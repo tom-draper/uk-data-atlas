@@ -92,7 +92,7 @@ export const handleDataChangeRoutes = ({
 		measure,
 		place: placeText,
 		geography: requestedGeography(parsedUrl.searchParams, place),
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 	});
 	const namedRefusal = namedAreaRefusal({
 		parsedUrl,
@@ -108,7 +108,7 @@ export const handleDataChangeRoutes = ({
 			requestedGeography(parsedUrl.searchParams, place) ??
 			area?.geography ??
 			null,
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
 	const partition = selectSourcePartition({
@@ -149,7 +149,7 @@ export const handleDataChangeRoutes = ({
 		!endPeriod
 	) {
 		return invalidQuery(
-			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with boundaryYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
+			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with codeYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	}
 	// The partition is chosen by geography and boundary year alone. Which
@@ -157,7 +157,7 @@ export const handleDataChangeRoutes = ({
 	// positions anyway to say which way round the change runs.
 	if (partition.kind === "refusal")
 		return invalidQuery(
-			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with boundaryYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
+			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with codeYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	const {
 		plan: { source },

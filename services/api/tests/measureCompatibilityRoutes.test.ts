@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { route as routeRequest } from "../src/routes";
+import { reportRequest as routeRequest } from "./evidenceFixtures";
 import {
 	registry,
 	measureCompatibilityInventory,

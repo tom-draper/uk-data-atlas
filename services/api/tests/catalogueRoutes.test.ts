@@ -40,7 +40,7 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 	assert.equal(aggregation?.available, false);
 
 	const observed = routeWithData(
-		"/v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024",
+		"/v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&codeYear=2024",
 	);
 	assert.equal(observed.status, 200);
 	const data = "data" in observed.body ? (observed.body.data as never) : {};
@@ -59,7 +59,7 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 	// The emissions code vintage is not this measure's.
 	assert.equal(
 		routeWithData(
-			"/v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2025",
+			"/v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&codeYear=2025",
 		).status,
 		400,
 	);

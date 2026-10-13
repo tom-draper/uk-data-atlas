@@ -185,7 +185,7 @@ test("cites an area with its release, identity hash, validation and attribution"
 			{ id: "atlas", status: "not-validated" },
 			{
 				...validationReport.resources[0],
-				href: "/v1/validation/boundary-releases/ward/2025-01-en-ward",
+				href: "/v1/documents/validation-report.json",
 			},
 			{
 				id: "crosswalks/ward-to-local-authority-2025",

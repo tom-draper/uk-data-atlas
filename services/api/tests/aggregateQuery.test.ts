@@ -7,13 +7,13 @@ import { dataCatalog } from "./routeFixtures";
 const geographyResolver = createGeographyResolver({});
 
 const url = (query: string) =>
-	new URL(`https://api.example.test/v1/data/measure/aggregate?${query}`);
+	new URL(`https://api.example.test/v1/data/measure/value?${query}`);
 
 test("parses a country aggregation query", () => {
 	assert.deepEqual(
 		parseAggregateQuery({
 			parsedUrl: url(
-				"period=2024&geography=localAuthority&boundaryYear=2024&place=E92000001",
+				"period=2024&geography=localAuthority&codeYear=2024&place=E92000001",
 			),
 			measureId: "measure.example",
 			measure: dataCatalog.measures[0]!,
@@ -38,7 +38,7 @@ test("parses a country aggregation query", () => {
 test("reads a place reference's geography as the target's", () => {
 	const result = parseAggregateQuery({
 		parsedUrl: url(
-			"period=2024&geography=localAuthority&boundaryYear=2024&place=region/R1&crosswalk=x&from=localAuthority/release",
+			"period=2024&geography=localAuthority&codeYear=2024&place=region/R1&crosswalk=x&from=localAuthority/release",
 		),
 		measureId: "measure.example",
 		measure: dataCatalog.measures[0]!,
@@ -58,7 +58,7 @@ test("reads a place reference's geography as the target's", () => {
 test("rejects unsupported selectors and malformed targets", () => {
 	const conversion = parseAggregateQuery({
 		parsedUrl: url(
-			"period=2024&geography=localAuthority&boundaryYear=2024&place=E92000001&conversion=x",
+			"period=2024&geography=localAuthority&codeYear=2024&place=E92000001&conversion=x",
 		),
 		measureId: "measure.example",
 		measure: dataCatalog.measures[0]!,
@@ -68,7 +68,7 @@ test("rejects unsupported selectors and malformed targets", () => {
 
 	const invalidCountry = parseAggregateQuery({
 		parsedUrl: url(
-			"period=2024&geography=localAuthority&boundaryYear=2024&place=E1",
+			"period=2024&geography=localAuthority&codeYear=2024&place=E1",
 		),
 		measureId: "measure.example",
 		measure: dataCatalog.measures[0]!,

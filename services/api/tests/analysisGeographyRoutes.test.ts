@@ -4,7 +4,7 @@ import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "../src/analysisGeographyValidation";
 import { createAreaLookup } from "../src/areaInventory";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
-import { route as routeRequest } from "../src/routes";
+import { reportRequest as routeRequest } from "./evidenceFixtures";
 import {
 	containmentCrosswalk,
 	crosswalkInventory,
@@ -118,7 +118,7 @@ test("lists only reviewed analysis conversions", () => {
 
 test("preflights an explicit source and retains not-comparable periods", () => {
 	const base =
-		"/v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&boundaryYear=2021";
+		"/v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021";
 	const available = route(`${base}&period=2025`);
 	assert.equal(available.status, 200);
 	const availableData =
@@ -171,7 +171,10 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 			boundaryRelease: "2025-01-uk-lad",
 			codeProperty: "LAD25CD",
 			nameProperty: "LAD25NM",
-			areas: [{ code: "E08000001", name: "Greater Manchester" }],
+			areas: [
+				{ code: "E08000001", name: "Greater Manchester" },
+				{ code: "E08000099", name: "Uncovered authority" },
+			],
 		},
 	]);
 	const analysisCrosswalk = {
@@ -208,7 +211,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 	};
 	const response = routeRequest(
 		"GET",
-		"/v1/analysis:plan?measure=population&period=2022&to=localAuthority/2025-01-uk-lad&geography=ward&boundaryYear=2023",
+		"/v1/analysis:plan?measure=population&period=2022&to=localAuthority/2025-01-uk-lad&geography=ward&codeYear=2023",
 		testContext({
 			analysisGeographyInventory: planInventory,
 			areaLookup: planAreaLookup,
@@ -273,7 +276,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 		available: true,
 	});
 	assert.deepEqual(data.expectedSize, {
-		targetAreaCount: 1,
+		targetAreaCount: 2,
 		coveredAreaCount: 1,
 		outputRecordCount: 1,
 	});
@@ -286,8 +289,13 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 	assert.deepEqual(data.saferAlternatives, [
 		{
 			kind: "source-exact",
-			href: "/v1/data/population?period=2022&geography=ward&boundaryYear=2023",
+			href: "/v1/data/population?period=2022&geography=ward&codeYear=2023",
 			reason: "Keep the publisher's source partition when a conversion is not needed.",
+		},
+		{
+			kind: "coverage-plan",
+			href: "/v1/documents/measure-population.json",
+			reason: "Inspect the country-by-country gap before using a partial analysis frame.",
 		},
 	]);
 });

@@ -1,3 +1,4 @@
+import { routeWithData } from "./routeFixtures";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
@@ -159,4 +160,12 @@ test("defaults an ambiguous place name and reports its other meanings", () => {
 		[["ward/E05000001", 100]],
 	);
 	assert.match(data.data.note, /localAuthority was used as the most likely/);
+});
+
+test("refuses an unavailable explicit code year instead of using the newest partition", () => {
+	const response = routeWithData(
+		"/v1/data/population/value?place=E05000001&codeYear=1999",
+	);
+	assert.equal(response.status, 400);
+	assert.match("detail" in response.body ? response.body.detail : "", /1999/);
 });

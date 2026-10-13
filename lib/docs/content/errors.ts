@@ -9,6 +9,12 @@ export interface ErrorCodeContent {
 }
 
 export const ERROR_CODES: Record<string, ErrorCodeContent> = {
+	place_not_served: {
+		status: 422,
+		meaning:
+			"The place matched, but this measure cannot answer any of its meanings.",
+		fix: "Read each candidate's reason, then choose a measure or a place it covers.",
+	},
 	unsupported_geography: {
 		status: 404,
 		meaning:
@@ -43,7 +49,7 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 		status: 422,
 		meaning:
 			"Some areas a total needs are missing, so no total is given rather than a quietly incomplete one.",
-		fix: "See where the measure is published with [Check a measure's coverage](/docs/v1/reference/data-catalogue/measure-coverage), then choose a period or group of areas it fully covers.",
+		fix: "See where the measure is published with [Build evidence](/docs/v1/reference/governance/evidence-document), then choose a period or group of areas it fully covers.",
 	},
 	ambiguous_place: {
 		status: 409,
@@ -54,7 +60,7 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 		status: 422,
 		meaning:
 			"Not every area code in the data appears in the boundary release you chose.",
-		fix: "Find a release that fits with [Check which boundaries fit](/docs/v1/reference/data-catalogue/measure-compatibility).",
+		fix: "Find a release that fits with [Build evidence](/docs/v1/reference/governance/evidence-document).",
 	},
 	invalid_format: {
 		status: 400,

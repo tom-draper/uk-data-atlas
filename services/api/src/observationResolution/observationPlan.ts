@@ -235,7 +235,7 @@ export const resolveObservations = (
 		return refuse({
 			status: 422,
 			title: "Operation Not Supported",
-			detail: `${request.release} does not hold every source area code for this partition of ${measure.id}, so its values cannot be drawn on it. Inspect /v1/measures/${measure.id}/compatibility.`,
+			detail: `${request.release} does not hold every source area code for this partition of ${measure.id}, so its values cannot be drawn on it. Inspect /v1/documents/measure-${measure.id}.json.`,
 			code: "incompatible_geometry",
 			alternatives: {
 				releases: (compatibility?.candidates ?? [])

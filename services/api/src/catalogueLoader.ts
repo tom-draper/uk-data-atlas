@@ -1,5 +1,6 @@
+import type { EvidenceManifest } from "./evidenceReports";
 import { lazyValue } from "./lazyValue";
-import { readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
 import { createGeographyResolver } from "./geographyResolver";
@@ -57,8 +58,9 @@ const EVIDENCE_DOCUMENTS = [
 const readEvidenceDocuments = (
 	apiRoot: string,
 	atlasRelease: RouteContext["atlasRelease"],
-) =>
-	new Map<string, StoredFile>(
+	dataCatalogHash: string,
+) => {
+	const documents = new Map<string, StoredFile>(
 		EVIDENCE_DOCUMENTS.flatMap((id) => {
 			const path = `${id}.json`;
 			const artifact = atlasRelease?.artifacts.find(
@@ -78,6 +80,37 @@ const readEvidenceDocuments = (
 			];
 		}),
 	);
+	const indexPath = resolve(apiRoot, "public", "evidence-documents.json");
+	if (existsSync(indexPath)) {
+		const manifest: EvidenceManifest = JSON.parse(
+			readFileSync(indexPath, "utf8"),
+		);
+		if (
+			manifest.schemaVersion !== 1 ||
+			manifest.dataCatalogHash !== dataCatalogHash ||
+			!Array.isArray(manifest.documents)
+		)
+			throw new Error(
+				"Evidence documents were not built from this data catalogue.",
+			);
+		for (const entry of manifest.documents) {
+			if (
+				!/^[a-z0-9-]+$/.test(entry.id) ||
+				entry.artifact !== `documents/${entry.id}.json`
+			)
+				throw new Error("Invalid evidence document path");
+			const path = resolve(apiRoot, "public", entry.artifact);
+			if (statSync(path).size !== entry.bytes)
+				throw new Error(`Evidence document size mismatch at ${path}`);
+			documents.set(entry.id, {
+				path,
+				bytes: entry.bytes,
+				contentHash: entry.contentHash,
+			});
+		}
+	}
+	return documents;
+};
 
 export type ApiCatalogues = Omit<
 	Required<RouteContext>,
@@ -90,6 +123,7 @@ export type ApiCatalogues = Omit<
 export type CatalogueOptions = {
 	mapAssetBaseUrl?: string;
 	mapTileBaseUrl?: string;
+	loadEvidenceDocuments?: boolean;
 	/** Geometry releases held in memory at once; see `AreaGeometryCache`. */
 	geometryCacheReleases?: number;
 	/**
@@ -146,7 +180,13 @@ export const readApiCatalogues = (
 		readAtlasRelease(apiRoot),
 	);
 	const documents = stage("evidence-documents", () =>
-		readEvidenceDocuments(apiRoot, atlasRelease),
+		options.loadEvidenceDocuments === false
+			? new Map<string, StoredFile>()
+			: readEvidenceDocuments(
+					apiRoot,
+					atlasRelease,
+					dataCatalog.contentHash,
+				),
 	);
 	const exportManifest = stage("export-manifest", () =>
 		readExportManifest(apiRoot),

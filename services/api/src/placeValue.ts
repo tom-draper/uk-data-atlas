@@ -12,7 +12,10 @@ import { comparePlaceCandidates, type PlaceCandidate } from "./placeResolver";
  * guessing which the caller meant.
  */
 
-export type Dispatch = (url: string) => {
+export type Dispatch = (
+	url: string,
+	operation: "series" | "aggregate",
+) => {
 	status: number;
 	body: unknown;
 };
@@ -82,8 +85,8 @@ const seriesAttempt = (
 	let lastReason = "";
 	for (const source of sources) {
 		const { type, boundaryYear } = source.sourceGeography;
-		const via = `/v1/data/${measure.id}/series?place=${encodeURIComponent(candidate.code)}&geography=${type}&boundaryYear=${boundaryYear}`;
-		const response = dispatch(via);
+		const via = `/v1/data/${measure.id}/series?place=${encodeURIComponent(candidate.code)}&geography=${type}&codeYear=${boundaryYear}`;
+		const response = dispatch(via, "series");
 		if (response.status !== 200) {
 			lastReason = detailOf(response.body);
 			continue;
@@ -160,8 +163,8 @@ const aggregateAttempt = (
 		candidate.kind === "named-location"
 			? `place=location/${encodeURIComponent(candidate.code)}`
 			: `place=${encodeURIComponent(candidate.code)}`;
-	const via = `/v1/data/${measure.id}/aggregate?${selector}&geography=${memberGeography}&boundaryYear=${boundaryYear}&period=${encodeURIComponent(chosen)}`;
-	const response = dispatch(via);
+	const via = `/v1/data/${measure.id}/value?${selector}&geography=${memberGeography}&codeYear=${boundaryYear}&period=${encodeURIComponent(chosen)}`;
+	const response = dispatch(via, "aggregate");
 	if (response.status !== 200) {
 		return { candidate, served: false, reason: detailOf(response.body) };
 	}
@@ -213,6 +216,7 @@ export const attemptPlace = (
 		: seriesAttempt(measure, candidate, period, dispatch);
 
 export type PlaceValueOutcome =
+	| { outcome: "unavailable-source" }
 	| {
 			outcome: "answered";
 			chosen: Attempt & { served: true };
@@ -240,7 +244,24 @@ export const valueForPlace = (
 	candidates: PlaceCandidate[],
 	period: string | undefined,
 	dispatch: Dispatch,
+	selection: {
+		geography?: string | null;
+		codeYear?: string | null;
+		datasetId?: string | null;
+	} = {},
 ): PlaceValueOutcome => {
+	const sources = measure.sources.filter(
+		(source) =>
+			(selection.geography == null ||
+				source.sourceGeography.type === selection.geography) &&
+			(selection.codeYear == null ||
+				String(source.sourceGeography.boundaryYear) ===
+					selection.codeYear) &&
+			(selection.datasetId == null ||
+				source.datasetId === selection.datasetId),
+	);
+	if (sources.length === 0) return { outcome: "unavailable-source" };
+	const selectedMeasure = { ...measure, sources };
 	if (candidates.length === 0) return { outcome: "unmatched" };
 	const attempts: Attempt[] = [];
 	for (const tier of [0, 1]) {
@@ -248,7 +269,7 @@ export const valueForPlace = (
 			(candidate) => tierOf(candidate) === tier,
 		);
 		const tried = inTier.map((candidate) =>
-			attemptPlace(measure, candidate, period, dispatch),
+			attemptPlace(selectedMeasure, candidate, period, dispatch),
 		);
 		attempts.push(...tried);
 		// Where the same ground is reached twice, keep the source-exact reading:

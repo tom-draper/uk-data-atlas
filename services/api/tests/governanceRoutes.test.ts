@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-	route,
+	report as route,
 	registry,
 	geographyInventory,
 	areaLookup,

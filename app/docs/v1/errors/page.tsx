@@ -18,7 +18,7 @@ const PROBLEM = `{
   "code": "aggregation_not_supported"
 }`;
 
-const URL = `${API_BASE_URL}/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&place=E92000001`;
+const URL = `${API_BASE_URL}/data/house-price-median/value?period=2022&geography=ward&codeYear=2020&place=E92000001`;
 
 const HANDLING = [
 	{
@@ -43,11 +43,11 @@ if (!response.ok) {
 		code: `import requests
 
 response = requests.get(
-    "${API_BASE_URL}/data/house-price-median/aggregate",
+    "${API_BASE_URL}/data/house-price-median/value",
     params={
         "period": "2022",
         "geography": "ward",
-        "boundaryYear": "2020",
+        "codeYear": "2020",
         "areaCode": "E92000001",
     },
 )

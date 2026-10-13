@@ -122,7 +122,7 @@ const planEvidence = (
 		saferAlternatives: [
 			{
 				kind: "source-exact" as const,
-				href: `/v1/data/${measureId}?period=${encodeURIComponent(period)}&geography=${support.source.geography}&boundaryYear=${support.source.boundaryYear}`,
+				href: `/v1/data/${measureId}?period=${encodeURIComponent(period)}&geography=${support.source.geography}&codeYear=${support.source.boundaryYear}`,
 				reason: "Keep the publisher's source partition when a conversion is not needed.",
 			},
 			...(coverage &&
@@ -130,7 +130,7 @@ const planEvidence = (
 				? [
 						{
 							kind: "coverage-plan" as const,
-							href: `/v1/measures/${measureId}/coverage-plan?geography=${analysisGeography.geography}&release=${analysisGeography.boundaryRelease}`,
+							href: `/v1/documents/measure-${measureId}.json`,
 							reason: "Inspect the country-by-country gap before using a partial analysis frame.",
 						},
 					]
@@ -199,10 +199,10 @@ export const handleAnalysisGeographyRoutes = ({
 	if (!requestedMeasure || !to)
 		return invalidQuery("measure and to=geography/release are required.");
 	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+	const boundaryYear = parsedUrl.searchParams.get("codeYear");
 	if (isPlan && (!geography || !boundaryYear))
 		return invalidQuery(
-			"geography and boundaryYear are required when planning an analysis, so the API never chooses between source partitions.",
+			"geography and codeYear are required when planning an analysis, so the API never chooses between source partitions.",
 		);
 	const supports = supportFor(
 		inventory,
@@ -274,7 +274,7 @@ export const handleAnalysisGeographyRoutes = ({
 			conversion: analysisConversion(support),
 			note: support.note,
 			...evidence,
-			result: `/v1/data/${requestedMeasure}/convert?period=${encodeURIComponent(period)}&geography=${support.source.geography}&boundaryYear=${support.source.boundaryYear}&${support.path ? "path" : "crosswalk"}=${encodeURIComponent(analysisConversion(support).id)}`,
+			result: `/v1/data/${requestedMeasure}/convert?period=${encodeURIComponent(period)}&geography=${support.source.geography}&codeYear=${support.source.boundaryYear}&${support.path ? "path" : "crosswalk"}=${encodeURIComponent(analysisConversion(support).id)}`,
 		}),
 	};
 };

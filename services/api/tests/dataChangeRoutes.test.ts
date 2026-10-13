@@ -23,7 +23,7 @@ test("ranks change between two periods of one source partition", () => {
 	});
 	const ask = (measureId: string, query: string) =>
 		routeRequest("GET", `/v1/data/${measureId}/change?${query}`, context);
-	const partition = "geography=localAuthority&boundaryYear=2023";
+	const partition = "geography=localAuthority&codeYear=2023";
 	type Record = {
 		areaCode: string;
 		rank: number;
@@ -119,12 +119,12 @@ test("ranks change between two periods of one source partition", () => {
 			"population",
 			"startPeriod=2022&endPeriod=2024",
 			400,
-			/boundaryYear=2023 \(3 periods\)/,
+			/codeYear=2023 \(3 periods\)/,
 		],
 		// A partition of one period has nothing to change between.
 		[
 			"ghg-emissions",
-			"geography=localAuthority&boundaryYear=2025&startPeriod=2024&endPeriod=2024",
+			"geography=localAuthority&codeYear=2025&startPeriod=2024&endPeriod=2024",
 			422,
 			/single period/,
 		],
@@ -133,7 +133,7 @@ test("ranks change between two periods of one source partition", () => {
 		// between. The ratio rule itself is covered where it is decided.
 		[
 			"mobile-5g-coverage",
-			"geography=localAuthority&boundaryYear=2024&startPeriod=2025&endPeriod=2025&by=relative",
+			"geography=localAuthority&codeYear=2024&startPeriod=2025&endPeriod=2025&by=relative",
 			422,
 			/single period/,
 		],

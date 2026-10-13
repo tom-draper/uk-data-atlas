@@ -58,7 +58,7 @@ const populationProvenance = (
 						status: "caller-selected-code-join",
 						boundaryRelease: geometry.boundaryRelease,
 						compatibility: geometry.compatibility,
-						href: "/v1/measures/population/compatibility",
+						href: "/v1/documents/measure-population.json",
 						note: geometry.note,
 					},
 	},
@@ -84,7 +84,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	);
 
 	const first = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=1",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1",
 	);
 	assert.equal(first.status, 200);
 	const firstData = "data" in first.body ? first.body.data : undefined;
@@ -106,7 +106,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
 	assert.equal(typeof cursor, "string");
 	const second = routeWithData(
-		`/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=1&cursor=${cursor}`,
+		`/v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1&cursor=${cursor}`,
 	);
 	assert.deepEqual("data" in second.body && second.body.data, {
 		measure: dataCatalog.measures[0],
@@ -125,7 +125,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	});
 
 	const localAuthority = routeWithData(
-		"/v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023&place=N09000001",
+		"/v1/data/population?period=2024&geography=localAuthority&codeYear=2023&place=N09000001",
 	);
 	assert.equal(localAuthority.status, 200);
 	assert.deepEqual(
@@ -150,7 +150,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	);
 
 	const withGeometry = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&place=E05000001",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&release=2023-05-uk-bgc&place=E05000001",
 	);
 	assert.equal(withGeometry.status, 200);
 	assert.deepEqual("data" in withGeometry.body && withGeometry.body.data, {
@@ -183,7 +183,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 
 	const withArea = routeRequest(
 		"GET",
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&place=E05000001&include=area",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&release=2023-05-uk-bgc&place=E05000001&include=area",
 		testContext({
 			boundaryRegistry: registry,
 			areaLookup: compatibleWardAreaLookup,
@@ -212,12 +212,12 @@ test("publishes datasets, measures and source-exact population observations", ()
 	]);
 
 	const includeWithoutRelease = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&include=area",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&include=area",
 	);
 	assert.equal(includeWithoutRelease.status, 400);
 
 	const csv = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&place=E05000001&format=csv",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&place=E05000001&format=csv",
 	);
 	assert.equal(csv.status, 200);
 	assert.equal(csv.representation?.contentType, "text/csv; charset=utf-8");
@@ -227,7 +227,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	);
 
 	const ndjson = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&place=E05000001&format=ndjson",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&place=E05000001&format=ndjson",
 	);
 	assert.equal(ndjson.status, 200);
 	assert.equal(
@@ -257,7 +257,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	});
 
 	const csvPage = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=1&format=csv",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1&format=csv",
 	);
 	assert.equal(csvPage.status, 200);
 	const pageCursor =
@@ -265,7 +265,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	assert.equal(typeof pageCursor, "string");
 	assert.equal(
 		csvPage.representation?.headers?.link,
-		`</v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=1&format=csv&cursor=${pageCursor}>; rel="next"`,
+		`</v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1&format=csv&cursor=${pageCursor}>; rel="next"`,
 	);
 	assert.equal(
 		String(csvPage.representation?.body).trimEnd().split("\n").length,
@@ -273,13 +273,13 @@ test("publishes datasets, measures and source-exact population observations", ()
 	);
 
 	const csvLastPage = routeWithData(
-		`/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=1&format=csv&cursor=${pageCursor}`,
+		`/v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1&format=csv&cursor=${pageCursor}`,
 	);
 	assert.equal(csvLastPage.status, 200);
 	assert.deepEqual(csvLastPage.representation?.headers, {});
 
 	const invalidFormat = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=parquet",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&format=parquet",
 	);
 	assert.equal(invalidFormat.status, 400);
 });
@@ -346,7 +346,7 @@ test("serves categorical winners without numeric operations", () => {
 		],
 	};
 	const response = routeWithCatalog(
-		`/v1/data/${measureId}?period=2024&geography=ward&boundaryYear=2024`,
+		`/v1/data/${measureId}?period=2024&geography=ward&codeYear=2024`,
 		catalog,
 		[...measureObservations, winners],
 	);
@@ -361,7 +361,7 @@ test("serves categorical winners without numeric operations", () => {
 	);
 	assert.equal(
 		routeWithCatalog(
-			`/v1/data/${measureId}/rankings?period=2024&geography=ward&boundaryYear=2024`,
+			`/v1/data/${measureId}/rankings?period=2024&geography=ward&codeYear=2024`,
 			catalog,
 			[...measureObservations, winners],
 		).status,
@@ -369,7 +369,7 @@ test("serves categorical winners without numeric operations", () => {
 	);
 	assert.equal(
 		routeWithCatalog(
-			`/v1/data/${measureId}?period=2024&geography=ward&boundaryYear=2024&format=csv`,
+			`/v1/data/${measureId}?period=2024&geography=ward&codeYear=2024&format=csv`,
 			catalog,
 			[...measureObservations, winners],
 		).status,
@@ -377,7 +377,7 @@ test("serves categorical winners without numeric operations", () => {
 	);
 	assert.equal(
 		routeWithCatalog(
-			`/v1/data/${measureId}?period=2024&geography=ward&boundaryYear=2024&units=canonical`,
+			`/v1/data/${measureId}?period=2024&geography=ward&codeYear=2024&units=canonical`,
 			catalog,
 			[...measureObservations, winners],
 		).status,
@@ -404,7 +404,7 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 	);
 
 	const observed = routeWithData(
-		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025",
+		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025",
 	);
 	assert.equal(observed.status, 200);
 	const data = "data" in observed.body ? (observed.body.data as never) : {};
@@ -424,14 +424,14 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 	// A period the measure does not publish is rejected, not served empty.
 	assert.equal(
 		routeWithData(
-			"/v1/data/ghg-emissions?period=1999&geography=localAuthority&boundaryYear=2025",
+			"/v1/data/ghg-emissions?period=1999&geography=localAuthority&codeYear=2025",
 		).status,
 		400,
 	);
 	// So is the population measure's own code vintage.
 	assert.equal(
 		routeWithData(
-			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2023",
+			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2023",
 		).status,
 		400,
 	);
@@ -443,7 +443,7 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 
 test("normalises values only when the caller explicitly asks for canonical units", () => {
 	const response = routeWithData(
-		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&units=canonical",
+		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025&units=canonical",
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? (response.body.data as never) : {};
@@ -465,13 +465,13 @@ test("normalises values only when the caller explicitly asks for canonical units
 	);
 	assert.equal(
 		routeWithData(
-			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&units=canonical&format=csv",
+			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025&units=canonical&format=csv",
 		).status,
 		422,
 	);
 	assert.equal(
 		routeWithData(
-			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&units=not-a-unit-mode",
+			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025&units=not-a-unit-mode",
 		).status,
 		400,
 	);
@@ -479,7 +479,7 @@ test("normalises values only when the caller explicitly asks for canonical units
 
 test("carries the measure's unit into a tabular export", () => {
 	const csv = routeWithData(
-		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&format=csv",
+		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025&format=csv",
 	);
 	assert.equal(csv.status, 200);
 	const [header, first] = String(csv.representation?.body).split("\n");
@@ -490,7 +490,7 @@ test("carries the measure's unit into a tabular export", () => {
 
 test("publishes a census breakdown as counts with its own denominator", () => {
 	const observed = routeWithData(
-		"/v1/data/travel-to-work-car?period=2021&geography=localAuthority&boundaryYear=2025",
+		"/v1/data/travel-to-work-car?period=2021&geography=localAuthority&codeYear=2025",
 	);
 	assert.equal(observed.status, 200);
 	const data = "data" in observed.body ? (observed.body.data as never) : {};
@@ -522,7 +522,7 @@ test("publishes a census breakdown as counts with its own denominator", () => {
 
 test("serves a small-area partition on its own geography", () => {
 	const observed = routeWithData(
-		"/v1/data/small-area-fixture?period=2019&geography=lsoa&boundaryYear=2011",
+		"/v1/data/small-area-fixture?period=2019&geography=lsoa&codeYear=2011",
 	);
 	assert.equal(observed.status, 200);
 	const data = "data" in observed.body ? (observed.body.data as never) : {};
@@ -535,7 +535,7 @@ test("serves a small-area partition on its own geography", () => {
 	// An LSOA partition is not a data zone partition, even for the same year.
 	assert.equal(
 		routeWithData(
-			"/v1/data/small-area-fixture?period=2019&geography=dataZone&boundaryYear=2011",
+			"/v1/data/small-area-fixture?period=2019&geography=dataZone&codeYear=2011",
 		).status,
 		400,
 	);
@@ -543,15 +543,15 @@ test("serves a small-area partition on its own geography", () => {
 
 test("keeps aggregation separate from the source-exact observation route", () => {
 	const invalidSource = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2024",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2024",
 	);
 	assert.equal(invalidSource.status, 400);
 	const incompatibleRelease = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-12-uk-bgc",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&release=2023-12-uk-bgc",
 	);
 	assert.equal(incompatibleRelease.status, 422);
 	const aggregation = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&aggregate=sum",
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&aggregate=sum",
 	);
 	assert.equal(aggregation.status, 422);
 });

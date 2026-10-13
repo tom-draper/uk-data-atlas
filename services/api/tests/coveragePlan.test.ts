@@ -14,7 +14,7 @@ import {
 	populationLocalAuthorityObservations,
 	populationObservations,
 	registry,
-	routeWithData,
+	reportWithData as routeWithData,
 	testContext,
 } from "./routeFixtures";
 

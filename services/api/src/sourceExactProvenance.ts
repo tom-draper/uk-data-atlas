@@ -61,7 +61,7 @@ const provenanceBase = ({
 						status: "caller-selected-code-join" as const,
 						boundaryRelease: geometry.boundaryRelease,
 						compatibility: geometry.compatibility,
-						href: `/v1/measures/${measure.id}/compatibility`,
+						href: `/v1/documents/measure-${measure.id}.json`,
 						note: geometry.note,
 					},
 	},

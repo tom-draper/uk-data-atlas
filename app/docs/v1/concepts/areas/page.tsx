@@ -112,7 +112,7 @@ export default function AreasPage() {
 			<List
 				items={[
 					"`geography`: the kind of area the publisher used, such as `ward`.",
-					"`boundaryYear`: the year of the codes they used, such as `2023`.",
+					"`codeYear`: the year of the codes they used, such as `2023`.",
 				]}
 			/>
 			<P>

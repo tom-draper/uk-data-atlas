@@ -9,7 +9,7 @@ export const metadata = docsMetadata(
 	"/docs/v1/pagination",
 );
 
-const URL = `${API_BASE_URL}/data/population?period=2022&geography=ward&boundaryYear=2023&limit=500`;
+const URL = `${API_BASE_URL}/data/population?period=2022&geography=ward&codeYear=2023&limit=500`;
 
 const LOOP_SAMPLES = [
 	{
@@ -37,7 +37,7 @@ while (true) {
 params = {
     "period": "2022",
     "geography": "ward",
-    "boundaryYear": "2023",
+    "codeYear": "2023",
     "limit": 500,
 }
 records = []

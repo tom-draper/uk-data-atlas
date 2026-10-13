@@ -93,7 +93,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Get observations",
 		intro: "The main way to fetch data. Ask for a measure, a period and the set of areas it was published on, and you get the values exactly as the publisher released them, with nothing converted or added up.",
 		tips: [
-			"`geography` and `boundaryYear` together choose which published set of area codes you want. [Get a measure](/docs/v1/reference/data-catalogue/measure) lists the combinations on offer.",
+			"`geography` and `codeYear` together choose which published set of area codes you want. [Get a measure](/docs/v1/reference/data-catalogue/measure) lists the combinations on offer.",
 			"Add `release` to draw the values on a particular set of boundaries. It's accepted only when every area code is in that release, so your map never silently loses areas.",
 			"Set `format=csv` or `format=ndjson` for a table you can load straight into a spreadsheet or database.",
 		],
@@ -156,17 +156,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 
 	// Analysis
-	aggregateSourceExactMeasure: {
-		title: "Add up a measure",
-		intro: "Get a total over a group of areas, such as a country, a combined authority, a county or a named location like Greater Manchester. Shares with a published weight are averaged instead. It only combines values where the result genuinely means something.",
-		tips: [
-			"`place` is what to sum onto: `location/{id}` for a named location, a country code, or any other area a `crosswalk` groups members into.",
-			"An area that isn't a country is summed onto through whatever geography your chosen `crosswalk` maps to, so the same call gives you a combined authority, a county or a region. Find one with [List crosswalks](/docs/v1/reference/geography/list-crosswalks).",
-			"Only a crosswalk that establishes membership can be used. Clean containment and full area overlap qualify; a lookup that relates two vintages of the same area does not, and is refused rather than summed.",
-			"Counts add up. Medians and ranks don't, so asking for one gets a `422` that explains why, rather than a misleading number.",
-			"If a named location is missing some of its areas, you get a `partial_coverage` refusal. A country or membership total with gaps is still returned, with its coverage stated plainly.",
-		],
-	},
 	convertSourceExactMeasure: {
 		title: "Convert to other areas",
 		intro: "Regroup a measure onto a different set of areas, such as wards up to local authorities, using a crosswalk you choose. Only counts can be converted, because converting works by adding values up.",
@@ -216,14 +205,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		tips: [
 			"Name `sourceGeography` and `sourceBoundaryYear` explicitly, even when a measure has only one obvious source today.",
 			"An `available` plan gives you the exact conversion request. A `not-comparable` plan explains why the named period cannot be used on that frame.",
-		],
-	},
-	getMeasureConversionSupport: {
-		title: "Check conversion support",
-		intro: "Inspect the reviewed conversion paths for one measure on one analysis boundary. Use it to discover supported source partitions before asking for a preflight plan.",
-		tips: [
-			"`analysisGeography` is one exact `geography/release` pair, for example `localAuthority/2023-05-uk-bgc-v2`.",
-			"An unsupported response is intentional: it means the Atlas has not established a defensible path, not that it guessed a substitute.",
 		],
 	},
 
@@ -472,92 +453,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Where another nation publishes its own version, `elsewhere` links to it and says whether the two can be compared.",
 		],
 	},
-	getMeasureCompatibility: {
-		title: "Check which boundaries fit",
-		intro: "Find out which boundary releases a measure's data can be drawn on, by checking that every area code it uses is present.",
-	},
-	getMeasureCoverage: {
-		title: "Check a measure's coverage",
-		intro: "See where a measure has data, and what share of its area codes appear in each boundary release.",
-	},
-	getMeasureQuality: {
-		title: "Check a measure's quality",
-		intro: "A pre-flight check before you request data: every source and period, how its records were produced, whether it can be aggregated and which boundaries it fits.",
-	},
 
-	reconcileMeasure: {
-		title: "Check a measure against itself",
-		intro: "Where the same measure is published for both small areas and large ones, adding the small ones up should reproduce the large ones. This runs that check and shows the two figures side by side, so you can see where they disagree and by how much.",
-		tips: [
-			"Both numbers come from the publisher. A difference is a clue about the crosswalk, the boundary vintage or the data itself, and nothing here is corrected.",
-			"An area marked `incomplete` is one where some of its smaller parts have no value, so the sum was always going to fall short. That is a gap, not a disagreement.",
-			"It is also how weightings are judged: the same constituencies added into local authorities land a median 0.3% from the published figures by population weight, and 8.8% by area weight.",
-			"Leave `crosswalk` out to see which comparisons are possible for this measure.",
-		],
-	},
-	planMeasureCoverage: {
-		title: "Plan coverage by country",
-		intro: "Before you rank or map a measure across the UK, check what it actually covers. Ward population, for instance, is published for England and Wales and for neither Scotland nor Northern Ireland, so a ranking of UK wards would quietly leave two countries out. This tells you that first.",
-		tips: [
-			"Each country comes back as `source-exact`, `converted`, `partial` or `missing`, with the number of areas behind it.",
-			"A `missing` country says whether the measure exists elsewhere and only lacks a route onto this release, which tells you what would fix it.",
-			"Counts come from the areas a source or conversion really carries, and nothing is estimated to fill a gap.",
-		],
-	},
-	getGeographyHealth: {
-		title: "Check relationship health",
-		intro: "A release-by-release summary of how well connected the Atlas's geographies are: how many areas in each have published relationships, and how many are still on their own. Filter with `geography` or `country` to narrow it.",
-		tips: [
-			"A good place to start when deciding whether the geography you need is well enough connected for the conversion you have in mind.",
-			"`status` and `reach` answer different questions. A release can have a relationship on every area and still convert onto nothing: if its only paths lead to other vintages of its own geography, `reach` is `vintage-only`. Filter with `reach=isolated` to see the releases nothing reaches at all.",
-		],
-	},
-	listRelationshipRepairs: {
-		title: "List relationship repairs to do",
-		intro: "The queue of relationships that could be published but haven't been yet, ordered by the next safe step: publish a crosswalk, review a candidate, or compile a missing release.",
-		tips: [
-			"Nothing here is published automatically. Each repair still goes through the usual adapter, validation and release review.",
-		],
-	},
-	listRelationshipCandidates: {
-		title: "List relationship candidates",
-		intro: "A behind-the-scenes report of relationships between areas found in the raw boundary files, and whether each has been published as a crosswalk yet.",
-	},
-	listCorrections: {
-		title: "List reviewed corrections",
-		intro: "See the reviewed API-owned corrections, derived calculations and normalisations that can affect a response, with their exact scope and evidence.",
-		tips: [
-			"The default data response remains source-exact; use the explicit request described by a correction to opt into a reviewed transformation.",
-		],
-	},
 	getEvidenceDocument: {
 		title: "Download a build evidence document",
-		intro: "Fetch one of the immutable JSON documents the build publishes as evidence: geography coverage, the validation receipt for reviewed conversions, measure compatibility, relationship candidates or the full validation report. Each is the exact artifact the release was built with, not a query.",
+		intro: "Download the build evidence linked from a measure or boundary release. Measure documents contain quality, compatibility, coverage plans and reconciliations. Archive documents contain validation, corrections and geography health.",
 		tips: [
 			"Name the document in the path, such as `/v1/documents/geography-inventory.json`. An unknown id returns 404.",
 			"Documents are pinned to the Atlas release, so a saved copy stays valid evidence for the results it was built alongside.",
 		],
-	},
-	getValidationReport: {
-		title: "Get the validation report",
-		intro: "Every check the build ran on boundaries, crosswalks and measures. Nothing is published with an unexplained failure: each accepted exception is listed with the reason it was accepted.",
-		tips: ["Filter by result with `status`."],
-	},
-	getBoundaryReleaseValidation: {
-		title: "Get checks for boundaries",
-		intro: "See the checks one boundary release went through before it was published.",
-	},
-	getCrosswalkValidation: {
-		title: "Get checks for a crosswalk",
-		intro: "See the checks one crosswalk passed: its file is intact, its areas resolve and, for containment, every area has exactly one parent.",
-	},
-	getMeasureValidation: {
-		title: "Get checks for a measure",
-		intro: "See the checks that one measure's definition is consistent, both with itself and with the rest of the catalogue.",
-	},
-	getMeasureSourceValidation: {
-		title: "Get checks for a download",
-		intro: "See the checks run on one downloadable dataset: that it matches its hash, every area code resolves, it covers the right countries and its values make sense.",
 	},
 	getAttribution: {
 		title: "Get attribution text",

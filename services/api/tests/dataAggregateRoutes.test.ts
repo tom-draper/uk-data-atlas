@@ -183,7 +183,7 @@ test("aggregates a region through an explicit complete crosswalk", () => {
 		],
 	};
 	const response = routeWithCatalog(
-		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&place=region/E12000002&from=localAuthority/2025-12-uk-lad&crosswalk=${crosswalkId}`,
+		`/v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025&place=region/E12000002&from=localAuthority/2025-12-uk-lad&crosswalk=${crosswalkId}`,
 		dataCatalog,
 		measureObservations,
 		{
@@ -289,7 +289,7 @@ test("aggregates an intensive measure with its published weight", () => {
 		],
 	});
 	const response = routeWithCatalog(
-		`/v1/data/${shareId}/aggregate?period=2024&geography=ward&boundaryYear=2023&place=E92000001`,
+		`/v1/data/${shareId}/value?period=2024&geography=ward&codeYear=2023&place=E92000001`,
 		catalog,
 		[
 			...measureObservations,
@@ -313,7 +313,7 @@ test("aggregates an intensive measure with its published weight", () => {
 
 test("sums a country from the GSS code prefix, or refuses to", () => {
 	const query =
-		"/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025";
+		"/v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025";
 
 	const england = routeWithData(`${query}&place=E92000001`);
 	assert.equal(england.status, 200);
@@ -344,18 +344,18 @@ test("sums a country from the GSS code prefix, or refuses to", () => {
 	// A place is required, and one that is not a curated location or a
 	// country needs a membership crosswalk to be summed onto.
 	assert.equal(routeWithData(query).status, 400);
-	// A local authority is not yet an aggregation target.
-	assert.equal(routeWithData(`${query}&place=E06000001`).status, 400);
+	// A code absent from the place index is unknown.
+	assert.equal(routeWithData(`${query}&place=E06000001`).status, 404);
 });
 
 test("refuses to combine a median, and says why", () => {
 	const observed = routeWithData(
-		"/v1/data/house-price-median?period=2022&geography=ward&boundaryYear=2020",
+		"/v1/data/house-price-median?period=2022&geography=ward&codeYear=2020",
 	);
 	assert.equal(observed.status, 200);
 
 	const aggregate = routeWithData(
-		"/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&place=E92000001",
+		"/v1/data/house-price-median/value?period=2022&geography=ward&codeYear=2020&place=E92000001",
 	);
 	assert.equal(aggregate.status, 422);
 	assert.match(
@@ -368,7 +368,7 @@ test("refuses to combine a median, and says why", () => {
 	);
 
 	const convert = routeWithData(
-		`/v1/data/house-price-median/convert?period=2022&geography=ward&boundaryYear=2020&crosswalk=${crosswalkArtifact.id}`,
+		`/v1/data/house-price-median/convert?period=2022&geography=ward&codeYear=2020&crosswalk=${crosswalkArtifact.id}`,
 	);
 	assert.equal(convert.status, 422);
 	assert.match(
@@ -395,7 +395,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	const context = testContext(inputs);
 	const response = routeRequest(
 		"GET",
-		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&place=location/test-wards",
+		"/v1/data/population/value?period=2022&geography=ward&codeYear=2023&place=location/test-wards",
 		context,
 	);
 	assert.equal(response.status, 200);
@@ -433,7 +433,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	// also serves this measure.
 	const wrongGeography = routeRequest(
 		"GET",
-		"/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&place=location/test-wards",
+		"/v1/data/population/value?period=2022&geography=localAuthority&codeYear=2023&place=location/test-wards",
 		context,
 	);
 	assert.equal(wrongGeography.status, 422);
@@ -452,7 +452,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	// question it can answer.
 	const withLegacy = routeRequest(
 		"GET",
-		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&place=location/incomplete-test-wards",
+		"/v1/data/population/value?period=2022&geography=ward&codeYear=2023&place=location/incomplete-test-wards",
 		context,
 	);
 	assert.equal(withLegacy.status, 200);
@@ -477,21 +477,21 @@ test("aggregates an extensive measure only over a complete direct named-location
 	// unresolved code is refused rather than assumed to be harmless.
 	const unverifiable = routeRequest(
 		"GET",
-		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&place=location/incomplete-test-wards",
+		"/v1/data/population/value?period=2022&geography=ward&codeYear=2023&place=location/incomplete-test-wards",
 		testContext({ ...inputs, areaLookup: undefined }),
 	);
 	assert.equal(unverifiable.status, 503);
 
 	const intensive = routeRequest(
 		"GET",
-		"/v1/data/mobile-5g-coverage/aggregate?period=2025&geography=localAuthority&boundaryYear=2024&place=location/test-wards",
+		"/v1/data/mobile-5g-coverage/value?period=2025&geography=localAuthority&codeYear=2024&place=location/test-wards",
 		context,
 	);
 	assert.equal(intensive.status, 422);
 
 	const conversion = routeRequest(
 		"GET",
-		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&place=location/test-wards&release=2023-05-uk-bgc",
+		"/v1/data/population/value?period=2022&geography=ward&codeYear=2023&place=location/test-wards&release=2023-05-uk-bgc",
 		context,
 	);
 	assert.equal(conversion.status, 422);
@@ -562,7 +562,7 @@ test("sums a location whose members span several code vintages", () => {
 	});
 	const response = routeRequest(
 		"GET",
-		"/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&place=location/spanning",
+		"/v1/data/population/value?period=2022&geography=localAuthority&codeYear=2023&place=location/spanning",
 		context,
 	);
 	assert.equal(
@@ -584,7 +584,7 @@ test("sums a location whose members span several code vintages", () => {
 	const detail = (locationId: string) => {
 		const refused = routeRequest(
 			"GET",
-			`/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&place=location/${locationId}`,
+			`/v1/data/population/value?period=2022&geography=localAuthority&codeYear=2023&place=location/${locationId}`,
 			context,
 		);
 		assert.equal(refused.status, 422);
@@ -599,7 +599,7 @@ test("sums a location whose members span several code vintages", () => {
 
 test("flags a country total that leaves out areas a matching release holds", () => {
 	const url =
-		"/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&place=E92000001";
+		"/v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025&place=E92000001";
 	const context = testContext({
 		boundaryRegistry: registry,
 		areaLookup: createAreaLookup([
@@ -781,7 +781,7 @@ const containmentCompatibility: MeasureCompatibilityInventory = {
 
 const aggregateOnto = (query: string, crosswalk: CrosswalkArtifact) =>
 	routeWithCatalog(
-		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&from=localAuthority/2025-12-uk-lad&${query}`,
+		`/v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025&from=localAuthority/2025-12-uk-lad&${query}`,
 		dataCatalog,
 		measureObservations,
 		{
@@ -882,7 +882,7 @@ const aggregateThrough = (
 	steps: Array<[CrosswalkArtifact, "forward" | "reverse"]>,
 ) =>
 	routeWithCatalog(
-		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&from=localAuthority/2025-12-uk-lad&${query}`,
+		`/v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025&from=localAuthority/2025-12-uk-lad&${query}`,
 		dataCatalog,
 		measureObservations,
 		{

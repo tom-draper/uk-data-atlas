@@ -91,7 +91,7 @@ export const parseAggregateQuery = ({
 		period: parsedUrl.searchParams.get("period"),
 		geography:
 			parsedUrl.searchParams.get("geography") ?? impliedSourceGeography,
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
 	const defaults = defaultSource(measure, requested);

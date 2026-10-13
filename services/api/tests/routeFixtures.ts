@@ -1,3 +1,4 @@
+import { reportRequest } from "./evidenceFixtures";
 import { createAreaLookup } from "../src/areaInventory";
 import type { AreaGeometryCache } from "../src/areaGeometry";
 import {
@@ -82,48 +83,53 @@ const resolverFor = (inputs: TestContextInputs) =>
 // Most tests exercise one narrow dependency combination. This fixture adapter
 // keeps those cases concise while ensuring the production router only accepts
 // its named RouteContext.
-export const route = (
-	method: string | undefined,
-	url: string | undefined,
-	boundaryRegistry: BoundaryRegistry,
-	geographyInventory?: RouteContext["geographyInventory"],
-	areaLookup?: TestContextInputs["areaLookup"],
-	crosswalkInventory?: RouteContext["crosswalkInventory"],
-	crosswalkLookup?: TestContextInputs["crosswalkLookup"],
-	atlasRelease?: RouteContext["atlasRelease"],
-	areaGeometryCache?: AreaGeometryCache,
-	relationshipCandidateInventory?: RouteContext["relationshipCandidateInventory"],
-	validationReport?: RouteContext["validationReport"],
-	namedLocationInventory?: RouteContext["namedLocationInventory"],
-	namedLocationLookup?: TestContextInputs["namedLocationLookup"],
-	dataCatalog?: RouteContext["dataCatalog"],
-	measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
-	measureObservations?: RouteContext["measureObservations"],
-	exportManifest?: RouteContext["exportManifest"],
-	relationshipPathInventory?: RouteContext["relationshipPathInventory"],
-) =>
-	routeRequest(
-		method,
-		url,
-		testContext({
-			boundaryRegistry,
-			geographyInventory,
-			areaLookup,
-			crosswalkInventory,
-			crosswalkLookup,
-			atlasRelease,
-			areaGeometryCache,
-			relationshipCandidateInventory,
-			validationReport,
-			namedLocationInventory,
-			namedLocationLookup,
-			relationshipPathInventory,
-			dataCatalog,
-			measureCompatibilityInventory,
-			measureObservations,
-			exportManifest,
-		}),
-	);
+const fixtureRoute =
+	(send: typeof routeRequest) =>
+	(
+		method: string | undefined,
+		url: string | undefined,
+		boundaryRegistry: BoundaryRegistry,
+		geographyInventory?: RouteContext["geographyInventory"],
+		areaLookup?: TestContextInputs["areaLookup"],
+		crosswalkInventory?: RouteContext["crosswalkInventory"],
+		crosswalkLookup?: TestContextInputs["crosswalkLookup"],
+		atlasRelease?: RouteContext["atlasRelease"],
+		areaGeometryCache?: AreaGeometryCache,
+		relationshipCandidateInventory?: RouteContext["relationshipCandidateInventory"],
+		validationReport?: RouteContext["validationReport"],
+		namedLocationInventory?: RouteContext["namedLocationInventory"],
+		namedLocationLookup?: TestContextInputs["namedLocationLookup"],
+		dataCatalog?: RouteContext["dataCatalog"],
+		measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
+		measureObservations?: RouteContext["measureObservations"],
+		exportManifest?: RouteContext["exportManifest"],
+		relationshipPathInventory?: RouteContext["relationshipPathInventory"],
+	) =>
+		send(
+			method,
+			url,
+			testContext({
+				boundaryRegistry,
+				geographyInventory,
+				areaLookup,
+				crosswalkInventory,
+				crosswalkLookup,
+				atlasRelease,
+				areaGeometryCache,
+				relationshipCandidateInventory,
+				validationReport,
+				namedLocationInventory,
+				namedLocationLookup,
+				relationshipPathInventory,
+				dataCatalog,
+				measureCompatibilityInventory,
+				measureObservations,
+				exportManifest,
+			}),
+		);
+
+export const route = fixtureRoute(routeRequest);
+export const report = fixtureRoute(reportRequest);
 
 export const registry: BoundaryRegistry = {
 	schemaVersion: 1,
@@ -776,41 +782,49 @@ export const measureCompatibilityInventory: MeasureCompatibilityInventory = {
 export const routeWithData = (url: string) =>
 	routeWithCatalog(url, dataCatalog, measureObservations);
 
-export const routeWithCatalog = (
-	url: string,
-	catalog: DataCatalog,
-	observations: RouteContext["measureObservations"],
-	overrides: Pick<
-		TestContextInputs,
-		| "crosswalkLookup"
-		| "measureCompatibilityInventory"
-		| "analysisGeographyInventory"
-		| "exportManifest"
-		| "relationshipPathInventory"
-	> = {},
-) =>
-	routeRequest(
-		"GET",
-		url,
-		testContext({
-			geographyInventory,
-			areaLookup,
-			crosswalkInventory,
-			crosswalkLookup: overrides.crosswalkLookup ?? crosswalkLookup,
-			dataCatalog: catalog,
-			measureCompatibilityInventory:
-				overrides.measureCompatibilityInventory ??
-				measureCompatibilityInventory,
-			analysisGeographyInventory: overrides.analysisGeographyInventory,
-			measureObservations: [
-				populationObservations,
-				populationLocalAuthorityObservations,
-				...(observations ?? []),
-			],
-			exportManifest: overrides.exportManifest,
-			relationshipPathInventory: overrides.relationshipPathInventory,
-		}),
-	);
+const fixtureDataRoute =
+	(send: typeof routeRequest) =>
+	(
+		url: string,
+		catalog: DataCatalog,
+		observations: RouteContext["measureObservations"],
+		overrides: Pick<
+			TestContextInputs,
+			| "crosswalkLookup"
+			| "measureCompatibilityInventory"
+			| "analysisGeographyInventory"
+			| "exportManifest"
+			| "relationshipPathInventory"
+		> = {},
+	) =>
+		send(
+			"GET",
+			url,
+			testContext({
+				geographyInventory,
+				areaLookup,
+				crosswalkInventory,
+				crosswalkLookup: overrides.crosswalkLookup ?? crosswalkLookup,
+				dataCatalog: catalog,
+				measureCompatibilityInventory:
+					overrides.measureCompatibilityInventory ??
+					measureCompatibilityInventory,
+				analysisGeographyInventory:
+					overrides.analysisGeographyInventory,
+				measureObservations: [
+					populationObservations,
+					populationLocalAuthorityObservations,
+					...(observations ?? []),
+				],
+				exportManifest: overrides.exportManifest,
+				relationshipPathInventory: overrides.relationshipPathInventory,
+			}),
+		);
+
+export const routeWithCatalog = fixtureDataRoute(routeRequest);
+export const reportWithCatalog = fixtureDataRoute(reportRequest);
+export const reportWithData = (url: string) =>
+	reportWithCatalog(url, dataCatalog, measureObservations);
 
 export const atlasRelease: AtlasRelease = {
 	schemaVersion: 1,

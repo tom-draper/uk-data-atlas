@@ -45,12 +45,20 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 
 	// 3. Ask the API whether the values can be drawn on it, rather than
 	//    assuming the codes line up.
-	const compatibility = await client.get<{
-		sources: Array<{
-			sourceGeography: { type: string; boundaryYear: number };
-			candidates: Array<{ boundaryRelease: string; status: string }>;
-		}>;
-	}>("/v1/measures/population/compatibility");
+	const evidence = await client.get<{
+		compatibility: {
+			data: {
+				sources: Array<{
+					sourceGeography: { type: string; codeYear: number };
+					candidates: Array<{
+						boundaryRelease: string;
+						status: string;
+					}>;
+				}>;
+			};
+		};
+	}>("/v1/documents/measure-population.json");
+	const compatibility = evidence.data.compatibility;
 	const source = compatibility.data.sources.find((candidate) =>
 		candidate.candidates.some(
 			(entry) =>
@@ -63,10 +71,10 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		throw new Error(
 			`no population partition is compatible with ${release}`,
 		);
-	const partition = `geography=${source.sourceGeography.type}&boundaryYear=${source.sourceGeography.boundaryYear}`;
+	const partition = `geography=${source.sourceGeography.type}&codeYear=${source.sourceGeography.codeYear}`;
 	steps.push({
 		title: "Check the codes fit the boundaries",
-		detail: `${source.sourceGeography.type} ${source.sourceGeography.boundaryYear} values are compatible with ${release}.`,
+		detail: `${source.sourceGeography.type} ${source.sourceGeography.codeYear} values are compatible with ${release}.`,
 	});
 
 	// 4. Fetch the values joined to that release. The join is by code, and the

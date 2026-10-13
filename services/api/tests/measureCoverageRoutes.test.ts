@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { dataCatalog, routeWithData } from "./routeFixtures";
+import { dataCatalog, reportWithData as routeWithData } from "./routeFixtures";
 
 test("publishes source and boundary code coverage without claiming equal geometry", () => {
 	const response = routeWithData("/v1/measures/population/coverage");
@@ -40,7 +40,7 @@ test("publishes source and boundary code coverage without claiming equal geometr
 				],
 				assessment: {
 					status: "assessed",
-					href: "/v1/measures/population/compatibility",
+					href: "/v1/documents/measure-population.json",
 					note: "Boundary coverage compares area-code membership only; it does not assert equal geometry.",
 				},
 			},

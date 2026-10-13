@@ -169,7 +169,7 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 			<H2 id="coverage">Areas and years</H2>
 			<P>
 				Request each of these with its geography and code year as
-				`geography` and `boundaryYear`.
+				`geography` and `codeYear`.
 			</P>
 			<Table
 				head={["Areas", "Code year", "Periods", "Covers", "Records"]}
@@ -248,7 +248,7 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 						{`Get the first page of \`${sampleMeasure}\` for ${geographyName(sample.geography).toLowerCase()}:`}
 					</P>
 					<Request
-						url={`${API_BASE_URL}/data/${sampleMeasure}?period=${encodeURIComponent(sample.periods.at(-1) ?? "")}&geography=${sample.geography}&boundaryYear=${sample.boundaryYear}&limit=5`}
+						url={`${API_BASE_URL}/data/${sampleMeasure}?period=${encodeURIComponent(sample.periods.at(-1) ?? "")}&geography=${sample.geography}&codeYear=${sample.boundaryYear}&limit=5`}
 					/>
 				</>
 			) : null}

@@ -23,7 +23,7 @@ import {
 	containmentCrosswalk,
 	dataCatalog,
 	registry,
-	routeWithData,
+	reportWithData as routeWithData,
 	testContext,
 } from "./routeFixtures";
 
@@ -466,10 +466,7 @@ test("lists only a composed path that reconciles, between releases the partition
 		["c-reconciles"],
 	);
 	const [entry] = listed;
-	assert.equal(
-		entry?.href,
-		`/v1/measures/${measure.id}/reconciliation?path=c-reconciles&period=2022`,
-	);
+	assert.equal(entry?.href, `/v1/documents/measure-${measure.id}.json`);
 	const followed = reconcileMeasure(
 		context,
 		measure,
@@ -498,5 +495,5 @@ test("links each listed comparison to the latest period both partitions publish"
 	);
 
 	assert.deepEqual(entry?.periods, ["2021", "2022"]);
-	assert.match(entry?.href ?? "", /&period=2022$/);
+	assert.equal(entry?.latestPeriod, "2022");
 });

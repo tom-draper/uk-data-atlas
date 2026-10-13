@@ -614,7 +614,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Return population estimates for a supported ward, local authority,
       constituency, country or named location. Ward and local authority come
       from their source partitions, country and named location from
-      `/aggregate`, and constituency from ONS's own mid-2021 and mid-2022
+      `/value`, and constituency from ONS's own mid-2021 and mid-2022
       estimates for the 575 July 2024 constituencies in England and Wales,
       served as a third partition of `population`. They are not ward
       estimates added up: wards do not nest within these constituencies, and
@@ -660,7 +660,7 @@ only **available** when its endpoint, contract and provenance are published.
       gains, such as Ceredigion's 0.65 years, sit within overlapping intervals.
 - [x] Sum an extensive measure, or take the weighted mean of an intensive one
       that names its weight, over a curated named location through
-      `GET /v1/data/{measure-id}/aggregate`. Members are matched by code in one
+      `GET /v1/data/{measure-id}/value`. Members are matched by code in one
       requested source partition. A location lists every code it has been
       made of, so a code of another vintage, whose successor or predecessor
       the partition holds instead, is passed over, as is a legacy code naming
@@ -849,14 +849,14 @@ only **available** when its endpoint, contract and provenance are published.
       measures aggregate by sum; an intensive measure aggregates only when it
       names a published weight measure. Conversion remains extensive-only.
 - [x] Sum an extensive measure over a curated named location or a country
-      through `GET /v1/data/{measure-id}/aggregate`. Country membership follows
+      through `GET /v1/data/{measure-id}/value`. Country membership follows
       the GSS code prefix, which the coding scheme assigns by country, so it is
       definitional rather than a geometric comparison. A location with a missing
       member its vintage does not explain, a country the partition does not
       reach, and a measure that neither adds nor names a usable weight are all
       rejected rather than summed.
 - [x] Aggregate an extensive or explicitly weighted measure onto any published
-      membership target through `GET /v1/data/{measure-id}/aggregate`, with
+      membership target through `GET /v1/data/{measure-id}/value`, with
       `place`, a code-set-compatible source release and the crosswalk that
       establishes the membership. The target's geography is the crosswalk's, so
       a combined authority, a county and unitary authority, an English region
@@ -873,14 +873,14 @@ only **available** when its endpoint, contract and provenance are published.
       `region/E12000001` also names the target's geography, which the
       crosswalk must reach.
 - [x] Check a measure against itself across two geographies, through
-      `GET /v1/measures/{measure-id}/reconciliation`. Adding the finer
+      `GET /v1/documents/measure-{measure-id}.json`. Adding the finer
       partition up through a published crosswalk should reproduce the coarser
       one; both figures are the publisher's, so a difference is evidence about
       the crosswalk, the vintage or the data, and nothing is corrected. An
       area whose finer parts are not all published is `incomplete`, which is a
       gap rather than a disagreement.
 - [x] Answer a measure's coverage of one release country by country, through
-      `GET /v1/measures/{measure-id}/coverage-plan`, so a gap in one nation is
+      `GET /v1/documents/measure-{measure-id}.json-plan`, so a gap in one nation is
       read before a ranking is, not after. Each country is `source-exact`,
       `converted`, `partial` or `missing`, counted from the areas a source or
       conversion carries rather than from declared coverage, and a missing
@@ -900,7 +900,7 @@ only **available** when its endpoint, contract and provenance are published.
       direction, weights multiply along the path, and the whole path is
       refused if any step would drop a value or split one without a weight.
       The response lists each step's crosswalk and direction.
-      `GET /v1/measures/{measure-id}/reconciliation` takes `path` the same
+      `GET /v1/documents/measure-{measure-id}.json` takes `path` the same
       way, adding the finer partition up through every step, and lists a
       path only between releases the partitions are verified to join and
       only where it reconciles the latest shared period.
@@ -984,14 +984,14 @@ fetch the postcode directory from ONS.
 
 - [x] Publish code-set compatibility candidates between an implemented
       measure's source geography and compiled boundary releases through
-      `GET /v1/measures/{measure-id}/compatibility`. This is evidence for
+      `GET /v1/documents/measure-{measure-id}.json`. This is evidence for
       selecting a conversion path, not proof that candidate geometries are
       identical or a licence to select one automatically.
 - [x] Every implemented data response links to source, transformation,
       geography match and Atlas release provenance.
 - [x] Publish source and boundary code coverage for each implemented measure
-      partition through `GET /v1/measures/{measure-id}/coverage`. Geography
-      and release integrity remains available from `GET /v1/validation`; a
+      partition through `GET /v1/documents/measure-{measure-id}.json`. Geography
+      and release integrity remains available from `GET /v1/documents/validation-report.json`; a
       code-coverage result is explicitly not a claim of equal geometry.
 - [x] Gate every measure and source partition in the validation report. Each
       observation artifact must reproduce its hash, hold codes that one
@@ -1068,7 +1068,7 @@ fetch the postcode directory from ONS.
       release its envelope names. There are no asynchronous exports or query
       snapshots yet.
 - [x] Report a measure/geography/release quality matrix before large queries
-      through `GET /v1/measures/{measure-id}/quality`: observed and derived
+      through `GET /v1/documents/measure-{measure-id}.json`: observed and derived
       record counts for every period, code coverage against each compatible
       boundary release, and the source's coverage note naming any area with
       no value. Suppressed values are named in that note rather than counted
@@ -1147,18 +1147,18 @@ model explicit instead:
 
 The route selector in the documentation should begin with the user’s job:
 
-| I need to…                                                           | Start here                                                         |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| resolve a name or inspect possible meanings                          | `/places`                                                          |
-| inspect one exact official identity                                  | `/areas/{geography}/{release}/{code}`                              |
-| get its geometry, relationships or citation                          | the corresponding area subresource                                 |
-| draw a whole release as a map, or load its features into a warehouse | `/map-resources/{geography}/{release}` and its `features`          |
-| render values or download source-exact observations                  | `/data/{measure}`                                                  |
-| see a trend, ranking, comparison or change                           | `/series`, `/rankings`, `/compare` or `/change` under that measure |
-| translate an identifier through a published crosswalk                | `/translations`                                                    |
-| convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                          |
-| validate a supplied code/name or discover releases                   | `/areas:validate`, `/geographies`, `/boundary-releases`            |
-| cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-release` and `/validation`  |
+| I need to…                                                           | Start here                                                                          |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| resolve a name or inspect possible meanings                          | `/places`                                                                           |
+| inspect one exact official identity                                  | `/areas/{geography}/{release}/{code}`                                               |
+| get its geometry, relationships or citation                          | the corresponding area subresource                                                  |
+| draw a whole release as a map, or load its features into a warehouse | `/map-resources/{geography}/{release}` and its `features`                           |
+| render values or download source-exact observations                  | `/data/{measure}`                                                                   |
+| see a trend, ranking, comparison or change                           | `/series`, `/rankings`, `/compare` or `/change` under that measure                  |
+| translate an identifier through a published crosswalk                | `/translations`                                                                     |
+| convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                                           |
+| validate a supplied code/name or discover releases                   | `/areas:validate`, `/geographies`, `/boundary-releases`                             |
+| cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-release` and `/documents/{document-id}.json` |
 
 `/data/{measure}/value?place=` is a deliberately narrow convenience for a
 place-name question. It resolves a name and dispatches to an existing
@@ -1704,7 +1704,7 @@ GET /v1/measures/population
 		{
 			"datasetId": "population",
 			"periods": ["2022"],
-			"sourceGeography": { "type": "ward", "boundaryYear": 2023 },
+			"sourceGeography": { "type": "ward", "codeYear": 2023 },
 			"coverage": { "kind": "partial", "includes": ["England", "Wales"] }
 		},
 		{
@@ -1712,7 +1712,7 @@ GET /v1/measures/population
 			"periods": ["2011", "…", "2024"],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2023
+				"codeYear": 2023
 			},
 			"coverage": {
 				"kind": "source-reported",
@@ -1997,7 +1997,7 @@ presentation rounding.
 Allow it only under explicit rules:
 
 ```
-GET /v1/data/population/aggregate?period={period}&geography={source-geography}&boundaryYear={source-boundary-year}&place=location/{location-id}
+GET /v1/data/population/value?period={period}&geography={source-geography}&codeYear={source-boundary-year}&place=location/{location-id}
 GET /v1/data/population-density?area=location/devon@2026-09&period=2022
 ```
 
@@ -2019,7 +2019,7 @@ language that manufactures invalid figures.
 GET /v1/provenance/datasets/{dataset-release}
 GET /v1/provenance/boundaries/{geography}/{release}
 GET /v1/provenance/crosswalks/{crosswalk-id}
-GET /v1/validation/{resource-id}
+GET /v1/documents/validation-report.json
 GET /v1/releases/{atlas-release}/manifest
 ```
 
@@ -2034,7 +2034,7 @@ X-Data-Status: observed
 Link: </v1/provenance/datasets/population-uk@2026.09.0>; rel="provenance"
 ```
 
-`/validation` should publish both passing invariants and known exceptions:
+`/documents/{document-id}.json` should publish both passing invariants and known exceptions:
 unmatched source records, missing geometry, crosswalk coverage, row counts,
 weight sums, duplicate codes, and differences from a prior release. It is not
 enough for the team to see this only in CI.
@@ -2231,6 +2231,9 @@ rather than falling back to the default.
 
 | Variable                             | Default     | Meaning                                                                                      |
 | ------------------------------------ | ----------- | -------------------------------------------------------------------------------------------- |
+| `ATLAS_WORKERS`                      | `2`         | Independent server processes, from 1 to 32.                                                  |
+| `ATLAS_MAP_ASSET_BASE_URL`           | unset       | Release-specific object storage CDN base for map archives and downloads.                     |
+| `ATLAS_MAP_TILE_BASE_URL`            | unset       | External MVT service base, serving geography/release/tiles/z/x/y.mvt.                        |
 | `PORT`                               | `3001`      | Port to listen on.                                                                           |
 | `HOST`                               | `127.0.0.1` | Address to listen on.                                                                        |
 | `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                  |
@@ -2517,7 +2520,7 @@ joins in the renderer. This is the whole point of the design:
 the measure's source geography and boundary year resolve to the codes this
 geometry release publishes. Where they differ the request is refused with
 `incompatible_geometry` (422), naming the measure's source geography, the
-geometry release and the `/v1/measures/{measure-id}/compatibility` evidence.
+geometry release and the `/v1/documents/measure-{measure-id}.json` evidence.
 The code is the one `/v1/data/{measure-id}` already returns when a caller
 asks for a release that does not hold every source code; a map resource
 applies the same rule to the shapes. To map a measure published on
@@ -2677,8 +2680,8 @@ published fact per measure and frame, not a property of the crosswalk alone.
 
 ```text
 available: GET /v1/analysis-geographies
-available: GET /v1/measures/{measure-id}/conversion-support?to={geography}/{release}
-available: GET /v1/analysis:plan?measure={measure-id}&period={period}&to={geography}/{release}&geography={geography}&boundaryYear={year}
+available: GET /v1/documents/measure-{measure-id}.json
+available: GET /v1/analysis:plan?measure={measure-id}&period={period}&to={geography}/{release}&geography={geography}&codeYear={year}
 ```
 
 The initial published pair is final annual 2024 and 2025 reported
@@ -2924,7 +2927,6 @@ second inventory to maintain:
 - `GET /v1/docs` — The human documentation landing page
 - `GET /v1/places` — Find every place a name could mean
 - `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
-- `POST /v1/postcodes:batch` — Find where each of a batch of postcodes is and the areas containing it
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
 
 **Map**
@@ -2933,7 +2935,6 @@ second inventory to maintain:
 - `GET /v1/data/{measure-id}` — Retrieve source-exact observations, or an opt-in canonical-unit representation
 - `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
 - `GET /v1/areas:contains` — Find the areas containing a point in one or more geographies
-- `POST /v1/areas:containsBatch` — Find the areas containing each of a bounded batch of points
 - `GET /v1/areas:near` — Rank the areas nearest a point by distance
 - `GET /v1/areas/{geography}/{release}/{code}/children/geometry` — Get every child of an area as one GeoJSON FeatureCollection
 - `GET /v1/areas/{geography}/{release}/{code}/neighbours` — List the areas whose boundary meets this one's
@@ -2943,10 +2944,7 @@ second inventory to maintain:
 **Trend**
 
 - `GET /v1/analysis-geographies` — List reviewed analysis geography conversions
-- `GET /v1/analysis-geography-validation` — Get the validation receipt for reviewed conversions
 - `GET /v1/analysis:plan` — Preflight a reviewed source-to-analysis conversion
-- `GET /v1/measures/{measure-id}/conversion-support` — Inspect reviewed conversion support for one measure and frame
-- `GET /v1/data/{measure-id}/aggregate` — Aggregate an extensive or explicitly weighted measure
 - `GET /v1/data/{measure-id}/convert` — Regroup an extensive measure through a published crosswalk or relationship path
 - `GET /v1/data/{measure-id}/series` — Retrieve a source-exact or reviewed derived time series
 - `GET /v1/data/{measure-id}/rankings` — Rank areas within one source-exact measure partition
@@ -2975,7 +2973,6 @@ second inventory to maintain:
 - `GET /v1/boundary-releases:resolve` — Select the boundary release to use for a date
 - `GET /v1/boundary-releases:compare` — Compare two releases of one geography without inferring geography change from codes
 - `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release, with links to download it whole
-- `GET /v1/geography-inventory` — Report resolver identity and relationship coverage, including the compiled backlog by geography
 - `GET /v1/areas` — List compiled area identities
 - `GET /v1/areas:validate` — Validate a batch of area codes or names, or infer their likely release
 - `GET /v1/areas/{geography}/{release}/{code}` — Get one compiled area by its full identity
@@ -2983,7 +2980,6 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/history` — Explain a code's published historical relationships and same-code continuity
 - `GET /v1/areas/{geography}/{release}/{code}/parents` — List published clean-containment parents for an area
 - `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
-- `GET /v1/geography-health` — Summarise relationship health across compiled releases
 - `GET /v1/relationships` — Discover, assess and plan published geography relationships
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
@@ -3009,22 +3005,10 @@ second inventory to maintain:
 - `GET /v1/datasets/{dataset-id}` — Get one published source dataset and its input hashes
 - `GET /v1/measures` — List measures currently available to query
 - `GET /v1/measures/{measure-id}` — Get one measure's semantics and availability
-- `GET /v1/measures/{measure-id}/compatibility` — Report source-code compatibility with compiled boundary releases
-- `GET /v1/measures/{measure-id}/coverage` — Report source and boundary code coverage for a measure
-- `GET /v1/measures/{measure-id}/reconciliation` — Check a measure against itself across two geographies
-- `GET /v1/measures/{measure-id}/coverage-plan` — Say what a measure can answer on one release, country by country
-- `GET /v1/measures/{measure-id}/quality` — Preflight source, status and boundary quality for a measure
 
 **Governance**
 
-- `GET /v1/relationship-candidates` — List discovered relationship candidates and their coverage gaps
-- `GET /v1/relationship-repairs` — List the governed queue of relationship repairs
-- `GET /v1/corrections` — List reviewed corrections and transformations applied by the API
-- `GET /v1/validation` — Report every release gate, including waived exceptions
-- `GET /v1/validation/boundary-releases/{geography}/{release}` — Get one boundary release's checks
-- `GET /v1/validation/crosswalks/{crosswalk-id}` — Get one crosswalk's checks
-- `GET /v1/validation/measures/{measure-id}` — Get one measure's definition check
-- `GET /v1/validation/exports/{export-id}` — Get one measure source partition's checks
+- `GET /v1/documents/{document-id}.json` — Download an immutable build evidence document
 - `GET /v1/attribution` — Assemble the attribution and licence block for named resources
 
 <!-- route-index:end -->
@@ -3048,51 +3032,51 @@ catalogues by the contract tests:
 - `GET /v1`
 - `GET /v1/openapi.yaml`
 - `GET /v1/geographies`
-- `GET /v1/geography-inventory`
+- `GET /v1/documents/geography-inventory.json`
 - `GET /v1/datasets`
 - `GET /v1/measures`
-- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023`
-- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
-- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
-- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=csv`
-- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
-- `GET /v1/data/population/series?place=N09000001&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023`
-- `GET /v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039`
-- `GET /v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022`
+- `GET /v1/data/population?period=2022&geography=ward&codeYear=2023`
+- `GET /v1/data/population?period=2022&geography=ward&codeYear=2023&release=2023-05-uk-bgc`
+- `GET /v1/data/population?period=2022&geography=ward&codeYear=2023&release=2023-05-uk-bgc&include=area`
+- `GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=csv`
+- `GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=ndjson`
+- `GET /v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023`
+- `GET /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023`
+- `GET /v1/data/population/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000932&comparisonPlace=W05001039`
+- `GET /v1/data/population/change?geography=localAuthority&codeYear=2023&startPeriod=2011&endPeriod=2022`
 - `GET /v1/data/population/value?place=location/cornwall&period=2022`
-- `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
-- `GET /v1/measures/ghg-emissions/coverage`
-- `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024`
+- `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025`
+- `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025&release=2025-05-uk-bgc-v2&include=area`
+- `GET /v1/documents/measure-ghg-emissions.json`
+- `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&codeYear=2024`
 - `GET /v1/measures/mobile-4g-coverage`
-- `GET /v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&place=S92000003`
-- `GET /v1/data/total-jobs/series?place=E08000035&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/qualification-level-4-plus?period=2021&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/broadband-gigabit-availability?period=2025-07&geography=localAuthority&boundaryYear=2024`
-- `GET /v1/data/claimant-count/aggregate?period=2026-04&geography=localAuthority&boundaryYear=2024&place=S92000003`
-- `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/median-annual-pay/series?place=E08000003&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/crime-total?period=year-ending-2026-03&geography=communitySafetyPartnership&boundaryYear=2023&release=2023-12-ew-bgc`
-- `GET /v1/data/unemployment-rate/series?place=E08000003&geography=localAuthority&boundaryYear=2019`
-- `GET /v1/data/no2-background-mean/aggregate?period=2024&geography=localAuthority&boundaryYear=2024&place=W92000004`
-- `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&place=W92000004`
-- `GET /v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
-- `GET /v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025&place=S92000003`
+- `GET /v1/data/total-jobs/series?place=E08000035&geography=localAuthority&codeYear=2023`
+- `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&codeYear=2023`
+- `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&codeYear=2023`
+- `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&codeYear=2023`
+- `GET /v1/data/qualification-level-4-plus?period=2021&geography=localAuthority&codeYear=2023`
+- `GET /v1/data/broadband-gigabit-availability?period=2025-07&geography=localAuthority&codeYear=2024`
+- `GET /v1/data/claimant-count/value?period=2026-04&geography=localAuthority&codeYear=2024&place=S92000003`
+- `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&codeYear=2025`
+- `GET /v1/data/median-annual-pay/series?place=E08000003&geography=localAuthority&codeYear=2025`
+- `GET /v1/data/crime-total?period=year-ending-2026-03&geography=communitySafetyPartnership&codeYear=2023&release=2023-12-ew-bgc`
+- `GET /v1/data/unemployment-rate/series?place=E08000003&geography=localAuthority&codeYear=2019`
+- `GET /v1/data/no2-background-mean/value?period=2024&geography=localAuthority&codeYear=2024&place=W92000004`
+- `GET /v1/data/ethnicity-indian/value?period=2021&geography=localAuthority&codeYear=2023&place=W92000004`
+- `GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
+- `GET /v1/data/population?period=2024&geography=localAuthority&codeYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en-bgc&via=local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap`
 - `GET /v1/relationships?from=ward/2023-05-uk-bgc&to=localAuthority/2023-05-uk-bgc-v2&purpose=membership`
-- `GET /v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc`
-- `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/house-price-median/series?place=E05008945&geography=ward&boundaryYear=2020`
-- `GET /v1/data/imd-decile?period=2025&geography=lsoa&boundaryYear=2021&release=2021-12-ew-bgc-v5&include=area`
-- `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/life-expectancy-male/series?place=E06000001&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/population?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
-- `GET /v1/data/population-density/series?place=E09000012&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/documents/measure-population.json`
+- `GET /v1/data/population-density?period=2024&geography=localAuthority&codeYear=2023`
+- `GET /v1/data/house-price-median/series?place=E05008945&geography=ward&codeYear=2020`
+- `GET /v1/data/imd-decile?period=2025&geography=lsoa&codeYear=2021&release=2021-12-ew-bgc-v5&include=area`
+- `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&codeYear=2025`
+- `GET /v1/data/life-expectancy-male/series?place=E06000001&geography=localAuthority&codeYear=2025`
+- `GET /v1/data/population?period=2022&geography=constituency&codeYear=2024&release=2024-07-uk-bgc&include=area`
+- `GET /v1/data/population-density/series?place=E09000012&geography=localAuthority&codeYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/places?q=Newport`
 - `GET /v1/postcodes/SW1A1AA`
@@ -3115,8 +3099,8 @@ catalogues by the contract tests:
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014?include=metrics`
 - `GET /v1/crosswalks`
 - `GET /v1/translations?from=ward/2024-12-uk-bgc&code=E05000932&to=localAuthority/2024-12-uk-bgc&purpose=membership`
-- `GET /v1/relationship-candidates`
-- `GET /v1/validation`
+- `GET /v1/documents/relationship-candidates.json`
+- `GET /v1/documents/validation-report.json`
 - `GET /v1/exports`
 - `GET /v1/lookups`
 - `GET /v1/atlas-release`
@@ -3469,7 +3453,7 @@ and reports coverage stats (referenced-but-missing target codes, source
 codes with more than one target, missing values). Each candidate is
 `eligible`, `needs-review`, or `not-available`, and carries the covering
 crosswalk's id in `publishedCrosswalkId` when one already exists. `GET
-/v1/relationship-candidates` exposes this directly; it is a gap report for a
+/v1/documents/relationship-candidates.json` exposes this directly; it is a gap report for a
 human to act on, not an instruction to auto-publish every `eligible`
 candidate without review.
 
@@ -3507,9 +3491,9 @@ A check either passes or is waived. Every exception must be listed in
 `config/validation-waivers.json` with its reason, and the build fails on one
 that is not, or on a waiver that no longer matches an exception, so the file
 stays an accurate list of known gaps. The report publishes each waived
-check's finding beside its reason. `GET /v1/validation` serves the report,
+check's finding beside its reason. `GET /v1/documents/validation-report.json` serves the report,
 with `?status=waived` for just the exceptions, and each boundary release,
-crosswalk, measure and export's checks are also served at `/v1/validation`
+crosswalk, measure and export's checks are also served at `/v1/documents/validation-report.json`
 followed by the resource's own path. Conversion checks, such as preserved
 totals across a crosswalk, belong here once conversion is offered.
 

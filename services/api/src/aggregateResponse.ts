@@ -180,7 +180,7 @@ export const buildAggregateResponse = ({
 							inputRecordCount: aggregate.members.length,
 							coverage: {
 								...coverage,
-								href: `/v1/measures/${measureId}/coverage`,
+								href: `/v1/documents/measure-${measureId}.json`,
 								note: "The sum covers every area of this country published in this source partition. Each assessment compares those areas with the country's areas in a boundary release the partition is assessed to match; `partial` means the release holds areas the partition publishes no value for, so the total is not a national one.",
 							},
 							...(weight ? { weight } : {}),

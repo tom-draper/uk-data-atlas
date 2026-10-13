@@ -89,7 +89,7 @@ export const measureCoverage = (
 							}
 						: {
 								status: "assessed" as const,
-								href: `/v1/measures/${measure.id}/compatibility`,
+								href: `/v1/documents/measure-${measure.id}.json`,
 								note: "Boundary coverage compares area-code membership only; it does not assert equal geometry.",
 							},
 			};

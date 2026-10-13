@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { routeWithData } from "./routeFixtures";
+import { reportWithData as routeWithData } from "./routeFixtures";
 
 test("reports a measure quality matrix before querying its observations", () => {
 	const response = routeWithData("/v1/measures/small-area-fixture/quality");

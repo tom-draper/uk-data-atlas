@@ -165,7 +165,7 @@ export const publishedPartitions = (measure: Measure) =>
 	measure.sources
 		.map(
 			(source) =>
-				`geography=${source.sourceGeography.type}&boundaryYear=${source.sourceGeography.boundaryYear} (${source.periods.length} period${source.periods.length === 1 ? "" : "s"})`,
+				`geography=${source.sourceGeography.type}&codeYear=${source.sourceGeography.boundaryYear} (${source.periods.length} period${source.periods.length === 1 ? "" : "s"})`,
 		)
 		.join("; ");
 

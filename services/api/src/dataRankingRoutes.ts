@@ -72,7 +72,7 @@ export const handleDataRankingRoutes = ({
 	const requested = {
 		period: parsedUrl.searchParams.get("period"),
 		geography: parsedUrl.searchParams.get("geography"),
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
 	const partition = selectSourcePartition({
@@ -86,7 +86,7 @@ export const handleDataRankingRoutes = ({
 		(partition.kind === "selected" && partition.period === null)
 	)
 		return invalidQuery(
-			`${measureId} ranks areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
+			`${measureId} ranks areas within one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	if (partition.kind === "refusal")
 		return refused(partition.resolution.refusal);

@@ -17,7 +17,7 @@
 		"node": ">=24 <27"
 	},
 	"scripts": {
-		"build": "pnpm --dir ../.. data:download && pnpm build:operations && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:geometry-source-registry && pnpm build:geometry-store && pnpm build:named-locations && pnpm build:place-index && pnpm build:area-search-index && pnpm build:postcode-index && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:postcode-areas && pnpm build:postcode-counts && pnpm build:crosswalk-inventory && pnpm build:relationship-paths && pnpm build:analysis-geographies && pnpm build:analysis-geography-validation && pnpm build:location-projections && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:terrain-catalogue && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:atlas-release && pnpm --dir ../.. docs:catalogue",
+		"build": "pnpm build:data && pnpm build:runtime",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",
 		"example:map-render": "tsx examples/correct-map-render.ts",
@@ -62,7 +62,10 @@
 		"build:validation-report": "tsx scripts/build-validation-report.ts",
 		"build:runtime": "node scripts/build-runtime.mjs",
 		"start:dev": "tsx scripts/serve.ts",
-		"pack:named-locations": "tsx scripts/pack-named-locations.ts"
+		"pack:named-locations": "tsx scripts/pack-named-locations.ts",
+		"build:documents": "tsx --max-old-space-size=4096 scripts/build-evidence-documents.ts",
+		"docs:examples": "tsx scripts/refresh-problem-examples.ts",
+		"build:data": "pnpm --dir ../.. data:download && pnpm build:operations && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:geometry-source-registry && pnpm build:geometry-store && pnpm build:named-locations && pnpm build:place-index && pnpm build:area-search-index && pnpm build:postcode-index && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:postcode-areas && pnpm build:postcode-counts && pnpm build:crosswalk-inventory && pnpm build:relationship-paths && pnpm build:analysis-geographies && pnpm build:analysis-geography-validation && pnpm build:location-projections && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:terrain-catalogue && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:documents && pnpm build:atlas-release && pnpm --dir ../.. docs:catalogue"
 	},
 	"dependencies": {
 		"@uk-data-atlas/catalogue": "workspace:*",

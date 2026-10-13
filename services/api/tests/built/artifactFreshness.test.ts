@@ -45,6 +45,7 @@ const ARTIFACTS: Record<string, string> = {
 const RECORDED_UPSTREAM: Record<string, string[]> = {
 	"area-inventory.json": ["boundaryRegistryHash"],
 	"export-manifest.json": ["dataCatalogHash"],
+	"evidence-documents.json": ["dataCatalogHash"],
 	"geography-inventory.json": ["boundaryRegistryHash"],
 	"location-projection-inventory.json": [
 		"namedLocationInventoryHash",

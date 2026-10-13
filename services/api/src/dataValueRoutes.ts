@@ -1,3 +1,5 @@
+import { isCountryCode } from "./aggregation";
+import { aggregateValue } from "./dataAggregateRoutes";
 import type { Measure } from "./dataCatalog";
 import { CONTAINMENT_NOTE, countryOfCode } from "./pointLookup";
 import {
@@ -38,6 +40,16 @@ export const handleDataValueRoutes = ({
 		segments[3] !== "value"
 	)
 		return undefined;
+	if (
+		["release", "conversion", "aggregate"].some((key) =>
+			parsedUrl.searchParams.has(key),
+		)
+	)
+		return problem(
+			422,
+			"Operation Not Supported",
+			"Select the source code year for a value. A geometry release does not convert or reassign observations.",
+		);
 	const { dataCatalog } = context;
 	if (!dataCatalog) {
 		return problem(
@@ -89,7 +101,62 @@ export const handleDataValueRoutes = ({
 	// Each candidate goes to the route that already serves its kind of
 	// place, so the value and every refusal are exactly what that route
 	// gives when called directly.
-	const outcome = valueForPlace(measure, candidates, period, dispatch);
+	const explicitAggregate =
+		["crosswalk", "path", "from"].some((key) =>
+			parsedUrl.searchParams.has(key),
+		) ||
+		(["geography", "codeYear", "datasetId"].some((key) =>
+			parsedUrl.searchParams.has(key),
+		) &&
+			(candidates.some(
+				(candidate) =>
+					candidate.kind === "named-location" ||
+					candidate.geography === "country",
+			) ||
+				place.startsWith("location/") ||
+				isCountryCode(place.replace(/^country\//, "")) ||
+				(parsedUrl.searchParams.has("geography") &&
+					candidates.some(
+						(candidate) =>
+							candidate.geography !==
+							parsedUrl.searchParams.get("geography"),
+					))));
+	if (explicitAggregate)
+		return aggregateValue({
+			context,
+			releaseId,
+			parsedUrl,
+			segments,
+			dispatch,
+		});
+	const requestedGeography = parsedUrl.searchParams.get("geography");
+	const requestedCodeYear = parsedUrl.searchParams.get("codeYear");
+	const requestedDataset = parsedUrl.searchParams.get("datasetId");
+	const outcome = valueForPlace(
+		measure,
+		candidates,
+		period,
+		(url, operation) => {
+			if (operation === "series") return dispatch(url);
+			const aggregateUrl = new URL(url, parsedUrl);
+			return aggregateValue({
+				context,
+				releaseId,
+				parsedUrl: aggregateUrl,
+				segments: aggregateUrl.pathname.split("/").filter(Boolean),
+				dispatch,
+			});
+		},
+		{
+			geography: requestedGeography,
+			codeYear: requestedCodeYear,
+			datasetId: requestedDataset,
+		},
+	);
+	if (outcome.outcome === "unavailable-source")
+		return invalidQuery(
+			`No published source matches geography=${requestedGeography ?? "any"}, codeYear=${requestedCodeYear ?? "any"}, datasetId=${requestedDataset ?? "any"}. GET /v1/measures/${measureId} lists the published partitions.`,
+		);
 	if (outcome.outcome === "unmatched") {
 		return problem(
 			404,
@@ -102,7 +169,10 @@ export const handleDataValueRoutes = ({
 			422,
 			"Place Not Served",
 			`"${place}" matched ${outcome.attempts.length} place${outcome.attempts.length === 1 ? "" : "s"}, and ${measureId} answers none of them. Each candidate below says why.`,
-			{ candidates: outcome.attempts.map(describeAttempt) },
+			{
+				code: "place_not_served",
+				candidates: outcome.attempts.map(describeAttempt),
+			},
 		);
 	}
 	const { chosen, attempts, placeDefaulted } = outcome;
@@ -134,7 +204,7 @@ export const handleDataValueRoutes = ({
 					? `No period was given, so the latest published, ${chosen.answer.period}, was used.`
 					: undefined,
 				chosen.method === "aggregate"
-					? "Summed from the local authorities the place is made of; the aggregate route's response, at via, lists any member codes of another vintage it passed over."
+					? "Summed from the local authorities the place is made of. The detailed value response at via lists any member codes of another vintage it passed over."
 					: "The value as published for this area.",
 				placeDefaulted
 					? `The name matched several places with different answers, so ${chosen.candidate.geography} was used as the most likely match; the others are listed in otherMatches.`
@@ -173,14 +243,14 @@ const postcodeValue = (
 	const period = parsedUrl.searchParams.get("period")?.trim() || undefined;
 	const geography =
 		parsedUrl.searchParams.get("geography")?.trim() || undefined;
-	const boundaryYearText = parsedUrl.searchParams.get("boundaryYear");
+	const boundaryYearText = parsedUrl.searchParams.get("codeYear");
 	const boundaryYear =
 		boundaryYearText === null ? undefined : Number(boundaryYearText);
 	if (
 		boundaryYear !== undefined &&
 		(!/^\d{4}$/.test(boundaryYearText!) || !Number.isInteger(boundaryYear))
 	) {
-		return invalidQuery("boundaryYear must be a four-digit year.");
+		return invalidQuery("codeYear must be a four-digit year.");
 	}
 	if (!record.centroid) {
 		return problem(

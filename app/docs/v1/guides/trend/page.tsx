@@ -47,7 +47,7 @@ export default function TrendGuidePage() {
 						`value`.
 					</P>
 					<Request
-						url={`${API}/data/population/series?place=E08000025&geography=localAuthority&boundaryYear=2023`}
+						url={`${API}/data/population/series?place=E08000025&geography=localAuthority&codeYear=2023`}
 						operationId="getSourceExactMeasureSeries"
 					/>
 				</Step>
@@ -61,7 +61,7 @@ export default function TrendGuidePage() {
 						says how many areas it was ranked against.
 					</P>
 					<Request
-						url={`${API}/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&place=E08000025`}
+						url={`${API}/data/population/change?geography=localAuthority&codeYear=2023&startPeriod=2011&endPeriod=2022&by=relative&place=E08000025`}
 						operationId="getSourceExactMeasureChange"
 					/>
 				</Step>
@@ -74,7 +74,7 @@ export default function TrendGuidePage() {
 						explanation:
 					</P>
 					<Request
-						url={`${API}/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&place=E92000001`}
+						url={`${API}/data/house-price-median/value?period=2022&geography=ward&codeYear=2020&place=E92000001`}
 						operationId="aggregateSourceExactMeasure"
 					/>
 					<Callout tone="note">
@@ -92,7 +92,7 @@ export default function TrendGuidePage() {
 						to show beside your chart.
 					</P>
 					<Request
-						url={`${API}/measures/population/quality`}
+						url={`${API}/documents/measure-population.json`}
 						operationId="getMeasureQuality"
 					/>
 				</Step>
