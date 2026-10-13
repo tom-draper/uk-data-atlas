@@ -178,7 +178,7 @@ export const handleDataRoutes = ({
 			"Tabular exports currently support numeric measures only; request JSON for categorical observations.",
 		);
 	}
-	if (include !== null && include !== "area") {
+	if (include !== null && readChoice(include, DATA.include) === null) {
 		return invalidQuery("include currently supports only area.");
 	}
 	if (include === "area" && !geometry) {
