@@ -2,9 +2,9 @@ import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { releaseKey } from "./geographyKeys";
 import { choices, readChoice } from "./queryParameters";
-import { QUERY_RULES } from "./queryRules";
-
-const HEALTH = QUERY_RULES["GET /geography-health"];
+const HEALTH = {
+	reach: { values: ["connected", "vintage-only", "isolated"] },
+} as const;
 
 export const handleGeographyHealthRoutes = ({
 	context,
