@@ -118,3 +118,9 @@ export const invalidQuery = (
 	detail: string,
 	extensions?: Parameters<typeof problem>[3],
 ): ApiResponse => problem(400, "Invalid Query", detail, extensions);
+
+/** Why a requirement was refused, to report a capability as not built. */
+export const requirementDetail = (response: ApiResponse | undefined) =>
+	response && "detail" in response.body
+		? response.body.detail
+		: "Catalogue data is unavailable.";
