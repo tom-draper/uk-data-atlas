@@ -88,19 +88,6 @@ export const QUERY_RULES = {
 			default: 100,
 		},
 	},
-	"GET /data/{measure-id}/aggregate": {
-		geography: {
-			values: [
-				"ward",
-				"localAuthority",
-				"constituency",
-				"lsoa",
-				"msoa",
-				"dataZone",
-				"superOutputArea",
-			],
-		},
-	},
 	"GET /data/{measure-id}/convert": {
 		geography: {
 			values: [
@@ -292,11 +279,6 @@ export const QUERY_RULES = {
 			default: "full",
 		},
 	},
-	"GET /geography-health": {
-		reach: {
-			values: ["connected", "vintage-only", "isolated"],
-		},
-	},
 	"GET /relationships": {
 		purpose: {
 			values: ["identity", "membership", "apportion"],
@@ -334,14 +316,6 @@ export const QUERY_RULES = {
 			minimum: 1,
 			maximum: 500,
 			default: 100,
-		},
-	},
-	"GET /validation": {
-		status: {
-			values: ["passed", "waived"],
-		},
-		scope: {
-			values: ["data"],
 		},
 	},
 	"GET /lookups/{lookup-id}": {

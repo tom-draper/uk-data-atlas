@@ -6,9 +6,10 @@ import {
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { choices, readChoice } from "./queryParameters";
-import { QUERY_RULES } from "./queryRules";
-
-const VALIDATION = QUERY_RULES["GET /validation"];
+const VALIDATION = {
+	status: { values: ["passed", "waived"] },
+	scope: { values: ["data"] },
+} as const;
 
 /**
  * Current-release provenance and validation routes. The release manifest
