@@ -51,7 +51,11 @@ import { handleCrosswalkRoutes } from "./crosswalkRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
-import { handleReleaseJoinRoutes, joinRelease } from "./releaseJoinRoutes";
+import {
+	handleReleaseJoinRoutes,
+	handleReleaseJoinRoutesAsync,
+	joinRelease,
+} from "./releaseJoinRoutes";
 import {
 	canonicalGeographyRequest,
 	canonicalMeasureRequest,
@@ -404,6 +408,12 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 export const handleRouteAsync = async (
 	request: RouteRequest,
 ): Promise<ApiResponse | undefined> => {
+	if (joinRelease(request.segments)) {
+		const geography = canonicalGeographyRequest(request);
+		const release = canonicalReleaseRequest(geography ?? request);
+		if (release && "status" in release) return release;
+		return handleReleaseJoinRoutesAsync(release ?? geography ?? request);
+	}
 	if (
 		request.segments[0] === "v1" &&
 		request.segments[1] === "terrain" &&

@@ -66,6 +66,7 @@ const joinedArea = (entry: ValidatedValue) =>
 
 export const handleReleaseJoinRoutes = (
 	request: RouteRequest,
+	loadedJson?: string,
 ): ApiResponse | undefined => {
 	const target = joinRelease(request.segments);
 	if (!target) return undefined;
@@ -201,25 +202,28 @@ export const handleReleaseJoinRoutes = (
 			candidate.tier === tier && candidate.format === "geojson",
 	);
 	const stored = entry && context.mapFeatures?.get(entry.artifact);
-	if (!resource || !entry || !stored)
+	if (!resource || !entry || (!stored && loadedJson === undefined))
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			`No GeoJSON is built for ${id} at tier ${tier}; the join table, without format=geojson, still numbers the values for its tiles.`,
 		);
-	if (stored.bytes > MAX_GEOJSON_JOIN_BYTES)
+	if (entry.bytes > MAX_GEOJSON_JOIN_BYTES)
 		return problem(
 			422,
 			"Too Large To Join As GeoJSON",
-			`${id} at tier ${tier} is ${Math.round(stored.bytes / 1048576)} MB of GeoJSON, more than the ${MAX_GEOJSON_JOIN_BYTES / 1048576} MB read for one request. Ask for a coarser tier, or take the join table and draw it on ${join.links!.tiles}.`,
+			`${id} at tier ${tier} is ${Math.round(entry.bytes / 1048576)} MB of GeoJSON, more than the ${MAX_GEOJSON_JOIN_BYTES / 1048576} MB read for one request. Ask for a coarser tier, or take the join table and draw it on ${join.links!.tiles}.`,
 			{ links: { tiles: join.links!.tiles } },
 		);
-	const raw = readFileSync(stored.path);
-	const collection = JSON.parse(
-		(stored.gzipBytes !== undefined ? gunzipSync(raw) : raw).toString(
-			"utf8",
-		),
-	) as {
+	let json = loadedJson;
+	if (json === undefined) {
+		if (!stored) throw new Error("The GeoJSON join has no map asset");
+		const raw = readFileSync(stored.path);
+		json = (
+			stored.gzipBytes !== undefined ? gunzipSync(raw) : raw
+		).toString("utf8");
+	}
+	const collection = JSON.parse(json) as {
 		features: Array<{
 			id: number;
 			properties: Record<string, unknown>;
@@ -256,4 +260,54 @@ export const handleReleaseJoinRoutes = (
 			},
 		},
 	};
+};
+
+export const handleReleaseJoinRoutesAsync = async (
+	request: RouteRequest,
+): Promise<ApiResponse | undefined> => {
+	if (
+		request.method !== "POST" ||
+		request.parsedUrl.searchParams.get("format") !== "geojson" ||
+		!request.context.mapResources?.assetBaseUrl
+	)
+		return handleReleaseJoinRoutes(request);
+	const target = joinRelease(request.segments);
+	if (!target) return undefined;
+	const tier = request.parsedUrl.searchParams.get("tier") ?? "medium";
+	const resource = request.context.mapResources.resources.find(
+		(resource) =>
+			resource.geography === target.geography &&
+			resource.boundaryRelease === target.release,
+	);
+	const entry = resource?.features.find(
+		(entry) => entry.tier === tier && entry.format === "geojson",
+	);
+	if (!entry || entry.bytes > MAX_GEOJSON_JOIN_BYTES)
+		return handleReleaseJoinRoutes(request);
+	try {
+		const response = await fetch(entry.href, {
+			signal: AbortSignal.timeout(30000),
+		});
+		if (!response.ok || !response.body)
+			throw new Error(`Map asset returned HTTP ${response.status}`);
+		const chunks: Uint8Array[] = [];
+		let bytes = 0;
+		for await (const chunk of response.body) {
+			bytes += chunk.byteLength;
+			if (bytes > MAX_GEOJSON_JOIN_BYTES) {
+				throw new Error("Map asset exceeds the GeoJSON join limit");
+			}
+			chunks.push(chunk);
+		}
+		return handleReleaseJoinRoutes(
+			request,
+			Buffer.concat(chunks).toString("utf8"),
+		);
+	} catch (error) {
+		return problem(
+			503,
+			"Map Asset Unavailable",
+			error instanceof Error ? error.message : "The map download failed.",
+		);
+	}
 };
