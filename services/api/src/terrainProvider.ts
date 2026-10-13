@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "./contentHash";
 
 export type TerrainInterpolation = "nearest" | "bilinear";
 export type TerrainPointStatus = "ok" | "outside_coverage" | "nodata";
@@ -92,16 +92,13 @@ export class TerrainRemoteError extends Error {
 	}
 }
 
-const hash = (value: string) =>
-	`sha256:${createHash("sha256").update(value).digest("hex")}`;
-
 const sourceMetadata = (
 	values: readonly (number | null)[],
 ): TerrainSourceMetadata => ({
 	id: "fixture-england-lidar-dtm",
 	version: "2026-01-fixture",
-	tileHash: hash(JSON.stringify(values)),
-	contentHash: hash(JSON.stringify(values)),
+	tileHash: sha256(JSON.stringify(values)),
+	contentHash: sha256(JSON.stringify(values)),
 	crs: "EPSG:27700",
 	horizontalDatum: "OSGB36",
 	horizontalTransformation: "OSTN15",
@@ -113,7 +110,7 @@ const sourceMetadata = (
 	coverage: {
 		kind: "bbox",
 		bbox: [100, 200, 130, 230],
-		footprintHash: hash("bbox:100,200,130,230"),
+		footprintHash: sha256("bbox:100,200,130,230"),
 	},
 });
 
@@ -345,8 +342,8 @@ export const createRemoteTerrainProvider = ({
 					value: null,
 					source: {
 						...source,
-						tileHash: hash(`outside:${x}:${y}`),
-						contentHash: hash(endpoint),
+						tileHash: sha256(`outside:${x}:${y}`),
+						contentHash: sha256(endpoint),
 					},
 				};
 			}
@@ -388,8 +385,8 @@ export const createRemoteTerrainProvider = ({
 							value: null,
 							source: {
 								...source,
-								tileHash: hash(`outside:${x}:${y}`),
-								contentHash: hash(endpoint),
+								tileHash: sha256(`outside:${x}:${y}`),
+								contentHash: sha256(endpoint),
 							},
 						};
 				}
@@ -418,8 +415,8 @@ export const createRemoteTerrainProvider = ({
 				const value = Array.isArray(rawValue) ? rawValue[0] : rawValue;
 				const resultSource = {
 					...source,
-					tileHash: hash(JSON.stringify(payload)),
-					contentHash: hash(endpoint),
+					tileHash: sha256(JSON.stringify(payload)),
+					contentHash: sha256(endpoint),
 				};
 				return {
 					status:

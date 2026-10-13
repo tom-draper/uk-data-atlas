@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import type { GeoJsonGeometry } from "../areaGeometry";
+import { sha256 } from "../contentHash";
 
 /**
  * One tier of a boundary release as a GeoJSON FeatureCollection, the form most
@@ -71,6 +71,6 @@ export const buildGeoJson = (
 	return {
 		gzipped: gzipSync(body, { level: 9 }),
 		bytes: body.length,
-		contentHash: `sha256:${createHash("sha256").update(body).digest("hex")}`,
+		contentHash: sha256(body),
 	};
 };

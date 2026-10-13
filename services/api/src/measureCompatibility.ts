@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { AreaReleaseArtifact } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import { releaseKey } from "./geographyKeys";
@@ -8,6 +7,7 @@ import {
 	AnyMeasureObservationArtifact,
 	MeasureSource,
 } from "./dataCatalog";
+import { sha256 } from "./contentHash";
 
 /**
  * How a source partition's codes stand against a boundary release. Only the
@@ -59,9 +59,6 @@ export type MeasureCompatibilityInventory = {
 		sources: MeasureCompatibilitySource[];
 	}>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const sample = (codes: Set<string>) => [...codes].sort().slice(0, 20);
 

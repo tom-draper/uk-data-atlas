@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { AreaLookup, AreaRecord } from "./areaInventory";
 import { releaseKey } from "./geographyKeys";
 import {
@@ -12,6 +11,7 @@ import {
 	findSorted,
 	lowerBound,
 } from "./sortedIndex";
+import { sha256 } from "./contentHash";
 
 /**
  * The compiled area search index: every area identity, one per release and
@@ -58,9 +58,6 @@ export type AreaSearchFilters = {
 	geography?: string | null;
 	boundaryRelease?: string | null;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const releasePrefix = (geography: string, boundaryRelease: string) =>
 	`${geography}/${boundaryRelease}/`;

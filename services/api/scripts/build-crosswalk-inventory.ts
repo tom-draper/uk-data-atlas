@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -38,9 +37,7 @@ import {
 	type AreaInventory,
 	type AreaReleaseArtifact,
 } from "../src/areaInventory";
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
+import { sha256 } from "../src/contentHash";
 
 const readCompiledAreaLookup = (outputDirectory: string) => {
 	const inventory = JSON.parse(

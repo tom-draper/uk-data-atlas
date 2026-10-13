@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "./contentHash";
 
 /**
  * The OpenAPI path templates, used to name the operation a request reached.
@@ -55,7 +55,7 @@ export type OperationsArtifact = {
 };
 
 export const openapiDocumentHash = (openapiDocument: string) =>
-	`sha256:${createHash("sha256").update(openapiDocument).digest("hex")}`;
+	sha256(openapiDocument);
 
 type OpenApiParameter = { $ref?: string; name?: string; in?: string };
 type OpenApiOperation = {

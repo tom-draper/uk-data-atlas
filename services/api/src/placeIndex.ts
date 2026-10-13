@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { AreaLookup } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { NamedLocationInventory } from "./namedLocations";
@@ -9,6 +8,7 @@ import {
 	withoutTitle,
 } from "./nameNormalisation";
 import { compareCodeUnits } from "./sortedIndex";
+import { sha256 } from "./contentHash";
 
 /**
  * The compiled place index: every area and named location, and every name
@@ -83,9 +83,6 @@ export const placeReference = (
 	geography: string,
 	code: string,
 ) => (kind === "named-location" ? `location/${code}` : `${geography}/${code}`);
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 type Grouped = Omit<CompiledPlace, "name" | "boundaryReleases"> & {
 	/** Release to name, so the newest release's name wins. */

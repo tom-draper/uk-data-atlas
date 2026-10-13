@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { parseLookupCoordinate, type LookupPoint } from "./pointLookup";
 import { compareCodeUnits, findSorted } from "./sortedIndex";
+import { sha256 } from "./contentHash";
 
 /**
  * The compiled postcode index: every unit postcode in the ONS Postcode
@@ -95,9 +95,6 @@ export type PostcodeSourceRow = {
  */
 export const NORTHERN_IRELAND_EXCLUSION =
 	"Northern Ireland postcodes are licensed by Land and Property Services for internal business use only, so this API does not serve them.";
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const UNIT =
 	/^(?:[A-Z]{1,2}[0-9][0-9A-Z]?[0-9][A-Z]{2}|GIR0AA|NPT[0-9][A-Z]{2})$/;

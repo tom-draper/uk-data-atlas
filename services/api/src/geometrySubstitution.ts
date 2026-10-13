@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -17,6 +16,7 @@ import {
 	type GridOffset,
 } from "./gridOffset";
 import { fromWgs84Geometry, toWgs84Geometry } from "./reprojection";
+import { sha256 } from "./contentHash";
 
 export type { GeometrySubstitution };
 
@@ -123,9 +123,7 @@ export const loadSubstitutions = (
 			donor: {
 				release: donorIdentity,
 				input: donor.input,
-				inputHash:
-					donor.inputHash ??
-					`sha256:${createHash("sha256").update(content).digest("hex")}`,
+				inputHash: donor.inputHash ?? sha256(content),
 			},
 			geometries,
 		};

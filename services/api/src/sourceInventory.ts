@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
+import { sha256 } from "./contentHash";
 
 export type SourceFile = {
 	extension: string;
@@ -34,9 +34,6 @@ type Metadata = {
 	temporalCoverage?: unknown;
 	files?: unknown;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const optionalString = (value: unknown): string | undefined =>
 	typeof value === "string" && value.length > 0 ? value : undefined;

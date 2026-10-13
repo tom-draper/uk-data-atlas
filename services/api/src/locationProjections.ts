@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { AreaLookup } from "./areaInventory";
 import type {
 	CrosswalkArtifact,
@@ -17,6 +16,7 @@ import {
 } from "./locationMembership";
 import { reconcileMembers, type MemberCoverage } from "./memberReconciliation";
 import type { NamedLocationInventory } from "./namedLocations";
+import { sha256 } from "./contentHash";
 
 export type LocationProjection = {
 	locationId: string;
@@ -100,9 +100,6 @@ export type LocationProjectionArtifact = {
 };
 
 export type LocationProjectionLookup = Map<string, LocationProjection>;
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 export const locationProjectionKey = (
 	locationId: string,

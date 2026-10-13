@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,6 +16,7 @@ import { readShapefileFeatures } from "../src/shapefile";
 import { createAreaGeometryCache } from "../src/geometryLoader";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
 import { compileNamedLocationGeometry } from "../src/namedLocationGeometry";
+import { sha256 } from "../src/contentHash";
 
 /**
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
@@ -159,7 +159,7 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 	});
 	const inventory = {
 		...parsed,
-		contentHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
+		contentHash: sha256(content),
 		locations,
 	};
 	writeFileSync(outputPath, `${JSON.stringify(inventory, null, "\t")}\n`);

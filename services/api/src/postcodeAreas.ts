@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { GeoJsonGeometry } from "./areaGeometry";
 import {
 	containPoint,
@@ -15,6 +14,7 @@ import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./postcodeRoutes";
 import { rankReleases } from "./postcodeValue";
 import type { PostcodeIndex, PostcodeIndexArtifact } from "./postcodes";
 import { compareCodeUnits, findSorted } from "./sortedIndex";
+import { sha256 } from "./contentHash";
 
 /**
  * The areas every postcode's centroid falls in, compiled for the boundary
@@ -101,9 +101,6 @@ export type PostcodeAreaMatch = {
 	containment: Exclude<PointContainment, "outside">;
 	distanceToBoundaryM: number;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 export const releaseKey = (geography: string, boundaryRelease: string) =>
 	`${geography}/${boundaryRelease}`;

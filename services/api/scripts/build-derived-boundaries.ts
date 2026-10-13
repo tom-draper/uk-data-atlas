@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,14 +6,12 @@ import {
 	type AreaSourceAdapterManifest,
 } from "../src/areaSourceAdapters";
 import { sourceGeoJsonPath } from "../src/areaInventory";
+import { sha256 } from "../src/contentHash";
 
 type FeatureCollection = {
 	type?: unknown;
 	features?: Array<{ properties?: Record<string, unknown> }>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

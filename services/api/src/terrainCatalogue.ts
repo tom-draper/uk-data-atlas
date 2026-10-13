@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import type { Country } from "./dataCatalog";
+import { sha256 } from "./contentHash";
 
 export type TerrainProduct = {
 	id: string;
@@ -41,9 +41,6 @@ export type TerrainCatalogue = {
 	publicationRequirements: readonly string[];
 	products: TerrainProduct[];
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const ukCoverage = {
 	countries: ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"] as Country[],

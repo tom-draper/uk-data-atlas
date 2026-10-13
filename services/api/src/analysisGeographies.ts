@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import type {
 	CrosswalkInventory,
@@ -12,6 +11,7 @@ import type {
 	RelationshipPath,
 	RelationshipPathInventory,
 } from "./relationshipPaths";
+import { sha256 } from "./contentHash";
 
 export type AnalysisGeographySupport = {
 	measureId: string;
@@ -80,9 +80,6 @@ export type AnalysisGeographySupportConfig = {
 	pathId?: string;
 	note: string;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
