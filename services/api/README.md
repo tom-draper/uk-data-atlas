@@ -2245,6 +2245,31 @@ rather than falling back to the default.
 | `ATLAS_TERRAIN_REMOTE_TIMEOUT_MS`    | `5000`      | Maximum time for one remote terrain request.                                                 |
 | `ATLAS_TERRAIN_REMOTE_CONCURRENCY`   | `4`         | Maximum concurrent remote terrain requests.                                                  |
 
+### Container image
+
+`services/api/Dockerfile` builds the server without a release. Build it from
+the repository root, since the server depends on the workspace packages:
+
+```sh
+docker build -f services/api/Dockerfile -t uk-data-atlas-api .
+docker run --rm -p 3001:3001 \
+  -v "$PWD/services/api/public:/app/public:ro" uk-data-atlas-api
+```
+
+The image holds the server's source and its production dependencies, about
+20 MB over its Node base. The Atlas release, `services/api/public`, is some
+gigabytes and changes on its own schedule, so it is mounted rather than built
+in. It must be built from the same commit as the image: the server refuses to
+start with an `operations.json` compiled from another `openapi.yaml`.
+
+In the container the server listens on `0.0.0.0:3001`, runs as the `node`
+user, reports health from `/readyz`, and drains open requests on `SIGTERM`.
+Every variable in the table above applies; behind a proxy, set
+`ATLAS_TRUSTED_PROXY_HOPS`.
+
+`pnpm --filter @uk-data-atlas/api deploy --prod <directory>` writes the same
+files to a directory, for a host that runs Node without a container.
+
 ### Deployment smoke test
 
 `pnpm smoke <base-url>` checks a deployed server and prints TAP, exiting
