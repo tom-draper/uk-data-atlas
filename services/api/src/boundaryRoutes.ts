@@ -8,6 +8,10 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const COMPARE = QUERY_RULES["GET /boundary-releases:compare"];
 
 /** Published boundary releases and the geography catalogues built from them. */
 export const handleBoundaryRoutes = ({
@@ -123,14 +127,18 @@ export const handleBoundaryRoutes = ({
 		const geography = parsedUrl.searchParams.get("geography")?.trim();
 		const from = parsedUrl.searchParams.get("from")?.trim();
 		const to = parsedUrl.searchParams.get("to")?.trim();
-		const limitText = parsedUrl.searchParams.get("limit");
-		const limit = limitText === null ? 25 : Number(limitText);
+		const limit = readWholeNumber(
+			parsedUrl.searchParams.get("limit"),
+			COMPARE.limit,
+		);
 		if (!geography || !from || !to)
 			return invalidQuery(
 				"geography, from and to are required boundary release ids.",
 			);
-		if (!Number.isInteger(limit) || limit < 1 || limit > 100)
-			return invalidQuery("limit must be an integer from 1 to 100.");
+		if (limit === null)
+			return invalidQuery(
+				`limit must be an integer from ${COMPARE.limit.minimum} to ${COMPARE.limit.maximum}.`,
+			);
 		if (from === to)
 			return invalidQuery(
 				"from and to must name different boundary releases.",

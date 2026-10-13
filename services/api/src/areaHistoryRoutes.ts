@@ -2,6 +2,11 @@ import { areaNotFound } from "./areaResources";
 import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
+import { readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const DEPTH =
+	QUERY_RULES["GET /areas/{geography}/{release}/{code}/history"].depth;
 
 /** Published lineage links and explicitly qualified same-code continuity. */
 export const handleAreaHistoryRoutes = ({
@@ -23,10 +28,11 @@ export const handleAreaHistoryRoutes = ({
 		string,
 	];
 	const geographyResolver = context.geographyResolver;
-	const depthParameter = parsedUrl.searchParams.get("depth");
-	const depth = depthParameter === null ? 8 : Number(depthParameter);
-	if (!Number.isInteger(depth) || depth < 1 || depth > 20)
-		return invalidQuery("depth must be an integer from 1 to 20.");
+	const depth = readWholeNumber(parsedUrl.searchParams.get("depth"), DEPTH);
+	if (depth === null)
+		return invalidQuery(
+			`depth must be an integer from ${DEPTH.minimum} to ${DEPTH.maximum}.`,
+		);
 	const history = geographyResolver.areaHistory(
 		{
 			geography,

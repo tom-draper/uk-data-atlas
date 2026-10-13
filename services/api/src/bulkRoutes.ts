@@ -15,6 +15,10 @@ import {
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { observationTableOf } from "./observationTables";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const LOOKUP = QUERY_RULES["GET /lookups/{lookup-id}"];
 
 /** Immutable observation exports and rendered lookup artifacts. */
 export const handleBulkRoutes = ({
@@ -149,9 +153,12 @@ export const handleBulkRoutes = ({
 				"Not Found",
 				"No bulk lookup matches that identity.",
 			);
-		const format = parsedUrl.searchParams.get("format") ?? "csv";
-		if (format !== "csv" && format !== "ndjson")
-			return invalidQuery("format must be csv or ndjson.", {
+		const format = readChoice(
+			parsedUrl.searchParams.get("format"),
+			LOOKUP.format,
+		);
+		if (!format)
+			return invalidQuery(`format must be ${choices(LOOKUP.format)}.`, {
 				code: "invalid_format",
 			});
 		const table = (() => {
