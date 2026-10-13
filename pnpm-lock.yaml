@@ -304,6 +304,9 @@ importers:
       proj4:
         specifier: 2.22.0
         version: 2.22.0
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
       yaml:
         specifier: ^2.9.1
         version: 2.9.1
@@ -311,9 +314,6 @@ importers:
       '@types/node':
         specifier: ^26.6.2
         version: 26.6.2
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
