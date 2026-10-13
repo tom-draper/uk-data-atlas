@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { AreaGeometryCache, GeoJsonGeometry } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
 import {
@@ -9,9 +8,7 @@ import {
 import { buildGeoJson } from "./mapResource/geoJson";
 import { buildGeoParquet } from "./mapResource/geoParquet";
 import type { GeometryTier } from "./simplifyGeometry";
-
-const sha256 = (content: Buffer) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
+import { sha256 } from "./contentHash";
 
 /** A release's flat downloads when no tiles can be drawn from it. */
 export type FlatDownloads = {

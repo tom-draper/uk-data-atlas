@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "./contentHash";
 import type { ValidatedValue } from "./batchValidation";
 import { envelope, type ApiResponse } from "./routeResponse";
 
@@ -51,9 +51,7 @@ export const matchManifest = (
 	schemaVersion: 1,
 	atlasRelease,
 	input: {
-		sha256: `sha256:${createHash("sha256")
-			.update(JSON.stringify({ values, parents: parents ?? [] }))
-			.digest("hex")}`,
+		sha256: sha256(JSON.stringify({ values, parents: parents ?? [] })),
 		values,
 		...(parents ? { parents } : {}),
 	},

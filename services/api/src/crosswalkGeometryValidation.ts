@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
@@ -10,6 +9,7 @@ import {
 	reversedGridOffset,
 } from "./geometrySubstitution";
 import { releaseKey } from "./geographyKeys";
+import { sha256 } from "./contentHash";
 
 export type GeometryContainmentValidation =
 	| {
@@ -48,9 +48,6 @@ export type GeometryContainmentInputs = Array<{
 	/** Grid offsets undone on a WGS84 release, with their definition's hash. */
 	reversedOffsets?: Array<{ id: string; contentHash: string }>;
 }>;
-
-const sha256 = (content: Buffer | string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 export const geometryContainmentInputs = (
 	repositoryRoot: string,

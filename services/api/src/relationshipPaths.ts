@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import type { CrosswalkInventory, CrosswalkMethod } from "./crosswalkInventory";
 import { releaseKey } from "./geographyKeys";
+import { sha256 } from "./contentHash";
 
 export type RelationshipPurpose = "identity" | "membership" | "apportion";
 
@@ -70,9 +70,6 @@ export type ApprovedRelationshipPath = {
 	purpose: RelationshipPurpose;
 	steps: Array<{ crosswalkId: string; direction: "forward" | "reverse" }>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 /** The purpose a crosswalk declares, or the one its method implies. */
 export const relationshipPurposeFor = (

@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "./contentHash";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
@@ -348,9 +348,7 @@ export const compileGeometricContainmentCrosswalk = (
 	};
 	return {
 		...artifactWithoutHash,
-		contentHash: `sha256:${createHash("sha256")
-			.update(JSON.stringify(artifactWithoutHash))
-			.digest("hex")}`,
+		contentHash: sha256(JSON.stringify(artifactWithoutHash)),
 	};
 };
 
@@ -476,8 +474,6 @@ export const compileBestFitCrosswalk = (
 	};
 	return {
 		...artifactWithoutHash,
-		contentHash: `sha256:${createHash("sha256")
-			.update(JSON.stringify(artifactWithoutHash))
-			.digest("hex")}`,
+		contentHash: sha256(JSON.stringify(artifactWithoutHash)),
 	};
 };

@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import {
 	existsSync,
 	openSync,
@@ -10,6 +9,7 @@ import { join } from "node:path";
 import type { AreaReleaseArtifact } from "./areaInventory";
 import { hashFile } from "./fileHashCache";
 import { reversedOffsetsFor, substitutionsFor } from "@uk-data-atlas/geography";
+import { sha256 } from "./contentHash";
 
 type BoundaryMetadata = { files?: unknown };
 export type GeometrySourceRegistry = {
@@ -17,8 +17,6 @@ export type GeometrySourceRegistry = {
 	contentHash: string;
 	releases: Array<Record<string, unknown>>;
 };
-const sha = (s: string | Buffer) =>
-	"sha256:" + createHash("sha256").update(s).digest("hex");
 const kebab = (s: string) =>
 	s.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 const sourcePath = (directory: string) => {
@@ -121,5 +119,5 @@ export const createGeometrySourceRegistry = (
 		};
 	});
 	const content = JSON.stringify({ schemaVersion: 1, releases });
-	return { schemaVersion: 1, contentHash: sha(content), releases };
+	return { schemaVersion: 1, contentHash: sha256(content), releases };
 };

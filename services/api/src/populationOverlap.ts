@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MultiPolygon } from "polygon-clipping";
@@ -22,6 +21,7 @@ import type {
 	PopulationOverlapCrosswalkArtifact,
 } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
+import { sha256 } from "./contentHash";
 
 // About a millimetre, for a retry when polygon-clipping's sweep line fails.
 const RETRY_PRECISION = 1e8;
@@ -29,9 +29,6 @@ const RETRY_PRECISION = 1e8;
 // A block clips in well under a millisecond; one that runs this long has hit
 // polygon-clipping's non-terminating case.
 const CLIP_TIMEOUT_MS = 30_000;
-
-const sha256 = (content: string | Buffer) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const boundsOf = (geometry: MultiPolygon): AreaGeometry["bounds"] => {
 	const bounds: AreaGeometry["bounds"] = [

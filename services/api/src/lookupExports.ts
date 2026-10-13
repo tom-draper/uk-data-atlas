@@ -1,7 +1,7 @@
-import { createHash } from "node:crypto";
 import type { AreaRecord } from "./areaInventory";
 import type { CrosswalkArtifact } from "./crosswalkInventory";
 import type { NamedLocationInventory } from "./namedLocations";
+import { sha256 } from "./contentHash";
 
 export type LookupFormat = "csv" | "ndjson";
 
@@ -46,9 +46,6 @@ export type LookupManifest = {
 		}
 	>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const column = (
 	name: string,

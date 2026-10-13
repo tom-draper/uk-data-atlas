@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MultiPolygon, Polygon } from "polygon-clipping";
@@ -25,6 +24,7 @@ import {
 	toWgs84Geometry,
 } from "./reprojection";
 import { readShapefileFeatures } from "./shapefile";
+import { sha256 } from "./contentHash";
 
 export const readGeometries = (
 	repositoryRoot: string,
@@ -154,7 +154,7 @@ export const readGeometries = (
 		geometries,
 		provenance: {
 			input: source.input,
-			inputHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
+			inputHash: sha256(content),
 			...geometryProvenance(source.crs),
 			...(offsets.length > 0 ||
 			substitutions.length > 0 ||

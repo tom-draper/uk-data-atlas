@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -7,6 +6,7 @@ import {
 	observationArtifactName,
 } from "./dataCatalog";
 import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
+import { sha256 } from "./contentHash";
 
 export type ExportField = {
 	name: string;
@@ -70,9 +70,6 @@ export type ExportManifest = {
 	datasets: Record<string, ExportDataset>;
 	exports: BulkExport[];
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const FIELD_DESCRIPTIONS: Record<string, string> = {
 	areaCode: "The official code of the area in the served source partition.",

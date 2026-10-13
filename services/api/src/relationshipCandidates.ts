@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import {
 	closeSync,
 	existsSync,
@@ -10,6 +9,7 @@ import { join } from "node:path";
 import { readGeoJsonProperties } from "./geoJsonProperties";
 import { readDbfRecords } from "./dbf";
 import type { AreaReleaseArtifact } from "./areaInventory";
+import { sha256 } from "./contentHash";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -79,9 +79,6 @@ export type PublishedRelationship = {
 	from: { geography: string; boundaryRelease: string };
 	to: { geography: string; boundaryRelease: string };
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

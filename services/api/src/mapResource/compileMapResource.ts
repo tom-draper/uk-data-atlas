@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { AreaGeometryCache } from "../areaGeometry";
 import { GEOMETRY_TIERS, type GeometryTier } from "../simplifyGeometry";
 import { decomposeArcs } from "./arcs";
@@ -21,6 +20,7 @@ import {
 } from "./tileset";
 import { buildArchive, type ArchiveTile } from "./pmtiles";
 import { releaseKey } from "../geographyKeys";
+import { sha256 } from "../contentHash";
 
 /**
  * One boundary release compiled into everything a map needs: the archive of
@@ -43,9 +43,6 @@ export const LAYER_NAME = "boundaries";
  */
 export const featureIds = (codes: string[]) =>
 	new Map([...codes].sort().map((code, index) => [code, index + 1] as const));
-
-const sha256 = (content: Buffer) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 export type MapResourceDescriptor = {
 	id: string;

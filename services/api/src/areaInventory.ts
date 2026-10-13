@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { readGeoJsonProperties } from "./geoJsonProperties";
 import { join } from "node:path";
@@ -10,6 +9,7 @@ import type {
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import { releaseKey } from "./geographyKeys";
 import { readDbfRecords } from "./dbf";
+import { sha256 } from "./contentHash";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -79,9 +79,6 @@ export const createAreaLookup = (
 			new Map(artifact.areas.map((area) => [area.code, area])),
 		]),
 	);
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

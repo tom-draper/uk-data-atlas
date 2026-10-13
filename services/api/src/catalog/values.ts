@@ -1,10 +1,7 @@
-import { createHash } from "node:crypto";
+export { sha256 } from "../contentHash";
 
 /** A parsed file from the website's data/datasets, keyed by period or edition. */
 export type PrecompiledFile = Record<string, unknown>;
-
-export const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 export const string = (value: unknown, context: string): string => {
 	if (typeof value !== "string" || value.trim().length === 0) {

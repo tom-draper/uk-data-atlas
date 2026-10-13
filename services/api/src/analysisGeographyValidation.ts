@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import {
 	isNumericObservation,
 	observationArtifactName,
@@ -21,6 +20,7 @@ import type {
 	AnalysisGeographyInventory,
 	AnalysisGeographySupport,
 } from "./analysisGeographies";
+import { sha256 } from "./contentHash";
 
 export type AnalysisGeographyValidationInventory = {
 	schemaVersion: 1;
@@ -54,9 +54,6 @@ export type AnalysisGeographyValidationInventory = {
 		}>;
 	}>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const totalOf = (records: Array<{ value: number }>) =>
 	records.reduce((total, record) => total + record.value, 0);

@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import {
 	existsSync,
 	mkdirSync,
@@ -12,6 +11,7 @@ import type {
 	BoundaryRegistry,
 	BoundaryRelease,
 } from "../src/boundaryRegistry";
+import { sha256 } from "../src/contentHash";
 
 type BoundaryMetadata = {
 	id?: unknown;
@@ -25,9 +25,6 @@ type BoundaryMetadata = {
 	licence?: { name?: unknown; url?: unknown };
 	spatialCoverage?: { geography?: unknown; countries?: unknown };
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const stringValue = (
 	value: unknown,
