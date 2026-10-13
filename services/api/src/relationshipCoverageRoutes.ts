@@ -1,4 +1,3 @@
-import type { AreaRelation } from "./areaRelationships";
 import {
 	envelope,
 	invalidQuery,
@@ -6,18 +5,10 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { readWholeNumber } from "./queryParameters";
+import { choices, readChoice, readWholeNumber } from "./queryParameters";
 import { QUERY_RULES } from "./queryRules";
 
-const LIMIT = QUERY_RULES["GET /relationships"].limit;
-
-const RELATIONS: AreaRelation[] = [
-	"within",
-	"contains",
-	"successor",
-	"predecessor",
-	"overlaps",
-];
+const { limit: LIMIT, relation: RELATION } = QUERY_RULES["GET /relationships"];
 
 /** Summarises actual release coverage, so hierarchy gaps are queryable facts. */
 export const handleRelationshipCoverageRoutes = ({
@@ -34,22 +25,19 @@ export const handleRelationshipCoverageRoutes = ({
 		return undefined;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
-	const relationParameter = parsedUrl.searchParams.get("relation");
+	const relation = readChoice(
+		parsedUrl.searchParams.get("relation"),
+		RELATION,
+	);
 	const limit = readWholeNumber(parsedUrl.searchParams.get("limit"), LIMIT);
-	if (
-		!geography ||
-		!boundaryRelease ||
-		(relationParameter !== null &&
-			!RELATIONS.includes(relationParameter as AreaRelation)) ||
-		limit === null
-	)
+	if (!geography || !boundaryRelease || relation === null || limit === null)
 		return invalidQuery(
-			`geography and release are required; relation must be within, contains, successor, predecessor or overlaps; limit must be an integer from ${LIMIT.minimum} to ${LIMIT.maximum}.`,
+			`geography and release are required; relation must be ${choices(RELATION)}; limit must be an integer from ${LIMIT.minimum} to ${LIMIT.maximum}.`,
 		);
 	const coverage = context.geographyResolver.relationshipCoverage(
 		geography,
 		boundaryRelease,
-		relationParameter as AreaRelation | undefined,
+		relation,
 		limit,
 	);
 	if (!coverage)
@@ -69,15 +57,15 @@ export const handleRelationshipCoverageRoutes = ({
 		body: envelope(releaseId, {
 			geography,
 			boundaryRelease,
-			relation: relationParameter,
+			relation: relation ?? null,
 			status,
 			...(status === "available"
 				? {}
 				: {
 						reason:
 							status === "partial"
-								? `${coverage.areaCount - coverage.relatedAreaCount} of ${coverage.areaCount} areas have no published${relationParameter ? ` ${relationParameter}` : ""} relationship.`
-								: `No published${relationParameter ? ` ${relationParameter}` : ""} relationships cover this release.`,
+								? `${coverage.areaCount - coverage.relatedAreaCount} of ${coverage.areaCount} areas have no published${relation ? ` ${relation}` : ""} relationship.`
+								: `No published${relation ? ` ${relation}` : ""} relationships cover this release.`,
 					}),
 			...coverage,
 		}),
