@@ -75,7 +75,7 @@ export default function TrendGuidePage() {
 					</P>
 					<Request
 						url={`${API}/data/house-price-median/value?period=2022&geography=ward&codeYear=2020&place=E92000001`}
-						operationId="aggregateSourceExactMeasure"
+						operationId="getMeasureValueForPlace"
 					/>
 					<Callout tone="note">
 						Change is always measured within one set of area codes,
@@ -93,7 +93,7 @@ export default function TrendGuidePage() {
 					</P>
 					<Request
 						url={`${API}/documents/measure-population.json`}
-						operationId="getMeasureQuality"
+						operationId="getEvidenceDocument"
 					/>
 				</Step>
 			</Steps>
