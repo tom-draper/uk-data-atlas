@@ -150,6 +150,10 @@ test("operations that share a reader state the same rule", () => {
 	])
 		assert.deepEqual(shared, crs);
 	assert.deepEqual(
+		QUERY_RULES["POST /postcodes:batch"].view,
+		QUERY_RULES["GET /postcodes/{postcode}"].view,
+	);
+	assert.deepEqual(
 		QUERY_RULES["GET /areas/{geography}/{release}/{code}/children"].depth,
 		QUERY_RULES["GET /areas/{geography}/{release}/{code}/parents"].depth,
 	);

@@ -2133,7 +2133,10 @@ Two things can change under a client, and each is pinned separately.
   server reads each operation's query parameters from
   `public/operations.json`, compiled from `openapi.yaml` by
   `pnpm build:operations`, and refuses to start with one compiled from an
-  older document.
+  older document. What a parameter's schema states outright, an enum's
+  values or a whole number's range and default, handlers read from
+  `src/queryRules.ts`, which `pnpm build:query-rules` writes from the same
+  document and a test holds to it.
 - **The data** is identified by the current Atlas release. Every response
   carries an `Atlas-Release` header, and JSON responses name it in the envelope
   too. A correction or preprocessing change replaces the current release; the

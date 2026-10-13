@@ -21,6 +21,8 @@ import {
 } from "./routeResponse";
 import { readBatchInput } from "./batchInput";
 import type { RouteRequest } from "./routing";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
 /** The areas a postcode is placed in when a caller names none. */
 export const DEFAULT_POSTCODE_GEOGRAPHIES = [
@@ -149,16 +151,15 @@ const postcodeLookupRequest = (
  * or `compact`, only what most callers read (each area, the centroid and the
  * required attribution).
  */
-type PostcodeView = "full" | "compact";
+// A single postcode and a batch state the same `view`.
+const VIEW = QUERY_RULES["GET /postcodes/{postcode}"].view;
+type PostcodeView = (typeof VIEW.values)[number];
 
-const postcodeView = (query: URLSearchParams): PostcodeView | ApiResponse => {
-	const view = query.get("view");
-	if (view === null || view === "full") return "full";
-	if (view === "compact") return "compact";
-	return invalidQuery(
-		`view must be full or compact; ${JSON.stringify(view)} is neither.`,
+const postcodeView = (query: URLSearchParams): PostcodeView | ApiResponse =>
+	readChoice(query.get("view"), VIEW) ??
+	invalidQuery(
+		`view must be ${choices(VIEW)}; ${JSON.stringify(query.get("view"))} is neither.`,
 	);
-};
 
 /**
  * A point's matches without the release-wide geometry provenance each
