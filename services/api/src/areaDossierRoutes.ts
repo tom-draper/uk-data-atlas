@@ -1,7 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { geometryBounds } from "./areaContainment";
 import { notBuilt, unsupported } from "./capability";
-import { problem, type ApiResponse } from "./routeResponse";
+import { problem, requirementDetail, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 type AreaIdentity = {
@@ -12,11 +12,6 @@ type AreaIdentity = {
 
 type AreaDossierResult =
 	{ dossier: Record<string, unknown> } | { response: ApiResponse };
-
-const requirementDetail = (response: ApiResponse | undefined) =>
-	response && "detail" in response.body
-		? response.body.detail
-		: "Catalogue data is unavailable.";
 
 /** The evidence an exact area expands to with `include=dossier`. */
 export const areaDossier = (
