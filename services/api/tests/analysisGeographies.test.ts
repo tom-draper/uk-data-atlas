@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -170,12 +170,11 @@ test("refuses a path that is missing, unbuilt or ends elsewhere", () => {
 	);
 });
 
-test("requires exactly one of crosswalkId and pathId in the configuration", () => {
+test("requires exactly one of crosswalkId and pathId in the configuration", (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "analysis-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
 	const configured = (entry: Record<string, unknown>) => {
-		const path = join(
-			mkdtempSync(join(tmpdir(), "analysis-")),
-			"config.json",
-		);
+		const path = join(directory, "config.json");
 		writeFileSync(
 			path,
 			JSON.stringify({ schemaVersion: 1, supports: [entry] }),

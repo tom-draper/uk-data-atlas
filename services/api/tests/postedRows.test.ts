@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -227,8 +227,9 @@ test("answers a join only as a POST, and only for a release it holds", () => {
 	);
 });
 
-test("returns the joined areas as GeoJSON from the stored tier", () => {
+test("returns the joined areas as GeoJSON from the stored tier", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-join-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
 	const path = join(directory, "ward-low.geojson.gz");
 	const feature = (id: number, code: string) => ({
 		type: "Feature",
