@@ -76,7 +76,8 @@ export const routeAsync = async (
 	context: RouteContext,
 	body?: RequestBody,
 ): Promise<ApiResponse> => {
-	if (method !== "GET") return route(method, url, context, body);
+	if (method !== "GET" && method !== "POST")
+		return route(method, url, context, body);
 	const request = buildRequest(method, url, context, body);
 	if ("status" in request) return request;
 	return (await handleRouteAsync(request)) ?? notFound();

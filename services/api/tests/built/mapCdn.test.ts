@@ -1,3 +1,6 @@
+import { createServer } from "node:http";
+import { createApiServer } from "../../src/apiServer";
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -78,5 +81,59 @@ test("redirects archive, feature and tile requests and advertises the tile CDN",
 	assert.match(
 		JSON.stringify(tileJson.body),
 		/https:\/\/tiles.example.com\/test/,
+	);
+});
+
+test("joins GeoJSON fetched from object storage through the real HTTP server", async (t) => {
+	const assets = createServer((request, response) => {
+		const path = new URL(request.url ?? "/", "http://localhost").pathname;
+		if (!path.startsWith("/maps/map-resources/") || path.includes("..")) {
+			response.writeHead(404).end();
+			return;
+		}
+		response.setHeader("content-type", "application/geo+json");
+		if (path.endsWith(".gz"))
+			response.setHeader("content-encoding", "gzip");
+		response.end(
+			readFileSync(join(apiRoot, "public", path.slice("/maps/".length))),
+		);
+	});
+	await new Promise<void>((ready) => assets.listen(0, "127.0.0.1", ready));
+	t.after(() => {
+		assets.closeAllConnections();
+		assets.close();
+	});
+	const address = assets.address();
+	assert.ok(address && typeof address !== "string");
+	const catalogues = readApiCatalogues(apiRoot, {
+		mapAssetBaseUrl: `http://127.0.0.1:${address.port}/maps`,
+	});
+	catalogues.mapFeatures.clear();
+	const api = createApiServer(catalogues);
+	await new Promise<void>((ready) => api.listen(0, "127.0.0.1", ready));
+	t.after(() => {
+		api.closeAllConnections();
+		api.close();
+	});
+	const apiAddress = api.address();
+	assert.ok(apiAddress && typeof apiAddress !== "string");
+	const response = await fetch(
+		`http://127.0.0.1:${apiAddress.port}/v1/boundary-releases/localAuthority/2023-05-uk-bgc-v2:join?format=geojson&tier=low`,
+		{
+			method: "POST",
+			headers: { "content-type": "text/csv" },
+			body: "code,value\nE08000025,123\n",
+		},
+	);
+	assert.equal(response.status, 200, await response.clone().text());
+	const joined: {
+		features: Array<{ properties: { code: string; value: number } }>;
+	} = await response.json();
+	assert.deepEqual(
+		joined.features.map((feature) => [
+			feature.properties.code,
+			feature.properties.value,
+		]),
+		[["E08000025", 123]],
 	);
 });
