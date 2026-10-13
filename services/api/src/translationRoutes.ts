@@ -1,4 +1,3 @@
-import type { RelationshipPurpose } from "./relationshipPaths";
 import { parseExactReleaseReference } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
 import {
@@ -7,8 +6,10 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
-const PURPOSES: RelationshipPurpose[] = ["identity", "membership", "apportion"];
+const TRANSLATIONS = QUERY_RULES["GET /translations"];
 
 /**
  * Translate one code through the resolver's published conversion graph. A
@@ -31,15 +32,13 @@ export const handleTranslationRoutes = ({
 	const from = parseExactReleaseReference(parsedUrl.searchParams.get("from"));
 	const to = parseExactReleaseReference(parsedUrl.searchParams.get("to"));
 	const code = parsedUrl.searchParams.get("code");
-	const purpose = parsedUrl.searchParams.get("purpose") ?? "membership";
-	if (
-		!from ||
-		!code ||
-		!to ||
-		!PURPOSES.includes(purpose as RelationshipPurpose)
-	) {
+	const purpose = readChoice(
+		parsedUrl.searchParams.get("purpose"),
+		TRANSLATIONS.purpose,
+	);
+	if (!from || !code || !to || !purpose) {
 		return invalidQuery(
-			"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion.",
+			`from, code and to are required. from and to are exact geography/release references; purpose must be ${choices(TRANSLATIONS.purpose)}.`,
 		);
 	}
 	const source = { ...from, code };
@@ -49,7 +48,7 @@ export const handleTranslationRoutes = ({
 	const translations = geographyResolver.translateArea(
 		resolvedSource,
 		resolvedTarget,
-		purpose as RelationshipPurpose,
+		purpose,
 	);
 	return translations.length > 0
 		? {

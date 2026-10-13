@@ -1,7 +1,7 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
 import { refused } from "./observationResolution/observationPlan";
-import { rankingOf, readRankingOrder } from "./ranking";
+import { rankingOf } from "./ranking";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import { publishedPartitions, statedDefaults } from "./dataDefaults";
 import { selectSourcePartition } from "./sourcePartition";
@@ -13,6 +13,10 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const RANKINGS = QUERY_RULES["GET /data/{measure-id}/rankings"];
 
 /** Source-exact observations for one period, ranked with ties shared, in stable pages. */
 export const handleDataRankingRoutes = ({
@@ -109,9 +113,12 @@ export const handleDataRankingRoutes = ({
 			`The observation artifact for ${measureId} does not contain numeric records required for ranking.`,
 		);
 	}
-	const order = readRankingOrder(parsedUrl.searchParams.get("order"));
+	const order = readChoice(
+		parsedUrl.searchParams.get("order"),
+		RANKINGS.order,
+	);
 	if (!order) {
-		return invalidQuery("order must be asc or desc.");
+		return invalidQuery(`order must be ${choices(RANKINGS.order)}.`);
 	}
 	const page = paginate(parsedUrl, rankingOf(numericRecords, order), {
 		keyOf: (record) => record.areaCode,

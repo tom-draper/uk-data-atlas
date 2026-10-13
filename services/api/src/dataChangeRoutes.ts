@@ -1,6 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
-import { rankObservations, readRankingOrder } from "./ranking";
+import { rankObservations } from "./ranking";
 import {
 	changeRefusal,
 	changeValue,
@@ -27,6 +27,10 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const CHANGE = QUERY_RULES["GET /data/{measure-id}/change"];
 
 /** Change between two periods of a measure for areas published in both, ranked in stable pages. */
 export const handleDataChangeRoutes = ({
@@ -184,20 +188,22 @@ export const handleDataChangeRoutes = ({
 			`${startPeriod} and ${endPeriod} share years, so most of the apparent change between them is the same data counted twice. Choose periods that do not overlap.`,
 		);
 	}
-	const basisParameter = parsedUrl.searchParams.get("by") ?? "absolute";
-	if (basisParameter !== "absolute" && basisParameter !== "relative") {
-		return invalidQuery("by must be absolute or relative.");
+	const basis: ChangeBasis | null = readChoice(
+		parsedUrl.searchParams.get("by"),
+		CHANGE.by,
+	);
+	if (!basis) {
+		return invalidQuery(`by must be ${choices(CHANGE.by)}.`);
 	}
-	const basis: ChangeBasis = basisParameter;
 	if (basis === "relative") {
 		const relativeRefusal = relativeChangeRefusal(measure);
 		if (relativeRefusal) {
 			return invalidQuery(relativeRefusal);
 		}
 	}
-	const order = readRankingOrder(parsedUrl.searchParams.get("order"));
+	const order = readChoice(parsedUrl.searchParams.get("order"), CHANGE.order);
 	if (!order) {
-		return invalidQuery("order must be asc or desc.");
+		return invalidQuery(`order must be ${choices(CHANGE.order)}.`);
 	}
 	const artifacts = {
 		measureObservations,

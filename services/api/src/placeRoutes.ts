@@ -2,9 +2,12 @@ import { describeCandidate } from "./placeResponses";
 import { resolveAreaQuery } from "./areaResolveRoutes";
 import { selectedAsOf } from "./locationRoutes";
 import { postcodePlace } from "./postcodeRoutes";
-import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
 import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const LIMIT = QUERY_RULES["GET /places"].limit;
 
 /** Resolve an area code or place name without selecting one ambiguous meaning. */
 export const handlePlaceRoutes = ({
@@ -34,10 +37,10 @@ export const handlePlaceRoutes = ({
 			releaseId,
 			parsedUrl,
 		});
-	const limit = readPageSize(parsedUrl.searchParams.get("limit"), 10);
-	if (limit === undefined)
+	const limit = readWholeNumber(parsedUrl.searchParams.get("limit"), LIMIT);
+	if (limit === null)
 		return invalidQuery(
-			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
+			`limit must be an integer between ${LIMIT.minimum} and ${LIMIT.maximum}.`,
 		);
 	const asOf = selectedAsOf(parsedUrl);
 	if (typeof asOf !== "string" && asOf !== undefined) return asOf;
