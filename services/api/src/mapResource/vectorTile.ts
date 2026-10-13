@@ -1,3 +1,5 @@
+import { varint } from "./varint";
+
 /**
  * A Mapbox Vector Tile writer, enough of it to publish a boundary release.
  *
@@ -12,15 +14,6 @@
 
 /** Tile-local coordinates run 0 to `extent` across the tile, y downwards. */
 export const TILE_EXTENT = 4096;
-
-const varint = (value: number, into: number[]) => {
-	let rest = value;
-	while (rest > 0x7f) {
-		into.push((rest & 0x7f) | 0x80);
-		rest = Math.floor(rest / 128);
-	}
-	into.push(rest);
-};
 
 const tag = (field: number, wire: number, into: number[]) =>
 	varint(field * 8 + wire, into);
