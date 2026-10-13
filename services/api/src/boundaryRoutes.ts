@@ -8,9 +8,10 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { readWholeNumber } from "./queryParameters";
+import { choices, readChoice, readWholeNumber } from "./queryParameters";
 import { QUERY_RULES } from "./queryRules";
 
+const RESOLVE = QUERY_RULES["GET /boundary-releases:resolve"];
 const COMPARE = QUERY_RULES["GET /boundary-releases:compare"];
 
 /** Published boundary releases and the geography catalogues built from them. */
@@ -63,9 +64,12 @@ export const handleBoundaryRoutes = ({
 			return invalidQuery(
 				"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
 			);
-		if (country !== undefined && !/^GB-(ENG|NIR|SCT|WLS)$/.test(country))
+		if (
+			country !== undefined &&
+			readChoice(country, RESOLVE.country) === null
+		)
 			return invalidQuery(
-				"country must be one of GB-ENG, GB-NIR, GB-SCT or GB-WLS.",
+				`country must be one of ${choices(RESOLVE.country)}.`,
 			);
 		const requestedMonth = selectionDate.month;
 		const selection = geographyResolver.selectReleaseForDate(

@@ -1,7 +1,6 @@
 import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
-	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
 import { areaNotFound } from "./areaResources";
@@ -9,6 +8,12 @@ import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { areaKey, releaseKey } from "./geographyKeys";
 import { selectAreaChildren } from "./areaChildren";
+import { readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const TIER =
+	QUERY_RULES["GET /areas/{geography}/{release}/{code}/children/geometry"]
+		.tier;
 
 /** The geometry of every area a published relationship places inside one area, as a feature collection. */
 export const handleAreaChildGeometryRoutes = ({
@@ -42,14 +47,12 @@ export const handleAreaChildGeometryRoutes = ({
 	if (relationshipsUnavailable) return relationshipsUnavailable;
 	const geometryUnavailable = geographyResolver.requires("geometry");
 	if (geometryUnavailable) return geometryUnavailable;
-	const requestedTier = parsedUrl.searchParams.get("tier") ?? "full";
-	if (!isGeometryTier(requestedTier))
+	const requestedTier = readChoice(parsedUrl.searchParams.get("tier"), TIER);
+	if (!requestedTier)
 		return problem(
 			400,
 			"Unknown Tier",
-			`No such generalisation tier: ${requestedTier}. Choose one of ${Object.keys(
-				GEOMETRY_TIERS,
-			).join(", ")}.`,
+			`No such generalisation tier: ${parsedUrl.searchParams.get("tier")}. Choose one of ${TIER.values.join(", ")}.`,
 		);
 	const contained = geographyResolver
 		.relationships({ geography, boundaryRelease, code })

@@ -1,8 +1,5 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
-import {
-	RELATIONSHIP_OPERATIONS,
-	type RelationshipOperation,
-} from "./geographyResolver";
+import type { RelationshipOperation } from "./geographyResolver";
 import type { DataCatalog } from "./dataCatalog";
 import {
 	publishedSourcePartitionOf,
@@ -12,12 +9,10 @@ import {
 import { parseExactReleaseReference } from "./releaseForDate";
 import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
-const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
-	"identity",
-	"membership",
-	"apportion",
-];
+const RELATIONSHIPS = QUERY_RULES["GET /relationships"];
 
 const measureReadiness = (
 	catalog: DataCatalog | undefined,
@@ -189,17 +184,17 @@ export const handleRelationshipCapabilityRoutes = ({
 		);
 	if (
 		purposeParameter !== null &&
-		!RELATIONSHIP_PURPOSES.includes(purposeParameter as RelationshipPurpose)
+		readChoice(purposeParameter, RELATIONSHIPS.purpose) === null
 	)
 		return invalidQuery(
-			`purpose must be one of ${RELATIONSHIP_PURPOSES.join(", ")}.`,
+			`purpose must be one of ${RELATIONSHIPS.purpose.values.join(", ")}.`,
 		);
 	if (
 		operation !== null &&
-		!RELATIONSHIP_OPERATIONS.includes(operation as RelationshipOperation)
+		readChoice(operation, RELATIONSHIPS.operation) === null
 	)
 		return invalidQuery(
-			`operation must be one of ${RELATIONSHIP_OPERATIONS.join(", ")}.`,
+			`operation must be one of ${RELATIONSHIPS.operation.values.join(", ")}.`,
 		);
 	const geographyResolver = context.geographyResolver;
 	if (!to) {

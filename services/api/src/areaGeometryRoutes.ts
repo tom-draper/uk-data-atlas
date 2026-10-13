@@ -1,12 +1,12 @@
-import {
-	GENERALISATION_METHOD,
-	GEOMETRY_TIERS,
-	isGeometryTier,
-	simplifyGeometry,
-} from "./simplifyGeometry";
+import { GENERALISATION_METHOD, simplifyGeometry } from "./simplifyGeometry";
 import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const TIER =
+	QUERY_RULES["GET /areas/{geography}/{release}/{code}/geometry"].tier;
 
 /** One area's published boundary as a GeoJSON feature, generalised to a tier on request. */
 export const handleAreaGeometryRoutes = ({
@@ -41,14 +41,15 @@ export const handleAreaGeometryRoutes = ({
 				"Not Found",
 				"No raw geometry matches that area identity.",
 			);
-		const requestedTier = parsedUrl.searchParams.get("tier") ?? "full";
-		if (!isGeometryTier(requestedTier))
+		const requestedTier = readChoice(
+			parsedUrl.searchParams.get("tier"),
+			TIER,
+		);
+		if (!requestedTier)
 			return problem(
 				400,
 				"Unknown Tier",
-				`No such generalisation tier: ${requestedTier}. Choose one of ${Object.keys(
-					GEOMETRY_TIERS,
-				).join(", ")}.`,
+				`No such generalisation tier: ${parsedUrl.searchParams.get("tier")}. Choose one of ${TIER.values.join(", ")}.`,
 			);
 		const simplified = simplifyGeometry(resolved.geometry, requestedTier);
 		if (!simplified)

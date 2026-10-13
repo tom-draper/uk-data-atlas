@@ -6,6 +6,10 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const LIMIT = QUERY_RULES["GET /relationships"].limit;
 
 const RELATIONS: AreaRelation[] = [
 	"within",
@@ -31,19 +35,16 @@ export const handleRelationshipCoverageRoutes = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const relationParameter = parsedUrl.searchParams.get("relation");
-	const limitParameter = parsedUrl.searchParams.get("limit");
-	const limit = limitParameter === null ? 25 : Number(limitParameter);
+	const limit = readWholeNumber(parsedUrl.searchParams.get("limit"), LIMIT);
 	if (
 		!geography ||
 		!boundaryRelease ||
 		(relationParameter !== null &&
 			!RELATIONS.includes(relationParameter as AreaRelation)) ||
-		!Number.isInteger(limit) ||
-		limit < 1 ||
-		limit > 100
+		limit === null
 	)
 		return invalidQuery(
-			"geography and release are required; relation must be within, contains, successor, predecessor or overlaps; limit must be an integer from 1 to 100.",
+			`geography and release are required; relation must be within, contains, successor, predecessor or overlaps; limit must be an integer from ${LIMIT.minimum} to ${LIMIT.maximum}.`,
 		);
 	const coverage = context.geographyResolver.relationshipCoverage(
 		geography,

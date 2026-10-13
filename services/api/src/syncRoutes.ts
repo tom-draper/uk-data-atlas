@@ -5,6 +5,10 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const VALIDATION = QUERY_RULES["GET /validation"];
 
 /**
  * Current-release provenance and validation routes. The release manifest
@@ -68,12 +72,16 @@ export const handleSyncRoutes = ({
 					);
 		}
 		const status = parsedUrl.searchParams.get("status");
-		if (status !== null && status !== "passed" && status !== "waived") {
-			return invalidQuery("status must be passed or waived.");
+		if (status !== null && readChoice(status, VALIDATION.status) === null) {
+			return invalidQuery(
+				`status must be ${choices(VALIDATION.status)}.`,
+			);
 		}
 		const scope = parsedUrl.searchParams.get("scope");
-		if (scope !== null && scope !== "data") {
-			return invalidQuery("scope must be data when supplied.");
+		if (scope !== null && readChoice(scope, VALIDATION.scope) === null) {
+			return invalidQuery(
+				`scope must be ${choices(VALIDATION.scope)} when supplied.`,
+			);
 		}
 		const { resources, ...report } = validationReport;
 		const filtered = resources.filter(
