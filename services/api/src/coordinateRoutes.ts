@@ -15,6 +15,10 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const CONVERT = QUERY_RULES["GET /coordinates:convert"];
 
 /**
  * Convert a coordinate without coupling a client to a boundary release. Area
@@ -50,13 +54,14 @@ export const handleCoordinateRoutes = ({
 			"to must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 		);
 	const gridReferenceDigitsText = parsedUrl.searchParams.get("gridrefDigits");
-	if (
-		gridReferenceDigitsText !== null &&
-		!/^[1-5]$/.test(gridReferenceDigitsText)
-	)
-		return invalidQuery("gridrefDigits must be an integer from 1 to 5.");
-	const gridReferenceDigits =
-		gridReferenceDigitsText === null ? 5 : Number(gridReferenceDigitsText);
+	const gridReferenceDigits = readWholeNumber(
+		gridReferenceDigitsText,
+		CONVERT.gridrefDigits,
+	);
+	if (gridReferenceDigits === null)
+		return invalidQuery(
+			`gridrefDigits must be an integer from ${CONVERT.gridrefDigits.minimum} to ${CONVERT.gridrefDigits.maximum}.`,
+		);
 	if (gridReferenceDigitsText !== null && targetCrs !== "EPSG:27700")
 		return invalidQuery(
 			"gridrefDigits can only be used with to=EPSG:27700.",

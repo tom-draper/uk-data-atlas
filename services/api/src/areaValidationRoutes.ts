@@ -4,6 +4,10 @@ import { matchManifest, matchReportResponse } from "./matchReport";
 import { readPostedRows } from "./requestRows";
 import { invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const VALIDATE = QUERY_RULES["GET /areas:validate"];
 
 /**
  * Validate many area codes or names against one published boundary release.
@@ -38,9 +42,12 @@ export const handleAreaValidationRoutes = ({
 	const parents = posted
 		? (posted.parents ?? [])
 		: parsedUrl.searchParams.getAll("parent");
-	const format = parsedUrl.searchParams.get("format") ?? "json";
-	if (format !== "json" && format !== "csv")
-		return invalidQuery("format must be json or csv.");
+	const format = readChoice(
+		parsedUrl.searchParams.get("format"),
+		VALIDATE.format,
+	);
+	if (!format)
+		return invalidQuery(`format must be ${choices(VALIDATE.format)}.`);
 	if (Boolean(geography) !== Boolean(boundaryRelease))
 		return invalidQuery(
 			"geography and release must be supplied together, or both omitted to infer a likely compiled release.",

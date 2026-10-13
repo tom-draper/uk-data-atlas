@@ -1,6 +1,10 @@
 import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { releaseKey } from "./geographyKeys";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const HEALTH = QUERY_RULES["GET /geography-health"];
 
 export const handleGeographyHealthRoutes = ({
 	context,
@@ -17,11 +21,10 @@ export const handleGeographyHealthRoutes = ({
 	const geographyResolver = context.geographyResolver;
 	const geography = parsedUrl.searchParams.get("geography");
 	const country = parsedUrl.searchParams.get("country");
+	// An empty reach filters nothing, as an absent one does.
 	const reach = parsedUrl.searchParams.get("reach");
-	if (reach && !["connected", "vintage-only", "isolated"].includes(reach))
-		return invalidQuery(
-			"reach must be connected, vintage-only or isolated.",
-		);
+	if (reach && readChoice(reach, HEALTH.reach) === null)
+		return invalidQuery(`reach must be ${choices(HEALTH.reach)}.`);
 	const releases = geographyResolver
 		.geographyHealth()
 		.filter(

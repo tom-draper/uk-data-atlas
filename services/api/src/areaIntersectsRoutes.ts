@@ -1,7 +1,6 @@
 import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
-	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
 import { cursorFor, nextPageHref, readCursor } from "./pagination";
@@ -13,6 +12,8 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
+import { readChoice, readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
 /**
  * A box query answers with identities by default, so the cost of a wide box is
@@ -20,8 +21,7 @@ import {
  * results rather than on the box: a national box is a reasonable analysis
  * question, and it is the geometry that is expensive, not the extent.
  */
-const DEFAULT_INTERSECTS_LIMIT = 200;
-const MAX_INTERSECTS_LIMIT = 1000;
+const INTERSECTS = QUERY_RULES["GET /areas:intersects"];
 
 /** Areas of one boundary release that intersect a box, with geometry only when a tier is asked for. */
 export const handleAreaIntersectsRoutes = ({
@@ -58,24 +58,25 @@ export const handleAreaIntersectsRoutes = ({
 			"bbox (west,south,east,north in WGS 84, west < east and south < north) and geography are required.",
 		);
 	}
-	const requestedTier = parsedUrl.searchParams.get("tier");
-	if (requestedTier !== null && !isGeometryTier(requestedTier)) {
+	// Undefined when no tier is asked for: the stored geometry is returned.
+	const requestedTier = readChoice(
+		parsedUrl.searchParams.get("tier"),
+		INTERSECTS.tier,
+	);
+	if (requestedTier === null) {
 		return problem(
 			400,
 			"Unknown Tier",
-			`No such generalisation tier: ${requestedTier}. Choose one of ${Object.keys(
-				GEOMETRY_TIERS,
-			).join(", ")}.`,
+			`No such generalisation tier: ${parsedUrl.searchParams.get("tier")}. Choose one of ${INTERSECTS.tier.values.join(", ")}.`,
 		);
 	}
-	const limitParameter = parsedUrl.searchParams.get("limit");
-	const limit =
-		limitParameter === null
-			? DEFAULT_INTERSECTS_LIMIT
-			: Number(limitParameter);
-	if (!Number.isInteger(limit) || limit < 1 || limit > MAX_INTERSECTS_LIMIT) {
+	const limit = readWholeNumber(
+		parsedUrl.searchParams.get("limit"),
+		INTERSECTS.limit,
+	);
+	if (limit === null) {
 		return invalidQuery(
-			`limit must be a whole number from 1 to ${MAX_INTERSECTS_LIMIT}.`,
+			`limit must be a whole number from ${INTERSECTS.limit.minimum} to ${INTERSECTS.limit.maximum}.`,
 		);
 	}
 	const cursor = readCursor(parsedUrl);
@@ -100,7 +101,7 @@ export const handleAreaIntersectsRoutes = ({
 			boundaryRelease,
 			[west!, south!, east!, north!],
 			limit,
-			requestedTier !== null,
+			requestedTier !== undefined,
 			after,
 		);
 		if (!found)
@@ -111,7 +112,7 @@ export const handleAreaIntersectsRoutes = ({
 			);
 		const matches = found.matches.map((match) => {
 			const { geometry, ...area } = match;
-			if (requestedTier === null) return area;
+			if (requestedTier === undefined) return area;
 			const simplified =
 				geometry && simplifyGeometry(geometry, requestedTier);
 			if (!simplified) return area;
@@ -150,7 +151,7 @@ export const handleAreaIntersectsRoutes = ({
 					truncated: found.more,
 					relationRule:
 						"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.",
-					...(requestedTier === null
+					...(requestedTier === undefined
 						? {
 								geometry:
 									"Not included. Pass tier to receive it, at the cost of the coordinates.",

@@ -18,7 +18,8 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { GEOMETRY_TIERS, isGeometryTier } from "./simplifyGeometry";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
 /**
  * The map resources: what is published, what each one is, and the tiles
@@ -36,9 +37,14 @@ const MVT_CONTENT_TYPE = "application/vnd.mapbox-vector-tile";
 const PMTILES_CONTENT_TYPE = "application/vnd.pmtiles";
 const PARQUET_CONTENT_TYPE = "application/vnd.apache.parquet";
 
+const FEATURES =
+	QUERY_RULES["GET /map-resources/{geography}/{release}/features"];
+const JOIN =
+	QUERY_RULES["GET /map-resources/{geography}/{release}/join/{measure-id}"];
+
 /** The whole-release downloads a tier is published in, by `format=`. */
 const FEATURE_FORMATS: Record<
-	string,
+	(typeof FEATURES.format.values)[number],
 	{ format: string; contentType: string; extension: string }
 > = {
 	geoparquet: {
@@ -52,8 +58,6 @@ const FEATURE_FORMATS: Record<
 		extension: "geojson",
 	},
 };
-
-const TIER_NAMES = Object.keys(GEOMETRY_TIERS).join(", ");
 
 const unavailable = () =>
 	problem(
@@ -71,20 +75,23 @@ const featureDownload = (
 	geography: string,
 	release: string,
 ): ApiResponse => {
-	const tier = parsedUrl.searchParams.get("tier");
+	const tier = readChoice(parsedUrl.searchParams.get("tier"), FEATURES.tier);
 	// Like a join's period, the detail is the caller's to choose: the finest
 	// is twenty times the coarsest, and neither is a safe default for both a
 	// warehouse and a web page.
-	if (tier === null || !isGeometryTier(tier))
+	if (!tier)
 		return invalidQuery(
-			`Ask for the detail to download with tier=, one of ${TIER_NAMES}.`,
+			`Ask for the detail to download with tier=, one of ${FEATURES.tier.values.join(", ")}.`,
 		);
-	const format = parsedUrl.searchParams.get("format") ?? "geoparquet";
-	const download = FEATURE_FORMATS[format];
-	if (!download)
-		return invalidQuery("format must be geoparquet or geojson.", {
+	const format = readChoice(
+		parsedUrl.searchParams.get("format"),
+		FEATURES.format,
+	);
+	if (!format)
+		return invalidQuery(`format must be ${choices(FEATURES.format)}.`, {
 			code: "invalid_format",
 		});
+	const download = FEATURE_FORMATS[format];
 	const entry = features.find(
 		(candidate) =>
 			candidate.tier === tier && candidate.format === download.format,
@@ -282,9 +289,12 @@ export const handleMapResourceRoutes = ({
 
 	if (segments.length === 6 && segments[4] === "join") {
 		const measureId = segments[5]!;
-		const format = parsedUrl.searchParams.get("format") ?? "json";
-		if (format !== "json" && format !== "parquet")
-			return invalidQuery("format must be json or parquet.", {
+		const format = readChoice(
+			parsedUrl.searchParams.get("format"),
+			JOIN.format,
+		);
+		if (!format)
+			return invalidQuery(`format must be ${choices(JOIN.format)}.`, {
 				code: "invalid_format",
 			});
 		// The map resource decides the geometry: a value may only be drawn on
