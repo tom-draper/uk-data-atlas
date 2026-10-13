@@ -309,17 +309,38 @@ test("a followed relation reads only the crosswalks that can state it", () => {
 	);
 });
 
-test("a crosswalk's header names every relation its records state", () => {
+test("an area's parents are read only from the crosswalks it is a source of", () => {
+	const { lookup, handed } = countingLookup(graph);
+	const lazy = new LazyAreaRelationshipIndex(lookup);
+
+	// The authority is the target of both ward crosswalks, so none of them
+	// can name a parent of it, and neither is read.
+	assert.equal(
+		lazy.get("localAuthority/2024/L1", (relation) => relation === "within"),
+		undefined,
+	);
+	assert.deepEqual([...handed], []);
+	assert.ok(lazy.get("ward/2024/W1", (relation) => relation === "within"));
+	assert.deepEqual(
+		[...handed].sort(),
+		[containment.id, secondContainment.id].sort(),
+	);
+});
+
+test("a crosswalk's header names every relation its records state, by side", () => {
 	for (const crosswalk of graph) {
-		const stated = relationsOf(crosswalk);
-		for (const relationships of createAreaRelationshipIndex([
-			crosswalk,
-		]).values())
-			for (const { relation } of relationships)
-				assert.ok(
-					stated.includes(relation),
-					`${crosswalk.id} ${relation}`,
-				);
+		const index = createAreaRelationshipIndex([crosswalk]);
+		for (const side of ["from", "to"] as const) {
+			const stated = relationsOf(crosswalk, side);
+			const prefix = `${crosswalk[side].geography}/${crosswalk[side].boundaryRelease}/`;
+			for (const [area, relationships] of index)
+				if (area.startsWith(prefix))
+					for (const { relation } of relationships)
+						assert.ok(
+							stated.includes(relation),
+							`${crosswalk.id} ${side} ${relation}`,
+						);
+		}
 	}
 });
 
