@@ -1,10 +1,13 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { readFiniteNumber } from "./queryParameters";
+import { choices, readChoice, readFiniteNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 import {
 	TerrainRemoteError,
 	type TerrainInterpolation,
 } from "./terrainProvider";
+
+const POINT = QUERY_RULES["GET /terrain/elevation/point"];
 
 type ElevationPointRequest = {
 	x: number;
@@ -24,13 +27,15 @@ const parseElevationPointRequest = (
 			"Invalid Terrain Point",
 			"x and y must be finite EPSG:27700 coordinates.",
 		);
-	const interpolation =
-		parsedUrl.searchParams.get("interpolation") ?? "bilinear";
-	if (interpolation !== "bilinear" && interpolation !== "nearest")
+	const interpolation = readChoice(
+		parsedUrl.searchParams.get("interpolation"),
+		POINT.interpolation,
+	);
+	if (!interpolation)
 		return problem(
 			400,
 			"Invalid Interpolation",
-			"interpolation must be bilinear or nearest.",
+			`interpolation must be ${choices(POINT.interpolation)}.`,
 		);
 	return {
 		x,

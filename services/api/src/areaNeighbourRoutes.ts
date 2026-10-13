@@ -8,6 +8,11 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import { areaKey } from "./geographyKeys";
+import { readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const NEIGHBOURS =
+	QUERY_RULES["GET /areas/{geography}/{release}/{code}/neighbours"];
 
 /**
  * Travels with a neighbour list, because the answer rests on a property of the
@@ -47,8 +52,11 @@ export const handleAreaNeighbourRoutes = ({
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const unavailable = geographyResolver.requires("geometry");
 	if (unavailable) return unavailable;
-	const touches = parsedUrl.searchParams.get("touches") ?? "edge";
-	if (touches !== "edge" && touches !== "any")
+	const touches = readChoice(
+		parsedUrl.searchParams.get("touches"),
+		NEIGHBOURS.touches,
+	);
+	if (!touches)
 		return invalidQuery(
 			"touches must be edge, for areas sharing a border, or any, which also returns areas meeting at a single point.",
 		);

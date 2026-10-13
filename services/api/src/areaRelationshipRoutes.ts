@@ -3,6 +3,12 @@ import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
 import { selectAreaChildren } from "./areaChildren";
+import { readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+// Parents and children state the same depth, and neither defaults it.
+const DEPTH =
+	QUERY_RULES["GET /areas/{geography}/{release}/{code}/parents"].depth;
 
 /** Published direct containment relationships in either direction. */
 export const handleAreaRelationshipRoutes = ({
@@ -63,13 +69,11 @@ export const handleAreaRelationshipRoutes = ({
 		relationships = selected.children;
 		childSelection = selected.selection;
 	}
-	const depthParameter = parsedUrl.searchParams.get("depth");
-	const depth = depthParameter === null ? undefined : Number(depthParameter);
-	if (
-		depth !== undefined &&
-		(!Number.isInteger(depth) || depth < 1 || depth > 20)
-	)
-		return invalidQuery("depth must be an integer from 1 to 20.");
+	const depth = readWholeNumber(parsedUrl.searchParams.get("depth"), DEPTH);
+	if (depth === null)
+		return invalidQuery(
+			`depth must be an integer from ${DEPTH.minimum} to ${DEPTH.maximum}.`,
+		);
 	return {
 		status: 200,
 		body: envelope(releaseId, {

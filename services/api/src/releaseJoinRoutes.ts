@@ -12,7 +12,8 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { GEOMETRY_TIERS, type GeometryTier } from "./simplifyGeometry";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
 /**
  * Join a caller's own rows to a boundary release: send a column of codes or
@@ -32,10 +33,7 @@ const JOIN_SUFFIX = ":join";
 // without parsing a whole release per request.
 export const MAX_GEOJSON_JOIN_BYTES = 64 * 1024 * 1024;
 
-const GEOJSON_TIERS = Object.keys(GEOMETRY_TIERS).join(", ");
-
-const isGeometryTier = (tier: string): tier is GeometryTier =>
-	tier in GEOMETRY_TIERS;
+const JOIN = QUERY_RULES["POST /boundary-releases/{geography}/{release}:join"];
 
 /** The release a join path names, or undefined when it is not a join path. */
 export const joinRelease = (segments: string[]) =>
@@ -79,12 +77,17 @@ export const handleReleaseJoinRoutes = (
 			"Method Not Allowed",
 			"A join reads your rows from the request body, so it is a POST. Send JSON or CSV with an area column and a value column.",
 		);
-	const format = parsedUrl.searchParams.get("format") ?? "json";
-	if (format !== "json" && format !== "geojson")
-		return invalidQuery("format must be json or geojson.");
-	const tier = parsedUrl.searchParams.get("tier") ?? "medium";
-	if (format === "geojson" && !isGeometryTier(tier))
-		return invalidQuery(`tier must be one of ${GEOJSON_TIERS}.`);
+	const format = readChoice(
+		parsedUrl.searchParams.get("format"),
+		JOIN.format,
+	);
+	if (!format) return invalidQuery(`format must be ${choices(JOIN.format)}.`);
+	// The tier only matters to the GeoJSON, so only that refuses a bad one.
+	const tier = readChoice(parsedUrl.searchParams.get("tier"), JOIN.tier);
+	if (format === "geojson" && !tier)
+		return invalidQuery(
+			`tier must be one of ${JOIN.tier.values.join(", ")}.`,
+		);
 
 	const rows = readPostedRows(body, { withValues: true });
 	if ("status" in rows) return rows;
