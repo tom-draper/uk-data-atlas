@@ -8,12 +8,7 @@ import { measureCapability } from "./measureCapability";
 import type { AreaIdentity } from "./resolver/areas";
 import type { RouteRequest } from "./routing";
 import { releaseMonth } from "./releaseForDate";
-import type { ApiResponse } from "./routeResponse";
-
-const requirementDetail = (response: ApiResponse | undefined) =>
-	response && "detail" in response.body
-		? response.body.detail
-		: "Catalogue data is unavailable.";
+import { requirementDetail } from "./routeResponse";
 
 /**
  * What the API can answer for one area, as `include=capabilities` expands it:

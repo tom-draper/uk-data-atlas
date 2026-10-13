@@ -2,6 +2,7 @@ import {
 	envelope,
 	invalidQuery,
 	problem,
+	requirementDetail,
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -10,11 +11,6 @@ import { notBuilt, unsupported } from "./capability";
 import { areaKey } from "./geographyKeys";
 import type { NamedLocation } from "./namedLocations";
 import { paginate } from "./pagination";
-
-const requirementDetail = (response: ApiResponse | undefined) =>
-	response && "detail" in response.body
-		? response.body.detail
-		: "Catalogue data is unavailable.";
 
 export const selectedAsOf = (
 	parsedUrl: URL,
