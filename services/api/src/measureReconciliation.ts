@@ -498,8 +498,9 @@ export const availableReconciliations = (
 							from: crosswalk.from,
 							against: crosswalk.to,
 							periods,
+							latestPeriod: periods.at(-1),
 							// The latest period both partitions publish.
-							href: `/v1/measures/${measure.id}/reconciliation?crosswalk=${crosswalk.id}&period=${periods.at(-1)}`,
+							href: `/v1/documents/measure-${measure.id}.json`,
 						},
 					]
 				: [];
@@ -576,7 +577,8 @@ export const availableReconciliations = (
 					from: path.from,
 					against: path.to,
 					periods,
-					href: `/v1/measures/${measure.id}/reconciliation?path=${encodeURIComponent(path.id)}&period=${latest}`,
+					latestPeriod: periods.at(-1),
+					href: `/v1/documents/measure-${measure.id}.json`,
 				},
 			];
 		});

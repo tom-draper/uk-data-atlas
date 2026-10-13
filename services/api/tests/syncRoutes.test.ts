@@ -3,7 +3,7 @@ import test from "node:test";
 import type { RouteContext, RouteRequest } from "../src/routing";
 import { handleRoute } from "../src/routeHandlers";
 import { handleSyncRoutes } from "../src/syncRoutes";
-import { route as routeRequest } from "../src/routes";
+import { reportRequest as routeRequest } from "./evidenceFixtures";
 import { testContext } from "./routeFixtures";
 
 const context = (overrides: Partial<RouteContext> = {}): RouteContext =>

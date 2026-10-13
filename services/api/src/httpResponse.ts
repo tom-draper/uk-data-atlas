@@ -1,3 +1,4 @@
+import { publicJson } from "./publicJson";
 import { createHash } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
 import type { CachedAnswer } from "./responseCache";
@@ -195,7 +196,7 @@ export const httpResponse = (
 	const isHead = request.method === "HEAD";
 	const result = route(isHead ? "GET" : request.method);
 	const represented =
-		result.representation?.body ?? `${JSON.stringify(result.body)}\n`;
+		result.representation?.body ?? `${publicJson(result.body)}\n`;
 	const stored = isStoredFile<StoredFile>(represented)
 		? represented
 		: undefined;

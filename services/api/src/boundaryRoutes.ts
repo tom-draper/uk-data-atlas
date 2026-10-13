@@ -199,6 +199,10 @@ export const handleBoundaryRoutes = ({
 				status: 200,
 				body: envelope(releaseId, {
 					...release,
+					documents: {
+						validation: "/v1/documents/validation-report.json",
+						health: "/v1/documents/geography-health.json",
+					},
 					downloads: releaseDownloads(
 						context.mapResources,
 						release.geography,

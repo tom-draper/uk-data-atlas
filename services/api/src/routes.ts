@@ -1,3 +1,4 @@
+import { unexpectedQueryParameter } from "./operationTemplates";
 import { handleRoute, handleRouteAsync } from "./routeHandlers";
 import type { RequestBody, RouteContext, RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
@@ -30,6 +31,19 @@ const buildRequest = (
 	body: RequestBody | undefined,
 ): RouteRequest | ApiResponse => {
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
+	const matched = context.operationMatcher?.(parsedUrl.pathname);
+	const unexpected = unexpectedQueryParameter(
+		matched?.operation,
+		method,
+		parsedUrl.pathname + parsedUrl.search,
+	);
+	if (unexpected)
+		return problem(
+			400,
+			"Unknown Query Parameter",
+			`This operation does not accept the query parameter ${unexpected.parameter}.`,
+			{ code: "unknown_query_parameter", ...unexpected },
+		);
 	const segments = parsedUrl.pathname
 		.split("/")
 		.filter(Boolean)

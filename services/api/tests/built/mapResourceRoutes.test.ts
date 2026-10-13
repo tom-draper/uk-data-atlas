@@ -318,7 +318,7 @@ test("refuses a features download without a tier it publishes", () => {
 test("serves a join table as Parquet holding exactly the JSON values", () => {
 	const url =
 		`/v1/map-resources/${RESOURCE}/join/travel-to-work-car` +
-		"?period=2021&geography=localAuthority&boundaryYear=2023";
+		"?period=2021&geography=localAuthority&codeYear=2023";
 	const json = data(url) as unknown as {
 		values: Array<{
 			id: number;
@@ -377,7 +377,7 @@ test("numbers join values with the ids the tiles actually carry", () => {
 	// that covers everything, so this is the case that discriminates.
 	const join = data(
 		`/v1/map-resources/${RESOURCE}/join/travel-to-work-car` +
-			"?period=2021&geography=localAuthority&boundaryYear=2023",
+			"?period=2021&geography=localAuthority&codeYear=2023",
 	) as unknown as {
 		values: Array<{ id: number; code: string }>;
 		areasWithoutValue: number;

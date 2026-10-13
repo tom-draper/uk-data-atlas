@@ -10,6 +10,15 @@ export const handleCatalogueRoutes = ({
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	const { dataCatalog } = context;
+	const withEvidence = <T extends { id: string }>(measure: T) =>
+		context.documents?.has(`measure-${measure.id}`)
+			? {
+					...measure,
+					documents: {
+						evidence: `/v1/documents/measure-${measure.id}.json`,
+					},
+				}
+			: measure;
 	if (segments[0] !== "v1") return undefined;
 	if (segments[1] === "datasets" && segments.length === 2)
 		return dataCatalog
@@ -47,8 +56,10 @@ export const handleCatalogueRoutes = ({
 					body: envelope(
 						releaseId,
 						query === null
-							? dataCatalog.measures
-							: searchMeasures(dataCatalog, query),
+							? dataCatalog.measures.map(withEvidence)
+							: searchMeasures(dataCatalog, query).map(
+									withEvidence,
+								),
 					),
 				}
 			: problem(
@@ -68,7 +79,7 @@ export const handleCatalogueRoutes = ({
 			(candidate) => candidate.id === segments[2],
 		);
 		return measure
-			? { status: 200, body: envelope(releaseId, measure) }
+			? { status: 200, body: envelope(releaseId, withEvidence(measure)) }
 			: problem(
 					404,
 					"Not Found",

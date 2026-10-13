@@ -151,9 +151,7 @@ updated against a local build on 2026-09-30.
    `geography`, `release` (or `date` to let the API pick), `place` for
    anything a person might type, `period` for observation time. Done for
    `place`: every data route takes it in place of `areaCode`, `locationId`,
-   `targetCode` and `regionCode`. Still open: the data routes name their
-   source partition's code vintage `boundaryYear`, which is not a boundary
-   release, so it needs its own word rather than `release`.
+   `targetCode` and `regionCode`. Done: `codeYear` names the source partition's area-code vintage. `release` names a boundary release.
 5. **Accept what people have.** Wherever an area is expected, accept a code,
    a name, a postcode or a named location, and resolve it the same way
    `/data/{measure}/value?place=` does, reporting the other matches.
@@ -165,12 +163,9 @@ updated against a local build on 2026-09-30.
    Serve them as documents linked from the resources they describe, not as a
    parallel set of query routes.
 
-## Surface: 87 paths to a front door
+## Surface: 70 paths to a front door
 
-The API had 93 documented paths on 2026-09-29, and 89 after the first merges
-below. Four area and location report paths have since folded into canonical
-resources, leaving 87. Many answer the same question in slightly different ways, or expose
-build internals as routes. Proposed shape:
+The current contract has 70 paths after aggregation and evidence routes were folded into value and static documents. The front door below answers common questions; advanced operations remain documented separately.
 
 ### Front door
 
@@ -210,11 +205,8 @@ build internals as routes. Proposed shape:
   measure leaves no choice about, its newest boundary year and its latest
   period, stated in `defaults`. `/series`, `/change` and `/compare` take an
   area name as well as a code, and a name meaning several areas is a 409
-  with a request for each. Still to do: `/compare` names its two areas
-  `baselineAreaCode` and `comparisonAreaCode` rather than `place`, and
-  `/data/{measure}` itself still needs its partition named.
-- `/data/{measure}/aggregate` folds into `value`, which already dispatches to
-  it.
+  with a request for each. Done: `/compare` accepts `baselinePlace` and `comparisonPlace`. `/data/{measure}` defaults a partition when the source leaves one clear choice.
+- Done: `/data/{measure}/aggregate` is removed. `value` answers named places and accepts explicit source and membership parameters for a detailed aggregate.
 
 ### Publish as documents, not routes
 
@@ -225,9 +217,7 @@ build internals as routes. Proposed shape:
 routes. These are the evidence that the archive is correct. Link them from
 the release and measure resources, and serve them as static files.
 
-`geography-inventory` and `analysis-geography-validation` now ship as static
-documents at `/documents/{document-id}.json`; move the remaining evidence
-routes once their query-specific summaries have equivalent build artifacts.
+The evidence routes now ship as static documents at `/documents/{document-id}.json`. Every measure links to its quality, coverage plans, compatibility, conversion support and period-by-period reconciliations. Releases link to archive validation and geography health. `pnpm build:documents` produces the reports before `build:atlas-release` pins their manifest.
 
 ### Park
 

@@ -71,16 +71,16 @@ export const handleDataTransformRoutes = ({
 		);
 	const requestedGeography = parsedUrl.searchParams.get("geography");
 	const baselineAreaCodeParameter =
-		parsedUrl.searchParams.get("baselineAreaCode");
+		parsedUrl.searchParams.get("baselinePlace");
 	const comparisonAreaCodeParameter =
-		parsedUrl.searchParams.get("comparisonAreaCode");
+		parsedUrl.searchParams.get("comparisonPlace");
 	const nameArea = (text: string | null, geography: string | null) =>
 		areaNamedBy({
 			geographyResolver: context.geographyResolver,
 			measure,
 			place: text,
 			geography,
-			boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+			boundaryYear: parsedUrl.searchParams.get("codeYear"),
 		});
 	const baselineNamed = nameArea(
 		baselineAreaCodeParameter,
@@ -112,8 +112,8 @@ export const handleDataTransformRoutes = ({
 		baselineNamed,
 	);
 	for (const [parameter, text, named] of [
-		["baselineAreaCode", baselineAreaCodeParameter, baselinePlace],
-		["comparisonAreaCode", comparisonAreaCodeParameter, comparisonPlace],
+		["baselinePlace", baselineAreaCodeParameter, baselinePlace],
+		["comparisonPlace", comparisonAreaCodeParameter, comparisonPlace],
 	] as const) {
 		const refusal = namedAreaRefusal({
 			parsedUrl,
@@ -135,7 +135,7 @@ export const handleDataTransformRoutes = ({
 	const requested = {
 		period: parsedUrl.searchParams.get("period"),
 		geography: requestedGeography ?? inferredGeography,
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
 	const defaults = defaultSource(measure, requested);
@@ -147,16 +147,12 @@ export const handleDataTransformRoutes = ({
 	const comparisonAreaCode =
 		comparisonArea?.code ?? comparisonAreaCodeParameter;
 	if (!baselineAreaCode || !comparisonAreaCode)
-		return invalidQuery(
-			"baselineAreaCode and comparisonAreaCode are required.",
-		);
+		return invalidQuery("baselinePlace and comparisonPlace are required.");
 	if (baselineAreaCode === comparisonAreaCode)
-		return invalidQuery(
-			"baselineAreaCode and comparisonAreaCode must differ.",
-		);
+		return invalidQuery("baselinePlace and comparisonPlace must differ.");
 	if (period === null || geography === null || boundaryYear === null)
 		return invalidQuery(
-			`${measureId} compares two areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
+			`${measureId} compares two areas within one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	const resolved = resolveObservations(context, {
 		measureId,

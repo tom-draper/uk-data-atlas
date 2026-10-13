@@ -276,7 +276,7 @@ export const runSmoke = async (
 								periods: string[];
 								sourceGeography: {
 									type: string;
-									boundaryYear: number;
+									codeYear: number;
 								};
 							}>;
 						}>
@@ -289,7 +289,7 @@ export const runSmoke = async (
 					measure && source && period,
 					"no measure has a published period",
 				);
-				const path = `/v1/data/${measure.id}?period=${period}&geography=${source.sourceGeography.type}&boundaryYear=${source.sourceGeography.boundaryYear}&limit=1`;
+				const path = `/v1/data/${measure.id}?period=${period}&geography=${source.sourceGeography.type}&codeYear=${source.sourceGeography.codeYear}&limit=1`;
 				const { body: data } =
 					await json<
 						Envelope<{ records: Array<{ areaCode: string }> }>
@@ -304,15 +304,11 @@ export const runSmoke = async (
 		[
 			"validation",
 			async () => {
-				const { body } =
-					await json<Envelope<{ summary: { checkCount: number } }>>(
-						"/v1/validation",
-					);
-				expect(
-					body.data.summary.checkCount > 0,
-					"the report has no checks",
-				);
-				return `${body.data.summary.checkCount} checks`;
+				const { body } = await json<{
+					summary: { checkCount: number };
+				}>("/v1/documents/validation-report.json");
+				expect(body.summary.checkCount > 0, "the report has no checks");
+				return `${body.summary.checkCount} checks`;
 			},
 		],
 		[

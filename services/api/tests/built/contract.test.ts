@@ -9,7 +9,7 @@ import { CAPABILITY_STATUSES } from "../../src/capability";
 import { CONVERSION_METHODS } from "../../src/conversion";
 import { COMPATIBILITY_STATUSES } from "../../src/measureCompatibility";
 import { PROBLEM_CODES } from "../../src/problemCodes";
-import { route } from "../../src/routes";
+import { route as domainRoute } from "../../src/routes";
 import { GEOMETRY_TIERS } from "../../src/simplifyGeometry";
 import { readApiCatalogues } from "../../src/server";
 import {
@@ -30,6 +30,19 @@ import {
  * agree; this checks the routes behind them are really served, against the
  * compiled catalogues the server loads, and that the README agrees too.
  */
+const route = (
+	...args: Parameters<typeof domainRoute>
+): ReturnType<typeof domainRoute> => {
+	const result = domainRoute(...args);
+	const wire = httpResponse({ method: args[0], headers: {} }, () => result);
+	if (
+		typeof wire.body === "string" &&
+		/[/+]json/.test(wire.headers["content-type"] ?? "")
+	)
+		return { ...result, body: JSON.parse(wire.body) };
+	return result;
+};
+
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const catalogues = readApiCatalogues(apiRoot);
 
@@ -436,10 +449,10 @@ test("names each operation's most likely refusal, and produces it", () => {
 const PAGINATED = [
 	"/v1/areas?geography=ward&release=2024-12-uk-bgc",
 	"/v1/crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/records",
-	"/v1/data/population?period=2022&geography=ward&boundaryYear=2023",
-	"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
-	"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023",
-	"/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
+	"/v1/data/population?period=2022&geography=ward&codeYear=2023",
+	"/v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+	"/v1/data/population/rankings?period=2022&geography=ward&codeYear=2023",
+	"/v1/data/population/change?geography=localAuthority&codeYear=2023&startPeriod=2011&endPeriod=2022",
 ];
 
 test("pages every cursor route the same way", () => {
@@ -524,14 +537,21 @@ const matchOperation = catalogues.operationMatcher;
 
 /** The JSON a client receives, and its media type, or undefined when not JSON. */
 const servedJson = (response: ReturnType<typeof route>) => {
-	if (response.status >= 400)
-		return { mediaType: "application/problem+json", body: response.body };
-	if (!response.representation)
-		return { mediaType: "application/json", body: response.body };
-	const mediaType = response.representation.contentType.split(";")[0]!.trim();
-	return /[/+]json$/.test(mediaType) &&
-		typeof response.representation.body === "string"
-		? { mediaType, body: JSON.parse(response.representation.body) }
+	const wire = httpResponse({ method: "GET", headers: {} }, () => response);
+	const mediaType = wire.headers["content-type"]?.split(";")[0]!.trim();
+	if (
+		mediaType === "application/json" &&
+		typeof wire.body === "object" &&
+		"path" in wire.body
+	)
+		return {
+			mediaType,
+			body: JSON.parse(readFileSync(wire.body.path, "utf8")),
+		};
+	return mediaType &&
+		/[/+]json$/.test(mediaType) &&
+		typeof wire.body === "string"
+		? { mediaType, body: JSON.parse(wire.body) }
 		: undefined;
 };
 
@@ -620,7 +640,7 @@ test("serves each representation the OpenAPI document declares", () => {
 		);
 	};
 	const data =
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=1";
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1";
 	assert.deepEqual(
 		[
 			served(data),
@@ -653,17 +673,17 @@ test("serves each representation the OpenAPI document declares", () => {
 
 /** The derivative data routes, each with a query that reaches its work. */
 const DERIVATIVE = [
-	"/v1/data/population/series?place=E05000932&geography=ward&boundaryYear=2023",
-	"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023",
-	"/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
-	"/v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039",
-	"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&place=location/north-west",
-	"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+	"/v1/data/population/series?place=E05000932&geography=ward&codeYear=2023",
+	"/v1/data/population/rankings?period=2022&geography=ward&codeYear=2023",
+	"/v1/data/population/change?geography=localAuthority&codeYear=2023&startPeriod=2011&endPeriod=2022",
+	"/v1/data/population/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000932&comparisonPlace=W05001039",
+	"/v1/data/population/value?period=2022&geography=ward&codeYear=2023&place=location/north-west",
+	"/v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
 ];
 
 test("keeps a geometry release from standing in for a conversion", () => {
 	const base =
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=3";
+		"/v1/data/population?period=2022&geography=ward&codeYear=2023&limit=3";
 	const sourceExact = route("GET", base, catalogues);
 	const joined = route("GET", `${base}&release=2023-05-uk-bgc`, catalogues);
 	const records = (response: typeof sourceExact) =>
@@ -896,7 +916,7 @@ test("keeps the resolution contract's one exception the only one", () => {
 		),
 	);
 	assert.ok(
-		asking.length >= 7,
+		asking.length >= 4,
 		`only ${asking.length} routes ask the resolver`,
 	);
 	assert.match(
@@ -976,6 +996,23 @@ test("serves the analysis contract's reviewed-support routes", () => {
  * fixture, because the promise is about what the compiled catalogue says.
  */
 const capabilityAnswers = (url: string) => {
+	const requested = new URL(url, "http://localhost");
+	if (
+		requested.pathname.startsWith("/v1/measures/") &&
+		requested.pathname.endsWith("/coverage")
+	) {
+		const id = requested.pathname.split("/")[3]!;
+		const file = catalogues.documents.get(`measure-${id}`);
+		assert.ok(file, id);
+		const document = JSON.parse(readFileSync(file.path, "utf8"));
+		const target = document.data.coveragePlans.find(
+			(entry: { geography: string; release: string }) =>
+				entry.geography === requested.searchParams.get("geography") &&
+				entry.release === requested.searchParams.get("release"),
+		);
+		assert.ok(target, url);
+		return [target.capability];
+	}
 	const response = route("GET", url, catalogues);
 	assert.equal(response.status, 200, url);
 	const data = (response.body as { data: Record<string, any> }).data;

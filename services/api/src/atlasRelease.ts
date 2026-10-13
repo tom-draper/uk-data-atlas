@@ -248,6 +248,14 @@ export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
 	};
 	const artifacts = [
 		...RELEASE_ARTIFACTS.map(artifactReference),
+		...(existsSync(join(publicDirectory, "evidence-documents.json"))
+			? [
+					artifactReference({
+						id: "evidence-documents",
+						path: "evidence-documents.json",
+					}),
+				]
+			: []),
 		...cataloguedLocationProjectionArtifacts(publicDirectory).map(
 			artifactReference,
 		),

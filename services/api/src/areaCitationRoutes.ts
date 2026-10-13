@@ -280,7 +280,7 @@ export const areaCitation = (
 					const href =
 						id === "atlas"
 							? "/v1/validation"
-							: `/v1/validation/${id}`;
+							: "/v1/documents/validation-report.json";
 					return resource
 						? { ...resource, href }
 						: { id, status: "not-validated" as const };

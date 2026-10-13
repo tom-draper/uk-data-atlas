@@ -18,19 +18,12 @@ import { prepareAggregateTarget } from "./aggregatePreparation";
 import { statedDefaults } from "./dataDefaults";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
-export const handleDataAggregateRoutes = ({
+export const aggregateValue = ({
 	context,
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 4 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "data" ||
-		segments[3] !== "aggregate"
-	)
-		return undefined;
+}: RouteRequest): ApiResponse => {
 	const { dataCatalog, measureObservations } = context;
 	const measureId = segments[2] as string;
 	const resolvedMeasure = resolveAggregationMeasure({

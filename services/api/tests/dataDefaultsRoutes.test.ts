@@ -28,7 +28,7 @@ test("data analysis routes select and state the current source defaults", () => 
 
 	const comparison = dataOf(
 		routeWithData(
-			"/v1/data/population/compare?geography=localAuthority&baselineAreaCode=E06000001&comparisonAreaCode=N09000001",
+			"/v1/data/population/compare?geography=localAuthority&baselinePlace=E06000001&comparisonPlace=N09000001",
 		),
 	);
 	assert.deepEqual(comparison.defaults, {
@@ -47,7 +47,7 @@ test("data analysis routes select and state the current source defaults", () => 
 
 	const aggregate = dataOf(
 		routeWithData(
-			"/v1/data/population/aggregate?place=N92000002&geography=localAuthority",
+			"/v1/data/population/value?place=N92000002&geography=localAuthority",
 		),
 	);
 	assert.deepEqual(aggregate.defaults, {

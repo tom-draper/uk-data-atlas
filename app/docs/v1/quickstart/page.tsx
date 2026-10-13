@@ -84,8 +84,8 @@ export default function QuickstartPage() {
 					<P>
 						To fetch data yourself, ask for a measure, a `period`
 						and the set of areas it was published on. That set is
-						named by `geography` and `boundaryYear`: here, wards as
-						they were coded in 2023.
+						named by `geography` and `codeYear`: here, wards as they
+						were coded in 2023.
 					</P>
 					<SpecExample id="getMeasureObservations" />
 					<P>

@@ -11,7 +11,7 @@ import {
 	createRelationshipPathIndex,
 } from "../src/relationshipPaths";
 import {
-	route,
+	report as route,
 	registry,
 	geographyInventory,
 	areaLookup,

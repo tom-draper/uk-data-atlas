@@ -143,7 +143,7 @@ export const handleDataConversionRoutes = ({
 	}
 	const period = parsedUrl.searchParams.get("period");
 	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+	const boundaryYear = parsedUrl.searchParams.get("codeYear");
 	// The three are documented as required here, so a caller who leaves one out
 	// is answered the same way whatever the measure. Which partition they name
 	// is the resolver's to decide.

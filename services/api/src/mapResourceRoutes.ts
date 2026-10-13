@@ -332,7 +332,7 @@ export const handleMapResourceRoutes = ({
 			measureId,
 			periods: [period],
 			geography: parsedUrl.searchParams.get("geography"),
-			boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+			boundaryYear: parsedUrl.searchParams.get("codeYear"),
 			release,
 		});
 		if (resolved.kind === "refusal") return refused(resolved.refusal);

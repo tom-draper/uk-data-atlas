@@ -12,7 +12,7 @@ import { type AtlasClient, createClient, type Step } from "./client";
 export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const steps: Step[] = [];
 	const measureId = "road-collisions";
-	const source = "geography=lsoa&boundaryYear=2021";
+	const source = "geography=lsoa&codeYear=2021";
 	const analysisGeography = "localAuthority/2023-05-uk-bgc-v2";
 	const period = "2025";
 	const comparisonPeriod = "2024";
@@ -23,14 +23,14 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		label: string;
 		aggregation: { kind: string };
 		sources: Array<{
-			sourceGeography: { type: string; boundaryYear: number };
+			sourceGeography: { type: string; codeYear: number };
 			periods: string[];
 		}>;
 	}>(`/v1/measures/${measureId}`);
 	const sourcePartition = measure.data.sources.find(
 		(candidate) =>
 			candidate.sourceGeography.type === "lsoa" &&
-			candidate.sourceGeography.boundaryYear === 2021,
+			candidate.sourceGeography.codeYear === 2021,
 	);
 	if (!sourcePartition)
 		throw new Error("no LSOA collision partition to trend");
@@ -46,7 +46,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		basis?: string;
 		conversion?: { id: string; method: string };
 	}>(
-		`/v1/analysis:plan?measure=${measureId}&period=${period}&to=${analysisGeography}&geography=lsoa&boundaryYear=2021`,
+		`/v1/analysis:plan?measure=${measureId}&period=${period}&to=${analysisGeography}&geography=lsoa&codeYear=2021`,
 	);
 	if (plan.data.status !== "available" || plan.data.basis !== "derived")
 		throw new Error("the reviewed collision conversion is not available");
@@ -85,7 +85,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 
 	// 4. The release-pinned receipt ties the source artifact and crosswalk to
 	// exact input/output totals, so the conversion can be independently cited.
-	const receipt = await client.get<{
+	const receipt = await client.document<{
 		supports: Array<{
 			measureId: string;
 			analysisGeography: { geography: string; boundaryRelease: string };
@@ -99,7 +99,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 				outputTotal: number;
 			}>;
 		}>;
-	}>("/v1/analysis-geography-validation");
+	}>("/v1/documents/analysis-geography-validation.json");
 	const evidence = receipt.data.supports.find(
 		(candidate) =>
 			candidate.measureId === measureId &&
@@ -132,7 +132,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		status: "available" | "not-comparable";
 		reason?: string;
 	}>(
-		`/v1/analysis:plan?measure=${measureId}&period=2023&to=${analysisGeography}&geography=lsoa&boundaryYear=2021`,
+		`/v1/analysis:plan?measure=${measureId}&period=2023&to=${analysisGeography}&geography=lsoa&codeYear=2021`,
 	);
 	if (unavailablePlan.data.status !== "not-comparable")
 		throw new Error("an unsupported period must be not-comparable");

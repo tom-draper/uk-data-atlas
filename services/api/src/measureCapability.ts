@@ -130,7 +130,7 @@ export const conversionCoverageOnto = (
 											period,
 										},
 										method: result.method,
-										href: `/v1/data/${measure.id}/convert?period=${period}&geography=${source.sourceGeography.type}&boundaryYear=${source.sourceGeography.boundaryYear}&crosswalk=${summary.id}`,
+										href: `/v1/data/${measure.id}/convert?period=${period}&geography=${source.sourceGeography.type}&codeYear=${source.sourceGeography.boundaryYear}&crosswalk=${summary.id}`,
 									},
 									targets: new Set(
 										result.records.map(

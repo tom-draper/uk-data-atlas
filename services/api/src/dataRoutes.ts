@@ -72,7 +72,7 @@ export const handleDataRoutes = ({
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
 		return invalidQuery(
-			`This table lists a partition's areas as published, and a curated location is not one of them. /v1/data/${measureId}/aggregate sums it from its members.`,
+			`This table lists a partition's areas as published, and a curated location is not one of them. /v1/data/${measureId}/value sums it from its members.`,
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
 	const named = areaNamedBy({
@@ -80,7 +80,7 @@ export const handleDataRoutes = ({
 		measure,
 		place: placeText,
 		geography: requestedGeography(parsedUrl.searchParams, place),
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 	});
 	const namedRefusal = namedAreaRefusal({
 		parsedUrl,
@@ -97,7 +97,7 @@ export const handleDataRoutes = ({
 			requestedGeography(parsedUrl.searchParams, place) ??
 			area?.geography ??
 			null,
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
 	const defaults = defaultSource(measure, requested);
@@ -109,7 +109,7 @@ export const handleDataRoutes = ({
 	// is the resolver's to decide rather than this route's.
 	if (period === null || geography === null || boundaryYear === null) {
 		return invalidQuery(
-			`${measureId} lists the areas of one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
+			`${measureId} lists the areas of one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	}
 	const requestedRelease = parsedUrl.searchParams.get("release");

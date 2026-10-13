@@ -8,11 +8,6 @@ import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
 import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
 import { handleCoordinateRoutes } from "./coordinateRoutes";
-import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
-import { handleCoveragePlanRoutes } from "./coveragePlanRoutes";
-import { handleMeasureReconciliationRoutes } from "./measureReconciliationRoutes";
-import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
-import { handleMeasureQualityRoutes } from "./measureQualityRoutes";
 import { handleDataRoutes } from "./dataRoutes";
 import { handleDataSeriesRoutes } from "./dataSeriesRoutes";
 import { handleDataRankingRoutes } from "./dataRankingRoutes";
@@ -24,7 +19,6 @@ import {
 	handlePostcodeRoutes,
 } from "./postcodeRoutes";
 import { handleDataTransformRoutes } from "./dataTransformRoutes";
-import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
 import { handleAnalysisGeographyRoutes } from "./analysisGeographyRoutes";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
@@ -44,8 +38,6 @@ import { handleAreaOverlapRoutes } from "./areaOverlapRoutes";
 import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
-import { handleRelationshipRepairRoutes } from "./relationshipRepairRoutes";
-import { handleGeographyHealthRoutes } from "./geographyHealthRoutes";
 import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
@@ -108,9 +100,6 @@ const documentPath = v1("documents", { length: 3 });
 const datasetPath = v1("datasets");
 const measureBasePath = v1("measures", { maxLength: 3 });
 const analysisPath = v1(["analysis-geographies", "analysis:plan"]);
-const conversionSupportPath = v1("measures", {
-	at: { 3: "conversion-support" },
-});
 const boundaryPath = v1([
 	"geographies",
 	"boundary-releases",
@@ -172,40 +161,9 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleCoordinateRoutes,
 	},
 	{
-		name: "measure-compatibility",
-		owns: v1("measures", { at: { 3: "compatibility" } }),
-		handle: handleMeasureCompatibilityRoutes,
-	},
-	{
-		name: "measure-reconciliation",
-		owns: v1("measures", { at: { 3: "reconciliation" } }),
-		handle: handleMeasureReconciliationRoutes,
-	},
-	{
-		name: "measure-coverage-plan",
-		owns: v1("measures", { at: { 3: "coverage-plan" } }),
-		handle: handleCoveragePlanRoutes,
-	},
-	{
-		name: "measure-coverage",
-		owns: v1("measures", { at: { 3: "coverage" } }),
-		handle: handleMeasureCoverageRoutes,
-	},
-	{
-		name: "measure-quality",
-		owns: v1("measures", { at: { 3: "quality" } }),
-		handle: handleMeasureQualityRoutes,
-	},
-	{
 		name: "analysis-geographies",
-		owns: (segments) =>
-			analysisPath(segments) || conversionSupportPath(segments),
+		owns: (segments) => analysisPath(segments),
 		handle: handleAnalysisGeographyRoutes,
-	},
-	{
-		name: "geography-health",
-		owns: v1("geography-health", { length: 2 }),
-		handle: handleGeographyHealthRoutes,
 	},
 	{
 		name: "data",
@@ -252,11 +210,6 @@ const routeFamilies: RouteFamily[] = [
 		name: "data-transforms",
 		owns: v1("data", { length: 4, at: { 3: "compare" } }),
 		handle: handleDataTransformRoutes,
-	},
-	{
-		name: "data-aggregate",
-		owns: v1("data", { length: 4, at: { 3: "aggregate" } }),
-		handle: handleDataAggregateRoutes,
 	},
 	{
 		name: "data-conversion",
@@ -347,13 +300,8 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleRelationshipRoutes,
 	},
 	{
-		name: "relationship-repairs",
-		owns: v1("relationship-repairs", { length: 2 }),
-		handle: handleRelationshipRepairRoutes,
-	},
-	{
 		name: "governance",
-		owns: v1(["attribution", "corrections", "relationship-candidates"]),
+		owns: v1("attribution"),
 		handle: handleGovernanceRoutes,
 	},
 	{
@@ -373,7 +321,7 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "sync",
-		owns: v1(["atlas-release", "validation"]),
+		owns: v1("atlas-release"),
 		handle: handleSyncRoutes,
 	},
 ];

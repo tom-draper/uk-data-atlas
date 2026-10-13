@@ -76,7 +76,7 @@ export const handleDataSeriesRoutes = ({
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
 		return invalidQuery(
-			`A series is one area's. A curated location is summed from its members by /v1/data/${measureId}/aggregate, or answered by /v1/data/${measureId}/value?place=${encodeURIComponent(`location/${place.id}`)}.`,
+			`A series is one area's. A curated location is summed from its members by /v1/data/${measureId}/value, or answered by /v1/data/${measureId}/value?place=${encodeURIComponent(`location/${place.id}`)}.`,
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
 	const named = areaNamedBy({
@@ -84,7 +84,7 @@ export const handleDataSeriesRoutes = ({
 		measure,
 		place: placeText,
 		geography: requestedGeography(parsedUrl.searchParams, place),
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 	});
 	const namedRefusal = namedAreaRefusal({
 		parsedUrl,
@@ -101,7 +101,7 @@ export const handleDataSeriesRoutes = ({
 			requestedGeography(parsedUrl.searchParams, place) ??
 			area?.geography ??
 			null,
-		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		boundaryYear: parsedUrl.searchParams.get("codeYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
 	const partition = selectSourcePartition({

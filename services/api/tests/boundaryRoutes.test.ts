@@ -34,6 +34,10 @@ test("gets one boundary release", () => {
 	assert.equal(response.status, 200);
 	assert.deepEqual("data" in response.body && response.body.data, {
 		...registry.releases[0],
+		documents: {
+			validation: "/v1/documents/validation-report.json",
+			health: "/v1/documents/geography-health.json",
+		},
 		downloads: {
 			status: "unavailable",
 			reason: "No map resource has been compiled for this release.",

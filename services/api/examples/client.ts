@@ -35,6 +35,17 @@ export const createClient = (baseUrl: string) => {
 			}
 			return body as { data: T; atlasRelease: string };
 		},
+		async document<T>(
+			path: string,
+		): Promise<{ data: T; atlasRelease: string }> {
+			const { status, body, headers } = await call(path);
+			if (status !== 200)
+				throw new Error(`GET ${path} answered ${status}`);
+			return {
+				data: body,
+				atlasRelease: headers.get("atlas-release") ?? "",
+			};
+		},
 		/** The refusal a request is expected to produce, for a worked example. */
 		async refusal(path: string): Promise<Problem> {
 			const { status, body } = await call(path);

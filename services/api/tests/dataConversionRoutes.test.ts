@@ -18,7 +18,7 @@ import {
 
 test("converts a measure only through a crosswalk the caller names", () => {
 	const base =
-		"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023";
+		"/v1/data/population/convert?period=2022&geography=ward&codeYear=2023";
 
 	// The route never picks a conversion path on the caller's behalf.
 	assert.equal(routeWithData(base).status, 400);
@@ -64,7 +64,7 @@ test("converts a measure only through a crosswalk the caller names", () => {
 
 	// A share cannot be regrouped by adding it up.
 	const intensive = routeWithData(
-		`/v1/data/mobile-5g-coverage/convert?period=2025&geography=localAuthority&boundaryYear=2024&crosswalk=${crosswalkArtifact.id}`,
+		`/v1/data/mobile-5g-coverage/convert?period=2025&geography=localAuthority&codeYear=2024&crosswalk=${crosswalkArtifact.id}`,
 	);
 	assert.equal(intensive.status, 422);
 	assert.match(
@@ -159,7 +159,7 @@ const pathContext = (second: CrosswalkArtifact) =>
 
 test("converts a measure through every step of a published path the caller names", () => {
 	const base =
-		"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023";
+		"/v1/data/population/convert?period=2022&geography=ward&codeYear=2023";
 	const context = pathContext(
 		authorityToArea([
 			[
@@ -227,7 +227,7 @@ test("converts a measure through every step of a published path the caller names
 test("refuses a path whose later step would drop a value", () => {
 	const refused = routeRequest(
 		"GET",
-		"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&path=ward-to-health-area",
+		"/v1/data/population/convert?period=2022&geography=ward&codeYear=2023&path=ward-to-health-area",
 		pathContext(authorityToArea([["E08000001", [["H1", 1]]]])),
 	);
 
