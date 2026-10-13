@@ -234,10 +234,10 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 					/>
 					{sampleMeasure && (
 						<Request
-							url={`${API_BASE_URL}/corrections?measure=${encodeURIComponent(sampleMeasure)}`}
+							url={`${API_BASE_URL}/documents/corrections.json`}
 						/>
 					)}
-					<EndpointRef id="listCorrections" />
+					<EndpointRef id="getEvidenceDocument" />
 				</>
 			)}
 

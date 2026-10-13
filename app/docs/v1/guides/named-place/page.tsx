@@ -90,7 +90,7 @@ export default function NamedPlaceGuidePage() {
 					</P>
 					<Request
 						url={`${API}/data/population/value?period=2024&geography=localAuthority&codeYear=2023&place=location/north-wales`}
-						operationId="aggregateSourceExactMeasure"
+						operationId="getMeasureValueForPlace"
 					/>
 					<Callout tone="warning">
 						Not every measure can be added. A median, rank or
@@ -123,7 +123,7 @@ export default function NamedPlaceGuidePage() {
 			</P>
 			<EndpointRef id="listNamedLocations" />
 			<EndpointRef id="getNamedLocationMembers" />
-			<EndpointRef id="aggregateSourceExactMeasure" />
+			<EndpointRef id="getMeasureValueForPlace" />
 		</DocPage>
 	);
 }

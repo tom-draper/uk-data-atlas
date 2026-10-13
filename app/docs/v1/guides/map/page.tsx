@@ -69,7 +69,7 @@ export default function MapGuidePage() {
 					</P>
 					<Request
 						url={`${API}/documents/measure-population.json`}
-						operationId="getMeasureCompatibility"
+						operationId="getEvidenceDocument"
 					/>
 				</Step>
 

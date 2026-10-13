@@ -109,7 +109,7 @@ export default function MeasuresPage() {
 			<H2 id="endpoints">Useful endpoints</H2>
 			<EndpointRef id="listMeasures" />
 			<EndpointRef id="getMeasure" />
-			<EndpointRef id="getMeasureQuality" />
+			<EndpointRef id="getEvidenceDocument" />
 		</DocPage>
 	);
 }
