@@ -1,14 +1,27 @@
 import type { GeoJSONSource } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
-import type { BoundaryGeojson } from "@/lib/types/geometry";
+import type { BoundaryGeojson, Feature } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapInstance } from "@/lib/types/mapInstance";
 import { DEFAULT_COLOR } from "./featureBuilder";
-import type { FillPaintConfig } from "./expressions";
+import {
+	boolean,
+	featureState,
+	readFromFeatureState,
+	when,
+	type FillPaintConfig,
+	type PaintValue,
+} from "./expressions";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
 const LINE_LAYER_ID = "wards-line";
+/**
+ * Feature state marking an area the source still holds but the dataset being
+ * drawn leaves out. Exported so hover and click can ignore those areas too.
+ */
+export const OUTSIDE_DATASET_STATE = "outsideDataset";
+const BORDER_OPACITY = 0.05;
 
 const emptyFeatureCollection = (): FeatureCollection => ({
 	type: "FeatureCollection",
@@ -33,9 +46,51 @@ const styleIsReady = (map: MapInstance): boolean => {
 	return typeof loaded === "boolean" ? loaded : map.isStyleLoaded() === true;
 };
 
+/**
+ * Each feature's geometry by id, when every feature carries geometry and a
+ * distinct id, which is what feature state needs to address it. Null otherwise,
+ * and then the source is redrawn from its properties alone.
+ */
+const geometryById = (
+	geojson: BoundaryGeojson,
+): Map<number, NonNullable<Feature["geometry"]>> | null => {
+	if (geojson.features.length === 0) return null;
+	const geometries = new Map<number, NonNullable<Feature["geometry"]>>();
+	for (const feature of geojson.features) {
+		if (
+			!feature.geometry ||
+			!Number.isSafeInteger(feature.id) ||
+			geometries.has(feature.id)
+		)
+			return null;
+		geometries.set(feature.id, feature.geometry);
+	}
+	return geometries;
+};
+
+/**
+ * Draws the active dataset over its boundaries.
+ *
+ * Re-uploading a collection makes MapLibre serialise it on the main thread and
+ * re-tile it in a worker, which takes seconds for a national ward map. Most
+ * dataset changes keep the same boundary file, though: the collection is new
+ * only because its features carry new values. So while the source already
+ * holds every feature being drawn, by the same geometry object, the values the
+ * fill reads are set as feature state instead, and any feature the dataset
+ * leaves out is hidden rather than removed.
+ */
 export class BoundaryLayerController {
 	private lastFillPaint: FillPaintConfig | null = null;
-	private sourceGeojson: BoundaryGeojson | null = null;
+	/** The uploaded features' geometry, when they can be addressed by state. */
+	private sourceGeometry: Map<
+		number,
+		NonNullable<Feature["geometry"]>
+	> | null = null;
+	/** The collection whose values are drawn, uploaded or not. */
+	private drawnGeojson: BoundaryGeojson | null = null;
+	/** Which of the drawn collection's properties are set as state. */
+	private stateProperties: string | null = null;
+	private hidesFeatures = false;
 	private deferredPaint: {
 		geojson: BoundaryGeojson;
 		paint: FillPaintConfig;
@@ -75,11 +130,15 @@ export class BoundaryLayerController {
 		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
 		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
 		if (sourceExists && fillLayerExists && lineLayerExists) {
-			if (this.sourceGeojson !== geojson) {
-				(this.map.getSource(SOURCE_ID) as GeoJSONSource).setData(
-					asMapData(geojson),
-				);
-				this.sourceGeojson = geojson;
+			if (this.drawnGeojson !== geojson) {
+				if (!this.sourceHolds(geojson)) {
+					(this.map.getSource(SOURCE_ID) as GeoJSONSource).setData(
+						asMapData(geojson),
+					);
+					this.uploaded(geojson);
+				}
+				this.drawnGeojson = geojson;
+				this.stateProperties = null;
 			}
 			this.applyVisibility(visibility);
 			return;
@@ -87,7 +146,8 @@ export class BoundaryLayerController {
 
 		this.removeExistingLayers();
 		this.addSource(geojson);
-		this.sourceGeojson = geojson;
+		this.uploaded(geojson);
+		this.drawnGeojson = geojson;
 		this.map.addLayer({
 			id: FILL_LAYER_ID,
 			type: "fill",
@@ -113,7 +173,7 @@ export class BoundaryLayerController {
 	}
 
 	clear(): void {
-		this.sourceGeojson = null;
+		this.forgetSource();
 		const source = this.map.getSource(SOURCE_ID) as
 			GeoJSONSource | undefined;
 		if (source) source.setData(emptyFeatureCollection());
@@ -125,7 +185,7 @@ export class BoundaryLayerController {
 			this.map.setPaintProperty(
 				LINE_LAYER_ID,
 				"line-opacity",
-				hidden ? 0 : 0.05,
+				hidden ? 0 : this.shownOnly(BORDER_OPACITY),
 			);
 		}
 		for (const layerId of BASE_BOUNDARY_LAYERS) {
@@ -146,18 +206,23 @@ export class BoundaryLayerController {
 		)
 			return;
 
+		// Brings the state up to date even while the data layer is hidden, as
+		// it also decides which features are shown at all.
+		const dataColor = this.colorFromState(this.lastFillPaint.color);
 		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
 		const hidden = visibility.hideBoundaryLayer;
 		const fillColor = hidden
 			? "transparent"
 			: visibility.hideDataLayer
 				? DEFAULT_COLOR
-				: this.lastFillPaint.color;
+				: dataColor;
 		const fillOpacity = hidden
 			? 0
-			: visibility.hideDataLayer
-				? overlayOpacity
-				: this.lastFillPaint.opacity(overlayOpacity);
+			: this.shownOnly(
+					visibility.hideDataLayer
+						? overlayOpacity
+						: this.lastFillPaint.opacity(overlayOpacity),
+				);
 
 		this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
 		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
@@ -169,12 +234,97 @@ export class BoundaryLayerController {
 		this.map.setPaintProperty(
 			LINE_LAYER_ID,
 			"line-opacity",
-			hidden || visibility.hideBorders ? 0 : 0.05,
+			hidden || visibility.hideBorders
+				? 0
+				: this.shownOnly(BORDER_OPACITY),
 		);
 	}
 
+	/** Whether the source already holds every feature, geometry and all. */
+	private sourceHolds(geojson: BoundaryGeojson): boolean {
+		const geometry = this.sourceGeometry;
+		return (
+			geometry !== null &&
+			geojson.features.length > 0 &&
+			geojson.features.every(
+				(feature) =>
+					feature.geometry !== null &&
+					geometry.get(feature.id) === feature.geometry,
+			)
+		);
+	}
+
+	private uploaded(geojson: BoundaryGeojson): void {
+		this.sourceGeometry = geometryById(geojson);
+		this.hidesFeatures = false;
+	}
+
+	private forgetSource(): void {
+		this.sourceGeometry = null;
+		this.drawnGeojson = null;
+		this.stateProperties = null;
+		this.hidesFeatures = false;
+	}
+
+	/**
+	 * The fill colour, reading its values from feature state when the source is
+	 * addressed that way, with that state brought up to date first.
+	 */
+	private colorFromState(color: PaintValue<string>): PaintValue<string> {
+		if (!this.sourceGeometry) return color;
+		const { value, properties } = readFromFeatureState(color);
+		this.setState(properties);
+		return value;
+	}
+
+	/**
+	 * Sets the drawn features' values as state, and hides the features the
+	 * source holds that the drawn collection leaves out.
+	 */
+	private setState(properties: string[]): void {
+		const geometry = this.sourceGeometry;
+		const drawn = this.drawnGeojson;
+		const key = properties.join("\u0000");
+		if (!geometry || !drawn || this.stateProperties === key) return;
+		this.stateProperties = key;
+		const shown = new Set<number>();
+		for (const feature of drawn.features) {
+			shown.add(feature.id);
+			const values = feature.properties as unknown as Record<
+				string,
+				unknown
+			>;
+			const state: Record<string, unknown> = {
+				[OUTSIDE_DATASET_STATE]: false,
+			};
+			for (const property of properties)
+				state[property] = values[property] ?? null;
+			this.map.setFeatureState(
+				{ source: SOURCE_ID, id: feature.id },
+				state,
+			);
+		}
+		this.hidesFeatures = shown.size < geometry.size;
+		if (!this.hidesFeatures) return;
+		for (const id of geometry.keys())
+			if (!shown.has(id))
+				this.map.setFeatureState(
+					{ source: SOURCE_ID, id },
+					{ [OUTSIDE_DATASET_STATE]: true },
+				);
+	}
+
+	/** An opacity that leaves the features outside the dataset invisible. */
+	private shownOnly(opacity: PaintValue<number>): PaintValue<number> {
+		if (!this.hidesFeatures) return opacity;
+		return when(
+			[[boolean(featureState(OUTSIDE_DATASET_STATE), false), 0]],
+			opacity,
+		) as PaintValue<number>;
+	}
+
 	private removeExistingLayers(): void {
-		this.sourceGeojson = null;
+		this.forgetSource();
 		if (!this.map.getSource(SOURCE_ID)) return;
 		if (this.map.getLayer(FILL_LAYER_ID))
 			this.map.removeLayer(FILL_LAYER_ID);

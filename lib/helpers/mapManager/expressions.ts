@@ -91,6 +91,33 @@ export const categoryFilter = (
 	return expression(["any", ...clauses]);
 };
 
+/**
+ * The same paint value with every feature property it reads taken from
+ * feature state instead, and the names of those properties, so the caller
+ * knows which values to set as state. Literal arrays are left alone.
+ */
+export const readFromFeatureState = <T extends string | number>(
+	value: PaintValue<T>,
+): { value: PaintValue<T>; properties: string[] } => {
+	const properties = new Set<string>();
+	const rewrite = (part: unknown): unknown => {
+		if (!Array.isArray(part) || part[0] === "literal") return part;
+		if (
+			part[0] === "get" &&
+			part.length === 2 &&
+			typeof part[1] === "string"
+		) {
+			properties.add(part[1]);
+			return ["feature-state", part[1]];
+		}
+		return part.map(rewrite);
+	};
+	return {
+		value: rewrite(value) as PaintValue<T>,
+		properties: [...properties].sort(),
+	};
+};
+
 export const hoverOpacity = (opacity: number): MapExpression =>
 	when([[boolean(featureState("hover"), false), opacity * 0.58]], opacity);
 
