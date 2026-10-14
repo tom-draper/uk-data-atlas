@@ -296,4 +296,32 @@ describe("LayerManager visibility updates", () => {
 
 		expect(map.getLayer("wards-fill")).toBeDefined();
 	});
+
+	it("paints while another source's tiles are still loading", () => {
+		// The style is in place, but isStyleLoaded() reports false until every
+		// source has finished parsing its tiles.
+		const map = Object.assign(createMap(false), {
+			style: { _loaded: true },
+		});
+		const manager = new LayerManager(map as any);
+
+		manager.paintBoundaries(
+			{
+				type: "FeatureCollection",
+				crs: { type: "name", properties: { name: "CRS84" } },
+				features: [],
+			} as any,
+			featureColorPaint(),
+			{
+				hideDataLayer: false,
+				hideBorders: false,
+				hideBoundaryLayer: false,
+				hideOverlay: false,
+				overlayOpacity: 0.6,
+			},
+		);
+
+		expect(map.once).not.toHaveBeenCalled();
+		expect(map.getLayer("wards-fill")).toBeDefined();
+	});
 });

@@ -18,6 +18,21 @@ const emptyFeatureCollection = (): FeatureCollection => ({
 const asMapData = (geojson: BoundaryGeojson) =>
 	geojson as unknown as GeoJSON.FeatureCollection;
 
+/**
+ * Whether the style itself has loaded, whatever its sources are doing.
+ *
+ * `isStyleLoaded()` is also false while any source still has tiles to parse, so
+ * gating on it made a dataset picked while the previous one was still tiling
+ * wait for that work, and the map to go idle, before it could start its own.
+ * Sources and paint can be updated as soon as the style is in place. Both map
+ * providers keep that flag on `style._loaded`; fall back to the public check if
+ * one ever stops doing so.
+ */
+const styleIsReady = (map: MapInstance): boolean => {
+	const loaded = (map as { style?: { _loaded?: unknown } }).style?._loaded;
+	return typeof loaded === "boolean" ? loaded : map.isStyleLoaded() === true;
+};
+
 export class BoundaryLayerController {
 	private lastFillPaint: FillPaintConfig | null = null;
 	private sourceGeojson: BoundaryGeojson | null = null;
@@ -36,7 +51,7 @@ export class BoundaryLayerController {
 		visibility: MapOptions["visibility"],
 	): void {
 		this.lastFillPaint = paint;
-		if (!this.map.isStyleLoaded()) {
+		if (!styleIsReady(this.map)) {
 			this.deferredPaint = { geojson, paint, visibility };
 			if (!this.awaitingStyle) {
 				this.awaitingStyle = true;
@@ -93,7 +108,7 @@ export class BoundaryLayerController {
 	}
 
 	updateVisibility(visibility: MapOptions["visibility"]): void {
-		if (!this.map.isStyleLoaded() || !this.lastFillPaint) return;
+		if (!styleIsReady(this.map) || !this.lastFillPaint) return;
 		this.applyVisibility(visibility);
 	}
 
@@ -105,7 +120,7 @@ export class BoundaryLayerController {
 	}
 
 	setBorderVisibility(hidden: boolean): void {
-		if (!this.map.isStyleLoaded()) return;
+		if (!styleIsReady(this.map)) return;
 		if (this.map.getLayer(LINE_LAYER_ID)) {
 			this.map.setPaintProperty(
 				LINE_LAYER_ID,
