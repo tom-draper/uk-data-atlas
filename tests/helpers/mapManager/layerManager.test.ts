@@ -39,6 +39,7 @@ function createMap(styleLoaded = true) {
 		removeLayer: (id: string) => layers.delete(id),
 		removeSource: (id: string) => sources.delete(id),
 		setPaintProperty: vi.fn(),
+		setFeatureState: vi.fn(),
 		setFilter: vi.fn(),
 		getCanvas: () => ({ style: { cursor: "" } }),
 		getZoom: () => 10,
@@ -323,5 +324,141 @@ describe("LayerManager visibility updates", () => {
 
 		expect(map.once).not.toHaveBeenCalled();
 		expect(map.getLayer("wards-fill")).toBeDefined();
+	});
+});
+
+describe("LayerManager boundary values", () => {
+	const visibility = {
+		hideDataLayer: false,
+		hideBorders: false,
+		hideBoundaryLayer: false,
+		hideOverlay: false,
+		overlayOpacity: 0.6,
+	};
+	const square = (x: number) => ({
+		type: "Polygon",
+		coordinates: [
+			[
+				[x, 0],
+				[x + 1, 0],
+				[x, 1],
+				[x, 0],
+			],
+		],
+	});
+	const geometries = [square(0), square(1), square(2)];
+	// A dataset's collection: the shared boundary geometry, with its values.
+	const collection = (values: Record<number, number>) =>
+		({
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "CRS84" } },
+			features: Object.entries(values).map(([id, value]) => ({
+				type: "Feature",
+				id: Number(id),
+				properties: { code: `E0${id}`, value },
+				geometry: geometries[Number(id)],
+			})),
+		}) as any;
+	const lastPaint = (map: ReturnType<typeof createMap>, property: string) =>
+		map.setPaintProperty.mock.calls.findLast(
+			([, name]) => name === property,
+		)?.[2];
+
+	it("sets new values on the same boundaries as feature state", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		const paint = valuePaint([
+			"interpolate",
+			["linear"],
+			["get", "value"],
+			0,
+			"#000",
+			10,
+			"#fff",
+		]);
+
+		manager.paintBoundaries(
+			collection({ 0: 1, 1: 2, 2: 3 }),
+			paint,
+			visibility,
+		);
+		const setData = map.sources.get("location-wards")!.setData;
+		map.setFeatureState.mockClear();
+		manager.paintBoundaries(
+			collection({ 0: 7, 1: 8, 2: 9 }),
+			paint,
+			visibility,
+		);
+
+		expect(setData).not.toHaveBeenCalled();
+		expect(map.setFeatureState).toHaveBeenCalledTimes(3);
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards", id: 1 },
+			{ outsideDataset: false, value: 8 },
+		);
+		expect(lastPaint(map, "fill-color")).toEqual([
+			"interpolate",
+			["linear"],
+			["feature-state", "value"],
+			0,
+			"#000",
+			10,
+			"#fff",
+		]);
+		expect(lastPaint(map, "line-opacity")).toBe(0.05);
+	});
+
+	it("hides the boundaries a dataset leaves out instead of re-uploading", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		const paint = valuePaint(["get", "value"]);
+
+		manager.paintBoundaries(
+			collection({ 0: 1, 1: 2, 2: 3 }),
+			paint,
+			visibility,
+		);
+		const setData = map.sources.get("location-wards")!.setData;
+		manager.paintBoundaries(collection({ 0: 4, 2: 5 }), paint, visibility);
+
+		expect(setData).not.toHaveBeenCalled();
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards", id: 1 },
+			{ outsideDataset: true },
+		);
+		const hiddenOpacity = (opacity: unknown) => [
+			"case",
+			["boolean", ["feature-state", "outsideDataset"], false],
+			0,
+			opacity,
+		];
+		expect(lastPaint(map, "line-opacity")).toEqual(hiddenOpacity(0.05));
+		expect(lastPaint(map, "fill-opacity")).toEqual(
+			hiddenOpacity([
+				"case",
+				["boolean", ["feature-state", "hover"], false],
+				0.348,
+				0.6,
+			]),
+		);
+	});
+
+	it("uploads boundaries the source does not already hold", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		const paint = valuePaint(["get", "value"]);
+
+		manager.paintBoundaries(collection({ 0: 1 }), paint, visibility);
+		const setData = map.sources.get("location-wards")!.setData;
+		const wider = collection({ 0: 1, 1: 2 });
+		manager.paintBoundaries(wider, paint, visibility);
+
+		expect(setData).toHaveBeenCalledWith(wider);
+		expect(lastPaint(map, "fill-opacity")).toEqual([
+			"case",
+			["boolean", ["feature-state", "hover"], false],
+			0.348,
+			0.6,
+		]);
 	});
 });

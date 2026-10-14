@@ -99,4 +99,45 @@ describe("EventHandler", () => {
 			}),
 		);
 	});
+
+	it("ignores areas the boundary layer is hiding", () => {
+		const map = createMap();
+		map.getSource.mockReturnValue({});
+		const onAreaHover = vi.fn();
+		const onAreaClick = vi.fn();
+		const handler = new EventHandler(map as any, {
+			onAreaHover,
+			onAreaClick,
+			onLocationChange: () => {},
+		});
+		handler.setupEventHandlers(
+			{ E09000001: { value: 10 }, E09000002: { value: 20 } },
+			"LAD24CD",
+		);
+		const click = map.on.mock.calls.find(
+			([event]) => event === "click",
+		)?.[2] as (event: unknown) => void;
+		const shown = {
+			id: 1,
+			properties: { LAD24CD: "E09000001", LAD24NM: "Shown" },
+			state: { outsideDataset: false },
+		};
+		const hidden = {
+			id: 2,
+			properties: { LAD24CD: "E09000002", LAD24NM: "Hidden" },
+			state: { outsideDataset: true },
+		};
+
+		(handler as any).handleMouseMove({ features: [shown] });
+		(handler as any).handleMouseMove({ features: [hidden] });
+		click({ features: [hidden] });
+
+		expect(onAreaHover).toHaveBeenNthCalledWith(
+			1,
+			expect.objectContaining({ code: "E09000001" }),
+		);
+		// Moving onto a hidden area leaves the shown one.
+		expect(onAreaHover).toHaveBeenLastCalledWith(null);
+		expect(onAreaClick).not.toHaveBeenCalled();
+	});
 });

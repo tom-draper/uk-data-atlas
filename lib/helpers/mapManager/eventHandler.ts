@@ -8,6 +8,7 @@ import {
 	boundaryYearForCodeKey,
 	nameKeyForCodeKey,
 } from "@/lib/data/boundaries/catalog";
+import { OUTSIDE_DATASET_STATE } from "./boundaryLayers";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -17,6 +18,18 @@ type MapMouseEventType = MapMouseEvent;
 type MapFeature = {
 	id?: string | number;
 	properties?: Record<string, string | undefined>;
+	state?: Record<string, unknown>;
+};
+
+/**
+ * The area under the pointer, unless it is one the boundary layer is keeping
+ * hidden because the drawn dataset leaves it out.
+ */
+const shownFeature = (features?: MapFeature[]): MapFeature | undefined => {
+	const feature = features?.[0];
+	return feature?.state?.[OUTSIDE_DATASET_STATE] === true
+		? undefined
+		: feature;
 };
 
 function rafThrottle<T extends unknown[]>(
@@ -131,10 +144,11 @@ export class EventHandler {
 			this.canvas.style.cursor = "";
 			return;
 		}
-		const features = e.features;
-		if (!features?.length) return;
-
-		const feature = features[0];
+		const feature = shownFeature(e.features);
+		if (!feature) {
+			if (this.lastHoveredFeatureId !== null) this.handleMouseLeave();
+			return;
+		}
 		const featureId = feature.id;
 
 		// Early return if hovering same feature
@@ -170,7 +184,7 @@ export class EventHandler {
 	private handleAreaClick(
 		e: MapMouseEventType & { features?: MapFeature[] },
 	): void {
-		const feature = e.features?.[0];
+		const feature = shownFeature(e.features);
 		if (!feature) return;
 		const area = this.areaForFeature(feature);
 		if (!area) return;

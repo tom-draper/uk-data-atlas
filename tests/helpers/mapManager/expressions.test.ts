@@ -4,6 +4,7 @@ import {
 	hoverOpacity,
 	linearInterpolate,
 	featureProperty,
+	readFromFeatureState,
 	zoomInterpolate,
 } from "@/lib/helpers/mapManager/expressions";
 
@@ -45,5 +46,40 @@ describe("MapLibre expression helpers", () => {
 				[9, 1],
 			]),
 		).toEqual(["interpolate", ["linear"], ["zoom"], 6, 0, 9, 1]);
+	});
+
+	it("reads feature properties from feature state instead", () => {
+		expect(
+			readFromFeatureState([
+				"case",
+				["==", ["get", "value"], null],
+				"#ccc",
+				[
+					"match",
+					["get", "party"],
+					["literal", ["get", "x"]],
+					"#f00",
+					"#000",
+				],
+			] as any),
+		).toEqual({
+			value: [
+				"case",
+				["==", ["feature-state", "value"], null],
+				"#ccc",
+				[
+					"match",
+					["feature-state", "party"],
+					["literal", ["get", "x"]],
+					"#f00",
+					"#000",
+				],
+			],
+			properties: ["party", "value"],
+		});
+		expect(readFromFeatureState("#ccc")).toEqual({
+			value: "#ccc",
+			properties: [],
+		});
 	});
 });
