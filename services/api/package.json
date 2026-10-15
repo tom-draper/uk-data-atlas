@@ -58,7 +58,7 @@
 		"build:analysis-geography-validation": "tsx scripts/build-analysis-geography-validation.ts",
 		"build:operations": "tsx scripts/build-operations.ts",
 		"build:query-rules": "tsx scripts/build-query-rules.ts",
-		"build:map-resource": "tsx scripts/build-map-resource.ts",
+		"build:map-resource": "tsx --max-old-space-size=4096 scripts/build-map-resource.ts",
 		"build:validation-report": "tsx scripts/build-validation-report.ts",
 		"build:runtime": "node scripts/build-runtime.mjs",
 		"start:dev": "tsx scripts/serve.ts",
