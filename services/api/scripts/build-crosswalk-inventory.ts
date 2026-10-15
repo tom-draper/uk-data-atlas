@@ -38,6 +38,7 @@ import {
 	type AreaReleaseArtifact,
 } from "../src/areaInventory";
 import { sha256 } from "../src/contentHash";
+import { BOUNDED_CLIPPING_VERSION } from "../src/boundedClipping";
 
 const readCompiledAreaLookup = (outputDirectory: string) => {
 	const inventory = JSON.parse(
@@ -98,6 +99,13 @@ const reusableGeometryCrosswalk = (
 			readFileSync(path, "utf8"),
 		) as CrosswalkArtifact;
 		if (artifact.method !== adapter.method) return undefined;
+		if (
+			(artifact.method === "extent-continuity" ||
+				artifact.method === "geometric-containment" ||
+				artifact.method === "best-fit") &&
+			artifact.provenance.boundedClipping !== BOUNDED_CLIPPING_VERSION
+		)
+			return undefined;
 		const { contentHash, ...withoutHash } = artifact;
 		if (contentHash !== sha256(JSON.stringify(withoutHash)))
 			return undefined;
@@ -205,6 +213,8 @@ const reusablePopulationOverlap = (
 			readFileSync(path, "utf8"),
 		) as CrosswalkArtifact;
 		if (artifact.method !== "population-overlap") return undefined;
+		if (artifact.provenance.boundedClipping !== BOUNDED_CLIPPING_VERSION)
+			return undefined;
 		const { contentHash, ...withoutHash } = artifact;
 		const blocks = geometrySources.get(
 			`${adapter.weighting.blocks.geography}/${adapter.weighting.blocks.boundaryRelease}`,

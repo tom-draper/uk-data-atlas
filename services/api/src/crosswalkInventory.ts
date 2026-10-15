@@ -160,6 +160,8 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 		coverageExceptions?: Record<string, CoverageException>;
 		areaProjection: "EPSG:6933";
 		clipping: string;
+		/** Version of the worker protocol used for bounded clipping. */
+		boundedClipping?: number;
 	};
 	validation: {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;
@@ -204,6 +206,7 @@ export type PopulationOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 		};
 		areaProjection: "EPSG:6933";
 		clipping: string;
+		boundedClipping?: number;
 	};
 	validation: {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;

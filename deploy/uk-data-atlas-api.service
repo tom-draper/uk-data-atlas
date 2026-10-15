@@ -1,0 +1,27 @@
+[Unit]
+Description=UK Data Atlas API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/root/uk-data-atlas
+Environment=NODE_ENV=production
+Environment=ATLAS_API_ROOT=/root/uk-data-atlas/services/api
+Environment=HOST=127.0.0.1
+Environment=PORT=3001
+Environment=ATLAS_WORKERS=2
+Environment=ATLAS_TRUSTED_PROXY_HOPS=1
+Environment=PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/opt/node24/bin/node services/api/dist/serve.mjs
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=20s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
