@@ -69,7 +69,8 @@ export const buildGeoJson = (
 	chunks.push(Buffer.from("]}\n"));
 	const body = Buffer.concat(chunks);
 	return {
-		gzipped: gzipSync(body, { level: 9 }),
+		// Level 9 took five times as long as 6 to save under half a percent.
+		gzipped: gzipSync(body, { level: 6 }),
 		bytes: body.length,
 		contentHash: sha256(body),
 	};
