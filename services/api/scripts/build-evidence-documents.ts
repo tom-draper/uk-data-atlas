@@ -4,7 +4,6 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawn } from "node:child_process";
 import { readApiCatalogues } from "../src/catalogueLoader";
 import { evidenceReport, type EvidenceDocument } from "../src/evidenceReports";
 import { availableReconciliations } from "../src/measureReconciliation";
@@ -172,49 +171,10 @@ const buildMeasure = (
 	});
 };
 
-const buildChild = (id: string): Promise<EvidenceDocument> =>
-	new Promise((resolveDocument, reject) => {
-		const child = spawn(
-			process.execPath,
-			[
-				...process.execArgv,
-				fileURLToPath(import.meta.url),
-				"--measure",
-				id,
-			],
-			{ stdio: ["ignore", "pipe", "inherit"] },
-		);
-		let output = "";
-		child.stdout.setEncoding("utf8").on("data", (chunk) => {
-			output += chunk;
-		});
-		child.on("error", reject);
-		child.on("exit", (code) => {
-			if (code !== 0)
-				return reject(
-					new Error(`Evidence build for ${id} exited ${code}`),
-				);
-			const document: EvidenceDocument = JSON.parse(output);
-			resolveDocument(document);
-		});
-	});
-
-const main = async () => {
-	if (
-		process.env.ATLAS_EVIDENCE_COMPILER_HASH &&
-		process.env.ATLAS_EVIDENCE_COMPILER_HASH !== compilerHash
-	)
-		throw new Error(
-			"The evidence compiler changed during the build. Rerun build:documents.",
-		);
+const main = () => {
 	const context = readApiCatalogues(apiRoot, {
 		loadEvidenceDocuments: false,
 	});
-	const measureId = process.argv[process.argv.indexOf("--measure") + 1];
-	if (process.argv.includes("--measure")) {
-		process.stdout.write(JSON.stringify(buildMeasure(context, measureId!)));
-		return;
-	}
 	const documents = [
 		write("corrections", report(context, "/v1/corrections")),
 		write("geography-health", report(context, "/v1/geography-health")),
@@ -224,22 +184,16 @@ const main = async () => {
 		),
 	];
 	const sourceHash = inputsHash(context);
-	for (
-		let index = 0;
-		index < context.dataCatalog.measures.length;
-		index += 2
-	) {
-		const batch = context.dataCatalog.measures.slice(index, index + 2);
-		const built = await Promise.all(
-			batch.map(
-				async (measure) =>
-					cachedMeasure(measure.id, sourceHash) ??
-					(await buildChild(measure.id)),
-			),
+	// One process builds every measure. The boundary and crosswalk loaders
+	// keep what they read, so each measure after the first is mostly
+	// compilation: a process per measure re-read the same files 229 times and
+	// took several times the CPU for the same documents.
+	for (const measure of context.dataCatalog.measures) {
+		documents.push(
+			cachedMeasure(measure.id, sourceHash) ??
+				buildMeasure(context, measure.id),
 		);
-		documents.push(...built);
-		for (const measure of batch)
-			process.stderr.write(`Built evidence for ${measure.id}\n`);
+		process.stderr.write(`Built evidence for ${measure.id}\n`);
 	}
 	const manifest = {
 		schemaVersion: 1,
@@ -252,4 +206,4 @@ const main = async () => {
 	);
 };
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) main();
