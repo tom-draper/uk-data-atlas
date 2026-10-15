@@ -77,3 +77,39 @@ test("clips against a registered geometry, and keeps it across a restart", () =>
 		clipper.close();
 	}
 });
+
+test("waits for its result when a notification arrives before the worker message", (t) => {
+	const clipper = new BoundedClipper(10_000);
+	const wait = Atomics.wait;
+	let notifications = 0;
+	t.mock.method(
+		Atomics,
+		"wait",
+		(...args: Parameters<typeof Atomics.wait>) => {
+			if (notifications++ === 0) return "ok";
+			return wait(...args);
+		},
+	);
+	try {
+		const clipped = clipper.clip(
+			"intersection",
+			square(0, 2),
+			square(1, 3),
+		);
+		assert.deepEqual(
+			clipped.status === "clipped" ? clipped.geometry : clipped,
+			square(1, 2),
+		);
+		const separate = clipper.clip(
+			"intersection",
+			square(0, 1),
+			square(2, 3),
+		);
+		assert.deepEqual(
+			separate.status === "clipped" ? separate.geometry : separate,
+			[],
+		);
+	} finally {
+		clipper.close();
+	}
+});

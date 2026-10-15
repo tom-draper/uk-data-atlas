@@ -9,6 +9,9 @@ import {
 } from "node:worker_threads";
 import type { MultiPolygon } from "polygon-clipping";
 
+/** Included in artifact provenance so results from older protocols are rebuilt. */
+export const BOUNDED_CLIPPING_VERSION = 2;
+
 // polygon-clipping can loop forever on near-coincident edges, and a loop in
 // the calling thread cannot be interrupted. The clip runs in a worker instead;
 // the caller blocks on a shared flag with a deadline, so the API stays
@@ -23,7 +26,7 @@ const signal = new Int32Array(workerData.signal);
 const registered = new Map();
 const resolve = (geometry) =>
 	typeof geometry === "string" ? registered.get(geometry) : geometry;
-workerData.port.on("message", ({ register, operation, first, second }) => {
+workerData.port.on("message", ({ register, requestId, operation, first, second }) => {
 	if (register) {
 		registered.set(register.id, register.geometry);
 		return;
@@ -36,7 +39,7 @@ workerData.port.on("message", ({ register, operation, first, second }) => {
 	} catch (error) {
 		result = { error: error instanceof Error ? error.message : String(error) };
 	}
-	workerData.port.postMessage(result);
+	workerData.port.postMessage({ requestId, ...result });
 	Atomics.store(signal, 0, 1);
 	Atomics.notify(signal, 0);
 });
@@ -62,6 +65,7 @@ export class BoundedClipper {
 	private readonly signal = new Int32Array(new SharedArrayBuffer(4));
 	// Kept here too, so a worker replaced after a timeout can be given them.
 	private readonly registered = new Map<string, MultiPolygon>();
+	private nextRequestId = 0;
 
 	constructor(private readonly timeoutMs: number) {}
 
@@ -100,25 +104,34 @@ export class BoundedClipper {
 					reason: `No geometry is registered as ${operand}.`,
 				};
 		if (!this.worker) this.start();
-		Atomics.store(this.signal, 0, 0);
-		this.port!.postMessage({ operation, first, second });
-		if (Atomics.wait(this.signal, 0, 0, this.timeoutMs) === "timed-out") {
-			this.close();
-			return {
-				status: "failed",
-				reason: `Clipping did not finish within ${this.timeoutMs} ms.`,
-			};
+		const requestId = ++this.nextRequestId;
+		const deadline = performance.now() + this.timeoutMs;
+		this.port!.postMessage({ requestId, operation, first, second });
+		for (;;) {
+			// A notification is only a hint: the preceding request can notify
+			// after its response was already read. Reset before checking the
+			// queue so a response arriving between the check and wait wakes us.
+			Atomics.store(this.signal, 0, 0);
+			let received;
+			while ((received = receiveMessageOnPort(this.port!)?.message)) {
+				const response = received as { requestId: number } & (
+					{ geometry: MultiPolygon } | { error: string }
+				);
+				if (response.requestId !== requestId) continue;
+				return "error" in response
+					? { status: "failed", reason: response.error }
+					: { status: "clipped", geometry: response.geometry };
+			}
+			const remaining = deadline - performance.now();
+			if (remaining <= 0) {
+				this.close();
+				return {
+					status: "failed",
+					reason: `Clipping did not finish within ${this.timeoutMs} ms.`,
+				};
+			}
+			Atomics.wait(this.signal, 0, 0, remaining);
 		}
-		const received = receiveMessageOnPort(this.port!)?.message as
-			{ geometry: MultiPolygon } | { error: string } | undefined;
-		if (!received)
-			return {
-				status: "failed",
-				reason: "The clipping worker returned no result.",
-			};
-		return "error" in received
-			? { status: "failed", reason: received.error }
-			: { status: "clipped", geometry: received.geometry };
 	}
 
 	close() {

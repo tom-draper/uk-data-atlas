@@ -2,7 +2,7 @@ import { sha256 } from "./contentHash";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
-import { BoundedClipper } from "./boundedClipping";
+import { BoundedClipper, BOUNDED_CLIPPING_VERSION } from "./boundedClipping";
 import {
 	type AreaGeometry,
 	areaMultiPolygon,
@@ -424,6 +424,7 @@ export const compileExtentContinuityCrosswalk = (
 			],
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
+			boundedClipping: BOUNDED_CLIPPING_VERSION,
 		},
 		validation: {
 			sourceNameConflicts: [],

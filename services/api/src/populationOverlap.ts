@@ -13,7 +13,11 @@ import { labelsFor, round } from "./areaOverlap";
 import { CLIPPING_VERSION } from "./pieceIntersection";
 import { readGeometries } from "./rawAreaGeometries";
 import { multiPolygonAreaM2 } from "./equalAreaProjection";
-import { BoundedClipper, type ClipOperand } from "./boundedClipping";
+import {
+	BoundedClipper,
+	BOUNDED_CLIPPING_VERSION,
+	type ClipOperand,
+} from "./boundedClipping";
 import { csvFields } from "./csv";
 import type { PopulationOverlapCrosswalkAdapter } from "./crosswalkAdapters";
 import type {
@@ -406,6 +410,7 @@ export const compilePopulationOverlapCrosswalk = (
 			},
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
+			boundedClipping: BOUNDED_CLIPPING_VERSION,
 		},
 		validation: {
 			sourceNameConflicts: [],

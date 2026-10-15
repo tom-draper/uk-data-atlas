@@ -12,7 +12,7 @@ import { labelsFor, round } from "./areaOverlap";
 import { CLIPPING_VERSION } from "./pieceIntersection";
 import { readGeometries } from "./rawAreaGeometries";
 import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
-import { BoundedClipper } from "./boundedClipping";
+import { BoundedClipper, BOUNDED_CLIPPING_VERSION } from "./boundedClipping";
 import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
@@ -307,6 +307,7 @@ export const compileGeometricContainmentCrosswalk = (
 			],
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
+			boundedClipping: BOUNDED_CLIPPING_VERSION,
 		},
 		validation: {
 			sourceNameConflicts: [],
@@ -438,6 +439,7 @@ export const compileBestFitCrosswalk = (
 			],
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
+			boundedClipping: BOUNDED_CLIPPING_VERSION,
 		},
 		validation: {
 			sourceNameConflicts: [],
