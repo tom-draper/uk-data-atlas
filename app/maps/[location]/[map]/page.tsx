@@ -19,7 +19,7 @@ import {
 import { atlasMapFigure } from "@/lib/atlas/snippets";
 import { JsonLd, rankingJsonLd } from "@/lib/atlas/structuredData";
 import { gazetteer } from "@/lib/data/gazetteer/static";
-import { pageMetadata } from "@/lib/site";
+import { pageMetadata, titleCase } from "@/lib/site";
 
 type Params = Promise<{ location: string; map: string }>;
 
@@ -27,9 +27,6 @@ type Params = Promise<{ location: string; map: string }>;
 export function generateStaticParams() {
 	return [];
 }
-
-const titleCase = (text: string) =>
-	text.replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 const AREA_PLURALS: Readonly<Record<string, string>> = {
 	ward: "wards",

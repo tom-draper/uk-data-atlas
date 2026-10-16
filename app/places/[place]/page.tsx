@@ -4,7 +4,7 @@ import Navigation from "@/components/Navigation";
 import { Sheet } from "@/components/docs/Page";
 import { AreaPlacePage } from "@/components/places/AreaPlacePage";
 import { NamedPlacePage } from "@/components/places/NamedPlacePage";
-import { geographyNoun, namedKindName } from "@/lib/places/labels";
+import { geographyName, namedKindName } from "@/lib/places/labels";
 import {
 	loadAreaProfile,
 	loadNamedProfile,
@@ -13,7 +13,7 @@ import {
 } from "@/lib/places/load";
 import { isAreaCode } from "@/lib/places/profile";
 import { areaSummary } from "@/lib/places/summary";
-import { pageMetadata } from "@/lib/site";
+import { pageMetadata, titleCase } from "@/lib/site";
 
 type Params = Promise<{ place: string }>;
 
@@ -56,12 +56,12 @@ export async function generateMetadata({
 	const profile = await resolvePlace(params);
 	if (profile.type === "named")
 		return pageMetadata({
-			subject: `${profile.label}: ${namedKindName(profile.kind).toLowerCase()}`,
+			subject: `${profile.label}: ${titleCase(namedKindName(profile.kind))}`,
 			description: `${profile.label}, a ${namedKindName(profile.kind).toLowerCase()} of ${profile.members.filter((member) => member.current).length} UK local authorities: its members, history, map and the API requests that return them.`,
 			path: `/places/${profile.id}`,
 		});
 	return pageMetadata({
-		subject: `${profile.name} (${profile.code}), ${geographyNoun(profile.geography)}`,
+		subject: `${profile.name} (${profile.code}), ${titleCase(geographyName(profile.geography))}`,
 		description: `${areaSummary(profile)} Its boundary history, the areas it sits within and borders, and the datasets published for it.`,
 		path: `/places/${profile.code}`,
 	});
