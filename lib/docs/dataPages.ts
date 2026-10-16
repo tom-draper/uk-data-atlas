@@ -96,3 +96,12 @@ export function findGeographyBySlug(slug: string): string | undefined {
 export function capitalise(text: string): string {
 	return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+/**
+ * A measure's unit as a table cell: "People", "Score out of 24". A unit that
+ * opens with a symbol or abbreviation ("kt CO2e", "µg/m³", "£ per year") is
+ * left as written, since capitalising it would change what it means.
+ */
+export function unitLabel(unit: string): string {
+	return /^[a-z]{3,}(\s|$)/.test(unit) ? capitalise(unit) : unit;
+}
