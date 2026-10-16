@@ -25,7 +25,8 @@ export const DEFAULT_NAMED_LOCATION_MEMBER_GEOGRAPHY = "localAuthority";
  * What a named location is. An official kind is an area ONS defines, with its
  * members taken from the ONS lookup in `source`; a `ceremonial-county` is a
  * county lord-lieutenants are appointed to, with its members worked out from
- * Ordnance Survey's boundaries (see ceremonialCounties.ts);
+ * Ordnance Survey's boundaries (see ceremonialCounties.ts), and a
+ * `historic-county` likewise from its historic counties;
  * `editorial-grouping` is a curated set that claims no official status.
  */
 export type NamedLocationKind =
