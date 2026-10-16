@@ -191,22 +191,16 @@ export default function DatasetsPage() {
 												},
 											]
 										: []),
-									...(dataset.docsHref
-										? [
-												{
-													label: "API",
-													value: (
-														<TextLink
-															href={
-																dataset.docsHref
-															}
-														>
-															API documentation
-														</TextLink>
-													),
-												},
-											]
-										: []),
+									{
+										label: "API",
+										value: dataset.docsHref ? (
+											<TextLink href={dataset.docsHref}>
+												API documentation
+											</TextLink>
+										) : (
+											"Not served by the API"
+										),
+									},
 								]}
 							/>
 							<p className="-mt-4 text-[13.5px] leading-[1.7] text-slate-500">
