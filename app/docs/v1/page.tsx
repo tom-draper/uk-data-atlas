@@ -79,12 +79,12 @@ export default function IntroductionPage() {
 				<H2 id="what-you-can-do">What you can do</H2>
 				<CardGrid columns={3}>
 					<LinkCard
-						href="/docs/v1/reference/start-here/resolve-places"
+						href="/docs/v1/concepts/places"
 						title="Look up any place"
 						icon={<Search className="h-4 w-4" />}
 					>
-						Turn a name like “Newport” into the exact areas it could
-						mean.
+						Turn a name like “Newport” or a postcode like M1 1AE
+						into the exact areas it could mean.
 					</LinkCard>
 					<LinkCard
 						href="/docs/v1/reference/map/measure-observations"

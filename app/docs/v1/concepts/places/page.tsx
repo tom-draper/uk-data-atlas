@@ -27,6 +27,7 @@ export default function PlacesPage() {
 				{ id: "matches", title: "How names match" },
 				{ id: "references", title: "Place references" },
 				{ id: "named-locations", title: "Named locations" },
+				{ id: "postcodes", title: "Postcodes" },
 				{ id: "endpoints", title: "Useful endpoints" },
 			]}
 		>
@@ -113,15 +114,34 @@ export default function PlacesPage() {
 				time as councils are reorganised.
 			</P>
 			<P>
-				You can add up data over any named location, and list the wards
-				or constituencies inside it through a
-				[crosswalk](/docs/v1/concepts/crosswalks).
+				You can total a measure that adds up, such as population, over
+				any named location, and list the wards or constituencies inside
+				it through a [crosswalk](/docs/v1/concepts/crosswalks).
+			</P>
+
+			<H2 id="postcodes">Postcodes</H2>
+			<P>
+				A full postcode, such as `M1 1AE`, is another way to name a
+				place. Postcodes have no boundaries, so the API places the
+				postcode's centroid from the ONS Postcode Directory in the areas
+				you ask for: its local authority, ward and Westminster
+				constituency by default. A postcode's addresses can fall on both
+				sides of a boundary, so check `nearBoundary` before relying on
+				the answer.
+			</P>
+			<P>
+				Terminated postcodes are still served, with the month they were
+				terminated. Northern Ireland postcodes aren't licensed for this
+				API and are refused with `451`. You can also pass `postcode`
+				instead of `place` to [Get a value for a
+				place](/docs/v1/reference/start-here/measure-value-for-place).
 			</P>
 
 			<H2 id="endpoints">Useful endpoints</H2>
 			<EndpointRef id="resolvePlaces" />
 			<EndpointRef id="listNamedLocations" />
 			<EndpointRef id="getNamedLocationMembers" />
+			<EndpointRef id="resolvePostcode" />
 		</DocPage>
 	);
 }
