@@ -53,9 +53,9 @@ export default function CrosswalksPage() {
 			<P>
 				Every crosswalk is checked before it's published. Containment
 				must give each area exactly one parent, and overlap weights must
-				add up. [Get checks for a
-				crosswalk](/docs/v1/reference/governance/crosswalk-validation)
-				shows the results.
+				add up. [Get a
+				crosswalk](/docs/v1/reference/geography/crosswalk) shows the
+				results with its method and quality.
 			</P>
 
 			<H2 id="uses">What they're used for</H2>
