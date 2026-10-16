@@ -12,7 +12,7 @@ import { dataPageHref, geographyHref } from "@/lib/docs/navigation";
 import { docsMetadata } from "@/lib/docs/metadata";
 
 export const metadata = docsMetadata(
-	"Download UK Data Atlas datasets and boundaries",
+	"Download datasets and boundaries",
 	"Download complete UK Data Atlas datasets, area-code tables and boundary files, with links to the detail page for every dataset and geography.",
 	"/docs/v1/downloads",
 );

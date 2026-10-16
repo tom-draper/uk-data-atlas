@@ -50,7 +50,7 @@ export async function generateMetadata({
 	const page = findDataPage((await params).slug);
 	if (!page) return {};
 	return docsMetadata(
-		`${page.title} datasets by area`,
+		`${page.title}: datasets by area`,
 		page.intro,
 		dataPageHref(page.slug),
 	);

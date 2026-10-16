@@ -28,7 +28,7 @@ const LOWERCASE_TITLE_WORDS = new Set([
 
 /** Converts written page titles to the title case used in browser metadata. */
 export function titleCase(value: string): string {
-	const words = value.split(" ");
+	const words = value.replace(/ & /g, " and ").split(" ");
 
 	return words
 		.map((word, index) => {

@@ -12,7 +12,7 @@ import {
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-	subject: "Geographies & Boundaries",
+	subject: "Geographies and Boundaries",
 	description:
 		"Every kind of UK area in the UK Data Atlas, explained: local authorities, wards, constituencies, LSOAs, MSOAs, data zones, health boards and more, with the data published on each.",
 	path: "/geographies",
