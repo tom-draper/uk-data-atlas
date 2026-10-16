@@ -130,6 +130,16 @@ export default function MapGuidePage() {
 			<EndpointRef id="getMapResourceTileJson" />
 			<EndpointRef id="getMapResourceJoin" />
 			<EndpointRef id="getMapResourceArchive" />
+			<P>
+				For a map of one area's parts, such as Birmingham's wards, fetch
+				every shape inside it in one request instead. To load only the
+				areas in view as someone pans, ask for the areas meeting a box.
+				For analysis in DuckDB, QGIS or GeoPandas, download the whole
+				release as GeoParquet, which carries the same `id` as the tiles.
+			</P>
+			<EndpointRef id="getAreaChildrenGeometry" />
+			<EndpointRef id="findAreasIntersectingBox" />
+			<EndpointRef id="getMapResourceFeatures" />
 		</DocPage>
 	);
 }
