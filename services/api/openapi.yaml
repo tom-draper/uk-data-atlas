@@ -407,9 +407,11 @@ paths:
         Build artifacts that explain release coverage, reviewed conversion
         validation and other evidence are published as immutable JSON documents,
         rather than query endpoints. Available document ids are
-        `analysis-geography-validation`, `geography-inventory`,
-        `measure-compatibility`, `relationship-candidates` and
-        `validation-report`.
+        `analysis-geography-validation`, `corrections`, `geography-health`,
+        `geography-inventory`, `measure-compatibility`,
+        `relationship-candidates`, `relationship-repairs`, `validation-report`
+        and `measure-{measure-id}` for each measure, such as
+        `measure-population`.
       parameters:
         - name: document-id
           in: path
@@ -499,7 +501,8 @@ paths:
         A map resource is one boundary release prepared for drawing: tiles whose
         borders are compiled once and shared, so neighbours cannot be drawn two
         different ways. Releases are published deliberately rather than every
-        release being tiled, so this list is short.
+        release being tiled: most are, but a release served only as area
+        records, such as the 2022 Scottish data zones, is not listed.
       responses:
         "200":
           description: One entry per published map resource.
