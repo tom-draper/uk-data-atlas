@@ -100,7 +100,7 @@ export const compileLifeExpectancy = (lifeExpectancySeriesPath: string) => {
 						kind: "partial",
 						countries: countriesFor(latestRecords),
 						recordCount: latestRecords.length,
-						note: "England, Wales and Northern Ireland. Scotland's local life expectancy is published separately by National Records of Scotland.",
+						note: "Every local authority in all four UK nations, except the City of London and the Isles of Scilly, which have no published values of their own.",
 					},
 				},
 			],
