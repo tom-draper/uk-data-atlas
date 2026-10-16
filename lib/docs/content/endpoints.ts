@@ -73,7 +73,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	// Terrain
 	getTerrainCatalogue: {
 		title: "Discover terrain products",
-		intro: "See which terrain product families exist and whether a versioned source is currently available.",
+		intro: "See which terrain product families are planned and whether a versioned source is available yet. Every product is currently `not-published`, so there are no values, tiles or contours to fetch.",
 	},
 	getTerrainProduct: {
 		title: "Inspect a terrain product",
@@ -81,7 +81,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	getTerrainElevationPoint: {
 		title: "Get terrain elevation",
-		intro: "Sample bare-earth elevation at an EPSG:27700 point and receive the interpolation method, source version, hash, datum and uncertainty alongside the value.",
+		intro: "Sample bare-earth elevation at an EPSG:27700 point and receive the interpolation method, source version, hash, datum and uncertainty alongside the value. It needs a terrain source configured on the server, and doesn't mean the catalogue's planned products are published.",
 		tips: [
 			"`outside_coverage` and `nodata` are explicit successful results, not zeroes or guessed values.",
 			"A remote preview may be enabled without storing raster files locally.",

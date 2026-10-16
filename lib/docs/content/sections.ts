@@ -30,7 +30,7 @@ export const SECTIONS: Record<string, SectionContent> = {
 	},
 	terrain: {
 		title: "Terrain",
-		intro: "Discover versioned terrain products and sample elevation with its interpolation method, coverage status, coordinate reference, datum and uncertainty.",
+		intro: "Discover the planned terrain products and, where a server has a terrain source configured, sample elevation with its interpolation method, coverage status, datum and uncertainty. No terrain product is published yet.",
 	},
 	"data-catalogue": {
 		title: "Catalogue",
