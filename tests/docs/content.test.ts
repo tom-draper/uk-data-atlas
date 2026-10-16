@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { ENDPOINTS } from "@/lib/docs/content/endpoints";
 import { ERROR_CODES } from "@/lib/docs/content/errors";
 import { SECTIONS } from "@/lib/docs/content/sections";
@@ -71,6 +73,31 @@ describe("links written into the content", () => {
 		const broken = texts
 			.flatMap(docsLinks)
 			.filter((href) => !hrefs.has(href));
+		expect(broken).toEqual([]);
+	});
+
+	it("in the site's pages all lead to pages that exist", () => {
+		const files = ["app", "components", "lib"].flatMap((dir) =>
+			fs
+				.readdirSync(dir, { recursive: true, encoding: "utf8" })
+				.filter((file) => /\.tsx?$/.test(file))
+				.map((file) => path.join(dir, file)),
+		);
+		const broken = files.flatMap((file) => {
+			const text = fs.readFileSync(file, "utf8");
+			// Markdown links and href attributes, not prefixes a page tests.
+			const links = [
+				...docsLinks(text),
+				...[...text.matchAll(/href="(\/docs\/v1[^"#]*)/g)].map(
+					(match) => match[1],
+				),
+			];
+			return links
+				.filter((href) => !href.endsWith("..."))
+				.map((href) => href.replace(/\/$/, ""))
+				.filter((href) => !hrefs.has(href))
+				.map((href) => `${file}: ${href}`);
+		});
 		expect(broken).toEqual([]);
 	});
 });
