@@ -158,7 +158,7 @@ export const GEOGRAPHIES: Record<string, GeographyContent> = {
 		title: "Data zones",
 		singular: "Data zone",
 		group: "statistical",
-		intro: "Scotland's small areas for statistics, similar to LSOAs in England and Wales. The Scottish Index of Multiple Deprivation is published on them.",
+		intro: "Scotland's small areas for statistics, similar to LSOAs in England and Wales. The Scottish Index of Multiple Deprivation is published on them. Northern Ireland's Census 2021 data zones are held here too.",
 	},
 	intermediateZone: {
 		slug: "intermediate-zones",
