@@ -1,5 +1,9 @@
 import CodePanel, { RequestSamples } from "./CodePanel";
-import { findOperationById, loadApiContract } from "@/lib/docs/openapi";
+import {
+	findOperationById,
+	loadApiContract,
+	type DocsRequestBody,
+} from "@/lib/docs/openapi";
 import { operationExample, requestSamples } from "@/lib/docs/samples";
 
 /** An endpoint's worked example from the spec: the request, then its response. */
@@ -31,13 +35,18 @@ export function SpecExample({
 	);
 }
 
-/** A request written for a guide, optionally paired with its spec example response. */
+/**
+ * A request written for a guide, optionally paired with its spec example
+ * response. With a `body`, it is POSTed.
+ */
 export function Request({
 	url,
 	operationId,
+	body,
 }: {
 	url: string;
 	operationId?: string;
+	body?: DocsRequestBody;
 }) {
 	const response = operationId
 		? operationExample(findOperationById(loadApiContract(), operationId))
@@ -46,7 +55,7 @@ export function Request({
 
 	return (
 		<div className="my-5 space-y-3">
-			<RequestSamples samples={requestSamples(url)} />
+			<RequestSamples samples={requestSamples(url, "envelope", body)} />
 			{response && (
 				<CodePanel
 					title="Example response"
