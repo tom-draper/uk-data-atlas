@@ -2,6 +2,7 @@ import {
 	Callout,
 	DocPage,
 	EndpointRef,
+	H2,
 	P,
 	Step,
 	Steps,
@@ -31,6 +32,7 @@ export default function NamedPlaceGuidePage() {
 				{ id: "members", title: "Resolve its members" },
 				{ id: "answer", title: "Ask a question" },
 				{ id: "explain", title: "Explain the result" },
+				{ id: "definitions", title: "When the definition matters" },
 			]}
 		>
 			<Steps>
@@ -115,6 +117,33 @@ export default function NamedPlaceGuidePage() {
 				</Step>
 			</Steps>
 
+			<H2 id="definitions">When the definition matters</H2>
+			<P>
+				One name can have several curated definitions, such as a
+				ceremonial and a historic county of the same name. Give the
+				exact name to see each one, its kind and the source that sets it
+				apart:
+			</P>
+			<Request url={`${API}/locations/alternatives?q=Lancashire`} />
+			<P>
+				Members change as councils are reorganised. Compare a location's
+				membership between two dates to see which councils it kept,
+				gained or lost, before you put figures from different years side
+				by side:
+			</P>
+			<Request
+				url={`${API}/locations/lancashire/comparison?from=1974&to=2026-01-01`}
+				operationId="compareNamedLocationMembership"
+			/>
+			<P>
+				For a map, fetch the location's outline as one GeoJSON feature,
+				its members merged into a single shape:
+			</P>
+			<Request
+				url={`${API}/locations/greater-manchester/geometry`}
+				operationId="getNamedLocationGeometry"
+			/>
+
 			<P>
 				Named locations are useful starting points, not permission to
 				hide the method. When the exact boundary matters, move from the
@@ -124,6 +153,8 @@ export default function NamedPlaceGuidePage() {
 			<EndpointRef id="listNamedLocations" />
 			<EndpointRef id="getNamedLocationMembers" />
 			<EndpointRef id="getMeasureValueForPlace" />
+			<EndpointRef id="getNamedLocationAlternatives" />
+			<EndpointRef id="compareNamedLocationMembership" />
 		</DocPage>
 	);
 }
