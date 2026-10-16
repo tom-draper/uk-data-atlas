@@ -12,6 +12,12 @@ export interface DatasetTopic {
 export interface DatasetGuide {
 	topic: string;
 	about: string;
+	/**
+	 * The geography the publisher released it for, when the Atlas maps it on
+	 * another: crime is published for community safety partnerships and drawn
+	 * on their councils.
+	 */
+	publishedOn?: string;
 }
 
 export const DATASET_TOPICS: DatasetTopic[] = [
@@ -64,6 +70,7 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 	},
 	"nhs-waiting": {
 		topic: "health-and-care",
+		publishedOn: "integratedCareBoard",
 		about: "How long patients in England have been waiting for planned hospital treatment after a GP referral. Waits are reported for each integrated care board, the NHS body that plans services for an area.",
 	},
 	"adult-social-care-activity": {
@@ -236,7 +243,8 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 	},
 	crime: {
 		topic: "crime-and-safety",
-		about: "Crimes recorded by the police in each local authority of England and Wales, by type of offence. Recorded crime depends partly on how often crimes are reported, so it isn't a perfect measure of how much crime happens.",
+		publishedOn: "communitySafetyPartnership",
+		about: "Crimes recorded by the police in England and Wales, by type of offence. It's published for community safety partnerships, which mostly match councils, and the Atlas shows each partnership's figures on its local authorities. Recorded crime depends partly on how often crimes are reported, so it isn't a perfect measure of how much crime happens.",
 	},
 	"road-collisions": {
 		topic: "crime-and-safety",

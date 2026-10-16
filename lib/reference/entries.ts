@@ -92,7 +92,10 @@ export function boundaryEntries(catalogue: Catalogue = loadCatalogue()) {
 				? catalogue.areaCounts.get(`${id}/${latest.id}`)
 				: undefined,
 			coverage: latest ? nationList(latest.coverage.countries) : null,
-			datasets: datasets.filter((dataset) => dataset.geography === id),
+			datasets: datasets.filter(
+				(dataset) =>
+					dataset.geography === id || dataset.publishedOn === id,
+			),
 			docsHref: geographyHref(id),
 		};
 	});
