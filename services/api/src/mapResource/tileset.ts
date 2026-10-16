@@ -62,8 +62,12 @@ export type MapFeature = {
 	 * feature reaches a tile. A release is cut into thousands of tiles, and
 	 * projecting every vertex again for each one was most of the cost of
 	 * tiling a coastline. Held here, they go when the zoom band's features do.
+	 * Polygon parts are indexed at the current zoom to skip distant islands.
 	 */
-	projected?: WorldRing[][];
+	projected?: {
+		polygons: WorldRing[][];
+		tiles?: { zoom: number; polygons: Map<number, WorldRing[][]> };
+	};
 };
 
 const polygonsOf = (geometry: GeoJsonGeometry): Coordinate[][][] => {
@@ -137,6 +141,30 @@ export const featuresByTile = (features: MapFeature[], zoom: number) => {
 	return byTile;
 };
 
+/** Index polygon parts separately so distant islands do not reach every tile. */
+const polygonsByTile = (polygons: WorldRing[][], zoom: number) => {
+	const byTile = new Map<number, WorldRing[][]>();
+	const size = 2 ** zoom;
+	for (const polygon of polygons) {
+		const outer = polygon[0];
+		if (!outer) continue;
+		const [west, north, east, south] = outer.box;
+		// Include neighbouring tiles for the buffer and coordinate rounding.
+		const firstX = Math.max(Math.floor(west * size) - 1, 0);
+		const firstY = Math.max(Math.floor(north * size) - 1, 0);
+		const lastX = Math.min(Math.floor(east * size) + 1, size - 1);
+		const lastY = Math.min(Math.floor(south * size) + 1, size - 1);
+		for (let x = firstX; x <= lastX; x += 1)
+			for (let y = firstY; y <= lastY; y += 1) {
+				const key = x * size + y;
+				const reaching = byTile.get(key);
+				if (reaching) reaching.push(polygon);
+				else byTile.set(key, [polygon]);
+			}
+	}
+	return byTile;
+};
+
 /**
  * What is left of each area inside one tile.
  *
@@ -152,11 +180,25 @@ export const tileFeatures = (
 	const inTile: TileFeature[] = [];
 	for (const feature of features) {
 		if (!overlaps(feature.bounds, tileBounds)) continue;
-		feature.projected ??= polygonsOf(feature.geometry).map((polygon) =>
-			polygon.map(toWorldRing),
-		);
+		const projected = (feature.projected ??= {
+			polygons: polygonsOf(feature.geometry).map((polygon) =>
+				polygon.map(toWorldRing),
+			),
+		});
+		let polygons = projected.polygons;
+		if (polygons.length > 1) {
+			if (projected.tiles?.zoom !== address.z)
+				projected.tiles = {
+					zoom: address.z,
+					polygons: polygonsByTile(polygons, address.z),
+				};
+			polygons =
+				projected.tiles.polygons.get(
+					address.x * 2 ** address.z + address.y,
+				) ?? [];
+		}
 		const rings: Array<Array<[number, number]>> = [];
-		for (const polygon of feature.projected) {
+		for (const polygon of polygons) {
 			const [outer, ...holes] = polygon;
 			if (!outer) continue;
 			const clipped = clipWorldRing(outer, address);
