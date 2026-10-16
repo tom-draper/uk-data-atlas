@@ -62,7 +62,7 @@ export default function CachingPage() {
 			toc={[
 				{ id: "headers", title: "What the API sends" },
 				{ id: "conditional", title: "Conditional requests" },
-				{ id: "pinned", title: "Resources that never change" },
+				{ id: "pinned", title: "Checking current resources" },
 			]}
 		>
 			<H2 id="headers">What the API sends</H2>
