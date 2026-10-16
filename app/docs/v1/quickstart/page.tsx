@@ -27,7 +27,7 @@ export default function QuickstartPage() {
 			href="/docs/v1/quickstart"
 			eyebrow="Get started"
 			title="Quickstart"
-			lede="Five requests that take you from a place name to real numbers. There's nothing to install and no key to set up: every request is a plain GET, so you can paste any of these URLs straight into your browser."
+			lede="Five requests that take you from a place name to real numbers. There's nothing to install and no key to set up: each of these is a plain GET, so you can paste any of these URLs straight into your browser."
 			toc={[
 				{ id: "search", title: "Search for a place" },
 				{ id: "answer", title: "Ask a question" },
