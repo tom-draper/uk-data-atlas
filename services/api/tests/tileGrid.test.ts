@@ -93,3 +93,93 @@ test("places a coordinate in a tile as worldTile does at the tile's zoom", () =>
 		]);
 	}
 });
+
+test("clips long rings across hierarchy levels, closure and buffer boundaries", () => {
+	const centre: Coordinate = [-3, 54];
+	const closed = wanderingRing(random(19), centre, 8193, 0.01);
+	for (const ring of [
+		closed,
+		closed.slice(0, -1),
+		[...closed.slice(401), ...closed.slice(0, 401)],
+	]) {
+		const projected = toWorldRing(ring);
+		for (const z of [6, 9, 12]) {
+			const [worldX, worldY] = worldTile(centre, z);
+			for (const offset of [-1, 0, 1]) {
+				const address = {
+					z,
+					x: Math.floor(worldX) + offset,
+					y: Math.floor(worldY),
+				};
+				for (const buffer of [0, 64, 257])
+					assert.deepEqual(
+						clipWorldRing(projected, address, buffer),
+						clipRing(
+							ring.map((point) => toTileGrid(point, address)),
+							buffer,
+						),
+					);
+			}
+		}
+	}
+});
+
+test("retains a ring inside the tile and rejects empty and distant rings", () => {
+	const ring: Coordinate[] = [
+		[-90, 0],
+		[-45, 0],
+		[-45, 40],
+		[-90, 40],
+		[-90, 0],
+	];
+	assert.deepEqual(clipWorldRing(toWorldRing(ring), { z: 0, x: 0, y: 0 }), [
+		[1024, 2048],
+		[1536, 2048],
+		[1536, 1551],
+		[1024, 1551],
+	]);
+	assert.deepEqual(
+		clipWorldRing(toWorldRing([]), { z: 6, x: 31, y: 20 }),
+		[],
+	);
+	assert.deepEqual(
+		clipWorldRing(toWorldRing(ring), { z: 6, x: 31, y: 20 }),
+		[],
+	);
+});
+
+test("keeps the tile covered when all vertices lie outside it", () => {
+	const address = { z: 6, x: 31, y: 20 };
+	const corners: Coordinate[] = [
+		[-512, -512],
+		[4608, -512],
+		[4608, 4608],
+		[-512, 4608],
+	];
+	const ring: Coordinate[] = [];
+	for (let side = 0; side < corners.length; side += 1) {
+		const from = corners[side]!;
+		const to = corners[(side + 1) % corners.length]!;
+		for (let step = 0; step < 257; step += 1) {
+			const x =
+				(address.x +
+					(from[0] + ((to[0] - from[0]) * step) / 257) / 4096) /
+				64;
+			const y =
+				(address.y +
+					(from[1] + ((to[1] - from[1]) * step) / 257) / 4096) /
+				64;
+			ring.push([
+				x * 360 - 180,
+				(Math.atan(Math.sinh(Math.PI * (1 - 2 * y))) * 180) / Math.PI,
+			]);
+		}
+	}
+	ring.push(ring[0]!);
+	assert.deepEqual(clipWorldRing(toWorldRing(ring), address), [
+		[4160, -64],
+		[4160, 4160],
+		[-64, 4160],
+		[-64, -64],
+	]);
+});
