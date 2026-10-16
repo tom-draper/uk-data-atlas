@@ -1,4 +1,9 @@
-import { API_BASE_URL, API_ORIGIN, type DocsOperation } from "./openapi";
+import {
+	API_BASE_URL,
+	API_ORIGIN,
+	type DocsOperation,
+	type DocsRequestBody,
+} from "./openapi";
 
 /**
  * Ready-to-run request samples in the languages the docs offer, built from a
@@ -61,8 +66,43 @@ function pythonParams(params: [string, string][]): string {
 	return `{\n${lines.join("\n")}\n    }`;
 }
 
-function javascriptSample(url: string, kind: ResponseKind): string {
-	const request = `const response = await fetch(\n  ${JSON.stringify(url)},\n);`;
+const isJson = (body: DocsRequestBody) =>
+	body.contentType === "application/json";
+
+/** A parsed JSON value written as Python, where `null` is `None`. */
+function pythonLiteral(value: unknown, indent = "    "): string {
+	if (value === null) return "None";
+	if (value === true) return "True";
+	if (value === false) return "False";
+	if (Array.isArray(value)) {
+		return `[${value.map((item) => pythonLiteral(item, indent)).join(", ")}]`;
+	}
+	if (typeof value === "object") {
+		const inner = `${indent}    `;
+		const lines = Object.entries(value).map(
+			([key, item]) =>
+				`${inner}${pythonString(key)}: ${pythonLiteral(item, inner)},`,
+		);
+		return `{\n${lines.join("\n")}\n${indent}}`;
+	}
+	return JSON.stringify(value);
+}
+
+function javascriptBody(body: DocsRequestBody): string {
+	const payload = isJson(body)
+		? `JSON.stringify(${JSON.stringify(JSON.parse(body.example), null, 2).replace(/\n/g, "\n  ")})`
+		: JSON.stringify(body.example);
+	return `{\n  method: "POST",\n  headers: { "Content-Type": ${JSON.stringify(body.contentType)} },\n  body: ${payload},\n}`;
+}
+
+function javascriptSample(
+	url: string,
+	kind: ResponseKind,
+	body?: DocsRequestBody,
+): string {
+	const request = body
+		? `const response = await fetch(${JSON.stringify(url)}, ${javascriptBody(body)});`
+		: `const response = await fetch(\n  ${JSON.stringify(url)},\n);`;
 	switch (kind) {
 		case "envelope":
 			return `${request}\nconst { data } = await response.json();\n\nconsole.log(data);`;
@@ -75,12 +115,29 @@ function javascriptSample(url: string, kind: ResponseKind): string {
 	}
 }
 
-function pythonSample(url: string, kind: ResponseKind): string {
+function pythonSample(
+	url: string,
+	kind: ResponseKind,
+	body?: DocsRequestBody,
+): string {
 	const { base, params } = splitUrl(url);
+	const args = [
+		pythonString(base),
+		...(params.length > 0 ? [`params=${pythonParams(params)}`] : []),
+		...(body
+			? isJson(body)
+				? [`json=${pythonLiteral(JSON.parse(body.example))}`]
+				: [
+						`data=${pythonString(body.example)}`,
+						`headers={"Content-Type": ${pythonString(body.contentType)}}`,
+					]
+			: []),
+	];
+	const method = body ? "post" : "get";
 	const call =
-		params.length > 0
-			? `response = requests.get(\n    ${pythonString(base)},\n    params=${pythonParams(params)},\n)`
-			: `response = requests.get(${pythonString(base)})`;
+		args.length > 1
+			? `response = requests.${method}(\n${args.map((arg) => `    ${arg},`).join("\n")}\n)`
+			: `response = requests.${method}(${args[0]})`;
 	const read = {
 		envelope: 'data = response.json()["data"]\n\nprint(data)',
 		json: "body = response.json()",
@@ -90,21 +147,34 @@ function pythonSample(url: string, kind: ResponseKind): string {
 	return `import requests\n\n${call}\nresponse.raise_for_status()\n${read}`;
 }
 
+function curlSample(url: string, body?: DocsRequestBody): string {
+	if (!body) return `curl "${url}"`;
+	// A shell single-quoted string ends at a quote, so close and reopen it.
+	const data = body.example.replace(/'/g, `'\\''`);
+	return `curl -X POST "${url}" \\\n  -H "Content-Type: ${body.contentType}" \\\n  --data '${data}'`;
+}
+
+/** Samples for a request; with a `body`, it is POSTed as written. */
 export function requestSamples(
 	url: string,
 	kind: ResponseKind = "envelope",
+	body?: DocsRequestBody,
 ): CodeSample[] {
 	return [
-		{ language: "curl", label: SAMPLE_LABELS.curl, code: `curl "${url}"` },
+		{
+			language: "curl",
+			label: SAMPLE_LABELS.curl,
+			code: curlSample(url, body),
+		},
 		{
 			language: "javascript",
 			label: SAMPLE_LABELS.javascript,
-			code: javascriptSample(url, kind),
+			code: javascriptSample(url, kind, body),
 		},
 		{
 			language: "python",
 			label: SAMPLE_LABELS.python,
-			code: pythonSample(url, kind),
+			code: pythonSample(url, kind, body),
 		},
 	];
 }
@@ -158,7 +228,11 @@ export function operationExample(operation: DocsOperation): OperationExample {
 
 	return {
 		url,
-		samples: requestSamples(url, responseKind(operation, url)),
+		samples: requestSamples(
+			url,
+			responseKind(operation, url),
+			operation.requestBody ?? undefined,
+		),
 		response: answered?.example
 			? {
 					status: answered.status,

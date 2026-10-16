@@ -72,3 +72,42 @@ describe("operationExample", () => {
 		expect(kind("downloadBulkLookup", "?format=csv")).toBe("text");
 	});
 });
+
+describe("POST samples", () => {
+	const contract = loadApiContract();
+	const [curl, javascript, python] = operationExample(
+		findOperationById(contract, "findContainingAreasForPoints"),
+	).samples;
+
+	it("sends the spec's example body in every language", () => {
+		expect(curl.code).toContain("curl -X POST");
+		expect(curl.code).toContain(
+			`--data '{"points":["-1.5491,53.8008","1.0,54.5"]}'`,
+		);
+		expect(javascript.code).toContain('method: "POST"');
+		expect(javascript.code).toContain('"-1.5491,53.8008"');
+		expect(python.code).toContain("requests.post(");
+		expect(python.code).toContain(
+			'"points": ["-1.5491,53.8008", "1.0,54.5"],',
+		);
+	});
+
+	it("gives every POST route a body to send", () => {
+		const posts = contract.sections
+			.flatMap((section) => section.operations)
+			.filter((op) => op.method === "post");
+		expect(posts.length).toBeGreaterThan(0);
+		expect(
+			posts.filter((op) => !op.requestBody).map((op) => op.id),
+		).toEqual([]);
+	});
+
+	it("writes JSON null and booleans as Python", () => {
+		const [, , py] = requestSamples("https://x/v1/a", "envelope", {
+			contentType: "application/json",
+			example: '{"a":null,"b":true}',
+		});
+		expect(py.code).toContain('"a": None,');
+		expect(py.code).toContain('"b": True,');
+	});
+});

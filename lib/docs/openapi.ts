@@ -52,6 +52,13 @@ export interface DocsResponse {
 	example: string | null;
 }
 
+/** A request body's worked example, in the first media type the route reads. */
+export interface DocsRequestBody {
+	contentType: string;
+	/** Exactly as it is sent: JSON text, or the body as written. */
+	example: string;
+}
+
 export interface DocsOperation {
 	id: string;
 	slug: string;
@@ -62,6 +69,7 @@ export interface DocsOperation {
 	sectionSlug: string;
 	parameters: DocsParameter[];
 	responses: DocsResponse[];
+	requestBody: DocsRequestBody | null;
 }
 
 export interface DocsSection {
@@ -312,6 +320,25 @@ function readParameter(spec: Spec, raw: Schema): DocsParameter {
 	};
 }
 
+function readRequestBody(
+	spec: Spec,
+	raw: Schema | undefined,
+): DocsRequestBody | null {
+	if (!raw) return null;
+	const content = schemaRecordMap(deref(spec, raw).content);
+	const [contentType, media] = Object.entries(content).find(
+		([, value]) => "example" in value,
+	) ?? [undefined, undefined];
+	if (!contentType || !media) return null;
+	return {
+		contentType,
+		example:
+			typeof media.example === "string"
+				? media.example
+				: JSON.stringify(media.example),
+	};
+}
+
 function readResponse(spec: Spec, status: string, raw: Schema): DocsResponse {
 	const response = deref(spec, raw);
 	const content = schemaRecordMap(response.content);
@@ -382,6 +409,10 @@ export function buildContract(spec: Spec): ApiContract {
 				),
 				responses: Object.entries(responses).map(([status, r]) =>
 					readResponse(spec, status, r),
+				),
+				requestBody: readRequestBody(
+					spec,
+					schemaRecord(op.requestBody),
 				),
 			});
 		}
