@@ -68,6 +68,10 @@ const STATUSES: [string, string][] = [
 		"It worked, and there's nothing to send, such as a map tile with no areas in it.",
 	],
 	[
+		"`206` Partial Content",
+		"You asked for a byte `Range` of a file, as a PMTiles reader does, and got that part.",
+	],
+	[
 		"`304` Not Modified",
 		"Your cached copy is still current. See [Caching](/docs/v1/caching).",
 	],
@@ -80,21 +84,40 @@ const STATUSES: [string, string][] = [
 		"Nothing matches what you asked for, such as an unknown measure or area code.",
 	],
 	[
+		"`405` Method Not Allowed",
+		"The route takes a different method, such as a batch route that only takes POST.",
+	],
+	[
 		"`409` Conflict",
 		"What you asked for is ambiguous. The response lists the choices.",
 	],
-	["`410` Gone", "That Atlas release is no longer served."],
 	[
-		"`422` Unprocessable",
-		"The request is clear, but answering it would be misleading, so the API declines.",
+		"`413` Content Too Large",
+		"A POST body is bigger than the route accepts. Send it in smaller batches.",
 	],
 	[
 		"`414` URI Too Long",
 		"The request target is longer than the server accepts. Send fewer codes, or page the request.",
 	],
 	[
+		"`415` Unsupported Media Type",
+		"A POST body isn't in a format the route reads. Send JSON, or CSV where the route accepts it.",
+	],
+	[
+		"`416` Range Not Satisfiable",
+		"The byte range you asked for lies outside the file.",
+	],
+	[
+		"`422` Unprocessable",
+		"The request is clear, but answering it would be misleading, so the API declines.",
+	],
+	[
 		"`429` Too Many Requests",
 		"You've spent your requests for now. `Retry-After` says how many seconds to wait. See [Rate limits](/docs/v1/rate-limits).",
+	],
+	[
+		"`451` Unavailable For Legal Reasons",
+		"The API isn't licensed to serve it, such as a Northern Ireland postcode.",
 	],
 	[
 		"`500` Server Error",
