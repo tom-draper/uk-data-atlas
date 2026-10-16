@@ -242,7 +242,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	// Areas & boundaries
 	listMapResources: {
 		title: "List map resources",
-		intro: "List the boundary releases that are ready to draw as vector tiles. Releases are tiled deliberately, not automatically, so this list is short.",
+		intro: "List the boundary releases that are ready to draw as vector tiles. Releases are tiled deliberately rather than automatically, so the few served only as area records are left out.",
 	},
 	getMapResource: {
 		title: "Get a map resource",
@@ -458,7 +458,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Download a build evidence document",
 		intro: "Download the build evidence linked from a measure or boundary release. Measure documents contain quality, compatibility, coverage plans and reconciliations. Archive documents contain validation, corrections and geography health.",
 		tips: [
-			"Name the document in the path, such as `/v1/documents/geography-inventory.json`. An unknown id returns 404.",
+			"Name the document in the path, such as `/v1/documents/geography-inventory.json`, or `/v1/documents/measure-population.json` for one measure. An unknown id returns 404.",
 			"Documents are pinned to the Atlas release, so a saved copy stays valid evidence for the results it was built alongside.",
 		],
 	},
