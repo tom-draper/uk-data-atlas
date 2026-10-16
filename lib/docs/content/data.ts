@@ -72,7 +72,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Life expectancy",
 		topic: "people",
 		datasets: ["life-expectancy-series"],
-		intro: "Life expectancy at birth for men and women in local areas of England, Wales and Northern Ireland, for every three-year period since 2001 to 2003, with confidence intervals.",
+		intro: "Life expectancy at birth for men and women in local authorities across the UK, for every three-year period since 2001 to 2003, with confidence intervals.",
 	},
 	{
 		slug: "jobs",
@@ -132,7 +132,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "House prices",
 		topic: "housing",
 		datasets: ["house-price"],
-		intro: "Median and mean prices paid for homes in every ward in England and Wales, for each year from 1995 to 2023. This was the final ONS ward-level edition.",
+		intro: "Median prices paid for homes in every ward in England and Wales, for each year from 1995 to 2022. This was the final ONS ward-level edition, and its partial 2023 is left out because it isn't comparable.",
 	},
 	{
 		slug: "temporary-accommodation",
@@ -195,7 +195,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Road collisions",
 		topic: "transport",
 		datasets: ["road-collisions"],
-		intro: "Provisional counts of reported road collisions in the first half of 2025, by how serious the worst injury was, for local authorities in Great Britain and small areas in England and Wales.",
+		intro: "Final annual counts of road collisions reported to the police in 2024 and 2025, by how serious the worst injury was, for local authorities in Great Britain and small areas in England and Wales.",
 	},
 	{
 		slug: "electric-vehicle-chargers",
