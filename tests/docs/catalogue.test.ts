@@ -142,3 +142,11 @@ describe("formatPeriod", () => {
 		expect(formatPeriod("2022")).toBe("2022");
 	});
 });
+
+describe("exports", () => {
+	it("link by a full API path, so the docs prefix them with the origin", () => {
+		const hrefs = loadCatalogue().exports.map((item) => item.href);
+		expect(hrefs.length).toBeGreaterThan(0);
+		expect(hrefs.filter((href) => !href.startsWith("/v1/"))).toEqual([]);
+	});
+});
