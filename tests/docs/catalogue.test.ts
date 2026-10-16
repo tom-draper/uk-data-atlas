@@ -133,6 +133,7 @@ describe("formatPeriod", () => {
 	it("reads each published period form aloud", () => {
 		expect(formatPeriod("year-ending-2026-03")).toBe("Year to March 2026");
 		expect(formatPeriod("2026-04")).toBe("April 2026");
+		expect(formatPeriod("2026-07-01")).toBe("1 July 2026");
 		expect(formatPeriod("2026-Q1")).toBe("January to March 2026");
 		expect(formatPeriod("2025-H1")).toBe("January to June 2025");
 		expect(formatPeriod("2001-2003")).toBe("2001–2003");

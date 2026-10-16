@@ -397,11 +397,17 @@ const MONTHS = [
 
 /**
  * A period as a reader would say it: `year-ending-2026-03` is "Year to March
- * 2026", `2026-Q1` is "January to March 2026". Unfamiliar forms pass through.
+ * 2026", `2026-Q1` is "January to March 2026" and `2026-07-01` is "1 July
+ * 2026". Unfamiliar forms pass through.
  */
 export function formatPeriod(period: string): string {
 	let match = /^year-ending-(\d{4})-(\d{2})$/.exec(period);
 	if (match) return `Year to ${MONTHS[Number(match[2]) - 1]} ${match[1]}`;
+	// `2026-07-01` is a count taken on one day.
+	match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(period);
+	if (match) {
+		return `${Number(match[3])} ${MONTHS[Number(match[2]) - 1]} ${match[1]}`;
+	}
 	match = /^(\d{4})-(\d{2})$/.exec(period);
 	// `1996-97` is a financial year; `2026-04` is a month.
 	if (match && Number(match[2]) !== (Number(match[1]) + 1) % 100) {
