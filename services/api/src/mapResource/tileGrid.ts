@@ -193,41 +193,61 @@ const BLOCK = 32;
 
 /**
  * A ring on the zoom 0 world grid, x and y interleaved, with its extent there
- * and the extent of each block of BLOCK vertices, as minimum x and y then
- * maximum x and y.
+ * and a binary tree of extents over consecutive blocks of BLOCK vertices.
+ * Each extent stores minimum x and y then maximum x and y.
  */
 export type WorldRing = {
 	world: Float64Array;
 	box: [minX: number, minY: number, maxX: number, maxY: number];
-	blocks: Float64Array;
+	boundsTree: Float64Array;
+	leafCount: number;
 };
 
 export const toWorldRing = (ring: Coordinate[]): WorldRing => {
 	const world = new Float64Array(ring.length * 2);
-	const blocks = new Float64Array(Math.ceil(ring.length / BLOCK) * 4);
-	blocks.fill(Infinity);
-	for (let block = 0; block < blocks.length; block += 4) {
-		blocks[block + 2] = -Infinity;
-		blocks[block + 3] = -Infinity;
+	const leafCount =
+		2 ** Math.ceil(Math.log2(Math.max(1, Math.ceil(ring.length / BLOCK))));
+	// Heap order: root at 1, leaf blocks at leafCount.
+	const boundsTree = new Float64Array(leafCount * 8);
+	boundsTree.fill(Infinity);
+	for (let block = 0; block < boundsTree.length; block += 4) {
+		boundsTree[block + 2] = -Infinity;
+		boundsTree[block + 3] = -Infinity;
 	}
 	ring.forEach((coordinate, index) => {
 		const [x, y] = worldTile(coordinate, 0);
 		world[index * 2] = x;
 		world[index * 2 + 1] = y;
-		const block = Math.floor(index / BLOCK) * 4;
-		blocks[block] = Math.min(blocks[block]!, x);
-		blocks[block + 1] = Math.min(blocks[block + 1]!, y);
-		blocks[block + 2] = Math.max(blocks[block + 2]!, x);
-		blocks[block + 3] = Math.max(blocks[block + 3]!, y);
+		const block = (leafCount + Math.floor(index / BLOCK)) * 4;
+		boundsTree[block] = Math.min(boundsTree[block]!, x);
+		boundsTree[block + 1] = Math.min(boundsTree[block + 1]!, y);
+		boundsTree[block + 2] = Math.max(boundsTree[block + 2]!, x);
+		boundsTree[block + 3] = Math.max(boundsTree[block + 3]!, y);
 	});
-	const box: WorldRing["box"] = [Infinity, Infinity, -Infinity, -Infinity];
-	for (let block = 0; block < blocks.length; block += 4) {
-		box[0] = Math.min(box[0], blocks[block]!);
-		box[1] = Math.min(box[1], blocks[block + 1]!);
-		box[2] = Math.max(box[2], blocks[block + 2]!);
-		box[3] = Math.max(box[3], blocks[block + 3]!);
+	for (let node = leafCount - 1; node > 0; node -= 1) {
+		const parent = node * 4;
+		const left = node * 8;
+		const right = left + 4;
+		boundsTree[parent] = Math.min(boundsTree[left]!, boundsTree[right]!);
+		boundsTree[parent + 1] = Math.min(
+			boundsTree[left + 1]!,
+			boundsTree[right + 1]!,
+		);
+		boundsTree[parent + 2] = Math.max(
+			boundsTree[left + 2]!,
+			boundsTree[right + 2]!,
+		);
+		boundsTree[parent + 3] = Math.max(
+			boundsTree[left + 3]!,
+			boundsTree[right + 3]!,
+		);
 	}
-	return { world, box, blocks };
+	return {
+		world,
+		box: [boundsTree[4]!, boundsTree[5]!, boundsTree[6]!, boundsTree[7]!],
+		boundsTree,
+		leafCount,
+	};
 };
 
 /** The first edge, in the order clipToTile cuts them, a point lies beyond. */
@@ -267,15 +287,6 @@ const blockEdge = (
 	return north < low || south > high ? MIXED : INSIDE;
 };
 
-// Reused from tile to tile: a coastline is placed in thousands of them.
-let beyond = new Uint8Array(0);
-let blockBeyond = new Uint8Array(0);
-
-const edgeAt = (index: number) => {
-	const edge = blockBeyond[(index / BLOCK) | 0]!;
-	return edge === MIXED ? beyond[index]! : edge;
-};
-
 /**
  * clipRing for a ring toWorldRing has projected, placing it in the tile
  * itself, with the same result for far less work.
@@ -288,13 +299,13 @@ const edgeAt = (index: number) => {
  * and only those are placed and clipped: a coastline that leaves the tile
  * costs two points each time it does, rather than every vertex.
  *
- * Rounding never reorders values, so a block whose extent rounds wholly beyond
- * an edge has every vertex beyond it. Its vertices are coded together, and
- * only its two ends can be a run's first or last, so the rest are never
- * placed. A ring wholly beyond an edge is skipped outright.
+ * Rounding never reorders values, so an extent that rounds wholly beyond
+ * one edge has every vertex beyond it. A binary tree over consecutive vertex
+ * blocks lets a whole subtree become one run without examining its children.
+ * Only mixed leaf blocks need individual vertex classification.
  */
 export const clipWorldRing = (
-	{ world, box: [minX, minY, maxX, maxY], blocks }: WorldRing,
+	{ world, box: [minX, minY, maxX, maxY], boundsTree, leafCount }: WorldRing,
 	{ z, x, y }: TileAddress,
 	buffer = TILE_BUFFER,
 ): Point[] => {
@@ -309,32 +320,6 @@ export const clipWorldRing = (
 		return [];
 
 	const vertices = world.length / 2;
-	const blockCount = blocks.length / 4;
-	if (beyond.length < vertices) beyond = new Uint8Array(vertices);
-	if (blockBeyond.length < blockCount)
-		blockBeyond = new Uint8Array(blockCount);
-	for (let block = 0; block < blockCount; block += 1) {
-		// y runs downwards, so a block's least y is its northern edge.
-		const edge = blockEdge(
-			toTileUnits(blocks[block * 4]!, z, x),
-			toTileUnits(blocks[block * 4 + 1]!, z, y),
-			toTileUnits(blocks[block * 4 + 2]!, z, x),
-			toTileUnits(blocks[block * 4 + 3]!, z, y),
-			low,
-			high,
-		);
-		blockBeyond[block] = edge;
-		if (edge !== MIXED) continue;
-		const end = Math.min((block + 1) * BLOCK, vertices);
-		for (let index = block * BLOCK; index < end; index += 1)
-			beyond[index] = edgeOf(
-				toTileUnits(world[index * 2]!, z, x),
-				toTileUnits(world[index * 2 + 1]!, z, y),
-				low,
-				high,
-			);
-	}
-
 	// As clipRing does, a closing vertex that repeats the first is dropped.
 	const count =
 		vertices > 1 &&
@@ -344,33 +329,66 @@ export const clipWorldRing = (
 			toTileUnits(world[vertices * 2 - 1]!, z, y)
 			? vertices - 1
 			: vertices;
-	const kept: Point[] = [];
-	for (let block = 0; block * BLOCK < count; block += 1) {
-		const first = block * BLOCK;
-		const last = Math.min(first + BLOCK, count) - 1;
-		const uniform = blockBeyond[block] !== MIXED;
-		for (let index = first; index <= last; index += 1) {
-			// Between its ends, a block beyond one edge is all one run.
-			if (
-				uniform &&
-				blockBeyond[block] !== INSIDE &&
-				index !== first &&
-				index !== last
-			) {
-				index = last - 1;
-				continue;
-			}
-			const edge = edgeAt(index);
-			if (
-				edge === INSIDE ||
-				edgeAt((index + count - 1) % count) !== edge ||
-				edgeAt((index + 1) % count) !== edge
-			)
-				kept.push([
-					toTileUnits(world[index * 2]!, z, x),
-					toTileUnits(world[index * 2 + 1]!, z, y),
-				]);
+	const runs: Array<{ first: number; last: number; edge: number }> = [];
+	const append = (first: number, last: number, edge: number) => {
+		const previous = runs[runs.length - 1];
+		if (previous?.edge === edge) previous.last = last;
+		else runs.push({ first, last, edge });
+	};
+	const visit = (node: number, first: number, end: number) => {
+		if (first >= count) return;
+		const offset = node * 4;
+		const edge = blockEdge(
+			toTileUnits(boundsTree[offset]!, z, x),
+			toTileUnits(boundsTree[offset + 1]!, z, y),
+			toTileUnits(boundsTree[offset + 2]!, z, x),
+			toTileUnits(boundsTree[offset + 3]!, z, y),
+			low,
+			high,
+		);
+		if (edge !== MIXED) {
+			append(first, Math.min(end, count) - 1, edge);
+		} else if (node < leafCount) {
+			const middle = (first + end) / 2;
+			visit(node * 2, first, middle);
+			visit(node * 2 + 1, middle, end);
+		} else {
+			for (let index = first; index < Math.min(end, count); index += 1)
+				append(
+					index,
+					index,
+					edgeOf(
+						toTileUnits(world[index * 2]!, z, x),
+						toTileUnits(world[index * 2 + 1]!, z, y),
+						low,
+						high,
+					),
+				);
 		}
+	};
+	visit(1, 0, leafCount * BLOCK);
+	const kept: Point[] = [];
+	const keep = (index: number) =>
+		kept.push([
+			toTileUnits(world[index * 2]!, z, x),
+			toTileUnits(world[index * 2 + 1]!, z, y),
+		]);
+	for (let index = 0; index < runs.length; index += 1) {
+		const run = runs[index]!;
+		if (run.edge === INSIDE) {
+			for (let vertex = run.first; vertex <= run.last; vertex += 1)
+				keep(vertex);
+			continue;
+		}
+		// The first and last runs are adjacent around the ring.
+		const previous = runs[(index + runs.length - 1) % runs.length]!;
+		const next = runs[(index + 1) % runs.length]!;
+		if (
+			previous.edge !== run.edge ||
+			(run.first === run.last && next.edge !== run.edge)
+		)
+			keep(run.first);
+		if (run.last !== run.first && next.edge !== run.edge) keep(run.last);
 	}
 	return clipToTile(kept, buffer);
 };
