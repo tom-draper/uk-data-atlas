@@ -124,8 +124,8 @@ export default function IntroductionPage() {
 						title="Locate a batch of points"
 						icon={<MapPin className="h-4 w-4" />}
 					>
-						Match a spreadsheet of coordinates to areas, including
-						points outside coverage.
+						Match a spreadsheet of coordinates or postcodes to
+						areas, including points outside coverage.
 					</LinkCard>
 					<LinkCard
 						href="/docs/v1/guides/named-place"

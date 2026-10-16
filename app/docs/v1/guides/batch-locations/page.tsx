@@ -2,6 +2,7 @@ import {
 	Callout,
 	DocPage,
 	EndpointRef,
+	H2,
 	P,
 	Step,
 	Steps,
@@ -21,11 +22,12 @@ export default function BatchLocationsGuidePage() {
 			href="/docs/v1/guides/batch-locations"
 			eyebrow="Guide"
 			title="Locate a batch of points"
-			lede="Have a spreadsheet of sites, incidents or survey points? Send up to 100 coordinates in one request, match each to its containing area, and keep the points the API could not place instead of losing them in a failed join."
+			lede="Have a spreadsheet of sites, incidents or survey points? Send up to 100 coordinates or postcodes in one request, match each to its containing area, and keep the ones the API could not place instead of losing them in a failed join."
 			toc={[
 				{ id: "send", title: "Send the points" },
 				{ id: "read", title: "Read every result" },
 				{ id: "follow", title: "Join your data" },
+				{ id: "postcodes", title: "Postcodes instead of points" },
 			]}
 		>
 			<Steps>
@@ -68,7 +70,26 @@ export default function BatchLocationsGuidePage() {
 				</Step>
 			</Steps>
 
+			<H2 id="postcodes">Postcodes instead of points</H2>
+			<P>
+				A list of addresses usually has postcodes rather than
+				coordinates. Send up to 100 full postcodes as a JSON `postcodes`
+				array, and each is placed by its centroid from the ONS Postcode
+				Directory, in its local authority, ward and Westminster
+				constituency unless you ask for other geographies:
+			</P>
+			<SpecExample id="resolvePostcodes" showResponse={false} />
+			<P>
+				Each postcode keeps its place in the order you sent, with a
+				`status`. A postcode that is `invalid`, `not-found`, has no grid
+				reference (`not-placed`) or is in Northern Ireland
+				(`not-served`) doesn't fail the batch, and `summary` counts each
+				outcome for your import report. Add `view=compact` if you only
+				need each postcode's point and areas.
+			</P>
+
 			<EndpointRef id="findContainingAreasForPoints" />
+			<EndpointRef id="resolvePostcodes" />
 			<EndpointRef id="getMeasureObservations" />
 		</DocPage>
 	);
