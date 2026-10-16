@@ -41,8 +41,9 @@ async function resolvePage(params: Params) {
 		notFound();
 	const areas = areasWithin(await loadRanking(map.slug), location);
 	const plural = AREA_PLURALS[map.areaNoun] ?? `${map.areaNoun}s`;
-	const subject = `${atlasMapTitle(map)} in ${locationLabel(location)}: ${titleCase(plural)} Ranked`;
-	return { location, map, areas, plural, subject };
+	const place = `${atlasMapTitle(map)} in ${locationLabel(location)}`;
+	const subject = `${place}: ${titleCase(plural)} Ranked`;
+	return { location, map, areas, plural, subject, place };
 }
 
 export async function generateMetadata({
@@ -50,13 +51,14 @@ export async function generateMetadata({
 }: {
 	params: Params;
 }): Promise<Metadata> {
-	const { location, map, areas, plural, subject } = await resolvePage(params);
+	const { location, map, areas, plural, place } = await resolvePage(params);
 	const figure = atlasMapFigure(location, map);
 	const lead = `All ${areas.length} ${plural} in ${locationLabel(location)} ranked by ${rankedValueLabel(map).toLowerCase()}, from ${areas[0].name} to ${areas.at(-1)!.name}.`;
 	return pageMetadata({
 		// This segment has its own opengraph-image.
 		image: null,
-		subject,
+		// Short, so a search result is less likely to cut it off.
+		subject: `${place}, Ranked`,
 		description: figure ? `${figure} ${lead}` : lead,
 		path: `/maps/${location.slug}/${map.slug}`,
 	});
