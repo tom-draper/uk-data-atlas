@@ -10,6 +10,7 @@ import {
 	Search,
 	Table2,
 	LocateFixed,
+	MapPin,
 } from "lucide-react";
 import CodePanel, { RequestSamples } from "@/components/docs/CodePanel";
 import {
@@ -121,6 +122,7 @@ export default function IntroductionPage() {
 					<LinkCard
 						href="/docs/v1/guides/batch-locations"
 						title="Locate a batch of points"
+						icon={<MapPin className="h-4 w-4" />}
 					>
 						Match a spreadsheet of coordinates to areas, including
 						points outside coverage.
