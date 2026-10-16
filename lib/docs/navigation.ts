@@ -56,6 +56,7 @@ export const USING_THE_API: NavLink[] = [
 export const GUIDES: NavLink[] = [
 	{ href: "/docs/v1/guides/map", title: "Draw a map" },
 	{ href: "/docs/v1/guides/trend", title: "Chart a trend" },
+	{ href: "/docs/v1/guides/compare", title: "Compare an area" },
 	{ href: "/docs/v1/guides/coordinate", title: "Explore a coordinate" },
 	{
 		href: "/docs/v1/guides/batch-locations",
