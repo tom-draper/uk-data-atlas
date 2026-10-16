@@ -5,7 +5,7 @@ import { JsonLd, websiteJsonLd } from "@/lib/atlas/structuredData";
 import { SITE_NAME, siteMetadata } from "@/lib/site";
 
 export const metadata: Metadata = siteMetadata({
-	title: SITE_NAME,
+	title: `${SITE_NAME} - Interactive Maps of UK Official Statistics`,
 	description:
 		"Interactive maps of the official data that shapes the United Kingdom: elections, population, house prices, crime, deprivation, health and more, for every council.",
 	path: "/",
