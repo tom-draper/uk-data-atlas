@@ -1,13 +1,9 @@
 import type { AreaGeometryCache } from "../areaGeometry";
-import { GEOMETRY_TIERS, type GeometryTier } from "../simplifyGeometry";
+import type { GeometryTier } from "../simplifyGeometry";
 import { decomposeArcs } from "./arcs";
 import { buildGeoJson } from "./geoJson";
 import { buildGeoParquet } from "./geoParquet";
-import {
-	compileTier,
-	TOPOLOGY_METHOD,
-	type TierGeometry,
-} from "./topologyTiers";
+import { compileTiers, TOPOLOGY_METHOD } from "./topologyTiers";
 import { tileBounds, tilesCovering, type TileBox } from "./tileGrid";
 import {
 	boundsOf,
@@ -162,12 +158,7 @@ export const compileMapResource = (
 
 	// Each tier is generalised once and used for both forms, so a feature in
 	// the flat download and the same feature in a tile are the same shape.
-	const compiledTiers = new Map<GeometryTier, TierGeometry>(
-		(Object.keys(GEOMETRY_TIERS) as GeometryTier[]).map((tier) => [
-			tier,
-			compileTier(topology, tier),
-		]),
-	);
+	const compiledTiers = compileTiers(topology);
 
 	const bounds: TileBox = [Infinity, Infinity, -Infinity, -Infinity];
 	const tiles: ArchiveTile[] = [];

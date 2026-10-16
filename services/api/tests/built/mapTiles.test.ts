@@ -9,7 +9,7 @@ import {
 import { readGeometrySourceLookup } from "../../src/geometrySources";
 import { simplifyGeometry } from "../../src/simplifyGeometry";
 import { decomposeArcs } from "../../src/mapResource/arcs";
-import { compileTier } from "../../src/mapResource/topologyTiers";
+import { compileTiers } from "../../src/mapResource/topologyTiers";
 import {
 	tileBounds,
 	tilesCovering,
@@ -60,6 +60,7 @@ const release = (() => {
 })();
 
 const topology = decomposeArcs(release);
+const tiers = compileTiers(topology);
 
 const mapFeatures = (areas: Map<string, GeoJsonGeometry>): MapFeature[] =>
 	[...areas].map(([code, geometry], index) => ({
@@ -193,7 +194,7 @@ test("draws no area over another once the grid is finer than the boundaries", ()
 	// Both ends of every band except the whole-world zoom, which the next test
 	// covers: at zoom 5 a tile unit is already under 200 metres.
 	for (const band of ZOOM_TIERS) {
-		const features = mapFeatures(compileTier(topology, band.tier).areas);
+		const features = mapFeatures(tiers.get(band.tier)!.areas);
 		for (const zoom of [Math.max(band.minZoom, 5), band.maxZoom]) {
 			const result = drawn(features, zoom, adjacentInSource);
 			assert.ok(result.tiles > 0, `zoom ${zoom} produced no tiles`);
@@ -213,7 +214,7 @@ test("merges borders only where the grid is coarser than they are", () => {
 	// than the geometry, not a tier drawing a border two ways, and it is
 	// confined to this zoom: it is recorded here rather than left for someone
 	// to find in a renderer.
-	const features = mapFeatures(compileTier(topology, tierForZoom(0)).areas);
+	const features = mapFeatures(tiers.get(tierForZoom(0))!.areas);
 	const result = drawn(features, 0, adjacentInSource);
 	assert.equal(result.tiles, 1);
 	assert.ok(result.overlapping > 0, "zoom 0 no longer merges any border");
@@ -224,7 +225,7 @@ test("merges borders only where the grid is coarser than they are", () => {
 });
 
 test("carries the code, name and a stable id into the tile", () => {
-	const features = mapFeatures(compileTier(topology, "low").areas);
+	const features = mapFeatures(tiers.get("low")!.areas);
 	const address = sampleTiles(4, 12).find((tile) =>
 		buildTile("boundaries", features, tile, tileBounds(tile)),
 	)!;
@@ -251,7 +252,7 @@ test("keeps more borders through a coarse tile than generalising alone does", ()
 	const band = ZOOM_TIERS[0]!;
 	const zoom = band.maxZoom;
 	const shared = drawn(
-		mapFeatures(compileTier(topology, band.tier).areas),
+		mapFeatures(tiers.get(band.tier)!.areas),
 		zoom,
 		adjacentInSource,
 	);
