@@ -9,6 +9,7 @@ import {
 	atlasMapsFor,
 	atlasMapTitle,
 	findAtlasLocation,
+	locationLabel,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 import { hasRankingFor } from "@/lib/atlas/rankingPages";
@@ -30,7 +31,9 @@ async function resolveLocation(params: Params) {
 }
 
 function placeName(location: AtlasLocation) {
-	return location.name === "United Kingdom" ? "the UK" : location.name;
+	return location.name === "United Kingdom"
+		? "the UK"
+		: locationLabel(location);
 }
 
 export async function generateMetadata({

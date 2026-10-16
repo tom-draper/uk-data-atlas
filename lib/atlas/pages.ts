@@ -273,10 +273,30 @@ export function atlasHref(locationName: string, viz: ActiveViz): string {
 		: `${path}?period=${reference.period}`;
 }
 
+/** Places whose name reads naturally after "the": "in the North West". */
+const NAMES_AFTER_THE: ReadonlySet<string> = new Set([
+	"United Kingdom",
+	"North West",
+	"North East",
+	"West Midlands",
+	"East Midlands",
+	"South West",
+	"South East",
+	"East of England",
+	"Lowlands",
+	"Central Belt",
+	"Scottish Islands",
+	"Scottish Borders",
+	"Pembrokeshire Coast",
+	"Belfast Metropolitan Area",
+	"West of Northern Ireland",
+]);
+
+/** A place's name mid-sentence: "the North West", "the Highlands". */
 export function locationLabel(location: AtlasLocation) {
-	return location.name === "United Kingdom"
-		? "the United Kingdom"
-		: location.name;
+	const name = location.name.replace(/ The /g, " the ");
+	if (name.startsWith("The ")) return `the ${name.slice(4)}`;
+	return NAMES_AFTER_THE.has(name) ? `the ${name}` : name;
 }
 
 export function atlasMapTitle(map: AtlasMap, period = map.periods[0]) {

@@ -13,6 +13,7 @@ import {
 	findAtlasLocation,
 	findAtlasMap,
 	legacyAtlasHref,
+	locationLabel,
 	MAP_NAMES,
 } from "@/lib/atlas/pages";
 import gazetteerCore from "@/public/data/datasets/gazetteer.core.json";
@@ -103,6 +104,19 @@ describe("atlas pages", () => {
 		expect(
 			atlasPageHeading(location("united-kingdom"), map("brexit")),
 		).toBe("EU Referendum Results in the United Kingdom");
+	});
+
+	it('puts "the" before places that take it, mid-sentence', () => {
+		const label = (slug: string) => locationLabel(location(slug));
+		expect(label("north-west")).toBe("the North West");
+		expect(label("east-of-england")).toBe("the East of England");
+		expect(label("the-highlands")).toBe("the Highlands");
+		expect(label("cardiff-and-the-valleys")).toBe(
+			"Cardiff and the Valleys",
+		);
+		expect(label("london")).toBe("London");
+		expect(label("yorkshire")).toBe("Yorkshire");
+		expect(label("greater-manchester")).toBe("Greater Manchester");
 	});
 
 	it("round-trips every map and period through its URL", () => {
