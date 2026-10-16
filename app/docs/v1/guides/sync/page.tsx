@@ -1,4 +1,10 @@
-import { DocPage, P, Step, Steps } from "@/components/docs/Content";
+import {
+	DocPage,
+	EndpointRef,
+	P,
+	Step,
+	Steps,
+} from "@/components/docs/Content";
 import { Request } from "@/components/docs/Example";
 import { RequestSamples } from "@/components/docs/CodePanel";
 import { docsMetadata } from "@/lib/docs/metadata";
@@ -135,8 +141,22 @@ export default function SyncGuidePage() {
 						url={`${API}/lookups`}
 						operationId="listBulkLookups"
 					/>
+					<P>
+						Each crosswalk is also a lookup table. To keep only part
+						of one, page through its mappings instead, filtered to
+						one `source` area if you like.
+					</P>
 				</Step>
 			</Steps>
+
+			<P>
+				To record where each dataset came from, keep the dataset
+				catalogue beside your copy: each entry names its publisher,
+				source files and their hashes.
+			</P>
+			<EndpointRef id="listCrosswalkRecords" />
+			<EndpointRef id="listDatasets" />
+			<EndpointRef id="getDataset" />
 		</DocPage>
 	);
 }
