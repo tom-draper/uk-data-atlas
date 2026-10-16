@@ -47,9 +47,20 @@ describe("dataset guides", () => {
 	it("links each dataset to a geography on the geographies page", () => {
 		expect(
 			datasetEntries()
-				.filter((entry) => !GEOGRAPHIES[entry.geography])
+				.filter(
+					(entry) =>
+						!GEOGRAPHIES[entry.geography] ||
+						(entry.publishedOn && !GEOGRAPHIES[entry.publishedOn]),
+				)
 				.map((entry) => entry.slug),
 		).toEqual([]);
+	});
+
+	it("lists a dataset under the geography it was published for", () => {
+		const partnerships = boundaryEntries().find(
+			(entry) => entry.id === "communitySafetyPartnership",
+		);
+		expect(partnerships?.datasets.map((d) => d.slug)).toContain("crime");
 	});
 });
 
