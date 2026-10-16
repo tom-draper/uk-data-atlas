@@ -173,8 +173,9 @@ export default async function PlacesPage() {
 		>
 			<H2 id="named-places">Named places</H2>
 			<P>
-				The places people know areas by. Each region, nation, county and
-				combined authority lists its local authorities and their wards.
+				The places people know areas by, from nations and regions to
+				ceremonial and historic counties and groupings of councils. Each
+				lists its local authorities and their wards.
 			</P>
 			{named.map(({ kind, entries }) => (
 				<section key={kind}>
