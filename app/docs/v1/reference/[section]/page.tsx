@@ -16,8 +16,8 @@ import {
 	loadApiContract,
 	operationHref,
 } from "@/lib/docs/openapi";
-import { titleCase } from "@/lib/docs/metadata";
 import { docsPageMetadata } from "@/lib/docs/metadata";
+import { titleCase } from "@/lib/site";
 
 type Params = Promise<{ section: string }>;
 

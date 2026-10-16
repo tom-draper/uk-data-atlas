@@ -19,7 +19,6 @@ import {
 	sectionContent,
 	sectionHref,
 } from "@/lib/docs/navigation";
-import { titleCase } from "@/lib/docs/metadata";
 import {
 	API_BASE_URL,
 	allOperations,
@@ -30,6 +29,7 @@ import {
 } from "@/lib/docs/openapi";
 import { operationExample } from "@/lib/docs/samples";
 import { docsPageMetadata } from "@/lib/docs/metadata";
+import { titleCase } from "@/lib/site";
 
 type Params = Promise<{ section: string; operation: string }>;
 
