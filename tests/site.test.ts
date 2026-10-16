@@ -10,6 +10,10 @@ describe("titleCase", () => {
 		);
 	});
 
+	it('writes an ampersand as "and"', () => {
+		expect(titleCase("Maps & spatial")).toBe("Maps and Spatial");
+	});
+
 	it("leaves acronyms alone", () => {
 		expect(titleCase(geographyName("lsoa"))).toBe("LSOA");
 		expect(titleCase("LSOAs ranked")).toBe("LSOAs Ranked");

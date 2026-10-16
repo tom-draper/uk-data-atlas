@@ -18,7 +18,7 @@ import {
 } from "@/lib/docs/openapi";
 import { docsPageMetadata } from "@/lib/docs/metadata";
 
-const TITLE = "API Reference - UK Data Atlas";
+const TITLE = "All Endpoints - UK Data Atlas API Reference";
 const DESCRIPTION =
 	"Every endpoint in the UK Data Atlas API, grouped by what it's for: places, observations, maps, analysis, bulk downloads, boundaries and citation.";
 

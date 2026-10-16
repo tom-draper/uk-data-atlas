@@ -39,7 +39,7 @@ export async function generateMetadata({
 	if (!id) return {};
 	const content = GEOGRAPHIES[id];
 	return docsMetadata(
-		`${content.title} boundaries and data`,
+		`${content.title}: boundaries and data`,
 		content.intro,
 		geographyHref(id),
 	);
