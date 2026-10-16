@@ -31,7 +31,7 @@ import {
 } from "@/lib/docs/dataPages";
 import { docsMetadata } from "@/lib/docs/metadata";
 import { dataPageHref, geographyHref } from "@/lib/docs/navigation";
-import { API_BASE_URL } from "@/lib/docs/openapi";
+import { API_BASE_URL, API_ORIGIN } from "@/lib/docs/openapi";
 
 type Params = Promise<{ slug: string }>;
 
@@ -330,7 +330,8 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 						`${geographyName(download.sourceGeography.type)} · ${periodRange(download.periods)} · code year ${download.sourceGeography.boundaryYear}`,
 						download.recordCount.toLocaleString("en-GB"),
 						<a
-							href={`${API_BASE_URL}${download.href}`}
+							// The catalogue's href is already a full API path, `/v1/exports/...`.
+							href={`${API_ORIGIN}${download.href}`}
 							rel="noopener"
 							className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
 						>
