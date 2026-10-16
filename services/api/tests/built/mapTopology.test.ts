@@ -9,7 +9,7 @@ import {
 import { readGeometrySourceLookup } from "../../src/geometrySources";
 import { GEOMETRY_TIERS, simplifyGeometry } from "../../src/simplifyGeometry";
 import { decomposeArcs, rebuildAreas } from "../../src/mapResource/arcs";
-import { compileTier } from "../../src/mapResource/topologyTiers";
+import { compileTiers } from "../../src/mapResource/topologyTiers";
 
 /**
  * The release gate for a map resource: neighbours share edges at every tier.
@@ -149,9 +149,8 @@ test("keeps an island that no junction divides", () => {
 	);
 	assert.equal(topology.arcs.length, 1);
 	assert.equal(topology.closed[0], true);
-	for (const tier of TIERS) {
-		const compiled = compileTier(topology, tier);
-		assert.equal(compiled.areas.size, 1, tier);
+	for (const compiled of compileTiers(topology).values()) {
+		assert.equal(compiled.areas.size, 1, compiled.tier);
 	}
 });
 
@@ -176,6 +175,7 @@ const release = (() => {
 })();
 
 const topology = decomposeArcs(release);
+const tiers = compileTiers(topology);
 const atFullResolution = sharedPairs(release);
 
 test("decomposes the release into a clean coverage", () => {
@@ -188,15 +188,12 @@ test("decomposes the release into a clean coverage", () => {
 	assert.ok(atFullResolution.size > 800, "too few borders to be a gate");
 	// Splitting the release into arcs and putting it back must not move a
 	// single boundary, or nothing generalised from it can be trusted either.
-	assert.deepEqual(
-		ownedEdges(compileTier(topology, "full").areas),
-		ownedEdges(release),
-	);
+	assert.deepEqual(ownedEdges(tiers.get("full")!.areas), ownedEdges(release));
 });
 
 test("keeps every neighbour sharing edges at every tier", () => {
 	for (const tier of TIERS) {
-		const compiled = compileTier(topology, tier);
+		const compiled = tiers.get(tier)!;
 
 		// Nothing is taken off the map to make the tier fit.
 		assert.equal(
@@ -230,7 +227,7 @@ test("keeps every neighbour sharing edges at every tier", () => {
 });
 
 test("generalises the release substantially at the coarsest tier", () => {
-	const low = compileTier(topology, "low");
+	const low = tiers.get("low")!;
 	// A gate that every tier passes because nothing was simplified would be
 	// worthless, so hold the coarsest tier to a real reduction.
 	assert.ok(

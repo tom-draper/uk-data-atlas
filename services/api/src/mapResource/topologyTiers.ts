@@ -1,8 +1,8 @@
-import type { Pair } from "polygon-clipping";
 import type { Coordinate } from "../areaContainment";
 import {
 	GEOMETRY_TIERS,
-	removedVertices,
+	isGeometryTier,
+	vertexImportance,
 	type GeometryTier,
 } from "../simplifyGeometry";
 import { rebuildAreas, rebuildRing, type Topology } from "./arcs";
@@ -16,23 +16,6 @@ import type { GeoJsonGeometry } from "../areaGeometry";
  * exactly or do not share it at all, at every tier, which is the guarantee a
  * map needs and the one `simplifyGeometry` cannot give.
  */
-
-/**
- * One arc generalised by `removedVertices`.
- *
- * An open arc keeps both ends, because they are junctions another arc also
- * ends at, and moving one would tear the two apart. A closed arc has no
- * junction to keep and is simplified around, never below a triangle.
- */
-const simplifyArc = (
-	arc: Coordinate[],
-	closed: boolean,
-	thresholdM2: number,
-): Coordinate[] => {
-	if (arc.length <= (closed ? 3 : 2)) return arc;
-	const removed = removedVertices(arc as Pair[], closed, thresholdM2);
-	return arc.filter((_, i) => !removed[i]);
-};
 
 export type TierGeometry = {
 	tier: GeometryTier;
@@ -60,13 +43,14 @@ const REFINEMENT_STEP = 8;
  * junctions at its ends: the ring is still there, but it encloses nothing and
  * is no longer drawable. Rather than drop the part, which would take an island
  * off the map without saying so, the arcs of a collapsed ring are simplified
- * again at a finer threshold until the ring encloses something. They are still
- * simplified once each, so every area referencing a refined arc gets the same
+ * at a finer threshold until the ring encloses something. The cached removal
+ * sequence gives every area referencing a refined arc the same
  * refinement and borders stay shared.
  */
-export const compileTier = (
+const compileTier = (
 	topology: Topology,
 	tier: GeometryTier,
+	importance: Float64Array[],
 ): TierGeometry => {
 	const toleranceM = GEOMETRY_TIERS[tier];
 	const minEffectiveAreaM2 = toleranceM * toleranceM;
@@ -91,10 +75,8 @@ export const compileTier = (
 	);
 	const refined = new Uint8Array(topology.arcs.length);
 	const simplify = (index: number) =>
-		simplifyArc(
-			topology.arcs[index]!,
-			topology.closed[index]!,
-			thresholds[index]!,
+		topology.arcs[index]!.filter(
+			(_, vertex) => importance[index]![vertex]! >= thresholds[index]!,
 		);
 	const arcs = topology.arcs.map((_, index) => simplify(index));
 
@@ -141,6 +123,21 @@ export const compileTier = (
 		verticesAfter: arcs.reduce((total, arc) => total + arc.length, 0),
 		refinedArcs: refined.reduce<number>((total, flag) => total + flag, 0),
 	};
+};
+
+/** Compile every tier from one removal sequence per arc, including refinements. */
+export const compileTiers = (
+	topology: Topology,
+): Map<GeometryTier, TierGeometry> => {
+	const maxThresholdM2 = Math.max(...Object.values(GEOMETRY_TIERS)) ** 2;
+	const importance = topology.arcs.map((arc, index) =>
+		vertexImportance(arc, topology.closed[index]!, maxThresholdM2),
+	);
+	return new Map(
+		Object.keys(GEOMETRY_TIERS)
+			.filter(isGeometryTier)
+			.map((tier) => [tier, compileTier(topology, tier, importance)]),
+	);
 };
 
 /**

@@ -45,7 +45,7 @@ export const triangleAreaM2 = (a: Pair, b: Pair, c: Pair) =>
 /**
  * Visvalingam-Whyatt over one line: repeatedly drop the vertex whose triangle
  * with its two neighbours is smallest, until the smallest remaining exceeds
- * the threshold. Removing a point enlarges its neighbours' triangles, so their
+ * the threshold. Removing a point redraws its neighbours' triangles, so their
  * areas are recomputed and pushed again; a stale entry is recognised on pop by
  * no longer matching the area currently recorded for that vertex.
  *
@@ -55,20 +55,25 @@ export const triangleAreaM2 = (a: Pair, b: Pair, c: Pair) =>
  * A closed line lists each vertex once and never falls below a triangle. An
  * open one keeps both ends, which are never measured or offered.
  *
- * Returns a flag per vertex: 1 where it is dropped.
+ * Returns the threshold each vertex must exceed to be removed, for queries
+ * up to maxThresholdM2. Unremoved vertices have Infinity. A newly drawn
+ * triangle can be smaller than the one just removed, so its importance is
+ * the largest area removed so far. Filtering with importance < threshold reproduces stopping
+ * the original removal sequence at that threshold.
  */
-export const removedVertices = (
+export const vertexImportance = (
 	points: Pair[],
 	closed: boolean,
-	thresholdM2: number,
-): Uint8Array => {
+	maxThresholdM2: number,
+): Float64Array => {
 	const count = points.length;
 	const floor = closed ? 3 : 2;
+	const importance = new Float64Array(count).fill(Infinity);
+	if (count <= floor || maxThresholdM2 <= 0) return importance;
 	const projected = points.map(projectEqualArea);
 	const previous = new Int32Array(count);
 	const next = new Int32Array(count);
 	const area = new Float64Array(count);
-	const removed = new Uint8Array(count);
 	for (let i = 0; i < count; i += 1) {
 		previous[i] = (i - 1 + count) % count;
 		next[i] = (i + 1) % count;
@@ -88,24 +93,28 @@ export const removedVertices = (
 	for (let i = 0; i < count; i += 1) if (movable(i)) heap.push([area[i]!, i]);
 
 	let remaining = count;
+	let barrier = 0;
 	while (heap.size > 0 && remaining > floor) {
 		const [entryArea, vertex] = heap.pop();
 		// Stale: this vertex has gone, or its triangle has since been redrawn.
-		if (removed[vertex] || entryArea !== area[vertex]) continue;
-		if (entryArea >= thresholdM2) break;
-		removed[vertex] = 1;
+		if (importance[vertex] !== Infinity || entryArea !== area[vertex])
+			continue;
+		if (entryArea >= maxThresholdM2) break;
+		barrier = Math.max(barrier, entryArea);
+		importance[vertex] = barrier;
 		remaining -= 1;
 		const before = previous[vertex]!;
 		const after = next[vertex]!;
 		next[before] = after;
 		previous[after] = before;
 		for (const neighbour of [before, after]) {
-			if (removed[neighbour] || !movable(neighbour)) continue;
+			if (importance[neighbour] !== Infinity || !movable(neighbour))
+				continue;
 			area[neighbour] = areaAt(neighbour);
 			heap.push([area[neighbour]!, neighbour]);
 		}
 	}
-	return removed;
+	return importance;
 };
 
 /** One ring generalised; it never falls below a closed triangle. */
@@ -117,8 +126,8 @@ const simplifyRing = (ring: Pair[], thresholdM2: number): Pair[] => {
 	const points = isClosed ? ring.slice(0, -1) : ring.slice();
 	if (points.length <= 3) return ring;
 
-	const removed = removedVertices(points, true, thresholdM2);
-	const kept = points.filter((_, i) => !removed[i]);
+	const importance = vertexImportance(points, true, thresholdM2);
+	const kept = points.filter((_, i) => importance[i]! >= thresholdM2);
 	return isClosed ? [...kept, kept[0]!] : kept;
 };
 
