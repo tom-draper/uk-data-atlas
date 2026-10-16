@@ -64,12 +64,13 @@ export default function GeographiesPage() {
 				map can only colour in the areas its data was published for.
 			</P>
 			<P>
-				Each area has a nine-character code from the Office for National
-				Statistics, such as E08000003 for Manchester, which stays the
-				same as long as the area does. Boundaries are redrawn from time
-				to time, when councils merge or wards are reviewed, so the Atlas
-				keeps several releases of each and matches every dataset to the
-				boundaries its figures were published on.
+				Most areas have a nine-character code from the Office for
+				National Statistics, such as E08000003 for Manchester, which
+				stays the same as long as the area does. Some Northern Ireland
+				areas use their own codes instead. Boundaries are redrawn from
+				time to time, when councils merge or wards are reviewed, so the
+				Atlas keeps several releases of each and matches every dataset
+				to the boundaries its figures were published on.
 			</P>
 			<P>
 				Because boundaries move, an area&apos;s figures from different
