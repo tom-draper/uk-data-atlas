@@ -6,8 +6,9 @@ import {
 	P,
 	Table,
 } from "@/components/docs/Content";
-import { SpecExample } from "@/components/docs/Example";
+import { Request, SpecExample } from "@/components/docs/Example";
 import { docsMetadata } from "@/lib/docs/metadata";
+import { API_BASE_URL } from "@/lib/docs/openapi";
 
 export const metadata = docsMetadata(
 	"Crosswalks",
@@ -25,6 +26,7 @@ export default function CrosswalksPage() {
 			toc={[
 				{ id: "kinds", title: "Three kinds" },
 				{ id: "uses", title: "What they're used for" },
+				{ id: "analysis", title: "Converting for analysis" },
 				{ id: "translate", title: "Translating a code" },
 				{ id: "endpoints", title: "Useful endpoints" },
 			]}
@@ -73,6 +75,37 @@ export default function CrosswalksPage() {
 				repeats how it was made.
 			</P>
 
+			<H2 id="analysis">Converting for analysis</H2>
+			<P>
+				A crosswalk existing doesn't make every conversion through it
+				sound. Moving collisions counted on LSOAs up to councils works,
+				because each LSOA sits inside one council and collisions add up;
+				adding ward medians up into a council median doesn't. The Atlas
+				keeps a list of the measure, source and boundary combinations it
+				has reviewed as safe to convert:
+			</P>
+			<Request
+				url={`${API_BASE_URL}/analysis-geographies?measure=road-collisions`}
+			/>
+			<P>
+				Before fetching anything, ask for a plan. It names the source
+				figures, the crosswalk and whether the period can be compared on
+				the boundaries you want, and always offers the publisher's own
+				figures as a safer alternative. It fetches and changes no data:
+			</P>
+			<Request
+				url={`${API_BASE_URL}/analysis:plan?measure=road-collisions&period=2025&geography=lsoa&codeYear=2021&to=localAuthority/2023-05-uk-bgc-v2`}
+			/>
+			<P>
+				A reviewed conversion can then be used with `analysisGeography`
+				on [Get a time
+				series](/docs/v1/reference/trend/source-exact-measure-series),
+				or through [Convert to other
+				areas](/docs/v1/reference/trend/convert-source-exact-measure). A
+				combination that hasn't been reviewed is reported as
+				`not-comparable`, never quietly substituted.
+			</P>
+
 			<H2 id="translate">Translating a code</H2>
 			<P>
 				Here's a ward translated into the local authority it belongs to.
@@ -84,6 +117,8 @@ export default function CrosswalksPage() {
 			<EndpointRef id="listCrosswalks" />
 			<EndpointRef id="translateAreaCode" />
 			<EndpointRef id="getAreaRelationships" />
+			<EndpointRef id="listAnalysisGeographies" />
+			<EndpointRef id="planAnalysis" />
 		</DocPage>
 	);
 }
