@@ -31,10 +31,9 @@ export default function BatchLocationsGuidePage() {
 			<Steps>
 				<Step id="send" title="Send the points">
 					<P>
-						Repeat `point` for each coordinate. This example sends a
-						point in Leeds and another outside UK coverage, asking
-						for local authorities as they were published on 1 June
-						2025.
+						{
+							"POST the coordinates as a JSON `points` array, each one `{lng},{lat}`. This example sends a point in Leeds and another outside UK coverage, asking for local authorities as they were published on 1 June 2025."
+						}
 					</P>
 					<SpecExample id="findContainingAreasForPoints" />
 				</Step>
