@@ -118,10 +118,12 @@ export default function AreasPage() {
 			<P>
 				This doesn't choose which boundaries to draw. To put values on a
 				map, add a `release`. The API only accepts one that contains
-				every area code in the data, so nothing silently goes missing.
-				[Check which boundaries
-				fit](/docs/v1/reference/data-catalogue/measure-compatibility)
-				lists the releases that work.
+				every area code in the data, so nothing silently goes missing. A
+				release that doesn't fit is refused with
+				`incompatible_geometry`, naming the releases that would, and a
+				measure's [evidence
+				document](/docs/v1/reference/governance/evidence-document) lists
+				every compatible release.
 			</P>
 
 			<H2 id="shapes">Shapes</H2>
