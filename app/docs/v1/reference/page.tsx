@@ -37,7 +37,7 @@ export default function ReferencePage() {
 			href="/docs/v1/reference"
 			eyebrow="API reference"
 			title="Every endpoint, in one place"
-			lede={`All ${count} endpoints, grouped by what they're for. The API is read-only, so every request is a simple GET you can try in your browser.`}
+			lede={`All ${count} endpoints, grouped by what they're for. The API is read-only: almost every request is a simple GET you can try in your browser, and the few POST routes take a batch of points, postcodes, codes or rows in the body.`}
 			toc={[
 				{ id: "base-url", title: "Base URL" },
 				{ id: "sections", title: "Sections" },
