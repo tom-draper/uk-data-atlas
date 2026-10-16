@@ -93,6 +93,13 @@ export default function AreasPage() {
 				picks the right one. The [geography pages](/docs/v1/geographies)
 				list every available release and its coverage.
 			</Callout>
+			<P>
+				Moving to a newer release? [Compare boundary
+				releases](/docs/v1/reference/geography/compare-boundary-releases)
+				lists the codes the two share, the codes added and the codes
+				gone, and where there's published evidence, whether a shared
+				code's boundary stayed the same.
+			</P>
 
 			<H2 id="identity">Naming an exact area</H2>
 			<P>
