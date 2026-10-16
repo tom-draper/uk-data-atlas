@@ -26,6 +26,7 @@ import {
 	combining,
 	dataPageFacts,
 	findDataPage,
+	unitLabel,
 	yearSpan,
 } from "@/lib/docs/dataPages";
 import { docsMetadata } from "@/lib/docs/metadata";
@@ -155,7 +156,7 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 							{measure.id}
 						</code>
 					</span>,
-					measure.unit,
+					unitLabel(measure.unit),
 					combining(measure),
 				])}
 			/>
