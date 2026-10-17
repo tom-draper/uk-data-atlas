@@ -9,6 +9,7 @@ import {
 } from "@/lib/atlas/rankings";
 import {
 	ageShare,
+	boardName,
 	medianAge,
 	successorCouncil,
 } from "@/lib/atlas/rankingRecipes";
@@ -38,7 +39,7 @@ describe("ranking pages", () => {
 	it("has no page for a single council's local authority ranking", () => {
 		expect(hasRankingFor("rutland", "crime")).toBe(false);
 		expect(hasRankingFor("london", "crime")).toBe(true);
-		expect(hasRankingFor("london", "general-election")).toBe(false);
+		expect(hasRankingFor("london", "local-election")).toBe(false);
 	});
 
 	it("reads values in full where the map's legend rounds them", () => {
@@ -92,7 +93,7 @@ describe("ranking pages", () => {
 		);
 		for (const area of ranking.areas) {
 			expect(area.value).toBeGreaterThanOrEqual(0);
-			expect(area.value).toBeLessThanOrEqual(area.extra![0]!);
+			expect(area.value).toBeLessThanOrEqual(area.extra![0] as number);
 		}
 	});
 
@@ -112,5 +113,55 @@ describe("ranking pages", () => {
 		expect(medianAge({ 30: 0, 40: 4, 41: 4 })).toBe(41);
 		expect(medianAge({ 20: 1, 21: 2, 22: 1 })).toBeCloseTo(21.5);
 		expect(ageShare({ 10: 1, 70: 3 }, 65)).toBe(75);
+	});
+
+	it("files each constituency under the council holding most of it", async () => {
+		const ranking = await loadRanking("general-election");
+		expect(ranking.level).toBe("constituency");
+		expect(ranking.areas).toHaveLength(650);
+		const leeds = areasWithin(ranking, findAtlasLocation("leeds")!);
+		expect(leeds.map((area) => area.name)).toContain(
+			"Leeds Central and Headingley",
+		);
+		expect(leeds.every((area) => area.district === "E08000035")).toBe(true);
+		expect(ranking.columns?.map((column) => column.label)).toEqual([
+			"Winner",
+			"Majority",
+			"Turnout",
+		]);
+		expect(typeof ranking.areas[0]!.extra![0]).toBe("string");
+	});
+
+	it("places a region of councils where most of its councils are", async () => {
+		const ranking = await loadRanking("regional-gdp-itl3");
+		const london = areasWithin(ranking, findAtlasLocation("london")!);
+		expect(london.length).toBeGreaterThan(5);
+		expect(london.every((area) => area.code.startsWith("TLI"))).toBe(true);
+		const wales = areasWithin(ranking, findAtlasLocation("wales")!);
+		expect(wales.every((area) => area.code.startsWith("TLL"))).toBe(true);
+		// A county is part of a region, not most of one.
+		expect(areasWithin(ranking, findAtlasLocation("kent")!)).toEqual([]);
+	});
+
+	it("ranks NHS boards by the councils they serve", async () => {
+		const ranking = await loadRanking("nhs-waiting");
+		expect(ranking.level).toBe("icb");
+		expect(ranking.areas).toHaveLength(42);
+		expect(hasRankingFor("london", "nhs-waiting")).toBe(true);
+		expect(areasWithin(ranking, findAtlasLocation("london")!)).toHaveLength(
+			5,
+		);
+		expect(rankedAreaNoun(findAtlasMap("nhs-waiting")!)).toBe(
+			"integrated care board",
+		);
+	});
+
+	it("names an NHS board as people say it", () => {
+		expect(
+			boardName("NHS LANCASHIRE AND SOUTH CUMBRIA INTEGRATED CARE BOARD"),
+		).toBe("Lancashire and South Cumbria");
+		expect(
+			boardName("NHS NORTH EAST AND NORTH CUMBRIA INTEGRATED CARE BOARD"),
+		).toBe("North East and North Cumbria");
 	});
 });

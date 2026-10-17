@@ -41,8 +41,13 @@ export type RankedArea = {
 	/** The local authority a ward sits in; the authority itself otherwise. */
 	district: string;
 	value: number;
+	/**
+	 * The councils an area covers, where it is more than its district: a
+	 * place's page lists it when most of them are the place's.
+	 */
+	within?: string[];
 	/** The extra columns' values, in the order of `MapRanking.columns`. */
-	extra?: (number | null)[];
+	extra?: (number | string | null)[];
 };
 
 export type RankedColumn = { label: string; format: ColumnFormat };
@@ -54,7 +59,13 @@ export type MapRanking = {
 	areas: RankedArea[];
 };
 
-const RANKED_LEVELS = new Set(["localAuthority", "ward"]);
+const RANKED_LEVELS = new Set<string>([
+	"localAuthority",
+	"ward",
+	"constituency",
+	"itl3",
+	"icb",
+]);
 
 function definitionOf(map: AtlasMap) {
 	return CHART_DATASET_DEFINITIONS.find(
@@ -75,8 +86,9 @@ export function rankingSource(map: AtlasMap) {
 		definition.map?.valueFor ??
 		definition.map?.valueKey;
 	if (!valued) return null;
-	// Wards are ranked only where a recipe reads the ward's own name.
-	if (level === "ward" && !RANKING_RECIPES[map.slug]) return null;
+	// Areas other than councils are ranked only where a recipe reads their
+	// names and the councils they sit in.
+	if (level !== "localAuthority" && !RANKING_RECIPES[map.slug]) return null;
 	return {
 		file: definition.precompiledFile,
 		inputs: recipe.inputs ?? [],
@@ -86,9 +98,20 @@ export function rankingSource(map: AtlasMap) {
 	};
 }
 
-/** What a ranking's rows are, "ward" or "local authority". */
+/** What each level's rows are called, one and many. */
+export const LEVEL_NOUNS: Readonly<
+	Record<RankingLevel, { one: string; many: string }>
+> = {
+	localAuthority: { one: "local authority", many: "local authorities" },
+	ward: { one: "ward", many: "wards" },
+	constituency: { one: "constituency", many: "constituencies" },
+	itl3: { one: "area", many: "areas" },
+	icb: { one: "integrated care board", many: "integrated care boards" },
+};
+
+/** What a ranking's rows are, such as "ward" or "local authority". */
 export const rankedAreaNoun = (map: AtlasMap) =>
-	rankingSource(map)?.level === "ward" ? "ward" : "local authority";
+	LEVEL_NOUNS[rankingSource(map)?.level ?? "localAuthority"].one;
 
 export const RANKED_MAPS: readonly AtlasMap[] = ATLAS_MAPS.filter(
 	(map) => rankingSource(map) !== null,
@@ -193,7 +216,7 @@ export function compileRanking(
 		.filter(
 			(row) =>
 				Number.isFinite(row.value) &&
-				(level === "ward" ||
+				(level !== "localAuthority" ||
 					row.code === row.district ||
 					!ownFigures.has(row.district)),
 		)
@@ -204,10 +227,12 @@ export function compileRanking(
 				district: row.district,
 				value: row.value,
 			};
+			if (row.within && row.within.length > 0) area.within = row.within;
 			if (columns.length > 0)
 				area.extra = columns.map(({ column }) => {
 					const value = column.value(row, context);
-					return value !== null && Number.isFinite(value)
+					return typeof value === "string" ||
+						(value !== null && Number.isFinite(value))
 						? value
 						: null;
 				});
@@ -246,21 +271,27 @@ const DISTRICT_PREFIXES: Readonly<Record<string, readonly string[]>> = {
 	"GB-NIR": ["N09", "N92"],
 };
 
-/** The areas of a ranking within a place, in rank order. */
+/**
+ * The areas of a ranking within a place, in rank order: those whose district,
+ * or most of the councils they cover, are the place's.
+ */
 export function areasWithin(
 	ranking: MapRanking,
 	location: AtlasLocation,
 ): RankedArea[] {
-	if (location.members.length > 0) {
-		const members = new Set(location.members);
-		return ranking.areas.filter((area) => members.has(area.district));
-	}
 	const prefixes = location.countries.flatMap(
 		(country) => DISTRICT_PREFIXES[country] ?? [],
 	);
-	return ranking.areas.filter((area) =>
-		prefixes.some((prefix) => area.district.startsWith(prefix)),
-	);
+	const members = new Set(location.members);
+	const inPlace =
+		location.members.length > 0
+			? (code: string) => members.has(code)
+			: (code: string) =>
+					prefixes.some((prefix) => code.startsWith(prefix));
+	return ranking.areas.filter((area) => {
+		const councils = area.within ?? [area.district];
+		return councils.filter(inPlace).length * 2 > councils.length;
+	});
 }
 
 /**
@@ -303,6 +334,12 @@ const RANKED_FORMATS: Readonly<Record<string, (value: number) => string>> = {
 	simd: (value) => `${value.toFixed(1)}%`,
 	wimd: (value) => `${value.toFixed(1)}%`,
 	"population-age": (value) => `${value.toFixed(1)} years`,
+	"general-election": (value) => `${value.toFixed(1)}%`,
+	"brexit-constituency": (value) => `${value.toFixed(1)}%`,
+	"nhs-waiting": (value) => `${value.toFixed(1)}%`,
+	// Published in millions of pounds.
+	"regional-gdp-itl3": (value) =>
+		`£${Math.round(value).toLocaleString("en-GB")}m`,
 	"population-density": (value) =>
 		`${Math.round(value).toLocaleString("en-GB")} per km²`,
 };
@@ -332,6 +369,10 @@ const RANKED_VALUE_LABELS: Readonly<Record<string, string>> = {
 	simd: "Data zones in Scotland's most deprived 10%",
 	wimd: "Neighbourhoods in Wales' most deprived 10%",
 	"population-age": "Median age",
+	"general-election": "Majority as a share of votes",
+	"brexit-constituency": "Estimated share voting Leave",
+	"nhs-waiting": "Patients waiting over 18 weeks",
+	"regional-gdp-itl3": "Gross domestic product",
 	"population-density": "Residents per km²",
 };
 
@@ -367,6 +408,7 @@ const COLUMN_FORMATS: Readonly<
 	count: (value) => Math.round(value).toLocaleString("en-GB"),
 	years: (value) => value.toFixed(1),
 	micrograms: (value) => `${value.toFixed(1)} µg/m³`,
+	text: String,
 	squareKm: (value) =>
 		`${value.toLocaleString("en-GB", { maximumFractionDigits: value < 10 ? 2 : 1 })} km²`,
 };
@@ -374,11 +416,13 @@ const COLUMN_FORMATS: Readonly<
 /** How an extra column's value reads; a dash where the data has none. */
 export const formatColumnValue = (
 	column: RankedColumn,
-	value: number | null | undefined,
+	value: number | string | null | undefined,
 ) =>
 	value === null || value === undefined
 		? "–"
-		: COLUMN_FORMATS[column.format](value);
+		: typeof value === "string"
+			? value
+			: COLUMN_FORMATS[column.format](value);
 
 /** The place pages a council's row links to, by council code. */
 export const COUNCIL_PLACES: ReadonlyMap<string, AtlasLocation> = new Map(
