@@ -5746,12 +5746,6 @@
 			"population": 162100,
 			"period": "year ending March 2026"
 		},
-		"maidstone": {
-			"kind": "crime",
-			"crimes": 33,
-			"population": 187767,
-			"period": "year ending March 2026"
-		},
 		"guildford": {
 			"kind": "crime",
 			"crimes": 10913,
@@ -6032,12 +6026,6 @@
 			"kind": "crime",
 			"crimes": 15501,
 			"population": 180989,
-			"period": "year ending March 2026"
-		},
-		"medway": {
-			"kind": "crime",
-			"crimes": 107,
-			"population": 292655,
 			"period": "year ending March 2026"
 		},
 		"bracknell-forest": {
@@ -6398,18 +6386,6 @@
 			"kind": "crime",
 			"crimes": 14750,
 			"population": 142691,
-			"period": "year ending March 2026"
-		},
-		"tonbridge-and-malling": {
-			"kind": "crime",
-			"crimes": 27,
-			"population": 136853,
-			"period": "year ending March 2026"
-		},
-		"tunbridge-wells": {
-			"kind": "crime",
-			"crimes": 26,
-			"population": 119694,
 			"period": "year ending March 2026"
 		},
 		"burnley": {

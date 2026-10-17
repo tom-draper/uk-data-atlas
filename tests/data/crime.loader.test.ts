@@ -22,9 +22,23 @@ E23000039,Dorset,E22000064,Poole,E06000058,"Bournemouth, Christchurch and Poole"
 E23000025,Suffolk,E22000274,Suffolk Coastal,E07000244,Suffolk Coastal,${counts(5152)}
 E23000025,Suffolk,E22000278,Waveney,E07000244,Waveney,${counts(7245)}
 E23000035,Devon and Cornwall,,Unassigned Devon and Cornwall,,,${counts(300)}
+E23000032,Kent [note 4],,,,,${counts(150000)}
+E23000032,Kent,E22000137,Ashford,E07000105,Ashford,${counts(9197)}
+E23000032,Kent [note 4],E22000143,Medway,E06000035,Medway,${counts(107)}
+E23000032,Kent [note 4],,Unassigned Kent,,,${counts(68563)}
 `;
 
-const read = async () => csv;
+// The CSP notes sheet: note 4 moves some partnerships' crime to "Unassigned".
+const notes = `CSP notes,
+Note number,Note text
+1,Caution must be taken when interpreting small numbers of offences.
+4,"Due to ongoing IT issues, crime data for Maidstone, Medway, Tonbridge and Malling, Dartford and Gravesham, and Tunbridge Wells are recorded under an unassigned CSP group from 2024 onwards."
+`;
+
+const readWith = (table: string) => async (_path: string, sheet: string) =>
+	sheet === "Notes - CSP" ? notes : table;
+
+const read = readWith(csv);
 
 describe("loadCrime", () => {
 	it("keeps every partnership, including those covering several authorities", async () => {
@@ -34,6 +48,7 @@ describe("loadCrime", () => {
 			"E22000063",
 			"E22000064",
 			"E22000100",
+			"E22000137",
 			"E22000274",
 			"E22000278",
 			"E22000362",
@@ -88,6 +103,7 @@ describe("loadCrime", () => {
 		expect(Object.keys(dataset.data).sort()).toEqual([
 			"E06000026",
 			"E06000058",
+			"E07000105",
 			"E07000244",
 		]);
 	});
@@ -97,8 +113,22 @@ describe("loadCrime", () => {
 			`E06000026,Plymouth,${counts(20000)}`,
 			`E06000026,Plymouth,[x],${counts(1).slice(2)}`,
 		);
-		await expect(loadCrime(async () => unavailable)).rejects.toThrow(
+		await expect(loadCrime(readWith(unavailable))).rejects.toThrow(
 			/E22000100 totalRecordedCrime is not a count/,
+		);
+	});
+
+	it("withholds a partnership whose crime its force recorded as unassigned", async () => {
+		const [dataset] = Object.values(await loadCrime(read));
+
+		expect(dataset.partnerships.E22000143).toBeUndefined();
+		expect(dataset.data.E06000035).toBeUndefined();
+		expect(dataset.data.E07000105).toMatchObject({
+			policeForceAreaName: "Kent",
+			totalRecordedCrime: 9197,
+		});
+		expect(dataset.metadata.notes.at(-1)).toMatch(
+			/^No figures for Medway: /,
 		);
 	});
 });
