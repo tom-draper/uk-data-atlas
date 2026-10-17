@@ -209,7 +209,7 @@ export const areaCitation = (
 					status: "available" as const,
 					scope: "source-file" as const,
 					value: inputHash,
-					note: "Hashes the whole source file this release's geometry is read from, not this area alone. Per-area geometry hashes are not compiled.",
+					note: "Hashes the whole source file this release's geometry is read from. Request include=metrics for the hash of this area's full WGS 84 geometry.",
 				}
 			: {
 					status: "not-published" as const,

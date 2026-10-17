@@ -4651,8 +4651,8 @@ paths:
         attributed, together with any dataset a derived measure is calculated
         from. Name a `crosswalk` to cite one that publishes a relationship for
         this area. A resource that supplies nothing for the area is refused with
-        `422` rather than cited. Per-area geometry hashes are not compiled yet
-        and are reported as `not-published`; the boundary release's
+        `422` rather than cited. The citation hashes the whole geometry source
+        file; `include=metrics` supplies the per-area `geometryHash`. The boundary release's
         `metadataHash` pins its metadata, which names the source file but does
         not hash its contents. The envelope's top-level `atlasRelease` is the
         release of the API response itself: use `citation.identity.contentHash`
@@ -10767,8 +10767,16 @@ components:
           geometryExtent,
           method,
           geometrySource,
+          geometryHash,
         ]
       properties:
+        geometryHash:
+          type: string
+          pattern: "^sha256:[0-9a-f]{64}$"
+          description: >
+            SHA-256 of the UTF-8 JSON serialization of the full WGS 84 geometry
+            returned by the area's geometry route with tier=full. This identifies
+            its coordinates and their order, not topological equivalence.
         boundingBox:
           type: array
           description: >

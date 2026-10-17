@@ -79,6 +79,10 @@ test("measures an area's geometry without returning its coordinates", () => {
 			unknown
 		>;
 		const metrics = data.metrics as Record<string, unknown>;
+		assert.equal(
+			metrics.geometryHash,
+			"sha256:53bea9ee9129d28832b5d0b511be59bcbe7105023281c8a886eceb31fbbed9ef",
+		);
 		// The point of the endpoint: measurements, and no coordinates beyond
 		// the three single points that are themselves the answer.
 		assert.equal("geometry" in data, false);
