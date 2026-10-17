@@ -34,7 +34,7 @@ const registry: BoundaryRegistry = {
 		release("lsoa", "2011-12-ew-bgc-v3", ["GB-ENG", "GB-WLS"]),
 		release("lsoa", "2011-12-w-bgc", ["GB-WLS"]),
 		release("dataZone", "2011-12-sc-bfc", ["GB-SCT"]),
-		release("dataZone", "2011-12-sc-nc", ["GB-SCT"]),
+		release("dataZone", "2011-12-sc-bgc", ["GB-SCT"]),
 		release("superOutputArea", "2011-ni", ["GB-NIR"]),
 	],
 };
@@ -117,7 +117,7 @@ test("returns same-month variants that differ otherwise as an ambiguity", () => 
 	assert.deepEqual(
 		selection.status === "ambiguous" &&
 			selection.choices.map((choice) => choice.id),
-		["2011-12-sc-bfc", "2011-12-sc-nc"],
+		["2011-12-sc-bfc", "2011-12-sc-bgc"],
 	);
 });
 

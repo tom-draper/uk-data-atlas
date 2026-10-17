@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "./contentHash";
+import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 export type SourceFile = {
 	extension: string;
@@ -66,12 +67,16 @@ export const createSourceInventory = (
 	const sources = metadataPaths(dataRoot)
 		.map((metadataPath) => {
 			const raw = readFileSync(metadataPath, "utf8");
-			const metadata = JSON.parse(raw) as Metadata;
+			const key = relative(dataRoot, join(metadataPath, "..")).replaceAll(
+				"\\",
+				"/",
+			);
+			const metadata: Metadata = {
+				...JSON.parse(raw),
+				...sourceMetadataCorrections[key],
+			};
 			return {
-				key: relative(dataRoot, join(metadataPath, "..")).replaceAll(
-					"\\",
-					"/",
-				),
+				key,
 				...(optionalString(metadata.id) === undefined
 					? {}
 					: { metadataId: optionalString(metadata.id) }),

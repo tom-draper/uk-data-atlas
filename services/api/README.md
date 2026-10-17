@@ -3278,9 +3278,9 @@ every area of its release is left to that lookup; one listing only the areas
 that changed, as ONS's ward code history does, keeps its continuity crosswalk
 beside it. A pair sharing fewer than half its codes is skipped, which
 leaves the 2024 constituency redistribution and the 2011 move to GSS local
-authority codes to methods that can describe them. So is a release whose
-geometry file holds no shapes, such as the names-and-codes 2011 data zone
-file. `pnpm tsx scripts/propose-extent-continuity.ts --write` regenerates
+authority codes to methods that can describe them. A release whose
+geometry file holds no shapes is also skipped.
+`pnpm tsx scripts/propose-extent-continuity.ts --write` regenerates
 the adapters when a release is added.
 
 Chaining the releases makes an area's history long, and every crosswalk

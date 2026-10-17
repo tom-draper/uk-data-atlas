@@ -48,7 +48,7 @@ map tiles.
 **No big gaps means:**
 
 - Every compiled release can be downloaded whole, as GeoJSON and GeoParquet,
-  from one obvious URL. The current build publishes 98 of 99 releases whole.
+  from one obvious URL. The current build publishes all 98 releases whole.
 - Every release has map tiles (PMTiles). The current build tiles 94 releases;
   four others have full-detail downloads but fail the topology check.
 - The archive holds every release ONS (and NISRA, Scottish Government, OS)
@@ -128,7 +128,7 @@ identified below; they do not represent a fresh run of every original question.
 | Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                                        |
 | What's at this postcode?                           | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                                              |
 | What's the history of Lancashire?                  | ⚠️ partial     | Ceremonial and historic definitions, dated membership, alternative definitions and membership comparisons are implemented. Earlier boundary vintages and legally dated reorganisation events remain separate work. |
-| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. 98 of 99 releases download whole; four that are not coverages have no tiles and download at full detail only.                      |
+| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. All 98 releases download whole; four that are not coverages have no tiles and download at full detail only.                        |
 | Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                                 |
 | Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Supplied counts can be POSTed to a named crosswalk. This particular ward-to-constituency request still depends on a published crosswalk for the exact releases.                                                    |
 | What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
@@ -231,15 +231,13 @@ already supports.
 
 ### Now: close the gaps that block the mission
 
-1. **Close the remaining delivery gaps.** The source file for
-   `dataZone/2011-12-sc-nc` has 6,976 features and no non-null geometries.
-   Obtain a usable publisher source with the same identities. Do not substitute
-   another release merely because it uses similar codes. Four releases fail
+1. **Close the remaining delivery gaps.** All 98 boundary releases have
+   whole-release downloads. Four releases fail
    the shared-edge topology check: `dataZone/2022-sc-bfc`, `dataZone/2021-ni`,
    `lsoa/2001-12-ew-bgc` and `ward/2017-12-gb-bgc`. Their full-detail downloads
    remain available. Investigate the affected geometry before replacing it.
 2. **Complete the missing relationships.** No published crosswalk references
-   those three data-zone releases or `nhsEnglandRegion/2022-07-en-bgc`.
+   the three boundary data-zone releases or `nhsEnglandRegion/2022-07-en-bgc`.
    The current candidate inventory also identifies missing Northern Irish
    target releases for its embedded DEA, local-government district and
    super-data-zone fields. Existing eligible candidates are already published.
@@ -247,14 +245,19 @@ already supports.
    `include=metrics`, and the geometry route reports its generalisation tier.
    Per-area validity results remain unfinished.
 
+The ONS `DZ_DEC_2011_SC_NC` source is a names-and-codes table, not an
+unclipped boundary release. Its [publisher service](https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/DZ_DEC_2011_SC_NC_45ae61d197ca46658b7431e39e1eb3de/FeatureServer?f=pjson)
+has no layers and one table. It remains in the source inventory as a lookup;
+`dataZone/2011-12-sc-bfc` supplies the 2011 Scottish boundaries.
+
 Run `pnpm --dir services/api audit:archive` after a data build to list delivery
 failures, unpublished relationship candidates and the releases held for each
 geography. The output records the compiled manifests' hashes, so a report can
 be tied to the exact inputs inspected. It audits the held archive, not every
 release available from publishers.
 
-Completed since the original question bank: whole-release downloads for 98 of
-99 releases, map tiles for 94, measure discovery by name and alias, request
+Completed since the original question bank: whole-release downloads for all
+98 releases, map tiles for 94, measure discovery by name and alias, request
 bodies and downloadable match reports, matching with parent hints, and `:join`
 for supplied data. `POST /crosswalks/{crosswalk-id}:convert?semantics=count`
 converts supplied counts with explicit weighting opt-in and coverage. Ceremonial
@@ -296,7 +299,7 @@ until a real user asks.
 
 ## Archive gaps
 
-The compiled archive holds 99 releases across 33 geographies. Many
+The compiled archive holds 98 releases across 33 geographies. Many
 geographies have only one release, so they can't answer anything historical.
 
 | Geography                                                        | Releases held                      | Gap                                                  |

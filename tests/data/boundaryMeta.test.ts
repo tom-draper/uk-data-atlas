@@ -14,6 +14,7 @@ import {
 	BOUNDARY_TYPES,
 } from "@/lib/data/boundaries/catalog";
 import { parseDatasetMeta } from "@/lib/data/catalog/meta";
+import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 const ROOT = join(process.cwd(), "data", "boundaries");
 
@@ -29,13 +30,18 @@ const filesIn = (dir: string, prefix = ""): string[] =>
 const directories = (dir: string) =>
 	readdirSync(dir).filter((name) => statSync(join(dir, name)).isDirectory());
 
-const releaseFolders = directories(ROOT).flatMap((geography) =>
-	directories(join(ROOT, geography)).map((release) => ({
-		geography,
-		release,
-		dir: join(ROOT, geography, release),
-	})),
-);
+const releaseFolders = directories(ROOT)
+	.flatMap((geography) =>
+		directories(join(ROOT, geography)).map((release) => ({
+			geography,
+			release,
+			dir: join(ROOT, geography, release),
+		})),
+	)
+	.filter(
+		({ geography, release }) =>
+			!sourceMetadataCorrections[`boundaries/${geography}/${release}`],
+	);
 
 /**
  * The catalogue's BoundaryType for each geography folder, read off the asset

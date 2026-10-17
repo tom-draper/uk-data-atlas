@@ -606,19 +606,6 @@ const CATALOG = {
 				nameKey: "Name",
 				asset: asset("data-zone", "2011-12-sc-bfc"),
 			},
-			{
-				// Held, not served: the same 2011 data zones as the release
-				// above, but keyed DZ11CD rather than DataZone, so serving it
-				// for 2011 would silently change the codes datasets join on.
-				id: "2011-12-sc-nc",
-				year: 2011,
-				month: 12,
-				extent: "sc",
-				codeKey: "DZ11CD",
-				nameKey: "DZ11NM",
-				holdReason:
-					"It duplicates the served 2011 data zones under incompatible codes.",
-			},
 		],
 	},
 	superOutputArea: {

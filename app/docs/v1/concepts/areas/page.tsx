@@ -82,7 +82,7 @@ export default function AreasPage() {
 				items={[
 					"`2024-07-uk-bgc` is the July 2024 release covering the UK.",
 					"The middle part is the coverage, such as `uk`, `gb`, `ew` (England and Wales), `en` or `sc`.",
-					"The last part is the publisher's boundary type: `bgc` (or `gcb` in a few older releases) is generalised and clipped to the coastline, `bfc` is full resolution and `nc` is not clipped.",
+					"The last part is the publisher's boundary type: `bgc` (or `gcb` in a few older releases) is generalised and clipped to the coastline, and `bfc` is full resolution and clipped to the coastline.",
 					"A suffix such as `-v2` marks a corrected edition the publisher reissued. A few releases from other publishers have shorter ids, like `2011-ni`.",
 					"A year can have more than one release. Use the full id, including its month and coverage, when you need one exact set of shapes.",
 				]}

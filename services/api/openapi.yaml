@@ -8496,27 +8496,6 @@ components:
               enum: [409]
             code:
               const: ambiguous_release
-      examples:
-        - type: https://api.ukdataatlas.com/problems/ambiguous-release
-          title: Ambiguous Release
-          status: 409
-          detail:
-            2 dataZone boundary releases are dated 2011-12 and differ in more than
-            coverage. Choose one by id; each is listed in choices.
-          code: ambiguous_release
-          choices:
-            - id: 2011-12-sc-bfc
-              month: 2011-12
-              title: Data zones, December 2011 (Scotland, full resolution, clipped)
-              countries:
-                - GB-SCT
-              href: /v1/boundary-releases/dataZone/2011-12-sc-bfc
-            - id: 2011-12-sc-nc
-              month: 2011-12
-              title: Data zones, December 2011 (Scotland, not clipped)
-              countries:
-                - GB-SCT
-              href: /v1/boundary-releases/dataZone/2011-12-sc-nc
 
     Envelope:
       type: object
