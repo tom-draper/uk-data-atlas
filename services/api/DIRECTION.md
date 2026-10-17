@@ -7,7 +7,8 @@ history. Where the two disagree on priority, this document wins.
 `openapi.yaml` stays the binding description of what is implemented.
 
 Written 2026-09-29, after putting a set of everyday questions to a local build
-of the API (see [What we tested](#what-we-tested)).
+of the API (see [What we tested](#what-we-tested)). Implementation status reviewed
+on 2026-10-17 against the source, tests and compiled archive.
 
 ## Mission
 
@@ -47,10 +48,9 @@ map tiles.
 **No big gaps means:**
 
 - Every compiled release can be downloaded whole, as GeoJSON and GeoParquet,
-  from one obvious URL. Today only local authorities, May 2023, can be.
-  Everything else has to be fetched one area at a time, or 1,000 at a time
-  through a bounding box.
-- Every release has map tiles (PMTiles), not only local authorities, May 2023.
+  from one obvious URL. The current build publishes 98 of 99 releases whole.
+- Every release has map tiles (PMTiles). The current build tiles 94 releases;
+  four others have full-detail downloads but fail the topology check.
 - The archive holds every release ONS (and NISRA, Scottish Government, OS)
   publishes for the core administrative and statistical geographies, not only
   the latest. See [Archive gaps](#archive-gaps).
@@ -116,21 +116,22 @@ fix what's broken, convert it to where you need it, and put it on a map.
 These are the acceptance tests. A pillar is done when its questions are
 answered in one or two obvious requests, without reading the README. Add
 questions as they occur to us. Status is from the local run on 2026-09-29,
-updated against a local build on 2026-09-30.
+updated against a local build on 2026-09-30. Later implementation findings are
+identified below; they do not represent a fresh run of every original question.
 
-| Question                                           | Status         | Notes                                                                                                                                                                                              |
-| -------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| What's the population of North Wales?              | ✅ one request | `/data/population/value?place=north wales` gives 697,115 (2024) and lists the other "North Wales" places it could have meant.                                                                      |
-| Which measures are about house prices?             | ✅ one request | `/measures?q=house prices` finds `house-price-median`, and `house-prices` is accepted wherever the id is. `q=deprivation` lists all four national indices rather than choosing one.                |
-| I have 100 LAD codes; which boundary set are they? | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. The codes can be POSTed as CSV or JSON, and releases that match equally well are named in `likely.tiedWith`.                        |
-| What replaced Allerdale?                           | ✅             | `history` gives Cumberland (E06000063), April 2023.                                                                                                                                                |
-| Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                        |
-| What's at this postcode?                           | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                              |
-| What's the history of Lancashire?                  | ❌             | Lancashire county exists in one release (2025) with no lineage. The named location is an editorial list of 14 councils. There are no ceremonial or historic counties and no reorganisation events. |
-| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. 98 of 99 releases download whole; four that are not coverages have no tiles and download at full detail only.      |
-| Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                 |
-| Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Code translation exists for some pairs; there is no way to send your own values.                                                                                                                   |
-| What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                       |
+| Question                                           | Status         | Notes                                                                                                                                                                                                              |
+| -------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| What's the population of North Wales?              | ✅ one request | `/data/population/value?place=north wales` gives 697,115 (2024) and lists the other "North Wales" places it could have meant.                                                                                      |
+| Which measures are about house prices?             | ✅ one request | `/measures?q=house prices` finds `house-price-median`, and `house-prices` is accepted wherever the id is. `q=deprivation` lists all four national indices rather than choosing one.                                |
+| I have 100 LAD codes; which boundary set are they? | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. The codes can be POSTed as CSV or JSON, and releases that match equally well are named in `likely.tiedWith`.                                        |
+| What replaced Allerdale?                           | ✅             | `history` gives Cumberland (E06000063), April 2023.                                                                                                                                                                |
+| Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                                        |
+| What's at this postcode?                           | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                                              |
+| What's the history of Lancashire?                  | ⚠️ partial     | Ceremonial and historic definitions, dated membership, alternative definitions and membership comparisons are implemented. Earlier boundary vintages and legally dated reorganisation events remain separate work. |
+| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. 98 of 99 releases download whole; four that are not coverages have no tiles and download at full detail only.                      |
+| Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                                 |
+| Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Code translation exists for some pairs; there is no way to send your own values.                                                                                                                                   |
+| What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
 
 ## UX rules
 
@@ -230,29 +231,39 @@ already supports.
 
 ### Now: close the gaps that block the mission
 
-1. **Simplify the surface.** Apply the merges, the one vocabulary and the
-   `include=` folding above while it costs nothing. Update `openapi.yaml`, the
-   docs page and the contract tests in the same passes. Under way: see
-   [Merge](#merge); `latest` is accepted wherever a path names a release, and
-   `/areas:contains` takes a postcode. `pnpm contract:surface
---before-launch` locks a deliberate break until launch.
-2. **Places with history.** Ceremonial counties (the source is in
-   `data/geography/ceremonial-counties` and, since `data-2026-09-29`, in the
-   published data release, but not yet compiled into the API), then historic
-   counties, then reorganisation events as
-   first-class lineage, so a county, a district and its successors can be told
-   as one story.
-3. **Matching your own data by name.** Name matching with parent hints, and a
-   whole-column diagnosis that says which geography and release a column is
-   and what in it is broken.
-4. **The last boundary download gaps.** `dataZone/2011-12-sc-nc` has no
-   readable geometry, and the 2022 and 2021 data zone ids carry no month, so
-   `latest` cannot place them.
+1. **Convert supplied counts.** Accept CSV or JSON with a code or name and a
+   numeric value. Require an explicit crosswalk and conversion method, report
+   source coverage and provenance, and refuse invalid inputs or unsupported
+   splits without silently discarding values.
+2. **Close the remaining delivery gaps.** The source file for
+   `dataZone/2011-12-sc-nc` has 6,976 features and no non-null geometries.
+   Obtain a usable publisher source with the same identities. Do not substitute
+   another release merely because it uses similar codes. Four releases fail
+   the shared-edge topology check: `dataZone/2022-sc-bfc`, `dataZone/2021-ni`,
+   `lsoa/2001-12-ew-bgc` and `ward/2017-12-gb-bgc`. Their full-detail downloads
+   remain available. Investigate the affected geometry before replacing it.
+3. **Complete the missing relationships.** No published crosswalk references
+   those three data-zone releases or `nhsEnglandRegion/2022-07-en-bgc`.
+   The current candidate inventory also identifies missing Northern Irish
+   target releases for its embedded DEA, local-government district and
+   super-data-zone fields. Existing eligible candidates are already published.
+4. **Validate individual geometries.** Per-area hashes are available through
+   `include=metrics`, and the geometry route reports its generalisation tier.
+   Per-area validity results remain unfinished.
 
-Done since this was written, and recorded in the [question
-bank](#question-bank): whole-release downloads and tiles for 98 of 99
-releases, measure discovery by name and alias, and a `POST` body, match
-report and `:join` for your own data.
+Run `pnpm --dir services/api audit:archive` after a data build to list delivery
+failures, unpublished relationship candidates and the releases held for each
+geography. The output records the compiled manifests' hashes, so a report can
+be tied to the exact inputs inspected. It audits the held archive, not every
+release available from publishers.
+
+Completed since the original question bank: whole-release downloads for 98 of
+99 releases, map tiles for 94, measure discovery by name and alias, request
+bodies and downloadable match reports, matching with parent hints, and `:join`
+for supplied data. Ceremonial and historic counties are sourced named locations
+with dated membership and comparison routes. Year-only boundary ids participate
+in date selection through registry metadata. The query consolidation and
+`include=` folding described above are implemented.
 
 ### Next: depth
 
@@ -290,26 +301,26 @@ until a real user asks.
 The compiled archive holds 99 releases across 33 geographies. Many
 geographies have only one release, so they can't answer anything historical.
 
-| Geography                                                        | Releases held        | Gap                                                 |
-| ---------------------------------------------------------------- | -------------------- | --------------------------------------------------- |
-| Local authority                                                  | 19 (2008–2026)       | Pre-2008, including the 1990s unitary changes       |
-| Ward                                                             | 17 (2011–2026)       | Pre-2011                                            |
-| Westminster constituency                                         | 9 (2015–2024)        | 2010 and earlier                                    |
-| Parish                                                           | 7 (2019–2026)        | Pre-2019                                            |
-| Country                                                          | 6 (2020–2025)        | Earlier releases                                    |
-| LSOA                                                             | 4 (2001, 2011, 2021) | —                                                   |
-| MSOA                                                             | 1 (2021)             | 2011 and 2001                                       |
-| Output area                                                      | 1 (2021)             | 2011 and 2001                                       |
-| Region                                                           | 1 (2025)             | Every earlier release                               |
-| County and unitary authority                                     | 1 (2025)             | Every earlier release; the 2009 and 2019–23 changes |
-| Combined authority                                               | 1 (2025)             | Earlier releases                                    |
-| Police force area, fire and rescue, community safety partnership | 1 each               | Earlier releases                                    |
-| Integrated care board                                            | 1 (2026)             | 2022–2025, and CCGs/STPs before them                |
-| Senedd constituency                                              | 1 (2022)             | The 2026 constituencies                             |
-| Ceremonial county                                                | not compiled         | Everything (source is in the data release)          |
-| Historic county                                                  | none                 | Everything                                          |
-| Built-up areas                                                   | none                 | 2022                                                |
-| National Landscapes (AONBs)                                      | none                 | Current                                             |
+| Geography                                                        | Releases held                      | Gap                                                  |
+| ---------------------------------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
+| Local authority                                                  | 19 (2008–2026)                     | Pre-2008, including the 1990s unitary changes        |
+| Ward                                                             | 17 (2011–2026)                     | Pre-2011                                             |
+| Westminster constituency                                         | 9 (2015–2024)                      | 2010 and earlier                                     |
+| Parish                                                           | 7 (2019–2026)                      | Pre-2019                                             |
+| Country                                                          | 6 (2020–2025)                      | Earlier releases                                     |
+| LSOA                                                             | 4 (2001, 2011, 2021)               | —                                                    |
+| MSOA                                                             | 1 (2021)                           | 2011 and 2001                                        |
+| Output area                                                      | 1 (2021)                           | 2011 and 2001                                        |
+| Region                                                           | 1 (2025)                           | Every earlier release                                |
+| County and unitary authority                                     | 1 (2025)                           | Every earlier release; the 2009 and 2019–23 changes  |
+| Combined authority                                               | 1 (2025)                           | Earlier releases                                     |
+| Police force area, fire and rescue, community safety partnership | 1 each                             | Earlier releases                                     |
+| Integrated care board                                            | 1 (2026)                           | 2022–2025, and CCGs/STPs before them                 |
+| Senedd constituency                                              | 1 (2022)                           | The 2026 constituencies                              |
+| Ceremonial county                                                | Sourced named locations            | Historical boundary releases and legal change events |
+| Historic county                                                  | Sourced circa-1888 named locations | Historical boundary releases and legal change events |
+| Built-up areas                                                   | none                               | 2022                                                 |
+| National Landscapes (AONBs)                                      | none                               | Current                                              |
 
 Grow this table as a checklist: a row is done when every published release is
 compiled, related to its neighbours in time, and downloadable whole.

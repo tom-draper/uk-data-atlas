@@ -17,6 +17,7 @@
 		"node": ">=24 <27"
 	},
 	"scripts": {
+		"audit:archive": "node scripts/audit-archive.mjs",
 		"build": "pnpm build:data && pnpm build:runtime",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",
