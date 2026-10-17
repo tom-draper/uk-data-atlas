@@ -2,7 +2,7 @@ import { DocPage, EndpointRef, H2, List, P } from "@/components/docs/Content";
 import { docsMetadata } from "@/lib/docs/metadata";
 
 export const metadata = docsMetadata(
-	"Current Atlas release",
+	"Atlas releases",
 	"How UK Data Atlas API identifies the dataset, boundary and crosswalk artifacts behind its current responses.",
 	"/docs/v1/concepts/releases",
 );
@@ -12,7 +12,7 @@ export default function ReleasesPage() {
 		<DocPage
 			href="/docs/v1/concepts/releases"
 			eyebrow="Concepts"
-			title="Current Atlas release"
+			title="Atlas releases"
 			lede="Everything behind the API, from datasets and boundaries to crosswalks and validation, is built into a single current release with its own fingerprint. It tells you exactly which artifacts produced an answer."
 			toc={[
 				{ id: "what", title: "What a release is" },
