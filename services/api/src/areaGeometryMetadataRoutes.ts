@@ -1,4 +1,5 @@
 import { areaMetrics } from "./areaMetrics";
+import { sha256 } from "./contentHash";
 import type { AreaIdentity } from "./resolver/areas";
 import type { RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
@@ -51,6 +52,7 @@ export const areaGeometryMetrics = (
 			};
 		return {
 			metrics: {
+				geometryHash: sha256(JSON.stringify(resolved.geometry)),
 				boundingBox: metrics.boundingBox,
 				centroid: metrics.centroid,
 				labelPoint: metrics.labelPoint,

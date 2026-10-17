@@ -237,7 +237,9 @@ only **available** when its endpoint, contract and provenance are published.
       the observation artifacts, with their hashes, that hold this area's
       value, and only those datasets are credited; a named `crosswalk` must
       map the area. Either is refused if it supplies nothing for the area.
-      Per-area geometry hashes are reported as not yet published.
+      The citation hashes the geometry source file. `include=metrics` also
+      supplies `geometryHash`, the SHA-256 of this area's full WGS 84 geometry
+      serialized as JSON, including coordinate order.
 - [x] Resolve the boundary release for a requested date through
       `GET /v1/boundary-releases:resolve?geography=&date=&country=`, returning
       the exact release selected rather than a mutable `latest` alias: the
@@ -473,11 +475,11 @@ only **available** when its endpoint, contract and provenance are published.
       slivers, the widest 18.7 m. A pair near the sliver threshold is
       `indeterminate` rather than guessed, and any published relationship
       between the two is listed beside the measurement.
-- [ ] Complete the geometry metadata above with the properties it does not yet
-      carry: a per-area geometry hash, validity checks and a generalisation
+- [ ] Add per-area geometry validity checks. `include=metrics` already carries
+      a per-area geometry hash, and the geometry route reports its generalisation
       tier. Source CRS, transformation, area and perimeter method, centroid, a
       guaranteed-inside label point, and the source file with its SHA-256 are
-      already served.
+      also served.
 - [x] Deliver vector tiles and cached exports for map-scale workloads. One
       boundary release is published as a PMTiles archive with its TileJSON and
       per-tile `.mvt` reads, compiled from shared arcs so neighbours cannot

@@ -4744,6 +4744,7 @@
 					"data.metrics.geometryExtent.parts",
 					"data.metrics.geometryExtent.rings",
 					"data.metrics.geometryExtent.vertices",
+					"data.metrics.geometryHash",
 					"data.metrics.geometrySource",
 					"data.metrics.geometrySource.corrections",
 					"data.metrics.geometrySource.corrections[].description",
