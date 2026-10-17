@@ -125,8 +125,10 @@ export default function MapGuidePage() {
 				For a map of the whole country, fetching one shape at a time is
 				too slow. Use vector tiles instead: configure your map library
 				with the TileJSON, then colour the areas with a small table of
-				values that shares the tiles' numbering.
+				values that shares the tiles' numbering. Most boundary releases
+				are published as tiles; list the map resources to see which.
 			</P>
+			<EndpointRef id="listMapResources" />
 			<EndpointRef id="getMapResourceTileJson" />
 			<EndpointRef id="getMapResourceJoin" />
 			<EndpointRef id="getMapResourceArchive" />
