@@ -34,6 +34,7 @@ export interface NavGroup {
 export const GET_STARTED: NavLink[] = [
 	{ href: "/docs/v1", title: "Introduction" },
 	{ href: "/docs/v1/quickstart", title: "Quickstart" },
+	{ href: "/docs/v1/early-access", title: "Early access" },
 ];
 
 export const CONCEPTS: NavLink[] = [

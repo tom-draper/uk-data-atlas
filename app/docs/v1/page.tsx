@@ -70,10 +70,13 @@ export default function IntroductionPage() {
 						Browse the reference
 					</Link>
 				</div>
-				{/* Remove once the API is deployed. */}
-				<p className="mt-6 inline-flex rounded-full bg-amber-400/15 px-3 py-1 text-[12.5px] text-amber-900 ring-1 ring-amber-600/20">
-					Coming soon. The API isn't live yet, so details may change.
-				</p>
+				{/* Remove once v1 is frozen. */}
+				<Link
+					href="/docs/v1/early-access"
+					className="mt-6 inline-flex rounded-full bg-amber-400/15 px-3 py-1 text-[12.5px] text-amber-900 ring-1 ring-amber-600/20 transition-colors hover:bg-amber-400/25"
+				>
+					Early access. The API is live, but details may still change.
+				</Link>
 			</div>
 
 			<div className="max-w-[900px]">
@@ -181,7 +184,7 @@ export default function IntroductionPage() {
 				<H2 id="try-it">Try a question</H2>
 				<p className="mb-5 max-w-[70ch] text-[15.5px] leading-[1.75] text-slate-600">
 					Ask for a statistic in the language you use, then see the
-					request and response the API would return.
+					request and response the API returns.
 				</p>
 				<div className="min-w-0 space-y-3">
 					<RequestSamples
