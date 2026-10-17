@@ -102,20 +102,24 @@ export const MIN_COMPRESSED_BYTES = 1024;
 const gzippedTag = (etag: string) => `${etag.slice(0, -1)}-gzip"`;
 
 /** Whether a client will take a gzip-encoded body, per RFC 9110 section 12.5.3. */
-export const acceptsGzip = (header: string | string[] | undefined) =>
-	(Array.isArray(header) ? header.join(",") : (header ?? ""))
-		.split(",")
-		.some((entry) => {
-			const [coding, ...parameters] = entry
-				.trim()
-				.toLowerCase()
-				.split(";");
-			if (coding !== "gzip" && coding !== "*") return false;
-			const q = parameters
-				.map((parameter) => parameter.trim())
-				.find((parameter) => parameter.startsWith("q="));
-			return q === undefined || Number(q.slice(2)) > 0;
-		});
+export const acceptsGzip = (header: string | string[] | undefined) => {
+	let gzipAllowed: boolean | undefined;
+	let wildcardAllowed = false;
+	for (const entry of (Array.isArray(header)
+		? header.join(",")
+		: (header ?? "")
+	).split(",")) {
+		const [coding, ...parameters] = entry.trim().toLowerCase().split(";");
+		if (coding !== "gzip" && coding !== "*") continue;
+		const q = parameters
+			.map((parameter) => parameter.trim())
+			.find((parameter) => parameter.startsWith("q="));
+		const allowed = q === undefined || Number(q.slice(2)) > 0;
+		if (coding === "gzip") gzipAllowed = (gzipAllowed ?? false) || allowed;
+		else wildcardAllowed ||= allowed;
+	}
+	return gzipAllowed ?? wildcardAllowed;
+};
 
 /**
  * The one byte range a `Range` header asks of a file `size` bytes long, per
