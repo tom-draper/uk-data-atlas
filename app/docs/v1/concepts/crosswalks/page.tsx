@@ -105,6 +105,15 @@ export default function CrosswalksPage() {
 				combination that hasn't been reviewed is reported as
 				`not-comparable`, never quietly substituted.
 			</P>
+			<P>
+				Not sure which conversions exist? Ask what's published from one
+				exact release. Add a `to` release and a `purpose` to compare the
+				paths between them, with their coverage and what each may be
+				used for:
+			</P>
+			<Request
+				url={`${API_BASE_URL}/relationships?from=ward/2023-12-uk-bgc&to=localAuthority/2023-12-uk-bgc&purpose=membership`}
+			/>
 
 			<H2 id="translate">Translating a code</H2>
 			<P>
@@ -117,6 +126,7 @@ export default function CrosswalksPage() {
 			<EndpointRef id="listCrosswalks" />
 			<EndpointRef id="translateAreaCode" />
 			<EndpointRef id="getAreaRelationships" />
+			<EndpointRef id="queryRelationships" />
 			<EndpointRef id="listAnalysisGeographies" />
 			<EndpointRef id="planAnalysis" />
 		</DocPage>
