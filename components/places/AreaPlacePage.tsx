@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Card, Pill } from "@/components/docs/Page";
 import PlaceMap from "@/components/places/PlaceMap";
 import {
@@ -23,6 +24,7 @@ import {
 	geographyName,
 	geographyNoun,
 } from "@/lib/places/labels";
+import { placeFacts, type PlaceFacts } from "@/lib/places/facts";
 import { loadAreaProfile, PLACE_INDEX } from "@/lib/places/load";
 import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
 import { areaSummary } from "@/lib/places/summary";
@@ -91,12 +93,71 @@ function AreaMap({
 	);
 }
 
+const sourceClass =
+	"block text-[12.5px] font-normal text-slate-500 hover:text-slate-800";
+
+const percent = (value: number) => `${value.toFixed(1)}%`;
+
+/** Residents per km², from the population estimate and the boundary's area. */
+function density(profile: AreaProfile) {
+	if (!profile.population || !profile.areaKm2) return null;
+	const perKm2 = profile.population.value / profile.areaKm2;
+	return perKm2.toLocaleString("en-GB", {
+		maximumFractionDigits: perKm2 < 10 ? 1 : 0,
+	});
+}
+
+/** Median age, density and ethnicity, where the datasets publish them. */
+function peopleFacts(profile: AreaProfile, facts: PlaceFacts) {
+	const items: { label: string; value: ReactNode }[] = [];
+	const perKm2 = density(profile);
+	if (perKm2)
+		items.push({
+			label: "Density",
+			value: `${perKm2} per km²`,
+		});
+	if (facts.age) {
+		const [median, over65, year] = facts.age;
+		items.push({
+			label: "Median age",
+			value: (
+				<>
+					{median.toFixed(1)}
+					<Link
+						href={`/datasets#${profile.population?.dataset ?? "population"}`}
+						className={sourceClass}
+					>
+						{percent(over65)} aged 65+, mid-{year}
+					</Link>
+				</>
+			),
+		});
+	}
+	if (facts.ethnicity) {
+		const [white, whiteBritish] = facts.ethnicity;
+		items.push({
+			label: "Ethnicity",
+			value: (
+				<>
+					{percent(white)} White
+					<Link href="/datasets#ethnicity" className={sourceClass}>
+						{percent(whiteBritish)} White British, 2021 Census
+					</Link>
+				</>
+			),
+		});
+	}
+	return items;
+}
+
 function AreaFacts({
 	profile,
 	releases,
+	facts,
 }: {
 	profile: AreaProfile;
 	releases: string[];
+	facts: PlaceFacts;
 }) {
 	const firstYear = releases[profile.releases[0]!]!.slice(0, 4);
 	const lastYear = releases[profile.releases.at(-1)!]!.slice(0, 4);
@@ -123,7 +184,7 @@ function AreaFacts({
 										)}
 										<Link
 											href={`/datasets#${profile.population.dataset}`}
-											className="block text-[12.5px] font-normal text-slate-500 hover:text-slate-800"
+											className={sourceClass}
 										>
 											Mid-
 											{profile.population.year} estimate
@@ -133,6 +194,7 @@ function AreaFacts({
 							},
 						]
 					: []),
+				...peopleFacts(profile, facts),
 				{
 					label: "In use",
 					value: profile.current
@@ -300,8 +362,8 @@ function AreaApi({
 export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 	const releases = PLACE_INDEX.releases[profile.geography];
 	const lastRelease = releases[profile.releases.at(-1)!]!;
-	const { council, councilProfile, region, namedPlaces } =
-		await loadAreaContext(profile);
+	const [{ council, councilProfile, region, namedPlaces }, facts] =
+		await Promise.all([loadAreaContext(profile), placeFacts(profile.code)]);
 
 	return (
 		<>
@@ -334,7 +396,11 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 				aside={<PlaceTimeline profile={profile} releases={releases} />}
 			>
 				<AreaMap profile={profile} lastRelease={lastRelease} />
-				<AreaFacts profile={profile} releases={releases} />
+				<AreaFacts
+					profile={profile}
+					releases={releases}
+					facts={facts}
+				/>
 				<AreaWithin
 					profile={profile}
 					council={council}
