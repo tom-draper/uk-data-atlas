@@ -24,7 +24,14 @@ import {
 	geographyName,
 	geographyNoun,
 } from "@/lib/places/labels";
+import { atlasMapTitle, locationLabel } from "@/lib/atlas/pages";
+import { formatRankedValue, rankedValueLabel } from "@/lib/atlas/rankings";
 import { placeFacts, type PlaceFacts } from "@/lib/places/facts";
+import {
+	placeRankings,
+	standing,
+	type PlaceRanking,
+} from "@/lib/places/rankings";
 import { loadAreaProfile, PLACE_INDEX } from "@/lib/places/load";
 import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
 import { areaSummary } from "@/lib/places/summary";
@@ -206,6 +213,64 @@ function AreaFacts({
 	);
 }
 
+/** Where the place stands in each ranking, linked to the ranking's page. */
+function AreaRankings({
+	name,
+	rankings,
+}: {
+	name: string;
+	rankings: PlaceRanking[];
+}) {
+	return (
+		<Section id="rankings" title="How it compares">
+			<p>
+				Where {name} ranks on each map with a ranking table, from
+				highest to lowest value.
+			</p>
+			<Card className="mt-4 overflow-hidden">
+				<div className="overflow-x-auto">
+					<table className="w-full text-left text-[14px]">
+						<thead>
+							<tr className="border-b border-slate-900/[0.07] text-[12px] font-semibold tracking-wide text-slate-500">
+								<th className="px-4 py-3">Measure</th>
+								<th className="px-4 py-3 text-right">Value</th>
+								<th className="px-4 py-3">Rank</th>
+							</tr>
+						</thead>
+						<tbody className="divide-y divide-slate-900/[0.05]">
+							{rankings.map(({ map, value, rank, of, group }) => (
+								<tr key={map.slug}>
+									<td className="px-4 py-2">
+										<Link
+											href={`/maps/${group.slug}/${map.slug}`}
+											className="font-medium text-slate-900 underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700"
+										>
+											{rankedValueLabel(map)}
+										</Link>
+										<span className="block text-[12.5px] text-slate-500">
+											{atlasMapTitle(map) ===
+											rankedValueLabel(map)
+												? map.source.source
+												: `${atlasMapTitle(map)} · ${map.source.source}`}
+										</span>
+									</td>
+									<td className="px-4 py-2 text-right tabular-nums text-slate-900">
+										{formatRankedValue(map, value)}
+									</td>
+									<td className="px-4 py-2 text-slate-600">
+										{standing(rank, of)} of {of} in{" "}
+										{locationLabel(group)}
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</Card>
+		</Section>
+	);
+}
+
 function AreaWithin({
 	profile,
 	council,
@@ -362,8 +427,12 @@ function AreaApi({
 export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 	const releases = PLACE_INDEX.releases[profile.geography];
 	const lastRelease = releases[profile.releases.at(-1)!]!;
-	const [{ council, councilProfile, region, namedPlaces }, facts] =
-		await Promise.all([loadAreaContext(profile), placeFacts(profile.code)]);
+	const [{ council, councilProfile, region, namedPlaces }, facts, rankings] =
+		await Promise.all([
+			loadAreaContext(profile),
+			placeFacts(profile.code),
+			placeRankings(profile.code, profile.geography),
+		]);
 
 	return (
 		<>
@@ -401,6 +470,9 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 					releases={releases}
 					facts={facts}
 				/>
+				{rankings.length > 0 && (
+					<AreaRankings name={profile.name} rankings={rankings} />
+				)}
 				<AreaWithin
 					profile={profile}
 					council={council}
