@@ -29,6 +29,7 @@ export default function AreasPage() {
 				{ id: "geographies", title: "Geographies" },
 				{ id: "releases", title: "Boundary releases" },
 				{ id: "identity", title: "Naming an exact area" },
+				{ id: "containment", title: "What an area contains" },
 				{ id: "data", title: "Which areas data is on" },
 				{ id: "shapes", title: "Shapes" },
 				{ id: "endpoints", title: "Useful endpoints" },
@@ -119,6 +120,31 @@ export default function AreasPage() {
 				url={`${API_BASE_URL}/areas?geography=ward&release=2024-12-uk-bgc&limit=100`}
 			/>
 
+			<H2 id="containment">What an area contains</H2>
+			<P>
+				To ask which wards are in Manchester, list the council&apos;s
+				children. `childGeography` picks the kind of area, and without
+				it you get the newest release of each geography that was current
+				alongside the council&apos;s.
+			</P>
+			<Request
+				url={`${API_BASE_URL}/areas/localAuthority/latest/E08000003/children?childGeography=ward`}
+			/>
+			<P>
+				Parents work the other way. A ward&apos;s parents include its
+				council and the constituencies it falls inside, and `depth`
+				follows the chain further up.
+			</P>
+			<Request
+				url={`${API_BASE_URL}/areas/ward/latest/E05011350/parents`}
+			/>
+			<P>
+				Both only list areas that fit wholly inside one another, as
+				their publishers declare. Where areas only partly overlap, such
+				as wards that straddle a constituency boundary, use a
+				[crosswalk](/docs/v1/concepts/crosswalks) instead.
+			</P>
+
 			<H2 id="data">Which areas data is on</H2>
 			<P>
 				Publishers release statistics against the area codes that were
@@ -155,6 +181,8 @@ export default function AreasPage() {
 			<EndpointRef id="getBoundaryRelease" />
 			<EndpointRef id="listAreas" />
 			<EndpointRef id="getArea" />
+			<EndpointRef id="getAreaChildren" />
+			<EndpointRef id="getAreaParents" />
 			<EndpointRef id="validateAreaValues" />
 			<EndpointRef id="getAreaGeometry" />
 		</DocPage>
