@@ -60,8 +60,10 @@ export default function EarlyAccessPage() {
 			<P>
 				The OpenAPI description always describes the API as it's
 				currently served, and the [reference](/docs/v1/reference) is
-				generated from it. Each response's `atlasRelease` tells you when
-				the data behind it has changed.
+				generated from it. The [changelog](/docs/v1/changelog) lists
+				changes you might notice and marks the ones that break existing
+				requests. Each response's `atlasRelease` tells you when the data
+				behind it has changed.
 			</P>
 			<EndpointRef id="getOpenapiDescription" />
 			<EndpointRef id="getAtlasRelease" />
