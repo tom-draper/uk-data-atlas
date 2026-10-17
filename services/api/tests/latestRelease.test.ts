@@ -81,12 +81,44 @@ test("takes a geography's only release as its latest, dated or not", () => {
 	);
 });
 
-test("will not guess the newest release when one carries no month", () => {
+test("uses registry dates to select latest for year-only release ids", () => {
+	const dated: BoundaryRegistry = {
+		...registry,
+		releases: [
+			{
+				...registry.releases[0]!,
+				id: "2021-ni",
+				temporalCoverage: "2021",
+			},
+			{
+				...registry.releases[0]!,
+				id: "2022-sc-bfc",
+				temporalCoverage: "2022",
+			},
+		],
+	};
+	const response = route(
+		"GET",
+		"/v1/boundary-releases/ward/latest",
+		testContext({ boundaryRegistry: dated, areaLookup }),
+	);
+	assert.equal(response.status, 200);
+	assert.equal(
+		response.headers?.["content-location"],
+		"/v1/boundary-releases/ward/2022-sc-bfc",
+	);
+});
+
+test("will not guess the newest release when neither id nor metadata dates it", () => {
 	const mixed: BoundaryRegistry = {
 		...withOlder,
 		releases: [
 			...withOlder.releases,
-			{ ...registry.releases[0]!, id: "2022-sc-bfc" },
+			{
+				...registry.releases[0]!,
+				id: "undated-sc-bfc",
+				temporalCoverage: undefined,
+			},
 		],
 	};
 	const response = route(
@@ -99,9 +131,9 @@ test("will not guess the newest release when one carries no month", () => {
 		detail: string;
 		choices: Array<{ id: string }>;
 	};
-	assert.match(body.detail, /2022-sc-bfc carries no month/);
+	assert.match(body.detail, /undated-sc-bfc has no date/);
 	assert.deepEqual(
 		body.choices.map((choice) => choice.id),
-		["2025-01-en-ward", "2022-sc-bfc"],
+		["2025-01-en-ward", "undated-sc-bfc"],
 	);
 });
