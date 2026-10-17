@@ -30,7 +30,11 @@ export const compileCrime = (
 	const crimeEdition = Object.values(
 		JSON.parse(readFileSync(crimePath, "utf8")) as Record<
 			string,
-			{ year?: unknown; dataDate?: unknown }
+			{
+				year?: unknown;
+				dataDate?: unknown;
+				metadata?: { notes?: unknown };
+			}
 		>,
 	);
 	const crimeMonths = [
@@ -58,6 +62,13 @@ export const compileCrime = (
 			`${crimePath}: expected one edition naming the twelve months it covers`,
 		);
 	const crimeYear = Number(crimeEnding[2]);
+	// The partnerships the compiled table withholds, because their force
+	// recorded their crime as unassigned, as the loader notes them.
+	const sourceNotes = crimeEdition[0]?.metadata?.notes;
+	const withheld = (Array.isArray(sourceNotes) ? sourceNotes : []).filter(
+		(note): note is string =>
+			typeof note === "string" && note.startsWith("No figures for "),
+	);
 	const crimePeriod = `year-ending-${crimeYear}-${String(crimeMonth).padStart(2, "0")}`;
 	return publishIndicators(manifest, {
 		datasetId: "crime",
@@ -68,11 +79,14 @@ export const compileCrime = (
 		partitionBoundaryYear: 2023,
 		period: crimePeriod,
 		coverageNote:
-			"Published source records cover every community safety partnership in England and Wales.",
+			withheld.length > 0
+				? "Published source records cover every community safety partnership in England and Wales except those whose crime the police recorded as unassigned, which are not served."
+				: "Published source records cover every community safety partnership in England and Wales.",
 		notes: [
 			`Offences recorded by the police in the twelve months to ${crimeEnding[1]} ${crimeYear}, by the community safety partnership where they were committed.`,
 			"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 			"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+			...withheld,
 			"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime.",
 		],
 		indicators: [
