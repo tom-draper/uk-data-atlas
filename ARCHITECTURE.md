@@ -90,7 +90,7 @@ the API artifacts it was built from in its own file.
 
 Everything in `services/api/public` is build output, so its layout on disk is
 the API's own business. Clients reach every file through a route, and a route
-can find its file anywhere. What freezes at launch is the routes, their
+can find its file anywhere. What freezes when v1 leaves early access is the routes, their
 parameters and what they return.
 
 ## Which way code may depend
