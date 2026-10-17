@@ -363,6 +363,15 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "List crosswalks",
 		intro: "A crosswalk maps one set of areas onto another, such as wards to local authorities, or 2010 constituencies to 2024 ones. This lists every crosswalk the Atlas publishes.",
 	},
+	convertSuppliedCounts: {
+		title: "Convert your own counts",
+		intro: "Send your own counts by area, as JSON rows or CSV, and get them back regrouped onto the crosswalk's target areas. Nothing you send is stored. Only counts that add up over areas can be converted, so set `semantics=count`.",
+		tips: [
+			"One bad row, such as a name that matches two areas or a value that isn't a number, refuses the whole request with `422`, listing the rows to fix.",
+			"Where a source area is split between targets, pass the crosswalk's `weighting`; the results are then estimates.",
+			"A target none of your rows reach is left out, never given a zero.",
+		],
+	},
 	getCrosswalk: {
 		title: "Get a crosswalk",
 		intro: "Find out how a crosswalk was made and how reliable it is, without downloading its full list of mappings.",
