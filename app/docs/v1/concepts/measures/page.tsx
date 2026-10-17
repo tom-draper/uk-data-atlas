@@ -6,7 +6,9 @@ import {
 	P,
 	Table,
 } from "@/components/docs/Content";
+import { Request } from "@/components/docs/Example";
 import { docsMetadata } from "@/lib/docs/metadata";
+import { API_BASE_URL } from "@/lib/docs/openapi";
 
 export const metadata = docsMetadata(
 	"Measures and periods",
@@ -23,6 +25,7 @@ export default function MeasuresPage() {
 			lede="A measure is one thing that's counted or measured about an area, such as its population, median pay or broadband coverage. Every number the API gives you belongs to a measure and a period."
 			toc={[
 				{ id: "measures", title: "What a measure is" },
+				{ id: "finding", title: "Finding a measure" },
 				{ id: "combining", title: "Can it be added up?" },
 				{ id: "periods", title: "Periods" },
 				{ id: "uncertainty", title: "Uncertainty" },
@@ -41,6 +44,19 @@ export default function MeasuresPage() {
 				A measure is published as it was released. If a publisher only
 				covers England and Wales, so does the measure, and the API won't
 				fill in the gaps.
+			</P>
+
+			<H2 id="finding">Finding a measure</H2>
+			<P>
+				You don&apos;t need to know a measure&apos;s id to start. Search
+				with the words you&apos;d use, and the API matches them against
+				ids, aliases, labels and dataset titles:
+			</P>
+			<Request url={`${API_BASE_URL}/measures?q=house%20prices`} />
+			<P>
+				That finds `house-price-median`. Its `aliases`, here
+				`house-price` and `house-prices`, are accepted anywhere the id
+				is, so `/data/house-prices/value?place=leeds` works too.
 			</P>
 
 			<H2 id="combining">Can it be added up?</H2>
