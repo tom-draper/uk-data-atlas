@@ -15,6 +15,7 @@ import {
 	COUNCIL_PLACES,
 	formatColumnValue,
 	formatRankedValue,
+	LEVEL_NOUNS,
 	rankedValueLabel,
 } from "@/lib/atlas/rankings";
 import { atlasMapFigure } from "@/lib/atlas/snippets";
@@ -28,11 +29,6 @@ type Params = Promise<{ location: string; map: string }>;
 export function generateStaticParams() {
 	return [];
 }
-
-const AREA_PLURALS = {
-	ward: "wards",
-	localAuthority: "local authorities",
-} as const;
 
 /**
  * "Emissions per person (CO2e)" reads "emissions per person (CO2e)"; a label
@@ -51,7 +47,7 @@ async function resolvePage(params: Params) {
 		notFound();
 	const ranking = await loadRanking(map.slug);
 	const areas = areasWithin(ranking, location);
-	const plural = AREA_PLURALS[ranking.level];
+	const plural = LEVEL_NOUNS[ranking.level].many;
 	const place = `${atlasMapTitle(map)} in ${locationLabel(location)}`;
 	const subject = `${place}: ${titleCase(plural)} Ranked`;
 	return { location, map, ranking, areas, plural, subject, place };
@@ -83,6 +79,8 @@ export default async function RankingPage({ params }: { params: Params }) {
 		await resolvePage(params);
 	const figure = atlasMapFigure(location, map);
 	const wards = ranking.level === "ward";
+	// Constituencies have place pages of their own; councils link to their maps.
+	const placePages = ranking.level === "constituency";
 	const columns = ranking.columns ?? [];
 	const heading = subject.split(": ");
 
@@ -156,7 +154,9 @@ export default async function RankingPage({ params }: { params: Params }) {
 									<tr className="border-b border-slate-900/[0.07] text-[12px] font-semibold tracking-wide text-slate-500">
 										<th className="w-16 px-4 py-3">Rank</th>
 										<th className="px-4 py-3">
-											{wards ? "Ward" : "Local authority"}
+											{titleCase(
+												LEVEL_NOUNS[ranking.level].one,
+											)}
 										</th>
 										<th className="px-4 py-3 text-right">
 											{rankedValueLabel(map)}
@@ -200,6 +200,15 @@ export default async function RankingPage({ params }: { params: Params }) {
 																	)?.name}
 															</span>
 														</>
+													) : placePages ? (
+														<Link
+															href={`/places/${area.code}`}
+															className={
+																linkClass
+															}
+														>
+															{area.name}
+														</Link>
 													) : ownPage ? (
 														<Link
 															href={`/maps/${ownPage.slug}`}

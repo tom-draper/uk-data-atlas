@@ -7,7 +7,8 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
  * `pnpm seo:build`; a page renders only the stored numbers.
  */
 
-export type RankingLevel = "localAuthority" | "ward";
+export type RankingLevel =
+	"localAuthority" | "ward" | "constituency" | "itl3" | "icb";
 
 export type DataRecord = Record<string, unknown>;
 
@@ -25,10 +26,15 @@ export type DatedEdition = Edition & { year: number };
 export type RankingRow = {
 	code: string;
 	name: string;
-	/** The local authority a ward sits in; the authority itself otherwise. */
+	/**
+	 * The local authority a ward or constituency sits in, or most of it does;
+	 * the authority itself otherwise.
+	 */
 	district: string;
 	value: number;
 	record: DataRecord;
+	/** The councils an area covers, for areas made of several. */
+	within?: string[];
 };
 
 export type RankingContext = {
@@ -52,12 +58,14 @@ export type ColumnFormat =
 	| "count"
 	| "years"
 	| "micrograms"
-	| "squareKm";
+	| "squareKm"
+	/** A name, such as the winning party. */
+	| "text";
 
 export type RankingColumn = {
 	/** Null when the data cannot fill the column, which then is left off. */
 	label: string | ((context: RankingContext) => string | null);
-	value: (row: RankingRow, context: RankingContext) => number | null;
+	value: (row: RankingRow, context: RankingContext) => number | string | null;
 	format: ColumnFormat;
 };
 
@@ -154,7 +162,7 @@ function change(
 const column = (
 	label: string,
 	format: ColumnFormat,
-	value: (record: DataRecord, row: RankingRow) => number | null,
+	value: (record: DataRecord, row: RankingRow) => number | string | null,
 ): RankingColumn => ({ label, format, value: (row) => value(row.record, row) });
 
 const per100k = column("Per 100,000 residents", "count", (record) =>
@@ -372,6 +380,127 @@ const ethnicShare = (
 		return share(count(groups), groups.total);
 	});
 
+// Areas other than councils -----------------------------------------------
+
+type Overlaps = {
+	releases: Record<
+		string,
+		Record<string, { code: string; weight: number }[]>
+	>;
+};
+
+/**
+ * The council holding most of a constituency, from the newest boundary
+ * release that has the code: a constituency is listed under that council's
+ * places.
+ */
+function constituencyCouncil(context: RankingContext, code: string) {
+	const { releases } = context.inputs[
+		"constituency-lad-overlaps"
+	] as Overlaps;
+	for (const release of Object.keys(releases).sort().reverse()) {
+		const overlaps = releases[release]![code];
+		if (!overlaps?.length) continue;
+		const main = overlaps.reduce((best, overlap) =>
+			overlap.weight > best.weight ? overlap : best,
+		);
+		return successorCouncil(main.code) ?? main.code;
+	}
+	return null;
+}
+
+const constituencyRecipe = (
+	value: (record: DataRecord) => number | null,
+	columns: readonly RankingColumn[] = [],
+): RankingRecipe => ({
+	level: "constituency",
+	inputs: ["constituency-lad-overlaps"],
+	rows: (context) =>
+		Object.entries(context.edition.data).flatMap(([code, record]) => {
+			const ranked = value(record);
+			const district = constituencyCouncil(context, code);
+			if (ranked === null || !district) return [];
+			return [
+				{
+					code,
+					name: String(record.constituencyName ?? code),
+					district,
+					value: ranked,
+					record,
+				},
+			];
+		}),
+	columns,
+});
+
+/** The parties as the election results abbreviate them. */
+const PARTY_NAMES: Readonly<Record<string, string>> = {
+	Lab: "Labour",
+	Con: "Conservative",
+	LD: "Liberal Democrat",
+	SNP: "SNP",
+	Green: "Green",
+	RUK: "Reform UK",
+	PC: "Plaid Cymru",
+	SF: "Sinn Féin",
+	DUP: "DUP",
+	SDLP: "SDLP",
+	APNI: "Alliance",
+	UUP: "UUP",
+	TUV: "TUV",
+	Ind: "Independent",
+	Spk: "Speaker",
+};
+
+/**
+ * ITL1 regions are England's regions and the other three nations, so an ITL3
+ * region, named for its ITL1 region by its code's third letter, covers that
+ * region's councils.
+ */
+const ITL1_REGIONS: Readonly<Record<string, string>> = {
+	C: "E12000001",
+	D: "E12000002",
+	E: "E12000003",
+	F: "E12000004",
+	G: "E12000005",
+	H: "E12000006",
+	I: "E12000007",
+	J: "E12000008",
+	K: "E12000009",
+};
+const ITL1_NATIONS: Readonly<Record<string, string>> = {
+	L: "W",
+	M: "S",
+	N: "N",
+};
+
+function itlCouncils(code: string): string[] {
+	const letter = code[2] ?? "";
+	const region = ITL1_REGIONS[letter];
+	const nation = ITL1_NATIONS[letter];
+	return gazetteer
+		.currentCouncilCodes()
+		.filter((council) =>
+			region
+				? (gazetteer.get(council)?.parents ?? []).includes(region)
+				: nation !== undefined && council.startsWith(nation),
+		)
+		.sort();
+}
+
+/** "NHS LANCASHIRE AND SOUTH CUMBRIA INTEGRATED CARE BOARD" reads "Lancashire and South Cumbria". */
+export function boardName(name: string) {
+	return name
+		.replace(/^NHS\s+/i, "")
+		.replace(/\s+INTEGRATED CARE BOARD$/i, "")
+		.toLowerCase()
+		.replace(
+			/(^|[\s-])([a-z])/g,
+			(_match, gap: string, letter: string) => gap + letter.toUpperCase(),
+		)
+		.replace(/\b(And|Of|The|Upon|On)\b/g, (word) => word.toLowerCase());
+}
+
 // Recipes ------------------------------------------------------------------
 
 export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
@@ -382,6 +511,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		value: field("pctLeave"),
 		columns: [column("Turnout", "percent", field("pctTurnout"))],
 	},
+	"brexit-constituency": constituencyRecipe(field("pctLeave")),
 	broadband: {
 		columns: [
 			column("Superfast", "percent", field("pctSuperfast")),
@@ -463,6 +593,17 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		columns: [column("Fuel-poor households", "count", field("fuelPoor"))],
 	},
 	"gas-consumption": { columns: [changeSince("percent")] },
+	"general-election": constituencyRecipe(
+		(record) => share(num(record.majority), num(record.validVotes)),
+		[
+			column("Winner", "text", (record) => {
+				const party = String(record.firstParty ?? "");
+				return party ? (PARTY_NAMES[party] ?? party) : null;
+			}),
+			column("Majority", "count", field("majority")),
+			column("Turnout", "percent", field("turnoutPercent")),
+		],
+	),
 	"ghg-emissions": {
 		columns: [changeSince("percent"), changeSince("percent", "first")],
 	},
@@ -520,6 +661,44 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		columns: [
 			column("Male", "years", field("maleBirthLE")),
 			column("Female", "years", field("femaleBirthLE")),
+		],
+	},
+	"nhs-waiting": {
+		level: "icb",
+		rows: (context) => {
+			const ladToIcb = (context.edition as DataRecord).ladToIcb as Record<
+				string,
+				string
+			>;
+			const councils = new Map<string, string[]>();
+			for (const [council, board] of Object.entries(ladToIcb ?? {})) {
+				const list = councils.get(board) ?? [];
+				list.push(successorCouncil(council) ?? council);
+				councils.set(board, list);
+			}
+			return Object.entries(context.edition.data).flatMap(
+				([code, record]) => {
+					const value = num(record.pctOver18Weeks);
+					const within = [
+						...new Set(councils.get(code) ?? []),
+					].sort();
+					if (value === null || within.length === 0) return [];
+					return [
+						{
+							code,
+							name: boardName(String(record.icbName ?? code)),
+							district: within[0]!,
+							within,
+							value,
+							record,
+						},
+					];
+				},
+			);
+		},
+		columns: [
+			column("Waiting", "count", field("total")),
+			column("Over 18 weeks", "count", field("over18Weeks")),
 		],
 	},
 	"mobile-coverage": {
@@ -585,6 +764,41 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 	qualification: {
 		columns: [breakdownShare("No qualifications", "noQualifications")],
 	},
+	"regional-gdp-itl3": {
+		level: "itl3",
+		rows: (context) =>
+			Object.entries(context.edition.data).flatMap(([code, record]) => {
+				const value = num(record.gdpMillionGbp);
+				const within = itlCouncils(code);
+				if (value === null || within.length === 0) return [];
+				return [
+					{
+						code,
+						name: String(record.itlName ?? code),
+						district: within[0]!,
+						within,
+						value,
+						record,
+					},
+				];
+			}),
+		columns: [
+			{
+				label: (context) =>
+					context.previous
+						? `Change since ${context.previous.year}`
+						: null,
+				format: "signedPercent",
+				value: (row, context) =>
+					change(
+						"percent",
+						row.value,
+						num(context.previous?.data[row.code]?.gdpMillionGbp),
+					),
+			},
+		],
+	},
+
 	"school-performance": {
 		columns: [
 			changeOnYearBefore("points", (record, year) =>

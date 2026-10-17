@@ -40,6 +40,13 @@ async function readWardAreas(): Promise<Record<string, number>> {
 /** Inputs that are not compiled datasets, by the name a recipe asks for. */
 const SPECIAL_INPUTS: Readonly<Record<string, () => Promise<unknown>>> = {
 	"ward-areas": readWardAreas,
+	"constituency-lad-overlaps": async () =>
+		JSON.parse(
+			await readFile(
+				join(DATASETS, "constituency-lad-overlaps.json"),
+				"utf8",
+			),
+		),
 };
 
 /**
