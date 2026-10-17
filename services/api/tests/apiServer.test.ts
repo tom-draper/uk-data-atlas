@@ -566,6 +566,25 @@ test("keeps the plain and the gzipped form of an answer apart", async (t) => {
 	assert.equal(revalidated.headers.get("vary"), "accept-encoding");
 });
 
+test("honours an explicit gzip refusal before and after caching", async (t) => {
+	const { get } = await serve(t, { responseCacheBytes: 4 * 1024 * 1024 });
+	const gzip = await get("/v1/openapi.yaml", {
+		headers: { "accept-encoding": "gzip" },
+	});
+	assert.equal(gzip.headers.get("content-encoding"), "gzip");
+	const text = await gzip.text();
+	const gzipTag = gzip.headers.get("etag")!;
+	for (const encoding of ["gzip;q=0, *", "*, gzip;q=0"]) {
+		const response = await get("/v1/openapi.yaml", {
+			headers: { "accept-encoding": encoding, "if-none-match": gzipTag },
+		});
+		assert.equal(response.status, 200);
+		assert.equal(response.headers.get("content-encoding"), null);
+		assert.notEqual(response.headers.get("etag"), gzipTag);
+		assert.equal(await response.text(), text);
+	}
+});
+
 test("still limits a client whose requests are answered from the response cache", async (t) => {
 	const { get } = await serve(t, {
 		responseCacheBytes: 1024 * 1024,

@@ -2203,7 +2203,8 @@ line up.
 - **Compression:** a JSON, GeoJSON, CSV, NDJSON or YAML answer of 1 KB or
   more is gzipped for a client that sends `Accept-Encoding: gzip`, on the
   thread pool rather than the event loop. The gzipped form has its own ETag,
-  ending `-gzip"`.
+  ending `-gzip"`. An explicit `gzip;q=0` refuses gzip even when a wildcard
+  allows other encodings.
 - **Response cache:** a successful `GET` answer of up to 1 MB is kept, as
   it goes on the wire, for `ATLAS_RESPONSE_CACHE_MB` in total, least recently
   used first. A repeat of the same request target, from a client that takes
