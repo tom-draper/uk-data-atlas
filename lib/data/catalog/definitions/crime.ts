@@ -20,7 +20,7 @@ export const crimeDatasetDefinition: DatasetDefinition<CrimeDataset> = {
 			"Police recorded crime by local authority district for England and Wales.",
 	},
 	// Table C2 is recorded crime by community safety partnership area, read
-	// straight out of the published workbook rather than from an extract.
-	precompile: ({ xlsxSheet }) =>
-		loadCrime((path) => xlsxSheet(path, "Table C2")),
+	// straight out of the published workbook rather than from an extract,
+	// with the notes that say which areas' figures are incomplete.
+	precompile: ({ xlsxSheet }) => loadCrime(xlsxSheet),
 };

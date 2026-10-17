@@ -64,6 +64,29 @@ const count = (value: string | undefined, context: string): number => {
 };
 
 /**
+ * The numbers of the notes saying a partnership's crime is recorded under its
+ * force's "Unassigned" row instead, as an IT fault has done for several Kent
+ * partnerships since 2024. A row citing one publishes only a remnant of the
+ * area's crime, so it is withheld rather than read as next to none.
+ */
+async function unassignedNotes(notesCsv: string): Promise<Set<string>> {
+	const { data: rows } = await parseCsv<string[]>(notesCsv, {
+		header: false,
+	});
+	const notes = new Set<string>();
+	for (const [number, text] of rows as string[][])
+		if (
+			/^\d+$/.test(number?.trim() ?? "") &&
+			/recorded under an unassigned/i.test(text ?? "")
+		)
+			notes.add(number!.trim());
+	return notes;
+}
+
+const citedNotes = (cell: string) =>
+	[...cell.matchAll(/\[note (\d+)\]/gi)].map((match) => match[1]!);
+
+/**
  * Table C2 publishes recorded crime by community safety partnership, not by
  * local authority. Most partnerships are one authority, but some cover
  * several, marked "Combined Local Authorities", and some authorities are
@@ -78,9 +101,13 @@ const count = (value: string | undefined, context: string): number => {
  * partnership, are not areas and are skipped.
  */
 export async function loadCrime(
-	read: (path: string) => Promise<string>,
+	read: (path: string, sheet: string) => Promise<string>,
 ): Promise<Record<string, CrimeDataset>> {
-	const csvText = await read("economics/crime/pfatablesyemarch2026.xlsx");
+	const workbook = "economics/crime/pfatablesyemarch2026.xlsx";
+	const csvText = await read(workbook, "Table C2");
+	const unassigned = await unassignedNotes(
+		await read(workbook, "Notes - CSP"),
+	);
 	const { dataDate, year } = periodFromTitle(csvText.split("\n")[0] ?? "");
 
 	const headerLine = findHeaderLine(csvText, "police force area code");
@@ -90,6 +117,7 @@ export async function loadCrime(
 	});
 
 	const partnerships: Record<string, CrimePartnershipData> = {};
+	const withheld: string[] = [];
 	for (const row of rows as string[][]) {
 		const partnershipCode = row[2]?.trim() ?? "";
 		// Only rows for a force are data; the header's cells span several
@@ -99,6 +127,11 @@ export async function loadCrime(
 			throw new Error(
 				`Crime table repeats partnership ${partnershipCode}`,
 			);
+		// The force name carries the notes, as "Kent [note 4]".
+		if (citedNotes(row[1] ?? "").some((note) => unassigned.has(note))) {
+			withheld.push(row[3]?.trim() || partnershipCode);
+			continue;
+		}
 		const authorityCode = row[4]?.trim() ?? "";
 		if (
 			authorityCode !== COMBINED_AUTHORITIES &&
@@ -118,7 +151,9 @@ export async function loadCrime(
 			communitySafetyPartnershipCode: partnershipCode,
 			communitySafetyPartnershipName: row[3]?.trim() ?? "",
 			policeForceAreaCode: row[0].trim(),
-			policeForceAreaName: row[1]?.trim() ?? "",
+			policeForceAreaName: (row[1] ?? "")
+				.replace(/\s*\[note \d+\]/gi, "")
+				.trim(),
 			localAuthorityCode: single ? authorityCode : null,
 			localAuthorityName: single ? (row[5]?.trim() ?? "") : null,
 			...counts,
@@ -180,6 +215,11 @@ export async function loadCrime(
 				notes: [
 					"Police recorded crime statistics are published as official statistics, not accredited official statistics",
 					"Published by community safety partnership. An authority split between several partnerships is their sum; an authority inside a partnership covering several authorities has no value of its own.",
+					...(withheld.length > 0
+						? [
+								`No figures for ${withheld.join(", ")}: the police recorded their crime under the force's unassigned total, so the published counts are only a remnant.`,
+							]
+						: []),
 				],
 			},
 		},
