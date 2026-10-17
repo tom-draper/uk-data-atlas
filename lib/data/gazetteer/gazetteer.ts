@@ -11,6 +11,15 @@ import type {
 
 const key = (from: Level, to: Level) => `${from}->${to}`;
 
+/** The local authorities in the newest boundaries the gazetteer holds. */
+function currentCouncils(core: GazetteerCore): GazetteerEntry[] {
+	const councils = Object.values(core.byCode).filter(
+		(entry) => entry.level === "localAuthority",
+	);
+	const current = Math.max(...councils.map((entry) => entry.vintage));
+	return councils.filter((entry) => entry.vintage === current);
+}
+
 /**
  * Each current local authority as a place of its own, so the atlas can open
  * on any council. One a named location already stands for, by name or by
@@ -24,14 +33,9 @@ function councilPlaces(core: GazetteerCore): Record<string, NamedLocation> {
 			.filter(([, place]) => place.memberCodes.length === 1)
 			.map(([, place]) => place.memberCodes[0]),
 	);
-	const councils = Object.values(core.byCode).filter(
-		(entry) => entry.level === "localAuthority",
-	);
-	const current = Math.max(...councils.map((entry) => entry.vintage));
 	const places: Record<string, NamedLocation> = {};
-	for (const council of councils) {
-		if (council.vintage !== current || namedCouncils.has(council.code))
-			continue;
+	for (const council of currentCouncils(core)) {
+		if (namedCouncils.has(council.code)) continue;
 		// "Bristol, City of" reads as "Bristol".
 		const name = council.name.replace(/, (City|County) of$/, "");
 		if (namedNames.has(name) || namedNames.has(council.name)) continue;
@@ -107,6 +111,10 @@ export class Gazetteer {
 		return Object.keys(this.placesByName).filter(
 			(name) => !(name in this.core.namedLocations),
 		);
+	}
+	/** Every current local authority's code, whether or not it is a place. */
+	currentCouncilCodes(): string[] {
+		return currentCouncils(this.core).map((entry) => entry.code);
 	}
 	// Whole record for a named location (mirrors the old LOCATIONS[name]).
 	namedLocation(named: string) {
