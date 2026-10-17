@@ -13,6 +13,7 @@ import {
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 import { hasRankingFor } from "@/lib/atlas/rankingPages";
+import { rankedAreaNoun } from "@/lib/atlas/rankings";
 import { JsonLd, locationMapsJsonLd } from "@/lib/atlas/structuredData";
 import { pageMetadata } from "@/lib/site";
 
@@ -130,7 +131,8 @@ export default async function LocationMapsPage({ params }: { params: Params }) {
 												href={`/maps/${location.slug}/${map.slug}`}
 												className={`mt-3 inline-block text-[13px] text-slate-600 ${linkClass}`}
 											>
-												Every {map.areaNoun} ranked
+												Every {rankedAreaNoun(map)}{" "}
+												ranked
 											</Link>
 										)}
 									</Card>
