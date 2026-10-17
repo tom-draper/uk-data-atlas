@@ -35,6 +35,7 @@ export const GET_STARTED: NavLink[] = [
 	{ href: "/docs/v1", title: "Introduction" },
 	{ href: "/docs/v1/quickstart", title: "Quickstart" },
 	{ href: "/docs/v1/early-access", title: "Early access" },
+	{ href: "/docs/v1/changelog", title: "Changelog" },
 ];
 
 export const CONCEPTS: NavLink[] = [
