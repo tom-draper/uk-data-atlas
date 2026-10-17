@@ -36,7 +36,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Population",
 		topic: "people",
 		datasets: ["population-uk", "population", "population-constituency"],
-		intro: "Official population estimates from the Office for National Statistics: every UK local authority each year since 2011, wards in England and Wales, and the Westminster constituencies first contested in 2024. Ward estimates run through mid-2022; newer ONS ward estimates use May 2025 boundaries, which are not yet mapped in the atlas. Population density is included too.",
+		intro: "Official population estimates from the Office for National Statistics: every UK local authority each year since 2011, wards in England and Wales, and the Westminster constituencies first contested in 2024. Ward estimates run through mid-2022; newer ONS ward estimates, on May 2025 boundaries, are not in the Atlas yet. Population density is included too.",
 	},
 	{
 		slug: "census-2021-small-areas",
