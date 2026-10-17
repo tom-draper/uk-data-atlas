@@ -110,6 +110,14 @@ export default function AreasPage() {
 			<Request
 				url={`${API_BASE_URL}/areas/constituency/2024-07-uk-bgc/E14001262`}
 			/>
+			<P>
+				To get every area in a release, such as all wards for a lookup
+				table, list them a page at a time, or download the release whole
+				from its boundary release page.
+			</P>
+			<Request
+				url={`${API_BASE_URL}/areas?geography=ward&release=2024-12-uk-bgc&limit=100`}
+			/>
 
 			<H2 id="data">Which areas data is on</H2>
 			<P>
@@ -144,6 +152,8 @@ export default function AreasPage() {
 
 			<H2 id="endpoints">Useful endpoints</H2>
 			<EndpointRef id="listBoundaryReleases" />
+			<EndpointRef id="getBoundaryRelease" />
+			<EndpointRef id="listAreas" />
 			<EndpointRef id="getArea" />
 			<EndpointRef id="validateAreaValues" />
 			<EndpointRef id="getAreaGeometry" />
