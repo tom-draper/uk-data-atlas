@@ -13,6 +13,7 @@ import { hasRankingFor, loadRanking } from "@/lib/atlas/rankingPages";
 import {
 	areasWithin,
 	COUNCIL_PLACES,
+	formatColumnValue,
 	formatRankedValue,
 	rankedValueLabel,
 } from "@/lib/atlas/rankings";
@@ -28,10 +29,19 @@ export function generateStaticParams() {
 	return [];
 }
 
-const AREA_PLURALS: Readonly<Record<string, string>> = {
+const AREA_PLURALS = {
 	ward: "wards",
-	"local authority": "local authorities",
-};
+	localAuthority: "local authorities",
+} as const;
+
+/**
+ * "Emissions per person (CO2e)" reads "emissions per person (CO2e)"; a label
+ * led by a name, such as "White British residents", keeps its capitals.
+ */
+const midSentence = (label: string) =>
+	/^[A-Z][a-z]* [^A-Z]/.test(label)
+		? label[0]!.toLowerCase() + label.slice(1)
+		: label;
 
 async function resolvePage(params: Params) {
 	const slugs = await params;
@@ -39,11 +49,12 @@ async function resolvePage(params: Params) {
 	const map = findAtlasMap(slugs.map);
 	if (!location || !map || !hasRankingFor(location.slug, map.slug))
 		notFound();
-	const areas = areasWithin(await loadRanking(map.slug), location);
-	const plural = AREA_PLURALS[map.areaNoun] ?? `${map.areaNoun}s`;
+	const ranking = await loadRanking(map.slug);
+	const areas = areasWithin(ranking, location);
+	const plural = AREA_PLURALS[ranking.level];
 	const place = `${atlasMapTitle(map)} in ${locationLabel(location)}`;
 	const subject = `${place}: ${titleCase(plural)} Ranked`;
-	return { location, map, areas, plural, subject, place };
+	return { location, map, ranking, areas, plural, subject, place };
 }
 
 export async function generateMetadata({
@@ -53,7 +64,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
 	const { location, map, areas, plural, place } = await resolvePage(params);
 	const figure = atlasMapFigure(location, map);
-	const lead = `All ${areas.length} ${plural} in ${locationLabel(location)} ranked by ${rankedValueLabel(map).toLowerCase()}, from ${areas[0].name} to ${areas.at(-1)!.name}.`;
+	const lead = `All ${areas.length} ${plural} in ${locationLabel(location)} ranked by ${midSentence(rankedValueLabel(map))}, from ${areas[0].name} to ${areas.at(-1)!.name}.`;
 	return pageMetadata({
 		// This segment has its own opengraph-image.
 		image: null,
@@ -68,9 +79,11 @@ const linkClass =
 	"underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700";
 
 export default async function RankingPage({ params }: { params: Params }) {
-	const { location, map, areas, plural, subject } = await resolvePage(params);
+	const { location, map, ranking, areas, plural, subject } =
+		await resolvePage(params);
 	const figure = atlasMapFigure(location, map);
-	const wards = map.areaNoun === "ward";
+	const wards = ranking.level === "ward";
+	const columns = ranking.columns ?? [];
 	const heading = subject.split(": ");
 
 	return (
@@ -106,7 +119,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 						<p className="mt-3 text-[15px] leading-[1.7] text-slate-600">
 							All {areas.length} {plural} in{" "}
 							{locationLabel(location)}, ranked by{" "}
-							{rankedValueLabel(map).toLowerCase()}. Data:{" "}
+							{midSentence(rankedValueLabel(map))}. Data:{" "}
 							<a
 								href={map.source.sourceUrl}
 								target="_blank"
@@ -134,7 +147,9 @@ export default async function RankingPage({ params }: { params: Params }) {
 						</Link>
 					</div>
 
-					<Card className="mt-9 max-w-[900px] overflow-hidden">
+					<Card
+						className={`mt-9 overflow-hidden ${columns.length > 1 ? "max-w-[1180px]" : "max-w-[900px]"}`}
+					>
 						<div className="overflow-x-auto">
 							<table className="w-full text-left text-[14px]">
 								<thead>
@@ -146,6 +161,14 @@ export default async function RankingPage({ params }: { params: Params }) {
 										<th className="px-4 py-3 text-right">
 											{rankedValueLabel(map)}
 										</th>
+										{columns.map((column) => (
+											<th
+												key={column.label}
+												className="px-4 py-3 text-right font-medium"
+											>
+												{column.label}
+											</th>
+										))}
 									</tr>
 								</thead>
 								<tbody className="divide-y divide-slate-900/[0.05]">
@@ -153,6 +176,11 @@ export default async function RankingPage({ params }: { params: Params }) {
 										const council = COUNCIL_PLACES.get(
 											area.district,
 										);
+										// A former council's row names it, not its successor.
+										const ownPage =
+											area.code === area.district
+												? council
+												: undefined;
 										return (
 											<tr
 												key={area.code}
@@ -172,9 +200,9 @@ export default async function RankingPage({ params }: { params: Params }) {
 																	)?.name}
 															</span>
 														</>
-													) : council ? (
+													) : ownPage ? (
 														<Link
-															href={`/maps/${council.slug}`}
+															href={`/maps/${ownPage.slug}`}
 															className={
 																linkClass
 															}
@@ -191,6 +219,21 @@ export default async function RankingPage({ params }: { params: Params }) {
 														area.value,
 													)}
 												</td>
+												{columns.map(
+													(column, index) => (
+														<td
+															key={column.label}
+															className="px-4 py-2 text-right tabular-nums text-slate-600"
+														>
+															{formatColumnValue(
+																column,
+																area.extra?.[
+																	index
+																],
+															)}
+														</td>
+													),
+												)}
 											</tr>
 										);
 									})}
