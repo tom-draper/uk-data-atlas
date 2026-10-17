@@ -56,9 +56,9 @@ export default function JoinDataGuidePage() {
 					/>
 					<Callout tone="tip">
 						Not sure which release your codes come from? Leave out
-						`geography` and `release`. The response ranks the
-						releases by how many of your values they hold and
-						reports the likely one, without joining anything.
+						`geography` and `release`, and the response names the
+						likely one. [Identify a column of
+						codes](/docs/v1/guides/identify-codes) walks through it.
 					</Callout>
 				</Step>
 				<Step id="read" title="Read the results">

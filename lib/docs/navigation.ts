@@ -63,6 +63,10 @@ export const GUIDES: NavLink[] = [
 		href: "/docs/v1/guides/batch-locations",
 		title: "Locate a batch of points",
 	},
+	{
+		href: "/docs/v1/guides/identify-codes",
+		title: "Identify a column of codes",
+	},
 	{ href: "/docs/v1/guides/join-data", title: "Join your own data" },
 	{ href: "/docs/v1/guides/named-place", title: "Explore a named place" },
 	{ href: "/docs/v1/guides/sync", title: "Keep a copy in sync" },
