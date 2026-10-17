@@ -12,6 +12,7 @@ import type {
 	BoundaryRelease,
 } from "../src/boundaryRegistry";
 import { sha256 } from "../src/contentHash";
+import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 type BoundaryMetadata = {
 	id?: unknown;
@@ -143,6 +144,12 @@ export const createBoundaryRegistry = (
 			return readdirSync(geographyDirectory, { withFileTypes: true })
 				.filter((entry) => entry.isDirectory())
 				.flatMap((release) => {
+					if (
+						sourceMetadataCorrections[
+							`boundaries/${geography.name}/${release.name}`
+						]?.kind === "lookup"
+					)
+						return [];
 					const metaPath = join(
 						geographyDirectory,
 						release.name,

@@ -8,6 +8,7 @@ import {
 	type BoundaryType,
 } from "@/lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
+import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 /**
  * Compiled assets live in public/data, where they are served from; the two
@@ -39,6 +40,12 @@ const sourceBoundaryReleases = readdirSync(
 				{ withFileTypes: true },
 			)
 				.filter((release) => release.isDirectory())
+				.filter(
+					(release) =>
+						!sourceMetadataCorrections[
+							`boundaries/${geography.name}/${release.name}`
+						],
+				)
 				.map((release) =>
 					identity(toCamelCase(geography.name), release.name),
 				)
