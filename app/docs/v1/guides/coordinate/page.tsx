@@ -119,9 +119,21 @@ export default function CoordinateGuidePage() {
 				references when you set the matching `crs`. That makes it
 				suitable for survey data as well as web-map coordinates.
 			</P>
+			<P>
+				To change a coordinate's form without looking up any areas, for
+				example to turn a grid reference into a latitude and longitude
+				for a web map, convert it. A grid reference names a square, so
+				the answer is the square's centre, with an uncertainty that
+				covers the whole square.
+			</P>
+			<Request
+				url={`${API}/coordinates:convert?crs=EPSG:27700&gridref=TQ3000080000`}
+				operationId="convertCoordinate"
+			/>
 			<EndpointRef id="findContainingAreas" />
 			<EndpointRef id="findNearestAreas" />
 			<EndpointRef id="getArea" />
+			<EndpointRef id="convertCoordinate" />
 		</DocPage>
 	);
 }
