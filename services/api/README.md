@@ -1144,9 +1144,9 @@ explanation of the resource model. A literal URI in this document
 that differs from OpenAPI is conceptual or superseded; it is not an endpoint a
 client should copy into production.
 
-Until launch, nothing is frozen: [DIRECTION.md](DIRECTION.md) calls for
-renaming and merging routes while no client depends on them. After launch,
-keep v1 paths stable rather than renaming routes for tidiness. Make the mental
+Until early access ends, nothing is frozen: [DIRECTION.md](DIRECTION.md)
+calls for renaming and merging routes while clients expect them to change.
+Once v1 is frozen, keep its paths stable rather than renaming routes for tidiness. Make the mental
 model explicit instead:
 
 | Term                        | Meaning                                                                                                                                                                      |
@@ -2138,10 +2138,10 @@ Two things can change under a client, and each is pinned separately.
   breaking change. The one way out is deprecation: an operation marked
   `deprecated: true` with `x-deprecated-since` and `x-sunset` dates is served
   with `Deprecation` and `Sunset` headers, and may be removed once its sunset
-  has passed. A change that breaks anything else needs `/v2`. Until the
-  first deployment there is no client to break, so a deliberate break is
-  locked with `--before-launch`, which lists what it breaks; that flag goes
-  at launch. What is served is held to the same document:
+  has passed. A change that breaks anything else needs `/v2`. During early
+  access clients are told to expect breaks, so a deliberate break is locked
+  with `--before-launch`, which lists what it breaks; that flag goes when v1
+  is frozen. What is served is held to the same document:
   `tests/built/contract.test.ts` sends every example and refusal request it
   names and checks each body against its operation's response schema. The
   server reads each operation's query parameters from

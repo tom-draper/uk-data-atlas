@@ -18,7 +18,7 @@ on 2026-10-17 against the source, tests and compiled archive.
 > a place, and the tools to match and map your own data.
 
 It is read-only to begin with. Private uploads may come later, but nothing
-before launch should depend on them.
+before v1 is frozen should depend on them.
 
 The centre of gravity is the **boundary archive**. Boundaries are what break
 people's own visualisations: the wrong vintage, a missing nation, a code that
@@ -135,10 +135,10 @@ identified below; they do not represent a fresh run of every original question.
 
 ## UX rules
 
-1. **Nothing is deployed, so nothing is frozen yet.** The README currently
-   says to keep v1 paths and parameter names stable. There are no v1 clients,
-   so this is the only cheap moment to rename, merge and delete. Freeze at
-   launch, not before. What freezes is the routes, their parameters and what
+1. **Early access, so nothing is frozen yet.** The API is deployed, but in
+   early access, and the docs say v1 will change. This is the cheapest moment
+   to rename, merge and delete, while the few clients have been told to expect
+   it. Freeze when early access ends, not before. What freezes is the routes, their parameters and what
    they return. How the build lays its output out on disk is the API's own
    business and can change in any release, since every file is served
    through a route.
@@ -282,7 +282,8 @@ in date selection through registry metadata. The query consolidation and
 ### Later
 
 - Private uploads and storage.
-- API keys, quotas and usage tiers. These only matter once it is deployed.
+- API keys, quotas and usage tiers. These only matter once usage grows past
+  early access.
 - Custom polygon queries.
 
 ### Parked

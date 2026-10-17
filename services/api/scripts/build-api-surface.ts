@@ -12,10 +12,10 @@ import {
  * Locks the v1 surface after an additive change to `openapi.yaml`. It refuses
  * to lock a breaking change: that is what the lock exists to stop.
  *
- * Until the API is deployed there is no client to break (services/api/DIRECTION.md,
- * "Nothing is deployed, so nothing is frozen yet"), so `--before-launch`
- * locks a breaking change deliberately, listing what it breaks. Remove the
- * flag at launch.
+ * During early access clients are told to expect breaks (services/api/DIRECTION.md,
+ * "Early access, so nothing is frozen yet"), so `--before-launch` locks a
+ * breaking change deliberately, listing what it breaks. Remove the flag when
+ * v1 is frozen.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const surfacePath = resolve(apiRoot, "contract", "v1-surface.json");
