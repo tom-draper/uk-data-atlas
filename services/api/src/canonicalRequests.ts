@@ -1,5 +1,5 @@
 import { problem, type ApiResponse } from "./routeResponse";
-import { releaseMonth } from "./releaseForDate";
+import { boundaryReleaseMonth } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
 import { canonicalMeasureId } from "./measureTerms";
 import { canonicalGeography } from "./geography";
@@ -130,10 +130,8 @@ export const canonicalReleaseRequest = (
 				links: { geographies: "/v1/geographies" },
 			},
 		);
-	// A release id without a month cannot be placed in time, so while one
-	// stands beside others which of them is newest is not something to guess.
 	const undated = releases.filter(
-		(release) => releaseMonth(release.id) === undefined,
+		(release) => boundaryReleaseMonth(release) === undefined,
 	);
 	if (
 		releases.length > 1 &&
@@ -143,7 +141,7 @@ export const canonicalReleaseRequest = (
 			409,
 			"Ambiguous Release",
 			undated.length > 0
-				? `${undated.map((release) => release.id).join(" and ")} ${undated.length === 1 ? "carries" : "carry"} no month, so which ${latest.geography} release is newest cannot be told. Name one by id; each is listed in choices.`
+				? `${undated.map((release) => release.id).join(" and ")} ${undated.length === 1 ? "has" : "have"} no date in its id or registry metadata, so which ${latest.geography} release is newest cannot be told. Name one by id; each is listed in choices.`
 				: `Several ${latest.geography} boundary releases share the latest month and differ in more than coverage. Name one by id; each is listed in choices.`,
 			{
 				code: "ambiguous_release",

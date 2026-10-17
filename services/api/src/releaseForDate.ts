@@ -143,9 +143,12 @@ export type ReleaseSelection =
 			undated: string[];
 	  };
 
-const reference = (release: BoundaryRelease): ReleaseReference => ({
+const reference = (
+	release: BoundaryRelease,
+	month: string,
+): ReleaseReference => ({
 	id: release.id,
-	month: releaseMonth(release.id) as string,
+	month,
 	title: release.title,
 	countries: release.coverage.countries,
 	href: `/v1/boundary-releases/${release.geography}/${release.id}`,
@@ -180,7 +183,7 @@ export const selectReleaseForDate = (
 		(release) => release.geography === geography,
 	);
 	const undated = releases
-		.filter((release) => releaseMonth(release.id) === undefined)
+		.filter((release) => boundaryReleaseMonth(release) === undefined)
 		.map((release) => release.id)
 		.sort();
 	if (releases.length === 0) {
@@ -192,8 +195,10 @@ export const selectReleaseForDate = (
 		};
 	}
 	const dated = releases
-		.filter((release) => releaseMonth(release.id) !== undefined)
-		.map(reference)
+		.flatMap((release) => {
+			const month = boundaryReleaseMonth(release);
+			return month ? [reference(release, month)] : [];
+		})
 		.sort(byMonth);
 	if (dated.length === 0) {
 		return {

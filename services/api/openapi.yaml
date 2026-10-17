@@ -7455,7 +7455,7 @@ components:
         for the furthest date. A response to `latest` names the release it read
         in `Content-Location`. A geography whose newest month holds several
         releases that differ in more than coverage, or that has a release whose
-        id carries no month, is refused with `409` and the releases that could
+        id and registry metadata supply no date, is refused with `409` and the releases that could
         be newest.
     CrosswalkId:
       name: crosswalk-id
