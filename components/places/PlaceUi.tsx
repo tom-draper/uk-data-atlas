@@ -48,7 +48,7 @@ export function Facts({
 }) {
 	return (
 		<dl
-			className={`mt-6 grid grid-cols-2 gap-x-6 gap-y-4 ${items.length > 4 ? "sm:grid-cols-3 xl:grid-cols-5" : "sm:grid-cols-4"}`}
+			className={`mt-6 grid grid-cols-2 gap-x-6 gap-y-4 ${items.length > 6 ? "sm:grid-cols-3 xl:grid-cols-4" : items.length > 4 ? "sm:grid-cols-3 xl:grid-cols-5" : "sm:grid-cols-4"}`}
 		>
 			{items.map((item) => (
 				<div key={item.label} className="min-w-0">
