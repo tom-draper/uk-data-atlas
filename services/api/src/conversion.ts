@@ -86,7 +86,7 @@ const populationWeighted = ({ artifact }: ConversionStep) =>
  */
 export const convertThroughSteps = (
 	path: readonly ConversionStep[],
-	records: PopulationObservation[],
+	records: ReadonlyArray<Pick<PopulationObservation, "areaCode" | "value">>,
 ): ConversionResult => {
 	let reached = records.map(
 		(record) => new Map<string, number>([[record.areaCode, 1]]),

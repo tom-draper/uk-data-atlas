@@ -311,6 +311,14 @@ export const QUERY_RULES = {
 			default: 25,
 		},
 	},
+	"POST /crosswalks/{crosswalk-id}:convert": {
+		semantics: {
+			values: ["count"],
+		},
+		weighting: {
+			values: ["area", "population"],
+		},
+	},
 	"GET /crosswalks/{crosswalk-id}/records": {
 		limit: {
 			minimum: 1,

@@ -130,7 +130,7 @@ identified below; they do not represent a fresh run of every original question.
 | What's the history of Lancashire?                  | ⚠️ partial     | Ceremonial and historic definitions, dated membership, alternative definitions and membership comparisons are implemented. Earlier boundary vintages and legally dated reorganisation events remain separate work. |
 | Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. 98 of 99 releases download whole; four that are not coverages have no tiles and download at full detail only.                      |
 | Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                                 |
-| Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Code translation exists for some pairs; there is no way to send your own values.                                                                                                                                   |
+| Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Supplied counts can be POSTed to a named crosswalk. This particular ward-to-constituency request still depends on a published crosswalk for the exact releases.                                                    |
 | What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
 
 ## UX rules
@@ -164,9 +164,9 @@ identified below; they do not represent a fresh run of every original question.
    Serve them as documents linked from the resources they describe, not as a
    parallel set of query routes.
 
-## Surface: 70 paths to a front door
+## Surface: 71 paths to a front door
 
-The current contract has 70 paths after aggregation and evidence routes were folded into value and static documents. The front door below answers common questions; advanced operations remain documented separately.
+The current contract has 71 paths after aggregation and evidence routes were folded into value and static documents. The front door below answers common questions; advanced operations remain documented separately.
 
 ### Front door
 
@@ -231,23 +231,19 @@ already supports.
 
 ### Now: close the gaps that block the mission
 
-1. **Convert supplied counts.** Accept CSV or JSON with a code or name and a
-   numeric value. Require an explicit crosswalk and conversion method, report
-   source coverage and provenance, and refuse invalid inputs or unsupported
-   splits without silently discarding values.
-2. **Close the remaining delivery gaps.** The source file for
+1. **Close the remaining delivery gaps.** The source file for
    `dataZone/2011-12-sc-nc` has 6,976 features and no non-null geometries.
    Obtain a usable publisher source with the same identities. Do not substitute
    another release merely because it uses similar codes. Four releases fail
    the shared-edge topology check: `dataZone/2022-sc-bfc`, `dataZone/2021-ni`,
    `lsoa/2001-12-ew-bgc` and `ward/2017-12-gb-bgc`. Their full-detail downloads
    remain available. Investigate the affected geometry before replacing it.
-3. **Complete the missing relationships.** No published crosswalk references
+2. **Complete the missing relationships.** No published crosswalk references
    those three data-zone releases or `nhsEnglandRegion/2022-07-en-bgc`.
    The current candidate inventory also identifies missing Northern Irish
    target releases for its embedded DEA, local-government district and
    super-data-zone fields. Existing eligible candidates are already published.
-4. **Validate individual geometries.** Per-area hashes are available through
+3. **Validate individual geometries.** Per-area hashes are available through
    `include=metrics`, and the geometry route reports its generalisation tier.
    Per-area validity results remain unfinished.
 
@@ -260,7 +256,9 @@ release available from publishers.
 Completed since the original question bank: whole-release downloads for 98 of
 99 releases, map tiles for 94, measure discovery by name and alias, request
 bodies and downloadable match reports, matching with parent hints, and `:join`
-for supplied data. Ceremonial and historic counties are sourced named locations
+for supplied data. `POST /crosswalks/{crosswalk-id}:convert?semantics=count`
+converts supplied counts with explicit weighting opt-in and coverage. Ceremonial
+and historic counties are sourced named locations
 with dated membership and comparison routes. Year-only boundary ids participate
 in date selection through registry metadata. The query consolidation and
 `include=` folding described above are implemented.
@@ -273,8 +271,8 @@ in date selection through registry metadata. The query consolidation and
 - **Resolutions.** Most releases are generalised (BGC) only. Add full
   resolution (BFC/BFE) where people need accurate edges, and extra-generalised
   (BUC) for fast web maps.
-- **Stateless value conversion.** Send `code,value` rows, a target geography
-  and a method, and get converted values with the crosswalk and its quality.
+- **Conversion coverage.** Add reviewed crosswalks for common supplied-data
+  requests that the initial single-crosswalk count conversion cannot answer.
 - **Dataset breadth** driven by the question bank: add what common questions
   reach for and we don't have, before adding more of what we do.
 
