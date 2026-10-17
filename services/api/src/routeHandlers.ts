@@ -40,6 +40,10 @@ import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
 import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
+import {
+	crosswalkConversionId,
+	handleCrosswalkConversionRoutes,
+} from "./crosswalkConversionRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
@@ -310,8 +314,16 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleLocationRoutes,
 	},
 	{
+		name: "crosswalk-conversion",
+		owns: (segments) => crosswalkConversionId(segments) !== undefined,
+		handle: handleCrosswalkConversionRoutes,
+		acceptsPost: true,
+	},
+	{
 		name: "crosswalks",
-		owns: v1("crosswalks"),
+		owns: (segments) =>
+			v1("crosswalks")(segments) &&
+			crosswalkConversionId(segments) === undefined,
 		handle: handleCrosswalkRoutes,
 	},
 	{
@@ -342,7 +354,7 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 		return problem(
 			405,
 			"Method Not Allowed",
-			"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate and a boundary release's :join, where a request carries more than a URL can.",
+			"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can.",
 		);
 	const response = family?.handle(routed);
 	if (!canonical || !response) return response;

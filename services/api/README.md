@@ -542,6 +542,18 @@ only **available** when its endpoint, contract and provenance are published.
       is listed in `unjoined` with the validator's reason. Two rows for one
       area leave it out, both listed as `duplicate-area`, since which value
       was meant is the caller's to say. Nothing is stored.
+- [x] Convert supplied counts through
+      `POST /v1/crosswalks/{crosswalk-id}:convert?semantics=count`. Send the same
+      CSV or JSON rows as `:join`. The crosswalk fixes both releases. Every row
+      must resolve to one source area and carry a finite non-negative count;
+      one invalid or duplicate row refuses the whole request. Weighted splits
+      require an explicit `weighting=area` or `weighting=population` matching
+      the crosswalk. Unmapped codes, unweighted splits and best-fit assignments
+      are refused. Each result reports complete or partial coverage against the
+      crosswalk's published source mappings. Unreached targets are absent,
+      never zero. The response carries the input hash, crosswalk hash, Atlas
+      release, and input and output totals. Source area identities must be
+      compiled. Nothing is stored, and POST answers are never cached.
 - [ ] Add optional user-confirmed matching rules for repeated imports, kept
       separate from the public canonical aliases until reviewed.
 

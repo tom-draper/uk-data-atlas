@@ -79,6 +79,7 @@ export const handleIndexRoutes = ({
 				"/v1/locations/{location-id}/parents",
 				"/v1/crosswalks",
 				"/v1/crosswalks/{crosswalk-id}",
+				"/v1/crosswalks/{crosswalk-id}:convert",
 				"/v1/crosswalks/{crosswalk-id}/records",
 				"/v1/exports",
 				"/v1/exports/{export-id}",
