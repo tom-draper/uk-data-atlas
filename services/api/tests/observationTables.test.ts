@@ -4,7 +4,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { readMeasureObservations } from "../src/observationLoader";
-import type { DataCatalog } from "../src/dataCatalog";
+import type {
+	DataCatalog,
+	AnyMeasureObservationArtifact,
+} from "../src/dataCatalog";
 import {
 	lazySourceObservations,
 	ObservationCache,
@@ -315,7 +318,7 @@ test("does not retain oversized observations or displace a cached small artifact
 test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
 	t.after(() => rmSync(directory, { recursive: true, force: true }));
-	const own = {
+	const own: AnyMeasureObservationArtifact = {
 		schemaVersion: 1,
 		contentHash: "sha256:own",
 		measureId: "population",
