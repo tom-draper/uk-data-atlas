@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	canServeAsWgs84,
@@ -127,10 +127,9 @@ export type IntersectingArea = {
 	bounds: GeometryBounds;
 };
 /**
- * How the geometry cache has behaved since the server started. A release costs
- * some 10 to 200 MB of heap once read, its coordinates packed, so the limit is
- * a count of releases, and a rising eviction count says it is too small for
- * the traffic it serves.
+ * Geometry cache activity. Compiled releases retain metadata and indexes,
+ * while individual area reads populate the materialised geometry cache.
+ * The release limit is a count, not a heap or RSS ceiling.
  */
 export type AreaGeometryCacheStats = {
 	maxReleases: number;
@@ -141,9 +140,8 @@ export type AreaGeometryCacheStats = {
 	/** Of those loads, how many read a compiled release rather than its source. */
 	compiledLoads: number;
 	/**
-	 * Of those loads, how many found a compiled release built from a different
-	 * source and read the source instead, at many times the cost. Any at all
-	 * says the store needs rebuilding.
+	 * Stale compiled stores rejected on load. The field name is retained for
+	 * metrics compatibility; serving never falls back to the source file.
 	 */
 	staleCompiledLoads: number;
 	evictions: number;
@@ -158,6 +156,35 @@ export const compiledGeometryFile = (
 	geography: string,
 	boundaryRelease: string,
 ) => `${geography}-${boundaryRelease}.bin`;
+
+const requireCompiledGeometry = (
+	directory: string,
+	identity: string,
+	source: GeometrySource,
+	onStale?: (release: string, path: string) => void,
+) => {
+	const [geography, boundaryRelease] = identity.split("/") as [
+		string,
+		string,
+	];
+	const path = join(
+		directory,
+		compiledGeometryFile(geography, boundaryRelease),
+	);
+	try {
+		const stored = readGeometryStore(path, source);
+		if (stored) return stored;
+		onStale?.(identity, path);
+		throw new Error(
+			"The compiled geometry does not match the registered source.",
+		);
+	} catch (error) {
+		throw new Error(
+			`Cannot use compiled geometry for ${identity} at ${path}: ${error instanceof Error ? error.message : String(error)} Remove the unusable compiled file if present, then run pnpm --dir services/api build:geometry-store before starting the API.`,
+			{ cause: error },
+		);
+	}
+};
 
 export class AreaGeometryCache {
 	private readonly releases = new Map<string, CachedRelease>();
@@ -179,11 +206,11 @@ export class AreaGeometryCache {
 		private readonly maxReleases = 2,
 		/**
 		 * Where compiled releases are kept (`build:geometry-store`). A release
-		 * compiled there from its current source is read from it; any other
-		 * is read from its source.
+		 * must match the registered source. Missing, stale or invalid stores
+		 * are refused; omit the directory only for source-based build tools.
 		 */
 		private readonly storeDirectory?: string,
-		/** Told of each compiled release passed over because it is stale. */
+		/** Told before a stale compiled release is rejected. */
 		private readonly onStaleCompiled?: (
 			release: string,
 			path: string,
@@ -193,6 +220,14 @@ export class AreaGeometryCache {
 			throw new Error(
 				"The geometry cache must hold at least one release.",
 			);
+		if (storeDirectory)
+			for (const [identity, source] of sources)
+				requireCompiledGeometry(
+					storeDirectory,
+					identity,
+					source,
+					onStaleCompiled,
+				).close();
 	}
 	stats(): AreaGeometryCacheStats {
 		return {
@@ -421,27 +456,22 @@ export class AreaGeometryCache {
 			...(corrections.length > 0 ? { corrections } : {}),
 		};
 	}
-	/** A compiled release of this area set, if one is current. */
+	/** A required compiled release, validated against its registered source. */
 	private readCompiled(
+		directory: string,
 		identity: string,
 		geography: string,
 		boundaryRelease: string,
-	): CachedRelease | undefined {
-		if (!this.storeDirectory) return undefined;
-		const path = join(
-			this.storeDirectory,
-			compiledGeometryFile(geography, boundaryRelease),
-		);
-		if (!existsSync(path)) return undefined;
-		const stored = readGeometryStore(
-			path,
+	): CachedRelease {
+		const stored = requireCompiledGeometry(
+			directory,
+			identity,
 			this.source(geography, boundaryRelease),
+			(release, path) => {
+				this.counts.staleCompiledLoads += 1;
+				this.onStaleCompiled?.(release, path);
+			},
 		);
-		if (!stored) {
-			this.counts.staleCompiledLoads += 1;
-			this.onStaleCompiled?.(identity, path);
-			return undefined;
-		}
 		this.counts.compiledLoads += 1;
 		return {
 			identity,
@@ -573,9 +603,14 @@ export class AreaGeometryCache {
 		let release = this.releases.get(identity);
 		if (!release) {
 			const started = performance.now();
-			release =
-				this.readCompiled(identity, geography, boundaryRelease) ??
-				this.readSource(identity, geography, boundaryRelease);
+			release = this.storeDirectory
+				? this.readCompiled(
+						this.storeDirectory,
+						identity,
+						geography,
+						boundaryRelease,
+					)
+				: this.readSource(identity, geography, boundaryRelease);
 			this.releases.set(identity, release);
 			this.counts.loads += 1;
 			this.counts.loadSeconds += (performance.now() - started) / 1000;

@@ -83,15 +83,13 @@ function startWorker() {
 		mapTileBaseUrl: configuration.mapTileBaseUrl,
 		geometryCacheReleases: configuration.geometryCacheReleases,
 		crosswalkCacheBytes: configuration.crosswalkCacheBytes,
-		// A stale compiled release is still served, from its source, but at many
-		// times the cost (seconds for the largest), so it is reported each time.
 		onStaleCompiledGeometry: (release, path) =>
 			log({
-				level: "warn",
+				level: "error",
 				event: "geometry.store_stale",
 				release,
 				path,
-				fix: "pnpm build:geometry-store",
+				fix: "pnpm --dir services/api build:geometry-store",
 			}),
 		terrainRemoteEndpoint: configuration.terrainRemoteEndpoint,
 		terrainCoverageEndpoint: configuration.terrainCoverageEndpoint,

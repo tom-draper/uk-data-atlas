@@ -128,8 +128,8 @@ export type CatalogueOptions = {
 	geometryCacheReleases?: number;
 	crosswalkCacheBytes?: number;
 	/**
-	 * Told when a compiled geometry release no longer matches its source, so
-	 * the release is read from the source instead.
+	 * Told before rejecting a compiled geometry release that no longer matches
+	 * its registered source.
 	 */
 	onStaleCompiledGeometry?: (release: string, path: string) => void;
 	/** Enables the non-persistent EA remote preview provider when set. */
