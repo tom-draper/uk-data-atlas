@@ -3831,6 +3831,12 @@ paths:
         question, and it is the geometry that is expensive, not the extent. A
         box matching nothing is an empty answer, not an error; a geography and
         release the catalogue does not carry is a 404.
+        Geometry collections process at most 250,000 source vertices per request,
+        counted before simplification. A larger request returns 422 without a
+        partial collection. Reduce the page size for a box query, omit its tier
+        to retrieve identities, or follow the problem's `links.downloads` to the
+        boundary release metadata and its prebuilt downloads.
+
       parameters:
         - name: bbox
           in: query
@@ -3927,6 +3933,15 @@ paths:
         "404":
           description: >
             No compiled area release matches the requested geography and release.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: >
+            The geometry collection exceeds the source vertex budget or child
+            count limit. No partial collection is returned. The problem includes
+            links.downloads for the release metadata and its bulk downloads.
           content:
             application/problem+json:
               schema:
@@ -5103,6 +5118,13 @@ paths:
         being passed over. `collection.members` and `collection.withGeometry`
         disagreeing is how a caller tells a partial collection from a complete
         one; the response is still a 200.
+        At most 1,000 children may be requested in one collection.
+        Geometry collections process at most 250,000 source vertices per request,
+        counted before simplification. A larger request returns 422 without a
+        partial collection. Reduce the page size for a box query, omit its tier
+        to retrieve identities, or follow the problem's `links.downloads` to the
+        boundary release metadata and its prebuilt downloads.
+
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -5216,6 +5238,15 @@ paths:
           description: >
             The area's children are published in more than one geography release
             and `childGeography` does not choose one; `choices` lists them.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: >
+            The geometry collection exceeds the source vertex budget or child
+            count limit. No partial collection is returned. The problem includes
+            links.downloads for the release metadata and its bulk downloads.
           content:
             application/problem+json:
               schema:

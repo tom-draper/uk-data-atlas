@@ -1,3 +1,4 @@
+import { GeometryBudget, geometryBudgetProblem } from "./geometryBudget";
 import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
@@ -58,7 +59,6 @@ export const handleAreaIntersectsRoutes = ({
 			"bbox (west,south,east,north in WGS 84, west < east and south < north) and geography are required.",
 		);
 	}
-	// Undefined when no tier is asked for: the stored geometry is returned.
 	const requestedTier = readChoice(
 		parsedUrl.searchParams.get("tier"),
 		INTERSECTS.tier,
@@ -101,7 +101,7 @@ export const handleAreaIntersectsRoutes = ({
 			boundaryRelease,
 			[west!, south!, east!, north!],
 			limit,
-			requestedTier !== undefined,
+			false,
 			after,
 		);
 		if (!found)
@@ -110,23 +110,41 @@ export const handleAreaIntersectsRoutes = ({
 				"Catalogue Unavailable",
 				"Build the geometry source registry before box lookup.",
 			);
-		const matches = found.matches.map((match) => {
-			const { geometry, ...area } = match;
-			if (requestedTier === undefined) return area;
-			const simplified =
-				geometry && simplifyGeometry(geometry, requestedTier);
-			if (!simplified) return area;
-			return {
-				...area,
-				generalisation: {
-					vertices: simplified.verticesAfter,
-					verticesAtFullResolution: simplified.verticesBefore,
-					parts: simplified.partsAfter,
-					partsAtFullResolution: simplified.partsBefore,
-				},
-				geometry: simplified.geometry,
-			};
-		});
+		const budget = new GeometryBudget();
+		const matches = [];
+		for (const area of found.matches) {
+			if (requestedTier === undefined) {
+				matches.push(area);
+				continue;
+			}
+			const resolved = geographyResolver.geometryFor({
+				geography,
+				boundaryRelease,
+				code: area.code,
+			});
+			if (!resolved) continue;
+			if (!budget.add(resolved.geometry))
+				return geometryBudgetProblem(geography, boundaryRelease);
+			const simplified = simplifyGeometry(
+				resolved.geometry,
+				requestedTier,
+			);
+			matches.push(
+				!simplified
+					? area
+					: {
+							...area,
+							generalisation: {
+								vertices: simplified.verticesAfter,
+								verticesAtFullResolution:
+									simplified.verticesBefore,
+								parts: simplified.partsAfter,
+								partsAtFullResolution: simplified.partsBefore,
+							},
+							geometry: simplified.geometry,
+						},
+			);
+		}
 		const last = found.matches.at(-1);
 		const nextCursor = found.more && last ? cursorFor(last.code) : null;
 		return {
