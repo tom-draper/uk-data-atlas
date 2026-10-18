@@ -1,21 +1,24 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { httpResponse } from "../src/httpResponse";
-import { envelope } from "../src/routeResponse";
+import { publicJson } from "../src/publicJson";
 
-test("publishes code-year vocabulary without mutating compiled source metadata", () => {
-	const source = {
-		sourceGeography: { type: "ward", boundaryYear: 2023 },
-		boundaryYears: [2023, 2024],
-	};
-	const answer = httpResponse({ method: "GET", headers: {} }, () => ({
-		status: 200,
-		body: envelope("release", source),
-	}));
-	assert.equal(typeof answer.body, "string");
-	assert.deepEqual(JSON.parse(String(answer.body)).data, {
-		sourceGeography: { type: "ward", codeYear: 2023 },
-		codeYears: [2023, 2024],
-	});
-	assert.equal(source.sourceGeography.boundaryYear, 2023);
+test("bodies without code-vintage keys serialise unchanged", () => {
+	const body = { area: { code: "E08000035" }, note: '"boundaryYea' };
+	assert.equal(publicJson(body), JSON.stringify(body));
+	assert.equal(publicJson(undefined), undefined);
+});
+
+test("code-vintage keys are published as codeYear and codeYears", () => {
+	assert.equal(
+		publicJson({
+			rows: [{ boundaryYear: 2024, value: 1 }],
+			partition: { boundaryYears: [2019, 2024] },
+			note: "boundaryYear stays in text",
+		}),
+		JSON.stringify({
+			rows: [{ codeYear: 2024, value: 1 }],
+			partition: { codeYears: [2019, 2024] },
+			note: "boundaryYear stays in text",
+		}),
+	);
 });
