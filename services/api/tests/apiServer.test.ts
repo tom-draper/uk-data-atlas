@@ -124,7 +124,7 @@ test("answers a failing handler with a 500 that can be found in the logs", async
 	const reported: unknown[] = [];
 	const { get, logged } = await serve(
 		t,
-		{ onError: (error) => reported.push(error) },
+		{ maxConcurrentRequests: 1, onError: (error) => reported.push(error) },
 		failing,
 	);
 	broken = true;
@@ -594,3 +594,125 @@ test("still limits a client whose requests are answered from the response cache"
 	assert.equal((await get("/v1/geographies")).status, 200);
 	assert.equal((await get("/v1/geographies")).status, 429);
 });
+
+test("bounds active body reads without queuing and keeps probes available", async (t) => {
+	const { get, server } = await serve(t, {
+		maxConcurrentRequests: 1,
+		metrics: "open",
+	});
+	const address = server.address() as AddressInfo;
+	const accepted = new Promise<void>((resolve) =>
+		server.once("request", () => resolve()),
+	);
+	const held = httpRequest({
+		host: "127.0.0.1",
+		port: address.port,
+		path: "/v1/areas:lookup",
+		method: "POST",
+		headers: { "content-type": "application/json" },
+	});
+	held.on("error", () => {});
+	t.after(() => held.destroy());
+	held.flushHeaders();
+	await accepted;
+	const refused = await get("/v1/geographies", {
+		headers: { "accept-encoding": "gzip" },
+	});
+	assert.equal(refused.status, 503);
+	assert.equal(refused.headers.get("retry-after"), "1");
+	assert.equal(refused.headers.get("cache-control"), "no-store");
+	assert.equal(refused.headers.get("access-control-allow-origin"), "*");
+	assert.equal(refused.headers.get("content-encoding"), null);
+	assert.equal((await refused.json()).title, "Server Busy");
+	for (const path of ["/healthz", "/readyz", "/metrics"])
+		assert.equal((await get(path)).status, 200);
+	assert.equal(
+		(await get("/v1/geographies", { method: "OPTIONS" })).status,
+		204,
+	);
+	// Complete the admitted body rather than waiting for its timeout.
+	const completed = new Promise<void>((resolve) =>
+		held.once("response", (response) => {
+			response.resume();
+			response.once("end", resolve);
+		}),
+	);
+	held.end("{}");
+	await completed;
+	assert.equal((await get("/v1/geographies")).status, 200);
+});
+
+test("releases admission after a client abandons an unfinished body", async (t) => {
+	const { get, server } = await serve(t, { maxConcurrentRequests: 1 });
+	const address = server.address() as AddressInfo;
+	let connection: import("node:net").Socket | undefined;
+	server.once("connection", (socket) => {
+		connection = socket;
+	});
+	const accepted = new Promise<void>((resolve) =>
+		server.once("request", () => resolve()),
+	);
+	const held = httpRequest({
+		host: "127.0.0.1",
+		port: address.port,
+		path: "/v1/areas:lookup",
+		method: "POST",
+	});
+	held.on("error", () => {});
+	t.after(() => held.destroy());
+	held.flushHeaders();
+	await accepted;
+	assert.equal((await get("/v1/geographies")).status, 503);
+	const closed = new Promise<void>((resolve) =>
+		connection!.once("close", () => resolve()),
+	);
+	held.destroy();
+	await closed;
+	await new Promise<void>((resolve) => setImmediate(resolve));
+	assert.equal((await get("/v1/geographies")).status, 200);
+});
+
+test(
+	"holds admission while a large response waits for its reader",
+	{ timeout: 10_000 },
+	async (t) => {
+		const context = testContext({
+			openapiDocument: "x".repeat(16 * 1024 * 1024),
+			operationMatcher,
+		});
+		const { get, server } = await serve(
+			t,
+			{ maxConcurrentRequests: 1 },
+			context,
+		);
+		const address = server.address() as AddressInfo;
+		let connection: import("node:net").Socket | undefined;
+		server.once("connection", (socket) => {
+			connection = socket;
+		});
+		const download = httpRequest({
+			host: "127.0.0.1",
+			port: address.port,
+			path: "/v1/openapi.yaml",
+			headers: { "accept-encoding": "identity" },
+		});
+		download.on("error", () => {});
+		t.after(() => download.destroy());
+		await new Promise<void>((resolve) =>
+			download
+				.once("response", (response) => {
+					response.pause();
+					resolve();
+				})
+				.end(),
+		);
+		assert.equal((await get("/v1/geographies")).status, 503);
+		const closed = new Promise<void>((resolve) =>
+			connection!.once("close", () => resolve()),
+		);
+		download.destroy();
+		await closed;
+		await new Promise<void>((resolve) => setImmediate(resolve));
+		assert.equal((await get("/v1/geographies")).status, 200);
+	},
+);

@@ -2193,6 +2193,14 @@ line up.
 
 ### Limits
 
+- **Concurrency:** each worker admits at most `ATLAS_MAX_CONCURRENT_REQUESTS`
+  requests, 16 by default. The slot covers body reading, routing, compression
+  and response writing. Excess requests return `503 Server Busy` with
+  `Retry-After: 1` and a closed connection, without entering a waiting queue
+  or reading their bodies. Retry with backoff. Health, readiness, metrics and
+  `OPTIONS` requests are exempt. A disconnected request keeps its slot until
+  its active work finishes. This limits overlapping work, not bytes per request.
+
 - **Rate limit:** a token bucket per client, see the checklist above. A
   request costs one token, except where its operation declares
   `x-rate-limit-cost` in `openapi.yaml`: the routes that read many areas'
@@ -2271,6 +2279,7 @@ rather than falling back to the default.
 | `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                              |
 | `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                       |
 | `ATLAS_CROSSWALK_CACHE_MB`           | `64`        | MiB of uncompressed JSON represented by cached crosswalks per worker; `0` disables retention. |
+| `ATLAS_MAX_CONCURRENT_REQUESTS`      | `16`        | Active requests per worker, integer 1 to 1024. Excess requests receive `503` without queuing. |
 | `ATLAS_RESPONSE_CACHE_MB`            | `32`        | Megabytes of finished answers kept for repeat requests; `0` turns the cache off.              |
 | `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                   |
 | `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                       |
