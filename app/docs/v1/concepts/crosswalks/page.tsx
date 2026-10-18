@@ -1,4 +1,5 @@
 import {
+	Callout,
 	DocPage,
 	EndpointRef,
 	H2,
@@ -28,6 +29,7 @@ export default function CrosswalksPage() {
 				{ id: "uses", title: "What they're used for" },
 				{ id: "analysis", title: "Converting for analysis" },
 				{ id: "translate", title: "Translating a code" },
+				{ id: "missing", title: "When there's no crosswalk" },
 				{ id: "endpoints", title: "Useful endpoints" },
 			]}
 		>
@@ -122,6 +124,42 @@ export default function CrosswalksPage() {
 			</P>
 			<SpecExample id="translateAreaCode" />
 
+			<H2 id="missing">When there&apos;s no crosswalk</H2>
+			<P>
+				Crosswalks link exact releases, and publishers don&apos;t
+				publish one for every pair. December 2019 wards have no lookup
+				to the 2024 constituencies, for example, though May 2025 wards
+				do. Ask before you convert:
+			</P>
+			<Request
+				url={`${API_BASE_URL}/relationships?from=ward/2019-12-uk-bgc&to=constituency/2024-07-uk-bgc&purpose=apportion`}
+			/>
+			<P>
+				`status` is `available`, `partial` or `unsupported`, and
+				`reason` says why. When no single crosswalk links the two, the
+				API looks for a route through several. Here the route goes via
+				local authorities, and its `coverage` shows only about two in
+				three wards get through, while `operations` says it may only be
+				used for weighted estimates.
+			</P>
+			<P>When the answer isn&apos;t good enough, you can:</P>
+			<List
+				items={[
+					"Get the same data from its publisher on a release that has a lookup, such as May 2025 wards.",
+					"Use the publisher's own figures for the target areas, where they exist.",
+					"Accept a partial route as an estimate, and report its coverage alongside the results.",
+				]}
+			/>
+			<Callout tone="note">
+				[Converting your own
+				counts](/docs/v1/reference/geography/convert-supplied-counts)
+				goes through one named crosswalk between the exact releases, and
+				a best-fit crosswalk can&apos;t convert counts. If a lookup you
+				need is missing, [open an
+				issue](https://github.com/tom-draper/uk-data-atlas/issues) and
+				say which releases it should join.
+			</Callout>
+
 			<H2 id="endpoints">Useful endpoints</H2>
 			<EndpointRef id="listCrosswalks" />
 			<EndpointRef id="translateAreaCode" />
@@ -129,6 +167,7 @@ export default function CrosswalksPage() {
 			<EndpointRef id="queryRelationships" />
 			<EndpointRef id="listAnalysisGeographies" />
 			<EndpointRef id="planAnalysis" />
+			<EndpointRef id="convertSuppliedCounts" />
 		</DocPage>
 	);
 }
