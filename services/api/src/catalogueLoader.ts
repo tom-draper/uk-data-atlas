@@ -126,6 +126,7 @@ export type CatalogueOptions = {
 	loadEvidenceDocuments?: boolean;
 	/** Geometry releases held in memory at once; see `AreaGeometryCache`. */
 	geometryCacheReleases?: number;
+	crosswalkCacheBytes?: number;
 	/**
 	 * Told when a compiled geometry release no longer matches its source, so
 	 * the release is read from the source instead.
@@ -207,7 +208,11 @@ export const readApiCatalogues = (
 		readMapAssets(apiRoot, mapResources),
 	);
 	const crosswalkLookup = stage("crosswalk-lookup", () =>
-		readCrosswalkLookup(apiRoot, crosswalkInventory),
+		readCrosswalkLookup(
+			apiRoot,
+			crosswalkInventory,
+			options.crosswalkCacheBytes,
+		),
 	);
 	const analysisGeographyInventory = stage(
 		"analysis-geography-inventory",

@@ -82,6 +82,7 @@ function startWorker() {
 		mapAssetBaseUrl: configuration.mapAssetBaseUrl,
 		mapTileBaseUrl: configuration.mapTileBaseUrl,
 		geometryCacheReleases: configuration.geometryCacheReleases,
+		crosswalkCacheBytes: configuration.crosswalkCacheBytes,
 		// A stale compiled release is still served, from its source, but at many
 		// times the cost (seconds for the largest), so it is reported each time.
 		onStaleCompiledGeometry: (release, path) =>
@@ -122,6 +123,7 @@ function startWorker() {
 			loadSeconds: Math.round(performance.now() - loading) / 1000,
 			rateLimit: configuration.server.rateLimit ?? null,
 			geometryCacheReleases: configuration.geometryCacheReleases,
+			crosswalkCacheBytes: configuration.crosswalkCacheBytes,
 			metrics:
 				configuration.server.metrics === undefined
 					? "off"

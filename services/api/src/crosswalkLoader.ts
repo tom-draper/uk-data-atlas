@@ -15,8 +15,10 @@ export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory =>
 		"crosswalk inventory",
 	);
 
+export const DEFAULT_CROSSWALK_CACHE_BYTES = 64 * 1024 * 1024;
+
 /**
- * The crosswalk artifacts, each parsed the first time it is asked for. They
+ * The crosswalk artifacts, read on demand and retained within a JSON byte budget. They
  * are most of a gigabyte of JSON once parsed and a request touches few of
  * them, so reading them all before listening cost seconds of start-up and
  * held the whole set for the life of the process. A missing file still stops
@@ -25,9 +27,21 @@ export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory =>
 class LazyCrosswalkLookup implements CrosswalkLookup {
 	private readonly entries: CrosswalkInventory["crosswalks"];
 	private readonly paths = new Map<string, string>();
-	private readonly loaded = new Map<string, CrosswalkArtifact>();
+	private readonly loaded = new Map<
+		string,
+		{ artifact: CrosswalkArtifact; bytes: number }
+	>();
+	private bytes = 0;
 
-	constructor(apiRoot: string, inventory: CrosswalkInventory) {
+	constructor(
+		apiRoot: string,
+		inventory: CrosswalkInventory,
+		private readonly maxBytes: number,
+	) {
+		if (!Number.isSafeInteger(maxBytes) || maxBytes < 0)
+			throw new Error(
+				"Crosswalk cache bytes must be a non-negative safe integer.",
+			);
 		this.entries = inventory.crosswalks;
 		for (const crosswalk of this.entries) {
 			const path = publicPath(apiRoot, crosswalk.artifact);
@@ -39,13 +53,17 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 
 	get(id: string): CrosswalkArtifact | undefined {
 		const cached = this.loaded.get(id);
-		if (cached) return cached;
+		if (cached) {
+			this.loaded.delete(id);
+			this.loaded.set(id, cached);
+			return cached.artifact;
+		}
 		const expected = this.entries.find((crosswalk) => crosswalk.id === id);
 		if (!expected) return undefined;
 		const path = this.paths.get(id)!;
-		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as CrosswalkArtifact;
+		const json = readFileSync(path, "utf8");
+		const bytes = Buffer.byteLength(json);
+		const artifact = JSON.parse(json) as CrosswalkArtifact;
 		if (
 			artifact.schemaVersion !== 1 ||
 			artifact.contentHash !== expected.contentHash ||
@@ -53,7 +71,15 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 		) {
 			throw new Error(`Invalid crosswalk artifact at ${path}`);
 		}
-		this.loaded.set(id, artifact);
+		if (bytes <= this.maxBytes) {
+			while (this.bytes + bytes > this.maxBytes) {
+				const oldest = this.loaded.keys().next().value!;
+				this.bytes -= this.loaded.get(oldest)!.bytes;
+				this.loaded.delete(oldest);
+			}
+			this.loaded.set(id, { artifact, bytes });
+			this.bytes += bytes;
+		}
 		return artifact;
 	}
 
@@ -73,7 +99,8 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 export const readCrosswalkLookup = (
 	apiRoot: string,
 	inventory: CrosswalkInventory,
-): CrosswalkLookup => new LazyCrosswalkLookup(apiRoot, inventory);
+	maxBytes = DEFAULT_CROSSWALK_CACHE_BYTES,
+): CrosswalkLookup => new LazyCrosswalkLookup(apiRoot, inventory, maxBytes);
 
 export const readRelationshipPathInventory = (
 	apiRoot: string,

@@ -487,3 +487,22 @@ test("counts the source areas that reach the target through every step", () => {
 
 	assert.equal(translator.pathReach(route, endpoint("a")), 2);
 });
+
+test("direction indexes follow the loaded artifact rather than retaining it by id", () => {
+	const translator = new CrosswalkTranslator({});
+	const first = lookupCrosswalk("same-id", "ward", "localAuthority", [
+		["A", ["B"]],
+	]);
+	const reloaded = structuredClone(first);
+	for (const direction of ["forward", "reverse"] as const) {
+		const steps = translator.translationSteps(first, direction);
+		assert.equal(translator.translationSteps(first, direction), steps);
+		const rebuilt = translator.translationSteps(reloaded, direction);
+		assert.notEqual(rebuilt, steps);
+		assert.deepEqual(rebuilt, steps);
+		const targets = translator.stepTargets(first, direction);
+		assert.equal(translator.stepTargets(first, direction), targets);
+		assert.notEqual(translator.stepTargets(reloaded, direction), targets);
+		assert.deepEqual(translator.stepTargets(reloaded, direction), targets);
+	}
+});

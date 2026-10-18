@@ -50,3 +50,25 @@ test("defaults to two workers and validates deployment origins", () => {
 			readServeConfiguration({ ATLAS_MAP_ASSET_BASE_URL: value }),
 		);
 });
+
+test("bounds the crosswalk cache and allows disabling retention", () => {
+	assert.equal(
+		readServeConfiguration({}).crosswalkCacheBytes,
+		64 * 1024 * 1024,
+	);
+	assert.equal(
+		readServeConfiguration({ ATLAS_CROSSWALK_CACHE_MB: "8" })
+			.crosswalkCacheBytes,
+		8 * 1024 * 1024,
+	);
+	assert.equal(
+		readServeConfiguration({ ATLAS_CROSSWALK_CACHE_MB: "0" })
+			.crosswalkCacheBytes,
+		0,
+	);
+	for (const value of ["-1", "1.5", "many", "4097"])
+		assert.throws(
+			() => readServeConfiguration({ ATLAS_CROSSWALK_CACHE_MB: value }),
+			/ATLAS_CROSSWALK_CACHE_MB/,
+		);
+});

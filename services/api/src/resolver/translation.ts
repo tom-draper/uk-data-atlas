@@ -353,14 +353,17 @@ export type CrosswalkTranslatorInputs = {
  * per-crosswalk direction indexes so routes never scan crosswalk records.
  */
 export class CrosswalkTranslator {
-	private readonly translationStepCache = new Map<
-		string,
-		Map<string, TranslationStep>
+	private readonly translationStepCache = new WeakMap<
+		CrosswalkArtifact,
+		Partial<Record<StepDirection, Map<string, TranslationStep>>>
 	>();
-	private readonly stepTargetCache = new Map<string, Map<string, string[]>>();
-	private readonly successorStepCache = new Map<
-		string,
-		Map<string, TranslationStep>
+	private readonly stepTargetCache = new WeakMap<
+		CrosswalkArtifact,
+		Partial<Record<StepDirection, Map<string, string[]>>>
+	>();
+	private readonly successorStepCache = new WeakMap<
+		CrosswalkArtifact,
+		Partial<Record<StepDirection, Map<string, TranslationStep>>>
 	>();
 	private readonly pathReachCache = new Map<string, number>();
 	private pathsById?: Map<string, RelationshipPath>;
@@ -459,11 +462,12 @@ export class CrosswalkTranslator {
 		artifact: CrosswalkArtifact,
 		direction: StepDirection,
 	): Map<string, TranslationStep> {
-		const key = `${artifact.id}/${direction}`;
-		let steps = this.translationStepCache.get(key);
+		const directions = this.translationStepCache.get(artifact) ?? {};
+		let steps = directions[direction];
 		if (!steps) {
 			steps = buildTranslationSteps(artifact, direction);
-			this.translationStepCache.set(key, steps);
+			directions[direction] = steps;
+			this.translationStepCache.set(artifact, directions);
 		}
 		return steps;
 	}
@@ -472,11 +476,12 @@ export class CrosswalkTranslator {
 		artifact: CrosswalkArtifact,
 		direction: StepDirection,
 	): Map<string, string[]> {
-		const key = `${artifact.id}/${direction}`;
-		let targets = this.stepTargetCache.get(key);
+		const directions = this.stepTargetCache.get(artifact) ?? {};
+		let targets = directions[direction];
 		if (!targets) {
 			targets = buildStepTargets(artifact, direction);
-			this.stepTargetCache.set(key, targets);
+			directions[direction] = targets;
+			this.stepTargetCache.set(artifact, directions);
 		}
 		return targets;
 	}
@@ -584,8 +589,8 @@ export class CrosswalkTranslator {
 			!artifact.validation.continuity.realigned?.length
 		)
 			return this.translationSteps(artifact, direction);
-		const key = `${artifact.id}/${direction}`;
-		let steps = this.successorStepCache.get(key);
+		const directions = this.successorStepCache.get(artifact) ?? {};
+		let steps = directions[direction];
 		if (!steps) {
 			steps = buildTranslationSteps(
 				{
@@ -608,7 +613,8 @@ export class CrosswalkTranslator {
 				},
 				direction,
 			);
-			this.successorStepCache.set(key, steps);
+			directions[direction] = steps;
+			this.successorStepCache.set(artifact, directions);
 		}
 		return steps;
 	}
