@@ -40,6 +40,42 @@ export const canonicalMeasureId = (
 const containsAll = (haystack: Set<string>, needles: string[]) =>
 	needles.every((needle) => haystack.has(needle));
 
+type MeasureWords = {
+	label: Set<string>;
+	identity: Set<string>;
+	everything: Set<string>;
+};
+
+// A catalogue is fixed once loaded, so each measure's words are worked out
+// once rather than on every search.
+const wordsByCatalog = new WeakMap<DataCatalog, Map<Measure, MeasureWords>>();
+
+const measureWords = (catalog: DataCatalog) => {
+	const cached = wordsByCatalog.get(catalog);
+	if (cached) return cached;
+	const datasetLabels = new Map(
+		catalog.datasets.map((dataset) => [dataset.id, dataset.label]),
+	);
+	const index = new Map(
+		catalog.measures.map((measure) => {
+			const label = new Set(words(measure.label));
+			const identity = new Set(
+				[measure.id, ...(measure.aliases ?? [])].flatMap(words),
+			);
+			const everything = new Set([
+				...label,
+				...identity,
+				...measure.sources.flatMap(({ datasetId }) =>
+					words(datasetLabels.get(datasetId) ?? ""),
+				),
+			]);
+			return [measure, { label, identity, everything }];
+		}),
+	);
+	wordsByCatalog.set(catalog, index);
+	return index;
+};
+
 /**
  * Rank a measure against a query: an exact id or alias first, then every
  * query word in its label, then in its id or aliases, then anywhere including
@@ -50,24 +86,13 @@ const score = (
 	measure: Measure,
 	query: string[],
 	slug: string,
-	datasetLabels: Map<string, string>,
+	{ label, identity, everything }: MeasureWords,
 ) => {
 	if (measure.id === slug || measure.aliases?.includes(slug)) return 1000;
-	const label = new Set(words(measure.label));
-	const identity = new Set(
-		[measure.id, ...(measure.aliases ?? [])].flatMap(words),
-	);
 	const extra = (field: Set<string>) =>
 		Math.min(field.size - query.length, 99);
 	if (containsAll(label, query)) return 400 - extra(label);
 	if (containsAll(identity, query)) return 300 - extra(identity);
-	const everything = new Set([
-		...label,
-		...identity,
-		...measure.sources.flatMap(({ datasetId }) =>
-			words(datasetLabels.get(datasetId) ?? ""),
-		),
-	]);
 	return containsAll(everything, query) ? 100 : 0;
 };
 
@@ -76,13 +101,11 @@ export const searchMeasures = (catalog: DataCatalog, query: string) => {
 	const terms = words(query);
 	if (terms.length === 0) return catalog.measures;
 	const slug = measureSlug(query);
-	const datasetLabels = new Map(
-		catalog.datasets.map((dataset) => [dataset.id, dataset.label]),
-	);
+	const index = measureWords(catalog);
 	return catalog.measures
 		.map((measure) => ({
 			measure,
-			score: score(measure, terms, slug, datasetLabels),
+			score: score(measure, terms, slug, index.get(measure)!),
 		}))
 		.filter(({ score }) => score > 0)
 		.sort(
