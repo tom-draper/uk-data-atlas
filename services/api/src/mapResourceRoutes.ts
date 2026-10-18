@@ -37,6 +37,9 @@ const MVT_CONTENT_TYPE = "application/vnd.mapbox-vector-tile";
 const PMTILES_CONTENT_TYPE = "application/vnd.pmtiles";
 const PARQUET_CONTENT_TYPE = "application/vnd.apache.parquet";
 
+export const MAX_MAP_JOIN_ROWS = 250_000;
+export const MAX_MAP_JOIN_COLUMN_BYTES = 16 * 1024 * 1024;
+
 const FEATURES =
 	QUERY_RULES["GET /map-resources/{geography}/{release}/features"];
 const JOIN =
@@ -367,8 +370,29 @@ export const handleMapResourceRoutes = ({
 				"Catalogue Unavailable",
 				`The area identities for ${id} are not loaded, so values cannot be numbered to match the tiles.`,
 			);
-		const numbered = featureIds(areaCodes);
 		const records = observations.records;
+		const budgetFailure = () =>
+			problem(
+				422,
+				"Map Join Budget Exceeded",
+				`Map joins accept at most ${MAX_MAP_JOIN_ROWS} source records and ${MAX_MAP_JOIN_COLUMN_BYTES} uncompressed column bytes. Retrieve source observations in pages from /v1/data/${plan.measure.id} using JSON, CSV or NDJSON. No partial join is returned.`,
+				{
+					links: {
+						data: `/v1/data/${encodeURIComponent(plan.measure.id)}?${new URLSearchParams({ period, geography: plan.source.sourceGeography.type, codeYear: String(plan.source.sourceGeography.boundaryYear), datasetId: plan.source.datasetId })}`,
+					},
+				},
+			);
+		if (records.length > MAX_MAP_JOIN_ROWS) return budgetFailure();
+		let columnBytes = 0;
+		for (const record of records) {
+			if (!isNumericObservation(record)) continue;
+			columnBytes +=
+				20 +
+				Buffer.byteLength(record.areaCode, "utf8") +
+				Buffer.byteLength(record.status, "utf8");
+			if (columnBytes > MAX_MAP_JOIN_COLUMN_BYTES) return budgetFailure();
+		}
+		const numbered = featureIds(areaCodes);
 		const join = {
 			measure: { id: plan.measure.id, label: plan.measure.label },
 			period,

@@ -218,3 +218,28 @@ test("refuses a table it cannot write faithfully", () => {
 		/fields are required/,
 	);
 });
+
+test("encodes UTF-8 strings and binary slices without copying unrelated bytes", () => {
+	const backing = new Uint8Array([99, 1, 2, 99]);
+	const file = writeParquet({
+		columns: [
+			{
+				name: "text",
+				type: "string",
+				optional: true,
+				values: ["é😀", "", null],
+			},
+			{
+				name: "bytes",
+				type: "binary",
+				optional: true,
+				values: [backing.subarray(1, 3), new Uint8Array(), null],
+			},
+		],
+	});
+	assert.deepEqual(readParquet(file).rows, [
+		{ text: "é😀", bytes: Buffer.from([1, 2]) },
+		{ text: "", bytes: Buffer.from([]) },
+		{ text: null, bytes: null },
+	]);
+});

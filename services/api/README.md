@@ -2241,6 +2241,14 @@ line up.
   also allows its indexes to be collected once active requests release it.
   Parsed objects and indexes take more heap than their source JSON, so this
   setting is not an RSS or heap ceiling. Set it to `0` to disable retention.
+- **Map joins:** JSON and Parquet map-resource joins accept at most 250,000
+  source records and 16 MiB of uncompressed column payload. The byte budget
+  counts 20 bytes per numeric row for its id, value and string-length prefixes,
+  plus UTF-8 code and status bytes. A larger join returns
+  `422 Map Join Budget Exceeded`, with no partial table and a `links.data` URL
+  for paginated source observations in JSON, CSV or NDJSON. The check precedes
+  output row and column construction, but follows source parsing and record
+  materialisation. It does not cap heap, RSS or the JSON response's encoded size.
 - **Geometry collections:** children geometry accepts at most 1,000 children.
   Children geometry and box queries with a `tier` process at most 250,000 source
   vertices per request, counted before simplification. An oversized collection
