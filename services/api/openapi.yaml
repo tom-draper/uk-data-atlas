@@ -762,6 +762,15 @@ paths:
         the GeoParquet `features`. Everything the JSON envelope says about the
         table, from the Atlas release to the join rule and provenance, travels
         in the file's `uk-data-atlas` metadata.
+
+        Both formats accept at most 250,000 source records and 16 MiB of
+        uncompressed column payload. The byte budget counts 20 bytes per numeric
+        row for id, value and string-length prefixes, plus the UTF-8 code and
+        status bytes. Oversized joins return `422 Map Join Budget Exceeded`
+        before output rows or columns are built, with no partial table and a
+        `links.data` URL for paginated source observations. Source artifact
+        parsing and record materialisation occur before this check; this is
+        not a heap or RSS ceiling.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -815,12 +824,14 @@ paths:
           $ref: "#/components/responses/NotFound"
         "422":
           description: >
-            The measure's source codes are not all in this release, so its
-            values cannot be drawn on it.
+            The source codes cannot be drawn on this release, or the join
+            exceeds its record or uncompressed column-byte budget.
           content:
             application/problem+json:
               schema:
-                $ref: "#/components/schemas/IncompatibleGeometryProblem"
+                oneOf:
+                  - $ref: "#/components/schemas/IncompatibleGeometryProblem"
+                  - $ref: "#/components/schemas/MapJoinBudgetProblem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -8385,6 +8396,26 @@ components:
               code: E05012432
               match: exact
               ask: /v1/data/population/series?place=E05012432&geography=ward
+
+    MapJoinBudgetProblem:
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [links]
+          properties:
+            title:
+              type: string
+              const: Map Join Budget Exceeded
+            status:
+              type: integer
+              const: 422
+            links:
+              type: object
+              required: [data]
+              properties:
+                data:
+                  type: string
+                  description: Paginated source observations for the requested partition and period.
 
     IncompatibleGeometryProblem:
       description: >

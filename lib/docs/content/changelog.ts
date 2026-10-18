@@ -23,6 +23,15 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-10-18",
+		title: "Bound map join output work",
+		surface: "c9428ec181be",
+		breaking: true,
+		changes: [
+			"Map-resource joins in JSON and Parquet now accept at most 250,000 source records and 16 MiB of uncompressed column payload. Oversized joins return `422 Map Join Budget Exceeded`, with no partial table. Follow `links.data` to retrieve source observations in pages as JSON, CSV or NDJSON.",
+		],
+	},
+	{
+		date: "2026-10-18",
 		title: "Limit concurrent requests per worker",
 		breaking: true,
 		changes: [

@@ -748,6 +748,7 @@
 					"code",
 					"detail",
 					"links",
+					"links.data",
 					"parameter",
 					"presentIn",
 					"presentIn[].boundaryRelease",
