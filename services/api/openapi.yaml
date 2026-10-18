@@ -79,7 +79,10 @@ info:
     costs one from the bucket, except where an operation declares
     `x-rate-limit-cost`: those that read many areas' shapes, or take a
     batch, cost that many. `414` means the
-    request target is longer than the server accepts. `500` means the route
+    request target is longer than the server accepts. `503 Server Busy` means
+    the worker has reached its concurrent request limit. It carries
+    `Retry-After: 1`; retry with backoff. The server does not queue excess
+    requests. `500` means the route
     failed unexpectedly, and carries a `requestId`. Every response carries
     `X-Request-Id`, echoing a well-formed one the client sent, so a failure
     can be found in the server's logs. None of these is cached.

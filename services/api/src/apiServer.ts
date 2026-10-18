@@ -33,6 +33,7 @@ import { routeAsync } from "./routes";
 import type { RouteContext } from "./routing";
 import {
 	DEFAULT_MAX_URL_LENGTH,
+	DEFAULT_MAX_CONCURRENT_REQUESTS,
 	errorFields,
 	type ServerOptions,
 } from "./serverOptions";
@@ -196,6 +197,17 @@ export const createApiServer = (
 	catalogues: RouteContext,
 	options: ServerOptions = {},
 ): ApiServer => {
+	const maxConcurrentRequests =
+		options.maxConcurrentRequests ?? DEFAULT_MAX_CONCURRENT_REQUESTS;
+	if (
+		!Number.isSafeInteger(maxConcurrentRequests) ||
+		maxConcurrentRequests < 1 ||
+		maxConcurrentRequests > 1024
+	)
+		throw new Error(
+			"maxConcurrentRequests must be an integer between 1 and 1024",
+		);
+	let activeRequests = 0;
 	const releaseId =
 		catalogues.atlasRelease?.releaseId ??
 		catalogues.boundaryRegistry.contentHash;
@@ -260,6 +272,7 @@ export const createApiServer = (
 	const handle = async (
 		request: IncomingMessage,
 		response: ServerResponse,
+		overloaded = false,
 	) => {
 		const startedAt = performance.now();
 		const incomingId = request.headers["x-request-id"];
@@ -278,6 +291,19 @@ export const createApiServer = (
 		let storeAs: string | undefined;
 
 		let result = operations(request, pathname);
+		if (!result && overloaded) {
+			matched = matchOperation(pathname);
+			result = httpResponse(request, () =>
+				problem(
+					503,
+					"Server Busy",
+					"This worker has reached its concurrent request limit. Retry after one second.",
+				),
+			);
+			result.gzip = false;
+			result.headers["retry-after"] = "1";
+			result.headers.connection = "close";
+		}
 		if (!result) {
 			matched = matchOperation(pathname);
 			const unexpected = unexpectedQueryParameter(
@@ -522,7 +548,39 @@ export const createApiServer = (
 			requestTimeout: REQUEST_TIMEOUT_MS,
 			keepAliveTimeout: KEEP_ALIVE_TIMEOUT_MS,
 		},
-		handle,
+		(request, response) => {
+			const pathname = (request.url ?? "/").split("?", 1)[0]!;
+			const exempt =
+				request.method === "OPTIONS" ||
+				(OPERATIONS_PATHS as readonly string[]).includes(pathname);
+			if (exempt || activeRequests >= maxConcurrentRequests) {
+				void handle(request, response, !exempt).catch(() =>
+					response.destroy(),
+				);
+				return;
+			}
+			activeRequests += 1;
+			let settled = false;
+			let finished = false;
+			let released = false;
+			const release = () => {
+				if (!settled || !finished || released) return;
+				released = true;
+				activeRequests -= 1;
+			};
+			const finish = () => {
+				finished = true;
+				release();
+			};
+			response.once("finish", finish);
+			response.once("close", finish);
+			void handle(request, response)
+				.catch(() => response.destroy())
+				.finally(() => {
+					settled = true;
+					release();
+				});
+		},
 	);
 	server.on("close", () => metrics.close());
 	return Object.assign(server, {

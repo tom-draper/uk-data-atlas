@@ -72,3 +72,20 @@ test("bounds the crosswalk cache and allows disabling retention", () => {
 			/ATLAS_CROSSWALK_CACHE_MB/,
 		);
 });
+
+test("bounds concurrent requests per worker", () => {
+	assert.equal(readServeConfiguration({}).server.maxConcurrentRequests, 16);
+	assert.equal(
+		readServeConfiguration({ ATLAS_MAX_CONCURRENT_REQUESTS: "2" }).server
+			.maxConcurrentRequests,
+		2,
+	);
+	for (const value of ["0", "-1", "1.5", "many", "1025"])
+		assert.throws(
+			() =>
+				readServeConfiguration({
+					ATLAS_MAX_CONCURRENT_REQUESTS: value,
+				}),
+			/ATLAS_MAX_CONCURRENT_REQUESTS/,
+		);
+});

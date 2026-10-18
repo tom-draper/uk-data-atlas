@@ -23,7 +23,16 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-10-18",
+		title: "Limit concurrent requests per worker",
+		breaking: true,
+		changes: [
+			"A worker now admits at most 16 active requests by default, configurable with `ATLAS_MAX_CONCURRENT_REQUESTS`. Excess requests return `503 Server Busy` with `Retry-After: 1` without queuing. Retry with backoff. Health, readiness, metrics and preflight requests remain available.",
+		],
+	},
+	{
+		date: "2026-10-18",
 		title: "Bound large geometry collections",
+		surface: "5f2bbbf9901a",
 		breaking: true,
 		changes: [
 			"Children geometry now refuses collections with more than 1,000 children. Children geometry and box queries with a `tier` refuse requests that process more than 250,000 source vertices before simplification with `422 Geometry Budget Exceeded`.",

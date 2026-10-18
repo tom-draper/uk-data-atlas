@@ -8,7 +8,11 @@ export type LogEntry = {
 	[field: string]: unknown;
 };
 
+export const DEFAULT_MAX_CONCURRENT_REQUESTS = 16;
+
 export type ServerOptions = {
+	/** Active requests per worker, including body reads and response writes. */
+	maxConcurrentRequests?: number;
 	/** Absent, requests are not limited. */
 	rateLimit?: RateLimitPolicy & {
 		/** Proxies in front of the server that append to X-Forwarded-For. */
@@ -184,6 +188,13 @@ export const readServeConfiguration = (
 			1,
 		),
 		server: {
+			maxConcurrentRequests: integer(
+				env,
+				"ATLAS_MAX_CONCURRENT_REQUESTS",
+				DEFAULT_MAX_CONCURRENT_REQUESTS,
+				1,
+				1024,
+			),
 			...(capacity > 0
 				? {
 						rateLimit: {
