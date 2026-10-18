@@ -87,3 +87,51 @@ before reducing the instance size. `ATLAS_GEOMETRY_CACHE_RELEASES` and
 Run `pnpm --dir services/api profile:startup` to collect stage timings and a heap
 snapshot. Set `ATLAS_HEAP_SNAPSHOT_PATH` to a disk with room, or set
 `ATLAS_HEAP_SNAPSHOT=off` for a startup-only measurement without the snapshot.
+
+## Measure request memory
+
+Build the API data first, then run the local workload from the repository root:
+
+```sh
+pnpm --silent --dir services/api profile:memory > /tmp/atlas-memory.json
+```
+
+The command runs one fresh API worker for each scenario in
+`benchmarks/memory-workload.json`. It uses local compiled assets and warms the
+same default postcode releases as serving. The load generator runs in a separate
+process and consumes response streams without collecting whole bodies. Worker
+cache, concurrency and rate-limit settings come from the usual environment
+variables. The command uses a 1,024 MiB V8 heap limit and exposes garbage collection.
+
+The JSON report records the release, Node version, runtime flags, resource
+settings, OS peak RSS, sampled heap and RSS, memory after requests and garbage
+collection, latency, decoded response bytes, HTTP statuses and transport failures.
+Peak RSS includes startup and is not reset between startup and requests. The
+20 ms samples can miss allocations during synchronous handlers. A 1,024 MiB heap
+limit is not an RSS limit. These local measurements do not establish production
+instance sizing.
+
+Copy the workload JSON and pass its path to select your own releases and loads:
+
+```sh
+pnpm --silent --dir services/api profile:memory /absolute/path/workload.json > /tmp/atlas-memory.json
+```
+
+Each scenario has a unique `name`, a `/v1/` `path`, `requests` from 1 to 10,000,
+and `concurrency` from 1 to 64. `method` defaults to `GET`; `POST` accepts a
+JSON string in `body`. `encoding` is `identity` by default or `gzip`.
+`expectedStatuses` defaults to `[200]`. List an expected refusal such as `422`
+or `503` explicitly when measuring a budget boundary. Requests time out after
+30 seconds. A worker has 120 seconds to become ready or return its final report.
+
+The command exits nonzero if a response has an unexpected status, a transport
+failure occurs, or a worker cannot start. Inspect status and failure counts
+before comparing memory. Compare identical workloads, artifacts, settings and
+Node versions. Each scenario starts with fresh caches, then repeat requests can
+use them. The supplied short workload is a starting point, not a sustained-load
+or production traffic model.
+
+If startup reports stale generated inventories, rebuild their declared inputs
+and dependent inventories on the build machine. For example, after rebuilding
+analysis support, rebuild `analysis-geography-validation.json` too. Rebuild
+`operations.json` whenever `openapi.yaml` changes. Do not bypass startup validation.

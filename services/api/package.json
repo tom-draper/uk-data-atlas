@@ -35,6 +35,7 @@
 		"build:terrain-catalogue": "tsx scripts/build-terrain-catalogue.ts",
 		"start": "node dist/serve.mjs",
 		"profile:startup": "tsx --max-old-space-size=4096 scripts/profile-startup.ts",
+		"profile:memory": "node --expose-gc --max-old-space-size=1024 --import tsx scripts/profile-memory.ts",
 		"smoke": "tsx scripts/smoke.ts",
 		"contract:surface": "tsx scripts/build-api-surface.ts",
 		"test": "tsx --max-old-space-size=4096 --test --test-concurrency=2 tests/*.test.ts tests/built/*.test.ts",
