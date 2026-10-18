@@ -138,10 +138,12 @@ export default function RateLimitsPage() {
 			<P>
 				Separately from your own budget, each server process works on a
 				limited number of requests at once, 16 by default. A request
-				that arrives when it is full is answered with `503 Server Busy`
-				and `Retry-After: 1`, even if you have plenty of budget left. It
-				isn't queued, isn't charged to you and carries no `RateLimit`
-				headers. The backoff above handles it too.
+				that arrives when it is full waits its turn, for up to a second.
+				If the wait runs out, or too many requests are already waiting,
+				it's answered with `503 Server Busy` and `Retry-After: 1`, even
+				if you have plenty of budget left. A refused request isn't
+				charged to you and carries no `RateLimit` headers. The backoff
+				above handles it too.
 			</P>
 
 			<H2 id="staying-under">Staying under the limit</H2>
@@ -163,7 +165,9 @@ export default function RateLimitsPage() {
 				`ATLAS_RATE_LIMIT_CAPACITY` and
 				`ATLAS_RATE_LIMIT_REFILL_PER_SECOND`, and a capacity of `0`
 				turns the limit off. `ATLAS_MAX_CONCURRENT_REQUESTS` sets how
-				many requests each process works on at once.
+				many requests each process works on at once, and
+				`ATLAS_MAX_QUEUED_REQUESTS` and `ATLAS_QUEUE_TIMEOUT_MS` set how
+				many may wait and for how long.
 			</Callout>
 		</DocPage>
 	);
