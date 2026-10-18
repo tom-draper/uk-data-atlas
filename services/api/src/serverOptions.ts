@@ -10,10 +10,19 @@ export type LogEntry = {
 };
 
 export const DEFAULT_MAX_CONCURRENT_REQUESTS = 16;
+export const DEFAULT_MAX_QUEUED_REQUESTS = 256;
+export const DEFAULT_QUEUE_TIMEOUT_MS = 1000;
 
 export type ServerOptions = {
 	/** Active requests per worker, including body reads and response writes. */
 	maxConcurrentRequests?: number;
+	/**
+	 * Requests that wait, unread, for an active slot once every slot is taken.
+	 * `0` refuses them at once.
+	 */
+	maxQueuedRequests?: number;
+	/** How long a queued request waits for a slot before it is refused. */
+	queueTimeoutMs?: number;
 	/** Absent, requests are not limited. */
 	rateLimit?: RateLimitPolicy & {
 		/** Proxies in front of the server that append to X-Forwarded-For. */
@@ -206,6 +215,20 @@ export const readServeConfiguration = (
 				DEFAULT_MAX_CONCURRENT_REQUESTS,
 				1,
 				1024,
+			),
+			maxQueuedRequests: integer(
+				env,
+				"ATLAS_MAX_QUEUED_REQUESTS",
+				DEFAULT_MAX_QUEUED_REQUESTS,
+				0,
+				4096,
+			),
+			queueTimeoutMs: integer(
+				env,
+				"ATLAS_QUEUE_TIMEOUT_MS",
+				DEFAULT_QUEUE_TIMEOUT_MS,
+				1,
+				30_000,
 			),
 			...(capacity > 0
 				? {

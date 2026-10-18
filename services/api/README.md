@@ -2195,11 +2195,15 @@ line up.
 
 - **Concurrency:** each worker admits at most `ATLAS_MAX_CONCURRENT_REQUESTS`
   requests, 16 by default. The slot covers body reading, routing, compression
-  and response writing. Excess requests return `503 Server Busy` with
-  `Retry-After: 1` and a closed connection, without entering a waiting queue
-  or reading their bodies. Retry with backoff. Health, readiness, metrics and
-  `OPTIONS` requests are exempt. A disconnected request keeps its slot until
-  its active work finishes. This limits overlapping work, not bytes per request.
+  and response writing. Further requests wait, oldest first and with their
+  bodies unread, for a free slot: at most `ATLAS_MAX_QUEUED_REQUESTS`, 256 by
+  default, for at most `ATLAS_QUEUE_TIMEOUT_MS`, one second by default. A
+  request that finds the queue full, or waits out the timeout, returns
+  `503 Server Busy` with `Retry-After: 1` and a closed connection. Retry with
+  backoff. A queued request whose client disconnects gives up its place.
+  Health, readiness, metrics and `OPTIONS` requests are exempt. A disconnected
+  request keeps its slot until its active work finishes. This limits
+  overlapping work, not bytes per request.
 
 - **Rate limit:** a token bucket per client, see the checklist above. A
   request costs one token, except where its operation declares
@@ -2308,7 +2312,9 @@ rather than falling back to the default.
 | `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                       |
 | `ATLAS_OBSERVATION_CACHE_MB`         | `64`        | MiB of source JSON cached for observations per worker; `0` disables retention.                |
 | `ATLAS_CROSSWALK_CACHE_MB`           | `64`        | MiB of uncompressed JSON represented by cached crosswalks per worker; `0` disables retention. |
-| `ATLAS_MAX_CONCURRENT_REQUESTS`      | `16`        | Active requests per worker, integer 1 to 1024. Excess requests receive `503` without queuing. |
+| `ATLAS_MAX_CONCURRENT_REQUESTS`      | `16`        | Active requests per worker, integer 1 to 1024. Further requests wait in the queue.            |
+| `ATLAS_MAX_QUEUED_REQUESTS`          | `256`       | Requests per worker waiting for a slot, integer 0 to 4096. A full queue answers `503`.        |
+| `ATLAS_QUEUE_TIMEOUT_MS`             | `1000`      | Longest wait in the queue before `503`, integer 1 to 30000.                                   |
 | `ATLAS_RESPONSE_CACHE_MB`            | `32`        | Megabytes of finished answers kept for repeat requests; `0` turns the cache off.              |
 | `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                   |
 | `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                       |

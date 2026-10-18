@@ -90,6 +90,28 @@ test("bounds concurrent requests per worker", () => {
 		);
 });
 
+test("bounds the queue for a busy worker and allows disabling it", () => {
+	const defaults = readServeConfiguration({}).server;
+	assert.equal(defaults.maxQueuedRequests, 256);
+	assert.equal(defaults.queueTimeoutMs, 1000);
+	const configured = readServeConfiguration({
+		ATLAS_MAX_QUEUED_REQUESTS: "0",
+		ATLAS_QUEUE_TIMEOUT_MS: "250",
+	}).server;
+	assert.equal(configured.maxQueuedRequests, 0);
+	assert.equal(configured.queueTimeoutMs, 250);
+	for (const value of ["-1", "1.5", "many", "4097"])
+		assert.throws(
+			() => readServeConfiguration({ ATLAS_MAX_QUEUED_REQUESTS: value }),
+			/ATLAS_MAX_QUEUED_REQUESTS/,
+		);
+	for (const value of ["0", "1.5", "30001"])
+		assert.throws(
+			() => readServeConfiguration({ ATLAS_QUEUE_TIMEOUT_MS: value }),
+			/ATLAS_QUEUE_TIMEOUT_MS/,
+		);
+});
+
 test("bounds observation retention and allows disabling it", () => {
 	assert.equal(
 		readServeConfiguration({}).observationCacheBytes,
