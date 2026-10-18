@@ -108,3 +108,58 @@ test("refuses a missing artifact at once and a stale one when it is read", () =>
 		);
 	});
 });
+
+test("evicts the least recently used crosswalk by JSON bytes and reloads it", () => {
+	withArtifacts(
+		[
+			["a", "ward"],
+			["b", "ward"],
+			["c", "ward"],
+		],
+		(directory, inventory) => {
+			for (const { id } of inventory.crosswalks) artifact(directory, id);
+			const bytes = Buffer.byteLength(
+				JSON.stringify({
+					schemaVersion: 1,
+					id: "a",
+					contentHash: "sha256:a",
+					records: [],
+				}),
+			);
+			const lookup = readCrosswalkLookup(directory, inventory, bytes * 2);
+			const a = lookup.get("a");
+			const b = lookup.get("b");
+			assert.equal(lookup.get("a"), a);
+			lookup.get("c");
+			assert.equal(lookup.get("a"), a);
+			assert.notEqual(lookup.get("b"), b);
+			assert.deepEqual(lookup.get("b"), b);
+		},
+	);
+});
+
+test("serves an oversized crosswalk without retaining it or evicting a smaller one", () => {
+	withArtifacts(
+		[
+			["a", "ward"],
+			["larger", "ward"],
+		],
+		(directory, inventory) => {
+			for (const { id } of inventory.crosswalks) artifact(directory, id);
+			const bytes = Buffer.byteLength(
+				JSON.stringify({
+					schemaVersion: 1,
+					id: "a",
+					contentHash: "sha256:a",
+					records: [],
+				}),
+			);
+			const lookup = readCrosswalkLookup(directory, inventory, bytes);
+			const a = lookup.get("a");
+			assert.notEqual(lookup.get("larger"), lookup.get("larger"));
+			assert.equal(lookup.get("a"), a);
+			const uncached = readCrosswalkLookup(directory, inventory, 0);
+			assert.notEqual(uncached.get("a"), uncached.get("a"));
+		},
+	);
+});
