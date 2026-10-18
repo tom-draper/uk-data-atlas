@@ -29,7 +29,7 @@ const HEADERS: [string, string][] = [
 	],
 	[
 		"`Retry-After`",
-		"Sent only with a `429`. The whole seconds to wait before the refused request would be affordable.",
+		"Sent with a `429`, and with a `503` when the server is busy. The whole seconds to wait before sending the request again.",
 	],
 ];
 
@@ -40,7 +40,7 @@ const BACKOFF = [
 		code: `async function get(url) {
   for (let attempt = 0; ; attempt++) {
     const response = await fetch(url);
-    if (response.status !== 429) return response;
+    if (response.status !== 429 && response.status !== 503) return response;
 
     // Retry-After is authoritative; only guess if it's missing.
     const wait = Number(response.headers.get("retry-after") ?? 2 ** attempt);
@@ -59,7 +59,7 @@ def get(url):
     attempt = 0
     while True:
         response = requests.get(url)
-        if response.status_code != 429:
+        if response.status_code not in (429, 503):
             return response
 
         # Retry-After is authoritative; only guess if it's missing.
@@ -70,7 +70,7 @@ def get(url):
 	{
 		language: "curl" as const,
 		label: "cURL",
-		code: `# --retry understands Retry-After on a 429
+		code: `# --retry waits out Retry-After on a 429 or 503
 curl --retry 5 --retry-all-errors -i "${URL}"`,
 	},
 ];
@@ -86,6 +86,7 @@ export default function RateLimitsPage() {
 				{ id: "budget", title: "What you get" },
 				{ id: "headers", title: "Reading the headers" },
 				{ id: "refused", title: "When you're refused" },
+				{ id: "busy", title: "When the server is busy" },
 				{ id: "staying-under", title: "Staying under the limit" },
 			]}
 		>
@@ -133,6 +134,16 @@ export default function RateLimitsPage() {
 			/>
 			<RequestSamples samples={BACKOFF} />
 
+			<H2 id="busy">When the server is busy</H2>
+			<P>
+				Separately from your own budget, each server process works on a
+				limited number of requests at once, 16 by default. A request
+				that arrives when it is full is answered with `503 Server Busy`
+				and `Retry-After: 1`, even if you have plenty of budget left. It
+				isn't queued, isn't charged to you and carries no `RateLimit`
+				headers. The backoff above handles it too.
+			</P>
+
 			<H2 id="staying-under">Staying under the limit</H2>
 			<P>
 				Most clients that hit the limit are re-fetching things that
@@ -151,7 +162,8 @@ export default function RateLimitsPage() {
 				Running the API yourself? The bucket is set by
 				`ATLAS_RATE_LIMIT_CAPACITY` and
 				`ATLAS_RATE_LIMIT_REFILL_PER_SECOND`, and a capacity of `0`
-				turns the limit off.
+				turns the limit off. `ATLAS_MAX_CONCURRENT_REQUESTS` sets how
+				many requests each process works on at once.
 			</Callout>
 		</DocPage>
 	);
