@@ -109,7 +109,7 @@ const STATUSES: [string, string][] = [
 	],
 	[
 		"`422` Unprocessable",
-		"The request is clear, but answering it would be misleading, so the API declines.",
+		"The request is clear, but answering it would be misleading, so the API declines. A geometry collection too large to build in one request is refused with the title `Geometry Budget Exceeded`, and its `links.downloads` points to the release's bulk downloads.",
 	],
 	[
 		"`429` Too Many Requests",
@@ -123,7 +123,10 @@ const STATUSES: [string, string][] = [
 		"`500` Server Error",
 		"The route failed unexpectedly. The response carries a `requestId`; quote it if you report the failure.",
 	],
-	["`503` Unavailable", "The data isn't ready yet. Try again shortly."],
+	[
+		"`503` Unavailable",
+		"The server can't answer right now. With the title `Server Busy` and `Retry-After: 1`, it's handling as many requests as it can, so wait and send it again. See [Rate limits](/docs/v1/rate-limits#busy). Otherwise the data or geometry behind the request can't be served yet.",
+	],
 ];
 
 export default function ErrorsPage() {
@@ -151,7 +154,8 @@ export default function ErrorsPage() {
 			<P>
 				`title` and `detail` are written for people. `code` is stable,
 				so branch on that in your code. Some errors add more, like the
-				`choices` for an ambiguous place name.
+				`choices` for an ambiguous place name. A few, such as a busy
+				server, carry no `code`, so branch on the status for those.
 			</P>
 
 			<H2 id="statuses">Status codes</H2>
