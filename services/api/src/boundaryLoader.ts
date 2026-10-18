@@ -64,13 +64,23 @@ export const readAreaInventory = (apiRoot: string): AreaInventory =>
 		"area inventory",
 	);
 
+/**
+ * Area records kept parsed at once, about 125 bytes each. Every release
+ * compiled today, about 574,000 records, fits. Some routes read every
+ * release of a geography in one request, so a budget smaller than a
+ * geography's releases would re-read files on each such request.
+ */
+export const DEFAULT_AREA_CACHE_RECORDS = 1_000_000;
+
 class LazyAreaLookup extends Map<string, Map<string, AreaRecord>> {
 	private readonly loaded = new Map<string, Map<string, AreaRecord>>();
 	private readonly releases: Map<string, AreaInventory["releases"][number]>;
+	private loadedRecords = 0;
 
 	constructor(
 		private readonly apiRoot: string,
 		inventory: AreaInventory,
+		private readonly maxRecords: number,
 	) {
 		super();
 		this.releases = new Map(
@@ -107,8 +117,13 @@ class LazyAreaLookup extends Map<string, Map<string, AreaRecord>> {
 			throw new Error(`Invalid area release artifact at ${path}`);
 		const areas = new Map(artifact.areas.map((area) => [area.code, area]));
 		this.loaded.set(key, areas);
-		if (this.loaded.size > 8)
-			this.loaded.delete(this.loaded.keys().next().value!);
+		this.loadedRecords += areas.size;
+		// Evict least recently used releases, but always keep the one just read.
+		for (const [oldest, records] of this.loaded) {
+			if (this.loadedRecords <= this.maxRecords || oldest === key) break;
+			this.loaded.delete(oldest);
+			this.loadedRecords -= records.size;
+		}
 		return areas;
 	}
 
@@ -140,7 +155,8 @@ class LazyAreaLookup extends Map<string, Map<string, AreaRecord>> {
 export const readAreaLookup = (
 	apiRoot: string,
 	inventory = readAreaInventory(apiRoot),
-): AreaLookup => new LazyAreaLookup(apiRoot, inventory);
+	maxRecords = DEFAULT_AREA_CACHE_RECORDS,
+): AreaLookup => new LazyAreaLookup(apiRoot, inventory, maxRecords);
 
 /** The compiled place index, refused unless built from these very inputs. */
 export const readPlaceIndex = (
