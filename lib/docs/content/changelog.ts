@@ -23,6 +23,13 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-10-18",
+		title: "Queue requests when a worker is busy",
+		changes: [
+			"A request that arrives while a worker is at its concurrent request limit now waits up to one second for a free slot instead of being refused at once. `503 Server Busy` is now returned only when the wait times out or too many requests are already waiting. Self-hosted instances can tune this with `ATLAS_MAX_QUEUED_REQUESTS` and `ATLAS_QUEUE_TIMEOUT_MS`.",
+		],
+	},
+	{
+		date: "2026-10-18",
 		title: "Bound map join output work",
 		surface: "c9428ec181be",
 		breaking: true,
