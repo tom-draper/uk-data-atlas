@@ -11,6 +11,7 @@ import {
 	type GeometrySourceLookup,
 } from "../src/areaGeometry";
 import { encodeGeometryStore, readGeometryStore } from "../src/geometryStore";
+import { createAreaGeometryCache } from "../src/geometryLoader";
 import { packGeometry, unpackGeometry } from "../src/packedGeometry";
 
 const square = (west: number, south: number, size: number) => [
@@ -193,7 +194,7 @@ test("warms a source release's spatial index before its first lookup", (t) => {
 	]);
 });
 
-test("reads a release from its source when its compiled file is stale", (t) => {
+test("rejects a stale compiled release before any request and reports the rebuild", (t) => {
 	const { root, sources, store } = gridRelease(t);
 	mkdirSync(store);
 	const source = sources.get("ward/2025-05-uk-bgc")!;
@@ -208,12 +209,137 @@ test("reads a release from its source when its compiled file is stale", (t) => {
 		),
 	);
 	const stale: string[] = [];
-	const cache = new AreaGeometryCache(root, sources, 2, store, (release) =>
-		stale.push(release),
+	writeFileSync(join(root, "data", source.input), "not JSON");
+	assert.throws(
+		() =>
+			new AreaGeometryCache(root, sources, 2, store, (release) =>
+				stale.push(release),
+			),
+		/does not match the registered source.*build:geometry-store/,
 	);
-	assert.ok(cache.get("ward", "2025-05-uk-bgc", "E05000001"));
-	assert.equal(cache.stats().compiledLoads, 0);
-	assert.equal(cache.stats().staleCompiledLoads, 1);
-	assert.equal(cache.stats().loads, 1);
 	assert.deepEqual(stale, ["ward/2025-05-uk-bgc"]);
+});
+
+test("requires compiled metadata for every registered release before use", (t) => {
+	const { root, sources, store } = gridRelease(t);
+	mkdirSync(store);
+	const source = sources.get("ward/2025-05-uk-bgc")!;
+	writeFileSync(
+		join(store, compiledGeometryFile("ward", "2025-05-uk-bgc")),
+		encodeGeometryStore(
+			source,
+			new AreaGeometryCache(root, sources).compile(
+				"ward",
+				"2025-05-uk-bgc",
+			),
+		),
+	);
+	sources.set("ward/2024-05-uk-bgc", source);
+	writeFileSync(join(root, "data", source.input), "not JSON");
+	assert.throws(
+		() => new AreaGeometryCache(root, sources, 2, store),
+		/Cannot use compiled geometry for ward\/2024-05-uk-bgc.*build:geometry-store/,
+	);
+});
+
+test("rejects invalid compiled metadata instead of reading the raw source", (t) => {
+	const { root, sources, store } = gridRelease(t);
+	mkdirSync(store);
+	writeFileSync(
+		join(store, compiledGeometryFile("ward", "2025-05-uk-bgc")),
+		Buffer.alloc(64),
+	);
+	writeFileSync(
+		join(root, "data", sources.get("ward/2025-05-uk-bgc")!.input),
+		"not JSON",
+	);
+	assert.throws(
+		() => new AreaGeometryCache(root, sources, 2, store),
+		/not a compiled geometry release.*build:geometry-store/,
+	);
+});
+
+test("rechecks missing and stale stores after eviction without a source fallback", (t) => {
+	const { root, sources, store } = gridRelease(t);
+	mkdirSync(store);
+	const source = sources.get("ward/2025-05-uk-bgc")!;
+	const body = encodeGeometryStore(
+		source,
+		new AreaGeometryCache(root, sources).compile("ward", "2025-05-uk-bgc"),
+	);
+	sources.set("ward/2024-05-uk-bgc", source);
+	const first = join(store, compiledGeometryFile("ward", "2025-05-uk-bgc"));
+	writeFileSync(first, body);
+	writeFileSync(
+		join(store, compiledGeometryFile("ward", "2024-05-uk-bgc")),
+		body,
+	);
+	const cache = new AreaGeometryCache(root, sources, 1, store);
+	assert.deepEqual(cache.stats().loadedReleases, []);
+	assert.equal(cache.stats().compiledLoads, 0);
+	const expected = cache.get("ward", "2025-05-uk-bgc", "E05000001");
+	assert.ok(expected);
+	assert.deepEqual(
+		cache.get("ward", "2024-05-uk-bgc", "E05000001"),
+		expected,
+	);
+	writeFileSync(join(root, "data", source.input), "not JSON");
+	rmSync(first);
+	assert.throws(
+		() => cache.get("ward", "2025-05-uk-bgc", "E05000001"),
+		/ENOENT.*build:geometry-store/,
+	);
+	writeFileSync(
+		first,
+		encodeGeometryStore({ ...source, inputHash: "sha256:old" }, []),
+	);
+	assert.throws(
+		() => cache.get("ward", "2025-05-uk-bgc", "E05000001"),
+		/does not match the registered source.*build:geometry-store/,
+	);
+	assert.equal(cache.stats().staleCompiledLoads, 1);
+	assert.equal(cache.stats().loads, 2);
+	assert.deepEqual(cache.stats().loadedReleases, ["ward/2024-05-uk-bgc"]);
+	writeFileSync(first, body);
+	assert.deepEqual(
+		cache.get("ward", "2025-05-uk-bgc", "E05000001"),
+		expected,
+	);
+});
+
+test("the API factory validates the store and serves without raw boundary files", (t) => {
+	const { root, sources } = gridRelease(t);
+	const apiRoot = join(root, "services", "api");
+	const store = join(apiRoot, "public", "geometry-store");
+	mkdirSync(store, { recursive: true });
+	const source = sources.get("ward/2025-05-uk-bgc")!;
+	writeFileSync(
+		join(apiRoot, "public", "geometry-sources.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			releases: [
+				{ id: "ward/2025-05-uk-bgc", status: "available", ...source },
+			],
+		}),
+	);
+	assert.throws(
+		() => createAreaGeometryCache(apiRoot),
+		/Cannot use compiled geometry.*build:geometry-store/,
+	);
+	const file = join(store, compiledGeometryFile("ward", "2025-05-uk-bgc"));
+	writeFileSync(
+		file,
+		encodeGeometryStore(
+			source,
+			new AreaGeometryCache(root, sources).compile(
+				"ward",
+				"2025-05-uk-bgc",
+			),
+		),
+	);
+	rmSync(join(root, "data", source.input));
+	const cache = createAreaGeometryCache(apiRoot);
+	assert.deepEqual(cache.stats().loadedReleases, []);
+	assert.ok(cache.get("ward", "2025-05-uk-bgc", "E05000001"));
+	assert.equal(cache.stats().compiledLoads, 1);
 });

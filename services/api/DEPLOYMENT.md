@@ -20,8 +20,20 @@ Keep the compiled `services/api/public` directory on a read-only persistent
 volume. Deploy code and data together, then replace the container. The data build
 is separate from the image build. The volume must include the geometry store,
 observation tables, indexes and manifests. Raw sources are not required for a
-current geometry store. To allow source fallback, also mount `data` at
-`/app/data`. Rebuild stale stores before deployment.
+current geometry store. Serving never falls back to raw source files. Startup
+validates compiled metadata for every release in the geometry source registry
+and refuses missing, stale or invalid stores. If a later release load finds an
+unusable file, the request fails instead of parsing raw boundaries.
+
+Remove an unusable compiled file if present, then rebuild on the build machine:
+
+```sh
+pnpm --dir services/api build:geometry-store
+```
+
+Deploy the rebuilt store with its matching `geometry-sources.json` registry and
+restart the worker. Validation compares registered source metadata. It does not
+rehash raw boundary files or decode every geometry during startup.
 
 Put a TLS reverse proxy in front of port 3001. The compose configuration binds
 the host port to localhost. Configure the proxy's request-body limit to 8 MB,

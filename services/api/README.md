@@ -2240,19 +2240,31 @@ line up.
   the boundary release metadata and its prebuilt downloads. For box queries,
   reduce `limit` or omit `tier` to retrieve identities. Geometry is loaded one
   area at a time and checked before simplification. This does not bound the
-  size of an individual area loaded or the source fallback for a missing store.
+  size of an individual area loaded.
 - **Slow clients:** headers must arrive within 15 seconds and the whole
   request within 30; idle keep-alive connections close after 5.
-- **Geometry cache:** a count of releases. Each is read from
-  `public/geometry-store`, which `pnpm build:geometry-store` compiles
-  already in WGS84 and with every area's envelope, so loading one costs the
-  file's size in memory (1 to 94 MB, the 2021 output areas being the
-  largest) and some 100 ms rather than a parse of its source. A release
-  with no current compiled file, as `compiledLoads` below `loads` in
-  `/readyz` shows, is read from its source instead, which takes seconds and
-  blocks every other request while it does. The 256 most recently read
-  areas are also held as GeoJSON. A rising eviction count means the cache
-  is too small for the traffic.
+- **Geometry cache:** `ATLAS_GEOMETRY_CACHE_RELEASES` bounds the number of
+  loaded releases. Serving requires a current compiled file under
+  `public/geometry-store` for every release in `geometry-sources.json`.
+  Cache creation validates each file's metadata against the registry and closes
+  its descriptor before checking the next. Missing, stale or invalid metadata
+  stops startup with the affected release, path and rebuild command. This checks
+  registered source metadata, without rehashing raw boundary files or decoding
+  every area's geometry.
+
+    Remove an unusable compiled file if present, then run
+    `pnpm --dir services/api build:geometry-store` before deploying the API
+    and ship the complete store with its matching geometry source registry.
+    Releases load compact metadata and indexes, then read individual geometries
+    from disk. The cache never parses a whole raw boundary file while serving.
+    It rechecks files on later release loads, so a missing or stale file after
+    startup fails the request rather than triggering a source fallback. To recover,
+    remove the affected compiled file if present, rebuild the store, and restart
+    the worker. The 256 most recently read
+    areas are also held as GeoJSON. A rising eviction count means the cache is
+    too small for the traffic. Source-based build tools can still create an
+    `AreaGeometryCache` without a store directory.
+
 - **Location projection cache:** the 8 most recently read crosswalk shards
   of `public/location-projections`. Most are under a megabyte, but the LSOA
   shards are some 13 MB on disk and 20 MB of heap once read, so the cache
