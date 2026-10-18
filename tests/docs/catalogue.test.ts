@@ -4,6 +4,7 @@ import {
 	loadCatalogue,
 	nationList,
 	periodRange,
+	releaseYears,
 	releasesForGeography,
 	servedDatasetIds,
 	sourceSummaries,
@@ -113,6 +114,27 @@ describe("catalogue helpers", () => {
 	it("describes a run of periods", () => {
 		expect(periodRange(["2011", "2012", "2024"])).toBe("2011 to 2024");
 		expect(periodRange(["2022"])).toBe("2022");
+	});
+
+	it("gives the years a geography's releases span", () => {
+		const release = (id: string) => ({
+			id,
+			geography: "ward",
+			title: id,
+			coverage: { countries: [] },
+			source: { publisher: "ONS" },
+		});
+		expect(
+			releaseYears([
+				release("2026-05-uk-bgc"),
+				release("2011-12-ew-bgc"),
+				release("2019-12-uk-bgc"),
+			]),
+		).toBe("2011 to 2026");
+		expect(releaseYears([release("2011-ni")])).toBe("2011");
+		expect(
+			releaseYears(releasesForGeography(catalogue, "localAuthority")),
+		).toMatch(/^2008 to /);
 	});
 
 	it("groups measures that share a published source", () => {
