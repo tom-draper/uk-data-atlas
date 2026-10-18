@@ -136,8 +136,12 @@ export default function MapGuidePage() {
 				For a map of one area's parts, such as Birmingham's wards, fetch
 				every shape inside it in one request instead. To load only the
 				areas in view as someone pans, ask for the areas meeting a box.
-				For analysis in DuckDB, QGIS or GeoPandas, download the whole
-				release as GeoParquet, which carries the same `id` as the tiles.
+				Because both send whole shapes, one request is capped at 1,000
+				areas and 250,000 boundary points before simplifying. A larger
+				one is refused with `422`, so lower the box query's `limit`, or
+				use tiles or a download instead. For analysis in DuckDB, QGIS or
+				GeoPandas, download the whole release as GeoParquet, which
+				carries the same `id` as the tiles.
 			</P>
 			<EndpointRef id="getAreaChildrenGeometry" />
 			<EndpointRef id="findAreasIntersectingBox" />
