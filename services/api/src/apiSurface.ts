@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 /**
  * The v1 compatibility guarantee, as data a test can hold the contract to.
  *
@@ -289,3 +291,13 @@ export const breakingChanges = (
 			);
 	return breaks;
 };
+
+/**
+ * A short name for one locked surface file. The docs changelog records it on
+ * each entry, so a test can tell when the surface changed without an entry.
+ */
+export const surfaceFingerprint = (text: string): string =>
+	createHash("sha256")
+		.update(text.replace(/\r\n/g, "\n"))
+		.digest("hex")
+		.slice(0, 12);

@@ -5,6 +5,7 @@ import { parse } from "yaml";
 import {
 	breakingChanges,
 	extractSurface,
+	surfaceFingerprint,
 	type ApiSurface,
 } from "../src/apiSurface";
 
@@ -16,6 +17,9 @@ import {
  * "Early access, so nothing is frozen yet"), so `--before-launch` locks a
  * breaking change deliberately, listing what it breaks. Remove the flag when
  * v1 is frozen.
+ *
+ * Every locked change needs a docs changelog entry carrying the new surface's
+ * fingerprint. tests/docs/changelog.test.ts fails until it has one.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const surfacePath = resolve(apiRoot, "contract", "v1-surface.json");
@@ -54,8 +58,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 		);
 		process.exit(1);
 	}
-	writeFileSync(surfacePath, renderSurface(current));
+	const rendered = renderSurface(current);
+	const changed = !locked || renderSurface(locked) !== rendered;
+	writeFileSync(surfacePath, rendered);
 	console.log(
 		`Locked ${Object.keys(current.operations).length} v1 operations in ${surfacePath}`,
 	);
+	if (changed)
+		console.log(
+			`The surface changed. Add an entry to lib/docs/content/changelog.ts with surface: "${surfaceFingerprint(rendered)}".`,
+		);
 }
