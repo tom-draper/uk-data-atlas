@@ -151,7 +151,7 @@ const simplifyPolygon = (
 	return [simplifiedOuter, ...simplifiedHoles];
 };
 
-const countVertices = (geometry: GeoJsonGeometry): number => {
+export const countVertices = (geometry: GeoJsonGeometry): number => {
 	if (geometry.type === "GeometryCollection")
 		return (geometry.geometries ?? []).reduce(
 			(total, part) => total + countVertices(part),

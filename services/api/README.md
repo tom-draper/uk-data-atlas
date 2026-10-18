@@ -2218,6 +2218,21 @@ line up.
   for an answer not yet held is computed as before, since a `304` carries
   no body to keep. `/metrics` reports the cache's size, hits, misses and
   evictions.
+- **Crosswalk cache:** `ATLAS_CROSSWALK_CACHE_MB`, 64 MiB per worker by
+  default, bounds retained artifacts by their uncompressed JSON bytes. Entries
+  are evicted in least recently used order. A larger artifact is served without
+  being retained. Translation indexes use weak keys so evicting an artifact
+  also allows its indexes to be collected once active requests release it.
+  Parsed objects and indexes take more heap than their source JSON, so this
+  setting is not an RSS or heap ceiling. Set it to `0` to disable retention.
+- **Geometry collections:** children geometry accepts at most 1,000 children.
+  Children geometry and box queries with a `tier` process at most 250,000 source
+  vertices per request, counted before simplification. An oversized collection
+  returns `422 Geometry Budget Exceeded`, with no partial answer and a link to
+  the boundary release metadata and its prebuilt downloads. For box queries,
+  reduce `limit` or omit `tier` to retrieve identities. Geometry is loaded one
+  area at a time and checked before simplification. This does not bound the
+  size of an individual area loaded or the source fallback for a missing store.
 - **Slow clients:** headers must arrive within 15 seconds and the whole
   request within 30; idle keep-alive connections close after 5.
 - **Geometry cache:** a count of releases. Each is read from
@@ -2244,27 +2259,28 @@ line up.
 Every setting is read once at start, and a malformed value stops the server
 rather than falling back to the default.
 
-| Variable                             | Default     | Meaning                                                                                      |
-| ------------------------------------ | ----------- | -------------------------------------------------------------------------------------------- |
-| `ATLAS_WORKERS`                      | `2`         | Independent server processes, from 1 to 32.                                                  |
-| `ATLAS_MAP_ASSET_BASE_URL`           | unset       | Release-specific object storage CDN base for map archives and downloads.                     |
-| `ATLAS_MAP_TILE_BASE_URL`            | unset       | External MVT service base, serving geography/release/tiles/z/x/y.mvt.                        |
-| `PORT`                               | `3001`      | Port to listen on.                                                                           |
-| `HOST`                               | `127.0.0.1` | Address to listen on.                                                                        |
-| `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                  |
-| `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                            |
-| `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                             |
-| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                      |
-| `ATLAS_RESPONSE_CACHE_MB`            | `32`        | Megabytes of finished answers kept for repeat requests; `0` turns the cache off.             |
-| `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                  |
-| `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                      |
-| `ATLAS_ACCESS_LOG`                   | `on`        | Log every request, not only failures.                                                        |
-| `ATLAS_MAX_URL_LENGTH`               | `4096`      | Longest request target served.                                                               |
-| `ATLAS_SHUTDOWN_GRACE_SECONDS`       | `10`        | Time to finish open requests after `SIGTERM`.                                                |
-| `ATLAS_TERRAIN_REMOTE_ENDPOINT`      | unset       | ArcGIS ImageServer `getSamples` endpoint for the non-persistent EA terrain preview provider. |
-| `ATLAS_TERRAIN_COVERAGE_ENDPOINT`    | unset       | Optional ArcGIS FeatureServer query endpoint used to verify exact coverage before sampling.  |
-| `ATLAS_TERRAIN_REMOTE_TIMEOUT_MS`    | `5000`      | Maximum time for one remote terrain request.                                                 |
-| `ATLAS_TERRAIN_REMOTE_CONCURRENCY`   | `4`         | Maximum concurrent remote terrain requests.                                                  |
+| Variable                             | Default     | Meaning                                                                                       |
+| ------------------------------------ | ----------- | --------------------------------------------------------------------------------------------- |
+| `ATLAS_WORKERS`                      | `2`         | Independent server processes, from 1 to 32.                                                   |
+| `ATLAS_MAP_ASSET_BASE_URL`           | unset       | Release-specific object storage CDN base for map archives and downloads.                      |
+| `ATLAS_MAP_TILE_BASE_URL`            | unset       | External MVT service base, serving geography/release/tiles/z/x/y.mvt.                         |
+| `PORT`                               | `3001`      | Port to listen on.                                                                            |
+| `HOST`                               | `127.0.0.1` | Address to listen on.                                                                         |
+| `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                   |
+| `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                             |
+| `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                              |
+| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                       |
+| `ATLAS_CROSSWALK_CACHE_MB`           | `64`        | MiB of uncompressed JSON represented by cached crosswalks per worker; `0` disables retention. |
+| `ATLAS_RESPONSE_CACHE_MB`            | `32`        | Megabytes of finished answers kept for repeat requests; `0` turns the cache off.              |
+| `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                   |
+| `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                       |
+| `ATLAS_ACCESS_LOG`                   | `on`        | Log every request, not only failures.                                                         |
+| `ATLAS_MAX_URL_LENGTH`               | `4096`      | Longest request target served.                                                                |
+| `ATLAS_SHUTDOWN_GRACE_SECONDS`       | `10`        | Time to finish open requests after `SIGTERM`.                                                 |
+| `ATLAS_TERRAIN_REMOTE_ENDPOINT`      | unset       | ArcGIS ImageServer `getSamples` endpoint for the non-persistent EA terrain preview provider.  |
+| `ATLAS_TERRAIN_COVERAGE_ENDPOINT`    | unset       | Optional ArcGIS FeatureServer query endpoint used to verify exact coverage before sampling.   |
+| `ATLAS_TERRAIN_REMOTE_TIMEOUT_MS`    | `5000`      | Maximum time for one remote terrain request.                                                  |
+| `ATLAS_TERRAIN_REMOTE_CONCURRENCY`   | `4`         | Maximum concurrent remote terrain requests.                                                   |
 
 ### Container image
 

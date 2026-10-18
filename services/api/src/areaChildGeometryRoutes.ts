@@ -1,4 +1,9 @@
 import {
+	GeometryBudget,
+	MAX_GEOMETRY_FEATURES,
+	geometryBudgetProblem,
+} from "./geometryBudget";
+import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
 	simplifyGeometry,
@@ -102,6 +107,13 @@ export const handleAreaChildGeometryRoutes = ({
 			`That area's children are published in ${chosenLayers.size} geography releases, which overlap one another. Choose one with childGeography, as a geography or {geography}/{release}.`,
 			{ choices: [...chosenLayers].sort() },
 		);
+	const childRelease = children[0]!.counterpart;
+	if (children.length > MAX_GEOMETRY_FEATURES)
+		return geometryBudgetProblem(
+			childRelease.geography,
+			childRelease.boundaryRelease,
+		);
+	const budget = new GeometryBudget();
 	const features: unknown[] = [];
 	// A child can be published as a relationship and still have no servable
 	// geometry, and a whole release can be missing its geometry source.
@@ -139,6 +151,11 @@ export const handleAreaChildGeometryRoutes = ({
 			note("No feature for this code in the raw geometry source.");
 			continue;
 		}
+		if (!budget.add(resolved.geometry))
+			return geometryBudgetProblem(
+				childRelease.geography,
+				childRelease.boundaryRelease,
+			);
 		const simplified = simplifyGeometry(resolved.geometry, requestedTier);
 		if (!simplified) {
 			note(`Every part is smaller than the ${requestedTier} tier keeps.`);
