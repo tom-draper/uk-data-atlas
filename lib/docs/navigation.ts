@@ -64,6 +64,10 @@ export const GUIDES: NavLink[] = [
 		href: "/docs/v1/guides/constituency",
 		title: "Brief on a constituency",
 	},
+	{
+		href: "/docs/v1/guides/areas-in-need",
+		title: "Find the areas most in need",
+	},
 	{ href: "/docs/v1/guides/coordinate", title: "Explore a coordinate" },
 	{
 		href: "/docs/v1/guides/batch-locations",
