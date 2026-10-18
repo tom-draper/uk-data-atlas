@@ -159,7 +159,9 @@ const thrift = (fields: Field[]) => {
 
 /** PLAIN encoding of the values present, nulls left to the definition levels. */
 const plainValues = (column: ParquetColumn): Buffer => {
-	const present = column.values.filter((value) => value !== null);
+	const present = column.optional
+		? column.values.filter((value) => value !== null)
+		: column.values;
 	switch (column.type) {
 		case "int32": {
 			const out = Buffer.alloc(present.length * 4);
@@ -190,22 +192,38 @@ const plainValues = (column: ParquetColumn): Buffer => {
 		}
 		case "string":
 		case "binary": {
-			const parts = present.map((value) => {
-				const bytes =
+			if (
+				!present.every(
+					(value): value is string | Uint8Array =>
+						typeof value === "string" ||
+						value instanceof Uint8Array,
+				)
+			)
+				throw new Error(`${column.name} holds a non-${column.type}.`);
+			const size = present.reduce(
+				(bytes, value) =>
+					bytes +
+					4 +
+					(typeof value === "string"
+						? Buffer.byteLength(value, "utf8")
+						: value.byteLength),
+				0,
+			);
+			const out = Buffer.alloc(size);
+			let offset = 0;
+			for (const value of present) {
+				const length =
 					typeof value === "string"
-						? Buffer.from(value, "utf8")
-						: value instanceof Uint8Array
-							? Buffer.from(value)
-							: undefined;
-				if (!bytes)
-					throw new Error(
-						`${column.name} holds a non-${column.type}.`,
-					);
-				const length = Buffer.alloc(4);
-				length.writeUInt32LE(bytes.length);
-				return [length, bytes];
-			});
-			return Buffer.concat(parts.flat());
+						? Buffer.byteLength(value, "utf8")
+						: value.byteLength;
+				out.writeUInt32LE(length, offset);
+				offset += 4;
+				if (typeof value === "string")
+					out.write(value, offset, length, "utf8");
+				else out.set(value, offset);
+				offset += length;
+			}
+			return out;
 		}
 	}
 };
@@ -239,7 +257,9 @@ const definitionLevels = (values: ParquetColumn["values"]): Buffer => {
 
 /** Min and max in the column's own PLAIN form, for numeric columns only. */
 const statistics = (column: ParquetColumn): Field[] | undefined => {
-	const present = column.values.filter((value) => value !== null);
+	const present = column.optional
+		? column.values.filter((value) => value !== null)
+		: column.values;
 	const nulls = column.values.length - present.length;
 	if (column.type === "string" || column.type === "binary")
 		return [{ id: 3, kind: "i64", value: nulls }];

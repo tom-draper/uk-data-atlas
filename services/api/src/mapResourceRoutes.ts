@@ -368,18 +368,7 @@ export const handleMapResourceRoutes = ({
 				`The area identities for ${id} are not loaded, so values cannot be numbered to match the tiles.`,
 			);
 		const numbered = featureIds(areaCodes);
-		const values = observations.records.flatMap((record) =>
-			isNumericObservation(record)
-				? [
-						{
-							id: numbered.get(record.areaCode)!,
-							code: record.areaCode,
-							value: record.value,
-							status: record.status,
-						},
-					]
-				: [],
-		);
+		const records = observations.records;
 		const join = {
 			measure: { id: plan.measure.id, label: plan.measure.label },
 			period,
@@ -398,11 +387,36 @@ export const handleMapResourceRoutes = ({
 			contentHash: observations.contentHash,
 			measure: `/v1/measures/${plan.measure.id}`,
 		};
-		if (format === "json")
+		if (format === "json") {
+			const values = records.flatMap((record) =>
+				isNumericObservation(record)
+					? [
+							{
+								id: numbered.get(record.areaCode)!,
+								code: record.areaCode,
+								value: record.value,
+								status: record.status,
+							},
+						]
+					: [],
+			);
 			return {
 				status: 200,
 				body: envelope(releaseId, { ...join, values, provenance }),
 			};
+		}
+		const ids: number[] = [];
+		const codes: string[] = [];
+		const values: number[] = [];
+		const statuses: string[] = [];
+		for (const record of records) {
+			if (!isNumericObservation(record)) continue;
+			ids.push(numbered.get(record.areaCode)!);
+			codes.push(record.areaCode);
+			values.push(record.value);
+			statuses.push(record.status);
+		}
+
 		// The same table as columns. Everything the envelope says about it
 		// travels in the file's metadata, so a copy loaded into a warehouse on
 		// its own still names its release, its source and its join rule.
@@ -416,22 +430,22 @@ export const handleMapResourceRoutes = ({
 						{
 							name: "id",
 							type: "int32",
-							values: values.map((row) => row.id),
+							values: ids,
 						},
 						{
 							name: "code",
 							type: "string",
-							values: values.map((row) => row.code),
+							values: codes,
 						},
 						{
 							name: "value",
 							type: "double",
-							values: values.map((row) => row.value),
+							values,
 						},
 						{
 							name: "status",
 							type: "string",
-							values: values.map((row) => row.status),
+							values: statuses,
 						},
 					],
 					metadata: {
