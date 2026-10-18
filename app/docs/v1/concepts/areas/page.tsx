@@ -8,6 +8,7 @@ import {
 	Table,
 } from "@/components/docs/Content";
 import { Request } from "@/components/docs/Example";
+import { loadCatalogue, releasesForGeography } from "@/lib/docs/catalogue";
 import { docsMetadata } from "@/lib/docs/metadata";
 import { API_BASE_URL } from "@/lib/docs/openapi";
 
@@ -17,7 +18,15 @@ export const metadata = docsMetadata(
 	"/docs/v1/concepts/areas",
 );
 
+/** The year a geography's oldest release in the Atlas is from. */
+function firstYear(geography: string): string {
+	return releasesForGeography(loadCatalogue(), geography)
+		.at(-1)!
+		.id.slice(0, 4);
+}
+
 export default function AreasPage() {
+	const since = `${firstYear("localAuthority")} for local authorities, ${firstYear("ward")} for wards and ${firstYear("constituency")} for constituencies`;
 	return (
 		<DocPage
 			href="/docs/v1/concepts/areas"
@@ -30,6 +39,7 @@ export default function AreasPage() {
 				{ id: "releases", title: "Boundary releases" },
 				{ id: "identity", title: "Naming an exact area" },
 				{ id: "containment", title: "What an area contains" },
+				{ id: "history", title: "When areas change" },
 				{ id: "data", title: "Which areas data is on" },
 				{ id: "shapes", title: "Shapes" },
 				{ id: "endpoints", title: "Useful endpoints" },
@@ -145,6 +155,50 @@ export default function AreasPage() {
 				[crosswalk](/docs/v1/concepts/crosswalks) instead.
 			</P>
 
+			<H2 id="history">When areas change</H2>
+			<P>
+				Councils merge, wards are redrawn and constituencies are
+				reshaped, so a code can stop appearing in newer releases. Ask
+				for Allerdale (`E07000026`) in the `latest` release and you get
+				`area_not_in_release`, with `presentIn` listing the releases
+				that still hold it. Ask one of those for the code&apos;s history
+				to find out what happened:
+			</P>
+			<Request
+				url={`${API_BASE_URL}/areas/localAuthority/2022-12-uk-bgc-v2/E07000026/history`}
+			/>
+			<P>
+				Allerdale&apos;s `successor` is Cumberland (`E06000063`), from
+				April 2023, and Cumberland&apos;s own history lists the three
+				councils it was `merged-from`. Each link names the published
+				lookup it comes from:
+			</P>
+			<Table
+				head={["Relation", "What it means"]}
+				rows={[
+					[
+						"`successor`, `predecessor`",
+						"The publisher's lookup says one area became another.",
+					],
+					[
+						"`merged-from`, `split-from`",
+						"The new area was made from several old ones, or is one part of an old area.",
+					],
+					[
+						"`equivalent-to`",
+						"The same extent in the neighbouring release, so nothing changed between them.",
+					],
+				]}
+			/>
+			<P>
+				`sameCodeReleases` lists every release that uses the same code.
+				That alone doesn&apos;t mean the boundary stayed the same, since
+				publishers sometimes redraw an area and keep its code.
+			</P>
+			<Callout tone="note">
+				{`The archive starts at different years for each geography: ${since}. Each [geography page](/docs/v1/geographies) lists exactly which releases it has. Earlier boundaries aren't in the Atlas yet.`}
+			</Callout>
+
 			<H2 id="data">Which areas data is on</H2>
 			<P>
 				Publishers release statistics against the area codes that were
@@ -183,6 +237,7 @@ export default function AreasPage() {
 			<EndpointRef id="getArea" />
 			<EndpointRef id="getAreaChildren" />
 			<EndpointRef id="getAreaParents" />
+			<EndpointRef id="getAreaHistory" />
 			<EndpointRef id="validateAreaValues" />
 			<EndpointRef id="getAreaGeometry" />
 		</DocPage>
