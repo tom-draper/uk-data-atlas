@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { readMeasureObservations } from "../src/observationLoader";
+import type { DataCatalog } from "../src/dataCatalog";
 import {
 	lazySourceObservations,
+	ObservationCache,
 	observationTableOf,
 	periodRecordLookup,
 	readSourceObservations,
@@ -205,7 +208,7 @@ test("a lazy table view resolves to its table and a missing or mismatched file i
 			join(directory, "fixture-table.json"),
 			JSON.stringify(table),
 		);
-		const tables = new Map<string, MeasureTableArtifact>();
+		const tables = new ObservationCache();
 		const rented = lazySourceObservations(
 			directory,
 			"fixture-table",
@@ -213,9 +216,7 @@ test("a lazy table view resolves to its table and a missing or mismatched file i
 			table.sourceGeography,
 			tables,
 		);
-		assert.equal(tables.size, 0);
 		assert.equal(observationTableOf(rented)?.id, "fixture-table");
-		assert.equal(tables.size, 1);
 		assert.equal(rented.periods[0]?.records.length, 1);
 
 		const wrongYear = lazySourceObservations(
@@ -231,4 +232,182 @@ test("a lazy table view resolves to its table and a missing or mismatched file i
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}
+});
+
+test("evicts least recently used artifacts and reloads through live lazy views", (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	const text = JSON.stringify(table);
+	for (const name of ["a", "b", "c"])
+		writeFileSync(join(directory, `${name}.json`), text);
+	const cache = new ObservationCache(Buffer.byteLength(text) * 2);
+	const a = lazySourceObservations(
+		directory,
+		"a",
+		"owned",
+		table.sourceGeography,
+		cache,
+	);
+	const rented = lazySourceObservations(
+		directory,
+		"a",
+		"rented",
+		table.sourceGeography,
+		cache,
+	);
+	const b = lazySourceObservations(
+		directory,
+		"b",
+		"owned",
+		table.sourceGeography,
+		cache,
+	);
+	const aTable = observationTableOf(a);
+	const bPeriods = b.periods;
+	assert.equal(observationTableOf(rented), aTable);
+	const aPeriods = a.periods;
+	cache.read(directory, "c", "owned");
+	assert.equal(a.periods, aPeriods);
+	assert.equal(observationTableOf(a), aTable);
+	assert.notEqual(b.periods, bPeriods);
+	assert.deepEqual(b.periods, bPeriods);
+	// An active caller's period and lookup remain usable after eviction.
+	assert.deepEqual(periodRecordLookup(bPeriods[0]!)!("E01000001"), {
+		areaCode: "E01000001",
+		value: 10,
+		status: "observed",
+	});
+});
+
+test("does not retain oversized observations or displace a cached small artifact", (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	const text = JSON.stringify(table);
+	writeFileSync(join(directory, "small.json"), text);
+	writeFileSync(
+		join(directory, "large.json"),
+		JSON.stringify({
+			...table,
+			records: [...table.records, ...table.records],
+		}),
+	);
+	const cache = new ObservationCache(Buffer.byteLength(text));
+	const small = cache.read(directory, "small", "owned");
+	const large = lazySourceObservations(
+		directory,
+		"large",
+		"owned",
+		table.sourceGeography,
+		cache,
+	);
+	assert.notEqual(large.periods, large.periods);
+	assert.equal(cache.read(directory, "small", "owned"), small);
+	const uncached = lazySourceObservations(
+		directory,
+		"small",
+		"owned",
+		table.sourceGeography,
+		new ObservationCache(0),
+	);
+	assert.notEqual(uncached.periods, uncached.periods);
+});
+
+test("bounds ordinary observation artifacts as well as shared tables", (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	const own = {
+		schemaVersion: 1,
+		contentHash: "sha256:own",
+		measureId: "population",
+		sourceGeography: { type: "ward", boundaryYear: 2023 },
+		periods: [
+			{
+				period: "2022",
+				records: [
+					{ areaCode: "E05000001", value: 5, status: "observed" },
+				],
+			},
+		],
+	};
+	const text = JSON.stringify(own);
+	for (const name of ["a", "b"])
+		writeFileSync(join(directory, `${name}.json`), text);
+	const cache = new ObservationCache(Buffer.byteLength(text));
+	const view = lazySourceObservations(
+		directory,
+		"a",
+		"population",
+		own.sourceGeography,
+		cache,
+	);
+	const periods = view.periods;
+	assert.equal(view.periods, periods);
+	cache.read(directory, "b", "population");
+	assert.notEqual(view.periods, periods);
+	assert.deepEqual(view.periods, periods);
+	for (const bytes of [-1, 0.5, NaN, Infinity])
+		assert.throws(
+			() => new ObservationCache(bytes),
+			/non-negative safe integer/,
+		);
+});
+
+test("catalogue views share the configured observation budget", (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-catalogue-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	mkdirSync(join(directory, "public"));
+	const text = JSON.stringify(table);
+	for (const name of ["a", "b"])
+		writeFileSync(join(directory, "public", `${name}.json`), text);
+	const catalogue: DataCatalog = {
+		schemaVersion: 1,
+		contentHash: "sha256:catalogue",
+		source: {
+			artifact: "data/datasets/dataset-manifest.json",
+			manifestVersion: 1,
+		},
+		datasets: [],
+		measures: ["owned", "rented"].map((id) => ({
+			id,
+			label: id,
+			valueKind: "count",
+			unit: "people",
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: true,
+			},
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: true,
+			},
+			links: { data: `/v1/data/${id}` },
+			sources: (id === "owned" ? ["a", "b"] : ["a"]).map(
+				(observationArtifact) => ({
+					datasetId: "fixture",
+					periods: ["2021"],
+					sourceGeography: table.sourceGeography,
+					observationArtifact,
+					coverage: {
+						kind: "partial",
+						countries: ["GB-ENG"],
+						recordCount: 2,
+						note: "Fixture",
+					},
+				}),
+			),
+		})),
+	};
+	const [a, b, rented] = readMeasureObservations(
+		directory,
+		catalogue,
+		Buffer.byteLength(text),
+	);
+	const first = observationTableOf(a!);
+	assert.equal(observationTableOf(rented!), first);
+	const periods = a!.periods;
+	assert.equal(b!.periods.length, 1);
+	assert.notEqual(a!.periods, periods);
+	assert.deepEqual(a!.periods, periods);
 });

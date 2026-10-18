@@ -787,9 +787,9 @@ only **available** when its endpoint, contract and provenance are published.
       are served, with a `-total` where the table has one, and the build
       refuses a file whose categories do not sum exactly to its total. Each
       table is stored once per geography as a shared table artifact (15 MB for
-      all fourteen, against about 190 MB as one artifact per measure), read
-      once and expanded per measure only when asked for; each measure still
-      exports the whole table it lives in. LSOAs nest in MSOAs through the
+      all fourteen, against about 190 MB as one artifact per measure), cached
+      within the observation budget and expanded per measure only when asked for.
+      Each measure still exports the whole table it lives in. LSOAs nest in MSOAs through the
       official exact-fit lookup
       `lsoa-2021-12-ew-bgc-v5-to-msoa-2021-12-ew-bgc-v3-official-lookup`, so a
       small-area count converts or aggregates up exactly. The 2011 to 2021
@@ -2226,6 +2226,14 @@ line up.
   for an answer not yet held is computed as before, since a `304` carries
   no body to keep. `/metrics` reports the cache's size, hits, misses and
   evictions.
+- **Observation cache:** `ATLAS_OBSERVATION_CACHE_MB`, 64 MiB per worker by
+  default, bounds retained observation artifacts by their uncompressed JSON
+  bytes. Shared tables and ordinary measure artifacts use one least recently
+  used cache. Eviction releases cached measure views, materialised records and
+  row indexes once active callers release them. A larger artifact is served
+  without retention. Set `0` to disable retention. Long-lived catalogue views
+  reload evicted artifacts on demand. Parsed objects, derived records and
+  indexes can exceed their source JSON size, so this is not a heap or RSS ceiling.
 - **Crosswalk cache:** `ATLAS_CROSSWALK_CACHE_MB`, 64 MiB per worker by
   default, bounds retained artifacts by their uncompressed JSON bytes. Entries
   are evicted in least recently used order. A larger artifact is served without
@@ -2290,6 +2298,7 @@ rather than falling back to the default.
 | `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                             |
 | `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                              |
 | `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                       |
+| `ATLAS_OBSERVATION_CACHE_MB`         | `64`        | MiB of source JSON cached for observations per worker; `0` disables retention.                |
 | `ATLAS_CROSSWALK_CACHE_MB`           | `64`        | MiB of uncompressed JSON represented by cached crosswalks per worker; `0` disables retention. |
 | `ATLAS_MAX_CONCURRENT_REQUESTS`      | `16`        | Active requests per worker, integer 1 to 1024. Excess requests receive `503` without queuing. |
 | `ATLAS_RESPONSE_CACHE_MB`            | `32`        | Megabytes of finished answers kept for repeat requests; `0` turns the cache off.              |
