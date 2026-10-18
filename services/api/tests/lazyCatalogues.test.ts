@@ -57,6 +57,48 @@ test("area release keys are available before any records are parsed", () =>
 		assert.equal(lookup.get("unknown"), undefined);
 	}));
 
+test("area releases stay parsed until their records exceed the budget", () =>
+	fixture((root, directory) => {
+		const ids = ["2022", "2023", "2024"];
+		const inventory: AreaInventory = {
+			schemaVersion: 1,
+			contentHash: "inventory",
+			boundaryRegistryHash: "registry",
+			releases: ids.map((id) => ({
+				id,
+				geography: "ward",
+				status: "available",
+				recordCount: 2,
+				artifact: `${id}.json`,
+				contentHash: id,
+				codeProperty: "code",
+				nameProperty: "name",
+			})),
+		};
+		for (const id of ids)
+			writeFileSync(
+				join(directory, `${id}.json`),
+				JSON.stringify({
+					schemaVersion: 1,
+					contentHash: id,
+					areas: [
+						{ code: "E00000001", name: `Ward A ${id}` },
+						{ code: "E00000002", name: `Ward B ${id}` },
+					],
+				}),
+			);
+		const lookup = readAreaLookup(root, inventory, 4);
+		lookup.get("ward/2022");
+		lookup.get("ward/2023");
+		lookup.get("ward/2022");
+		lookup.get("ward/2024");
+		for (const id of ids) rmSync(join(directory, `${id}.json`));
+		// 2023 was least recently used, so reading 2024 evicted it.
+		assert.equal(lookup.get("ward/2022")?.size, 2);
+		assert.equal(lookup.get("ward/2024")?.size, 2);
+		assert.throws(() => lookup.get("ward/2023"), /ENOENT/);
+	}));
+
 test("packed named locations read geometry only when requested", () =>
 	fixture((root, directory) => {
 		const inventory: NamedLocationInventory = {
