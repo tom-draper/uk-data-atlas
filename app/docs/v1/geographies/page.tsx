@@ -1,5 +1,9 @@
 import { CardGrid, DocPage, H2, LinkCard, P } from "@/components/docs/Content";
-import { loadCatalogue, releasesForGeography } from "@/lib/docs/catalogue";
+import {
+	loadCatalogue,
+	releaseYears,
+	releasesForGeography,
+} from "@/lib/docs/catalogue";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
 import { dataPagesOnGeography } from "@/lib/docs/dataPages";
 import { docsMetadata } from "@/lib/docs/metadata";
@@ -18,7 +22,7 @@ export default function GeographiesPage() {
 			href="/docs/v1/geographies"
 			eyebrow="Geographies"
 			title="Geographies and boundaries"
-			lede="Every kind of area the Atlas holds boundaries for, from countries down to small neighbourhoods. Each page lists its boundary releases, how many areas they contain, and what data is published on them."
+			lede="Every kind of area the Atlas holds boundaries for, from countries down to small neighbourhoods. Each page lists its boundary releases, how many areas they contain, and what data is published on them. The years on each card are the span of releases the Atlas holds."
 			toc={GEOGRAPHY_GROUPS.map((group) => ({
 				id: group.id,
 				title: group.title,
@@ -57,7 +61,9 @@ export default function GeographiesPage() {
 											{[
 												count !== undefined &&
 													`${count.toLocaleString("en-GB")} areas`,
-												`${releases.length} ${releases.length === 1 ? "release" : "releases"}`,
+												releases.length === 1
+													? `1 release, ${releaseYears(releases)}`
+													: `${releases.length} releases, ${releaseYears(releases)}`,
 												data.length > 0 &&
 													`${data.length} data ${data.length === 1 ? "page" : "pages"}`,
 											]

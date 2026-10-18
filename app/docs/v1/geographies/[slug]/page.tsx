@@ -8,6 +8,7 @@ import {
 	loadCatalogue,
 	nationList,
 	periodRange,
+	releaseYears,
 	releasesForGeography,
 } from "@/lib/docs/catalogue";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
@@ -87,6 +88,10 @@ export default async function GeographyPage({ params }: { params: Params }) {
 						value: capitalise(
 							nationList(latest.coverage.countries),
 						),
+					},
+					{
+						label: "Release years",
+						value: releaseYears(releases),
 					},
 					{
 						label: "Areas in the latest release",

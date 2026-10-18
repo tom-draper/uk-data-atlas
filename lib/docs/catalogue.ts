@@ -445,6 +445,13 @@ export function releasesForGeography(
 		.sort((a, b) => b.id.localeCompare(a.id));
 }
 
+/** The years a geography's releases span, from the year that starts each id. */
+export function releaseYears(releases: BoundaryRelease[]): string {
+	const years = [...new Set(releases.map((r) => r.id.slice(0, 4)))].sort();
+	if (years.length === 0) return "No releases";
+	return periodRange(years.length === 1 ? years : [years[0], years.at(-1)!]);
+}
+
 export function geographyIds(catalogue: Catalogue): string[] {
 	return [...new Set(catalogue.releases.map((r) => r.geography))].sort();
 }
