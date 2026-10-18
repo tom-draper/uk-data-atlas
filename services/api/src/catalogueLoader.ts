@@ -127,6 +127,7 @@ export type CatalogueOptions = {
 	/** Geometry releases held in memory at once; see `AreaGeometryCache`. */
 	geometryCacheReleases?: number;
 	crosswalkCacheBytes?: number;
+	observationCacheBytes?: number;
 	/**
 	 * Told before rejecting a compiled geometry release that no longer matches
 	 * its registered source.
@@ -340,7 +341,11 @@ export const readApiCatalogues = (
 		readLookupManifest(apiRoot),
 	);
 	const measureObservations = stage("measure-observations", () =>
-		readMeasureObservations(apiRoot, dataCatalog),
+		readMeasureObservations(
+			apiRoot,
+			dataCatalog,
+			options.observationCacheBytes,
+		),
 	);
 	const measureCompatibilityInventory = stage("measure-compatibility", () =>
 		readMeasureCompatibility(apiRoot),

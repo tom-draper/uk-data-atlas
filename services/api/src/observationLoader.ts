@@ -6,7 +6,8 @@ import {
 } from "./dataCatalog";
 import {
 	lazySourceObservations,
-	type MeasureTableArtifact,
+	ObservationCache,
+	DEFAULT_OBSERVATION_CACHE_BYTES,
 } from "./observationTables";
 
 /**
@@ -17,9 +18,9 @@ import {
 export const readMeasureObservations = (
 	apiRoot: string,
 	dataCatalog: DataCatalog,
+	maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES,
 ): AnyMeasureObservationArtifact[] => {
-	// A table serves every measure that names it, so it is read once.
-	const tables = new Map<string, MeasureTableArtifact>();
+	const tables = new ObservationCache(maxBytes);
 	return dataCatalog.measures.flatMap((measure) =>
 		measure.sources.map((source) =>
 			lazySourceObservations(

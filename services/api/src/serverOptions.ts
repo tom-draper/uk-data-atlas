@@ -1,3 +1,4 @@
+import { DEFAULT_OBSERVATION_CACHE_BYTES } from "./observationTables";
 import { DEFAULT_CROSSWALK_CACHE_BYTES } from "./crosswalkLoader";
 import type { RateLimitPolicy } from "./rateLimit";
 
@@ -72,6 +73,7 @@ export type ServeConfiguration = {
 	host: string;
 	geometryCacheReleases: number;
 	crosswalkCacheBytes: number;
+	observationCacheBytes: number;
 	shutdownGraceSeconds: number;
 	server: ServerOptions;
 	terrainRemoteEndpoint?: string;
@@ -158,6 +160,16 @@ export const readServeConfiguration = (
 				env,
 				"ATLAS_CROSSWALK_CACHE_MB",
 				DEFAULT_CROSSWALK_CACHE_BYTES / 1024 / 1024,
+				0,
+				4096,
+			) *
+			1024 *
+			1024,
+		observationCacheBytes:
+			integer(
+				env,
+				"ATLAS_OBSERVATION_CACHE_MB",
+				DEFAULT_OBSERVATION_CACHE_BYTES / 1024 / 1024,
 				0,
 				4096,
 			) *

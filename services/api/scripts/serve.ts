@@ -83,6 +83,7 @@ function startWorker() {
 		mapTileBaseUrl: configuration.mapTileBaseUrl,
 		geometryCacheReleases: configuration.geometryCacheReleases,
 		crosswalkCacheBytes: configuration.crosswalkCacheBytes,
+		observationCacheBytes: configuration.observationCacheBytes,
 		onStaleCompiledGeometry: (release, path) =>
 			log({
 				level: "error",
@@ -122,6 +123,7 @@ function startWorker() {
 			rateLimit: configuration.server.rateLimit ?? null,
 			geometryCacheReleases: configuration.geometryCacheReleases,
 			crosswalkCacheBytes: configuration.crosswalkCacheBytes,
+			observationCacheBytes: configuration.observationCacheBytes,
 			metrics:
 				configuration.server.metrics === undefined
 					? "off"

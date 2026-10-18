@@ -89,3 +89,25 @@ test("bounds concurrent requests per worker", () => {
 			/ATLAS_MAX_CONCURRENT_REQUESTS/,
 		);
 });
+
+test("bounds observation retention and allows disabling it", () => {
+	assert.equal(
+		readServeConfiguration({}).observationCacheBytes,
+		64 * 1024 * 1024,
+	);
+	assert.equal(
+		readServeConfiguration({ ATLAS_OBSERVATION_CACHE_MB: "8" })
+			.observationCacheBytes,
+		8 * 1024 * 1024,
+	);
+	assert.equal(
+		readServeConfiguration({ ATLAS_OBSERVATION_CACHE_MB: "0" })
+			.observationCacheBytes,
+		0,
+	);
+	for (const value of ["-1", "1.5", "many", "4097"])
+		assert.throws(
+			() => readServeConfiguration({ ATLAS_OBSERVATION_CACHE_MB: value }),
+			/ATLAS_OBSERVATION_CACHE_MB/,
+		);
+});

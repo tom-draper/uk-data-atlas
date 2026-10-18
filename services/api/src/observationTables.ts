@@ -123,6 +123,63 @@ export const tableMeasureObservations = (
 	return view;
 };
 
+export const DEFAULT_OBSERVATION_CACHE_BYTES = 64 * 1024 * 1024;
+
+type ObservationCacheEntry = {
+	artifact: MeasureTableArtifact | AnyMeasureObservationArtifact;
+	views: Map<string, AnyMeasureObservationArtifact>;
+	bytes: number;
+};
+
+/** Retains observations and table views by their source JSON byte budget. */
+export class ObservationCache {
+	private readonly entries = new Map<string, ObservationCacheEntry>();
+	private bytes = 0;
+
+	constructor(private readonly maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES) {
+		if (!Number.isSafeInteger(maxBytes) || maxBytes < 0)
+			throw new Error(
+				"Observation cache bytes must be a non-negative safe integer",
+			);
+	}
+
+	read(
+		publicDirectory: string,
+		artifactName: string,
+		measureId: string,
+	): AnyMeasureObservationArtifact {
+		const path = join(publicDirectory, `${artifactName}.json`);
+		let entry = this.entries.get(path);
+		if (entry) {
+			this.entries.delete(path);
+			this.entries.set(path, entry);
+		} else {
+			const text = readFileSync(path, "utf8");
+			entry = {
+				artifact: JSON.parse(text),
+				views: new Map(),
+				bytes: Buffer.byteLength(text),
+			};
+			if (entry.bytes <= this.maxBytes) {
+				while (this.bytes + entry.bytes > this.maxBytes) {
+					const oldest = this.entries.keys().next().value!;
+					this.bytes -= this.entries.get(oldest)!.bytes;
+					this.entries.delete(oldest);
+				}
+				this.entries.set(path, entry);
+				this.bytes += entry.bytes;
+			}
+		}
+		if (!isMeasureTable(entry.artifact)) return entry.artifact;
+		let view = entry.views.get(measureId);
+		if (!view) {
+			view = tableMeasureObservations(entry.artifact, measureId);
+			entry.views.set(measureId, view);
+		}
+		return view;
+	}
+}
+
 /**
  * Read the observations a measure source names from the public directory,
  * whether the artifact is the measure's own or a table it shares. Tables are
@@ -150,7 +207,7 @@ export const readSourceObservations = (
  * A measure source's observations that are read when first used, shaped like
  * the artifact they stand for. What the catalogue already says (the measure
  * and the source's geography) is held up front, so finding the artifact for a
- * request reads nothing; its content hash and periods read the file, once.
+ * request reads nothing; its content hash and periods use the shared cache.
  * Reading every artifact before listening cost seconds of start-up and held
  * every measure in memory, though a request touches few of them. A missing
  * file still stops the server starting; one that is malformed or does not
@@ -161,19 +218,16 @@ export const lazySourceObservations = (
 	artifactName: string,
 	measureId: string,
 	sourceGeography: SourceGeography,
-	tables: Map<string, MeasureTableArtifact> = new Map(),
+	cache: ObservationCache = new ObservationCache(),
 ): AnyMeasureObservationArtifact => {
 	const path = join(publicDirectory, `${artifactName}.json`);
 	if (!existsSync(path))
 		throw new Error(`Missing measure observations at ${path}`);
-	let loaded: AnyMeasureObservationArtifact | undefined;
 	const load = () => {
-		if (loaded) return loaded;
-		const observations = readSourceObservations(
+		const observations = cache.read(
 			publicDirectory,
 			artifactName,
 			measureId,
-			tables,
 		);
 		if (
 			observations.schemaVersion !== 1 ||
@@ -184,8 +238,7 @@ export const lazySourceObservations = (
 			!Array.isArray(observations.periods)
 		)
 			throw new Error(`Invalid measure observations at ${path}`);
-		loaded = observations;
-		return loaded;
+		return observations;
 	};
 	// Keys are in an artifact's own order, which its content hash depends on
 	// where the artifact is hashed as it was written.
@@ -195,9 +248,7 @@ export const lazySourceObservations = (
 			return load().contentHash;
 		},
 		measureId,
-		get sourceGeography() {
-			return loaded?.sourceGeography ?? sourceGeography;
-		},
+		sourceGeography,
 		get periods() {
 			return load().periods;
 		},
