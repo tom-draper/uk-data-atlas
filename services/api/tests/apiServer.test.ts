@@ -598,6 +598,7 @@ test("still limits a client whose requests are answered from the response cache"
 test("bounds active body reads without queuing and keeps probes available", async (t) => {
 	const { get, server } = await serve(t, {
 		maxConcurrentRequests: 1,
+		maxQueuedRequests: 0,
 		metrics: "open",
 	});
 	const address = server.address() as AddressInfo;
@@ -643,7 +644,10 @@ test("bounds active body reads without queuing and keeps probes available", asyn
 });
 
 test("releases admission after a client abandons an unfinished body", async (t) => {
-	const { get, server } = await serve(t, { maxConcurrentRequests: 1 });
+	const { get, server } = await serve(t, {
+		maxConcurrentRequests: 1,
+		maxQueuedRequests: 0,
+	});
 	const address = server.address() as AddressInfo;
 	let connection: import("node:net").Socket | undefined;
 	server.once("connection", (socket) => {
@@ -682,7 +686,7 @@ test(
 		});
 		const { get, server } = await serve(
 			t,
-			{ maxConcurrentRequests: 1 },
+			{ maxConcurrentRequests: 1, maxQueuedRequests: 0 },
 			context,
 		);
 		const address = server.address() as AddressInfo;
@@ -716,3 +720,105 @@ test(
 		assert.equal((await get("/v1/geographies")).status, 200);
 	},
 );
+
+// Takes the only active slot with a POST whose body is still being sent.
+const holdSlot = async (
+	t: TestContext,
+	server: ReturnType<typeof createApiServer>,
+) => {
+	const address = server.address() as AddressInfo;
+	const accepted = new Promise<void>((resolve) =>
+		server.once("request", () => resolve()),
+	);
+	const held = httpRequest({
+		host: "127.0.0.1",
+		port: address.port,
+		path: "/v1/areas:lookup",
+		method: "POST",
+		headers: { "content-type": "application/json" },
+	});
+	held.on("error", () => {});
+	t.after(() => held.destroy());
+	held.flushHeaders();
+	await accepted;
+	return () =>
+		new Promise<void>((resolve) => {
+			held.once("response", (response) => {
+				response.resume();
+				response.once("end", resolve);
+			});
+			held.end("{}");
+		});
+};
+
+test("queues a request until an active slot frees", async (t) => {
+	const { get, server } = await serve(t, {
+		maxConcurrentRequests: 1,
+		queueTimeoutMs: 10_000,
+	});
+	const release = await holdSlot(t, server);
+	let answered = false;
+	const queued = get("/v1/geographies").then((response) => {
+		answered = true;
+		return response;
+	});
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	assert.equal(answered, false);
+	await release();
+	assert.equal((await queued).status, 200);
+});
+
+test("refuses a queued request once its wait times out", async (t) => {
+	const { get, server } = await serve(t, {
+		maxConcurrentRequests: 1,
+		queueTimeoutMs: 50,
+	});
+	const release = await holdSlot(t, server);
+	const startedAt = performance.now();
+	const refused = await get("/v1/geographies");
+	assert.ok(performance.now() - startedAt >= 45);
+	assert.equal(refused.status, 503);
+	assert.equal(refused.headers.get("retry-after"), "1");
+	assert.equal((await refused.json()).title, "Server Busy");
+	await release();
+	assert.equal((await get("/v1/geographies")).status, 200);
+});
+
+test("refuses at once when the queue is full", async (t) => {
+	const { get, server } = await serve(t, {
+		maxConcurrentRequests: 1,
+		maxQueuedRequests: 1,
+		queueTimeoutMs: 10_000,
+	});
+	const release = await holdSlot(t, server);
+	const queued = get("/v1/geographies");
+	await new Promise((resolve) => setTimeout(resolve, 20));
+	const startedAt = performance.now();
+	assert.equal((await get("/v1/geographies")).status, 503);
+	assert.ok(performance.now() - startedAt < 1000);
+	await release();
+	assert.equal((await queued).status, 200);
+});
+
+test("gives up a queue place when its client disconnects", async (t) => {
+	const { get, server } = await serve(t, {
+		maxConcurrentRequests: 1,
+		maxQueuedRequests: 1,
+		queueTimeoutMs: 10_000,
+	});
+	const release = await holdSlot(t, server);
+	const address = server.address() as AddressInfo;
+	const socket = connect(address.port, "127.0.0.1");
+	await new Promise<void>((resolve) => socket.once("connect", resolve));
+	const arrived = new Promise<void>((resolve) =>
+		server.once("request", () => resolve()),
+	);
+	socket.write("GET /v1/geographies HTTP/1.1\r\nHost: x\r\n\r\n");
+	await arrived;
+	socket.destroy();
+	await new Promise((resolve) => setTimeout(resolve, 20));
+	const queued = get("/v1/geographies");
+	await new Promise((resolve) => setTimeout(resolve, 20));
+	await release();
+	assert.equal((await queued).status, 200);
+});

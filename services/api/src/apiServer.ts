@@ -34,6 +34,8 @@ import type { RouteContext } from "./routing";
 import {
 	DEFAULT_MAX_URL_LENGTH,
 	DEFAULT_MAX_CONCURRENT_REQUESTS,
+	DEFAULT_MAX_QUEUED_REQUESTS,
+	DEFAULT_QUEUE_TIMEOUT_MS,
 	errorFields,
 	type ServerOptions,
 } from "./serverOptions";
@@ -207,7 +209,28 @@ export const createApiServer = (
 		throw new Error(
 			"maxConcurrentRequests must be an integer between 1 and 1024",
 		);
+	const maxQueuedRequests =
+		options.maxQueuedRequests ?? DEFAULT_MAX_QUEUED_REQUESTS;
+	if (
+		!Number.isSafeInteger(maxQueuedRequests) ||
+		maxQueuedRequests < 0 ||
+		maxQueuedRequests > 4096
+	)
+		throw new Error(
+			"maxQueuedRequests must be an integer between 0 and 4096",
+		);
+	const queueTimeoutMs = options.queueTimeoutMs ?? DEFAULT_QUEUE_TIMEOUT_MS;
+	if (
+		!Number.isSafeInteger(queueTimeoutMs) ||
+		queueTimeoutMs < 1 ||
+		queueTimeoutMs > 30_000
+	)
+		throw new Error(
+			"queueTimeoutMs must be an integer between 1 and 30000",
+		);
 	let activeRequests = 0;
+	// Requests waiting for a slot, oldest first. Each entry starts its request.
+	const queued = new Set<() => void>();
 	const releaseId =
 		catalogues.atlasRelease?.releaseId ??
 		catalogues.boundaryRegistry.contentHash;
@@ -542,6 +565,63 @@ export const createApiServer = (
 		}
 	};
 
+	const startQueued = () => {
+		for (const start of queued) {
+			if (activeRequests >= maxConcurrentRequests) return;
+			start();
+		}
+	};
+
+	const admit = (request: IncomingMessage, response: ServerResponse) => {
+		activeRequests += 1;
+		let settled = false;
+		let finished = false;
+		let released = false;
+		const release = () => {
+			if (!settled || !finished || released) return;
+			released = true;
+			activeRequests -= 1;
+			startQueued();
+		};
+		const finish = () => {
+			finished = true;
+			release();
+		};
+		response.once("finish", finish);
+		response.once("close", finish);
+		void handle(request, response)
+			.catch(() => response.destroy())
+			.finally(() => {
+				settled = true;
+				release();
+			});
+	};
+
+	const refuse = (request: IncomingMessage, response: ServerResponse) => {
+		void handle(request, response, true).catch(() => response.destroy());
+	};
+
+	// A queued request's body is left unread until it is admitted, so waiting
+	// holds a connection but not its upload.
+	const enqueue = (request: IncomingMessage, response: ServerResponse) => {
+		if (queued.size >= maxQueuedRequests) return refuse(request, response);
+		const leave = () => {
+			queued.delete(start);
+			clearTimeout(timer);
+			response.off("close", leave);
+		};
+		const start = () => {
+			leave();
+			admit(request, response);
+		};
+		const timer = setTimeout(() => {
+			leave();
+			refuse(request, response);
+		}, queueTimeoutMs);
+		response.once("close", leave);
+		queued.add(start);
+	};
+
 	const server = createServer(
 		{
 			headersTimeout: HEADERS_TIMEOUT_MS,
@@ -553,33 +633,11 @@ export const createApiServer = (
 			const exempt =
 				request.method === "OPTIONS" ||
 				(OPERATIONS_PATHS as readonly string[]).includes(pathname);
-			if (exempt || activeRequests >= maxConcurrentRequests) {
-				void handle(request, response, !exempt).catch(() =>
-					response.destroy(),
-				);
-				return;
-			}
-			activeRequests += 1;
-			let settled = false;
-			let finished = false;
-			let released = false;
-			const release = () => {
-				if (!settled || !finished || released) return;
-				released = true;
-				activeRequests -= 1;
-			};
-			const finish = () => {
-				finished = true;
-				release();
-			};
-			response.once("finish", finish);
-			response.once("close", finish);
-			void handle(request, response)
-				.catch(() => response.destroy())
-				.finally(() => {
-					settled = true;
-					release();
-				});
+			if (exempt)
+				void handle(request, response).catch(() => response.destroy());
+			else if (activeRequests < maxConcurrentRequests)
+				admit(request, response);
+			else enqueue(request, response);
 		},
 	);
 	server.on("close", () => metrics.close());
