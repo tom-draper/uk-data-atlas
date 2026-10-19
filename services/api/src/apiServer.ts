@@ -381,7 +381,7 @@ export const createApiServer = (
 						problem(
 							429,
 							"Too Many Requests",
-							`This client has used its ${decision.limit} requests; one is earned back every ${(1 / options.rateLimit!.refillPerSecond).toFixed(2)} seconds. Retry after ${decision.retryAfterSeconds} seconds, and cache what you have fetched: every response carries an ETag.`,
+							`This client has exhausted its ${decision.limit}-token allowance on this worker; one token is earned back every ${(1 / options.rateLimit!.refillPerSecond).toFixed(2)} seconds. Retry after ${decision.retryAfterSeconds} seconds, and cache what you have fetched: every response carries an ETag.`,
 						),
 					);
 				} else if (method === "OPTIONS") {

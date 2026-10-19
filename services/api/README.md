@@ -1056,10 +1056,10 @@ fetch the postcode directory from ONS.
       partitions and lookup tables are already immutable, cacheable downloads
       through `GET /v1/exports` and `GET /v1/lookups`; a query's results
       cannot yet be snapshotted.
-- [x] Fair rate limits: a token bucket per client, IPv6 clients by /64,
+- [x] Fair rate limits: a token bucket per client per worker, IPv6 clients by /64,
       announced on every response with the IETF draft `RateLimit-Policy` and
       `RateLimit` headers and refused with `429` and `Retry-After`. The
-      defaults allow a burst of 600 requests, earned back at 10 a second,
+      defaults allow a burst of 600 tokens per worker, earned back at 10 a second,
       which a map drawing a view does not reach. Behind a proxy the client is
       read from `X-Forwarded-For` only as far as the declared proxy hops.
 - [ ] Operational API keys and managed services, only when they add service
@@ -2214,12 +2214,23 @@ line up.
   request keeps its slot until its active work finishes. This limits
   overlapping work, not bytes per request.
 
-- **Rate limit:** a token bucket per client, see the checklist above. A
+- **Rate limit:** a token bucket per client per worker, see the checklist above. A
   request costs one token, except where its operation declares
   `x-rate-limit-cost` in `openapi.yaml`: the routes that read many areas'
   shapes or take a batch cost 5 or 10. At most 100,000 clients are
   remembered; the least recently seen is forgotten first,
   and starts again with the full bucket it would have earned anyway.
+  `RateLimit` and `RateLimit-Policy` describe only the responding worker's
+  bucket. They are not a deployment-wide quota. With the default two workers,
+  a client reaching both can spend up to 1,200 tokens initially and earn back
+  20 tokens per second in total. Connections need not be spread evenly, so
+  clients must respect each response's headers and `Retry-After` rather than
+  assume that total is available. More instances multiply the possible
+  allowance again, and worker restarts reset their buckets. For a strict
+  deployment-wide quota, enforce the limit at a shared reverse proxy or API
+  gateway. Set `ATLAS_RATE_LIMIT_CAPACITY=0` only if that external limit replaces
+  the worker limits. Configure `ATLAS_TRUSTED_PROXY_HOPS` to match the actual
+  proxy chain, never to trust arbitrary client-supplied addresses.
 - **Request target:** longer than `ATLAS_MAX_URL_LENGTH` is `414`.
 - **Compression:** a JSON, GeoJSON, CSV, NDJSON or YAML answer of 1 KB or
   more is gzipped for a client that sends `Accept-Encoding: gzip`, on the
@@ -2315,8 +2326,8 @@ rather than falling back to the default.
 | `ATLAS_MAP_TILE_BASE_URL`            | unset       | External MVT service base, serving geography/release/tiles/z/x/y.mvt.                         |
 | `PORT`                               | `3001`      | Port to listen on.                                                                            |
 | `HOST`                               | `127.0.0.1` | Address to listen on.                                                                         |
-| `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                   |
-| `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                             |
+| `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Tokens per client per worker; `0` turns worker-local limiting off.                            |
+| `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Tokens earned back each second per client per worker.                                         |
 | `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                              |
 | `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                       |
 | `ATLAS_OBSERVATION_CACHE_MB`         | `64`        | MiB of source JSON cached for observations per worker; `0` disables retention.                |
