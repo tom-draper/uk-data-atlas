@@ -383,3 +383,29 @@ test("executes a declared multi-step translation through the resolver", () => {
 		],
 	);
 });
+
+test("checks only the requirement asked for", () => {
+	const read: string[] = [];
+	const inputs = Object.defineProperties(
+		{ areaLookup, crosswalkInventory },
+		{
+			placeIndex: {
+				get: () => {
+					read.push("placeIndex");
+					return undefined;
+				},
+			},
+			areaSearchIndex: {
+				get: () => {
+					read.push("areaSearchIndex");
+					return undefined;
+				},
+			},
+		},
+	);
+	const resolver = createGeographyResolver(inputs);
+	assert.equal(resolver.requires("areas"), undefined);
+	assert.deepEqual(read, []);
+	assert.equal(resolver.requires("places")?.status, 503);
+	assert.deepEqual(read, ["placeIndex"]);
+});
