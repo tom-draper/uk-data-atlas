@@ -1,4 +1,5 @@
 import proj4 from "proj4";
+import type { GeometryValidityReport } from "./geometryValidity";
 import {
 	packGeometry,
 	unpackGeometry,
@@ -23,6 +24,7 @@ export type GeometryProvenance = {
 	input?: string;
 	inputHash?: string;
 	sourceCrs: string;
+	validity?: GeometryValidityReport;
 	transformation?: GeometryTransformation;
 	/**
 	 * Declared grid corrections that moved this area before reprojection, and

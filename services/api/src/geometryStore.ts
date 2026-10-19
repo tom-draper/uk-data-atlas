@@ -7,6 +7,10 @@ import {
 	type SpatialCell,
 } from "./geometrySpatialIndex";
 import { packedBounds, type PackedGeometry } from "./packedGeometry";
+import {
+	uncompiledGeometryValidity,
+	type GeometryValidityReport,
+} from "./geometryValidity";
 
 /**
  * A compiled release keeps only metadata in memory: area codes, envelopes,
@@ -68,8 +72,16 @@ const arraysOf = (packed: PackedGeometry): Array<Float64Array | Uint32Array> =>
 			? packed.geometries.flatMap(arraysOf)
 			: [];
 
-const encodeArea = (packed: PackedGeometry): Buffer[] => {
-	const descriptor = Buffer.from(JSON.stringify(describe(packed)));
+const encodeArea = (
+	packed: PackedGeometry,
+	validity?: GeometryValidityReport,
+): Buffer[] => {
+	const descriptor = Buffer.from(
+		JSON.stringify({
+			...describe(packed),
+			...(validity ? { validity } : {}),
+		}),
+	);
 	const length = Buffer.alloc(4);
 	length.writeUInt32LE(descriptor.length);
 	const parts: Buffer[] = [length, descriptor];
@@ -126,13 +138,14 @@ const buildSpatialIndex = (
 export const encodeGeometryStore = (
 	source: GeometrySource,
 	areas: Iterable<readonly [string, PackedGeometry]>,
+	validate?: (packed: PackedGeometry) => GeometryValidityReport,
 ): Buffer => {
 	const codes: string[] = [];
 	const records: Buffer[][] = [];
 	const bounds: Array<GeometryBounds | undefined> = [];
 	for (const [code, packed] of areas) {
 		codes.push(code);
-		records.push(encodeArea(packed));
+		records.push(encodeArea(packed, validate?.(packed)));
 		bounds.push(packedBounds(packed));
 	}
 	const spatialIndex = buildSpatialIndex(bounds);
@@ -212,6 +225,7 @@ export type StoredRelease = {
 	codes: string[];
 	has(code: string): boolean;
 	get(code: string): PackedGeometry | undefined;
+	validity(code: string): GeometryValidityReport | undefined;
 	bounds(code: string): GeometryBounds | undefined;
 	spatialIndex: StoredSpatialIndex;
 	bytes: number;
@@ -423,6 +437,18 @@ export const readGeometryStore = (
 			get: (code) => {
 				const at = index.get(code);
 				return at === undefined ? undefined : decode(at);
+			},
+			validity: (code) => {
+				const at = index.get(code);
+				if (at === undefined) return undefined;
+				const start = offsets[at]!;
+				const length = readAt(descriptor, start, 4).readUInt32LE(0);
+				if (length > offsets[at + 1]! - start - 4)
+					throw new Error(`${path} has an invalid area descriptor.`);
+				const area = JSON.parse(
+					readAt(descriptor, start + 4, length).toString("utf8"),
+				) as { validity?: GeometryValidityReport };
+				return area.validity ?? uncompiledGeometryValidity;
 			},
 			bounds: (code) => {
 				const at = index.get(code);

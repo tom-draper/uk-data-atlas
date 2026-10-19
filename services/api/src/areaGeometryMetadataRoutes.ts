@@ -48,6 +48,7 @@ export const areaGeometryMetrics = (
 					422,
 					"Geometry Not Measurable",
 					"That area's geometry carries no polygon to measure.",
+					{ geometrySource: resolved.geometrySource },
 				),
 			};
 		return {

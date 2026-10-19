@@ -15,6 +15,7 @@ import { releaseKey } from "../src/geographyKeys";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 import { geometrySubstitution } from "../src/geometrySubstitution";
 import { encodeGeometryStore } from "../src/geometryStore";
+import { compileGeometryValidity } from "./compileGeometryValidity";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -29,8 +30,12 @@ import { encodeGeometryStore } from "../src/geometryStore";
 
 /** The code a compiled release depends on: a change to any rebuilds them all. */
 const COMPILER_SOURCES = [
+	"package.json",
+	"scripts/build-geometry-store.ts",
+	"scripts/compileGeometryValidity.ts",
 	"src/areaGeometry.ts",
 	"src/geometryStore.ts",
+	"src/geometryValidity.ts",
 	"src/geometrySpatialIndex.ts",
 	"src/geometrySubstitution.ts",
 	"src/gridOffset.ts",
@@ -106,6 +111,7 @@ export const buildGeometryStore = (
 		const body = encodeGeometryStore(
 			source,
 			cache.compile(geography, boundaryRelease),
+			compileGeometryValidity,
 		);
 		// Written beside and moved into place, so a server reading the store
 		// never sees half a file.

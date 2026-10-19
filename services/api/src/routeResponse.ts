@@ -1,4 +1,5 @@
 import type { ProblemCode } from "./problemCodes";
+import type { GeometryProvenance } from "./reprojection";
 
 export type Envelope<T> = {
 	apiVersion: "v1";
@@ -12,6 +13,7 @@ export type Problem = {
 	title: string;
 	status: number;
 	detail: string;
+	geometrySource?: GeometryProvenance;
 	choices?: unknown[];
 	candidates?: unknown[];
 	code?: ProblemCode;
