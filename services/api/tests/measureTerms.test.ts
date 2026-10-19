@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { withAliases } from "../src/catalog/measureAliases";
 import type { DataCatalog } from "../src/dataCatalog";
-import { measureSlug, searchMeasures } from "../src/measureTerms";
+import {
+	canonicalMeasureId,
+	measureSlug,
+	searchMeasures,
+} from "../src/measureTerms";
 import {
 	dataCatalog,
 	measureObservations,
@@ -30,6 +34,44 @@ const ids = (response: ReturnType<typeof get>) =>
 test("reads a term as a plain slug", () => {
 	assert.equal(measureSlug("  House Prices "), "house-prices");
 	assert.equal(measureSlug("Ynys Môn_GDP"), "ynys-mon-gdp");
+});
+
+test("resolves exact ids before slugs and retains the first matching alias", () => {
+	const template = dataCatalog.measures[0];
+	assert.ok(template);
+	const catalog: DataCatalog = {
+		...dataCatalog,
+		measures: [
+			{ ...template, id: "first", aliases: ["shared", "second"] },
+			{ ...template, id: "second", aliases: ["shared"] },
+			{ ...template, id: "Mixed_CASE", aliases: ["ynys-mon"] },
+		],
+	};
+	for (let pass = 0; pass < 2; pass++) {
+		assert.equal(canonicalMeasureId(catalog, "second"), "second");
+		assert.equal(canonicalMeasureId(catalog, "Second"), "first");
+		assert.equal(canonicalMeasureId(catalog, " SHARED "), "first");
+		assert.equal(canonicalMeasureId(catalog, "Mixed_CASE"), "Mixed_CASE");
+		assert.equal(canonicalMeasureId(catalog, "Ynys Môn"), "Mixed_CASE");
+		assert.equal(canonicalMeasureId(catalog, "unknown"), undefined);
+	}
+});
+
+test("keeps identities separate when two catalogues publish the same alias", () => {
+	const template = dataCatalog.measures[0];
+	assert.ok(template);
+	const first = {
+		...dataCatalog,
+		measures: [{ ...template, id: "first", aliases: ["shared"] }],
+	};
+	const second = {
+		...dataCatalog,
+		measures: [{ ...template, id: "second", aliases: ["shared"] }],
+	};
+	assert.equal(canonicalMeasureId(first, "shared"), "first");
+	assert.equal(canonicalMeasureId(second, "shared"), "second");
+	assert.equal(canonicalMeasureId(first, "shared"), "first");
+	assert.equal(canonicalMeasureId(second, "first"), undefined);
 });
 
 test("attaches reviewed aliases and refuses any that could be misread", () => {
