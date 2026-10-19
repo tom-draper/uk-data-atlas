@@ -331,6 +331,11 @@ export const createRemoteTerrainProvider = ({
 
 	return {
 		point: async (x, y, options = {}) => {
+			if (
+				options.version !== undefined &&
+				options.version !== source.version
+			)
+				return undefined;
 			const [minX, minY, maxX, maxY] = source.coverage.bbox;
 			if (x < minX || x > maxX || y < minY || y > maxY) {
 				return {

@@ -228,7 +228,7 @@ test("remote terrain preview samples upstream without persisting a raster", asyn
 	});
 	const response = await routeAsync(
 		"GET",
-		"/v1/terrain/elevation/point?x=530000&y=180000&interpolation=bilinear",
+		"/v1/terrain/elevation/point?x=530000&y=180000&interpolation=bilinear&version=remote-preview",
 		testContext({ terrainAsyncProvider: provider }),
 	);
 	assert.equal(response.status, 200);
@@ -286,6 +286,15 @@ test("remote terrain preview honors exact coverage and maps upstream failures", 
 			throw new Error("should not sample outside coverage");
 		},
 	});
+	for (const x of [530000, 1]) {
+		const unknown = await routeAsync(
+			"GET",
+			`/v1/terrain/elevation/point?x=${x}&y=180000&version=missing`,
+			testContext({ terrainAsyncProvider: provider }),
+		);
+		assert.equal(unknown.status, 404);
+		assert.equal(requestCount, 0);
+	}
 	const outside = await routeAsync(
 		"GET",
 		"/v1/terrain/elevation/point?x=530000&y=180000",
