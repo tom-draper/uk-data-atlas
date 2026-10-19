@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer, request as httpRequest } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { gzipSync } from "node:zlib";
 import { connect, type AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
 import { compileExportManifest } from "../src/exportManifest";
@@ -14,6 +15,7 @@ import { createOperationMatcher } from "../src/operationTemplates";
 import type { RouteContext } from "../src/routing";
 import { compileOperations } from "../scripts/build-operations";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
+import type { StoredFile } from "../src/routeResponse";
 import {
 	atlasRelease,
 	dataCatalog,
@@ -848,75 +850,213 @@ test("gives up a queue place when its client disconnects", async (t) => {
 	assert.equal((await queued).status, 200);
 });
 
-test("streams complete CSV and Parquet exports with their published hashes and validators", async (t) => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "atlas-observation-downloads-"),
-	);
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
-	const measure = dataCatalog.measures.find(
-		(item) => item.id === "small-area-fixture",
-	)!;
-	const source = measure.sources[0];
-	const observations = measureObservations.find(
-		(item) => item.measureId === measure.id,
-	)!;
-	writeFileSync(
-		join(directory, `${observationArtifactName(measure.id, source)}.json`),
-		JSON.stringify(observations),
-	);
-	const catalog = {
-		...dataCatalog,
-		measures: [measure],
-		datasets: [{ ...dataCatalog.datasets[0], id: source.datasetId }],
-	};
-	const manifest = compileExportManifest(directory, catalog);
-	const files = manifest.exports[0].formats!;
-	const exportFiles = new Map(
-		files.map((file) => [
-			file.artifact,
-			{
-				path: join(directory, file.artifact),
-				bytes: file.bytes,
-				contentHash: file.contentHash,
-			},
-		]),
-	);
-	const { get } = await serve(
-		t,
-		{},
-		testContext({
-			atlasRelease,
-			openapiDocument,
-			operationMatcher,
-			dataCatalog: catalog,
-			exportManifest: manifest,
-			exportFiles,
-		}),
-	);
-	for (const file of files) {
-		const response = await get(file.href, {
-			headers: { "accept-encoding": "identity" },
-		});
-		assert.equal(response.status, 200);
-		const body = Buffer.from(await response.arrayBuffer());
-		assert.equal(body.length, file.bytes);
-		assert.equal(sha256(body), file.contentHash);
-		assert.match(
-			response.headers.get("content-disposition")!,
-			new RegExp(`\\.${file.format}"$`),
+test(
+	"records completed, failed and cancelled stored export transfers",
+	{ timeout: 10_000 },
+	async (t) => {
+		const directory = mkdtempSync(
+			join(tmpdir(), "atlas-observation-downloads-"),
 		);
-		const etag = response.headers.get("etag");
-		assert.ok(etag);
-		const cached = await get(file.href, {
-			headers: { "accept-encoding": "identity", "if-none-match": etag },
-		});
-		assert.equal(cached.status, 304);
-		if (file.format === "parquet")
-			assert.equal(readParquet(body).rowCount, 2);
-		else
+		t.after(() => rmSync(directory, { recursive: true, force: true }));
+		const measure = dataCatalog.measures.find(
+			(item) => item.id === "small-area-fixture",
+		)!;
+		const source = measure.sources[0];
+		const observations = measureObservations.find(
+			(item) => item.measureId === measure.id,
+		)!;
+		writeFileSync(
+			join(
+				directory,
+				`${observationArtifactName(measure.id, source)}.json`,
+			),
+			JSON.stringify(observations),
+		);
+		const catalog = {
+			...dataCatalog,
+			measures: [measure],
+			datasets: [{ ...dataCatalog.datasets[0], id: source.datasetId }],
+		};
+		const manifest = compileExportManifest(directory, catalog);
+		const files = manifest.exports[0].formats!;
+		const exportFiles = new Map<string, StoredFile>(
+			files.map((file) => [
+				file.artifact,
+				{
+					path: join(directory, file.artifact),
+					bytes: file.bytes,
+					contentHash: file.contentHash,
+				},
+			]),
+		);
+		const { get, logged, server } = await serve(
+			t,
+			{ accessLog: true, maxConcurrentRequests: 1, maxQueuedRequests: 0 },
+			testContext({
+				atlasRelease,
+				openapiDocument,
+				operationMatcher,
+				dataCatalog: catalog,
+				exportManifest: manifest,
+				exportFiles,
+			}),
+		);
+		const waitForLog = async (count: number) => {
+			const deadline = performance.now() + 2000;
+			while (logged.length < count && performance.now() < deadline)
+				await new Promise<void>((resolve) => setImmediate(resolve));
+			assert.equal(logged.length, count);
+		};
+		for (const [index, file] of files.entries()) {
+			const response = await get(file.href, {
+				headers: { "accept-encoding": "identity" },
+			});
+			assert.equal(response.status, 200);
+			const body = Buffer.from(await response.arrayBuffer());
+			await waitForLog(index * 2 + 1);
+			assert.equal(body.length, file.bytes);
+			assert.equal(sha256(body), file.contentHash);
 			assert.match(
-				body.toString("utf8"),
-				/"measureId","unit","datasetId"/,
+				response.headers.get("content-disposition")!,
+				new RegExp(`\\.${file.format}"$`),
 			);
-	}
-});
+			const etag = response.headers.get("etag");
+			assert.ok(etag);
+			const cached = await get(file.href, {
+				headers: {
+					"accept-encoding": "identity",
+					"if-none-match": etag,
+				},
+			});
+			assert.equal(cached.status, 304);
+			await waitForLog(index * 2 + 2);
+			if (file.format === "parquet")
+				assert.equal(readParquet(body).rowCount, 2);
+			else
+				assert.match(
+					body.toString("utf8"),
+					/"measureId","unit","datasetId"/,
+				);
+		}
+		assert.equal(logged.length, 4);
+		assert.equal(logged[0].status, 200);
+		assert.equal(logged[0].bytes, files[0].bytes);
+		assert.equal(logged[1].bytes, 0);
+		const missing = files[0];
+		rmSync(join(directory, missing.artifact));
+		await assert.rejects(get(missing.href));
+		for (let waited = 0; logged.length < 5 && waited < 2000; waited += 20)
+			await new Promise((resolve) => setTimeout(resolve, 20));
+		assert.equal(logged.length, 5);
+		assert.equal(logged[4].event, "request.failed");
+		assert.equal(logged[4].status, 500);
+		assert.equal(logged[4].bytes, 0);
+		const route = logged[4].route;
+		assert.equal(typeof route, "string");
+		assert.equal(
+			server.metrics.failures.value({ route: String(route) }),
+			1,
+		);
+		assert.equal((await get("/v1/geographies")).status, 200);
+
+		const file = exportFiles.get(missing.artifact)!;
+		const bytes = 64 * 1024 * 1024;
+		missing.bytes = bytes;
+		file.bytes = bytes;
+		writeFileSync(file.path, Buffer.alloc(bytes));
+		const download = httpRequest({
+			host: "127.0.0.1",
+			port: (server.address() as AddressInfo).port,
+			path: missing.href,
+			headers: { "x-request-id": "interrupted-export" },
+		});
+		download.on("error", () => {});
+		t.after(() => download.destroy());
+		await new Promise<void>((resolve) => {
+			download.once("response", (response) => {
+				response.pause();
+				resolve();
+			});
+			download.end();
+		});
+		await new Promise((resolve) => setTimeout(resolve, 50));
+		assert.equal(
+			logged.some((entry) => entry.requestId === "interrupted-export"),
+			false,
+		);
+		assert.equal((await get("/v1/geographies")).status, 503);
+		download.destroy();
+		for (
+			let waited = 0;
+			!logged.some((entry) => entry.requestId === "interrupted-export") &&
+			waited < 2000;
+			waited += 20
+		)
+			await new Promise((resolve) => setTimeout(resolve, 20));
+		const cancelled = logged.filter(
+			(entry) => entry.requestId === "interrupted-export",
+		);
+		assert.equal(cancelled.length, 1);
+		assert.equal(cancelled[0].status, 499);
+		assert.equal(cancelled[0].httpStatus, 200);
+		assert.equal(cancelled[0].event, "request");
+		assert.ok(
+			Number(cancelled[0].bytes) > 0 &&
+				Number(cancelled[0].bytes) < bytes,
+		);
+		assert.ok(Number(cancelled[0].durationMs) >= 50);
+		assert.equal(
+			server.metrics.requests.value({
+				route: String(route),
+				method: "GET",
+				status: "499",
+			}),
+			1,
+		);
+		assert.equal(
+			server.metrics.requests.value({
+				route: String(route),
+				method: "GET",
+				status: "500",
+			}),
+			1,
+		);
+		assert.equal(
+			server.metrics.failures.value({ route: String(route) }),
+			1,
+		);
+		assert.equal((await get("/v1/geographies")).status, 200);
+
+		const content = Buffer.from(
+			"a stored export with gzip and range support\n",
+		);
+		missing.bytes = content.length;
+		file.bytes = content.length;
+		writeFileSync(file.path, content);
+		const range = await get(missing.href, {
+			headers: { range: "bytes=2-7" },
+		});
+		assert.equal(range.status, 206);
+		assert.equal(await range.text(), "stored");
+		await waitForLog(10);
+		assert.equal(logged.at(-1)!.bytes, 6);
+		const encoded = gzipSync(content);
+		writeFileSync(file.path, encoded);
+		exportFiles.set(missing.artifact, {
+			...file,
+			gzipBytes: encoded.length,
+		});
+		for (const [index, encoding] of ["identity", "gzip"].entries()) {
+			const response = await get(missing.href, {
+				headers: { "accept-encoding": encoding },
+			});
+			assert.equal(response.status, 200);
+			assert.equal(await response.text(), content.toString());
+			await waitForLog(11 + index);
+			assert.equal(
+				logged.at(-1)!.bytes,
+				encoding === "gzip" ? encoded.length : content.length,
+			);
+		}
+	},
+);
