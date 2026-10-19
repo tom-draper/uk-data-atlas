@@ -98,12 +98,19 @@ export const tableMeasureObservations = (
 	const period = {
 		period: table.period,
 		get records() {
-			records ??= table.records.flatMap(([areaCode, ...values]) => {
-				const value = values[column];
-				return typeof value === "number"
-					? [{ areaCode, value, status: "observed" as const }]
-					: [];
-			});
+			if (!records) {
+				const materialised: PopulationObservation[] = [];
+				for (const row of table.records) {
+					const value = row[column + 1];
+					if (typeof value === "number")
+						materialised.push({
+							areaCode: row[0],
+							value,
+							status: "observed",
+						});
+				}
+				records = materialised;
+			}
 			return records;
 		},
 	};
