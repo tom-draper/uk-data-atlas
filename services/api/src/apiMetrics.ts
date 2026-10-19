@@ -141,7 +141,7 @@ export class ApiMetrics {
 	);
 	readonly failures = new Counter(
 		"atlas_api_unhandled_errors_total",
-		"Requests that threw and were answered 500, by operation template.",
+		"Requests that failed unexpectedly, by operation template.",
 	);
 	private readonly eventLoopDelay = monitorEventLoopDelay({ resolution: 10 });
 	private readonly started = performance.now();

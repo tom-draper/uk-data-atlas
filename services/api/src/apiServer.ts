@@ -114,16 +114,31 @@ const readBody = (request: IncomingMessage): Promise<BodyRead> =>
  * as a map does when it pans past a tile, tears the whole chain down, so the
  * file is closed rather than left open waiting for a reader that never comes.
  */
-export const sendFile = (file: SentFile, response: ServerResponse) => {
+export const sendFile = (
+	file: SentFile,
+	response: ServerResponse,
+	onComplete?: (error: Error | null | undefined, bytes: number) => void,
+) => {
 	const source = createReadStream(file.path, {
 		start: file.start,
 		end: file.end,
 	});
+	let bytes = 0;
+	const decoder = file.gunzip ? createGunzip() : undefined;
+	const output = decoder ?? source;
 	const done = (error?: Error | null) => {
+		if (!error && bytes !== file.bytes)
+			error = new Error(
+				"Stored file size does not match its declared length.",
+			);
 		if (error) response.destroy(error);
+		onComplete?.(error, bytes);
 	};
-	if (file.gunzip) pipeline(source, createGunzip(), response, done);
+	if (decoder) pipeline(source, decoder, response, done);
 	else pipeline(source, response, done);
+	output.on("data", (chunk: Buffer) => {
+		bytes += chunk.length;
+	});
 	return source;
 };
 
@@ -465,6 +480,9 @@ export const createApiServer = (
 				route: matched.route,
 				path: pathname,
 				status,
+				...(status !== response.statusCode && response.headersSent
+					? { httpStatus: response.statusCode }
+					: {}),
 				durationMs:
 					Math.round((performance.now() - startedAt) * 10) / 10,
 				bytes,
@@ -535,21 +553,43 @@ export const createApiServer = (
 					etag: result.headers.etag,
 				});
 			response.writeHead(result.status, headers);
-			if (isStoredFile(result.body)) sendFile(result.body, response);
-			else response.end(result.body);
+			let status = result.status;
+			let bytes = result.body ? bodyBytes(result.body) : 0;
+			if (isStoredFile(result.body)) {
+				const file = result.body;
+				const transfer = await new Promise<{
+					error: Error | null | undefined;
+					bytes: number;
+				}>((resolve) => {
+					sendFile(file, response, (error, bytes) =>
+						resolve({ error, bytes }),
+					);
+				});
+				bytes = transfer.bytes;
+				if (transfer.error) {
+					const cancelled =
+						"code" in transfer.error &&
+						[
+							"ERR_STREAM_PREMATURE_CLOSE",
+							"ECONNRESET",
+							"EPIPE",
+						].includes(String(transfer.error.code));
+					status = cancelled ? 499 : 500;
+					if (!cancelled) failure = transfer.error;
+				}
+			} else response.end(result.body);
 
 			const durationSeconds = (performance.now() - startedAt) / 1000;
-			const bytes = result.body ? bodyBytes(result.body) : 0;
 			metrics.observe({
 				route: matched.route,
 				method,
-				status: result.status,
+				status,
 				durationSeconds,
 				bytes,
 			});
-			const entry = entryFor(result.status, bytes);
+			const entry = entryFor(status, bytes);
 			if (failure !== undefined) reportFailure(failure, entry);
-			else if (result.status >= 500)
+			else if (status >= 500)
 				log?.({
 					level: "warn",
 					event: "request.unavailable",
