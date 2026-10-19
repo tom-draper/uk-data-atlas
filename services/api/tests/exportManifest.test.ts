@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import type { DataCatalog } from "../src/dataCatalog";
 import { compileExportManifest } from "../src/exportManifest";
+import { sha256 } from "../src/contentHash";
+import { readParquet } from "./parquetFixtures";
 
 const dataset = (id: string) => ({
 	id,
@@ -23,6 +25,7 @@ const catalog = {
 	measures: [
 		{
 			id: "fixture",
+			unit: "count",
 			derivedFrom: {
 				datasetIds: ["fixture-dataset", "land-area"],
 				note: "Divided by land area.",
@@ -87,7 +90,12 @@ test("describes each export's records, schema and provenance from its artifact",
 		assert.match(manifest.contentHash, /^sha256:[a-f0-9]{64}$/);
 		const [entry] = manifest.exports;
 		assert.deepEqual(
-			{ ...entry, schema: undefined, provenance: undefined },
+			{
+				...entry,
+				formats: undefined,
+				schema: undefined,
+				provenance: undefined,
+			},
 			{
 				id: "fixture-observations",
 				measureId: "fixture",
@@ -101,6 +109,7 @@ test("describes each export's records, schema and provenance from its artifact",
 				href: "/v1/exports/fixture-observations",
 				recordCount: 3,
 				recordCountByPeriod: { 2023: 2, 2024: 1 },
+				formats: undefined,
 				schema: undefined,
 				provenance: undefined,
 			},
@@ -170,4 +179,134 @@ test("fails before a catalogued observation artifact exists", () => {
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}
+});
+
+test("publishes deterministic CSV and Parquet with exact byte sizes and hashes", () => {
+	withArtifact(artifact, (directory) => {
+		const entry = compileExportManifest(directory, catalog).exports[0];
+		assert.deepEqual(
+			entry.formats?.map((file) => file.format),
+			["csv", "parquet"],
+		);
+		for (const file of entry.formats ?? []) {
+			const body = readFileSync(join(directory, file.artifact));
+			assert.equal(body.length, file.bytes);
+			assert.equal(sha256(body), file.contentHash);
+			assert.equal(file.href, `${entry.href}?format=${file.format}`);
+		}
+		const parquet = entry.formats!.find(
+			(file) => file.format === "parquet",
+		)!;
+		const rows = readParquet(
+			readFileSync(join(directory, parquet.artifact)),
+		).rows;
+		assert.equal(rows.length, 3);
+		assert.deepEqual(
+			rows.map((row) => [
+				row.period,
+				row.value,
+				row.lowerBound,
+				row.upperBound,
+			]),
+			[
+				["2023", 1, 0, 2],
+				["2023", 2, null, null],
+				["2024", 3, null, null],
+			],
+		);
+		assert.equal(rows[0].unit, "count");
+		assert.equal(rows[0].datasetId, "fixture-dataset");
+		assert.deepEqual(
+			compileExportManifest(directory, catalog),
+			compileExportManifest(directory, catalog),
+		);
+	});
+});
+
+test("preserves categorical strings, CSV quoting and publisher codes", () => {
+	withArtifact(
+		{
+			...artifact,
+			periods: [
+				{
+					period: "2024",
+					records: [
+						{
+							areaCode: "E05000001",
+							sourceAreaCode: "OLD",
+							category: 'Green, "Môn"\nParty',
+							status: "observed",
+						},
+					],
+				},
+			],
+		},
+		(directory) => {
+			const entry = compileExportManifest(directory, catalog).exports[0];
+			const csv = readFileSync(
+				join(directory, entry.formats![0].artifact),
+				"utf8",
+			);
+			assert.ok(csv.includes('"Green, ""Môn""\nParty"'));
+			const rows = readParquet(
+				readFileSync(join(directory, entry.formats![1].artifact)),
+			).rows;
+			assert.equal(rows[0].category, 'Green, "Môn"\nParty');
+			assert.equal(rows[0].value, null);
+			assert.equal(rows[0].sourceAreaCode, "OLD");
+		},
+	);
+});
+
+test("projects shared tables to the named measure without losing null or zero", () => {
+	withArtifact(
+		{
+			schemaVersion: 1,
+			kind: "measure-table",
+			id: "fixture-observations",
+			contentHash: "sha256:table",
+			datasetId: "fixture-dataset",
+			sourceGeography: { type: "ward", boundaryYear: 2024 },
+			period: "2024",
+			measures: ["other", "fixture"],
+			records: [
+				["A", 99, 0],
+				["B", 88, null],
+			],
+		},
+		(directory) => {
+			const entry = compileExportManifest(directory, catalog).exports[0];
+			const rows = readParquet(
+				readFileSync(join(directory, entry.formats![1].artifact)),
+			).rows;
+			assert.deepEqual(
+				rows.map((row) => [row.measureId, row.areaCode, row.value]),
+				[
+					["fixture", "A", 0],
+					["fixture", "B", null],
+				],
+			);
+		},
+	);
+});
+
+test("exports an empty partition with column headers and a readable Parquet schema", () => {
+	withArtifact(
+		{ ...artifact, periods: [{ period: "2024", records: [] }] },
+		(directory) => {
+			const entry = compileExportManifest(directory, catalog).exports[0];
+			const file = readParquet(
+				readFileSync(join(directory, entry.formats![1].artifact)),
+			);
+			assert.equal(file.rowCount, 0);
+			assert.equal(file.schema.children.length, 13);
+			assert.match(
+				readFileSync(
+					join(directory, entry.formats![0].artifact),
+					"utf8",
+				),
+				/^"measureId","unit"/,
+			);
+		},
+	);
 });

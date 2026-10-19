@@ -326,6 +326,12 @@ export const QUERY_RULES = {
 			default: 100,
 		},
 	},
+	"GET /exports/{export-id}": {
+		format: {
+			values: ["json", "csv", "parquet"],
+			default: "json",
+		},
+	},
 	"GET /lookups/{lookup-id}": {
 		format: {
 			values: ["csv", "ndjson"],

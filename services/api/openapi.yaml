@@ -6317,7 +6317,9 @@ paths:
         names the artifact, its content hash and byte size, and describes it as
         read from the artifact at build time: its record counts, layout, record
         fields and the datasets to attribute. Field meanings and dataset
-        attribution are listed once in `fields` and `datasets`.
+        attribution are listed once in `fields` and `datasets`. Optional `formats`
+        lists prebuilt CSV and Parquet files of the named measure, with the
+        byte size, content hash and download link for each format.
       responses:
         "200":
           description: The bulk-export manifest.
@@ -6435,18 +6437,29 @@ paths:
           source partition; `/v1/exports` lists them."
         x-example-request: "/v1/exports/population"
       description: >
-        Returns the exact JSON artifact listed by `/exports`, after checking its
-        content hash against the manifest. This response is intentionally not
-        wrapped in the usual API envelope.
+        Defaults to the source JSON artifact. Use `format=csv` or `format=parquet`
+        for a prebuilt flat file of the named measure across all periods. Shared
+        tables are projected to that measure, preserving null cells. Rows carry
+        measureId, unit, datasetId, geography, boundaryYear, period, areaCode,
+        sourceAreaCode, value, category, status, lowerBound and upperBound.
+        Missing fields are empty in CSV and null in Parquet. Sizes and hashes for
+        the flat files are listed in each export's `formats`. The response is
+        not wrapped in the usual API envelope.
       parameters:
         - $ref: "#/components/parameters/ExportId"
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, csv, parquet]
+            default: json
       responses:
         "200":
           description: The complete source observation artifact.
           headers:
             Content-Disposition:
               schema: { type: string }
-              description: Suggested immutable JSON filename.
+              description: Suggested filename for the selected format.
           content:
             application/json:
               schema: { type: object }
@@ -6454,6 +6467,12 @@ paths:
               example:
                 schemaVersion: 1
                 measureId: total-jobs
+            text/csv:
+              schema: { type: string }
+            application/vnd.apache.parquet:
+              schema: { type: string, format: binary }
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -11824,6 +11843,18 @@ components:
               type: integer
         format:
           const: json
+        formats:
+          type: array
+          description: Prebuilt flat files of the named measure, schema version 1. Sizes are file bytes before HTTP compression; hashes identify those bytes.
+          items:
+            type: object
+            required: [format, artifact, href, bytes, contentHash]
+            properties:
+              format: { enum: [csv, parquet] }
+              artifact: { type: string }
+              href: { type: string }
+              bytes: { type: integer }
+              contentHash: { type: string }
         artifact:
           type: string
         contentHash:
@@ -11855,7 +11886,8 @@ components:
                 `table` is an artifact several measures share, such as a census
                 table: one row per area, the area code and then a value for each
                 measure in `measures` order, null where none is published. Each
-                of its measures exports the whole table.
+                measure's JSON download contains the whole table. CSV and Parquet
+                contain only the named measure.
             measures:
               type: array
               items: { type: string }

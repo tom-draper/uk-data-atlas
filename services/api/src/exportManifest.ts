@@ -3,10 +3,15 @@ import { join } from "node:path";
 import {
 	type DataCatalog,
 	type MeasureSource,
+	type MeasureObservation,
 	observationArtifactName,
 } from "./dataCatalog";
 import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
 import { sha256 } from "./contentHash";
+import {
+	compileObservationDownloads,
+	type ObservationDownload,
+} from "./observationDownloads";
 
 export type ExportField = {
 	name: string;
@@ -31,6 +36,7 @@ export type BulkExport = {
 	periods: string[];
 	sourceGeography: { type: string; boundaryYear: number };
 	format: "json";
+	formats?: ObservationDownload[];
 	artifact: string;
 	contentHash: string;
 	bytes: number;
@@ -88,10 +94,10 @@ type ArtifactRecords = {
 	contentHash?: unknown;
 	periods?: Array<{
 		period: string;
-		records: Array<Record<string, unknown>>;
+		records: Array<MeasureObservation & Record<string, unknown>>;
 	}>;
 	period?: string;
-	records?: Array<Record<string, unknown>>;
+	records?: Array<MeasureObservation & Record<string, unknown>>;
 };
 
 /** The fields records carry, in first-seen order, refusing any undocumented one. */
@@ -192,13 +198,7 @@ const exportDataset = (dataCatalog: DataCatalog, id: string): ExportDataset => {
 	};
 };
 
-/**
- * Publish immutable, whole-artifact JSON downloads for every source partition.
- * The manifest does not manufacture a flattened export: consumers receive the
- * same publisher-observation artifact the API reads. Each entry describes
- * that artifact as read from it: its records, their fields and the datasets
- * that must be attributed.
- */
+/** Describe source JSON artifacts and prebuild flat CSV and Parquet downloads. */
 export const compileExportManifest = (
 	publicDirectory: string,
 	dataCatalog: DataCatalog,
@@ -217,13 +217,21 @@ export const compileExportManifest = (
 				const table = JSON.parse(content) as unknown;
 				// A table is several measures' artifact, so each of them
 				// exports the whole table under an id of its own.
-				if (isMeasureTable(table))
-					return tableExport(
+				if (isMeasureTable(table)) {
+					const entry = tableExport(
 						measure,
 						source,
 						table,
 						statSync(path).size,
 					);
+					entry.formats = compileObservationDownloads(
+						publicDirectory,
+						entry,
+						table,
+						measure.unit,
+					);
+					return entry;
+				}
 				const parsed = table as ArtifactRecords;
 				if (typeof parsed.contentHash !== "string") {
 					throw new Error(`${artifact}.json has no content hash.`);
@@ -240,7 +248,7 @@ export const compileExportManifest = (
 				}
 				const records = periods.flatMap((period) => period.records);
 				const fields = recordFields(`${artifact}.json`, records);
-				return {
+				const entry: BulkExport = {
 					id: artifact,
 					measureId: measure.id,
 					datasetId: source.datasetId,
@@ -270,6 +278,13 @@ export const compileExportManifest = (
 					},
 					provenance: provenanceOf(measure, source),
 				};
+				entry.formats = compileObservationDownloads(
+					publicDirectory,
+					entry,
+					{ periods },
+					measure.unit,
+				);
+				return entry;
 			}),
 		)
 		.sort((left, right) => left.id.localeCompare(right.id));

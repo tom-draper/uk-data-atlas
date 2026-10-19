@@ -61,6 +61,7 @@ export type RouteContext = {
 	/** Release-pinned evidence that every reviewed conversion conserves values. */
 	analysisGeographyValidationInventory?: AnalysisGeographyValidationInventory;
 	exportManifest?: ExportManifest;
+	exportFiles?: Map<string, StoredFile>;
 	/** The OpenAPI description the server serves at `/v1/openapi.yaml`. */
 	openapiDocument?: string;
 	/**

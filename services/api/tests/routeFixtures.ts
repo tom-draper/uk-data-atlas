@@ -794,6 +794,7 @@ const fixtureDataRoute =
 			| "measureCompatibilityInventory"
 			| "analysisGeographyInventory"
 			| "exportManifest"
+			| "exportFiles"
 			| "relationshipPathInventory"
 		> = {},
 	) =>
@@ -817,6 +818,7 @@ const fixtureDataRoute =
 					...(observations ?? []),
 				],
 				exportManifest: overrides.exportManifest,
+				exportFiles: overrides.exportFiles,
 				relationshipPathInventory: overrides.relationshipPathInventory,
 			}),
 		);
