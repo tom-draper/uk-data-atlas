@@ -215,7 +215,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	downloadBulkExport: {
 		title: "Download a dataset",
-		intro: "Download one complete set of observations as a single JSON file. Much easier than paging through thousands of requests when you want everything.",
+		intro: "Download complete observations as JSON, CSV or Parquet. CSV and Parquet contain the named measure across all periods; JSON retains the complete source artifact.",
 		tips: [
 			"This response isn't wrapped in the usual envelope: it's the file itself.",
 		],
