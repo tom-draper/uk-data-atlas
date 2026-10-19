@@ -52,7 +52,7 @@ test("clips a projected ring exactly as clipRing does, in every tile", () => {
 		const closed = wanderingRing(next, centre, 50 + sample * 90, step);
 		for (const ring of [closed, closed.slice(0, -1)]) {
 			const projected = toWorldRing(ring);
-			for (const z of [6, 9, 12]) {
+			for (let z = 0; z <= 12; z += 1) {
 				const [west, north] = [centre[0] - 1, centre[1] + 1];
 				const [east, south] = [centre[0] + 1, centre[1] - 1];
 				for (const address of tilesCovering(
