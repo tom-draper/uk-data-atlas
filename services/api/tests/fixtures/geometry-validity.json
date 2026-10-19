@@ -327,6 +327,18 @@
 					]
 				]
 			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "null-coordinate",
+				"status": "invalid",
+				"code": "invalid-coordinate"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [[[0, 50], [1, 50], null, [0, 50]]]
+			}
 		}
 	]
 }

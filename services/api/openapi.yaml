@@ -4721,6 +4721,8 @@ paths:
         build-time validity report for the full WGS84 geometry. Invalid geometry
         is not repaired; measurements from it may be unreliable. An unmeasurable
         geometry's `422` response also carries `geometrySource` and its report.
+        If measurement throws after geometry is loaded, the `503` problem
+        retains that provenance and report too.
       x-likely-refusal:
         status: 404
         code: area_not_in_release

@@ -244,7 +244,11 @@ test("compiles deterministic reports and serves them with metrics and provenance
 		].includes(properties.name);
 		assert.equal(
 			response.status,
-			unmeasurable ? 422 : 200,
+			properties.name === "null-coordinate"
+				? 503
+				: unmeasurable
+					? 422
+					: 200,
 			properties.name,
 		);
 		if (response.status === 200) {
