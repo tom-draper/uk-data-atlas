@@ -165,18 +165,21 @@ export class GeographyResolver {
 
 	/** Return the shared 503 response when a route's required geography input is absent. */
 	requires(requirement: GeographyRequirement): ApiResponse | undefined {
-		const available: Record<GeographyRequirement, boolean> = {
-			areas: this.areas.hasAreas(),
-			places: this.areas.hasPlaceIndex(),
-			"area-search": this.areas.hasAreaSearch(),
-			postcodes: this.inputs.postcodeIndex !== undefined,
-			geometry: this.spatial.hasAreaGeometryCache(),
-			relationships: this.lineage.hasAreaRelationships(),
-			"named-locations": this.locations.hasNamedLocationInventory(),
-			"location-projections": this.locations.hasLocationProjectionStore(),
-			crosswalks: this.translator.hasCrosswalks(),
+		// Only the requested check runs: some, such as the place index, load
+		// a large artifact the first time they are asked.
+		const available: Record<GeographyRequirement, () => boolean> = {
+			areas: () => this.areas.hasAreas(),
+			places: () => this.areas.hasPlaceIndex(),
+			"area-search": () => this.areas.hasAreaSearch(),
+			postcodes: () => this.inputs.postcodeIndex !== undefined,
+			geometry: () => this.spatial.hasAreaGeometryCache(),
+			relationships: () => this.lineage.hasAreaRelationships(),
+			"named-locations": () => this.locations.hasNamedLocationInventory(),
+			"location-projections": () =>
+				this.locations.hasLocationProjectionStore(),
+			crosswalks: () => this.translator.hasCrosswalks(),
 		};
-		if (available[requirement]) return undefined;
+		if (available[requirement]()) return undefined;
 		const descriptions: Record<GeographyRequirement, string> = {
 			areas: "Build the area inventory before serving geography data.",
 			places: "Build the place index before resolving place names.",
