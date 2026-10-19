@@ -1,6 +1,7 @@
 import { areaMetrics } from "./areaMetrics";
 import { sha256 } from "./contentHash";
 import type { AreaIdentity } from "./resolver/areas";
+import type { GeometryProvenance } from "./reprojection";
 import type { RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 
@@ -31,6 +32,7 @@ export const areaGeometryMetrics = (
 	const geographyResolver = context.geographyResolver;
 	const unavailable = geographyResolver.requires("geometry");
 	if (unavailable) return { response: unavailable };
+	let geometrySource: GeometryProvenance | undefined;
 	try {
 		const resolved = geographyResolver.areaGeometry(identity);
 		if (!resolved)
@@ -41,6 +43,7 @@ export const areaGeometryMetrics = (
 					"No raw geometry matches that area identity.",
 				),
 			};
+		geometrySource = resolved.geometrySource;
 		const metrics = areaMetrics(resolved.geometry);
 		if (!metrics)
 			return {
@@ -84,6 +87,7 @@ export const areaGeometryMetrics = (
 				error instanceof Error
 					? error.message
 					: "Geometry could not be loaded.",
+				geometrySource ? { geometrySource } : {},
 			),
 		};
 	}
