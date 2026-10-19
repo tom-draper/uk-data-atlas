@@ -40,6 +40,22 @@ the host port to localhost. Configure the proxy's request-body limit to 8 MB,
 matching the API. `/healthz` reports liveness and `/readyz` reports readiness.
 SIGTERM drains requests for ten seconds, and compose allows fifteen seconds.
 
+When one reverse proxy connects directly to the API, set the trusted hop count:
+
+```sh
+ATLAS_TRUSTED_PROXY_HOPS=1 docker compose -f services/api/compose.yaml up -d
+```
+
+Set `ATLAS_TRUSTED_PROXY_HOPS` to the actual number of trusted proxies between
+the client and the API. Keep the default `0` for direct connections without a
+proxy. With `0`, clients behind a proxy share that proxy's rate-limit bucket.
+
+Configure each trusted proxy to append its incoming connection's remote address
+to `X-Forwarded-For`, or configure the public-facing proxy to overwrite the
+header with the client's address. Only trusted proxies may connect to the API
+when the hop count is nonzero. An incorrect count or an untrusted path to the
+API can let clients spoof their rate-limit identity.
+
 ## Map files on object storage
 
 Upload the files named by `map-resources.json` to a release-specific object
