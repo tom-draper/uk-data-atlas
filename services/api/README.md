@@ -2187,6 +2187,36 @@ evictions. Handlers run synchronously, so event
 loop delay is the first sign of a slow request: typically a geometry release
 being read for the first time.
 
+With `ATLAS_WORKERS > 1`, every successful `/metrics` scrape collects all current
+workers over cluster IPC through the existing API port. Every sample has a
+`worker` label containing Node's cluster worker ID. A replacement gets a new ID,
+and an exited worker disappears from subsequent scrapes. Single-worker mode
+retains the original metrics without a `worker` label.
+
+Counters and histogram buckets, sums and counts remain separate per worker.
+Apply `rate` before summing counters, for example
+`sum(rate(atlas_api_requests_total[5m]))`. For a deployment-wide duration
+percentile, use
+`histogram_quantile(0.99, sum by (le) (rate(atlas_api_request_duration_seconds_bucket[5m])))`.
+Memory, cache sizes, uptime, release information and event loop quantiles also
+remain per worker. Sum memory for the deployment's total. Inspect uptime and
+event loop quantiles per worker. Summing or averaging quantiles does not produce
+a deployment-wide percentile.
+
+The primary allows one second to collect snapshots. The requesting worker has
+a separate 1.5-second deadline if the primary cannot respond. A missing reply,
+IPC failure or worker membership change during collection returns `503` with
+`{"status":"metrics-unavailable"}`. Partial snapshots are never returned as
+successful scrapes. Concurrent scrapes share an in-flight collection. Workers
+starting or restarting can temporarily make collection unavailable, and each
+new scrape discovers the current workers. Keep the scraper's timeout above
+1.5 seconds. Authentication is checked before collection, and all scrape
+responses use `Cache-Control: no-store`.
+
+These deadlines apply once a responsive worker accepts the scrape. A worker
+blocked in a synchronous handler cannot serve HTTP until its event loop resumes.
+The scraper's own timeout bounds that request.
+
 ### Logs and errors
 
 `pnpm start` writes one JSON object per line to standard output. Each request

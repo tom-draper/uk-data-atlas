@@ -253,10 +253,10 @@ export const createApiServer = (
 	const started = Date.now();
 	let draining = false;
 
-	const operations = (
+	const operations = async (
 		request: IncomingMessage,
 		pathname: string,
-	): HttpResponse | undefined => {
+	): Promise<HttpResponse | undefined> => {
 		if (!(OPERATIONS_PATHS as readonly string[]).includes(pathname))
 			return undefined;
 		if (request.method !== "GET" && request.method !== "HEAD")
@@ -280,7 +280,10 @@ export const createApiServer = (
 			refused.headers["www-authenticate"] = 'Bearer realm="metrics"';
 			return refused;
 		}
-		const text = metrics.render();
+		const text = options.collectMetrics
+			? await options.collectMetrics()
+			: metrics.render();
+		if (text === null) return json(503, { status: "metrics-unavailable" });
 		return {
 			status: 200,
 			headers: {
@@ -313,7 +316,7 @@ export const createApiServer = (
 		// Set when this request's answer should be kept once it is finished.
 		let storeAs: string | undefined;
 
-		let result = operations(request, pathname);
+		let result = await operations(request, pathname);
 		if (!result && overloaded) {
 			matched = matchOperation(pathname);
 			result = httpResponse(request, () =>

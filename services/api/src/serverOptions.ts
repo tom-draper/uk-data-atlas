@@ -52,6 +52,7 @@ export type ServerOptions = {
 	 * traffic by default.
 	 */
 	metrics?: { token: string } | "open";
+	collectMetrics?: () => Promise<string | null>;
 	/** Longest request target served; a longer one is refused with 414. */
 	maxUrlLength?: number;
 	/**
