@@ -151,7 +151,8 @@ export const validateBatch = (
 	boundaryRelease: string,
 	values: string[],
 ): ValidatedValue[] => {
-	const areas = areaLookup.get(releaseKey(geography, boundaryRelease));
+	const requested = releaseKey(geography, boundaryRelease);
+	const areas = areaLookup.get(requested);
 	if (!areas)
 		throw new Error(`${geography}/${boundaryRelease} is not compiled.`);
 	const ref = (area: AreaRecord): AreaRef => ({
@@ -262,14 +263,15 @@ export const validateBatch = (
 			...base,
 			kind: "name",
 			status: "unmatched",
-			matchesIn: [...areaLookup]
-				.filter(
-					([key, other]) =>
-						key.startsWith(prefix) &&
-						other !== areas &&
-						nameIndexFor(other).has(name),
-				)
-				.map(([key]) => key.slice(prefix.length))
+			// Keys first, so only this geography's releases are parsed.
+			matchesIn: [...areaLookup.keys()]
+				.filter((key) => {
+					if (!key.startsWith(prefix) || key === requested)
+						return false;
+					const other = areaLookup.get(key);
+					return other !== undefined && nameIndexFor(other).has(name);
+				})
+				.map((key) => key.slice(prefix.length))
 				.sort(),
 		};
 	});
