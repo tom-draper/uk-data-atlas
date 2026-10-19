@@ -67,6 +67,7 @@ export interface CatalogueExport {
 	periods: string[];
 	sourceGeography: { type: string; boundaryYear: number };
 	bytes: number;
+	formats?: Array<{ format: "csv" | "parquet"; href: string; bytes: number }>;
 	recordCount: number;
 	href: string;
 }
@@ -197,7 +198,18 @@ function isCatalogueExport(value: unknown): value is CatalogueExport {
 		typeof value.sourceGeography.boundaryYear === "number" &&
 		typeof value.bytes === "number" &&
 		typeof value.recordCount === "number" &&
-		typeof value.href === "string"
+		typeof value.href === "string" &&
+		(!("formats" in value) ||
+			isArrayOf(
+				value.formats,
+				(
+					item,
+				): item is NonNullable<CatalogueExport["formats"]>[number] =>
+					isRecord(item) &&
+					(item.format === "csv" || item.format === "parquet") &&
+					typeof item.href === "string" &&
+					typeof item.bytes === "number",
+			))
 	);
 }
 

@@ -70,6 +70,16 @@ export default function FormatsPage() {
 				file:
 			</P>
 			<SpecExample id="listBulkExports" showResponse={false} />
+			<P>
+				Whole datasets default to JSON. Add `format=csv` for a
+				spreadsheet or `format=parquet` for a compressed file with typed
+				columns. Both flat formats contain the named measure across all
+				its periods; JSON retains the complete source artifact,
+				including other measures when they share a table. Missing values
+				stay empty in CSV and null in Parquet. Each export's `formats`
+				lists the flat files with their byte sizes, hashes and download
+				links. Sizes describe the files before any HTTP compression.
+			</P>
 			<Callout tone="tip">
 				Each download has a `contentHash`. Check it after downloading to
 				be sure you got exactly the file that was published. [Keep a

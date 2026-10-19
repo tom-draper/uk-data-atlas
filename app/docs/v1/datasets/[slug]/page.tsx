@@ -310,7 +310,11 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 				code correction is documented and retains its publisher code on
 				the affected record. The source and licence information above
 				applies to these files too; preserve the attribution and note
-				any cleaning or reformatting when you redistribute one.
+				any cleaning or reformatting when you redistribute one. CSV and
+				Parquet contain the named measure across all periods. JSON
+				retains the complete source artifact, which may include other
+				measures in a shared table. Sizes are rounded up to the nearest
+				KB before HTTP compression.
 			</P>
 			<Table
 				head={["Measure", "Coverage", "Records", "Download"]}
@@ -329,14 +333,35 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 						</span>,
 						`${geographyName(download.sourceGeography.type)} · ${periodRange(download.periods)} · code year ${download.sourceGeography.boundaryYear}`,
 						download.recordCount.toLocaleString("en-GB"),
-						<a
-							// The catalogue's href is already a full API path, `/v1/exports/...`.
-							href={`${API_ORIGIN}${download.href}`}
-							rel="noopener"
-							className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+						<span
+							key="downloads"
+							className="flex flex-wrap gap-x-3 gap-y-1"
 						>
-							JSON
-						</a>,
+							{[
+								{
+									format: "json",
+									href: download.href,
+									bytes: download.bytes,
+								},
+								...(download.formats ?? []),
+							].map((file) => (
+								<a
+									key={file.format}
+									href={`${API_ORIGIN}${file.href}`}
+									rel="noopener"
+									className="whitespace-nowrap font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+								>
+									{file.format === "parquet"
+										? "Parquet"
+										: file.format.toUpperCase()}{" "}
+									(
+									{Math.ceil(
+										file.bytes / 1_000,
+									).toLocaleString("en-GB")}{" "}
+									KB)
+								</a>
+							))}
+						</span>,
 					];
 				})}
 			/>
