@@ -25,16 +25,32 @@ const stem = (word: string) =>
 const words = (term: string) =>
 	measureSlug(term).split("-").filter(Boolean).map(stem);
 
+const identitiesByCatalog = new WeakMap<
+	DataCatalog,
+	{ ids: Set<string>; terms: Map<string, string> }
+>();
+
 /** The measure an id or alias names, or undefined when it names none. */
 export const canonicalMeasureId = (
 	catalog: DataCatalog,
 	term: string,
 ): string | undefined => {
-	if (catalog.measures.some((measure) => measure.id === term)) return term;
-	const slug = measureSlug(term);
-	return catalog.measures.find(
-		(measure) => measure.id === slug || measure.aliases?.includes(slug),
-	)?.id;
+	let identities = identitiesByCatalog.get(catalog);
+	if (!identities) {
+		const ids = new Set<string>();
+		const terms = new Map<string, string>();
+		for (const measure of catalog.measures) {
+			ids.add(measure.id);
+			for (const name of [measure.id, ...(measure.aliases ?? [])]) {
+				if (!terms.has(name)) terms.set(name, measure.id);
+			}
+		}
+		identities = { ids, terms };
+		identitiesByCatalog.set(catalog, identities);
+	}
+	return identities.ids.has(term)
+		? term
+		: identities.terms.get(measureSlug(term));
 };
 
 const containsAll = (haystack: Set<string>, needles: string[]) =>
