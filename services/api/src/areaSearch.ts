@@ -257,6 +257,49 @@ export class AreaSearch {
 		};
 	}
 
+	/**
+	 * Every identity in the given releases, without listing them: a listing
+	 * can span every compiled area, and a page needs only a few.
+	 */
+	private releaseMatches(releases: number[]): AreaMatches {
+		// Where each release's identities begin among the matches.
+		const starts = [0];
+		for (const at of releases)
+			starts.push(
+				starts.at(-1)! + this.offsets[at + 1]! - this.offsets[at]!,
+			);
+		const length = starts.at(-1)!;
+		return {
+			length,
+			positionOf: (id) => {
+				const position = this.positionOfId(id);
+				if (position === -1) return -1;
+				const index = releases.indexOf(this.releaseAt(position));
+				return index === -1
+					? -1
+					: starts[index]! +
+							position -
+							this.offsets[releases[index]!]!;
+			},
+			slice: (start, end) => {
+				const results: AreaSearchResult[] = [];
+				const last = Math.min(end, length);
+				let index = 0;
+				for (let match = Math.max(start, 0); match < last; match += 1) {
+					while (starts[index + 1]! <= match) index += 1;
+					results.push(
+						this.result(
+							this.offsets[releases[index]!]! +
+								match -
+								starts[index]!,
+						),
+					);
+				}
+				return results;
+			},
+		};
+	}
+
 	private filtered(positions: Iterable<number>, filters: AreaSearchFilters) {
 		const releases = new Set(this.admitted(filters));
 		const kept: number[] = [];
@@ -271,18 +314,7 @@ export class AreaSearch {
 	 * or else every identity with a code, name or alias beginning with it.
 	 */
 	search(filters: AreaSearchFilters & { query?: string }): AreaMatches {
-		if (!filters.query) {
-			const positions: number[] = [];
-			for (const at of this.admitted(filters)) {
-				for (
-					let p = this.offsets[at]!;
-					p < this.offsets[at + 1]!;
-					p += 1
-				)
-					positions.push(p);
-			}
-			return this.matches(positions);
-		}
+		if (!filters.query) return this.releaseMatches(this.admitted(filters));
 		const codeQuery = filters.query.toLocaleLowerCase();
 		const nameQuery = normalisePlaceName(filters.query);
 		if (!nameQuery) return this.matches([]);
