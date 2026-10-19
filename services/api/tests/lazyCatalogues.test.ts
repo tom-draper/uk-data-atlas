@@ -3,6 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { validateBatch } from "../src/batchValidation";
 import { readAreaLookup } from "../src/boundaryLoader";
 import { readNamedLocationInventory } from "../src/locationLoader";
 import { packNamedLocations } from "../src/namedLocationStorage";
@@ -97,6 +98,52 @@ test("area releases stay parsed until their records exceed the budget", () =>
 		assert.equal(lookup.get("ward/2022")?.size, 2);
 		assert.equal(lookup.get("ward/2024")?.size, 2);
 		assert.throws(() => lookup.get("ward/2023"), /ENOENT/);
+	}));
+
+test("matching names in one geography never parses another's releases", () =>
+	fixture((root, directory) => {
+		const releases = [
+			["ward", "2023"],
+			["ward", "2024"],
+			["parish", "2024"],
+		] as const;
+		const inventory: AreaInventory = {
+			schemaVersion: 1,
+			contentHash: "inventory",
+			boundaryRegistryHash: "registry",
+			releases: releases.map(([geography, id]) => ({
+				id,
+				geography,
+				status: "available",
+				recordCount: 1,
+				artifact: `${geography}-${id}.json`,
+				contentHash: `${geography}-${id}`,
+				codeProperty: "code",
+				nameProperty: "name",
+			})),
+		};
+		for (const [geography, id] of releases)
+			writeFileSync(
+				join(directory, `${geography}-${id}.json`),
+				JSON.stringify({
+					schemaVersion: 1,
+					contentHash: `${geography}-${id}`,
+					areas: [
+						{
+							code: id === "2023" ? "E05000001" : "E05000002",
+							name: id === "2023" ? "Old Ward" : "New Ward",
+						},
+					],
+				}),
+			);
+		const lookup = readAreaLookup(root, inventory);
+		rmSync(join(directory, "parish-2024.json"));
+		const [result] = validateBatch(lookup, "ward", "2024", ["Old Ward"]);
+		assert.equal(result?.status, "unmatched");
+		assert.deepEqual(
+			result && "matchesIn" in result ? result.matchesIn : undefined,
+			["2023"],
+		);
 	}));
 
 test("packed named locations read geometry only when requested", () =>

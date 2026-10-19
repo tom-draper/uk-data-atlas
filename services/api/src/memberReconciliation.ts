@@ -86,9 +86,11 @@ const appearances = (
 ): Appearance[] => {
 	const prefix = `${geography}/`;
 	const found: Appearance[] = [];
-	for (const [key, areas] of areaLookup) {
+	// Iterate keys, not entries: reading an entry parses its release, and
+	// only this geography's releases are wanted.
+	for (const key of areaLookup.keys()) {
 		if (!key.startsWith(prefix)) continue;
-		const area = areas.get(code);
+		const area = areaLookup.get(key)?.get(code);
 		if (area) {
 			found.push({
 				boundaryRelease: key.slice(prefix.length),
