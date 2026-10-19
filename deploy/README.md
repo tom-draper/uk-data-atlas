@@ -31,6 +31,35 @@ Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.
 
+To inspect the complete local data build without executing commands, run:
+
+```sh
+pnpm --dir services/api build:data --plan
+```
+
+After a complete build, rebuild a named stage and every affected downstream
+stage with `--from`. Preview the selection before running it:
+
+```sh
+pnpm --dir services/api build:data --from crosswalk-inventory --plan
+pnpm --dir services/api build:data --from crosswalk-inventory
+```
+
+Stage names appear in the plan alongside their commands and dependencies.
+`--from` reuses existing upstream artifacts and leaves unrelated stages out.
+Downloads run only when you select `download` or run the complete build.
+If upstream inputs changed, select their stage instead, or run
+`pnpm --dir services/api build:data` for the complete build.
+The runner executes serially and stops at the first failure. Compilers retain
+their existing artifact reuse checks. Existing per-stage scripts still work,
+but only `build:data --from` also regenerates affected downstream artifacts.
+
+`atlas-release-initial` writes the manifest consumed by evidence documents.
+`documents` rebuilds those documents and then the downstream `atlas-release`
+stage pins them in the final manifest. Both manifest stages use the existing
+`build:atlas-release` script. `docs-catalogue` refreshes the website's catalogue
+when its API inputs change.
+
 ## systemd
 
 The checked-in units mirror the host. Adjust paths if Node or the repository
