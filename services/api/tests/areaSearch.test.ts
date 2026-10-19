@@ -127,3 +127,33 @@ test("serves a compiled index only against the inventory it was built from", () 
 		/malformed/,
 	);
 });
+
+test("pages a listing the same however it is sliced", () => {
+	for (const filters of [
+		{},
+		{ geography: "localAuthority" },
+		{ geography: "ward" },
+		{ geography: "localAuthority", boundaryRelease: "2023-05-uk-bgc" },
+		{ geography: "region" },
+	]) {
+		const matches = search.search(filters);
+		const all = ids(filters);
+		assert.equal(matches.length, all.length);
+		for (let start = 0; start <= all.length; start += 1)
+			for (let end = start; end <= all.length + 1; end += 1)
+				assert.deepEqual(
+					matches.slice(start, end).map((area) => area.id),
+					all.slice(start, end),
+				);
+		all.forEach((id, position) =>
+			assert.equal(matches.positionOf(id), position),
+		);
+		assert.equal(matches.positionOf("ward/2023-05-uk-bgc/E05999999"), -1);
+	}
+	assert.equal(
+		search
+			.search({ geography: "ward" })
+			.positionOf("localAuthority/2023-05-uk-bgc-v2/E08000003"),
+		-1,
+	);
+});
