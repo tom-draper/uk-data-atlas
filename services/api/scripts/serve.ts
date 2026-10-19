@@ -1,6 +1,10 @@
 import cluster from "node:cluster";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+	createWorkerMetrics,
+	installPrimaryMetrics,
+} from "../src/clusterMetrics";
 import { createApiServer, readApiCatalogues } from "../src/server";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../src/postcodeRoutes";
 import {
@@ -17,6 +21,7 @@ const log = jsonLog();
 const configuration = readServeConfiguration(process.env, log);
 
 if (cluster.isPrimary && configuration.workers > 1) {
+	installPrimaryMetrics();
 	let stopping = false;
 	for (let index = 0; index < configuration.workers; index++) cluster.fork();
 	cluster.on("exit", (worker, code, signal) => {
@@ -111,7 +116,14 @@ function startWorker() {
 				: [];
 		}),
 	);
-	const server = createApiServer(catalogues, configuration.server);
+	const collector = cluster.isWorker
+		? createWorkerMetrics(() => server.metrics.render())
+		: undefined;
+	const server = createApiServer(catalogues, {
+		...configuration.server,
+		collectMetrics: collector?.collect,
+	});
+	server.once("close", () => collector?.close());
 
 	server.listen(configuration.port, configuration.host, () => {
 		log({

@@ -74,7 +74,13 @@ port through Node's cluster scheduler. A synchronous request blocks its worker;
 the other can continue. The primary restarts failed workers after one second.
 Use the deployment supervisor to restart the primary process. Rate limits,
 response caches and metrics are per worker. Multiply rate-limit capacity by the
-worker count when choosing a public quota. Metrics scrapes sample one worker.
+worker count when choosing a public quota. Each successful metrics scrape
+collects all current workers over cluster IPC on the shared API port. Samples
+carry a `worker` label, so process gauges and counter resets stay distinct.
+Worker loss or an incomplete collection returns `503` instead of partial
+metrics. Allow more than 1.5 seconds for scraping. See the
+[metrics reference](README.md#endpoints) for collection deadlines and PromQL
+aggregation examples.
 
 A startup-only run on 2026-10-12 used about 266 MB RSS per process before requests,
 down from about 789 MB in the same checkout before lazy loading. These are single
