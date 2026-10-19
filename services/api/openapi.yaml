@@ -73,12 +73,17 @@ info:
 
     Any operation may also answer with a problem that is not in its own list,
     because it comes from the server rather than the route. `429` means the
-    client has spent its requests: each client has a bucket, described by
+    client has spent its allowance on the responding worker: each client has
+    an independent bucket per worker, described by
     the IETF draft `RateLimit-Policy` and `RateLimit` headers on every
     response, and a refusal carries `Retry-After` in seconds. A request
     costs one from the bucket, except where an operation declares
     `x-rate-limit-cost`: those that read many areas' shapes, or take a
-    batch, cost that many. `414` means the
+    batch, cost that many. These headers describe only the responding worker,
+    not a deployment-wide quota. Worker and instance counts multiply the
+    possible total allowance, and restarting a worker resets its buckets.
+    Use a shared reverse-proxy or API-gateway limit when a deployment-wide
+    quota is required. `414` means the
     request target is longer than the server accepts. `503 Server Busy` means
     the worker has reached its concurrent request limit. It carries
     `Retry-After: 1`; retry with backoff. The server does not queue excess

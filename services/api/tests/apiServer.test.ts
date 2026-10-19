@@ -190,6 +190,25 @@ test("contains a failure while finalising an otherwise successful response", asy
 	assert.equal((await get("/v1/geographies")).status, 200);
 });
 
+test("keeps client allowances and response headers local to each server", async (t) => {
+	const options = { rateLimit: { capacity: 1, refillPerSecond: 0.001 } };
+	const first = await serve(t, options);
+	const second = await serve(t, options);
+	const accepted = await first.get("/v1/geographies");
+	assert.equal(accepted.status, 200);
+	assert.equal(accepted.headers.get("ratelimit"), '"default";r=0;t=1000');
+	const refused = await first.get("/v1/geographies");
+	assert.equal(refused.status, 429);
+	assert.equal(refused.headers.get("retry-after"), "1000");
+	assert.match((await refused.json()).detail, /this worker/);
+	const independent = await second.get("/v1/geographies");
+	assert.equal(independent.status, 200);
+	assert.equal(independent.headers.get("ratelimit"), '"default";r=0;t=1000');
+	assert.equal((await second.get("/v1/geographies")).status, 429);
+	assert.equal(first.server.metrics.rateLimited.value(), 1);
+	assert.equal(second.server.metrics.rateLimited.value(), 1);
+});
+
 test("limits each client and tells it when to come back", async (t) => {
 	const { get, server } = await serve(t, {
 		rateLimit: { capacity: 2, refillPerSecond: 0.01 },
