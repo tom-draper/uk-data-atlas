@@ -24,9 +24,12 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # The raw source data is a 1.3 GB release, so the build-dependent API
-      # suite runs weekly in api-built.yml; keep pull-request feedback quick.
+      # The build-dependent API suite downloads the pinned raw-data release
+      # weekly in api-built.yml; keep pull-request feedback quick.
       - run: pnpm check
+      - name: Test API release compilation with fixture artifacts
+        if: github.event_name == 'pull_request'
+        run: pnpm --dir services/api exec tsx --test tests/built/atlasRelease.test.ts
 
   website-build:
     name: Website build
