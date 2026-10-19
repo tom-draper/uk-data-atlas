@@ -74,13 +74,18 @@ test("answers one area from the table's rows without building the records", () =
 		...table.records,
 		["E01000001", 99, 99],
 	] as MeasureTableArtifact["records"];
-	// A view builds its records with flatMap, so counting it counts the builds.
-	records.flatMap = ((...args: Parameters<typeof records.flatMap>) => {
-		builds += 1;
-		return Array.prototype.flatMap.apply(records, args);
-	}) as typeof records.flatMap;
 	const rented = tableMeasureObservations({ ...table, records }, "rented");
-	const lookup = periodRecordLookup(rented.periods[0]!)!;
+	const period = rented.periods[0];
+	assert.ok(period);
+	const readRecords = Object.getOwnPropertyDescriptor(period, "records")?.get;
+	assert.ok(readRecords);
+	Object.defineProperty(period, "records", {
+		get() {
+			builds++;
+			return readRecords.call(period);
+		},
+	});
+	const lookup = periodRecordLookup(period)!;
 
 	assert.deepEqual(lookup("E01000001"), {
 		areaCode: "E01000001",
@@ -98,6 +103,26 @@ test("answers one area from the table's rows without building the records", () =
 		periodRecordLookup({ period: "2021", records: [] }),
 		undefined,
 	);
+});
+
+test("retains zeros and row order while omitting unpublished column values", () => {
+	const view = tableMeasureObservations(
+		{
+			...table,
+			records: [
+				["E01000004", 99, 0],
+				["E01000002", 99, null],
+				["E01000003", 99],
+				["E01000001", 99, -2],
+			],
+		},
+		"rented",
+	);
+	assert.deepEqual(view.periods[0]?.records, [
+		{ areaCode: "E01000004", value: 0, status: "observed" },
+		{ areaCode: "E01000001", value: -2, status: "observed" },
+	]);
+	assert.equal(view.periods[0]?.records, view.periods[0]?.records);
 });
 
 test("reads a shared table once and a measure's own artifact as it is", () => {
