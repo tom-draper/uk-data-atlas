@@ -371,6 +371,25 @@ export const readApiCatalogues = (
 		terrainProvider: undefined,
 		terrainAsyncProvider,
 		exportManifest,
+		exportFiles: new Map(
+			exportManifest.exports.flatMap((entry) =>
+				(entry.formats ?? []).map(
+					(format) =>
+						[
+							format.artifact,
+							{
+								path: resolve(
+									apiRoot,
+									"public",
+									format.artifact,
+								),
+								bytes: format.bytes,
+								contentHash: format.contentHash,
+							},
+						] as const,
+				),
+			),
+		),
 		lookupManifest,
 		mapResources,
 		...mapAssets,

@@ -748,8 +748,16 @@ only **available** when its endpoint, contract and provenance are published.
       outside the API. A
       tabular page that is not the last carries its successor in a `Link`
       header with `rel="next"`.
-- [ ] Export large datasets as Parquet, with an immutable export manifest and
-      documented schema/versioning policy.
+- [x] Export complete source partitions as CSV and Parquet alongside JSON.
+      `GET /v1/exports/{export-id}?format=csv` or `format=parquet` serves a
+      prebuilt file, with its byte size and SHA-256 hash listed in `formats`.
+      Flat schema version 1 has `measureId`, `unit`, `datasetId`, `geography`,
+      `boundaryYear`, `period`, `areaCode`, `sourceAreaCode`, `value`, `category`,
+      `status`, `lowerBound` and `upperBound`. Rows cover the named measure in
+      every period, including null cells in shared source tables. Missing cells
+      are empty in CSV and null in Parquet. JSON preserves the whole source
+      artifact. Sizes and hashes refer to file bytes before HTTP compression.
+      Changing column types, names or meanings requires a new flat schema version.
 - [x] Return source-exact mobile coverage through
       `GET /v1/data/mobile-4g-coverage` and `GET /v1/data/mobile-5g-coverage`:
       2025 Local Authority 2024 codes across all four UK nations, as the share
@@ -789,7 +797,8 @@ only **available** when its endpoint, contract and provenance are published.
       table is stored once per geography as a shared table artifact (15 MB for
       all fourteen, against about 190 MB as one artifact per measure), cached
       within the observation budget and expanded per measure only when asked for.
-      Each measure still exports the whole table it lives in. LSOAs nest in MSOAs through the
+      Each measure's JSON download still exports the whole table it lives in.
+      CSV and Parquet contain the named measure. LSOAs nest in MSOAs through the
       official exact-fit lookup
       `lsoa-2021-12-ew-bgc-v5-to-msoa-2021-12-ew-bgc-v3-official-lookup`, so a
       small-area count converts or aggregates up exactly. The 2011 to 2021
@@ -3580,7 +3589,7 @@ build time rather than restating the catalogue: the number of records in all
 and in each period, the layout, whether records are numeric or categorical,
 and each record field with its type and whether every record carries it. The
 build fails on a record field the manifest has no description for, so every
-field a download can contain is documented in the manifest's `fields`.
+record field in the JSON download is documented in the manifest's `fields`.
 Provenance names the measure and each dataset to attribute, the source
 dataset and any a derived measure was computed from, described once in the
 manifest's `datasets` with publisher, licence and the hash of every input
@@ -3590,8 +3599,12 @@ An export's `schema.version` is the artifact's own `schemaVersion`. Adding an
 optional field to records, or a new field to a manifest entry, does not change
 it; removing or renaming a field, changing its type or meaning, or changing
 the layout increments it, and the old version stays readable from the Atlas
-release that published it. CSV, NDJSON and Parquet downloads of observations
-are still future work.
+release that published it. CSV and Parquet are prebuilt alongside the JSON
+artifact, selected with `?format=csv` or `?format=parquet`. The entry's `formats`
+list their byte sizes, hashes and links. These flat files use the version 1
+columns documented above and contain the named measure across all periods,
+including null cells in shared source tables. Whole-partition NDJSON downloads
+are not currently offered.
 
 `GET /v1/lookups` lists the whole reference tables a user would otherwise
 rebuild call by call: every boundary release's area identities with their

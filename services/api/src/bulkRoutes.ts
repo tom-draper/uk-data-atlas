@@ -18,6 +18,8 @@ import { observationTableOf } from "./observationTables";
 import { choices, readChoice } from "./queryParameters";
 import { QUERY_RULES } from "./queryRules";
 
+const EXPORT = QUERY_RULES["GET /exports/{export-id}"];
+
 const LOOKUP = QUERY_RULES["GET /lookups/{lookup-id}"];
 
 /** Immutable observation exports and rendered lookup artifacts. */
@@ -68,6 +70,44 @@ export const handleBulkRoutes = ({
 				"Not Found",
 				"No bulk export matches that identity.",
 			);
+		const format = readChoice(
+			parsedUrl.searchParams.get("format"),
+			EXPORT.format,
+		);
+		if (!format)
+			return invalidQuery(`format must be ${choices(EXPORT.format)}.`);
+		if (format !== "json") {
+			const download = listedExport.formats?.find(
+				(item) => item.format === format,
+			);
+			const file =
+				download && context.exportFiles?.get(download.artifact);
+			if (
+				!file ||
+				!download ||
+				file.contentHash !== download.contentHash ||
+				file.bytes !== download.bytes
+			)
+				return problem(
+					503,
+					"Export Unavailable",
+					"Build the requested bulk export before downloading it.",
+				);
+			return {
+				status: 200,
+				body: envelope(releaseId, listedExport),
+				representation: {
+					contentType:
+						format === "csv"
+							? "text/csv; charset=utf-8"
+							: "application/vnd.apache.parquet",
+					body: file,
+					headers: {
+						"content-disposition": `attachment; filename="${listedExport.id}.${format}"`,
+					},
+				},
+			};
+		}
 		const measure = dataCatalog.measures.find(
 			(candidate) => candidate.id === listedExport.measureId,
 		);

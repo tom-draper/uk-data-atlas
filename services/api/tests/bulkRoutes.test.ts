@@ -78,4 +78,55 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 		JSON.parse(String(downloaded.representation?.body ?? "{}")),
 		measureObservations[0],
 	);
+	for (const format of ["csv", "parquet"] as const) {
+		const file = {
+			format,
+			artifact: `exports/fixture.${format}`,
+			bytes: 42,
+			contentHash: "sha256:download",
+			href: `/v1/exports/small-area-fixture?format=${format}`,
+		};
+		const entry = { ...manifest.exports[0], formats: [file] };
+		const stored = {
+			path: `/tmp/fixture.${format}`,
+			bytes: file.bytes,
+			contentHash: file.contentHash,
+		};
+		const response = routeWithCatalog(
+			file.href,
+			dataCatalog,
+			measureObservations,
+			{
+				exportManifest: { ...manifest, exports: [entry] },
+				exportFiles: new Map([[file.artifact, stored]]),
+			},
+		);
+		assert.equal(response.status, 200);
+		assert.equal(response.representation?.body, stored);
+		assert.equal(
+			response.representation?.contentType,
+			format === "csv"
+				? "text/csv; charset=utf-8"
+				: "application/vnd.apache.parquet",
+		);
+		assert.equal(
+			response.representation?.headers?.["content-disposition"],
+			`attachment; filename="small-area-fixture.${format}"`,
+		);
+		assert.equal(
+			routeWithCatalog(file.href, dataCatalog, measureObservations, {
+				exportManifest: manifest,
+			}).status,
+			503,
+		);
+	}
+	assert.equal(
+		routeWithCatalog(
+			"/v1/exports/small-area-fixture?format=xlsx",
+			dataCatalog,
+			measureObservations,
+			{ exportManifest: manifest },
+		).status,
+		400,
+	);
 });

@@ -5,6 +5,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { connect, type AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
+import { compileExportManifest } from "../src/exportManifest";
+import { observationArtifactName } from "../src/dataCatalog";
+import { readParquet } from "./parquetFixtures";
+import { sha256 } from "../src/contentHash";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
 import { createOperationMatcher } from "../src/operationTemplates";
 import type { RouteContext } from "../src/routing";
@@ -12,6 +16,8 @@ import { compileOperations } from "../scripts/build-operations";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import {
 	atlasRelease,
+	dataCatalog,
+	measureObservations,
 	compatibleWardAreaLookup,
 	testContext,
 } from "./routeFixtures";
@@ -821,4 +827,77 @@ test("gives up a queue place when its client disconnects", async (t) => {
 	await new Promise((resolve) => setTimeout(resolve, 20));
 	await release();
 	assert.equal((await queued).status, 200);
+});
+
+test("streams complete CSV and Parquet exports with their published hashes and validators", async (t) => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "atlas-observation-downloads-"),
+	);
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	const measure = dataCatalog.measures.find(
+		(item) => item.id === "small-area-fixture",
+	)!;
+	const source = measure.sources[0];
+	const observations = measureObservations.find(
+		(item) => item.measureId === measure.id,
+	)!;
+	writeFileSync(
+		join(directory, `${observationArtifactName(measure.id, source)}.json`),
+		JSON.stringify(observations),
+	);
+	const catalog = {
+		...dataCatalog,
+		measures: [measure],
+		datasets: [{ ...dataCatalog.datasets[0], id: source.datasetId }],
+	};
+	const manifest = compileExportManifest(directory, catalog);
+	const files = manifest.exports[0].formats!;
+	const exportFiles = new Map(
+		files.map((file) => [
+			file.artifact,
+			{
+				path: join(directory, file.artifact),
+				bytes: file.bytes,
+				contentHash: file.contentHash,
+			},
+		]),
+	);
+	const { get } = await serve(
+		t,
+		{},
+		testContext({
+			atlasRelease,
+			openapiDocument,
+			operationMatcher,
+			dataCatalog: catalog,
+			exportManifest: manifest,
+			exportFiles,
+		}),
+	);
+	for (const file of files) {
+		const response = await get(file.href, {
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(response.status, 200);
+		const body = Buffer.from(await response.arrayBuffer());
+		assert.equal(body.length, file.bytes);
+		assert.equal(sha256(body), file.contentHash);
+		assert.match(
+			response.headers.get("content-disposition")!,
+			new RegExp(`\\.${file.format}"$`),
+		);
+		const etag = response.headers.get("etag");
+		assert.ok(etag);
+		const cached = await get(file.href, {
+			headers: { "accept-encoding": "identity", "if-none-match": etag },
+		});
+		assert.equal(cached.status, 304);
+		if (file.format === "parquet")
+			assert.equal(readParquet(body).rowCount, 2);
+		else
+			assert.match(
+				body.toString("utf8"),
+				/"measureId","unit","datasetId"/,
+			);
+	}
 });
