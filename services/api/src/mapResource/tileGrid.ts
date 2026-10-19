@@ -309,13 +309,16 @@ export const clipWorldRing = (
 	{ z, x, y }: TileAddress,
 	buffer = TILE_BUFFER,
 ): Point[] => {
+	const scale = 2 ** z;
+	const units = (value: number, tile: number) =>
+		Math.round((value * scale - tile) * TILE_EXTENT);
 	const low = -buffer;
 	const high = TILE_EXTENT + buffer;
 	if (
-		toTileUnits(maxX, z, x) < low ||
-		toTileUnits(minX, z, x) > high ||
-		toTileUnits(maxY, z, y) < low ||
-		toTileUnits(minY, z, y) > high
+		units(maxX, x) < low ||
+		units(minX, x) > high ||
+		units(maxY, y) < low ||
+		units(minY, y) > high
 	)
 		return [];
 
@@ -323,10 +326,8 @@ export const clipWorldRing = (
 	// As clipRing does, a closing vertex that repeats the first is dropped.
 	const count =
 		vertices > 1 &&
-		toTileUnits(world[0]!, z, x) ===
-			toTileUnits(world[vertices * 2 - 2]!, z, x) &&
-		toTileUnits(world[1]!, z, y) ===
-			toTileUnits(world[vertices * 2 - 1]!, z, y)
+		units(world[0]!, x) === units(world[vertices * 2 - 2]!, x) &&
+		units(world[1]!, y) === units(world[vertices * 2 - 1]!, y)
 			? vertices - 1
 			: vertices;
 	const runs: Array<{ first: number; last: number; edge: number }> = [];
@@ -339,10 +340,10 @@ export const clipWorldRing = (
 		if (first >= count) return;
 		const offset = node * 4;
 		const edge = blockEdge(
-			toTileUnits(boundsTree[offset]!, z, x),
-			toTileUnits(boundsTree[offset + 1]!, z, y),
-			toTileUnits(boundsTree[offset + 2]!, z, x),
-			toTileUnits(boundsTree[offset + 3]!, z, y),
+			units(boundsTree[offset]!, x),
+			units(boundsTree[offset + 1]!, y),
+			units(boundsTree[offset + 2]!, x),
+			units(boundsTree[offset + 3]!, y),
 			low,
 			high,
 		);
@@ -358,8 +359,8 @@ export const clipWorldRing = (
 					index,
 					index,
 					edgeOf(
-						toTileUnits(world[index * 2]!, z, x),
-						toTileUnits(world[index * 2 + 1]!, z, y),
+						units(world[index * 2]!, x),
+						units(world[index * 2 + 1]!, y),
 						low,
 						high,
 					),
@@ -370,8 +371,8 @@ export const clipWorldRing = (
 	const kept: Point[] = [];
 	const keep = (index: number) =>
 		kept.push([
-			toTileUnits(world[index * 2]!, z, x),
-			toTileUnits(world[index * 2 + 1]!, z, y),
+			units(world[index * 2]!, x),
+			units(world[index * 2 + 1]!, y),
 		]);
 	for (let index = 0; index < runs.length; index += 1) {
 		const run = runs[index]!;
