@@ -2,6 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
 import type { PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
+import type {
+	MeasureObservationArtifact,
+	SourceGeography,
+} from "../src/dataCatalog";
+import {
+	tableMeasureObservations,
+	type MeasureTableArtifact,
+} from "../src/observationTables";
 import {
 	crosswalkArtifact,
 	dataCatalog,
@@ -57,6 +65,93 @@ const analysisInventory: AnalysisGeographyInventory = {
 		},
 	],
 };
+
+test("reads a table-backed series without materialising every area's records", () => {
+	const measure = dataCatalog.measures.find(
+		(candidate) => candidate.id === "small-area-fixture",
+	);
+	assert.ok(measure);
+	const periods = ["2019", "2020", "2021"];
+	const sourceGeography: SourceGeography = {
+		type: "lsoa",
+		boundaryYear: 2011,
+	};
+	const observations: MeasureObservationArtifact = {
+		schemaVersion: 1,
+		contentHash: "sha256:series-table",
+		measureId: measure.id,
+		sourceGeography,
+		periods: periods.flatMap<MeasureObservationArtifact["periods"][number]>(
+			(period, index) => {
+				const table: MeasureTableArtifact = {
+					schemaVersion: 1,
+					kind: "measure-table",
+					contentHash: `sha256:table-${period}`,
+					id: `table-${period}`,
+					datasetId: "small-area",
+					sourceGeography,
+					period,
+					measures: [measure.id],
+					records: [
+						[
+							"E01000001",
+							index === 1 ? null : index === 2 ? 0 : 12,
+						],
+						["E01000002", null],
+					],
+				};
+				const view = tableMeasureObservations(table, measure.id);
+				Object.defineProperty(view.periods[0], "records", {
+					get() {
+						throw new Error(
+							"A single-area series must not read all records",
+						);
+					},
+				});
+				return view.periods;
+			},
+		),
+	};
+	const catalog = {
+		...dataCatalog,
+		measures: [
+			{
+				...measure,
+				sources: measure.sources.map((source) => ({
+					...source,
+					periods,
+				})),
+			},
+		],
+	};
+	const seriesFor = (code: string) =>
+		routeWithCatalog(
+			`/v1/data/${measure.id}/series?place=${code}&geography=lsoa&codeYear=2011`,
+			catalog,
+			[observations],
+		);
+	const response = seriesFor("E01000001");
+	assert.equal(response.status, 200);
+	assert.ok("data" in response.body);
+	const data = response.body.data;
+	assert.ok(data && typeof data === "object" && "series" in data);
+	assert.deepEqual(data.series, [
+		{
+			period: "2019",
+			areaCode: "E01000001",
+			value: 12,
+			status: "observed",
+		},
+		{
+			period: "2021",
+			areaCode: "E01000001",
+			value: 0,
+			status: "observed",
+		},
+	]);
+	assert.equal(seriesFor("E01000002").status, 404);
+	assert.equal(seriesFor("E01099999").status, 404);
+});
 
 test("returns a source-exact series without selecting a geometry release", () => {
 	const response = routeWithData(

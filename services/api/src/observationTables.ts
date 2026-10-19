@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
 	AnyMeasureObservationArtifact,
+	MeasureObservationArtifact,
 	PopulationObservation,
 	SourceGeography,
 } from "./dataCatalog";
@@ -89,7 +90,7 @@ export const periodRecordLookup = (period: object): RecordLookup | undefined =>
 export const tableMeasureObservations = (
 	table: MeasureTableArtifact,
 	measureId: string,
-): AnyMeasureObservationArtifact => {
+): MeasureObservationArtifact => {
 	const column = table.measures.indexOf(measureId);
 	if (column === -1)
 		throw new Error(`${table.id} does not serve ${measureId}`);
@@ -112,7 +113,7 @@ export const tableMeasureObservations = (
 			? { areaCode, value, status: "observed" }
 			: undefined;
 	});
-	const view: AnyMeasureObservationArtifact = {
+	const view: MeasureObservationArtifact = {
 		schemaVersion: 1,
 		contentHash: table.contentHash,
 		measureId,

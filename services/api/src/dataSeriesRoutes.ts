@@ -1,7 +1,4 @@
-import {
-	isNumericObservation,
-	type PopulationObservation,
-} from "./dataCatalog";
+import { isNumericObservation } from "./dataCatalog";
 import { analysisConversion } from "./analysisGeographies";
 import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { buildTranslationSteps } from "./resolver/translation";
@@ -14,10 +11,7 @@ import {
 	statedDefaults,
 } from "./dataDefaults";
 import { selectSourcePartition } from "./sourcePartition";
-import {
-	sourceSeriesProvenance,
-	type ObservationArtifactReference,
-} from "./sourceExactProvenance";
+import { sourceSeriesProvenance } from "./sourceExactProvenance";
 import type { RouteRequest } from "./routing";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
@@ -140,25 +134,22 @@ export const handleDataSeriesRoutes = ({
 		defaults,
 		plan: { source },
 	} = partition;
-	const observationsByPeriod = source.periods.map((period) => ({
-		period,
-		observations: observationsFor(measureId, source, period, {
-			measureObservations,
-		}),
-	}));
-	if (observationsByPeriod.some(({ observations }) => !observations)) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} does not contain every period declared by the catalogue.`,
-		);
-	}
-	const available = observationsByPeriod as Array<{
+	const available: Array<{
 		period: string;
-		observations: ObservationArtifactReference & {
-			records: PopulationObservation[];
-		};
-	}>;
+		observations: NonNullable<ReturnType<typeof observationsFor>>;
+	}> = [];
+	for (const period of source.periods) {
+		const observations = observationsFor(measureId, source, period, {
+			measureObservations,
+		});
+		if (!observations)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} does not contain every period declared by the catalogue.`,
+			);
+		available.push({ period, observations });
+	}
 	const firstObservations = available[0]?.observations;
 	if (!firstObservations) {
 		return problem(
@@ -294,9 +285,7 @@ export const handleDataSeriesRoutes = ({
 		};
 	}
 	const records = available.flatMap(({ period, observations }) => {
-		const record = observations.records.find(
-			(candidate) => candidate.areaCode === areaCode,
-		);
+		const record = observations.recordFor(areaCode);
 		return record ? [{ period, ...record }] : [];
 	});
 	if (records.length === 0) {
