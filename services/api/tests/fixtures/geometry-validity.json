@@ -1,0 +1,332 @@
+{
+	"type": "FeatureCollection",
+	"features": [
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "valid-polygon",
+				"status": "valid"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[4, 50],
+						[4, 54],
+						[0, 54],
+						[0, 50]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "valid-hole",
+				"status": "valid"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[4, 50],
+						[4, 54],
+						[0, 54],
+						[0, 50]
+					],
+					[
+						[1, 51],
+						[2, 51],
+						[2, 52],
+						[1, 52],
+						[1, 51]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "bow-tie",
+				"status": "invalid",
+				"code": "self-intersection"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[4, 54],
+						[4, 50],
+						[0, 54],
+						[0, 50]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "hole-outside",
+				"status": "invalid",
+				"code": "hole-outside-shell"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[4, 50],
+						[4, 54],
+						[0, 54],
+						[0, 50]
+					],
+					[
+						[5, 51],
+						[6, 51],
+						[6, 52],
+						[5, 52],
+						[5, 51]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "nested-holes",
+				"status": "invalid",
+				"code": "nested-holes"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[4, 50],
+						[4, 54],
+						[0, 54],
+						[0, 50]
+					],
+					[
+						[1, 51],
+						[3, 51],
+						[3, 53],
+						[1, 53],
+						[1, 51]
+					],
+					[
+						[1.5, 51.5],
+						[2, 51.5],
+						[2, 52],
+						[1.5, 52],
+						[1.5, 51.5]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "crossing-hole",
+				"status": "invalid",
+				"code": "self-intersection"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[4, 50],
+						[4, 54],
+						[0, 54],
+						[0, 50]
+					],
+					[
+						[3, 51],
+						[5, 51],
+						[5, 52],
+						[3, 52],
+						[3, 51]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "short-ring",
+				"status": "invalid",
+				"code": "too-few-points"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[1, 50],
+						[0, 50]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "unclosed-ring",
+				"status": "invalid",
+				"code": "ring-not-closed"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[4, 50],
+						[4, 54],
+						[0, 54]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "repeated-point-ring",
+				"status": "invalid",
+				"code": "too-few-points"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[0, 50],
+						[0, 50],
+						[0, 50]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "collinear-ring",
+				"status": "invalid",
+				"code": "self-intersection"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[0, 50],
+						[1, 50],
+						[2, 50],
+						[0, 50]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "valid-multipolygon",
+				"status": "valid"
+			},
+			"geometry": {
+				"type": "MultiPolygon",
+				"coordinates": [
+					[
+						[
+							[0, 50],
+							[4, 50],
+							[4, 54],
+							[0, 54],
+							[0, 50]
+						]
+					],
+					[
+						[
+							[5, 50],
+							[6, 50],
+							[6, 51],
+							[5, 51],
+							[5, 50]
+						]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "overlapping-multipolygon",
+				"status": "invalid",
+				"code": "self-intersection"
+			},
+			"geometry": {
+				"type": "MultiPolygon",
+				"coordinates": [
+					[
+						[
+							[0, 50],
+							[4, 50],
+							[4, 54],
+							[0, 54],
+							[0, 50]
+						]
+					],
+					[
+						[
+							[3, 51],
+							[5, 51],
+							[5, 52],
+							[3, 52],
+							[3, 51]
+						]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "multipolygon-invalid-hole",
+				"status": "invalid",
+				"code": "hole-outside-shell"
+			},
+			"geometry": {
+				"type": "MultiPolygon",
+				"coordinates": [
+					[
+						[
+							[0, 50],
+							[4, 50],
+							[4, 54],
+							[0, 54],
+							[0, 50]
+						]
+					],
+					[
+						[
+							[5, 50],
+							[8, 50],
+							[8, 53],
+							[5, 53],
+							[5, 50]
+						],
+						[
+							[9, 51],
+							[10, 51],
+							[10, 52],
+							[9, 52],
+							[9, 51]
+						]
+					]
+				]
+			}
+		}
+	]
+}

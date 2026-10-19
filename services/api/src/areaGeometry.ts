@@ -28,6 +28,7 @@ import {
 	substitutionProvenance,
 } from "./geometrySubstitution";
 import { readGeometryStore } from "./geometryStore";
+import type { GeometryValidityReport } from "./geometryValidity";
 import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
 import {
 	borderIndex,
@@ -84,6 +85,7 @@ type CachedRelease = {
 	geometries: Pick<Map<string, PackedGeometry>, "get" | "keys">;
 	/** Every area's envelope, when the release was compiled with them. */
 	storedBounds?: (code: string) => GeometryBounds | undefined;
+	storedValidity?: (code: string) => GeometryValidityReport | undefined;
 	// Reprojected lazily, one requested area at a time: whole releases can
 	// hold millions of vertices, and most requests read a single area. Kept
 	// packed, so a release read in full costs its coordinates twice rather
@@ -448,12 +450,19 @@ export class AreaGeometryCache {
 						),
 					]),
 		];
+		const validity =
+			code === undefined
+				? undefined
+				: this.releases
+						.get(`${geography}/${boundaryRelease}`)
+						?.storedValidity?.(code);
 		return {
 			...(source.inputHash
 				? { input: source.input, inputHash: source.inputHash }
 				: {}),
 			...geometryProvenance(source.crs),
 			...(corrections.length > 0 ? { corrections } : {}),
+			...(validity ? { validity } : {}),
 		};
 	}
 	/** A required compiled release, validated against its registered source. */
@@ -478,6 +487,7 @@ export class AreaGeometryCache {
 			crs: "EPSG:4326",
 			geometries: { get: stored.get, keys: () => stored.codes.values() },
 			storedBounds: stored.bounds,
+			storedValidity: stored.validity,
 			wgs84: new Map(),
 			bounds: new Map(),
 			spatialIndex: stored.spatialIndex,

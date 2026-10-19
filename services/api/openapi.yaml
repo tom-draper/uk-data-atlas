@@ -4717,7 +4717,10 @@ paths:
         `population-density` uses as its denominator. The `method` block repeats
         this with every response. An area whose geometry carries no polygon to
         measure, such as a release held only as points, is refused with `422`
-        rather than measured as zero.
+        rather than measured as zero. `geometrySource.validity` carries the
+        build-time validity report for the full WGS84 geometry. Invalid geometry
+        is not repaired; measurements from it may be unreliable. An unmeasurable
+        geometry's `422` response also carries `geometrySource` and its report.
       x-likely-refusal:
         status: 404
         code: area_not_in_release
@@ -7899,6 +7902,8 @@ components:
           type: integer
         detail:
           type: string
+        geometrySource:
+          $ref: "#/components/schemas/GeometrySource"
         choices:
           type: array
           description: >
@@ -10908,9 +10913,18 @@ components:
       type: object
       description: >
         Where the served WGS84 geometry came from. `transformation` is present
-        only when the source was reprojected.
+        only when the source was reprojected. Per-area compiled geometry carries
+        `validity`; release-wide provenance and direct source reads omit it.
       required: [sourceCrs]
       properties:
+        input:
+          type: string
+          description: Registered source file, preserved without validity repairs.
+        inputHash:
+          type: string
+          description: SHA-256 of the registered source file's original bytes.
+        validity:
+          $ref: "#/components/schemas/GeometryValidity"
         sourceCrs:
           type: string
         transformation:
@@ -10939,6 +10953,66 @@ components:
                 type: string
               description:
                 type: string
+
+    GeometryValidity:
+      type: object
+      description: >
+        Deterministic build-time validation of the full served geometry, after
+        declared corrections and reprojection. Checks Polygon and MultiPolygon
+        topology in planar WGS84 XY using JSTS IsValidOp, including
+        self-intersections, holes, ring degeneracy and relationships between
+        MultiPolygon parts. Z is ignored. This is not a geodesic, antimeridian,
+        cross-area coverage or general GeoJSON/OGC conformance certificate.
+        At most the first issue found by the checker is returned. Source geometry is
+        never repaired by validation. A valid result applies only to these
+        checks. More than 10,000 positions, or 10,000 polygon/ring components,
+        yields `not-checked` with `position-limit`; GeometryCollection and
+        non-polygon types are `unsupported-geometry`. Older stores without
+        reports are `not-compiled`. Validator failures are `validator-error`,
+        never a valid result. No topology validation runs during requests.
+      required: [method, status]
+      properties:
+        method:
+          type: object
+          required: [validator, version, coordinates, positionLimit]
+          properties:
+            validator: { const: "jsts/IsValidOp" }
+            version: { const: "2.12.1" }
+            coordinates: { const: "WGS84-planar-XY" }
+            positionLimit: { const: 10000 }
+        status:
+          type: string
+          enum: [valid, invalid, not-checked]
+        reason:
+          type: string
+          enum:
+            [
+              not-compiled,
+              position-limit,
+              unsupported-geometry,
+              validator-error,
+            ]
+        issue:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            coordinate:
+              type: array
+              description: A finite XY location of the first issue, when available.
+              minItems: 2
+              maxItems: 2
+              items: { type: number }
+      oneOf:
+        - properties:
+            status: { const: valid }
+        - required: [issue]
+          properties:
+            status: { const: invalid }
+        - required: [reason]
+          properties:
+            status: { const: not-checked }
 
     AreaGeometryEnvelope:
       allOf:

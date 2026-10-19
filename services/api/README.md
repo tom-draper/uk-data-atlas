@@ -475,11 +475,19 @@ only **available** when its endpoint, contract and provenance are published.
       slivers, the widest 18.7 m. A pair near the sliver threshold is
       `indeterminate` rather than guessed, and any published relationship
       between the two is listed beside the measurement.
-- [ ] Add per-area geometry validity checks. `include=metrics` already carries
-      a per-area geometry hash, and the geometry route reports its generalisation
-      tier. Source CRS, transformation, area and perimeter method, centroid, a
-      guaranteed-inside label point, and the source file with its SHA-256 are
-      also served.
+- [x] Add per-area geometry validity reports. `build:geometry-store` checks
+      Polygon and MultiPolygon self-intersections, holes and degenerate rings
+      with JSTS IsValidOp. `include=metrics` exposes the first finding through
+      `metrics.geometrySource.validity`, beside the source file and SHA-256;
+      geometry responses carry the same report in their provenance. A metrics
+      refusal retains the report in its problem's `geometrySource`. Validation
+      never repairs coordinates or changes source bytes or hashes. Checks use
+      planar WGS84 XY after declared corrections and reprojection, ignore Z,
+      and do not certify general GeoJSON/OGC conformance or cross-area topology.
+      Areas over 10,000 positions or polygon/ring components, collections and
+      non-polygons are explicitly `not-checked`. Older stores report
+      `not-compiled` until rebuilt. Reports are deterministic, compiled per area,
+      and read from store metadata without request-time topology validation.
 - [x] Deliver vector tiles and cached exports for map-scale workloads. One
       boundary release is published as a PMTiles archive with its TileJSON and
       per-tile `.mvt` reads, compiled from shared arcs so neighbours cannot
