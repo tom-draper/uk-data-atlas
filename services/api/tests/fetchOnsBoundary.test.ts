@@ -225,7 +225,12 @@ test("removes partial pages after a failed download", async (context) => {
 		return request(input, options);
 	};
 	await assert.rejects(
-		fetchOnsBoundary({ repositoryRoot, source, fetcher: failed }),
+		fetchOnsBoundary({
+			repositoryRoot,
+			source,
+			fetcher: failed,
+			retryDelay: 0,
+		}),
 		/HTTP 503/,
 	);
 	assert.deepEqual(
@@ -234,6 +239,33 @@ test("removes partial pages after a failed download", async (context) => {
 		),
 		[],
 	);
+});
+
+test("retries dropped connections and server errors", async (context) => {
+	const repositoryRoot = mkdtempSync(join(tmpdir(), "atlas-ons-retry-"));
+	context.after(() =>
+		rmSync(repositoryRoot, { recursive: true, force: true }),
+	);
+	const { request } = fetcher();
+	const failures = new Map<string, number>();
+	const flaky: typeof fetch = async (input, options) => {
+		const offset = new URL(String(input)).searchParams.get("resultOffset");
+		if (offset !== null) {
+			const failed = failures.get(offset) ?? 0;
+			failures.set(offset, failed + 1);
+			if (failed === 0) throw new TypeError("fetch failed");
+			if (failed === 1) return new Response("busy", { status: 503 });
+		}
+		return request(input, options);
+	};
+	const result = await fetchOnsBoundary({
+		repositoryRoot,
+		source,
+		fetcher: flaky,
+		retryDelay: 0,
+	});
+	assert.equal(result.contentHash, source.contentHash);
+	assert.deepEqual([...failures.values()], [3, 3]);
 });
 
 test("does not replace an existing snapshot with changed source bytes", async (context) => {

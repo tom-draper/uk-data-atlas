@@ -38,19 +38,42 @@ export const fetchOnsBoundary = async ({
 	source,
 	fetcher = fetch,
 	retrieved = new Date().toISOString().slice(0, 10),
+	attempts = 4,
+	retryDelay = 2_000,
 }: {
 	repositoryRoot: string;
 	source: OnsBoundarySource;
 	fetcher?: typeof fetch;
 	retrieved?: string;
+	attempts?: number;
+	retryDelay?: number;
 }) => {
 	if (!/^[a-zA-Z0-9-]+$/.test(source.release))
 		throw new Error("Invalid boundary release directory.");
 	const layer = `${SERVICES}/${source.service}/FeatureServer/0`;
+	// The publisher's service drops the odd connection, so retry dropped,
+	// timed-out and server-error requests before giving up.
+	const request = async (url: URL | string) => {
+		for (let attempt = 1; ; attempt++) {
+			const retry = attempt < attempts;
+			try {
+				const response = await fetcher(url, {
+					signal: AbortSignal.timeout(60_000),
+				});
+				if (
+					!retry ||
+					(response.status < 500 && response.status !== 429)
+				)
+					return response;
+				await response.body?.cancel();
+			} catch (error) {
+				if (!retry) throw error;
+			}
+			await new Promise((done) => setTimeout(done, retryDelay * attempt));
+		}
+	};
 	const read = async (url: URL | string) => {
-		const response = await fetcher(url, {
-			signal: AbortSignal.timeout(60_000),
-		});
+		const response = await request(url);
 		if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
 		const value: unknown = await response.json();
 		if (!isRecord(value) || "error" in value)
