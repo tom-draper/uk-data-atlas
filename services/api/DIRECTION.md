@@ -8,7 +8,7 @@ history. Where the two disagree on priority, this document wins.
 
 Written 2026-09-29, after putting a set of everyday questions to a local build
 of the API (see [What we tested](#what-we-tested)). Implementation status reviewed
-on 2026-10-17 against the source, tests and compiled archive.
+on 2026-10-20 against the source, tests and a fresh compiled archive.
 
 ## Mission
 
@@ -237,13 +237,15 @@ already supports.
    `lsoa/2001-12-ew-bgc` and `ward/2017-12-gb-bgc`. Their full-detail downloads
    remain available. Investigate the affected geometry before replacing it.
 2. **Complete the missing relationships.** No published crosswalk references
-   the three boundary data-zone releases or `nhsEnglandRegion/2022-07-en-bgc`.
+   `dataZone/2022-sc-bfc`, `dataZone/2021-ni` or
+   `nhsEnglandRegion/2022-07-en-bgc`.
    The current candidate inventory also identifies missing Northern Irish
    target releases for its embedded DEA, local-government district and
    super-data-zone fields. Existing eligible candidates are already published.
-3. **Validate individual geometries.** Per-area hashes are available through
-   `include=metrics`, and the geometry route reports its generalisation tier.
-   Per-area validity results remain unfinished.
+3. **Backfill current and census boundaries.** Start with the 2026 Senedd
+   constituencies and the 2001 and 2011 MSOA and output-area releases. Keep the
+   2010 Westminster gap open until a polygon source is verified. A map PDF or
+   a code lookup is not a boundary release.
 
 The ONS `DZ_DEC_2011_SC_NC` source is a names-and-codes table, not an
 unclipped boundary release. Its [publisher service](https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/DZ_DEC_2011_SC_NC_45ae61d197ca46658b7431e39e1eb3de/FeatureServer?f=pjson)
@@ -255,6 +257,14 @@ failures, unpublished relationship candidates and the releases held for each
 geography. The output records the compiled manifests' hashes, so a report can
 be tied to the exact inputs inspected. It audits the held archive, not every
 release available from publishers.
+
+Per-area geometry validity reports are implemented. `build:geometry-store`
+compiles them without repairing coordinates, and `include=metrics` and geometry
+responses expose them in source provenance. Reports identify invalid geometry
+and areas not checked, including those above the validator's position limit.
+They do not certify that a release is a valid cross-area coverage. The fresh
+build holds compiled stores for all 98 releases; its archive audit still lists
+the four delivery gaps and three relationship gaps above.
 
 Completed since the original question bank: whole-release downloads for all
 98 releases, map tiles for 94, measure discovery by name and alias, request
