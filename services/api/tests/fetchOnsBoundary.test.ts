@@ -6,6 +6,8 @@ import {
 	readdirSync,
 	readFileSync,
 	rmSync,
+	statSync,
+	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -61,6 +63,7 @@ const fetcher = (
 					geometryType: "esriGeometryPolygon",
 					objectIdField: "FID",
 					maxRecordCount: 2,
+					editingInfo: { dataLastEditDate: 12345 },
 				}
 			: url.searchParams.has("returnCountOnly")
 				? { count: 3 }
@@ -89,6 +92,12 @@ test("downloads every page and compiles the resulting boundary snapshot", async 
 		retrieved: "2026-10-19",
 	});
 	assert.equal(result.count, 3);
+	assert.equal(statSync(join(result.path, "..")).mode & 0o777, 0o755);
+	assert.deepEqual(
+		JSON.parse(readFileSync(join(result.path, "..", "meta.json"), "utf8"))
+			.publisherRevision,
+		{ dataLastEditDate: 12345 },
+	);
 	const raw = readFileSync(result.path, "utf8");
 	assert.deepEqual(JSON.parse(raw).features, [
 		feature("W09000001"),
@@ -292,4 +301,72 @@ test("rejects changed publisher bytes even when every code and the count match",
 		),
 		[],
 	);
+});
+
+test("rejects publisher changes during acquisition and removes staging", async (context) => {
+	const repositoryRoot = mkdtempSync(join(tmpdir(), "atlas-ons-changing-"));
+	context.after(() =>
+		rmSync(repositoryRoot, { recursive: true, force: true }),
+	);
+	for (const change of ["count", "revision"]) {
+		const { request } = fetcher();
+		let metadataReads = 0;
+		let countReads = 0;
+		const changing: typeof fetch = async (input, options) => {
+			const url = new URL(String(input));
+			if (
+				!url.pathname.endsWith("/query") &&
+				++metadataReads === 2 &&
+				change === "revision"
+			)
+				return Response.json({
+					editingInfo: { dataLastEditDate: 99999 },
+				});
+			if (
+				url.searchParams.has("returnCountOnly") &&
+				++countReads === 2 &&
+				change === "count"
+			)
+				return Response.json({ count: 4 });
+			return request(input, options);
+		};
+		await assert.rejects(
+			fetchOnsBoundary({ repositoryRoot, source, fetcher: changing }),
+			/changed during download/,
+		);
+		assert.deepEqual(
+			readdirSync(
+				join(repositoryRoot, "data/boundaries/senedd-constituency"),
+			),
+			[],
+		);
+	}
+});
+
+test("refuses an existing snapshot with missing or changed provenance", async (context) => {
+	const repositoryRoot = mkdtempSync(join(tmpdir(), "atlas-ons-provenance-"));
+	context.after(() =>
+		rmSync(repositoryRoot, { recursive: true, force: true }),
+	);
+	const { request } = fetcher();
+	const result = await fetchOnsBoundary({
+		repositoryRoot,
+		source,
+		fetcher: request,
+	});
+	const metadataPath = join(result.path, "..", "meta.json");
+	writeFileSync(
+		metadataPath,
+		JSON.stringify({ sourceUrl: "https://example.com/other-source" }),
+	);
+	await assert.rejects(
+		fetchOnsBoundary({ repositoryRoot, source, fetcher: request }),
+		/different source bytes or provenance/,
+	);
+	rmSync(metadataPath);
+	await assert.rejects(
+		fetchOnsBoundary({ repositoryRoot, source, fetcher: request }),
+		/without source metadata/,
+	);
+	assert.equal(existsSync(result.path), true);
 });

@@ -1,4 +1,5 @@
 import {
+	chmodSync,
 	closeSync,
 	existsSync,
 	mkdirSync,
@@ -193,6 +194,10 @@ export const fetchOnsBoundary = async ({
 				`${source.service}: publisher revision changed during download.`,
 			);
 		if (existsSync(directory)) {
+			if (!existsSync(join(directory, "meta.json")))
+				throw new Error(
+					`${directory} already exists without source metadata; use a new release directory.`,
+				);
 			const previous: unknown = JSON.parse(
 				readFileSync(join(directory, "meta.json"), "utf8"),
 			);
@@ -216,6 +221,7 @@ export const fetchOnsBoundary = async ({
 					description: source.title,
 					topics: ["boundaries", "geography"],
 					publisher: "Office for National Statistics",
+					publisherRevision: metadata.editingInfo,
 					sourceUrl,
 					retrieved,
 					temporalCoverage: source.release.slice(0, 7),
@@ -241,6 +247,7 @@ export const fetchOnsBoundary = async ({
 				"\t",
 			)}\n`,
 		);
+		chmodSync(staging, 0o755);
 		renameSync(staging, directory);
 		return { path, count: source.count, contentHash };
 	} finally {
