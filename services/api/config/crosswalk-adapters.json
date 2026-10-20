@@ -849,6 +849,69 @@
 			}
 		},
 		{
+			"id": "output-area-2011-12-ew-bgc-v2-to-lsoa-2011-12-ew-bgc-v3-official-lookup",
+			"input": "lookups/output-area-to-lsoa/2011-12-ew/OA11_LSOA11_MSOA11_LAD11_EW_LUv2_b3fe7c68f4b2420185eaff6284d4c125.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "outputArea",
+				"boundaryRelease": "2011-12-ew-bgc-v2",
+				"codeProperty": "OA11CD",
+				"nameProperty": "OA11CD"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3",
+				"codeProperty": "LSOA11CD",
+				"nameProperty": "LSOA11NM"
+			}
+		},
+		{
+			"id": "lsoa-2011-12-ew-bgc-v3-to-msoa-2011-12-ew-bgc-v3-official-lookup",
+			"input": "lookups/lsoa-to-msoa/2011-12-ew/OA11_LSOA11_MSOA11_LAD11_EW_LUv2_b3fe7c68f4b2420185eaff6284d4c125.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3",
+				"codeProperty": "LSOA11CD",
+				"nameProperty": "LSOA11NM"
+			},
+			"to": {
+				"geography": "msoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3",
+				"codeProperty": "MSOA11CD",
+				"nameProperty": "MSOA11NM"
+			}
+		},
+		{
+			"id": "lsoa-2001-12-ew-bgc-v2-to-msoa-2001-12-ew-bgc-v2-official-lookup",
+			"input": "lookups/lsoa-to-msoa/2001-12-ew/OA01_LSOA01_MSOA01_EW_LU_b75358eac2274f4fb012dcd32d13f5cf.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc-v2",
+				"codeProperty": "LSOA01CD",
+				"nameProperty": "LSOA01NM"
+			},
+			"to": {
+				"geography": "msoa",
+				"boundaryRelease": "2001-12-ew-bgc-v2",
+				"codeProperty": "MSOA01CD",
+				"nameProperty": "MSOA01NM"
+			}
+		},
+		{
 			"id": "data-zone-2011-12-sc-bfc-to-intermediate-zone-2011-12-sc-bfc-official-lookup",
 			"input": "lookups/data-zone-to-intermediate-zone/2011-sc/DZ11_IZ11_SC_LU.geojson",
 			"method": "clean-containment",
