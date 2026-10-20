@@ -24,7 +24,22 @@ import {
 	toWgs84Geometry,
 } from "./reprojection";
 import { readShapefileFeatures } from "./shapefile";
+import {
+	parseGeoJsonFeatures,
+	parseGeoJsonProperties,
+	type GeoJsonFeatures,
+} from "./geoJsonProperties";
 import { sha256 } from "./contentHash";
+
+/** Each feature's properties, without decoding GeoJSON geometry. */
+const featureProperties = (
+	shapefile: Array<{ properties?: unknown }> | undefined,
+	content: Buffer,
+): unknown[] => {
+	if (shapefile) return shapefile.map((feature) => feature.properties);
+	const parsed = parseGeoJsonProperties(content);
+	return parsed.type === "FeatureCollection" ? parsed.properties : [];
+};
 
 export const readGeometries = (
 	repositoryRoot: string,
@@ -57,21 +72,15 @@ export const readGeometries = (
 	const content = readFileSync(inputPath);
 	// Shapefiles are read as the geometry cache reads them; the hash is of the
 	// input file's bytes either way, as the geometry source registry records.
-	const collection = (
-		inputPath.toLowerCase().endsWith(".shp")
-			? {
-					type: "FeatureCollection",
-					features: readShapefileFeatures(inputPath),
-				}
-			: JSON.parse(content.toString("utf8"))
-	) as {
-		type?: unknown;
-		features?: Array<{ properties?: unknown; geometry?: unknown }>;
-	};
-	if (
-		collection.type !== "FeatureCollection" ||
-		!Array.isArray(collection.features)
-	) {
+	// GeoJSON is decoded a feature at a time: the 2001 output areas are larger
+	// than the longest string V8 can hold.
+	const shapefile = inputPath.toLowerCase().endsWith(".shp")
+		? readShapefileFeatures(inputPath)
+		: undefined;
+	const collection: GeoJsonFeatures = shapefile
+		? { type: "FeatureCollection", features: shapefile }
+		: parseGeoJsonFeatures(content);
+	if (collection.type !== "FeatureCollection") {
 		throw new Error(
 			`${crosswalkId}: ${source.input} is not a FeatureCollection.`,
 		);
@@ -82,9 +91,9 @@ export const readGeometries = (
 				geometrySources,
 				identity,
 				source.substitutions,
-				collection.features.flatMap((feature) => {
+				featureProperties(shapefile, content).flatMap((properties) => {
 					const code = (
-						feature.properties as Record<string, unknown> | null
+						properties as Record<string, unknown> | null | undefined
 					)?.[source.codeProperty];
 					return typeof code === "string" ? [code.trim()] : [];
 				}),
@@ -100,10 +109,14 @@ export const readGeometries = (
 					code,
 					toPolygons(geometry, `${code} substituted geometry`),
 				);
-	for (const [index, feature] of collection.features.entries()) {
-		const code = (feature.properties as Record<string, unknown> | null)?.[
-			source.codeProperty
-		];
+	let index = -1;
+	for (const item of collection.features) {
+		index += 1;
+		const feature = item as
+			{ properties?: unknown; geometry?: unknown } | null | undefined;
+		const code = (
+			feature?.properties as Record<string, unknown> | null | undefined
+		)?.[source.codeProperty];
 		if (typeof code !== "string" || code.trim().length === 0) {
 			throw new Error(
 				`${crosswalkId}: ${source.input} feature ${index} has no ${source.codeProperty}.`,
@@ -111,7 +124,10 @@ export const readGeometries = (
 		}
 		if (codePattern && !codePattern.test(code)) continue;
 		if (substituted(code.trim())) continue;
-		if (typeof feature.geometry !== "object" || feature.geometry === null) {
+		if (
+			typeof feature?.geometry !== "object" ||
+			feature.geometry === null
+		) {
 			throw new Error(
 				`${crosswalkId}: ${source.input} feature ${index} (${code}) has no geometry.`,
 			);
