@@ -1520,6 +1520,24 @@
 			"sliverWidthM": 100
 		},
 		{
+			"id": "lsoa-2001-12-ew-bgc-v2-to-2011-12-ew-bgc-v3-extent-continuity",
+			"method": "extent-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc-v2"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"sliverWidthM": 100
+		},
+		{
 			"id": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-extent-continuity",
 			"method": "extent-continuity",
 			"quality": "derived",
@@ -2789,6 +2807,23 @@
 			"from": {
 				"geography": "lsoa",
 				"boundaryRelease": "2001-12-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "lsoa-2001-12-ew-bgc-v2-to-local-authority-2026-05-uk-bgc-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc-v2"
 			},
 			"to": {
 				"geography": "localAuthority",
