@@ -55,6 +55,19 @@ export const ONS_BOUNDARY_SOURCES: OnsBoundarySource[] = [
 		countries: ["GB-ENG", "GB-WLS"],
 	},
 	{
+		geography: "lsoa",
+		release: "2001-12-ew-bgc-v2",
+		itemId: "98b573a6f3ea483e97f7e08771624316",
+		service: "Lower_Layer_Super_Output_Areas_Dec_2001_EW_BGC_2022",
+		title: "Lower layer super output areas, December 2001 (England and Wales, generalised, clipped, version 2)",
+		count: 34378,
+		contentHash:
+			"sha256:4a4fa7f7e413fbff7862a139343bd84f62cbabafa1cee441204bb1d49a66b5d3",
+		codeProperty: "LSOA01CD",
+		nameProperty: "LSOA01NM",
+		countries: ["GB-ENG", "GB-WLS"],
+	},
+	{
 		geography: "outputArea",
 		release: "2001-12-ew-bgc",
 		itemId: "6c949149484a430a8e4eb11e17421c86",
