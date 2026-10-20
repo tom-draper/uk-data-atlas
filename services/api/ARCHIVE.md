@@ -17,7 +17,8 @@ The importer pages the official polygon service in object-ID order and requests
 WGS84 coordinates. It writes each page to a temporary snapshot, so national
 output-area files do not need to fit in one JavaScript string. It checks the
 published area count, unique codes, names, polygon presence, and publisher
-revision when supplied before publishing the directory atomically. It does not repair,
+revision when supplied before publishing the directory atomically. It makes up
+to four attempts at a request that drops, times out or meets a server error. It does not repair,
 simplify, or otherwise edit coordinates returned by the publisher.
 
 The catalogue pins the reviewed snapshot's SHA-256 as well as its publisher
