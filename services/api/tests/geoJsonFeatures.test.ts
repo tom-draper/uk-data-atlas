@@ -3,7 +3,10 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
-import { readGeoJsonFeatures } from "../src/geoJsonProperties";
+import {
+	parseGeoJsonFeatures,
+	readGeoJsonFeatures,
+} from "../src/geoJsonProperties";
 
 const read = (t: TestContext, text: string) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-geojson-features-"));
@@ -72,4 +75,17 @@ test("rejects malformed features, metadata, collection structure and trailing JS
 		'{"type":"FeatureCollection","features":[]} {}',
 	])
 		assert.throws(() => read(t, text), SyntaxError, text);
+});
+
+test("decodes features from bytes a caller has already read", () => {
+	const result = parseGeoJsonFeatures(
+		Buffer.from(
+			'{"type":"FeatureCollection","features":[{"properties":{"code":"E00000001"},"geometry":null}]}',
+		),
+	);
+	assert.equal(result.type, "FeatureCollection");
+	assert.deepEqual(
+		result.type === "FeatureCollection" && [...result.features],
+		[{ properties: { code: "E00000001" }, geometry: null }],
+	);
 });

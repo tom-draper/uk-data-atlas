@@ -219,8 +219,11 @@ export type GeoJsonFeatures =
 	| { type: "FeatureCollection"; features: Iterable<unknown> }
 	| { type: "invalid" };
 
-export const readGeoJsonFeatures = (path: string): GeoJsonFeatures => {
-	const bytes = readFileSync(path);
+/**
+ * The features of GeoJSON bytes, each decoded only when iterated, so a file
+ * longer than the largest string V8 can hold can still be read.
+ */
+export const parseGeoJsonFeatures = (bytes: Buffer): GeoJsonFeatures => {
 	const scanner = new Scanner(bytes);
 	if (scanner.peek() !== OPEN_BRACE) return { type: "invalid" };
 	let type: unknown;
@@ -249,3 +252,6 @@ export const readGeoJsonFeatures = (path: string): GeoJsonFeatures => {
 	}
 	return { type: "FeatureCollection", features: decode(features) };
 };
+
+export const readGeoJsonFeatures = (path: string): GeoJsonFeatures =>
+	parseGeoJsonFeatures(readFileSync(path));
