@@ -247,11 +247,13 @@ already supports.
    adapter. DEA and super-data-zone boundaries still need source imports.
 3. **Backfill current and census boundaries.** The 2026 Senedd
    constituencies and the 2001 and 2011 MSOA and output-area releases are held,
-   tiled and related. The census hierarchies still lack containment:
-   separately generalised BGC files put 30 of the 2011 output areas 50 to
-   143 m outside their LSOA, three 2001 output areas 60 to 178 m outside their
-   unthinned LSOA, and one 2001 LSOA 59 m outside its MSOA. Import the
-   official ONS OA-LSOA-MSOA lookups for those relationships rather than
+   tiled and related. Separately generalised BGC files fail strict
+   containment between census levels, so the 2011 OA-LSOA, 2011 LSOA-MSOA
+   and 2001 LSOA-MSOA relationships come from the official ONS lookups, with
+   reviewed overhang waivers. The 2001 OA-LSOA lookup is still missing: the
+   ONS table keys output areas by their old `00AAFA0001` codes, while the
+   held boundaries use `E00000001` codes. Relating them needs a pinned
+   old-to-new code translation, tested for one-to-one coverage, rather than
    loosening containment. Keep the 2010 Westminster gap open until a polygon
    source is verified. A map PDF or a code lookup is not a boundary release.
 

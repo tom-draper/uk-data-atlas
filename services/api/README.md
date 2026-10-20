@@ -203,7 +203,8 @@ only **available** when its endpoint, contract and provenance are published.
       coverage: OA → LSOA → MSOA → LAD where applicable, Scottish data zone
       and Northern Irish super output area equivalents. England and Wales
       run 2021 output area → LSOA → MSOA and LSOA → May 2023 local
-      authority, from the ONS exact-fit lookups. Scotland runs 2011 data
+      authority, from the ONS exact-fit lookups. The same lookups relate
+      2011 output area → LSOA → MSOA and 2001 LSOA → MSOA. Scotland runs 2011 data
       zone → intermediate zone → December 2018 council area, from the
       Scottish Government's parent codes. Each of these is
       `clean-containment`, checked against both releases' geometry, with declared
