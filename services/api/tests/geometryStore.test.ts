@@ -24,6 +24,47 @@ const square = (west: number, south: number, size: number) => [
 	],
 ];
 
+test("compiles repeated codes and ignores non-object features without changing coordinates", (t) => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-geometry-source-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data"));
+	writeFileSync(
+		join(root, "data", "source.geojson"),
+		'{"type":"FeatureCollection","features":[null,17,[],{"properties":{"CODE":"A"},"geometry":{"type":"Point","coordinates":[-0,1.2345678901234567]}},{"properties":{"CODE":"A"},"geometry":{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1e-7,53.123456789012344]}]}}]}',
+	);
+	const source: GeometrySource = {
+		input: "source.geojson",
+		crs: "EPSG:4326",
+		codeProperty: "CODE",
+	};
+	const path = join(root, "release.bin");
+	writeFileSync(
+		path,
+		encodeGeometryStore(
+			source,
+			new AreaGeometryCache(
+				root,
+				new Map([["test/release", source]]),
+			).compile("test", "release"),
+		),
+	);
+	const stored = readGeometryStore(path, source)!;
+	t.after(() => stored.close());
+	assert.deepEqual(stored.codes, ["A"]);
+	assert.deepEqual(unpackGeometry(stored.get("A")!), {
+		type: "GeometryCollection",
+		geometries: [
+			{ type: "Point", coordinates: [-0, 1.2345678901234567] },
+			{
+				type: "GeometryCollection",
+				geometries: [
+					{ type: "Point", coordinates: [1e-7, 53.123456789012344] },
+				],
+			},
+		],
+	});
+});
+
 test("reads back every kind of packed area exactly as it was written", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-geometry-store-"));
 	t.after(() => rmSync(directory, { recursive: true, force: true }));
