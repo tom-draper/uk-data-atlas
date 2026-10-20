@@ -64,13 +64,14 @@ describe("geography pages", () => {
 	});
 
 	it("lists every map boundary release in its geography documentation", () => {
+		// The API archive may hold releases the map does not draw.
 		for (const [geography, family] of Object.entries(BOUNDARY_CATALOG)) {
 			expect(
-				releasesForGeography(catalogue, geography)
-					.map(({ id }) => id)
-					.sort(),
+				releasesForGeography(catalogue, geography).map(({ id }) => id),
 				geography,
-			).toEqual(family.releases.map(({ id }) => id).sort());
+			).toEqual(
+				expect.arrayContaining(family.releases.map(({ id }) => id)),
+			);
 		}
 	});
 
