@@ -1538,6 +1538,78 @@
 			"sliverWidthM": 100
 		},
 		{
+			"id": "msoa-2001-12-ew-bgc-v2-to-2011-12-ew-bgc-v3-extent-continuity",
+			"method": "extent-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "msoa",
+				"boundaryRelease": "2001-12-ew-bgc-v2"
+			},
+			"to": {
+				"geography": "msoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "msoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v3-extent-continuity",
+			"method": "extent-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "msoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "msoa",
+				"boundaryRelease": "2021-12-ew-bgc-v3"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "output-area-2001-12-ew-bgc-to-2011-12-ew-bgc-v2-extent-continuity",
+			"method": "extent-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "outputArea",
+				"boundaryRelease": "2001-12-ew-bgc"
+			},
+			"to": {
+				"geography": "outputArea",
+				"boundaryRelease": "2011-12-ew-bgc-v2"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "output-area-2011-12-ew-bgc-v2-to-2021-12-ew-bgc-v2-extent-continuity",
+			"method": "extent-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "outputArea",
+				"boundaryRelease": "2011-12-ew-bgc-v2"
+			},
+			"to": {
+				"geography": "outputArea",
+				"boundaryRelease": "2021-12-ew-bgc-v2"
+			},
+			"sliverWidthM": 100
+		},
+		{
 			"id": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-extent-continuity",
 			"method": "extent-continuity",
 			"quality": "derived",
@@ -2399,6 +2471,42 @@
 			"sliverWidthM": 100
 		},
 		{
+			"id": "senedd-constituency-2026-05-w-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2026-05-w-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "lsoa-2011-12-ew-bgc-v3-to-msoa-2011-12-ew-bgc-v3-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "msoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"sliverWidthM": 100
+		},
+		{
 			"id": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
 			"method": "geometric-containment",
 			"quality": "derived",
@@ -2697,6 +2805,40 @@
 			},
 			"from": {
 				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "msoa-2001-12-ew-bgc-v2-to-local-authority-2026-05-uk-bgc-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "msoa",
+				"boundaryRelease": "2001-12-ew-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "msoa-2011-12-ew-bgc-v3-to-local-authority-2026-05-uk-bgc-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "msoa",
 				"boundaryRelease": "2011-12-ew-bgc-v3"
 			},
 			"to": {
