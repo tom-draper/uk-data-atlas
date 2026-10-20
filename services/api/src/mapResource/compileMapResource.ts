@@ -145,10 +145,15 @@ export const compileMapResource = (
 			`No geometry is available for ${geography}/${boundaryRelease}.`,
 		);
 	const topology = decomposeArcs(areas);
-	if (topology.overlappingEdges > 0)
+	if (topology.overlappingEdges > 0) {
+		const codes = topology.overlappingAreaCodes;
+		const sample = codes.slice(0, 20).join(", ");
+		const remaining =
+			codes.length > 20 ? `, ... (${codes.length - 20} more)` : "";
 		throw new Error(
-			`${geography}/${boundaryRelease} is not a coverage: ${topology.overlappingEdges} edges lie on more than two areas, so it cannot be tiled without drawing one over another.`,
+			`${geography}/${boundaryRelease} is not a coverage: ${topology.overlappingEdges} edges lie on more than two areas, so it cannot be tiled without drawing one over another. Offending area codes: ${sample}${remaining}.`,
 		);
+	}
 
 	// A feature keeps its number at every zoom, and the number comes from
 	// sorted code order rather than the order the geometry file happens to

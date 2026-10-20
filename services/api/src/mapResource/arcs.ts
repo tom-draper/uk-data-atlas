@@ -37,11 +37,13 @@ export type Topology = {
 	/** Each area's polygons, by area code. */
 	areas: Map<string, PolygonArcs[]>;
 	/**
-	 * Edges found on more than two areas. A coverage should have none: an edge
-	 * belongs to one area on each side of it. They are counted rather than
-	 * refused here, so the caller decides whether the release is fit to tile.
+	 * Distinct edges found on more than two areas. A coverage should have none:
+	 * an edge belongs to one area on each side of it. They are counted rather
+	 * than refused here, so the caller decides whether the release is fit to tile.
 	 */
 	overlappingEdges: number;
+	/** Sorted codes of every area owning an over-shared edge. */
+	overlappingAreaCodes: string[];
 };
 
 /** Vertices are numbered, and an edge keyed by its two numbers; this bounds how many. */
@@ -117,7 +119,8 @@ export const decomposeArcs = (
 	const edgeEnd: number[] = [];
 	const firstOwner: number[] = [];
 	const secondOwner: number[] = [];
-	let overlappingEdges = 0;
+	const overlappingEdges = new Set<number>();
+	const overlappingAreaCodes = new Set<string>();
 	for (const [area, polygons] of ringsByArea.entries()) {
 		for (const polygon of polygons) {
 			for (const ring of polygon) {
@@ -140,7 +143,12 @@ export const decomposeArcs = (
 					if (firstOwner[edge] === area || secondOwner[edge] === area)
 						continue;
 					if (secondOwner[edge] === -1) secondOwner[edge] = area;
-					else overlappingEdges += 1;
+					else {
+						overlappingEdges.add(edge);
+						overlappingAreaCodes.add(codes[firstOwner[edge]!]!);
+						overlappingAreaCodes.add(codes[secondOwner[edge]!]!);
+						overlappingAreaCodes.add(codes[area]!);
+					}
 				}
 			}
 		}
@@ -242,7 +250,8 @@ export const decomposeArcs = (
 				ringsByArea[area]!.map((polygon) => polygon.map(ringArcs)),
 			]),
 		),
-		overlappingEdges,
+		overlappingEdges: overlappingEdges.size,
+		overlappingAreaCodes: [...overlappingAreaCodes].sort(),
 	};
 };
 
