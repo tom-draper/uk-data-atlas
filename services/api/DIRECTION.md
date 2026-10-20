@@ -48,8 +48,8 @@ map tiles.
 **No big gaps means:**
 
 - Every compiled release can be downloaded whole, as GeoJSON and GeoParquet,
-  from one obvious URL. The current build publishes all 103 releases whole.
-- Every release has map tiles (PMTiles). The current build tiles 99 releases;
+  from one obvious URL. The current build publishes all 104 releases whole.
+- Every release has map tiles (PMTiles). The current build tiles 100 releases;
   four others have full-detail downloads but fail the topology check.
 - The archive holds every release ONS (and NISRA, Scottish Government, OS)
   publishes for the core administrative and statistical geographies, not only
@@ -128,7 +128,7 @@ identified below; they do not represent a fresh run of every original question.
 | Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                                        |
 | What's at this postcode?                           | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                                              |
 | What's the history of Lancashire?                  | ⚠️ partial     | Ceremonial and historic definitions, dated membership, alternative definitions and membership comparisons are implemented. Earlier boundary vintages and legally dated reorganisation events remain separate work. |
-| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. All 103 releases download whole; four that are not coverages have no tiles and download at full detail only.                       |
+| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. All 104 releases download whole; four that are not coverages have no tiles and download at full detail only.                       |
 | Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                                 |
 | Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Supplied counts can be POSTed to a named crosswalk. This particular ward-to-constituency request still depends on a published crosswalk for the exact releases.                                                    |
 | What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
@@ -231,11 +231,13 @@ already supports.
 
 ### Now: close the gaps that block the mission
 
-1. **Close the remaining delivery gaps.** All 103 boundary releases have
+1. **Close the remaining delivery gaps.** All 104 boundary releases have
    whole-release downloads. Four releases fail
    the shared-edge topology check: `dataZone/2022-sc-bfc`, `dataZone/2021-ni`,
    `lsoa/2001-12-ew-bgc` and `ward/2017-12-gb-bgc`. Their full-detail downloads
    remain available. Investigate the affected geometry before replacing it.
+   `lsoa/2001-12-ew-bgc-v2` replaces the thinned 2001 LSOA release and is
+   tiled; the thinned snapshot stays held unchanged.
 2. **Complete the missing relationships.** No published crosswalk references
    `dataZone/2022-sc-bfc`, `dataZone/2021-ni` or
    `nhsEnglandRegion/2022-07-en-bgc`.
@@ -245,9 +247,10 @@ already supports.
    adapter. DEA and super-data-zone boundaries still need source imports.
 3. **Backfill current and census boundaries.** The 2026 Senedd
    constituencies and the 2001 and 2011 MSOA and output-area releases are held,
-   tiled and related. Output areas still lack containment in LSOAs: separately
-   generalised BGC files put 30 of the 2011 output areas 50 to 143 m outside
-   their LSOA, and the thinned 2001 LSOA source fails three. Import the
+   tiled and related. The census hierarchies still lack containment:
+   separately generalised BGC files put 30 of the 2011 output areas 50 to
+   143 m outside their LSOA, three 2001 output areas 60 to 178 m outside their
+   unthinned LSOA, and one 2001 LSOA 59 m outside its MSOA. Import the
    official ONS OA-LSOA-MSOA lookups for those relationships rather than
    loosening containment. Keep the 2010 Westminster gap open until a polygon
    source is verified. A map PDF or a code lookup is not a boundary release.
@@ -255,10 +258,12 @@ already supports.
 The 2026-10-20 delivery investigation found that the held 2001 LSOA source
 was thinned in this repository to meet an obsolete GitHub file-size limit.
 That operation collapsed small polygon parts into rings with only two
-distinct vertices. Recover the publisher's unthinned geometry in a new
-immutable snapshot rather than deleting those parts or weakening topology
-validation. The original geometry has been checked for the 220 involved
-areas, but the complete replacement still needs acquisition and validation.
+distinct vertices. `lsoa/2001-12-ew-bgc-v2` is the publisher's unthinned
+geometry, imported as a new snapshot. It passes the topology check and is
+tiled. It carries the old release's continuity to 2011 LSOAs and best fit to
+2026 local authorities. Clients still on `lsoa/2001-12-ew-bgc` should move to
+it; retiring the thinned release needs a deprecation path the archive does
+not have yet.
 
 The other three delivery failures involve source defects. The 2017 wards
 contain small polygon parts inside neighbouring wards. Northern Irish 2021
@@ -290,11 +295,11 @@ compiles them without repairing coordinates, and `include=metrics` and geometry
 responses expose them in source provenance. Reports identify invalid geometry
 and areas not checked, including those above the validator's position limit.
 They do not certify that a release is a valid cross-area coverage. The fresh
-build holds compiled stores for all 103 releases; its archive audit still lists
+build holds compiled stores for all 104 releases; its archive audit still lists
 the four delivery gaps and three relationship gaps above.
 
 Completed since the original question bank: whole-release downloads for all
-103 releases, map tiles for 99, measure discovery by name and alias, request
+104 releases, map tiles for 100, measure discovery by name and alias, request
 bodies and downloadable match reports, matching with parent hints, and `:join`
 for supplied data. `POST /crosswalks/{crosswalk-id}:convert?semantics=count`
 converts supplied counts with explicit weighting opt-in and coverage. Ceremonial
@@ -337,7 +342,7 @@ until a real user asks.
 
 ## Archive gaps
 
-The compiled archive holds 103 releases across 33 geographies. Many
+The compiled archive holds 104 releases across 33 geographies. Many
 geographies have only one release, so they can't answer anything historical.
 
 | Geography                                                        | Releases held                      | Gap                                                  |
@@ -347,7 +352,7 @@ geographies have only one release, so they can't answer anything historical.
 | Westminster constituency                                         | 9 (2015–2024)                      | 2010 and earlier                                     |
 | Parish                                                           | 7 (2019–2026)                      | Pre-2019                                             |
 | Country                                                          | 6 (2020–2025)                      | Earlier releases                                     |
-| LSOA                                                             | 4 (2001, 2011, 2021)               | —                                                    |
+| LSOA                                                             | 5 (2001, 2011, 2021)               | —                                                    |
 | MSOA                                                             | 3 (2001, 2011, 2021)               | —                                                    |
 | Output area                                                      | 3 (2001, 2011, 2021)               | —                                                    |
 | Region                                                           | 1 (2025)                           | Every earlier release                                |
