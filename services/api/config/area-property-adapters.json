@@ -17,6 +17,14 @@
 			"codeProperty": "InterZone",
 			"nameProperty": "Name"
 		},
+		"outputArea/2001-12-ew-bgc": {
+			"codeProperty": "OA01CD",
+			"nameProperty": "OA01CD"
+		},
+		"outputArea/2011-12-ew-bgc-v2": {
+			"codeProperty": "OA11CD",
+			"nameProperty": "OA11CD"
+		},
 		"outputArea/2021-12-ew-bgc-v2": {
 			"codeProperty": "OA21CD",
 			"nameProperty": "OA21CD"

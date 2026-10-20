@@ -51,6 +51,7 @@
 		"build:postcode-areas": "tsx scripts/build-postcode-areas.ts",
 		"build:postcode-counts": "tsx scripts/build-postcode-counts.ts",
 		"fetch:onspd": "tsx scripts/fetch-onspd.ts",
+		"fetch:boundaries": "tsx --max-old-space-size=4096 scripts/fetch-ons-boundaries.ts",
 		"refresh:onspd": "tsx scripts/fetch-onspd.ts",
 		"build:data-catalog": "tsx scripts/build-data-catalog.ts",
 		"build:export-manifest": "tsx scripts/build-export-manifest.ts",
