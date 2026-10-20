@@ -98,6 +98,16 @@ export default function LegendPanel({
 			? activeDataset.type
 			: null;
 
+	if (
+		!activeDataset ||
+		((activeDataset.type === "generalElection" ||
+			activeDataset.type === "localElection") &&
+			parties.length === 0) ||
+		(activeDataset.type === "ethnicity" && ethnicities.length === 0)
+	) {
+		return null;
+	}
+
 	return (
 		<div className="pointer-events-none md:p-2.5 md:pr-0 flex flex-col h-full gap-2.5">
 			<div
