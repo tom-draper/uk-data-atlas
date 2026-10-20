@@ -105,5 +105,28 @@
 		"title": "Sub Integrated Care Board Location to NHS England Region, April 2026 (England)",
 		"description": "Official ONS lookup assigning each April 2026 Sub Integrated Care Board Location to its Integrated Care Board and NHS England Region.",
 		"temporalCoverage": "2026-04"
+	},
+	{
+		"service": "OA11_LSOA11_MSOA11_LAD11_EW_LUv2_b3fe7c68f4b2420185eaff6284d4c125",
+		"directory": "output-area-to-lsoa/2011-12-ew",
+		"title": "2011 output area to 2011 LSOA (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2011 Output Areas to Lower and Middle Layer Super Output Areas and 2011 Local Authority Districts, December 2011, one row per Output Area: every 2011 Output Area lies wholly in one 2011 LSOA.",
+		"temporalCoverage": "2011-12"
+	},
+	{
+		"service": "OA11_LSOA11_MSOA11_LAD11_EW_LUv2_b3fe7c68f4b2420185eaff6284d4c125",
+		"directory": "lsoa-to-msoa/2011-12-ew",
+		"title": "2011 LSOA to 2011 MSOA (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2011 Output Areas to Lower and Middle Layer Super Output Areas, December 2011, stored at LSOA level: every 2011 LSOA lies wholly in one 2011 MSOA.",
+		"temporalCoverage": "2011-12",
+		"distinctColumns": ["LSOA11CD", "LSOA11NM", "MSOA11CD", "MSOA11NM"]
+	},
+	{
+		"service": "OA01_LSOA01_MSOA01_EW_LU_b75358eac2274f4fb012dcd32d13f5cf",
+		"directory": "lsoa-to-msoa/2001-12-ew",
+		"title": "2001 LSOA to 2001 MSOA (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2001 Output Areas to Lower and Middle Layer Super Output Areas, December 2001, stored at LSOA level: every 2001 LSOA lies wholly in one 2001 MSOA.",
+		"temporalCoverage": "2001-12",
+		"distinctColumns": ["LSOA01CD", "LSOA01NM", "MSOA01CD", "MSOA01NM"]
 	}
 ]
