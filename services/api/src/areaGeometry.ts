@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { readGeoJsonFeatures, type GeoJsonFeatures } from "./geoJsonProperties";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
@@ -69,8 +69,6 @@ export type GeometrySource = {
 	reversedOffsets?: string[];
 };
 export type GeometrySourceLookup = Map<string, GeometrySource>;
-type Feature = { properties?: unknown; geometry?: unknown };
-type Collection = { type?: unknown; features?: Feature[] };
 const isGeometry = (value: unknown): value is GeoJsonGeometry =>
 	typeof value === "object" &&
 	value !== null &&
@@ -502,22 +500,31 @@ export class AreaGeometryCache {
 	): CachedRelease {
 		const source = this.source(geography, boundaryRelease);
 		const inputPath = join(this.repositoryRoot, "data", source.input);
-		const data: Collection = inputPath.toLowerCase().endsWith(".shp")
+		const data: GeoJsonFeatures = inputPath.toLowerCase().endsWith(".shp")
 			? {
 					type: "FeatureCollection",
 					features: readShapefileFeatures(inputPath),
 				}
-			: (JSON.parse(readFileSync(inputPath, "utf8")) as Collection);
-		if (data.type !== "FeatureCollection" || !Array.isArray(data.features))
+			: readGeoJsonFeatures(inputPath);
+		if (data.type !== "FeatureCollection")
 			throw new Error(
 				"Geometry source is not a GeoJSON FeatureCollection.",
 			);
 		const geometries = new Map<string, GeoJsonGeometry>();
 		for (const feature of data.features) {
-			const props = feature.properties;
-			const value =
-				typeof props === "object" && props !== null
-					? (props as Record<string, unknown>)[source.codeProperty]
+			if (
+				typeof feature !== "object" ||
+				feature === null ||
+				!("geometry" in feature)
+			)
+				continue;
+			const props =
+				"properties" in feature ? feature.properties : undefined;
+			const value: unknown =
+				typeof props === "object" &&
+				props !== null &&
+				source.codeProperty in props
+					? Reflect.get(props, source.codeProperty)
 					: undefined;
 			if (typeof value !== "string" || !isGeometry(feature.geometry))
 				continue;

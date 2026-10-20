@@ -34,6 +34,7 @@ const COMPILER_SOURCES = [
 	"scripts/build-geometry-store.ts",
 	"scripts/compileGeometryValidity.ts",
 	"src/areaGeometry.ts",
+	"src/geoJsonProperties.ts",
 	"src/geometryStore.ts",
 	"src/geometryValidity.ts",
 	"src/geometrySpatialIndex.ts",

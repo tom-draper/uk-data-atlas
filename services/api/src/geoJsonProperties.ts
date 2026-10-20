@@ -214,3 +214,38 @@ export const parseGeoJsonProperties = (
 
 export const readGeoJsonProperties = (path: string): GeoJsonProperties =>
 	parseGeoJsonProperties(readFileSync(path));
+
+export type GeoJsonFeatures =
+	| { type: "FeatureCollection"; features: Iterable<unknown> }
+	| { type: "invalid" };
+
+export const readGeoJsonFeatures = (path: string): GeoJsonFeatures => {
+	const bytes = readFileSync(path);
+	const scanner = new Scanner(bytes);
+	if (scanner.peek() !== OPEN_BRACE) return { type: "invalid" };
+	let type: unknown;
+	let features: Array<[number, number]> | undefined;
+	scanner.eachKey((key) => {
+		if (key === "features" && features)
+			for (const span of features) JSON.parse(scanner.slice(span));
+		if (key === "features" && scanner.peek() === OPEN_BRACKET) {
+			const found: Array<[number, number]> = [];
+			scanner.eachItem(() => found.push(scanner.skipValue()));
+			features = found;
+			return;
+		}
+		const value: unknown = JSON.parse(scanner.slice(scanner.skipValue()));
+		if (key === "type") type = value;
+		if (key === "features") features = undefined;
+	});
+	scanner.skipSpace();
+	if (scanner.at !== bytes.length)
+		throw new SyntaxError(
+			`Invalid GeoJSON: unexpected content at offset ${scanner.at}.`,
+		);
+	if (type !== "FeatureCollection" || !features) return { type: "invalid" };
+	function* decode(spans: Array<[number, number]>): Generator<unknown> {
+		for (const span of spans) yield JSON.parse(scanner.slice(span));
+	}
+	return { type: "FeatureCollection", features: decode(features) };
+};
