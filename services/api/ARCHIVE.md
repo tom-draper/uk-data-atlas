@@ -21,11 +21,14 @@ revision when supplied before publishing the directory atomically. It does not r
 simplify, or otherwise edit coordinates returned by the publisher.
 
 The catalogue pins the reviewed snapshot's SHA-256 as well as its publisher
-item and area count. A same-count source revision still fails the hash check.
+item and area count. The hash covers the imported FeatureCollection, with each
+page's features serialized as JSON in object-ID order. It does not cover the
+publisher's HTTP response bytes. A same-count source revision still fails the hash check.
 Review any changed source before updating the pinned hash.
 
 Each snapshot contains `source.geojson` and `meta.json`, including its source
-item URL, retrieval date, licence, country coverage, and SHA-256. Repeating an
+item URL, retrieval date, licence, country coverage, publisher revision when
+supplied, and SHA-256. Repeating an
 unchanged download preserves the snapshot and its original retrieval date. If
 the source bytes change, choose a new release directory after reviewing the
 publisher's revision. The importer refuses to overwrite the existing snapshot.
