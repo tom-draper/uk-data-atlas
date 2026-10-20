@@ -239,13 +239,36 @@ already supports.
 2. **Complete the missing relationships.** No published crosswalk references
    `dataZone/2022-sc-bfc`, `dataZone/2021-ni` or
    `nhsEnglandRegion/2022-07-en-bgc`.
-   The current candidate inventory also identifies missing Northern Irish
-   target releases for its embedded DEA, local-government district and
-   super-data-zone fields. Existing eligible candidates are already published.
+   The current candidate inventory also identifies unresolved Northern Irish
+   DEA, local-government district and super-data-zone fields. The district
+   codes match held local-authority releases and need an explicit membership
+   adapter. DEA and super-data-zone boundaries still need source imports.
 3. **Backfill current and census boundaries.** Start with the 2026 Senedd
    constituencies and the 2001 and 2011 MSOA and output-area releases. Keep the
    2010 Westminster gap open until a polygon source is verified. A map PDF or
    a code lookup is not a boundary release.
+
+The 2026-10-20 delivery investigation found that the held 2001 LSOA source
+was thinned in this repository to meet an obsolete GitHub file-size limit.
+That operation collapsed small polygon parts into rings with only two
+distinct vertices. Recover the publisher's unthinned geometry in a new
+immutable snapshot rather than deleting those parts or weakening topology
+validation. The original geometry has been checked for the 220 involved
+areas, but the complete replacement still needs acquisition and validation.
+
+The other three delivery failures involve source defects. The 2017 wards
+contain small polygon parts inside neighbouring wards. Northern Irish 2021
+data zones have tiny overlapping parts at three junctions. Scottish 2022
+data zones contain near-spikes, which become exact shared edges after
+reprojection rounding. Keep these releases downloads-only until a reviewed
+source revision or explicit correction resolves the defects. Do not silently
+snap, discard, or repair their coordinates to make tiles pass.
+
+The Scottish Government's 2022 Data Zone Lookup supplies membership in local
+authorities and parliamentary constituencies for all 7,392 held data zones.
+It needs a pinned lookup import and explicit adapters. Its intermediate-zone
+codes cannot be published as relationships until the corresponding boundary
+release is held. The 2011-to-2022 data-zone translation remains unresolved.
 
 The ONS `DZ_DEC_2011_SC_NC` source is a names-and-codes table, not an
 unclipped boundary release. Its [publisher service](https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/DZ_DEC_2011_SC_NC_45ae61d197ca46658b7431e39e1eb3de/FeatureServer?f=pjson)
