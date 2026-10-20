@@ -50,7 +50,7 @@ function countVertices(collection: FeatureCollection): number {
 	return count;
 }
 
-/** Rings with fewer than four positions are not valid polygons. */
+/** Closed rings need at least four positions and three distinct vertices. */
 function countDegenerateRings(collection: FeatureCollection): number {
 	let count = 0;
 	for (const f of collection.features) {
@@ -62,7 +62,10 @@ function countDegenerateRings(collection: FeatureCollection): number {
 					? g.coordinates
 					: [];
 		for (const polygon of polygons) {
-			for (const ring of polygon) if (ring.length < 4) count += 1;
+			for (const ring of polygon) {
+				const vertices = new Set(ring.map(([x, y]) => `${x},${y}`));
+				if (ring.length < 4 || vertices.size < 3) count += 1;
+			}
 		}
 	}
 	return count;
@@ -108,15 +111,20 @@ async function main() {
 		})),
 	};
 
-	await writeFile(output, JSON.stringify(out));
-	const after = countVertices(out);
 	const degenerate = countDegenerateRings(out);
-	console.log(
-		`${out.features.length} features: ${before.toLocaleString("en-GB")} → ${after.toLocaleString("en-GB")} vertices (${((after / before) * 100).toFixed(1)}%), ${((await stat(input)).size / 1e6).toFixed(0)} MB → ${((await stat(output)).size / 1e6).toFixed(0)} MB, ${degenerate} degenerate rings.`,
-	);
+	if (degenerate > 0) {
+		throw new Error(
+			`Simplification produced ${degenerate} degenerate rings`,
+		);
+	}
 	if (out.features.length !== source.features.length) {
 		throw new Error("Simplification changed the number of features");
 	}
+	await writeFile(output, JSON.stringify(out));
+	const after = countVertices(out);
+	console.log(
+		`${out.features.length} features: ${before.toLocaleString("en-GB")} → ${after.toLocaleString("en-GB")} vertices (${((after / before) * 100).toFixed(1)}%), ${((await stat(input)).size / 1e6).toFixed(0)} MB → ${((await stat(output)).size / 1e6).toFixed(0)} MB, ${degenerate} degenerate rings.`,
+	);
 }
 
 main();
