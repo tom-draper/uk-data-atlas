@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import { compileRelationshipCandidates } from "../src/relationshipCandidates";
+import {
+	readCrosswalkAdapters,
+	type PropertyCrosswalkAdapter,
+} from "../src/crosswalkAdapters";
 
 const readAreaArtifacts = (outputDirectory: string) => {
 	const inventory = JSON.parse(
@@ -44,6 +48,13 @@ export const buildRelationshipCandidates = (repositoryRoot: string) => {
 		repositoryRoot,
 		readAreaArtifacts(outputDirectory),
 		crosswalks.crosswalks,
+		readCrosswalkAdapters(
+			join(repositoryRoot, "services/api/config/crosswalk-adapters.json"),
+		).filter(
+			(adapter): adapter is PropertyCrosswalkAdapter =>
+				adapter.method === "official-lookup" ||
+				adapter.method === "clean-containment",
+		),
 	);
 	const inventoryPath = join(outputDirectory, "relationship-candidates.json");
 	writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, "\t")}\n`);
