@@ -5,6 +5,73 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import { compileRelationshipCandidates } from "../src/relationshipCandidates";
 import type { AreaReleaseArtifact } from "../src/areaInventory";
+import type { PropertyCrosswalkAdapter } from "../src/crosswalkAdapters";
+
+test("recognizes only the configured release for an authoritative parent field", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeWardSource(root, [
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward",
+				LGD2014_cd: "L1",
+				LGD2014_nm: "Council",
+			},
+		]);
+		writeLadSource(root, [{ code: "L1", name: "Council" }]);
+		const artifacts = [
+			wardArtifact([{ code: "E1", name: "Ward" }]),
+			ladArtifact([{ code: "L1", name: "Council" }]),
+		];
+		const adapter: PropertyCrosswalkAdapter = {
+			id: "published-membership",
+			input: "boundaries/ward/2025/wards.geojson",
+			method: "official-lookup",
+			quality: "publisher-supplied",
+			relationshipPurpose: "membership",
+			weighting: { status: "not-provided" },
+			from: {
+				geography: "ward",
+				boundaryRelease: "2025",
+				codeProperty: "WD25CD",
+				nameProperty: "WD25NM",
+			},
+			to: {
+				geography: "localAuthority",
+				boundaryRelease: "2025",
+				codeProperty: "LGD2014_cd",
+				nameProperty: "LGD2014_nm",
+			},
+		};
+		const compile = (configured: PropertyCrosswalkAdapter[]) =>
+			compileRelationshipCandidates(
+				root,
+				artifacts,
+				[adapter],
+				configured,
+			).candidates;
+		assert.equal(compile([])[0]?.status, "not-available");
+		const [candidate] = compile([adapter]);
+		assert.equal(candidate.status, "eligible");
+		assert.equal(candidate.publishedCrosswalkId, "published-membership");
+		assert.deepEqual(candidate.to, adapter.to);
+		for (const unrelated of [
+			{ ...adapter, input: "another.geojson" },
+			{ ...adapter, from: { ...adapter.from, boundaryRelease: "2024" } },
+			{ ...adapter, to: { ...adapter.to, boundaryRelease: "2024" } },
+		])
+			assert.equal(compile([unrelated])[0]?.status, "not-available");
+		const missing = compileRelationshipCandidates(
+			root,
+			[artifacts[0], ladArtifact([])],
+			[],
+			[adapter],
+		);
+		assert.equal(missing.candidates[0]?.status, "needs-review");
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
 
 const writeSource = (
 	root: string,

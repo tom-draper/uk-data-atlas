@@ -10,6 +10,7 @@ import { readGeoJsonProperties } from "./geoJsonProperties";
 import { readDbfRecords } from "./dbf";
 import type { AreaReleaseArtifact } from "./areaInventory";
 import { sha256 } from "./contentHash";
+import type { PropertyCrosswalkAdapter } from "./crosswalkAdapters";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -270,6 +271,7 @@ export const compileRelationshipCandidates = (
 	repositoryRoot: string,
 	artifacts: AreaReleaseArtifact[],
 	publishedRelationships: PublishedRelationship[] = [],
+	configuredRelationships: PropertyCrosswalkAdapter[] = [],
 ): RelationshipCandidateInventory => {
 	const candidates: RelationshipCandidate[] = [];
 	for (const artifact of artifacts) {
@@ -289,8 +291,23 @@ export const compileRelationshipCandidates = (
 		if (candidatePairs.length === 0) continue;
 		const propertiesByFeature = readProperties(source.path);
 		for (const pair of candidatePairs) {
-			const matches = artifacts.filter((candidate) =>
-				samePropertyPair(candidate, pair),
+			const configured = configuredRelationships.filter(
+				(relationship) =>
+					relationship.input === source.input &&
+					relationship.from.geography === from.geography &&
+					relationship.from.boundaryRelease ===
+						from.boundaryRelease &&
+					samePropertyPair(relationship.from, from) &&
+					samePropertyPair(relationship.to, pair),
+			);
+			const matches = artifacts.filter(
+				(candidate) =>
+					samePropertyPair(candidate, pair) ||
+					configured.some(
+						({ to }) =>
+							to.geography === candidate.geography &&
+							to.boundaryRelease === candidate.boundaryRelease,
+					),
 			);
 			const geographies = targetGeographies(artifacts, pair);
 			const relationships = new Map<string, Set<string>>();
