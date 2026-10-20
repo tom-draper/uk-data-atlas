@@ -48,8 +48,8 @@ map tiles.
 **No big gaps means:**
 
 - Every compiled release can be downloaded whole, as GeoJSON and GeoParquet,
-  from one obvious URL. The current build publishes all 98 releases whole.
-- Every release has map tiles (PMTiles). The current build tiles 94 releases;
+  from one obvious URL. The current build publishes all 103 releases whole.
+- Every release has map tiles (PMTiles). The current build tiles 99 releases;
   four others have full-detail downloads but fail the topology check.
 - The archive holds every release ONS (and NISRA, Scottish Government, OS)
   publishes for the core administrative and statistical geographies, not only
@@ -128,7 +128,7 @@ identified below; they do not represent a fresh run of every original question.
 | Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                                        |
 | What's at this postcode?                           | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                                              |
 | What's the history of Lancashire?                  | ⚠️ partial     | Ceremonial and historic definitions, dated membership, alternative definitions and membership comparisons are implemented. Earlier boundary vintages and legally dated reorganisation events remain separate work. |
-| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. All 98 releases download whole; four that are not coverages have no tiles and download at full detail only.                        |
+| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. All 103 releases download whole; four that are not coverages have no tiles and download at full detail only.                       |
 | Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                                 |
 | Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Supplied counts can be POSTed to a named crosswalk. This particular ward-to-constituency request still depends on a published crosswalk for the exact releases.                                                    |
 | What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
@@ -231,7 +231,7 @@ already supports.
 
 ### Now: close the gaps that block the mission
 
-1. **Close the remaining delivery gaps.** All 98 boundary releases have
+1. **Close the remaining delivery gaps.** All 103 boundary releases have
    whole-release downloads. Four releases fail
    the shared-edge topology check: `dataZone/2022-sc-bfc`, `dataZone/2021-ni`,
    `lsoa/2001-12-ew-bgc` and `ward/2017-12-gb-bgc`. Their full-detail downloads
@@ -243,10 +243,14 @@ already supports.
    DEA, local-government district and super-data-zone fields. The district
    codes match held local-authority releases and need an explicit membership
    adapter. DEA and super-data-zone boundaries still need source imports.
-3. **Backfill current and census boundaries.** Start with the 2026 Senedd
-   constituencies and the 2001 and 2011 MSOA and output-area releases. Keep the
-   2010 Westminster gap open until a polygon source is verified. A map PDF or
-   a code lookup is not a boundary release.
+3. **Backfill current and census boundaries.** The 2026 Senedd
+   constituencies and the 2001 and 2011 MSOA and output-area releases are held,
+   tiled and related. Output areas still lack containment in LSOAs: separately
+   generalised BGC files put 30 of the 2011 output areas 50 to 143 m outside
+   their LSOA, and the thinned 2001 LSOA source fails three. Import the
+   official ONS OA-LSOA-MSOA lookups for those relationships rather than
+   loosening containment. Keep the 2010 Westminster gap open until a polygon
+   source is verified. A map PDF or a code lookup is not a boundary release.
 
 The 2026-10-20 delivery investigation found that the held 2001 LSOA source
 was thinned in this repository to meet an obsolete GitHub file-size limit.
@@ -286,11 +290,11 @@ compiles them without repairing coordinates, and `include=metrics` and geometry
 responses expose them in source provenance. Reports identify invalid geometry
 and areas not checked, including those above the validator's position limit.
 They do not certify that a release is a valid cross-area coverage. The fresh
-build holds compiled stores for all 98 releases; its archive audit still lists
+build holds compiled stores for all 103 releases; its archive audit still lists
 the four delivery gaps and three relationship gaps above.
 
 Completed since the original question bank: whole-release downloads for all
-98 releases, map tiles for 94, measure discovery by name and alias, request
+103 releases, map tiles for 99, measure discovery by name and alias, request
 bodies and downloadable match reports, matching with parent hints, and `:join`
 for supplied data. `POST /crosswalks/{crosswalk-id}:convert?semantics=count`
 converts supplied counts with explicit weighting opt-in and coverage. Ceremonial
@@ -333,7 +337,7 @@ until a real user asks.
 
 ## Archive gaps
 
-The compiled archive holds 98 releases across 33 geographies. Many
+The compiled archive holds 103 releases across 33 geographies. Many
 geographies have only one release, so they can't answer anything historical.
 
 | Geography                                                        | Releases held                      | Gap                                                  |
@@ -344,14 +348,14 @@ geographies have only one release, so they can't answer anything historical.
 | Parish                                                           | 7 (2019–2026)                      | Pre-2019                                             |
 | Country                                                          | 6 (2020–2025)                      | Earlier releases                                     |
 | LSOA                                                             | 4 (2001, 2011, 2021)               | —                                                    |
-| MSOA                                                             | 1 (2021)                           | 2011 and 2001                                        |
-| Output area                                                      | 1 (2021)                           | 2011 and 2001                                        |
+| MSOA                                                             | 3 (2001, 2011, 2021)               | —                                                    |
+| Output area                                                      | 3 (2001, 2011, 2021)               | —                                                    |
 | Region                                                           | 1 (2025)                           | Every earlier release                                |
 | County and unitary authority                                     | 1 (2025)                           | Every earlier release; the 2009 and 2019–23 changes  |
 | Combined authority                                               | 1 (2025)                           | Earlier releases                                     |
 | Police force area, fire and rescue, community safety partnership | 1 each                             | Earlier releases                                     |
 | Integrated care board                                            | 1 (2026)                           | 2022–2025, and CCGs/STPs before them                 |
-| Senedd constituency                                              | 1 (2022)                           | The 2026 constituencies                              |
+| Senedd constituency                                              | 2 (2022, 2026)                     | —                                                    |
 | Ceremonial county                                                | Sourced named locations            | Historical boundary releases and legal change events |
 | Historic county                                                  | Sourced circa-1888 named locations | Historical boundary releases and legal change events |
 | Built-up areas                                                   | none                               | 2022                                                 |
