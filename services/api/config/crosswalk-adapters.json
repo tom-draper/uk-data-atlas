@@ -2,6 +2,46 @@
 	"schemaVersion": 1,
 	"crosswalks": [
 		{
+			"id": "nhs-england-region-2022-07-en-bgc-to-nhs-england-region-2024-01-en-bgc-area-overlap",
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"from": {
+				"geography": "nhsEnglandRegion",
+				"boundaryRelease": "2022-07-en-bgc"
+			},
+			"to": {
+				"geography": "nhsEnglandRegion",
+				"boundaryRelease": "2024-01-en-bgc"
+			},
+			"sliverWidthM": 100,
+			"minimumCoverage": 0.99
+		},
+		{
+			"id": "data-zone-2021-ni-to-local-authority-2025-12-uk-bgc-official-lookup",
+			"input": "boundaries/data-zone/2021-ni/DZ2021.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": { "status": "not-provided" },
+			"from": {
+				"geography": "dataZone",
+				"boundaryRelease": "2021-ni",
+				"codeProperty": "DZ2021_cd",
+				"nameProperty": "DZ2021_nm"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LGD2014_cd",
+				"nameProperty": "LGD2014_nm"
+			}
+		},
+		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
 			"input": "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson",
 			"method": "official-lookup",
