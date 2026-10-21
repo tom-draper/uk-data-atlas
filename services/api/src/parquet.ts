@@ -1,4 +1,7 @@
-import { gzipSync } from "node:zlib";
+import { promisify } from "node:util";
+import { gzip, gzipSync, type ZlibOptions } from "node:zlib";
+
+const gzipAsync = promisify(gzip);
 
 /**
  * A Parquet file writer, written from the Apache Parquet format specification
@@ -396,7 +399,8 @@ const leafOrder = (columns: ParquetColumn[]) => {
 	return order.flat();
 };
 
-export const writeParquet = (table: ParquetTable): Buffer => {
+/** The table checked, and each column's page as it is before compression. */
+const pages = (table: ParquetTable): Buffer[] => {
 	const rowCount = table.columns[0]?.values.length ?? 0;
 	if (table.columns.length === 0)
 		throw new Error("A Parquet table needs at least one column.");
@@ -408,6 +412,49 @@ export const writeParquet = (table: ParquetTable): Buffer => {
 		if (!column.optional && column.values.includes(null))
 			throw new Error(`${column.name} is required but holds a null.`);
 	}
+	return leafOrder(table.columns).map((column) => {
+		const values = plainValues(column);
+		return column.optional
+			? Buffer.concat([definitionLevels(column.values), values])
+			: values;
+	});
+};
+
+// mtime 0 and a fixed level keep the page bytes a function of the values
+// alone. Level 6 is a fifth of level 9's time for pages within half a
+// percent of its size.
+const PAGE_GZIP: ZlibOptions = { level: 6 };
+
+export const writeParquet = (table: ParquetTable): Buffer => {
+	const bodies = pages(table);
+	return assemble(
+		table,
+		bodies,
+		bodies.map((body) => gzipSync(body, PAGE_GZIP)),
+	);
+};
+
+/**
+ * The same bytes as `writeParquet`, with the pages compressed on the libuv
+ * thread pool: for a file built while a server is answering requests.
+ */
+export const writeParquetAsync = async (
+	table: ParquetTable,
+): Promise<Buffer> => {
+	const bodies = pages(table);
+	return assemble(
+		table,
+		bodies,
+		await Promise.all(bodies.map((body) => gzipAsync(body, PAGE_GZIP))),
+	);
+};
+
+const assemble = (
+	table: ParquetTable,
+	bodies: Buffer[],
+	compressedPages: Buffer[],
+): Buffer => {
+	const rowCount = table.columns[0]!.values.length;
 	const schema = schemaElements(table.columns);
 	const columns = leafOrder(table.columns);
 
@@ -416,15 +463,9 @@ export const writeParquet = (table: ParquetTable): Buffer => {
 	let totalUncompressed = 0;
 	let totalCompressed = 0;
 	const columnChunks: Field[][] = [];
-	for (const column of columns) {
-		const values = plainValues(column);
-		const body = column.optional
-			? Buffer.concat([definitionLevels(column.values), values])
-			: values;
-		// mtime 0 and a fixed level keep the page bytes a function of the
-		// values alone. Level 6 is a fifth of level 9's time for pages within
-		// half a percent of its size.
-		const compressed = gzipSync(body, { level: 6 });
+	for (const [index, column] of columns.entries()) {
+		const body = bodies[index]!;
+		const compressed = compressedPages[index]!;
 		const header = thrift([
 			{ id: 1, kind: "i32", value: PAGE_DATA },
 			{ id: 2, kind: "i32", value: body.length },
