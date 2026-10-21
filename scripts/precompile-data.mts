@@ -36,6 +36,7 @@ import {
 import { compileDataset } from "./precompile/compileDataset.mts";
 import { compileDatasets } from "./precompile/datasetPool.mts";
 import { chunksSize, out } from "./precompile/output.mts";
+import { atlasLookupPath } from "./atlas-lookups";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./precompile/paths.mts";
 import {
 	compileRegionChunks,
@@ -118,7 +119,7 @@ async function compileSelected(names: readonly string[]) {
 				wardToLad: parseBoundaryWardToLad(
 					JSON.parse(
 						await readFile(
-							join(OUT_DIR, "boundary-mappings.json"),
+							atlasLookupPath(ROOT, "boundary-mappings.json"),
 							"utf8",
 						),
 					),

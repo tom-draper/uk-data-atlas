@@ -10,6 +10,7 @@ import {
 } from "../lib/atlas/rankings";
 import type { Editions } from "../lib/atlas/rankingRecipes";
 import type { AreaProfile } from "../lib/places/profile";
+import { atlasLookupPath } from "./atlas-lookups";
 
 const DATASETS = join(process.cwd(), "public", "data", "datasets");
 export const RANKINGS_DIR = join(DATASETS, "rankings");
@@ -43,7 +44,10 @@ const SPECIAL_INPUTS: Readonly<Record<string, () => Promise<unknown>>> = {
 	"constituency-lad-overlaps": async () =>
 		JSON.parse(
 			await readFile(
-				join(DATASETS, "constituency-lad-overlaps.json"),
+				atlasLookupPath(
+					process.cwd(),
+					"constituency-lad-overlaps.json",
+				),
 				"utf8",
 			),
 		),

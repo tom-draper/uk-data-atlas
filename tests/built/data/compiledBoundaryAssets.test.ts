@@ -6,6 +6,7 @@ import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 import { getProp } from "@/lib/data/boundaries/properties";
 import { parseMatchIndexLevel } from "@/lib/data/areaBank";
 import type { GazetteerCore } from "@/lib/data/gazetteer/types";
+import { atlasLookupPath } from "@/scripts/atlas-lookups";
 
 /**
  * Compiled assets live in public/data, where they are served from; the two
@@ -148,20 +149,14 @@ describe("upload match index parents", () => {
 describe("constituency to local authority crosswalk", () => {
 	const overlaps = JSON.parse(
 		readFileSync(
-			join(
-				process.cwd(),
-				"public",
-				"data",
-				"datasets",
-				"constituency-lad-overlaps.json",
-			),
+			atlasLookupPath(process.cwd(), "constituency-lad-overlaps.json"),
 			"utf8",
 		),
 	) as {
 		targetLocalAuthorityRelease: string;
 		releases: Record<string, unknown>;
 	};
-	const rerun = "rerun scripts/gazetteer-crosswalks.ts";
+	const rerun = "rebuild the API, then run pnpm lookups:fetch";
 
 	it("has a table for every constituency release the catalogue serves", () => {
 		const { releases, vintages } = BOUNDARY_CATALOG.constituency;

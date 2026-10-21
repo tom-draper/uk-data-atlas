@@ -24,7 +24,9 @@ import {
 	BOUNDARY_CHUNK_TYPES,
 	type ChunkedBoundaryType,
 } from "../lib/data/boundaries/chunks";
+import { lsoaLadMappingsFile } from "@uk-data-atlas/geography";
 import { lsoaYearForBoundaryAsset } from "../lib/data/boundaries/lsoaLadMappings";
+import { atlasLookupPath } from "./atlas-lookups";
 import { getProp } from "../lib/data/boundaries/properties";
 import {
 	REGION_CHUNK_KEYS,
@@ -154,11 +156,11 @@ export const chunkedReleases = (root: string): ChunkedRelease[] =>
 					topologyPath: join(directory, "boundaries.topojson"),
 					chunkDirectory: join(directory, "chunks"),
 					lookupPaths: [
-						join(
-							datasetsIn(root),
+						atlasLookupPath(
+							root,
 							type === "ward"
 								? "boundary-mappings.json"
-								: `lsoa-lad-mappings-${lsoaYear}.json`,
+								: lsoaLadMappingsFile(lsoaYear!),
 						),
 					],
 					localAuthority: authorityOf[type],
@@ -270,7 +272,10 @@ export async function compileBoundaryChunks(root: string): Promise<void> {
 	);
 	const wardToLad = (
 		JSON.parse(
-			await readFile(join(datasets, "boundary-mappings.json"), "utf8"),
+			await readFile(
+				atlasLookupPath(root, "boundary-mappings.json"),
+				"utf8",
+			),
 		) as { wardToLad: Record<string, string> }
 	).wardToLad;
 

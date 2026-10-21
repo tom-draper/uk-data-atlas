@@ -34,8 +34,8 @@ const createRepository = async () => {
 		"scripts/precompile-selection.ts",
 		"packages/geography/package.json",
 		"packages/geography/src/index.ts",
-		"public/data/datasets/boundary-mappings.json",
-		"public/data/datasets/parish-lad-mappings.json",
+		".cache/atlas-lookups/boundary-mappings.json",
+		".cache/atlas-lookups/parish-lad-mappings.json",
 	])
 		await write(file, `// ${file}`);
 	await write(

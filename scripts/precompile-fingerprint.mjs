@@ -37,8 +37,8 @@ const pipelineInputs = [
 	"scripts/precompile-selection.ts",
 	"packages/geography/package.json",
 	"packages/geography/src",
-	"public/data/datasets/boundary-mappings.json",
-	"public/data/datasets/parish-lad-mappings.json",
+	".cache/atlas-lookups/boundary-mappings.json",
+	".cache/atlas-lookups/parish-lad-mappings.json",
 ];
 
 const definitionsDirectory = "lib/data/catalog/definitions";
