@@ -1,0 +1,786 @@
+{
+	"population-density": {
+		"wales": {
+			"kind": "density",
+			"population": 3134196,
+			"areaKm2": 20736.744800000004
+		},
+		"greater-manchester": {
+			"kind": "density",
+			"population": 2919285,
+			"areaKm2": 1275.9660000000001
+		},
+		"london": {
+			"kind": "density",
+			"population": 8871368,
+			"areaKm2": 1571.9583999999998
+		},
+		"leeds": {
+			"kind": "density",
+			"population": 820294,
+			"areaKm2": 551.6983
+		},
+		"hartlepool": {
+			"kind": "density",
+			"population": 94161,
+			"areaKm2": 93.887
+		},
+		"oxford": {
+			"kind": "density",
+			"population": 163100,
+			"areaKm2": 45.603
+		},
+		"kent": {
+			"kind": "density",
+			"population": 1877610,
+			"areaKm2": 3738.0939
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "density",
+			"population": 1201436,
+			"areaKm2": 2116.4486
+		},
+		"rutland": {
+			"kind": "density",
+			"population": 41165,
+			"areaKm2": 381.81699999999995
+		}
+	},
+	"house-price": {
+		"wales": {
+			"kind": "range",
+			"low": {
+				"name": "Menai (Bangor), Gwynedd",
+				"value": 76475
+			},
+			"high": {
+				"name": "Llantilio Crossenny, Monmouthshire",
+				"value": 651000
+			}
+		},
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Halliwell, Bolton",
+				"value": 105000
+			},
+			"high": {
+				"name": "Hale Barns, Trafford",
+				"value": 730500
+			}
+		},
+		"london": {
+			"kind": "range",
+			"low": {
+				"name": "Abbey, Barking and Dagenham",
+				"value": 207500
+			},
+			"high": {
+				"name": "Knightsbridge and Belgravia, Westminster",
+				"value": 3750000
+			}
+		},
+		"leeds": {
+			"kind": "range",
+			"low": {
+				"name": "Gipton & Harehills",
+				"value": 117000
+			},
+			"high": {
+				"name": "Harewood",
+				"value": 488000
+			}
+		},
+		"hartlepool": {
+			"kind": "range",
+			"low": {
+				"name": "Victoria",
+				"value": 70000
+			},
+			"high": {
+				"name": "Rural West",
+				"value": 312000
+			}
+		},
+		"oxford": {
+			"kind": "range",
+			"low": {
+				"name": "Northfield Brook",
+				"value": 315000
+			},
+			"high": {
+				"name": "North",
+				"value": 985000
+			}
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Town & Castle, Dover",
+				"value": 196000
+			},
+			"high": {
+				"name": "Sevenoaks Kippington, Sevenoaks",
+				"value": 1325000
+			}
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "range",
+			"low": {
+				"name": "Maerdy, Rhondda Cynon Taf",
+				"value": 85000
+			},
+			"high": {
+				"name": "Llantilio Crossenny, Monmouthshire",
+				"value": 651000
+			}
+		},
+		"rutland": {
+			"kind": "range",
+			"low": {
+				"name": "Oakham North West",
+				"value": 235532
+			},
+			"high": {
+				"name": "Exton",
+				"value": 625000
+			}
+		}
+	},
+	"crime": {
+		"wales": {
+			"kind": "crime",
+			"crimes": 225413,
+			"population": 2884765,
+			"period": "year ending March 2026"
+		},
+		"greater-manchester": {
+			"kind": "crime",
+			"crimes": 310685,
+			"population": 3009664,
+			"period": "year ending March 2026"
+		},
+		"london": {
+			"kind": "crime",
+			"crimes": 875325,
+			"population": 9089736,
+			"period": "year ending March 2026"
+		},
+		"leeds": {
+			"kind": "crime",
+			"crimes": 96875,
+			"population": 845189,
+			"period": "year ending March 2026"
+		},
+		"hartlepool": {
+			"kind": "crime",
+			"crimes": 13174,
+			"population": 98180,
+			"period": "year ending March 2026"
+		},
+		"oxford": {
+			"kind": "crime",
+			"crimes": 15987,
+			"population": 166034,
+			"period": "year ending March 2026"
+		},
+		"rutland": {
+			"kind": "crime",
+			"crimes": 1765,
+			"population": 41443,
+			"period": "year ending March 2026"
+		}
+	},
+	"life-expectancy": {
+		"wales": {
+			"kind": "range",
+			"low": {
+				"name": "Merthyr Tydfil",
+				"value": 77.35
+			},
+			"high": {
+				"name": "Monmouthshire",
+				"value": 82.44999999999999
+			}
+		},
+		"united-kingdom": {
+			"kind": "range",
+			"low": {
+				"name": "Blackpool",
+				"value": 76.4
+			},
+			"high": {
+				"name": "Hart",
+				"value": 84.95
+			}
+		},
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Manchester",
+				"value": 77.85
+			},
+			"high": {
+				"name": "Trafford",
+				"value": 81.75
+			}
+		},
+		"leeds": {
+			"kind": "sexes",
+			"male": 78.8,
+			"female": 82.6
+		},
+		"hartlepool": {
+			"kind": "sexes",
+			"male": 77.3,
+			"female": 80.3
+		},
+		"oxford": {
+			"kind": "sexes",
+			"male": 80.7,
+			"female": 84.1
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Thanet",
+				"value": 79.6
+			},
+			"high": {
+				"name": "Sevenoaks",
+				"value": 83.75
+			}
+		},
+		"the-highlands": {
+			"kind": "range",
+			"low": {
+				"name": "Highland",
+				"value": 79.85
+			},
+			"high": {
+				"name": "Argyll and Bute",
+				"value": 80
+			}
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "range",
+			"low": {
+				"name": "Blaenau Gwent",
+				"value": 77.5
+			},
+			"high": {
+				"name": "Monmouthshire",
+				"value": 82.44999999999999
+			}
+		},
+		"rutland": {
+			"kind": "sexes",
+			"male": 81.9,
+			"female": 84.8
+		}
+	},
+	"income": {
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Oldham",
+				"value": 29124
+			},
+			"high": {
+				"name": "Trafford",
+				"value": 35593
+			}
+		},
+		"london": {
+			"kind": "value",
+			"value": 39778
+		},
+		"leeds": {
+			"kind": "value",
+			"value": 31679
+		},
+		"hartlepool": {
+			"kind": "value",
+			"value": 28830
+		},
+		"oxford": {
+			"kind": "value",
+			"value": 36517
+		},
+		"north-west": {
+			"kind": "value",
+			"value": 31330
+		},
+		"east-of-england": {
+			"kind": "value",
+			"value": 34104
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Thanet",
+				"value": 28323
+			},
+			"high": {
+				"name": "Dartford",
+				"value": 36210
+			}
+		},
+		"yorkshire": {
+			"kind": "value",
+			"value": 30682
+		},
+		"rutland": {
+			"kind": "value",
+			"value": 39559
+		}
+	},
+	"child-poverty": {
+		"wales": {
+			"kind": "percent",
+			"percent": 21.19258146170755
+		},
+		"united-kingdom": {
+			"kind": "percent",
+			"percent": 19.285511955900084
+		},
+		"greater-manchester": {
+			"kind": "percent",
+			"percent": 27.65117190975323
+		},
+		"london": {
+			"kind": "percent",
+			"percent": 15.60530480739338
+		},
+		"leeds": {
+			"kind": "percent",
+			"percent": 24.975495500082747
+		},
+		"hartlepool": {
+			"kind": "percent",
+			"percent": 27.18399482312338
+		},
+		"oxford": {
+			"kind": "percent",
+			"percent": 14.161973198679355
+		},
+		"kent": {
+			"kind": "percent",
+			"percent": 15.66459574377391
+		},
+		"the-highlands": {
+			"kind": "percent",
+			"percent": 11.623295651996157
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "percent",
+			"percent": 21.50672882800359
+		},
+		"rutland": {
+			"kind": "percent",
+			"percent": 11.467324290998766
+		}
+	},
+	"broadband": {
+		"wales": {
+			"kind": "percent",
+			"percent": 76.1615707476838
+		},
+		"united-kingdom": {
+			"kind": "percent",
+			"percent": 77.5176015827573
+		},
+		"greater-manchester": {
+			"kind": "percent",
+			"percent": 86.34018143816883
+		},
+		"london": {
+			"kind": "percent",
+			"percent": 75.95512251866751
+		},
+		"leeds": {
+			"kind": "percent",
+			"percent": 92.3
+		},
+		"hartlepool": {
+			"kind": "percent",
+			"percent": 94.2
+		},
+		"oxford": {
+			"kind": "percent",
+			"percent": 38.2
+		},
+		"kent": {
+			"kind": "percent",
+			"percent": 72.65791261303488
+		},
+		"the-highlands": {
+			"kind": "percent",
+			"percent": 48.54056818181819
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "percent",
+			"percent": 79.774552807831
+		},
+		"rutland": {
+			"kind": "percent",
+			"percent": 76.3
+		}
+	},
+	"mobile-coverage": {
+		"wales": {
+			"kind": "percent",
+			"percent": 19.14521435239913
+		},
+		"united-kingdom": {
+			"kind": "percent",
+			"percent": 46.81369219031037
+		},
+		"greater-manchester": {
+			"kind": "percent",
+			"percent": 76.84479472509071
+		},
+		"london": {
+			"kind": "percent",
+			"percent": 94.75810483890909
+		},
+		"leeds": {
+			"kind": "percent",
+			"percent": 78.33
+		},
+		"hartlepool": {
+			"kind": "percent",
+			"percent": 3.81
+		},
+		"oxford": {
+			"kind": "percent",
+			"percent": 74.08
+		},
+		"kent": {
+			"kind": "percent",
+			"percent": 30.417487023138214
+		},
+		"the-highlands": {
+			"kind": "percent",
+			"percent": 13.1573545491048
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "percent",
+			"percent": 42.37585949200984
+		},
+		"rutland": {
+			"kind": "percent",
+			"percent": 0.58
+		}
+	},
+	"business-activity": {
+		"wales": {
+			"kind": "count",
+			"count": 104820
+		},
+		"united-kingdom": {
+			"kind": "count",
+			"count": 2711140
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 105760
+		},
+		"london": {
+			"kind": "count",
+			"count": 538315
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 29340
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 2180
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 4865
+		},
+		"kent": {
+			"kind": "count",
+			"count": 74430
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 14830
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 33615
+		},
+		"rutland": {
+			"kind": "count",
+			"count": 1900
+		}
+	},
+	"electric-vehicle-chargers": {
+		"wales": {
+			"kind": "count",
+			"count": 5910,
+			"rate": 185.46523687927595
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 2873,
+			"rate": 95.45916088972058
+		},
+		"london": {
+			"kind": "count",
+			"count": 31371,
+			"rate": 345.1255349990363
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 1169,
+			"rate": 138.31225915150338
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 89,
+			"rate": 90.64982684864535
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 278,
+			"rate": 167.43558548249155
+		},
+		"kent": {
+			"kind": "count",
+			"count": 2321,
+			"rate": 120.15422812426877
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 1265,
+			"rate": 389.25472336759185
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 2018,
+			"rate": 164.27218386762496
+		},
+		"rutland": {
+			"kind": "count",
+			"count": 78,
+			"rate": 188.21031295996912
+		}
+	},
+	"council-tax": {
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Wigan",
+				"value": 2152.68
+			},
+			"high": {
+				"name": "Stockport",
+				"value": 2618.9
+			}
+		},
+		"london": {
+			"kind": "range",
+			"low": {
+				"name": "Wandsworth",
+				"value": 1028.21
+			},
+			"high": {
+				"name": "Kingston upon Thames",
+				"value": 2609.2
+			}
+		},
+		"leeds": {
+			"kind": "value",
+			"value": 2283.73
+		},
+		"hartlepool": {
+			"kind": "value",
+			"value": 2560.2
+		},
+		"oxford": {
+			"kind": "value",
+			"value": 2678.4
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Medway",
+				"value": 2328.55
+			},
+			"high": {
+				"name": "Folkestone and Hythe",
+				"value": 2538.75
+			}
+		},
+		"rutland": {
+			"kind": "value",
+			"value": 2737.58
+		}
+	},
+	"claimant-count": {
+		"wales": {
+			"kind": "count",
+			"count": 65695,
+			"period": "Apr 2026"
+		},
+		"united-kingdom": {
+			"kind": "count",
+			"count": 1733090,
+			"period": "Apr 2026"
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 95290,
+			"period": "Apr 2026"
+		},
+		"london": {
+			"kind": "count",
+			"count": 348980,
+			"period": "Apr 2026"
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 25795,
+			"rate": 4.6,
+			"period": "Apr 2026"
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 2790,
+			"rate": 4.6,
+			"period": "Apr 2026"
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 3085,
+			"rate": 2.6,
+			"period": "Apr 2026"
+		},
+		"north-west": {
+			"kind": "count",
+			"count": 209730,
+			"period": "Apr 2026"
+		},
+		"kent": {
+			"kind": "count",
+			"count": 41720,
+			"period": "Apr 2026"
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 4735,
+			"period": "Apr 2026"
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 28490,
+			"period": "Apr 2026"
+		},
+		"rutland": {
+			"kind": "count",
+			"count": 425,
+			"rate": 1.8,
+			"period": "Apr 2026"
+		}
+	},
+	"homelessness": {
+		"greater-manchester": {
+			"kind": "count",
+			"count": 5980,
+			"rate": 4.8331980899976985,
+			"period": "Jan-Mar 2026"
+		},
+		"london": {
+			"kind": "count",
+			"count": 76017,
+			"rate": 21.12735948167277,
+			"period": "Jan-Mar 2026"
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 738,
+			"rate": 2.06683320824045,
+			"period": "Jan-Mar 2026"
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 18,
+			"rate": 0.42423813900869706,
+			"period": "Jan-Mar 2026"
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 312,
+			"rate": 5.36414276872292,
+			"period": "Jan-Mar 2026"
+		},
+		"rutland": {
+			"kind": "count",
+			"count": 24,
+			"rate": 1.36775517182424,
+			"period": "Jan-Mar 2026"
+		}
+	},
+	"ghg-emissions": {
+		"wales": {
+			"kind": "count",
+			"count": 23533453,
+			"rate": 7.3851733252661695
+		},
+		"united-kingdom": {
+			"kind": "count",
+			"count": 351667904.9999999,
+			"rate": 5.075932605150784
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 11202418,
+			"rate": 3.7221490505252417
+		},
+		"london": {
+			"kind": "count",
+			"count": 27382566,
+			"rate": 3.012470989256454
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 3479578.0000000005,
+			"rate": 4.116922960426604
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 588351,
+			"rate": 5.992574862497453
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 557699,
+			"rate": 3.3589445535251814
+		},
+		"kent": {
+			"kind": "count",
+			"count": 8195582,
+			"rate": 4.242713611543088
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 2581672,
+			"rate": 7.944095021232076
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 5792069,
+			"rate": 4.714944617155454
+		},
+		"rutland": {
+			"kind": "count",
+			"count": 852787.0000000002,
+			"rate": 20.577347199768365
+		}
+	}
+}
