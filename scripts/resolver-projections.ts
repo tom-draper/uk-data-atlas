@@ -1,14 +1,13 @@
 /**
  * Which API build each committed resolver projection came from.
  *
- * `pnpm lineage:build` and `pnpm containment:build` ask the API's geography
- * resolver where areas go and commit its answers to public/data/datasets.
- * The API's own build is not committed, so these files are the only trace of
- * it in the repository. Each script records, beside its outputs, the API
- * release it read and a hash of every file it wrote. `pnpm precompile:verify`
- * then fails when a file was edited after it was written, or when the
- * projections came from different API builds, as happens when only one of
- * the two scripts is rerun after an API rebuild.
+ * `pnpm places:build` asks the API's geography resolver about each place and
+ * commits its answers to public/data/datasets. The API's own build is not
+ * committed, so these files are the only trace of it in the repository. The
+ * script records, beside its outputs, the API release it read and a hash of
+ * every file it wrote. `pnpm precompile:verify` then fails when a file was
+ * edited after it was written, or when the projections came from different
+ * API builds.
  */
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -90,7 +89,7 @@ export const resolverProjectionProblems = (datasets: string): string[] => {
 							`${names.join(", ")} from ${release}`,
 					)
 					.join("; ") +
-				". Run pnpm lineage:build, pnpm containment:build and pnpm places:build against one build.",
+				". Run pnpm places:build against one build.",
 		);
 	return problems;
 };
