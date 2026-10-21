@@ -51,7 +51,11 @@ test("redirects archive, feature and tile requests and advertises the tile CDN",
 		archive.headers?.location,
 		`${assetBase}/${resource.tiles.artifact}`,
 	);
-	const feature = resource.features[0]!;
+	// The full tier has no file on the CDN: it keeps the API's own address.
+	const full = resource.features.find((entry) => entry.tier === "full")!;
+	assert.equal(full.artifact, undefined);
+	assert.ok(full.href.startsWith("/v1/map-resources/"));
+	const feature = resource.features.find((entry) => entry.artifact)!;
 	const response = route(
 		"GET",
 		`/v1/map-resources/${resource.id}/features?tier=${feature.tier}&format=${feature.format === "geojson" ? "geojson" : "geoparquet"}`,

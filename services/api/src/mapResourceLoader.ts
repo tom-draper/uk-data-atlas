@@ -70,8 +70,7 @@ export const releaseDownloads = (
 		if (unavailable?.features?.length)
 			return {
 				status: "untiled" as const,
-				reason: `No tiles: ${unavailable.reason} The release is still downloadable whole, at full detail as published.`,
-				geojson: byTier(unavailable.features, "geojson"),
+				reason: `No tiles: ${unavailable.reason} The release is still downloadable whole as GeoParquet, at full detail as published.`,
 				geoparquet: byTier(unavailable.features, "geoparquet-1.1"),
 			};
 		return {
@@ -110,6 +109,10 @@ export const readMapResources = (
 	if (!assetBaseUrl) return resources;
 	const href = (artifact: string) =>
 		`${assetBaseUrl}/${artifact.split("/").map(encodeURIComponent).join("/")}`;
+	// A download built on request has no file to put on the CDN, so it keeps
+	// the API's own address.
+	const featureHref = (entry: { artifact?: string; href: string }) =>
+		entry.artifact ? href(entry.artifact) : entry.href;
 	return {
 		...resources,
 		assetBaseUrl,
@@ -119,14 +122,14 @@ export const readMapResources = (
 			tiles: { ...resource.tiles, href: href(resource.tiles.artifact) },
 			features: resource.features.map((entry) => ({
 				...entry,
-				href: href(entry.artifact),
+				href: featureHref(entry),
 			})),
 		})),
 		unavailable: resources.unavailable?.map((resource) => ({
 			...resource,
 			features: resource.features?.map((entry) => ({
 				...entry,
-				href: href(entry.artifact),
+				href: featureHref(entry),
 			})),
 		})),
 	};
@@ -153,16 +156,20 @@ export const readMapAssets = (
 		),
 	),
 	mapFeatures: new Map(
-		allFeatures(mapResources).map((entry) => [
-			entry.artifact,
-			{
-				path: join(apiRoot, "public", entry.artifact),
-				bytes: entry.bytes,
-				contentHash: entry.contentHash,
-				...(entry.gzipBytes === undefined
-					? {}
-					: { gzipBytes: entry.gzipBytes }),
-			},
-		]),
+		allFeatures(mapResources)
+			.flatMap((entry) =>
+				entry.artifact ? [{ ...entry, artifact: entry.artifact }] : [],
+			)
+			.map((entry) => [
+				entry.artifact,
+				{
+					path: join(apiRoot, "public", entry.artifact),
+					bytes: entry.bytes,
+					contentHash: entry.contentHash,
+					...(entry.gzipBytes === undefined
+						? {}
+						: { gzipBytes: entry.gzipBytes }),
+				},
+			]),
 	),
 });

@@ -77,6 +77,7 @@ const featureDownload = (
 	features: MapResourceDescriptor["features"],
 	geography: string,
 	release: string,
+	topology: "shared-arc" | "none",
 ): ApiResponse => {
 	const tier = readChoice(parsedUrl.searchParams.get("tier"), FEATURES.tier);
 	// Like a join's period, the detail is the caller's to choose: the finest
@@ -100,12 +101,50 @@ const featureDownload = (
 			candidate.tier === tier && candidate.format === download.format,
 	);
 	if (!entry) {
-		const tiers = [...new Set(features.map((candidate) => candidate.tier))];
+		const tiers = [
+			...new Set(
+				features
+					.filter((candidate) => candidate.format === download.format)
+					.map((candidate) => candidate.tier),
+			),
+		];
+		const otherFormat = features.some(
+			(candidate) => candidate.tier === tier,
+		);
 		return problem(
 			404,
 			"Not Found",
-			`${geography}/${release} is downloadable at ${tiers.join(", ")} only: its areas are not a coverage, so they cannot be generalised together without opening gaps between them.`,
+			otherFormat
+				? `${geography}/${release} at tier ${tier} is published as GeoParquet only. GeoJSON is published at ${tiers.join(", ") || "no tier"} of this release.`
+				: `${geography}/${release} is downloadable at ${[...new Set(features.map((candidate) => candidate.tier))].join(", ")} only: its areas are not a coverage, so they cannot be generalised together without opening gaps between them.`,
 		);
+	}
+	if (!entry.artifact) {
+		const built = context.fullDetailDownloads?.get(
+			geography,
+			release,
+			topology,
+			entry.contentHash,
+		);
+		if (built?.status === "stale")
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"The geometry store no longer matches the published map resources. Rebuild the map resources.",
+			);
+		if (built?.status !== "built") return unavailable();
+		return {
+			status: 200,
+			body: envelope(releaseId, entry),
+			representation: {
+				contentType: download.contentType,
+				body: built.body,
+				contentHash: entry.contentHash,
+				headers: {
+					"content-disposition": `attachment; filename="${geography}-${release}-${tier}.${download.extension}"`,
+				},
+			},
+		};
 	}
 	if (context.mapResources?.assetBaseUrl)
 		return {
@@ -244,6 +283,7 @@ export const handleMapResourceRoutes = ({
 				untiled.features!,
 				geography,
 				release,
+				"none",
 			);
 		return notFound(geography, release);
 	}
@@ -309,6 +349,7 @@ export const handleMapResourceRoutes = ({
 			resource.features,
 			geography,
 			release,
+			"shared-arc",
 		);
 
 	if (segments.length === 6 && segments[4] === "join") {

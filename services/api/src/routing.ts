@@ -9,6 +9,7 @@ import type { AnyMeasureObservationArtifact, DataCatalog } from "./dataCatalog";
 import type { ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { LookupManifest } from "./lookupExports";
+import type { FullDetailSource } from "./fullDetailDownloads";
 import type { GeographyResolver } from "./geographyResolver";
 import type {
 	LocationProjectionInventory,
@@ -76,6 +77,8 @@ export type RouteContext = {
 	mapArchives?: Map<string, MapArchive>;
 	/** Each map resource tier's GeoParquet file, keyed by its artifact path. */
 	mapFeatures?: Map<string, StoredFile>;
+	/** Full-tier map downloads, built from the geometry store on request. */
+	fullDetailDownloads?: FullDetailSource;
 	/** Immutable build artifacts published as evidence documents. */
 	documents?: Map<string, StoredFile>;
 };

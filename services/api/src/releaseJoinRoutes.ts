@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
+import { GEOJSON_TIERS } from "./mapResource/fullDetail";
 import { areaNotFound } from "./areaResources";
 import type { ValidatedValue } from "./batchValidation";
 import { releaseKey } from "./geographyKeys";
@@ -197,11 +198,20 @@ export const handleReleaseJoinRoutes = (
 			body: envelope(releaseId, { ...join, values, unjoined }),
 		};
 
+	// Full and high detail are too large to be worth GeoJSON, so only the
+	// coarser tiers are published in it.
+	if (!GEOJSON_TIERS.includes(tier!))
+		return problem(
+			422,
+			"Too Large To Join As GeoJSON",
+			`GeoJSON is published at ${GEOJSON_TIERS.join(" and ")} detail only. Ask for one of those tiers, or take the join table and draw it on ${join.links!.tiles}.`,
+			{ links: { tiles: join.links!.tiles } },
+		);
 	const entry = resource?.features.find(
 		(candidate) =>
 			candidate.tier === tier && candidate.format === "geojson",
 	);
-	const stored = entry && context.mapFeatures?.get(entry.artifact);
+	const stored = entry?.artifact && context.mapFeatures?.get(entry.artifact);
 	if (!resource || !entry || (!stored && loadedJson === undefined))
 		return problem(
 			503,

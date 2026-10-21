@@ -3,6 +3,7 @@ import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
+import type { FullDetailResult, FullDetailSource } from "./fullDetailDownloads";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
@@ -382,5 +383,39 @@ export const handleRouteAsync = async (
 	) {
 		return handleTerrainRoutesAsync(request);
 	}
+	if (
+		request.segments[1] === "map-resources" &&
+		request.segments[4] === "features"
+	)
+		return handleFeatureDownloadAsync(request);
 	return handleRoute(request);
+};
+
+/**
+ * A map download, awaiting a full-tier file that has to be built. The route
+ * is run once to find which file it would send; if that file must be built,
+ * the build is awaited and the route run again with it. Parsing and every
+ * answer stay in the one synchronous route.
+ */
+const handleFeatureDownloadAsync = async (
+	request: RouteRequest,
+): Promise<ApiResponse | undefined> => {
+	const downloads = request.context.fullDetailDownloads;
+	if (!downloads?.build) return handleRoute(request);
+	const using = (source: FullDetailSource): RouteRequest => ({
+		...request,
+		context: { ...request.context, fullDetailDownloads: source },
+	});
+	let pending: Promise<FullDetailResult> | undefined;
+	const first = handleRoute(
+		using({
+			get: (...asked) => {
+				pending = downloads.build!(...asked);
+				return { status: "unavailable" };
+			},
+		}),
+	);
+	if (!pending) return first;
+	const result = await pending;
+	return handleRoute(using({ get: () => result }));
 };

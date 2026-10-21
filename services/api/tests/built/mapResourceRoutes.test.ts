@@ -26,8 +26,12 @@ const get = (url: string) =>
 		route(method, url, catalogues),
 	);
 
-/** A download's bytes, which the server streams from its file on disk. */
+/**
+ * A download's bytes, which the server streams from its file on disk, or
+ * for a full tier, built from the geometry store, holds in memory.
+ */
 const bytesOf = (body: unknown) => {
+	if (Buffer.isBuffer(body)) return body;
 	assert.ok(isStoredFile(body as never), "a download is served from disk");
 	const file = body as { path: string; bytes: number; gunzip: boolean };
 	assert.equal(file.gunzip, false, "a binary download is sent as stored");
@@ -212,7 +216,7 @@ test("serves each tier flat, as the GeoParquet its descriptor lists", () => {
 	);
 });
 
-test("serves each tier as GeoJSON with the same features as the GeoParquet", () => {
+test("serves the medium and low tiers as GeoJSON with the same features as the GeoParquet", () => {
 	const descriptor = data(`/v1/map-resources/${RESOURCE}`) as {
 		areaCount: number;
 		features: Array<{
@@ -228,8 +232,6 @@ test("serves each tier as GeoJSON with the same features as the GeoParquet", () 
 		(entry) => entry.format === "geojson",
 	);
 	assert.deepEqual(geoJson.map((entry) => entry.tier).sort(), [
-		"full",
-		"high",
 		"low",
 		"medium",
 	]);
