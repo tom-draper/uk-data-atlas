@@ -1,5 +1,5 @@
 import { BOUNDARY_CATALOG } from "./catalog";
-import { withCDN } from "@/lib/helpers/cdn";
+import { atlasLookupUrl } from "@/lib/helpers/atlasApi";
 import type { Crosswalk } from "../gazetteer/types";
 
 /**
@@ -55,7 +55,7 @@ const parseConstituencyLadOverlaps = (
 	};
 };
 
-const URL = withCDN("/data/datasets/constituency-lad-overlaps.json");
+const URL = atlasLookupUrl("constituency-lad-overlaps");
 let cached: ConstituencyLadOverlaps | null = null;
 let pending: Promise<ConstituencyLadOverlaps> | null = null;
 
