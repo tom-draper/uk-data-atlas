@@ -128,5 +128,8 @@ there is no build step.
 | How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm lineage:build` and `pnpm containment:build`, then `pnpm precompile`, then `pnpm places:build` |
 | Anything, before a release             | `pnpm check:full`                                                                                                                         |
 
-`pnpm check` is the quick set CI runs. `pnpm check:full` rebuilds everything
-from the raw data and needs `data/` restored.
+`pnpm check` is the quick set CI runs. It needs no generated data: unit tests
+that import a generated dataset get a small sample from `tests/fixtures/datasets`
+instead. Tests that read the real generated data, or the raw data in `data/`,
+live in `tests/built/` and run locally only. `pnpm check:full` rebuilds
+everything from the raw data, runs them too, and needs `data/` restored.
