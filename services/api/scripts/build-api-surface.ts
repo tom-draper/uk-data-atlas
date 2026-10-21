@@ -1,3 +1,4 @@
+import { surfaceFingerprint } from "@uk-data-atlas/catalogue/surface-fingerprint";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -5,7 +6,6 @@ import { parse } from "yaml";
 import {
 	breakingChanges,
 	extractSurface,
-	surfaceFingerprint,
 	type ApiSurface,
 } from "../src/apiSurface";
 
