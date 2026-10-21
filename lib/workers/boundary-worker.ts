@@ -11,7 +11,7 @@ import {
 	fetchLsoaToLad,
 	lsoaYearForBoundaryAsset,
 } from "../data/boundaries/lsoaLadMappings";
-import { withCDN } from "../helpers/cdn";
+import { atlasLookupUrl } from "../helpers/atlasApi";
 import { getProp } from "../data/boundaries/properties";
 import {
 	COUNTRY_LOCATIONS,
@@ -82,7 +82,7 @@ interface Response {
 	error?: string;
 }
 
-const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
+const BOUNDARY_MAPPINGS_URL = atlasLookupUrl("boundary-mappings");
 let wardToLad: Record<string, string> | null = null;
 let wardToLadPending: Promise<Record<string, string>> | null = null;
 

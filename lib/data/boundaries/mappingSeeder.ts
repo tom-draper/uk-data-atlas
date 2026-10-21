@@ -3,11 +3,11 @@ import {
 	type AreaLineage,
 	type PrecompiledBoundaryMappings,
 } from "@uk-data-atlas/geography";
-import { withCDN } from "../../helpers/cdn";
+import { atlasLookupUrl } from "../../helpers/atlasApi";
 import { LINEAGE_TYPES, type LineageType, type YearCode } from "./codeMapper";
 
-const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
-const AREA_LINEAGE_URL = withCDN("/data/datasets/area-lineage.json");
+const BOUNDARY_MAPPINGS_URL = atlasLookupUrl("boundary-mappings");
+const AREA_LINEAGE_URL = atlasLookupUrl("area-lineage");
 
 /** The mutable boundary-code lookup populated from precompiled mappings. */
 export type BoundaryMappingTarget = {
