@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
@@ -13,15 +13,16 @@ import {
 	namedLocationMembersTable,
 } from "../src/lookupExports";
 import type { NamedLocationInventory } from "../src/namedLocations";
+import { readStoredText, storedTextExists } from "../src/storedText";
 
 export const buildLookupManifest = (repositoryRoot: string) => {
 	const publicDirectory = join(repositoryRoot, "services", "api", "public");
 	const read = <T>(path: string): T => {
 		const fullPath = join(publicDirectory, path);
-		if (!existsSync(fullPath)) {
+		if (!storedTextExists(fullPath)) {
 			throw new Error(`Build ${path} before the lookup manifest.`);
 		}
-		return JSON.parse(readFileSync(fullPath, "utf8")) as T;
+		return JSON.parse(readStoredText(fullPath)) as T;
 	};
 	const areaInventory = read<AreaInventory>("area-inventory.json");
 	const crosswalkInventory = read<CrosswalkInventory>(

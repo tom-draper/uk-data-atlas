@@ -47,6 +47,7 @@ import {
 	postcodeLookupPoint,
 	type PostcodeShard,
 } from "../src/postcodes";
+import { readStoredText, writeStoredText } from "../src/storedText";
 
 /**
  * Compile services/api/public/postcode-areas.json and one shard per postcode district
@@ -228,7 +229,7 @@ export const buildPostcodeAreas = async (
 	let at = 0;
 	for (const entry of postcodeIndex.artifact.shards) {
 		const shard = JSON.parse(
-			readFileSync(join(publicRoot, entry.path), "utf8"),
+			readStoredText(join(publicRoot, entry.path)),
 		) as PostcodeShard;
 		for (const postcode of shard.postcodes) {
 			const found = postcodeIndex.lookup(
@@ -276,7 +277,7 @@ export const buildPostcodeAreas = async (
 			let offset = 0;
 			for (const [index, entry] of previous.shards.entries()) {
 				const shard = JSON.parse(
-					readFileSync(join(publicRoot, entry.path), "utf8"),
+					readStoredText(join(publicRoot, entry.path)),
 				) as PostcodeAreasShard;
 				yield { offset, shard };
 				offset += postcodeIndex.artifact.shards[index]!.postcodes;
@@ -358,7 +359,7 @@ export const buildPostcodeAreas = async (
 	});
 	for (const file of files) {
 		mkdirSync(dirname(join(publicRoot, file.path)), { recursive: true });
-		writeFileSync(join(publicRoot, file.path), file.text);
+		writeStoredText(join(publicRoot, file.path), file.text);
 	}
 	const outputPath = join(publicRoot, "postcode-areas.json");
 	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);

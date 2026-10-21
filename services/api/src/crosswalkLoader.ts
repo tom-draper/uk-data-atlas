@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
@@ -6,6 +6,7 @@ import type {
 import type { RelationshipPathInventory } from "./relationshipPaths";
 import type { CrosswalkHeader, CrosswalkLookup } from "./resolver/translation";
 import { publicPath, readPublicManifest } from "./publicManifest";
+import { readStoredText, storedTextExists } from "./storedText";
 
 export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory =>
 	readPublicManifest<CrosswalkInventory>(
@@ -45,7 +46,7 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 		this.entries = inventory.crosswalks;
 		for (const crosswalk of this.entries) {
 			const path = publicPath(apiRoot, crosswalk.artifact);
-			if (!existsSync(path))
+			if (!storedTextExists(path))
 				throw new Error(`Missing crosswalk artifact at ${path}`);
 			this.paths.set(crosswalk.id, path);
 		}
@@ -61,7 +62,7 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 		const expected = this.entries.find((crosswalk) => crosswalk.id === id);
 		if (!expected) return undefined;
 		const path = this.paths.get(id)!;
-		const json = readFileSync(path, "utf8");
+		const json = readStoredText(path);
 		const bytes = Buffer.byteLength(json);
 		const artifact = JSON.parse(json) as CrosswalkArtifact;
 		if (

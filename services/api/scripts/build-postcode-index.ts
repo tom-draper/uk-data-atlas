@@ -15,6 +15,7 @@ import {
 	type PostcodeSource,
 	type PostcodeSourceRow,
 } from "../src/postcodes";
+import { writeStoredText } from "../src/storedText";
 
 /**
  * Compile the newest filtered ONS Postcode Directory under
@@ -126,7 +127,7 @@ export const buildPostcodeIndex = async (repositoryRoot: string) => {
 	mkdirSync(join(publicRoot, "postcodes"));
 	for (const file of files) {
 		mkdirSync(dirname(join(publicRoot, file.path)), { recursive: true });
-		writeFileSync(join(publicRoot, file.path), file.text);
+		writeStoredText(join(publicRoot, file.path), file.text);
 	}
 	const outputPath = join(publicRoot, "postcode-index.json");
 	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);

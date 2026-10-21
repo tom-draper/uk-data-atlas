@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
@@ -18,15 +18,16 @@ import {
 	readMeasureTotals,
 	readValidationWaivers,
 } from "../src/validation/inputs";
+import { readStoredText, storedTextExists } from "../src/storedText";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
 	const read = <T>(path: string): T => {
 		const fullPath = join(outputDirectory, path);
-		if (!existsSync(fullPath)) {
+		if (!storedTextExists(fullPath)) {
 			throw new Error(`Build ${path} before the validation report.`);
 		}
-		return JSON.parse(readFileSync(fullPath, "utf8")) as T;
+		return JSON.parse(readStoredText(fullPath)) as T;
 	};
 	const areaInventory = read<AreaInventory>("area-inventory.json");
 	const crosswalkInventory = read<CrosswalkInventory>(
