@@ -100,6 +100,30 @@ test("reads back every kind of packed area exactly as it was written", (t) => {
 			},
 		],
 		["E", { type: "MultiPolygon", coordinates: [] }],
+		// Held as steps: on the 1e-7 grid, with a third number per position.
+		[
+			"F",
+			{
+				type: "LineString",
+				coordinates: [
+					[-0.0944786, 51.519761, 12.5],
+					[-0.0957646, 51.5200704, -3],
+					[179.9999999, -89.9999999, 0],
+				],
+			},
+		],
+		// A step past 32 bits, then a value off the grid, held as f64.
+		[
+			"G",
+			{
+				type: "LineString",
+				coordinates: [
+					[-179.9999999, 0],
+					[179.9999999, 0],
+				],
+			},
+		],
+		["H", { type: "Point", coordinates: [-0.094478614999957, 51.5] }],
 	];
 	const source: GeometrySource = {
 		input: "boundaries/example.geojson",
@@ -116,7 +140,7 @@ test("reads back every kind of packed area exactly as it was written", (t) => {
 	);
 	const stored = readGeometryStore(path, source)!;
 	t.after(() => stored.close());
-	assert.deepEqual(stored.codes, ["A", "B", "C", "D", "E"]);
+	assert.deepEqual(stored.codes, ["A", "B", "C", "D", "E", "F", "G", "H"]);
 	for (const [code, geometry] of areas)
 		assert.deepEqual(unpackGeometry(stored.get(code)!), geometry, code);
 	assert.equal(stored.get("Z"), undefined);
