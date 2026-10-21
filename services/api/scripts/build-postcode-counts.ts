@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -10,9 +10,10 @@ import type {
 	PostcodeAreasShard,
 } from "../src/postcodeAreas";
 import type { PostcodeIndexArtifact, PostcodeShard } from "../src/postcodes";
+import { readStoredText } from "../src/storedText";
 
-const read = <T>(path: string): T =>
-	JSON.parse(readFileSync(path, "utf8")) as T;
+// Shards are stored gzipped; the index files beside them are plain.
+const read = <T>(path: string): T => JSON.parse(readStoredText(path)) as T;
 
 export const buildPostcodeCounts = (repositoryRoot: string) => {
 	const publicRoot = join(repositoryRoot, "services", "api", "public");

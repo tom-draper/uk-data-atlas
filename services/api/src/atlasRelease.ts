@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { releaseKey } from "./geographyKeys";
 import { observationArtifactName, type DataCatalog } from "./dataCatalog";
 import { sha256 } from "./contentHash";
+import { readStoredText, storedTextExists } from "./storedText";
 
 export type AtlasReleaseArtifactRef = {
 	id: string;
@@ -235,7 +236,7 @@ export const releaseResources = (
 export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
 	const artifactReference = ({ id, path }: { id: string; path: string }) => {
 		const fullPath = join(publicDirectory, path);
-		if (!existsSync(fullPath)) {
+		if (!storedTextExists(fullPath)) {
 			throw new Error(
 				`${id}: build ${path} before building the atlas release manifest`,
 			);
@@ -243,7 +244,7 @@ export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
 		return {
 			id,
 			path,
-			contentHash: sha256(readFileSync(fullPath, "utf8")),
+			contentHash: sha256(readStoredText(fullPath)),
 		};
 	};
 	const artifacts = [

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -12,13 +12,18 @@ import type {
 } from "../src/crosswalkInventory";
 import { compileLocationProjections } from "../src/locationProjections";
 import type { NamedLocationInventory } from "../src/namedLocations";
+import {
+	readStoredText,
+	storedTextExists,
+	writeStoredText,
+} from "../src/storedText";
 
 const read = <T>(directory: string, path: string): T => {
 	const fullPath = join(directory, path);
-	if (!existsSync(fullPath)) {
+	if (!storedTextExists(fullPath)) {
 		throw new Error(`Build ${path} before location projections.`);
 	}
-	return JSON.parse(readFileSync(fullPath, "utf8")) as T;
+	return JSON.parse(readStoredText(fullPath)) as T;
 };
 
 const readAreaLookup = (directory: string) => {
@@ -60,7 +65,10 @@ export const buildLocationProjections = (repositoryRoot: string) => {
 			`${artifact.crosswalkId}.json`,
 		);
 		mkdirSync(dirname(outputPath), { recursive: true });
-		writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
+		writeStoredText(
+			outputPath,
+			`${JSON.stringify(artifact, null, "\t")}\n`,
+		);
 	}
 	for (const artifact of projections.artifacts) {
 		const outputPath = join(
@@ -69,7 +77,10 @@ export const buildLocationProjections = (repositoryRoot: string) => {
 			`${artifact.crosswalkId}.json`,
 		);
 		mkdirSync(dirname(outputPath), { recursive: true });
-		writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
+		writeStoredText(
+			outputPath,
+			`${JSON.stringify(artifact, null, "\t")}\n`,
+		);
 	}
 	const inventoryPath = join(
 		outputDirectory,

@@ -31,6 +31,7 @@ import {
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 import { publicPath, readPublicManifest } from "./publicManifest";
+import { readStoredText } from "./storedText";
 
 export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry =>
 	readPublicManifest<BoundaryRegistry>(
@@ -195,7 +196,7 @@ export const readPostcodeIndex = (apiRoot: string): PostcodeIndex => {
 		);
 	}
 	return new PostcodeIndex(artifact, (shard) =>
-		readFileSync(publicPath(apiRoot, shard), "utf8"),
+		readStoredText(publicPath(apiRoot, shard)),
 	);
 };
 
@@ -233,7 +234,7 @@ export const readPostcodeAreaIndex = (
 		);
 	}
 	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
-		readFileSync(publicPath(apiRoot, shard), "utf8"),
+		readStoredText(publicPath(apiRoot, shard)),
 	);
 };
 

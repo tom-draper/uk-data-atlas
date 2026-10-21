@@ -10,6 +10,7 @@ import {
 	crosswalkShape,
 } from "../src/relationshipPaths";
 import { readApprovedRelationshipPaths } from "../src/relationshipPathAdapters";
+import { readStoredText } from "../src/storedText";
 
 // Long enough to rebase a local authority across a decade of releases, which
 // takes one identity step per release in between.
@@ -27,7 +28,7 @@ export const buildRelationshipPaths = (repositoryRoot: string) => {
 			summary.id,
 			crosswalkShape(
 				JSON.parse(
-					readFileSync(join(directory, summary.artifact), "utf8"),
+					readStoredText(join(directory, summary.artifact)),
 				) as CrosswalkArtifact,
 			),
 		]),

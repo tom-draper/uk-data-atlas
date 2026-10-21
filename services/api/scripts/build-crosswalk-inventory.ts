@@ -39,6 +39,11 @@ import {
 } from "../src/areaInventory";
 import { sha256 } from "../src/contentHash";
 import { BOUNDED_CLIPPING_VERSION } from "../src/boundedClipping";
+import {
+	readStoredText,
+	storedTextExists,
+	writeStoredText,
+} from "../src/storedText";
 
 const readCompiledAreaLookup = (outputDirectory: string) => {
 	const inventory = JSON.parse(
@@ -93,11 +98,9 @@ const reusableGeometryCrosswalk = (
 	| BestFitCrosswalkArtifact
 	| undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
-	if (!existsSync(path)) return undefined;
+	if (!storedTextExists(path)) return undefined;
 	try {
-		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as CrosswalkArtifact;
+		const artifact = JSON.parse(readStoredText(path)) as CrosswalkArtifact;
 		if (artifact.method !== adapter.method) return undefined;
 		if (
 			(artifact.method === "extent-continuity" ||
@@ -207,11 +210,9 @@ const reusablePopulationOverlap = (
 	pairs: CrosswalkArtifact | undefined,
 ): CrosswalkArtifact | undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
-	if (!pairs || !existsSync(path)) return undefined;
+	if (!pairs || !storedTextExists(path)) return undefined;
 	try {
-		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as CrosswalkArtifact;
+		const artifact = JSON.parse(readStoredText(path)) as CrosswalkArtifact;
 		if (artifact.method !== "population-overlap") return undefined;
 		if (artifact.provenance.boundedClipping !== BOUNDED_CLIPPING_VERSION)
 			return undefined;
@@ -279,10 +280,10 @@ const reusableCleanContainment = (
 	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
 ): PropertyCrosswalkArtifact | undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
-	if (!existsSync(path)) return undefined;
+	if (!storedTextExists(path)) return undefined;
 	try {
 		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
+			readStoredText(path),
 		) as PropertyCrosswalkArtifact;
 		const { contentHash, ...withoutHash } = artifact;
 		const expectedGeometryInputs = geometryContainmentInputs(
@@ -414,7 +415,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const writeArtifact = (artifact: CrosswalkArtifact) => {
 		const path = join(outputDirectory, "crosswalks", `${artifact.id}.json`);
 		mkdirSync(dirname(path), { recursive: true });
-		writeFileSync(path, `${JSON.stringify(artifact, null, "\t")}\n`);
+		writeStoredText(path, `${JSON.stringify(artifact, null, "\t")}\n`);
 	};
 	// Geometry crosswalks take minutes each, so each is written as it compiles:
 	// a build stopped part way reuses those on its next run, which revalidates

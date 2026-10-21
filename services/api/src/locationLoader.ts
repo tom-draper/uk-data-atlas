@@ -13,6 +13,7 @@ import {
 	type NamedLocationInventory,
 } from "./namedLocations";
 import { publicPath, readPublicManifest } from "./publicManifest";
+import { readStoredText } from "./storedText";
 
 export const readNamedLocationInventory = (
 	apiRoot: string,
@@ -107,7 +108,7 @@ export const createLocationProjectionStore = (
 		(shard) => {
 			const path = publicPath(apiRoot, shard.artifact);
 			const artifact = JSON.parse(
-				readFileSync(path, "utf8"),
+				readStoredText(path),
 			) as LocationProjectionArtifact;
 			if (
 				artifact.schemaVersion !== 1 ||
@@ -126,7 +127,7 @@ export const createLocationProjectionStore = (
 		(shard) => {
 			const path = publicPath(apiRoot, shard.artifact);
 			const artifact = JSON.parse(
-				readFileSync(path, "utf8"),
+				readStoredText(path),
 			) as LocationParentProjectionArtifact;
 			if (
 				artifact.schemaVersion !== 1 ||

@@ -12,6 +12,7 @@ import type {
 	DataCatalog,
 } from "../src/dataCatalog";
 import type { MeasureTableArtifact } from "../src/observationTables";
+import { readStoredText } from "../src/storedText";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "services", "api", "public");
@@ -36,7 +37,7 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const crosswalkLookup = new Map(
 		crosswalkInventory.crosswalks.map((entry) => {
 			const artifact = JSON.parse(
-				readFileSync(join(directory, entry.artifact), "utf8"),
+				readStoredText(join(directory, entry.artifact)),
 			) as CrosswalkArtifact;
 			return [entry.id, artifact] as const;
 		}),
