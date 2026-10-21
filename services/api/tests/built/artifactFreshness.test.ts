@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { observationPartitionKey } from "../../src/measureCompatibility";
 import { isMeasureTable } from "../../src/observationTables";
 import { openapiDocumentHash } from "../../src/operationTemplates";
+import { readStoredText, storedTextExists } from "../../src/storedText";
 import {
 	readMeasureTotals,
 	readValidationWaivers,
@@ -21,10 +22,7 @@ import {
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const publicRoot = join(apiRoot, "public");
 const read = (path: string) =>
-	JSON.parse(readFileSync(join(publicRoot, path), "utf8")) as Record<
-		string,
-		any
-	>;
+	JSON.parse(readStoredText(join(publicRoot, path))) as Record<string, any>;
 const hashOf = (path: string) => read(path).contentHash as string;
 
 const ARTIFACTS: Record<string, string> = {
@@ -63,7 +61,13 @@ const RECORDED_UPSTREAM: Record<string, string[]> = {
 };
 
 const compiled = readdirSync(publicRoot)
-	.filter((name) => name.endsWith(".json"))
+	.flatMap((file) =>
+		file.endsWith(".json")
+			? [file]
+			: file.endsWith(".json.gz")
+				? [file.slice(0, -".gz".length)]
+				: [],
+	)
 	.flatMap((name) => {
 		try {
 			const artifact = read(name);
@@ -92,7 +96,7 @@ test("declares every upstream hash an artifact records", () => {
 test("builds each artifact from the current version of what it records", () => {
 	const stale: string[] = [];
 	for (const [name, fields] of Object.entries(RECORDED_UPSTREAM)) {
-		if (!existsSync(join(publicRoot, name))) continue;
+		if (!storedTextExists(join(publicRoot, name))) continue;
 		const artifact = read(name);
 		for (const field of fields) {
 			const upstream = ARTIFACTS[field.slice(0, -"Hash".length)]!;
