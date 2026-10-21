@@ -3700,7 +3700,9 @@ to more than one feature fragment (an area split across islands, for
 example) is returned as a single `GeometryCollection` instead of an
 arbitrarily chosen fragment. Geometry is always served in WGS84, to seven
 decimal places of a degree (about a centimetre); publishers' WGS84 files carry
-fifteen, the float noise of their own reprojection. Sources in
+fifteen, the float noise of their own reprojection. About thirty areas
+whose parts lie less than a centimetre apart keep their source precision,
+because rounding would make their valid boundary invalid. Sources in
 British National Grid (EPSG:27700), 26 of the current releases, are
 reprojected one requested area at a time through EPSG:1314, OSGB36 to WGS 84
 (6): the seven-parameter Helmert transformation the website build already

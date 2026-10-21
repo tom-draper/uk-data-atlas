@@ -216,6 +216,14 @@ export class AreaGeometryCache {
 			release: string,
 			path: string,
 		) => void,
+		/**
+		 * How an area read from a WGS84 source is rounded. Builds that publish
+		 * geometry pass `roundKeepingValidity`, so a few areas keep their
+		 * source precision; it needs a validator the server doesn't ship.
+		 */
+		private readonly roundSource: (
+			packed: PackedGeometry,
+		) => PackedGeometry = roundPacked,
 	) {
 		if (!Number.isInteger(maxReleases) || maxReleases < 1)
 			throw new Error(
@@ -585,7 +593,7 @@ export class AreaGeometryCache {
 			packed.set(
 				code,
 				wgs84
-					? roundPacked(packGeometry(geometry))
+					? this.roundSource(packGeometry(geometry))
 					: packGeometry(geometry),
 			);
 		return {

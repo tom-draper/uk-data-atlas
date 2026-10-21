@@ -13,7 +13,10 @@ import { join } from "node:path";
 import test from "node:test";
 import { parse } from "yaml";
 import { buildGeometryStore } from "../scripts/build-geometry-store";
-import { compileGeometryValidity } from "../scripts/compileGeometryValidity";
+import {
+	compileGeometryValidity,
+	roundKeepingValidity,
+} from "../scripts/compileGeometryValidity";
 import { compiledGeometryFile, type GeometrySource } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
 import { sha256 } from "../src/contentHash";
@@ -23,7 +26,7 @@ import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,
 } from "../src/geometryValidity";
-import { packGeometry } from "../src/packedGeometry";
+import { packGeometry, unpackGeometry } from "../src/packedGeometry";
 import { route } from "../src/routes";
 import fixtures from "./fixtures/geometry-validity.json";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";
@@ -114,6 +117,71 @@ test("bounds validation and identifies geometries it has not checked", () => {
 				message: "Positions must have finite X and Y ordinates.",
 			},
 		},
+	);
+});
+
+test("rounds areas to seven decimal places unless that breaks a valid one", () => {
+	const square = [
+		[
+			[0, 0],
+			[1, 0],
+			[1, 1],
+			[0, 1],
+			[0, 0],
+		],
+	];
+	// Four billionths of a degree east of the square: rounding puts its
+	// west edge on the square's east edge.
+	const near = [
+		[
+			[1.00000004, 0.4],
+			[2, 0.4],
+			[2, 0.6],
+			[1.00000004, 0.6],
+			[1.00000004, 0.4],
+		],
+	];
+	const islands = packGeometry({
+		type: "MultiPolygon",
+		coordinates: [square, near],
+	});
+	assert.equal(compileGeometryValidity(islands).status, "valid");
+	assert.equal(roundKeepingValidity(islands), islands);
+
+	const far = packGeometry({
+		type: "MultiPolygon",
+		coordinates: [
+			square,
+			near.map((ring) => ring.map(([x, y]) => [x! + 0.5, y!])),
+		],
+	});
+	assert.deepEqual(
+		(
+			unpackGeometry(roundKeepingValidity(far))
+				.coordinates as number[][][][]
+		)[1]?.[0]?.[0],
+		[1.5, 0.4],
+	);
+
+	// Already invalid: rounded like any other area.
+	const bowTie = packGeometry({
+		type: "Polygon",
+		coordinates: [
+			[
+				[0, 0],
+				[1, 1],
+				[1, 0],
+				[0.00000004, 1],
+				[0, 0],
+			],
+		],
+	});
+	assert.deepEqual(
+		(
+			unpackGeometry(roundKeepingValidity(bowTie))
+				.coordinates as number[][][]
+		)[0]?.[3],
+		[0, 1],
 	);
 });
 
