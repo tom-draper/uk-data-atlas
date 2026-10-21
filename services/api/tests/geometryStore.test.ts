@@ -24,7 +24,7 @@ const square = (west: number, south: number, size: number) => [
 	],
 ];
 
-test("compiles repeated codes and ignores non-object features without changing coordinates", (t) => {
+test("compiles repeated codes and ignores non-object features, keeping seven decimal places", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-geometry-source-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data"));
@@ -54,11 +54,11 @@ test("compiles repeated codes and ignores non-object features without changing c
 	assert.deepEqual(unpackGeometry(stored.get("A")!), {
 		type: "GeometryCollection",
 		geometries: [
-			{ type: "Point", coordinates: [-0, 1.2345678901234567] },
+			{ type: "Point", coordinates: [0, 1.2345679] },
 			{
 				type: "GeometryCollection",
 				geometries: [
-					{ type: "Point", coordinates: [1e-7, 53.123456789012344] },
+					{ type: "Point", coordinates: [1e-7, 53.1234568] },
 				],
 			},
 		],

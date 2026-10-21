@@ -5551,7 +5551,9 @@ paths:
         `geometrySource.corrections` names it when applied. A code that maps to
         more than one feature fragment in the source (e.g. an area split across
         islands) is returned as a single GeometryCollection rather than picking
-        one fragment.
+        one fragment. Coordinates keep seven decimal places of a degree, about a
+        centimetre; most publishers' WGS84 files carry fifteen, which is float
+        noise from their own reprojection.
 
 
         `tier` generalises the geometry before it is served, for callers that do
