@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { gunzipSync } from "node:zlib";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import {
 	followLineage,
@@ -9,21 +10,18 @@ import {
 } from "@uk-data-atlas/geography";
 
 const apiRoot = new URL("../..", import.meta.url).pathname;
-const lineagePath = new URL(
-	"../../../../public/data/datasets/area-lineage.json",
-	import.meta.url,
-).pathname;
 
 // Every code of every pair would take minutes; one in this many is enough to
 // catch a lineage left behind by a rebuilt API.
 const SAMPLE_EVERY = 37;
 
-test("the atlas's committed area lineage answers as the resolver does", () => {
-	const { geographyResolver } = readApiCatalogues(apiRoot);
-	const lineages = JSON.parse(readFileSync(lineagePath, "utf8")) as Record<
-		string,
-		AreaLineage
-	>;
+test("the area lineage served to the atlas answers as the resolver does", () => {
+	const { geographyResolver, atlasLookups } = readApiCatalogues(apiRoot);
+	const lineage = atlasLookups.get("area-lineage");
+	assert.ok(lineage, "Run pnpm build:atlas-lookups first.");
+	const lineages = JSON.parse(
+		gunzipSync(readFileSync(lineage.path)).toString("utf8"),
+	) as Record<string, AreaLineage>;
 	const differences: string[] = [];
 	let checked = 0;
 	for (const [geography, lineage] of Object.entries(lineages))

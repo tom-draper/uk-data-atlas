@@ -18,8 +18,6 @@
 		"lookups:fetch": "tsx scripts/fetch-atlas-lookups.mts",
 		"precompile:verify": "npx tsx scripts/verify-precompiled.mts",
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",
-		"lineage:build": "npx tsx --max-old-space-size=4096 scripts/build-area-lineage.mts",
-		"containment:build": "npx tsx --max-old-space-size=4096 scripts/build-area-containment.mts",
 		"seo:build": "npx tsx scripts/build-seo-data.mts",
 		"places:build": "npx tsx --max-old-space-size=4096 scripts/build-place-profiles.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
@@ -33,7 +31,7 @@
 		"test:e2e": "playwright test",
 		"typecheck": "tsc --noEmit && pnpm --filter \"./packages/*\" typecheck",
 		"check": "pnpm typecheck && pnpm format:check && vitest run --project unit && pnpm --dir services/api typecheck && pnpm --dir services/api test:unbuilt",
-		"check:full": "pnpm precompile && pnpm --dir services/api build && pnpm lineage:build && pnpm containment:build --check && pnpm places:build && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir services/api typecheck && pnpm --dir services/api test",
+		"check:full": "pnpm precompile && pnpm --dir services/api build && pnpm places:build && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir services/api typecheck && pnpm --dir services/api test",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
 		"roads:serve": "node scripts/serve-os-open-roads.mjs"
 	},
