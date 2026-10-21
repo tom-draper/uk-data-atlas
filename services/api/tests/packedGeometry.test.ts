@@ -5,6 +5,7 @@ import { geometryBounds } from "../src/areaContainment";
 import {
 	packedBounds,
 	packGeometry,
+	roundPacked,
 	unpackGeometry,
 } from "../src/packedGeometry";
 
@@ -112,4 +113,41 @@ test("keeps geometry it cannot pack uniformly as it came", () => {
 		assert.equal(packed.kind, "raw");
 		assert.equal(unpackGeometry(packed), geometry);
 	}
+});
+
+test("rounding keeps seven decimal places of every coordinate", () => {
+	const noisy: GeoJsonGeometry = {
+		type: "GeometryCollection",
+		geometries: [
+			{
+				type: "Polygon",
+				coordinates: [
+					[
+						[-0.094478614999957, 51.51976097700003],
+						[-0.095764645999964, 51.52007037700008],
+						[-0.096020304999968, 51.52032696400005],
+						[-0.094478614999957, 51.51976097700003],
+					],
+				],
+			},
+			{ type: "Unknown", coordinates: [[1.23456789, [-0.000000049]]] },
+		],
+	};
+	assert.deepEqual(unpackGeometry(roundPacked(packGeometry(noisy))), {
+		type: "GeometryCollection",
+		geometries: [
+			{
+				type: "Polygon",
+				coordinates: [
+					[
+						[-0.0944786, 51.519761],
+						[-0.0957646, 51.5200704],
+						[-0.0960203, 51.520327],
+						[-0.0944786, 51.519761],
+					],
+				],
+			},
+			{ type: "Unknown", coordinates: [[1.2345679, [0]]] },
+		],
+	});
 });

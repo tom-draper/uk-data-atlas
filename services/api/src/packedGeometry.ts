@@ -144,6 +144,40 @@ export const packedBounds = (
 	return [west, south, east, north];
 };
 
+/**
+ * Seven decimal places of a degree, about a centimetre in the UK. Published
+ * WGS84 boundaries carry fifteen or more, float noise from their publisher's
+ * own reprojection, far finer than any boundary is surveyed or generalised
+ * to. Every boundary is held at this precision, so the geometry store can
+ * keep coordinates as small integer steps.
+ */
+export const DEGREE_SCALE = 1e7;
+
+/** Rounded to `DEGREE_SCALE`, with -0 as 0 so each value has one form. */
+export const roundDegrees = (value: number) =>
+	Math.round(value * DEGREE_SCALE) / DEGREE_SCALE + 0;
+
+const roundNumbers = (value: unknown): unknown =>
+	typeof value === "number"
+		? roundDegrees(value)
+		: Array.isArray(value)
+			? value.map(roundNumbers)
+			: value;
+
+/** The geometry with every coordinate rounded by `roundDegrees`. */
+export const roundPacked = (packed: PackedGeometry): PackedGeometry =>
+	packed.kind === "packed"
+		? { ...packed, positions: packed.positions.map(roundDegrees) }
+		: packed.kind === "collection"
+			? { kind: "collection", geometries: packed.geometries.map(roundPacked) }
+			: {
+					kind: "raw",
+					geometry: {
+						...packed.geometry,
+						coordinates: roundNumbers(packed.geometry.coordinates),
+					},
+				};
+
 /** Bytes held by the packed numbers, for the cache's own accounting. */
 export const packedBytes = (packed: PackedGeometry): number =>
 	packed.kind === "packed"

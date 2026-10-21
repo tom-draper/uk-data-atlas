@@ -2,6 +2,7 @@ import proj4 from "proj4";
 import type { GeometryValidityReport } from "./geometryValidity";
 import {
 	packGeometry,
+	roundDegrees,
 	unpackGeometry,
 	type PackedGeometry,
 } from "./packedGeometry";
@@ -64,7 +65,7 @@ const irishGrid = proj4(
 
 // Seven decimal places of a degree is about a centimetre here, far finer
 // than the transformation's accuracy, and keeps responses free of float noise.
-const round = (value: number) => Math.round(value * 1e7) / 1e7;
+const round = roundDegrees;
 // Grid coordinates are conventionally expressed in metres. Keeping two
 // fractional places avoids projection-library float noise without suggesting
 // sub-centimetre transformation accuracy.

@@ -18,6 +18,7 @@ import { readShapefileFeatures } from "./shapefile";
 import {
 	packedBounds,
 	packGeometry,
+	roundPacked,
 	unpackGeometry,
 	type PackedGeometry,
 } from "./packedGeometry";
@@ -577,9 +578,16 @@ export class AreaGeometryCache {
 					),
 				);
 		}
+		// Reprojection rounds the others to the same precision.
+		const wgs84 = isWgs84(source.crs);
 		const packed = new Map<string, PackedGeometry>();
 		for (const [code, geometry] of geometries)
-			packed.set(code, packGeometry(geometry));
+			packed.set(
+				code,
+				wgs84
+					? roundPacked(packGeometry(geometry))
+					: packGeometry(geometry),
+			);
 		return {
 			identity,
 			crs: source.crs,
