@@ -8,7 +8,7 @@ import { geographyName, namedKindName } from "@/lib/places/labels";
 import {
 	loadAreaProfile,
 	loadNamedProfile,
-	PLACE_INDEX,
+	loadPlaceIndex,
 	placeEntry,
 } from "@/lib/places/load";
 import { isAreaCode } from "@/lib/places/profile";
@@ -18,7 +18,8 @@ import { pageMetadata, titleCase } from "@/lib/site";
 type Params = Promise<{ place: string }>;
 
 /** Councils, constituencies and named places are built ahead of time. */
-export function generateStaticParams() {
+export async function generateStaticParams() {
+	const PLACE_INDEX = await loadPlaceIndex();
 	return [
 		...PLACE_INDEX.areas
 			.filter(
@@ -32,12 +33,12 @@ export function generateStaticParams() {
 
 async function resolvePlace(params: Params) {
 	const id = decodeURIComponent((await params).place);
-	if (!placeEntry(id)) {
+	if (!(await placeEntry(id))) {
 		// Codes are written in capitals; a slug is written in lower case.
 		const canonical = isAreaCode(id.toUpperCase())
 			? id.toUpperCase()
 			: id.toLowerCase();
-		if (canonical !== id && placeEntry(canonical))
+		if (canonical !== id && (await placeEntry(canonical)))
 			permanentRedirect(`/places/${canonical}`);
 		notFound();
 	}
@@ -62,7 +63,7 @@ export async function generateMetadata({
 		});
 	return pageMetadata({
 		subject: `${profile.name} (${profile.code}), ${titleCase(geographyName(profile.geography))}`,
-		description: `${areaSummary(profile)} Its boundary history, the areas it sits within and borders, and the datasets published for it.`,
+		description: `${await areaSummary(profile)} Its boundary history, the areas it sits within and borders, and the datasets published for it.`,
 		path: `/places/${profile.code}`,
 	});
 }

@@ -1,5 +1,4 @@
 import {
-	loadCatalogue,
 	measuresFromDatasets,
 	measuresOnGeography,
 	nationList,
@@ -12,7 +11,7 @@ import { DATA_PAGES, type DataPage } from "./content/data";
 import { GEOGRAPHIES } from "./content/geographies";
 
 /** Everything a data page shows, gathered from the catalogue. */
-export function dataPageFacts(page: DataPage, catalogue = loadCatalogue()) {
+export function dataPageFacts(page: DataPage, catalogue: Catalogue) {
 	const datasets = catalogue.datasets.filter((d) =>
 		page.datasets.includes(d.id),
 	);
@@ -70,10 +69,7 @@ export function findDataPage(slug: string): DataPage | undefined {
 }
 
 /** The data pages with anything published on a geography. */
-export function dataPagesOnGeography(
-	geography: string,
-	catalogue: Catalogue = loadCatalogue(),
-) {
+export function dataPagesOnGeography(geography: string, catalogue: Catalogue) {
 	const measureIds = new Set(
 		measuresOnGeography(catalogue, geography).map((m) => m.id),
 	);

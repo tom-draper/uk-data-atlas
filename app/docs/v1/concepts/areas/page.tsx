@@ -8,7 +8,11 @@ import {
 	Table,
 } from "@/components/docs/Content";
 import { Request } from "@/components/docs/Example";
-import { loadCatalogue, releasesForGeography } from "@/lib/docs/catalogue";
+import {
+	loadCatalogue,
+	releasesForGeography,
+	type Catalogue,
+} from "@/lib/docs/catalogue";
 import { docsMetadata } from "@/lib/docs/metadata";
 import { API_BASE_URL } from "@/lib/docs/openapi";
 
@@ -19,14 +23,13 @@ export const metadata = docsMetadata(
 );
 
 /** The year a geography's oldest release in the Atlas is from. */
-function firstYear(geography: string): string {
-	return releasesForGeography(loadCatalogue(), geography)
-		.at(-1)!
-		.id.slice(0, 4);
+function firstYear(catalogue: Catalogue, geography: string): string {
+	return releasesForGeography(catalogue, geography).at(-1)!.id.slice(0, 4);
 }
 
-export default function AreasPage() {
-	const since = `${firstYear("localAuthority")} for local authorities, ${firstYear("ward")} for wards and ${firstYear("constituency")} for constituencies`;
+export default async function AreasPage() {
+	const catalogue = await loadCatalogue();
+	const since = `${firstYear(catalogue, "localAuthority")} for local authorities, ${firstYear(catalogue, "ward")} for wards and ${firstYear(catalogue, "constituency")} for constituencies`;
 	return (
 		<DocPage
 			href="/docs/v1/concepts/areas"

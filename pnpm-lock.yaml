@@ -241,9 +241,6 @@ importers:
       '@types/topojson-specification':
         specifier: ^1.0.5
         version: 1.0.5
-      '@uk-data-atlas/api':
-        specifier: workspace:*
-        version: link:services/api
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0

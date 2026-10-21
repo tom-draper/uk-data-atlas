@@ -1,3 +1,4 @@
+import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -52,25 +53,14 @@ const sourceBoundaryReleases = readdirSync(
 		: [],
 );
 
-const docsCatalogue = JSON.parse(
-	readFileSync(
-		join(
-			process.cwd(),
-			"public",
-			"data",
-			"datasets",
-			"docs-catalogue.json",
-		),
-		"utf8",
-	),
-) as {
+const docsCatalogue = await fetchAtlasPage<{
 	releases: Array<{ geography: string; id: string }>;
 	areaAvailability: Array<{
 		geography: string;
 		id: string;
 		status: "available" | "not-compiled";
 	}>;
-};
+}>("docs-catalogue");
 
 const apiAreaInventory = { releases: docsCatalogue.areaAvailability };
 

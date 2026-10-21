@@ -1,3 +1,4 @@
+import { loadCatalogue } from "@/lib/docs/catalogue";
 import type { Metadata } from "next";
 import { Fragment } from "react";
 import { EndpointRef, H2, H3, P, Table } from "@/components/docs/Content";
@@ -18,8 +19,9 @@ export const metadata: Metadata = pageMetadata({
 	path: "/geographies",
 });
 
-export default function GeographiesPage() {
-	const entries = boundaryEntries();
+export default async function GeographiesPage() {
+	const catalogue = await loadCatalogue();
+	const entries = boundaryEntries(catalogue);
 	const groups = boundariesByGroup(entries);
 
 	return (

@@ -7,7 +7,6 @@ import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog/registry";
 import { datasetSlug } from "@/lib/datasets";
 import {
 	type Catalogue,
-	loadCatalogue,
 	nationList,
 	releasesForGeography,
 	sourceSummaries,
@@ -33,7 +32,7 @@ export const boundaryHref = (geography: string) =>
 /** The link to a dataset's section on /datasets. */
 export const datasetHref = (slug: string) => `/datasets#${slug}`;
 
-export function datasetEntries(catalogue: Catalogue = loadCatalogue()) {
+export function datasetEntries(catalogue: Catalogue) {
 	return CATALOGUE_DATASET_DEFINITIONS.map((definition) => {
 		const slug = datasetSlug(definition.type);
 		const countries =
@@ -77,7 +76,7 @@ export function datasetsByTopic(entries: DatasetEntry[]) {
 	}));
 }
 
-export function boundaryEntries(catalogue: Catalogue = loadCatalogue()) {
+export function boundaryEntries(catalogue: Catalogue) {
 	const datasets = datasetEntries(catalogue);
 	return Object.entries(GEOGRAPHIES).map(([id, content]) => {
 		const releases = releasesForGeography(catalogue, id);

@@ -3,7 +3,7 @@ import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
 import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/atlas/pages";
 import { RANKING_PAGES } from "@/lib/atlas/rankingPages";
-import { PLACE_INDEX } from "@/lib/places/load";
+import { loadPlaceIndex } from "@/lib/places/load";
 import { SITE_URL } from "@/lib/site";
 
 /** Every page of the API docs. */
@@ -45,7 +45,8 @@ function mapEntries(): MetadataRoute.Sitemap {
 }
 
 /** The places index, and a page for every place in it. */
-function placeEntries(): MetadataRoute.Sitemap {
+async function placeEntries(): Promise<MetadataRoute.Sitemap> {
+	const PLACE_INDEX = await loadPlaceIndex();
 	return [
 		{
 			url: `${SITE_URL}/places`,
@@ -64,7 +65,7 @@ function placeEntries(): MetadataRoute.Sitemap {
 	];
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	return [
 		{
 			url: SITE_URL,
@@ -87,7 +88,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 0.6,
 		},
 		...mapEntries(),
-		...placeEntries(),
+		...(await placeEntries()),
 		...docsEntries(),
 	];
 }

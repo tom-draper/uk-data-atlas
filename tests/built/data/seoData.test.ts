@@ -6,7 +6,6 @@ import {
 	readFigureInputs,
 	serialiseMapFigures,
 } from "@/scripts/map-figures";
-import { PLACE_FACTS_PATH, serialisePlaceFacts } from "@/scripts/place-facts";
 import {
 	RANKING_PAGES_PATH,
 	RANKINGS_DIR,
@@ -32,10 +31,4 @@ describe("map page data; run pnpm seo:build if stale", () => {
 			).toBe(contents);
 		expect(await readFile(RANKING_PAGES_PATH, "utf8")).toBe(pages);
 	}, 120_000);
-
-	it("place facts match the committed datasets", async () => {
-		expect(await serialisePlaceFacts()).toBe(
-			await readFile(PLACE_FACTS_PATH, "utf8"),
-		);
-	}, 60_000);
 });

@@ -64,8 +64,8 @@ function geographyName(geography: string): string {
 export default async function DataTopicPage({ params }: { params: Params }) {
 	const page = findDataPage((await params).slug);
 	if (!page) notFound();
-	const facts = dataPageFacts(page);
-	const catalogue = loadCatalogue();
+	const catalogue = await loadCatalogue();
+	const facts = dataPageFacts(page, catalogue);
 	const downloads = exportsFromDatasets(catalogue, page.datasets);
 	const topic = DATA_TOPICS.find((t) => t.id === page.topic);
 

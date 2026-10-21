@@ -593,7 +593,6 @@ async function download(mode) {
 async function verifyPrecompiled() {
 	try {
 		await stat(join(PRECOMPILED, "dataset-manifest.json"));
-		await stat(join(PRECOMPILED, "docs-catalogue.json"));
 		await stat(join(ROOT, "public", "data", "boundaries"));
 	} catch {
 		fail(

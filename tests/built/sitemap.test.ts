@@ -3,7 +3,7 @@ import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
 import { SITE_URL } from "@/lib/site";
 
-const entries = sitemap();
+const entries = await sitemap();
 const paths = entries.map((entry) => new URL(entry.url).pathname);
 
 describe("sitemap", () => {

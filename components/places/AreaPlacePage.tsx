@@ -25,7 +25,7 @@ import {
 	geographyNoun,
 } from "@/lib/places/labels";
 import { placeFacts, type PlaceFacts } from "@/lib/places/facts";
-import { loadAreaProfile, PLACE_INDEX } from "@/lib/places/load";
+import { loadAreaProfile, loadPlaceIndex } from "@/lib/places/load";
 import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
 import { areaSummary } from "@/lib/places/summary";
 
@@ -360,7 +360,7 @@ function AreaApi({
 }
 
 export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
-	const releases = PLACE_INDEX.releases[profile.geography];
+	const releases = (await loadPlaceIndex()).releases[profile.geography];
 	const lastRelease = releases[profile.releases.at(-1)!]!;
 	const [{ council, councilProfile, region, namedPlaces }, facts] =
 		await Promise.all([loadAreaContext(profile), placeFacts(profile.code)]);
@@ -383,7 +383,7 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 				)}
 				eyebrow={`${geographyName(profile.geography)} · ${profile.code}`}
 				title={profile.name}
-				lede={areaSummary(profile)}
+				lede={await areaSummary(profile)}
 				pill={
 					profile.current ? (
 						<Pill tone="emerald">In use</Pill>

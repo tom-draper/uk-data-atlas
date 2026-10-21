@@ -50,7 +50,7 @@ export default async function GeographyPage({ params }: { params: Params }) {
 	const id = findGeographyBySlug((await params).slug);
 	if (!id) notFound();
 	const content = GEOGRAPHIES[id];
-	const catalogue = loadCatalogue();
+	const catalogue = await loadCatalogue();
 	const releases = releasesForGeography(catalogue, id);
 	const latest = releases[0];
 	const latestCount = catalogue.areaCounts.get(`${id}/${latest.id}`);
