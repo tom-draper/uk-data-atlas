@@ -18,6 +18,7 @@ const manifest = join(
 // the raw data directory alone.
 const precompileInputs = [
 	join(root, "data"),
+	join(root, ".cache", "atlas-lookups"),
 	join(root, "scripts"),
 	join(root, "lib", "data"),
 	join(root, "lib", "helpers"),

@@ -3,7 +3,11 @@ import { dirname, join } from "path";
 import { encodeCompactPayload } from "../lib/data/compactPayload";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "../lib/data/gazetteer/types";
-import type { PrecompiledBoundaryMappings } from "@uk-data-atlas/geography";
+import {
+	lsoaLadMappingsFile,
+	type PrecompiledBoundaryMappings,
+} from "@uk-data-atlas/geography";
+import { atlasLookupPath } from "./atlas-lookups";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import { getProp } from "../lib/data/boundaries/properties";
 import {
@@ -114,13 +118,7 @@ const regionForRecord = (
  * year, so the chunk a record is placed in agrees with the filter.
  */
 const readLsoaToLad = async (root: string, boundaryYear: number) => {
-	const path = join(
-		root,
-		"public",
-		"data",
-		"datasets",
-		`lsoa-lad-mappings-${boundaryYear}.json`,
-	);
+	const path = atlasLookupPath(root, lsoaLadMappingsFile(boundaryYear));
 	const parsed = JSON.parse(await readFile(path, "utf8")) as {
 		lsoaToLad?: Record<string, string>;
 	};

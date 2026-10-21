@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { readdir, readFile } from "fs/promises";
+import { readFile } from "fs/promises";
 import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "../../lib/data/gazetteer/types";
@@ -14,6 +14,7 @@ import {
 	snapshotFileContents,
 } from "./cache.mts";
 import { chunksSize } from "./output.mts";
+import { ATLAS_LOOKUP_NAMES, atlasLookupPath } from "../atlas-lookups";
 import { OUT_DIR, ROOT } from "./paths.mts";
 import type {
 	CompiledDatasets,
@@ -34,26 +35,24 @@ type RegionChunkInputs = {
 
 /**
  * What places a record in a region besides the dataset itself: the ward and
- * LSOA lookups written beside the chunks. A chunk is only as current as the
+ * LSOA lookups fetched from the API. A chunk is only as current as the
  * lookup that placed its records, so their hashes go into the recorded
  * fingerprints under `lookup:` names.
  */
 export async function regionChunkLookupFingerprints(): Promise<
 	Record<string, string>
 > {
-	const names = (await readdir(OUT_DIR))
-		.filter(
-			(name) =>
-				name === "boundary-mappings.json" ||
-				/^lsoa-lad-mappings-\d{4}\.json$/.test(name),
-		)
-		.sort();
+	const names = ATLAS_LOOKUP_NAMES.filter(
+		(name) =>
+			name === "boundary-mappings.json" ||
+			/^lsoa-lad-mappings-\d{4}\.json$/.test(name),
+	);
 	return Object.fromEntries(
 		await Promise.all(
 			names.map(async (name) => [
 				`lookup:${name}`,
 				createHash("sha256")
-					.update(await readFile(join(OUT_DIR, name)))
+					.update(await readFile(atlasLookupPath(ROOT, name)))
 					.digest("hex"),
 			]),
 		),

@@ -12,6 +12,7 @@ import {
 	regionForLadIn,
 } from "@/lib/data/datasetRegionChunks";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import { atlasLookupPath } from "@/scripts/atlas-lookups";
 
 describe("dataset region chunks", () => {
 	it("uses the North West chunk for Greater Manchester", () => {
@@ -49,7 +50,10 @@ describe("dataset region chunks", () => {
 			data: Record<string, unknown>;
 		};
 		const { lsoaToLad } = read(
-			join(datasets, `lsoa-lad-mappings-${full.boundaryYear}.json`),
+			atlasLookupPath(
+				process.cwd(),
+				`lsoa-lad-mappings-${full.boundaryYear}.json`,
+			),
 		) as { lsoaToLad: Record<string, string> };
 
 		const chunkOf = new Map<string, string>();
