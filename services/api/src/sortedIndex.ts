@@ -7,12 +7,18 @@
  * are always contiguous.
  */
 
+/** A sorted array, or a table read as one. Arrays satisfy this already. */
+export type Indexed<T> = {
+	readonly length: number;
+	at(index: number): T | undefined;
+};
+
 export const compareCodeUnits = (left: string, right: string) =>
 	left < right ? -1 : left > right ? 1 : 0;
 
 /** The first position whose key is at or after `value`. */
 export const lowerBound = <T>(
-	sorted: readonly T[],
+	sorted: Indexed<T>,
 	value: string,
 	key: (item: T) => string = (item) => item as unknown as string,
 ) => {
@@ -20,7 +26,7 @@ export const lowerBound = <T>(
 	let high = sorted.length;
 	while (low < high) {
 		const middle = (low + high) >> 1;
-		if (key(sorted[middle]!) < value) low = middle + 1;
+		if (key(sorted.at(middle)!) < value) low = middle + 1;
 		else high = middle;
 	}
 	return low;
@@ -28,12 +34,12 @@ export const lowerBound = <T>(
 
 /** The position whose key is `value`, or -1. */
 export const findSorted = <T>(
-	sorted: readonly T[],
+	sorted: Indexed<T>,
 	value: string,
 	key: (item: T) => string = (item) => item as unknown as string,
 ) => {
 	const position = lowerBound(sorted, value, key);
-	return position < sorted.length && key(sorted[position]!) === value
+	return position < sorted.length && key(sorted.at(position)!) === value
 		? position
 		: -1;
 };
