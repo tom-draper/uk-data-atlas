@@ -28,7 +28,7 @@ import {
 	compileParishLadContainment,
 	type ContainmentCrosswalk,
 	type OverlapCrosswalk,
-} from "./area-containment";
+} from "@uk-data-atlas/geography";
 import { recordResolverProjections } from "./resolver-projections";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");

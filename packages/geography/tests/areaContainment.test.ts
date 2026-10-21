@@ -6,7 +6,7 @@ import {
 	compileParishLadContainment,
 	type ContainmentCrosswalk,
 	type OverlapCrosswalk,
-} from "@/scripts/area-containment";
+} from "../src/areaContainment";
 
 const crosswalk = (
 	method: string,
