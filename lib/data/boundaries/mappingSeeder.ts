@@ -24,7 +24,7 @@ export type BoundaryMappingTarget = {
 	setAreaLineage?: (type: LineageType, lineage: AreaLineage) => void;
 };
 
-/** Load the API resolver's lineages, written by `pnpm lineage:build`. */
+/** Load the API resolver's lineages, served at /v1/atlas-lookups. */
 export const applyAreaLineage = (
 	lineages: Partial<Record<LineageType, AreaLineage>>,
 	target: BoundaryMappingTarget,

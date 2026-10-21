@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { describe, expect, it } from "vitest";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
+import { atlasLookupPath } from "@/scripts/atlas-lookups";
 
 const datasets = join(process.cwd(), "public", "data", "datasets");
 const read = (file: string) =>
@@ -29,8 +30,14 @@ describe("LSOA datasets", () => {
 					code.startsWith("E01"),
 				);
 				if (codes.length === 0) continue;
-				const { lsoaToLad } = read(
-					`lsoa-lad-mappings-${edition.boundaryYear}.json`,
+				const { lsoaToLad } = JSON.parse(
+					readFileSync(
+						atlasLookupPath(
+							process.cwd(),
+							`lsoa-lad-mappings-${edition.boundaryYear}.json`,
+						),
+						"utf8",
+					),
 				) as { lsoaToLad: Record<string, string> };
 				const missing = codes.filter((code) => !(code in lsoaToLad));
 				expect(

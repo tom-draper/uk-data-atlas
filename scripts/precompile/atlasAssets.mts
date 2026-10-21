@@ -14,7 +14,8 @@ import {
 	snapshotFileContents,
 } from "./cache.mts";
 import { out } from "./output.mts";
-import { OUT_DIR, PUBLIC_DATA } from "./paths.mts";
+import { atlasLookupPath } from "../atlas-lookups";
+import { OUT_DIR, PUBLIC_DATA, ROOT } from "./paths.mts";
 import { readBoundaryAsset } from "./sources/read.mts";
 import type { ReuseContext } from "./types.mts";
 
@@ -87,16 +88,16 @@ export async function compileAtlasAssets({
 				return { data, compiled };
 			});
 	// Ward and parish containment come from the API's geography resolver,
-	// written by `pnpm containment:build` and committed; upload matching reads
+	// fetched by `pnpm lookups:fetch`; upload matching reads
 	// ward and parish parents from them, so the index is compiled in step.
 	// Both files are part of the precompiler fingerprint, so a cached index
 	// is only reused while they are unchanged.
 	const boundaryMappings = readFile(
-		join(OUT_DIR, "boundary-mappings.json"),
+		atlasLookupPath(ROOT, "boundary-mappings.json"),
 		"utf8",
 	).then((json) => ({ wardToLad: parseBoundaryWardToLad(JSON.parse(json)) }));
 	const parishToLad = readFile(
-		join(OUT_DIR, "parish-lad-mappings.json"),
+		atlasLookupPath(ROOT, "parish-lad-mappings.json"),
 		"utf8",
 	).then((json) => parseParishLadMappings(JSON.parse(json)));
 	const matchIndex = canReuseAtlasAssets
