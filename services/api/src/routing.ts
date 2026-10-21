@@ -83,6 +83,7 @@ export type RouteContext = {
 	documents?: Map<string, StoredFile>;
 	/** The atlas's containment and lineage lookups, by id. */
 	atlasLookups?: Map<string, StoredFile>;
+	atlasPages?: Map<string, StoredFile>;
 };
 
 /** A request body, as sent: its declared media type and its text. */

@@ -1,3 +1,13 @@
+import {
+	medianAge,
+	ageShare,
+	ethnicGroups,
+} from "@uk-data-atlas/catalogue/place-facts";
+export {
+	medianAge,
+	ageShare,
+	ethnicGroups,
+} from "@uk-data-atlas/catalogue/place-facts";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 
 /**
@@ -306,70 +316,6 @@ function councilNamed(name: string) {
 const decileField = (key: string) => (record: DataRecord) => num(record[key]);
 
 // Population -----------------------------------------------------------------
-
-/** The age half of residents are under, interpolated within the year of age. */
-export function medianAge(ages: unknown): number | null {
-	if (!ages || typeof ages !== "object") return null;
-	const counts = Object.entries(ages as DataRecord)
-		.map(([age, count]) => [Number(age), num(count) ?? 0] as const)
-		.sort((a, b) => a[0] - b[0]);
-	const total = counts.reduce((sum, [, count]) => sum + count, 0);
-	if (total <= 0) return null;
-	let below = 0;
-	for (const [age, count] of counts) {
-		if (below + count >= total / 2)
-			return count === 0 ? age : age + (total / 2 - below) / count;
-		below += count;
-	}
-	return null;
-}
-
-/** The share of residents within an age range, the last age being "90+". */
-export function ageShare(ages: unknown, from: number, to = Infinity) {
-	if (!ages || typeof ages !== "object") return null;
-	let total = 0;
-	let within = 0;
-	for (const [age, count] of Object.entries(ages as DataRecord)) {
-		const people = num(count) ?? 0;
-		total += people;
-		if (Number(age) >= from && Number(age) <= to) within += people;
-	}
-	return share(within, total);
-}
-
-// Ethnicity ------------------------------------------------------------------
-
-const ETHNIC_GROUPS = {
-	asian: "Asian, Asian British or Asian Welsh",
-	black: "Black, Black British, Black Welsh, Caribbean or African",
-	mixed: "Mixed or Multiple ethnic groups",
-	white: "White",
-	other: "Other ethnic group",
-} as const;
-
-const WHITE_BRITISH = "English, Welsh, Scottish, Northern Irish or British";
-
-/** The people in each of the census's broad ethnic groups, and White British. */
-export function ethnicGroups(record: DataRecord) {
-	const people = (group: unknown) =>
-		Object.values((group ?? {}) as DataRecord).reduce<number>(
-			(sum, entry) =>
-				sum + (num((entry as DataRecord | null)?.population) ?? 0),
-			0,
-		);
-	const groups = Object.fromEntries(
-		Object.entries(ETHNIC_GROUPS).map(([key, name]) => [
-			key,
-			people(record[name]),
-		]),
-	) as Record<keyof typeof ETHNIC_GROUPS, number>;
-	const white = record[ETHNIC_GROUPS.white] as DataRecord | undefined;
-	const whiteBritish =
-		num((white?.[WHITE_BRITISH] as DataRecord | undefined)?.population) ??
-		0;
-	const total = Object.values(groups).reduce((sum, count) => sum + count, 0);
-	return { ...groups, whiteBritish, total };
-}
 
 const ethnicShare = (
 	label: string,

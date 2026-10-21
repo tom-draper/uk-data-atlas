@@ -25,6 +25,7 @@
 		"example:trend": "tsx examples/defensible-trend.ts",
 		"example:sync": "tsx examples/reliable-sync.ts",
 		"build:area-inventory": "tsx scripts/build-area-inventory.ts",
+		"build:atlas-pages": "tsx --max-old-space-size=3072 scripts/build-atlas-pages.ts",
 		"build:atlas-lookups": "tsx --max-old-space-size=4096 scripts/build-atlas-lookups.ts",
 		"build:atlas-release": "tsx scripts/build-atlas-release.ts",
 		"build:boundary-registry": "tsx scripts/build-boundary-registry.ts",

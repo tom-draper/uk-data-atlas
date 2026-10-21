@@ -15,3 +15,7 @@ Like `@uk-data-atlas/geography`, it holds code only, reads no files and is
 safe to bundle into the browser. Its tsconfig has no DOM or Node types and no
 path aliases, and `tests/packages/packageImports.test.ts` fails if it imports
 anything its package.json does not declare.
+
+The package also exports the place profile format, place fact calculations,
+compact dataset codecs and the API contract fingerprint. These modules read
+no files and can run in the browser.
