@@ -61,6 +61,12 @@ export type ApiResponse = {
 		 * the same way a string body is.
 		 */
 		body: string | Buffer | StoredFile;
+		/**
+		 * The `sha256:` hash of a Buffer body, when it is already known. It
+		 * is the validator, so the body is never hashed per request, and the
+		 * body can then be read in byte ranges, as a stored file can.
+		 */
+		contentHash?: string;
 		headers?: Record<string, string>;
 	};
 };

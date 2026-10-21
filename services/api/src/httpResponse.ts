@@ -85,7 +85,10 @@ export const entityTag = (body: string | Buffer) =>
  * The same validator, from a hash the build recorded rather than the bytes.
  * The gzipped form of a representation is different bytes, so it has its own.
  */
-const storedEntityTag = (file: StoredFile, gzipped: boolean) =>
+const storedEntityTag = (
+	file: Pick<StoredFile, "contentHash">,
+	gzipped: boolean,
+) =>
 	`"sha256-${Buffer.from(file.contentHash.replace(/^sha256:/, ""), "hex").toString("base64url")}${gzipped ? "-gzip" : ""}"`;
 
 /**
@@ -214,6 +217,13 @@ export const httpResponse = (
 				gunzip: stored.gzipBytes !== undefined && !gzipped,
 			}
 		: (represented as string | Buffer);
+	// A Buffer whose hash the route already knows, such as a download built
+	// from the geometry store: validated and ranged like a stored file.
+	const contentHash = result.representation?.contentHash;
+	const held =
+		contentHash !== undefined && Buffer.isBuffer(represented)
+			? { bytes: represented, contentHash }
+			: undefined;
 	const headers: Record<string, string> = {
 		...CROSS_ORIGIN,
 		"content-type":
@@ -230,6 +240,7 @@ export const httpResponse = (
 	// as a stored file is, unless its route has already encoded it.
 	const compressible =
 		!stored &&
+		!held &&
 		headers["content-encoding"] === undefined &&
 		COMPRESSIBLE.test(headers["content-type"] ?? "");
 	const compress =
@@ -257,44 +268,53 @@ export const httpResponse = (
 		};
 	const etag = stored
 		? storedEntityTag(stored, gzipped)
-		: compress
-			? gzippedTag(entityTag(body as string | Buffer))
-			: entityTag(body as string | Buffer);
+		: held
+			? storedEntityTag(held, false)
+			: compress
+				? gzippedTag(entityTag(body as string | Buffer))
+				: entityTag(body as string | Buffer);
 	headers.etag = etag;
 	headers["cache-control"] = freshness;
 	if (matchesEntityTag(request.headers["if-none-match"], etag))
 		return notModified(etag, headers.vary);
-	// A file sent as it is stored can be read in pieces, which is how a
-	// PMTiles client reads an archive: the header, then a directory, then
-	// the tiles it needs, never the whole file.
-	if (stored && stored.gzipBytes === undefined && result.status === 200) {
+	// A file sent as it is stored, or a body with a known hash, can be read
+	// in pieces. That is how a PMTiles client reads an archive (the header,
+	// then a directory, then the tiles it needs) and how DuckDB or GDAL read
+	// a GeoParquet download over HTTP.
+	const size =
+		stored && stored.gzipBytes === undefined
+			? stored.bytes
+			: held?.bytes.length;
+	if (size !== undefined && result.status === 200) {
 		headers["accept-ranges"] = "bytes";
 		const ifRange = [request.headers["if-range"]].flat()[0];
 		const range =
 			ifRange === undefined || ifRange.trim() === etag
-				? requestedRange(request.headers.range, stored.bytes)
+				? requestedRange(request.headers.range, size)
 				: undefined;
 		if (range === "unsatisfiable")
 			return {
 				status: 416,
 				headers: {
 					...CROSS_ORIGIN,
-					"content-range": `bytes */${stored.bytes}`,
+					"content-range": `bytes */${size}`,
 					"cache-control": ERROR_CACHE_CONTROL,
 					"content-length": "0",
 				},
 			};
 		if (range) {
-			const part: SentFile = {
-				path: stored.path,
-				bytes: range.end - range.start + 1,
-				gunzip: false,
-				start: range.start,
-				end: range.end,
-			};
+			const part: Buffer | SentFile = held
+				? held.bytes.subarray(range.start, range.end + 1)
+				: {
+						path: stored!.path,
+						bytes: range.end - range.start + 1,
+						gunzip: false,
+						start: range.start,
+						end: range.end,
+					};
 			headers["content-range"] =
-				`bytes ${range.start}-${range.end}/${stored.bytes}`;
-			headers["content-length"] = String(part.bytes);
+				`bytes ${range.start}-${range.end}/${size}`;
+			headers["content-length"] = String(bodyBytes(part));
 			return { status: 206, headers, ...(isHead ? {} : { body: part }) };
 		}
 	}

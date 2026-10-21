@@ -287,6 +287,37 @@ test("reads a stored file in byte ranges, as a PMTiles client does", () => {
 	);
 });
 
+test("validates and ranges a body built for the request by its known hash", () => {
+	// A full-detail map download is built from the geometry store, not read
+	// from disk, but DuckDB and GDAL still read it over HTTP in ranges.
+	const bytes = Buffer.from("0123456789");
+	const contentHash = `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
+	const serve = (headers: Record<string, string>) =>
+		httpResponse({ method: "GET", headers }, () => ({
+			status: 200,
+			body: ok.body,
+			representation: {
+				contentType: "application/vnd.apache.parquet",
+				body: bytes,
+				contentHash,
+			},
+		}));
+	const whole = serve({});
+	assert.equal(whole.status, 200);
+	assert.equal(whole.body, bytes);
+	assert.equal(whole.headers.etag, entityTag(bytes));
+	assert.equal(whole.headers["accept-ranges"], "bytes");
+	assert.equal(whole.headers["content-encoding"], undefined);
+
+	const part = serve({ range: "bytes=7-" });
+	assert.equal(part.status, 206);
+	assert.deepEqual(part.body, Buffer.from("789"));
+	assert.equal(part.headers["content-range"], "bytes 7-9/10");
+	assert.equal(part.headers["content-length"], "3");
+	assert.equal(serve({ range: "bytes=10-" }).status, 416);
+	assert.equal(serve({ "if-none-match": whole.headers.etag! }).status, 304);
+});
+
 test("never ranges over a file stored gzipped", () => {
 	const stored = {
 		path: "/nowhere/release.geojson.gz",
