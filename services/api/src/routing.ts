@@ -81,6 +81,8 @@ export type RouteContext = {
 	fullDetailDownloads?: FullDetailSource;
 	/** Immutable build artifacts published as evidence documents. */
 	documents?: Map<string, StoredFile>;
+	/** The atlas's containment and lineage lookups, by id. */
+	atlasLookups?: Map<string, StoredFile>;
 };
 
 /** A request body, as sent: its declared media type and its text. */
