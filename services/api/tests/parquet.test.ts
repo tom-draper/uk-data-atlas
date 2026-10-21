@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CREATED_BY, writeParquet, type ParquetTable } from "../src/parquet";
+import {
+	CREATED_BY,
+	writeParquet,
+	writeParquetAsync,
+	type ParquetTable,
+} from "../src/parquet";
 import { chunkBounds, readParquet } from "./parquetFixtures";
 
 /**
@@ -242,4 +247,15 @@ test("encodes UTF-8 strings and binary slices without copying unrelated bytes", 
 		{ text: "", bytes: Buffer.from([]) },
 		{ text: null, bytes: null },
 	]);
+});
+
+test("writes the same file whether pages are compressed here or off the main thread", async () => {
+	const table = {
+		columns: [
+			{ name: "id", type: "int32" as const, values: [1, 2, 3] },
+			{ name: "code", type: "string" as const, values: ["a", "b", "c"] },
+		],
+		metadata: { about: "test" },
+	};
+	assert.deepEqual(await writeParquetAsync(table), writeParquet(table));
 });
