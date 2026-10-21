@@ -6,12 +6,16 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./surface-fingerprint": "./src/surfaceFingerprint.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"devDependencies": {
 		"typescript": "^7.0.2"
+	},
+	"dependencies": {
+		"@noble/hashes": "^2.4.0"
 	}
 }
