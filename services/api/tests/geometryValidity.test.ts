@@ -204,6 +204,7 @@ test("compiles deterministic reports and serves them with metrics and provenance
 	assert.equal(stored.validity("missing"), undefined);
 	const bowTie = stored.validity(features[2]!.properties.CODE);
 	assert.equal(bowTie?.status, "invalid");
+	assert.deepEqual(bowTie?.method, GEOMETRY_VALIDITY_METHOD);
 	if (bowTie?.status === "invalid")
 		assert.deepEqual(bowTie.issue, {
 			code: "self-intersection",

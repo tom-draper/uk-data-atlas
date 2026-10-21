@@ -6,8 +6,14 @@ import {
 	spatialCells,
 	type SpatialCell,
 } from "./geometrySpatialIndex";
-import { packedBounds, type PackedGeometry } from "./packedGeometry";
 import {
+	DEGREE_SCALE,
+	packedBounds,
+	roundDegrees,
+	type PackedGeometry,
+} from "./packedGeometry";
+import {
+	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,
 	type GeometryValidityReport,
 } from "./geometryValidity";
@@ -17,24 +23,34 @@ import {
  * byte ranges and the spatial grid. Individual geometry records stay on disk
  * until a route needs them.
  *
- * Layout, little-endian, records aligned to eight bytes:
+ * Layout, little-endian, tables aligned to eight bytes:
  *
- *   "ATLGEO2\n"
+ *   "ATLGEO3\n"
  *   u32 header length, u32 area count
- *   header JSON: { source, codes, spatialIndex counts }
+ *   header JSON: { source, codes, spatialIndex counts, validityMethod }
  *   f64 offsets[count + 1]
  *   f64 bounds[count * 4]
  *   i32 cells[cellCount * 2]: longitude, latitude
  *   u32 cellOffsets[cellCount + 1]
  *   u32 cellCandidates[candidateCount]
  *   u32 indexedCodes[indexedCodeCount]
- *   aligned area records
+ *   area records
+ *
+ * A record is a u32 descriptor length, the descriptor JSON (its shape and
+ * validity, which is read on its own), then its arrays. Coordinates are held
+ * to seven decimal places (see `roundDegrees`), so most are stored as each
+ * position's step from the one before, in units of 1e-7, as zigzag varints:
+ * neighbouring vertices are close, so most steps take one to three bytes.
+ * Positions not on that grid are kept as f64. Counts are varints too.
+ * Plain varints decode faster than a compressed frame per record, which
+ * costs more to set up than small areas take to read.
  */
 
-const MAGIC = Buffer.from("ATLGEO2\n");
+const MAGIC = Buffer.from("ATLGEO3\n");
 
 type Descriptor =
-	| { k: "p"; t: string; s: number; n: number; c: number[] }
+	/** `q` marks positions held as steps rather than f64. */
+	| { k: "p"; t: string; s: number; n: number; c: number[]; q?: 1 }
 	| { k: "c"; g: Descriptor[] }
 	| { k: "r"; g: GeoJsonGeometry };
 
@@ -48,60 +64,190 @@ type StoreHeader = {
 	source: GeometrySource;
 	codes: string[];
 	spatialIndex: SpatialIndexHeader;
+	/** Shared by every record's validity report, so stored once. */
+	validityMethod: GeometryValidityReport["method"];
 };
 
 const align = (offset: number) => Math.ceil(offset / 8) * 8;
 
-const describe = (packed: PackedGeometry): Descriptor =>
-	packed.kind === "packed"
-		? {
-				k: "p",
-				t: packed.type,
-				s: packed.stride,
-				n: packed.positions.length,
-				c: packed.counts.map((level) => level.length),
-			}
-		: packed.kind === "collection"
-			? { k: "c", g: packed.geometries.map(describe) }
-			: { k: "r", g: packed.geometry };
+/** Bytes appended through `varint` and `bytes`, grown as needed. */
+class ByteWriter {
+	buffer = Buffer.allocUnsafe(1024);
+	length = 0;
+	private reserve(bytes: number) {
+		if (this.length + bytes <= this.buffer.length) return;
+		const next = Buffer.allocUnsafe(
+			Math.max(this.buffer.length * 2, this.length + bytes),
+		);
+		this.buffer.copy(next, 0, 0, this.length);
+		this.buffer = next;
+	}
+	/** A non-negative integer below 2^53, seven bits a byte. */
+	varint(value: number) {
+		this.reserve(8);
+		while (value >= 0x80) {
+			this.buffer[this.length++] = (value % 0x80) | 0x80;
+			value = Math.floor(value / 0x80);
+		}
+		this.buffer[this.length++] = value;
+	}
+	bytes(block: Uint8Array) {
+		this.reserve(block.length);
+		this.buffer.set(block, this.length);
+		this.length += block.length;
+	}
+}
 
-const arraysOf = (packed: PackedGeometry): Array<Float64Array | Uint32Array> =>
-	packed.kind === "packed"
-		? [packed.positions, ...packed.counts]
-		: packed.kind === "collection"
-			? packed.geometries.flatMap(arraysOf)
-			: [];
+const onGrid = (positions: Float64Array) => {
+	for (const value of positions)
+		if (roundDegrees(value) !== value) return false;
+	return true;
+};
+
+/** Each position's step from the one `stride` before, zigzag encoded. */
+const writeSteps = (
+	writer: ByteWriter,
+	positions: Float64Array,
+	stride: number,
+) => {
+	for (let at = 0; at < positions.length; at++) {
+		const units = Math.round(positions[at]! * DEGREE_SCALE);
+		const step =
+			at < stride
+				? units
+				: units - Math.round(positions[at - stride]! * DEGREE_SCALE);
+		writer.varint(step < 0 ? -2 * step - 1 : 2 * step);
+	}
+};
+
+const encodeParts = (
+	packed: PackedGeometry,
+	writer: ByteWriter,
+): Descriptor => {
+	if (packed.kind === "collection")
+		return {
+			k: "c",
+			g: packed.geometries.map((part) => encodeParts(part, writer)),
+		};
+	if (packed.kind === "raw") return { k: "r", g: packed.geometry };
+	const steps = onGrid(packed.positions);
+	if (steps) writeSteps(writer, packed.positions, packed.stride);
+	else
+		writer.bytes(
+			new Uint8Array(
+				packed.positions.buffer,
+				packed.positions.byteOffset,
+				packed.positions.byteLength,
+			),
+		);
+	for (const level of packed.counts)
+		for (const count of level) writer.varint(count);
+	return {
+		k: "p",
+		t: packed.type,
+		s: packed.stride,
+		n: packed.positions.length,
+		c: packed.counts.map((level) => level.length),
+		...(steps ? { q: 1 as const } : {}),
+	};
+};
 
 const encodeArea = (
 	packed: PackedGeometry,
 	validity?: GeometryValidityReport,
 ): Buffer[] => {
+	const writer = new ByteWriter();
+	const shape = encodeParts(packed, writer);
+	let report: Omit<GeometryValidityReport, "method"> | undefined;
+	if (validity) {
+		const { method, ...rest } = validity;
+		if (JSON.stringify(method) !== JSON.stringify(GEOMETRY_VALIDITY_METHOD))
+			throw new Error("A validity report was made by another method.");
+		report = rest;
+	}
 	const descriptor = Buffer.from(
-		JSON.stringify({
-			...describe(packed),
-			...(validity ? { validity } : {}),
-		}),
+		JSON.stringify({ ...shape, ...(report ? { validity: report } : {}) }),
 	);
 	const length = Buffer.alloc(4);
 	length.writeUInt32LE(descriptor.length);
-	const parts: Buffer[] = [length, descriptor];
-	let size = 4 + descriptor.length;
-	for (const array of arraysOf(packed)) {
-		const padding = align(size) - size;
-		if (padding) parts.push(Buffer.alloc(padding));
-		size += padding;
-		const bytes = Buffer.from(
-			array.buffer,
-			array.byteOffset,
-			array.byteLength,
-		);
-		parts.push(bytes);
-		size += bytes.length;
-	}
-	const padding = align(size) - size;
-	if (padding) parts.push(Buffer.alloc(padding));
-	return parts;
+	return [length, descriptor, writer.buffer.subarray(0, writer.length)];
 };
+
+/** Reads one record's arrays, in the order `encodeParts` wrote them. */
+class RecordReader {
+	constructor(
+		private readonly record: Buffer,
+		private cursor: number,
+		private readonly path: string,
+	) {}
+
+	private truncated() {
+		return new Error(`${this.path} has a truncated area record.`);
+	}
+
+	private varint() {
+		const record = this.record;
+		if (this.cursor >= record.length) throw this.truncated();
+		let byte = record[this.cursor++]!;
+		if (byte < 0x80) return byte;
+		let value = byte & 0x7f;
+		let scale = 0x80;
+		do {
+			if (this.cursor >= record.length) throw this.truncated();
+			byte = record[this.cursor++]!;
+			value += (byte & 0x7f) * scale;
+			scale *= 0x80;
+		} while (byte >= 0x80);
+		return value;
+	}
+
+	private positions(length: number, stride: number, steps: boolean) {
+		const values = new Float64Array(length);
+		if (!steps) {
+			const end = this.cursor + length * 8;
+			if (end > this.record.length) throw this.truncated();
+			// Copied, so the array owns aligned memory of its own.
+			new Uint8Array(values.buffer).set(
+				this.record.subarray(this.cursor, end),
+			);
+			this.cursor = end;
+			return values;
+		}
+		const units = new Float64Array(stride);
+		for (let at = 0; at < length; at++) {
+			const zigzag = this.varint();
+			const axis = at % stride;
+			units[axis] += zigzag % 2 ? -(zigzag + 1) / 2 : zigzag / 2;
+			values[at] = units[axis]! / DEGREE_SCALE;
+		}
+		return values;
+	}
+
+	private counts(length: number) {
+		const values = new Uint32Array(length);
+		for (let at = 0; at < length; at++) values[at] = this.varint();
+		return values;
+	}
+
+	read(part: Descriptor): PackedGeometry {
+		if (part.k === "c")
+			return {
+				kind: "collection",
+				geometries: part.g.map((child) => this.read(child)),
+			};
+		if (part.k === "r") return { kind: "raw", geometry: part.g };
+		const positions = this.positions(part.n, part.s, part.q === 1);
+		const counts: Uint32Array[] = [];
+		for (const length of part.c) counts.push(this.counts(length));
+		return {
+			kind: "packed",
+			type: part.t,
+			stride: part.s,
+			positions,
+			counts,
+		};
+	}
+}
 
 type BuiltSpatialIndex = {
 	cells: Array<{ cell: SpatialCell; candidates: number[] }>;
@@ -161,6 +307,7 @@ export const encodeGeometryStore = (
 			candidateCount,
 			indexedCodeCount: spatialIndex.indexedCodes.length,
 		},
+		validityMethod: GEOMETRY_VALIDITY_METHOD,
 	};
 	const header = Buffer.from(JSON.stringify(headerValue));
 	const prefix = Buffer.alloc(8);
@@ -396,40 +543,9 @@ export const readGeometryStore = (
 			const area = JSON.parse(
 				record.toString("utf8", 4, 4 + descriptorLength),
 			) as Descriptor;
-			let cursor = 4 + descriptorLength;
-			const float64 = (length: number) => {
-				cursor = align(cursor);
-				const array = new Float64Array(
-					record.buffer,
-					record.byteOffset + cursor,
-					length,
-				);
-				cursor += array.byteLength;
-				return array;
-			};
-			const uint32 = (length: number) => {
-				cursor = align(cursor);
-				const array = new Uint32Array(
-					record.buffer,
-					record.byteOffset + cursor,
-					length,
-				);
-				cursor += array.byteLength;
-				return array;
-			};
-			const build = (part: Descriptor): PackedGeometry =>
-				part.k === "p"
-					? {
-							kind: "packed",
-							type: part.t,
-							stride: part.s,
-							positions: float64(part.n),
-							counts: part.c.map(uint32),
-						}
-					: part.k === "c"
-						? { kind: "collection", geometries: part.g.map(build) }
-						: { kind: "raw", geometry: part.g };
-			return build(area);
+			return new RecordReader(record, 4 + descriptorLength, path).read(
+				area,
+			);
 		};
 		return {
 			codes: header.codes,
@@ -447,8 +563,15 @@ export const readGeometryStore = (
 					throw new Error(`${path} has an invalid area descriptor.`);
 				const area = JSON.parse(
 					readAt(descriptor, start + 4, length).toString("utf8"),
-				) as { validity?: GeometryValidityReport };
-				return area.validity ?? uncompiledGeometryValidity;
+				) as {
+					validity?: Omit<GeometryValidityReport, "method">;
+				};
+				return area.validity
+					? ({
+							method: header.validityMethod,
+							...area.validity,
+						} as GeometryValidityReport)
+					: uncompiledGeometryValidity;
 			},
 			bounds: (code) => {
 				const at = index.get(code);
