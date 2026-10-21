@@ -40,6 +40,15 @@ const COMPILER_SOURCES = [
 	"src/simplifyGeometry.ts",
 	"src/parquet.ts",
 	"src/flatDownloads.ts",
+	// How areas are read, corrected and rounded, which the geometry store
+	// shares: the full tier is built from the store and must match.
+	"src/areaGeometry.ts",
+	"src/geoJsonProperties.ts",
+	"src/geometrySubstitution.ts",
+	"src/gridOffset.ts",
+	"src/packedGeometry.ts",
+	"src/reprojection.ts",
+	"src/shapefile.ts",
 ];
 
 const sha256 = (content: string | Buffer) =>
