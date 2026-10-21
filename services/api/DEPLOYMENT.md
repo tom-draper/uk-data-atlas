@@ -71,6 +71,10 @@ With this setting, descriptors link to the CDN and API download routes redirect
 to it. The API does not open local PMTiles archives, so map files can be omitted
 from its volume. Keep `map-resources.json` on the volume.
 
+Full-detail (`tier=full`) GeoParquet downloads have no artifact: the API writes
+them from the geometry store when asked for, so they are always served by the
+API, never by the CDN. Keep `geometry-store/` on the volume.
+
 PMTiles clients can read archives directly with HTTP range requests. Configure
 the CDN to support Range, GET, HEAD and CORS, and expose `ETag`, `Content-Range`
 and `Accept-Ranges`. Serve stored `.geojson.gz` objects with
