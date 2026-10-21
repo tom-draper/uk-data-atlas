@@ -1,6 +1,7 @@
 import type { Coordinate } from "../areaContainment";
 import type { GeoJsonGeometry } from "../areaGeometry";
-import { writeParquet } from "../parquet";
+import type { PackedGeometry } from "../packedGeometry";
+import { writeParquet, type ParquetTable } from "../parquet";
 import type { TileBox } from "./tileGrid";
 import { boundsOf } from "./tileset";
 
@@ -56,6 +57,90 @@ export const toWkb = (geometry: GeoJsonGeometry): Buffer => {
 	);
 };
 
+type Ring = { positions: Float64Array; start: number; length: number };
+
+/**
+ * A packed area's polygons, read without building GeoJSON: a release of
+ * output areas is millions of positions, and as nested arrays they cost
+ * several times the bytes and most of the time spent writing them.
+ */
+const packedPolygons = (
+	packed: PackedGeometry,
+	into: Array<{ stride: number; rings: Ring[] }>,
+): boolean => {
+	if (packed.kind === "collection")
+		return packed.geometries.every((part) => packedPolygons(part, into));
+	if (packed.kind !== "packed") return false;
+	const { positions, stride, counts } = packed;
+	const depth =
+		packed.type === "Polygon" ? 2 : packed.type === "MultiPolygon" ? 3 : 0;
+	if (depth === 0 || counts.length !== depth || stride < 2) return false;
+	const ringLengths = counts[depth - 1]!;
+	const ringsPerPolygon = depth === 2 ? counts[0]! : counts[1]!;
+	let ring = 0;
+	let at = 0;
+	for (const ringCount of ringsPerPolygon) {
+		const rings: Ring[] = [];
+		for (let index = 0; index < ringCount; index += 1) {
+			const length = ringLengths[ring]!;
+			rings.push({ positions, start: at, length });
+			at += length * stride;
+			ring += 1;
+		}
+		into.push({ stride, rings });
+	}
+	return true;
+};
+
+/**
+ * A packed polygon or multipolygon as the WKB `toWkb` writes for its
+ * GeoJSON. A collection of polygons is written as the one multipolygon it
+ * is. Undefined for anything else.
+ */
+export const packedWkb = (
+	packed: PackedGeometry,
+): { type: "Polygon" | "MultiPolygon"; wkb: Buffer } | undefined => {
+	if (packed.kind === "raw") {
+		const { geometry } = packed;
+		return geometry.type === "Polygon" || geometry.type === "MultiPolygon"
+			? { type: geometry.type, wkb: toWkb(geometry) }
+			: undefined;
+	}
+	const polygons: Array<{ stride: number; rings: Ring[] }> = [];
+	if (!packedPolygons(packed, polygons) || polygons.length === 0)
+		return undefined;
+	const multi =
+		packed.kind === "collection" || packed.type === "MultiPolygon";
+	let size = multi ? 9 : 0;
+	for (const polygon of polygons) {
+		size += 9;
+		for (const ring of polygon.rings) size += 4 + ring.length * 16;
+	}
+	const out = Buffer.allocUnsafe(size);
+	let offset = 0;
+	const header = (type: number, count: number) => {
+		out.writeUInt8(1, offset); // little-endian
+		out.writeUInt32LE(type, offset + 1);
+		out.writeUInt32LE(count, offset + 5);
+		offset += 9;
+	};
+	if (multi) header(WKB_MULTIPOLYGON, polygons.length);
+	for (const { stride, rings } of polygons) {
+		header(WKB_POLYGON, rings.length);
+		for (const { positions, start, length } of rings) {
+			out.writeUInt32LE(length, offset);
+			offset += 4;
+			for (let index = 0; index < length; index += 1) {
+				const at = start + index * stride;
+				out.writeDoubleLE(positions[at]!, offset);
+				out.writeDoubleLE(positions[at + 1]!, offset + 8);
+				offset += 16;
+			}
+		}
+	}
+	return { type: multi ? "MultiPolygon" : "Polygon", wkb: out };
+};
+
 export type GeoParquetFeature = {
 	id: number;
 	code: string;
@@ -63,13 +148,45 @@ export type GeoParquetFeature = {
 	geometry: GeoJsonGeometry;
 };
 
+/** A feature with its shape already written as WKB, and its envelope. */
+export type GeoParquetRow = {
+	id: number;
+	code: string;
+	name: string;
+	type: string;
+	wkb: Buffer;
+	bbox: TileBox;
+};
+
 export const buildGeoParquet = (
 	features: GeoParquetFeature[],
 	/** What the file is, carried inside it so a copy on its own is citable. */
 	about: Record<string, unknown>,
-): Buffer => {
-	const sorted = [...features].sort((left, right) => left.id - right.id);
-	const boxes = sorted.map((feature) => boundsOf(feature.geometry));
+): Buffer =>
+	writeGeoParquet(
+		features.map((feature) => ({
+			id: feature.id,
+			code: feature.code,
+			name: feature.name,
+			type: feature.geometry.type,
+			wkb: toWkb(feature.geometry),
+			bbox: boundsOf(feature.geometry),
+		})),
+		about,
+	);
+
+export const writeGeoParquet = (
+	rows: GeoParquetRow[],
+	about: Record<string, unknown>,
+): Buffer => writeParquet(geoParquetTable(rows, about));
+
+/** The GeoParquet file of these rows, as a table for the Parquet writer. */
+export const geoParquetTable = (
+	rows: GeoParquetRow[],
+	about: Record<string, unknown>,
+): ParquetTable => {
+	const sorted = [...rows].sort((left, right) => left.id - right.id);
+	const boxes = sorted.map((row) => row.bbox);
 	const bbox: TileBox = [Infinity, Infinity, -Infinity, -Infinity];
 	for (const box of boxes) {
 		bbox[0] = Math.min(bbox[0], box[0]);
@@ -84,7 +201,7 @@ export const buildGeoParquet = (
 			geometry: {
 				encoding: "WKB",
 				geometry_types: [
-					...new Set(sorted.map((feature) => feature.geometry.type)),
+					...new Set(sorted.map((row) => row.type)),
 				].sort(),
 				// No `crs`: GeoParquet's default is OGC:CRS84, longitude then
 				// latitude on WGS 84, which is what every tier is compiled in.
@@ -101,27 +218,27 @@ export const buildGeoParquet = (
 			},
 		},
 	};
-	return writeParquet({
+	return {
 		columns: [
 			{
 				name: "id",
 				type: "int32",
-				values: sorted.map((feature) => feature.id),
+				values: sorted.map((row) => row.id),
 			},
 			{
 				name: "code",
 				type: "string",
-				values: sorted.map((feature) => feature.code),
+				values: sorted.map((row) => row.code),
 			},
 			{
 				name: "name",
 				type: "string",
-				values: sorted.map((feature) => feature.name),
+				values: sorted.map((row) => row.name),
 			},
 			{
 				name: "geometry",
 				type: "binary",
-				values: sorted.map((feature) => toWkb(feature.geometry)),
+				values: sorted.map((row) => row.wkb),
 			},
 			{
 				name: "bbox.xmin",
@@ -148,5 +265,5 @@ export const buildGeoParquet = (
 			geo: JSON.stringify(geo),
 			"uk-data-atlas": JSON.stringify(about),
 		},
-	});
+	};
 };

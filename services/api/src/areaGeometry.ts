@@ -610,12 +610,8 @@ export class AreaGeometryCache {
 			if (packed) yield [code, packed];
 		}
 	}
-	/** The area's geometry in WGS84, reprojected from its source if needed. */
-	get(
-		geography: string,
-		boundaryRelease: string,
-		code: string,
-	): GeoJsonGeometry | undefined {
+	/** A release, loaded on first use and kept among the most recent. */
+	private loaded(geography: string, boundaryRelease: string): CachedRelease {
 		const identity = [geography, boundaryRelease].join("/");
 		let release = this.releases.get(identity);
 		if (!release) {
@@ -646,12 +642,37 @@ export class AreaGeometryCache {
 			this.releases.delete(identity);
 			this.releases.set(identity, release);
 		}
+		return release;
+	}
+	/** The area's geometry in WGS84, reprojected from its source if needed. */
+	get(
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): GeoJsonGeometry | undefined {
 		return this.wgs84Geometry(
-			release,
+			this.loaded(geography, boundaryRelease),
 			geography,
 			boundaryRelease,
 			code,
 			true,
+		);
+	}
+	/**
+	 * The area in WGS84, packed, and not kept: for a pass over a whole
+	 * release, such as writing a download, which needs no GeoJSON.
+	 */
+	packed(
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): PackedGeometry | undefined {
+		return this.wgs84Packed(
+			this.loaded(geography, boundaryRelease),
+			geography,
+			boundaryRelease,
+			code,
+			false,
 		);
 	}
 	/** Load releases and their precomputed indexes before accepting traffic. */
