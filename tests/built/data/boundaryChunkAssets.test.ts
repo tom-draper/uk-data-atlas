@@ -10,7 +10,7 @@ import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 import { filterFeatures } from "@/lib/data/boundaries/filter";
 import { getProp } from "@/lib/data/boundaries/properties";
 import { lsoaYearForBoundaryAsset } from "@/lib/data/boundaries/lsoaLadMappings";
-import { boundaryChunkProblems } from "../../scripts/boundary-chunks";
+import { boundaryChunkProblems } from "@/scripts/boundary-chunks";
 
 const PUBLIC = join(process.cwd(), "public");
 const read = (path: string) =>

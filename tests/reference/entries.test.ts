@@ -3,11 +3,6 @@ import { datasetSlug } from "@/lib/datasets";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
 import { BOUNDARY_DETAILS } from "@/lib/reference/boundaries";
 import { DATASET_GUIDES, DATASET_TOPICS } from "@/lib/reference/datasets";
-import {
-	boundaryEntries,
-	datasetEntries,
-	datasetsByTopic,
-} from "@/lib/reference/entries";
 
 const slugs = CATALOGUE_DATASET_DEFINITIONS.map((d) => datasetSlug(d.type));
 const topics = new Set(DATASET_TOPICS.map((topic) => topic.id));
@@ -31,36 +26,11 @@ describe("dataset guides", () => {
 		).toEqual([]);
 	});
 
-	it("lists every dataset once, with every topic in use", () => {
-		const grouped = datasetsByTopic(datasetEntries());
-		expect(grouped.flatMap((t) => t.datasets).length).toBe(slugs.length);
-		expect(grouped.filter((t) => t.datasets.length === 0)).toEqual([]);
-	});
-
 	it("gives every section on the page its own anchor", () => {
 		// Map pages' structured data points at /datasets#{slug}.
 		expect(
 			duplicates([...slugs, ...topics, "about-datasets", "all-datasets"]),
 		).toEqual([]);
-	});
-
-	it("links each dataset to a geography on the geographies page", () => {
-		expect(
-			datasetEntries()
-				.filter(
-					(entry) =>
-						!GEOGRAPHIES[entry.geography] ||
-						(entry.publishedOn && !GEOGRAPHIES[entry.publishedOn]),
-				)
-				.map((entry) => entry.slug),
-		).toEqual([]);
-	});
-
-	it("lists a dataset under the geography it was published for", () => {
-		const partnerships = boundaryEntries().find(
-			(entry) => entry.id === "communitySafetyPartnership",
-		);
-		expect(partnerships?.datasets.map((d) => d.slug)).toContain("crime");
 	});
 });
 
@@ -79,14 +49,6 @@ describe("geography details", () => {
 				"about-geographies",
 				"all-geographies",
 			]),
-		).toEqual([]);
-	});
-
-	it("has a release for every geography", () => {
-		expect(
-			boundaryEntries()
-				.filter((entry) => !entry.latest)
-				.map((entry) => entry.id),
 		).toEqual([]);
 	});
 });

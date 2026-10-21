@@ -1,32 +1,7 @@
 import { configDefaults, defineConfig } from "vitest/config";
 
-/**
- * Suites that parse whole compiled artifacts: the boundary TopoJSON, about
- * 120 MB, and precompiled datasets of up to 17 MB. Run beside each other and
- * everything else they fill memory and push the machine into swap, where a
- * 17-second suite can pass a minute. They run afterwards, one file at a time.
- */
-const HEAVY_DATA_TESTS = [
-	"tests/data/boundaryChunkAssets.test.ts",
-	"tests/data/compiledBoundaryAssets.test.ts",
-	"tests/data/seoData.test.ts",
-	"tests/data/datasetBoundaryYears.test.ts",
-	"tests/data/lsoaBoundaryYear.test.ts",
-	"tests/data/datasetRegionChunks.test.ts",
-	"tests/data/datasetRegistry.test.ts",
-	"tests/data/placeProfiles.test.ts",
-];
-
-/**
- * Suites that read the raw source data restored into data/ by
- * `pnpm data:download`. CI never restores it, so these run only locally,
- * through `pnpm check:full`.
- */
-const SOURCE_DATA_TESTS = [
-	"tests/data/boundaryMeta.test.ts",
-	"tests/data/boundaryReleases.test.ts",
-	"tests/data/gridOffset.test.ts",
-];
+/** Tests that read generated data or the raw source data in data/. */
+const BUILT_TESTS = "tests/built/**/*.test.ts";
 
 export default defineConfig({
 	resolve: {
@@ -44,30 +19,21 @@ export default defineConfig({
 						"tests/**/*.test.ts",
 						"packages/*/tests/**/*.test.ts",
 					],
-					exclude: [
-						...configDefaults.exclude,
-						...HEAVY_DATA_TESTS,
-						...SOURCE_DATA_TESTS,
-					],
+					exclude: [...configDefaults.exclude, BUILT_TESTS],
 					sequence: { groupOrder: 0 },
 				},
 			},
 			{
 				extends: true,
+				// Built tests need `pnpm precompile` (and `data/` restored), so
+				// they run locally only. Some parse whole compiled artifacts
+				// of up to 120 MB, so they run one file at a time to stay out
+				// of swap.
 				test: {
-					name: "data",
-					include: HEAVY_DATA_TESTS,
+					name: "built",
+					include: [BUILT_TESTS],
 					fileParallelism: false,
 					sequence: { groupOrder: 1 },
-				},
-			},
-			{
-				extends: true,
-				test: {
-					name: "source",
-					include: SOURCE_DATA_TESTS,
-					fileParallelism: false,
-					sequence: { groupOrder: 2 },
 				},
 			},
 		],
