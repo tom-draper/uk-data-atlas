@@ -63,7 +63,11 @@ function countDegenerateRings(collection: FeatureCollection): number {
 					: [];
 		for (const polygon of polygons) {
 			for (const ring of polygon) {
-				const vertices = new Set(ring.map(([x, y]) => `${x},${y}`));
+				const vertices = new Set(
+					ring.map(
+						([longitude, latitude]) => `${longitude},${latitude}`,
+					),
+				);
 				if (ring.length < 4 || vertices.size < 3) count += 1;
 			}
 		}
