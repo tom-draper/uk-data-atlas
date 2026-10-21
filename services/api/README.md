@@ -3119,6 +3119,8 @@ second inventory to maintain:
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
+- `GET /v1/atlas-lookups/{lookup-id}.json` — Download a containment or lineage lookup the atlas reads
+- `GET /v1/atlas-pages/{page-id}.json` — Download a containment or lineage page the atlas reads
 - `GET /v1/translations` — Translate one code through a published conversion path in either direction
 - `GET /v1/locations` — List the curated area collections
 - `GET /v1/locations/alternatives` — List competing named-location definitions for a real-world name

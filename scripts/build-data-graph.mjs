@@ -123,16 +123,5 @@ export const buildDataStages = [
 		"documents",
 		"atlas-lookups",
 	]),
-	stage(
-		"docs-catalogue",
-		[
-			"data-catalog",
-			"export-manifest",
-			"boundary-registry",
-			"geography-inventory",
-			"map-resource",
-			"area-inventory",
-		],
-		["--dir", "../..", "docs:catalogue"],
-	),
+	stage("atlas-pages", ["atlas-release", "geometry-store"]),
 ];

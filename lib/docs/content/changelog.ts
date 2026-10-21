@@ -22,6 +22,14 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-10-21",
+		title: "Serve website place and catalogue artifacts",
+		surface: "52834368e3ba",
+		changes: [
+			"The API now serves website place profiles, facts, ward areas and the docs catalogue at `/v1/atlas-pages/{page-id}.json`. Containment and lineage lookups are available at `/v1/atlas-lookups/{lookup-id}.json`. Existing requests are unchanged; artifact shapes follow the website.",
+		],
+	},
+	{
 		date: "2026-10-18",
 		title: "Queue requests when a worker is busy",
 		changes: [

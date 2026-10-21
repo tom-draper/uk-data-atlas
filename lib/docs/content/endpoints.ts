@@ -471,6 +471,13 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Documents are pinned to the Atlas release, so a saved copy stays valid evidence for the results it was built alongside.",
 		],
 	},
+	getAtlasPage: {
+		title: "Download website place data",
+		intro: "Download the API-built place profiles, directory, facts or docs catalogue used by the website.",
+		tips: [
+			"Use `places-index`, `places-area-{shard}`, `places-named-{id}`, `place-facts`, `ward-areas` or `docs-catalogue` as the page id. These shapes follow the website; use the area and catalogue routes for stable domain responses.",
+		],
+	},
 	getAtlasLookup: {
 		title: "Download an atlas lookup",
 		intro: "Download one of the lookups the atlas map reads: where each ward, LSOA and parish sits, which authorities each constituency overlaps, and where each area went between boundary releases.",

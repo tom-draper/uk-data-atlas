@@ -3,6 +3,7 @@ import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
+import { handleAtlasPageRoutes } from "./atlasPages";
 import { handleAtlasLookupRoutes } from "./atlasLookups";
 import type { FullDetailResult, FullDetailSource } from "./fullDetailDownloads";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
@@ -332,6 +333,11 @@ const routeFamilies: RouteFamily[] = [
 		name: "bulk",
 		owns: v1(["exports", "lookups"]),
 		handle: handleBulkRoutes,
+	},
+	{
+		name: "atlas-pages",
+		owns: v1("atlas-pages", { length: 3 }),
+		handle: handleAtlasPageRoutes,
 	},
 	{
 		name: "atlas-lookups",
