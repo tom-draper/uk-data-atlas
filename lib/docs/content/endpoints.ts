@@ -471,6 +471,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Documents are pinned to the Atlas release, so a saved copy stays valid evidence for the results it was built alongside.",
 		],
 	},
+	getAtlasLookup: {
+		title: "Download an atlas lookup",
+		intro: "Download one of the lookups the atlas map reads: where each ward, LSOA and parish sits, which authorities each constituency overlaps, and where each area went between boundary releases.",
+		tips: [
+			"Name the lookup in the path, such as `/v1/atlas-lookups/area-lineage.json`. An unknown id returns 404.",
+			"Each file follows the atlas's own shape, so it may change with the atlas. For a stable contract, use the crosswalk and area routes.",
+		],
+	},
 	getAttribution: {
 		title: "Get attribution text",
 		intro: "Get the publisher and licence details for the data you've used, plus a plain-text block ready to paste under a map or into a report.",

@@ -3,6 +3,7 @@ import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
+import { handleAtlasLookupRoutes } from "./atlasLookups";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
@@ -330,6 +331,11 @@ const routeFamilies: RouteFamily[] = [
 		name: "bulk",
 		owns: v1(["exports", "lookups"]),
 		handle: handleBulkRoutes,
+	},
+	{
+		name: "atlas-lookups",
+		owns: v1("atlas-lookups", { length: 3 }),
+		handle: handleAtlasLookupRoutes,
 	},
 	{
 		name: "sync",
