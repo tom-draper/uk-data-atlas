@@ -188,6 +188,13 @@
 			]
 		},
 		{
+			"check": "containment-verified",
+			"reason": "The 2022 data zones are full-detail and the 2024 council areas are generalised. 41 of 7,392 data zones overhang their council by 100 m to 806 m, all on the coasts of Shetland, Na h-Eileanan Siar, Argyll and Bute, Orkney, Highland, Aberdeenshire and Fife; 38 overhang by under 500 m. Each lies at least 98.4% inside its published council, median 99.7%. The Scottish Government's assignment is correct.",
+			"resources": [
+				"crosswalks/data-zone-2022-sc-bfc-to-local-authority-2024-12-uk-bgc-official-lookup"
+			]
+		},
+		{
 			"check": "source-names-consistent",
 			"reason": "The ONS code history database names E05008165 both Loton and Luton. It is Loton, in Shropshire, as every boundary release names it; both names are kept as the publisher's labels rather than the Atlas correcting the source.",
 			"resources": [

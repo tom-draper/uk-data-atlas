@@ -954,6 +954,93 @@
 			}
 		},
 		{
+			"id": "data-zone-2022-sc-bfc-to-local-authority-2024-12-uk-bgc-official-lookup",
+			"input": "lookups/data-zone-to-local-authority/2022-sc/DZ22_CA_SC_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "dataZone",
+				"boundaryRelease": "2022-sc-bfc",
+				"codeProperty": "DZ22CD",
+				"nameProperty": "DZ22NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "CACD",
+				"nameProperty": "CANM"
+			}
+		},
+		{
+			"id": "data-zone-2022-sc-bfc-to-ward-2024-12-uk-bgc-official-lookup",
+			"input": "lookups/data-zone-to-ward/2022-sc/DZ22_MMW_SC_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "dataZone",
+				"boundaryRelease": "2022-sc-bfc",
+				"codeProperty": "DZ22CD",
+				"nameProperty": "DZ22NM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "MMWCD",
+				"nameProperty": "MMWNM"
+			}
+		},
+		{
+			"id": "data-zone-2022-sc-bfc-to-constituency-2024-07-uk-bgc-official-lookup",
+			"input": "lookups/data-zone-to-constituency/2022-sc/DZ22_UKPC_SC_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "dataZone",
+				"boundaryRelease": "2022-sc-bfc",
+				"codeProperty": "DZ22CD",
+				"nameProperty": "DZ22NM"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc",
+				"codeProperty": "UKPCCD",
+				"nameProperty": "UKPCNM"
+			}
+		},
+		{
+			"id": "data-zone-2022-sc-bfc-to-scottish-parliamentary-constituency-2022-12-sc-bgc-official-lookup",
+			"input": "lookups/data-zone-to-scottish-parliamentary-constituency/2022-sc/DZ22_SPC_SC_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "dataZone",
+				"boundaryRelease": "2022-sc-bfc",
+				"codeProperty": "DZ22CD",
+				"nameProperty": "DZ22NM"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2022-12-sc-bgc",
+				"codeProperty": "SPCCD",
+				"nameProperty": "SPCNM"
+			}
+		},
+		{
 			"id": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
 			"input": "lookups/local-authority-changes/2022-12-to-2023-05-uk/LAD22_LAD23_UK_LU_v1.geojson",
 			"method": "official-lookup",
