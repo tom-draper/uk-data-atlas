@@ -86,7 +86,8 @@ export const handleBulkRoutes = ({
 				!file ||
 				!download ||
 				file.contentHash !== download.contentHash ||
-				file.bytes !== download.bytes
+				file.bytes !== download.bytes ||
+				file.gzipBytes !== download.gzipBytes
 			)
 				return problem(
 					503,

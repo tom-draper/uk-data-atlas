@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { gunzipSync } from "node:zlib";
 import test from "node:test";
 import type { DataCatalog } from "../src/dataCatalog";
 import { compileExportManifest } from "../src/exportManifest";
@@ -188,8 +195,17 @@ test("publishes deterministic CSV and Parquet with exact byte sizes and hashes",
 			entry.formats?.map((file) => file.format),
 			["csv", "parquet"],
 		);
+		// CSV is stored gzipped; Parquet is already compressed inside.
+		assert.deepEqual(
+			entry.formats?.map((file) => file.artifact),
+			[`exports/${entry.id}.csv.gz`, `exports/${entry.id}.parquet`],
+		);
 		for (const file of entry.formats ?? []) {
-			const body = readFileSync(join(directory, file.artifact));
+			const stored = readFileSync(join(directory, file.artifact));
+			const body =
+				file.gzipBytes === undefined ? stored : gunzipSync(stored);
+			if (file.gzipBytes !== undefined)
+				assert.equal(stored.length, file.gzipBytes);
 			assert.equal(body.length, file.bytes);
 			assert.equal(sha256(body), file.contentHash);
 			assert.equal(file.href, `${entry.href}?format=${file.format}`);
@@ -223,6 +239,17 @@ test("publishes deterministic CSV and Parquet with exact byte sizes and hashes",
 	});
 });
 
+test("replaces an uncompressed CSV an earlier build wrote", () => {
+	withArtifact(artifact, (directory) => {
+		const id = compileExportManifest(directory, catalog).exports[0].id;
+		const stale = join(directory, "exports", `${id}.csv`);
+		writeFileSync(stale, "stale");
+		compileExportManifest(directory, catalog);
+		assert.equal(existsSync(stale), false);
+		assert.equal(existsSync(`${stale}.gz`), true);
+	});
+});
+
 test("preserves categorical strings, CSV quoting and publisher codes", () => {
 	withArtifact(
 		{
@@ -243,10 +270,9 @@ test("preserves categorical strings, CSV quoting and publisher codes", () => {
 		},
 		(directory) => {
 			const entry = compileExportManifest(directory, catalog).exports[0];
-			const csv = readFileSync(
-				join(directory, entry.formats![0].artifact),
-				"utf8",
-			);
+			const csv = gunzipSync(
+				readFileSync(join(directory, entry.formats![0].artifact)),
+			).toString("utf8");
 			assert.ok(csv.includes('"Green, ""Môn""\nParty"'));
 			const rows = readParquet(
 				readFileSync(join(directory, entry.formats![1].artifact)),
@@ -301,10 +327,9 @@ test("exports an empty partition with column headers and a readable Parquet sche
 			assert.equal(file.rowCount, 0);
 			assert.equal(file.schema.children.length, 13);
 			assert.match(
-				readFileSync(
-					join(directory, entry.formats![0].artifact),
-					"utf8",
-				),
+				gunzipSync(
+					readFileSync(join(directory, entry.formats![0].artifact)),
+				).toString("utf8"),
 				/^"measureId","unit"/,
 			);
 		},

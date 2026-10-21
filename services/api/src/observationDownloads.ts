@@ -1,5 +1,6 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { gzipSync } from "node:zlib";
 import type { MeasureObservation } from "./dataCatalog";
 import type { BulkExport } from "./exportManifest";
 import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
@@ -10,8 +11,14 @@ export type ObservationDownload = {
 	format: "csv" | "parquet";
 	artifact: string;
 	href: string;
+	/** The size of the file once any stored encoding is undone. */
 	bytes: number;
 	contentHash: string;
+	/**
+	 * Present when the file is stored gzipped, as CSV is: its size as sent
+	 * with `Content-Encoding: gzip`.
+	 */
+	gzipBytes?: number;
 };
 
 type DownloadArtifact =
@@ -105,20 +112,31 @@ export const compileObservationDownloads = (
 		},
 	});
 	mkdirSync(join(publicDirectory, "exports"), { recursive: true });
-	return (
-		[
-			["csv", Buffer.from(csv)],
-			["parquet", parquet],
-		] as const
-	).map(([format, body]) => {
-		const artifact = `exports/${entry.id}.${format}`;
-		writeFileSync(join(publicDirectory, artifact), body);
-		return {
-			format,
-			artifact,
-			href: `${entry.href}?format=${format}`,
-			bytes: body.length,
-			contentHash: sha256(body),
-		};
-	});
+	const csvBody = Buffer.from(csv);
+	// CSV is stored gzipped: it shrinks about twentyfold, and is sent as stored
+	// to a client that accepts gzip and decoded for one that does not.
+	const csvGzipped = gzipSync(csvBody, { level: 9 });
+	const csvArtifact = `exports/${entry.id}.csv.gz`;
+	writeFileSync(join(publicDirectory, csvArtifact), csvGzipped);
+	// The uncompressed file an earlier build wrote, now replaced.
+	rmSync(join(publicDirectory, `exports/${entry.id}.csv`), { force: true });
+	const parquetArtifact = `exports/${entry.id}.parquet`;
+	writeFileSync(join(publicDirectory, parquetArtifact), parquet);
+	return [
+		{
+			format: "csv",
+			artifact: csvArtifact,
+			href: `${entry.href}?format=csv`,
+			bytes: csvBody.length,
+			contentHash: sha256(csvBody),
+			gzipBytes: csvGzipped.length,
+		},
+		{
+			format: "parquet",
+			artifact: parquetArtifact,
+			href: `${entry.href}?format=parquet`,
+			bytes: parquet.length,
+			contentHash: sha256(parquet),
+		},
+	];
 };
