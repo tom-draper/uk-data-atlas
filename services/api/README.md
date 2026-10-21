@@ -206,7 +206,8 @@ only **available** when its endpoint, contract and provenance are published.
       authority, from the ONS exact-fit lookups. The same lookups relate
       2011 output area → LSOA → MSOA and 2001 LSOA → MSOA. Scotland runs 2011 data
       zone → intermediate zone → December 2018 council area, from the
-      Scottish Government's parent codes. Each of these is
+      Scottish Government's parent codes, and 2022 data zone → December
+      2024 council area from its `within` records. Each of these is
       `clean-containment`, checked against both releases' geometry, with declared
       two-step paths from the smallest area to its authority and back.
       Northern Ireland's 2011 super output areas do not nest in the 2014

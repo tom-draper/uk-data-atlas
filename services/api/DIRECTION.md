@@ -239,8 +239,7 @@ already supports.
    `lsoa/2001-12-ew-bgc-v2` replaces the thinned 2001 LSOA release and is
    tiled; the thinned snapshot stays held unchanged.
 2. **Complete the missing relationships.** No published crosswalk references
-   `dataZone/2022-sc-bfc`, `dataZone/2021-ni` or
-   `nhsEnglandRegion/2022-07-en-bgc`.
+   `dataZone/2021-ni` or `nhsEnglandRegion/2022-07-en-bgc`.
    The current candidate inventory also identifies unresolved Northern Irish
    DEA, local-government district and super-data-zone fields. The district
    codes match held local-authority releases and need an explicit membership
@@ -275,11 +274,16 @@ reprojection rounding. Keep these releases downloads-only until a reviewed
 source revision or explicit correction resolves the defects. Do not silently
 snap, discard, or repair their coordinates to make tiles pass.
 
-The Scottish Government's 2022 Data Zone Lookup supplies membership in local
-authorities and parliamentary constituencies for all 7,392 held data zones.
-It needs a pinned lookup import and explicit adapters. Its intermediate-zone
-codes cannot be published as relationships until the corresponding boundary
-release is held. The 2011-to-2022 data-zone translation remains unresolved.
+The Scottish Government's statistics.gov.scot records relate all 7,392 held
+2022 data zones to December 2024 council areas as clean containment, with a
+reviewed coastal overhang waiver. They also assign each data zone to one
+December 2024 ward, one 2024 UK Parliament constituency and one 2011-based
+Scottish Parliament constituency (the 2022 release). Data zones do not nest
+in those, so the assignments are published as `membership` only, as the ONS
+ward-to-constituency lookup is. The records' intermediate-zone, health-board
+and health-and-social-care-partnership codes cannot be published until those
+boundary releases are held. The 2011-to-2022 data-zone translation remains
+unresolved.
 
 The ONS `DZ_DEC_2011_SC_NC` source is a names-and-codes table, not an
 unclipped boundary release. Its [publisher service](https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/DZ_DEC_2011_SC_NC_45ae61d197ca46658b7431e39e1eb3de/FeatureServer?f=pjson)
@@ -298,7 +302,7 @@ responses expose them in source provenance. Reports identify invalid geometry
 and areas not checked, including those above the validator's position limit.
 They do not certify that a release is a valid cross-area coverage. The fresh
 build holds compiled stores for all 104 releases; its archive audit still lists
-the four delivery gaps and three relationship gaps above.
+the four delivery gaps and two relationship gaps above.
 
 Completed since the original question bank: whole-release downloads for all
 104 releases, map tiles for 100, measure discovery by name and alias, request
