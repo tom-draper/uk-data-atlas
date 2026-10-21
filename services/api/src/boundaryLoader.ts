@@ -8,10 +8,15 @@ import {
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { GeographyInventory } from "./geographyInventory";
 import type { NamedLocationInventory } from "./namedLocations";
-import { placeIndexMismatch, type PlaceIndexArtifact } from "./placeIndex";
 import {
-	areaSearchIndexMismatch,
-	type AreaSearchIndexArtifact,
+	openPlaceIndexDatabase,
+	PLACE_INDEX_DATABASE,
+	type PlaceIndex,
+} from "./placeIndex";
+import {
+	AREA_SEARCH_INDEX_DATABASE,
+	openAreaSearchIndexDatabase,
+	type AreaSearchIndex,
 } from "./areaSearch";
 import {
 	PostcodeIndex,
@@ -159,25 +164,27 @@ export const readAreaLookup = (
 	maxRecords = DEFAULT_AREA_CACHE_RECORDS,
 ): AreaLookup => new LazyAreaLookup(apiRoot, inventory, maxRecords);
 
-/** The compiled place index, refused unless built from these very inputs. */
+/**
+ * The compiled place index, read from its SQLite tables, refused unless built
+ * from these very inputs.
+ */
 export const readPlaceIndex = (
 	apiRoot: string,
 	areaInventory: AreaInventory,
 	namedLocations: NamedLocationInventory,
-): PlaceIndexArtifact => {
-	const path = publicPath(apiRoot, "place-index.json");
-	const index = JSON.parse(readFileSync(path, "utf8")) as PlaceIndexArtifact;
-	const mismatch = placeIndexMismatch(
-		index,
-		areaInventory.contentHash,
-		namedLocations,
-	);
-	if (mismatch) {
+): PlaceIndex => {
+	try {
+		return openPlaceIndexDatabase(
+			publicPath(apiRoot, PLACE_INDEX_DATABASE),
+			areaInventory.contentHash,
+			namedLocations,
+		);
+	} catch (error) {
 		throw new Error(
-			`The place index at ${path} ${mismatch}. Run pnpm build:place-index.`,
+			`${(error as Error).message} Run pnpm build:place-index.`,
+			{ cause: error },
 		);
 	}
-	return index;
 };
 
 /**
@@ -263,20 +270,23 @@ export const readPostcodeCounts = (
 	);
 };
 
-/** The compiled area search index, refused unless built from this inventory. */
+/**
+ * The compiled area search index, read from its SQLite tables, refused unless
+ * built from this inventory.
+ */
 export const readAreaSearchIndex = (
 	apiRoot: string,
 	areaInventory: AreaInventory,
-): AreaSearchIndexArtifact => {
-	const path = publicPath(apiRoot, "area-search-index.json");
-	const index = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as AreaSearchIndexArtifact;
-	const mismatch = areaSearchIndexMismatch(index, areaInventory.contentHash);
-	if (mismatch) {
+): AreaSearchIndex => {
+	try {
+		return openAreaSearchIndexDatabase(
+			publicPath(apiRoot, AREA_SEARCH_INDEX_DATABASE),
+			areaInventory.contentHash,
+		);
+	} catch (error) {
 		throw new Error(
-			`The area search index at ${path} ${mismatch}. Run pnpm build:area-search-index.`,
+			`${(error as Error).message} Run pnpm build:area-search-index.`,
+			{ cause: error },
 		);
 	}
-	return index;
 };

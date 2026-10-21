@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import {
 	AreaSearch,
 	areaSearchIndexMismatch,
 	compileAreaSearchIndex,
+	openAreaSearchIndexDatabase,
+	writeAreaSearchIndexDatabase,
 } from "../src/areaSearch";
 
 const release = (
@@ -155,5 +160,47 @@ test("pages a listing the same however it is sliced", () => {
 			.search({ geography: "ward" })
 			.positionOf("localAuthority/2023-05-uk-bgc-v2/E08000003"),
 		-1,
+	);
+});
+
+test("answers from its SQLite tables exactly as from the artifact", (context) => {
+	const directory = mkdtempSync(join(tmpdir(), "area-search-"));
+	context.after(() => rmSync(directory, { recursive: true, force: true }));
+	const path = join(directory, "area-search-index.sqlite");
+	writeAreaSearchIndexDatabase(path, index);
+	const stored = openAreaSearchIndexDatabase(path, "sha256:areas");
+	assert.equal(stored.contentHash, index.contentHash);
+	const fromStore = new AreaSearch(stored, areaLookup);
+	for (const filters of [
+		{},
+		{ geography: "ward" },
+		{ boundaryRelease: "2023-05-uk-bgc" },
+		{ query: "Manchester" },
+		{ query: "man" },
+		{ query: "e08000003" },
+		{ query: "Bristol" },
+		{ query: "Ynys Mon", geography: "localAuthority" },
+		{ query: "zz" },
+	]) {
+		const expected = search.search(filters);
+		const actual = fromStore.search(filters);
+		assert.deepEqual(
+			actual.slice(0, actual.length),
+			expected.slice(0, expected.length),
+		);
+		for (const area of expected.slice(0, expected.length))
+			assert.equal(
+				actual.positionOf(area.id),
+				expected.positionOf(area.id),
+			);
+		if (filters.query)
+			assert.deepEqual(
+				fromStore.exactCandidates({ ...filters, query: filters.query }),
+				search.exactCandidates({ ...filters, query: filters.query }),
+			);
+	}
+	assert.throws(
+		() => openAreaSearchIndexDatabase(path, "sha256:other"),
+		/area inventory/,
 	);
 });
