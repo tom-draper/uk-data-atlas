@@ -1,4 +1,4 @@
-import { withCDN } from "../../helpers/cdn";
+import { atlasLookupUrl } from "../../helpers/atlasApi";
 import { BOUNDARY_CATALOG } from "./catalog";
 
 export type LsoaLadMapping = {
@@ -32,7 +32,7 @@ const parseLsoaLadMapping = (value: unknown, year: number): LsoaLadMapping => {
 const pending = new Map<number, Promise<Record<string, string>>>();
 
 const lsoaLadMappingUrl = (year: number) =>
-	withCDN(`/data/datasets/lsoa-lad-mappings-${year}.json`);
+	atlasLookupUrl(`lsoa-lad-mappings-${year}`);
 
 /**
  * The small-area releases do not carry a local-authority parent in their
