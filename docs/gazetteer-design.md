@@ -277,7 +277,7 @@ takes ward parents from.
 
 The constituency/LAD crosswalk is written by `pnpm containment:build` from the
 API resolver's area and population overlaps, whose geometry is expensive and
-runs in the API build. `tests/data/compiledBoundaryAssets.test.ts` fails if
+runs in the API build. `tests/built/data/compiledBoundaryAssets.test.ts` fails if
 either artifact drifts from the catalogue: the match index must cover every
 served vintage, and the crosswalk must have a table for every served
 constituency release and target the served 2025 LAD release. (Every served

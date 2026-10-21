@@ -1,7 +1,7 @@
 /**
  * Compiles what the map, ranking and place pages read from the committed
  * datasets: the headline figures their search snippets lead with, each map's
- * areas ranked, and the figures about each place's residents. Run after `pnpm precompile` changes a dataset; tests/data/seoData
+ * areas ranked, and the figures about each place's residents. Run after `pnpm precompile` changes a dataset; tests/built/data/seoData
  * fails while either is stale.
  */
 import { mkdir, rm, writeFile } from "node:fs/promises";
