@@ -1,3 +1,4 @@
+import { FullDetailDownloads } from "./fullDetailDownloads";
 import type { EvidenceManifest } from "./evidenceReports";
 import { lazyValue } from "./lazyValue";
 import { existsSync, readFileSync, statSync } from "node:fs";
@@ -396,6 +397,10 @@ export const readApiCatalogues = (
 		lookupManifest,
 		mapResources,
 		...mapAssets,
+		fullDetailDownloads: new FullDetailDownloads(
+			areaGeometryCache,
+			geographyResolver,
+		),
 		measureObservations,
 		measureCompatibilityInventory,
 		analysisGeographyInventory,

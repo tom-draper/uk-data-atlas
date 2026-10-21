@@ -10,6 +10,11 @@ import { tileId, TILE_TYPE_MVT } from "../../src/mapResource/pmtiles";
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_TIERS } from "../../src/mapResource/tileset";
 import { featureIds } from "../../src/mapResource/compileMapResource";
 import { GEOMETRY_TIERS } from "../../src/simplifyGeometry";
+import { createAreaGeometryCache } from "../../src/geometryLoader";
+import {
+	buildFullDetailParquet,
+	GEOJSON_TIERS,
+} from "../../src/mapResource/fullDetail";
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
@@ -36,6 +41,42 @@ const manifest = JSON.parse(
 
 const sha256 = (content: Buffer) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
+
+const areaInventory = JSON.parse(
+	readFileSync(join(publicRoot, "area-inventory.json"), "utf8"),
+) as {
+	releases: Array<{ geography: string; id: string; artifact?: string }>;
+};
+const geometry = createAreaGeometryCache(apiRoot);
+
+/**
+ * A tier's download as a client receives it: the stored file, or, for the
+ * full tier, the GeoParquet built from the geometry store on request.
+ */
+const downloadBytes = (
+	resource: MapResourceDescriptor,
+	entry: MapResourceDescriptor["features"][number],
+): Buffer => {
+	if (entry.artifact) return readFileSync(join(publicRoot, entry.artifact));
+	const release = areaInventory.releases.find(
+		(candidate) =>
+			candidate.geography === resource.geography &&
+			candidate.id === resource.boundaryRelease,
+	)!;
+	const areas = JSON.parse(
+		readFileSync(join(publicRoot, release.artifact!), "utf8"),
+	) as { areas: Array<{ code: string; name: string }> };
+	return buildFullDetailParquet(
+		geometry,
+		{
+			geography: resource.geography,
+			boundaryRelease: resource.boundaryRelease,
+			attribution: resource.attribution.text,
+			topology: "shared-arc",
+		},
+		new Map(areas.areas.map((area) => [area.code, area.name])),
+	)!.body;
+};
 
 test("recomputes the manifest's own content hash", () => {
 	const { contentHash, ...withoutHash } = manifest;
@@ -209,12 +250,15 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 			]),
 		);
 		for (const entry of parquet) {
-			const bytes = readFileSync(join(publicRoot, entry.artifact));
-			assert.equal(bytes.length, entry.bytes, `${entry.artifact} size`);
+			// Only the full tier is built on request; every other is stored.
+			assert.equal(entry.artifact === undefined, entry.tier === "full");
+			const name = entry.artifact ?? `${resource.id} full`;
+			const bytes = downloadBytes(resource, entry);
+			assert.equal(bytes.length, entry.bytes, `${name} size`);
 			assert.equal(
 				sha256(bytes),
 				entry.contentHash,
-				`${entry.artifact} does not hash to what its descriptor records; rebuild with \`pnpm build:map-resource\``,
+				`${name} does not hash to what its descriptor records; rebuild with \`pnpm build:map-resource\``,
 			);
 			const file = readParquet(bytes);
 			assert.equal(file.rowCount, entry.rowCount);
@@ -318,18 +362,18 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 	}
 });
 
-test("publishes every tier as GeoJSON holding the GeoParquet's features", () => {
+test("publishes the coarser tiers as GeoJSON holding the GeoParquet's features", () => {
 	for (const resource of manifest.resources) {
 		const geoJson = resource.features.filter(
 			(entry) => entry.format === "geojson",
 		);
 		assert.deepEqual(
 			geoJson.map((entry) => entry.tier),
-			Object.keys(GEOMETRY_TIERS),
+			GEOJSON_TIERS,
 			resource.id,
 		);
 		for (const entry of geoJson) {
-			const stored = readFileSync(join(publicRoot, entry.artifact));
+			const stored = readFileSync(join(publicRoot, entry.artifact!));
 			assert.equal(
 				stored.length,
 				entry.gzipBytes,
@@ -364,7 +408,7 @@ test("publishes every tier as GeoJSON holding the GeoParquet's features", () => 
 							(candidate) =>
 								candidate.tier === entry.tier &&
 								candidate.format === "geoparquet-1.1",
-						)!.artifact,
+						)!.artifact!,
 					),
 				),
 			);

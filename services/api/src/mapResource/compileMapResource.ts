@@ -17,6 +17,7 @@ import {
 import { buildArchive, type ArchiveTile } from "./pmtiles";
 import { releaseKey } from "../geographyKeys";
 import { sha256 } from "../contentHash";
+import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
 
 /**
  * One boundary release compiled into everything a map needs: the archive of
@@ -31,14 +32,9 @@ import { sha256 } from "../contentHash";
 
 export const LAYER_NAME = "boundaries";
 
-/**
- * A map resource numbers its areas so a renderer can hold state against them,
- * because a vector tile feature id must be an integer. The number is the
- * code's place in sorted order, which anything holding the same set of codes
- * can reproduce without reading the tiles.
- */
-export const featureIds = (codes: string[]) =>
-	new Map([...codes].sort().map((code, index) => [code, index + 1] as const));
+import { featureIds } from "./featureIds";
+
+export { featureIds };
 
 export type MapResourceDescriptor = {
 	id: string;
@@ -75,16 +71,20 @@ export type MapResourceDescriptor = {
 		refinedArcs: number;
 	}>;
 	/**
-	 * The flat form: every area of one tier as a whole-release download, as
-	 * GeoParquet and as GeoJSON, with the ids the tiles and join tables use.
-	 * Every tier is published, `full` included, because a warehouse chooses
-	 * its own detail.
+	 * The flat form: every area of one tier as a whole-release download, with
+	 * the ids the tiles and join tables use. Every tier is published as
+	 * GeoParquet, `full` included, because a warehouse chooses its own detail;
+	 * the coarser tiers a browser can hold are published as GeoJSON too.
 	 */
 	features: Array<{
 		tier: GeometryTier;
 		toleranceM: number;
 		format: "geoparquet-1.1" | "geojson";
-		artifact: string;
+		/**
+		 * The stored file. Absent for the `full` tier, which is built from the
+		 * geometry store when it is asked for (see `fullDetail.ts`).
+		 */
+		artifact?: string;
 		href: string;
 		rowCount: number;
 		coordinates: number;
@@ -220,52 +220,87 @@ export const compileMapResource = (
 		href: `/v1/attribution?boundaryReleases=${geography}/${boundaryRelease}`,
 	};
 	const id = releaseKey(geography, boundaryRelease);
-	const features = [...compiledTiers].flatMap(([tier, compiled]) => {
-		const rows = [...compiled.areas].map(([code, geometry]) => ({
-			id: numbered.get(code)!,
-			code,
-			name: names.get(code) ?? code,
-			geometry,
-		}));
-		const parquet = buildGeoParquet(rows, {
-			mapResource: id,
-			tier,
-			toleranceM: compiled.toleranceM,
-			topology: "shared-arc",
-			attribution: attribution.text,
-			geometrySourceInputHash:
-				cache.provenance(geography, boundaryRelease).inputHash ?? null,
-		});
-		const geoJson = buildGeoJson(rows, {
-			mapResource: id,
-			tier,
-			attribution: attribution.text,
-		});
-		const base = {
-			tier,
-			toleranceM: compiled.toleranceM,
-			rowCount: compiled.areas.size,
-			coordinates: compiled.verticesAfter,
-		};
-		return [
-			{
-				entry: {
-					...base,
-					format: "geoparquet-1.1" as const,
-					artifact: artifact.replace(
-						/\.pmtiles$/,
-						`-${tier}.parquet`,
-					),
-					href: `/v1/map-resources/${id}/features?tier=${tier}`,
-					bytes: parquet.length,
-					contentHash: sha256(parquet),
+	type Download = {
+		entry: MapResourceDescriptor["features"][number];
+		body?: Buffer;
+	};
+	const features = [...compiledTiers].flatMap(
+		([tier, compiled]): Download[] => {
+			if (tier === "full") {
+				const full = buildFullDetailParquet(
+					cache,
+					{
+						geography,
+						boundaryRelease,
+						attribution: attribution.text,
+						topology: "shared-arc",
+					},
+					names,
+				);
+				if (!full) return [];
+				return [
+					{
+						entry: {
+							tier,
+							toleranceM: 0,
+							rowCount: full.rowCount,
+							coordinates: full.coordinates,
+							format: "geoparquet-1.1",
+							href: `/v1/map-resources/${id}/features?tier=${tier}`,
+							bytes: full.body.length,
+							contentHash: full.contentHash,
+						},
+					},
+				];
+			}
+			const rows = [...compiled.areas].map(([code, geometry]) => ({
+				id: numbered.get(code)!,
+				code,
+				name: names.get(code) ?? code,
+				geometry,
+			}));
+			const base = {
+				tier,
+				toleranceM: compiled.toleranceM,
+				rowCount: compiled.areas.size,
+				coordinates: compiled.verticesAfter,
+			};
+			const parquet = buildGeoParquet(rows, {
+				mapResource: id,
+				tier,
+				toleranceM: compiled.toleranceM,
+				topology: "shared-arc",
+				attribution: attribution.text,
+				geometrySourceInputHash:
+					cache.provenance(geography, boundaryRelease).inputHash ??
+					null,
+			});
+			const downloads: Download[] = [
+				{
+					entry: {
+						...base,
+						format: "geoparquet-1.1",
+						artifact: artifact.replace(
+							/\.pmtiles$/,
+							`-${tier}.parquet`,
+						),
+						href: `/v1/map-resources/${id}/features?tier=${tier}`,
+						bytes: parquet.length,
+						contentHash: sha256(parquet),
+					},
+					body: parquet,
 				},
-				body: parquet,
-			},
-			{
+			];
+			if (!GEOJSON_TIERS.includes(tier)) return downloads;
+			const geoJson = buildGeoJson(rows, {
+				mapResource: id,
+				tier,
+				attribution: attribution.text,
+			});
+			downloads.push({
 				entry: {
 					...base,
-					format: "geojson" as const,
+					format: "geojson",
 					artifact: artifact.replace(
 						/\.pmtiles$/,
 						`-${tier}.geojson.gz`,
@@ -276,9 +311,10 @@ export const compileMapResource = (
 					gzipBytes: geoJson.gzipped.length,
 				},
 				body: geoJson.gzipped,
-			},
-		];
-	});
+			});
+			return downloads;
+		},
+	);
 	const archive = buildArchive(tiles, {
 		minZoom: MIN_ZOOM,
 		maxZoom: MAX_ZOOM,
@@ -312,10 +348,9 @@ export const compileMapResource = (
 
 	return {
 		archive,
-		features: features.map(({ entry, body }) => ({
-			artifact: entry.artifact,
-			body,
-		})),
+		features: features.flatMap(({ entry, body }) =>
+			entry.artifact && body ? [{ artifact: entry.artifact, body }] : [],
+		),
 		descriptor: {
 			id,
 			geography,

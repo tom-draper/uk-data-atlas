@@ -39,6 +39,7 @@ const COMPILER_SOURCES = [
 		.map((name) => `src/mapResource/${name}`),
 	"src/simplifyGeometry.ts",
 	"src/parquet.ts",
+	"src/flatDownloads.ts",
 ];
 
 const sha256 = (content: string | Buffer) =>
@@ -135,12 +136,14 @@ export const buildMapResources = (
 			}),
 		);
 		const kept = previous[id];
+		// A full-tier download has no file: it is built from the geometry
+		// store when asked for.
+		const stored = (entry: { artifact?: string }) =>
+			!entry.artifact || existsSync(join(out, entry.artifact));
 		if (
 			kept?.key === key &&
 			"descriptor" in kept &&
-			[kept.descriptor.tiles, ...kept.descriptor.features].every(
-				(entry) => existsSync(join(out, entry.artifact)),
-			)
+			[kept.descriptor.tiles, ...kept.descriptor.features].every(stored)
 		) {
 			resources.push(kept.descriptor);
 			compiledIds.add(id);
@@ -149,9 +152,7 @@ export const buildMapResources = (
 		if (
 			kept?.key === key &&
 			"unavailable" in kept &&
-			(kept.unavailable.features ?? []).every((entry) =>
-				existsSync(join(out, entry.artifact)),
-			)
+			(kept.unavailable.features ?? []).every(stored)
 		) {
 			unavailable.push(kept.unavailable);
 			compiledIds.add(id);
@@ -169,27 +170,19 @@ export const buildMapResources = (
 			// here with the reason, rather than failing every other release; if
 			// its areas can be read it is still downloadable whole.
 			const reason = (error as Error).message;
-			const flat = compileFlatDownloads(
-				cache,
-				release,
-				names,
-				`map-resources/${geography}-${boundaryRelease}`,
-				reason,
-			);
-			for (const file of flat?.files ?? [])
-				writeFileSync(join(out, file.artifact), file.body);
+			const flat = compileFlatDownloads(cache, release, names, reason);
 			const entry: Unavailable = {
 				geography,
 				boundaryRelease,
 				reason,
-				...(flat ? { features: flat.downloads.features } : {}),
+				...(flat ? { features: flat.features } : {}),
 			};
 			unavailable.push(entry);
 			compiledIds.add(id);
 			state[id] = { key, unavailable: entry };
 			saveState();
 			log(
-				`${id}: not tiled. ${reason}${flat ? ` Downloads at full detail: ${flat.downloads.features.map((feature) => `${feature.format} ${((feature.gzipBytes ?? feature.bytes) / 1048576).toFixed(1)}MB`).join(", ")}.` : ""}`,
+				`${id}: not tiled. ${reason}${flat ? ` Downloads at full detail: ${flat.features.map((feature) => `${feature.format} ${((feature.gzipBytes ?? feature.bytes) / 1048576).toFixed(1)}MB`).join(", ")}.` : ""}`,
 			);
 			continue;
 		}
@@ -216,7 +209,7 @@ export const buildMapResources = (
 		...unavailable.flatMap((entry) =>
 			(entry.features ?? []).map((feature) => feature.artifact),
 		),
-	]);
+	]) as Set<string | undefined>;
 	for (const name of readdirSync(directory))
 		if (
 			name !== "build-state.json" &&

@@ -3,7 +3,7 @@ import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import { createGeographyResolver } from "../src/geographyResolver";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest, routeAsync } from "../src/routes";
 import type { RouteContext } from "../src/routing";
 import {
 	route,
@@ -45,7 +45,7 @@ test("gets one boundary release", () => {
 	});
 });
 
-test("links a boundary release to its whole-release downloads", () => {
+test("links a boundary release to its whole-release downloads", async () => {
 	const href = "/v1/map-resources/ward/2025-01-en-ward";
 	const withMap = (mapResources: RouteContext["mapResources"]) =>
 		routeRequest("GET", "/v1/boundary-releases/ward/2025-01-en-ward", {
@@ -69,7 +69,6 @@ test("links a boundary release to its whole-release downloads", () => {
 					features: [
 						feature("full", "geoparquet-1.1"),
 						feature("low", "geoparquet-1.1"),
-						feature("full", "geojson"),
 						feature("low", "geojson"),
 					],
 				} as never,
@@ -81,7 +80,6 @@ test("links a boundary release to its whole-release downloads", () => {
 			pmtiles: `${href}.pmtiles`,
 			tileJson: `${href}/tiles.json`,
 			geojson: {
-				full: `${href}/features?tier=full&format=geojson`,
 				low: `${href}/features?tier=low&format=geojson`,
 			},
 			geoparquet: {
@@ -109,7 +107,7 @@ test("links a boundary release to its whole-release downloads", () => {
 		},
 	);
 	// One that could not be tiled but whose areas could be read is still
-	// downloadable whole, at full detail.
+	// downloadable whole, as GeoParquet at full detail.
 	assert.deepEqual(
 		withMap({
 			resources: [],
@@ -118,20 +116,18 @@ test("links a boundary release to its whole-release downloads", () => {
 					geography: "ward",
 					boundaryRelease: "2025-01-en-ward",
 					reason: "ward/2025-01-en-ward is not a coverage.",
-					features: [
-						feature("full", "geoparquet-1.1"),
-						feature("full", "geojson"),
-					] as never,
+					features: [feature("full", "geoparquet-1.1")] as never,
 				},
 			],
 		}).data.downloads,
 		{
 			status: "untiled",
-			reason: "No tiles: ward/2025-01-en-ward is not a coverage. The release is still downloadable whole, at full detail as published.",
-			geojson: { full: `${href}/features?tier=full&format=geojson` },
+			reason: "No tiles: ward/2025-01-en-ward is not a coverage. The release is still downloadable whole as GeoParquet, at full detail as published.",
 			geoparquet: { full: `${href}/features?tier=full` },
 		},
 	);
+	const built = Buffer.from("PAR1 built from the store PAR1");
+	const builds: unknown[][] = [];
 	const untiled: RouteContext = {
 		...testContext({ boundaryRegistry: registry }),
 		mapResources: {
@@ -143,41 +139,61 @@ test("links a boundary release to its whole-release downloads", () => {
 					reason: "ward/2025-01-en-ward is not a coverage.",
 					features: [
 						{
-							...feature("full", "geojson"),
-							artifact:
-								"map-resources/ward-2025-01-en-ward-full.geojson.gz",
-							bytes: 10,
+							...feature("full", "geoparquet-1.1"),
+							bytes: built.length,
 							contentHash: "sha256:00",
-							gzipBytes: 5,
 						},
 					] as never,
 				},
 			],
 		},
-		mapFeatures: new Map([
-			[
-				"map-resources/ward-2025-01-en-ward-full.geojson.gz",
-				{
-					path: "/nowhere",
-					bytes: 10,
-					contentHash: "sha256:00",
-					gzipBytes: 5,
-				},
-			],
-		]),
+		fullDetailDownloads: {
+			get: (...asked) => {
+				builds.push(asked);
+				return { status: "built", body: built };
+			},
+		},
 	};
-	const download = routeRequest(
+	// Built from the store, untiled releases having no shared borders.
+	const download = routeRequest("GET", `${href}/features?tier=full`, untiled);
+	assert.equal(download.status, 200);
+	assert.equal(
+		download.representation?.contentType,
+		"application/vnd.apache.parquet",
+	);
+	assert.equal(download.representation?.body, built);
+	assert.equal(download.representation?.contentHash, "sha256:00");
+	assert.deepEqual(builds, [
+		["ward", "2025-01-en-ward", "none", "sha256:00"],
+	]);
+	// A server awaits the build rather than building while others wait.
+	builds.length = 0;
+	const awaited = await routeAsync("GET", `${href}/features?tier=full`, {
+		...untiled,
+		fullDetailDownloads: {
+			get: () => assert.fail("built on the request's own turn"),
+			build: async (...asked) => {
+				builds.push(asked);
+				return { status: "built", body: built };
+			},
+		},
+	});
+	assert.equal(awaited.status, 200);
+	assert.equal(awaited.representation?.body, built);
+	assert.deepEqual(builds, [
+		["ward", "2025-01-en-ward", "none", "sha256:00"],
+	]);
+	const asGeoJson = routeRequest(
 		"GET",
 		`${href}/features?tier=full&format=geojson`,
 		untiled,
 	);
-	assert.equal(download.status, 200);
-	assert.equal(download.representation?.contentType, "application/geo+json");
-	const coarser = routeRequest(
-		"GET",
-		`${href}/features?tier=low&format=geojson`,
-		untiled,
+	assert.equal(asGeoJson.status, 404);
+	assert.match(
+		(asGeoJson.body as { detail: string }).detail,
+		/GeoParquet only/,
 	);
+	const coarser = routeRequest("GET", `${href}/features?tier=low`, untiled);
 	assert.equal(coarser.status, 404);
 	assert.match(
 		(coarser.body as { detail: string }).detail,

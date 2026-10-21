@@ -610,14 +610,19 @@ paths:
         drawn from, so neighbours share their borders exactly, and the ids are
         the ones a join table publishes, so values join by `id` or `code`
         without reading a tile. Every tier is published, `full` included, and
-        its size and SHA-256 are listed under `features` in the descriptor. A
+        its size and SHA-256 are listed under `features` in the descriptor. The
+        `full` file is not stored: it is written from the geometry store when
+        asked for, and is the same file, byte for byte, each time. The first
+        request for a large release can take a few seconds. A
         coarse tier keeps every border shared but is not guaranteed to be a
         valid polygon everywhere, as the descriptor's `generalisation` says. The
         file's `uk-data-atlas` metadata names the resource, tier, attribution
         and publisher file hash, so a copy loaded on its own is still citable.
 
         `format=geojson` returns the same features as an RFC 7946
-        FeatureCollection, for the tools that open GeoJSON directly. Each
+        FeatureCollection, for the tools that open GeoJSON directly. It is
+        published at the `medium` and `low` tiers only; `full` and `high` are
+        GeoParquet only, and asking for them as GeoJSON answers 404. Each
         feature has the same `id`, and `code` and `name` properties; coordinates
         are written to six decimal places, about 0.1 m. The file is stored
         gzipped, so a client sending `Accept-Encoding: gzip` receives it with
@@ -1220,7 +1225,8 @@ paths:
             default: medium
           description:
             The geometry detail for `format=geojson`, as on the map resource's
-            features.
+            GeoJSON features. GeoJSON is published at `medium` and `low` only;
+            `full` and `high` answer 422.
       requestBody:
         required: true
         content:
@@ -1301,7 +1307,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "422":
-          description: The requested GeoJSON tier is too large to read for one request.
+          description:
+            The requested GeoJSON tier is too large to read for one request, or
+            is not published as GeoJSON (`full` and `high`).
           content:
             application/problem+json:
               schema:
@@ -9061,9 +9069,9 @@ components:
         features:
           type: array
           description: >
-            Every tier as a whole-release download, in GeoParquet and in
-            GeoJSON, compiled from the same shared-arc generalisation as the
-            tiles.
+            Every tier as a whole-release download in GeoParquet, and the
+            `medium` and `low` tiers in GeoJSON too, compiled from the same
+            shared-arc generalisation as the tiles.
           items:
             type: object
             required:
@@ -9071,7 +9079,6 @@ components:
                 tier,
                 toleranceM,
                 format,
-                artifact,
                 href,
                 rowCount,
                 coordinates,
@@ -9089,6 +9096,9 @@ components:
                 enum: [geoparquet-1.1, geojson]
               artifact:
                 type: string
+                description:
+                  The stored file. Absent for `full`, which is written from the
+                  geometry store when asked for.
               href:
                 type: string
               rowCount:
@@ -9369,11 +9379,12 @@ components:
 
     BoundaryReleaseDownloads:
       description: >
-        Where to get the whole release: its vector tiles, and every
-        generalisation tier as GeoJSON and as GeoParquet. A release whose areas
-        are not a coverage, because some edge lies on more than two of them,
-        cannot be tiled or generalised with shared borders: it is `untiled`,
-        with the reason, and downloadable whole at `full` detail only. A release
+        Where to get the whole release: its vector tiles, every generalisation
+        tier as GeoParquet, and the `medium` and `low` tiers as GeoJSON. A
+        release whose areas are not a coverage, because some edge lies on more
+        than two of them, cannot be tiled or generalised with shared borders:
+        it is `untiled`, with the reason, and downloadable whole as GeoParquet
+        at `full` detail only. A release
         with no readable geometry is `unavailable`. Either stays available area
         by area.
       oneOf:
@@ -9393,7 +9404,7 @@ components:
               type: string
             geojson:
               type: object
-              description: The download for each tier, `full`, `high`, `medium` and `low`.
+              description: The download for the `medium` and `low` tiers.
               additionalProperties:
                 type: string
             geoparquet:
@@ -9402,18 +9413,13 @@ components:
               additionalProperties:
                 type: string
         - type: object
-          required: [status, reason, geojson, geoparquet]
+          required: [status, reason, geoparquet]
           properties:
             status:
               type: string
               const: untiled
             reason:
               type: string
-            geojson:
-              type: object
-              description: The download at `full` detail.
-              additionalProperties:
-                type: string
             geoparquet:
               type: object
               description: The download at `full` detail.
