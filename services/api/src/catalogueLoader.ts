@@ -1,6 +1,7 @@
 import { FullDetailDownloads } from "./fullDetailDownloads";
 import type { EvidenceManifest } from "./evidenceReports";
 import { lazyValue } from "./lazyValue";
+import { readAtlasLookups } from "./atlasLookups";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
@@ -191,6 +192,9 @@ export const readApiCatalogues = (
 					dataCatalog.contentHash,
 				),
 	);
+	const atlasLookups = stage("atlas-lookups", () =>
+		readAtlasLookups(apiRoot),
+	);
 	const exportManifest = stage("export-manifest", () =>
 		readExportManifest(apiRoot),
 	);
@@ -362,6 +366,7 @@ export const readApiCatalogues = (
 		crosswalkInventory,
 		atlasRelease,
 		documents,
+		atlasLookups,
 		relationshipCandidateInventory,
 		validationReport,
 		namedLocationInventory,

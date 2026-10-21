@@ -117,7 +117,12 @@ export const buildDataStages = [
 		"operations",
 		"geometry-store",
 	]),
-	stage("atlas-release", ["atlas-release-initial", "documents"]),
+	stage("atlas-lookups", ["atlas-release-initial"]),
+	stage("atlas-release", [
+		"atlas-release-initial",
+		"documents",
+		"atlas-lookups",
+	]),
 	stage(
 		"docs-catalogue",
 		[

@@ -32,6 +32,7 @@ export const handleIndexRoutes = ({
 				"/v1/boundary-releases/{geography}/{release}",
 				"/v1/boundary-releases/{geography}/{release}:join",
 				"/v1/documents/{document-id}.json",
+				"/v1/atlas-lookups/{lookup-id}.json",
 				"/v1/relationships",
 				"/v1/terrain",
 				"/v1/terrain/{terrain-id}",
