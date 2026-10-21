@@ -7,8 +7,9 @@ import {
 	normalisePlaceName,
 	withoutTitle,
 } from "./nameNormalisation";
-import { compareCodeUnits } from "./sortedIndex";
+import { compareCodeUnits, type Indexed } from "./sortedIndex";
 import { sha256 } from "./contentHash";
+import { json, SqliteIndex, text, writeSqliteIndex } from "./sqliteIndex";
 
 /**
  * The compiled place index: every area and named location, and every name
@@ -74,6 +75,29 @@ export type PlaceIndexArtifact = {
 	/** The places carrying each of `codes`, position for position. */
 	codePlaces: number[][];
 };
+
+/**
+ * What a search reads from the index: the artifact itself, or its tables in
+ * SQLite, as the server reads it.
+ */
+export type PlaceIndex = {
+	releases: readonly string[];
+	places: Indexed<CompiledPlace>;
+	names: Indexed<string>;
+	labels: Indexed<CompiledPlaceLabel[]>;
+	codes: Indexed<string>;
+	codePlaces: Indexed<number[]>;
+};
+
+/** The fields an index is checked against before it serves a query. */
+type PlaceIndexHeader = Pick<
+	PlaceIndexArtifact,
+	| "schemaVersion"
+	| "contentHash"
+	| "nameNormalisation"
+	| "areaInventoryHash"
+	| "namedLocationInventoryHash"
+>;
 
 /** The shape of a code a query can name directly: E08000003. */
 export const AREA_CODE = /^[A-Z]\d{8}$/;
@@ -279,6 +303,15 @@ export const placeIndexMismatch = (
 		artifact.codes.length !== artifact.codePlaces.length
 	)
 		return "is malformed";
+	return headerMismatch(artifact, areaInventoryHash, namedLocations);
+};
+
+const headerMismatch = (
+	artifact: PlaceIndexHeader,
+	areaInventoryHash: string,
+	namedLocations: NamedLocationInventory | undefined,
+): string | undefined => {
+	if (artifact.schemaVersion !== 1) return "is malformed";
 	if (artifact.nameNormalisation !== NAME_NORMALISATION)
 		return "was normalised under different name rules than this API applies";
 	if (artifact.areaInventoryHash !== areaInventoryHash)
@@ -289,4 +322,85 @@ export const placeIndexMismatch = (
 	)
 		return "was not built from the current named locations";
 	return undefined;
+};
+
+/** Where the server reads the index from, beside `place-index.json`. */
+export const PLACE_INDEX_DATABASE = "place-index.sqlite";
+
+/** Write the index as SQLite tables, one row per array position. */
+export const writePlaceIndexDatabase = (
+	path: string,
+	index: PlaceIndexArtifact,
+) =>
+	writeSqliteIndex(
+		path,
+		{
+			schemaVersion: String(index.schemaVersion),
+			contentHash: index.contentHash,
+			nameNormalisation: index.nameNormalisation,
+			areaInventoryHash: index.areaInventoryHash,
+			namedLocationInventoryHash: JSON.stringify(
+				index.namedLocationInventoryHash,
+			),
+			releases: JSON.stringify(index.releases),
+		},
+		{
+			places: {
+				columns: ["place TEXT", "value TEXT"],
+				rows: index.places.map((place) => [
+					place.place,
+					JSON.stringify(place),
+				]),
+			},
+			names: {
+				columns: ["name TEXT", "labels TEXT"],
+				rows: index.names.map((name, at) => [
+					name,
+					JSON.stringify(index.labels[at]),
+				]),
+			},
+			codes: {
+				columns: ["code TEXT", "places TEXT"],
+				rows: index.codes.map((code, at) => [
+					code,
+					JSON.stringify(index.codePlaces[at]),
+				]),
+			},
+		},
+	);
+
+/**
+ * The index written by `writePlaceIndexDatabase`, refused unless built from
+ * this area inventory and these named locations.
+ */
+export const openPlaceIndexDatabase = (
+	path: string,
+	areaInventoryHash: string,
+	namedLocations: NamedLocationInventory | undefined,
+): PlaceIndex & { contentHash: string } => {
+	const database = new SqliteIndex(path);
+	const meta = (key: string) => database.meta.get(key) ?? "";
+	const header: PlaceIndexHeader = {
+		schemaVersion: Number(meta("schemaVersion")) as 1,
+		contentHash: meta("contentHash"),
+		nameNormalisation: meta("nameNormalisation"),
+		areaInventoryHash: meta("areaInventoryHash"),
+		namedLocationInventoryHash: JSON.parse(
+			meta("namedLocationInventoryHash") || "null",
+		),
+	};
+	const mismatch = headerMismatch(header, areaInventoryHash, namedLocations);
+	if (mismatch) throw new Error(`The place index at ${path} ${mismatch}.`);
+	const places = database.table("places");
+	const names = database.table("names");
+	const codes = database.table("codes");
+	return {
+		contentHash: header.contentHash,
+		releases: JSON.parse(meta("releases")) as string[],
+		places: places.column("value", json<CompiledPlace>()),
+		names: names.column("name", text),
+		labels: names.column("labels", json<CompiledPlaceLabel[]>()),
+		codes: codes.column("code", text),
+		codePlaces: codes.column("places", json<number[]>()),
+	};
 };

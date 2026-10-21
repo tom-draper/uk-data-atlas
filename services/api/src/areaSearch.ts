@@ -10,8 +10,16 @@ import {
 	findNumber,
 	findSorted,
 	lowerBound,
+	type Indexed,
 } from "./sortedIndex";
 import { sha256 } from "./contentHash";
+import {
+	packPositions,
+	SqliteIndex,
+	text,
+	unpackPositions,
+	writeSqliteIndex,
+} from "./sqliteIndex";
 
 /**
  * The compiled area search index: every area identity, one per release and
@@ -47,6 +55,27 @@ export type AreaSearchIndexArtifact = {
 	titleTerms: string[];
 	titleTermAreas: number[][];
 };
+
+/**
+ * What a search reads from the index: the artifact itself, or its tables in
+ * SQLite, as the server reads it.
+ */
+export type AreaSearchIndex = {
+	releases: ReadonlyArray<{
+		geography: string;
+		boundaryRelease: string;
+		codes: Indexed<string>;
+	}>;
+	terms: Indexed<string>;
+	termAreas: Indexed<readonly number[]>;
+	titleTerms: Indexed<string>;
+	titleTermAreas: Indexed<readonly number[]>;
+};
+
+type AreaSearchIndexHeader = Pick<
+	AreaSearchIndexArtifact,
+	"schemaVersion" | "contentHash" | "nameNormalisation" | "areaInventoryHash"
+>;
 
 export type AreaSearchResult = AreaRecord & {
 	id: string;
@@ -157,6 +186,14 @@ export const areaSearchIndexMismatch = (
 		artifact.titleTerms.length !== artifact.titleTermAreas.length
 	)
 		return "is malformed";
+	return headerMismatch(artifact, areaInventoryHash);
+};
+
+const headerMismatch = (
+	artifact: AreaSearchIndexHeader,
+	areaInventoryHash: string,
+): string | undefined => {
+	if (artifact.schemaVersion !== 1) return "is malformed";
 	if (artifact.nameNormalisation !== NAME_NORMALISATION)
 		return "was normalised under different name rules than this API applies";
 	if (artifact.areaInventoryHash !== areaInventoryHash)
@@ -182,7 +219,7 @@ export class AreaSearch {
 	private readonly prefixes: string[];
 
 	constructor(
-		private readonly index: AreaSearchIndexArtifact,
+		private readonly index: AreaSearchIndex,
 		private readonly areaLookup: AreaLookup,
 	) {
 		this.offsets = [0];
@@ -207,7 +244,7 @@ export class AreaSearch {
 	private result(position: number): AreaSearchResult {
 		const at = this.releaseAt(position);
 		const { geography, boundaryRelease, codes } = this.index.releases[at]!;
-		const code = codes[position - this.offsets[at]!]!;
+		const code = codes.at(position - this.offsets[at]!)!;
 		const area = this.areaLookup
 			.get(releaseKey(geography, boundaryRelease))!
 			.get(code)!;
@@ -322,10 +359,13 @@ export class AreaSearch {
 		const term = findSorted(this.index.terms, nameQuery);
 		if (term !== -1) {
 			const exact = this.filtered(
-				this.index.termAreas[term]!.filter(
-					(position) =>
-						this.codeAt(position).toLocaleLowerCase() === codeQuery,
-				),
+				this.index.termAreas
+					.at(term)!
+					.filter(
+						(position) =>
+							this.codeAt(position).toLocaleLowerCase() ===
+							codeQuery,
+					),
 				filters,
 			);
 			if (exact.length > 0) return this.matches(exact);
@@ -334,10 +374,11 @@ export class AreaSearch {
 		for (
 			let position = lowerBound(this.index.terms, nameQuery);
 			position < this.index.terms.length &&
-			this.index.terms[position]!.startsWith(nameQuery);
+			this.index.terms.at(position)!.startsWith(nameQuery);
 			position += 1
 		) {
-			for (const area of this.index.termAreas[position]!) found.add(area);
+			for (const area of this.index.termAreas.at(position)!)
+				found.add(area);
 		}
 		return this.matches(this.filtered(found, filters));
 	}
@@ -356,10 +397,10 @@ export class AreaSearch {
 		const titleTerm = findSorted(this.index.titleTerms, nameQuery);
 		return this.filtered(
 			[
-				...(term === -1 ? [] : this.index.termAreas[term]!),
+				...(term === -1 ? [] : this.index.termAreas.at(term)!),
 				...(titleTerm === -1
 					? []
-					: this.index.titleTermAreas[titleTerm]!),
+					: this.index.titleTermAreas.at(titleTerm)!),
 			],
 			filters,
 		)
@@ -369,6 +410,106 @@ export class AreaSearch {
 
 	private codeAt(position: number) {
 		const at = this.releaseAt(position);
-		return this.index.releases[at]!.codes[position - this.offsets[at]!]!;
+		return this.index.releases[at]!.codes.at(position - this.offsets[at]!)!;
 	}
 }
+
+/** Where the server reads the index from, beside `area-search-index.json`. */
+export const AREA_SEARCH_INDEX_DATABASE = "area-search-index.sqlite";
+
+/**
+ * Write the index as SQLite tables: every identity's code in position order,
+ * and each term's postings packed as u32s.
+ */
+export const writeAreaSearchIndexDatabase = (
+	path: string,
+	index: AreaSearchIndexArtifact,
+) =>
+	writeSqliteIndex(
+		path,
+		{
+			schemaVersion: String(index.schemaVersion),
+			contentHash: index.contentHash,
+			nameNormalisation: index.nameNormalisation,
+			areaInventoryHash: index.areaInventoryHash,
+			releases: JSON.stringify(
+				index.releases.map(({ geography, boundaryRelease, codes }) => ({
+					geography,
+					boundaryRelease,
+					length: codes.length,
+				})),
+			),
+		},
+		{
+			codes: {
+				columns: ["code TEXT"],
+				rows: index.releases.flatMap((release) =>
+					release.codes.map((code) => [code]),
+				),
+			},
+			terms: {
+				columns: ["term TEXT", "areas BLOB"],
+				rows: index.terms.map((term, at) => [
+					term,
+					packPositions(index.termAreas[at]!),
+				]),
+			},
+			titleTerms: {
+				columns: ["term TEXT", "areas BLOB"],
+				rows: index.titleTerms.map((term, at) => [
+					term,
+					packPositions(index.titleTermAreas[at]!),
+				]),
+			},
+		},
+	);
+
+/**
+ * The index written by `writeAreaSearchIndexDatabase`, refused unless built
+ * from this area inventory.
+ */
+export const openAreaSearchIndexDatabase = (
+	path: string,
+	areaInventoryHash: string,
+): AreaSearchIndex & { contentHash: string } => {
+	const database = new SqliteIndex(path);
+	const meta = (key: string) => database.meta.get(key) ?? "";
+	const header: AreaSearchIndexHeader = {
+		schemaVersion: Number(meta("schemaVersion")) as 1,
+		contentHash: meta("contentHash"),
+		nameNormalisation: meta("nameNormalisation"),
+		areaInventoryHash: meta("areaInventoryHash"),
+	};
+	const mismatch = headerMismatch(header, areaInventoryHash);
+	if (mismatch)
+		throw new Error(`The area search index at ${path} ${mismatch}.`);
+	const codes = database.table("codes");
+	const terms = database.table("terms");
+	const titleTerms = database.table("titleTerms");
+	let offset = 0;
+	const releases = (
+		JSON.parse(meta("releases")) as Array<{
+			geography: string;
+			boundaryRelease: string;
+			length: number;
+		}>
+	).map(({ geography, boundaryRelease, length }) => {
+		const release = {
+			geography,
+			boundaryRelease,
+			codes: codes.column("code", text, offset, length),
+		};
+		offset += length;
+		return release;
+	});
+	if (offset !== codes.length)
+		throw new Error(`The area search index at ${path} is malformed.`);
+	return {
+		contentHash: header.contentHash,
+		releases,
+		terms: terms.column("term", text),
+		termAreas: terms.column("areas", unpackPositions),
+		titleTerms: titleTerms.column("term", text),
+		titleTermAreas: titleTerms.column("areas", unpackPositions),
+	};
+};

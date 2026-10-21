@@ -13,8 +13,8 @@ import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
 } from "./namedLocations";
-import type { AreaSearchIndexArtifact } from "./areaSearch";
-import type { PlaceIndexArtifact } from "./placeIndex";
+import type { AreaSearchIndex } from "./areaSearch";
+import type { PlaceIndex } from "./placeIndex";
 import type { PostcodeAreaIndex } from "./postcodeAreas";
 import type { PostcodeCounts, PostcodeCountsIndex } from "./postcodeCounts";
 import type { PostcodeIndex } from "./postcodes";
@@ -113,9 +113,9 @@ export type GeographyResolverInputs = {
 	namedLocationInventory?: NamedLocationInventory;
 	namedLocationLookup?: NamedLocationLookup;
 	/** Every area and named location by name, compiled with the area inventory. */
-	placeIndex?: PlaceIndexArtifact;
+	placeIndex?: PlaceIndex;
 	/** Every area identity by code, name and alias, compiled with the area inventory. */
-	areaSearchIndex?: AreaSearchIndexArtifact;
+	areaSearchIndex?: AreaSearchIndex;
 	/** Every unit postcode's centroid, compiled from the ONS Postcode Directory. */
 	postcodeIndex?: PostcodeIndex;
 	/** The areas each postcode falls in, compiled for the releases read most. */

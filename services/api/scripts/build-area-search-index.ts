@@ -1,8 +1,12 @@
-import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { compileAreaSearchIndex } from "../src/areaSearch";
+import {
+	AREA_SEARCH_INDEX_DATABASE,
+	compileAreaSearchIndex,
+	writeAreaSearchIndexDatabase,
+} from "../src/areaSearch";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
+import { writeStoredText } from "../src/storedText";
 
 export const buildAreaSearchIndex = (repositoryRoot: string) => {
 	const apiRoot = join(repositoryRoot, "services", "api");
@@ -11,10 +15,14 @@ export const buildAreaSearchIndex = (repositoryRoot: string) => {
 		readAreaLookup(apiRoot, areaInventory),
 		areaInventory.contentHash,
 	);
-	const outputPath = join(apiRoot, "public", "area-search-index.json");
-	// Compact: this is an index read by machine, and indenting it would
-	// double its size.
-	writeFileSync(outputPath, `${JSON.stringify(index)}\n`);
+	const outputPath = join(apiRoot, "public", AREA_SEARCH_INDEX_DATABASE);
+	// The server searches the SQLite tables. The JSON is what the atlas
+	// release pins, stored gzipped and never read by a request.
+	writeStoredText(
+		join(apiRoot, "public", "area-search-index.json"),
+		`${JSON.stringify(index)}\n`,
+	);
+	writeAreaSearchIndexDatabase(outputPath, index);
 	return {
 		outputPath,
 		areas: index.releases.reduce(

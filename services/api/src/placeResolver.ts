@@ -5,7 +5,7 @@ import {
 	AREA_CODE,
 	placeReference,
 	type CompiledPlaceLabel,
-	type PlaceIndexArtifact,
+	type PlaceIndex,
 } from "./placeIndex";
 
 /**
@@ -134,13 +134,13 @@ export const parsePlaceReference = (
 };
 
 const toCandidate = (
-	index: PlaceIndexArtifact,
+	index: PlaceIndex,
 	position: number,
 	match: PlaceMatch,
 	matchedLabel?: string,
 	asOf?: string,
 ): PlaceCandidate => {
-	const place = index.places[position]!;
+	const place = index.places.at(position)!;
 	const memberCodes = place.memberCodes
 		? memberCodesAt(
 				place.memberCodes,
@@ -184,7 +184,7 @@ const toCandidate = (
  * best match.
  */
 export const resolvePlaces = (
-	index: PlaceIndexArtifact,
+	index: PlaceIndex,
 	query: string,
 	limit = 10,
 	asOf?: string,
@@ -230,7 +230,7 @@ export const resolvePlaces = (
 	const code = trimmed.toUpperCase();
 	if (AREA_CODE.test(code)) {
 		const at = findSorted(index.codes, code);
-		for (const position of at === -1 ? [] : index.codePlaces[at]!) {
+		for (const position of at === -1 ? [] : index.codePlaces.at(at)!) {
 			consider(position, "exact", code);
 		}
 	}
@@ -238,7 +238,7 @@ export const resolvePlaces = (
 	const normalised = normalisePlaceName(trimmed);
 	const exact = findSorted(index.names, normalised);
 	if (exact !== -1) {
-		considerLabels(index.labels[exact]!, (viaTitle) =>
+		considerLabels(index.labels.at(exact)!, (viaTitle) =>
 			viaTitle ? "exact-without-title" : "exact",
 		);
 	}
@@ -247,11 +247,11 @@ export const resolvePlaces = (
 		for (
 			let position = lowerBound(index.names, normalised);
 			position < index.names.length &&
-			index.names[position]!.startsWith(normalised);
+			index.names.at(position)!.startsWith(normalised);
 			position += 1
 		) {
 			if (position === exact) continue;
-			considerLabels(index.labels[position]!, () => "prefix");
+			considerLabels(index.labels.at(position)!, () => "prefix");
 		}
 	}
 

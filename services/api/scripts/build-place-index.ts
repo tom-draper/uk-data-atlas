@@ -1,4 +1,3 @@
-import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -7,7 +6,12 @@ import {
 	readBoundaryRegistry,
 } from "../src/boundaryLoader";
 import { readNamedLocationInventory } from "../src/locationLoader";
-import { compilePlaceIndex } from "../src/placeIndex";
+import {
+	compilePlaceIndex,
+	PLACE_INDEX_DATABASE,
+	writePlaceIndexDatabase,
+} from "../src/placeIndex";
+import { writeStoredText } from "../src/storedText";
 
 export const buildPlaceIndex = (repositoryRoot: string) => {
 	const apiRoot = join(repositoryRoot, "services", "api");
@@ -18,10 +22,14 @@ export const buildPlaceIndex = (repositoryRoot: string) => {
 		areaInventory.contentHash,
 		readBoundaryRegistry(apiRoot),
 	);
-	const outputPath = join(apiRoot, "public", "place-index.json");
-	// Compact: this is an index read by machine, and indenting it would
-	// double its size.
-	writeFileSync(outputPath, `${JSON.stringify(index)}\n`);
+	const outputPath = join(apiRoot, "public", PLACE_INDEX_DATABASE);
+	// The server searches the SQLite tables. The JSON is what the atlas
+	// release pins, stored gzipped and never read by a request.
+	writeStoredText(
+		join(apiRoot, "public", "place-index.json"),
+		`${JSON.stringify(index)}\n`,
+	);
+	writePlaceIndexDatabase(outputPath, index);
 	return {
 		outputPath,
 		places: index.places.length,

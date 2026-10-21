@@ -1,8 +1,16 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import { normalisePlaceName } from "../src/nameNormalisation";
-import { compilePlaceIndex, placeIndexMismatch } from "../src/placeIndex";
+import {
+	compilePlaceIndex,
+	openPlaceIndexDatabase,
+	placeIndexMismatch,
+	writePlaceIndexDatabase,
+} from "../src/placeIndex";
 import { parsePlaceReference, resolvePlaces } from "../src/placeResolver";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type { NamedLocationInventory } from "../src/namedLocations";
@@ -259,5 +267,42 @@ test("serves a compiled index only against the inputs it was built from", () => 
 			namedLocations,
 		)!,
 		/malformed/,
+	);
+});
+
+test("answers from its SQLite tables exactly as from the artifact", (context) => {
+	const directory = mkdtempSync(join(tmpdir(), "place-index-"));
+	context.after(() => rmSync(directory, { recursive: true, force: true }));
+	const path = join(directory, "place-index.sqlite");
+	writePlaceIndexDatabase(path, index);
+	const stored = openPlaceIndexDatabase(path, "sha256:areas", namedLocations);
+	assert.equal(stored.contentHash, index.contentHash);
+	for (const query of [
+		"Manchester",
+		"manc",
+		"Bristol",
+		"Ynys Mon",
+		"E08000003",
+		"localAuthority/E08000003",
+		"location/greater-manchester",
+		"Greater Manchester",
+		"ri",
+		"zz",
+		"",
+	])
+		for (const asOf of [undefined, "2024-01-01"])
+			assert.deepEqual(
+				resolvePlaces(stored, query, 10, asOf),
+				resolvePlaces(index, query, 10, asOf),
+				query,
+			);
+	assert.throws(
+		() =>
+			openPlaceIndexDatabase(path, "sha256:other-areas", namedLocations),
+		/area inventory/,
+	);
+	assert.throws(
+		() => openPlaceIndexDatabase(path, "sha256:areas", undefined),
+		/named locations/,
 	);
 });

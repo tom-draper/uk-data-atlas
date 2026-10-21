@@ -9,12 +9,12 @@ import {
 } from "../batchValidation";
 import type { BoundaryRegistry } from "../boundaryRegistry";
 import { resolvePlaces } from "../placeResolver";
-import type { PlaceIndexArtifact } from "../placeIndex";
+import type { PlaceIndex } from "../placeIndex";
 import {
 	AreaSearch,
 	type AreaMatches,
 	type AreaSearchFilters,
-	type AreaSearchIndexArtifact,
+	type AreaSearchIndex,
 } from "../areaSearch";
 import {
 	compareBoundaryReleases,
@@ -53,8 +53,8 @@ export type AreasResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
 	areaInventory?: AreaInventory;
 	areaLookup?: AreaLookup;
-	placeIndex?: PlaceIndexArtifact;
-	areaSearchIndex?: AreaSearchIndexArtifact;
+	placeIndex?: PlaceIndex;
+	areaSearchIndex?: AreaSearchIndex;
 };
 
 /** Area identity, release and place indexes over immutable compiled artifacts. */
