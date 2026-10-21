@@ -119,7 +119,45 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 			}).status,
 			503,
 		);
+		// A stored file that does not match the listed encoding is refused.
+		assert.equal(
+			routeWithCatalog(file.href, dataCatalog, measureObservations, {
+				exportManifest: { ...manifest, exports: [entry] },
+				exportFiles: new Map([
+					[file.artifact, { ...stored, gzipBytes: 7 }],
+				]),
+			}).status,
+			503,
+		);
 	}
+	const gzipped = {
+		format: "csv" as const,
+		artifact: "exports/fixture.csv.gz",
+		bytes: 42,
+		gzipBytes: 12,
+		contentHash: "sha256:download",
+		href: "/v1/exports/small-area-fixture?format=csv",
+	};
+	const gzippedStored = {
+		path: "/tmp/fixture.csv.gz",
+		bytes: 42,
+		gzipBytes: 12,
+		contentHash: "sha256:download",
+	};
+	const gzippedResponse = routeWithCatalog(
+		gzipped.href,
+		dataCatalog,
+		measureObservations,
+		{
+			exportManifest: {
+				...manifest,
+				exports: [{ ...manifest.exports[0], formats: [gzipped] }],
+			},
+			exportFiles: new Map([[gzipped.artifact, gzippedStored]]),
+		},
+	);
+	assert.equal(gzippedResponse.status, 200);
+	assert.equal(gzippedResponse.representation?.body, gzippedStored);
 	assert.equal(
 		routeWithCatalog(
 			"/v1/exports/small-area-fixture?format=xlsx",

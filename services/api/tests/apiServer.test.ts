@@ -886,6 +886,9 @@ test(
 					path: join(directory, file.artifact),
 					bytes: file.bytes,
 					contentHash: file.contentHash,
+					...(file.gzipBytes === undefined
+						? {}
+						: { gzipBytes: file.gzipBytes }),
 				},
 			]),
 		);
@@ -942,7 +945,8 @@ test(
 		assert.equal(logged[0].status, 200);
 		assert.equal(logged[0].bytes, files[0].bytes);
 		assert.equal(logged[1].bytes, 0);
-		const missing = files[0];
+		// Parquet is stored as sent, so its bytes can be replaced in place below.
+		const missing = files.find((file) => file.format === "parquet")!;
 		rmSync(join(directory, missing.artifact));
 		await assert.rejects(get(missing.href));
 		for (let waited = 0; logged.length < 5 && waited < 2000; waited += 20)
@@ -1042,6 +1046,7 @@ test(
 		assert.equal(logged.at(-1)!.bytes, 6);
 		const encoded = gzipSync(content);
 		writeFileSync(file.path, encoded);
+		missing.gzipBytes = encoded.length;
 		exportFiles.set(missing.artifact, {
 			...file,
 			gzipBytes: encoded.length,

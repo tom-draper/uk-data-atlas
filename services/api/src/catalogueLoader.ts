@@ -385,6 +385,9 @@ export const readApiCatalogues = (
 								),
 								bytes: format.bytes,
 								contentHash: format.contentHash,
+								...(format.gzipBytes === undefined
+									? {}
+									: { gzipBytes: format.gzipBytes }),
 							},
 						] as const,
 				),

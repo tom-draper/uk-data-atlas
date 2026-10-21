@@ -11936,6 +11936,12 @@ components:
               href: { type: string }
               bytes: { type: integer }
               contentHash: { type: string }
+              gzipBytes:
+                type: integer
+                description:
+                  "Present when the file is stored gzipped, as CSV is: its size
+                  as sent with `Content-Encoding: gzip`. A stored-gzipped file
+                  is not served in byte ranges."
         artifact:
           type: string
         contentHash:
