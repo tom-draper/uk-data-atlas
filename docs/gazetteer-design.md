@@ -55,15 +55,17 @@ One runtime geometry path remains: `polygonAreaSqKm` in
 
 ## 3. Artifacts
 
-All live in `public/data/datasets/`. Sizes as of 2026-09-27.
+The precompile writes its artifacts to `public/data/datasets/`. The API build
+writes the others, and serves them at `/v1/atlas-lookups/{id}.json`. Sizes as
+of 2026-09-27.
 
-| Artifact                         | Built by                     | Loaded                                  | Size (raw / gz) |
-| -------------------------------- | ---------------------------- | --------------------------------------- | --------------- |
-| `gazetteer.core.json`            | `precompile-data.mts`        | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
-| `constituency-lad-overlaps.json` | `build-area-containment.mts` | on demand, constituency location filter | 305 KB / 44 KB  |
-| `gazetteer.matchindex.json`      | `precompile-data.mts`        | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
-| `boundary-mappings.json`         | `build-area-containment.mts` | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
-| `lsoa-lad-mappings-<year>.json`  | `build-area-containment.mts` | on demand, LSOA location filter         | small           |
+| Artifact                         | Built by                 | Loaded                                  | Size (raw / gz) |
+| -------------------------------- | ------------------------ | --------------------------------------- | --------------- |
+| `gazetteer.core.json`            | `precompile-data.mts`    | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
+| `constituency-lad-overlaps.json` | `build-atlas-lookups.ts` | on demand, constituency location filter | 305 KB / 44 KB  |
+| `gazetteer.matchindex.json`      | `precompile-data.mts`    | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
+| `boundary-mappings.json`         | `build-atlas-lookups.ts` | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
+| `lsoa-lad-mappings-<year>.json`  | `build-atlas-lookups.ts` | on demand, LSOA location filter         | small           |
 
 **Core contents.** 361 LADs (2025) plus 45 superseded 2016 and 2 2024 LADs that
 named locations still reference, 650 constituencies (2024), the 9 English
@@ -260,8 +262,8 @@ Fixed on 2026-09-27:
 
 Parishes followed the same day. Their releases publish no parent, so the
 match index takes each shared-name parish's council from the API resolver,
-via `parish-lad-mappings.json` (written by `pnpm containment:build`, read only
-by the precompile): the ONS parish lookup for the 2019 and 2026 releases, and
+via `parish-lad-mappings.json` (compiled by the API build, read only by the
+precompile): the ONS parish lookup for the 2019 and 2026 releases, and
 otherwise the local authority holding most of the parish, in the newest
 release not after the parish's. It used to sample the geometry itself; the
 2025 parents it found agreed with the ONS parish/ward/LAD lookup on all 1,442
@@ -275,7 +277,7 @@ until 2026-09-27. It is now built by `precompile-data.mts`
 (`lib/data/gazetteer/matchIndex.ts`), straight after the boundary mappings it
 takes ward parents from.
 
-The constituency/LAD crosswalk is written by `pnpm containment:build` from the
+The constituency/LAD crosswalk is compiled by the API build from the
 API resolver's area and population overlaps, whose geometry is expensive and
 runs in the API build. `tests/built/data/compiledBoundaryAssets.test.ts` fails if
 either artifact drifts from the catalogue: the match index must cover every

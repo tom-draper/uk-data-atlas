@@ -1945,10 +1945,10 @@ stands even where it is no. It must name one area, and translating that area
 back must reach only the one asked about, so a successor that merged several
 areas, or took part of one, is not the same area.
 
-The website cannot hold the crosswalks, so `pnpm lineage:build`, run after
-the API build, writes what `sameArea` answers between the ward, local
-authority and constituency releases the website serves to the committed
-`public/data/datasets/area-lineage.json` (about 70 KB gzipped). It stores the
+The website cannot hold the crosswalks, so the API build's `atlas-lookups`
+stage writes what `sameArea` answers between the ward, local authority and
+constituency releases the website serves to `area-lineage`, served at
+`/v1/atlas-lookups/area-lineage.json` (about 90 KB gzipped). It stores the
 codes that do not carry on unchanged between neighbouring releases, and
 overrides for the few pairs further apart whose direct answer is not what
 those steps compose to: a lookup joining two releases directly, as the 2010 to

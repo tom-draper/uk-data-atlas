@@ -58,13 +58,11 @@ public/data/            the atlas's compiled data, read by the browser from
 Some of the files in `public/data/datasets/` are the resolver's answers rather
 than compiled datasets, written by scripts that read the API's build:
 
-| File                                                                                                               | Written by                                                  |
-| ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| `area-lineage.json`                                                                                                | `pnpm lineage:build`                                        |
-| `boundary-mappings.json`, `parish-lad-mappings.json`, `lsoa-lad-mappings-*.json`, `constituency-lad-overlaps.json` | `pnpm containment:build`                                    |
-| `docs-catalogue.json`                                                                                              | `pnpm docs:catalogue`, the last step of the API's own build |
-| `places/`                                                                                                          | `pnpm places:build`                                         |
-| `map-figures.json`, `ranking-pages.json`, `rankings/*.json`                                                        | `pnpm seo:build`, from the compiled datasets                |
+| File                                                        | Written by                                                  |
+| ----------------------------------------------------------- | ----------------------------------------------------------- |
+| `docs-catalogue.json`                                       | `pnpm docs:catalogue`, the last step of the API's own build |
+| `places/`                                                   | `pnpm places:build`                                         |
+| `map-figures.json`, `ranking-pages.json`, `rankings/*.json` | `pnpm seo:build`, from the compiled datasets                |
 
 `map-figures.json` and the rankings are not the resolver's: they hold the
 headline figure each map page's search snippet leads with, and each map's
@@ -81,8 +79,19 @@ rather than importing them, so the 50 MB of profiles stays out of the bundle;
 `next.config.ts` traces the folder into the route. Councils, constituencies
 and named places are built ahead of time, and wards render on first visit.
 
-Because the API's build is not committed, the lineage, containment and place
-files are recorded in `public/data/datasets/resolver-projections.json` with the API
+The atlas's containment and lineage lookups (`area-lineage`,
+`boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
+`constituency-lad-overlaps`) are not in the repository. The API's build
+compiles them with `@uk-data-atlas/geography` for the boundary releases
+`@uk-data-atlas/catalogue` lists, and serves them at
+`/v1/atlas-lookups/{id}.json`. The browser fetches them there, and
+`pnpm lookups:fetch`, the first step of `pnpm precompile`, copies them to the
+gitignored `.cache/atlas-lookups/` for the precompile to cut chunks with. Set
+`NEXT_PUBLIC_ATLAS_API_ORIGIN` to read a local API instead of
+`https://api.ukdataatlas.com`. Deploy the API before the website, so the
+chunks a website build cuts agree with the lookups its browser fetches.
+
+Because the API's build is not committed, the place files are recorded in `public/data/datasets/resolver-projections.json` with the API
 release each came from and its hash. `pnpm precompile:verify`, which every
 website build runs, fails if one of them changed after it was written, or if
 they came from different API builds. The docs catalogue records the hashes of
@@ -122,11 +131,11 @@ there is no build step.
 
 ## Rebuilding after a change
 
-| You changed                            | Run                                                                                                                                       |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm seo:build`                                                                                                  |
-| How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm lineage:build` and `pnpm containment:build`, then `pnpm precompile`, then `pnpm places:build` |
-| Anything, before a release             | `pnpm check:full`                                                                                                                         |
+| You changed                            | Run                                                                               |
+| -------------------------------------- | --------------------------------------------------------------------------------- |
+| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm seo:build`                                          |
+| How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm precompile`, then `pnpm places:build` |
+| Anything, before a release             | `pnpm check:full`                                                                 |
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`
