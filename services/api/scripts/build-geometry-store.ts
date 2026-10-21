@@ -15,7 +15,10 @@ import { releaseKey } from "../src/geographyKeys";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 import { geometrySubstitution } from "../src/geometrySubstitution";
 import { encodeGeometryStore } from "../src/geometryStore";
-import { compileGeometryValidity } from "./compileGeometryValidity";
+import {
+	compileGeometryValidity,
+	roundKeepingValidity,
+} from "./compileGeometryValidity";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -82,7 +85,14 @@ export const buildGeometryStore = (
 			)
 			.join("\0"),
 	);
-	const cache = new AreaGeometryCache(root, sources, 1);
+	const cache = new AreaGeometryCache(
+		root,
+		sources,
+		1,
+		undefined,
+		undefined,
+		roundKeepingValidity,
+	);
 
 	const written = new Set<string>();
 	let compiled = 0;
