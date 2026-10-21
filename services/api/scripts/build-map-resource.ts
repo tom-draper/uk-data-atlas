@@ -13,6 +13,7 @@ import { AreaGeometryCache } from "../src/areaGeometry";
 import { compileFlatDownloads } from "../src/flatDownloads";
 import { releaseKey } from "../src/geographyKeys";
 import { readGeometrySourceLookup } from "../src/geometrySources";
+import { roundKeepingValidity } from "./compileGeometryValidity";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
@@ -42,6 +43,7 @@ const COMPILER_SOURCES = [
 	"src/flatDownloads.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
+	"scripts/compileGeometryValidity.ts",
 	"src/areaGeometry.ts",
 	"src/geoJsonProperties.ts",
 	"src/geometrySubstitution.ts",
@@ -86,7 +88,14 @@ export const buildMapResources = (
 	const geometrySources = readGeometrySourceLookup(
 		join(root, "services", "api"),
 	);
-	const cache = new AreaGeometryCache(root, geometrySources);
+	const cache = new AreaGeometryCache(
+		root,
+		geometrySources,
+		undefined,
+		undefined,
+		undefined,
+		roundKeepingValidity,
+	);
 	const directory = join(out, "map-resources");
 	mkdirSync(directory, { recursive: true });
 

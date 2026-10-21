@@ -6,7 +6,11 @@ import {
 	type GeometryValidityIssue,
 	type GeometryValidityReport,
 } from "../src/geometryValidity";
-import { unpackGeometry, type PackedGeometry } from "../src/packedGeometry";
+import {
+	roundPacked,
+	unpackGeometry,
+	type PackedGeometry,
+} from "../src/packedGeometry";
 
 const reader = new GeoJSONReader(new GeometryFactory());
 
@@ -42,9 +46,36 @@ const unchecked = (
 	reason,
 });
 
+/** Reports by geometry, so an area checked while rounding isn't checked again. */
+const reports = new WeakMap<PackedGeometry, GeometryValidityReport>();
+
 export const compileGeometryValidity = (
 	packed: PackedGeometry,
 ): GeometryValidityReport => {
+	let report = reports.get(packed);
+	if (!report) {
+		report = checkGeometry(packed);
+		reports.set(packed, report);
+	}
+	return report;
+};
+
+/**
+ * Rounded to seven decimal places, unless that makes a valid area invalid:
+ * vertices of two parts less than a centimetre apart can cross, or a ring
+ * that narrow can collapse. Those areas keep their source coordinates.
+ */
+export const roundKeepingValidity = (
+	packed: PackedGeometry,
+): PackedGeometry => {
+	const rounded = roundPacked(packed);
+	return compileGeometryValidity(rounded).status === "invalid" &&
+		compileGeometryValidity(packed).status === "valid"
+		? packed
+		: rounded;
+};
+
+const checkGeometry = (packed: PackedGeometry): GeometryValidityReport => {
 	if (packed.kind === "collection") return unchecked("unsupported-geometry");
 	const type = packed.kind === "packed" ? packed.type : packed.geometry.type;
 	if (type !== "Polygon" && type !== "MultiPolygon")
