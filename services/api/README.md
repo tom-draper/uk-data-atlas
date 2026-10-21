@@ -3057,96 +3057,96 @@ second inventory to maintain:
 
 **Start here**
 
-- `GET /v1` — API discovery
-- `GET /v1/openapi.yaml` — The OpenAPI description of this API
-- `GET /v1/docs` — The human documentation landing page
-- `GET /v1/places` — Find every place a name could mean
-- `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
-- `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
+- `GET /v1`, API discovery
+- `GET /v1/openapi.yaml`, The OpenAPI description of this API
+- `GET /v1/docs`, The human documentation landing page
+- `GET /v1/places`, Find every place a name could mean
+- `GET /v1/postcodes/{postcode}`, Find where a postcode is and the areas containing it
+- `GET /v1/data/{measure-id}/value`, Answer a measure for a place by name (by-place dispatcher)
 
 **Map**
 
-- `GET /v1/coordinates:convert` — Convert one supported coordinate between WGS 84 and national grids
-- `GET /v1/data/{measure-id}` — Retrieve source-exact observations, or an opt-in canonical-unit representation
-- `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
-- `GET /v1/areas:contains` — Find the areas containing a point in one or more geographies
-- `GET /v1/areas:near` — Rank the areas nearest a point by distance
-- `GET /v1/areas/{geography}/{release}/{code}/children/geometry` — Get every child of an area as one GeoJSON FeatureCollection
-- `GET /v1/areas/{geography}/{release}/{code}/neighbours` — List the areas whose boundary meets this one's
-- `GET /v1/areas/{geography}/{release}/{code}/overlap` — Measure how one area overlaps another
-- `GET /v1/areas/{geography}/{release}/{code}/geometry` — Get one compiled area's raw geometry as a GeoJSON Feature
+- `GET /v1/coordinates:convert`, Convert one supported coordinate between WGS 84 and national grids
+- `GET /v1/data/{measure-id}`, Retrieve source-exact observations, or an opt-in canonical-unit representation
+- `GET /v1/areas:intersects`, Find the areas meeting a bounding box in one release
+- `GET /v1/areas:contains`, Find the areas containing a point in one or more geographies
+- `GET /v1/areas:near`, Rank the areas nearest a point by distance
+- `GET /v1/areas/{geography}/{release}/{code}/children/geometry`, Get every child of an area as one GeoJSON FeatureCollection
+- `GET /v1/areas/{geography}/{release}/{code}/neighbours`, List the areas whose boundary meets this one's
+- `GET /v1/areas/{geography}/{release}/{code}/overlap`, Measure how one area overlaps another
+- `GET /v1/areas/{geography}/{release}/{code}/geometry`, Get one compiled area's raw geometry as a GeoJSON Feature
 
 **Trend**
 
-- `GET /v1/analysis-geographies` — List reviewed analysis geography conversions
-- `GET /v1/analysis:plan` — Preflight a reviewed source-to-analysis conversion
-- `GET /v1/data/{measure-id}/convert` — Regroup an extensive measure through a published crosswalk or relationship path
-- `GET /v1/data/{measure-id}/series` — Retrieve a source-exact or reviewed derived time series
-- `GET /v1/data/{measure-id}/rankings` — Rank areas within one source-exact measure partition
-- `GET /v1/data/{measure-id}/change` — Rank areas by change between two periods of one measure partition
-- `GET /v1/data/{measure-id}/compare` — Compare two areas within one source-exact measure partition
+- `GET /v1/analysis-geographies`, List reviewed analysis geography conversions
+- `GET /v1/analysis:plan`, Preflight a reviewed source-to-analysis conversion
+- `GET /v1/data/{measure-id}/convert`, Regroup an extensive measure through a published crosswalk or relationship path
+- `GET /v1/data/{measure-id}/series`, Retrieve a source-exact or reviewed derived time series
+- `GET /v1/data/{measure-id}/rankings`, Rank areas within one source-exact measure partition
+- `GET /v1/data/{measure-id}/change`, Rank areas by change between two periods of one measure partition
+- `GET /v1/data/{measure-id}/compare`, Compare two areas within one source-exact measure partition
 
 **Sync**
 
-- `GET /v1/exports` — List release-pinned whole observation artifacts
-- `GET /v1/exports/{export-id}` — Download one immutable source observation artifact
-- `GET /v1/lookups` — List whole lookup tables for download
-- `GET /v1/lookups/{lookup-id}` — Download one whole lookup table as CSV or NDJSON
-- `GET /v1/atlas-release` — Get the current immutable atlas release manifest
+- `GET /v1/exports`, List release-pinned whole observation artifacts
+- `GET /v1/exports/{export-id}`, Download one immutable source observation artifact
+- `GET /v1/lookups`, List whole lookup tables for download
+- `GET /v1/lookups/{lookup-id}`, Download one whole lookup table as CSV or NDJSON
+- `GET /v1/atlas-release`, Get the current immutable atlas release manifest
 
 **Geography**
 
-- `GET /v1/map-resources` — List the boundary releases published as map resources
-- `GET /v1/map-resources/{geography}/{release}` — Describe one map resource, its tiles and what they were made from
-- `GET /v1/map-resources/{geography}/{release}/tiles.json` — The TileJSON a renderer is configured with
-- `GET /v1/map-resources/{geography}/{release}/features` — A whole boundary release as one GeoParquet or GeoJSON file
-- `GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt` — One vector tile of a boundary release
-- `GET /v1/map-resources/{geography}/{release}/join/{measure-id}` — One measure's values, numbered to match this resource's tiles
-- `GET /v1/map-resources/{geography}/{release}.pmtiles` — The whole tile pyramid as one PMTiles archive
-- `GET /v1/geographies` — List geography types with their latest boundary release
-- `GET /v1/boundary-releases` — List every compiled boundary release
-- `GET /v1/boundary-releases:resolve` — Select the boundary release to use for a date
-- `GET /v1/boundary-releases:compare` — Compare two releases of one geography without inferring geography change from codes
-- `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release, with links to download it whole
-- `GET /v1/areas` — List compiled area identities
-- `GET /v1/areas:validate` — Validate a batch of area codes or names, or infer their likely release
-- `GET /v1/areas/{geography}/{release}/{code}` — Get one compiled area by its full identity
-- `GET /v1/areas/{geography}/{release}/{code}/relationships` — Get published relationships for one compiled area
-- `GET /v1/areas/{geography}/{release}/{code}/history` — Explain a code's published historical relationships and same-code continuity
-- `GET /v1/areas/{geography}/{release}/{code}/parents` — List published clean-containment parents for an area
-- `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
-- `GET /v1/relationships` — Discover, assess and plan published geography relationships
-- `GET /v1/crosswalks` — List published crosswalks
-- `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
-- `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
-- `GET /v1/atlas-lookups/{lookup-id}.json` — Download a containment or lineage lookup the atlas reads
-- `GET /v1/atlas-pages/{page-id}.json` — Download a containment or lineage page the atlas reads
-- `GET /v1/translations` — Translate one code through a published conversion path in either direction
-- `GET /v1/locations` — List the curated area collections
-- `GET /v1/locations/alternatives` — List competing named-location definitions for a real-world name
-- `GET /v1/locations/{location-id}` — Get one curated area collection's definition
-- `GET /v1/locations/{location-id}/comparison` — Compare a named location's direct membership between two dates
-- `GET /v1/locations/{location-id}/geometry` — Get a curated area's compiled GeoJSON geometry
-- `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release
-- `GET /v1/locations/{location-id}/parents` — Find the areas of a coarser geography a named location covers or meets
+- `GET /v1/map-resources`, List the boundary releases published as map resources
+- `GET /v1/map-resources/{geography}/{release}`, Describe one map resource, its tiles and what they were made from
+- `GET /v1/map-resources/{geography}/{release}/tiles.json`, The TileJSON a renderer is configured with
+- `GET /v1/map-resources/{geography}/{release}/features`, A whole boundary release as one GeoParquet or GeoJSON file
+- `GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt`, One vector tile of a boundary release
+- `GET /v1/map-resources/{geography}/{release}/join/{measure-id}`, One measure's values, numbered to match this resource's tiles
+- `GET /v1/map-resources/{geography}/{release}.pmtiles`, The whole tile pyramid as one PMTiles archive
+- `GET /v1/geographies`, List geography types with their latest boundary release
+- `GET /v1/boundary-releases`, List every compiled boundary release
+- `GET /v1/boundary-releases:resolve`, Select the boundary release to use for a date
+- `GET /v1/boundary-releases:compare`, Compare two releases of one geography without inferring geography change from codes
+- `GET /v1/boundary-releases/{geography}/{release}`, Get one boundary release, with links to download it whole
+- `GET /v1/areas`, List compiled area identities
+- `GET /v1/areas:validate`, Validate a batch of area codes or names, or infer their likely release
+- `GET /v1/areas/{geography}/{release}/{code}`, Get one compiled area by its full identity
+- `GET /v1/areas/{geography}/{release}/{code}/relationships`, Get published relationships for one compiled area
+- `GET /v1/areas/{geography}/{release}/{code}/history`, Explain a code's published historical relationships and same-code continuity
+- `GET /v1/areas/{geography}/{release}/{code}/parents`, List published clean-containment parents for an area
+- `GET /v1/areas/{geography}/{release}/{code}/children`, List published clean-containment children for an area
+- `GET /v1/relationships`, Discover, assess and plan published geography relationships
+- `GET /v1/crosswalks`, List published crosswalks
+- `GET /v1/crosswalks/{crosswalk-id}`, Get one crosswalk's metadata
+- `GET /v1/crosswalks/{crosswalk-id}/records`, List (optionally filtered) records for one crosswalk
+- `GET /v1/atlas-lookups/{lookup-id}.json`, Download a containment or lineage lookup the atlas reads
+- `GET /v1/atlas-pages/{page-id}.json`, Download a website place profile or catalogue artifact
+- `GET /v1/translations`, Translate one code through a published conversion path in either direction
+- `GET /v1/locations`, List the curated area collections
+- `GET /v1/locations/alternatives`, List competing named-location definitions for a real-world name
+- `GET /v1/locations/{location-id}`, Get one curated area collection's definition
+- `GET /v1/locations/{location-id}/comparison`, Compare a named location's direct membership between two dates
+- `GET /v1/locations/{location-id}/geometry`, Get a curated area's compiled GeoJSON geometry
+- `GET /v1/locations/{location-id}/members`, Resolve a named location's members in one geography and release
+- `GET /v1/locations/{location-id}/parents`, Find the areas of a coarser geography a named location covers or meets
 
 **Terrain**
 
-- `GET /v1/terrain` — Discover terrain product families and their availability
-- `GET /v1/terrain/{terrain-id}` — Get one terrain product definition
-- `GET /v1/terrain/elevation/point` — Get one terrain elevation point
+- `GET /v1/terrain`, Discover terrain product families and their availability
+- `GET /v1/terrain/{terrain-id}`, Get one terrain product definition
+- `GET /v1/terrain/elevation/point`, Get one terrain elevation point
 
 **Data catalogue**
 
-- `GET /v1/datasets` — List published source datasets and their lineage
-- `GET /v1/datasets/{dataset-id}` — Get one published source dataset and its input hashes
-- `GET /v1/measures` — List measures currently available to query
-- `GET /v1/measures/{measure-id}` — Get one measure's semantics and availability
+- `GET /v1/datasets`, List published source datasets and their lineage
+- `GET /v1/datasets/{dataset-id}`, Get one published source dataset and its input hashes
+- `GET /v1/measures`, List measures currently available to query
+- `GET /v1/measures/{measure-id}`, Get one measure's semantics and availability
 
 **Governance**
 
-- `GET /v1/documents/{document-id}.json` — Download an immutable build evidence document
-- `GET /v1/attribution` — Assemble the attribution and licence block for named resources
+- `GET /v1/documents/{document-id}.json`, Download an immutable build evidence document
+- `GET /v1/attribution`, Assemble the attribution and licence block for named resources
 
 <!-- route-index:end -->
 

@@ -35,7 +35,7 @@ export const renderRouteIndex = (spec: Spec) => {
 		if (operations.length === 0) continue;
 		lines.push(`**${tag.name}**`, "");
 		for (const [path, summary] of operations)
-			lines.push(`- \`GET ${path}\`${summary ? ` — ${summary}` : ""}`);
+			lines.push(`- \`GET ${path}\`${summary ? `, ${summary}` : ""}`);
 		lines.push("");
 	}
 	return [...lines, INDEX_END].join("\n");

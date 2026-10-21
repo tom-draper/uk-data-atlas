@@ -6775,7 +6775,7 @@ paths:
     get:
       operationId: getAtlasPage
       tags: ["Geography"]
-      summary: Download a containment or lineage page the atlas reads
+      summary: Download a website place profile or catalogue artifact
       x-likely-refusal:
         status: 404
         when: The page id is not published.
