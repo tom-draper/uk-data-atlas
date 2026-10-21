@@ -5,16 +5,13 @@ import {
 	MAP_FIGURES_PATH,
 	readFigureInputs,
 	serialiseMapFigures,
-} from "../../scripts/map-figures";
-import {
-	PLACE_FACTS_PATH,
-	serialisePlaceFacts,
-} from "../../scripts/place-facts";
+} from "@/scripts/map-figures";
+import { PLACE_FACTS_PATH, serialisePlaceFacts } from "@/scripts/place-facts";
 import {
 	RANKING_PAGES_PATH,
 	RANKINGS_DIR,
 	serialiseRankings,
-} from "../../scripts/map-rankings";
+} from "@/scripts/map-rankings";
 
 describe("map page data; run pnpm seo:build if stale", () => {
 	it("figures match the committed datasets", async () => {
