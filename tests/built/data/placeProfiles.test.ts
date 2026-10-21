@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { ATLAS_API_ORIGIN, fetchAtlasPage } from "@/lib/helpers/atlasApi";
 import { describe, expect, it } from "vitest";
 import {
 	placeShard,
@@ -9,18 +8,23 @@ import {
 	type PlaceIndex,
 } from "@/lib/places/profile";
 
-const PLACES = join(process.cwd(), "public", "data", "datasets", "places");
-const index = JSON.parse(
-	readFileSync(join(PLACES, "index.json"), "utf8"),
-) as PlaceIndex;
-const files = new Map(
-	["areas", "named"].flatMap((folder) =>
-		readdirSync(join(PLACES, folder)).map((name) => [
-			`${folder}/${name}`,
-			readFileSync(join(PLACES, folder, name), "utf8"),
-		]),
-	),
+const index = await fetchAtlasPage<PlaceIndex>("places-index");
+const names = new Set(
+	index.areas.map(([code]) => `areas/${placeShard(code)}.json`),
 );
+for (const [id] of index.named) names.add(`named/${id}.json`);
+const files = new Map<string, string>();
+for (const name of names) {
+	const id = `places-${name
+		.replace("areas/", "area-")
+		.replace("named/", "named-")
+		.replace(/\.json$/, "")}`;
+	const response = await fetch(
+		`${ATLAS_API_ORIGIN}/v1/atlas-pages/${id}.json`,
+	);
+	if (!response.ok) throw new Error(`${id}: ${response.status}`);
+	files.set(name, await response.text());
+}
 const shards = new Map<string, Record<string, AreaProfile>>();
 const area = (code: string) => {
 	const name = `areas/${placeShard(code)}.json`;
@@ -33,9 +37,10 @@ describe("place profiles", () => {
 		const hash = createHash("sha256");
 		for (const name of [...files.keys()].sort())
 			hash.update(name).update(files.get(name)!);
-		expect(`sha256:${hash.digest("hex")}`, "run pnpm places:build").toBe(
-			index.contentHash,
-		);
+		expect(
+			`sha256:${hash.digest("hex")}`,
+			"run pnpm --dir services/api build:atlas-pages",
+		).toBe(index.contentHash);
 	});
 
 	it("hold a profile for every place in the index", () => {

@@ -1,9 +1,4 @@
-/**
- * Compiles what the map, ranking and place pages read from the committed
- * datasets: the headline figures their search snippets lead with, each map's
- * areas ranked, and the figures about each place's residents. Run after `pnpm precompile` changes a dataset; tests/built/data/seoData
- * fails while either is stale.
- */
+/** Compile map headlines and rankings from the website datasets. */
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import {
@@ -11,7 +6,6 @@ import {
 	readFigureInputs,
 	serialiseMapFigures,
 } from "./map-figures";
-import { PLACE_FACTS_PATH, serialisePlaceFacts } from "./place-facts";
 import {
 	RANKING_PAGES_PATH,
 	RANKINGS_DIR,
@@ -31,6 +25,3 @@ for (const [slug, contents] of files)
 	await writeFile(join(RANKINGS_DIR, `${slug}.json`), contents);
 await writeFile(RANKING_PAGES_PATH, pages);
 console.log(`Wrote ${files.size} rankings to ${RANKINGS_DIR}`);
-
-await writeFile(PLACE_FACTS_PATH, await serialisePlaceFacts());
-console.log(`Wrote ${PLACE_FACTS_PATH}`);

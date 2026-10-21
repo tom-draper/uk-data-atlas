@@ -1,19 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
-
-/**
- * The API catalogue projection used by static docs. It is generated after an
- * API build, carries hashes of its source artifacts, and is committed with
- * the other website precompiled data.
- */
-
-const DOCS_CATALOGUE = path.join(
-	process.cwd(),
-	"public",
-	"data",
-	"datasets",
-	"docs-catalogue.json",
-);
+import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
 
 export interface Licence {
 	name: string;
@@ -261,23 +246,17 @@ function isDocsCatalogueSnapshot(
 	);
 }
 
-function readSnapshot(): DocsCatalogueSnapshot {
-	const snapshot: unknown = JSON.parse(
-		fs.readFileSync(DOCS_CATALOGUE, "utf8"),
-	);
+async function readSnapshot(): Promise<DocsCatalogueSnapshot> {
+	const snapshot = await fetchAtlasPage<unknown>("docs-catalogue");
 	if (!isDocsCatalogueSnapshot(snapshot)) {
-		throw new Error(`Invalid docs catalogue snapshot at ${DOCS_CATALOGUE}`);
+		throw new Error(`Invalid docs catalogue snapshot at the API`);
 	}
 	return snapshot;
 }
 
-let cached: Catalogue | null = null;
-
-export function loadCatalogue(): Catalogue {
-	if (cached) return cached;
-	const snapshot = readSnapshot();
-
-	cached = {
+export async function loadCatalogue(): Promise<Catalogue> {
+	const snapshot = await readSnapshot();
+	return {
 		datasets: snapshot.datasets,
 		// Some sources report a period count rather than listing periods.
 		measures: snapshot.measures.map((measure) => ({
@@ -292,7 +271,6 @@ export function loadCatalogue(): Catalogue {
 		areaCounts: new Map(Object.entries(snapshot.areaCounts)),
 		mapResources: new Set(snapshot.mapResourceIds),
 	};
-	return cached;
 }
 
 const NATIONS: Record<string, string> = {

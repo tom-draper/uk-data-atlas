@@ -1,4 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ATLAS_LOCATIONS } from "../lib/atlas/pages";
 import { decodeCompactPayload } from "../lib/data/compactPayload";
@@ -9,7 +9,7 @@ import {
 	rankingSource,
 } from "../lib/atlas/rankings";
 import type { Editions } from "../lib/atlas/rankingRecipes";
-import type { AreaProfile } from "../lib/places/profile";
+import { fetchAtlasPage } from "../lib/helpers/atlasApi";
 import { atlasLookupPath } from "./atlas-lookups";
 
 const DATASETS = join(process.cwd(), "public", "data", "datasets");
@@ -24,18 +24,7 @@ async function readEditions(file: string): Promise<Editions> {
 
 /** Each ward's area in km², from the /places profiles. */
 async function readWardAreas(): Promise<Record<string, number>> {
-	const shards = join(DATASETS, "places", "areas");
-	const areas: Record<string, number> = {};
-	for (const shard of await readdir(shards)) {
-		if (!/^[EW]05/.test(shard)) continue;
-		const profiles = JSON.parse(
-			await readFile(join(shards, shard), "utf8"),
-		) as Record<string, AreaProfile>;
-		for (const [code, profile] of Object.entries(profiles))
-			if (profile.geography === "ward" && profile.areaKm2)
-				areas[code] = profile.areaKm2;
-	}
-	return areas;
+	return fetchAtlasPage<Record<string, number>>("ward-areas");
 }
 
 /** Inputs that are not compiled datasets, by the name a recipe asks for. */

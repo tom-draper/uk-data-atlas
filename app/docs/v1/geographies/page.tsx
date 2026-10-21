@@ -15,8 +15,8 @@ export const metadata = docsMetadata(
 	"/docs/v1/geographies",
 );
 
-export default function GeographiesPage() {
-	const catalogue = loadCatalogue();
+export default async function GeographiesPage() {
+	const catalogue = await loadCatalogue();
 	return (
 		<DocPage
 			href="/docs/v1/geographies"

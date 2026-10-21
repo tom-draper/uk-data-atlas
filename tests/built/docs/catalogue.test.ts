@@ -18,7 +18,7 @@ import {
 	dataPagesOnGeography,
 } from "@/lib/docs/dataPages";
 
-const catalogue = loadCatalogue();
+const catalogue = await loadCatalogue();
 
 describe("data pages", () => {
 	it("put every served dataset on exactly one page", () => {
@@ -168,7 +168,7 @@ describe("formatPeriod", () => {
 
 describe("exports", () => {
 	it("link by a full API path, so the docs prefix them with the origin", () => {
-		const hrefs = loadCatalogue().exports.map((item) => item.href);
+		const hrefs = catalogue.exports.map((item) => item.href);
 		expect(hrefs.length).toBeGreaterThan(0);
 		expect(hrefs.filter((href) => !href.startsWith("/v1/"))).toEqual([]);
 	});

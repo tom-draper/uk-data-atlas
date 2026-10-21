@@ -1,3 +1,4 @@
+import { loadCatalogue } from "@/lib/docs/catalogue";
 import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
 import { H2, H3, P, Table } from "@/components/docs/Content";
@@ -47,8 +48,9 @@ function LinkList({ links }: { links: { name: string; href: string }[] }) {
 	));
 }
 
-export default function DatasetsPage() {
-	const entries = datasetEntries();
+export default async function DatasetsPage() {
+	const catalogue = await loadCatalogue();
+	const entries = datasetEntries(catalogue);
 	const topics = datasetsByTopic(entries);
 
 	return (

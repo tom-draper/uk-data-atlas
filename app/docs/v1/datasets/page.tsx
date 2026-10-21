@@ -1,3 +1,4 @@
+import { loadCatalogue } from "@/lib/docs/catalogue";
 import { CardGrid, DocPage, H2, LinkCard, P } from "@/components/docs/Content";
 import { DATA_PAGES, DATA_TOPICS } from "@/lib/docs/content/data";
 import { capitalise, dataPageFacts, yearSpan } from "@/lib/docs/dataPages";
@@ -10,7 +11,8 @@ export const metadata = docsMetadata(
 	"/docs/v1/datasets",
 );
 
-export default function DataPage() {
+export default async function DataPage() {
+	const catalogue = await loadCatalogue();
 	return (
 		<DocPage
 			href="/docs/v1/datasets"
@@ -33,7 +35,7 @@ export default function DataPage() {
 						{DATA_PAGES.filter(
 							(page) => page.topic === topic.id,
 						).map((page) => {
-							const facts = dataPageFacts(page);
+							const facts = dataPageFacts(page, catalogue);
 							return (
 								<LinkCard
 									key={page.slug}

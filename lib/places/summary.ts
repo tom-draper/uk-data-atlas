@@ -1,16 +1,16 @@
 import { countryOf, geographyNoun } from "@/lib/places/labels";
-import { PLACE_INDEX } from "@/lib/places/load";
+import { loadPlaceIndex } from "@/lib/places/load";
 import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
 
 /** One sentence on what an area is and which boundary releases carry it. */
-export function areaSummary(profile: AreaProfile) {
+export async function areaSummary(profile: AreaProfile) {
 	const noun = geographyNoun(profile.geography);
 	const council = profile.parents.find(
 		(parent) => parent.geography === "localAuthority",
 	);
 	const country = countryOf(profile.code);
 	const where = [council?.name, country].filter(Boolean).join(", ");
-	const releases = PLACE_INDEX.releases[profile.geography];
+	const releases = (await loadPlaceIndex()).releases[profile.geography];
 	const first = releaseLabel(releases[profile.releases[0]!]!);
 	const last = releaseLabel(releases[profile.releases.at(-1)!]!);
 	return profile.current

@@ -10,7 +10,7 @@ import {
 } from "@/lib/places/labels";
 import {
 	loadAreaProfiles,
-	PLACE_INDEX,
+	loadPlaceIndex,
 	PLACE_REGIONS,
 	placeRegions,
 } from "@/lib/places/load";
@@ -68,6 +68,7 @@ function Count({ count }: { count: number }) {
 }
 
 export default async function PlacesPage() {
+	const PLACE_INDEX = await loadPlaceIndex();
 	const regions = await placeRegions();
 	// Every current ward, by region and then by local authority.
 	const councils = await loadAreaProfiles(

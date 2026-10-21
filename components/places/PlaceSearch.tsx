@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { withCDN } from "@/lib/helpers/cdn";
+import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
 import { placeKindName } from "@/lib/places/labels";
 import type { PlaceIndex, PlaceIndexEntry } from "@/lib/places/profile";
 
@@ -66,8 +66,7 @@ export default function PlaceSearch({
 	const load = () => {
 		if (loading.current) return;
 		loading.current = true;
-		void fetch(withCDN("/data/datasets/places/index.json"))
-			.then((response) => response.json() as Promise<PlaceIndex>)
+		void fetchAtlasPage<PlaceIndex>("places-index")
 			.then(setIndex)
 			.catch(() => {
 				loading.current = false;

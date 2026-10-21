@@ -45,13 +45,7 @@ const dataBaseUrl =
 
 const nextConfig: NextConfig = {
 	reactCompiler: true,
-	// Place pages read their profiles from disk while rendering on demand.
-	outputFileTracingIncludes: {
-		"/places/*": [
-			"./public/data/datasets/places/**/*",
-			"./public/data/datasets/place-facts.json",
-		],
-	},
+
 	env: {
 		NEXT_PUBLIC_DATA_VERSION: dataVersion,
 		NEXT_PUBLIC_DATA_BASE_URL: dataBaseUrl,

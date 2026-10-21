@@ -1,6 +1,4 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import placeIndex from "@/public/data/datasets/places/index.json";
+import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
 import {
 	isAreaCode,
 	placeShard,
@@ -11,41 +9,30 @@ import {
 	type PlaceIndexEntry,
 } from "@/lib/places/profile";
 
-export const PLACE_INDEX = placeIndex as unknown as PlaceIndex;
-
-// Read from disk rather than imported: bundling 50 MB of profiles would slow
-// every build. next.config.ts traces the folder into the /places function.
-const PROFILES = join(process.cwd(), "public", "data", "datasets", "places");
-
-/** Profile shards already read by this server instance. */
-const profileReads = new Map<string, Promise<unknown>>();
-
-const readProfiles = (path: string) => {
-	let read = profileReads.get(path);
-	if (!read) {
-		read = readFile(join(PROFILES, path), "utf8").then(JSON.parse);
-		profileReads.set(path, read);
-	}
-	return read;
-};
-
-const areaEntries = new Map(
-	PLACE_INDEX.areas.map((entry) => [entry[0], entry]),
-);
-const namedEntries = new Map(
-	PLACE_INDEX.named.map((entry) => [entry[0], entry]),
-);
+export const loadPlaceIndex = () => fetchAtlasPage<PlaceIndex>("places-index");
+const readProfiles = (path: string) =>
+	fetchAtlasPage<unknown>(
+		`places-${path
+			.replace("areas/", "area-")
+			.replace("named/", "named-")
+			.replace(/\.json$/, "")}`,
+	);
 
 /** A place's index row, by area code or named place id. */
-export function placeEntry(id: string): PlaceIndexEntry | undefined {
-	return isAreaCode(id) ? areaEntries.get(id) : namedEntries.get(id);
+export async function placeEntry(
+	id: string,
+): Promise<PlaceIndexEntry | undefined> {
+	const index = await loadPlaceIndex();
+	return (isAreaCode(id) ? index.areas : index.named).find(
+		(entry) => entry[0] === id,
+	);
 }
 
-/** An area's profile, read from its shard only when a page for it renders. */
+/** An area's profile from its API shard. */
 export async function loadAreaProfile(
 	code: string,
 ): Promise<AreaProfile | undefined> {
-	if (!areaEntries.has(code)) return undefined;
+	if (!(await placeEntry(code))) return undefined;
 	const shard = (await readProfiles(
 		`areas/${placeShard(code)}.json`,
 	)) as Record<string, AreaProfile>;
@@ -55,7 +42,7 @@ export async function loadAreaProfile(
 export async function loadNamedProfile(
 	id: string,
 ): Promise<NamedProfile | undefined> {
-	if (!namedEntries.has(id)) return undefined;
+	if (!(await placeEntry(id))) return undefined;
 	return (await readProfiles(`named/${id}.json`)) as NamedProfile;
 }
 
@@ -65,9 +52,11 @@ export async function loadAreaProfiles(
 ): Promise<Map<string, AreaProfile>> {
 	const shards = new Map<string, Promise<Record<string, AreaProfile>>>();
 	const profiles = new Map<string, AreaProfile>();
+	const index = await loadPlaceIndex();
+	const codesInIndex = new Set(index.areas.map(([code]) => code));
 	await Promise.all(
 		codes
-			.filter((code) => areaEntries.has(code))
+			.filter((code) => codesInIndex.has(code))
 			.map(async (code) => {
 				const shard = placeShard(code);
 				if (!shards.has(shard))
@@ -117,14 +106,14 @@ const NATION_REGION: Record<string, string> = {
  * outside England. A constituency takes the region of a council it sits in
  * or overlaps; English regions don't cross council lines.
  */
-const currentAreas = () =>
-	PLACE_INDEX.areas.filter(
+const currentAreas = async () =>
+	(await loadPlaceIndex()).areas.filter(
 		([, , geography, , , lastYear]) =>
 			geography !== "ward" && lastYear === null,
 	);
 
 const resolvePlaceRegions = async (): Promise<Map<string, string>> => {
-	const current = currentAreas();
+	const current = await currentAreas();
 	const profiles = await loadAreaProfiles(current.map(([code]) => code));
 	const regions = new Map<string, string>();
 	const regionOf = (code: string) =>
@@ -154,24 +143,5 @@ const resolvePlaceRegions = async (): Promise<Map<string, string>> => {
 	return regions;
 };
 
-let regions: Promise<Map<string, string>> | undefined;
-
-/** The region lookup shared by the places index and all place pages. */
-export const placeRegions = () => (regions ??= resolvePlaceRegions());
-
-/**
- * Read the place-index shards the directory uses before the server accepts
- * traffic. The reads stay cached for the instance, so `/places` does not pay
- * the first-request disk and JSON cost.
- */
-export const warmPlacesDirectory = async () => {
-	const current = currentAreas();
-	await Promise.all([
-		placeRegions(),
-		loadAreaProfiles(
-			current
-				.filter(([, , geography]) => geography === "localAuthority")
-				.map(([code]) => code),
-		),
-	]);
-};
+/** The region lookup shared by the places directory and place pages. */
+export const placeRegions = resolvePlaceRegions;
