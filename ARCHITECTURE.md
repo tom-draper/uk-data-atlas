@@ -13,24 +13,10 @@ The repository holds two products:
 - **The API**, a Node service in `services/api`. It deploys to its own
   server, which also builds its data.
 
-Both answer geography questions: which local authority a ward sits in, what a
-ward became after a boundary review, which LSOAs a parish covers. The API's
-geography resolver is the one place those answers are decided. The atlas does
-not work them out for itself. It reads the resolver's answers, compiled into
-small committed files, so the map always says what the API would say.
-
-```
-services/api                       the resolver: decides every answer
-    │  build-time scripts at the root ask it questions
-    ▼
-public/data/datasets/*.json        its answers, compact and committed
-    │
-    ▼
-atlas                              reads the answers, never the resolver
-```
-
-The resolver itself is far too large to ship to a browser, and the atlas never
-imports it.
+Both answer geography questions. The API resolves relationships and compiles
+place profiles, the docs catalogue, and containment and lineage lookups.
+The website fetches these over HTTP and shares browser-safe code through
+`packages/`. It never imports API project code.
 
 ## Layout
 
@@ -40,8 +26,7 @@ packages/geography/     shared geography code: lineage, containment file
                         formats, geometry substitutions, grid offsets
 packages/catalogue/     shared catalogue code: the register of corrections
 services/api/           the API: src/, scripts/, config/, openapi.yaml
-scripts/                the atlas's build scripts, including the ones that
-                        read the resolver
+scripts/                the atlas's build scripts
 data/                   raw source files, restored from the data release
 public/data/            the atlas's compiled data, read by the browser from
                         jsDelivr at the deployed commit (next.config.ts)
@@ -55,29 +40,34 @@ public/data/            the atlas's compiled data, read by the browser from
 | `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No                            | `pnpm --dir services/api build`, run where the API is served         |
 | `public/data/`         | The atlas's compiled datasets and boundaries                             | Yes, so Vercel need not build | `pnpm precompile` and `pnpm boundaries:compile`                      |
 
-Some of the files in `public/data/datasets/` are the resolver's answers rather
-than compiled datasets, written by scripts that read the API's build:
+`map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
+headlines and ranked areas, compiled by `pnpm seo:build` from the datasets.
+Rankings fetch ward areas from the API instead of reading place files.
 
-| File                                                        | Written by                                                  |
-| ----------------------------------------------------------- | ----------------------------------------------------------- |
-| `docs-catalogue.json`                                       | `pnpm docs:catalogue`, the last step of the API's own build |
-| `places/`                                                   | `pnpm places:build`                                         |
-| `map-figures.json`, `ranking-pages.json`, `rankings/*.json` | `pnpm seo:build`, from the compiled datasets                |
+The API builds website artifacts with `pnpm --dir services/api build:atlas-pages`,
+the final stage of its data build. It stores gzipped files and a manifest under
+`services/api/public/atlas-pages/` and `atlas-pages.json`, and serves them at
+`/v1/atlas-pages/{page-id}.json`:
 
-`map-figures.json` and the rankings are not the resolver's: they hold the
-headline figure each map page's search snippet leads with, and each map's
-areas ranked for the `/maps/{place}/{map}` pages. They are compiled from the
-datasets because those are too large to load while a page renders, and a data
-test fails while they are stale.
+| Page id               | Contents                                                   |
+| --------------------- | ---------------------------------------------------------- |
+| `places-index`        | Every place and the boundary release lists                 |
+| `places-area-{shard}` | Area profiles, sharded by code                             |
+| `places-named-{id}`   | A named place profile                                      |
+| `place-facts`         | Median age and ethnicity by code                           |
+| `ward-areas`          | Ward areas used by ranking recipes                         |
+| `docs-catalogue`      | Datasets, measures, exports and boundary releases for docs |
 
-`places/` holds a profile of every ward, local authority and constituency the
-resolver holds, current or abolished, and of every named place, for the
-`/places/{code}` pages: each one's outline, history across boundary releases,
-what it sits within, contains and borders, and which datasets publish figures
-for it. Area profiles are sharded by code, and the pages read them from disk
-rather than importing them, so the 50 MB of profiles stays out of the bundle;
-`next.config.ts` traces the folder into the route. Councils, constituencies
-and named places are built ahead of time, and wards render on first visit.
+The website server fetches these artifacts with a one-day revalidation interval.
+Current councils, constituencies and named places prerender during the website
+build; wards render on first visit. Place search fetches the index from the API
+on focus. Profiles and facts no longer need file tracing or committed copies.
+An unavailable API fails rendering rather than returning a false missing place.
+
+Until step 4 moves dataset compilers into a shared package, the API's profile
+build still reads `public/data/datasets/` and boundary properties as inputs.
+It does not import website code. Those inputs must exist before running the
+API stage. The stage writes only into the API's gitignored output directory.
 
 The atlas's containment and lineage lookups (`area-lineage`,
 `boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
@@ -91,12 +81,6 @@ gitignored `.cache/atlas-lookups/` for the precompile to cut chunks with. Set
 `https://api.ukdataatlas.com`. Deploy the API before the website, so the
 chunks a website build cuts agree with the lookups its browser fetches.
 
-Because the API's build is not committed, the place files are recorded in `public/data/datasets/resolver-projections.json` with the API
-release each came from and its hash. `pnpm precompile:verify`, which every
-website build runs, fails if one of them changed after it was written, or if
-they came from different API builds. The docs catalogue records the hashes of
-the API artifacts it was built from in its own file.
-
 Everything in `services/api/public` is build output, so its layout on disk is
 the API's own business. Clients reach every file through a route, and a route
 can find its file anywhere. What freezes when v1 leaves early access is the routes, their
@@ -108,17 +92,13 @@ parameters and what they return.
 atlas ──────────────┐
                     ├──► packages/*
 services/api ───────┘
-
-scripts/ (atlas build only) ──► services/api   (as @uk-data-atlas/api/catalogues)
 ```
 
 - The atlas and the API share code only through `packages/`. The API never
-  imports the atlas's `lib/`, and the atlas never imports the API at runtime.
+  imports the atlas's `lib/`, and the website never imports API project code.
   The website does read one API file, `services/api/openapi.yaml`, for its API
   reference; `.vercelignore` keeps everything else in `services/api` out of
   the deployment.
-- Only the atlas's build scripts depend on the API, through its
-  `@uk-data-atlas/api/catalogues` entry point, to read the resolver.
 - A package holds code only. It reads no files, knows no paths and is safe to
   bundle into a browser: each consumer loads its own data and passes it in.
   Its tsconfig rejects Node and DOM types and the atlas's `@/` aliases, and
@@ -131,11 +111,11 @@ there is no build step.
 
 ## Rebuilding after a change
 
-| You changed                            | Run                                                                               |
-| -------------------------------------- | --------------------------------------------------------------------------------- |
-| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm seo:build`                                          |
-| How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm precompile`, then `pnpm places:build` |
-| Anything, before a release             | `pnpm check:full`                                                                 |
+| You changed                            | Run                                                                     |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm seo:build`                                |
+| How the API compiles geography or data | `pnpm --dir services/api build`, deploy the API, then `pnpm precompile` |
+| Anything, before a release             | `pnpm check:full`                                                       |
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`

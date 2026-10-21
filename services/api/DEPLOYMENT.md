@@ -161,3 +161,16 @@ If startup reports stale generated inventories, rebuild their declared inputs
 and dependent inventories on the build machine. For example, after rebuilding
 analysis support, rebuild `analysis-geography-validation.json` too. Rebuild
 `operations.json` whenever `openapi.yaml` changes. Do not bypass startup validation.
+
+## Website place and catalogue artifacts
+
+The final `atlas-pages` build stage writes gzipped website profiles, facts,
+ward areas and the docs catalogue under `public/atlas-pages/`, with metadata
+in `public/atlas-pages.json`. Include both in the deployed volume. Until the
+shared dataset compiler work lands, this stage reads the website's compiled
+datasets and boundary properties in the repository's `public/data/`.
+
+Deploy the API before the website. Confirm `/v1/atlas-pages/places-index.json`
+and `/v1/atlas-pages/docs-catalogue.json` return 200 before starting the website
+build. These artifact shapes follow the website; clients needing stable
+responses should use the area and catalogue routes.

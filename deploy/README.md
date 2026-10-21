@@ -20,6 +20,15 @@ export PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
 cd /root/uk-data-atlas
 pnpm install --frozen-lockfile
 pnpm --dir services/api build
+```
+
+Deploy or restart the API with the newly built code and data before building
+the website. On an existing systemd installation, restart
+`uk-data-atlas-api.service`. Confirm the public routes are ready:
+
+```sh
+curl --fail https://api.ukdataatlas.com/v1/atlas-pages/places-index.json -o /dev/null
+curl --fail https://api.ukdataatlas.com/v1/atlas-pages/docs-catalogue.json -o /dev/null
 pnpm build
 ```
 
@@ -57,8 +66,9 @@ but only `build:data --from` also regenerates affected downstream artifacts.
 `atlas-release-initial` writes the manifest consumed by evidence documents.
 `documents` rebuilds those documents and then the downstream `atlas-release`
 stage pins them in the final manifest. Both manifest stages use the existing
-`build:atlas-release` script. `docs-catalogue` refreshes the website's catalogue
-when its API inputs change.
+`build:atlas-release` script. `atlas-pages` compiles the website place profiles, facts and docs catalogue.
+Until the dataset compilers move into a shared package, this stage needs the
+website datasets and boundary properties in `public/data/` as build inputs.
 
 ## systemd
 
@@ -133,4 +143,11 @@ certbot renew --dry-run
 ```
 
 Do not commit downloaded source data, generated API data, logs, credentials,
-certificates or swap files. The generated website docs catalogue is tracked.
+certificates or swap files. The API owns the website docs catalogue and place artifacts.
+
+Deploy the API before building or deploying the website. Verify
+`/v1/atlas-pages/places-index.json` and `/v1/atlas-pages/docs-catalogue.json`
+return 200 first. Website rendering and place search fetch these routes using
+`NEXT_PUBLIC_ATLAS_API_ORIGIN`, which defaults to `https://api.ukdataatlas.com`.
+For local builds, run the API on port 3917 and set that variable to
+`http://localhost:3917`. Stop the API before a memory-heavy precompile.
