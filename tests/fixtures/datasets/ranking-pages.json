@@ -1,0 +1,422 @@
+{
+	"adult-social-care-activity": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"yorkshire"
+	],
+	"adult-social-care-outcomes": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"yorkshire"
+	],
+	"air-quality": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"brexit": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"buckinghamshire",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"brexit-constituency": [
+		"greater-manchester",
+		"london",
+		"leeds",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"buckinghamshire",
+		"yorkshire"
+	],
+	"broadband": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"business-activity": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"car-availability": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"cardiff-and-the-valleys"
+	],
+	"child-poverty": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"claimant-count": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"council-tax": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"crime": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"cardiff-and-the-valleys"
+	],
+	"electric-vehicle-chargers": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"electricity-consumption": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"ethnicity": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"cardiff-and-the-valleys"
+	],
+	"fuel-poverty": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"gas-consumption": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"general-election": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"leeds",
+		"glasgow",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"buckinghamshire",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"ghg-emissions": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"homelessness": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"house-price": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"leeds",
+		"hartlepool",
+		"oxford",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"buckinghamshire",
+		"yorkshire",
+		"cardiff-and-the-valleys",
+		"rutland"
+	],
+	"housing-affordability": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"cardiff-and-the-valleys"
+	],
+	"imd": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"income": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"jobs": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"life-expectancy": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"healthy-life-expectancy": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"local-government-finance": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"mobile-coverage": [
+		"wales",
+		"united-kingdom",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"net-additional-dwellings": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"nhs-waiting": ["london", "north-west", "east-of-england", "yorkshire"],
+	"nimdm": [],
+	"planning-applications": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"population-density": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"leeds",
+		"hartlepool",
+		"oxford",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"buckinghamshire",
+		"yorkshire",
+		"cardiff-and-the-valleys",
+		"rutland"
+	],
+	"population-age": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"leeds",
+		"hartlepool",
+		"oxford",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"buckinghamshire",
+		"yorkshire",
+		"cardiff-and-the-valleys",
+		"rutland"
+	],
+	"qualification": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"cardiff-and-the-valleys"
+	],
+	"regional-gdp-itl3": [
+		"wales",
+		"united-kingdom",
+		"london",
+		"north-west",
+		"east-of-england",
+		"yorkshire"
+	],
+	"school-performance": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"school-performance-gap": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire"
+	],
+	"simd": ["the-highlands"],
+	"travel-to-work": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"cardiff-and-the-valleys"
+	],
+	"unemployment": [
+		"wales",
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent",
+		"yorkshire",
+		"the-highlands",
+		"cardiff-and-the-valleys"
+	],
+	"waste": [
+		"greater-manchester",
+		"london",
+		"north-west",
+		"east-of-england",
+		"kent"
+	],
+	"wimd": ["wales", "cardiff-and-the-valleys"]
+}
