@@ -16,7 +16,7 @@ type ManifestEntry = Awaited<ReturnType<typeof compileStaleDataset>>;
 
 const GIGABYTE = 1024 ** 3;
 // Matches the heap the precompile scripts give the main thread.
-const WORKER_HEAP_MB = 4096;
+const WORKER_HEAP_MB = 3072;
 const MAX_WORKERS = 4;
 
 /**
