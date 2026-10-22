@@ -1,5 +1,9 @@
 import { renameSync, rmSync } from "node:fs";
-import { DatabaseSync, type SQLInputValue } from "node:sqlite";
+import {
+	DatabaseSync,
+	type SQLInputValue,
+	type StatementSync,
+} from "node:sqlite";
 import type { Indexed } from "./sortedIndex";
 
 /**
@@ -79,6 +83,12 @@ export class SqliteIndex {
 			.get() as { length: number };
 		return new SqliteRows(
 			this.database.prepare(`SELECT * FROM ${name} WHERE position = ?`),
+			this.database.prepare(
+				`SELECT * FROM ${name} WHERE position >= ? ORDER BY position LIMIT ${SqliteRows.BLOCK}`,
+			),
+			this.database.prepare(
+				`SELECT * FROM ${name} WHERE position IN (SELECT value FROM json_each(?))`,
+			),
 			length,
 		);
 	}
@@ -87,29 +97,51 @@ export class SqliteIndex {
 type Row = Record<string, SQLInputValue>;
 
 /**
- * A table's rows by position. The last row read is kept, since a search reads
- * several columns of one row in turn.
+ * A table's rows by position. A binary search reads one row at a time; once
+ * reads run in order, as a prefix scan does, rows are read a block at a time.
+ * The rows last read are kept, since a search reads several columns of one
+ * row in turn.
  */
 export class SqliteRows {
-	private cached = -1;
-	private row: Row | undefined;
+	static readonly BLOCK = 64;
+	private start = 0;
+	private rows: Row[] = [];
+	private last = -2;
 
 	constructor(
-		private readonly statement: ReturnType<DatabaseSync["prepare"]>,
+		private readonly one: StatementSync,
+		private readonly block: StatementSync,
+		private readonly many: StatementSync,
 		readonly length: number,
 	) {}
 
+	/** Rows at several positions, read in one query. */
+	getEach(positions: readonly number[]): Array<Row | undefined> {
+		const rows = new Map(
+			(this.many.all(JSON.stringify(positions)) as Row[]).map((row) => [
+				row.position as number,
+				row,
+			]),
+		);
+		return positions.map((position) => rows.get(position));
+	}
+
 	get(position: number): Row | undefined {
-		if (position !== this.cached) {
-			this.row =
-				Number.isInteger(position) &&
-				position >= 0 &&
-				position < this.length
-					? (this.statement.get(position) as Row)
-					: undefined;
-			this.cached = position;
-		}
-		return this.row;
+		if (
+			!Number.isInteger(position) ||
+			position < 0 ||
+			position >= this.length
+		)
+			return undefined;
+		const sequential = position === this.last + 1;
+		this.last = position;
+		const cached = this.rows[position - this.start];
+		if (cached) return cached;
+		this.start = position;
+		this.rows = sequential
+			? (this.block.all(position) as Row[])
+			: [this.one.get(position) as Row];
+		return this.rows[0];
 	}
 
 	/** One column, decoded, read as an array. */
@@ -119,13 +151,22 @@ export class SqliteRows {
 		offset = 0,
 		length = this.length - offset,
 	): Indexed<T> {
+		const inRange = (index: number) => index >= 0 && index < length;
 		return {
 			length,
 			at: (index) => {
-				if (index < 0 || index >= length) return undefined;
+				if (!inRange(index)) return undefined;
 				const row = this.get(offset + index);
 				return row ? decode(row[name]!) : undefined;
 			},
+			atEach: (indexes) =>
+				this.getEach(
+					indexes.map((index) =>
+						Number.isInteger(index) && inRange(index)
+							? offset + index
+							: -1,
+					),
+				).map((row) => (row ? decode(row[name]!) : undefined)),
 		};
 	}
 }

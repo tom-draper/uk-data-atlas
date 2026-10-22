@@ -11,7 +11,15 @@
 export type Indexed<T> = {
 	readonly length: number;
 	at(index: number): T | undefined;
+	/** Several items at once, where reading them together is cheaper. */
+	atEach?(indexes: readonly number[]): Array<T | undefined>;
 };
+
+/** The items at several positions, read together where that is cheaper. */
+export const atEach = <T>(sorted: Indexed<T>, indexes: readonly number[]) =>
+	sorted.atEach
+		? sorted.atEach(indexes)
+		: indexes.map((index) => sorted.at(index));
 
 export const compareCodeUnits = (left: string, right: string) =>
 	left < right ? -1 : left > right ? 1 : 0;
