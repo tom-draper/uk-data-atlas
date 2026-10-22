@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { readdir, readFile, stat } from "node:fs/promises";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 
 // Two kinds of fingerprint come out of this file, so that changing one
 // dataset's loader recompiles that dataset alone.
@@ -155,6 +155,7 @@ const importClosure = async (context, files) => {
 			if (
 				seen.has(file) ||
 				file.includes("/node_modules/") ||
+				file.startsWith(join(root, "public", "data") + sep) ||
 				barredFiles.has(relative(root, file))
 			)
 				continue;
