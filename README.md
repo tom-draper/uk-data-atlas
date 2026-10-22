@@ -12,6 +12,14 @@
 
 <img width="2750" height="2076" alt="UK-Data-Atlas-12-31-2025_03_41_PM (1)" src="https://github.com/user-attachments/assets/fb52d8fa-40ac-4497-a598-335a33486d5a" />
 
+## Development builds
+
+Shared browser-safe compilers live in `packages/datasets/`. The website and API
+read raw `data/` and write their own outputs. Run `pnpm --dir services/api build`
+to build the API independently of `public/data/`. Deploy the API before running
+`pnpm precompile` and building the website. See [ARCHITECTURE.md](ARCHITECTURE.md)
+for dependencies and rebuild commands.
+
 ## Datasets
 
 <!-- sources:start -->

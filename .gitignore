@@ -76,9 +76,8 @@ next-env.d.ts
 AGENTS.md
 CLAUDE.md
 
-# API build output is built where it is served, not committed: its history
-# grew the repository with every rebuild. The website reads its committed
-# docs catalogue projection from public/data/datasets instead.
+# API build output is built where it is served and is not committed.
+# The website fetches place profiles and the docs catalogue over HTTP.
 /services/api/public/*
 
 /services/api/dist/
