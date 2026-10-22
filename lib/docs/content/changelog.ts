@@ -22,6 +22,16 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-10-22",
+		title: "Serve CSV exports gzipped",
+		surface: "679ec488e471",
+		breaking: true,
+		changes: [
+			"Each format listed by `/v1/exports` may now carry `gzipBytes`: present when the file is stored gzipped, as CSV is, giving its size as sent with `Content-Encoding: gzip`.",
+			"A CSV export is no longer served in byte ranges: a request with `Range` gets the whole file. Download it in one request instead.",
+		],
+	},
+	{
 		date: "2026-10-21",
 		title: "Serve website place and catalogue artifacts",
 		surface: "52834368e3ba",
