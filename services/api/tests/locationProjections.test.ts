@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import {
 	compileLocationProjections,
+	LocationProjectionDatabase,
 	LocationProjectionStore,
+	writeLocationProjectionDatabase,
 } from "../src/locationProjections";
 import {
 	areaLookup,
@@ -111,4 +116,85 @@ test("keeps only the most recently used member shards in memory", () => {
 	assert.equal(stats.reads, 2);
 	assert.equal(stats.loads, 4);
 	assert.equal(stats.evictions, 2);
+});
+
+test("reads each projection from its database exactly as from its shard", () => {
+	const compiled = compileLocationProjections(
+		namedLocationInventory,
+		crosswalkInventory,
+		[containmentCrosswalk],
+		areaLookup,
+	);
+	const directory = mkdtempSync(join(tmpdir(), "location-projections-"));
+	try {
+		const path = join(directory, "location-projections.sqlite");
+		writeLocationProjectionDatabase(path, compiled);
+		const database = new LocationProjectionDatabase(
+			path,
+			compiled.inventory,
+		);
+		let read = 0;
+		for (const artifact of compiled.artifacts)
+			for (const projection of artifact.projections) {
+				assert.deepEqual(
+					database.get(
+						projection.locationId,
+						projection.geography,
+						projection.boundaryRelease,
+						artifact.crosswalkId,
+					),
+					projection,
+				);
+				read += 1;
+			}
+		for (const artifact of compiled.parentArtifacts)
+			for (const projection of artifact.parentProjections) {
+				assert.deepEqual(
+					database.parents(
+						projection.locationId,
+						artifact.crosswalkId,
+					),
+					projection,
+				);
+				read += 1;
+			}
+		assert.ok(read > 0);
+		const [shard] = compiled.inventory.shards;
+		assert.ok(shard);
+		assert.equal(
+			database.get(
+				"no-such-location",
+				shard.geography,
+				shard.boundaryRelease,
+				shard.crosswalkId,
+			),
+			undefined,
+		);
+		assert.equal(
+			database.get(
+				"greater-manchester",
+				"another-geography",
+				shard.boundaryRelease,
+				shard.crosswalkId,
+			),
+			undefined,
+		);
+		assert.equal(database.stats(), undefined);
+		assert.deepEqual(
+			database.memberProjectionShards(),
+			new LocationProjectionStore(compiled.inventory, () => {
+				throw new Error("not read");
+			}).memberProjectionShards(),
+		);
+		assert.throws(
+			() =>
+				new LocationProjectionDatabase(path, {
+					...compiled.inventory,
+					contentHash: "sha256:other",
+				}),
+			/another projection inventory/,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
 });

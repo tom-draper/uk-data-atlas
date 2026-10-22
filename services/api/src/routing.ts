@@ -13,7 +13,7 @@ import type { FullDetailSource } from "./fullDetailDownloads";
 import type { GeographyResolver } from "./geographyResolver";
 import type {
 	LocationProjectionInventory,
-	LocationProjectionStore,
+	LocationProjections,
 } from "./locationProjections";
 import type { MapResources } from "./mapResourceLoader";
 import type { MapArchive } from "./mapResource/archiveReader";
@@ -46,7 +46,7 @@ export type RouteContext = {
 	validationReport?: ValidationReport;
 	namedLocationInventory?: NamedLocationInventory;
 	locationProjectionInventory?: LocationProjectionInventory;
-	locationProjectionStore?: LocationProjectionStore;
+	locationProjectionStore?: LocationProjections;
 	dataCatalog?: DataCatalog;
 	/** Versioned terrain product definitions and their honest availability. */
 	terrainCatalogue?: TerrainCatalogue;
