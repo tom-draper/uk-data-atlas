@@ -1,8 +1,10 @@
 /**
- * Pre-compiles all CSV datasets into compact JSON files served to the browser.
- * Eliminates PapaParse from the client bundle and removes main-thread CSV parsing.
+ * Builds the browser's data in public/data: boundaries, the gazetteer, region
+ * chunks, and a copy of each dataset compile-datasets.mts left in
+ * compiled/datasets. Eliminates PapaParse from the client bundle and removes
+ * main-thread CSV parsing.
  *
- * Run via: pnpm precompile
+ * Run via: pnpm precompile (which compiles the datasets first)
  * Run before pnpm build. pnpm dev regenerates stale local output.
  *
  * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
@@ -22,19 +24,15 @@ import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { compileBoundaryTiles } from "./compile-boundary-tiles.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
+import { compileCatalogueDatasets } from "./compile-datasets.mts";
 import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
 } from "./precompile-selection";
 import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
-import {
-	fileSnapshots,
-	loadReuseContext,
-	NO_REUSE,
-} from "./precompile/cache.mts";
-import { compileDataset } from "./precompile/compileDataset.mts";
-import { compileDatasets } from "./precompile/datasetPool.mts";
+import { fileSnapshots, loadReuseContext } from "./precompile/cache.mts";
+import { publishDatasets } from "./precompile/publishDatasets.mts";
 import { chunksSize, out } from "./precompile/output.mts";
 import { atlasLookupPath } from "./atlas-lookups";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./precompile/paths.mts";
@@ -91,18 +89,15 @@ async function compileSelected(names: readonly string[]) {
 		);
 	}
 
-	// Nothing is reused here, but each entry still records what compiled it.
+	await compileCatalogueDatasets(names);
 	const { datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const compiledDatasets: CompiledDatasets = new Map();
-	const results: Awaited<ReturnType<typeof compileDataset>>[] = [];
-	for (const definition of selected)
-		results.push(
-			await compileDataset(definition, compiledDatasets, {
-				...NO_REUSE,
-				datasetFingerprints,
-			}),
-		);
+	const results = await publishDatasets(
+		selected,
+		compiledDatasets,
+		datasetFingerprints,
+	);
 
 	const needsRegionChunks = selected.some(
 		(definition) => definition.payload?.regionChunks?.kind === "regional",
@@ -169,16 +164,20 @@ async function main() {
 		(dataset) => dataset.meta.kind === "lookup",
 	);
 	console.log(
-		`Pre-compiling ${described.length - boundaries.length - lookups.length} datasets ` +
+		`Publishing ${described.length - boundaries.length - lookups.length} datasets ` +
 			`(data/ also holds ${boundaries.length} boundary releases and ${lookups.length} lookup tables)...`,
 	);
 	await verifyDescribedFiles(described);
 
 	const compiledDatasets: CompiledDatasets = new Map();
 	const { compilerFingerprint, ...reuse } = await loadReuseContext();
+	if (!reuse.canReuse)
+		console.log(
+			"Pipeline inputs changed; rebuilding the gazetteer, road safety and region chunks.",
+		);
 
-	// The gazetteer is built on this thread while the datasets compile on
-	// theirs. Neither reads what the other writes.
+	// The gazetteer is built while the compiled datasets are copied in.
+	// Neither reads what the other writes.
 	const atlasAssets = await compileAtlasAssets(reuse);
 	const { gazetteerCore, boundaryMappings, matchIndex } = atlasAssets;
 	const roadSafety = compileRoadSafety(reuse, gazetteerCore);
@@ -187,10 +186,10 @@ async function main() {
 	// any other. Until then a rejection is not unhandled, only unread.
 	for (const artifact of artifacts) artifact.catch(() => {});
 
-	const chartResults = await compileDatasets(
+	const chartResults = await publishDatasets(
 		CATALOGUE_DATASET_DEFINITIONS,
 		compiledDatasets,
-		reuse,
+		reuse.datasetFingerprints,
 	);
 
 	const failures = (await Promise.allSettled(artifacts)).filter(

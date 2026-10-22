@@ -10,7 +10,7 @@ import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
 import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
-import { OUT_DIR, SOURCE_DATA } from "./paths.mts";
+import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";
 import { createTrackedReader } from "./trackedReader.mts";
 import type {
 	CatalogueDefinition,
@@ -33,7 +33,10 @@ export const readCompiledFromDisk = (
 			decodeCompactPayload(
 				JSON.parse(
 					await readFile(
-						join(OUT_DIR, `${definition.precompiledFile}.json`),
+						join(
+							COMPILED_DATASETS,
+							`${definition.precompiledFile}.json`,
+						),
 						"utf8",
 					),
 				),
@@ -70,7 +73,7 @@ export async function reuseDataset(
 }
 
 /**
- * Compiles one dataset into its browser JSON, or reuses the file an earlier
+ * Compiles one dataset into compiled/datasets, or reuses the file an earlier
  * run left when none of its inputs have changed. Returns the manifest entry.
  */
 export async function compileDataset(
@@ -119,7 +122,7 @@ export async function compileStaleDataset(
 		if (!missingRawSource) throw error;
 
 		const compiledPath = join(
-			OUT_DIR,
+			COMPILED_DATASETS,
 			`${definition.precompiledFile}.json`,
 		);
 		if (!existing || existing.output !== definition.precompiledFile)
@@ -169,6 +172,7 @@ export async function compileStaleDataset(
 	const output = await out(
 		definition.precompiledFile,
 		encodeCompactPayload(data),
+		COMPILED_DATASETS,
 	);
 	logArtifact("dataset", `${definition.precompiledFile}.json`, [
 		"compiled",

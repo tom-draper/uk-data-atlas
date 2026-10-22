@@ -9,9 +9,10 @@ caller-supplied `DatasetReader`. The caller reads files and passes their
 contents through that reader. The package does not import Node APIs or read
 files. Callers own caches, worker pools, validation and output writing.
 
-The website orchestrates compilation in `scripts/precompile/`. The API invokes
-`scripts/build-api-datasets.mts` through `pnpm --dir services/api build:datasets`.
-Both use the file adapters under `scripts/precompile/sources/`.
+`pnpm datasets:compile` (`scripts/compile-datasets.mts`) compiles every
+definition once into `compiled/datasets/`, with the cache and worker pool in
+`scripts/precompile/`. The website precompile and the API's `build:datasets`
+both copy their datasets from there. See `compiled/README.md`.
 
 Run `pnpm --filter @uk-data-atlas/datasets typecheck` for the package type check.
 The root Vitest unit project includes package tests and checks that shared

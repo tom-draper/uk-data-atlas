@@ -11,13 +11,17 @@ const writeAtomically = async (path: string, contents: string) => {
 	await rename(temporaryPath, path);
 };
 
-/** Writes `name`.json into the browser data folder and describes the result. */
+/**
+ * Writes `name`.json into `directory`, the browser data folder unless given,
+ * and describes the result.
+ */
 export const out = async (
 	name: string,
 	data: unknown,
+	directory = OUT_DIR,
 ): Promise<Required<CompiledOutput>> => {
 	const json = JSON.stringify(data);
-	const path = join(OUT_DIR, `${name}.json`);
+	const path = join(directory, `${name}.json`);
 	await writeAtomically(path, json);
 	return {
 		bytes: Buffer.byteLength(json, "utf8"),
