@@ -14,11 +14,11 @@ compiled/
     <output>.json             one compiled payload per entry
   │
   ├──▶ public/data/datasets/            website (copied by pnpm precompile)
-  └──▶ services/api/public/datasets/    API (copied by build:datasets)
+  └──▶ atlas.sqlite                   API (read directly)
 ```
 
-Neither product writes here. Datasets are still copied into each product.
-The API reads the terrain catalogue directly from `compiled/atlas.sqlite`.
+Neither product writes here. The API reads catalogue datasets and the terrain
+catalogue from `compiled/atlas.sqlite`. The website still copies datasets.
 
 ## datasets/
 
@@ -47,24 +47,40 @@ datasets.
 
 ## atlas.sqlite
 
-The `atlas-sqlite` stage depends on `terrain-catalogue` and writes this database
+The `atlas-sqlite` stage depends on `terrain-catalogue` and `datasets` and writes this database
 with the existing `node:sqlite` library. It replaces the whole database through
 a temporary file and atomic rename. Every run writes every table, so the stage
 cache detects its output without a retained-file `outputs` declaration.
 Future tables must join this writer before their loaders migrate.
 
-The database currently contains two tables:
+The database contains these tables:
 
-| Table      | Column    | Type            | Key and meaning                                                                                                                    |
-| ---------- | --------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `meta`     | `key`     | `TEXT`          | Primary key. Currently only `schemaVersion`.                                                                                       |
-| `meta`     | `value`   | `TEXT NOT NULL` | Database schema version, currently `"1"`.                                                                                          |
-| `payloads` | `id`      | `TEXT NOT NULL` | Primary key. Currently only `terrain-catalogue`.                                                                                   |
-| `payloads` | `payload` | `TEXT NOT NULL` | Complete JSON manifest, including its own `schemaVersion`, `contentHash`, `publicationRequirements`, and ordered `products` array. |
+| Table      | Column        | Type                   | Key and meaning                                                                  |
+| ---------- | ------------- | ---------------------- | -------------------------------------------------------------------------------- |
+| `meta`     | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                     |
+| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"1"`.                                        |
+| `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>`.     |
+| `payloads` | `payload`     | `TEXT NOT NULL`        | Exact UTF-8 JSON text from its compiled input, preserving bytes and array order. |
+| `datasets` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                             |
+| `datasets` | `output`      | `TEXT NOT NULL UNIQUE` | Compiled output name, without `.json`.                                           |
+| `datasets` | `source`      | `TEXT NOT NULL`        | JSON source metadata from the manifest.                                          |
+| `datasets` | `contract`    | `TEXT NOT NULL`        | JSON dataset contract.                                                           |
+| `datasets` | `summary`     | `TEXT NOT NULL`        | JSON compilation summary.                                                        |
+| `datasets` | `fingerprint` | `TEXT NOT NULL`        | Dataset compiler and input fingerprint.                                          |
+| `datasets` | `sha256`      | `TEXT NOT NULL`        | SHA-256 of the exact uncompressed payload bytes.                                 |
+| `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                               |
+| `datasets` | `payloadId`   | `TEXT NOT NULL`        | Foreign key to `payloads.id`, `dataset:<output>`.                                |
 
-Both tables use `WITHOUT ROWID`. There are no foreign keys or relationships
-between tables yet. Product ids and `dependsOn` references remain inside the
-terrain payload, with their existing JSON structure and order.
+All tables use `WITHOUT ROWID`. Each dataset has one payload. The complete
+manifest is also retained as a payload to preserve its version, input provenance
+and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
+the terrain catalogue. The writer validates every dataset's hash and length.
+SQLite enforces the payload foreign key during the build.
+
+The atomic writer rebuilds all tables, reading one dataset at a time. It avoids
+retaining all payloads in memory. Incremental row updates would require copying
+the database before mutation to retain atomic publication, so they are deferred.
+The stage cache skips the whole write when inputs are unchanged.
 
 `readTerrainCatalogue(apiRoot)` opens `../../compiled/atlas.sqlite` relative to
 the API root in read-only mode, reads the `terrain-catalogue` row, validates its
@@ -75,12 +91,15 @@ The `documents` stage depends on `atlas-sqlite` because it loads API catalogues.
 
 `services/api/public/terrain-catalogue.json` remains a build intermediate for
 release fingerprints and immutable release snapshots. The API terrain loader
-no longer reads it. Other API loaders still read their existing files.
+no longer reads it. The catalogue compiler and atlas pages read dataset payloads from SQLite.
+Gazetteer core and boundary assets remain API build intermediates under
+`services/api/public/source-data/`. Legacy provenance artifact labels in API
+responses remain unchanged for byte compatibility.
 
 ## Planned
 
 This folder is becoming the release both products read from directly:
-`atlas.sqlite` already holds the terrain catalogue payload. Areas, crosswalks,
-datasets, and other ready-to-send payloads will follow, with
+`atlas.sqlite` already holds catalogue datasets and the terrain catalogue. Areas, crosswalks,
+and other ready-to-send payloads will follow, with
 `tiles/*.pmtiles` for boundaries. As each part moves here, its product copies go
 away and this README gains its tables.

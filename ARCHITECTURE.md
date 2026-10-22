@@ -70,13 +70,13 @@ missing place.
 
 The API builds from raw `data/` without `public/data/`. The shared `datasets`
 stage compiles every catalogue dataset once into `compiled/datasets/` (see
-[compiled/README.md](compiled/README.md)). The API's `api-datasets` stage copies
-them into `services/api/public/datasets/`, beside the gazetteer it compiles, and
-writes boundary assets into `services/api/public/source-data/boundaries/`. The
-website precompile copies the same files into `public/data/datasets/`. The data catalogue, named
-locations and atlas pages consume these API-owned inputs. File reading and
-output writing stay in the build scripts; the package only transforms supplied
-contents.
+[compiled/README.md](compiled/README.md)). The `atlas-sqlite` stage stores their
+metadata and exact payload bytes in `compiled/atlas.sqlite`. The API catalogue
+compiler and atlas pages read it directly through the server-only reader in
+`shared/atlasSqlite.ts`. The `api-datasets` stage only builds
+gazetteer core and boundary assets under `services/api/public/source-data/`.
+Named locations consume that gazetteer. Website precompile still copies the
+catalogue files into `public/data/datasets/`.
 
 The atlas's containment and lineage lookups (`area-lineage`,
 `boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
@@ -149,7 +149,8 @@ build of either runs only `download`. A code change reruns every stage.
 and `--no-cache` rerun the stages they select regardless.
 
 The `atlas-sqlite` stage writes the terrain catalogue to `compiled/atlas.sqlite`,
-which the API reads directly. Other API loaders still read their JSON outputs.
+alongside the catalogue datasets, which the API reads directly. Other API
+loaders still read their JSON outputs.
 See [compiled/README.md](compiled/README.md) for the database schema.
 
 ## Rebuilding after a change

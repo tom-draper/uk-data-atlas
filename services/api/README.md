@@ -31,9 +31,10 @@ The dataset JSON and browser-facing TopoJSON are internal build products;
 their shape and filenames must remain free to change.
 
 The API builds directly from raw `data/` without website output.
-`pnpm build:datasets` compiles its dataset inputs and gazetteer into
-`services/api/public/datasets/` and boundary assets into
-`services/api/public/source-data/boundaries/`. Both directories are gitignored.
+`pnpm datasets:compile` at the repository root compiles catalogue datasets.
+The `atlas-sqlite` stage stores them in `compiled/atlas.sqlite` for the API to read.
+`pnpm build:datasets` builds gazetteer core and boundary assets under
+`services/api/public/source-data/`. These outputs are gitignored.
 After changing shared dataset compilers, run `pnpm build:data --from datasets`
 from `services/api` to rebuild every affected stage.
 
