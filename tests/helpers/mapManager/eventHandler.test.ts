@@ -12,6 +12,38 @@ function createMap() {
 }
 
 describe("EventHandler", () => {
+	it("selects a tile by its code and name and addresses its source layer", () => {
+		const map = createMap();
+		map.getSource.mockReturnValue({ type: "vector" });
+		const onAreaClick = vi.fn();
+		const handler = new EventHandler(map as any, {
+			onAreaClick,
+			onLocationChange: () => {},
+		});
+		handler.setupEventHandlers({ E001: { value: 10 } }, "WD24CD");
+		const click = map.on.mock.calls.find(
+			([event]) => event === "click",
+		)?.[2] as (event: unknown) => void;
+		click({
+			features: [
+				{ id: 12, properties: { code: "E001", name: "Test ward" } },
+			],
+		});
+		expect(onAreaClick).toHaveBeenCalledWith(
+			expect.objectContaining({
+				code: "E001",
+				name: "Test ward",
+				type: "ward",
+				boundaryYear: 2024,
+				data: { value: 10 },
+			}),
+		);
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards", sourceLayer: "boundaries", id: 12 },
+			{ hover: true },
+		);
+	});
+
 	it("keeps boundary handlers attached for repeated updates of the same dataset", () => {
 		const map = createMap();
 		const handler = new EventHandler(map as any, {

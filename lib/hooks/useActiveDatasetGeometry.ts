@@ -8,6 +8,7 @@ import { getProp } from "../data/boundaries/properties";
 import type { ConstituencyLadOverlaps } from "../data/boundaries/constituencyLadOverlaps";
 import { getChartDatasetDefinition } from "../datasets";
 import { filterGeometryToDatasetCoverage } from "../helpers/datasetCoverage";
+import { boundaryTiles } from "../data/boundaries/tiles";
 import { useActiveGeometry } from "./useActiveGeometry";
 
 type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
@@ -34,7 +35,7 @@ const isDatasetWithBoundaryData = (
  * geometry. The map still shows areas in a declared country coverage even when
  * that particular release has no records for them.
  */
-export const prepareActiveDatasetGeometry = (
+const filterActiveDatasetGeometry = (
 	rawGeometry: BoundaryGeojson | null,
 	activeDataset: Dataset | null,
 ): BoundaryGeojson | null => {
@@ -89,6 +90,16 @@ export const prepareActiveDatasetGeometry = (
 		? coverageGeometry
 		: { ...coverageGeometry, features };
 };
+
+export function prepareActiveDatasetGeometry(
+	raw: BoundaryGeojson | null,
+	dataset: Dataset | null,
+): BoundaryGeojson | null {
+	const prepared = filterActiveDatasetGeometry(raw, dataset);
+	const tiles = raw && boundaryTiles.get(raw);
+	if (prepared && tiles) boundaryTiles.set(prepared, tiles);
+	return prepared;
+}
 
 /** Fetches the active boundary vintage and prepares it for map rendering. */
 export const useActiveDatasetGeometry = (

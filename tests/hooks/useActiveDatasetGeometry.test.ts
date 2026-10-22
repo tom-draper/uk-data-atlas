@@ -1,3 +1,4 @@
+import { boundaryTiles } from "@/lib/data/boundaries/tiles";
 import { describe, expect, it } from "vitest";
 import { prepareActiveDatasetGeometry } from "@/lib/hooks/useActiveDatasetGeometry";
 
@@ -41,6 +42,24 @@ const codesOf = (prepared: typeof geometry) =>
 	);
 
 describe("active dataset geometry preparation", () => {
+	it("preserves tile source and full-release ids when coverage filters the collection", () => {
+		const tiles = {
+			href: "/data/boundaries/lsoa/test/boundaries.pmtiles",
+			minZoom: 0,
+			maxZoom: 12,
+			codeKey: "LSOA11CD" as const,
+			ids: new Map([
+				["E01000001", 1],
+				["S01000001", 2],
+				["W01000001", 3],
+			]),
+		};
+		boundaryTiles.set(geometry, tiles);
+		const prepared = prepareActiveDatasetGeometry(geometry, dataset);
+		expect(prepared).not.toBe(geometry);
+		expect(prepared && boundaryTiles.get(prepared)).toBe(tiles);
+	});
+
 	it("filters boundary features to the active dataset's record keys", () => {
 		const prepared = prepareActiveDatasetGeometry(geometry, dataset);
 

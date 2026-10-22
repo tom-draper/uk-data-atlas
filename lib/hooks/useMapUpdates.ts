@@ -1,3 +1,4 @@
+import { boundaryTiles } from "../data/boundaries/tiles";
 import { useEffect } from "react";
 import { ActiveViz, BoundaryGeojson, Dataset } from "@lib/types";
 import type { MapManager } from "../helpers/mapManager";
@@ -148,6 +149,10 @@ export function useMapUpdates({
 		// one always wins; skip it instead.
 		if (activeDataset.type === "custom" && activeDataset.kind === "points")
 			return;
+
+		mapManager.layerManager.setBoundaryTiles(
+			boundaryTiles.get(geojson) ?? null,
+		);
 
 		const performUpdate = () => {
 			if (isChartDataset(activeDataset)) {

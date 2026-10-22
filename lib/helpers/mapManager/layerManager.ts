@@ -1,3 +1,4 @@
+import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapInstance } from "@/lib/types/mapInstance";
@@ -48,6 +49,10 @@ export class LayerManager {
 				this.lines.updateVector(layer);
 				return;
 		}
+	}
+
+	setBoundaryTiles(tiles: BoundaryTiles | null): void {
+		this.boundaries.setTiles(tiles);
 	}
 
 	paintBoundaries(

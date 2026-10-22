@@ -4,12 +4,12 @@ import type { BoundaryGeojson } from "@lib/types";
 import {
 	BOUNDARY_CATALOG,
 	type BoundaryType,
-	fetchBoundaryFile,
 } from "../data/boundaries/boundaries";
 import {
 	constituencyReleaseIdForYear,
 	type ConstituencyLadOverlaps,
 } from "../data/boundaries/constituencyLadOverlaps";
+import { fetchMapBoundaries } from "../data/boundaries/tiles";
 import type { Crosswalk } from "../data/gazetteer/types";
 
 type GeometryState = {
@@ -45,13 +45,9 @@ export function geometryForRequest(
 }
 
 /**
- * The coordinates of the one vintage being drawn.
- *
- * Everything else works from the properties sidecars, which carry no geometry,
- * so the map fetches what it needs here instead of the whole catalogue being
- * held decoded. The file itself is cached — by the browser, and by a small
- * most-recently-used cache of decoded geometry — so moving back to a year just
- * visited does not pay for it again.
+ * Loads the active release's properties for tiles, or its filtered geometry
+ * when no compiled tiles are available. Both paths retain the same area
+ * attributes for dataset rendering and interaction.
  */
 export function useActiveGeometry(
 	type: BoundaryType | undefined,
@@ -104,7 +100,7 @@ export function useActiveGeometry(
 
 		let active = true;
 		setState((previous) => ({ ...previous, isLoading: true, error: null }));
-		fetchBoundaryFile(path, {
+		fetchMapBoundaries(path, {
 			type,
 			location: location ?? null,
 			relations: {
