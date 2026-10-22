@@ -2193,9 +2193,8 @@ Metrics label a request by the OpenAPI template it reached, such as
 `unmatched`, so a scan of made-up paths cannot grow the series. Besides
 request counts, durations and bytes, the server exports rate-limit refusals,
 unhandled errors, process memory, event loop delay, the geometry cache's
-area reads, release loads, evictions and load time, and the same for the
-location projection cache, and the response cache's size, hits, misses and
-evictions. Handlers run synchronously, so event
+area reads, release loads, evictions and load time, and the response cache's
+size, hits, misses and evictions. Handlers run synchronously, so event
 loop delay is the first sign of a slow request: typically a geometry release
 being read for the first time.
 
@@ -2347,11 +2346,14 @@ line up.
     too small for the traffic. Source-based build tools can still create an
     `AreaGeometryCache` without a store directory.
 
-- **Location projection cache:** the 8 most recently read crosswalk shards
-  of `public/location-projections`. Most are under a megabyte, but the LSOA
-  shards are some 13 MB on disk and 20 MB of heap once read, so the cache
-  holds at most some 180 MB. Parent projection shards, a few megabytes in
-  all, are kept without a limit.
+- **Location projections:** read one at a time from
+  `public/location-projections.sqlite`, which
+  `pnpm --dir services/api build:location-projections` writes beside the JSON
+  shards the release pins. Each projection is deflated against a dictionary
+  drawn from its shard, so a read decompresses a few kilobytes rather than
+  parsing a shard of up to 13 MB. Nothing is cached but each shard's 32 KB
+  dictionary, so the server no longer exports location projection cache
+  metrics.
 - **Shutdown:** on `SIGTERM` the server reports not ready, stops accepting
   connections, finishes what it holds, and closes whatever is left after the
   grace period.
