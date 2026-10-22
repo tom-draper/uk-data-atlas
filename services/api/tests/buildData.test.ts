@@ -131,6 +131,25 @@ test("the website target ends with its own datasets, after copying the API's pag
 	]);
 });
 
+test("the website target skips the API's postcode, search, document and release stages", (context) => {
+	const build = fixture(context);
+	assert.equal(build.run(["--target", "website"]).status, 0);
+	const commands = build.commands().map((args) => args.join(" "));
+	for (const stage of [
+		"postcode-index",
+		"postcode-areas",
+		"area-search-index",
+		"place-index",
+		"documents",
+		"atlas-release",
+		"validation-report",
+	])
+		assert.ok(!commands.includes(`build:${stage}`), stage);
+	assert.ok(commands.includes("build:atlas-lookups"));
+	assert.ok(commands.includes("build:atlas-pages"));
+	assert.equal(commands.at(-1), "--dir ../.. precompile:generate");
+});
+
 test("dataset rebuild refreshes every consumer using existing upstream artifacts", (context) => {
 	const build = fixture(context);
 	const result = build.run(["--target", "api", "--from", "datasets"]);
@@ -189,9 +208,6 @@ test("documents rebuild pins the final manifest without rerunning the initial ma
 	assert.deepEqual(build.commands(), [
 		["build:documents"],
 		["build:atlas-release"],
-		["build:atlas-pages"],
-		["--dir", "../..", "atlas-data:copy"],
-		["--dir", "../..", "precompile:generate"],
 	]);
 });
 
@@ -207,7 +223,7 @@ test("a plan shows the same selected stages and dependencies without executing t
 	assert.equal(result.status, 0, result.stderr);
 	assert.equal(
 		result.stdout,
-		"operations: pnpm build:operations [depends on: none]\ndocuments: pnpm build:documents [depends on: atlas-release-initial, operations, geometry-store]\natlas-release: pnpm build:atlas-release [depends on: atlas-release-initial, documents, atlas-lookups]\natlas-pages: pnpm build:atlas-pages [depends on: atlas-release, geometry-store, datasets]\n",
+		"operations: pnpm build:operations [depends on: none]\ndocuments: pnpm build:documents [depends on: atlas-release-initial, operations, geometry-store]\natlas-release: pnpm build:atlas-release [depends on: atlas-release-initial, documents, atlas-lookups]\n",
 	);
 	assert.deepEqual(build.commands(), []);
 	assert.equal(
@@ -218,7 +234,6 @@ test("a plan shows the same selected stages and dependencies without executing t
 		["build:operations"],
 		["build:documents"],
 		["build:atlas-release"],
-		["build:atlas-pages"],
 	]);
 });
 

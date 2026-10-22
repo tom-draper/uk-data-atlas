@@ -128,7 +128,20 @@ const apiStages = [
 		"documents",
 		"atlas-lookups",
 	]),
-	stage("atlas-pages", ["atlas-release", "geometry-store", "datasets"]),
+	// Place pages read areas, crosswalks, geometry and named locations; the
+	// docs catalogue reads the API's catalogue and map resource manifests.
+	stage("atlas-pages", [
+		"datasets",
+		"boundary-registry",
+		"geometry-store",
+		"named-locations",
+		"location-projections",
+		"relationship-paths",
+		"data-catalog",
+		"export-manifest",
+		"geography-inventory",
+		"map-resource",
+	]),
 ];
 
 // The website's own data: it copies the API's lookups and pages from disk,

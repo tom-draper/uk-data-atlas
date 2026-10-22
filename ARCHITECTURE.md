@@ -46,8 +46,9 @@ public/data/            the atlas's compiled data, served by the website
 headlines and ranked areas, compiled by `pnpm seo:build` from the datasets.
 Rankings read ward areas from the website's copy of the `ward-areas` page.
 
-The API builds website artifacts with `pnpm --dir services/api build:atlas-pages`,
-the final stage of its data build. It stores gzipped files and a manifest under
+The API builds website artifacts with `pnpm --dir services/api build:atlas-pages`.
+That stage reads only the areas, crosswalks, geometry, named locations and
+catalogue manifests it uses, not the API's release manifest. It stores gzipped files and a manifest under
 `services/api/public/atlas-pages/` and `atlas-pages.json`, and serves them at
 `/v1/atlas-pages/{page-id}.json`. `pnpm atlas-data:copy` copies them to
 `public/data/atlas-pages/{page-id}.json` for the website:
