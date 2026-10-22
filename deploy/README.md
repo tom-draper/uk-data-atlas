@@ -36,7 +36,7 @@ precompile, then website build. Run these steps serially.
 The API build also checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/` and the terrain catalogue
 payload to `compiled/atlas.sqlite`. Keep `compiled/atlas.sqlite` under the repository
-root when deploying the API, which reads it in read-only mode. `pnpm precompile` checks
+root when deploying either server. Both read it in read-only mode. `pnpm precompile` checks
 the raw download, copies the atlas lookups and pages from the API's build
 output with `pnpm atlas-data:copy`, then writes browser data to `public/data/`.
 Neither output directory is tracked in Git.
@@ -83,7 +83,7 @@ stage pins them in the final manifest. Both manifest stages use the existing
 The `datasets` stage runs after `download` and compiles every catalogue dataset
 once into `compiled/datasets/`, for both products (see `compiled/README.md`).
 `atlas-sqlite` stores catalogue payloads in `compiled/atlas.sqlite` for the
-API catalogue compiler and atlas pages. `api-datasets` builds gazetteer core
+API catalogue compiler, atlas pages and Next.js dataset route. `api-datasets` builds gazetteer core
 and boundary assets under `services/api/public/source-data/` for named
 locations and atlas pages. The API build does not need website output in
 `public/data/`.

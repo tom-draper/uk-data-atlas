@@ -13,12 +13,14 @@ compiled/
     dataset-manifest.json     one entry per catalogue dataset
     <output>.json             one compiled payload per entry
   │
-  ├──▶ public/data/datasets/            website (copied by pnpm precompile)
-  └──▶ atlas.sqlite                   API (read directly)
+  └──▶ atlas.sqlite
+         ├──▶ API server
+         └──▶ Next.js server ──▶ hash-versioned JSON ──▶ browser
 ```
 
-Neither product writes here. The API reads catalogue datasets and the terrain
-catalogue from `compiled/atlas.sqlite`. The website still copies datasets.
+Neither product writes here. The data pipeline writes this release. Both servers
+read catalogue datasets from `compiled/atlas.sqlite` on disk. The browser reads
+JSON from the Next.js server and never opens SQLite or fetches from the API.
 
 ## datasets/
 
@@ -91,10 +93,27 @@ The `documents` stage depends on `atlas-sqlite` because it loads API catalogues.
 
 `services/api/public/terrain-catalogue.json` remains a build intermediate for
 release fingerprints and immutable release snapshots. The API terrain loader
-no longer reads it. The catalogue compiler and atlas pages read dataset payloads from SQLite.
+no longer reads it. The API catalogue compiler, API atlas pages and website SEO compilers read
+dataset payloads from SQLite.
 Gazetteer core and boundary assets remain API build intermediates under
 `services/api/public/source-data/`. Legacy provenance artifact labels in API
 responses remain unchanged for byte compatibility.
+
+The Next.js atlas pages pass a map of output names to hash-versioned URLs into
+the client. `GET /data/catalogue/<sha256>/<output>.json` joins `datasets.payloadId`
+to `payloads.id`, matching both output and hash before returning the exact JSON
+with `Content-Type: application/json; charset=utf-8` and
+`Cache-Control: public, max-age=31536000, immutable`. The route supplies gzip
+compression when the client accepts it, with `Vary: Accept-Encoding`. Missing outputs and stale or invalid
+hashes return 404 with `Cache-Control: no-store`, never a different payload at
+an old URL. A database deployment can therefore invalidate uncached old URLs;
+pages and the compiled release must deploy together.
+
+Website precompile still reads `compiled/datasets/` to cut regional chunks. It
+does not copy catalogue payloads into `public/data/datasets/`. That directory
+still holds generated gazetteer, road-safety, regional chunk and SEO assets,
+plus the website build manifest. `pnpm precompile:generate` and
+`pnpm precompile:only` refresh SQLite after compiling datasets.
 
 ## Planned
 

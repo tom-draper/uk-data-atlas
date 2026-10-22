@@ -11,8 +11,9 @@ files. Callers own caches, worker pools, validation and output writing.
 
 `pnpm datasets:compile` (`scripts/compile-datasets.mts`) compiles every
 definition once into `compiled/datasets/`, with the cache and worker pool in
-`scripts/precompile/`. The website precompile copies datasets from there.
-The `atlas-sqlite` stage stores them in `compiled/atlas.sqlite` for the API. See `compiled/README.md`.
+`scripts/precompile/`. The website precompile reads these intermediates to cut
+regional chunks. The `atlas-sqlite` stage stores the catalogue payloads in
+`compiled/atlas.sqlite` for both servers to read. See `compiled/README.md`.
 
 Run `pnpm --filter @uk-data-atlas/datasets typecheck` for the package type check.
 The root Vitest unit project includes package tests and checks that shared
