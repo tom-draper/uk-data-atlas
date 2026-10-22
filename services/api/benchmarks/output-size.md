@@ -7,19 +7,19 @@ brief, so the numbers below are for this build.
 
 ## Where the bytes are
 
-| Directory | Size | Read by the server | Compresses (gzip) |
-| --- | ---: | --- | ---: |
-| `map-resources/` Parquet, 4 tiers | 2,156 MB | streamed from disk | already gzip pages |
-| `map-resources/` GeoJSON `.gz`, 4 tiers | 1,102 MB | streamed from disk | already gzip |
-| `map-resources/` PMTiles | 868 MB | tile by tile | n/a |
-| `geometry-store/*.bin` | 1,400 MB | per area, by byte range | 2.6x (zstd-3) |
-| `postcode-areas/` | 633 MB | one district shard per request | 5x |
-| `exports/` CSV | 537 MB | streamed raw, never compressed | 20x |
-| `crosswalks/` | 375 MB | whole file parsed, LRU 64 MB | 12x (35% is whitespace) |
-| `location-projections/` | 254 MB | whole shard parsed, LRU 8 shards | 12x (34% whitespace) |
-| `documents/` | 105 MB | served at `/v1/documents/*` | 11x |
-| `place-index.json` | 53 MB | whole file parsed on first search | |
-| `named-locations.json` | 84 MB | not at runtime (metadata file is used); hashed into the release | |
+| Directory                               |     Size | Read by the server                                              |       Compresses (gzip) |
+| --------------------------------------- | -------: | --------------------------------------------------------------- | ----------------------: |
+| `map-resources/` Parquet, 4 tiers       | 2,156 MB | streamed from disk                                              |      already gzip pages |
+| `map-resources/` GeoJSON `.gz`, 4 tiers | 1,102 MB | streamed from disk                                              |            already gzip |
+| `map-resources/` PMTiles                |   868 MB | tile by tile                                                    |                     n/a |
+| `geometry-store/*.bin`                  | 1,400 MB | per area, by byte range                                         |           2.6x (zstd-3) |
+| `postcode-areas/`                       |   633 MB | one district shard per request                                  |                      5x |
+| `exports/` CSV                          |   537 MB | streamed raw, never compressed                                  |                     20x |
+| `crosswalks/`                           |   375 MB | whole file parsed, LRU 64 MB                                    | 12x (35% is whitespace) |
+| `location-projections/`                 |   254 MB | whole shard parsed, LRU 8 shards                                |    12x (34% whitespace) |
+| `documents/`                            |   105 MB | served at `/v1/documents/*`                                     |                     11x |
+| `place-index.json`                      |    53 MB | whole file parsed on first search                               |                         |
+| `named-locations.json`                  |    84 MB | not at runtime (metadata file is used); hashed into the release |                         |
 
 Per tier, Parquet vs gzipped GeoJSON: full 983 / 489 MB, high 768 / 391,
 medium 323 / 175, low 80 / 45. The Parquet is the larger copy, because it
@@ -51,13 +51,13 @@ stores full-precision float64 WKB, which compresses poorly. GeoJSON rounds to
    projections are already sharded and loaded lazily. The costs are first-hit
    parses:
 
-   | First request | Time | RSS added |
-   | --- | ---: | ---: |
-   | Place search (`place-index.json`, 53 MB) | 0.5 to 1.3 s | about 300 MB, kept |
-   | Largest crosswalk (38 MB) | 0.4 to 1.1 s | about 145 MB |
-   | Largest location projection shard (19 MB) | 0.6 to 1.9 s | about 95 MB, up to 8 cached |
+    | First request                             |         Time |                   RSS added |
+    | ----------------------------------------- | -----------: | --------------------------: |
+    | Place search (`place-index.json`, 53 MB)  | 0.5 to 1.3 s |          about 300 MB, kept |
+    | Largest crosswalk (38 MB)                 | 0.4 to 1.1 s |                about 145 MB |
+    | Largest location projection shard (19 MB) | 0.6 to 1.9 s | about 95 MB, up to 8 cached |
 
-   Per worker, so doubled with the default 2 workers.
+    Per worker, so doubled with the default 2 workers.
 
 Startup: 0.64 s and 308 MB RSS warm; 13.7 s cold, nearly all of it reading
 the geometry store's tables from disk. Warm responses for small routes are
@@ -79,24 +79,24 @@ Larger, to agree first:
 - **D. Compress geometry store records** (zstd per area, Node built-in).
   About -0.8 GB and less cold-start I/O. Adds a small decompress per area.
 - **E. Map-resource downloads.** Pick one:
-  - E1: generate full-tier downloads from the geometry store on first
-    request into a writable cache volume. About -1.47 GB; first download of
-    a big release takes seconds; needs a new volume in `compose.yaml`.
-  - E2: drop one tier as a documented contract change. `high` costs 1.16 GB
-    and is 78% of `full`'s size.
-  - E3: leave as is.
+    - E1: generate full-tier downloads from the geometry store on first
+      request into a writable cache volume. About -1.47 GB; first download of
+      a big release takes seconds; needs a new volume in `compose.yaml`.
+    - E2: drop one tier as a documented contract change. `high` costs 1.16 GB
+      and is 78% of `full`'s size.
+    - E3: leave as is.
 
 ## Results
 
 Measured the same way, one worker, warm cache.
 
-| Change | Disk before | Disk after |
-| --- | ---: | ---: |
-| A. Export CSVs gzipped (`exports/`) | 531 MB | 38 MB |
-| B. Crosswalks | 375 MB | 24 MB |
-| B. Location projections (with parent shards) | 258 MB | 16 MB |
-| B. Postcode areas | 633 MB | 108 MB |
-| B. Postcode shards | 99 MB | 23 MB |
+| Change                                       | Disk before | Disk after |
+| -------------------------------------------- | ----------: | ---------: |
+| A. Export CSVs gzipped (`exports/`)          |      531 MB |      38 MB |
+| B. Crosswalks                                |      375 MB |      24 MB |
+| B. Location projections (with parent shards) |      258 MB |      16 MB |
+| B. Postcode areas                            |      633 MB |     108 MB |
+| B. Postcode shards                           |       99 MB |      23 MB |
 
 The 22 MB house-price CSV export: a client accepting gzip now receives
 1.15 MB in 10 ms instead of 22 MB in 44 ms. A client that does not accept
