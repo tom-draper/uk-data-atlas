@@ -25,7 +25,6 @@ import { spawn, spawnSync } from "node:child_process";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATA = join(ROOT, "data");
-const PRECOMPILED = join(ROOT, "public", "data", "datasets");
 const CONFIG = join(ROOT, "data-release.json");
 const LOCAL_MARKER = join(DATA, ".source-release.json");
 const STAGING = join(ROOT, ".data-release");
@@ -590,17 +589,6 @@ async function download(mode) {
 	}
 }
 
-async function verifyPrecompiled() {
-	try {
-		await stat(join(PRECOMPILED, "dataset-manifest.json"));
-		await stat(join(ROOT, "public", "data", "boundaries"));
-	} catch {
-		fail(
-			"Committed browser data is incomplete. Run pnpm precompile locally.",
-		);
-	}
-}
-
 async function main() {
 	const [command = "help", option, targetRef] = process.argv.slice(2);
 	if (command === "publish")
@@ -609,10 +597,9 @@ async function main() {
 		if (option && option !== "--force" && option !== "--replace")
 			fail(`Unknown download option ${option}.`);
 		await download(option);
-	} else if (command === "verify-precompiled") await verifyPrecompiled();
-	else {
+	} else {
 		console.log(
-			"Usage: node scripts/data-release.mjs <publish [data-YYYY-MM-DD] [target-commitish]|download [--force|--replace]|verify-precompiled>",
+			"Usage: node scripts/data-release.mjs <publish [data-YYYY-MM-DD] [target-commitish]|download [--force|--replace]>",
 		);
 	}
 }
