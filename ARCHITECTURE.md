@@ -68,10 +68,12 @@ build; wards render on first visit. Place search fetches the index from the
 website on focus. A missing copy fails rendering rather than returning a false
 missing place.
 
-The API builds from raw `data/` without `public/data/`. Its `datasets` stage
-uses `@uk-data-atlas/datasets` to compile datasets and the gazetteer into
-`services/api/public/datasets/`, and boundary assets into
-`services/api/public/source-data/boundaries/`. The data catalogue, named
+The API builds from raw `data/` without `public/data/`. The shared `datasets`
+stage compiles every catalogue dataset once into `compiled/datasets/` (see
+[compiled/README.md](compiled/README.md)). The API's `api-datasets` stage copies
+them into `services/api/public/datasets/`, beside the gazetteer it compiles, and
+writes boundary assets into `services/api/public/source-data/boundaries/`. The
+website precompile copies the same files into `public/data/datasets/`. The data catalogue, named
 locations and atlas pages consume these API-owned inputs. File reading and
 output writing stay in the build scripts; the package only transforms supplied
 contents.
@@ -134,7 +136,8 @@ products, with its dependencies. `pnpm data:build` runs them in order, and
 
 A target runs only the stages its outputs depend on, so building one target
 and then the other gives the same output as building both. Stages the targets
-share run in each build. `--plan` lists the
+share run in each build, but `datasets` reuses every dataset whose inputs and
+compiler are unchanged, so a second build compiles nothing again. `--plan` lists the
 stages without running them, and `--from <stage>` runs a stage and only the
 stages after it.
 
