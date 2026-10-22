@@ -8,7 +8,6 @@ import {
 	sameFileStamp,
 	sourceInputPath,
 } from "./precompile/cache.mts";
-import { boundaryChunkProblems } from "./boundary-chunks";
 import { precompileFingerprints } from "./precompile-fingerprint.mjs";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -30,7 +29,11 @@ const fail = (message: string): never => {
 	throw new Error(`${message} Run pnpm precompile locally.`);
 };
 
-const manifest = JSON.parse(await readFile(manifestPath, "utf8")) as Manifest;
+const manifest = JSON.parse(
+	await readFile(manifestPath, "utf8").catch(() =>
+		fail("Local precompiled dataset manifest is missing or unreadable."),
+	),
+) as Manifest;
 const expectedFingerprint = manifest.precompiler?.fingerprint;
 if (!expectedFingerprint) fail("Precompiled data has no compiler fingerprint.");
 const actual = await precompileFingerprints(root);
@@ -71,6 +74,7 @@ for (const dataset of manifest.datasets ?? []) {
 		);
 }
 
+const { boundaryChunkProblems } = await import("./boundary-chunks");
 const chunkProblems = await boundaryChunkProblems(root);
 if (chunkProblems.length > 0)
 	throw new Error(
