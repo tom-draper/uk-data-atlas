@@ -13,7 +13,7 @@ import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 /**
  * Compiled assets live in public/data, where they are served from; the two
- * releases published as TopoJSON are committed in data/. Look in both.
+ * releases published as TopoJSON are downloaded into data/. Look in both.
  */
 const localBoundaryPath = (path: string) => {
 	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
