@@ -5,7 +5,7 @@ parish and LSOA containment file formats, geometry substitutions and grid
 offset corrections.
 
 It holds code only. It reads no files and knows no paths: each consumer loads
-its own data (the API its full build, the atlas its committed projections) and
+its own data (the API its full build, the atlas its locally compiled projections) and
 passes it in. That keeps it safe to bundle into the browser.
 
 The tsconfig enforces most of this. It has no DOM or Node types, so
