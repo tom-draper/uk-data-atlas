@@ -146,6 +146,16 @@ test("crosswalk rebuild follows every downstream branch without geometry, postco
 	]);
 });
 
+test("atlas lookups depend only on areas, crosswalks and relationship paths", (context) => {
+	const build = fixture(context);
+	const result = build.run(["--from", "atlas-lookups", "--plan"]);
+	assert.equal(result.status, 0, result.stderr);
+	assert.match(
+		result.stdout,
+		/^atlas-lookups: pnpm build:atlas-lookups \[depends on: area-inventory, crosswalk-inventory, relationship-paths\]$/m,
+	);
+});
+
 test("documents rebuild pins the final manifest without rerunning the initial manifest", (context) => {
 	const build = fixture(context);
 	assert.equal(build.run(["--from", "documents"]).status, 0);
