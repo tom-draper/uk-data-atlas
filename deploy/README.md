@@ -40,7 +40,9 @@ The API build also checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/`. `pnpm precompile` checks
 the raw download, fetches lookups from the running API, then writes browser data
 to `public/data/`. Neither output directory is tracked in Git.
-`pnpm build` verifies local precompiled data before running Next.js. A nonzero
+`pnpm build` verifies local precompiled data, generates map headlines and
+rankings with `pnpm seo:build`, then runs Next.js. Keep the API running for
+rankings and website rendering. A nonzero
 exit from any command means that step failed; stop before the next step.
 Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
