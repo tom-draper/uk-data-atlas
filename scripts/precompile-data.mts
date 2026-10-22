@@ -17,10 +17,9 @@ import { readFile, mkdir, stat, utimes } from "fs/promises";
 import { join } from "path";
 import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 
-import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/data/catalog";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
-import { compileBoundaryChunks } from "./boundary-chunks";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import {
 	mergeManifestEntries,
@@ -200,6 +199,7 @@ async function main() {
 	}
 	atlasAssets.releaseBoundaryReads();
 	// Chunks are placed by the gazetteer and lookups the assets above just wrote.
+	const { compileBoundaryChunks } = await import("./boundary-chunks");
 	await compileBoundaryChunks(ROOT);
 	const regional = CATALOGUE_DATASET_DEFINITIONS.flatMap(
 		(definition, index) =>
