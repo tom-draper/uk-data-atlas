@@ -27,6 +27,7 @@ const apiStages = [
 		"datasets",
 		"area-inventory",
 		"crosswalk-inventory",
+		"named-locations",
 	]),
 	stage("api-datasets", ["download"], ["build:datasets"]),
 	stage("boundary-registry", ["download"]),
@@ -35,7 +36,6 @@ const apiStages = [
 	stage("geometry-source-registry", ["area-inventory"]),
 	stage("geometry-store", ["geometry-source-registry"]),
 	stage("named-locations", [
-		"atlas-sqlite",
 		"area-inventory",
 		"geometry-store",
 		"api-datasets",

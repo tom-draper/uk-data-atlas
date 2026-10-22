@@ -9,7 +9,7 @@ import test from "node:test";
 import { validateBatch } from "../src/batchValidation";
 import { readAreaLookup } from "../src/boundaryLoader";
 import { readNamedLocationInventory } from "../src/locationLoader";
-import { packNamedLocations } from "../src/namedLocationStorage";
+import { namedLocationTables } from "../src/atlasNamedLocations";
 import type { AreaInventory } from "../src/areaInventory";
 import type { NamedLocationInventory } from "../src/namedLocations";
 
@@ -172,7 +172,7 @@ test("matching names in one geography never parses another's releases", () =>
 		);
 	}));
 
-test("packed named locations read geometry only when requested", () =>
+test("SQLite named locations preserve membership rows and load geometry only when requested", () =>
 	fixture((root, directory) => {
 		const inventory: NamedLocationInventory = {
 			schemaVersion: 1,
@@ -209,15 +209,76 @@ test("packed named locations read geometry only when requested", () =>
 				},
 			],
 		};
-		packNamedLocations(directory, inventory);
+		inventory.locations[0]!.memberAssertions = [
+			{ code: "E00000001", validity: { from: "2024-01-01", to: null } },
+		];
+		inventory.locations[0]!.partialMembers = [
+			{ code: "E00000002", share: 0, memberOf: "test" },
+		];
+		inventory.locations.push({
+			id: "empty",
+			label: "Empty",
+			kind: "editorial-grouping",
+			definitionRevision: 1,
+			memberGeography: "ward",
+			memberCodes: [],
+			memberAssertions: [],
+			partialMembers: [],
+			validity: { from: null, to: null },
+			bbox: [0, 0, 0, 0],
+		});
+		writeFileSync(
+			join(directory, "named-locations.json"),
+			JSON.stringify(inventory),
+		);
+		const compiled = join(root, "../../compiled");
+		mkdirSync(compiled, { recursive: true });
+		const path = join(compiled, "atlas.sqlite");
+		writeSqliteIndex(path, {}, namedLocationTables(directory));
+		rmSync(join(directory, "named-locations.json"));
 		const loaded = readNamedLocationInventory(root);
+		assert.equal(JSON.stringify(loaded), JSON.stringify(inventory));
 		assert.equal(loaded.locations[0]?.label, "Test");
 		assert.deepEqual(
 			loaded.locations[0]?.geometry,
 			inventory.locations[0]?.geometry,
 		);
 		const cold = readNamedLocationInventory(root);
-		rmSync(join(directory, "location-geometries"), { recursive: true });
+		const stale = readNamedLocationInventory(root);
+		const database = new DatabaseSync(path);
+		assert.deepEqual(
+			database.prepare("PRAGMA foreign_key_check").all(),
+			[],
+		);
+		assert.equal(
+			database
+				.prepare("SELECT share FROM named_location_partial_members")
+				.get()?.share,
+			0,
+		);
+		assert.throws(
+			() => database.prepare("DELETE FROM named_locations").run(),
+			/FOREIGN KEY/,
+		);
+		database
+			.prepare(
+				"UPDATE named_location_inventory SET contentHash = 'new-release'",
+			)
+			.run();
+		assert.throws(
+			() => stale.locations[0]?.geometry,
+			/Missing named location geometry/,
+		);
+		database
+			.prepare(
+				"UPDATE named_location_inventory SET contentHash = 'locations'",
+			)
+			.run();
+		database.prepare("DELETE FROM named_location_geometries").run();
+		database.close();
 		assert.equal(cold.locations[0]?.label, "Test");
-		assert.throws(() => cold.locations[0]?.geometry, /ENOENT/);
+		assert.throws(
+			() => cold.locations[0]?.geometry,
+			/Missing named location geometry/,
+		);
 	}));
