@@ -1,30 +1,14 @@
 import type { AreaGeometryCache } from "../areaGeometry";
 import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
 import { buildGeoJson } from "./geoJson";
 import { buildGeoParquet } from "./geoParquet";
 import {
-	compileTiers,
-	TOPOLOGY_METHOD,
-} from "@uk-data-atlas/map-tiles/topologyTiers";
-import {
-	tileBounds,
-	tilesCovering,
-	type TileBox,
-} from "@uk-data-atlas/map-tiles/tileGrid";
-import {
-	boundsOf,
-	buildTile,
-	featuresByTile,
-	MAX_ZOOM,
-	MIN_ZOOM,
-	ZOOM_TIERS,
-	type MapFeature,
-} from "@uk-data-atlas/map-tiles/tileset";
-import {
-	buildArchive,
-	type ArchiveTile,
-} from "@uk-data-atlas/map-tiles/pmtiles";
+	compileTileset,
+	LAYER_NAME,
+} from "@uk-data-atlas/map-tiles/compileTileset";
+import type { TileBox } from "@uk-data-atlas/map-tiles/tileGrid";
+import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles/tileset";
+import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
 import { releaseKey } from "../geographyKeys";
 import { sha256 } from "../contentHash";
 import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
@@ -40,11 +24,8 @@ import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
  * its source without trusting this API.
  */
 
-export const LAYER_NAME = "boundaries";
-
-import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-
-export { featureIds };
+export { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
+export { LAYER_NAME };
 
 export type MapResourceDescriptor = {
 	id: string;
@@ -150,80 +131,26 @@ export const compileMapResource = (
 				return geometry ? [[code, geometry] as const] : [];
 			}),
 	);
-	if (areas.size === 0)
-		throw new Error(
-			`No geometry is available for ${geography}/${boundaryRelease}.`,
-		);
-	const topology = decomposeArcs(areas);
-	if (topology.overlappingEdges > 0) {
-		const codes = topology.overlappingAreaCodes;
-		const sample = codes.slice(0, 20).join(", ");
-		const remaining =
-			codes.length > 20 ? `, ... (${codes.length - 20} more)` : "";
-		throw new Error(
-			`${geography}/${boundaryRelease} is not a coverage: ${topology.overlappingEdges} edges lie on more than two areas, so it cannot be tiled without drawing one over another. Offending area codes: ${sample}${remaining}.`,
-		);
-	}
-
-	// A feature keeps its number at every zoom, and the number comes from
-	// sorted code order rather than the order the geometry file happens to
-	// list its features in, so a join table can work it out from the codes
-	// alone instead of having to be told it.
-	const numbered = featureIds([...areas.keys()]);
-
-	// Each tier is generalised once and used for both forms, so a feature in
-	// the flat download and the same feature in a tile are the same shape.
-	const compiledTiers = compileTiers(topology);
-
-	const bounds: TileBox = [Infinity, Infinity, -Infinity, -Infinity];
-	const tiles: ArchiveTile[] = [];
-	const tiers: MapResourceDescriptor["tiers"] = [];
-	for (const band of ZOOM_TIERS) {
-		const compiled = compiledTiers.get(band.tier)!;
-		tiers.push({
-			tier: band.tier,
-			toleranceM: compiled.toleranceM,
-			coordinates: compiled.verticesAfter,
-			refinedArcs: compiled.refinedArcs,
-		});
-		const features: MapFeature[] = [...compiled.areas].map(
-			([code, geometry]) => {
-				const box = boundsOf(geometry);
-				bounds[0] = Math.min(bounds[0], box[0]);
-				bounds[1] = Math.min(bounds[1], box[1]);
-				bounds[2] = Math.max(bounds[2], box[2]);
-				bounds[3] = Math.max(bounds[3], box[3]);
-				return {
-					id: numbered.get(code)!,
-					code,
-					name: names.get(code) ?? code,
-					geometry,
-					bounds: box,
-				};
-			},
-		);
-		for (let zoom = band.minZoom; zoom <= band.maxZoom; zoom += 1) {
-			const reaching = featuresByTile(features, zoom);
-			for (const address of tilesCovering(bounds, zoom)) {
-				const body = buildTile(
-					LAYER_NAME,
-					reaching.get(address.x * 2 ** zoom + address.y) ?? [],
-					address,
-					tileBounds(address),
-				);
-				if (body)
-					tiles.push({
-						z: address.z,
-						x: address.x,
-						y: address.y,
-						body,
-					});
-			}
-		}
-	}
+	const name = `${geography}/${boundaryRelease}`;
+	const attributionText = `Contains ${release.source.publisher} data, ${release.source.licence.name}`;
+	const {
+		archive,
+		arcCount,
+		bounds,
+		tileCount,
+		ids: numbered,
+		compiledTiers,
+		tiers,
+		zooms,
+	} = compileTileset(areas, {
+		name,
+		description: release.title,
+		attribution: attributionText,
+		names,
+	});
 
 	const attribution = {
-		text: `Contains ${release.source.publisher} data, ${release.source.licence.name}`,
+		text: attributionText,
 		publisher: release.source.publisher,
 		sourceUrl: release.source.url,
 		licence: release.source.licence,
@@ -325,37 +252,6 @@ export const compileMapResource = (
 			return downloads;
 		},
 	);
-	const archive = buildArchive(tiles, {
-		minZoom: MIN_ZOOM,
-		maxZoom: MAX_ZOOM,
-		bounds,
-		centre: [
-			(bounds[0] + bounds[2]) / 2,
-			(bounds[1] + bounds[3]) / 2,
-			ZOOM_TIERS[0]!.maxZoom,
-		],
-		// A renderer reads the archive alone, so what it needs to draw and to
-		// cite travels inside it as well as in the descriptor.
-		metadata: {
-			name: `${geography}/${boundaryRelease}`,
-			description: release.title,
-			attribution: attribution.text,
-			format: "pbf",
-			vector_layers: [
-				{
-					id: LAYER_NAME,
-					description: release.title,
-					minzoom: MIN_ZOOM,
-					maxzoom: MAX_ZOOM,
-					fields: {
-						code: "String",
-						name: "String",
-					},
-				},
-			],
-		},
-	});
-
 	return {
 		archive,
 		features: features.flatMap(({ entry, body }) =>
@@ -368,7 +264,7 @@ export const compileMapResource = (
 			title: release.title,
 			topology: "shared-arc",
 			areaCount: areas.size,
-			arcCount: topology.arcs.length,
+			arcCount,
 			bounds,
 			tiles: {
 				artifact,
@@ -378,14 +274,8 @@ export const compileMapResource = (
 				layer: LAYER_NAME,
 				minZoom: MIN_ZOOM,
 				maxZoom: MAX_ZOOM,
-				zooms: ZOOM_TIERS.map((band) => ({
-					minZoom: band.minZoom,
-					maxZoom: band.maxZoom,
-					tier: band.tier,
-					toleranceM: tiers.find((entry) => entry.tier === band.tier)!
-						.toleranceM,
-				})),
-				tileCount: tiles.length,
+				zooms,
+				tileCount,
 				bytes: archive.length,
 				contentHash: sha256(archive),
 			},
