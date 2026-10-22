@@ -410,3 +410,22 @@ export const readApiCatalogues = (
 		analysisGeographyValidationInventory,
 	};
 };
+
+/**
+ * A resolver over just the areas, crosswalks and relationship paths, for
+ * builds that only translate areas between releases. It reads none of the
+ * later build outputs, so a build stage using it depends only on those three.
+ */
+export const readTranslationResolver = (apiRoot: string) => {
+	const areaInventory = readAreaInventory(apiRoot);
+	const crosswalkInventory = readCrosswalkInventory(apiRoot);
+	return createGeographyResolver({
+		areaInventory,
+		areaLookup: readAreaLookup(apiRoot, areaInventory),
+		crosswalkInventory,
+		crosswalkLookup: readCrosswalkLookup(apiRoot, crosswalkInventory),
+		relationshipPathIndex: createRelationshipPathIndex(
+			readRelationshipPathInventory(apiRoot, crosswalkInventory),
+		),
+	});
+};

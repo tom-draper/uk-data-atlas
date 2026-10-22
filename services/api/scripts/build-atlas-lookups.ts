@@ -10,7 +10,7 @@ import { gzipSync } from "node:zlib";
 import { join, resolve } from "node:path";
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
-import { readApiCatalogues } from "../src/catalogueLoader";
+import { readTranslationResolver } from "../src/catalogueLoader";
 import {
 	ATLAS_LOOKUPS_DIRECTORY,
 	ATLAS_LOOKUPS_MANIFEST,
@@ -21,13 +21,12 @@ const apiRoot = resolve(import.meta.dirname, "..");
 const publicDirectory = join(apiRoot, "public");
 const directory = join(publicDirectory, ATLAS_LOOKUPS_DIRECTORY);
 
-// Clear the last build first, so loading the catalogues does not read it.
 rmSync(join(publicDirectory, ATLAS_LOOKUPS_MANIFEST), { force: true });
 rmSync(directory, { recursive: true, force: true });
-const { geographyResolver } = readApiCatalogues(apiRoot, {
-	loadEvidenceDocuments: false,
-});
-const lookups = compileAtlasLookups(geographyResolver, ATLAS_BOUNDARY_VINTAGES);
+const lookups = compileAtlasLookups(
+	readTranslationResolver(apiRoot),
+	ATLAS_BOUNDARY_VINTAGES,
+);
 
 mkdirSync(directory, { recursive: true });
 const manifest: AtlasLookupManifest = { schemaVersion: 1, lookups: [] };
