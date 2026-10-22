@@ -40,6 +40,7 @@ process.exit(process.argv.at(-1) === process.env.BUILD_FAIL ? 23 : 0);
 					PATH: `${directory}${delimiter}${process.env.PATH}`,
 					BUILD_TRACE: trace,
 					BUILD_FAIL: fail,
+					DATA_BUILD_CACHE_DIR: join(directory, "cache"),
 				},
 			});
 		},

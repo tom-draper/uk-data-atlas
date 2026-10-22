@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createStageCache } from "./build-data-cache.mjs";
 import { buildDataStages, buildDataTargets } from "./build-data-graph.mjs";
 
 const apiDirectory = fileURLToPath(
@@ -65,20 +66,38 @@ export function planBuild(stages, from, roots) {
 	return planned.filter((stage) => selected.has(stage.name));
 }
 
+// A stage that always runs reaches later stages through their inputs.
+const ALWAYS_RUNS = "always-runs";
+
+/**
+ * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, outputs?: string[] }} Stage
+ * @param {{
+ *   argv?: string[],
+ *   stages?: Stage[],
+ *   targets?: Record<string, string[]>,
+ *   execute?: (stage: Stage) => number,
+ *   log?: (line: string) => void,
+ *   createCache?: () => ReturnType<typeof createStageCache> | null,
+ * }} [options]
+ */
 export function runBuild({
 	argv = [],
 	stages = buildDataStages,
 	targets = buildDataTargets,
 	execute = executeStage,
 	log = console.log,
+	createCache = () => null,
 } = {}) {
 	let from;
 	let target;
 	let plan = false;
+	let useCache = true;
 	for (let index = 0; index < argv.length; index += 1) {
 		const argument = argv[index];
 		if (argument === "--plan" && !plan) {
 			plan = true;
+		} else if (argument === "--no-cache" && useCache) {
+			useCache = false;
 		} else if (argument === "--from" && from === undefined) {
 			from = argv[index + 1];
 			if (!from || from.startsWith("--"))
@@ -95,7 +114,7 @@ export function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: build-data [--target <name>] [--from <stage>] [--plan]`,
+				`Unknown or repeated argument: ${argument}. Usage: build-data [--target <name>] [--from <stage>] [--plan] [--no-cache]`,
 			);
 		}
 	}
@@ -104,11 +123,40 @@ export function runBuild({
 		from,
 		target === undefined || target === "all" ? undefined : targets[target],
 	);
-	for (const stage of selected) {
-		log(
-			`${stage.name}: pnpm ${stage.args.join(" ")} [depends on: ${stage.dependencies.join(", ") || "none"}]`,
+	const cache = createCache();
+	// --from and --no-cache rerun every stage they select, and record them.
+	const reuse = cache !== null && useCache && from === undefined;
+	// Each stage's output digest this build, or null once a stage has to run
+	// (in a plan, its outputs are not known until it does).
+	const digests = new Map(
+		stages
+			.filter((stage) => stage.cacheable === false)
+			.map((stage) => [stage.name, ALWAYS_RUNS]),
+	);
+	const dependencyDigests = (stage) =>
+		stage.dependencies.map((name) =>
+			digests.has(name)
+				? digests.get(name)
+				: (cache?.outputDigest(name) ?? null),
 		);
-		if (plan) continue;
+	for (const stage of selected) {
+		const description = `${stage.name}: pnpm ${stage.args.join(" ")} [depends on: ${stage.dependencies.join(", ") || "none"}]`;
+		const dependencies = dependencyDigests(stage);
+		const reused =
+			reuse && stage.cacheable !== false && !dependencies.includes(null)
+				? cache.lookup(stage, dependencies)
+				: null;
+		if (reused !== null) {
+			log(`${description} (unchanged, skipped)`);
+			digests.set(stage.name, reused);
+			continue;
+		}
+		log(description);
+		if (plan) {
+			if (stage.cacheable !== false) digests.set(stage.name, null);
+			continue;
+		}
+		cache?.begin(stage.name);
 		const status = execute(stage);
 		if (status !== 0) {
 			log(
@@ -116,6 +164,10 @@ export function runBuild({
 			);
 			return status;
 		}
+		const digest = cache?.record(stage, dependencies, {
+			cacheable: stage.cacheable !== false,
+		});
+		if (stage.cacheable !== false) digests.set(stage.name, digest ?? null);
 	}
 	return 0;
 }
@@ -141,7 +193,10 @@ if (
 	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
 	try {
-		process.exitCode = runBuild({ argv: process.argv.slice(2) });
+		process.exitCode = runBuild({
+			argv: process.argv.slice(2),
+			createCache: createStageCache,
+		});
 	} catch (error) {
 		console.error(error.message);
 		process.exitCode = 1;
