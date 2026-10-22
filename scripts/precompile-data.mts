@@ -3,7 +3,7 @@
  * Eliminates PapaParse from the client bundle and removes main-thread CSV parsing.
  *
  * Run via: pnpm precompile
- * Also runs automatically before pnpm dev and pnpm build.
+ * Run before pnpm build. pnpm dev regenerates stale local output.
  *
  * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
  * type or output file, against the boundaries and gazetteer a full run has

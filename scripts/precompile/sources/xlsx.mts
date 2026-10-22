@@ -48,8 +48,7 @@ const readPercentStyles = (entry: WorkbookEntry) =>
 
 /**
  * Pulls one named worksheet out of an .xlsx and renders it as CSV, so the
- * workbook can stay in data/ exactly as published and no extracted copy has to
- * be committed alongside it.
+ * workbook can stay in data/ exactly as published, without an extracted copy.
  */
 export const readXlsxSheet = async (
 	path: string,
