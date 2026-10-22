@@ -1,4 +1,5 @@
 import { renameSync, rmSync } from "node:fs";
+import { deflateRawSync, inflateRawSync } from "node:zlib";
 import {
 	DatabaseSync,
 	type SQLInputValue,
@@ -17,7 +18,11 @@ import type { Indexed } from "./sortedIndex";
 
 export type SqliteTable = {
 	columns: string[];
-	/** One row per position, in order. */
+	/**
+	 * The columns a row is found by. Without them, rows are keyed by
+	 * `position`, one per position in order.
+	 */
+	key?: string[];
 	rows: Iterable<SQLInputValue[]>;
 };
 
@@ -29,13 +34,15 @@ export const writeSqliteIndex = (
 	path: string,
 	meta: Record<string, string>,
 	tables: Record<string, SqliteTable>,
+	/** Smaller pages waste less on values that overflow them. */
+	pageSize = 4096,
 ) => {
 	const temporary = `${path}.tmp`;
 	rmSync(temporary, { force: true });
 	const database = new DatabaseSync(temporary);
 	try {
 		database.exec(
-			"PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;",
+			`PRAGMA page_size = ${pageSize}; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;`,
 		);
 		database.exec(
 			"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
@@ -44,11 +51,22 @@ export const writeSqliteIndex = (
 		for (const [key, value] of Object.entries(meta))
 			insertMeta.run(key, value);
 		for (const [name, table] of Object.entries(tables)) {
+			const placeholders = table.columns.map(() => "?");
+			if (table.key) {
+				database.exec(
+					`CREATE TABLE ${name} (${table.columns.join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID`,
+				);
+				const insert = database.prepare(
+					`INSERT INTO ${name} VALUES (${placeholders.join(", ")})`,
+				);
+				for (const row of table.rows) insert.run(...row);
+				continue;
+			}
 			database.exec(
 				`CREATE TABLE ${name} (position INTEGER PRIMARY KEY, ${table.columns.join(", ")})`,
 			);
 			const insert = database.prepare(
-				`INSERT INTO ${name} VALUES (${["?", ...table.columns.map(() => "?")].join(", ")})`,
+				`INSERT INTO ${name} VALUES (${["?", ...placeholders].join(", ")})`,
 			);
 			let position = 0;
 			for (const row of table.rows) insert.run(position++, ...row);
@@ -74,6 +92,18 @@ export class SqliteIndex {
 					.all() as Array<{ key: string; value: string }>
 			).map(({ key, value }) => [key, value]),
 		);
+	}
+
+	/**
+	 * Find a row of a keyed table by its key columns, returning one column.
+	 */
+	lookup(name: string, key: string[], column: string) {
+		const statement = this.database.prepare(
+			`SELECT ${column} AS value FROM ${name} WHERE ${key.map((part) => `${part} = ?`).join(" AND ")}`,
+		);
+		return (...values: SQLInputValue[]) =>
+			(statement.get(...values) as { value: SQLInputValue } | undefined)
+				?.value;
 	}
 
 	/** A table's rows, read by position. */
@@ -195,4 +225,39 @@ export const unpackPositions = (value: SQLInputValue): number[] => {
 	for (let index = 0; index < positions.length; index += 1)
 		positions[index] = view.getUint32(index * 4, true);
 	return positions;
+};
+
+/**
+ * A value as JSON, deflated against a dictionary of text like it. Values read
+ * one at a time are too small to compress well alone; a dictionary drawn from
+ * their neighbours supplies the repetition a whole file would have.
+ */
+export const packJson = (value: unknown, dictionary?: Uint8Array) =>
+	deflateRawSync(JSON.stringify(value), {
+		level: 9,
+		...(dictionary ? { dictionary } : {}),
+	});
+
+export const unpackJson = <T>(value: SQLInputValue, dictionary?: Uint8Array) =>
+	JSON.parse(
+		inflateRawSync(
+			value as Uint8Array,
+			dictionary ? { dictionary } : {},
+		).toString("utf8"),
+	) as T;
+
+/** The most a deflate dictionary can use. */
+const DICTIONARY_BYTES = 32 * 1024;
+
+/** A dictionary for values like these: the JSON of the first, to 32 KB. */
+export const jsonDictionary = (values: Iterable<unknown>) => {
+	const parts: Buffer[] = [];
+	let length = 0;
+	for (const value of values) {
+		if (length >= DICTIONARY_BYTES) break;
+		const part = Buffer.from(JSON.stringify(value));
+		parts.push(part);
+		length += part.length;
+	}
+	return Buffer.concat(parts).subarray(0, DICTIONARY_BYTES);
 };
