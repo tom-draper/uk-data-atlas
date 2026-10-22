@@ -1,1 +1,5 @@
-export * from "@uk-data-atlas/datasets/data/education/ks4";
+export {
+	endYear,
+	readMeasures,
+	measureSeries,
+} from "@uk-data-atlas/datasets/data/education/ks4";

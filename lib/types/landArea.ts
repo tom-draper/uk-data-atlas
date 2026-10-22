@@ -1,1 +1,4 @@
-export * from "@uk-data-atlas/datasets/types/landArea";
+export {
+	type LandAreaLADData,
+	type LandAreaDataset,
+} from "@uk-data-atlas/datasets/types/landArea";

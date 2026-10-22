@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/adultSocialCareOutcomes";
+export { adultSocialCareOutcomesDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/adultSocialCareOutcomes";

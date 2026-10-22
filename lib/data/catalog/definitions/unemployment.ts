@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/unemployment";
+export { unemploymentDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/unemployment";

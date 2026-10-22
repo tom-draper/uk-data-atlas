@@ -1,1 +1,5 @@
-export * from "@uk-data-atlas/datasets/types/indicator";
+export {
+	type IndicatorRecord,
+	type IndicatorDataset,
+	type AggregatedIndicatorData,
+} from "@uk-data-atlas/datasets/types/indicator";

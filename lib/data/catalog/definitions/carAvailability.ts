@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/carAvailability";
+export { carAvailabilityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/carAvailability";

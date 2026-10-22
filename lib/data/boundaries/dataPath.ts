@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/boundaries/dataPath";
+export { localDataPath } from "@uk-data-atlas/datasets/data/boundaries/dataPath";

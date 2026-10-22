@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/ghg-emissions/loader";
+export { loadGhgEmissions } from "@uk-data-atlas/datasets/data/ghg-emissions/loader";

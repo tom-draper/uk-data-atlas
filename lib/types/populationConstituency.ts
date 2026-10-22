@@ -1,1 +1,4 @@
-export * from "@uk-data-atlas/datasets/types/populationConstituency";
+export {
+	type PopulationConstituencyData,
+	type PopulationConstituencyDataset,
+} from "@uk-data-atlas/datasets/types/populationConstituency";
