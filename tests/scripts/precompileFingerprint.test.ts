@@ -33,7 +33,6 @@ const createRepository = async () => {
 		"scripts/precompile-fingerprint.mjs",
 		"scripts/precompile-selection.ts",
 		"packages/datasets/src/compileDataset.ts",
-		"packages/geography/package.json",
 		"packages/geography/src/index.ts",
 		".cache/atlas-lookups/boundary-mappings.json",
 		".cache/atlas-lookups/parish-lad-mappings.json",
@@ -44,6 +43,10 @@ const createRepository = async () => {
 		'import { helper } from "../../lib/helpers/shared";\nimport { validate } from "../../packages/datasets/src/data/catalog";\n',
 	);
 	await write("scripts/precompile/cache.mts", "// cache");
+	await write(
+		"packages/geography/package.json",
+		JSON.stringify({ exports: { ".": "./src/index.ts" } }),
+	);
 	await write("lib/helpers/shared.ts", "export const helper = 1;");
 	await write(
 		"packages/datasets/src/data/catalog/index.ts",
