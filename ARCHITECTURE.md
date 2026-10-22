@@ -124,5 +124,8 @@ there is no build step.
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`
 instead. Tests that read the real generated data, or the raw data in `data/`,
-live in `tests/built/` and run locally only. `pnpm check:full` rebuilds
-everything from the raw data, runs them too, and needs `data/` restored.
+live in `tests/built/` and run locally only. First follow the build order in
+[deploy/README.md](deploy/README.md), including the website build that generates
+SEO artifacts. Then `pnpm check:full` runs the quick checks, verifies local
+precompiled data, and runs the built website and API tests. It needs `data/`
+restored and both products built; it does not build or deploy either product.
