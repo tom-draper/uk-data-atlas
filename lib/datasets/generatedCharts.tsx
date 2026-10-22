@@ -29,7 +29,8 @@ import Chart23 from "@/components/education/SchoolPerformanceChart";
 import Chart24 from "@/components/deprivation/simd/SIMDChart";
 import Chart25 from "@/components/transport/travel-to-work/TravelToWorkChart";
 import Chart26 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart27 from "@/components/deprivation/wimd/WIMDChart";
+import Chart27 from "@/components/environment/waste/WasteChart";
+import Chart28 from "@/components/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -199,6 +200,12 @@ const Chart27Presentation = {
 	),
 } satisfies ChartPresentation;
 
+const Chart28Presentation = {
+	component: (props) => (
+		<Chart28 {...(props as ComponentProps<typeof Chart28>)} />
+	),
+} satisfies ChartPresentation;
+
 export const CHART_PRESENTATIONS = {
 	"health-adultSocialCareActivity": Chart0Presentation,
 	"health-adultSocialCareOutcomes": Chart0Presentation,
@@ -256,8 +263,8 @@ export const CHART_PRESENTATIONS = {
 	"deprivation-simd": Chart24Presentation,
 	"transport-travelToWork": Chart25Presentation,
 	"economics-unemployment": Chart26Presentation,
-	"environment-waste": Chart0Presentation,
-	"deprivation-wimd": Chart27Presentation,
+	"environment-waste": Chart27Presentation,
+	"deprivation-wimd": Chart28Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;
