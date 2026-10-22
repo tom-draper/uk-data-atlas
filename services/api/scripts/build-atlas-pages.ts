@@ -31,7 +31,8 @@ import {
 
 const API_ROOT = resolve(import.meta.dirname, "..");
 const ROOT = resolve(API_ROOT, "../..");
-const DATASETS = join(ROOT, "public", "data", "datasets");
+const DATASETS = join(API_ROOT, "public", "datasets");
+const BOUNDARIES = join(API_ROOT, "public", "source-data", "boundaries");
 
 /** Children listed by name rather than counted, up to this many. */
 const LISTED_CHILDREN = 120;
@@ -103,16 +104,8 @@ function readAreas(geography: PlaceGeography) {
 	const areas = new Map<string, Map<string, number>>();
 	const folder =
 		geography === "localAuthority" ? "local-authority" : geography;
-	for (const release of readdirSync(
-		join(ROOT, "public/data/boundaries", folder),
-	)) {
-		const path = join(
-			ROOT,
-			"public/data/boundaries",
-			folder,
-			release,
-			"properties.json",
-		);
+	for (const release of readdirSync(join(BOUNDARIES, folder))) {
+		const path = join(BOUNDARIES, folder, release, "properties.json");
 		const { features } = JSON.parse(readFileSync(path, "utf8")) as {
 			features: Record<string, unknown>[];
 		};

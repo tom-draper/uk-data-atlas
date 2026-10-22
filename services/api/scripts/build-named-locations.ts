@@ -64,8 +64,9 @@ const readHistoricCounties = (repositoryRoot: string) =>
 export const buildNamedLocations = (repositoryRoot: string) => {
 	const source = join(
 		repositoryRoot,
+		"services",
+		"api",
 		"public",
-		"data",
 		"datasets",
 		"gazetteer.core.json",
 	);
