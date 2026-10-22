@@ -49,7 +49,7 @@ datasets.
 
 ## atlas.sqlite
 
-The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, and `crosswalk-inventory` and writes this database
+The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, `crosswalk-inventory`, and `named-locations` and writes this database
 with the existing `node:sqlite` library. It replaces the whole database through
 a temporary file and atomic rename. Every run writes every table, so the stage
 cache detects its output without a retained-file `outputs` declaration.
@@ -74,7 +74,8 @@ The database contains these tables:
 | `datasets` | `payloadId`   | `TEXT NOT NULL`        | Foreign key to `payloads.id`, `dataset:<output>`.                                |
 
 `meta`, `payloads`, `datasets`, `area_releases`, `areas`, `crosswalks`, `crosswalk_sources`,
-`crosswalk_targets`, and `crosswalk_coverage` use `WITHOUT ROWID`. Each dataset has one payload. The complete
+`crosswalk_targets`, `crosswalk_coverage`, `named_locations`, `named_location_members`,
+`named_location_assertions`, `named_location_partial_members`, and `named_location_geometries` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
@@ -136,11 +137,11 @@ reads. The primary key supports area-code lookups within a release.
 
 The API inventory and bounded lazy area lookup read these tables in read-only
 connections that close after each read. They refuse stale hashes and incomplete
-releases and never fall back to JSON. SQLite runs before the named-location,
+releases and never fall back to JSON. SQLite runs before the
 place-index, area-search-index, postcode-area, and atlas-lookup consumers.
 
 The area inventory and `areas/*.json` remain build intermediates. Geometry
-registry, crosswalk compilation, compatibility, lookup manifest, validation,
+registry, crosswalk compilation, named-location compilation, compatibility, lookup manifest, validation,
 geography inventory, location projections, relationship candidates, docs catalogue,
 map resources, proposals, benchmarks, and release snapshots
 still read them. Atlas lookups use the migrated loader. Atlas pages read boundary
@@ -193,7 +194,54 @@ lookup manifests, validation reports, proposals, and release snapshots.
 Atlas lookups and pages use the migrated loader. The website copy step still
 copies their generated outputs and never reads crosswalk JSON directly.
 
+### Named locations
+
+`named_location_inventory` has one row keyed by integer `position = 0`. Its
+non-null columns are `schemaVersion INTEGER`, `contentHash TEXT`, `artifact TEXT`
+and `gazetteerVersion INTEGER`. The last two describe the source gazetteer.
+
+`named_locations` has text primary key `id`, unique integer `position`, text
+`fields`, `label`, `kind`, and `memberGeography`, integer `definitionRevision`,
+and real `minX`, `minY`, `maxX`, `maxY`. These columns are non-null. Nullable text
+`validFrom` and `validTo` retain the definition's half-open validity interval.
+Nullable `source TEXT` contains the publisher-specific provenance object as JSON.
+`fields` is an ordered JSON list of property names. It preserves optional arrays,
+including absent versus empty arrays, and response property order. Indexes on
+`(kind, position)` and `(memberGeography, position)` support filtered inventories.
+
+Membership data lives in relational child tables. Each has non-null
+`locationId TEXT`, a foreign key to `named_locations.id`, and non-null
+`position INTEGER`, with composite primary key `(locationId, position)`.
+
+- `named_location_members` has non-null `code TEXT`, preserving declared member order.
+- `named_location_assertions` has non-null `code TEXT` and nullable text
+  `validFrom`, `validTo` for each dated membership assertion. An index on
+  `(locationId, code, validFrom, validTo)` supports dated membership lookups.
+- `named_location_partial_members` has non-null `code TEXT`, `share REAL`, and
+  `memberOf TEXT`. Zero shares remain zero.
+
+Members and partial members index `(code, locationId)` for reverse membership
+lookups. Codes refer to the parent's `memberGeography`. They have no foreign key
+to `areas`, because assertions can describe historical codes across releases.
+`memberOf` is a foreign key to the named location holding that partial member.
+
+`named_location_geometries` has text primary key `locationId`, a foreign key to
+`named_locations.id`, non-null `boundaryRelease TEXT`, real `minX`, `minY`,
+`maxX`, `maxY`, and `geometry TEXT`. The last column contains GeoJSON. Geometry
+is optional, one row per location with a compiled union. Its release belongs to
+the parent's `memberGeography`. The API loads geometry on first access and
+closes every SQLite connection after reading. Inventory and membership reads do
+not parse geometry.
+
+The named-location compiler reads area JSON intermediates before SQLite is
+built, avoiding a dependency cycle. The API inventory loader and place-index
+compiler read named locations from SQLite. Full named-location JSON remains for
+location projections, lookup exports and release snapshots. Packed metadata and
+geometry JSON remain build outputs of the same compiler, although the API no
+longer reads them. Atlas pages use the resolver's migrated loader. The website
+copy step copies only generated atlas lookups and pages.
+
 ## Planned
 
-Named locations and other ready-to-send payloads will follow in `atlas.sqlite`.
+Other ready-to-send payloads will follow in `atlas.sqlite`.
 `tiles/*.pmtiles` will hold boundaries.

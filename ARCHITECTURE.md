@@ -157,9 +157,11 @@ build of either runs only `download`. A code change reruns every stage.
 and `--no-cache` rerun the stages they select regardless.
 
 The `atlas-sqlite` stage writes the terrain catalogue to `compiled/atlas.sqlite`,
-alongside catalogue datasets, relational areas, and crosswalk source/target rows, which
-the API reads directly. Area and crosswalk JSON remain build and release intermediates. Other API
-loaders still read their JSON outputs.
+alongside catalogue datasets, relational areas, crosswalk source/target rows and
+named locations with membership tables and lazy geometry. The API reads these
+directly. Their JSON outputs remain build and release intermediates. Named
+locations compile from area JSON before the shared SQLite database is written.
+Other API loaders still read their JSON outputs.
 See [compiled/README.md](compiled/README.md) for the database schema.
 
 ## Rebuilding after a change
