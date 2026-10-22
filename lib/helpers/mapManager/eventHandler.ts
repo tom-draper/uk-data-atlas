@@ -166,9 +166,13 @@ export class EventHandler {
 	}
 
 	private areaForFeature(feature: MapFeature) {
-		const code = feature.properties?.[this.currentCodeProp];
+		const code =
+			feature.properties?.[this.currentCodeProp] ??
+			feature.properties?.code;
 		if (!code || !this.currentData) return null;
-		const name = feature.properties?.[this.currentNameProp];
+		const name =
+			feature.properties?.[this.currentNameProp] ??
+			feature.properties?.name;
 		// Type assertion needed: TypeScript can't narrow the discriminated
 		// SelectedArea union from a string variable at runtime.
 		const boundaryYear = boundaryYearForCodeKey(this.currentCodeProp);
@@ -209,16 +213,26 @@ export class EventHandler {
 		this.callbacks.onAreaClick?.(area);
 	}
 
+	private sourceLayer() {
+		return this.map.getSource(SOURCE_ID)?.type === "vector"
+			? { sourceLayer: "boundaries" }
+			: {};
+	}
+
 	private setHoveredFeature(featureId: string | number): void {
 		if (!this.map.getSource(SOURCE_ID)) return;
 		if (this.lastHoveredFeatureId !== null) {
 			this.map.setFeatureState(
-				{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
+				{
+					source: SOURCE_ID,
+					...this.sourceLayer(),
+					id: this.lastHoveredFeatureId,
+				},
 				{ hover: false },
 			);
 		}
 		this.map.setFeatureState(
-			{ source: SOURCE_ID, id: featureId },
+			{ source: SOURCE_ID, ...this.sourceLayer(), id: featureId },
 			{ hover: true },
 		);
 		this.lastHoveredFeatureId = featureId;
@@ -232,7 +246,11 @@ export class EventHandler {
 		if (this.lastHoveredFeatureId !== null) {
 			if (this.map.getSource(SOURCE_ID)) {
 				this.map.setFeatureState(
-					{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
+					{
+						source: SOURCE_ID,
+						...this.sourceLayer(),
+						id: this.lastHoveredFeatureId,
+					},
 					{ hover: false },
 				);
 			}
@@ -269,7 +287,11 @@ export class EventHandler {
 		if (this.lastHoveredFeatureId !== null) {
 			try {
 				this.map.setFeatureState(
-					{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
+					{
+						source: SOURCE_ID,
+						...this.sourceLayer(),
+						id: this.lastHoveredFeatureId,
+					},
 					{ hover: false },
 				);
 			} catch {}

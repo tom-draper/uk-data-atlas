@@ -364,6 +364,61 @@ describe("LayerManager boundary values", () => {
 			([, name]) => name === property,
 		)?.[2];
 
+	it("draws tiles with stable release ids and replaces the source for TopoJSON", () => {
+		vi.stubGlobal("window", {
+			location: { href: "http://localhost:3000/atlas" },
+		});
+		const map = createMap();
+		const addSource = vi.spyOn(map, "addSource");
+		const addLayer = vi.spyOn(map, "addLayer");
+		const manager = new LayerManager(map as any);
+		manager.setBoundaryTiles({
+			href: "/data/boundaries/ward/test/boundaries.pmtiles",
+			minZoom: 0,
+			maxZoom: 12,
+			codeKey: "WD26CD",
+			ids: new Map([
+				["E001", 1],
+				["E002", 2],
+			]),
+		});
+		const data = collection({ 0: 10 });
+		data.features[0].properties = { WD26CD: "E002", value: 10 };
+		data.features[0].geometry = null;
+		manager.paintBoundaries(data, valuePaint(["get", "value"]), visibility);
+		expect(addSource).toHaveBeenCalledWith("location-wards", {
+			type: "vector",
+			url: "pmtiles://http://localhost:3000/data/boundaries/ward/test/boundaries.pmtiles",
+			minzoom: 0,
+			maxzoom: 12,
+		});
+		expect(addLayer.mock.calls[0]?.[0]).toMatchObject({
+			id: "wards-fill",
+			"source-layer": "boundaries",
+		});
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards", sourceLayer: "boundaries", id: 2 },
+			{ outsideDataset: false, value: 10 },
+		);
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards", sourceLayer: "boundaries", id: 1 },
+			{ outsideDataset: true },
+		);
+		manager.paintBoundaries(data, valuePaint(["get", "value"]), visibility);
+		expect(addSource).toHaveBeenCalledTimes(1);
+		manager.setBoundaryTiles(null);
+		const untiled = collection({ 0: 1 });
+		manager.paintBoundaries(
+			untiled,
+			valuePaint(["get", "value"]),
+			visibility,
+		);
+		expect(addSource).toHaveBeenLastCalledWith("location-wards", {
+			type: "geojson",
+			data: untiled,
+		});
+	});
+
 	it("sets new values on the same boundaries as feature state", () => {
 		const map = createMap();
 		const manager = new LayerManager(map as any);

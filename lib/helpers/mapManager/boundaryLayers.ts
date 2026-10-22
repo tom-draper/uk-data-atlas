@@ -1,3 +1,5 @@
+import { getFeatureProp } from "@/lib/types/geometry";
+import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
 import type { GeoJSONSource } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
 import type { BoundaryGeojson, Feature } from "@/lib/types/geometry";
@@ -80,6 +82,13 @@ const geometryById = (
  * leaves out is hidden rather than removed.
  */
 export class BoundaryLayerController {
+	private tiles: BoundaryTiles | null = null;
+	private sourceTiles: BoundaryTiles | null = null;
+
+	setTiles(tiles: BoundaryTiles | null): void {
+		this.tiles = tiles;
+	}
+
 	private lastFillPaint: FillPaintConfig | null = null;
 	/** The uploaded features' geometry, when they can be addressed by state. */
 	private sourceGeometry: Map<
@@ -126,12 +135,15 @@ export class BoundaryLayerController {
 		}
 		this.deferredPaint = null;
 
+		if (this.sourceTiles?.href !== this.tiles?.href)
+			this.removeExistingLayers();
+
 		const sourceExists = !!this.map.getSource(SOURCE_ID);
 		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
 		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
 		if (sourceExists && fillLayerExists && lineLayerExists) {
 			if (this.drawnGeojson !== geojson) {
-				if (!this.sourceHolds(geojson)) {
+				if (!this.tiles && !this.sourceHolds(geojson)) {
 					(this.map.getSource(SOURCE_ID) as GeoJSONSource).setData(
 						asMapData(geojson),
 					);
@@ -152,12 +164,14 @@ export class BoundaryLayerController {
 			id: FILL_LAYER_ID,
 			type: "fill",
 			source: SOURCE_ID,
+			...(this.tiles ? { "source-layer": "boundaries" } : {}),
 			paint: { "fill-color": DEFAULT_COLOR, "fill-opacity": 0 },
 		});
 		this.map.addLayer({
 			id: LINE_LAYER_ID,
 			type: "line",
 			source: SOURCE_ID,
+			...(this.tiles ? { "source-layer": "boundaries" } : {}),
 			paint: {
 				"line-color": "#000",
 				"line-width": 1,
@@ -173,6 +187,10 @@ export class BoundaryLayerController {
 	}
 
 	clear(): void {
+		if (this.sourceTiles) {
+			this.removeExistingLayers();
+			return;
+		}
 		this.forgetSource();
 		const source = this.map.getSource(SOURCE_ID) as
 			GeoJSONSource | undefined;
@@ -260,6 +278,7 @@ export class BoundaryLayerController {
 	}
 
 	private forgetSource(): void {
+		this.sourceTiles = null;
 		this.sourceGeometry = null;
 		this.drawnGeojson = null;
 		this.stateProperties = null;
@@ -271,7 +290,7 @@ export class BoundaryLayerController {
 	 * addressed that way, with that state brought up to date first.
 	 */
 	private colorFromState(color: PaintValue<string>): PaintValue<string> {
-		if (!this.sourceGeometry) return color;
+		if (!this.sourceGeometry && !this.tiles) return color;
 		const { value, properties } = readFromFeatureState(color);
 		this.setState(properties);
 		return value;
@@ -285,11 +304,25 @@ export class BoundaryLayerController {
 		const geometry = this.sourceGeometry;
 		const drawn = this.drawnGeojson;
 		const key = properties.join("\u0000");
-		if (!geometry || !drawn || this.stateProperties === key) return;
+		if (
+			(!geometry && !this.tiles) ||
+			!drawn ||
+			this.stateProperties === key
+		)
+			return;
 		this.stateProperties = key;
 		const shown = new Set<number>();
 		for (const feature of drawn.features) {
-			shown.add(feature.id);
+			const code =
+				this.tiles &&
+				getFeatureProp(feature.properties, this.tiles.codeKey);
+			const id = this.tiles
+				? typeof code === "string"
+					? this.tiles.ids.get(code)
+					: undefined
+				: feature.id;
+			if (id === undefined) continue;
+			shown.add(id);
 			const values = feature.properties as unknown as Record<
 				string,
 				unknown
@@ -300,13 +333,26 @@ export class BoundaryLayerController {
 			for (const property of properties)
 				state[property] = values[property] ?? null;
 			this.map.setFeatureState(
-				{ source: SOURCE_ID, id: feature.id },
+				{
+					source: SOURCE_ID,
+					id,
+					...(this.tiles ? { sourceLayer: "boundaries" } : {}),
+				},
 				state,
 			);
 		}
-		this.hidesFeatures = shown.size < geometry.size;
+		this.hidesFeatures = !!this.tiles || shown.size < (geometry?.size ?? 0);
+		if (this.tiles) {
+			for (const id of this.tiles.ids.values())
+				if (!shown.has(id))
+					this.map.setFeatureState(
+						{ source: SOURCE_ID, sourceLayer: "boundaries", id },
+						{ [OUTSIDE_DATASET_STATE]: true },
+					);
+			return;
+		}
 		if (!this.hidesFeatures) return;
-		for (const id of geometry.keys())
+		for (const id of geometry?.keys() ?? [])
 			if (!shown.has(id))
 				this.map.setFeatureState(
 					{ source: SOURCE_ID, id },
@@ -334,6 +380,16 @@ export class BoundaryLayerController {
 	}
 
 	private addSource(geojson: BoundaryGeojson): void {
+		if (this.tiles) {
+			this.sourceTiles = this.tiles;
+			this.map.addSource(SOURCE_ID, {
+				type: "vector",
+				url: `pmtiles://${new URL(this.tiles.href, window.location.href).href}`,
+				minzoom: this.tiles.minZoom,
+				maxzoom: this.tiles.maxZoom,
+			});
+			return;
+		}
 		this.map.addSource(SOURCE_ID, {
 			type: "geojson",
 			data: asMapData(geojson),
