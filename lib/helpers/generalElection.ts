@@ -28,18 +28,8 @@ export const getWinningParty = (
 	return winningParty;
 };
 
-export const calculateTurnout = (
-	validVotes: number,
-	invalidVotes: number,
-	electorate: number,
-) => {
-	if (!electorate || electorate === 0) {
-		return null;
-	}
-
-	const totalVotes = validVotes + invalidVotes;
-	return (totalVotes / electorate) * 100;
-};
+export { calculateTurnout } from "@uk-data-atlas/datasets/helpers/turnout";
+import { calculateTurnout } from "@uk-data-atlas/datasets/helpers/turnout";
 
 export const processPartyVotes = (
 	rawPartyVotes: PartyVotes,

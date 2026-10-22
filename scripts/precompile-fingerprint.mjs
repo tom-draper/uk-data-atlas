@@ -22,7 +22,10 @@ const baseInputs = [
 ];
 
 /** What compiles a dataset, whichever dataset it is. */
-const datasetCompilerInputs = ["scripts/precompile/compileDataset.mts"];
+const datasetCompilerInputs = [
+	"scripts/precompile/compileDataset.mts",
+	"packages/datasets/src/compileDataset.ts",
+];
 
 /** What builds everything that is not a catalogue dataset. */
 const pipelineInputs = [
@@ -41,15 +44,15 @@ const pipelineInputs = [
 	".cache/atlas-lookups/parish-lad-mappings.json",
 ];
 
-const definitionsDirectory = "lib/data/catalog/definitions";
+const definitionsDirectory = "packages/datasets/src/data/catalog/definitions";
 
 // These name every dataset, so reaching one from a single dataset's imports
 // would tie that dataset to all the others, and adding a dataset would change
 // everyone's fingerprint. Following an import stops at them. Each dataset's
 // definition is the starting point of its own fingerprint instead.
 const barredFiles = new Set([
-	"lib/data/catalog/registry.ts",
-	"lib/data/catalog/generated.ts",
+	"packages/datasets/src/data/catalog/registry.ts",
+	"packages/datasets/src/data/catalog/generated.ts",
 	`${definitionsDirectory}/index.ts`,
 ]);
 

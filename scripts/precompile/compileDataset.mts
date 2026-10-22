@@ -1,3 +1,4 @@
+import { compileDatasetContents } from "@uk-data-atlas/datasets";
 import { createHash } from "crypto";
 import { readFile } from "fs/promises";
 import { join } from "path";
@@ -5,7 +6,7 @@ import {
 	decodeCompactPayload,
 	encodeCompactPayload,
 } from "../../lib/data/compactPayload";
-import { validatePrecompiledDataset } from "../../lib/data/catalog";
+import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
 import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
@@ -104,7 +105,7 @@ export async function compileStaleDataset(
 	let compiled: Awaited<ReturnType<typeof definition.precompile>>;
 	let preserved: ExistingManifestDataset | undefined;
 	try {
-		compiled = await definition.precompile(reader);
+		compiled = await compileDatasetContents(definition, reader);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&
@@ -135,17 +136,7 @@ export async function compileStaleDataset(
 		compiled = decodeCompactPayload(JSON.parse(content)) as typeof compiled;
 		preserved = existing;
 	}
-	const data = definition.coverageCountries
-		? Object.fromEntries(
-				Object.entries(compiled).map(([id, dataset]) => [
-					id,
-					{
-						...dataset,
-						coverageCountries: definition.coverageCountries,
-					},
-				]),
-			)
-		: compiled;
+	const data = compiled;
 	// Region chunk generation is the sole downstream consumer of a compiled
 	// payload. Retaining every dataset here needlessly keeps the entire atlas
 	// in V8's heap until the last loader completes.

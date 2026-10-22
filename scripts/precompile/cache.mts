@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { createReadStream } from "fs";
 import { readFile, readdir, stat } from "fs/promises";
 import { join, relative } from "path";
-import type { SourceArtifact } from "../../lib/data/catalog";
+import type { SourceArtifact } from "@uk-data-atlas/datasets";
 import { precompileFingerprints } from "../precompile-fingerprint.mjs";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./paths.mts";
 import type {

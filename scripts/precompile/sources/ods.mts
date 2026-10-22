@@ -4,7 +4,7 @@ import { join } from "path";
 import {
 	odsTableRow,
 	type OdsTableOptions,
-} from "../../../lib/data/spreadsheet/ods";
+} from "@uk-data-atlas/datasets/data/spreadsheet/ods";
 import { SOURCE_DATA } from "../paths.mts";
 
 // ODS source files are never exposed by the application. The child-poverty

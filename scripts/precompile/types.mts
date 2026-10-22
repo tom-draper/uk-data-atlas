@@ -1,8 +1,8 @@
 import type {
 	CATALOGUE_DATASET_DEFINITIONS,
 	SourceArtifact,
-} from "../../lib/data/catalog";
-import type { DatasetPayloadLayout } from "../../lib/data/catalog/types";
+} from "@uk-data-atlas/datasets";
+import type { DatasetPayloadLayout } from "@uk-data-atlas/datasets/data/catalog/types";
 
 export type CatalogueDefinition =
 	(typeof CATALOGUE_DATASET_DEFINITIONS)[number];
