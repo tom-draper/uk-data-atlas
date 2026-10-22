@@ -6,6 +6,7 @@ import {
 	withoutTitle,
 } from "./nameNormalisation";
 import {
+	atEach,
 	compareCodeUnits,
 	findNumber,
 	findSorted,
@@ -241,19 +242,44 @@ export class AreaSearch {
 		return low;
 	}
 
-	private result(position: number): AreaSearchResult {
-		const at = this.releaseAt(position);
-		const { geography, boundaryRelease, codes } = this.index.releases[at]!;
-		const code = codes.at(position - this.offsets[at]!)!;
-		const area = this.areaLookup
-			.get(releaseKey(geography, boundaryRelease))!
-			.get(code)!;
-		return {
-			id: `${geography}/${boundaryRelease}/${code}`,
-			geography,
-			boundaryRelease,
-			...area,
-		};
+	/** The codes at several positions, read a release at a time. */
+	private codesAt(positions: readonly number[]) {
+		const codes = new Array<string>(positions.length);
+		const byRelease = new Map<number, number[]>();
+		positions.forEach((position, index) => {
+			const at = this.releaseAt(position);
+			const indexes = byRelease.get(at);
+			if (indexes) indexes.push(index);
+			else byRelease.set(at, [index]);
+		});
+		for (const [at, indexes] of byRelease) {
+			const found = atEach(
+				this.index.releases[at]!.codes,
+				indexes.map((index) => positions[index]! - this.offsets[at]!),
+			);
+			indexes.forEach((index, within) => {
+				codes[index] = found[within]!;
+			});
+		}
+		return codes;
+	}
+
+	private results(positions: readonly number[]): AreaSearchResult[] {
+		const codes = this.codesAt(positions);
+		return positions.map((position, index) => {
+			const { geography, boundaryRelease } =
+				this.index.releases[this.releaseAt(position)]!;
+			const code = codes[index]!;
+			const area = this.areaLookup
+				.get(releaseKey(geography, boundaryRelease))!
+				.get(code)!;
+			return {
+				id: `${geography}/${boundaryRelease}/${code}`,
+				geography,
+				boundaryRelease,
+				...area,
+			};
+		});
 	}
 
 	/** The position of the identity with this id, or -1. */
@@ -287,10 +313,7 @@ export class AreaSearch {
 				const position = this.positionOfId(id);
 				return position === -1 ? -1 : findNumber(positions, position);
 			},
-			slice: (start, end) =>
-				positions
-					.slice(start, end)
-					.map((position) => this.result(position)),
+			slice: (start, end) => this.results(positions.slice(start, end)),
 		};
 	}
 
@@ -319,20 +342,18 @@ export class AreaSearch {
 							this.offsets[releases[index]!]!;
 			},
 			slice: (start, end) => {
-				const results: AreaSearchResult[] = [];
+				const positions: number[] = [];
 				const last = Math.min(end, length);
 				let index = 0;
 				for (let match = Math.max(start, 0); match < last; match += 1) {
 					while (starts[index + 1]! <= match) index += 1;
-					results.push(
-						this.result(
-							this.offsets[releases[index]!]! +
-								match -
-								starts[index]!,
-						),
+					positions.push(
+						this.offsets[releases[index]!]! +
+							match -
+							starts[index]!,
 					);
 				}
-				return results;
+				return this.results(positions);
 			},
 		};
 	}
@@ -358,14 +379,13 @@ export class AreaSearch {
 		// An exact code is always a term, since codes are indexed as terms.
 		const term = findSorted(this.index.terms, nameQuery);
 		if (term !== -1) {
+			const areas = this.index.termAreas.at(term)!;
+			const codes = this.codesAt(areas);
 			const exact = this.filtered(
-				this.index.termAreas
-					.at(term)!
-					.filter(
-						(position) =>
-							this.codeAt(position).toLocaleLowerCase() ===
-							codeQuery,
-					),
+				areas.filter(
+					(_, index) =>
+						codes[index]!.toLocaleLowerCase() === codeQuery,
+				),
 				filters,
 			);
 			if (exact.length > 0) return this.matches(exact);
@@ -395,22 +415,17 @@ export class AreaSearch {
 		if (!nameQuery) return [];
 		const term = findSorted(this.index.terms, nameQuery);
 		const titleTerm = findSorted(this.index.titleTerms, nameQuery);
-		return this.filtered(
-			[
-				...(term === -1 ? [] : this.index.termAreas.at(term)!),
-				...(titleTerm === -1
-					? []
-					: this.index.titleTermAreas.at(titleTerm)!),
-			],
-			filters,
-		)
-			.filter((position, index, all) => position !== all[index - 1])
-			.map((position) => this.result(position));
-	}
-
-	private codeAt(position: number) {
-		const at = this.releaseAt(position);
-		return this.index.releases[at]!.codes.at(position - this.offsets[at]!)!;
+		return this.results(
+			this.filtered(
+				[
+					...(term === -1 ? [] : this.index.termAreas.at(term)!),
+					...(titleTerm === -1
+						? []
+						: this.index.titleTermAreas.at(titleTerm)!),
+				],
+				filters,
+			).filter((position, index, all) => position !== all[index - 1]),
+		);
 	}
 }
 
