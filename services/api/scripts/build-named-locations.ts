@@ -1,5 +1,5 @@
 import { packNamedLocations } from "../src/namedLocationStorage";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { geometryBounds } from "../src/areaContainment";
@@ -15,7 +15,12 @@ import { releaseMonth } from "../src/releaseForDate";
 import { toWgs84Geometry } from "../src/reprojection";
 import { readShapefileFeatures } from "../src/shapefile";
 import { createAreaGeometryCache } from "../src/geometryLoader";
-import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
+import {
+	createAreaLookup,
+	type AreaInventory,
+	type AreaReleaseArtifact,
+} from "../src/areaInventory";
+import { readPublicManifest } from "../src/publicManifest";
 import { compileNamedLocationGeometry } from "../src/namedLocationGeometry";
 import { sha256 } from "../src/contentHash";
 
@@ -83,12 +88,31 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 		"named-locations.json",
 	);
 	const parsed = compileNamedLocations(source);
-	const areaInventory = readAreaInventory(
-		join(repositoryRoot, "services", "api"),
+	const apiRoot = join(repositoryRoot, "services", "api");
+	const areaInventory = readPublicManifest<AreaInventory>(
+		apiRoot,
+		"area-inventory.json",
+		"releases",
+		"area inventory",
 	);
-	const areas = readAreaLookup(
-		join(repositoryRoot, "services", "api"),
-		areaInventory,
+	const memberGeographies = new Set([
+		"localAuthority",
+		...parsed.locations.map((location) => location.memberGeography),
+	]);
+	const areas = createAreaLookup(
+		areaInventory.releases.flatMap((release) =>
+			release.status === "available" &&
+			memberGeographies.has(release.geography)
+				? [
+						JSON.parse(
+							readFileSync(
+								join(apiRoot, "public", release.artifact),
+								"utf8",
+							),
+						) as AreaReleaseArtifact,
+					]
+				: [],
+		),
 	);
 	const cache = createAreaGeometryCache(
 		join(repositoryRoot, "services", "api"),
