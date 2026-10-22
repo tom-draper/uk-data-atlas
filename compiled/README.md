@@ -49,7 +49,7 @@ datasets.
 
 ## atlas.sqlite
 
-The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, and `area-inventory` and writes this database
+The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, and `crosswalk-inventory` and writes this database
 with the existing `node:sqlite` library. It replaces the whole database through
 a temporary file and atomic rename. Every run writes every table, so the stage
 cache detects its output without a retained-file `outputs` declaration.
@@ -73,7 +73,8 @@ The database contains these tables:
 | `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                               |
 | `datasets` | `payloadId`   | `TEXT NOT NULL`        | Foreign key to `payloads.id`, `dataset:<output>`.                                |
 
-`meta`, `payloads`, `datasets`, `area_releases`, and `areas` use `WITHOUT ROWID`. Each dataset has one payload. The complete
+`meta`, `payloads`, `datasets`, `area_releases`, `areas`, `crosswalks`, `crosswalk_sources`,
+`crosswalk_targets`, and `crosswalk_coverage` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
@@ -146,7 +147,53 @@ still read them. Atlas lookups use the migrated loader. Atlas pages read boundar
 properties for area sizes. `scripts/copy-atlas-data.mts` copies only compiled
 atlas lookups and pages, so it needs no area-inventory copy.
 
+### Crosswalks
+
+`crosswalk_inventory` has one row keyed by integer `position = 0` with non-null
+`schemaVersion INTEGER` and `contentHash TEXT`. Nullable `areaInventoryHash TEXT`
+records whether release coverage is present. `crosswalk_coverage` has primary
+key `(geography, boundaryRelease)`, both non-null text, unique non-null integer
+`position`, and non-null integers `areaCount` and `relatedAreaCount`.
+Its rows retain coverage order and refer to the inventory hash, without requiring
+all historical crosswalk endpoints to exist in `areas`.
+
+`crosswalks` has text primary key `id`, unique integer `position`, text
+`fromGeography`, `fromRelease`, `toGeography`, `toRelease`, `method`, `quality`,
+`weighting`, `artifact`, `contentHash`, and `header`, plus integer `recordCount`
+and `bytes`. These columns are non-null. Nullable `relationshipPurpose TEXT`
+distinguishes identity and membership where declared. `weighting` is JSON.
+`header` is the artifact metadata with a null `records` placeholder, preserving nested provenance,
+validation and property order. `bytes` retains the original JSON byte count for
+the existing cache budget. An index on `(fromGeography, fromRelease, toGeography,
+toRelease)` supports endpoint selection.
+
+`crosswalk_sources` has primary key `(crosswalkId, position)`, with a foreign key
+to `crosswalks.id`. `crosswalk_targets` has primary key `(crosswalkId,
+sourcePosition, position)` and a foreign key `(crosswalkId, sourcePosition)` to
+`crosswalk_sources`. Identity columns are non-null text for `crosswalkId` and
+non-null integers for positions. Each table has non-null text `code`, `labels`,
+and `fields`. `labels` is an ordered JSON string array. `fields` is an ordered
+JSON list of present property names, preserving property order and absent versus
+null values when reconstructing responses. Endpoint values live in columns,
+not in record payload blobs.
+
+Nullable source `REAL` columns are `areaM2`, `coverage`, and `population`.
+Nullable target `REAL` columns are `weight`, `overlapAreaM2`, `sourceShare`,
+`targetShare`, `population`, `containedShare`, `outsideWidthM`,
+`widestDifferenceM`, and `claimedDifferenceM`. Nullable target text columns are
+`change`, `match`, and `relation`. Missing weights stay null, distinct from zero.
+Both endpoint tables index `(crosswalkId, code)` for forward and reverse code
+lookups. Their primary keys support the API's ordered artifact reads.
+
+The API crosswalk inventory and bounded lazy artifact loader read SQLite and
+close each connection after a read. JSON inventories and compressed crosswalk
+artifacts remain inputs to relationship paths, analysis geographies and their
+validation, location projections, relationship candidates, geography inventory,
+lookup manifests, validation reports, proposals, and release snapshots.
+Atlas lookups and pages use the migrated loader. The website copy step still
+copies their generated outputs and never reads crosswalk JSON directly.
+
 ## Planned
 
-Crosswalks, named locations, and other ready-to-send payloads will follow in
-`atlas.sqlite`. `tiles/*.pmtiles` will hold boundaries.
+Named locations and other ready-to-send payloads will follow in `atlas.sqlite`.
+`tiles/*.pmtiles` will hold boundaries.
