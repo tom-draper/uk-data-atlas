@@ -352,7 +352,7 @@ export async function compileBoundaryChunks(root: string): Promise<void> {
 }
 
 /**
- * What is wrong with the committed chunks: a release without any, chunks cut
+ * What is wrong with the local chunks: a release without any, chunks cut
  * from a different release, lookups or generator, or a chunk file edited or
  * missing. Empty when the chunks are exactly what compiling would write.
  */
