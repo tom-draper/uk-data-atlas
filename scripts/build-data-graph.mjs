@@ -7,13 +7,19 @@ const stage = (name, dependencies = [], args = [`build:${name}`]) => ({
 const apiStages = [
 	stage("download", [], ["--dir", "../..", "data:download"]),
 	stage("operations"),
-	stage("datasets", ["download"]),
+	// Compiled once into compiled/datasets, for the website and the API.
+	stage("datasets", ["download"], ["--dir", "../..", "datasets:compile"]),
+	stage("api-datasets", ["datasets"], ["build:datasets"]),
 	stage("boundary-registry", ["download"]),
 	stage("derived-boundaries", ["download"]),
 	stage("area-inventory", ["boundary-registry", "derived-boundaries"]),
 	stage("geometry-source-registry", ["area-inventory"]),
 	stage("geometry-store", ["geometry-source-registry"]),
-	stage("named-locations", ["area-inventory", "geometry-store", "datasets"]),
+	stage("named-locations", [
+		"area-inventory",
+		"geometry-store",
+		"api-datasets",
+	]),
 	stage("place-index", [
 		"boundary-registry",
 		"area-inventory",
@@ -21,7 +27,7 @@ const apiStages = [
 	]),
 	stage("area-search-index", ["area-inventory"]),
 	stage("postcode-index", ["download"]),
-	stage("data-catalog", ["datasets"]),
+	stage("data-catalog", ["api-datasets"]),
 	stage("measure-compatibility", [
 		"data-catalog",
 		"boundary-registry",
@@ -131,7 +137,7 @@ const apiStages = [
 	// Place pages read areas, crosswalks, geometry and named locations; the
 	// docs catalogue reads the API's catalogue and map resource manifests.
 	stage("atlas-pages", [
-		"datasets",
+		"api-datasets",
 		"boundary-registry",
 		"geometry-store",
 		"named-locations",
@@ -145,7 +151,8 @@ const apiStages = [
 ];
 
 // The website's own data: it copies the API's lookups and pages from disk,
-// then compiles its datasets against them. The API reads none of it.
+// and the compiled datasets, then builds its boundaries and chunks against
+// them. The API reads none of it.
 const websiteStages = [
 	stage(
 		"website-lookups",
@@ -154,7 +161,7 @@ const websiteStages = [
 	),
 	stage(
 		"website-datasets",
-		["download", "website-lookups"],
+		["datasets", "website-lookups"],
 		["--dir", "../..", "precompile:generate"],
 	),
 ];

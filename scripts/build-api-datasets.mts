@@ -1,18 +1,17 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { constants } from "node:fs";
+import { copyFile, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-	CATALOGUE_DATASET_DEFINITIONS,
-	compileDatasetContents,
-	validatePrecompiledDataset,
-} from "@uk-data-atlas/datasets";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
-import { encodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
-import { createTrackedReader } from "./precompile/trackedReader.mts";
 
-/** Build API-owned inputs from raw data, one dataset at a time. */
+/**
+ * Build the API's dataset folder: the catalogue datasets copied from
+ * compiled/datasets, plus the boundary assets and gazetteer core it compiles
+ * itself.
+ */
 export async function buildDatasets(repositoryRoot: string) {
 	const directory = join(
 		repositoryRoot,
@@ -28,6 +27,7 @@ export async function buildDatasets(repositoryRoot: string) {
 		"public",
 		"source-data",
 	);
+	const compiledDirectory = join(repositoryRoot, "compiled", "datasets");
 	await mkdir(directory, { recursive: true });
 	await compileBoundaryAssets(boundaryDirectory);
 	const write = async (name: string, value: unknown) => {
@@ -40,30 +40,38 @@ export async function buildDatasets(repositoryRoot: string) {
 			sha256: createHash("sha256").update(content).digest("hex"),
 		};
 	};
-	const datasets = [];
-	for (const definition of CATALOGUE_DATASET_DEFINITIONS) {
-		const { reader, artifacts } = createTrackedReader();
-		const data = await compileDatasetContents(definition, reader);
-		const summary = validatePrecompiledDataset(definition, data);
-		const compiled = await write(
-			definition.precompiledFile,
-			encodeCompactPayload(data),
+	const copy = (file: string) =>
+		copyFile(
+			join(compiledDirectory, file),
+			join(directory, file),
+			constants.COPYFILE_FICLONE,
 		);
-		datasets.push({
-			type: definition.type,
-			output: definition.precompiledFile,
-			source: definition.source,
-			contract: definition.ingestion ?? {},
-			inputs: [...artifacts.values()].sort((a, b) =>
-				a.path < b.path ? -1 : a.path > b.path ? 1 : 0,
-			),
-			summary,
-			compiled,
-		});
-		console.log(
-			`Compiled ${definition.precompiledFile}.json (${compiled.bytes} bytes)`,
+	const manifest = JSON.parse(
+		await readFile(
+			join(compiledDirectory, "dataset-manifest.json"),
+			"utf8",
+		).catch(() => {
+			throw new Error(
+				`No compiled datasets in ${compiledDirectory}. Run pnpm datasets:compile first.`,
+			);
+		}),
+	) as { datasets: { type: string; output: string }[] };
+	const compiled = new Map(
+		manifest.datasets.map((entry) => [entry.type, entry.output]),
+	);
+	const missing = CATALOGUE_DATASET_DEFINITIONS.filter(
+		(definition) =>
+			compiled.get(definition.type) !== definition.precompiledFile,
+	);
+	if (missing.length > 0)
+		throw new Error(
+			`compiled/datasets has no ${missing.map(({ type }) => type).join(", ")}. Run pnpm datasets:compile first.`,
 		);
-	}
+	await Promise.all(
+		manifest.datasets.map(({ output }) => copy(`${output}.json`)),
+	);
+	await copy("dataset-manifest.json");
+	const datasets = manifest.datasets;
 	const core = await loadGazetteerCore((path) =>
 		readFile(
 			join(
@@ -76,7 +84,6 @@ export async function buildDatasets(repositoryRoot: string) {
 		),
 	);
 	await write("gazetteer.core", core);
-	await write("dataset-manifest", { version: 1, datasets });
 	return { directory, datasetCount: datasets.length };
 }
 
