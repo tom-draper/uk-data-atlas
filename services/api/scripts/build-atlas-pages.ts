@@ -893,7 +893,11 @@ for (const [name, json] of outputs) {
 	for (const [code, profile] of Object.entries(
 		JSON.parse(json) as Record<string, AreaProfile>,
 	))
-		if (profile.geography === "ward" && profile.areaKm2)
+		if (
+			/^[EW]05/.test(code) &&
+			profile.geography === "ward" &&
+			profile.areaKm2
+		)
 			wardAreas[code] = profile.areaKm2;
 }
 pages.set("ward-areas", JSON.stringify(wardAreas));
