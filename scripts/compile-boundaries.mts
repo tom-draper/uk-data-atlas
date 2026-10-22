@@ -218,7 +218,7 @@ const releaseSources = (outputDirectory: string) =>
 			const metaPath = join(releaseDir, "meta.json");
 			// A checked-out application can retain compiled releases while its
 			// optional raw-source snapshot omits older boundary inputs. Preserve
-			// those exact committed assets; a release without either form is still
+			// those existing local assets; a release without either form is still
 			// an error, rather than silently vanishing from the build.
 			if (!existsSync(metaPath)) {
 				if (existsSync(outputPath) && existsSync(propertiesPath))
@@ -230,7 +230,7 @@ const releaseSources = (outputDirectory: string) =>
 			const corrections = correctionsFromMeta(releaseDir);
 			// A release that takes areas from another can only be recompiled
 			// when that release's raw source is held too; otherwise its
-			// committed assets stand, as for a release missing its own.
+			// local assets stand, as for a release missing its own.
 			const donorsMissing = substitutionsFor(type, release.id).some(
 				({ donor }) => {
 					const asset = BOUNDARY_CATALOG[
