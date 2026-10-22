@@ -5,8 +5,8 @@ import {
 	forEachXlsSheetRow,
 	readWorkbookStream,
 	xlsSheetRows,
-} from "../../../lib/data/spreadsheet/xls";
-import { rowsToCsv } from "../../../lib/data/spreadsheet/xlsx";
+} from "@uk-data-atlas/datasets/data/spreadsheet/xls";
+import { rowsToCsv } from "@uk-data-atlas/datasets/data/spreadsheet/xlsx";
 import { SOURCE_DATA } from "../paths.mts";
 
 /**

@@ -1,0 +1,30 @@
+import { loadPopulation } from "../../population/loader";
+import type { PopulationDataset } from "../../../types/population";
+import type { DatasetDefinition } from "../types";
+
+export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> =
+	{
+		type: "population",
+		precompiledFile: "population",
+		boundaryType: "ward",
+		coverageCountries: ["GB-ENG", "GB-WLS"],
+		payload: {
+			regionChunks: {
+				kind: "regional",
+				populationSummary: true,
+				locationAggregate: "population",
+			},
+		},
+		source: {
+			name: "Population",
+			source: "Office for National Statistics",
+			sourceUrl: "https://www.ons.gov.uk/",
+			year: "2022",
+			licence: "Open Government Licence v3.0",
+			licenceUrl:
+				"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+			description:
+				"Ward population estimates for mid-2022. Newer ONS ward estimates use May 2025 boundaries, which are not yet mapped in the atlas.",
+		},
+		precompile: ({ xlsxSheetRows }) => loadPopulation(xlsxSheetRows),
+	};

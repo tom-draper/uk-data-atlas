@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import { join } from "path";
-import type { DatasetReader, SourceArtifact } from "../../lib/data/catalog";
-import type { OdsTableOptions } from "../../lib/data/spreadsheet/ods";
+import type { DatasetReader, SourceArtifact } from "@uk-data-atlas/datasets";
+import type { OdsTableOptions } from "@uk-data-atlas/datasets/data/spreadsheet/ods";
 import { fileStamp, sourceInputPath } from "./cache.mts";
 import { SOURCE_DATA } from "./paths.mts";
 import { readSource } from "./sources/read.mts";

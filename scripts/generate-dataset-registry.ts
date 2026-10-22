@@ -12,7 +12,9 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATASETS_DIR = join(ROOT, "lib", "datasets");
 const CATALOGUE_DEFINITIONS_DIR = join(
 	ROOT,
-	"lib",
+	"packages",
+	"datasets",
+	"src",
 	"data",
 	"catalog",
 	"definitions",
@@ -29,8 +31,24 @@ async function writeGenerated(path: string, source: string): Promise<void> {
 	await writeFile(path, await format(source, { ...config, filepath: path }));
 }
 
-const CATALOGUE_REGISTRY = join(ROOT, "lib", "data", "catalog", "registry.ts");
-const CATALOGUE_TYPES = join(ROOT, "lib", "data", "catalog", "generated.ts");
+const CATALOGUE_REGISTRY = join(
+	ROOT,
+	"packages",
+	"datasets",
+	"src",
+	"data",
+	"catalog",
+	"registry.ts",
+);
+const CATALOGUE_TYPES = join(
+	ROOT,
+	"packages",
+	"datasets",
+	"src",
+	"data",
+	"catalog",
+	"generated.ts",
+);
 const OUTPUT = join(DATASETS_DIR, "generated.ts");
 const CHART_OUTPUT = join(DATASETS_DIR, "generatedCharts.tsx");
 

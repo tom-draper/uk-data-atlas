@@ -1,0 +1,400 @@
+import { odsTableRows, type OdsTableOptions } from "../spreadsheet/ods";
+import { parseCsv } from "../../helpers/parseCsv";
+import { parseNullableNum } from "../../helpers/parseNumber";
+import { loadPopulationUk } from "../population/ukLoader";
+import type { IndicatorDataset, IndicatorRecord } from "../../types/indicator";
+import type { BoundaryType } from "../boundaries/catalog";
+
+type IndicatorType =
+	| "businessActivity"
+	| "netAdditionalDwellings"
+	| "localGovernmentFinance"
+	| "councilTax"
+	| "waste"
+	| "adultSocialCareActivity"
+	| "adultSocialCareOutcomes"
+	| "planningApplications"
+	| "electricVehicleChargers"
+	| "housingAffordability";
+
+const source = (path: string) => path;
+const numeric = (value: unknown) => parseNullableNum(value) ?? null;
+// GSS local authority codes use different prefixes in each nation. England's
+// county councils are E10 codes, which the adult-social-care returns include.
+const authorityCode = (value: string) =>
+	/^(?:E(?:0[6789])|W06|S12|N09)\d{6}$/.test(value);
+
+// These two authorities are published on superseded codes in these releases.
+// No official concordance accompanies the files, so they stay absent rather
+// than being silently placed on a different current-boundary area.
+const SUPERSEDED_LOCAL_AUTHORITY_CODES = new Set(["E08000016", "E08000019"]);
+const mapAuthorityCode = (code: string) =>
+	authorityCode(code) && !SUPERSEDED_LOCAL_AUTHORITY_CODES.has(code);
+
+const dataset = <T extends IndicatorType>(
+	type: T,
+	year: number,
+	boundaryType: BoundaryType,
+	boundaryYear: number,
+	data: Record<string, IndicatorRecord>,
+): Record<string, IndicatorDataset<T>> => ({
+	[String(year)]: {
+		id: `${type}${year}`,
+		type,
+		year,
+		boundaryType,
+		boundaryYear,
+		data,
+	},
+});
+
+async function addPopulationMetrics(
+	records: Record<string, IndicatorRecord>,
+	readSheet: (path: string, sheet: string) => Promise<string>,
+) {
+	const population = await loadPopulationUk(readSheet);
+	const latest = population["2024"]?.data ?? {};
+	for (const [code, record] of Object.entries(records)) {
+		const total = Object.values(latest[code]?.total ?? {}).reduce(
+			(sum, value) => sum + value,
+			0,
+		);
+		if (total > 0) {
+			record.metrics = {
+				per100kPopulation: (record.value / total) * 100_000,
+			};
+		}
+	}
+}
+
+const table = (content: string, name: string, maxColumns = 64) =>
+	odsTableRows(content, { table: name, label: name, maxColumns });
+
+/** ONS table 1 reports broad-industry counts; summing them gives all enterprises. */
+export async function loadBusinessActivity(
+	read: (path: string, sheet: string) => Promise<string>,
+	readPopulation: (path: string, sheet: string) => Promise<string> = read,
+) {
+	const { data: rows } = await parseCsv<string[]>(
+		await read(
+			source(
+				"economics/business-activity/ukbusinessworkbook2025new.xlsx",
+			),
+			"Table 1",
+		),
+		{ header: false },
+	);
+	// Each row lists its broad industries and then their total. Read the
+	// total, as adding up the row would count every business twice.
+	const total = rows.find((row) => row.includes("Total"))?.indexOf("Total");
+	if (total === undefined)
+		throw new Error("Business activity Table 1 has no Total column.");
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows) {
+		const match = /^([EWSN]\d+)\s*:\s*(.+)$/.exec(row[0] ?? "");
+		const value = numeric(row[total]);
+		if (!match || !mapAuthorityCode(match[1]!) || value === null) continue;
+		records[match[1]!] = { code: match[1]!, name: match[2]!.trim(), value };
+	}
+	await addPopulationMetrics(records, readPopulation);
+	return dataset("businessActivity", 2025, "localAuthority", 2025, records);
+}
+
+export async function loadNetAdditionalDwellings(
+	read: (path: string) => Promise<string>,
+) {
+	const rows = table(
+		await read(
+			source(
+				"economics/housing/net-additional-dwellings/Live_Table_122.ods",
+			),
+		),
+		"LT_122",
+		40,
+	);
+	const headers = rows[4] ?? [];
+	const target = headers.findIndex((header) => header.startsWith("2024-25"));
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(5)) {
+		const code = row[2]?.trim() ?? "";
+		const value = numeric(row[target]);
+		if (!mapAuthorityCode(code) || value === null) continue;
+		records[code] = { code, name: row[3]?.trim() || code, value };
+	}
+	return dataset(
+		"netAdditionalDwellings",
+		2025,
+		"localAuthority",
+		2025,
+		records,
+	);
+}
+
+export async function loadLocalGovernmentFinance(
+	read: (path: string) => Promise<string>,
+) {
+	const rows = table(
+		await read(
+			source(
+				"economics/local-government-finance/RA_2026-27_data_Part_1.ods",
+			),
+		),
+		"RA_LA_Data_2026-27",
+		128,
+	);
+	const headers = rows[9] ?? [];
+	const valueColumn = headers.indexOf("TOTAL EDUCATION SERVICES");
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(10)) {
+		const code = row[1]?.trim() ?? "";
+		const value = numeric(row[valueColumn]);
+		if (!mapAuthorityCode(code) || value === null) continue;
+		records[code] = { code, name: row[2]?.trim() || code, value };
+	}
+	return dataset(
+		"localGovernmentFinance",
+		2026,
+		"localAuthority",
+		2026,
+		records,
+	);
+}
+
+export async function loadCouncilTax(read: (path: string) => Promise<string>) {
+	const rows = table(
+		await read(
+			source(
+				"economics/local-government-finance/council-tax/Tables_1-9_2026-27.ods",
+			),
+		),
+		"Table_9",
+		16,
+	);
+	const headers = rows[2] ?? [];
+	const valueColumn = headers.indexOf("Band D");
+	if (valueColumn < 0)
+		throw new Error(
+			"Could not find the Band D column in council-tax Table 9",
+		);
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(3)) {
+		const code = row[1]?.trim() ?? "";
+		const value = numeric(row[valueColumn]);
+		if (!mapAuthorityCode(code) || value === null) continue;
+		records[code] = { code, name: row[2]?.trim() || code, value };
+	}
+	return dataset("councilTax", 2026, "localAuthority", 2026, records);
+}
+
+export async function loadWaste(
+	readRows: (
+		path: string,
+		options: OdsTableOptions,
+		visit: (row: readonly string[]) => void,
+	) => Promise<void>,
+) {
+	const records: Record<string, IndicatorRecord> = {};
+	let rowIndex = 0;
+	await readRows(
+		source("environment/waste/LA_and_Regional_Spreadsheet_2024-25.ods"),
+		{ table: "Table_1", label: "Table_1", maxColumns: 32 },
+		(row) => {
+			if (rowIndex++ < 4) return;
+			const code = row[2]?.trim() ?? "";
+			const total = numeric(row[6]);
+			const recycled = numeric(row[20]);
+			if (
+				row[0] !== "2024-25" ||
+				row[5] !== "Collection" ||
+				!mapAuthorityCode(code) ||
+				total === null
+			)
+				return;
+			records[code] = {
+				code,
+				name: row[4]?.trim() || code,
+				value: total,
+				...(recycled === null
+					? {}
+					: { metrics: { recycledTonnes: recycled } }),
+			};
+		},
+	);
+	return dataset("waste", 2025, "localAuthority", 2025, records);
+}
+
+export async function loadAdultSocialCareActivity(
+	read: (path: string) => Promise<string>,
+) {
+	const rows = table(
+		await read(
+			source(
+				"health/adult-social-care/activity/asc-activity-report-england-2024-to-2025-data-tables-updated-june-2026.ods",
+			),
+		),
+		"Table_2",
+		20,
+	);
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(4)) {
+		const code = row[0]?.trim() ?? "";
+		const workingAge = numeric(row[9]);
+		const older = numeric(row[10]);
+		if (!mapAuthorityCode(code) || workingAge === null || older === null)
+			continue;
+		records[code] = {
+			code,
+			name: row[2]?.trim() || code,
+			value: workingAge + older,
+		};
+	}
+	return dataset(
+		"adultSocialCareActivity",
+		2025,
+		"localAuthority",
+		2025,
+		records,
+	);
+}
+
+export async function loadAdultSocialCareOutcomes(
+	read: (path: string) => Promise<string>,
+) {
+	const rows = table(
+		await read(
+			source(
+				"health/adult-social-care/ascof/dhsc-ascof-england-2024-to-2025-outcome-and-demographic-data-23-january-2026.ods",
+			),
+		),
+		"Table_1a",
+		16,
+	);
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(6)) {
+		const code = row[1]?.trim() ?? "";
+		const value = numeric(row[8]);
+		if (
+			row[3] !== "Local Authority" ||
+			row[4] !== "Total" ||
+			row[5] !== "Total" ||
+			!mapAuthorityCode(code) ||
+			value === null
+		)
+			continue;
+		records[code] = { code, name: row[0]?.trim() || code, value };
+	}
+	return dataset(
+		"adultSocialCareOutcomes",
+		2025,
+		"localAuthority",
+		2025,
+		records,
+	);
+}
+
+export async function loadPlanningApplications(
+	readRows: (
+		path: string,
+		options: { skipLines?: number },
+		visit: (row: Readonly<Record<string, string>>) => void,
+	) => Promise<void>,
+) {
+	const records: Record<string, IndicatorRecord> = {};
+	await readRows(
+		source("housing/planning-applications/ps1-full-2026-03.csv"),
+		{ skipLines: 3 },
+		(row) => {
+			const code = row.LPACD?.trim() ?? "";
+			const value = numeric(row["Applications received"]);
+			if (
+				row.Quarter !== "2026 Q1" ||
+				!mapAuthorityCode(code) ||
+				value === null
+			)
+				return;
+			records[code] = { code, name: row.LPANM?.trim() || code, value };
+		},
+	);
+	return dataset(
+		"planningApplications",
+		2026,
+		"localAuthority",
+		2025,
+		records,
+	);
+}
+
+export async function loadElectricVehicleChargers(
+	read: (path: string) => Promise<string>,
+	readPopulation: (path: string, sheet: string) => Promise<string>,
+) {
+	const rows = table(
+		await read(
+			source(
+				"transport/electric-vehicle-chargers/evci0102_2026-07_EV_chargers_by_local_authority_UK.ods",
+			),
+		),
+		"EVCI0102a",
+		8,
+	);
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(3)) {
+		const code = row[0]?.trim() ?? "";
+		const value = numeric(row[4]);
+		if (!mapAuthorityCode(code) || value === null) continue;
+		records[code] = { code, name: row[1]?.trim() || code, value };
+	}
+	await addPopulationMetrics(records, readPopulation);
+	return dataset(
+		"electricVehicleChargers",
+		2026,
+		"localAuthority",
+		2026,
+		records,
+	);
+}
+
+/**
+ * ONS table 5c: the ratio of the median price paid for existing dwellings
+ * (year ending September) to median gross annual residence-based earnings.
+ * Authorities ONS suppresses for the year ("[x]") are left out.
+ */
+export async function loadHousingAffordability(
+	read: (path: string, sheet: string) => Promise<string>,
+) {
+	const year = 2025;
+	const { data: rows } = await parseCsv<string[]>(
+		await read(
+			source(
+				"education/housing-affordability/ons-ew-existing-dwellings-residence-earnings-2025.xlsx",
+			),
+			"5c",
+		),
+		{ header: false },
+	);
+	const headerIndex = rows.findIndex(
+		(row) => row[2]?.trim() === "Local authority code",
+	);
+	const headers = rows[headerIndex] ?? [];
+	const valueColumn = headers.findIndex(
+		(header) => header?.trim() === String(year),
+	);
+	if (headerIndex < 0 || valueColumn < 0)
+		throw new Error(
+			`Housing affordability table 5c has no ${year} local authority column`,
+		);
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(headerIndex + 1)) {
+		const code = row[2]?.trim() ?? "";
+		const value = numeric(row[valueColumn]);
+		if (!authorityCode(code) || value === null) continue;
+		records[code] = { code, name: row[3]?.trim() || code, value };
+	}
+	return dataset(
+		"housingAffordability",
+		year,
+		"localAuthority",
+		year,
+		records,
+	);
+}

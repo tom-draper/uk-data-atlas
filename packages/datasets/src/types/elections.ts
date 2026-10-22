@@ -1,0 +1,143 @@
+// lib/types/elections.ts
+import { ConstituencyYear, WardYear } from "../data/boundaries/years";
+import { PartyVotes, Party } from "./common";
+
+export interface LocalElectionWardData {
+	ladCode: string;
+	ladName: string;
+	totalVotes: number;
+	turnoutPercent: number;
+	wardName: string;
+	wardCode: string;
+	/**
+	 * The code the source gave, when it is not the code of the ward the
+	 * election was held in; the source config says why each one differs.
+	 */
+	sourceWardCode?: string;
+	electorate: number;
+	partyVotes: PartyVotes;
+}
+
+export interface GeneralElectionConstituencyData {
+	constituencyName: string;
+	onsId: string;
+	regionName: string;
+	countryName: string;
+	constituencyType: string;
+	memberFirstName: string;
+	memberSurname: string;
+	memberGender: string;
+	result: string;
+	firstParty: string;
+	secondParty: string;
+	electorate: number;
+	validVotes: number;
+	invalidVotes: number;
+	majority: number;
+	partyVotes: PartyVotes;
+	turnoutPercent: number;
+}
+
+export interface LocalAuthorityData {
+	ladCode: string;
+	ladName: string;
+	regionName: string;
+	/** Present for datasets, such as the EU referendum, that publish it. */
+	regionCode?: string;
+	countryName: string;
+}
+
+export type ElectionData =
+	| LocalElectionWardData
+	| GeneralElectionConstituencyData
+	| LocalAuthorityData;
+
+export const LOCAL_ELECTION_YEARS = [
+	2025, 2024, 2023, 2022, 2021, 2019, 2018, 2017, 2016,
+] as const;
+export const GENERAL_ELECTION_YEARS = [2024, 2019, 2017, 2015, 2010] as const;
+
+export type LocalElectionYear = (typeof LOCAL_ELECTION_YEARS)[number];
+export type GeneralElectionYear = (typeof GENERAL_ELECTION_YEARS)[number];
+
+interface BaseElectionDataset<D extends ElectionData> {
+	id: string;
+	year: number;
+	partyInfo: Party[];
+}
+
+/** A source ward row that could not be attached to one official ward code. */
+export interface LocalElectionExcludedWard {
+	wardName: string;
+	ladName: string;
+	/** The code the source gave, when it gave one. */
+	wardCode?: string;
+	reason:
+		| "no-ward-code"
+		| "code-shared-by-wards"
+		| "name-not-in-ward-list"
+		| "name-ambiguous"
+		| "no-candidates";
+}
+
+export interface LocalElectionDataset extends BaseElectionDataset<LocalElectionWardData> {
+	type: "localElection";
+	year: LocalElectionYear;
+	boundaryType: "ward";
+	boundaryYear: WardYear;
+	results: Record<string, string>;
+	/**
+	 * Party votes count each party's highest-polling candidate in a ward, and
+	 * totalVotes is their sum.
+	 */
+	data: Record<string, LocalElectionWardData>;
+	/**
+	 * `published` when the source gives each ward's code; `name-matched` when
+	 * codes were found by exact authority and ward name in the official ward
+	 * list for the boundary year, because the source gives none.
+	 */
+	wardCodes?: "published" | "name-matched";
+	/** Source ward rows left out because no single official code fits them. */
+	excludedWards?: LocalElectionExcludedWard[];
+	/** Selected-location card summary, emitted by the worker when available. */
+	locationAggregate?: AggregatedLocalElectionData;
+	/** Build artifact retained only until the worker selects one location. */
+	locationAggregates?: Record<string, AggregatedLocalElectionData>;
+}
+
+export interface GeneralElectionDataset extends BaseElectionDataset<GeneralElectionConstituencyData> {
+	type: "generalElection";
+	year: GeneralElectionYear;
+	boundaryType: "constituency";
+	boundaryYear: ConstituencyYear;
+	results: Record<string, string>;
+	data: Record<string, GeneralElectionConstituencyData>;
+}
+
+export interface WardStats {
+	partyVotes: PartyVotes;
+	electorate: number;
+	totalVotes: number;
+}
+
+export interface ConstituencyStats {
+	totalSeats: number;
+	partySeats: Record<string, number>;
+	totalVotes: number;
+	partyVotes: PartyVotes;
+	electorate: number;
+	validVotes: number;
+	invalidVotes: number;
+}
+
+export interface AggregatedLocalElectionData extends WardStats {}
+
+export interface AggregatedGeneralElectionData extends ConstituencyStats {}
+
+export interface ProcessedPartyData {
+	key: string;
+	name: string;
+	color: string;
+	votes: number;
+	percentage: number;
+}
