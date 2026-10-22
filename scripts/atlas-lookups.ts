@@ -6,11 +6,12 @@ import {
 } from "@uk-data-atlas/geography";
 
 /**
- * The containment and lineage lookups the API compiles for the atlas. The
- * browser fetches them from the API; the precompile reads a local copy,
- * fetched by `pnpm lookups:fetch`, so the chunks it cuts agree with them.
+ * The containment and lineage lookups the API build compiles for the atlas.
+ * `pnpm atlas-data:copy` copies them from the API's output on disk into
+ * public/data/atlas-lookups. The browser fetches them from there, and the
+ * precompile reads the same files, so the chunks it cuts agree with them.
  */
-export const ATLAS_LOOKUPS_CACHE = join(".cache", "atlas-lookups");
+export const ATLAS_LOOKUPS_DIRECTORY = join("public", "data", "atlas-lookups");
 
 /** Every lookup file the atlas reads, by file name. */
 export const ATLAS_LOOKUP_NAMES: readonly string[] = [
@@ -22,4 +23,4 @@ export const ATLAS_LOOKUP_NAMES: readonly string[] = [
 
 /** Where the precompile reads one lookup, such as `boundary-mappings.json`. */
 export const atlasLookupPath = (root: string, name: string) =>
-	join(root, ATLAS_LOOKUPS_CACHE, name);
+	join(root, ATLAS_LOOKUPS_DIRECTORY, name);

@@ -37,8 +37,8 @@ const createRepository = async () => {
 		"packages/geography/src/index.ts",
 		"packages/map-tiles/package.json",
 		"packages/map-tiles/src/compileTileset.ts",
-		".cache/atlas-lookups/boundary-mappings.json",
-		".cache/atlas-lookups/parish-lad-mappings.json",
+		"public/data/atlas-lookups/boundary-mappings.json",
+		"public/data/atlas-lookups/parish-lad-mappings.json",
 	])
 		await write(file, `// ${file}`);
 	await write(
