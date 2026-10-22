@@ -29,7 +29,7 @@
 		"build:atlas-lookups": "tsx --max-old-space-size=4096 scripts/build-atlas-lookups.ts",
 		"build:atlas-release": "tsx scripts/build-atlas-release.ts",
 		"build:boundary-registry": "tsx scripts/build-boundary-registry.ts",
-		"build:crosswalk-inventory": "tsx scripts/build-crosswalk-inventory.ts",
+		"build:crosswalk-inventory": "tsx --max-old-space-size=4096 scripts/build-crosswalk-inventory.ts",
 		"build:relationship-paths": "tsx scripts/build-relationship-paths.ts",
 		"build:location-projections": "tsx scripts/build-location-projections.ts",
 		"build:derived-boundaries": "tsx scripts/build-derived-boundaries.ts",
