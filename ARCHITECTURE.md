@@ -148,6 +148,10 @@ build of either runs only `download`. A code change reruns every stage.
 `scripts/build-data-cache.mjs` keeps this in `.cache/data-build/`. `--from`
 and `--no-cache` rerun the stages they select regardless.
 
+The `atlas-sqlite` stage writes the terrain catalogue to `compiled/atlas.sqlite`,
+which the API reads directly. Other API loaders still read their JSON outputs.
+See [compiled/README.md](compiled/README.md) for the database schema.
+
 ## Rebuilding after a change
 
 | You changed                            | Run                                                             |

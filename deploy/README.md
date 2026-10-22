@@ -34,7 +34,9 @@ pnpm build
 The build order is raw data download, API data and runtime build, website
 precompile, then website build. Run these steps serially.
 The API build also checks the source release pinned by `data-release.json` and
-writes generated catalogues to `services/api/public/`. `pnpm precompile` checks
+writes generated catalogues to `services/api/public/` and the terrain catalogue
+payload to `compiled/atlas.sqlite`. Keep `compiled/atlas.sqlite` under the repository
+root when deploying the API, which reads it in read-only mode. `pnpm precompile` checks
 the raw download, copies the atlas lookups and pages from the API's build
 output with `pnpm atlas-data:copy`, then writes browser data to `public/data/`.
 Neither output directory is tracked in Git.
