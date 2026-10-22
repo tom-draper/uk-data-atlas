@@ -32,6 +32,8 @@ test("place facts and ward areas are available independently of profile shards",
 	const read = (id: string) =>
 		JSON.parse(gunzipSync(readFileSync(pages.get(id)!.path)).toString());
 	assert.ok(read("place-facts").E06000063.age[0] > 0);
-	assert.ok(Object.keys(read("ward-areas")).length > 1000);
+	const wardCodes = Object.keys(read("ward-areas"));
+	assert.ok(wardCodes.length > 1000);
+	assert.ok(wardCodes.every((code) => /^[EW]05/.test(code)));
 	assert.ok(read("docs-catalogue").datasets.length > 0);
 });
