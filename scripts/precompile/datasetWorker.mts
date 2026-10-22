@@ -3,7 +3,7 @@
  * a time, and posts back each manifest entry.
  */
 import { parentPort } from "worker_threads";
-import { CATALOGUE_DATASET_DEFINITIONS } from "../../lib/data/catalog";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { compileStaleDataset } from "./compileDataset.mts";
 import type { ExistingManifestDataset } from "./types.mts";
 

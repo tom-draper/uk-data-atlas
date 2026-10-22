@@ -4,7 +4,7 @@ import {
 	parseBoundaryWardToLad,
 	parseParishLadMappings,
 } from "@uk-data-atlas/geography";
-import { loadGazetteerCore } from "../../lib/data/gazetteer/loader";
+import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { loadMatchIndex } from "../../lib/data/gazetteer/matchIndex";
 import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
 import {
