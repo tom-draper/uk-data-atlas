@@ -42,6 +42,15 @@ beforeEach(() => {
 			],
 		}),
 	);
+	writeFileSync(
+		join(root, "services/api/public/area-inventory.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "areas",
+			boundaryRegistryHash: "registry",
+			releases: [],
+		}),
+	);
 	buildAtlasSqlite(root);
 	// The request must work without either product's JSON copies.
 	rmSync(join(root, "compiled/datasets"), { recursive: true });

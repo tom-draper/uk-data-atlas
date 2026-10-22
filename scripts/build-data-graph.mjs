@@ -22,7 +22,7 @@ const apiStages = [
 		outputs: ["compiled/datasets"],
 	}),
 	stage("terrain-catalogue"),
-	stage("atlas-sqlite", ["terrain-catalogue", "datasets"]),
+	stage("atlas-sqlite", ["terrain-catalogue", "datasets", "area-inventory"]),
 	stage("api-datasets", ["download"], ["build:datasets"]),
 	stage("boundary-registry", ["download"]),
 	stage("derived-boundaries", ["download"]),
@@ -30,16 +30,18 @@ const apiStages = [
 	stage("geometry-source-registry", ["area-inventory"]),
 	stage("geometry-store", ["geometry-source-registry"]),
 	stage("named-locations", [
+		"atlas-sqlite",
 		"area-inventory",
 		"geometry-store",
 		"api-datasets",
 	]),
 	stage("place-index", [
+		"atlas-sqlite",
 		"boundary-registry",
 		"area-inventory",
 		"named-locations",
 	]),
-	stage("area-search-index", ["area-inventory"]),
+	stage("area-search-index", ["atlas-sqlite"]),
 	stage("postcode-index", ["download"]),
 	stage("data-catalog", ["atlas-sqlite"]),
 	stage("measure-compatibility", [
@@ -49,6 +51,7 @@ const apiStages = [
 	]),
 	stage("export-manifest", ["data-catalog"]),
 	stage("postcode-areas", [
+		"atlas-sqlite",
 		"postcode-index",
 		"area-inventory",
 		"geometry-store",
@@ -139,6 +142,7 @@ const apiStages = [
 		"geometry-store",
 	]),
 	stage("atlas-lookups", [
+		"atlas-sqlite",
 		"area-inventory",
 		"crosswalk-inventory",
 		"relationship-paths",

@@ -1,3 +1,6 @@
+import { DatabaseSync } from "node:sqlite";
+import { areaTables } from "../src/atlasAreas";
+import { writeSqliteIndex } from "../src/sqliteIndex";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -10,12 +13,26 @@ import { packNamedLocations } from "../src/namedLocationStorage";
 import type { AreaInventory } from "../src/areaInventory";
 import type { NamedLocationInventory } from "../src/namedLocations";
 
+const storeAreas = (
+	apiRoot: string,
+	directory: string,
+	inventory: AreaInventory,
+) => {
+	writeFileSync(
+		join(directory, "area-inventory.json"),
+		JSON.stringify(inventory),
+	);
+	const compiled = join(apiRoot, "../../compiled");
+	mkdirSync(compiled, { recursive: true });
+	writeSqliteIndex(join(compiled, "atlas.sqlite"), {}, areaTables(directory));
+};
+
 const fixture = (run: (root: string, directory: string) => void) => {
 	const root = mkdtempSync(join(tmpdir(), "lazy-catalogues-"));
-	const directory = join(root, "public");
-	mkdirSync(directory);
+	const directory = join(root, "services/api/public");
+	mkdirSync(directory, { recursive: true });
 	try {
-		run(root, directory);
+		run(join(root, "services/api"), directory);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
@@ -47,6 +64,7 @@ test("area release keys are available before any records are parsed", () =>
 					areas: [{ code: "E00000001", name: `Ward ${id}` }],
 				}),
 			);
+		storeAreas(root, directory, inventory);
 		const lookup = readAreaLookup(root, inventory);
 		assert.deepEqual([...lookup.keys()], ["ward/2023", "ward/2024"]);
 		rmSync(join(directory, "2023.json"));
@@ -54,7 +72,7 @@ test("area release keys are available before any records are parsed", () =>
 			code: "E00000001",
 			name: "Ward 2024",
 		});
-		assert.throws(() => lookup.get("ward/2023"), /ENOENT/);
+		assert.equal(lookup.get("ward/2023")?.size, 1);
 		assert.equal(lookup.get("unknown"), undefined);
 	}));
 
@@ -88,16 +106,23 @@ test("area releases stay parsed until their records exceed the budget", () =>
 					],
 				}),
 			);
+		storeAreas(root, directory, inventory);
 		const lookup = readAreaLookup(root, inventory, 4);
 		lookup.get("ward/2022");
 		lookup.get("ward/2023");
 		lookup.get("ward/2022");
 		lookup.get("ward/2024");
-		for (const id of ids) rmSync(join(directory, `${id}.json`));
+		const database = new DatabaseSync(
+			join(root, "../../compiled/atlas.sqlite"),
+		);
+		database
+			.prepare("DELETE FROM areas WHERE boundaryRelease = ?")
+			.run("2023");
+		database.close();
 		// 2023 was least recently used, so reading 2024 evicted it.
 		assert.equal(lookup.get("ward/2022")?.size, 2);
 		assert.equal(lookup.get("ward/2024")?.size, 2);
-		assert.throws(() => lookup.get("ward/2023"), /ENOENT/);
+		assert.throws(() => lookup.get("ward/2023"), /Invalid area release/);
 	}));
 
 test("matching names in one geography never parses another's releases", () =>
@@ -136,6 +161,7 @@ test("matching names in one geography never parses another's releases", () =>
 					],
 				}),
 			);
+		storeAreas(root, directory, inventory);
 		const lookup = readAreaLookup(root, inventory);
 		rmSync(join(directory, "parish-2024.json"));
 		const [result] = validateBatch(lookup, "ward", "2024", ["Old Ward"]);

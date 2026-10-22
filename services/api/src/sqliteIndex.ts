@@ -24,6 +24,8 @@ export type SqliteTable = {
 	 */
 	key?: string[];
 	rows: Iterable<SQLInputValue[]>;
+	constraints?: string[];
+	indexes?: string[][];
 };
 
 /**
@@ -42,7 +44,7 @@ export const writeSqliteIndex = (
 	const database = new DatabaseSync(temporary);
 	try {
 		database.exec(
-			`PRAGMA page_size = ${pageSize}; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;`,
+			`PRAGMA foreign_keys = ON; PRAGMA page_size = ${pageSize}; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;`,
 		);
 		database.exec(
 			"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
@@ -54,12 +56,16 @@ export const writeSqliteIndex = (
 			const placeholders = table.columns.map(() => "?");
 			if (table.key) {
 				database.exec(
-					`CREATE TABLE ${name} (${table.columns.join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID`,
+					`CREATE TABLE ${name} (${[...table.columns, ...(table.constraints ?? [])].join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID`,
 				);
 				const insert = database.prepare(
 					`INSERT INTO ${name} VALUES (${placeholders.join(", ")})`,
 				);
 				for (const row of table.rows) insert.run(...row);
+				for (const [index, columns] of (table.indexes ?? []).entries())
+					database.exec(
+						`CREATE INDEX ${name}_${index} ON ${name} (${columns.join(", ")})`,
+					);
 				continue;
 			}
 			database.exec(
