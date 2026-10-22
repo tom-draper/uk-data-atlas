@@ -1,3 +1,4 @@
+import { readAtlasPayload } from "@/shared/atlasSqlite";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { isDeepStrictEqual } from "util";
@@ -45,7 +46,9 @@ describe("dataset region chunks", () => {
 		const edition = "2025";
 		const datasets = join(process.cwd(), "public", "data", "datasets");
 		const read = (path: string) => JSON.parse(readFileSync(path, "utf8"));
-		const full = read(join(datasets, `${file}.json`))[edition] as {
+		const full = JSON.parse(
+			readAtlasPayload(process.cwd(), `dataset:${file}`),
+		)[edition] as {
 			boundaryYear: number;
 			data: Record<string, unknown>;
 		};
@@ -99,7 +102,7 @@ describe("dataset region chunks", () => {
 		"keeps every %s record in one chunk, and in the file's form",
 		(file) => {
 			const whole = decodeCompactPayload(
-				readJson(`${file}.json`),
+				JSON.parse(readAtlasPayload(process.cwd(), `dataset:${file}`)),
 			) as Record<string, { data: Record<string, unknown> }>;
 			const chunks = REGION_CHUNK_KEYS.map((region) =>
 				readJson("chunks", file, `${region}.json`),

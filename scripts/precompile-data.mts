@@ -1,8 +1,8 @@
+import { buildAtlasSqlite } from "../services/api/scripts/build-atlas-sqlite";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
- * chunks, and a copy of each dataset compile-datasets.mts left in
- * compiled/datasets. Eliminates PapaParse from the client bundle and removes
- * main-thread CSV parsing.
+ * chunks, using the catalogue intermediates in compiled/datasets.
+ * Catalogue payloads are served by Next.js from compiled/atlas.sqlite.
  *
  * Run via: pnpm precompile (which compiles the datasets first)
  * Run before pnpm build. pnpm dev regenerates stale local output.
@@ -90,6 +90,7 @@ async function compileSelected(names: readonly string[]) {
 	}
 
 	await compileCatalogueDatasets(names);
+	buildAtlasSqlite(ROOT);
 	const { datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const compiledDatasets: CompiledDatasets = new Map();
@@ -176,7 +177,7 @@ async function main() {
 			"Pipeline inputs changed; rebuilding the gazetteer, road safety and region chunks.",
 		);
 
-	// The gazetteer is built while the compiled datasets are copied in.
+	// The gazetteer is built while the compiled datasets are registered.
 	// Neither reads what the other writes.
 	const atlasAssets = await compileAtlasAssets(reuse);
 	const { gazetteerCore, boundaryMappings, matchIndex } = atlasAssets;

@@ -1,8 +1,7 @@
-import { constants } from "fs";
-import { copyFile, readFile } from "fs/promises";
+import { readFile } from "fs/promises";
 import { join } from "path";
 import { readCompiledFromDisk } from "./compileDataset.mts";
-import { COMPILED_DATASETS, OUT_DIR } from "./paths.mts";
+import { COMPILED_DATASETS } from "./paths.mts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
@@ -12,8 +11,8 @@ import type {
 const RUN_COMPILE = "Run pnpm datasets:compile first.";
 
 /**
- * Copies the named catalogue datasets from compiled/datasets into the folder
- * Next serves, and returns their manifest entries in the order given.
+ * Reads the named catalogue datasets from compiled/datasets and returns their
+ * manifest entries in the order given.
  * Regional datasets are registered in `compiledDatasets` so their region
  * chunks can be cut. Fails if a dataset is missing or was compiled by a
  * different compiler than the current one.
@@ -50,13 +49,6 @@ export async function publishDatasets(
 				throw new Error(
 					`compiled/datasets/${entry.output}.json is out of date. ${RUN_COMPILE}`,
 				);
-			const file = `${definition.precompiledFile}.json`;
-			// A copy-on-write clone where the file system has them, else a copy.
-			await copyFile(
-				join(COMPILED_DATASETS, file),
-				join(OUT_DIR, file),
-				constants.COPYFILE_FICLONE,
-			);
 			readCompiledFromDisk(definition, compiledDatasets);
 			return entry;
 		}),

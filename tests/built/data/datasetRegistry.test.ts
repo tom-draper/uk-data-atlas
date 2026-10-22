@@ -1,6 +1,5 @@
+import { readAtlasPayload } from "@/shared/atlasSqlite";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
 	CHART_PRESENTATIONS,
@@ -24,8 +23,6 @@ const CHART_PENDING_TYPES = new Set(
 	).map((definition) => definition.type),
 );
 
-const PRECOMPILED = join(process.cwd(), "public", "data", "datasets");
-
 type ManifestEntry = {
 	type: string;
 	output: string;
@@ -44,14 +41,14 @@ type ManifestEntry = {
 };
 
 const manifest = JSON.parse(
-	readFileSync(join(PRECOMPILED, "dataset-manifest.json"), "utf8"),
+	readAtlasPayload(process.cwd(), "dataset-manifest"),
 ) as { datasets: ManifestEntry[] };
 const manifestByType = new Map(
 	manifest.datasets.map((entry) => [entry.type, entry]),
 );
 
 const readCompiled = (file: string) => {
-	const content = readFileSync(join(PRECOMPILED, `${file}.json`), "utf8");
+	const content = readAtlasPayload(process.cwd(), `dataset:${file}`);
 	return {
 		data: JSON.parse(content) as Record<string, never>,
 		sha256: createHash("sha256").update(content).digest("hex"),

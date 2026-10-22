@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readAtlasPayload } from "../shared/atlasSqlite";
 import { join } from "node:path";
 import { decodeCompactPayload } from "../lib/data/compactPayload";
 import { compileMapFigures, type FigureInputs } from "../lib/atlas/figures";
@@ -29,7 +29,12 @@ export async function readFigureInputs(): Promise<FigureInputs> {
 		Object.entries(FILES).map(async ([key, file]) => [
 			key,
 			decodeCompactPayload(
-				JSON.parse(await readFile(join(DATASETS, file), "utf8")),
+				JSON.parse(
+					readAtlasPayload(
+						process.cwd(),
+						`dataset:${file.replace(/\.json$/, "")}`,
+					),
+				),
 			),
 		]),
 	);
