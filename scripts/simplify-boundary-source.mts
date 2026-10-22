@@ -1,13 +1,12 @@
 /**
- * Thins an over-dense published boundary GeoJSON down to a size that can be
- * checked in, without changing where any boundary runs by more than a
+ * Thins an over-dense published boundary GeoJSON for local compilation,
+ * without changing where any boundary runs by more than a
  * generalised release already allows.
  *
  * ONS's 2022 re-issue of the December 2001 LSOAs is labelled BGC (generalised
  * to 20 m, clipped) but keeps a vertex every 20–30 m along each line: 8.2M
  * vertices and 312 MB, against 2.05M vertices and 86 MB for the 2011 BGC
- * release of the same areas. GitHub refuses any file over 100 MB, so it cannot
- * be committed as published.
+ * release of the same areas. Simplification reduces memory and parsing costs.
  *
  * Simplification runs on a shared topology, so a border between two areas is
  * one arc simplified once, and neighbours can never gap or overlap. The
