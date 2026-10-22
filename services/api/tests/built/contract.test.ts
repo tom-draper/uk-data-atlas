@@ -10,7 +10,7 @@ import { CONVERSION_METHODS } from "../../src/conversion";
 import { COMPATIBILITY_STATUSES } from "../../src/measureCompatibility";
 import { PROBLEM_CODES } from "../../src/problemCodes";
 import { route as domainRoute } from "../../src/routes";
-import { GEOMETRY_TIERS } from "../../src/simplifyGeometry";
+import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { readApiCatalogues } from "../../src/server";
 import {
 	INDEX_END,

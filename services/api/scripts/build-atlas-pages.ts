@@ -7,7 +7,7 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readApiCatalogues } from "../src/catalogueLoader";
-import { simplifyGeometry } from "../src/simplifyGeometry";
+import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { buildDocsCatalogue } from "./build-docs-catalogue";
 import { writeAtlasPages } from "./write-atlas-pages";
 import {

@@ -3,7 +3,7 @@ import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
 	simplifyGeometry,
-} from "./simplifyGeometry";
+} from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { cursorFor, nextPageHref, readCursor } from "./pagination";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 import type { RouteRequest } from "./routing";

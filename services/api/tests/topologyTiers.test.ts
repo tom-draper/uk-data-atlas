@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
-import { decomposeArcs } from "../src/mapResource/arcs";
-import { compileTiers } from "../src/mapResource/topologyTiers";
+import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
+import { compileTiers } from "@uk-data-atlas/map-tiles/topologyTiers";
 
 test("refines tiny shared rings without changing their arcs or dropping an area", () => {
 	const square = (west: number, east: number): GeoJsonGeometry => ({

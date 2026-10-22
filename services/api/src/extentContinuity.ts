@@ -12,7 +12,10 @@ import {
 import { labelsFor, round } from "./areaOverlap";
 import { CLIPPING_VERSION } from "./pieceIntersection";
 import { readGeometries } from "./rawAreaGeometries";
-import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
+import {
+	multiPolygonAreaM2,
+	polygonWidthM,
+} from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { ExtentContinuityCrosswalkAdapter } from "./crosswalkAdapters";
 import type { ExtentContinuityCrosswalkArtifact } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";

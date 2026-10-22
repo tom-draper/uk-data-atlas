@@ -5,7 +5,7 @@ import {
 	sharedBorder,
 	sharedBorderWith,
 } from "../src/areaNeighbours";
-import { edgeLengthM } from "../src/equalAreaProjection";
+import { edgeLengthM } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 
 const ring = (west: number, south: number, east: number, north: number) => [

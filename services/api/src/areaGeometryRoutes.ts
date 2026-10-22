@@ -1,4 +1,7 @@
-import { GENERALISATION_METHOD, simplifyGeometry } from "./simplifyGeometry";
+import {
+	GENERALISATION_METHOD,
+	simplifyGeometry,
+} from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";

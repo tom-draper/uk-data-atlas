@@ -1,5 +1,5 @@
 import type { Pair } from "polygon-clipping";
-import { edgeLengthM } from "./equalAreaProjection";
+import { edgeLengthM } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeoJsonGeometry } from "./areaGeometry";
 import type { Coordinate } from "./areaContainment";
 

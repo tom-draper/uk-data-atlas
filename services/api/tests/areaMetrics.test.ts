@@ -3,7 +3,7 @@ import test from "node:test";
 import {
 	projectEqualArea,
 	unprojectEqualArea,
-} from "../src/equalAreaProjection";
+} from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import { areaMetrics } from "../src/areaMetrics";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 import { containPoint } from "../src/areaContainment";

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { AreaGeometryCache, type GeoJsonGeometry } from "../src/areaGeometry";
-import { decomposeArcs } from "../src/mapResource/arcs";
+import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
 import { compileMapResource } from "../src/mapResource/compileMapResource";
 
 const left: GeoJsonGeometry = {

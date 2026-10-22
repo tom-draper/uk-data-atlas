@@ -5,7 +5,7 @@ import {
 	tileId,
 	TILE_TYPE_MVT,
 	type ArchiveTile,
-} from "../src/mapResource/pmtiles";
+} from "@uk-data-atlas/map-tiles/pmtiles";
 import { readHeader, readMetadata, readTile } from "./pmtilesFixtures";
 
 /**

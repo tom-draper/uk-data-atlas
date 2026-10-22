@@ -1,6 +1,9 @@
 import polygonClipping from "polygon-clipping";
 import { boundsIntersect, boundsOf, toPolygons } from "./areaGeometryPieces";
-import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
+import {
+	multiPolygonAreaM2,
+	polygonWidthM,
+} from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import { CLIPPING_VERSION } from "./pieceIntersection";
 
 /**

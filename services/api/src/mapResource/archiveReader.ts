@@ -1,6 +1,6 @@
 import { fstatSync, openSync, readSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
-import { tileId } from "./pmtiles";
+import { tileId } from "@uk-data-atlas/map-tiles/pmtiles";
 
 /**
  * Reading tiles back out of a published archive, for the server to answer a
