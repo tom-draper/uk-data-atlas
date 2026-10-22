@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/planningApplications";
+export { planningApplicationsDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/planningApplications";

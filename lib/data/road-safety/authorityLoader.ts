@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/road-safety/authorityLoader";
+export { loadRoadCollisionsByAuthority } from "@uk-data-atlas/datasets/data/road-safety/authorityLoader";

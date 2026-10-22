@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/brexit";
+export { brexitDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/brexit";

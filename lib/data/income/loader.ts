@@ -1,1 +1,4 @@
-export * from "@uk-data-atlas/datasets/data/income/loader";
+export {
+	loadIncome,
+	loadWorkplaceIncome,
+} from "@uk-data-atlas/datasets/data/income/loader";

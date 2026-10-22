@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/income";
+export { incomeDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/income";

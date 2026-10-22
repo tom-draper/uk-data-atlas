@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/populationUk";
+export { populationUkDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/populationUk";

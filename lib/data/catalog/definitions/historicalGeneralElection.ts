@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/historicalGeneralElection";
+export { historicalGeneralElectionDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/historicalGeneralElection";

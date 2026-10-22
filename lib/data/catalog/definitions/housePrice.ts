@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/housePrice";
+export { housePriceDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/housePrice";

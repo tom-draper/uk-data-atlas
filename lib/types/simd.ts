@@ -1,1 +1,5 @@
-export * from "@uk-data-atlas/datasets/types/simd";
+export {
+	type SIMDDataZoneData,
+	type SIMDDataset,
+	type AggregatedSIMDData,
+} from "@uk-data-atlas/datasets/types/simd";

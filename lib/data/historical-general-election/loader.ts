@@ -1,1 +1,4 @@
-export * from "@uk-data-atlas/datasets/data/historical-general-election/loader";
+export {
+	parseHistoricalGeneralElectionCsv,
+	loadHistoricalGeneralElection,
+} from "@uk-data-atlas/datasets/data/historical-general-election/loader";

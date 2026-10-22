@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/nimdm/loader";
+export { loadNIMDM } from "@uk-data-atlas/datasets/data/nimdm/loader";

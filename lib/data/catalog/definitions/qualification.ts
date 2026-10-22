@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/qualification";
+export { qualificationDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/qualification";

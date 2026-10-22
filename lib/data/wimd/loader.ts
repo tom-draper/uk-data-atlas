@@ -1,1 +1,5 @@
-export * from "@uk-data-atlas/datasets/data/wimd/loader";
+export {
+	publishedWIMDRanks,
+	welshLSOAPopulations,
+	loadWIMD,
+} from "@uk-data-atlas/datasets/data/wimd/loader";
