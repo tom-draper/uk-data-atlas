@@ -169,7 +169,10 @@ export const roundPacked = (packed: PackedGeometry): PackedGeometry =>
 	packed.kind === "packed"
 		? { ...packed, positions: packed.positions.map(roundDegrees) }
 		: packed.kind === "collection"
-			? { kind: "collection", geometries: packed.geometries.map(roundPacked) }
+			? {
+					kind: "collection",
+					geometries: packed.geometries.map(roundPacked),
+				}
 			: {
 					kind: "raw",
 					geometry: {
