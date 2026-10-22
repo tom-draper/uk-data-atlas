@@ -119,13 +119,31 @@ Import a package by name (`@uk-data-atlas/geography`), never by a relative
 path. Packages ship TypeScript source: Turbopack and `tsx` both compile it, so
 there is no build step.
 
+## One data build
+
+`scripts/build-data-graph.mjs` lists every data build stage for both
+products, with its dependencies. `pnpm data:build` runs them in order, and
+`--target` limits it to one product:
+
+| Command                            | Builds                                                          |
+| ---------------------------------- | --------------------------------------------------------------- |
+| `pnpm data:build --target api`     | Every API stage. `pnpm --dir services/api build:data` runs this |
+| `pnpm data:build --target website` | Only the stages the website's data needs, then its datasets     |
+| `pnpm data:build`                  | Both                                                            |
+
+A target runs only the stages its outputs depend on, so building one target
+and then the other gives the same output as building both. Stages the targets
+share run in each build. `--plan` lists the
+stages without running them, and `--from <stage>` runs a stage and only the
+stages after it.
+
 ## Rebuilding after a change
 
-| You changed                            | Run                                                                                               |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Shared datasets or their loaders       | `pnpm --dir services/api build:data --from datasets`, then `pnpm precompile` and `pnpm seo:build` |
-| How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm precompile`                                           |
-| Anything, before a release             | `pnpm check:full`                                                                                 |
+| You changed                            | Run                                                             |
+| -------------------------------------- | --------------------------------------------------------------- |
+| Shared datasets or their loaders       | `pnpm data:build --from datasets`, then `pnpm seo:build`        |
+| How the API compiles geography or data | `pnpm data:build`, then `pnpm --dir services/api build:runtime` |
+| Anything, before a release             | `pnpm check:full`                                               |
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`

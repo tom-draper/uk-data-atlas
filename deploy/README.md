@@ -46,10 +46,13 @@ Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.
 
+`pnpm --dir services/api build:data` runs `pnpm data:build --target api`.
+`pnpm data:build --target website` runs only the stages the website's data
+needs, ending with the website's datasets, and `pnpm data:build` runs both.
 To inspect the complete local data build without executing commands, run:
 
 ```sh
-pnpm --dir services/api build:data --plan
+pnpm data:build --plan
 ```
 
 After a complete build, rebuild a named stage and every affected downstream
