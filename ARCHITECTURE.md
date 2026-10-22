@@ -25,8 +25,9 @@ The website fetches these over HTTP and shares browser-safe code through
 packages/geography/     shared geography code: lineage, containment file
                         formats, geometry substitutions, grid offsets
 packages/catalogue/     shared catalogue code: the register of corrections
+packages/datasets/      browser-safe dataset definitions and compilers
 services/api/           the API: src/, scripts/, config/, openapi.yaml
-scripts/                the atlas's build scripts
+scripts/                build orchestration and file readers for both products
 data/                   raw source files, restored from the data release
 public/data/            the atlas's compiled data, read by the browser from
                         jsDelivr at the deployed commit (next.config.ts)
@@ -64,10 +65,13 @@ build; wards render on first visit. Place search fetches the index from the API
 on focus. Profiles and facts no longer need file tracing or committed copies.
 An unavailable API fails rendering rather than returning a false missing place.
 
-Until step 4 moves dataset compilers into a shared package, the API's profile
-build still reads `public/data/datasets/` and boundary properties as inputs.
-It does not import website code. Those inputs must exist before running the
-API stage. The stage writes only into the API's gitignored output directory.
+The API builds from raw `data/` without `public/data/`. Its `datasets` stage
+uses `@uk-data-atlas/datasets` to compile datasets and the gazetteer into
+`services/api/public/datasets/`, and boundary assets into
+`services/api/public/source-data/boundaries/`. The data catalogue, named
+locations and atlas pages consume these API-owned inputs. File reading and
+output writing stay in the build scripts; the package only transforms supplied
+contents.
 
 The atlas's containment and lineage lookups (`area-lineage`,
 `boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
@@ -94,14 +98,15 @@ atlas ──────────────┐
 services/api ───────┘
 ```
 
-- The atlas and the API share code only through `packages/`. The API never
+- The atlas and API share domain code through `packages/`. Their build
+  scripts also reuse Node file adapters in root `scripts/`. The API never
   imports the atlas's `lib/`, and the website never imports API project code.
   The website does read one API file, `services/api/openapi.yaml`, for its API
   reference; `.vercelignore` keeps everything else in `services/api` out of
   the deployment.
-- A package holds code only. It reads no files, knows no paths and is safe to
+- A package holds code only. It reads no files and is safe to
   bundle into a browser: each consumer loads its own data and passes it in.
-  Its tsconfig rejects Node and DOM types and the atlas's `@/` aliases, and
+  Its tsconfig excludes Node types and the atlas's `@/` aliases, and
   `tests/packages/packageImports.test.ts` rejects any import its
   `package.json` does not declare.
 
@@ -111,11 +116,11 @@ there is no build step.
 
 ## Rebuilding after a change
 
-| You changed                            | Run                                                                     |
-| -------------------------------------- | ----------------------------------------------------------------------- |
-| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm seo:build`                                |
-| How the API compiles geography or data | `pnpm --dir services/api build`, deploy the API, then `pnpm precompile` |
-| Anything, before a release             | `pnpm check:full`                                                       |
+| You changed                            | Run                                                                                                               |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Shared datasets or their loaders       | `pnpm --dir services/api build:data --from datasets`, deploy the API, then `pnpm precompile` and `pnpm seo:build` |
+| How the API compiles geography or data | `pnpm --dir services/api build`, deploy the API, then `pnpm precompile`                                           |
+| Anything, before a release             | `pnpm check:full`                                                                                                 |
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`

@@ -27,8 +27,15 @@ source of apparently authoritative numbers.
 
 This document proposes a public API at `https://api.ukdataatlas.com/v1`. It is
 an implementation proposal, not a promise that every listed endpoint is ready.
-The present `public/data/datasets` files and browser-facing TopoJSON are internal
-build products; their shape and filenames must remain free to change.
+The dataset JSON and browser-facing TopoJSON are internal build products;
+their shape and filenames must remain free to change.
+
+The API builds directly from raw `data/` without website output.
+`pnpm build:datasets` compiles its dataset inputs and gazetteer into
+`services/api/public/datasets/` and boundary assets into
+`services/api/public/source-data/boundaries/`. Both directories are gitignored.
+After changing shared dataset compilers, run `pnpm build:data --from datasets`
+from `services/api` to rebuild every affected stage.
 
 ## Capability checklist
 
