@@ -31,14 +31,21 @@ import {
  * records the hash of all four, and the descriptor, for each release.
  */
 
-/** The code a map resource is compiled by: a change to any of it rebuilds every release. */
-const COMPILER_SOURCES = [
-	...readdirSync(
-		resolve(dirname(fileURLToPath(import.meta.url)), "../src/mapResource"),
+const sourceFiles = (directory: string) =>
+	readdirSync(
+		resolve(dirname(fileURLToPath(import.meta.url)), "..", directory),
 	)
 		.filter((name) => name.endsWith(".ts"))
-		.map((name) => `src/mapResource/${name}`),
-	"src/simplifyGeometry.ts",
+		.map((name) => `${directory}/${name}`);
+
+/**
+ * The code a map resource is compiled by, relative to services/api: a change
+ * to any of it rebuilds every release.
+ */
+const COMPILER_SOURCES = [
+	...sourceFiles("src/mapResource"),
+	// The tiler, shared with the website's precompile.
+	...sourceFiles("../../packages/map-tiles/src"),
 	"src/parquet.ts",
 	"src/flatDownloads.ts",
 	// How areas are read, corrected and rounded, which the geometry store

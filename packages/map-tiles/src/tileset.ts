@@ -1,6 +1,6 @@
-import type { Coordinate } from "../areaContainment";
-import type { GeoJsonGeometry } from "../areaGeometry";
-import type { GeometryTier } from "../simplifyGeometry";
+import type { Coordinate } from "./types";
+import type { GeoJsonGeometry } from "./types";
+import type { GeometryTier } from "./simplifyGeometry";
 import {
 	clipWorldRing,
 	toWorldRing,

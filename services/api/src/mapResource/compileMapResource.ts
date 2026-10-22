@@ -1,10 +1,17 @@
 import type { AreaGeometryCache } from "../areaGeometry";
-import type { GeometryTier } from "../simplifyGeometry";
-import { decomposeArcs } from "./arcs";
+import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
+import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
 import { buildGeoJson } from "./geoJson";
 import { buildGeoParquet } from "./geoParquet";
-import { compileTiers, TOPOLOGY_METHOD } from "./topologyTiers";
-import { tileBounds, tilesCovering, type TileBox } from "./tileGrid";
+import {
+	compileTiers,
+	TOPOLOGY_METHOD,
+} from "@uk-data-atlas/map-tiles/topologyTiers";
+import {
+	tileBounds,
+	tilesCovering,
+	type TileBox,
+} from "@uk-data-atlas/map-tiles/tileGrid";
 import {
 	boundsOf,
 	buildTile,
@@ -13,8 +20,11 @@ import {
 	MIN_ZOOM,
 	ZOOM_TIERS,
 	type MapFeature,
-} from "./tileset";
-import { buildArchive, type ArchiveTile } from "./pmtiles";
+} from "@uk-data-atlas/map-tiles/tileset";
+import {
+	buildArchive,
+	type ArchiveTile,
+} from "@uk-data-atlas/map-tiles/pmtiles";
 import { releaseKey } from "../geographyKeys";
 import { sha256 } from "../contentHash";
 import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
@@ -32,7 +42,7 @@ import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
 
 export const LAYER_NAME = "boundaries";
 
-import { featureIds } from "./featureIds";
+import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 
 export { featureIds };
 

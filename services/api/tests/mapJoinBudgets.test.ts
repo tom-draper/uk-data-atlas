@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { PopulationObservation } from "../src/dataCatalog";
 import type { MapResourceDescriptor } from "../src/mapResource/compileMapResource";
-import { TOPOLOGY_METHOD } from "../src/mapResource/topologyTiers";
+import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
 import {
 	MAX_MAP_JOIN_ROWS,
 	MAX_MAP_JOIN_COLUMN_BYTES,

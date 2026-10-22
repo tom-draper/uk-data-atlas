@@ -1,4 +1,4 @@
-import type { Coordinate } from "../areaContainment";
+import type { Coordinate } from "./types";
 import { TILE_EXTENT } from "./vectorTile";
 
 /**

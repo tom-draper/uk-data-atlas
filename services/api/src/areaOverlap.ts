@@ -13,7 +13,10 @@ import type {
 	AreaOverlapTarget,
 } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
-import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
+import {
+	multiPolygonAreaM2,
+	polygonWidthM,
+} from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import { releaseKey } from "./geographyKeys";
 import { CLIPPING_VERSION, intersectWithin } from "./pieceIntersection";
 import { readGeometries } from "./rawAreaGeometries";

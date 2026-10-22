@@ -2,8 +2,8 @@ import type { Coordinate } from "../areaContainment";
 import type { GeoJsonGeometry } from "../areaGeometry";
 import type { PackedGeometry } from "../packedGeometry";
 import { writeParquet, type ParquetTable } from "../parquet";
-import type { TileBox } from "./tileGrid";
-import { boundsOf } from "./tileset";
+import type { TileBox } from "@uk-data-atlas/map-tiles/tileGrid";
+import { boundsOf } from "@uk-data-atlas/map-tiles/tileset";
 
 /**
  * One tier of a map resource as GeoParquet 1.1: a row per area with the same

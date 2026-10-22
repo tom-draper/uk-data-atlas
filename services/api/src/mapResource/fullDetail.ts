@@ -1,8 +1,8 @@
 import type { AreaGeometryCache } from "../areaGeometry";
 import { sha256 } from "../contentHash";
 import { releaseKey } from "../geographyKeys";
-import type { GeometryTier } from "../simplifyGeometry";
-import { featureIds } from "./featureIds";
+import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
+import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { packedBounds, type PackedGeometry } from "../packedGeometry";
 import { writeParquet, writeParquetAsync, type ParquetTable } from "../parquet";
 import { geoParquetTable, packedWkb, type GeoParquetRow } from "./geoParquet";

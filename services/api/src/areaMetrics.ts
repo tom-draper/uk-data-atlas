@@ -4,7 +4,7 @@ import {
 	polygonPerimeterM,
 	projectEqualArea,
 	unprojectEqualArea,
-} from "./equalAreaProjection";
+} from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeoJsonGeometry } from "./areaGeometry";
 import {
 	containPoint,

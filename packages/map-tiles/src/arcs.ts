@@ -1,5 +1,5 @@
-import type { Coordinate } from "../areaContainment";
-import type { GeoJsonGeometry } from "../areaGeometry";
+import type { Coordinate } from "./types";
+import type { GeoJsonGeometry } from "./types";
 
 /**
  * A boundary release decomposed into shared arcs, so a border between two

@@ -12,7 +12,7 @@ import {
 import { labelsFor, round } from "./areaOverlap";
 import { CLIPPING_VERSION } from "./pieceIntersection";
 import { readGeometries } from "./rawAreaGeometries";
-import { multiPolygonAreaM2 } from "./equalAreaProjection";
+import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import {
 	BoundedClipper,
 	BOUNDED_CLIPPING_VERSION,

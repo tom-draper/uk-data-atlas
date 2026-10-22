@@ -6,10 +6,14 @@ import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import type { MapResourceDescriptor } from "../../src/mapResource/compileMapResource";
-import { tileId, TILE_TYPE_MVT } from "../../src/mapResource/pmtiles";
-import { MAX_ZOOM, MIN_ZOOM, ZOOM_TIERS } from "../../src/mapResource/tileset";
+import { tileId, TILE_TYPE_MVT } from "@uk-data-atlas/map-tiles/pmtiles";
+import {
+	MAX_ZOOM,
+	MIN_ZOOM,
+	ZOOM_TIERS,
+} from "@uk-data-atlas/map-tiles/tileset";
 import { featureIds } from "../../src/mapResource/compileMapResource";
-import { GEOMETRY_TIERS } from "../../src/simplifyGeometry";
+import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { createAreaGeometryCache } from "../../src/geometryLoader";
 import {
 	buildFullDetailParquet,

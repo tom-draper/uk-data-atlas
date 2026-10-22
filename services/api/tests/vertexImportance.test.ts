@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { unprojectEqualArea } from "../src/equalAreaProjection";
-import { vertexImportance } from "../src/simplifyGeometry";
+import { unprojectEqualArea } from "@uk-data-atlas/map-tiles/equalAreaProjection";
+import { vertexImportance } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 
 const points = [
 	[0, 0],

@@ -4,7 +4,7 @@ import {
 	GEOMETRY_TIERS,
 	isGeometryTier,
 	simplifyGeometry,
-} from "../src/simplifyGeometry";
+} from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { areaMetrics } from "../src/areaMetrics";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 

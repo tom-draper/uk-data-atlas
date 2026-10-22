@@ -11,7 +11,10 @@ import {
 import { labelsFor, round } from "./areaOverlap";
 import { CLIPPING_VERSION } from "./pieceIntersection";
 import { readGeometries } from "./rawAreaGeometries";
-import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
+import {
+	multiPolygonAreaM2,
+	polygonWidthM,
+} from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import { BoundedClipper, BOUNDED_CLIPPING_VERSION } from "./boundedClipping";
 import type {
 	BestFitCrosswalkAdapter,

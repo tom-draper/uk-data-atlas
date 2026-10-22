@@ -319,6 +319,19 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  packages/map-tiles:
+    dependencies:
+      polygon-clipping:
+        specifier: 0.15.7
+        version: 0.15.7
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   services/api:
     dependencies:
       '@uk-data-atlas/catalogue':
@@ -330,6 +343,9 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../../packages/geography
+      '@uk-data-atlas/map-tiles':
+        specifier: workspace:*
+        version: link:../../packages/map-tiles
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7

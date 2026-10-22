@@ -7,7 +7,7 @@ import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
 	simplifyGeometry,
-} from "./simplifyGeometry";
+} from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";

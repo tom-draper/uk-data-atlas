@@ -1,12 +1,12 @@
-import type { Coordinate } from "../areaContainment";
+import type { Coordinate } from "./types";
 import {
 	GEOMETRY_TIERS,
 	isGeometryTier,
 	vertexImportance,
 	type GeometryTier,
-} from "../simplifyGeometry";
+} from "./simplifyGeometry";
 import { rebuildAreas, rebuildRing, type Topology } from "./arcs";
-import type { GeoJsonGeometry } from "../areaGeometry";
+import type { GeoJsonGeometry } from "./types";
 
 /**
  * Generalise a decomposed release one arc at a time.
