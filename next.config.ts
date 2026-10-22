@@ -23,6 +23,9 @@ const nextConfig: NextConfig = {
 	// Place pages read their profiles from disk while rendering on demand.
 	outputFileTracingIncludes: {
 		"/places/*": ["./public/data/atlas-pages/**/*"],
+		"/atlas": ["./compiled/atlas.sqlite"],
+		"/atlas/*": ["./compiled/atlas.sqlite"],
+		"/data/catalogue/*": ["./compiled/atlas.sqlite"],
 	},
 
 	env: {
@@ -58,7 +61,7 @@ const nextConfig: NextConfig = {
 				: "no-cache";
 		return [
 			{
-				source: "/data/:path*",
+				source: "/data/:path((?!catalogue(?:/|$)).*)",
 				headers: [{ key: "Cache-Control", value: cacheControl }],
 			},
 		];

@@ -84,6 +84,7 @@ export function datasetLoadPriority(
  * or not its card is shown. See `datasetIsNeeded`.
  */
 export function useDatasets(
+	datasetUrls: Readonly<Record<string, string>>,
 	selectedLocation: string,
 	activeDatasetType?: string,
 ): UseDatasetsResult {
@@ -96,7 +97,7 @@ export function useDatasets(
 	const chartDatasets = useJsonDatasetLoaders(
 		CHART_DATASET_DEFINITIONS.map((definition) => ({
 			key: definition.type,
-			url: withCDN(`/data/datasets/${definition.precompiledFile}.json`),
+			url: datasetUrls[definition.precompiledFile]!,
 			filter: {
 				location: selectedLocation,
 				boundaryType: definition.boundaryType,
