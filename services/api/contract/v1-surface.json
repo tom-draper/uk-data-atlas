@@ -10904,6 +10904,7 @@
 					"data.exports[].formats[].bytes",
 					"data.exports[].formats[].contentHash",
 					"data.exports[].formats[].format",
+					"data.exports[].formats[].gzipBytes",
 					"data.exports[].formats[].href",
 					"data.exports[].href",
 					"data.exports[].id",
