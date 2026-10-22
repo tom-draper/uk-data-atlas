@@ -7,12 +7,13 @@ const stage = (name, dependencies = [], args = [`build:${name}`]) => ({
 export const buildDataStages = [
 	stage("download", [], ["--dir", "../..", "data:download"]),
 	stage("operations"),
+	stage("datasets", ["download"]),
 	stage("boundary-registry", ["download"]),
 	stage("derived-boundaries", ["download"]),
 	stage("area-inventory", ["boundary-registry", "derived-boundaries"]),
 	stage("geometry-source-registry", ["area-inventory"]),
 	stage("geometry-store", ["geometry-source-registry"]),
-	stage("named-locations", ["area-inventory", "geometry-store"]),
+	stage("named-locations", ["area-inventory", "geometry-store", "datasets"]),
 	stage("place-index", [
 		"boundary-registry",
 		"area-inventory",
@@ -20,7 +21,7 @@ export const buildDataStages = [
 	]),
 	stage("area-search-index", ["area-inventory"]),
 	stage("postcode-index", ["download"]),
-	stage("data-catalog", ["download"]),
+	stage("data-catalog", ["datasets"]),
 	stage("measure-compatibility", [
 		"data-catalog",
 		"boundary-registry",
@@ -123,5 +124,5 @@ export const buildDataStages = [
 		"documents",
 		"atlas-lookups",
 	]),
-	stage("atlas-pages", ["atlas-release", "geometry-store"]),
+	stage("atlas-pages", ["atlas-release", "geometry-store", "datasets"]),
 ];
