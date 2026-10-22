@@ -1,6 +1,6 @@
 import { decomposeArcs } from "./arcs";
 import { featureIds } from "./featureIds";
-import { buildArchive, type ArchiveTile } from "./pmtiles";
+import { buildArchive, type ArchiveTile, type Gzip } from "./pmtiles";
 import type { GeometryTier } from "./simplifyGeometry";
 import { tileBounds, tilesCovering, type TileBox } from "./tileGrid";
 import {
@@ -25,10 +25,12 @@ export type TilesetOptions = {
 	attribution: string;
 	/** Each area's name, for the label a renderer draws. Falls back to its code. */
 	names: Map<string, string>;
+	/** `zlib.gzipSync` under Node; see `Gzip`. */
+	gzip: Gzip;
 };
 
 export type CompiledTileset = {
-	archive: Buffer;
+	archive: Uint8Array;
 	arcCount: number;
 	bounds: TileBox;
 	tileCount: number;
@@ -136,6 +138,7 @@ export const compileTileset = (
 			(bounds[1] + bounds[3]) / 2,
 			ZOOM_TIERS[0]!.maxZoom,
 		],
+		gzip: options.gzip,
 		// A renderer reads the archive alone, so what it needs to draw and to
 		// cite travels inside it.
 		metadata: {

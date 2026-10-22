@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { gzipSync } from "node:zlib";
 import {
 	buildArchive,
 	tileId,
@@ -24,6 +25,7 @@ const details = {
 	bounds: [-8.7, 49.8, 1.9, 61.0] as [number, number, number, number],
 	centre: [-2.5, 54.5, 5] as [number, number, number],
 	metadata: { name: "boundaries", attribution: "Contains OS data" },
+	gzip: gzipSync,
 };
 
 const tile = (z: number, x: number, y: number, body: string): ArchiveTile => ({

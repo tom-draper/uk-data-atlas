@@ -24,8 +24,10 @@ const bytes = (field: number, value: number[], into: number[]) => {
 	for (const byte of value) into.push(byte);
 };
 
+const encoder = new TextEncoder();
+
 const string = (field: number, value: string, into: number[]) =>
-	bytes(field, [...Buffer.from(value, "utf8")], into);
+	bytes(field, [...encoder.encode(value)], into);
 
 const uint32 = (field: number, value: number, into: number[]) => {
 	tag(field, 0, into);
@@ -94,9 +96,9 @@ const value = (entry: string | number, into: number[]) => {
 	if (!Number.isInteger(entry)) {
 		// double_value, field 3, wire type 1: eight little-endian bytes.
 		tag(3, 1, into);
-		const buffer = Buffer.alloc(8);
-		buffer.writeDoubleLE(entry);
-		for (const byte of buffer) into.push(byte);
+		const double = new DataView(new ArrayBuffer(8));
+		double.setFloat64(0, entry, true);
+		for (const byte of new Uint8Array(double.buffer)) into.push(byte);
 		return;
 	}
 	if (entry < 0) {
@@ -120,7 +122,7 @@ const value = (entry: string | number, into: number[]) => {
 export const encodeTile = (
 	layerName: string,
 	features: TileFeature[],
-): Buffer => {
+): Uint8Array => {
 	const keys: string[] = [];
 	const keyIndex = new Map<string, number>();
 	const values: Array<string | number> = [];
@@ -173,5 +175,5 @@ export const encodeTile = (
 
 	const tile: number[] = [];
 	bytes(3, layer, tile);
-	return Buffer.from(tile);
+	return Uint8Array.from(tile);
 };

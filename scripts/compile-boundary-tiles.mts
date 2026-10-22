@@ -15,6 +15,7 @@ import { existsSync, readdirSync } from "fs";
 import { mkdir, readFile, rm, stat, writeFile } from "fs/promises";
 import { basename, dirname, join, relative } from "path";
 import { fileURLToPath } from "url";
+import { gzipSync } from "zlib";
 
 import { boundaryServesVectorTiles } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
@@ -198,6 +199,7 @@ export async function compileBoundaryTiles(
 					description: meta.title,
 					attribution: `Contains ${meta.publisher} data, ${meta.licence.name}`,
 					names,
+					gzip: gzipSync,
 				},
 			);
 			await writeFile(tilesPath, tileset.archive);

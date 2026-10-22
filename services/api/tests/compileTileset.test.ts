@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { gzipSync } from "node:zlib";
 import { compileTileset } from "@uk-data-atlas/map-tiles/compileTileset";
 import { readHeader, readMetadata } from "./pmtilesFixtures";
 
@@ -21,6 +22,7 @@ const options = {
 	description: "Test wards",
 	attribution: "Contains test data",
 	names: new Map([["E05000002", "East"]]),
+	gzip: gzipSync,
 };
 
 test("tiles a coverage and numbers features by code", () => {

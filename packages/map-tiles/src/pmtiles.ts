@@ -1,4 +1,3 @@
-import { gzipSync } from "node:zlib";
 import { varint } from "./varint";
 
 /**
@@ -14,6 +13,32 @@ import { varint } from "./varint";
  */
 
 const HEADER_BYTES = 127;
+
+/**
+ * Gzip, as the consumer provides it: `zlib.gzipSync` under Node. Passed in so
+ * this package stays free of Node built-ins.
+ */
+export type Gzip = (bytes: Uint8Array) => Uint8Array;
+
+const concat = (parts: readonly Uint8Array[]) => {
+	const joined = new Uint8Array(
+		parts.reduce((total, part) => total + part.length, 0),
+	);
+	let at = 0;
+	for (const part of parts) {
+		joined.set(part, at);
+		at += part.length;
+	}
+	return joined;
+};
+
+/** A string standing for some bytes, to find tiles stored already. */
+const bytesKey = (bytes: Uint8Array) => {
+	let key = "";
+	for (let at = 0; at < bytes.length; at += 8192)
+		key += String.fromCharCode(...bytes.subarray(at, at + 8192));
+	return key;
+};
 const ROOT_DIRECTORY_TARGET = 16384;
 
 export const TILE_TYPE_MVT = 1;
@@ -87,7 +112,7 @@ const serialiseDirectory = (entries: Entry[]) => {
 			varint(0, bytes);
 		else varint(entry.offset + 1, bytes);
 	}
-	return Buffer.from(bytes);
+	return Uint8Array.from(bytes);
 };
 
 /**
@@ -95,18 +120,18 @@ const serialiseDirectory = (entries: Entry[]) => {
  * entries into leaf directories and doubling how many go in each until the
  * root that points at them is small enough.
  */
-const buildDirectories = (entries: Entry[]) => {
+const buildDirectories = (entries: Entry[], gzip: Gzip) => {
 	const root = serialiseDirectory(entries);
-	const compressed = gzipSync(root);
+	const compressed = gzip(root);
 	if (compressed.length <= ROOT_DIRECTORY_TARGET)
-		return { root: compressed, leaves: Buffer.alloc(0) };
+		return { root: compressed, leaves: new Uint8Array(0) };
 	for (let perLeaf = 4096; ; perLeaf *= 2) {
 		const rootEntries: Entry[] = [];
-		const blocks: Buffer[] = [];
+		const blocks: Uint8Array[] = [];
 		let offset = 0;
 		for (let at = 0; at < entries.length; at += perLeaf) {
 			const group = entries.slice(at, at + perLeaf);
-			const leaf = gzipSync(serialiseDirectory(group));
+			const leaf = gzip(serialiseDirectory(group));
 			blocks.push(leaf);
 			rootEntries.push({
 				tileId: group[0]!.tileId,
@@ -116,13 +141,18 @@ const buildDirectories = (entries: Entry[]) => {
 			});
 			offset += leaf.length;
 		}
-		const packed = gzipSync(serialiseDirectory(rootEntries));
+		const packed = gzip(serialiseDirectory(rootEntries));
 		if (packed.length <= ROOT_DIRECTORY_TARGET || rootEntries.length === 1)
-			return { root: packed, leaves: Buffer.concat(blocks) };
+			return { root: packed, leaves: concat(blocks) };
 	}
 };
 
-export type ArchiveTile = { z: number; x: number; y: number; body: Buffer };
+export type ArchiveTile = {
+	z: number;
+	x: number;
+	y: number;
+	body: Uint8Array;
+};
 
 export type ArchiveDetails = {
 	minZoom: number;
@@ -131,6 +161,7 @@ export type ArchiveDetails = {
 	bounds: [west: number, south: number, east: number, north: number];
 	centre: [longitude: number, latitude: number, zoom: number];
 	metadata: Record<string, unknown>;
+	gzip: Gzip;
 };
 
 const e7 = (degrees: number) => Math.round(degrees * 10_000_000);
@@ -146,7 +177,7 @@ const e7 = (degrees: number) => Math.round(degrees * 10_000_000);
 export const buildArchive = (
 	tiles: ArchiveTile[],
 	details: ArchiveDetails,
-): Buffer => {
+): Uint8Array => {
 	const ordered = tiles
 		.map((tile) => ({
 			id: tileId(tile.z, tile.x, tile.y),
@@ -154,13 +185,13 @@ export const buildArchive = (
 		}))
 		.sort((left, right) => left.id - right.id);
 
-	const blocks: Buffer[] = [];
+	const blocks: Uint8Array[] = [];
 	const storedAt = new Map<string, { offset: number; length: number }>();
 	const entries: Entry[] = [];
 	let dataLength = 0;
 	for (const tile of ordered) {
-		const body = gzipSync(tile.body);
-		const key = body.toString("base64");
+		const body = details.gzip(tile.body);
+		const key = bytesKey(body);
 		let stored = storedAt.get(key);
 		if (!stored) {
 			stored = { offset: dataLength, length: body.length };
@@ -186,44 +217,48 @@ export const buildArchive = (
 		});
 	}
 
-	const { root, leaves } = buildDirectories(entries);
-	const metadata = gzipSync(Buffer.from(JSON.stringify(details.metadata)));
+	const { root, leaves } = buildDirectories(entries, details.gzip);
+	const metadata = details.gzip(
+		new TextEncoder().encode(JSON.stringify(details.metadata)),
+	);
 
 	const rootOffset = HEADER_BYTES;
 	const metadataOffset = rootOffset + root.length;
 	const leafOffset = metadataOffset + metadata.length;
 	const dataOffset = leafOffset + leaves.length;
 
-	const header = Buffer.alloc(HEADER_BYTES);
-	header.write("PMTiles", 0, "ascii");
-	header.writeUInt8(3, 7);
-	header.writeBigUInt64LE(BigInt(rootOffset), 8);
-	header.writeBigUInt64LE(BigInt(root.length), 16);
-	header.writeBigUInt64LE(BigInt(metadataOffset), 24);
-	header.writeBigUInt64LE(BigInt(metadata.length), 32);
-	header.writeBigUInt64LE(BigInt(leafOffset), 40);
-	header.writeBigUInt64LE(BigInt(leaves.length), 48);
-	header.writeBigUInt64LE(BigInt(dataOffset), 56);
-	header.writeBigUInt64LE(BigInt(dataLength), 64);
-	header.writeBigUInt64LE(
-		BigInt(entries.reduce((total, entry) => total + entry.runLength, 0)),
+	const header = new Uint8Array(HEADER_BYTES);
+	header.set(new TextEncoder().encode("PMTiles"), 0);
+	const view = new DataView(header.buffer);
+	view.setUint8(7, 3);
+	view.setBigUint64(8, BigInt(rootOffset), true);
+	view.setBigUint64(16, BigInt(root.length), true);
+	view.setBigUint64(24, BigInt(metadataOffset), true);
+	view.setBigUint64(32, BigInt(metadata.length), true);
+	view.setBigUint64(40, BigInt(leafOffset), true);
+	view.setBigUint64(48, BigInt(leaves.length), true);
+	view.setBigUint64(56, BigInt(dataOffset), true);
+	view.setBigUint64(64, BigInt(dataLength), true);
+	view.setBigUint64(
 		72,
+		BigInt(entries.reduce((total, entry) => total + entry.runLength, 0)),
+		true,
 	);
-	header.writeBigUInt64LE(BigInt(entries.length), 80);
-	header.writeBigUInt64LE(BigInt(storedAt.size), 88);
-	header.writeUInt8(1, 96); // clustered: entries ascend by tile id
-	header.writeUInt8(COMPRESSION_GZIP, 97);
-	header.writeUInt8(COMPRESSION_GZIP, 98);
-	header.writeUInt8(TILE_TYPE_MVT, 99);
-	header.writeUInt8(details.minZoom, 100);
-	header.writeUInt8(details.maxZoom, 101);
-	header.writeInt32LE(e7(details.bounds[0]), 102);
-	header.writeInt32LE(e7(details.bounds[1]), 106);
-	header.writeInt32LE(e7(details.bounds[2]), 110);
-	header.writeInt32LE(e7(details.bounds[3]), 114);
-	header.writeUInt8(details.centre[2], 118);
-	header.writeInt32LE(e7(details.centre[0]), 119);
-	header.writeInt32LE(e7(details.centre[1]), 123);
+	view.setBigUint64(80, BigInt(entries.length), true);
+	view.setBigUint64(88, BigInt(storedAt.size), true);
+	view.setUint8(96, 1); // clustered: entries ascend by tile id
+	view.setUint8(97, COMPRESSION_GZIP);
+	view.setUint8(98, COMPRESSION_GZIP);
+	view.setUint8(99, TILE_TYPE_MVT);
+	view.setUint8(100, details.minZoom);
+	view.setUint8(101, details.maxZoom);
+	view.setInt32(102, e7(details.bounds[0]), true);
+	view.setInt32(106, e7(details.bounds[1]), true);
+	view.setInt32(110, e7(details.bounds[2]), true);
+	view.setInt32(114, e7(details.bounds[3]), true);
+	view.setUint8(118, details.centre[2]);
+	view.setInt32(119, e7(details.centre[0]), true);
+	view.setInt32(123, e7(details.centre[1]), true);
 
-	return Buffer.concat([header, root, metadata, leaves, ...blocks]);
+	return concat([header, root, metadata, leaves, ...blocks]);
 };
