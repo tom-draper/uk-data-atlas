@@ -1,8 +1,11 @@
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { precompileFingerprints } from "@/scripts/precompile-fingerprint.mjs";
+import {
+	datasetFingerprints,
+	precompileFingerprints,
+} from "@/scripts/precompile-fingerprint.mjs";
 
 let root: string;
 
@@ -99,6 +102,18 @@ describe("precompile fingerprints", () => {
 
 		expect(Object.keys(datasets)).toEqual(["alpha", "beta"]);
 		expect(datasets.alpha).not.toEqual(datasets.beta);
+	});
+
+	it("fingerprints datasets alone without the website's lookups", async () => {
+		const { datasets } = await precompileFingerprints(root);
+		await unlink(
+			join(root, "public/data/atlas-lookups/boundary-mappings.json"),
+		);
+		await unlink(
+			join(root, "public/data/atlas-lookups/parish-lad-mappings.json"),
+		);
+
+		expect(await datasetFingerprints(root)).toEqual(datasets);
 	});
 
 	it("is stable while nothing changes", async () => {
