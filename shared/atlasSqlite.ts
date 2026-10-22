@@ -16,3 +16,46 @@ export function readAtlasPayload(repositoryRoot: string, id: string): string {
 		database.close();
 	}
 }
+
+export function readAtlasDatasetUrls(
+	repositoryRoot: string,
+): Record<string, string> {
+	const database = new DatabaseSync(
+		join(repositoryRoot, "compiled/atlas.sqlite"),
+		{ readOnly: true },
+	);
+	try {
+		return Object.fromEntries(
+			database
+				.prepare("SELECT output, sha256 FROM datasets")
+				.all()
+				.map((row) => [
+					String(row.output),
+					`/data/catalogue/${row.sha256}/${row.output}.json`,
+				]),
+		);
+	} finally {
+		database.close();
+	}
+}
+
+export function readVersionedAtlasDataset(
+	repositoryRoot: string,
+	output: string,
+	sha256: string,
+): string | undefined {
+	const database = new DatabaseSync(
+		join(repositoryRoot, "compiled/atlas.sqlite"),
+		{ readOnly: true },
+	);
+	try {
+		const row = database
+			.prepare(
+				"SELECT payload FROM datasets JOIN payloads ON payloads.id = datasets.payloadId WHERE output = ? AND sha256 = ?",
+			)
+			.get(output, sha256);
+		return row ? String(row.payload) : undefined;
+	} finally {
+		database.close();
+	}
+}

@@ -1,3 +1,4 @@
+import { readAtlasDatasetUrls } from "@/shared/atlasSqlite";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -55,6 +56,7 @@ export default async function AtlasMapPage({ params }: { params: Params }) {
 			<JsonLd data={atlasMapJsonLd(location, map)} />
 			<Suspense fallback={<LoadingDisplay />}>
 				<AtlasClient
+					datasetUrls={readAtlasDatasetUrls(process.cwd())}
 					page={{ location: location.slug, map: map.slug }}
 				/>
 			</Suspense>

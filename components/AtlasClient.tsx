@@ -45,7 +45,13 @@ function ErrorBanner({
 	);
 }
 
-export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
+export default function AtlasClient({
+	page = {},
+	datasetUrls,
+}: {
+	page?: AtlasPage;
+	datasetUrls: Record<string, string>;
+}) {
 	const {
 		activeViz,
 		selectedLocation,
@@ -64,7 +70,7 @@ export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
 		datasets,
 		loading: datasetsLoading,
 		errors,
-	} = useDatasets(selectedLocation, activeViz.datasetType);
+	} = useDatasets(datasetUrls, selectedLocation, activeViz.datasetType);
 	// Only the selected dataset's points are worth fetching, so tell the loader
 	// which visualisation is showing.
 	const roadSafety = useRoadSafetyData(

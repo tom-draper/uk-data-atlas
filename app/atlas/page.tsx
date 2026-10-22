@@ -1,3 +1,4 @@
+import { readAtlasDatasetUrls } from "@/shared/atlasSqlite";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
@@ -29,7 +30,7 @@ export default async function MapsPage({
 
 	return (
 		<Suspense fallback={<LoadingDisplay />}>
-			<AtlasClient />
+			<AtlasClient datasetUrls={readAtlasDatasetUrls(process.cwd())} />
 		</Suspense>
 	);
 }
