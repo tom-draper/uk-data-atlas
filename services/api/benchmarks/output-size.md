@@ -19,7 +19,7 @@ brief, so the numbers below are for this build.
 | `location-projections/`                 |   254 MB | whole shard parsed, LRU 8 shards                                |    12x (34% whitespace) |
 | `documents/`                            |   105 MB | served at `/v1/documents/*`                                     |                     11x |
 | `place-index.json`                      |    53 MB | whole file parsed on first search                               |                         |
-| `named-locations.json`                  |    84 MB | not at runtime (metadata file is used); hashed into the release |                         |
+| `named-locations.json`                  |    84 MB | not at runtime (shared SQLite is used); hashed into the release |                         |
 
 Per tier, Parquet vs gzipped GeoJSON: full 983 / 489 MB, high 768 / 391,
 medium 323 / 175, low 80 / 45. The Parquet is the larger copy, because it
