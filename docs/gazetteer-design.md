@@ -56,7 +56,7 @@ One runtime geometry path remains: `polygonAreaSqKm` in
 ## 3. Artifacts
 
 The website precompile writes its artifacts to `public/data/datasets/`. The
-API `datasets` stage writes its own `gazetteer.core.json` under
+API `api-datasets` stage writes its own `gazetteer.core.json` under
 `services/api/public/datasets/` for the `named-locations` stage. Both use the
 shared dataset package. The API builds the lookup artifacts separately, and
 `pnpm atlas-data:copy` copies them to `public/data/atlas-lookups/`, where the
