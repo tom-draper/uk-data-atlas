@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 
@@ -13,7 +14,7 @@ import type { CatalogManifest, CompiledMeasure } from "./manifest";
  */
 export const compileAirQuality = (
 	manifest: CatalogManifest,
-	airQualityPath: string,
+	airQualityPath: DatasetInput,
 	populationCodes: Set<string>,
 ): CompiledMeasure[] => {
 	const areaMean = (

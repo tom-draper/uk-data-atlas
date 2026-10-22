@@ -1,3 +1,4 @@
+import type { DatasetInput } from "./input";
 import type {
 	Measure,
 	MeasureObservationArtifact,
@@ -65,7 +66,7 @@ const SHARED_NOTES = [
 
 export const compileEnergyConsumption = (
 	{ manifestPath, datasets }: CatalogManifest,
-	paths: Record<(typeof FUELS)[number]["dataset"], string>,
+	paths: Record<(typeof FUELS)[number]["dataset"], DatasetInput>,
 ): { measures: Measure[]; artifacts: MeasureObservationArtifact[] } => {
 	const measures: Measure[] = [];
 	const artifacts: MeasureObservationArtifact[] = [];

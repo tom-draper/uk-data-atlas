@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import type {
 	Measure,
 	PopulationObservation,
@@ -36,9 +36,9 @@ const servedWardCodeCorrections = new Map([
  * against, and the list of moved wards lives only in the website loader.
  */
 const housePricePeriods = (
-	path: string,
+	path: DatasetInput,
 ): MeasureObservationArtifact["periods"] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
+	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const edition = object(source["2023"], `${path}.2023`);
 	if (edition.boundaryType !== "ward") {
 		throw new Error(`${path}: expected ward-level house prices`);
@@ -99,7 +99,7 @@ const housePricePeriods = (
 /** Ward median house prices, served under the codes they were published against. */
 export const compileHousePrice = (
 	{ manifestPath, datasets }: CatalogManifest,
-	housePricePath: string,
+	housePricePath: DatasetInput,
 ): CompiledMeasure => {
 	const housePrice = datasets.find((dataset) => dataset.id === "house-price");
 	if (!housePrice)

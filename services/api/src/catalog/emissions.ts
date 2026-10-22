@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type { Measure } from "../dataCatalog";
 import { countriesFor } from "./countries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
@@ -7,7 +8,7 @@ import { sha256 } from "./values";
 /** Net territorial greenhouse gas emissions by local authority. */
 export const compileEmissions = (
 	{ manifestPath, datasets }: CatalogManifest,
-	ghgEmissionsPath: string,
+	ghgEmissionsPath: DatasetInput,
 ): CompiledMeasure => {
 	const emissions = datasets.find(
 		(dataset) => dataset.id === "ghg-emissions",

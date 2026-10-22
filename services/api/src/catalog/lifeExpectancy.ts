@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import type { Measure } from "../dataCatalog";
 import { isPublishedAreaCode, countriesFor } from "./countries";
 import { type PrecompiledFile, sha256, number, object } from "./values";
@@ -12,9 +12,11 @@ import { type PrecompiledFile, sha256, number, object } from "./values";
  * the website's, which holds only the latest period and adds averaged values
  * for the four authorities created in April 2023.
  */
-export const compileLifeExpectancy = (lifeExpectancySeriesPath: string) => {
+export const compileLifeExpectancy = (
+	lifeExpectancySeriesPath: DatasetInput,
+) => {
 	const lifeExpectancySource = JSON.parse(
-		readFileSync(lifeExpectancySeriesPath, "utf8"),
+		readDatasetInput(lifeExpectancySeriesPath),
 	) as PrecompiledFile;
 	const lifeExpectancyPeriods = Object.entries(lifeExpectancySource)
 		.map(([key, value]) => {

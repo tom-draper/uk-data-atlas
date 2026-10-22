@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import type { CatalogManifest } from "./manifest";
 import type {
 	Measure,
@@ -10,7 +10,7 @@ import { countriesFor } from "./countries";
 
 const recordsFromData = (
 	data: Record<string, unknown>,
-	path: string,
+	path: DatasetInput,
 	codePattern: RegExp,
 ): PopulationObservation[] =>
 	Object.entries(data)
@@ -37,8 +37,8 @@ const recordsFromData = (
 		})
 		.sort((left, right) => left.areaCode.localeCompare(right.areaCode));
 
-const populationRecords = (path: string): PopulationObservation[] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
+const populationRecords = (path: DatasetInput): PopulationObservation[] => {
+	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const period = object(source["2022"], `${path}.2022`);
 	if (period.boundaryYear !== 2023 || period.boundaryType !== "ward") {
 		throw new Error(
@@ -53,9 +53,9 @@ const populationRecords = (path: string): PopulationObservation[] => {
 };
 
 const localAuthorityPopulationRecords = (
-	path: string,
+	path: DatasetInput,
 ): MeasureObservationArtifact["periods"] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
+	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period)) {
@@ -106,9 +106,9 @@ const localAuthorityPopulationRecords = (
  */
 export const compilePopulation = (
 	{ manifestPath, datasets }: CatalogManifest,
-	populationPath: string,
-	populationUkPath: string,
-	populationConstituencyPath: string,
+	populationPath: DatasetInput,
+	populationUkPath: DatasetInput,
+	populationConstituencyPath: DatasetInput,
 ): {
 	measure: Measure;
 	wardObservations: MeasureObservationArtifact;
@@ -141,7 +141,7 @@ export const compilePopulation = (
 	// ONS's own constituency estimates, one partition per mid-year.
 	const constituencyPeriods = Object.entries(
 		JSON.parse(
-			readFileSync(populationConstituencyPath, "utf8"),
+			readDatasetInput(populationConstituencyPath),
 		) as PrecompiledFile,
 	)
 		.map(([period, value]) => {

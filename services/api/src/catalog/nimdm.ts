@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type { Measure } from "../dataCatalog";
 import { countriesFor } from "./countries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
@@ -12,7 +13,7 @@ import { sha256 } from "./values";
  */
 export const compileNimdm = (
 	{ manifestPath, datasets }: CatalogManifest,
-	nimdmPath: string,
+	nimdmPath: DatasetInput,
 ): CompiledMeasure => {
 	const nimdm = datasets.find((dataset) => dataset.id === "nimdm");
 	if (!nimdm) throw new Error(`${manifestPath} has no nimdm dataset`);

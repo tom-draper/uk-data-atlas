@@ -1,9 +1,10 @@
+import { type DatasetInput } from "./input";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 
 type NewDataset = {
 	datasetId: string;
-	path: string;
+	path: DatasetInput;
 	boundaryYear: number;
 	period: string;
 	label: string;
@@ -44,7 +45,7 @@ export const compileNewDatasets = (
 	);
 
 export const NEW_DATASET_MEASURES = (
-	paths: Partial<Record<string, string>>,
+	paths: Partial<Record<string, DatasetInput>>,
 ): NewDataset[] => [
 	{
 		datasetId: "business-activity",

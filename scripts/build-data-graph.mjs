@@ -21,7 +21,9 @@ const apiStages = [
 	stage("datasets", ["download"], ["--dir", "../..", "datasets:compile"], {
 		outputs: ["compiled/datasets"],
 	}),
-	stage("api-datasets", ["datasets"], ["build:datasets"]),
+	stage("terrain-catalogue"),
+	stage("atlas-sqlite", ["terrain-catalogue", "datasets"]),
+	stage("api-datasets", ["download"], ["build:datasets"]),
 	stage("boundary-registry", ["download"]),
 	stage("derived-boundaries", ["download"]),
 	stage("area-inventory", ["boundary-registry", "derived-boundaries"]),
@@ -39,7 +41,7 @@ const apiStages = [
 	]),
 	stage("area-search-index", ["area-inventory"]),
 	stage("postcode-index", ["download"]),
-	stage("data-catalog", ["api-datasets"]),
+	stage("data-catalog", ["atlas-sqlite"]),
 	stage("measure-compatibility", [
 		"data-catalog",
 		"boundary-registry",
@@ -80,8 +82,6 @@ const apiStages = [
 		"area-inventory",
 		"crosswalk-inventory",
 	]),
-	stage("terrain-catalogue"),
-	stage("atlas-sqlite", ["terrain-catalogue"]),
 	stage("lookup-manifest", [
 		"area-inventory",
 		"crosswalk-inventory",

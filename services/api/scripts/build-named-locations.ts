@@ -67,7 +67,7 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 		"services",
 		"api",
 		"public",
-		"datasets",
+		"source-data",
 		"gazetteer.core.json",
 	);
 	if (!existsSync(source)) {

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import type {
 	SourceGeography,
 	MeasureAggregation,
@@ -50,7 +50,7 @@ const electionCodeKind = (code: string) =>
  * one timeless constituency or ward geography.
  */
 const electionFieldPeriods = (
-	path: string,
+	path: DatasetInput,
 	geography: "constituency" | "ward",
 	field: ElectionMeasureField,
 	wardCodeCorrections: ReadonlyMap<string, string> = new Map(),
@@ -70,7 +70,7 @@ const electionFieldPeriods = (
 	 */
 	correctedCodes: Array<[string, string]>;
 }> => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
+	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period))
@@ -217,7 +217,7 @@ const electionFieldPeriods = (
 
 /** Read the publisher's winning-party label without coercing it to a number. */
 const electionWinnerPeriods = (
-	path: string,
+	path: DatasetInput,
 	geography: "constituency" | "ward",
 	wardCodeCorrections: ReadonlyMap<string, string> = new Map(),
 ): Array<{
@@ -225,7 +225,7 @@ const electionWinnerPeriods = (
 	boundaryYear: number;
 	records: CategoricalObservation[];
 }> => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
+	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			const entry = object(value, `${path}.${period}`);
@@ -288,8 +288,8 @@ const electionWinnerPeriods = (
  */
 export const compileElections = (
 	{ manifestPath, datasets }: CatalogManifest,
-	generalElectionPath: string,
-	localElectionPath: string,
+	generalElectionPath: DatasetInput,
+	localElectionPath: DatasetInput,
 ) => {
 	const partyNames: Record<string, string> = {
 		APNI: "Alliance Party",
@@ -312,7 +312,7 @@ export const compileElections = (
 	};
 	const electionMeasures = (election: {
 		datasetId: "general-election" | "local-election";
-		path: string;
+		path: DatasetInput;
 		geography: "constituency" | "ward";
 		label: string;
 		countField: string;
@@ -377,20 +377,18 @@ export const compileElections = (
 			...new Set(
 				Object.values(
 					JSON.parse(
-						readFileSync(election.path, "utf8"),
+						readDatasetInput(election.path),
 					) as PrecompiledFile,
 				).flatMap((value) =>
 					Object.values(
-						object(value, election.path).data as Record<
+						object(value, String(election.path)).data as Record<
 							string,
 							unknown
 						>,
 					).flatMap((record) =>
 						Object.keys(
-							object(record, election.path).partyVotes as Record<
-								string,
-								unknown
-							>,
+							object(record, String(election.path))
+								.partyVotes as Record<string, unknown>,
 						),
 					),
 				),
@@ -614,7 +612,7 @@ export const compileElections = (
 	};
 	const electionWinnerMeasures = (election: {
 		datasetId: "general-election" | "local-election";
-		path: string;
+		path: DatasetInput;
 		geography: "constituency" | "ward";
 		label: string;
 		wardCodeCorrections?: ReadonlyMap<string, string>;

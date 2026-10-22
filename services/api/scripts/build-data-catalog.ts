@@ -1,4 +1,5 @@
-import { existsSync, writeFileSync } from "node:fs";
+import { AtlasDatasetInput } from "../src/catalog/input";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -7,9 +8,11 @@ import {
 } from "../src/catalog/compileDataCatalog";
 import { observationArtifactName } from "../src/dataCatalog";
 
-export const buildDataCatalog = (repositoryRoot: string) => {
+export const datasetCatalogInputs = (
+	repositoryRoot: string,
+): DataCatalogInputs => {
 	const precompiled = (file: string) =>
-		join(repositoryRoot, "services", "api", "public", "datasets", file);
+		new AtlasDatasetInput(repositoryRoot, file.replace(/\.json$/, ""));
 	const inputs: DataCatalogInputs = {
 		manifest: precompiled("dataset-manifest.json"),
 		population: precompiled("population.json"),
@@ -56,14 +59,11 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		electricVehicleChargers: precompiled("electric-vehicle-chargers.json"),
 		censusSmallAreaRoot: repositoryRoot,
 	};
-	const missing = Object.values(inputs).filter(
-		(path): path is string => !path || !existsSync(path),
-	);
-	if (missing.length > 0) {
-		throw new Error(
-			`Run build:datasets before the API data catalogue. Missing: ${missing.join(", ")}`,
-		);
-	}
+	return inputs;
+};
+
+export const buildDataCatalog = (repositoryRoot: string) => {
+	const inputs = datasetCatalogInputs(repositoryRoot);
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
 	const {
 		catalog,

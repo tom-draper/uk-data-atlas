@@ -1,10 +1,11 @@
+import { type DatasetInput } from "./input";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 
 /** Ofcom broadband availability by local authority, as shares of premises. */
 export const compileBroadband = (
 	manifest: CatalogManifest,
-	broadbandPath: string,
+	broadbandPath: DatasetInput,
 	populationCodes: Set<string>,
 ): CompiledMeasure[] => {
 	const premisesShare = (

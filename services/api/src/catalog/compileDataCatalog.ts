@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,
@@ -45,50 +45,50 @@ import { compileNewDatasets, NEW_DATASET_MEASURES } from "./newDatasets";
  * positional because every published measure adds one, and a shifted
  * positional list compiles fine while reading the wrong file.
  */
-export type DataCatalogInputs = {
-	manifest: string;
-	population: string;
-	populationUk: string;
-	ghgEmissions: string;
-	mobileCoverage: string;
-	travelToWork: string;
-	carAvailability: string;
-	qualification: string;
-	ethnicity: string;
-	broadband: string;
-	claimantCount: string;
-	homelessness: string;
-	roadCollisions: string;
-	income: string;
-	workplaceIncome: string;
-	crime: string;
-	airQuality: string;
-	unemployment: string;
-	jobs: string;
-	landArea: string;
-	housePrice: string;
-	imd: string;
-	nimdm: string;
-	wimd: string;
-	simd: string;
-	lifeExpectancySeries: string;
-	populationConstituency: string;
-	generalElection: string;
-	localElection: string;
-	regionalGdpItl1: string;
-	regionalGdpItl2: string;
-	regionalGdpItl3: string;
-	electricityConsumption: string;
-	gasConsumption: string;
-	businessActivity?: string;
-	netAdditionalDwellings?: string;
-	localGovernmentFinance?: string;
-	councilTax?: string;
-	waste?: string;
-	adultSocialCareActivity?: string;
-	adultSocialCareOutcomes?: string;
-	planningApplications?: string;
-	electricVehicleChargers?: string;
+export type DataCatalogInputs<Input = DatasetInput> = {
+	manifest: Input;
+	population: Input;
+	populationUk: Input;
+	ghgEmissions: Input;
+	mobileCoverage: Input;
+	travelToWork: Input;
+	carAvailability: Input;
+	qualification: Input;
+	ethnicity: Input;
+	broadband: Input;
+	claimantCount: Input;
+	homelessness: Input;
+	roadCollisions: Input;
+	income: Input;
+	workplaceIncome: Input;
+	crime: Input;
+	airQuality: Input;
+	unemployment: Input;
+	jobs: Input;
+	landArea: Input;
+	housePrice: Input;
+	imd: Input;
+	nimdm: Input;
+	wimd: Input;
+	simd: Input;
+	lifeExpectancySeries: Input;
+	populationConstituency: Input;
+	generalElection: Input;
+	localElection: Input;
+	regionalGdpItl1: Input;
+	regionalGdpItl2: Input;
+	regionalGdpItl3: Input;
+	electricityConsumption: Input;
+	gasConsumption: Input;
+	businessActivity?: Input;
+	netAdditionalDwellings?: Input;
+	localGovernmentFinance?: Input;
+	councilTax?: Input;
+	waste?: Input;
+	adultSocialCareActivity?: Input;
+	adultSocialCareOutcomes?: Input;
+	planningApplications?: Input;
+	electricVehicleChargers?: Input;
 	/**
 	 * The repository root, whose data/ directory holds the Census 2021
 	 * small-area tables compiled straight from their Nomis files.
@@ -167,7 +167,7 @@ export const compileDataCatalog = ({
 	censusTables: MeasureTableArtifact[];
 } => {
 	const manifest = JSON.parse(
-		readFileSync(manifestPath, "utf8"),
+		readDatasetInput(manifestPath),
 	) as DatasetManifest;
 	if (
 		typeof manifest.version !== "number" ||

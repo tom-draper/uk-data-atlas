@@ -1,10 +1,11 @@
+import { type DatasetInput } from "./input";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 
 /** The claimant count by local authority, on the April 2023 authorities. */
 export const compileClaimantCount = (
 	manifest: CatalogManifest,
-	claimantCountPath: string,
+	claimantCountPath: DatasetInput,
 	populationCodes: Set<string>,
 ): CompiledMeasure[] => {
 	const claimants = (

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import type {
 	SourceGeography,
 	PopulationObservation,
@@ -16,12 +16,12 @@ import { isPublishedAreaCode } from "./countries";
  * and summing or averaging it over a group of authorities would be wrong.
  */
 export const localAuthorityFieldPeriods = (
-	path: string,
+	path: DatasetInput,
 	field: string,
 	boundaryYear: number,
 	geography: SourceGeography["type"] = "localAuthority",
 ): MeasureObservationArtifact["periods"] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
+	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period))
@@ -96,7 +96,7 @@ export const localAuthorityFieldPeriods = (
  * same table, are left out when `isAuthority` says so.
  */
 export const localAuthorityFieldWithGaps = (
-	path: string,
+	path: DatasetInput,
 	field: string,
 	boundaryYear: number,
 	isAuthority: (code: string) => boolean = () => true,
@@ -110,7 +110,7 @@ export const localAuthorityFieldWithGaps = (
 	/** Required when the precompiled file holds more than one source period. */
 	selectedPeriod?: string,
 ) => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
+	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const entries = Object.entries(source);
 	const selected = selectedPeriod
 		? entries.find(([period]) => period === selectedPeriod)

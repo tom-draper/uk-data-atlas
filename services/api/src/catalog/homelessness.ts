@@ -1,10 +1,11 @@
+import { type DatasetInput } from "./input";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 
 /** Households and children in temporary accommodation, by English authority. */
 export const compileHomelessness = (
 	manifest: CatalogManifest,
-	homelessnessPath: string,
+	homelessnessPath: DatasetInput,
 	england2025: string[],
 ): CompiledMeasure[] => {
 	const inTemporaryAccommodation = (
