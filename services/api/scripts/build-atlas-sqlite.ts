@@ -1,3 +1,4 @@
+import { areaTables } from "../src/atlasAreas";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -50,6 +51,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 		path,
 		{ schemaVersion: "1" },
 		{
+			...areaTables(join(repositoryRoot, "services/api/public")),
 			payloads: {
 				columns: ["id TEXT NOT NULL", "payload TEXT NOT NULL"],
 				key: ["id"],

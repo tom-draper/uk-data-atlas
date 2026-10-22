@@ -1,3 +1,4 @@
+import { readSqliteAreaInventory, readSqliteAreas } from "./atlasAreas";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -5,7 +6,6 @@ import {
 	type AreaRecord,
 	type AreaInventory,
 	type AreaLookup,
-	type AreaReleaseArtifact,
 } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { GeographyInventory } from "./geographyInventory";
@@ -77,13 +77,7 @@ export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
 	}
 };
 
-export const readAreaInventory = (apiRoot: string): AreaInventory =>
-	readPublicManifest<AreaInventory>(
-		apiRoot,
-		"area-inventory.json",
-		"releases",
-		"area inventory",
-	);
+export const readAreaInventory = readSqliteAreaInventory;
 
 /**
  * Area records kept parsed at once, about 125 bytes each. Every release
@@ -107,9 +101,6 @@ class LazyAreaLookup extends Map<string, Map<string, AreaRecord>> {
 		this.releases = new Map(
 			inventory.releases.flatMap((release) => {
 				if (release.status !== "available") return [];
-				const path = publicPath(apiRoot, release.artifact);
-				if (!existsSync(path))
-					throw new Error(`Missing area release artifact at ${path}`);
 				const key = `${release.geography}/${release.id}`;
 				super.set(key, new Map());
 				return [[key, release]];
@@ -126,17 +117,12 @@ class LazyAreaLookup extends Map<string, Map<string, AreaRecord>> {
 		}
 		const release = this.releases.get(key);
 		if (!release || release.status !== "available") return undefined;
-		const path = publicPath(this.apiRoot, release.artifact);
-		const artifact: AreaReleaseArtifact = JSON.parse(
-			readFileSync(path, "utf8"),
+		const areas = new Map(
+			readSqliteAreas(this.apiRoot, release).map((area) => [
+				area.code,
+				area,
+			]),
 		);
-		if (
-			artifact.schemaVersion !== 1 ||
-			artifact.contentHash !== release.contentHash ||
-			!Array.isArray(artifact.areas)
-		)
-			throw new Error(`Invalid area release artifact at ${path}`);
-		const areas = new Map(artifact.areas.map((area) => [area.code, area]));
 		this.loaded.set(key, areas);
 		this.loadedRecords += areas.size;
 		// Evict least recently used releases, but always keep the one just read.

@@ -77,11 +77,11 @@ test("default build executes the complete pipeline in order from the API directo
 		["--dir", "../..", "datasets:compile"],
 		...[
 			"terrain-catalogue",
-			"atlas-sqlite",
-			"datasets",
 			"boundary-registry",
 			"derived-boundaries",
 			"area-inventory",
+			"atlas-sqlite",
+			"datasets",
 			"geometry-source-registry",
 			"geometry-store",
 			"named-locations",
@@ -163,7 +163,7 @@ test("dataset rebuild refreshes every consumer using existing upstream artifacts
 		"build:atlas-sqlite",
 	]);
 	assert.ok(!commands.includes("build:datasets"));
-	assert.ok(!commands.includes("build:named-locations"));
+	assert.ok(commands.includes("build:named-locations"));
 	for (const consumer of ["data-catalog", "atlas-pages"])
 		assert.ok(commands.includes(`build:${consumer}`), consumer);
 	assert.equal(commands.at(-1), "build:atlas-pages");
@@ -215,13 +215,13 @@ test("crosswalk rebuild follows every downstream branch without geometry, postco
 	]);
 });
 
-test("atlas lookups depend only on areas, crosswalks and relationship paths", (context) => {
+test("atlas lookups depend on SQLite, areas, crosswalks and relationship paths", (context) => {
 	const build = fixture(context);
 	const result = build.run(["--from", "atlas-lookups", "--plan"]);
 	assert.equal(result.status, 0, result.stderr);
 	assert.match(
 		result.stdout,
-		/^atlas-lookups: pnpm build:atlas-lookups \[depends on: area-inventory, crosswalk-inventory, relationship-paths\]$/m,
+		/^atlas-lookups: pnpm build:atlas-lookups \[depends on: atlas-sqlite, area-inventory, crosswalk-inventory, relationship-paths\]$/m,
 	);
 });
 

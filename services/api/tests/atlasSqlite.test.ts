@@ -26,6 +26,15 @@ const fixture = (context: TestContext) => {
 	const apiRoot = join(root, "services/api");
 	mkdirSync(join(apiRoot, "public"), { recursive: true });
 	buildTerrainCatalogue(root);
+	writeFileSync(
+		join(apiRoot, "public/area-inventory.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "areas",
+			boundaryRegistryHash: "registry",
+			releases: [],
+		}),
+	);
 	mkdirSync(join(root, "compiled/datasets"), { recursive: true });
 	writeFileSync(
 		join(root, "compiled/datasets/dataset-manifest.json"),
