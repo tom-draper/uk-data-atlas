@@ -267,6 +267,35 @@ const definitionFiles = async (root) => {
 	return found;
 };
 
+/** One fingerprint for each catalogue dataset, by its type. */
+const datasetFingerprintsIn = async (context) => {
+	const shared = await expand(context, [
+		...baseInputs,
+		...datasetCompilerInputs,
+	]);
+	/** @type {Record<string, string>} */
+	const datasets = {};
+	for (const [type, file] of await definitionFiles(context.root)) {
+		const own = await importClosure(context, [file]);
+		datasets[type] = await fingerprintOf(
+			context,
+			`uk-data-atlas-dataset-v1\0${type}`,
+			[...shared, ...own],
+		);
+	}
+	return datasets;
+};
+
+/**
+ * Content fingerprints for the files that can change a catalogue dataset, by
+ * its type. Unlike the pipeline's, they need none of the website's lookups.
+ *
+ * @param {string} root
+ * @returns {Promise<Record<string, string>>}
+ */
+export const datasetFingerprints = async (root) =>
+	datasetFingerprintsIn(await createContext(root));
+
 /**
  * Content fingerprints for the files that can change a browser data artifact:
  * one for the pipeline, and one for each catalogue dataset by its type.
@@ -276,26 +305,12 @@ const definitionFiles = async (root) => {
  */
 export const precompileFingerprints = async (root) => {
 	const context = await createContext(root);
-	const shared = await expand(context, [
-		...baseInputs,
-		...datasetCompilerInputs,
-	]);
-	/** @type {Record<string, string>} */
-	const datasets = {};
-	for (const [type, file] of await definitionFiles(root)) {
-		const own = await importClosure(context, [file]);
-		datasets[type] = await fingerprintOf(
-			context,
-			`uk-data-atlas-dataset-v1\0${type}`,
-			[...shared, ...own],
-		);
-	}
 	return {
 		pipeline: await fingerprintOf(
 			context,
 			"uk-data-atlas-precompiler-v2",
 			await expand(context, pipelineInputs),
 		),
-		datasets,
+		datasets: await datasetFingerprintsIn(context),
 	};
 };
