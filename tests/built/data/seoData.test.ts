@@ -13,12 +13,12 @@ import {
 } from "@/scripts/map-rankings";
 
 describe("map page data; run pnpm seo:build if stale", () => {
-	it("figures match the committed datasets", async () => {
-		const committed = await readFile(MAP_FIGURES_PATH, "utf8");
-		expect(serialiseMapFigures(await readFigureInputs())).toBe(committed);
+	it("figures match the local datasets", async () => {
+		const compiled = await readFile(MAP_FIGURES_PATH, "utf8");
+		expect(serialiseMapFigures(await readFigureInputs())).toBe(compiled);
 	}, 60_000);
 
-	it("rankings match the committed datasets", async () => {
+	it("rankings match the local datasets", async () => {
 		const { files: expected, pages } = await serialiseRankings();
 		const files = (await readdir(RANKINGS_DIR)).sort();
 		expect(files).toEqual(

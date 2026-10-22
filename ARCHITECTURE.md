@@ -128,4 +128,6 @@ live in `tests/built/` and run locally only. First follow the build order in
 [deploy/README.md](deploy/README.md), including the website build that generates
 SEO artifacts. Then `pnpm check:full` runs the quick checks, verifies local
 precompiled data, and runs the built website and API tests. It needs `data/`
-restored and both products built; it does not build or deploy either product.
+restored and both products built, with the API running. Set
+`NEXT_PUBLIC_ATLAS_API_ORIGIN` to that API's origin when testing locally.
+The check does not build or deploy either product.
