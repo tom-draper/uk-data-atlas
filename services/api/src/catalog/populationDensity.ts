@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type { Measure, MeasureObservationArtifact } from "../dataCatalog";
 import { countriesFor } from "./countries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
@@ -14,7 +15,7 @@ import { sha256 } from "./values";
  */
 export const compilePopulationDensity = (
 	{ manifestPath, datasets }: CatalogManifest,
-	landAreaPath: string,
+	landAreaPath: DatasetInput,
 	localAuthorityPeriods: MeasureObservationArtifact["periods"],
 ): CompiledMeasure => {
 	const landArea = datasets.find((dataset) => dataset.id === "land-area");

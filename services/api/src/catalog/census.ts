@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type { Measure } from "../dataCatalog";
 import { onApril2023Authorities } from "./authorityChanges";
 import { countriesFor } from "./countries";
@@ -16,10 +17,10 @@ import { sha256 } from "./values";
  */
 export const compileCensus = (
 	{ manifestPath, datasets }: CatalogManifest,
-	travelToWorkPath: string,
-	carAvailabilityPath: string,
-	qualificationPath: string,
-	ethnicityPath: string,
+	travelToWorkPath: DatasetInput,
+	carAvailabilityPath: DatasetInput,
+	qualificationPath: DatasetInput,
+	ethnicityPath: DatasetInput,
 	populationCodes: Set<string>,
 ) => {
 	const censusBreakdowns = [

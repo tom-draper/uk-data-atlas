@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type { SourceGeography, Measure } from "../dataCatalog";
 import { countriesFor } from "./countries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
@@ -16,13 +17,13 @@ import { sha256 } from "./values";
  */
 export const compileDeprivationIndices = (
 	{ manifestPath, datasets }: CatalogManifest,
-	imdPath: string,
-	wimdPath: string,
-	simdPath: string,
+	imdPath: DatasetInput,
+	wimdPath: DatasetInput,
+	simdPath: DatasetInput,
 ) => {
 	const deprivationIndex = (index: {
 		datasetId: "imd" | "wimd" | "simd";
-		path: string;
+		path: DatasetInput;
 		label: string;
 		nation: "England" | "Wales" | "Scotland";
 		otherNations: string;

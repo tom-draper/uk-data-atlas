@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import { countryForCode } from "./countries";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
@@ -7,7 +7,7 @@ import { sha256 } from "./values";
 /** Final annual reported road collisions, by local authority and by LSOA. */
 export const compileRoadCollisions = (
 	manifest: CatalogManifest,
-	roadCollisionsPath: string,
+	roadCollisionsPath: DatasetInput,
 	populationCodes: Set<string>,
 ): CompiledMeasure[] => {
 	const compiled: CompiledMeasure[] = [];
@@ -26,7 +26,7 @@ export const compileRoadCollisions = (
 		notes: [note],
 	});
 	const roadCollisionsEditions = Object.values(
-		JSON.parse(readFileSync(roadCollisionsPath, "utf8")) as Record<
+		JSON.parse(readDatasetInput(roadCollisionsPath)) as Record<
 			string,
 			{
 				year: number;

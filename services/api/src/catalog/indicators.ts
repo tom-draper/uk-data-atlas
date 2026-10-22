@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type {
 	Measure,
 	MeasureAggregation,
@@ -39,7 +40,7 @@ export const publishIndicators = (
 	{ manifestPath, datasets }: CatalogManifest,
 	spec: {
 		datasetId: string;
-		path: string;
+		path: DatasetInput;
 		boundaryYear: number;
 		period: string;
 		/** Raw-file period to read when it differs from the published period. */

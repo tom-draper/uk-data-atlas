@@ -1,10 +1,11 @@
+import { type DatasetInput } from "./input";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 
 /** Median gross pay of employees in each English authority, by residence or workplace. */
 export const compileIncome = (
 	manifest: CatalogManifest,
-	incomePath: string,
+	incomePath: DatasetInput,
 	england2025: string[],
 	options: { datasetId: "income" | "workplace-income" } = {
 		datasetId: "income",

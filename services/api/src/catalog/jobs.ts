@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type { Country, Measure } from "../dataCatalog";
 import { countryForCode, countriesFor } from "./countries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
@@ -15,7 +16,7 @@ import { sha256 } from "./values";
  */
 export const compileJobs = (
 	{ manifestPath, datasets }: CatalogManifest,
-	jobsPath: string,
+	jobsPath: DatasetInput,
 	populationCodes: Set<string>,
 ): CompiledMeasure => {
 	const jobs = datasets.find((dataset) => dataset.id === "jobs");

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 
@@ -11,7 +11,7 @@ import type { CatalogManifest, CompiledMeasure } from "./manifest";
  */
 export const compileCrime = (
 	manifest: CatalogManifest,
-	crimePath: string,
+	crimePath: DatasetInput,
 ): CompiledMeasure[] => {
 	const offence = (
 		id: string,
@@ -28,7 +28,7 @@ export const compileCrime = (
 		notes: note ? [note] : [],
 	});
 	const crimeEdition = Object.values(
-		JSON.parse(readFileSync(crimePath, "utf8")) as Record<
+		JSON.parse(readDatasetInput(crimePath)) as Record<
 			string,
 			{
 				year?: unknown;

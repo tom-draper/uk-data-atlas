@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { type DatasetInput, readDatasetInput } from "./input";
 import type {
 	MeasureSource,
 	Measure,
@@ -29,11 +29,11 @@ import { sha256 } from "./values";
  */
 export const compileUnemployment = (
 	{ manifestPath, datasets }: CatalogManifest,
-	unemploymentPath: string,
+	unemploymentPath: DatasetInput,
 	populationCodes: Set<string>,
 ) => {
 	const unemploymentFile = JSON.parse(
-		readFileSync(unemploymentPath, "utf8"),
+		readDatasetInput(unemploymentPath),
 	) as Record<
 		string,
 		{

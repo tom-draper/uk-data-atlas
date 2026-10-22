@@ -171,7 +171,7 @@ const jobsYear = (year: number, northernIreland: boolean) => ({
 const writeSources = (
 	directory: string,
 	wardRecordCount = 2,
-): DataCatalogInputs => {
+): DataCatalogInputs<string> => {
 	const manifest = join(directory, "dataset-manifest.json");
 	const population = join(directory, "population.json");
 	const populationUk = join(directory, "population-uk.json");

@@ -76,6 +76,8 @@ test("default build executes the complete pipeline in order from the API directo
 		["build:operations"],
 		["--dir", "../..", "datasets:compile"],
 		...[
+			"terrain-catalogue",
+			"atlas-sqlite",
 			"datasets",
 			"boundary-registry",
 			"derived-boundaries",
@@ -98,8 +100,6 @@ test("default build executes the complete pipeline in order from the API directo
 			"location-projections",
 			"relationship-candidates",
 			"geography-inventory",
-			"terrain-catalogue",
-			"atlas-sqlite",
 			"lookup-manifest",
 			"map-resource",
 			"validation-report",
@@ -160,9 +160,11 @@ test("dataset rebuild refreshes every consumer using existing upstream artifacts
 	const commands = build.commands().map((args) => args.join(" "));
 	assert.deepEqual(commands.slice(0, 2), [
 		"--dir ../.. datasets:compile",
-		"build:datasets",
+		"build:atlas-sqlite",
 	]);
-	for (const consumer of ["named-locations", "data-catalog", "atlas-pages"])
+	assert.ok(!commands.includes("build:datasets"));
+	assert.ok(!commands.includes("build:named-locations"));
+	for (const consumer of ["data-catalog", "atlas-pages"])
 		assert.ok(commands.includes(`build:${consumer}`), consumer);
 	assert.equal(commands.at(-1), "build:atlas-pages");
 	assert.ok(!commands.includes("--dir ../.. data:download"));
@@ -180,7 +182,7 @@ test("datasets compile once for both products", (context) => {
 			.length,
 		1,
 	);
-	assert.ok(commands.includes("build:datasets"));
+	assert.ok(commands.includes("build:atlas-sqlite"));
 	assert.equal(commands.at(-1), "--dir ../.. precompile:generate");
 });
 

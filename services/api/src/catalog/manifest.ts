@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type {
 	DatasetCatalogueEntry,
 	Measure,
@@ -7,7 +8,7 @@ import { string, number, object } from "./values";
 
 /** The compiled manifest each dataset is checked against. */
 export type CatalogManifest = {
-	manifestPath: string;
+	manifestPath: DatasetInput;
 	datasets: DatasetCatalogueEntry[];
 };
 

@@ -1,3 +1,4 @@
+import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import {
 	compilePlaceFacts,
@@ -31,7 +32,11 @@ import {
 
 const API_ROOT = resolve(import.meta.dirname, "..");
 const ROOT = resolve(API_ROOT, "../..");
-const DATASETS = join(API_ROOT, "public", "datasets");
+const readDataset = (output: string) =>
+	readAtlasPayload(
+		ROOT,
+		output === "dataset-manifest" ? output : `dataset:${output}`,
+	);
 const BOUNDARIES = join(API_ROOT, "public", "source-data", "boundaries");
 
 /** Children listed by name rather than counted, up to this many. */
@@ -133,9 +138,7 @@ function readAreas(geography: PlaceGeography) {
 // The atlas datasets that publish a figure for each code, and for which
 // years. A dataset's years each hold maps from code to figures.
 function readDatasetCoverage() {
-	const manifest = JSON.parse(
-		readFileSync(join(DATASETS, "dataset-manifest.json"), "utf8"),
-	) as {
+	const manifest = JSON.parse(readDataset("dataset-manifest")) as {
 		datasets: { output: string; source: { name: string } }[];
 	};
 	const coverage = new Map<string, Map<string, Set<number>>>();
@@ -145,7 +148,7 @@ function readDatasetCoverage() {
 		if (titles.has(output)) continue;
 		titles.set(output, source.name);
 		const file = decodeCompactPayload(
-			JSON.parse(readFileSync(join(DATASETS, `${output}.json`), "utf8")),
+			JSON.parse(readDataset(output)),
 		) as Record<string, unknown>;
 		for (const [key, entry] of Object.entries(file)) {
 			if (!entry || typeof entry !== "object") continue;
@@ -204,7 +207,7 @@ function readPopulations() {
 				: undefined;
 	for (const dataset of POPULATION_DATASETS) {
 		const file = decodeCompactPayload(
-			JSON.parse(readFileSync(join(DATASETS, `${dataset}.json`), "utf8")),
+			JSON.parse(readDataset(dataset)),
 		) as Record<
 			string,
 			{ year: number; data: Record<string, { total?: unknown }> }
@@ -231,7 +234,10 @@ const populations = readPopulations();
 const mapsSlugByCode = new Map<string, string>();
 const mapsSlugByName = new Map<string, string>();
 const core = JSON.parse(
-	readFileSync(join(DATASETS, "gazetteer.core.json"), "utf8"),
+	readFileSync(
+		join(API_ROOT, "public/source-data/gazetteer.core.json"),
+		"utf8",
+	),
 ) as {
 	byCode: Record<string, { name: string; level: string }>;
 	namedLocations: Record<string, unknown>;
@@ -867,9 +873,9 @@ for (const [name, json] of outputs)
 		json,
 	);
 const readEditions = (name: string) =>
-	decodeCompactPayload(
-		JSON.parse(readFileSync(join(DATASETS, `${name}.json`), "utf8")),
-	) as Parameters<typeof compilePlaceFacts>[1];
+	decodeCompactPayload(JSON.parse(readDataset(name))) as Parameters<
+		typeof compilePlaceFacts
+	>[1];
 pages.set(
 	"place-facts",
 	JSON.stringify(

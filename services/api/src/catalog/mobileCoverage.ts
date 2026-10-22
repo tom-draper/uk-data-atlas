@@ -1,3 +1,4 @@
+import { type DatasetInput } from "./input";
 import type { Measure } from "../dataCatalog";
 import { countriesFor } from "./countries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
@@ -7,7 +8,7 @@ import { sha256 } from "./values";
 /** Ofcom mobile coverage by local authority, as shares of premises. */
 export const compileMobileCoverage = (
 	{ manifestPath, datasets }: CatalogManifest,
-	mobileCoveragePath: string,
+	mobileCoveragePath: DatasetInput,
 ) => {
 	const mobile = datasets.find((dataset) => dataset.id === "mobile-coverage");
 	if (!mobile)
