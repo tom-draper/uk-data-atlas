@@ -18,6 +18,12 @@ export type BoundaryCapability = {
 	locationScope: BoundaryLocationScope;
 	/** Whether map geometry should be intersected with data record keys. */
 	filterGeometryToDatasetData?: boolean;
+	/**
+	 * Whether each release is also compiled to PMTiles vector tiles, so the map
+	 * fetches only the tiles in view. Worth it for the finer families, whose
+	 * releases run to megabytes; a coarse release is smaller whole.
+	 */
+	vectorTiles?: boolean;
 };
 
 const COUNTRY_PREFIX_ONLY = {
@@ -36,6 +42,7 @@ export const BOUNDARY_CAPABILITIES = {
 	ward: {
 		countryPrefixFilter: true,
 		locationScope: { kind: "parent-map", mapping: "wardToLad" },
+		vectorTiles: true,
 	},
 	constituency: {
 		countryPrefixFilter: true,
@@ -49,24 +56,27 @@ export const BOUNDARY_CAPABILITIES = {
 		countryPrefixFilter: true,
 		locationScope: { kind: "parent-map", mapping: "lsoaToLad" },
 		filterGeometryToDatasetData: true,
+		vectorTiles: true,
 	},
 	dataZone: {
 		countryPrefixFilter: true,
 		locationScope: { kind: "bbox" },
 		filterGeometryToDatasetData: true,
+		vectorTiles: true,
 	},
 	superOutputArea: {
 		// NI SOA codes (for example, "95AA01S1") do not have an N prefix.
 		countryPrefixFilter: false,
 		locationScope: { kind: "bbox" },
 		filterGeometryToDatasetData: true,
+		vectorTiles: true,
 	},
 	country: COUNTRY_PREFIX_ONLY,
 	localPlanningAuthority: COUNTRY_PREFIX_ONLY,
 	region: COUNTRY_PREFIX_ONLY,
 	countyAndUnitaryAuthority: COUNTRY_PREFIX_ONLY,
 	integratedCareBoard: COUNTRY_PREFIX_ONLY,
-	msoa: COUNTRY_PREFIX_ONLY,
+	msoa: { ...COUNTRY_PREFIX_ONLY, vectorTiles: true },
 	communitySafetyPartnership: COUNTRY_PREFIX_ONLY,
 	policeForceArea: COUNTRY_PREFIX_ONLY,
 	combinedAuthority: COUNTRY_PREFIX_ONLY,
@@ -85,7 +95,7 @@ export const BOUNDARY_CAPABILITIES = {
 	nationalPark: COUNTRY_PREFIX_ONLY,
 	countyElectoralDivision: COUNTRY_PREFIX_ONLY,
 	travelToWorkArea: COUNTRY_PREFIX_ONLY,
-	parish: COUNTRY_PREFIX_ONLY,
+	parish: { ...COUNTRY_PREFIX_ONLY, vectorTiles: true },
 } as const satisfies Record<BoundaryType, BoundaryCapability>;
 
 export const boundaryCapabilityFor = (type: BoundaryType): BoundaryCapability =>
@@ -105,3 +115,7 @@ export const boundaryReadsFeatureExtent = (type: BoundaryType): boolean => {
 		(scope.kind === "parent-map" && scope.mapping === "lsoaToLad")
 	);
 };
+
+/** Whether a family's releases are compiled to vector tiles as well as TopoJSON. */
+export const boundaryServesVectorTiles = (type: BoundaryType): boolean =>
+	boundaryCapabilityFor(type).vectorTiles === true;
