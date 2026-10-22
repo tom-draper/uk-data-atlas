@@ -60,6 +60,18 @@ beforeEach(() => {
 			crosswalks: [],
 		}),
 	);
+	writeFileSync(
+		join(root, "services/api/public/named-locations.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "locations",
+			source: {
+				artifact: "data/datasets/gazetteer.core.json",
+				gazetteerVersion: 1,
+			},
+			locations: [],
+		}),
+	);
 	buildAtlasSqlite(root);
 	// The request must work without either product's JSON copies.
 	rmSync(join(root, "compiled/datasets"), { recursive: true });

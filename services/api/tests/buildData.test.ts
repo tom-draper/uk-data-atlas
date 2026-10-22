@@ -82,10 +82,10 @@ test("default build executes the complete pipeline in order from the API directo
 			"area-inventory",
 			"geometry-source-registry",
 			"crosswalk-inventory",
-			"atlas-sqlite",
-			"datasets",
 			"geometry-store",
+			"datasets",
 			"named-locations",
+			"atlas-sqlite",
 			"place-index",
 			"area-search-index",
 			"postcode-index",
@@ -163,7 +163,7 @@ test("dataset rebuild refreshes every consumer using existing upstream artifacts
 		"build:atlas-sqlite",
 	]);
 	assert.ok(!commands.includes("build:datasets"));
-	assert.ok(commands.includes("build:named-locations"));
+	assert.ok(!commands.includes("build:named-locations"));
 	for (const consumer of ["data-catalog", "atlas-pages"])
 		assert.ok(commands.includes(`build:${consumer}`), consumer);
 	assert.equal(commands.at(-1), "build:atlas-pages");
@@ -199,7 +199,6 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers without upstre
 		...[
 			"crosswalk-inventory",
 			"atlas-sqlite",
-			"named-locations",
 			"place-index",
 			"area-search-index",
 			"data-catalog",
@@ -283,7 +282,6 @@ test("the first failing stage returns its exit code and prevents dependent execu
 	assert.deepEqual(build.commands(), [
 		["build:crosswalk-inventory"],
 		["build:atlas-sqlite"],
-		["build:named-locations"],
 		["build:place-index"],
 		["build:area-search-index"],
 		["build:data-catalog"],

@@ -1,5 +1,4 @@
-import { lazyValue } from "./lazyValue";
-import type { NamedLocationGeometry } from "./namedLocationGeometry";
+import { readSqliteNamedLocationInventory } from "./atlasNamedLocations";
 import { existsSync, readFileSync } from "node:fs";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import {
@@ -13,67 +12,7 @@ import {
 } from "./namedLocations";
 import { publicPath, readPublicManifest } from "./publicManifest";
 
-export const readNamedLocationInventory = (
-	apiRoot: string,
-): NamedLocationInventory => {
-	const packed = publicPath(apiRoot, "named-locations-metadata.json");
-	if (!existsSync(packed))
-		return readPublicManifest<NamedLocationInventory>(
-			apiRoot,
-			"named-locations.json",
-			"locations",
-			"named location inventory",
-		);
-	const inventory = readPublicManifest<
-		Omit<NamedLocationInventory, "locations"> & {
-			locations: Array<
-				NamedLocationInventory["locations"][number] & {
-					geometryArtifact?: string;
-				}
-			>;
-		}
-	>(
-		apiRoot,
-		"named-locations-metadata.json",
-		"locations",
-		"named location metadata",
-	);
-	return {
-		...inventory,
-		locations: inventory.locations.map(
-			({ geometryArtifact, ...location }) => {
-				if (!geometryArtifact) return location;
-				if (
-					!/^location-geometries\/[a-f0-9]{64}\.json$/.test(
-						geometryArtifact,
-					)
-				)
-					throw new Error("Invalid location geometry artifact");
-				const path = publicPath(apiRoot, geometryArtifact);
-				if (!existsSync(path))
-					throw new Error(`Missing location geometry at ${path}`);
-				const geometry = lazyValue(() => {
-					const value: NamedLocationGeometry = JSON.parse(
-						readFileSync(path, "utf8"),
-					);
-					if (
-						!value.boundaryRelease ||
-						!value.geometry ||
-						!Array.isArray(value.bbox)
-					)
-						throw new Error(`Invalid location geometry at ${path}`);
-					return value;
-				});
-				return {
-					...location,
-					get geometry() {
-						return geometry();
-					},
-				};
-			},
-		),
-	};
-};
+export const readNamedLocationInventory = readSqliteNamedLocationInventory;
 
 export const readLocationProjectionInventory = (
 	apiRoot: string,

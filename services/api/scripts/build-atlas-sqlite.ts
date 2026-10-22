@@ -1,3 +1,4 @@
+import { namedLocationTables } from "../src/atlasNamedLocations";
 import { crosswalkTables } from "../src/atlasCrosswalks";
 import { areaTables } from "../src/atlasAreas";
 import { createHash } from "node:crypto";
@@ -54,6 +55,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 		{
 			...areaTables(join(repositoryRoot, "services/api/public")),
 			...crosswalkTables(join(repositoryRoot, "services/api/public")),
+			...namedLocationTables(join(repositoryRoot, "services/api/public")),
 			payloads: {
 				columns: ["id TEXT NOT NULL", "payload TEXT NOT NULL"],
 				key: ["id"],
@@ -92,5 +94,5 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const path = buildAtlasSqlite(resolve(dirname(scriptPath), "../../.."));
-	console.log(`Wrote terrain catalogue and datasets to ${path}`);
+	console.log(`Wrote shared atlas database to ${path}`);
 }
