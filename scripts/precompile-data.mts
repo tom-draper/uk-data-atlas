@@ -20,6 +20,7 @@ import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
+import { compileBoundaryTiles } from "./compile-boundary-tiles.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import {
 	mergeManifestEntries,
@@ -154,6 +155,8 @@ async function main() {
 	const startedAt = performance.now();
 	await mkdir(OUT_DIR, { recursive: true });
 	await compileBoundaryAssets();
+	// Serially, not beside the datasets: a national release takes up to 2 GB.
+	await compileBoundaryTiles();
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
 	// first means a malformed drop fails the build immediately, with the folder

@@ -25,6 +25,7 @@ const createRepository = async () => {
 	);
 	for (const file of [
 		"scripts/compile-boundaries.mts",
+		"scripts/compile-boundary-tiles.mts",
 		"scripts/dataset-discovery.ts",
 		"scripts/dataset-region-chunks.mts",
 		"scripts/generate-dataset-registry.ts",
@@ -34,6 +35,8 @@ const createRepository = async () => {
 		"scripts/precompile-selection.ts",
 		"packages/datasets/src/compileDataset.ts",
 		"packages/geography/src/index.ts",
+		"packages/map-tiles/package.json",
+		"packages/map-tiles/src/compileTileset.ts",
 		".cache/atlas-lookups/boundary-mappings.json",
 		".cache/atlas-lookups/parish-lad-mappings.json",
 	])

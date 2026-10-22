@@ -31,6 +31,7 @@ const datasetCompilerInputs = [
 const pipelineInputs = [
 	...baseInputs,
 	"scripts/compile-boundaries.mts",
+	"scripts/compile-boundary-tiles.mts",
 	"scripts/dataset-discovery.ts",
 	"scripts/dataset-region-chunks.mts",
 	"scripts/generate-dataset-registry.ts",
@@ -40,6 +41,8 @@ const pipelineInputs = [
 	"scripts/precompile-selection.ts",
 	"packages/geography/package.json",
 	"packages/geography/src",
+	"packages/map-tiles/package.json",
+	"packages/map-tiles/src",
 	".cache/atlas-lookups/boundary-mappings.json",
 	".cache/atlas-lookups/parish-lad-mappings.json",
 ];
