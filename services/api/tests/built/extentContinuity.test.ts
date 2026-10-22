@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readStoredText } from "../../src/storedText";
 import { join } from "node:path";
 import test from "node:test";
 import type {
@@ -10,7 +10,7 @@ import type {
 const publicDirectory = new URL("../../public", import.meta.url).pathname;
 
 const read = <T>(path: string) =>
-	JSON.parse(readFileSync(join(publicDirectory, path), "utf8")) as T;
+	JSON.parse(readStoredText(join(publicDirectory, path))) as T;
 
 const inventory = read<CrosswalkInventory>("crosswalk-inventory.json");
 const artifact = (entry: CrosswalkInventory["crosswalks"][number]) =>
