@@ -27,6 +27,14 @@ const fixture = (context: TestContext) => {
 	mkdirSync(join(apiRoot, "public"), { recursive: true });
 	buildTerrainCatalogue(root);
 	writeFileSync(
+		join(root, "services/api/public/crosswalk-inventory.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "crosswalks",
+			crosswalks: [],
+		}),
+	);
+	writeFileSync(
 		join(apiRoot, "public/area-inventory.json"),
 		JSON.stringify({
 			schemaVersion: 1,

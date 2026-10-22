@@ -1,3 +1,4 @@
+import { crosswalkTables } from "../src/atlasCrosswalks";
 import { areaTables } from "../src/atlasAreas";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync } from "node:fs";
@@ -52,6 +53,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 		{ schemaVersion: "1" },
 		{
 			...areaTables(join(repositoryRoot, "services/api/public")),
+			...crosswalkTables(join(repositoryRoot, "services/api/public")),
 			payloads: {
 				columns: ["id TEXT NOT NULL", "payload TEXT NOT NULL"],
 				key: ["id"],

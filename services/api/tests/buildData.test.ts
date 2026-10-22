@@ -80,9 +80,10 @@ test("default build executes the complete pipeline in order from the API directo
 			"boundary-registry",
 			"derived-boundaries",
 			"area-inventory",
+			"geometry-source-registry",
+			"crosswalk-inventory",
 			"atlas-sqlite",
 			"datasets",
-			"geometry-source-registry",
 			"geometry-store",
 			"named-locations",
 			"place-index",
@@ -93,7 +94,6 @@ test("default build executes the complete pipeline in order from the API directo
 			"export-manifest",
 			"postcode-areas",
 			"postcode-counts",
-			"crosswalk-inventory",
 			"relationship-paths",
 			"analysis-geographies",
 			"analysis-geography-validation",
@@ -186,7 +186,7 @@ test("datasets compile once for both products", (context) => {
 	assert.equal(commands.at(-1), "--dir ../.. precompile:generate");
 });
 
-test("crosswalk rebuild follows every downstream branch without geometry, postcode, or catalogue upstream work", (context) => {
+test("crosswalk rebuild refreshes SQLite and downstream consumers without upstream work", (context) => {
 	const build = fixture(context);
 	const result = build.run([
 		"--target",
@@ -198,6 +198,15 @@ test("crosswalk rebuild follows every downstream branch without geometry, postco
 	assert.deepEqual(build.commands(), [
 		...[
 			"crosswalk-inventory",
+			"atlas-sqlite",
+			"named-locations",
+			"place-index",
+			"area-search-index",
+			"data-catalog",
+			"measure-compatibility",
+			"export-manifest",
+			"postcode-areas",
+			"postcode-counts",
 			"relationship-paths",
 			"analysis-geographies",
 			"analysis-geography-validation",
@@ -273,6 +282,15 @@ test("the first failing stage returns its exit code and prevents dependent execu
 	);
 	assert.deepEqual(build.commands(), [
 		["build:crosswalk-inventory"],
+		["build:atlas-sqlite"],
+		["build:named-locations"],
+		["build:place-index"],
+		["build:area-search-index"],
+		["build:data-catalog"],
+		["build:measure-compatibility"],
+		["build:export-manifest"],
+		["build:postcode-areas"],
+		["build:postcode-counts"],
 		["build:relationship-paths"],
 	]);
 });
