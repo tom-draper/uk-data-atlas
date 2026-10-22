@@ -132,7 +132,7 @@ export const PROBLEM_CODES = {
 		meaning:
 			"More than one release of the geography is dated that month and they differ in more than coverage; `choices` lists them.",
 		example:
-			"/v1/boundary-releases:resolve?geography=dataZone&date=2011-12-15",
+			"/v1/boundary-releases:resolve?geography=ward&date=2019-12-15&country=GB-ENG",
 	},
 } as const satisfies Record<string, ProblemCodeDefinition>;
 
