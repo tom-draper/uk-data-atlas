@@ -1,4 +1,3 @@
-// The fingerprint reads the generated boundary mappings in public/data.
 import { describe, expect, it } from "vitest";
 import { precompileFingerprints } from "@/scripts/precompile-fingerprint.mjs";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";

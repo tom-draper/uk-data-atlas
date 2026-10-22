@@ -104,6 +104,24 @@ describe("precompile fingerprints", () => {
 		);
 	});
 
+	it("ignores generated output reached through compiler imports", async () => {
+		await write(
+			"scripts/precompile-data.mts",
+			'import core from "../public/data/datasets/gazetteer.core.json";',
+		);
+		const before = await precompileFingerprints(root);
+		await write(
+			"public/data/datasets/gazetteer.core.json",
+			'{"version":1}',
+		);
+		expect(await precompileFingerprints(root)).toEqual(before);
+		await write(
+			"public/data/datasets/gazetteer.core.json",
+			'{"version":2}',
+		);
+		expect(await precompileFingerprints(root)).toEqual(before);
+	});
+
 	it("changes only a dataset's own fingerprint when its loader changes", async () => {
 		const before = await precompileFingerprints(root);
 		await write(
