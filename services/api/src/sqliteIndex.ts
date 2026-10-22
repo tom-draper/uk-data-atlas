@@ -124,7 +124,7 @@ export class SqliteIndex {
 	}
 }
 
-type Row = Record<string, SQLInputValue>;
+export type Row = Record<string, SQLInputValue>;
 
 /**
  * A table's rows by position. A binary search reads one row at a time; once
@@ -181,13 +181,22 @@ export class SqliteRows {
 		offset = 0,
 		length = this.length - offset,
 	): Indexed<T> {
+		return this.records((row) => decode(row[name]!), offset, length);
+	}
+
+	/** Whole rows, decoded, read as an array. */
+	records<T>(
+		decode: (row: Row) => T,
+		offset = 0,
+		length = this.length - offset,
+	): Indexed<T> {
 		const inRange = (index: number) => index >= 0 && index < length;
 		return {
 			length,
 			at: (index) => {
 				if (!inRange(index)) return undefined;
 				const row = this.get(offset + index);
-				return row ? decode(row[name]!) : undefined;
+				return row ? decode(row) : undefined;
 			},
 			atEach: (indexes) =>
 				this.getEach(
@@ -196,7 +205,7 @@ export class SqliteRows {
 							? offset + index
 							: -1,
 					),
-				).map((row) => (row ? decode(row[name]!) : undefined)),
+				).map((row) => (row ? decode(row) : undefined)),
 		};
 	}
 }
