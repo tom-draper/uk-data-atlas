@@ -135,11 +135,18 @@ products, with its dependencies. `pnpm data:build` runs them in order, and
 | `pnpm data:build`                  | Both                                                            |
 
 A target runs only the stages its outputs depend on, so building one target
-and then the other gives the same output as building both. Stages the targets
-share run in each build, but `datasets` reuses every dataset whose inputs and
-compiler are unchanged, so a second build compiles nothing again. `--plan` lists the
+and then the other gives the same output as building both. `--plan` lists the
 stages without running them, and `--from <stage>` runs a stage and only the
 stages after it.
+
+The build skips a stage that ran before when nothing it reads has changed:
+the repo's code, the size and mtime of every file in `data/`, its command, and
+the outputs of the stages it depends on. The files it wrote under `compiled/`,
+`public/data/` and `services/api/public/` must also be unchanged. So once one
+target is built, the other reruns none of the stages they share, and a second
+build of either runs only `download`. A code change reruns every stage.
+`scripts/build-data-cache.mjs` keeps this in `.cache/data-build/`. `--from`
+and `--no-cache` rerun the stages they select regardless.
 
 ## Rebuilding after a change
 
