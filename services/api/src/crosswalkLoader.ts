@@ -1,3 +1,7 @@
+import {
+	readSqliteCrosswalkInventory,
+	readSqliteCrosswalk,
+} from "./atlasCrosswalks";
 import { readFileSync } from "node:fs";
 import type {
 	CrosswalkArtifact,
@@ -5,29 +9,14 @@ import type {
 } from "./crosswalkInventory";
 import type { RelationshipPathInventory } from "./relationshipPaths";
 import type { CrosswalkHeader, CrosswalkLookup } from "./resolver/translation";
-import { publicPath, readPublicManifest } from "./publicManifest";
-import { readStoredText, storedTextExists } from "./storedText";
+import { publicPath } from "./publicManifest";
 
-export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory =>
-	readPublicManifest<CrosswalkInventory>(
-		apiRoot,
-		"crosswalk-inventory.json",
-		"crosswalks",
-		"crosswalk inventory",
-	);
+export const readCrosswalkInventory = readSqliteCrosswalkInventory;
 
 export const DEFAULT_CROSSWALK_CACHE_BYTES = 64 * 1024 * 1024;
 
-/**
- * The crosswalk artifacts, read on demand and retained within a JSON byte budget. They
- * are most of a gigabyte of JSON once parsed and a request touches few of
- * them, so reading them all before listening cost seconds of start-up and
- * held the whole set for the life of the process. A missing file still stops
- * the server starting; one that is malformed or stale is refused when read.
- */
 class LazyCrosswalkLookup implements CrosswalkLookup {
 	private readonly entries: CrosswalkInventory["crosswalks"];
-	private readonly paths = new Map<string, string>();
 	private readonly loaded = new Map<
 		string,
 		{ artifact: CrosswalkArtifact; bytes: number }
@@ -35,7 +24,7 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 	private bytes = 0;
 
 	constructor(
-		apiRoot: string,
+		private readonly apiRoot: string,
 		inventory: CrosswalkInventory,
 		private readonly maxBytes: number,
 	) {
@@ -44,12 +33,6 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 				"Crosswalk cache bytes must be a non-negative safe integer.",
 			);
 		this.entries = inventory.crosswalks;
-		for (const crosswalk of this.entries) {
-			const path = publicPath(apiRoot, crosswalk.artifact);
-			if (!storedTextExists(path))
-				throw new Error(`Missing crosswalk artifact at ${path}`);
-			this.paths.set(crosswalk.id, path);
-		}
 	}
 
 	get(id: string): CrosswalkArtifact | undefined {
@@ -61,17 +44,7 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 		}
 		const expected = this.entries.find((crosswalk) => crosswalk.id === id);
 		if (!expected) return undefined;
-		const path = this.paths.get(id)!;
-		const json = readStoredText(path);
-		const bytes = Buffer.byteLength(json);
-		const artifact = JSON.parse(json) as CrosswalkArtifact;
-		if (
-			artifact.schemaVersion !== 1 ||
-			artifact.contentHash !== expected.contentHash ||
-			!Array.isArray(artifact.records)
-		) {
-			throw new Error(`Invalid crosswalk artifact at ${path}`);
-		}
+		const { artifact, bytes } = readSqliteCrosswalk(this.apiRoot, expected);
 		if (bytes <= this.maxBytes) {
 			while (this.bytes + bytes > this.maxBytes) {
 				const oldest = this.loaded.keys().next().value!;

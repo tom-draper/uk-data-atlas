@@ -22,7 +22,12 @@ const apiStages = [
 		outputs: ["compiled/datasets"],
 	}),
 	stage("terrain-catalogue"),
-	stage("atlas-sqlite", ["terrain-catalogue", "datasets", "area-inventory"]),
+	stage("atlas-sqlite", [
+		"terrain-catalogue",
+		"datasets",
+		"area-inventory",
+		"crosswalk-inventory",
+	]),
 	stage("api-datasets", ["download"], ["build:datasets"]),
 	stage("boundary-registry", ["download"]),
 	stage("derived-boundaries", ["download"]),
