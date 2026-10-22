@@ -1,4 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import {
 	type AreaRecord,
 	type AreaInventory,
@@ -54,13 +56,26 @@ export const readGeographyInventory = (apiRoot: string): GeographyInventory =>
 		"geography inventory",
 	);
 
-export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue =>
-	readPublicManifest<TerrainCatalogue>(
-		apiRoot,
-		"terrain-catalogue.json",
-		"products",
-		"terrain catalogue",
-	);
+export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
+	const path = resolve(apiRoot, "../../compiled/atlas.sqlite");
+	const database = new DatabaseSync(path, { readOnly: true });
+	try {
+		const row = database
+			.prepare("SELECT payload FROM payloads WHERE id = ?")
+			.get("terrain-catalogue") as { payload: string } | undefined;
+		if (!row) throw new Error(`Missing terrain catalogue at ${path}`);
+		const catalogue = JSON.parse(row.payload) as TerrainCatalogue;
+		if (
+			catalogue.schemaVersion !== 1 ||
+			!Array.isArray(catalogue.products)
+		) {
+			throw new Error(`Invalid terrain catalogue at ${path}`);
+		}
+		return catalogue;
+	} finally {
+		database.close();
+	}
+};
 
 export const readAreaInventory = (apiRoot: string): AreaInventory =>
 	readPublicManifest<AreaInventory>(

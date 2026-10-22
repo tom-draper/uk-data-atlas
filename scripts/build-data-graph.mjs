@@ -81,6 +81,7 @@ const apiStages = [
 		"crosswalk-inventory",
 	]),
 	stage("terrain-catalogue"),
+	stage("atlas-sqlite", ["terrain-catalogue"]),
 	stage("lookup-manifest", [
 		"area-inventory",
 		"crosswalk-inventory",
@@ -132,6 +133,7 @@ const apiStages = [
 		["build:atlas-release"],
 	),
 	stage("documents", [
+		"atlas-sqlite",
 		"atlas-release-initial",
 		"operations",
 		"geometry-store",

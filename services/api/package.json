@@ -33,6 +33,7 @@
 		"build:location-projections": "tsx scripts/build-location-projections.ts",
 		"build:derived-boundaries": "tsx scripts/build-derived-boundaries.ts",
 		"build:geography-inventory": "tsx scripts/build-geography-inventory.ts",
+		"build:atlas-sqlite": "tsx scripts/build-atlas-sqlite.ts",
 		"build:terrain-catalogue": "tsx scripts/build-terrain-catalogue.ts",
 		"start": "node dist/serve.mjs",
 		"profile:startup": "tsx --max-old-space-size=4096 scripts/profile-startup.ts",
