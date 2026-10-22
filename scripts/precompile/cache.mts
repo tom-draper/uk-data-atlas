@@ -3,8 +3,11 @@ import { createReadStream } from "fs";
 import { readFile, readdir, stat } from "fs/promises";
 import { join, relative } from "path";
 import type { SourceArtifact } from "@uk-data-atlas/datasets";
-import { precompileFingerprints } from "../precompile-fingerprint.mjs";
-import { OUT_DIR, ROOT, SOURCE_DATA } from "./paths.mts";
+import {
+	datasetFingerprints,
+	precompileFingerprints,
+} from "../precompile-fingerprint.mjs";
+import { COMPILED_DATASETS, OUT_DIR, ROOT, SOURCE_DATA } from "./paths.mts";
 import type {
 	CatalogueDefinition,
 	CompiledOutput,
@@ -182,16 +185,17 @@ export const snapshotFileContents = async (
 	);
 
 /**
- * The compiled file `name`.json as it now stands, if it still matches what the
- * manifest recorded. An unchanged mtime is taken as proof; otherwise the
- * contents are hashed.
+ * The compiled file `name`.json in `directory` as it now stands, if it still
+ * matches what the manifest recorded. An unchanged mtime is taken as proof;
+ * otherwise the contents are hashed.
  */
 const cachedDatasetOutput = async (
 	name: string,
 	expected: CompiledOutput,
+	directory = OUT_DIR,
 ): Promise<CompiledOutput | undefined> => {
 	try {
-		const path = join(OUT_DIR, `${name}.json`);
+		const path = join(directory, `${name}.json`);
 		const output = await stat(path);
 		if (output.size !== expected.bytes) return undefined;
 		if (expected.modifiedAt === output.mtimeMs)
@@ -261,6 +265,7 @@ export const canReuseDataset = async (
 		return cachedDatasetOutput(
 			definition.precompiledFile,
 			existing.compiled,
+			COMPILED_DATASETS,
 		);
 	} catch {
 		return undefined;
@@ -277,36 +282,56 @@ export const NO_REUSE: ReuseContext = {
 };
 
 /**
- * Reads the manifest an earlier run wrote, and decides whether its output can
- * be reused. A dataset is reused only if what compiles it is unchanged, which
- * its own fingerprint says. The other artifacts share the pipeline's.
+ * The manifest an earlier run wrote in `directory`, or an empty one in a fresh
+ * checkout.
+ */
+const readExistingManifest = async (
+	directory: string,
+): Promise<ExistingManifest> => {
+	try {
+		return JSON.parse(
+			await readFile(join(directory, "dataset-manifest.json"), "utf8"),
+		);
+	} catch {
+		return {};
+	}
+};
+
+const byType = (manifest: ExistingManifest) =>
+	new Map(
+		(manifest.datasets ?? []).map((dataset) => [dataset.type, dataset]),
+	);
+
+/**
+ * The reuse context for compiling the catalogue datasets into
+ * compiled/datasets. A dataset is reused only if what compiles it is
+ * unchanged, which its own fingerprint says.
+ */
+export const loadDatasetReuseContext = async (): Promise<ReuseContext> => {
+	const existingManifest = await readExistingManifest(COMPILED_DATASETS);
+	return {
+		canReuse: false,
+		datasetFingerprints: await datasetFingerprints(ROOT),
+		existingManifest,
+		existingDatasets: byType(existingManifest),
+		sourceRelease: await readSourceRelease(),
+	};
+};
+
+/**
+ * Reads the manifest an earlier website run wrote, and decides whether its
+ * output can be reused. Its artifacts share the pipeline's fingerprint.
  */
 export const loadReuseContext = async (): Promise<
 	ReuseContext & { compilerFingerprint: string }
 > => {
-	let existingManifest: ExistingManifest = {};
-	try {
-		existingManifest = JSON.parse(
-			await readFile(join(OUT_DIR, "dataset-manifest.json"), "utf8"),
-		);
-	} catch {
-		// A fresh checkout has no cache to reuse.
-	}
+	const existingManifest = await readExistingManifest(OUT_DIR);
 	const { pipeline: compilerFingerprint, datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const sourceRelease = await readSourceRelease();
 	const canReuse =
 		existingManifest.precompiler?.fingerprint === compilerFingerprint;
-	if (!canReuse)
-		console.log(
-			"Pipeline inputs changed; rebuilding the gazetteer, road safety and region chunks.",
-		);
-	const existingDatasets = new Map(
-		(existingManifest.datasets ?? []).map((dataset) => [
-			dataset.type,
-			dataset,
-		]),
-	);
+	const existingDatasets = byType(existingManifest);
 	return {
 		canReuse,
 		datasetFingerprints,

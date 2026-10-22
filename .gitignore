@@ -70,3 +70,8 @@ CLAUDE.md
 /services/api/public/*
 
 /services/api/dist/
+
+# Compiled output the website and the API share, rebuilt by pnpm data:build.
+# Only its README is tracked.
+/compiled/*
+!/compiled/README.md
