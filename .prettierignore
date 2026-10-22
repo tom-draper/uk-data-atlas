@@ -1,5 +1,4 @@
-# Generated browser payloads. They are committed for deployment but are not
-# hand-authored source files.
+# Generated browser and API payloads are built locally and ignored by Git.
 /public/data/
 /services/api/public/
 /services/api/contract/
