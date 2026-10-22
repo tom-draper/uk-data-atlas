@@ -26,6 +26,8 @@ packages/geography/     shared geography code: lineage, containment file
                         formats, geometry substitutions, grid offsets
 packages/catalogue/     shared catalogue code: the register of corrections
 packages/datasets/      browser-safe dataset definitions and compilers
+packages/map-tiles/     the boundary tiler: shared-arc generalisation and
+                        PMTiles archives, for the API and the precompile
 services/api/           the API: src/, scripts/, config/, openapi.yaml
 scripts/                build orchestration and file readers for both products
 data/                   raw source files, restored from the data release
@@ -34,11 +36,11 @@ public/data/            the atlas's compiled data, served by the website
 
 ## Where the data lives
 
-| Where                  | What                                                                     | In git | Made by                                                              |
-| ---------------------- | ------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------- |
-| `data/`                | Raw files as publishers supplied them                                    | No     | `pnpm data:download`, from the release pinned in `data-release.json` |
-| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No     | `pnpm --dir services/api build`, run where the API is served         |
-| `public/data/`         | The atlas's compiled datasets and boundaries                             | No     | `pnpm precompile` and `pnpm boundaries:compile`                      |
+| Where                  | What                                                                     | In git | Made by                                                                  |
+| ---------------------- | ------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------ |
+| `data/`                | Raw files as publishers supplied them                                    | No     | `pnpm data:download`, from the release pinned in `data-release.json`     |
+| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No     | `pnpm --dir services/api build`, run where the API is served             |
+| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No     | `pnpm precompile`, `pnpm boundaries:compile` and `pnpm boundaries:tiles` |
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
 headlines and ranked areas, compiled by `pnpm seo:build` from the datasets.
