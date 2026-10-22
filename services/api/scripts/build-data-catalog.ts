@@ -9,7 +9,7 @@ import { observationArtifactName } from "../src/dataCatalog";
 
 export const buildDataCatalog = (repositoryRoot: string) => {
 	const precompiled = (file: string) =>
-		join(repositoryRoot, "public", "data", "datasets", file);
+		join(repositoryRoot, "services", "api", "public", "datasets", file);
 	const inputs: DataCatalogInputs = {
 		manifest: precompiled("dataset-manifest.json"),
 		population: precompiled("population.json"),
@@ -61,7 +61,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	);
 	if (missing.length > 0) {
 		throw new Error(
-			`Build the website's precompiled data before the API data catalogue. Missing: ${missing.join(", ")}`,
+			`Run build:datasets before the API data catalogue. Missing: ${missing.join(", ")}`,
 		);
 	}
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
