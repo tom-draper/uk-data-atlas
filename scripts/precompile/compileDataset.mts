@@ -134,6 +134,17 @@ export async function compileStaleDataset(
 		}
 
 		compiled = decodeCompactPayload(JSON.parse(content)) as typeof compiled;
+		if (definition.coverageCountries) {
+			compiled = Object.fromEntries(
+				Object.entries(compiled).map(([id, dataset]) => [
+					id,
+					{
+						...dataset,
+						coverageCountries: definition.coverageCountries,
+					},
+				]),
+			);
+		}
 		preserved = existing;
 	}
 	const data = compiled;
