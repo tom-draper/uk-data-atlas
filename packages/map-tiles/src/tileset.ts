@@ -225,7 +225,7 @@ export const buildTile = (
 	features: MapFeature[],
 	address: TileAddress,
 	tileBounds: TileBox,
-): Buffer | undefined => {
+): Uint8Array | undefined => {
 	const inTile = tileFeatures(features, address, tileBounds);
 	return inTile.length === 0 ? undefined : encodeTile(layerName, inTile);
 };

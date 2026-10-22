@@ -31,43 +31,50 @@ export type ArchiveHeader = {
 	centre: [number, number, number];
 };
 
+/** The bytes as a Buffer, without copying, for its readers. */
+const asBuffer = (bytes: Uint8Array) =>
+	Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+
 const number = (buffer: Buffer, at: number) =>
 	Number(buffer.readBigUInt64LE(at));
 
 const degrees = (buffer: Buffer, at: number) => buffer.readInt32LE(at) / 1e7;
 
-export const readHeader = (archive: Buffer): ArchiveHeader => ({
-	magic: archive.subarray(0, 7).toString("ascii"),
-	version: archive.readUInt8(7),
-	rootOffset: number(archive, 8),
-	rootLength: number(archive, 16),
-	metadataOffset: number(archive, 24),
-	metadataLength: number(archive, 32),
-	leafOffset: number(archive, 40),
-	leafLength: number(archive, 48),
-	dataOffset: number(archive, 56),
-	dataLength: number(archive, 64),
-	addressedTiles: number(archive, 72),
-	tileEntries: number(archive, 80),
-	tileContents: number(archive, 88),
-	clustered: archive.readUInt8(96),
-	internalCompression: archive.readUInt8(97),
-	tileCompression: archive.readUInt8(98),
-	tileType: archive.readUInt8(99),
-	minZoom: archive.readUInt8(100),
-	maxZoom: archive.readUInt8(101),
-	bounds: [
-		degrees(archive, 102),
-		degrees(archive, 106),
-		degrees(archive, 110),
-		degrees(archive, 114),
-	],
-	centre: [
-		degrees(archive, 119),
-		degrees(archive, 123),
-		archive.readUInt8(118),
-	],
-});
+export const readHeader = (bytes: Uint8Array): ArchiveHeader => {
+	const archive = asBuffer(bytes);
+	return {
+		magic: archive.subarray(0, 7).toString("ascii"),
+		version: archive.readUInt8(7),
+		rootOffset: number(archive, 8),
+		rootLength: number(archive, 16),
+		metadataOffset: number(archive, 24),
+		metadataLength: number(archive, 32),
+		leafOffset: number(archive, 40),
+		leafLength: number(archive, 48),
+		dataOffset: number(archive, 56),
+		dataLength: number(archive, 64),
+		addressedTiles: number(archive, 72),
+		tileEntries: number(archive, 80),
+		tileContents: number(archive, 88),
+		clustered: archive.readUInt8(96),
+		internalCompression: archive.readUInt8(97),
+		tileCompression: archive.readUInt8(98),
+		tileType: archive.readUInt8(99),
+		minZoom: archive.readUInt8(100),
+		maxZoom: archive.readUInt8(101),
+		bounds: [
+			degrees(archive, 102),
+			degrees(archive, 106),
+			degrees(archive, 110),
+			degrees(archive, 114),
+		],
+		centre: [
+			degrees(archive, 119),
+			degrees(archive, 123),
+			archive.readUInt8(118),
+		],
+	};
+};
 
 type Entry = {
 	tileId: number;
@@ -114,7 +121,8 @@ const readDirectory = (block: Buffer): Entry[] => {
 	return entries;
 };
 
-export const readMetadata = (archive: Buffer) => {
+export const readMetadata = (bytes: Uint8Array) => {
+	const archive = asBuffer(bytes);
 	const header = readHeader(archive);
 	return JSON.parse(
 		gunzipSync(
@@ -128,9 +136,10 @@ export const readMetadata = (archive: Buffer) => {
 
 /** The tile's own bytes, or undefined when the archive does not hold it. */
 export const readTile = (
-	archive: Buffer,
+	bytes: Uint8Array,
 	wanted: number,
 ): Buffer | undefined => {
+	const archive = asBuffer(bytes);
 	const header = readHeader(archive);
 	let directory = readDirectory(
 		gunzipSync(

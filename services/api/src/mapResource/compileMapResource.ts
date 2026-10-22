@@ -1,3 +1,4 @@
+import { gzipSync } from "node:zlib";
 import type { AreaGeometryCache } from "../areaGeometry";
 import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { buildGeoJson } from "./geoJson";
@@ -134,7 +135,7 @@ export const compileMapResource = (
 	const name = `${geography}/${boundaryRelease}`;
 	const attributionText = `Contains ${release.source.publisher} data, ${release.source.licence.name}`;
 	const {
-		archive,
+		archive: archiveBytes,
 		arcCount,
 		bounds,
 		tileCount,
@@ -147,7 +148,13 @@ export const compileMapResource = (
 		description: release.title,
 		attribution: attributionText,
 		names,
+		gzip: gzipSync,
 	});
+	const archive = Buffer.from(
+		archiveBytes.buffer,
+		archiveBytes.byteOffset,
+		archiveBytes.byteLength,
+	);
 
 	const attribution = {
 		text: attributionText,

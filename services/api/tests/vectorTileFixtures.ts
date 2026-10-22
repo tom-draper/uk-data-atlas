@@ -7,7 +7,12 @@
 type Field = { field: number; wire: number; value: number | Buffer };
 
 /** Protobuf wire format: a tag, then a varint or a length-delimited block. */
-export const readFields = (buffer: Buffer): Field[] => {
+/** The bytes as a Buffer, without copying, for its readers. */
+const asBuffer = (bytes: Uint8Array) =>
+	Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+
+export const readFields = (bytes: Uint8Array): Field[] => {
+	const buffer = asBuffer(bytes);
 	const fields: Field[] = [];
 	let at = 0;
 	const varint = () => {
@@ -42,7 +47,8 @@ export const readFields = (buffer: Buffer): Field[] => {
 	return fields;
 };
 
-export const packedVarints = (buffer: Buffer): number[] => {
+export const packedVarints = (bytes: Uint8Array): number[] => {
+	const buffer = asBuffer(bytes);
 	const values: number[] = [];
 	let at = 0;
 	while (at < buffer.length) {
@@ -69,7 +75,8 @@ export type DecodedFeature = {
 	properties: Record<string, string | number>;
 };
 
-export const decodeTile = (buffer: Buffer) => {
+export const decodeTile = (bytes: Uint8Array) => {
+	const buffer = asBuffer(bytes);
 	const layers = readFields(buffer)
 		.filter((entry) => entry.field === 3)
 		.map((entry) => {
