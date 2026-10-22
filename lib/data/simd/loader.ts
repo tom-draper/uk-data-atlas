@@ -1,1 +1,4 @@
-export * from "@uk-data-atlas/datasets/data/simd/loader";
+export {
+	publishedSIMDRanks,
+	loadSIMD,
+} from "@uk-data-atlas/datasets/data/simd/loader";

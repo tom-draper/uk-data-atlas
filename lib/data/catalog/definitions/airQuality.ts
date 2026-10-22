@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/airQuality";
+export { airQualityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/airQuality";

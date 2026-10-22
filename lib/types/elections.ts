@@ -1,1 +1,18 @@
-export * from "@uk-data-atlas/datasets/types/elections";
+export {
+	type LocalElectionWardData,
+	type GeneralElectionConstituencyData,
+	type LocalAuthorityData,
+	type ElectionData,
+	LOCAL_ELECTION_YEARS,
+	GENERAL_ELECTION_YEARS,
+	type LocalElectionYear,
+	type GeneralElectionYear,
+	type LocalElectionExcludedWard,
+	type LocalElectionDataset,
+	type GeneralElectionDataset,
+	type WardStats,
+	type ConstituencyStats,
+	type AggregatedLocalElectionData,
+	type AggregatedGeneralElectionData,
+	type ProcessedPartyData,
+} from "@uk-data-atlas/datasets/types/elections";

@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/simd";
+export { simdDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/simd";

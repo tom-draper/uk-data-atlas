@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/land-area/loader";
+export { loadLandArea } from "@uk-data-atlas/datasets/data/land-area/loader";

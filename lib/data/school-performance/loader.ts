@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/school-performance/loader";
+export { loadSchoolPerformance } from "@uk-data-atlas/datasets/data/school-performance/loader";

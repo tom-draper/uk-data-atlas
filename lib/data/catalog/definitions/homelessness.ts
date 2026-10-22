@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/homelessness";
+export { homelessnessDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/homelessness";
