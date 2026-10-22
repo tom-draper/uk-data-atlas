@@ -82,9 +82,10 @@ stage pins them in the final manifest. Both manifest stages use the existing
 `build:atlas-release` script. `atlas-pages` compiles the website place profiles, facts and docs catalogue.
 The `datasets` stage runs after `download` and compiles every catalogue dataset
 once into `compiled/datasets/`, for both products (see `compiled/README.md`).
-`api-datasets` copies them into the API's own folder, with the gazetteer and
-boundary properties it compiles itself. `named-locations`, `data-catalog` and
-`atlas-pages` depend on it. The API build does not need website output in
+`atlas-sqlite` stores catalogue payloads in `compiled/atlas.sqlite` for the
+API catalogue compiler and atlas pages. `api-datasets` builds gazetteer core
+and boundary assets under `services/api/public/source-data/` for named
+locations and atlas pages. The API build does not need website output in
 `public/data/`.
 
 ## systemd
