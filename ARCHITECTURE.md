@@ -26,6 +26,7 @@ packages/geography/     shared geography code: lineage, containment file
                         formats, geometry substitutions, grid offsets
 packages/catalogue/     shared catalogue code: the register of corrections
 packages/datasets/      browser-safe dataset definitions and compilers
+shared/                 server-only readers of the compiled release
 packages/map-tiles/     the boundary tiler: shared-arc generalisation and
                         PMTiles archives, for the API and the precompile
 services/api/           the API: src/, scripts/, config/, openapi.yaml
@@ -75,8 +76,15 @@ metadata and exact payload bytes in `compiled/atlas.sqlite`. The API catalogue
 compiler and atlas pages read it directly through the server-only reader in
 `shared/atlasSqlite.ts`. The `api-datasets` stage only builds
 gazetteer core and boundary assets under `services/api/public/source-data/`.
-Named locations consume that gazetteer. Website precompile still copies the
-catalogue files into `public/data/datasets/`.
+Named locations consume that gazetteer. The Next.js server also reads SQLite
+and passes dataset URLs containing their payload SHA-256 to the browser. Its
+`/data/catalogue/<sha256>/<output>.json` route serves exact JSON with one-year
+immutable caching and negotiated gzip compression. Neither product fetches
+catalogue datasets from the other product.
+
+Website precompile reads `compiled/datasets/` when cutting regional chunks,
+without copying the catalogue payloads. `public/data/datasets/` retains
+gazetteer, road-safety, chunk and SEO assets and the website build manifest.
 
 The atlas's containment and lineage lookups (`area-lineage`,
 `boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
