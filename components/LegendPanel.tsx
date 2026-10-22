@@ -39,6 +39,7 @@ import {
 	PercentageRangePanel,
 	SchoolPerformanceMeasurePanel,
 	UnemploymentMeasurePanel,
+	WasteMetricPanel,
 } from "./legend/LegendSupplementalPanels";
 import type { MapOptionsChangeHandler } from "./legend/types";
 import { useLegendControls } from "./legend/useLegendControls";
@@ -268,23 +269,45 @@ export default function LegendPanel({
 				/>
 			)}
 
-			{countMetricDataset && (
-				<CountMetricPanel
-					measure={
-						controls.displayOptions[countMetricDataset].measure
+			{activeDataset?.type === "waste" && (
+				<WasteMetricPanel
+					metric={controls.displayOptions.waste.metric}
+					onChange={(metric) =>
+						onMapOptionsChange("waste", {
+							metric,
+							colorRange:
+								metric === "recyclingShare"
+									? { min: 0, max: 100 }
+									: POPULATION_METRIC_RANGES.waste[
+											controls.displayOptions.waste
+												.measure
+										],
+						})
 					}
-					onChange={(measure) => {
-						const colorRange =
-							POPULATION_METRIC_RANGES[countMetricDataset][
-								measure
-							];
-						onMapOptionsChange(countMetricDataset, {
-							measure,
-							colorRange,
-						});
-					}}
 				/>
 			)}
+
+			{countMetricDataset &&
+				!(
+					countMetricDataset === "waste" &&
+					controls.displayOptions.waste.metric === "recyclingShare"
+				) && (
+					<CountMetricPanel
+						measure={
+							controls.displayOptions[countMetricDataset].measure
+						}
+						onChange={(measure) => {
+							const colorRange =
+								POPULATION_METRIC_RANGES[countMetricDataset][
+									measure
+								];
+							onMapOptionsChange(countMetricDataset, {
+								measure,
+								colorRange,
+							});
+						}}
+					/>
+				)}
 
 			{activeDataset?.type === "broadband" && (
 				<BroadbandMeasurePanel
