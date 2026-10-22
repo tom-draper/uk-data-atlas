@@ -1,5 +1,5 @@
 import { BOUNDARY_CATALOG } from "./catalog";
-import { atlasLookupUrl } from "@/lib/helpers/atlasApi";
+import { atlasLookupUrl } from "@/lib/helpers/atlasData";
 import type { Crosswalk } from "../gazetteer/types";
 
 /**

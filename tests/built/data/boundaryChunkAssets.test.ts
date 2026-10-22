@@ -11,21 +11,10 @@ import { filterFeatures } from "@/lib/data/boundaries/filter";
 import { getProp } from "@/lib/data/boundaries/properties";
 import { lsoaYearForBoundaryAsset } from "@/lib/data/boundaries/lsoaLadMappings";
 import { boundaryChunkProblems } from "@/scripts/boundary-chunks";
-import { atlasLookupPath } from "@/scripts/atlas-lookups";
 
 const PUBLIC = join(process.cwd(), "public");
-// The atlas fetches its lookups from the API; the precompile's copy stands in.
-const read = (path: string) => {
-	const lookup = /\/v1\/atlas-lookups\/([a-z0-9-]+\.json)$/.exec(path)?.[1];
-	return JSON.parse(
-		readFileSync(
-			lookup
-				? atlasLookupPath(process.cwd(), lookup)
-				: join(PUBLIC, path.split("?")[0]!),
-			"utf8",
-		),
-	);
-};
+const read = (path: string) =>
+	JSON.parse(readFileSync(join(PUBLIC, path.split("?")[0]!), "utf8"));
 
 // Places spanning one region, several regions and a region with no wards.
 const LOCATIONS = [
@@ -64,12 +53,12 @@ describe("committed boundary chunks", () => {
 			const asset = release.asset!;
 			const whole = decodeBoundaryData(read(asset));
 			const wardToLad = read(
-				"/v1/atlas-lookups/boundary-mappings.json",
+				"/data/atlas-lookups/boundary-mappings.json",
 			).wardToLad;
 			const lsoaToLad =
 				type === "lsoa"
 					? read(
-							`/v1/atlas-lookups/lsoa-lad-mappings-${lsoaYearForBoundaryAsset(asset)}.json`,
+							`/data/atlas-lookups/lsoa-lad-mappings-${lsoaYearForBoundaryAsset(asset)}.json`,
 						).lsoaToLad
 					: undefined;
 			const filter = (data: typeof whole, location: string) =>

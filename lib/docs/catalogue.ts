@@ -1,4 +1,4 @@
-import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
+import { readAtlasPage } from "@/lib/helpers/atlasPages";
 
 export interface Licence {
 	name: string;
@@ -247,9 +247,11 @@ function isDocsCatalogueSnapshot(
 }
 
 async function readSnapshot(): Promise<DocsCatalogueSnapshot> {
-	const snapshot = await fetchAtlasPage<unknown>("docs-catalogue");
+	const snapshot = await readAtlasPage<unknown>("docs-catalogue");
 	if (!isDocsCatalogueSnapshot(snapshot)) {
-		throw new Error(`Invalid docs catalogue snapshot at the API`);
+		throw new Error(
+			`Invalid docs catalogue snapshot in public/data/atlas-pages`,
+		);
 	}
 	return snapshot;
 }

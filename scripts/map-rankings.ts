@@ -9,7 +9,7 @@ import {
 	rankingSource,
 } from "../lib/atlas/rankings";
 import type { Editions } from "../lib/atlas/rankingRecipes";
-import { fetchAtlasPage } from "../lib/helpers/atlasApi";
+import { readAtlasPage } from "../lib/helpers/atlasPages";
 import { atlasLookupPath } from "./atlas-lookups";
 
 const DATASETS = join(process.cwd(), "public", "data", "datasets");
@@ -24,7 +24,7 @@ async function readEditions(file: string): Promise<Editions> {
 
 /** Each ward's area in km², from the /places profiles. */
 async function readWardAreas(): Promise<Record<string, number>> {
-	return fetchAtlasPage<Record<string, number>>("ward-areas");
+	return readAtlasPage<Record<string, number>>("ward-areas");
 }
 
 /** Inputs that are not compiled datasets, by the name a recipe asks for. */

@@ -3,7 +3,7 @@ import {
 	type AreaLineage,
 	type PrecompiledBoundaryMappings,
 } from "@uk-data-atlas/geography";
-import { atlasLookupUrl } from "../../helpers/atlasApi";
+import { atlasLookupUrl } from "../../helpers/atlasData";
 import { LINEAGE_TYPES, type LineageType, type YearCode } from "./codeMapper";
 
 const BOUNDARY_MAPPINGS_URL = atlasLookupUrl("boundary-mappings");
@@ -24,7 +24,7 @@ export type BoundaryMappingTarget = {
 	setAreaLineage?: (type: LineageType, lineage: AreaLineage) => void;
 };
 
-/** Load the API resolver's lineages, served at /v1/atlas-lookups. */
+/** Load the API resolver's lineages, from the website's copy. */
 export const applyAreaLineage = (
 	lineages: Partial<Record<LineageType, AreaLineage>>,
 	target: BoundaryMappingTarget,
