@@ -117,6 +117,28 @@ describe("precompile fingerprints", () => {
 		expect(after.pipeline).toEqual(before.pipeline);
 	});
 
+	it("follows workspace package subpath exports to a loader", async () => {
+		await write(
+			"packages/datasets/package.json",
+			JSON.stringify({ exports: { "./*": "./src/*.ts" } }),
+		);
+		await write(
+			"packages/datasets/src/data/catalog/definitions/alpha.ts",
+			definition(
+				"alpha",
+				'import { load } from "@uk-data-atlas/datasets/data/alpha/loader";',
+			),
+		);
+		const before = await precompileFingerprints(root);
+		await write(
+			"packages/datasets/src/data/alpha/loader.ts",
+			"export const load = 'changed';",
+		);
+		const after = await precompileFingerprints(root);
+		expect(after.datasets.alpha).not.toEqual(before.datasets.alpha);
+		expect(after.datasets.beta).toEqual(before.datasets.beta);
+	});
+
 	it("changes only a dataset's own fingerprint when its definition changes", async () => {
 		const before = await precompileFingerprints(root);
 		await write(
