@@ -22,7 +22,7 @@ for dependencies and rebuild commands. Raw data and generated browser/API data
 are ignored by Git with no per-file exceptions. See [deploy/README.md](deploy/README.md)
 for the complete build order. `pnpm precompile:verify` and
 `pnpm data:verify-precompiled` check local compiler fingerprints, raw input
-stamps, dataset hashes and boundary chunks. Run `pnpm precompile` when they
+modification times, dataset hashes and boundary chunks. Run `pnpm precompile` when they
 report stale or missing output. CI runs `pnpm check` only; run built tests and
 full builds locally.
 
