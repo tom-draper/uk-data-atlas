@@ -49,6 +49,8 @@ writes the final manifest afterwards so a fresh build has the required inputs.
 `pnpm --dir services/api build:data` runs `pnpm data:build --target api`.
 `pnpm data:build --target website` runs only the stages the website's data
 needs, ending with the website's datasets, and `pnpm data:build` runs both.
+Stages whose inputs and outputs are unchanged since they last ran are skipped
+(see "One data build" in `ARCHITECTURE.md`); add `--no-cache` to run them all.
 To inspect the complete local data build without executing commands, run:
 
 ```sh
