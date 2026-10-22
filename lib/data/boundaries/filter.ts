@@ -4,7 +4,7 @@ import type { Crosswalk } from "../gazetteer/types";
 import { featureExtent } from "./derived";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 import { boundaryCapabilityFor } from "./capabilities";
-import { getProp } from "./properties";
+import { getProp, countryPrefixForBoundaryCode } from "./properties";
 
 const COUNTRY_PREFIXES: Record<string, string> = {
 	England: "E",
@@ -66,7 +66,10 @@ export const filterFeatures = (
 			...geojson,
 			features: geojson.features.filter((f) => {
 				const code = getProp(f.properties, codeKeys);
-				return code?.startsWith(prefix);
+				return (
+					code !== undefined &&
+					countryPrefixForBoundaryCode(type, code) === prefix
+				);
 			}),
 		};
 	}

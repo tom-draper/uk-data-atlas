@@ -1,5 +1,6 @@
 import { boundaryTiles } from "@/lib/data/boundaries/tiles";
 import { describe, expect, it } from "vitest";
+import type { BoundaryGeojson, Dataset } from "@/lib/types";
 import { prepareActiveDatasetGeometry } from "@/lib/hooks/useActiveDatasetGeometry";
 
 const geometry = {
@@ -58,6 +59,42 @@ describe("active dataset geometry preparation", () => {
 		const prepared = prepareActiveDatasetGeometry(geometry, dataset);
 		expect(prepared).not.toBe(geometry);
 		expect(prepared && boundaryTiles.get(prepared)).toBe(tiles);
+	});
+
+	it("retains GDP boundaries with ITL codes when UK coverage is declared", () => {
+		const gdpGeometry = {
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "EPSG:4326" } },
+			features: ["TLC31", "TLL11", "TLM81", "TLN06"].map((code, id) => ({
+				type: "Feature" as const,
+				id,
+				properties: { ITL325CD: code, ITL325NM: code },
+				geometry: null,
+			})),
+		} satisfies BoundaryGeojson;
+		const gdpDataset = {
+			id: "regionalGdpItl32023",
+			type: "regionalGdpItl3",
+			year: 2023,
+			boundaryType: "itl3",
+			boundaryYear: 2025,
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+			data: Object.fromEntries(
+				gdpGeometry.features.map((feature) => [
+					feature.properties.ITL325CD,
+					{
+						itlCode: feature.properties.ITL325CD,
+						itlName: feature.properties.ITL325NM,
+						gdpMillionGbp: 100,
+						gvaMillionGbp: 90,
+					},
+				]),
+			),
+		} satisfies Dataset;
+
+		expect(
+			prepareActiveDatasetGeometry(gdpGeometry, gdpDataset)?.features,
+		).toEqual(gdpGeometry.features);
 	});
 
 	it("filters boundary features to the active dataset's record keys", () => {

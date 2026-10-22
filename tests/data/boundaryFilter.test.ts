@@ -4,6 +4,29 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { BoundaryGeojson } from "@/lib/types";
 
 describe("properties-only boundary filtering", () => {
+	it.each([
+		["England", "TLC31"],
+		["Wales", "TLL11"],
+		["Scotland", "TLM81"],
+		["Northern Ireland", "TLN06"],
+	])("keeps ITL boundaries in %s", (location, expectedCode) => {
+		const boundaries = {
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "EPSG:4326" } },
+			features: ["TLC31", "TLL11", "TLM81", "TLN06"].map((code, id) => ({
+				type: "Feature" as const,
+				id,
+				properties: { ITL325CD: code, ITL325NM: code },
+				geometry: null,
+			})),
+		} satisfies BoundaryGeojson;
+		const filtered = filterFeatures(boundaries, { location, type: "itl3" });
+		expect(filtered.features).toHaveLength(1);
+		expect(filtered.features[0]?.properties).toMatchObject({
+			ITL325CD: expectedCode,
+		});
+	});
+
 	it("keeps current unitary authorities in their historic county scopes", () => {
 		const boundaries = {
 			type: "FeatureCollection",
