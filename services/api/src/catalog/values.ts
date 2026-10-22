@@ -1,6 +1,6 @@
 export { sha256 } from "../contentHash";
 
-/** A parsed file from the website's data/datasets, keyed by period or edition. */
+/** A parsed file from the API's compiled datasets, keyed by period or edition. */
 export type PrecompiledFile = Record<string, unknown>;
 
 export const string = (value: unknown, context: string): string => {
