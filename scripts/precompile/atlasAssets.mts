@@ -88,7 +88,7 @@ export async function compileAtlasAssets({
 				return { data, compiled };
 			});
 	// Ward and parish containment come from the API's geography resolver,
-	// fetched by `pnpm lookups:fetch`; upload matching reads
+	// copied by `pnpm atlas-data:copy`; upload matching reads
 	// ward and parish parents from them, so the index is compiled in step.
 	// Both files are part of the precompiler fingerprint, so a cached index
 	// is only reused while they are unchanged.

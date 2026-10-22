@@ -156,7 +156,7 @@ describe("constituency to local authority crosswalk", () => {
 		targetLocalAuthorityRelease: string;
 		releases: Record<string, unknown>;
 	};
-	const rerun = "rebuild the API, then run pnpm lookups:fetch";
+	const rerun = "rebuild the API, then run pnpm atlas-data:copy";
 
 	it("has a table for every constituency release the catalogue serves", () => {
 		const { releases, vintages } = BOUNDARY_CATALOG.constituency;
