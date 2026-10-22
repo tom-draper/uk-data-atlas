@@ -28,9 +28,9 @@ import {
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 	type BoundaryType,
-} from "../lib/data/boundaries/catalog";
-import { boundaryReadsFeatureExtent } from "../lib/data/boundaries/capabilities";
-import { decodeBoundaryData } from "../lib/data/boundaries/decode";
+} from "@uk-data-atlas/datasets/data/boundaries/catalog";
+import { boundaryReadsFeatureExtent } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
 import {
 	applyGridOffset,
 	parseGridOffset,
@@ -41,8 +41,8 @@ import {
 	type GridOffset,
 } from "@uk-data-atlas/geography";
 import { applyReversedGridOffset } from "./reverse-grid-offset.mts";
-import { parseDatasetMeta } from "../lib/data/catalog/meta";
-import { polygonAreaSqKm } from "../lib/helpers/population";
+import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
+import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
 import { elapsedSince, formatKb, logArtifact } from "./timing.mts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -198,7 +198,7 @@ const SUBSTITUTIONS_MODULE = join(
  * list happened not to mention WD20CD, and spelled pcon15cd in the wrong case,
  * so the filter matched nothing and kept nothing.
  */
-const releaseSources = () =>
+const releaseSources = (outputDirectory: string) =>
 	BOUNDARY_TYPES.flatMap((type) =>
 		BOUNDARY_CATALOG[type].releases.flatMap((release) => {
 			if (!release.asset) return [];
@@ -210,7 +210,7 @@ const releaseSources = () =>
 			// GeoJSON; the compiled asset is written straight to where it is
 			// served from, rather than into data/ and copied across after.
 			const releaseDir = dirname(join(ROOT, "data", relative));
-			const outputPath = join(ROOT, "public", "data", relative);
+			const outputPath = join(outputDirectory, relative);
 			const propertiesPath = join(
 				dirname(outputPath),
 				PROPERTIES_FILENAME,
@@ -563,9 +563,11 @@ const assertKeptSomething = (
 };
 
 /** Compiles GeoJSON releases and derives properties for every served release. */
-export async function compileBoundaryAssets(): Promise<void> {
+export async function compileBoundaryAssets(
+	outputDirectory = join(ROOT, "public", "data"),
+): Promise<void> {
 	const startedAt = performance.now();
-	const sources = releaseSources();
+	const sources = releaseSources(outputDirectory);
 	console.log(`Preparing ${sources.length} TopoJSON boundary assets...`);
 	for (const {
 		type,
