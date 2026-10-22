@@ -1,1 +1,16 @@
-export * from "@uk-data-atlas/datasets/helpers/datasetAggregation/deprivation";
+export {
+	isMostDeprivedIMD,
+	isMostDeprivedWIMD,
+	isMostDeprivedSIMD,
+	NIMDM_MOST_DEPRIVED_RANK,
+	isMostDeprivedNIMDM,
+	summariseDeprivation,
+	summariseScoredDeprivation,
+	summariseDeprivationBy,
+	summariseIMD,
+	summariseWIMD,
+	aggregateIMD,
+	aggregateWIMD,
+	aggregateSIMD,
+	aggregateNIMDM,
+} from "@uk-data-atlas/datasets/helpers/datasetAggregation/deprivation";

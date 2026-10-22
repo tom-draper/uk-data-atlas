@@ -1,1 +1,6 @@
-export * from "@uk-data-atlas/datasets/data/unemployment/loader";
+export {
+	annualPeriod,
+	normaliseUnemploymentBoundaryCodes,
+	addMergedUnemploymentAuthorities,
+	loadUnemployment,
+} from "@uk-data-atlas/datasets/data/unemployment/loader";

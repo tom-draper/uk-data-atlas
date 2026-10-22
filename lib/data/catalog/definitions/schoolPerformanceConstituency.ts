@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/schoolPerformanceConstituency";
+export { schoolPerformanceConstituencyDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/schoolPerformanceConstituency";

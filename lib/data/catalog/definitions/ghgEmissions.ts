@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/ghgEmissions";
+export { ghgEmissionsDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/ghgEmissions";

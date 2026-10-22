@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/housingAffordability";
+export { housingAffordabilityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/housingAffordability";

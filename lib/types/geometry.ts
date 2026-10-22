@@ -1,1 +1,15 @@
-export * from "@uk-data-atlas/datasets/types/geometry";
+export {
+	type YearToProperties,
+	type Properties,
+	type PropertyKeys,
+	type PolygonGeometry,
+	type MultiPolygonGeometry,
+	type BoundaryGeometry,
+	type Feature,
+	type Features,
+	type BoundaryGeojsonFeature,
+	type BoundaryGeojson,
+	type LocationBounds,
+	getFeatureProp,
+	outerRings,
+} from "@uk-data-atlas/datasets/types/geometry";

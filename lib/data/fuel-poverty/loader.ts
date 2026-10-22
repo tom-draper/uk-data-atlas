@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/fuel-poverty/loader";
+export { loadFuelPoverty } from "@uk-data-atlas/datasets/data/fuel-poverty/loader";

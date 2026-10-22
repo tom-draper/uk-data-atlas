@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/datasets/data/catalog/definitions/businessActivity";
+export { businessActivityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/businessActivity";
