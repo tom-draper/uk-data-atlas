@@ -8671,7 +8671,8 @@ components:
         More than one release of the geography is dated that month and they
         differ in more than coverage; `choices` lists them. A caller can act on
         `choices` instead of reading the detail. Produced by `GET
-        /v1/boundary-releases:resolve?geography=dataZone&date=2011-12-15`.
+        /v1/boundary-releases:resolve?geography=ward&date=2019-12-15&country=GB-ENG`,
+        where both December 2019 ward releases cover England.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -8686,22 +8687,27 @@ components:
           title: Ambiguous Release
           status: 409
           detail:
-            2 dataZone boundary releases are dated 2011-12 and differ in more than
+            2 ward boundary releases are dated 2019-12 and differ in more than
             coverage. Choose one by id; each is listed in choices.
           code: ambiguous_release
           choices:
-            - id: 2011-12-sc-bfc
-              month: 2011-12
-              title: Data zones, December 2011 (Scotland, full resolution, clipped)
+            - id: 2019-12-gb-bgc
+              month: 2019-12
+              title: Wards, December 2019 (Great Britain, generalised, clipped)
               countries:
+                - GB-ENG
                 - GB-SCT
-              href: /v1/boundary-releases/dataZone/2011-12-sc-bfc
-            - id: 2011-12-sc-nc
-              month: 2011-12
-              title: Data zones, December 2011 (Scotland, not clipped)
+                - GB-WLS
+              href: /v1/boundary-releases/ward/2019-12-gb-bgc
+            - id: 2019-12-uk-bgc
+              month: 2019-12
+              title: Wards, December 2019 (United Kingdom, generalised, clipped)
               countries:
+                - GB-ENG
+                - GB-NIR
                 - GB-SCT
-              href: /v1/boundary-releases/dataZone/2011-12-sc-nc
+                - GB-WLS
+              href: /v1/boundary-releases/ward/2019-12-uk-bgc
 
     Envelope:
       type: object
