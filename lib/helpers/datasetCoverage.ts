@@ -1,5 +1,8 @@
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/boundaries";
-import { getProp } from "@/lib/data/boundaries/properties";
+import {
+	getProp,
+	countryPrefixForBoundaryCode,
+} from "@/lib/data/boundaries/properties";
 import type { BoundaryGeojson, BoundaryType, Dataset } from "@/lib/types";
 
 const COUNTRY_PREFIXES = {
@@ -26,7 +29,14 @@ export const filterGeometryToDatasetCoverage = (
 	const codeKeys = BOUNDARY_CATALOG[dataset.boundaryType].properties.code;
 	const filtered = geojson.features.filter((feature) => {
 		const code = getProp(feature.properties, codeKeys);
-		return !!code && prefixes.some((prefix) => code.startsWith(prefix));
+		return (
+			!!code &&
+			prefixes.some(
+				(prefix) =>
+					countryPrefixForBoundaryCode(dataset.boundaryType, code) ===
+					prefix,
+			)
+		);
 	});
 
 	return filtered.length === geojson.features.length

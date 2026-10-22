@@ -2,7 +2,7 @@ import { gazetteer } from "./gazetteer/static";
 import type { Crosswalk } from "./gazetteer/types";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./boundaries/catalog";
 import { boundaryCapabilityFor } from "./boundaries/capabilities";
-import { getProp } from "./boundaries/properties";
+import { getProp, countryPrefixForBoundaryCode } from "./boundaries/properties";
 import { atlasLookupUrl } from "../helpers/atlasApi";
 import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
 import { fetchLsoaToLad } from "./boundaries/lsoaLadMappings";
@@ -220,7 +220,9 @@ const matcherFor = async (
 	const capability = boundaryCapabilityFor(filter.boundaryType);
 	const countryPrefix = COUNTRY_PREFIXES[filter.location];
 	if (countryPrefix && capability.countryPrefixFilter)
-		return (code) => code.startsWith(countryPrefix);
+		return (code) =>
+			countryPrefixForBoundaryCode(filter.boundaryType, code) ===
+			countryPrefix;
 
 	const location = gazetteer.namedLocation(filter.location);
 	if (!location) return null;

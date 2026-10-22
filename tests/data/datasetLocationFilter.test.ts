@@ -9,6 +9,30 @@ afterEach(() => {
 });
 
 describe("location-scoped chart datasets", () => {
+	it.each([
+		["England", "TLC31"],
+		["Wales", "TLL11"],
+		["Scotland", "TLM81"],
+		["Northern Ireland", "TLN06"],
+	])("keeps GDP records in %s", async (location, expectedCode) => {
+		const payload = {
+			2023: {
+				boundaryYear: 2025,
+				data: Object.fromEntries(
+					["TLC31", "TLL11", "TLM81", "TLN06"].map((code) => [
+						code,
+						{ gdpMillionGbp: 100 },
+					]),
+				),
+			},
+		};
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location,
+			boundaryType: "itl3",
+		})) as typeof payload;
+		expect(Object.keys(filtered[2023].data)).toEqual([expectedCode]);
+	});
+
 	it("keeps only local-authority records which cards can hover in the location", async () => {
 		const includedCode = greaterManchester.memberCodes[0]!;
 		const payload = {
