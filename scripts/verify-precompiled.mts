@@ -78,4 +78,24 @@ if (chunkProblems.length > 0)
 	);
 
 await stat(join(root, "public", "data", "boundaries"));
+
+const tilesManifestPath = join(
+	root,
+	"public",
+	"data",
+	"boundaries",
+	"tiles.json",
+);
+const tiles = JSON.parse(
+	await readFile(tilesManifestPath, "utf8").catch(() =>
+		fail("Boundary vector tile manifest is missing or unreadable."),
+	),
+) as { releases: Record<string, { href: string; bytes: number }> };
+for (const [release, { href, bytes }] of Object.entries(tiles.releases)) {
+	const size = await stat(join(root, "public", href))
+		.then(({ size }) => size)
+		.catch(() => undefined);
+	if (size !== bytes)
+		fail(`Vector tiles for ${release} do not match tiles.json.`);
+}
 console.log("Local precompiled data matches its manifest and compiler inputs.");

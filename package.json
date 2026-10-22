@@ -17,6 +17,7 @@
 		"lookups:fetch": "tsx scripts/fetch-atlas-lookups.mts",
 		"precompile:verify": "npx tsx scripts/verify-precompiled.mts",
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",
+		"boundaries:tiles": "npx tsx --max-old-space-size=3072 scripts/compile-boundary-tiles.mts",
 		"seo:build": "npx tsx scripts/build-seo-data.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
 		"build": "pnpm precompile:verify && pnpm seo:build && next build --turbopack",
@@ -35,6 +36,7 @@
 	"dependencies": {
 		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/map-tiles": "workspace:*",
 		"@vercel/analytics": "^2.0.1",
 		"lucide-react": "^1.48.0",
 		"mapbox-gl": "^3.32.0",

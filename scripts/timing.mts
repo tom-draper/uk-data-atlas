@@ -20,7 +20,7 @@ export const formatKb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
  * how long that took.
  */
 export const logArtifact = (
-	kind: "boundary" | "dataset" | "gazetteer" | "chunks",
+	kind: "boundary" | "tiles" | "dataset" | "gazetteer" | "chunks",
 	name: string,
 	details: readonly (string | undefined)[],
 ) =>
