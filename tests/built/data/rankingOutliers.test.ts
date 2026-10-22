@@ -1,3 +1,4 @@
+import { readAtlasPayload } from "@/shared/atlasSqlite";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -47,9 +48,7 @@ const REVIEWED: Readonly<Record<string, string>> = {
 
 async function residents(): Promise<Map<string, number>> {
 	const editions = decodeCompactPayload(
-		JSON.parse(
-			await readFile(join(DATASETS, "population-uk.json"), "utf8"),
-		),
+		JSON.parse(readAtlasPayload(process.cwd(), "dataset:population-uk")),
 	) as Record<string, { data: Record<string, { total?: unknown }> }>;
 	const latest = editions[Object.keys(editions).sort().at(-1)!]!;
 	const counts = new Map<string, number>();

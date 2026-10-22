@@ -1,12 +1,16 @@
+import { readAtlasPayload } from "@/shared/atlasSqlite";
 import { readFileSync } from "fs";
-import { join } from "path";
 import { describe, expect, it } from "vitest";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
 import { atlasLookupPath } from "@/scripts/atlas-lookups";
 
-const datasets = join(process.cwd(), "public", "data", "datasets");
 const read = (file: string) =>
-	JSON.parse(readFileSync(join(datasets, file), "utf8"));
+	JSON.parse(
+		readAtlasPayload(
+			process.cwd(),
+			`dataset:${file.replace(/\.json$/, "")}`,
+		),
+	);
 
 type Edition = { boundaryYear?: number; data?: Record<string, unknown> };
 

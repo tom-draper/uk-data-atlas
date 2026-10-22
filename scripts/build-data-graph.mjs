@@ -175,7 +175,7 @@ const websiteStages = [
 	),
 	stage(
 		"website-datasets",
-		["datasets", "website-lookups"],
+		["atlas-sqlite", "website-lookups"],
 		["--dir", "../..", "precompile:generate"],
 		// It keeps unchanged files from its last run. The lookups and pages in
 		// public/data belong to website-lookups.

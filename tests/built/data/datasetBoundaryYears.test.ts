@@ -1,5 +1,4 @@
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readAtlasPayload } from "@/shared/atlasSqlite";
 import { describe, expect, it } from "vitest";
 import {
 	BOUNDARY_CATALOG,
@@ -15,14 +14,12 @@ import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
  * failure looks exactly like a dead button, so assert the link here instead.
  */
 describe("every chart dataset has a boundary to draw on", () => {
-	const precompiled = join(process.cwd(), "public", "data", "datasets");
-
 	for (const definition of CHART_DATASET_DEFINITIONS) {
 		it(`${definition.type} resolves every boundary year it declares`, () => {
 			const contents = JSON.parse(
-				readFileSync(
-					join(precompiled, `${definition.precompiledFile}.json`),
-					"utf8",
+				readAtlasPayload(
+					process.cwd(),
+					`dataset:${definition.precompiledFile}`,
 				),
 			) as Record<
 				string,

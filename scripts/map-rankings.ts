@@ -1,3 +1,4 @@
+import { readAtlasPayload } from "../shared/atlasSqlite";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ATLAS_LOCATIONS } from "../lib/atlas/pages";
@@ -18,7 +19,7 @@ export const RANKING_PAGES_PATH = join(DATASETS, "ranking-pages.json");
 
 async function readEditions(file: string): Promise<Editions> {
 	return decodeCompactPayload(
-		JSON.parse(await readFile(join(DATASETS, `${file}.json`), "utf8")),
+		JSON.parse(readAtlasPayload(process.cwd(), `dataset:${file}`)),
 	) as Editions;
 }
 
