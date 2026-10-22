@@ -6,7 +6,7 @@ import {
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readApiCatalogues } from "../src/catalogueLoader";
+import { readPlaceResolver } from "../src/catalogueLoader";
 import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { buildDocsCatalogue } from "./build-docs-catalogue";
 import { writeAtlasPages } from "./write-atlas-pages";
@@ -46,8 +46,7 @@ const OUTLINE_TIER = {
 const REDRAWN_SHARE = 0.02;
 const REDRAWN_KM2 = 0.05;
 
-const catalogues = readApiCatalogues(join(ROOT, "services", "api"));
-const { geographyResolver: resolver } = catalogues;
+const resolver = readPlaceResolver(API_ROOT);
 
 type Identity = { geography: string; boundaryRelease: string; code: string };
 type Relationship = {
