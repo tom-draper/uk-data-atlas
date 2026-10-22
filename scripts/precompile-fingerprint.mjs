@@ -114,15 +114,18 @@ const importedFiles = async (root, aliases, file) => {
 			// A TypeScript source is imported by its emitted extension.
 			bases.push(base.replace(/\.m?js$/, ""), base);
 		} else if (specifier.startsWith("@uk-data-atlas/")) {
-			bases.push(
-				join(
-					root,
-					"packages",
-					specifier.slice("@uk-data-atlas/".length),
-					"src",
-					"index",
-				),
+			const [name, ...parts] = specifier
+				.slice("@uk-data-atlas/".length)
+				.split("/");
+			const directory = join(root, "packages", name);
+			const { exports } = JSON.parse(
+				await readFile(join(directory, "package.json"), "utf8"),
 			);
+			const subpath = parts.length ? `./${parts.join("/")}` : ".";
+			const target =
+				exports[subpath] ??
+				(parts.length && exports["./*"]?.replace("*", parts.join("/")));
+			if (typeof target === "string") bases.push(join(directory, target));
 		} else {
 			for (const [prefix, target] of aliases) {
 				if (specifier.startsWith(prefix))
