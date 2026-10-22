@@ -17,6 +17,14 @@ import {
 import { reconcileMembers, type MemberCoverage } from "./memberReconciliation";
 import type { NamedLocationInventory } from "./namedLocations";
 import { sha256 } from "./contentHash";
+import type { SQLInputValue } from "node:sqlite";
+import {
+	jsonDictionary,
+	packJson,
+	SqliteIndex,
+	unpackJson,
+	writeSqliteIndex,
+} from "./sqliteIndex";
 
 export type LocationProjection = {
 	locationId: string;
@@ -401,17 +409,84 @@ export type LocationProjectionCacheStats = {
 	loadSeconds: number;
 };
 
-export class LocationProjectionStore {
-	private readonly shards = new Map<
+/**
+ * Where location projections are read from: the shards a release lists, and
+ * the projections themselves.
+ */
+export abstract class LocationProjections {
+	protected readonly shards = new Map<
 		string,
 		LocationProjectionInventory["shards"][number]
 	>();
-	/** Loaded member lookups by crosswalk, least recently used first. */
-	private readonly lookups = new Map<string, LocationProjectionLookup>();
-	private readonly parentShards = new Map<
+	protected readonly parentShards = new Map<
 		string,
 		LocationProjectionInventory["parentShards"][number]
 	>();
+
+	constructor(inventory: LocationProjectionInventory) {
+		for (const shard of inventory.shards)
+			this.shards.set(shard.crosswalkId, shard);
+		for (const shard of inventory.parentShards ?? [])
+			this.parentShards.set(shard.crosswalkId, shard);
+	}
+
+	/** How the shard cache has behaved, where shards are cached. */
+	abstract stats(): LocationProjectionCacheStats | undefined;
+
+	abstract parents(
+		locationId: string,
+		crosswalkId: string,
+	): LocationParentProjection | undefined;
+
+	abstract get(
+		locationId: string,
+		geography: string,
+		boundaryRelease: string,
+		crosswalkId: string,
+	): LocationProjection | undefined;
+
+	/** Crosswalks with parent projections into a geography and release. */
+	parentCrosswalks(geography: string, boundaryRelease: string) {
+		return [...this.parentShards.values()].filter(
+			(shard) =>
+				shard.geography === geography &&
+				shard.boundaryRelease === boundaryRelease,
+		);
+	}
+
+	/** Every materialised member projection shard, without loading its rows. */
+	memberProjectionShards() {
+		return [...this.shards.values()].sort((left, right) =>
+			left.crosswalkId.localeCompare(right.crosswalkId),
+		);
+	}
+
+	/** Every materialised parent projection shard, without loading its rows. */
+	parentProjectionShards() {
+		return [...this.parentShards.values()].sort((left, right) =>
+			left.crosswalkId.localeCompare(right.crosswalkId),
+		);
+	}
+
+	/** The member shard for a crosswalk, if it projects into this release. */
+	protected memberShard(
+		geography: string,
+		boundaryRelease: string,
+		crosswalkId: string,
+	) {
+		const shard = this.shards.get(crosswalkId);
+		return shard &&
+			shard.geography === geography &&
+			shard.boundaryRelease === boundaryRelease
+			? shard
+			: undefined;
+	}
+}
+
+/** Projections read from their JSON shards, a few shards held at a time. */
+export class LocationProjectionStore extends LocationProjections {
+	/** Loaded member lookups by crosswalk, least recently used first. */
+	private readonly lookups = new Map<string, LocationProjectionLookup>();
 	private readonly parentLookups = new Map<
 		string,
 		Map<string, LocationParentProjection>
@@ -440,10 +515,7 @@ export class LocationProjectionStore {
 		 */
 		private readonly capacity = 8,
 	) {
-		for (const shard of inventory.shards)
-			this.shards.set(shard.crosswalkId, shard);
-		for (const shard of inventory.parentShards ?? [])
-			this.parentShards.set(shard.crosswalkId, shard);
+		super(inventory);
 	}
 
 	stats(): LocationProjectionCacheStats {
@@ -452,29 +524,6 @@ export class LocationProjectionStore {
 			loadedShards: [...this.lookups.keys()],
 			...this.counts,
 		};
-	}
-
-	/** Crosswalks with parent projections into a geography and release. */
-	parentCrosswalks(geography: string, boundaryRelease: string) {
-		return [...this.parentShards.values()].filter(
-			(shard) =>
-				shard.geography === geography &&
-				shard.boundaryRelease === boundaryRelease,
-		);
-	}
-
-	/** Every materialised member projection shard, without loading its rows. */
-	memberProjectionShards() {
-		return [...this.shards.values()].sort((left, right) =>
-			left.crosswalkId.localeCompare(right.crosswalkId),
-		);
-	}
-
-	/** Every materialised parent projection shard, without loading its rows. */
-	parentProjectionShards() {
-		return [...this.parentShards.values()].sort((left, right) =>
-			left.crosswalkId.localeCompare(right.crosswalkId),
-		);
 	}
 
 	parents(
@@ -508,13 +557,8 @@ export class LocationProjectionStore {
 		boundaryRelease: string,
 		crosswalkId: string,
 	): LocationProjection | undefined {
-		const shard = this.shards.get(crosswalkId);
-		if (
-			!shard ||
-			shard.geography !== geography ||
-			shard.boundaryRelease !== boundaryRelease
-		)
-			return undefined;
+		const shard = this.memberShard(geography, boundaryRelease, crosswalkId);
+		if (!shard) return undefined;
 		let lookup = this.lookups.get(crosswalkId);
 		if (lookup) {
 			this.counts.reads += 1;
@@ -538,6 +582,191 @@ export class LocationProjectionStore {
 			}
 		}
 		return lookup.get(
+			locationProjectionKey(
+				locationId,
+				geography,
+				boundaryRelease,
+				crosswalkId,
+			),
+		);
+	}
+}
+
+/** Where the server reads projections from, beside their JSON shards. */
+export const LOCATION_PROJECTION_DATABASE = "location-projections.sqlite";
+
+/**
+ * Write every member and parent projection to one database, each found by
+ * its crosswalk and location, and deflated against a dictionary drawn from
+ * its shard. A request then reads the one projection it needs rather than
+ * parsing its whole shard.
+ */
+export const writeLocationProjectionDatabase = (
+	path: string,
+	{
+		inventory,
+		artifacts,
+		parentArtifacts,
+	}: Pick<
+		ReturnType<typeof compileLocationProjections>,
+		"inventory" | "artifacts" | "parentArtifacts"
+	>,
+) => {
+	const shards = [
+		...artifacts.map((artifact) => ({
+			table: "members",
+			crosswalkId: artifact.crosswalkId,
+			projections: artifact.projections,
+			key: (projection: LocationProjection) =>
+				locationProjectionKey(
+					projection.locationId,
+					projection.geography,
+					projection.boundaryRelease,
+					projection.via.id,
+				),
+		})),
+		...parentArtifacts.map((artifact) => ({
+			table: "parents",
+			crosswalkId: artifact.crosswalkId,
+			projections: artifact.parentProjections,
+			key: (projection: LocationParentProjection) =>
+				projection.locationId,
+		})),
+	].map((shard) => ({
+		...shard,
+		dictionary: jsonDictionary(shard.projections),
+	}));
+	const rows = (table: string) =>
+		shards
+			.filter((shard) => shard.table === table)
+			.flatMap(({ crosswalkId, projections, key, dictionary }) =>
+				projections.map((projection) => [
+					crosswalkId,
+					(key as (projection: unknown) => string)(projection),
+					packJson(projection, dictionary),
+				]),
+			);
+	writeSqliteIndex(
+		path,
+		{
+			schemaVersion: "1",
+			inventoryHash: inventory.contentHash,
+			namedLocationInventoryHash: inventory.namedLocationInventoryHash,
+			crosswalkInventoryHash: inventory.crosswalkInventoryHash,
+		},
+		{
+			dictionaries: {
+				columns: ["kind", "crosswalkId", "dictionary"],
+				key: ["kind", "crosswalkId"],
+				rows: shards.map(({ table, crosswalkId, dictionary }) => [
+					table,
+					crosswalkId,
+					dictionary,
+				]),
+			},
+			members: {
+				columns: ["crosswalkId", "key", "value"],
+				key: ["crosswalkId", "key"],
+				rows: rows("members"),
+			},
+			parents: {
+				columns: ["crosswalkId", "key", "value"],
+				key: ["crosswalkId", "key"],
+				rows: rows("parents"),
+			},
+		},
+		1024,
+	);
+};
+
+/** Projections read a row at a time from their database. */
+export class LocationProjectionDatabase extends LocationProjections {
+	private readonly database: SqliteIndex;
+	private readonly dictionary: (
+		kind: string,
+		crosswalkId: string,
+	) => SQLInputValue | undefined;
+	private readonly dictionaries = new Map<string, Uint8Array>();
+	private readonly rows: Record<
+		"members" | "parents",
+		(crosswalkId: string, key: string) => SQLInputValue | undefined
+	>;
+
+	constructor(path: string, inventory: LocationProjectionInventory) {
+		super(inventory);
+		this.database = new SqliteIndex(path);
+		const recorded = (key: string) => this.database.meta.get(key);
+		if (
+			recorded("schemaVersion") !== "1" ||
+			recorded("inventoryHash") !== inventory.contentHash ||
+			recorded("namedLocationInventoryHash") !==
+				inventory.namedLocationInventoryHash ||
+			recorded("crosswalkInventoryHash") !==
+				inventory.crosswalkInventoryHash
+		)
+			throw new Error(
+				`The location projections at ${path} were built from another projection inventory.`,
+			);
+		this.dictionary = this.database.lookup(
+			"dictionaries",
+			["kind", "crosswalkId"],
+			"dictionary",
+		);
+		this.rows = {
+			members: this.database.lookup(
+				"members",
+				["crosswalkId", "key"],
+				"value",
+			),
+			parents: this.database.lookup(
+				"parents",
+				["crosswalkId", "key"],
+				"value",
+			),
+		};
+	}
+
+	private read<T>(
+		kind: "members" | "parents",
+		crosswalkId: string,
+		key: string,
+	): T | undefined {
+		const value = this.rows[kind](crosswalkId, key);
+		if (value === undefined) return undefined;
+		const id = `${kind}/${crosswalkId}`;
+		let dictionary = this.dictionaries.get(id);
+		if (!dictionary) {
+			dictionary = this.dictionary(kind, crosswalkId) as Uint8Array;
+			this.dictionaries.set(id, dictionary);
+		}
+		return unpackJson<T>(value, dictionary);
+	}
+
+	/** Nothing is cached but each shard's dictionary: a read is one row. */
+	stats() {
+		return undefined;
+	}
+
+	parents(locationId: string, crosswalkId: string) {
+		if (!this.parentShards.has(crosswalkId)) return undefined;
+		return this.read<LocationParentProjection>(
+			"parents",
+			crosswalkId,
+			locationId,
+		);
+	}
+
+	get(
+		locationId: string,
+		geography: string,
+		boundaryRelease: string,
+		crosswalkId: string,
+	) {
+		if (!this.memberShard(geography, boundaryRelease, crosswalkId))
+			return undefined;
+		return this.read<LocationProjection>(
+			"members",
+			crosswalkId,
 			locationProjectionKey(
 				locationId,
 				geography,

@@ -5,7 +5,7 @@ import {
 } from "../memberReconciliation";
 import type {
 	LocationProjection,
-	LocationProjectionStore,
+	LocationProjections,
 } from "../locationProjections";
 import type {
 	NamedLocation,
@@ -21,7 +21,7 @@ export type LocationsResolverInputs = {
 	areaLookup?: AreaLookup;
 	namedLocationInventory?: NamedLocationInventory;
 	namedLocationLookup?: NamedLocationLookup;
-	locationProjectionStore?: LocationProjectionStore;
+	locationProjectionStore?: LocationProjections;
 };
 
 const memberAreaKey = (geography: string, code: string) =>
