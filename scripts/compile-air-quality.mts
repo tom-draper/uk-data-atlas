@@ -4,7 +4,7 @@
  * Each 1x1 km cell is given to the December 2024 local authority whose
  * boundary contains its centre, and an authority's value is the mean of its
  * cells: the average modelled background concentration across its area. The
- * result is committed beside the maps it came from, so the website's
+ * result is stored beside the maps it came from, so the website's
  * precompile reads a small table rather than repeating the spatial join.
  *
  * Run via: npx tsx scripts/compile-air-quality.mts

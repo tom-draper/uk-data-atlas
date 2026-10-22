@@ -12,7 +12,7 @@ export const readSource = (path: string) =>
 /**
  * Reads a compiled boundary asset. The compiler writes them to public/data,
  * where they are served from; the two releases published as TopoJSON rather
- * than GeoJSON are committed in data/ and copied across afterwards, so fall
+ * than GeoJSON are downloaded into data/ and copied across afterwards, so fall
  * back there for those.
  */
 export const readBoundaryAsset = async (path: string) => {
