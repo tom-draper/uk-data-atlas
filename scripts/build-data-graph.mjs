@@ -1,14 +1,26 @@
-const stage = (name, dependencies = [], args = [`build:${name}`]) => ({
+const stage = (
+	name,
+	dependencies = [],
+	args = [`build:${name}`],
+	{ cacheable = true, outputs = [] } = {},
+) => ({
 	name,
 	dependencies,
 	args,
+	cacheable,
+	outputs,
 });
 
 const apiStages = [
-	stage("download", [], ["--dir", "../..", "data:download"]),
+	// Always runs. It is quick when data/ already matches the pinned release.
+	stage("download", [], ["--dir", "../..", "data:download"], {
+		cacheable: false,
+	}),
 	stage("operations"),
 	// Compiled once into compiled/datasets, for the website and the API.
-	stage("datasets", ["download"], ["--dir", "../..", "datasets:compile"]),
+	stage("datasets", ["download"], ["--dir", "../..", "datasets:compile"], {
+		outputs: ["compiled/datasets"],
+	}),
 	stage("api-datasets", ["datasets"], ["build:datasets"]),
 	stage("boundary-registry", ["download"]),
 	stage("derived-boundaries", ["download"]),
@@ -163,6 +175,9 @@ const websiteStages = [
 		"website-datasets",
 		["datasets", "website-lookups"],
 		["--dir", "../..", "precompile:generate"],
+		// It keeps unchanged files from its last run. The lookups and pages in
+		// public/data belong to website-lookups.
+		{ outputs: ["public/data"] },
 	),
 ];
 
