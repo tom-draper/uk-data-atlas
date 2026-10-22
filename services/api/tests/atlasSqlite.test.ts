@@ -1,5 +1,13 @@
+import { createHash } from "node:crypto";
+import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -18,6 +26,11 @@ const fixture = (context: TestContext) => {
 	const apiRoot = join(root, "services/api");
 	mkdirSync(join(apiRoot, "public"), { recursive: true });
 	buildTerrainCatalogue(root);
+	mkdirSync(join(root, "compiled/datasets"), { recursive: true });
+	writeFileSync(
+		join(root, "compiled/datasets/dataset-manifest.json"),
+		JSON.stringify({ version: 1, datasets: [] }),
+	);
 	return { root, apiRoot };
 };
 
@@ -38,10 +51,14 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 				.prepare("SELECT id FROM payloads")
 				.all()
 				.map((row) => row.id),
-			["terrain-catalogue"],
+			["dataset-manifest", "terrain-catalogue"],
 		);
 		assert.equal(
-			database.prepare("SELECT payload FROM payloads").get()?.payload,
+			database
+				.prepare(
+					"SELECT payload FROM payloads WHERE id = 'terrain-catalogue'",
+				)
+				.get()?.payload,
 			readFileSync(
 				join(apiRoot, "public/terrain-catalogue.json"),
 				"utf8",
@@ -115,4 +132,57 @@ test("rebuilding SQLite replaces the payload and a missing input preserves the l
 	rmSync(join(apiRoot, "public/terrain-catalogue.json"));
 	assert.throws(() => buildAtlasSqlite(root), /ENOENT/);
 	assert.deepEqual(readFileSync(path), before);
+});
+
+test("dataset metadata references exact payloads and corrupt inputs preserve the published database", (context) => {
+	const { root } = fixture(context);
+	const content = '{"2024":{"value":42}}\n';
+	const entry = {
+		type: "sample",
+		output: "sample",
+		source: { name: "Sample" },
+		contract: { version: 1 },
+		summary: { datasetCount: 1 },
+		fingerprint: "compiler-v1",
+		compiled: {
+			bytes: Buffer.byteLength(content),
+			sha256: createHash("sha256").update(content).digest("hex"),
+		},
+	};
+	const directory = join(root, "compiled/datasets");
+	writeFileSync(join(directory, "sample.json"), content);
+	const manifest = JSON.stringify({ version: 1, datasets: [entry] });
+	writeFileSync(join(directory, "dataset-manifest.json"), manifest);
+	const path = buildAtlasSqlite(root);
+	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
+	assert.equal(readAtlasPayload(root, "dataset-manifest"), manifest);
+	const database = new DatabaseSync(path, { readOnly: true });
+	try {
+		const row = database.prepare("SELECT * FROM datasets").get()!;
+		assert.deepEqual(
+			{ ...row },
+			{
+				type: entry.type,
+				output: entry.output,
+				source: JSON.stringify(entry.source),
+				contract: JSON.stringify(entry.contract),
+				summary: JSON.stringify(entry.summary),
+				fingerprint: entry.fingerprint,
+				sha256: entry.compiled.sha256,
+				bytes: entry.compiled.bytes,
+				payloadId: "dataset:sample",
+			},
+		);
+		assert.deepEqual(
+			database.prepare("PRAGMA foreign_key_check").all(),
+			[],
+		);
+	} finally {
+		database.close();
+	}
+	const before = readFileSync(path);
+	writeFileSync(join(directory, "sample.json"), "{}");
+	assert.throws(() => buildAtlasSqlite(root), /does not match its manifest/);
+	assert.deepEqual(readFileSync(path), before);
+	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
 });
