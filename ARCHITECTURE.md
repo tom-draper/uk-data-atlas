@@ -44,12 +44,13 @@ public/data/            the atlas's compiled data, served by the website
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
 headlines and ranked areas, compiled by `pnpm seo:build` from the datasets.
-Rankings fetch ward areas from the API instead of reading place files.
+Rankings read ward areas from the website's copy of the `ward-areas` page.
 
 The API builds website artifacts with `pnpm --dir services/api build:atlas-pages`,
 the final stage of its data build. It stores gzipped files and a manifest under
 `services/api/public/atlas-pages/` and `atlas-pages.json`, and serves them at
-`/v1/atlas-pages/{page-id}.json`:
+`/v1/atlas-pages/{page-id}.json`. `pnpm atlas-data:copy` copies them to
+`public/data/atlas-pages/{page-id}.json` for the website:
 
 | Page id               | Contents                                                   |
 | --------------------- | ---------------------------------------------------------- |
@@ -60,11 +61,11 @@ the final stage of its data build. It stores gzipped files and a manifest under
 | `ward-areas`          | Ward areas used by ranking recipes                         |
 | `docs-catalogue`      | Datasets, measures, exports and boundary releases for docs |
 
-The website server fetches these artifacts with a one-day revalidation interval.
+The website server reads these from disk, once per server instance.
 Current councils, constituencies and named places prerender during the website
-build; wards render on first visit. Place search fetches the index from the API
-on focus. Profiles and facts no longer need file tracing or committed copies.
-An unavailable API fails rendering rather than returning a false missing place.
+build; wards render on first visit. Place search fetches the index from the
+website on focus. A missing copy fails rendering rather than returning a false
+missing place.
 
 The API builds from raw `data/` without `public/data/`. Its `datasets` stage
 uses `@uk-data-atlas/datasets` to compile datasets and the gazetteer into
@@ -78,13 +79,15 @@ The atlas's containment and lineage lookups (`area-lineage`,
 `boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
 `constituency-lad-overlaps`) are not in the repository. The API's build
 compiles them with `@uk-data-atlas/geography` for the boundary releases
-`@uk-data-atlas/catalogue` lists, and serves them at
-`/v1/atlas-lookups/{id}.json`. The browser fetches them there, and
-`pnpm lookups:fetch`, the first step of `pnpm precompile`, copies them to the
-gitignored `.cache/atlas-lookups/` for the precompile to cut chunks with. Set
-`NEXT_PUBLIC_ATLAS_API_ORIGIN` to read a local API instead of
-`https://api.ukdataatlas.com`. Deploy the API before the website, so the
-chunks a website build cuts agree with the lookups its browser fetches.
+`@uk-data-atlas/catalogue` lists, and also serves them at
+`/v1/atlas-lookups/{id}.json`. The website never reads them from the API.
+`pnpm atlas-data:copy`, the first step of `pnpm precompile`, copies them from
+the API's build output on disk into the gitignored `public/data/atlas-lookups/`.
+The browser fetches them from the website there, and the precompile cuts
+chunks with the same files, so the two agree. The place profiles, place facts,
+ward areas and docs catalogue the API build compiles into `atlas-pages` are
+copied the same way to `public/data/atlas-pages/`. Building and running the
+website needs the API's data build on disk, never a running API.
 
 Everything in `services/api/public` is build output, so its layout on disk is
 the API's own business. Clients reach every file through a route, and a route
@@ -102,8 +105,9 @@ services/api ───────┘
 - The atlas and API share domain code through `packages/`. Their build
   scripts also reuse Node file adapters in root `scripts/`. The API never
   imports the atlas's `lib/`, and the website never imports API project code.
-  The website does read one API file, `services/api/openapi.yaml`, for its API
-  reference; `.vercelignore` keeps everything else in `services/api` out of
+  The website does read API files: `services/api/openapi.yaml` for its API
+  reference, and the atlas lookups and pages `pnpm atlas-data:copy` takes from
+  the API's build output; `.vercelignore` keeps everything else in `services/api` out of
   the deployment.
 - A package holds code only. It reads no files and is safe to
   bundle into a browser: each consumer loads its own data and passes it in.
@@ -117,11 +121,11 @@ there is no build step.
 
 ## Rebuilding after a change
 
-| You changed                            | Run                                                                                                               |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Shared datasets or their loaders       | `pnpm --dir services/api build:data --from datasets`, deploy the API, then `pnpm precompile` and `pnpm seo:build` |
-| How the API compiles geography or data | `pnpm --dir services/api build`, deploy the API, then `pnpm precompile`                                           |
-| Anything, before a release             | `pnpm check:full`                                                                                                 |
+| You changed                            | Run                                                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Shared datasets or their loaders       | `pnpm --dir services/api build:data --from datasets`, then `pnpm precompile` and `pnpm seo:build` |
+| How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm precompile`                                           |
+| Anything, before a release             | `pnpm check:full`                                                                                 |
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`
@@ -130,6 +134,5 @@ live in `tests/built/` and run locally only. First follow the build order in
 [deploy/README.md](deploy/README.md), including the website build that generates
 SEO artifacts. Then `pnpm check:full` runs the quick checks, verifies local
 precompiled data, and runs the built website and API tests. It needs `data/`
-restored and both products built, with the API running. Set
-`NEXT_PUBLIC_ATLAS_API_ORIGIN` to that API's origin when testing locally.
-The check does not build or deploy either product.
+restored and both products built, with the API running for the API's own
+tests. The check does not build or deploy either product.
