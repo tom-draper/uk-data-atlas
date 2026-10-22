@@ -9,7 +9,15 @@ import {
 } from "./nameNormalisation";
 import { compareCodeUnits, type Indexed } from "./sortedIndex";
 import { sha256 } from "./contentHash";
-import { json, SqliteIndex, text, writeSqliteIndex } from "./sqliteIndex";
+import type { SQLInputValue } from "node:sqlite";
+import {
+	packPositions,
+	SqliteIndex,
+	text,
+	unpackPositions,
+	writeSqliteIndex,
+	type Row,
+} from "./sqliteIndex";
 
 /**
  * The compiled place index: every area and named location, and every name
@@ -328,10 +336,92 @@ const headerMismatch = (
 export const PLACE_INDEX_DATABASE = "place-index.sqlite";
 
 /** Write the index as SQLite tables, one row per array position. */
+/**
+ * A place as table columns. What the rest implies is left out: the reference
+ * when it follows from the kind and code, the name when it is the code, and
+ * the kind when it is an area. Most places are output areas named by their
+ * codes, so most rows are a geography, a code and a release.
+ */
+const placeColumns = (
+	place: CompiledPlace,
+	geographies: Map<string, number>,
+) => {
+	const {
+		place: reference,
+		kind,
+		geography,
+		code,
+		name,
+		boundaryReleases,
+		...rest
+	} = place;
+	const extra: Record<string, unknown> = { ...rest };
+	if (kind !== "area") extra.kind = kind;
+	if (reference !== placeReference(kind, geography, code))
+		extra.place = reference;
+	return [
+		geographies.get(geography)!,
+		code,
+		name === code ? null : name,
+		boundaryReleases.join(","),
+		Object.keys(extra).length > 0 ? JSON.stringify(extra) : null,
+	];
+};
+
+const placeFromColumns =
+	(geographies: string[]) =>
+	(row: Row): CompiledPlace => {
+		const geography = geographies[row.geography as number]!;
+		const code = row.code as string;
+		const {
+			kind = "area",
+			place,
+			...rest
+		} = row.extra === null
+			? ({} as Partial<CompiledPlace>)
+			: (JSON.parse(row.extra as string) as Partial<CompiledPlace>);
+		const releases = row.releases as string;
+		return {
+			place: place ?? placeReference(kind, geography, code),
+			kind,
+			geography,
+			code,
+			name: (row.name as string | null) ?? code,
+			boundaryReleases:
+				releases === "" ? [] : releases.split(",").map(Number),
+			...rest,
+		};
+	};
+
+/**
+ * A name's labels: positions packed as u32s, twice the place's position plus
+ * 1 when reached by setting a title aside, or JSON where a label has text.
+ */
+const packLabels = (labels: CompiledPlaceLabel[]) =>
+	labels.every((label) => label.length === 2)
+		? packPositions(
+				labels.map(([position, viaTitle]) => position * 2 + viaTitle),
+			)
+		: JSON.stringify(labels);
+
+const unpackLabels = (value: SQLInputValue): CompiledPlaceLabel[] =>
+	typeof value === "string"
+		? (JSON.parse(value) as CompiledPlaceLabel[])
+		: unpackPositions(value).map((packed) => [
+				packed >>> 1,
+				(packed & 1) as 0 | 1,
+			]);
+
 export const writePlaceIndexDatabase = (
 	path: string,
 	index: PlaceIndexArtifact,
-) =>
+) => {
+	const geographies = [
+		...new Set(index.places.map((place) => place.geography)),
+	].sort(compareCodeUnits);
+	const geographyAt = new Map(
+		geographies.map((geography, at) => [geography, at]),
+	);
 	writeSqliteIndex(
 		path,
 		{
@@ -343,31 +433,38 @@ export const writePlaceIndexDatabase = (
 				index.namedLocationInventoryHash,
 			),
 			releases: JSON.stringify(index.releases),
+			geographies: JSON.stringify(geographies),
 		},
 		{
 			places: {
-				columns: ["place TEXT", "value TEXT"],
-				rows: index.places.map((place) => [
-					place.place,
-					JSON.stringify(place),
-				]),
+				columns: [
+					"geography INTEGER",
+					"code TEXT",
+					"name TEXT",
+					"releases TEXT",
+					"extra TEXT",
+				],
+				rows: index.places.map((place) =>
+					placeColumns(place, geographyAt),
+				),
 			},
 			names: {
-				columns: ["name TEXT", "labels TEXT"],
+				columns: ["name TEXT", "labels"],
 				rows: index.names.map((name, at) => [
 					name,
-					JSON.stringify(index.labels[at]),
+					packLabels(index.labels[at]!),
 				]),
 			},
 			codes: {
-				columns: ["code TEXT", "places TEXT"],
+				columns: ["code TEXT", "places BLOB"],
 				rows: index.codes.map((code, at) => [
 					code,
-					JSON.stringify(index.codePlaces[at]),
+					packPositions(index.codePlaces[at]!),
 				]),
 			},
 		},
 	);
+};
 
 /**
  * The index written by `writePlaceIndexDatabase`, refused unless built from
@@ -397,10 +494,12 @@ export const openPlaceIndexDatabase = (
 	return {
 		contentHash: header.contentHash,
 		releases: JSON.parse(meta("releases")) as string[],
-		places: places.column("value", json<CompiledPlace>()),
+		places: places.records(
+			placeFromColumns(JSON.parse(meta("geographies")) as string[]),
+		),
 		names: names.column("name", text),
-		labels: names.column("labels", json<CompiledPlaceLabel[]>()),
+		labels: names.column("labels", unpackLabels),
 		codes: codes.column("code", text),
-		codePlaces: codes.column("places", json<number[]>()),
+		codePlaces: codes.column("places", unpackPositions),
 	};
 };
