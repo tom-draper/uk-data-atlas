@@ -66,7 +66,7 @@ process.exit(process.argv.at(-1) === process.env.BUILD_FAIL ? 23 : 0);
 	};
 }
 
-test("default build executes the complete previous pipeline in order from the API directory", (context) => {
+test("default build executes the complete pipeline in order from the API directory", (context) => {
 	const build = fixture(context);
 	const result = build.run([]);
 	assert.equal(result.status, 0, result.stderr);
@@ -107,6 +107,19 @@ test("default build executes the complete previous pipeline in order from the AP
 		].map((name) => [`build:${name}`]),
 		["build:atlas-pages"],
 	]);
+});
+
+test("dataset rebuild refreshes every consumer using existing upstream artifacts", (context) => {
+	const build = fixture(context);
+	const result = build.run(["--from", "datasets"]);
+	assert.equal(result.status, 0, result.stderr);
+	const commands = build.commands().map((args) => args.join(" "));
+	assert.equal(commands[0], "build:datasets");
+	for (const consumer of ["named-locations", "data-catalog", "atlas-pages"])
+		assert.ok(commands.includes(`build:${consumer}`), consumer);
+	assert.equal(commands.at(-1), "build:atlas-pages");
+	assert.ok(!commands.includes("--dir ../.. data:download"));
+	assert.ok(!commands.includes("build:geometry-store"));
 });
 
 test("crosswalk rebuild follows every downstream branch without geometry, postcode, or catalogue upstream work", (context) => {
