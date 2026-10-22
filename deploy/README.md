@@ -67,8 +67,10 @@ but only `build:data --from` also regenerates affected downstream artifacts.
 `documents` rebuilds those documents and then the downstream `atlas-release`
 stage pins them in the final manifest. Both manifest stages use the existing
 `build:atlas-release` script. `atlas-pages` compiles the website place profiles, facts and docs catalogue.
-Until the dataset compilers move into a shared package, this stage needs the
-website datasets and boundary properties in `public/data/` as build inputs.
+The `datasets` stage runs after `download` and compiles raw sources into the
+API's own datasets, gazetteer and boundary properties. `named-locations`,
+`data-catalog` and `atlas-pages` depend on it. The API build does not need
+website output in `public/data/`.
 
 ## systemd
 
