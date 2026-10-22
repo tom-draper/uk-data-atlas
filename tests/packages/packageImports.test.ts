@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
  * so their source may only import its own files and the dependencies its
  * package.json declares. Inside the repository Node resolves anything the
  * root has installed, so nothing else stops a package reaching for React or
- * the atlas's code; a package's tsconfig already rejects Node and DOM types
+ * the atlas's code; a package's tsconfig already rejects Node types
  * and the atlas's path aliases.
  */
 const PACKAGES = join(process.cwd(), "packages");
