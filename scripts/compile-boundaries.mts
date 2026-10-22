@@ -155,7 +155,7 @@ const substitutionSources = (type: string, releaseId: string) =>
 		};
 	});
 
-type SubstitutionSource = ReturnType<typeof substitutionSources>[number];
+export type SubstitutionSource = ReturnType<typeof substitutionSources>[number];
 
 /**
  * The grid offsets a WGS84 release carries backwards, loaded from their
@@ -198,7 +198,7 @@ const SUBSTITUTIONS_MODULE = join(
  * list happened not to mention WD20CD, and spelled pcon15cd in the wrong case,
  * so the filter matched nothing and kept nothing.
  */
-const releaseSources = (outputDirectory: string) =>
+export const releaseSources = (outputDirectory: string) =>
 	BOUNDARY_TYPES.flatMap((type) =>
 		BOUNDARY_CATALOG[type].releases.flatMap((release) => {
 			if (!release.asset) return [];
@@ -261,6 +261,7 @@ const releaseSources = (outputDirectory: string) =>
 					label: `${type}/${release.id}`,
 					objectName: type,
 					codeKey: release.codeKey,
+					nameKey: release.nameKey,
 					offsets: corrections.map(({ offset }) => offset),
 					substitutions,
 					reversedOffsets: reversedOffsets.map(
@@ -445,17 +446,22 @@ const decodeCorrected = (
 		),
 	);
 
-const simplifySource = async (
+export type SourceCorrection = {
+	label: string;
+	codeKey: string;
+	offsets: GridOffset[];
+	substitutions: SubstitutionSource[];
+	reversedOffsets: GridOffset[];
+};
+
+/**
+ * A release's published source in WGS84, with every correction it declares
+ * applied: grid offsets, offsets carried backwards and substituted areas. The
+ * TopoJSON and the vector tiles are both compiled from this.
+ */
+export const correctedSource = async (
 	raw: string,
-	objectName: string,
-	keep: ReadonlySet<string>,
-	correction: {
-		label: string;
-		codeKey: string;
-		offsets: GridOffset[];
-		substitutions: SubstitutionSource[];
-		reversedOffsets: GridOffset[];
-	},
+	correction: SourceCorrection,
 ) => {
 	let normalised = decodeCorrected(
 		raw,
@@ -486,6 +492,16 @@ const simplifySource = async (
 			donor.substitution satisfies GeometrySubstitution,
 			correction.label,
 		);
+	return normalised;
+};
+
+const simplifySource = async (
+	raw: string,
+	objectName: string,
+	keep: ReadonlySet<string>,
+	correction: SourceCorrection,
+) => {
+	const normalised = await correctedSource(raw, correction);
 	const cleaned = {
 		...normalised,
 		features: normalised.features.map((feature) => ({
