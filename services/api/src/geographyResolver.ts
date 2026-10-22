@@ -8,7 +8,7 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
-import type { LocationProjectionStore } from "./locationProjections";
+import type { LocationProjections } from "./locationProjections";
 import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
@@ -122,7 +122,7 @@ export type GeographyResolverInputs = {
 	postcodeAreaIndex?: PostcodeAreaIndex;
 	/** Per-area postcode counts, derived from the compiled postcode placements. */
 	postcodeCountsIndex?: PostcodeCountsIndex;
-	locationProjectionStore?: LocationProjectionStore;
+	locationProjectionStore?: LocationProjections;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 };

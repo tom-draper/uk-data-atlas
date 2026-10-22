@@ -3,9 +3,8 @@ import type { NamedLocationGeometry } from "./namedLocationGeometry";
 import { existsSync, readFileSync } from "node:fs";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import {
-	LocationProjectionStore,
-	LocationProjectionArtifact,
-	type LocationParentProjectionArtifact,
+	LOCATION_PROJECTION_DATABASE,
+	LocationProjectionDatabase,
 	type LocationProjectionInventory,
 } from "./locationProjections";
 import {
@@ -13,7 +12,6 @@ import {
 	type NamedLocationInventory,
 } from "./namedLocations";
 import { publicPath, readPublicManifest } from "./publicManifest";
-import { readStoredText } from "./storedText";
 
 export const readNamedLocationInventory = (
 	apiRoot: string,
@@ -97,55 +95,18 @@ export const readLocationProjectionInventory = (
 	return inventory;
 };
 
+/** The projections, read from the database the build writes beside them. */
 export const createLocationProjectionStore = (
 	apiRoot: string,
 	inventory: LocationProjectionInventory,
-	namedLocations: NamedLocationInventory,
-	crosswalkInventory: CrosswalkInventory,
-) =>
-	new LocationProjectionStore(
-		inventory,
-		(shard) => {
-			const path = publicPath(apiRoot, shard.artifact);
-			const artifact = JSON.parse(
-				readStoredText(path),
-			) as LocationProjectionArtifact;
-			if (
-				artifact.schemaVersion !== 1 ||
-				artifact.contentHash !== shard.contentHash ||
-				artifact.crosswalkId !== shard.crosswalkId ||
-				artifact.namedLocationInventoryHash !==
-					namedLocations.contentHash ||
-				artifact.crosswalkInventoryHash !==
-					crosswalkInventory.contentHash ||
-				!Array.isArray(artifact.projections)
-			) {
-				throw new Error(`Invalid location projection shard at ${path}`);
-			}
-			return artifact;
-		},
-		(shard) => {
-			const path = publicPath(apiRoot, shard.artifact);
-			const artifact = JSON.parse(
-				readStoredText(path),
-			) as LocationParentProjectionArtifact;
-			if (
-				artifact.schemaVersion !== 1 ||
-				artifact.contentHash !== shard.contentHash ||
-				artifact.crosswalkId !== shard.crosswalkId ||
-				artifact.namedLocationInventoryHash !==
-					namedLocations.contentHash ||
-				artifact.crosswalkInventoryHash !==
-					crosswalkInventory.contentHash ||
-				!Array.isArray(artifact.parentProjections)
-			) {
-				throw new Error(
-					`Invalid location parent projection shard at ${path}`,
-				);
-			}
-			return artifact;
-		},
-	);
+) => {
+	const path = publicPath(apiRoot, LOCATION_PROJECTION_DATABASE);
+	if (!existsSync(path))
+		throw new Error(
+			`Missing ${LOCATION_PROJECTION_DATABASE}. Run pnpm build:location-projections.`,
+		);
+	return new LocationProjectionDatabase(path, inventory);
+};
 
 export const createNamedLocations = (inventory: NamedLocationInventory) =>
 	createNamedLocationLookup(inventory);
