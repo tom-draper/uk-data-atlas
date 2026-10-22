@@ -49,7 +49,7 @@ datasets.
 
 ## atlas.sqlite
 
-The `atlas-sqlite` stage depends on `terrain-catalogue` and `datasets` and writes this database
+The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, and `area-inventory` and writes this database
 with the existing `node:sqlite` library. It replaces the whole database through
 a temporary file and atomic rename. Every run writes every table, so the stage
 cache detects its output without a retained-file `outputs` declaration.
@@ -73,7 +73,7 @@ The database contains these tables:
 | `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                               |
 | `datasets` | `payloadId`   | `TEXT NOT NULL`        | Foreign key to `payloads.id`, `dataset:<output>`.                                |
 
-All tables use `WITHOUT ROWID`. Each dataset has one payload. The complete
+`meta`, `payloads`, `datasets`, `area_releases`, and `areas` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
@@ -115,10 +115,38 @@ still holds generated gazetteer, road-safety, regional chunk and SEO assets,
 plus the website build manifest. `pnpm precompile:generate` and
 `pnpm precompile:only` refresh SQLite after compiling datasets.
 
+### Areas
+
+`area_inventory` has one row keyed by integer `position = 0`, with
+`schemaVersion INTEGER`, `contentHash TEXT`, and `boundaryRegistryHash TEXT`, all
+non-null. `area_releases` has the composite primary key `(geography, id)` and
+unique integer `position` to preserve inventory order. Its non-null text columns
+are `geography`, `id`, and `status`. Available releases have `recordCount INTEGER`,
+`artifact TEXT`, `contentHash TEXT`, `codeProperty TEXT`, and `nameProperty TEXT`.
+`derivedFrom TEXT` holds optional JSON source-adapter metadata. Unavailable
+releases have `reason TEXT` instead. Inapplicable columns are null.
+
+`areas` has primary key `(geography, boundaryRelease, code)`, non-null text
+`name`, and non-null integer `position` for record order. Nullable `aliases TEXT`
+holds an ordered JSON string array, preserving absent versus empty aliases.
+Its `(geography, boundaryRelease)` foreign key references `area_releases`.
+An index on `(geography, boundaryRelease, position)` supports ordered release
+reads. The primary key supports area-code lookups within a release.
+
+The API inventory and bounded lazy area lookup read these tables in read-only
+connections that close after each read. They refuse stale hashes and incomplete
+releases and never fall back to JSON. SQLite runs before the named-location,
+place-index, area-search-index, postcode-area, and atlas-lookup consumers.
+
+The area inventory and `areas/*.json` remain build intermediates. Geometry
+registry, crosswalk compilation, compatibility, lookup manifest, validation,
+geography inventory, location projections, relationship candidates, docs catalogue,
+map resources, proposals, benchmarks, and release snapshots
+still read them. Atlas lookups use the migrated loader. Atlas pages read boundary
+properties for area sizes. `scripts/copy-atlas-data.mts` copies only compiled
+atlas lookups and pages, so it needs no area-inventory copy.
+
 ## Planned
 
-This folder is becoming the release both products read from directly:
-`atlas.sqlite` already holds catalogue datasets and the terrain catalogue. Areas, crosswalks,
-and other ready-to-send payloads will follow, with
-`tiles/*.pmtiles` for boundaries. As each part moves here, its product copies go
-away and this README gains its tables.
+Crosswalks, named locations, and other ready-to-send payloads will follow in
+`atlas.sqlite`. `tiles/*.pmtiles` will hold boundaries.
