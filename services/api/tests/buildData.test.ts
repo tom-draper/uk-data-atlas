@@ -72,8 +72,9 @@ test("default build executes the complete pipeline in order from the API directo
 	assert.equal(result.status, 0, result.stderr);
 	assert.deepEqual(build.commands(), [
 		["--dir", "../..", "data:download"],
+		["build:operations"],
+		["--dir", "../..", "datasets:compile"],
 		...[
-			"operations",
 			"datasets",
 			"boundary-registry",
 			"derived-boundaries",
@@ -155,12 +156,30 @@ test("dataset rebuild refreshes every consumer using existing upstream artifacts
 	const result = build.run(["--target", "api", "--from", "datasets"]);
 	assert.equal(result.status, 0, result.stderr);
 	const commands = build.commands().map((args) => args.join(" "));
-	assert.equal(commands[0], "build:datasets");
+	assert.deepEqual(commands.slice(0, 2), [
+		"--dir ../.. datasets:compile",
+		"build:datasets",
+	]);
 	for (const consumer of ["named-locations", "data-catalog", "atlas-pages"])
 		assert.ok(commands.includes(`build:${consumer}`), consumer);
 	assert.equal(commands.at(-1), "build:atlas-pages");
 	assert.ok(!commands.includes("--dir ../.. data:download"));
 	assert.ok(!commands.includes("build:geometry-store"));
+});
+
+test("datasets compile once for both products", (context) => {
+	const build = fixture(context);
+	const result = build.run(["--from", "datasets"]);
+	assert.equal(result.status, 0, result.stderr);
+	const commands = build.commands().map((args) => args.join(" "));
+	assert.equal(commands[0], "--dir ../.. datasets:compile");
+	assert.equal(
+		commands.filter((command) => command.endsWith("datasets:compile"))
+			.length,
+		1,
+	);
+	assert.ok(commands.includes("build:datasets"));
+	assert.equal(commands.at(-1), "--dir ../.. precompile:generate");
 });
 
 test("crosswalk rebuild follows every downstream branch without geometry, postcode, or catalogue upstream work", (context) => {
