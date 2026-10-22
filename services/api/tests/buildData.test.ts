@@ -99,6 +99,7 @@ test("default build executes the complete pipeline in order from the API directo
 			"relationship-candidates",
 			"geography-inventory",
 			"terrain-catalogue",
+			"atlas-sqlite",
 			"lookup-manifest",
 			"map-resource",
 			"validation-report",
@@ -243,7 +244,7 @@ test("a plan shows the same selected stages and dependencies without executing t
 	assert.equal(result.status, 0, result.stderr);
 	assert.equal(
 		result.stdout,
-		"operations: pnpm build:operations [depends on: none]\ndocuments: pnpm build:documents [depends on: atlas-release-initial, operations, geometry-store]\natlas-release: pnpm build:atlas-release [depends on: atlas-release-initial, documents, atlas-lookups]\n",
+		"operations: pnpm build:operations [depends on: none]\ndocuments: pnpm build:documents [depends on: atlas-sqlite, atlas-release-initial, operations, geometry-store]\natlas-release: pnpm build:atlas-release [depends on: atlas-release-initial, documents, atlas-lookups]\n",
 	);
 	assert.deepEqual(build.commands(), []);
 	assert.equal(
