@@ -20,7 +20,6 @@
 		"seo:build": "npx tsx scripts/build-seo-data.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
 		"build": "pnpm precompile:verify && next build --turbopack",
-		"hooks:install": "git config core.hooksPath .githooks",
 		"start": "next start",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
