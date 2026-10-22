@@ -1,9 +1,10 @@
 import { normalisePlaceName, type NameMatch } from "./nameNormalisation";
 import { memberCodesAt } from "./namedLocations";
-import { findSorted, lowerBound } from "./sortedIndex";
+import { atEach, findSorted, lowerBound } from "./sortedIndex";
 import {
 	AREA_CODE,
 	placeReference,
+	type CompiledPlace,
 	type CompiledPlaceLabel,
 	type PlaceIndex,
 } from "./placeIndex";
@@ -135,12 +136,11 @@ export const parsePlaceReference = (
 
 const toCandidate = (
 	index: PlaceIndex,
-	position: number,
+	place: CompiledPlace,
 	match: PlaceMatch,
 	matchedLabel?: string,
 	asOf?: string,
 ): PlaceCandidate => {
-	const place = index.places.at(position)!;
 	const memberCodes = place.memberCodes
 		? memberCodesAt(
 				place.memberCodes,
@@ -200,21 +200,23 @@ export const resolvePlaces = (
 			(place) => place.place,
 		);
 		if (position !== -1)
-			return [toCandidate(index, position, "exact", trimmed, asOf)];
+			return [
+				toCandidate(
+					index,
+					index.places.at(position)!,
+					"exact",
+					trimmed,
+					asOf,
+				),
+			];
 	}
 
-	const found = new Map<number, PlaceCandidate>();
-	const consider = (
-		position: number,
-		match: PlaceMatch,
-		matchedLabel?: string,
-	) => {
+	// Each place's best match, read in one go once all are found.
+	const found = new Map<number, { match: PlaceMatch; label?: string }>();
+	const consider = (position: number, match: PlaceMatch, label?: string) => {
 		const existing = found.get(position);
 		if (existing && MATCH_RANK[existing.match] <= MATCH_RANK[match]) return;
-		found.set(
-			position,
-			toCandidate(index, position, match, matchedLabel, asOf),
-		);
+		found.set(position, { match, label });
 	};
 	const considerLabels = (
 		labels: CompiledPlaceLabel[],
@@ -255,5 +257,11 @@ export const resolvePlaces = (
 		}
 	}
 
-	return [...found.values()].sort(comparePlaceCandidates).slice(0, limit);
+	const places = atEach(index.places, [...found.keys()]);
+	return [...found.values()]
+		.map(({ match, label }, at) =>
+			toCandidate(index, places[at]!, match, label, asOf),
+		)
+		.sort(comparePlaceCandidates)
+		.slice(0, limit);
 };
