@@ -19,6 +19,7 @@ memory for the data download and geometry builds; these can take hours.
 export PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
 cd /root/uk-data-atlas
 pnpm install --frozen-lockfile
+pnpm data:download
 pnpm --dir services/api build
 ```
 
@@ -29,13 +30,18 @@ the website. On an existing systemd installation, restart
 ```sh
 curl --fail https://api.ukdataatlas.com/v1/atlas-pages/places-index.json -o /dev/null
 curl --fail https://api.ukdataatlas.com/v1/atlas-pages/docs-catalogue.json -o /dev/null
+pnpm precompile
 pnpm build
 ```
 
-The API build downloads the source release pinned by `data-release.json` and
-writes generated catalogues to `services/api/public/`. The website build
-requires the pinned precompiled data to be available; if verification reports
-missing precompiled artifacts, run `pnpm precompile` before `pnpm build`.
+The build order is raw data download, API data and runtime build, API start or
+deploy, website precompile, then website build. Run these steps serially.
+The API build also checks the source release pinned by `data-release.json` and
+writes generated catalogues to `services/api/public/`. `pnpm precompile` checks
+the raw download, fetches lookups from the running API, then writes browser data
+to `public/data/`. Neither output directory is tracked in Git.
+`pnpm build` verifies local precompiled data before running Next.js. A nonzero
+exit from any command means that step failed; stop before the next step.
 Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.
@@ -152,4 +158,7 @@ Deploy the API before building or deploying the website. Verify
 return 200 first. Website rendering and place search fetch these routes using
 `NEXT_PUBLIC_ATLAS_API_ORIGIN`, which defaults to `https://api.ukdataatlas.com`.
 For local builds, run the API on port 3917 and set that variable to
-`http://localhost:3917`. Stop the API before a memory-heavy precompile.
+`http://localhost:3917`. Fetch lookups while the API is running. On a memory-constrained local machine,
+run `pnpm lookups:fetch`, stop the API, then run `pnpm precompile:generate`
+instead of `pnpm precompile`. Restart the API before `pnpm build`, because
+website rendering fetches the API catalogue and place routes.
