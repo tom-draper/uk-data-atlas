@@ -4,7 +4,7 @@ const stage = (name, dependencies = [], args = [`build:${name}`]) => ({
 	args,
 });
 
-export const buildDataStages = [
+const apiStages = [
 	stage("download", [], ["--dir", "../..", "data:download"]),
 	stage("operations"),
 	stage("datasets", ["download"]),
@@ -130,3 +130,30 @@ export const buildDataStages = [
 	]),
 	stage("atlas-pages", ["atlas-release", "geometry-store", "datasets"]),
 ];
+
+// The website's own data: it copies the API's lookups and pages from disk,
+// then compiles its datasets against them. The API reads none of it.
+const websiteStages = [
+	stage(
+		"website-lookups",
+		["atlas-lookups", "atlas-pages"],
+		["--dir", "../..", "atlas-data:copy"],
+	),
+	stage(
+		"website-datasets",
+		["download", "website-lookups"],
+		["--dir", "../..", "precompile:generate"],
+	),
+];
+
+export const buildDataStages = [...apiStages, ...websiteStages];
+
+/**
+ * The final stages each product reads. A target builds them and everything
+ * they depend on, and nothing else, so building one target and then the other
+ * gives the same output as building both.
+ */
+export const buildDataTargets = {
+	api: apiStages.map(({ name }) => name),
+	website: ["website-datasets"],
+};

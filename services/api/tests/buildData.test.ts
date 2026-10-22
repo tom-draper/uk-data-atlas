@@ -106,12 +106,34 @@ test("default build executes the complete pipeline in order from the API directo
 			"atlas-release",
 		].map((name) => [`build:${name}`]),
 		["build:atlas-pages"],
+		["--dir", "../..", "atlas-data:copy"],
+		["--dir", "../..", "precompile:generate"],
+	]);
+});
+
+test("the api target builds every API stage and none of the website's", (context) => {
+	const build = fixture(context);
+	assert.equal(build.run(["--target", "api"]).status, 0);
+	const commands = build.commands();
+	assert.deepEqual(commands.at(-1), ["build:atlas-pages"]);
+	assert.ok(!commands.some((args) => args.includes("precompile:generate")));
+	assert.ok(!commands.some((args) => args.includes("atlas-data:copy")));
+});
+
+test("the website target ends with its own datasets, after copying the API's pages", (context) => {
+	const build = fixture(context);
+	const result = build.run(["--target", "website", "--from", "atlas-pages"]);
+	assert.equal(result.status, 0, result.stderr);
+	assert.deepEqual(build.commands(), [
+		["build:atlas-pages"],
+		["--dir", "../..", "atlas-data:copy"],
+		["--dir", "../..", "precompile:generate"],
 	]);
 });
 
 test("dataset rebuild refreshes every consumer using existing upstream artifacts", (context) => {
 	const build = fixture(context);
-	const result = build.run(["--from", "datasets"]);
+	const result = build.run(["--target", "api", "--from", "datasets"]);
 	assert.equal(result.status, 0, result.stderr);
 	const commands = build.commands().map((args) => args.join(" "));
 	assert.equal(commands[0], "build:datasets");
@@ -124,7 +146,12 @@ test("dataset rebuild refreshes every consumer using existing upstream artifacts
 
 test("crosswalk rebuild follows every downstream branch without geometry, postcode, or catalogue upstream work", (context) => {
 	const build = fixture(context);
-	const result = build.run(["--from", "crosswalk-inventory"]);
+	const result = build.run([
+		"--target",
+		"api",
+		"--from",
+		"crosswalk-inventory",
+	]);
 	assert.equal(result.status, 0, result.stderr);
 	assert.deepEqual(build.commands(), [
 		...[
@@ -163,19 +190,30 @@ test("documents rebuild pins the final manifest without rerunning the initial ma
 		["build:documents"],
 		["build:atlas-release"],
 		["build:atlas-pages"],
+		["--dir", "../..", "atlas-data:copy"],
+		["--dir", "../..", "precompile:generate"],
 	]);
 });
 
 test("a plan shows the same selected stages and dependencies without executing them", (context) => {
 	const build = fixture(context);
-	const result = build.run(["--plan", "--from", "operations"]);
+	const result = build.run([
+		"--plan",
+		"--target",
+		"api",
+		"--from",
+		"operations",
+	]);
 	assert.equal(result.status, 0, result.stderr);
 	assert.equal(
 		result.stdout,
 		"operations: pnpm build:operations [depends on: none]\ndocuments: pnpm build:documents [depends on: atlas-release-initial, operations, geometry-store]\natlas-release: pnpm build:atlas-release [depends on: atlas-release-initial, documents, atlas-lookups]\natlas-pages: pnpm build:atlas-pages [depends on: atlas-release, geometry-store, datasets]\n",
 	);
 	assert.deepEqual(build.commands(), []);
-	assert.equal(build.run(["--from", "operations"]).status, 0);
+	assert.equal(
+		build.run(["--target", "api", "--from", "operations"]).status,
+		0,
+	);
 	assert.deepEqual(build.commands(), [
 		["build:operations"],
 		["build:documents"],
@@ -205,6 +243,16 @@ test("invalid CLI arguments fail before executing stages", (context) => {
 	const build = fixture(context);
 	for (const [argv, message] of [
 		[["--from", "missing"], /Unknown stage: missing/],
+		[["--target", "missing"], /Unknown target: missing/],
+		[["--target"], /--target requires a target name/],
+		[
+			["--target", "api", "--from", "website-datasets"],
+			/not part of the selected target/,
+		],
+		[
+			["--target", "api", "--target", "website"],
+			/Unknown or repeated argument/,
+		],
 		[["--from"], /--from requires a stage name/],
 		[["--from", "--plan"], /--from requires a stage name/],
 		[["--wat"], /Unknown or repeated argument/],

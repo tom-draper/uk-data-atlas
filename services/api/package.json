@@ -69,7 +69,7 @@
 		"pack:named-locations": "tsx scripts/pack-named-locations.ts",
 		"build:documents": "tsx --max-old-space-size=3072 scripts/build-evidence-documents.ts",
 		"docs:examples": "tsx scripts/refresh-problem-examples.ts",
-		"build:data": "node ../../scripts/build-data.mjs",
+		"build:data": "node ../../scripts/build-data.mjs --target api",
 		"build:datasets": "pnpm --dir ../.. exec tsx --max-old-space-size=3072 scripts/build-api-datasets.mts"
 	},
 	"dependencies": {
