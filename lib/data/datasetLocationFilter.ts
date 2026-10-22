@@ -3,7 +3,7 @@ import type { Crosswalk } from "./gazetteer/types";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./boundaries/catalog";
 import { boundaryCapabilityFor } from "./boundaries/capabilities";
 import { getProp } from "./boundaries/properties";
-import { atlasLookupUrl } from "../helpers/atlasApi";
+import { atlasLookupUrl } from "../helpers/atlasData";
 import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
 import { fetchLsoaToLad } from "./boundaries/lsoaLadMappings";
 import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";

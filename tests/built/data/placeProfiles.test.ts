@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
-import { ATLAS_API_ORIGIN, fetchAtlasPage } from "@/lib/helpers/atlasApi";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { ATLAS_PAGES_PATH } from "@/lib/helpers/atlasData";
+import { readAtlasPage } from "@/lib/helpers/atlasPages";
 import { describe, expect, it } from "vitest";
 import {
 	placeShard,
@@ -8,7 +11,7 @@ import {
 	type PlaceIndex,
 } from "@/lib/places/profile";
 
-const index = await fetchAtlasPage<PlaceIndex>("places-index");
+const index = await readAtlasPage<PlaceIndex>("places-index");
 const names = new Set(
 	index.areas.map(([code]) => `areas/${placeShard(code)}.json`),
 );
@@ -19,11 +22,13 @@ for (const name of names) {
 		.replace("areas/", "area-")
 		.replace("named/", "named-")
 		.replace(/\.json$/, "")}`;
-	const response = await fetch(
-		`${ATLAS_API_ORIGIN}/v1/atlas-pages/${id}.json`,
+	files.set(
+		name,
+		await readFile(
+			join(process.cwd(), "public", ATLAS_PAGES_PATH, `${id}.json`),
+			"utf8",
+		),
 	);
-	if (!response.ok) throw new Error(`${id}: ${response.status}`);
-	files.set(name, await response.text());
 }
 const shards = new Map<string, Record<string, AreaProfile>>();
 const area = (code: string) => {
@@ -39,7 +44,7 @@ describe("place profiles", () => {
 			hash.update(name).update(files.get(name)!);
 		expect(
 			`sha256:${hash.digest("hex")}`,
-			"run pnpm --dir services/api build:atlas-pages",
+			"run pnpm --dir services/api build:atlas-pages, then pnpm atlas-data:copy",
 		).toBe(index.contentHash);
 	});
 

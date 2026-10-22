@@ -1,4 +1,4 @@
-import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
+import { readAtlasPage } from "@/lib/helpers/atlasPages";
 import {
 	isAreaCode,
 	placeShard,
@@ -9,9 +9,9 @@ import {
 	type PlaceIndexEntry,
 } from "@/lib/places/profile";
 
-export const loadPlaceIndex = () => fetchAtlasPage<PlaceIndex>("places-index");
+export const loadPlaceIndex = () => readAtlasPage<PlaceIndex>("places-index");
 const readProfiles = (path: string) =>
-	fetchAtlasPage<unknown>(
+	readAtlasPage<unknown>(
 		`places-${path
 			.replace("areas/", "area-")
 			.replace("named/", "named-")
@@ -28,7 +28,7 @@ export async function placeEntry(
 	);
 }
 
-/** An area's profile from its API shard. */
+/** An area's profile from its shard. */
 export async function loadAreaProfile(
 	code: string,
 ): Promise<AreaProfile | undefined> {

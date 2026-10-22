@@ -1,4 +1,4 @@
-import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
+import { readAtlasPage } from "@/lib/helpers/atlasPages";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -53,7 +53,7 @@ const sourceBoundaryReleases = readdirSync(
 		: [],
 );
 
-const docsCatalogue = await fetchAtlasPage<{
+const docsCatalogue = await readAtlasPage<{
 	releases: Array<{ geography: string; id: string }>;
 	areaAvailability: Array<{
 		geography: string;

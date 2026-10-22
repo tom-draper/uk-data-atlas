@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fetchAtlasPage } from "@/lib/helpers/atlasApi";
+import { fetchAtlasPage } from "@/lib/helpers/atlasData";
 import { placeKindName } from "@/lib/places/labels";
 import type { PlaceIndex, PlaceIndexEntry } from "@/lib/places/profile";
 

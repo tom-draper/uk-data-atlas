@@ -11,7 +11,7 @@ import {
 	fetchLsoaToLad,
 	lsoaYearForBoundaryAsset,
 } from "../data/boundaries/lsoaLadMappings";
-import { atlasLookupUrl } from "../helpers/atlasApi";
+import { atlasLookupUrl } from "../helpers/atlasData";
 import { getProp } from "../data/boundaries/properties";
 import {
 	COUNTRY_LOCATIONS,

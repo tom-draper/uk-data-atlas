@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
-import { PUBLIC_API_ORIGIN } from "../helpers/atlasApi";
 
 /**
  * The API reference as the docs pages need it, read from `services/api/openapi.yaml`
@@ -10,7 +9,8 @@ import { PUBLIC_API_ORIGIN } from "../helpers/atlasApi";
  * against.
  */
 
-export const API_ORIGIN = PUBLIC_API_ORIGIN;
+/** Where the public API is served. The docs show it in their examples. */
+export const API_ORIGIN = "https://api.ukdataatlas.com";
 export const API_BASE_URL = `${API_ORIGIN}/v1`;
 
 const SPEC_PATH = path.join(process.cwd(), "services", "api", "openapi.yaml");

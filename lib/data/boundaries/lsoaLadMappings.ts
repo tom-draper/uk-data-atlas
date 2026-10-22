@@ -1,4 +1,4 @@
-import { atlasLookupUrl } from "../../helpers/atlasApi";
+import { atlasLookupUrl } from "../../helpers/atlasData";
 import { BOUNDARY_CATALOG } from "./catalog";
 
 export type LsoaLadMapping = {
