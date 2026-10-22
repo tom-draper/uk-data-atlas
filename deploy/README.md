@@ -23,26 +23,24 @@ pnpm data:download
 pnpm --dir services/api build
 ```
 
-Deploy or restart the API with the newly built code and data before building
-the website. On an existing systemd installation, restart
-`uk-data-atlas-api.service`. Confirm the public routes are ready:
+Then build the website from the same checkout. It does not need the API
+running:
 
 ```sh
-curl --fail https://api.ukdataatlas.com/v1/atlas-pages/places-index.json -o /dev/null
-curl --fail https://api.ukdataatlas.com/v1/atlas-pages/docs-catalogue.json -o /dev/null
 pnpm precompile
 pnpm build
 ```
 
-The build order is raw data download, API data and runtime build, API start or
-deploy, website precompile, then website build. Run these steps serially.
+The build order is raw data download, API data and runtime build, website
+precompile, then website build. Run these steps serially.
 The API build also checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/`. `pnpm precompile` checks
-the raw download, fetches lookups from the running API, then writes browser data
-to `public/data/`. Neither output directory is tracked in Git.
-`pnpm build` verifies local precompiled data, generates map headlines and
-rankings with `pnpm seo:build`, then runs Next.js. Keep the API running for
-rankings and website rendering. A nonzero
+the raw download, copies the atlas lookups and pages from the API's build
+output with `pnpm atlas-data:copy`, then writes browser data to `public/data/`.
+Neither output directory is tracked in Git.
+`pnpm build` copies the atlas lookups and pages again, verifies local
+precompiled data, generates map headlines and rankings with `pnpm seo:build`,
+then runs Next.js. A nonzero
 exit from any command means that step failed; stop before the next step.
 Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
@@ -153,14 +151,9 @@ certbot renew --dry-run
 ```
 
 Do not commit downloaded source data, generated API data, logs, credentials,
-certificates or swap files. The API owns the website docs catalogue and place artifacts.
+certificates or swap files. The API build compiles the website docs catalogue and place artifacts.
 
-Deploy the API before building or deploying the website. Verify
-`/v1/atlas-pages/places-index.json` and `/v1/atlas-pages/docs-catalogue.json`
-return 200 first. Website rendering and place search fetch these routes using
-`NEXT_PUBLIC_ATLAS_API_ORIGIN`, which defaults to `https://api.ukdataatlas.com`.
-For local builds, run the API on port 3917 and set that variable to
-`http://localhost:3917`. Fetch lookups while the API is running. On a memory-constrained local machine,
-run `pnpm lookups:fetch`, stop the API, then run `pnpm precompile:generate`
-instead of `pnpm precompile`. Restart the API before `pnpm build`, because
-website rendering fetches the API catalogue and place routes.
+The website serves its own copy of the atlas lookups and pages from
+`public/data/` and never fetches from the API. Restart
+the API and website in either order. On a memory-constrained local machine,
+stop the API before `pnpm precompile`.

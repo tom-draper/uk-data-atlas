@@ -16,8 +16,9 @@
 
 Shared browser-safe compilers live in `packages/datasets/`. The website and API
 read raw `data/` and write their own outputs. Run `pnpm --dir services/api build`
-to build the API independently of `public/data/`. Deploy the API before running
-`pnpm precompile` and building the website. See [ARCHITECTURE.md](ARCHITECTURE.md)
+to build the API independently of `public/data/`. Build it before running
+`pnpm precompile`: the website copies the lookups and pages the API build
+compiles for it from disk, and never needs a running API. See [ARCHITECTURE.md](ARCHITECTURE.md)
 for dependencies and rebuild commands. Raw data and generated browser/API data
 are ignored by Git with no per-file exceptions. See [deploy/README.md](deploy/README.md)
 for the complete build order. `pnpm precompile:verify` and
