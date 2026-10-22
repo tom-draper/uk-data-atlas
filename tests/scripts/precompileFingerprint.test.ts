@@ -32,6 +32,7 @@ const createRepository = async () => {
 		"scripts/precompile-data.mts",
 		"scripts/precompile-fingerprint.mjs",
 		"scripts/precompile-selection.ts",
+		"packages/datasets/src/compileDataset.ts",
 		"packages/geography/package.json",
 		"packages/geography/src/index.ts",
 		".cache/atlas-lookups/boundary-mappings.json",
@@ -40,33 +41,42 @@ const createRepository = async () => {
 		await write(file, `// ${file}`);
 	await write(
 		"scripts/precompile/compileDataset.mts",
-		'import { helper } from "../../lib/helpers/shared";\nimport { validate } from "../../lib/data/catalog";\n',
+		'import { helper } from "../../lib/helpers/shared";\nimport { validate } from "../../packages/datasets/src/data/catalog";\n',
 	);
 	await write("scripts/precompile/cache.mts", "// cache");
 	await write("lib/helpers/shared.ts", "export const helper = 1;");
 	await write(
-		"lib/data/catalog/index.ts",
+		"packages/datasets/src/data/catalog/index.ts",
 		'export { validate } from "./ingestion";\nexport { ALL } from "./registry";\n',
 	);
-	await write("lib/data/catalog/ingestion.ts", "export const validate = 1;");
 	await write(
-		"lib/data/catalog/registry.ts",
+		"packages/datasets/src/data/catalog/ingestion.ts",
+		"export const validate = 1;",
+	);
+	await write(
+		"packages/datasets/src/data/catalog/registry.ts",
 		'import { alpha } from "./definitions/alpha";\nimport { beta } from "./definitions/beta";\n',
 	);
-	await write("lib/data/catalog/generated.ts", "// generated");
 	await write(
-		"lib/data/catalog/definitions/index.ts",
+		"packages/datasets/src/data/catalog/generated.ts",
+		"// generated",
+	);
+	await write(
+		"packages/datasets/src/data/catalog/definitions/index.ts",
 		'export * from "./alpha";\nexport * from "./beta";\n',
 	);
 	await write(
-		"lib/data/catalog/definitions/alpha.ts",
+		"packages/datasets/src/data/catalog/definitions/alpha.ts",
 		definition("alpha", 'import { load } from "../../alpha/loader";'),
 	);
 	await write(
-		"lib/data/catalog/definitions/beta.ts",
+		"packages/datasets/src/data/catalog/definitions/beta.ts",
 		definition("beta", 'import { load } from "@/lib/data/beta/loader";'),
 	);
-	await write("lib/data/alpha/loader.ts", "export const load = 'alpha';");
+	await write(
+		"packages/datasets/src/data/alpha/loader.ts",
+		"export const load = 'alpha';",
+	);
 	await write("lib/data/beta/loader.ts", "export const load = 'beta';");
 };
 
@@ -93,7 +103,10 @@ describe("precompile fingerprints", () => {
 
 	it("changes only a dataset's own fingerprint when its loader changes", async () => {
 		const before = await precompileFingerprints(root);
-		await write("lib/data/alpha/loader.ts", "export const load = 'new';");
+		await write(
+			"packages/datasets/src/data/alpha/loader.ts",
+			"export const load = 'new';",
+		);
 		const after = await precompileFingerprints(root);
 
 		expect(after.datasets.alpha).not.toEqual(before.datasets.alpha);
@@ -104,7 +117,7 @@ describe("precompile fingerprints", () => {
 	it("changes only a dataset's own fingerprint when its definition changes", async () => {
 		const before = await precompileFingerprints(root);
 		await write(
-			"lib/data/catalog/definitions/beta.ts",
+			"packages/datasets/src/data/catalog/definitions/beta.ts",
 			definition(
 				"beta",
 				'import { load } from "@/lib/data/beta/loader";',
@@ -139,14 +152,17 @@ describe("precompile fingerprints", () => {
 	it("leaves the others alone when a dataset is added", async () => {
 		const before = await precompileFingerprints(root);
 		await write(
-			"lib/data/catalog/definitions/gamma.ts",
+			"packages/datasets/src/data/catalog/definitions/gamma.ts",
 			definition("gamma"),
 		);
 		await write(
-			"lib/data/catalog/registry.ts",
+			"packages/datasets/src/data/catalog/registry.ts",
 			'import { gamma } from "./definitions/gamma";\n',
 		);
-		await write("lib/data/catalog/generated.ts", "// regenerated");
+		await write(
+			"packages/datasets/src/data/catalog/generated.ts",
+			"// regenerated",
+		);
 		const after = await precompileFingerprints(root);
 
 		expect(Object.keys(after.datasets)).toEqual(["alpha", "beta", "gamma"]);
@@ -166,7 +182,7 @@ describe("precompile fingerprints", () => {
 
 	it("refuses two definitions that declare the same type", async () => {
 		await write(
-			"lib/data/catalog/definitions/gamma.ts",
+			"packages/datasets/src/data/catalog/definitions/gamma.ts",
 			definition("alpha"),
 		);
 
