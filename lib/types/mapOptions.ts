@@ -53,6 +53,16 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
+export interface MobileCoverageOptions extends ColorRangeOption {
+	measure:
+		| "pct5GOutdoorAll"
+		| "pct5GOutdoorAny"
+		| "pct4GIndoorAll"
+		| "pct4GIndoorAny"
+		| "pct4GGeoAll"
+		| "pct5GGeoAny";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -75,6 +85,7 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| "mobileCoverage"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -92,6 +103,7 @@ export type ChartMapOptions = Omit<
 	| "homelessness"
 	| "schoolPerformance"
 > & {
+	mobileCoverage: MobileCoverageOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
