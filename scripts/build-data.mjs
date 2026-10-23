@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createStageCache } from "./build-data-cache.mjs";
-import { buildDataStages, buildDataTargets } from "./build-data-graph.mjs";
+import { buildDataStages } from "./build-data-graph.mjs";
 
 const apiDirectory = fileURLToPath(
 	new URL("../services/api/", import.meta.url),
@@ -56,7 +56,7 @@ export function planBuild(stages, from, roots) {
 		);
 	}
 	if (!planned.some((stage) => stage.name === from))
-		throw new Error(`Stage ${from} is not part of the selected target.`);
+		throw new Error(`Stage ${from} is not part of the selected build.`);
 	const selected = new Set([from]);
 	for (const stage of planned) {
 		if (stage.dependencies.some((dependency) => selected.has(dependency))) {
@@ -74,7 +74,6 @@ const ALWAYS_RUNS = "always-runs";
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
- *   targets?: Record<string, string[]>,
  *   execute?: (stage: Stage) => number,
  *   log?: (line: string) => void,
  *   createCache?: () => ReturnType<typeof createStageCache> | null,
@@ -83,14 +82,12 @@ const ALWAYS_RUNS = "always-runs";
 export function runBuild({
 	argv = [],
 	stages = buildDataStages,
-	targets = buildDataTargets,
 	execute = executeStage,
 	log = console.log,
 	createCache = () => null,
 } = {}) {
 	let from;
 	let only;
-	let target;
 	let plan = false;
 	let useCache = true;
 	for (let index = 0; index < argv.length; index += 1) {
@@ -109,40 +106,20 @@ export function runBuild({
 			if (!from || from.startsWith("--"))
 				throw new Error("--from requires a stage name.");
 			index += 1;
-		} else if (argument === "--target" && target === undefined) {
-			target = argv[index + 1];
-			if (!target || target.startsWith("--"))
-				throw new Error("--target requires a target name.");
-			if (target !== "all" && !Object.hasOwn(targets, target))
-				throw new Error(
-					`Unknown target: ${target}. Available targets: all, ${Object.keys(targets).join(", ")}`,
-				);
-			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--target <name>] [--only <stage> | --from <stage>] [--plan] [--no-cache]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--no-cache]`,
 			);
 		}
 	}
 	if (only !== undefined && from !== undefined)
 		throw new Error("--only and --from cannot be combined.");
-	const targetStages = planBuild(
-		stages,
-		undefined,
-		target === undefined || target === "all" ? undefined : targets[target],
-	);
-	const selectedStage = only ?? from;
-	if (
-		selectedStage !== undefined &&
-		!targetStages.some((stage) => stage.name === selectedStage)
-	)
+	if (only !== undefined && !stages.some((stage) => stage.name === only))
 		throw new Error(
-			stages.some((stage) => stage.name === selectedStage)
-				? `Stage ${selectedStage} is not part of the selected target.`
-				: `Unknown stage: ${selectedStage}. Available stages: ${stages.map((stage) => stage.name).join(", ")}`,
+			`Unknown stage: ${only}. Available stages: ${stages.map((stage) => stage.name).join(", ")}`,
 		);
 	const selected = planBuild(
-		targetStages,
+		stages,
 		from,
 		only === undefined ? undefined : [only],
 	);

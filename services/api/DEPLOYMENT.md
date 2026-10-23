@@ -3,7 +3,7 @@
 Build the API data on a build machine with the pinned Node and pnpm versions:
 
 ```sh
-pnpm data:build --target api
+pnpm data:build
 pnpm --dir services/api build
 ```
 

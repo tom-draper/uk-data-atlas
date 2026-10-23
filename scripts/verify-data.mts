@@ -27,7 +27,7 @@ type Manifest = {
 };
 
 const fail = (message: string): never => {
-	throw new Error(`${message} Run pnpm data:build --target website locally.`);
+	throw new Error(`${message} Run pnpm data:build locally.`);
 };
 
 const manifest = JSON.parse(
@@ -83,7 +83,7 @@ const { boundaryChunkProblems } = await import("./boundary-chunks");
 const chunkProblems = await boundaryChunkProblems(root);
 if (chunkProblems.length > 0)
 	throw new Error(
-		`${chunkProblems.join("\n")}\nRun pnpm data:build --target website locally.`,
+		`${chunkProblems.join("\n")}\nRun pnpm data:build locally.`,
 	);
 
 await stat(join(root, "public", "data", "boundaries"));

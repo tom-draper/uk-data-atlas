@@ -39,12 +39,12 @@ public/data/            the atlas's compiled data, served by the website
 
 ## Where the data lives
 
-| Where                  | What                                                                     | In git      | Made by                                                                                                             |
-| ---------------------- | ------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| `data/source/`         | Raw files as publishers supplied them                                    | No          | `pnpm data:download`, from the release pinned in `data-release.json`                                                |
-| `data/build/`          | Shared generated datasets and `atlas.sqlite`                             | README only | `pnpm data:build`                                                                                                   |
-| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No          | `pnpm data:build --target api`                                                                                      |
-| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No          | `pnpm data:build --target website`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
+| Where                  | What                                                                     | In git      | Made by                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------ | ----------- | -------------------------------------------------------------------------------------------------- |
+| `data/source/`         | Raw files as publishers supplied them                                    | No          | `pnpm data:download`, from the release pinned in `data-release.json`                               |
+| `data/build/`          | Shared generated datasets and `atlas.sqlite`                             | README only | `pnpm data:build`                                                                                  |
+| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No          | `pnpm data:build`                                                                                  |
+| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
 
 Raw release archives keep their paths relative to the source root. The existing
 pinned release restores into `data/source/` without republishing. For an existing
@@ -141,19 +141,12 @@ there is no build step.
 ## One data build
 
 `scripts/build-data-graph.mjs` lists every data build stage for both
-products, with its dependencies. `pnpm data:build` runs them in order, and
-`--target` limits it to one product:
+products, with its dependencies. `pnpm data:build` builds all API and website
+data in dependency order, including SQLite, PMTiles and SEO. Product targets
+are no longer supported.
 
-| Command                            | Builds                                            |
-| ---------------------------------- | ------------------------------------------------- |
-| `pnpm data:build --target api`     | Every API data stage                              |
-| `pnpm data:build --target website` | Website data, including boundaries, tiles and SEO |
-| `pnpm data:build`                  | Both                                              |
-
-A target runs only the stages its outputs depend on, so building one target
-and then the other gives the same output as building both. `--plan` lists the
-stages without running them. `--only <stage>` builds one stage and its
-prerequisites, reusing cached results where valid. `--from <stage>` rebuilds
+`--plan` lists the stages without running them. `--only <stage>` builds one
+stage and its prerequisites, reusing cached results where valid. `--from <stage>` rebuilds
 a stage and its downstream consumers using existing upstream outputs.
 These two options cannot be combined. For example:
 
@@ -165,15 +158,15 @@ pnpm data:build --from datasets
 
 Stage commands live in the graph rather than package scripts. The API package's
 `build` command bundles its server only. The root `build` command builds the
-Next.js application using existing data.
+Next.js application using existing data. `pnpm dev` verifies website data first and runs the
+complete data build only when that verification fails or a rebuild is forced.
 
 The build skips a stage that ran before when nothing it reads has changed:
 the repo's code, the size and mtime of raw files in `data/source/`, its command, and
 the outputs of the stages it depends on. The files it wrote under `data/build/`,
-`public/data/` and `services/api/public/` must also be unchanged. So once one
-target is built, the other reuses unchanged compiled stages. Download and
-catalogue registry generation always run. Website builds also regenerate source
-documentation and the website registry. These generated source files live outside
+`public/data/` and `services/api/public/` must also be unchanged. Repeated builds reuse unchanged compiled stages.
+Download, catalogue registry generation, source documentation and website
+registry generation always run. These generated source files live outside
 the compiled output cache. A code change reruns every compiled stage.
 `scripts/build-data-cache.mjs` keeps this in `.cache/data-build/`. `--from`
 and `--no-cache` rerun the stages they select regardless.

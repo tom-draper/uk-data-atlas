@@ -132,23 +132,15 @@ test("default build executes both products in dependency order", (context) => {
 	assert.equal(build.commands().length, apiOrder.length + 7);
 });
 
-test("the api target builds every API stage and none of the website's", (context) => {
+test("rebuilding atlas pages refreshes website copies and SEO", (context) => {
 	const build = fixture(context);
-	assert.deepEqual(stages(build.run(["--target", "api"])), apiOrder);
-});
-
-test("the website target ends with SEO after copying the API pages", (context) => {
-	const build = fixture(context);
-	assert.deepEqual(
-		stages(build.run(["--target", "website", "--from", "atlas-pages"])),
-		[
-			"atlas-pages",
-			"website-lookups",
-			"website-datasets",
-			"website-registry",
-			"seo",
-		],
-	);
+	assert.deepEqual(stages(build.run(["--from", "atlas-pages"])), [
+		"atlas-pages",
+		"website-lookups",
+		"website-datasets",
+		"website-registry",
+		"seo",
+	]);
 	assert.deepEqual(build.commands().at(-1), [
 		"--dir",
 		"../..",
@@ -158,34 +150,9 @@ test("the website target ends with SEO after copying the API pages", (context) =
 	]);
 });
 
-test("the website target skips unrelated API stages", (context) => {
-	const build = fixture(context);
-	const selected = stages(build.run(["--target", "website"]));
-	for (const name of [
-		"postcode-index",
-		"postcode-areas",
-		"area-search-index",
-		"place-index",
-		"documents",
-		"atlas-release",
-		"validation-report",
-	])
-		assert.ok(!selected.includes(name), name);
-	for (const name of [
-		"atlas-lookups",
-		"atlas-pages",
-		"boundaries",
-		"boundary-tiles",
-	])
-		assert.ok(selected.includes(name), name);
-	assert.equal(selected.at(-1), "seo");
-});
-
 test("dataset rebuild refreshes consumers using existing upstream artifacts", (context) => {
 	const build = fixture(context);
-	const selected = stages(
-		build.run(["--target", "api", "--from", "datasets"]),
-	);
+	const selected = stages(build.run(["--from", "datasets"]));
 	assert.deepEqual(selected.slice(0, 2), ["datasets", "atlas-sqlite"]);
 	for (const name of [
 		"api-datasets",
@@ -196,7 +163,7 @@ test("dataset rebuild refreshes consumers using existing upstream artifacts", (c
 		assert.ok(!selected.includes(name), name);
 	for (const name of ["data-catalog", "atlas-pages"])
 		assert.ok(selected.includes(name), name);
-	assert.equal(selected.at(-1), "atlas-pages");
+	assert.equal(selected.at(-1), "seo");
 });
 
 test("datasets build once for both products", (context) => {
@@ -210,34 +177,35 @@ test("datasets build once for both products", (context) => {
 
 test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) => {
 	const build = fixture(context);
-	assert.deepEqual(
-		stages(build.run(["--target", "api", "--from", "crosswalk-inventory"])),
-		[
-			"crosswalk-inventory",
-			"location-projections",
-			"atlas-sqlite",
-			"geography-inventory",
-			"relationship-paths",
-			"data-catalog",
-			"analysis-geographies",
-			"analysis-geography-validation",
-			"geography-catalogues",
-			"place-index",
-			"area-search-index",
-			"measure-compatibility",
-			"export-manifest",
-			"postcode-areas",
-			"postcode-counts",
-			"relationship-candidates",
-			"lookup-manifest",
-			"validation-report",
-			"atlas-release-initial",
-			"documents",
-			"atlas-lookups",
-			"atlas-release",
-			"atlas-pages",
-		],
-	);
+	assert.deepEqual(stages(build.run(["--from", "crosswalk-inventory"])), [
+		"crosswalk-inventory",
+		"location-projections",
+		"atlas-sqlite",
+		"geography-inventory",
+		"relationship-paths",
+		"data-catalog",
+		"analysis-geographies",
+		"analysis-geography-validation",
+		"geography-catalogues",
+		"place-index",
+		"area-search-index",
+		"measure-compatibility",
+		"export-manifest",
+		"postcode-areas",
+		"postcode-counts",
+		"relationship-candidates",
+		"lookup-manifest",
+		"validation-report",
+		"atlas-release-initial",
+		"documents",
+		"atlas-lookups",
+		"atlas-release",
+		"atlas-pages",
+		"website-lookups",
+		"website-datasets",
+		"website-registry",
+		"seo",
+	]);
 });
 
 test("documents rebuild pins the final manifest without rebuilding the initial manifest", (context) => {
@@ -259,7 +227,7 @@ test("documents rebuild pins the final manifest without rebuilding the initial m
 
 test("a plan selects the same stages without executing commands", (context) => {
 	const build = fixture(context);
-	const args = ["--target", "api", "--from", "operations"];
+	const args = ["--from", "operations"];
 	const result = build.run([...args, "--plan"]);
 	assert.deepEqual(stages(result), [
 		"operations",
@@ -333,20 +301,10 @@ test("invalid CLI arguments fail before executing stages", (context) => {
 			["--only", "datasets", "--only", "boundaries"],
 			/Unknown or repeated argument/,
 		],
-		[["--target", "missing"], /Unknown target: missing/],
-		[["--target"], /--target requires a target name/],
-		[
-			["--target", "api", "--from", "website-datasets"],
-			/not part of the selected target/,
-		],
-		[
-			["--target", "api", "--only", "boundary-tiles"],
-			/not part of the selected target/,
-		],
-		[
-			["--target", "api", "--target", "website"],
-			/Unknown or repeated argument/,
-		],
+		[["--target", "api"], /Unknown or repeated argument: --target/],
+		[["--target", "website"], /Unknown or repeated argument: --target/],
+		[["--target", "all"], /Unknown or repeated argument: --target/],
+		[["--target"], /Unknown or repeated argument: --target/],
 		[["--from"], /--from requires a stage name/],
 		[["--from", "--plan"], /--from requires a stage name/],
 		[["--wat"], /Unknown or repeated argument/],

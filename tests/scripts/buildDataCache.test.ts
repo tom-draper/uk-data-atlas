@@ -90,7 +90,6 @@ test("a second build reruns only the stages that always run", () => {
 	const { runs } = fixture();
 	assert.deepEqual(runs(), ["download", "compile", "summary", "report"]);
 	assert.deepEqual(runs(), ["download"]);
-	assert.deepEqual(runs(["--target", "all"]), ["download"]);
 });
 
 test("--only builds prerequisites on a clean run and reuses their cached outputs", () => {
