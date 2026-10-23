@@ -42,6 +42,7 @@ describe("datasetIsNeeded", () => {
 			"localGovernmentFinance",
 			"netAdditionalDwellings",
 			"nimdm",
+			"pupilAbsence",
 			"schoolPerformanceGap",
 			"simd",
 			"unemployment",

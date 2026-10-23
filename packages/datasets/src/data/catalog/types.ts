@@ -74,6 +74,7 @@ export interface DatasetReader {
 	zipCsvRows: (
 		path: string,
 		visit: (row: Readonly<Record<string, string>>) => void,
+		member?: string,
 	) => Promise<void>;
 }
 
