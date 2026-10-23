@@ -113,7 +113,7 @@ describe("upload match index", () => {
 			const level = parseMatchIndexLevel(index[boundaryType] ?? {});
 			expect(
 				Object.keys(level).map(Number).sort(),
-				`${boundaryType} vintages; rerun pnpm precompile`,
+				`${boundaryType} vintages; rerun pnpm data:build --target website`,
 			).toEqual(Object.keys(definition.vintages).map(Number).sort());
 		}
 	});
