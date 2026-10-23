@@ -312,3 +312,21 @@ release changes are needed. Rebuild with `pnpm data:build --only place-index`.
 Run `node --import tsx scripts/verify-place-index.mts` to compare every place,
 name, label and code with freshly compiled inputs and check representative
 search results.
+
+### Area search
+
+`area_search_meta`, `area_search_codes`, `area_search_terms` and
+`area_search_title_terms` store area search in `atlas.sqlite`. Codes keep their
+release order and terms keep their packed postings. Search still reads only the
+rows needed for matching, filters and pagination.
+
+The `area-search-index` stage replaces its tables in a temporary copy of the
+shared database and publishes it atomically, retaining place search and other
+atlas tables. Successful builds remove the separate database and both old JSON
+variants from `services/api/public/`. The build manifest covers the index through
+`atlas.sqlite`.
+
+Rebuild with `pnpm data:build --only area-search-index`. Run
+`node --import tsx scripts/verify-area-search-index.mts` to compare every stored
+code, term and posting with freshly compiled inputs, along with filtered search
+pages and exact matches. No source release changes are needed.

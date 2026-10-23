@@ -1,12 +1,13 @@
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-	AREA_SEARCH_INDEX_DATABASE,
 	compileAreaSearchIndex,
-	writeAreaSearchIndexDatabase,
+	areaSearchIndexTables,
 } from "../src/areaSearch";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
-import { writeStoredText } from "../src/storedText";
+import { copyFileSync, renameSync, rmSync } from "node:fs";
+import { DatabaseSync } from "node:sqlite";
+import { writeSqliteTables } from "../src/sqliteIndex";
 
 export const buildAreaSearchIndex = (repositoryRoot: string) => {
 	const apiRoot = join(repositoryRoot, "services", "api");
@@ -15,14 +16,32 @@ export const buildAreaSearchIndex = (repositoryRoot: string) => {
 		readAreaLookup(apiRoot, areaInventory),
 		areaInventory.contentHash,
 	);
-	const outputPath = join(apiRoot, "public", AREA_SEARCH_INDEX_DATABASE);
-	// The server searches the SQLite tables. The JSON is what the atlas
-	// release pins, stored gzipped and never read by a request.
-	writeStoredText(
-		join(apiRoot, "public", "area-search-index.json"),
-		`${JSON.stringify(index)}\n`,
-	);
-	writeAreaSearchIndexDatabase(outputPath, index);
+	const outputPath = join(repositoryRoot, "data/build/atlas.sqlite");
+	const temporary = `${outputPath}.area-search.tmp`;
+	try {
+		copyFileSync(outputPath, temporary);
+		const database = new DatabaseSync(temporary);
+		try {
+			database.exec("BEGIN");
+			const tables = areaSearchIndexTables(index);
+			for (const name of Object.keys(tables))
+				database.exec(`DROP TABLE IF EXISTS ${name}`);
+			writeSqliteTables(database, tables);
+			database.exec("COMMIT");
+		} finally {
+			database.close();
+		}
+		renameSync(temporary, outputPath);
+	} finally {
+		rmSync(temporary, { force: true });
+	}
+	for (const filename of [
+		"area-search-index.sqlite",
+		"area-search-index.json",
+		"area-search-index.json.gz",
+	])
+		rmSync(join(apiRoot, "public", filename), { force: true });
+
 	return {
 		outputPath,
 		areas: index.releases.reduce(

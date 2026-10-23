@@ -25,7 +25,11 @@ import {
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const publicRoot = join(apiRoot, "public");
 const read = (path: string) => {
-	if (path === "place-index.json") {
+	if (path === "place-index.json" || path === "area-search-index.json") {
+		const table =
+			path === "place-index.json"
+				? "place_index_meta"
+				: "area_search_meta";
 		const database = new DatabaseSync(
 			join(apiRoot, "../../data/build/atlas.sqlite"),
 			{ readOnly: true },
@@ -33,7 +37,7 @@ const read = (path: string) => {
 		try {
 			return Object.fromEntries(
 				database
-					.prepare("SELECT key, value FROM place_index_meta")
+					.prepare(`SELECT key, value FROM ${table}`)
 					.all()
 					.map((row) => [
 						String(row.key),
@@ -96,6 +100,7 @@ const compiled = [
 	...readdirSync(publicRoot),
 	...geographyCatalogues.map((id) => `${id}.json`),
 	"place-index.json",
+	"area-search-index.json",
 ]
 	.flatMap((file) =>
 		file.endsWith(".json")
@@ -134,6 +139,7 @@ test("builds each artifact from the current version of what it records", () => {
 	for (const [name, fields] of Object.entries(RECORDED_UPSTREAM)) {
 		if (
 			name !== "place-index.json" &&
+			name !== "area-search-index.json" &&
 			!geographyCatalogues.includes(name.replace(/\.json$/, "")) &&
 			!storedTextExists(join(publicRoot, name))
 		)

@@ -1,3 +1,4 @@
+import { writeSqliteIndex } from "../src/sqliteIndex";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -9,7 +10,7 @@ import {
 	areaSearchIndexMismatch,
 	compileAreaSearchIndex,
 	openAreaSearchIndexDatabase,
-	writeAreaSearchIndexDatabase,
+	areaSearchIndexTables,
 } from "../src/areaSearch";
 
 const release = (
@@ -166,8 +167,12 @@ test("pages a listing the same however it is sliced", () => {
 test("answers from its SQLite tables exactly as from the artifact", (context) => {
 	const directory = mkdtempSync(join(tmpdir(), "area-search-"));
 	context.after(() => rmSync(directory, { recursive: true, force: true }));
-	const path = join(directory, "area-search-index.sqlite");
-	writeAreaSearchIndexDatabase(path, index);
+	const path = join(directory, "atlas.sqlite");
+	writeSqliteIndex(
+		path,
+		{ schemaVersion: "1" },
+		areaSearchIndexTables(index),
+	);
 	const stored = openAreaSearchIndexDatabase(path, "sha256:areas");
 	assert.equal(stored.contentHash, index.contentHash);
 	const fromStore = new AreaSearch(stored, areaLookup);

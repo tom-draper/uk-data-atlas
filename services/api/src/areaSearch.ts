@@ -19,7 +19,7 @@ import {
 	SqliteIndex,
 	text,
 	unpackPositions,
-	writeSqliteIndex,
+	type SqliteTable,
 } from "./sqliteIndex";
 
 /**
@@ -429,20 +429,14 @@ export class AreaSearch {
 	}
 }
 
-/** Where the server reads the index from, beside `area-search-index.json`. */
-export const AREA_SEARCH_INDEX_DATABASE = "area-search-index.sqlite";
-
-/**
- * Write the index as SQLite tables: every identity's code in position order,
- * and each term's postings packed as u32s.
- */
-export const writeAreaSearchIndexDatabase = (
-	path: string,
+/** Codes in position order and term postings packed as u32s. */
+export const areaSearchIndexTables = (
 	index: AreaSearchIndexArtifact,
-) =>
-	writeSqliteIndex(
-		path,
-		{
+): Record<string, SqliteTable> => ({
+	area_search_meta: {
+		columns: ["key TEXT NOT NULL", "value TEXT NOT NULL"],
+		key: ["key"],
+		rows: Object.entries({
 			schemaVersion: String(index.schemaVersion),
 			contentHash: index.contentHash,
 			nameNormalisation: index.nameNormalisation,
@@ -454,40 +448,39 @@ export const writeAreaSearchIndexDatabase = (
 					length: codes.length,
 				})),
 			),
-		},
-		{
-			codes: {
-				columns: ["code TEXT"],
-				rows: index.releases.flatMap((release) =>
-					release.codes.map((code) => [code]),
-				),
-			},
-			terms: {
-				columns: ["term TEXT", "areas BLOB"],
-				rows: index.terms.map((term, at) => [
-					term,
-					packPositions(index.termAreas[at]!),
-				]),
-			},
-			titleTerms: {
-				columns: ["term TEXT", "areas BLOB"],
-				rows: index.titleTerms.map((term, at) => [
-					term,
-					packPositions(index.titleTermAreas[at]!),
-				]),
-			},
-		},
-	);
+		}),
+	},
+	area_search_codes: {
+		columns: ["code TEXT"],
+		rows: index.releases.flatMap((release) =>
+			release.codes.map((code) => [code]),
+		),
+	},
+	area_search_terms: {
+		columns: ["term TEXT", "areas BLOB"],
+		rows: index.terms.map((term, at) => [
+			term,
+			packPositions(index.termAreas[at]!),
+		]),
+	},
+	area_search_title_terms: {
+		columns: ["term TEXT", "areas BLOB"],
+		rows: index.titleTerms.map((term, at) => [
+			term,
+			packPositions(index.titleTermAreas[at]!),
+		]),
+	},
+});
 
 /**
- * The index written by `writeAreaSearchIndexDatabase`, refused unless built
+ * The index stored in the shared atlas database, refused unless built
  * from this area inventory.
  */
 export const openAreaSearchIndexDatabase = (
 	path: string,
 	areaInventoryHash: string,
 ): AreaSearchIndex & { contentHash: string } => {
-	const database = new SqliteIndex(path);
+	const database = new SqliteIndex(path, "area_search_");
 	const meta = (key: string) => database.meta.get(key) ?? "";
 	const header: AreaSearchIndexHeader = {
 		schemaVersion: Number(meta("schemaVersion")) as 1,
@@ -500,7 +493,7 @@ export const openAreaSearchIndexDatabase = (
 		throw new Error(`The area search index at ${path} ${mismatch}.`);
 	const codes = database.table("codes");
 	const terms = database.table("terms");
-	const titleTerms = database.table("titleTerms");
+	const titleTerms = database.table("title_terms");
 	let offset = 0;
 	const releases = (
 		JSON.parse(meta("releases")) as Array<{
