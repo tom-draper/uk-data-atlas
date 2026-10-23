@@ -103,6 +103,10 @@ export interface ImdOptions extends ColorRangeOption {
 		| "livingEnvironmentScore";
 }
 
+export interface PlanningApplicationsOptions extends ColorRangeOption {
+	measure: "received" | "decided" | "withdrawn" | "outstanding";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -129,6 +133,7 @@ export type ChartMapOptions = Omit<
 	| "mobileCoverage"
 	| "fuelPoverty"
 	| "imd"
+	| "planningApplications"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -150,6 +155,7 @@ export type ChartMapOptions = Omit<
 	mobileCoverage: MobileCoverageOptions;
 	fuelPoverty: FuelPovertyOptions;
 	imd: ImdOptions;
+	planningApplications: PlanningApplicationsOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;

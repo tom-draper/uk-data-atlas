@@ -19,6 +19,8 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { imdRange } from "@/lib/helpers/imdMeasures";
+import MeasureSelect from "./legend/MeasureSelect";
+import { PLANNING_MEASURES } from "@/lib/helpers/planningApplicationsMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -169,6 +171,19 @@ export default function LegendPanel({
 						onMapOptionsChange("regionalGdpItl3", {
 							measure,
 							colorRange: { min: 0, max: 50_000 },
+						})
+					}
+				/>
+			)}
+			{activeDataset?.type === "planningApplications" && (
+				<MeasureSelect
+					label="Planning applications"
+					value={controls.displayOptions.planningApplications.measure}
+					options={PLANNING_MEASURES}
+					onChange={(measure) =>
+						onMapOptionsChange("planningApplications", {
+							measure,
+							colorRange: { min: 0, max: 1500 },
 						})
 					}
 				/>
