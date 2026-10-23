@@ -74,3 +74,31 @@ test("refuses a release with no areas", () => {
 		/No geometry is available for ward\/test/,
 	);
 });
+
+test("compiled polygon archives retain overlapping areas while strict compilation rejects them", async () => {
+	const { compilePolygonArchive } =
+		await import("@uk-data-atlas/map-tiles/compileArchive");
+	const { readTile } = await import("./pmtilesFixtures");
+	const { decodeTile } = await import("./vectorTileFixtures");
+	const areas = new Map([
+		["E05000003", square(0, 51, 0.1)],
+		["E05000001", square(0, 51, 0.1)],
+		["E05000002", square(0, 51, 0.1)],
+	]);
+	assert.throws(() => compileTileset(areas, options), /is not a coverage/);
+	const result = compilePolygonArchive(areas, options);
+	const tile = readTile(result.archive, 0);
+	assert.ok(tile);
+	const [layer] = decodeTile(tile);
+	assert.equal(layer?.name, "boundaries");
+	assert.deepEqual(
+		layer.features.map(({ id, properties }) => [id, properties.code]),
+		[
+			[3, "E05000003"],
+			[1, "E05000001"],
+			[2, "E05000002"],
+		],
+	);
+	assert.ok(layer.features.every((feature) => feature.rings.length === 1));
+	assert.deepEqual(areas.get("E05000001"), square(0, 51, 0.1));
+});
