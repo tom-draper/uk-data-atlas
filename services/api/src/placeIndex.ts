@@ -15,7 +15,7 @@ import {
 	SqliteIndex,
 	text,
 	unpackPositions,
-	writeSqliteIndex,
+	type SqliteTable,
 	type Row,
 } from "./sqliteIndex";
 
@@ -332,10 +332,6 @@ const headerMismatch = (
 	return undefined;
 };
 
-/** Where the server reads the index from, beside `place-index.json`. */
-export const PLACE_INDEX_DATABASE = "place-index.sqlite";
-
-/** Write the index as SQLite tables, one row per array position. */
 /**
  * A place as table columns. What the rest implies is left out: the reference
  * when it follows from the kind and code, the name when it is the code, and
@@ -412,62 +408,61 @@ const unpackLabels = (value: SQLInputValue): CompiledPlaceLabel[] =>
 				(packed & 1) as 0 | 1,
 			]);
 
-export const writePlaceIndexDatabase = (
-	path: string,
+export const placeIndexTables = (
 	index: PlaceIndexArtifact,
-) => {
+): Record<string, SqliteTable> => {
 	const geographies = [
 		...new Set(index.places.map((place) => place.geography)),
 	].sort(compareCodeUnits);
 	const geographyAt = new Map(
 		geographies.map((geography, at) => [geography, at]),
 	);
-	writeSqliteIndex(
-		path,
-		{
-			schemaVersion: String(index.schemaVersion),
-			contentHash: index.contentHash,
-			nameNormalisation: index.nameNormalisation,
-			areaInventoryHash: index.areaInventoryHash,
-			namedLocationInventoryHash: JSON.stringify(
-				index.namedLocationInventoryHash,
-			),
-			releases: JSON.stringify(index.releases),
-			geographies: JSON.stringify(geographies),
+	const meta = {
+		schemaVersion: String(index.schemaVersion),
+		contentHash: index.contentHash,
+		nameNormalisation: index.nameNormalisation,
+		areaInventoryHash: index.areaInventoryHash,
+		namedLocationInventoryHash: JSON.stringify(
+			index.namedLocationInventoryHash,
+		),
+		releases: JSON.stringify(index.releases),
+		geographies: JSON.stringify(geographies),
+	};
+	return {
+		place_index_meta: {
+			columns: ["key TEXT NOT NULL", "value TEXT NOT NULL"],
+			key: ["key"],
+			rows: Object.entries(meta),
 		},
-		{
-			places: {
-				columns: [
-					"geography INTEGER",
-					"code TEXT",
-					"name TEXT",
-					"releases TEXT",
-					"extra TEXT",
-				],
-				rows: index.places.map((place) =>
-					placeColumns(place, geographyAt),
-				),
-			},
-			names: {
-				columns: ["name TEXT", "labels"],
-				rows: index.names.map((name, at) => [
-					name,
-					packLabels(index.labels[at]!),
-				]),
-			},
-			codes: {
-				columns: ["code TEXT", "places BLOB"],
-				rows: index.codes.map((code, at) => [
-					code,
-					packPositions(index.codePlaces[at]!),
-				]),
-			},
+		place_index_places: {
+			columns: [
+				"geography INTEGER",
+				"code TEXT",
+				"name TEXT",
+				"releases TEXT",
+				"extra TEXT",
+			],
+			rows: index.places.map((place) => placeColumns(place, geographyAt)),
 		},
-	);
+		place_index_names: {
+			columns: ["name TEXT", "labels"],
+			rows: index.names.map((name, at) => [
+				name,
+				packLabels(index.labels[at]!),
+			]),
+		},
+		place_index_codes: {
+			columns: ["code TEXT", "places BLOB"],
+			rows: index.codes.map((code, at) => [
+				code,
+				packPositions(index.codePlaces[at]!),
+			]),
+		},
+	};
 };
 
 /**
- * The index written by `writePlaceIndexDatabase`, refused unless built from
+ * The index stored in the shared atlas database, refused unless built from
  * this area inventory and these named locations.
  */
 export const openPlaceIndexDatabase = (
@@ -475,7 +470,7 @@ export const openPlaceIndexDatabase = (
 	areaInventoryHash: string,
 	namedLocations: NamedLocationInventory | undefined,
 ): PlaceIndex & { contentHash: string } => {
-	const database = new SqliteIndex(path);
+	const database = new SqliteIndex(path, "place_index_");
 	const meta = (key: string) => database.meta.get(key) ?? "";
 	const header: PlaceIndexHeader = {
 		schemaVersion: Number(meta("schemaVersion")) as 1,
