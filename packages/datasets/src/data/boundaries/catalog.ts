@@ -63,7 +63,7 @@ const asset = (geography: string, release: string) =>
  * substitution is on the filename, which leaves any version query in place.
  */
 export const propertiesAsset = (asset: string) =>
-	asset.replace("/boundaries.topojson", "/properties.json");
+	asset.replace(/\/boundaries\.(?:topojson|pmtiles)/, "/properties.json");
 
 /**
  * Authoritative catalogue of the boundary releases the atlas supports.

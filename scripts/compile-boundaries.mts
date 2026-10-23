@@ -1,7 +1,6 @@
 /**
  * Converts published boundary GeoJSON into the compact TopoJSON assets served
- * by the application, writing them into public/data where they are served
- * from. The GeoJSON files remain in data/ as reproducible sources, and are the
+ * by the application, writing them into data/build/website-boundaries for build-time consumers. The GeoJSON files remain in data/ as reproducible sources, and are the
  * only form of a release this repository commits.
  *
  * Run `node --import tsx scripts/compile-boundaries.mts --force` after changing the compression values
@@ -580,7 +579,7 @@ const assertKeptSomething = (
 
 /** Compiles GeoJSON releases and derives properties for every served release. */
 export async function compileBoundaryAssets(
-	outputDirectory = join(ROOT, "public", "data"),
+	outputDirectory = join(ROOT, "data/build/website-boundaries"),
 ): Promise<void> {
 	const startedAt = performance.now();
 	const sources = releaseSources(outputDirectory);

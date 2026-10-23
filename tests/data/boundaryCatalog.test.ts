@@ -17,9 +17,7 @@ describe("boundary catalogue", () => {
 			expect(definition.properties.code.length).toBeGreaterThan(0);
 			expect(definition.properties.name.length).toBeGreaterThan(0);
 			for (const path of Object.values(definition.vintages)) {
-				expect(path).toMatch(
-					/^\/data\/boundaries\/.+\.(topojson|geojson)/,
-				);
+				expect(path).toMatch(/^\/data\/boundaries\/.+\.pmtiles/);
 			}
 		}
 	});

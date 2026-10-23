@@ -1,11 +1,5 @@
-// lib/data/boundaries.ts
 import { BoundaryGeojson } from "@lib/types";
-import { boundaryChunkRegions, fetchBoundaryGeometry } from "./chunks";
-import { fetchBoundaryInWorker } from "./worker";
-import type { Crosswalk } from "../gazetteer/types";
-import type { BoundaryType, BoundaryYear } from "./catalog";
-import { filterFeatures, type BoundaryLocationRelations } from "./filter";
-import { fetchLsoaToLad, lsoaYearForBoundaryAsset } from "./lsoaLadMappings";
+import type { BoundaryYear } from "./catalog";
 
 export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
@@ -15,27 +9,6 @@ export { filterFeatures } from "./filter";
 export type WardYear = BoundaryYear<"ward">;
 export type ConstituencyYear = BoundaryYear<"constituency">;
 export type LocalAuthorityYear = BoundaryYear<"localAuthority">;
-
-/**
- * Decoded geometry, most recently used last.
- *
- * Only the selected location's geometry is returned from the worker, while
- * every chart aggregates from properties sidecars. The cache is therefore
- * keyed by both boundary release and location, rather than retaining complete
- * UK-wide coordinate sets just because the user visited a few map vintages.
- * Keeping a few selected results still makes moving back and forth a cache hit.
- */
-const GEOMETRY_CACHE_LIMIT = 3;
-const BOUNDARY_CACHE = new Map<string, BoundaryGeojson>();
-const BOUNDARY_PENDING = new Map<string, Promise<BoundaryGeojson>>();
-
-const rememberGeometry = (cacheKey: string, data: BoundaryGeojson) => {
-	BOUNDARY_CACHE.delete(cacheKey);
-	BOUNDARY_CACHE.set(cacheKey, data);
-	if (BOUNDARY_CACHE.size > GEOMETRY_CACHE_LIMIT) {
-		BOUNDARY_CACHE.delete(BOUNDARY_CACHE.keys().next().value!);
-	}
-};
 
 /** Properties sidecars, held for every vintage: they are small and all needed. */
 const PROPERTIES_CACHE = new Map<string, BoundaryGeojson>();
@@ -100,78 +73,5 @@ export function fetchBoundaryProperties(
 		});
 	PROPERTIES_PENDING.set(path, promise);
 	promise.catch(() => PROPERTIES_PENDING.delete(path));
-	return promise;
-}
-export type BoundaryGeometryFilter = {
-	type: BoundaryType;
-	location: string | null;
-	relations?: BoundaryLocationRelations;
-};
-
-export const geometryCacheKey = (
-	path: string,
-	filter?: BoundaryGeometryFilter,
-) =>
-	filter
-		? `${path}\u0000${filter.type}\u0000${filter.location ?? ""}\u0000${filter.relations?.constituencyLadOverlaps ? "constituency-lad-overlaps" : filter.type === "lsoa" ? "lsoa-lad" : "bbox"}`
-		: path;
-
-/**
- * Fetch and cache boundary file (supports both GeoJSON and TopoJSON)
- */
-async function doFetchBoundaryFile(
-	path: string,
-	filter?: BoundaryGeometryFilter,
-): Promise<BoundaryGeojson> {
-	const lsoaToLad =
-		filter?.type === "lsoa" && filter.location
-			? (filter.relations?.lsoaToLad ??
-				(await fetchLsoaToLad(
-					lsoaYearForBoundaryAsset(path) ?? NaN,
-				).catch(() => undefined)))
-			: undefined;
-	const typedGeojson = await fetchBoundaryGeometry(
-		path,
-		boundaryChunkRegions(
-			filter?.type,
-			filter?.location,
-			lsoaToLad !== undefined,
-		),
-	);
-	return filter
-		? filterFeatures(typedGeojson, {
-				...filter,
-				relations: { ...filter.relations, lsoaToLad },
-			})
-		: typedGeojson;
-}
-
-export function fetchBoundaryFile(
-	path: string,
-	filter?: BoundaryGeometryFilter,
-): Promise<BoundaryGeojson> {
-	const cacheKey = geometryCacheKey(path, filter);
-	const cached = BOUNDARY_CACHE.get(cacheKey);
-	if (cached) {
-		rememberGeometry(cacheKey, cached);
-		return Promise.resolve(cached);
-	}
-	const pending = BOUNDARY_PENDING.get(cacheKey);
-	if (pending) return pending;
-
-	const workerFetch = fetchBoundaryInWorker(path, filter);
-	const promise = (
-		workerFetch
-			? workerFetch.catch(() => doFetchBoundaryFile(path, filter))
-			: doFetchBoundaryFile(path, filter)
-	).then((data) => {
-		rememberGeometry(cacheKey, data);
-		BOUNDARY_PENDING.delete(cacheKey);
-		return data;
-	});
-	BOUNDARY_PENDING.set(cacheKey, promise);
-	promise.catch(() => {
-		BOUNDARY_PENDING.delete(cacheKey);
-	});
 	return promise;
 }

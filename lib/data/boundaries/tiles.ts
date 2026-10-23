@@ -1,6 +1,9 @@
 import { withCDN } from "@/lib/helpers/cdn";
 import { getFeatureProp } from "@/lib/types/geometry";
-import { boundaryServesVectorTiles } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
+import {
+	parseBoundaryResources,
+	type BoundaryResources,
+} from "@/shared/boundaryResources";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { BoundaryGeojson, PropertyKeys } from "@/lib/types/geometry";
 import {
@@ -8,8 +11,8 @@ import {
 	propertiesAsset,
 	type BoundaryType,
 } from "./catalog";
-import { fetchBoundaryFile, fetchBoundaryProperties } from "./boundaries";
-import type { BoundaryGeometryFilter } from "./boundaries";
+import { fetchBoundaryProperties } from "./boundaries";
+import type { BoundaryFeatureFilter } from "./filter";
 import { filterFeatures } from "./filter";
 import { fetchLsoaToLad, lsoaYearForBoundaryAsset } from "./lsoaLadMappings";
 
@@ -20,77 +23,46 @@ export type BoundaryTiles = {
 	codeKey: PropertyKeys;
 	ids: Map<string, number>;
 };
-type Manifest = {
-	minZoom: number;
-	maxZoom: number;
-	releases: Map<string, string>;
-};
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-	typeof value === "object" && value !== null && !Array.isArray(value);
-
-export function parseBoundaryTilesManifest(value: unknown): Manifest {
-	if (
-		!isRecord(value) ||
-		!Number.isInteger(value.minZoom) ||
-		!Number.isInteger(value.maxZoom) ||
-		typeof value.minZoom !== "number" ||
-		typeof value.maxZoom !== "number" ||
-		value.minZoom < 0 ||
-		value.maxZoom < value.minZoom ||
-		value.maxZoom > 24 ||
-		!isRecord(value.releases) ||
-		!isRecord(value.untiled)
-	)
-		throw new Error("Invalid boundary tiles manifest");
-	const releases = new Map<string, string>();
-	for (const [key, entry] of Object.entries(value.releases)) {
-		if (
-			!isRecord(entry) ||
-			typeof entry.href !== "string" ||
-			entry.href !== `/data/boundaries/${key}/boundaries.pmtiles` ||
-			typeof entry.bytes !== "number" ||
-			!Number.isSafeInteger(entry.bytes) ||
-			entry.bytes <= 0 ||
-			key in value.untiled
-		)
-			throw new Error("Invalid boundary tiles release");
-		releases.set(key, entry.href);
-	}
-	return { minZoom: value.minZoom, maxZoom: value.maxZoom, releases };
-}
-
-let manifest: Promise<Manifest | null> | undefined;
-function fetchManifest() {
+type Manifest = BoundaryResources;
+export const parseBoundaryTilesManifest = parseBoundaryResources;
+let manifest: Promise<Manifest> | undefined;
+function fetchManifest(): Promise<Manifest> {
 	return (manifest ??= fetch(withCDN("/data/boundaries/tiles.json"))
 		.then(async (response) => {
 			if (!response.ok)
-				throw new Error(`Boundary tiles manifest: ${response.status}`);
-			return parseBoundaryTilesManifest(await response.json());
+				throw new Error(`Boundary map manifest: ${response.status}`);
+			return parseBoundaryResources(await response.json());
 		})
-		.catch((error) => {
-			console.warn("[boundaries] Using TopoJSON:", error);
-			return null;
+		.catch((error: unknown) => {
+			manifest = undefined;
+			throw error;
 		}));
 }
 
-export function selectBoundaryTiles(
-	manifest: Manifest | null,
-	type: BoundaryType,
-	path: string,
-) {
-	if (!manifest || !boundaryServesVectorTiles(type)) return null;
+function selectResource(manifest: Manifest, type: BoundaryType, path: string) {
 	const release = BOUNDARY_CATALOG[type].releases.find(
 		(release) => release.asset === path,
 	);
-	const href = release && manifest.releases.get(`${type}/${release.id}`);
-	return href && release
-		? {
-				href: withCDN(href),
-				minZoom: manifest.minZoom,
-				maxZoom: manifest.maxZoom,
-				codeKey: release.codeKey,
-			}
-		: null;
+	const resource = release && manifest.releases[`${type}/${release.id}`];
+	if (!release || !resource)
+		throw new Error(
+			`Missing boundary map resource: ${type}/${path}. Run pnpm data:build.`,
+		);
+	return { release, resource };
+}
+
+export function selectBoundaryTiles(
+	manifest: Manifest,
+	type: BoundaryType,
+	path: string,
+) {
+	const { release, resource } = selectResource(manifest, type, path);
+	return {
+		href: withCDN(resource.href),
+		minZoom: manifest.minZoom,
+		maxZoom: manifest.maxZoom,
+		codeKey: release.codeKey,
+	};
 }
 
 // Rendering uses sidecars for values and filtering, tiles for coordinates.
@@ -98,10 +70,10 @@ export const boundaryTiles = new WeakMap<BoundaryGeojson, BoundaryTiles>();
 
 export async function fetchMapBoundaries(
 	path: string,
-	filter: BoundaryGeometryFilter,
+	filter: BoundaryFeatureFilter,
 ): Promise<BoundaryGeojson> {
-	const tiles = selectBoundaryTiles(await fetchManifest(), filter.type, path);
-	if (!tiles) return fetchBoundaryFile(path, filter);
+	const manifest = await fetchManifest();
+	const tiles = selectBoundaryTiles(manifest, filter.type, path);
 	const properties = await fetchBoundaryProperties(propertiesAsset(path));
 	const ids = featureIds([
 		...new Set(

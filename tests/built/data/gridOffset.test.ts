@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
 import {
 	applyGridOffset,
 	offsetPosition,

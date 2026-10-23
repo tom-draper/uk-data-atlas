@@ -296,7 +296,7 @@ const websiteStages = [
 		"boundaries",
 		["sources"],
 		["--dir", "../..", "exec", "tsx", "scripts/compile-boundaries.mts"],
-		{ outputs: ["public/data/boundaries"] },
+		{ outputs: ["data/build/website-boundaries"] },
 	),
 	stage(
 		"boundary-tiles",

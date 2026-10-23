@@ -13,7 +13,7 @@
  *   1. Convert the shapefile to source.geojson (outside this repo).
  *   2. npx tsx scripts/reproject-datazone-boundary.mts
  *   3. pnpm data:build --only boundaries
- *   4. cp public/data/boundaries/data-zone/2011-12-sc-bfc/boundaries.topojson \
+ *   4. cp data/build/website-boundaries/boundaries/data-zone/2011-12-sc-bfc/boundaries.topojson \
  *        data/source/boundaries/data-zone/2011-12-sc-bfc/boundaries.topojson
  */
 import { readFile, writeFile } from "fs/promises";

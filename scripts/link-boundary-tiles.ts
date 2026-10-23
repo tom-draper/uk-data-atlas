@@ -7,52 +7,103 @@ import {
 	readdir,
 	rename,
 	rm,
+	rmdir,
+	stat,
 } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
+import {
+	assertCompleteBoundaryResources,
+	parseBoundaryResources,
+} from "../shared/boundaryResources";
 
-/** Publish static archive paths without duplicating their storage. */
+/** Publish only map resources and properties. Topologies stay private. */
 export async function linkBoundaryTiles(
 	root = resolve("."),
 	destination = join(root, "public/data"),
 ) {
-	const source = join(root, "data/build/boundaries");
-	const manifest: { releases: Record<string, unknown> } = JSON.parse(
-		await readFile(join(source, "tiles.json"), "utf8"),
+	const build = join(root, "data/build");
+	const manifestPath = join(build, "boundaries/tiles.json");
+	const manifestText = await readFile(manifestPath, "utf8");
+	const manifest = parseBoundaryResources(JSON.parse(manifestText));
+	assertCompleteBoundaryResources(manifest);
+	const files = Object.entries(manifest.releases).flatMap(
+		([release, entry]) => {
+			const relative = entry.href.replace(/^\/data\//, "");
+			return [
+				{
+					source: join(build, relative),
+					relative,
+					bytes: entry.bytes,
+					release,
+				},
+				{
+					source: join(build, dirname(relative), "properties.json"),
+					relative: join(dirname(relative), "properties.json"),
+					bytes: undefined,
+					release,
+				},
+			];
+		},
 	);
-	for (const release of Object.keys(manifest.releases)) {
-		const target = join(
-			destination,
-			"boundaries",
-			release,
-			"boundaries.pmtiles",
-		);
+	// Validate the whole generation before changing any public files.
+	for (const file of files) {
+		const built = await stat(file.source);
+		if (
+			!built.isFile() ||
+			(file.bytes !== undefined && built.size !== file.bytes)
+		)
+			throw new Error(
+				`Boundary resource does not match manifest: ${file.release}`,
+			);
+	}
+	for (const { source, relative } of files) {
+		const target = join(destination, relative);
 		await mkdir(dirname(target), { recursive: true });
 		const temporary = `${target}.${randomUUID()}.tmp`;
 		try {
-			await link(join(source, release, "boundaries.pmtiles"), temporary);
+			await link(source, temporary);
 			await rename(temporary, target);
 		} finally {
 			await rm(temporary, { force: true });
 		}
 	}
 	const boundaryDirectory = join(destination, "boundaries");
-	await mkdir(boundaryDirectory, { recursive: true });
 	const current = new Set(
-		Object.keys(manifest.releases).map(
-			(release) => `${release}/boundaries.pmtiles`,
+		files.map(({ relative }) =>
+			relative.replace(/^boundaries\//, "").replaceAll("\\", "/"),
 		),
 	);
 	for (const file of await readdir(boundaryDirectory, { recursive: true })) {
+		const normal = file.replaceAll("\\", "/");
 		if (
-			file.endsWith(".pmtiles") &&
-			!current.has(file.replaceAll("\\", "/"))
+			normal.endsWith(".topojson") ||
+			normal.endsWith(".topojson.gz") ||
+			normal.endsWith("/boundaries.untiled.json") ||
+			(/\.(?:pmtiles|geojson)$/.test(normal) && !current.has(normal)) ||
+			(normal.endsWith("/properties.json") && !current.has(normal)) ||
+			normal.includes("/chunks/")
 		)
-			await rm(join(boundaryDirectory, file));
+			await rm(join(boundaryDirectory, file), { force: true });
 	}
-	await copyFile(
-		join(source, "tiles.json"),
-		join(destination, "boundaries/tiles.json"),
+	const directories = await readdir(boundaryDirectory, { recursive: true });
+	directories.sort(
+		(a, b) => b.split(/[\\/]/).length - a.split(/[\\/]/).length,
 	);
+	for (const directory of directories) {
+		const path = join(boundaryDirectory, directory);
+		if (
+			(await stat(path)).isDirectory() &&
+			(await readdir(path)).length === 0
+		)
+			await rmdir(path);
+	}
+	const temporary = join(boundaryDirectory, `tiles.${randomUUID()}.tmp`);
+	try {
+		await copyFile(manifestPath, temporary);
+		await rename(temporary, join(boundaryDirectory, "tiles.json"));
+	} finally {
+		await rm(temporary, { force: true });
+	}
 }
 
 if (

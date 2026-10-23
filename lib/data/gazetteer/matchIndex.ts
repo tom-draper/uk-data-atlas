@@ -19,7 +19,6 @@ import {
 	propertiesAsset,
 } from "../boundaries/catalog";
 import { localDataPath } from "../boundaries/dataPath";
-import { decodeBoundaryData } from "../boundaries/decode";
 import { getProp } from "../boundaries/properties";
 
 export type CompactMatchIndex = Record<string, CompactMatchIndexLevel>;
@@ -37,23 +36,13 @@ export async function loadMatchIndex(
 	parishToLad: Record<number, Record<string, string>>,
 ): Promise<CompactMatchIndex> {
 	const index: MatchIndex = {};
-	// Matching reads codes, names and parents, never a coordinate, so take
-	// them from the properties sidecar compiled beside each release. Decoding
-	// the geometry instead costs most of a minute across every vintage, and is
-	// only fallen back on for a release that has no sidecar.
-	const propertiesOf = async (path: string) => {
-		let sidecar: string;
-		try {
-			sidecar = await read(localDataPath(propertiesAsset(path)));
-		} catch {
-			const { features } = decodeBoundaryData(
-				JSON.parse(await read(localDataPath(path))),
-			);
-			return features.map((feature) => feature.properties);
-		}
-		return (JSON.parse(sidecar) as { features: Record<string, unknown>[] })
-			.features;
-	};
+	// Matching needs the required sidecar, never polygon coordinates.
+	const propertiesOf = async (path: string) =>
+		(
+			JSON.parse(await read(localDataPath(propertiesAsset(path)))) as {
+				features: Record<string, unknown>[];
+			}
+		).features;
 	// Every geography the catalogue serves, so a new one is matchable as soon
 	// as it has a release. One file at a time: together they are large.
 	for (const boundaryType of BOUNDARY_TYPES) {

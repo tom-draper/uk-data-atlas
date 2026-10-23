@@ -8,16 +8,23 @@ import {
 	BOUNDARY_TYPES,
 	type BoundaryType,
 } from "@/lib/data/boundaries/catalog";
-import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
 import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 /**
- * Compiled assets live in public/data, where they are served from; the two
+ * Compiled topology intermediates live in data/build/website-boundaries; the two
  * releases published as TopoJSON are downloaded into data/. Look in both.
  */
 const localBoundaryPath = (path: string) => {
-	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
-	const served = join(process.cwd(), "public", "data", relative);
+	const relative = path
+		.split("?")[0]!
+		.replace(/^\/data\//, "")
+		.replace(/\.pmtiles$/, ".topojson");
+	const served = join(
+		process.cwd(),
+		"data/build/website-boundaries",
+		relative,
+	);
 	return existsSync(served)
 		? served
 		: join(process.cwd(), "data/source", relative);
@@ -140,7 +147,7 @@ describe("boundary releases", () => {
 			expect(
 				release.asset,
 				`${type}/${release.id} is served from another release's folder`,
-			).toContain(`/${release.id}/boundaries.topojson`);
+			).toContain(`/${release.id}/boundaries.pmtiles`);
 			expect(existsSync(localBoundaryPath(release.asset))).toBe(true);
 		}
 	});

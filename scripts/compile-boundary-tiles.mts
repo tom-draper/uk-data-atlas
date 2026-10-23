@@ -1,71 +1,77 @@
-/**
- * Compiles the finer boundary families into PMTiles vector tiles, written
- * into data/build, then hard-linked to public/data so the map can fetch only the
- * tiles in view rather than a whole release.
- *
- * The tiles come from the same corrected source as the TopoJSON, and are cut by
- * the tiler the API uses (`@uk-data-atlas/map-tiles`), so the two consumers
- * share one tile format. A release that is not a coverage cannot be tiled; it
- * is recorded as untiled and the map keeps drawing its TopoJSON.
- *
- * Run `node --import tsx scripts/compile-boundary-tiles.mts --force` after changing the tiler, or add
- * `--only=ward/2026-05-uk-bgc` to retile one release.
- */
-import { existsSync, readdirSync } from "fs";
-import { mkdir, readFile, rm, stat, writeFile } from "fs/promises";
-import { basename, dirname, join, relative } from "path";
-import { fileURLToPath } from "url";
-import { gzipSync } from "zlib";
-
-import { boundaryServesVectorTiles } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
+/** Compile every website release to PMTiles, including releases with overlapping polygons. */
+import { randomUUID } from "node:crypto";
+import { existsSync, readdirSync } from "node:fs";
+import {
+	link,
+	mkdir,
+	readFile,
+	rename,
+	rm,
+	stat,
+	writeFile,
+} from "node:fs/promises";
+import { basename, dirname, join } from "node:path";
+import { gzipSync } from "node:zlib";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
-import { compileTileset } from "@uk-data-atlas/map-tiles/compileTileset";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
+import { compilePolygonArchive } from "@uk-data-atlas/map-tiles/compileArchive";
+import {
+	compileTileset,
+	NonCoverageError,
+} from "@uk-data-atlas/map-tiles/compileTileset";
 import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles/tileset";
 import type { GeoJsonGeometry } from "@uk-data-atlas/map-tiles/types";
+import {
+	assertCompleteBoundaryResources,
+	parseBoundaryResources,
+	websiteBoundaryReleases,
+	type BoundaryResource,
+	type BoundaryResources,
+} from "../shared/boundaryResources";
 import { correctedSource, releaseSources } from "./compile-boundaries.mts";
-import { linkBoundaryTiles } from "./link-boundary-tiles.ts";
+import { linkBoundaryTiles } from "./link-boundary-tiles";
 import { elapsedSince, formatKb, logArtifact } from "./timing.mts";
 
-const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-
-export const TILES_FILENAME = "boundaries.pmtiles";
-/** Written instead of the tiles when a release cannot be tiled, with why. */
-const UNTILED_FILENAME = "boundaries.untiled.json";
-/** Lists every tiled release, so the map knows which to draw from tiles. */
-export const TILES_MANIFEST = join("boundaries", "tiles.json");
-
-export type BoundaryTilesManifest = {
-	minZoom: number;
-	maxZoom: number;
-	/** Keyed by `type/release`, e.g. `ward/2024-05-uk-bgc`. */
-	releases: Record<string, { href: string; bytes: number }>;
-	untiled: Record<string, string>;
+const COMPILED_POLYGON_RELEASES: Readonly<Record<string, number>> = {
+	"ward/2017-12-gb-bgc": 3,
+	"lsoa/2001-12-ew-bgc": 91,
 };
 
-/** A change to the tiler or this script retiles every release. */
+const ROOT = join(import.meta.dirname, "..");
+const INTERMEDIATES = join(ROOT, "data/build/website-boundaries");
+export const TILES_FILENAME = "boundaries.pmtiles";
+export const TILES_MANIFEST = "boundaries/tiles.json";
 const TILER_SOURCES = [
-	fileURLToPath(import.meta.url),
-	...readdirSync(join(ROOT, "packages", "map-tiles", "src")).map((name) =>
-		join(ROOT, "packages", "map-tiles", "src", name),
+	import.meta.filename,
+	join(ROOT, "shared/boundaryResources.ts"),
+	...readdirSync(join(ROOT, "packages/map-tiles/src")).map((name) =>
+		join(ROOT, "packages/map-tiles/src", name),
 	),
 ];
 
-const isStale = async (inputs: string[], output: string) => {
-	if (process.argv.includes("--force")) return true;
+async function writeAtomically(path: string, contents: string | Uint8Array) {
+	await mkdir(dirname(path), { recursive: true });
+	const temporary = `${path}.${randomUUID()}.tmp`;
 	try {
-		const [built, ...sources] = await Promise.all(
-			[output, ...inputs].map((path) => stat(path)),
-		);
-		return sources.some((source) => source.mtimeMs > built!.mtimeMs);
-	} catch {
-		return true;
+		await writeFile(temporary, contents);
+		await rename(temporary, path);
+	} finally {
+		await rm(temporary, { force: true });
 	}
-};
+}
 
+async function isStale(inputs: string[], output: string) {
+	if (process.argv.includes("--force")) return true;
+	const built = await stat(output).catch(() => undefined);
+	if (!built) return true;
+	for (const input of inputs)
+		if ((await stat(input)).mtimeMs > built.mtimeMs) return true;
+	return false;
+}
 /** One geometry per code; a code split across features becomes a MultiPolygon. */
 const areasByCode = (
 	features: Array<{
-		properties: Record<string, unknown> | null;
+		properties: object | null;
 		geometry: GeoJsonGeometry | null;
 	}>,
 	codeKey: string,
@@ -79,7 +85,9 @@ const areasByCode = (
 				? (geometry.coordinates as unknown[])
 				: [];
 	for (const feature of features) {
-		const code = feature.properties?.[codeKey];
+		const code = feature.properties
+			? Reflect.get(feature.properties, codeKey)
+			: undefined;
 		if (typeof code !== "string" || !feature.geometry) continue;
 		const existing = areas.get(code);
 		areas.set(
@@ -101,89 +109,146 @@ const areasByCode = (
 };
 
 export async function compileBoundaryTiles(
-	outputDirectory = join(ROOT, "public", "data"),
-): Promise<BoundaryTilesManifest> {
+	outputDirectory = join(ROOT, "public/data"),
+): Promise<BoundaryResources> {
 	const startedAt = performance.now();
-	// `--only=ward/2026-05-uk-bgc` tiles one release, for trying a change.
 	const only = process.argv
 		.find((arg) => arg.startsWith("--only="))
-		?.slice("--only=".length);
-	const sources = releaseSources(outputDirectory).filter(
-		({ type, label }) =>
-			boundaryServesVectorTiles(type) && (!only || label === only),
-	);
-	console.log(`Preparing ${sources.length} vector tile archives...`);
-	const manifest: { releases: Record<string, unknown> } = {
-		minZoom: MIN_ZOOM,
-		maxZoom: MAX_ZOOM,
-		releases: {},
-		untiled: {},
-	};
-	const record = async (label: string, directory: string) => {
-		const tilesPath = join(directory, TILES_FILENAME);
-		const untiledPath = join(directory, UNTILED_FILENAME);
-		if (existsSync(tilesPath))
-			manifest.releases[label] = {
-				href: `/data/${relative(join(ROOT, "data/build"), tilesPath)}`,
-				bytes: (await stat(tilesPath)).size,
+		?.slice(7);
+	const manifestPath = join(ROOT, "data/build", TILES_MANIFEST);
+	const manifest: BoundaryResources = only
+		? parseBoundaryResources(
+				JSON.parse(await readFile(manifestPath, "utf8")),
+			)
+		: {
+				schemaVersion: 2,
+				minZoom: MIN_ZOOM,
+				maxZoom: MAX_ZOOM,
+				releases: {},
 			};
-		else if (existsSync(untiledPath))
-			manifest.untiled[label] = (
-				JSON.parse(await readFile(untiledPath, "utf8")) as {
-					reason: string;
-				}
-			).reason;
-	};
-
-	for (const source of sources) {
-		const releaseStartedAt = performance.now();
-		const { label, sourcePath, outputPath, codeKey, nameKey } = source;
-		const directory = join(
-			ROOT,
-			"data/build",
-			relative(outputDirectory, dirname(outputPath)),
+	const sources = releaseSources(INTERMEDIATES);
+	const byLabel = new Map(sources.map((source) => [source.label, source]));
+	const releases = websiteBoundaryReleases().filter(
+		({ key }) => !only || key === only,
+	);
+	if (releases.length === 0)
+		throw new Error(`Unknown boundary release: ${only}`);
+	// Keep deployable sidecars with the archives, independent of private topology.
+	for (const { asset } of releases) {
+		const relativeDirectory = dirname(asset.replace(/^\/data\//, ""));
+		const directory = join(ROOT, "data/build", relativeDirectory);
+		await mkdir(directory, { recursive: true });
+		const propertiesPath = join(
+			INTERMEDIATES,
+			relativeDirectory,
+			"properties.json",
 		);
-		const tilesPath = join(directory, TILES_FILENAME);
-		const untiledPath = join(directory, UNTILED_FILENAME);
-		const built = existsSync(tilesPath) ? tilesPath : untiledPath;
-
-		// Without its source a release keeps whatever tiles it already has.
-		if (!sourcePath || !existsSync(sourcePath)) {
-			await record(label, directory);
-			logArtifact("tiles", label, [
-				"skipped, local GeoJSON source missing",
-				elapsedSince(releaseStartedAt),
-			]);
-			continue;
+		const temporaryProperties = join(
+			directory,
+			`properties.${randomUUID()}.tmp`,
+		);
+		try {
+			await link(propertiesPath, temporaryProperties);
+			await rename(
+				temporaryProperties,
+				join(directory, "properties.json"),
+			);
+		} finally {
+			await rm(temporaryProperties, { force: true });
 		}
+	}
+	for (const { key: label, asset } of releases) {
+		const started = performance.now();
+		const relativeDirectory = dirname(asset.replace(/^\/data\//, ""));
+		const directory = join(ROOT, "data/build", relativeDirectory);
+		const descriptorPath = join(directory, "resource.json");
+		const propertiesPath = join(
+			INTERMEDIATES,
+			relativeDirectory,
+			"properties.json",
+		);
+
+		const source = byLabel.get(label);
+		const topologyPath = join(
+			INTERMEDIATES,
+			relativeDirectory,
+			"boundaries.topojson",
+		);
+		const inputs = [
+			topologyPath,
+			propertiesPath,
+			...TILER_SOURCES,
+			...(source?.inputs ?? []),
+		];
+		if (source?.sourcePath && existsSync(source.sourcePath))
+			inputs.push(source.sourcePath);
+		if (!(await isStale(inputs, descriptorPath))) {
+			const cached = JSON.parse(await readFile(descriptorPath, "utf8"));
+			const parsed = parseBoundaryResources({
+				...manifest,
+				releases: { [label]: cached },
+			});
+			const entry = parsed.releases[label]!;
+			if (
+				(
+					await stat(
+						join(
+							ROOT,
+							"data/build",
+							entry.href.replace(/^\/data\//, ""),
+						),
+					).catch(() => undefined)
+				)?.size === entry.bytes
+			) {
+				manifest.releases[label] = entry;
+				logArtifact("tiles", label, ["cached", elapsedSince(started)]);
+				continue;
+			}
+		}
+		const collection =
+			source?.sourcePath && existsSync(source.sourcePath)
+				? await correctedSource(
+						await readFile(source.sourcePath, "utf8"),
+						source,
+					)
+				: decodeBoundaryData(
+						JSON.parse(await readFile(topologyPath, "utf8")),
+					);
+		const release =
+			source ??
+			(() => {
+				throw new Error(`Missing source metadata for ${label}`);
+			})();
+		const features = collection.features;
+		const areas = areasByCode(features, release.codeKey, label);
+		const properties: { features: Record<string, unknown>[] } = JSON.parse(
+			await readFile(
+				join(INTERMEDIATES, relativeDirectory, "properties.json"),
+				"utf8",
+			),
+		);
+		const propertyCodes = [
+			...new Set(
+				properties.features.map(
+					(properties) => properties[release.codeKey],
+				),
+			),
+		].sort();
 		if (
-			!(await isStale(
-				[sourcePath, ...source.inputs, ...TILER_SOURCES],
-				built,
-			))
-		) {
-			await record(label, directory);
-			logArtifact("tiles", label, [
-				"cached",
-				existsSync(tilesPath)
-					? formatKb((await stat(tilesPath)).size)
-					: "untiled",
-				elapsedSince(releaseStartedAt),
-			]);
-			continue;
-		}
-
-		const collection = await correctedSource(
-			await readFile(sourcePath, "utf8"),
-			source,
-		);
-		const features = collection.features as unknown as Parameters<
-			typeof areasByCode
-		>[0];
+			JSON.stringify([...areas.keys()].sort()) !==
+			JSON.stringify(propertyCodes)
+		)
+			throw new Error(
+				`${label}: map geometry and properties have different area codes.`,
+			);
 		const names = new Map(
 			features.flatMap((feature) => {
-				const code = feature.properties?.[codeKey];
-				const name = feature.properties?.[nameKey];
+				const code = feature.properties
+					? Reflect.get(feature.properties, release.codeKey)
+					: undefined;
+				const name = feature.properties
+					? Reflect.get(feature.properties, release.nameKey)
+					: undefined;
 				return typeof code === "string" && typeof name === "string"
 					? [[code, name] as const]
 					: [];
@@ -191,14 +256,57 @@ export async function compileBoundaryTiles(
 		);
 		const meta = parseDatasetMeta(
 			JSON.parse(
-				await readFile(join(dirname(sourcePath), "meta.json"), "utf8"),
+				await readFile(
+					join(dirname(release.topologySourcePath), "meta.json"),
+					"utf8",
+				),
 			),
-			basename(dirname(sourcePath)),
+			basename(dirname(release.topologySourcePath)),
 		);
-		await mkdir(directory, { recursive: true });
+		const assertIds = (ids: Map<string, number>) => {
+			const numbered = [...ids].sort(([a], [b]) => a.localeCompare(b));
+			if (
+				numbered.length !== propertyCodes.length ||
+				numbered.some(
+					([code, id], index) =>
+						code !== propertyCodes[index] || id !== index + 1,
+				)
+			)
+				throw new Error(
+					`${label}: tile IDs do not match the properties sidecar.`,
+				);
+		};
+		let entry: BoundaryResource;
 		try {
-			const tileset = compileTileset(
-				areasByCode(features, codeKey, label),
+			const tileset = compileTileset(areas, {
+				name: label,
+				description: meta.title,
+				attribution: `Contains ${meta.publisher} data, ${meta.licence.name}`,
+				names,
+				gzip: gzipSync,
+			});
+			assertIds(tileset.ids);
+			await writeAtomically(
+				join(directory, TILES_FILENAME),
+				tileset.archive,
+			);
+			entry = {
+				method: "shared-arcs",
+				href: asset.replace(/\.topojson$/, ".pmtiles"),
+				bytes: tileset.archive.length,
+			};
+		} catch (error) {
+			if (
+				!(error instanceof NonCoverageError) ||
+				COMPILED_POLYGON_RELEASES[label] !== error.edgeCount
+			)
+				throw error;
+			// Keep the shapes previously drawn from TopoJSON, including overlaps.
+			const polygons = decodeBoundaryData(
+				JSON.parse(await readFile(topologyPath, "utf8")),
+			);
+			const archive = compilePolygonArchive(
+				areasByCode(polygons.features, release.codeKey, label),
 				{
 					name: label,
 					description: meta.title,
@@ -207,38 +315,37 @@ export async function compileBoundaryTiles(
 					gzip: gzipSync,
 				},
 			);
-			await writeFile(tilesPath, tileset.archive);
-			await rm(untiledPath, { force: true });
-			logArtifact("tiles", label, [
-				"compiled",
-				`${tileset.tileCount} tiles`,
-				formatKb(tileset.archive.length),
-				elapsedSince(releaseStartedAt),
-			]);
-		} catch (error) {
-			const reason = (error as Error).message;
-			if (!reason.includes("is not a coverage")) throw error;
-			await writeFile(untiledPath, JSON.stringify({ reason }) + "\n");
-			await rm(tilesPath, { force: true });
-			logArtifact("tiles", label, [
-				"untiled, not a coverage",
-				elapsedSince(releaseStartedAt),
-			]);
+			assertIds(archive.ids);
+			await writeAtomically(
+				join(directory, TILES_FILENAME),
+				archive.archive,
+			);
+			entry = {
+				method: "compiled-polygons",
+				href: asset.replace(/\.topojson$/, ".pmtiles"),
+				bytes: archive.archive.length,
+				reason: error.message,
+			};
 		}
-		await record(label, directory);
+		await writeAtomically(descriptorPath, JSON.stringify(entry));
+		manifest.releases[label] = entry;
+		logArtifact("tiles", label, [
+			entry.method,
+			formatKb(entry.bytes),
+			elapsedSince(started),
+		]);
 	}
-
-	const manifestPath = join(ROOT, "data/build", TILES_MANIFEST);
-	await mkdir(dirname(manifestPath), { recursive: true });
-	await writeFile(manifestPath, JSON.stringify(manifest, null, "\t") + "\n");
-	console.log(
-		`Vector tiles complete: ${Object.keys(manifest.releases).length} tiled, ` +
-			`${Object.keys(manifest.untiled).length} untiled (${elapsedSince(startedAt)}).`,
+	assertCompleteBoundaryResources(manifest);
+	await writeAtomically(
+		manifestPath,
+		JSON.stringify(manifest, null, "\t") + "\n",
 	);
 	await linkBoundaryTiles(ROOT, outputDirectory);
+	console.log(
+		`Boundary map resources complete (${elapsedSince(startedAt)}).`,
+	);
 	return manifest;
 }
 
-if (process.argv[1]?.endsWith("compile-boundary-tiles.mts")) {
+if (process.argv[1]?.endsWith("compile-boundary-tiles.mts"))
 	await compileBoundaryTiles();
-}

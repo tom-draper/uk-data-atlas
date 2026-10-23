@@ -328,7 +328,7 @@ Requirements:
 
 // Check for --all flag
 if (args[0] === "--all" || args[0] === "-a") {
-	const baseDir = args[1] || "./public/data/boundaries";
+	const baseDir = args[1] || "./data/build/website-boundaries/boundaries";
 	processAllBoundaries(baseDir);
 } else {
 	const input = args[0];
