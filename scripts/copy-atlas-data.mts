@@ -3,7 +3,7 @@
  * output on disk, services/api/public, into public/data. The website serves
  * and reads its own copy, so neither building nor running it needs a running
  * API. A file is only rewritten when its contents change, so an unchanged
- * lookup does not look new to `precompile:if-needed`. Without an API build,
+ * lookup does not look new to the dev data check. Without an API build,
  * a complete earlier copy is kept.
  */
 import { createHash } from "node:crypto";

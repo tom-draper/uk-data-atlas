@@ -1,5 +1,5 @@
 // Orchestrates the gazetteer core build from boundary topojson. Called from
-// scripts/precompile-data.ts. Crosswalk shards are built separately
+// scripts/compile-website-data.mts. Crosswalk shards are built separately
 // (scripts/gazetteer-crosswalks.ts) since they are expensive and change rarely.
 import { feature } from "topojson-client";
 import { getProp } from "../boundaries/properties";

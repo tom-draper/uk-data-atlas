@@ -5,6 +5,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { precompileFingerprints } from "./precompile-fingerprint.mjs";
 
+const args = process.argv.slice(2);
+if (args.length !== 2 || args[0] !== "--target" || args[1] !== "website") {
+	throw new Error(
+		"Usage: pnpm data:verify --target website. Only website verification is currently supported.",
+	);
+}
+
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const datasets = join(root, "public", "data", "datasets");
 const manifestPath = join(datasets, "dataset-manifest.json");
@@ -20,7 +27,9 @@ type Manifest = {
 };
 
 const fail = (message: string): never => {
-	throw new Error(`${message} Run pnpm data:build --target website locally.`);
+	throw new Error(
+		`${message} Run pnpm data:compile --target website locally.`,
+	);
 };
 
 const manifest = JSON.parse(
@@ -76,7 +85,7 @@ const { boundaryChunkProblems } = await import("./boundary-chunks");
 const chunkProblems = await boundaryChunkProblems(root);
 if (chunkProblems.length > 0)
 	throw new Error(
-		`${chunkProblems.join("\n")}\nRun pnpm data:build --target website locally.`,
+		`${chunkProblems.join("\n")}\nRun pnpm data:compile --target website locally.`,
 	);
 
 await stat(join(root, "public", "data", "boundaries"));

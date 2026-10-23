@@ -5,12 +5,14 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const options = { cwd: root, shell: process.platform === "win32" };
 const force = process.env.ATLAS_FORCE_PRECOMPILE === "1";
 const fresh =
-	!force && spawnSync("pnpm", ["precompile:verify"], options).status === 0;
+	!force &&
+	spawnSync("pnpm", ["data:verify", "--target", "website"], options)
+		.status === 0;
 
 if (fresh) {
 	console.log("Local precompiled data is up to date; skipping regeneration.");
 } else {
-	const child = spawnSync("pnpm", ["data:build", "--target", "website"], {
+	const child = spawnSync("pnpm", ["data:compile", "--target", "website"], {
 		...options,
 		stdio: "inherit",
 	});

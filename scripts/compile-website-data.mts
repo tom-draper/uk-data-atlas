@@ -4,12 +4,12 @@ import { buildAtlasSqlite } from "../services/api/scripts/build-atlas-sqlite";
  * chunks, using the catalogue intermediates in compiled/datasets.
  * Catalogue payloads are served by Next.js from compiled/atlas.sqlite.
  *
- * Run via: pnpm data:build --target website (which compiles the datasets first)
+ * Run via: pnpm data:compile --target website (which compiles the datasets first)
  * Run before pnpm build. pnpm dev regenerates stale local output.
  *
  * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
  * type or output file, against the boundaries and gazetteer a full run has
- * already written: pnpm precompile:only claimantCount
+ * already written: pnpm datasets:rebuild claimantCount
  *
  * This file only sequences the run. Reading raw sources is in precompile/sources,
  * the cache that lets a run skip unchanged work is precompile/cache.mts, and each
@@ -85,7 +85,7 @@ async function compileSelected(names: readonly string[]) {
 		manifestTimes = await stat(manifestPath);
 	} catch {
 		throw new Error(
-			"No dataset manifest to update. Run a full pnpm data:build --target website first.",
+			"No dataset manifest to update. Run a full pnpm data:compile --target website first.",
 		);
 	}
 
@@ -137,7 +137,7 @@ async function compileSelected(names: readonly string[]) {
 			CATALOGUE_DATASET_DEFINITIONS.map((definition) => definition.type),
 		),
 	});
-	// precompile:if-needed treats a manifest newer than data/ as proof that
+	// the dev data check treats a manifest newer than data/ as proof that
 	// everything is current. Only some datasets were rebuilt here, so keep the
 	// manifest's old timestamp and leave that judgement as a full run left it.
 	await utimes(manifestPath, manifestTimes.atime, manifestTimes.mtime);
