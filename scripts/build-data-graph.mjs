@@ -351,13 +351,3 @@ const websiteStages = [
 ];
 
 export const buildDataStages = [...apiStages, ...websiteStages];
-
-/**
- * The final stages each product reads. A target builds them and everything
- * they depend on, and nothing else, so building one target and then the other
- * gives the same output as building both.
- */
-export const buildDataTargets = {
-	api: apiStages.map(({ name }) => name),
-	website: ["seo"],
-};

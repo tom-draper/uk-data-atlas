@@ -4,7 +4,7 @@ import { buildAtlasSqlite } from "../services/api/scripts/build-atlas-sqlite";
  * chunks, using the catalogue intermediates in data/build/datasets.
  * Catalogue payloads are served by Next.js from data/build/atlas.sqlite.
  *
- * Run via: pnpm data:build --target website (which compiles the datasets first)
+ * Run via: pnpm data:build (which compiles the datasets first)
  * Run before pnpm build. pnpm dev regenerates stale local output.
  *
  * The internal `--only <dataset>[,<dataset>...]` option rebuilds selected
@@ -83,7 +83,7 @@ async function compileSelected(names: readonly string[]) {
 		manifestTimes = await stat(manifestPath);
 	} catch {
 		throw new Error(
-			"No dataset manifest to update. Run a full pnpm data:build --target website first.",
+			"No dataset manifest to update. Run a full pnpm data:build first.",
 		);
 	}
 

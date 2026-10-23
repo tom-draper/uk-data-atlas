@@ -19,25 +19,19 @@ memory for the data download and geometry builds; these can take hours.
 export PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
 cd /root/uk-data-atlas
 pnpm install --frozen-lockfile
-pnpm data:build --target api
+pnpm data:build
 pnpm --dir services/api build
-```
-
-Then build the website from the same checkout. It does not need the API
-running:
-
-```sh
-pnpm data:build --target website
 pnpm build
 ```
 
-The build order is raw data download, API data and runtime build, website
-data build, then website build. Run these steps serially.
+The data build downloads raw inputs and builds all API and website data.
+Then build the API runtime and Next.js app from the same checkout.
+Run these steps serially. Neither server needs to be running during the build.
 The API data build checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/` and the terrain catalogue
 payload to `data/build/atlas.sqlite`. Keep `data/build/atlas.sqlite` under the repository
 root when deploying either server. Both read it in read-only mode.
-`pnpm data:build --target website` builds missing or stale dependencies, copies
+`pnpm data:build` builds missing or stale dependencies, copies
 the atlas lookups and pages from the API's build output, then writes browser
 data and SEO files to `public/data/`.
 Neither output directory is tracked in Git.
@@ -48,10 +42,9 @@ exit from any command means that step failed; stop before the next step.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.
 
-`pnpm data:build --target api` builds the API data.
-`pnpm --dir services/api build` bundles the server.
-`pnpm data:build --target website` runs only the stages the website's data
-needs, including SEO data, and `pnpm data:build` runs both.
+`pnpm data:build` builds all data, including boundaries, PMTiles and SEO.
+`pnpm --dir services/api build` bundles the API server, and `pnpm build` builds
+the Next.js app from generated data.
 Stages whose inputs and outputs are unchanged since they last ran are skipped
 (see "One data build" in `ARCHITECTURE.md`); add `--no-cache` to run them all.
 To inspect the complete local data build without executing commands, run:
@@ -64,8 +57,8 @@ After a complete build, rebuild a named stage and every affected downstream
 stage with `--from`. Preview the selection before running it:
 
 ```sh
-pnpm data:build --target api --from crosswalk-inventory --plan
-pnpm data:build --target api --from crosswalk-inventory
+pnpm data:build --from crosswalk-inventory --plan
+pnpm data:build --from crosswalk-inventory
 ```
 
 Stage names appear in the plan alongside their commands and dependencies.
@@ -73,7 +66,7 @@ Stage names appear in the plan alongside their commands and dependencies.
 `--only <stage>` builds the named stage and its prerequisites, including
 downloads when required. It reuses valid cached results.
 If upstream inputs changed, select their stage instead, or run
-`pnpm data:build --target api` for the complete build.
+`pnpm data:build` for the complete build.
 The runner executes serially and stops at the first failure. Individual builders
 retain their existing artifact reuse checks. Use `--from` when downstream
 outputs also need to be refreshed.
@@ -168,7 +161,7 @@ certificates or swap files. The API build compiles the website docs catalogue an
 The website serves its own copy of the atlas lookups and pages from
 `public/data/` and never fetches from the API. Restart
 the API and website in either order. On a memory-constrained local machine,
-stop the API before `pnpm data:build --target website`.
+stop the API before `pnpm data:build`.
 
 API PMTiles and map feature downloads live in `data/build/map-resources/`.
 Include this directory alongside `data/build/atlas.sqlite` in API deployments.

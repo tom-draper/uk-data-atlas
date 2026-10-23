@@ -12,7 +12,7 @@ const fresh =
 if (fresh) {
 	console.log("Local data is up to date; skipping regeneration.");
 } else {
-	const child = spawnSync("pnpm", ["data:build", "--target", "website"], {
+	const child = spawnSync("pnpm", ["data:build"], {
 		...options,
 		stdio: "inherit",
 	});

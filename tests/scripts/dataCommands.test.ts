@@ -94,7 +94,7 @@ test("dev startup builds missing data through the pipeline before any copy comma
 	expect(result.status).toBe(0);
 	expect(commands).toEqual([
 		["data:verify", "--target", "website"],
-		["data:build", "--target", "website"],
+		["data:build"],
 	]);
 });
 
@@ -103,7 +103,7 @@ test("dev startup propagates compilation failure without building SEO data", () 
 	expect(result.status).toBe(23);
 	expect(commands).toEqual([
 		["data:verify", "--target", "website"],
-		["data:build", "--target", "website"],
+		["data:build"],
 	]);
 });
 
