@@ -5,9 +5,7 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const options = { cwd: root, shell: process.platform === "win32" };
 const force = process.env.ATLAS_FORCE_DATA_BUILD === "1";
 const fresh =
-	!force &&
-	spawnSync("pnpm", ["data:verify", "--target", "website"], options)
-		.status === 0;
+	!force && spawnSync("pnpm", ["data:verify"], options).status === 0;
 
 if (fresh) {
 	console.log("Local data is up to date; skipping regeneration.");
