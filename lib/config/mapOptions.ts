@@ -51,7 +51,9 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 				? { measure: "grade4" }
 				: {}),
 			...(definition.type === "housePrice" ? { measure: "median" } : {}),
-			...(definition.type === "income" ? { measure: "median" } : {}),
+			...(definition.type === "income"
+				? { measure: "median", period: "annual" }
+				: {}),
 			...(definition.type === "waste" ? { metric: "collected" } : {}),
 			...(definition.type === "ghgEmissions"
 				? { measure: "perPerson" }

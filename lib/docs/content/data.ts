@@ -86,7 +86,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Pay",
 		topic: "work",
 		datasets: ["income", "workplace-income"],
-		intro: "Median annual and hourly pay for employees in each English local authority, both by where workers live and where their jobs are located.",
+		intro: "Median annual and hourly pay for employees in each English local authority, both by where workers live and where their jobs are located. The income legend switches between annual and hourly pay and between median and mean. Regional cards show an unweighted average of the available authority estimates, rather than a pooled regional median or mean.",
 	},
 	{
 		slug: "businesses",
