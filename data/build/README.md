@@ -48,7 +48,7 @@ again. `pnpm data:build --only datasets` builds this stage and its prerequisites
 
 ## atlas.sqlite
 
-The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, `crosswalk-inventory`, and `named-locations` and writes this database
+The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, `crosswalk-inventory`, `named-locations`, and `location-projections` and writes this database
 with the existing `node:sqlite` library. It replaces the whole database through
 a temporary file and atomic rename. Every run writes every table, so the stage
 cache detects its output without a retained-file `outputs` declaration.
@@ -242,6 +242,28 @@ location projections, lookup exports and release snapshots. Packed metadata and
 geometry JSON remain build outputs of the same compiler, although the API no
 longer reads them. Atlas pages use the resolver's migrated loader. The website
 copy step copies only generated atlas lookups and pages.
+
+### Location projections
+
+`location_projection_members` and `location_projection_parents` have composite
+primary keys `(crosswalkId, key)`, both non-null text, and non-null `value BLOB`.
+Each row stores one JSON projection compressed with its shard's dictionary.
+`location_projection_dictionaries` has composite primary key `(kind, crosswalkId)`
+and non-null `dictionary BLOB`. All three tables use `WITHOUT ROWID`.
+
+The `location-projection-inventory` payload preserves the inventory's exact JSON
+bytes and provenance hashes. Runtime inventory and projection reads use only
+`atlas.sqlite`. Lookups still decompress one projection at a time and cache only
+shard dictionaries. The shared writer replaces the database atomically, then
+removes the obsolete `services/api/public/location-projections.sqlite`.
+
+The `location-projections` stage writes JSON shards and their inventory as inputs
+to the shared writer and immutable release snapshots. These intermediates remain
+until those snapshot readers migrate. Rebuilding projections invalidates the
+shared database and its downstream consumers.
+
+Run `node --import tsx scripts/verify-location-projections.mts` after building to
+compare every stored member and parent projection with its release shard.
 
 ## Planned
 

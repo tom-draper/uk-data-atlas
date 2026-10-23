@@ -91,6 +91,7 @@ const apiOrder = [
 	"geometry-store",
 	"api-datasets",
 	"named-locations",
+	"location-projections",
 	"atlas-sqlite",
 	"place-index",
 	"area-search-index",
@@ -103,7 +104,6 @@ const apiOrder = [
 	"relationship-paths",
 	"analysis-geographies",
 	"analysis-geography-validation",
-	"location-projections",
 	"relationship-candidates",
 	"geography-inventory",
 	"lookup-manifest",
@@ -213,6 +213,7 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		stages(build.run(["--target", "api", "--from", "crosswalk-inventory"])),
 		[
 			"crosswalk-inventory",
+			"location-projections",
 			"atlas-sqlite",
 			"place-index",
 			"area-search-index",
@@ -224,7 +225,6 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 			"relationship-paths",
 			"analysis-geographies",
 			"analysis-geography-validation",
-			"location-projections",
 			"relationship-candidates",
 			"geography-inventory",
 			"lookup-manifest",
@@ -308,7 +308,7 @@ test("the first failing stage returns its exit code and stops the build", (conte
 		result.stdout,
 		/Stage relationship-paths failed with exit code 23/,
 	);
-	assert.equal(build.commands().length, 10);
+	assert.equal(build.commands().length, 11);
 	assert.deepEqual(build.commands().at(-1), [
 		"exec",
 		"tsx",

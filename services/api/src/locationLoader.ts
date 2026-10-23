@@ -1,8 +1,9 @@
 import { readSqliteNamedLocationInventory } from "./atlasNamedLocations";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import {
-	LOCATION_PROJECTION_DATABASE,
 	LocationProjectionDatabase,
 	type LocationProjectionInventory,
 } from "./locationProjections";
@@ -10,7 +11,6 @@ import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
 } from "./namedLocations";
-import { publicPath, readPublicManifest } from "./publicManifest";
 
 export const readNamedLocationInventory = readSqliteNamedLocationInventory;
 
@@ -19,13 +19,17 @@ export const readLocationProjectionInventory = (
 	namedLocations: NamedLocationInventory,
 	crosswalkInventory: CrosswalkInventory,
 ): LocationProjectionInventory => {
-	const path = publicPath(apiRoot, "location-projection-inventory.json");
+	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
 	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
+		readAtlasPayload(
+			resolve(apiRoot, "../.."),
+			"location-projection-inventory",
+		),
 	) as LocationProjectionInventory;
 	if (
 		inventory.schemaVersion !== 1 ||
 		!Array.isArray(inventory.shards) ||
+		!Array.isArray(inventory.parentShards) ||
 		inventory.namedLocationInventoryHash !== namedLocations.contentHash ||
 		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
 	) {
@@ -34,15 +38,15 @@ export const readLocationProjectionInventory = (
 	return inventory;
 };
 
-/** The projections, read from the database the build writes beside them. */
+/** Projections share the atlas database with their location and crosswalk inputs. */
 export const createLocationProjectionStore = (
 	apiRoot: string,
 	inventory: LocationProjectionInventory,
 ) => {
-	const path = publicPath(apiRoot, LOCATION_PROJECTION_DATABASE);
+	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
 	if (!existsSync(path))
 		throw new Error(
-			`Missing ${LOCATION_PROJECTION_DATABASE}. Run pnpm --dir ../.. data:build --only location-projections.`,
+			`Missing ${path}. Run pnpm --dir ../.. data:build --only atlas-sqlite.`,
 		);
 	return new LocationProjectionDatabase(path, inventory);
 };

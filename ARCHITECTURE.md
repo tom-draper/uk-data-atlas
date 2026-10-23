@@ -180,7 +180,8 @@ and `--no-cache` rerun the stages they select regardless.
 
 The `atlas-sqlite` stage writes the terrain catalogue to `data/build/atlas.sqlite`,
 alongside catalogue datasets, relational areas, crosswalk source/target rows and
-named locations with membership tables and lazy geometry. The API reads these
+named locations with membership tables and lazy geometry, and indexed location
+projections. The API reads these
 directly. Their JSON outputs remain build and release intermediates. Named
 locations compile from area JSON before the shared SQLite database is written.
 Other API loaders still read their JSON outputs.

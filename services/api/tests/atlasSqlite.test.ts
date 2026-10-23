@@ -1,7 +1,23 @@
+import { createNamedLocationLookup } from "../src/namedLocations";
+import {
+	compileLocationProjections,
+	LocationProjectionStore,
+} from "../src/locationProjections";
+import {
+	createLocationProjectionStore,
+	readLocationProjectionInventory,
+} from "../src/locationLoader";
+import {
+	areaLookup,
+	containmentCrosswalk,
+	crosswalkInventory,
+	namedLocationInventory,
+} from "./geographyFixtures";
 import { createHash } from "node:crypto";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import assert from "node:assert/strict";
 import {
+	existsSync,
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
@@ -60,6 +76,17 @@ const fixture = (context: TestContext) => {
 		join(root, "data/build/datasets/dataset-manifest.json"),
 		JSON.stringify({ version: 1, datasets: [] }),
 	);
+	writeFileSync(
+		join(root, "services/api/public/location-projection-inventory.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "projections",
+			namedLocationInventoryHash: "locations",
+			crosswalkInventoryHash: "crosswalks",
+			shards: [],
+			parentShards: [],
+		}),
+	);
 	return { root, apiRoot };
 };
 
@@ -80,7 +107,11 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 				.prepare("SELECT id FROM payloads")
 				.all()
 				.map((row) => row.id),
-			["dataset-manifest", "terrain-catalogue"],
+			[
+				"dataset-manifest",
+				"location-projection-inventory",
+				"terrain-catalogue",
+			],
 		);
 		assert.equal(
 			database
@@ -214,4 +245,113 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	assert.throws(() => buildAtlasSqlite(root), /does not match its manifest/);
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
+});
+
+test("shared atlas serves projection routes without projection JSON or a second database", (context) => {
+	const { root, apiRoot } = fixture(context);
+	const compiled = compileLocationProjections(
+		namedLocationInventory,
+		crosswalkInventory,
+		[containmentCrosswalk],
+		areaLookup,
+	);
+	const directory = join(apiRoot, "public");
+	writeFileSync(
+		join(directory, "location-projection-inventory.json"),
+		JSON.stringify(compiled.inventory),
+	);
+	for (const shard of [
+		...compiled.inventory.shards,
+		...compiled.inventory.parentShards,
+	]) {
+		const artifact = [
+			...compiled.artifacts,
+			...compiled.parentArtifacts,
+		].find(
+			(artifact) =>
+				artifact.crosswalkId === shard.crosswalkId &&
+				(shard.artifact.startsWith("location-parent-projections/")
+					? "parentProjections" in artifact
+					: "projections" in artifact),
+		);
+		assert.ok(artifact);
+		mkdirSync(join(directory, shard.artifact, ".."), { recursive: true });
+		writeFileSync(
+			join(directory, shard.artifact),
+			JSON.stringify(artifact),
+		);
+	}
+	const obsolete = join(directory, "location-projections.sqlite");
+	writeFileSync(obsolete, "obsolete database");
+	buildAtlasSqlite(root);
+	assert.equal(existsSync(obsolete), false);
+	const published = readFileSync(join(root, "data/build/atlas.sqlite"));
+	writeFileSync(
+		join(directory, "location-projection-inventory.json"),
+		JSON.stringify({
+			...compiled.inventory,
+			shards: compiled.inventory.shards.map((shard) => ({
+				...shard,
+				contentHash: "stale",
+			})),
+		}),
+	);
+	assert.throws(() => buildAtlasSqlite(root), /does not match its inventory/);
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/atlas.sqlite")),
+		published,
+	);
+	// Runtime must use only the shared database, including its inventory.
+	rmSync(directory, { recursive: true });
+	const inventory = readLocationProjectionInventory(
+		apiRoot,
+		namedLocationInventory,
+		crosswalkInventory,
+	);
+	assert.equal(JSON.stringify(inventory), JSON.stringify(compiled.inventory));
+	const store = createLocationProjectionStore(apiRoot, inventory);
+	const before = new LocationProjectionStore(compiled.inventory, (shard) => {
+		const artifact = compiled.artifacts.find(
+			(artifact) => artifact.crosswalkId === shard.crosswalkId,
+		);
+		assert.ok(artifact);
+		return artifact;
+	});
+	const inputs = {
+		areaLookup,
+		namedLocationInventory,
+		crosswalkInventory,
+		namedLocationLookup: createNamedLocationLookup(namedLocationInventory),
+		crosswalkLookup: new Map([
+			[containmentCrosswalk.id, containmentCrosswalk],
+		]),
+	};
+	for (const query of [
+		"",
+		"geography=ward&release=2025-01-en-ward",
+		"geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025",
+	]) {
+		const url = `/v1/locations/greater-manchester/members?${query}`;
+		const expected = route(
+			"GET",
+			url,
+			testContext({ ...inputs, locationProjectionStore: before }),
+		);
+		const actual = route(
+			"GET",
+			url,
+			testContext({ ...inputs, locationProjectionStore: store }),
+		);
+		assert.equal(JSON.stringify(actual), JSON.stringify(expected), url);
+		if (query.includes("via=")) assert.equal(actual.status, 200);
+	}
+	assert.throws(
+		() =>
+			readLocationProjectionInventory(
+				apiRoot,
+				{ ...namedLocationInventory, contentHash: "stale" },
+				crosswalkInventory,
+			),
+		/Invalid location projection inventory/,
+	);
 });

@@ -1,3 +1,4 @@
+import { writeSqliteIndex } from "../src/sqliteIndex";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -7,7 +8,7 @@ import {
 	compileLocationProjections,
 	LocationProjectionDatabase,
 	LocationProjectionStore,
-	writeLocationProjectionDatabase,
+	locationProjectionTables,
 } from "../src/locationProjections";
 import {
 	areaLookup,
@@ -127,8 +128,24 @@ test("reads each projection from its database exactly as from its shard", () => 
 	);
 	const directory = mkdtempSync(join(tmpdir(), "location-projections-"));
 	try {
-		const path = join(directory, "location-projections.sqlite");
-		writeLocationProjectionDatabase(path, compiled);
+		const path = join(directory, "atlas.sqlite");
+		writeSqliteIndex(
+			path,
+			{ schemaVersion: "1" },
+			{
+				...locationProjectionTables(compiled),
+				payloads: {
+					columns: ["id TEXT", "payload TEXT"],
+					key: ["id"],
+					rows: [
+						[
+							"location-projection-inventory",
+							JSON.stringify(compiled.inventory),
+						],
+					],
+				},
+			},
+		);
 		const database = new LocationProjectionDatabase(
 			path,
 			compiled.inventory,
