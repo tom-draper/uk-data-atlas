@@ -157,6 +157,7 @@ export default function UIOverlay({
 
 	const legendPanel = (
 		<LegendPanel
+			setActiveViz={setActiveViz}
 			activeDataset={activeDataset}
 			activeViz={activeViz}
 			mapOptions={mapOptions}
