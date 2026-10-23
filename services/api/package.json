@@ -17,7 +17,8 @@
 	},
 	"scripts": {
 		"audit:archive": "node scripts/audit-archive.mjs",
-		"build": "node scripts/build-runtime.mjs",
+		"generate:query-rules": "tsx scripts/build-query-rules.ts",
+		"build": "pnpm generate:query-rules && node scripts/build-runtime.mjs",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",
 		"example:map-render": "tsx examples/correct-map-render.ts",
@@ -30,7 +31,7 @@
 		"contract:surface": "tsx scripts/build-api-surface.ts",
 		"test": "tsx --max-old-space-size=4096 --test --test-concurrency=2 tests/*.test.ts tests/built/*.test.ts",
 		"test:unbuilt": "tsx --test --test-concurrency=2 tests/*.test.ts",
-		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"typecheck": "pnpm generate:query-rules && tsc --noEmit -p tsconfig.json",
 		"fetch:onspd": "tsx scripts/fetch-onspd.ts",
 		"fetch:boundaries": "tsx --max-old-space-size=4096 scripts/fetch-ons-boundaries.ts",
 		"refresh:onspd": "tsx scripts/fetch-onspd.ts",

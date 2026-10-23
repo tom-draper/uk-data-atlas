@@ -63,7 +63,6 @@ const apiStages = [
 		cacheable: false,
 	}),
 	stage("operations"),
-	stage("query-rules", [], undefined, { cacheable: false }),
 	stage(
 		"catalogue-registry",
 		["sources"],

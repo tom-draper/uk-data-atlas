@@ -79,7 +79,6 @@ function stages(result: ReturnType<ReturnType<typeof fixture>["run"]>) {
 const apiOrder = [
 	"sources",
 	"operations",
-	"query-rules",
 	"catalogue-registry",
 	"datasets",
 	"terrain-catalogue",

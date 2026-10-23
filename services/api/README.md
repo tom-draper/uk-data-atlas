@@ -2172,8 +2172,9 @@ Two things can change under a client, and each is pinned separately.
   `pnpm --dir ../.. data:build --only operations`, and refuses to start with one compiled from an
   older document. What a parameter's schema states outright, an enum's
   values or a whole number's range and default, handlers read from
-  `src/queryRules.ts`, which `pnpm --dir ../.. data:build --only query-rules` writes from the same
-  document and a test holds to it.
+  `src/queryRules.ts`, generated from the same document by API builds and
+  typechecks. Run `pnpm generate:query-rules` from `services/api` to refresh it
+  explicitly. A test checks it against the document.
 - **The data** is identified by the current Atlas release. Every response
   carries an `Atlas-Release` header, and JSON responses name it in the envelope
   too. A correction or preprocessing change replaces the current release; the
