@@ -1,3 +1,7 @@
+import {
+	assertCompleteBoundaryResources,
+	parseBoundaryResources,
+} from "../shared/boundaryResources";
 import { readAtlasPayload } from "../shared/atlasSqlite";
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";
@@ -79,13 +83,6 @@ for (const dataset of manifest.datasets ?? []) {
 		);
 }
 
-const { boundaryChunkProblems } = await import("./boundary-chunks");
-const chunkProblems = await boundaryChunkProblems(root);
-if (chunkProblems.length > 0)
-	throw new Error(
-		`${chunkProblems.join("\n")}\nRun pnpm data:build locally.`,
-	);
-
 await stat(join(root, "public", "data", "boundaries"));
 
 const tilesManifestPath = join(
@@ -95,16 +92,27 @@ const tilesManifestPath = join(
 	"boundaries",
 	"tiles.json",
 );
-const tiles = JSON.parse(
-	await readFile(tilesManifestPath, "utf8").catch(() =>
-		fail("Boundary vector tile manifest is missing or unreadable."),
+const tiles = parseBoundaryResources(
+	JSON.parse(
+		await readFile(tilesManifestPath, "utf8").catch(() =>
+			fail("Boundary map resource manifest is missing or unreadable."),
+		),
 	),
-) as { releases: Record<string, { href: string; bytes: number }> };
+);
+assertCompleteBoundaryResources(tiles);
 for (const [release, { href, bytes }] of Object.entries(tiles.releases)) {
 	const size = await stat(join(root, "public", href))
 		.then(({ size }) => size)
 		.catch(() => undefined);
 	if (size !== bytes)
-		fail(`Vector tiles for ${release} do not match tiles.json.`);
+		fail(`Map resource for ${release} does not match tiles.json.`);
+	await stat(join(root, "public", dirname(href), "properties.json")).catch(
+		() => fail(`Missing boundary properties for ${release}.`),
+	);
 }
+const publicFiles = await readdir(join(root, "public/data/boundaries"), {
+	recursive: true,
+});
+if (publicFiles.some((file) => /\.topojson(?:\.gz)?$/.test(file)))
+	fail("Legacy public boundary topology remains.");
 console.log("Local precompiled data matches its manifest and compiler inputs.");

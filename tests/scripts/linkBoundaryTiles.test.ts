@@ -8,66 +8,131 @@ import {
 	rename,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { expect, onTestFinished, test } from "vitest";
 import { linkBoundaryTiles } from "@/scripts/link-boundary-tiles";
+import { websiteBoundaryReleases } from "@/shared/boundaryResources";
 
-test("shares archive storage, repairs old copies and removes obsolete tiles while retaining topology", async () => {
+async function fixture() {
 	const root = await mkdtemp(join(tmpdir(), "boundary-publish-"));
 	onTestFinished(() => rm(root, { recursive: true, force: true }));
-	const source = join(root, "data/build/boundaries");
-	const target = join(root, "public/data/boundaries");
-	await mkdir(join(source, "ward/current"), { recursive: true });
-	await mkdir(join(target, "ward/old"), { recursive: true });
+	const source = join(root, "data/build");
+	const target = join(root, "public/data");
 	const bytes = Buffer.from([80, 77, 0, 255]);
+	const releases = Object.fromEntries(
+		await Promise.all(
+			websiteBoundaryReleases().map(async ({ key, asset }) => {
+				const href = asset.replace(".topojson", ".pmtiles");
+				const relative = href.replace(/^\/data\//, "");
+				await mkdir(dirname(join(source, relative)), {
+					recursive: true,
+				});
+				await writeFile(join(source, relative), bytes);
+				const properties = join(
+					source,
+					dirname(relative),
+					"properties.json",
+				);
+				await mkdir(dirname(properties), { recursive: true });
+				await writeFile(properties, '{"features":[]}');
+				return [
+					key,
+					{ method: "shared-arcs", href, bytes: bytes.length },
+				];
+			}),
+		),
+	);
 	const manifest = JSON.stringify({
+		schemaVersion: 2,
 		minZoom: 0,
-		maxZoom: 10,
-		releases: {
-			"ward/current": {
-				href: "/data/boundaries/ward/current/boundaries.pmtiles",
-				bytes: 4,
-			},
-		},
-		untiled: {},
+		maxZoom: 12,
+		releases,
 	});
-	await writeFile(join(source, "tiles.json"), manifest);
-	await writeFile(join(source, "ward/current/boundaries.pmtiles"), bytes);
-	await writeFile(join(target, "ward/old/boundaries.pmtiles"), "old");
-	await writeFile(join(target, "ward/old/boundaries.json"), "topology");
-	await mkdir(join(target, "ward/current"), { recursive: true });
+	await writeFile(join(source, "boundaries/tiles.json"), manifest);
+	return { root, source, target, bytes, manifest };
+}
+
+test("publishes a complete generation, preserves hard links and removes legacy geometry", async () => {
+	const { root, source, target, bytes, manifest } = await fixture();
+	const directory = "boundaries/local-authority/2024-12-uk-bgc";
+	const archive = `${directory}/boundaries.pmtiles`;
+	await mkdir(join(target, directory, "chunks"), { recursive: true });
+	await writeFile(join(target, archive), "old copy");
+	for (const file of [
+		"boundaries.topojson",
+		"boundaries.topojson.gz",
+		"chunks/E12000001.topojson",
+		"chunks/index.json",
+		"old.geojson",
+	])
+		await writeFile(join(target, directory, file), "legacy");
+	await mkdir(join(target, "boundaries/ward/obsolete"), { recursive: true });
 	await writeFile(
-		join(target, "ward/current/boundaries.pmtiles"),
-		"old copy",
+		join(target, "boundaries/ward/obsolete/properties.json"),
+		"stale",
 	);
 	await linkBoundaryTiles(root);
 	await linkBoundaryTiles(root);
-	const original = await stat(
-		join(source, "ward/current/boundaries.pmtiles"),
+	expect((await stat(join(target, archive))).ino).toBe(
+		(await stat(join(source, archive))).ino,
 	);
-	const published = await stat(
-		join(target, "ward/current/boundaries.pmtiles"),
+	expect(
+		await readFile(join(target, directory, "properties.json"), "utf8"),
+	).toBe('{"features":[]}');
+	expect(await readFile(join(target, "boundaries/tiles.json"), "utf8")).toBe(
+		manifest,
 	);
-	expect(published.dev).toBe(original.dev);
-	expect(published.ino).toBe(original.ino);
-	expect(original.nlink).toBe(2);
-	await writeFile(join(source, "ward/current/replacement.pmtiles"), bytes);
-	await rename(
-		join(source, "ward/current/replacement.pmtiles"),
-		join(source, "ward/current/boundaries.pmtiles"),
+	for (const file of [
+		"boundaries.topojson",
+		"boundaries.topojson.gz",
+		"chunks/E12000001.topojson",
+		"chunks/index.json",
+		"old.geojson",
+	])
+		await expect(stat(join(target, directory, file))).rejects.toMatchObject(
+			{ code: "ENOENT" },
+		);
+	await expect(stat(join(target, directory, "chunks"))).rejects.toMatchObject(
+		{ code: "ENOENT" },
 	);
-	await linkBoundaryTiles(root);
-	expect(
-		(await stat(join(target, "ward/current/boundaries.pmtiles"))).ino,
-	).toBe((await stat(join(source, "ward/current/boundaries.pmtiles"))).ino);
-	expect(
-		await readFile(join(target, "ward/current/boundaries.pmtiles")),
-	).toEqual(bytes);
-	expect(await readFile(join(target, "tiles.json"), "utf8")).toBe(manifest);
-	expect(
-		await readFile(join(target, "ward/old/boundaries.json"), "utf8"),
-	).toBe("topology");
 	await expect(
-		stat(join(target, "ward/old/boundaries.pmtiles")),
+		stat(join(target, "boundaries/ward/obsolete")),
+	).rejects.toMatchObject({ code: "ENOENT" });
+	await writeFile(join(source, `${archive}.new`), bytes);
+	await rename(join(source, `${archive}.new`), join(source, archive));
+	await linkBoundaryTiles(root);
+	expect((await stat(join(target, archive))).ino).toBe(
+		(await stat(join(source, archive))).ino,
+	);
+	expect(await readFile(join(target, archive))).toEqual(bytes);
+});
+
+test("refuses incomplete or corrupt generations before deleting any legacy data", async () => {
+	const { root, source, target, manifest } = await fixture();
+	const directory = join(target, "boundaries/ward/old");
+	await mkdir(directory, { recursive: true });
+	await writeFile(join(directory, "boundaries.topojson"), "keep");
+	const broken = JSON.parse(manifest);
+	delete broken.releases["ward/2026-05-uk-bgc"];
+	await writeFile(
+		join(source, "boundaries/tiles.json"),
+		JSON.stringify(broken),
+	);
+	await expect(linkBoundaryTiles(root)).rejects.toThrow(
+		"Missing boundary map resource",
+	);
+	await writeFile(join(source, "boundaries/tiles.json"), manifest);
+	await writeFile(
+		join(source, "boundaries/ward/2026-05-uk-bgc/boundaries.pmtiles"),
+		"wrong size",
+	);
+	await expect(linkBoundaryTiles(root)).rejects.toThrow(
+		"does not match manifest",
+	);
+	expect(await readFile(join(directory, "boundaries.topojson"), "utf8")).toBe(
+		"keep",
+	);
+	await expect(
+		stat(join(target, "boundaries/tiles.json")),
 	).rejects.toMatchObject({ code: "ENOENT" });
 });

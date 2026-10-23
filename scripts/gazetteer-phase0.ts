@@ -12,7 +12,7 @@ import { getProp } from "../lib/data/boundaries/boundaries";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import { pointInRing } from "../lib/data/gazetteer/geometry";
 
-const B = join(process.cwd(), "public", "data", "boundaries");
+const B = join(process.cwd(), "data/build/website-boundaries", "boundaries");
 const FILES = {
 	lad: join(B, "local-authority", "2025-05-uk-bgc-v2", "boundaries.topojson"),
 	con: join(B, "constituency", "2024-07-uk-bgc", "boundaries.topojson"),

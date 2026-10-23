@@ -196,9 +196,6 @@ async function main() {
 		process.exit(1);
 	}
 	atlasAssets.releaseBoundaryReads();
-	// Chunks are placed by the gazetteer and lookups the assets above just wrote.
-	const { compileBoundaryChunks } = await import("./boundary-chunks");
-	await compileBoundaryChunks(ROOT);
 	const regional = CATALOGUE_DATASET_DEFINITIONS.flatMap(
 		(definition, index) =>
 			definition.payload?.regionChunks?.kind === "regional"

@@ -2,19 +2,26 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
-import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
 import { getProp } from "@/lib/data/boundaries/properties";
 import { parseMatchIndexLevel } from "@/lib/data/areaBank";
 import type { GazetteerCore } from "@/lib/data/gazetteer/types";
 import { atlasLookupPath } from "@/scripts/atlas-lookups";
 
 /**
- * Compiled assets live in public/data, where they are served from; the two
+ * Compiled topology intermediates live in data/build/website-boundaries; the two
  * releases published as TopoJSON are committed in data/. Look in both.
  */
 const localBoundaryPath = (path: string) => {
-	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
-	const served = join(process.cwd(), "public", "data", relative);
+	const relative = path
+		.split("?")[0]!
+		.replace(/^\/data\//, "")
+		.replace(/\.pmtiles$/, ".topojson");
+	const served = join(
+		process.cwd(),
+		"data/build/website-boundaries",
+		relative,
+	);
 	return existsSync(served)
 		? served
 		: join(process.cwd(), "data/source", relative);
@@ -27,13 +34,13 @@ describe("compiled ward boundary assets", () => {
 		expect(WARD_VINTAGES.length).toBeGreaterThanOrEqual(9);
 	});
 
-	it("serves every ward vintage as WGS84 TopoJSON", () => {
+	it("keeps WGS84 topology privately for every served ward vintage", () => {
 		for (const year of WARD_VINTAGES) {
 			const path =
 				BOUNDARY_CATALOG.ward.vintages[
 					year as keyof typeof BOUNDARY_CATALOG.ward.vintages
 				];
-			expect(path).toMatch(/\.topojson$/);
+			expect(path).toMatch(/\.pmtiles$/);
 
 			const topology = JSON.parse(
 				readFileSync(localBoundaryPath(path), "utf8"),

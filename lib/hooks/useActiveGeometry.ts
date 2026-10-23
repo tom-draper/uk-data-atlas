@@ -45,9 +45,8 @@ export function geometryForRequest(
 }
 
 /**
- * Loads the active release's properties for tiles, or its filtered geometry
- * when no compiled tiles are available. Both paths retain the same area
- * attributes for dataset rendering and interaction.
+ * Loads the active release's properties and associates its PMTiles resource
+ * for dataset rendering and interaction.
  */
 export function useActiveGeometry(
 	type: BoundaryType | undefined,

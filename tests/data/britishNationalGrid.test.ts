@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
 
 // PROJ's cct running EPSG:1314, OSGB36 to WGS 84 (6), as an explicit
 // pipeline: inverse British National Grid, then the Helmert shift in the

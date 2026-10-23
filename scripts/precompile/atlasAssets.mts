@@ -15,7 +15,7 @@ import {
 } from "./cache.mts";
 import { out } from "./output.mts";
 import { atlasLookupPath } from "../atlas-lookups";
-import { OUT_DIR, PUBLIC_DATA, ROOT } from "./paths.mts";
+import { OUT_DIR, BOUNDARY_DATA, ROOT } from "./paths.mts";
 import { readBoundaryAsset } from "./sources/read.mts";
 import type { ReuseContext } from "./types.mts";
 
@@ -30,7 +30,7 @@ export async function compileAtlasAssets({
 	canReuse,
 	existingManifest,
 }: ReuseContext) {
-	const boundaryDirectory = join(PUBLIC_DATA, "boundaries");
+	const boundaryDirectory = join(BOUNDARY_DATA, "boundaries");
 	const boundaryInputs = await fileSnapshots(boundaryDirectory);
 	// The gazetteer, mappings and upload index all traverse overlapping boundary
 	// releases. Share each raw asset for this build; each loader still owns its

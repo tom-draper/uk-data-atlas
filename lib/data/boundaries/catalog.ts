@@ -15,6 +15,8 @@ import {
 	BOUNDARY_TYPES,
 } from "@uk-data-atlas/datasets/data/boundaries/catalog";
 import { withCDN } from "@/lib/helpers/cdn";
+const mapAsset = (asset: string) =>
+	withCDN(asset.replace(/\.topojson$/, ".pmtiles"));
 export const BOUNDARY_CATALOG = { ...catalogue };
 for (const type of BOUNDARY_TYPES) {
 	const family = catalogue[type];
@@ -22,12 +24,12 @@ for (const type of BOUNDARY_TYPES) {
 		...family,
 		releases: family.releases.map((release) => ({
 			...release,
-			...(release.asset && { asset: withCDN(release.asset) }),
+			...(release.asset && { asset: mapAsset(release.asset) }),
 		})),
 		vintages: Object.fromEntries(
 			Object.entries(family.vintages).map(([year, asset]) => [
 				year,
-				withCDN(asset),
+				mapAsset(asset),
 			]),
 		),
 		propertyVintages: Object.fromEntries(

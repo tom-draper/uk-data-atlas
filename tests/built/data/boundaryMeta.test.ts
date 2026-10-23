@@ -109,7 +109,7 @@ describe("boundary release metadata", () => {
 					.split("?")[0]!
 					.replace("/data/boundaries/", "");
 				expect(described).toContain(
-					folder.replace("/boundaries.topojson", ""),
+					folder.replace(/\/boundaries\.(?:topojson|pmtiles)/, ""),
 				);
 			}
 		}

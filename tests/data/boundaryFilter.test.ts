@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-	filterFeatures,
-	geometryCacheKey,
-} from "@/lib/data/boundaries/boundaries";
+import { filterFeatures } from "@/lib/data/boundaries/boundaries";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { BoundaryGeojson } from "@/lib/types";
 
@@ -37,21 +34,6 @@ describe("properties-only boundary filtering", () => {
 				LAD24CD: code,
 			});
 		}
-	});
-
-	it("keeps location-filtered geometry in a distinct cache entry", () => {
-		const path = "/data/boundaries/ward/2024.topojson";
-		const greaterManchester = geometryCacheKey(path, {
-			type: "ward",
-			location: "Greater Manchester",
-		});
-		const westMidlands = geometryCacheKey(path, {
-			type: "ward",
-			location: "West Midlands",
-		});
-
-		expect(greaterManchester).not.toBe(path);
-		expect(greaterManchester).not.toBe(westMidlands);
 	});
 
 	it("uses a compiled bbox to retain an overlapping constituency", () => {

@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { PUBLIC_DATA, SOURCE_DATA } from "../paths.mts";
+import { BOUNDARY_DATA, SOURCE_DATA } from "../paths.mts";
 
 /**
  * Reads a file relative to data/. This is raw source data, which is not synced
@@ -9,15 +9,11 @@ import { PUBLIC_DATA, SOURCE_DATA } from "../paths.mts";
 export const readSource = (path: string) =>
 	readFile(join(SOURCE_DATA, path), "utf8");
 
-/**
- * Reads a compiled boundary asset. The compiler writes them to public/data,
- * where they are served from; the two releases published as TopoJSON rather
- * than GeoJSON are downloaded into data/ and copied across afterwards, so fall
- * back there for those.
- */
+/** Reads a private compiled boundary, falling back to an original source. */
 export const readBoundaryAsset = async (path: string) => {
+	path = path.replace(/\.pmtiles$/, ".topojson");
 	try {
-		return await readFile(join(PUBLIC_DATA, path), "utf8");
+		return await readFile(join(BOUNDARY_DATA, path), "utf8");
 	} catch {
 		return readSource(path);
 	}
