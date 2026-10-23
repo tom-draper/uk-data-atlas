@@ -107,6 +107,10 @@ export interface PlanningApplicationsOptions extends ColorRangeOption {
 	measure: "received" | "decided" | "withdrawn";
 }
 
+export interface WorkplaceIncomeOptions extends ColorRangeOption {
+	measure: "annualMedian" | "annualMean" | "hourlyMedian" | "hourlyMean";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -134,6 +138,7 @@ export type ChartMapOptions = Omit<
 	| "fuelPoverty"
 	| "imd"
 	| "planningApplications"
+	| "workplaceIncome"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -156,6 +161,7 @@ export type ChartMapOptions = Omit<
 	fuelPoverty: FuelPovertyOptions;
 	imd: ImdOptions;
 	planningApplications: PlanningApplicationsOptions;
+	workplaceIncome: WorkplaceIncomeOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
