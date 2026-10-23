@@ -11,11 +11,7 @@ import {
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { GeographyInventory } from "./geographyInventory";
 import type { NamedLocationInventory } from "./namedLocations";
-import {
-	openPlaceIndexDatabase,
-	PLACE_INDEX_DATABASE,
-	type PlaceIndex,
-} from "./placeIndex";
+import { openPlaceIndexDatabase, type PlaceIndex } from "./placeIndex";
 import {
 	AREA_SEARCH_INDEX_DATABASE,
 	openAreaSearchIndexDatabase,
@@ -177,7 +173,7 @@ export const readPlaceIndex = (
 ): PlaceIndex => {
 	try {
 		return openPlaceIndexDatabase(
-			publicPath(apiRoot, PLACE_INDEX_DATABASE),
+			resolve(apiRoot, "../../data/build/atlas.sqlite"),
 			areaInventory.contentHash,
 			namedLocations,
 		);

@@ -120,10 +120,12 @@ only **available** when its endpoint, contract and provenance are published.
       with the query follow equal ones. A place held in several releases comes
       back once. Of some 89,000 places, "Manchester" is six geographies and a
       curated location, and "Newport" thirteen codes. The build compiles
-      every place and name into sorted tables in `public/place-index.sqlite`,
+      every place and name into sorted `place_index_*` tables in
+      `data/build/atlas.sqlite`,
       which a search reads a few rows of by binary search, so a request does
-      no indexing and a worker never holds the whole index. The release pins
-      the same index as `place-index.json`, stored gzipped. The index records the area
+      no indexing and a worker never holds the whole index. The build manifest
+      covers the index through `atlas.sqlite`, with no separate search database
+      or JSON copy. The index records the area
       inventory and named locations it was built from and a fingerprint of the
       name-normalisation rules; the API refuses to start on one that differs
       from any of them.

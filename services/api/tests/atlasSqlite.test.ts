@@ -1,3 +1,7 @@
+import { buildPlaceIndex } from "../scripts/build-place-index";
+import { readAreaInventory, readPlaceIndex } from "../src/boundaryLoader";
+import { readNamedLocationInventory } from "../src/locationLoader";
+import { resolvePlaces } from "../src/placeResolver";
 import { buildLocationProjections } from "../scripts/build-location-projections";
 import { createNamedLocationLookup } from "../src/namedLocations";
 import {
@@ -404,4 +408,97 @@ test("projection compilation writes build intermediates and removes old public c
 		).shards,
 		[],
 	);
+});
+
+test("place-index stage preserves atlas data, replaces its tables and removes old outputs", (context) => {
+	const { root, apiRoot } = fixture(context);
+	const path = buildAtlasSqlite(root);
+	const database = new DatabaseSync(path);
+	try {
+		database.prepare("INSERT INTO payloads VALUES (?, ?)").run(
+			"boundary-releases",
+			JSON.stringify({
+				schemaVersion: 1,
+				contentHash: "registry",
+				releases: [],
+			}),
+		);
+		database.exec(`
+   INSERT INTO area_releases (geography, id, position, status, recordCount, artifact, contentHash, codeProperty, nameProperty)
+   VALUES ('localAuthority', '2023-05-uk-bgc', 0, 'available', 1, 'areas/test.json', 'test-area', 'CODE', 'NAME');
+   INSERT INTO areas VALUES ('localAuthority', '2023-05-uk-bgc', 'E08000003', 0, 'Manchester', NULL);
+  `);
+	} finally {
+		database.close();
+	}
+	const terrain = readAtlasPayload(root, "terrain-catalogue");
+	const manifest = readAtlasPayload(root, "dataset-manifest");
+	for (const filename of [
+		"place-index.sqlite",
+		"place-index.json",
+		"place-index.json.gz",
+	])
+		writeFileSync(join(apiRoot, "public", filename), "obsolete");
+	buildPlaceIndex(root);
+	buildPlaceIndex(root);
+	assert.equal(readAtlasPayload(root, "terrain-catalogue"), terrain);
+	assert.equal(readAtlasPayload(root, "dataset-manifest"), manifest);
+	for (const filename of [
+		"place-index.sqlite",
+		"place-index.json",
+		"place-index.json.gz",
+	])
+		assert.equal(existsSync(join(apiRoot, "public", filename)), false);
+	const search = () =>
+		readPlaceIndex(
+			apiRoot,
+			readAreaInventory(apiRoot),
+			readNamedLocationInventory(apiRoot),
+		);
+	assert.deepEqual(
+		resolvePlaces(search(), "manc").map((place) => [
+			place.place,
+			place.name,
+		]),
+		[["localAuthority/E08000003", "Manchester"]],
+	);
+	const changed = new DatabaseSync(path);
+	try {
+		changed.exec("UPDATE areas SET name = 'Renamed city'");
+	} finally {
+		changed.close();
+	}
+	buildPlaceIndex(root);
+	assert.deepEqual(resolvePlaces(search(), "Manchester"), []);
+	assert.deepEqual(
+		resolvePlaces(search(), "renamed").map((place) => place.name),
+		["Renamed city"],
+	);
+	assert.equal(existsSync(`${path}.place-index.tmp`), false);
+});
+
+test("failed place table replacement preserves the database and legacy files", (context) => {
+	const { root, apiRoot } = fixture(context);
+	const path = buildAtlasSqlite(root);
+	const database = new DatabaseSync(path);
+	try {
+		database.prepare("INSERT INTO payloads VALUES (?, ?)").run(
+			"boundary-releases",
+			JSON.stringify({
+				schemaVersion: 1,
+				contentHash: "registry",
+				releases: [],
+			}),
+		);
+		database.exec("CREATE VIEW place_index_names AS SELECT 1 AS position");
+	} finally {
+		database.close();
+	}
+	const before = readFileSync(path);
+	const legacy = join(apiRoot, "public/place-index.sqlite");
+	writeFileSync(legacy, "retained on failure");
+	assert.throws(() => buildPlaceIndex(root), /view/);
+	assert.deepEqual(readFileSync(path), before);
+	assert.equal(readFileSync(legacy, "utf8"), "retained on failure");
+	assert.equal(existsSync(`${path}.place-index.tmp`), false);
 });

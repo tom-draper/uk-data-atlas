@@ -19,7 +19,6 @@ const fixture = (context: TestContext) => {
 	for (const id of [
 		"boundary-releases",
 		"derived-boundaries",
-		"place-index",
 		"area-search-index",
 		"postcode-index",
 		"postcode-areas",
@@ -75,7 +74,7 @@ test("identifies binary data and remaining runtime files without migrated JSON o
 
 	assert.equal(
 		release.artifacts.some((x) =>
-			/boundary-releases|geography-inventory|relationship-paths|analysis-geograph|location-projection|terrain-catalogue|named-locations|area-inventory|crosswalk-inventory/.test(
+			/place-index|boundary-releases|geography-inventory|relationship-paths|analysis-geograph|location-projection|terrain-catalogue|named-locations|area-inventory|crosswalk-inventory/.test(
 				x.path,
 			),
 		),

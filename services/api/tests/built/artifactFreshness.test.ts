@@ -1,3 +1,4 @@
+import { DatabaseSync } from "node:sqlite";
 import { readAtlasPayload } from "../../../../shared/atlasSqlite";
 import { geographyCatalogues } from "../../scripts/geography-build-path";
 import assert from "node:assert/strict";
@@ -23,8 +24,29 @@ import {
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const publicRoot = join(apiRoot, "public");
-const read = (path: string) =>
-	JSON.parse(
+const read = (path: string) => {
+	if (path === "place-index.json") {
+		const database = new DatabaseSync(
+			join(apiRoot, "../../data/build/atlas.sqlite"),
+			{ readOnly: true },
+		);
+		try {
+			return Object.fromEntries(
+				database
+					.prepare("SELECT key, value FROM place_index_meta")
+					.all()
+					.map((row) => [
+						String(row.key),
+						row.key === "namedLocationInventoryHash"
+							? JSON.parse(String(row.value))
+							: String(row.value),
+					]),
+			);
+		} finally {
+			database.close();
+		}
+	}
+	return JSON.parse(
 		geographyCatalogues.includes(path.replace(/\.json$/, ""))
 			? readAtlasPayload(
 					resolve(apiRoot, "../.."),
@@ -32,6 +54,7 @@ const read = (path: string) =>
 				)
 			: readStoredText(join(publicRoot, path)),
 	) as Record<string, any>;
+};
 const hashOf = (path: string) => read(path).contentHash as string;
 
 const ARTIFACTS: Record<string, string> = {
@@ -72,6 +95,7 @@ const RECORDED_UPSTREAM: Record<string, string[]> = {
 const compiled = [
 	...readdirSync(publicRoot),
 	...geographyCatalogues.map((id) => `${id}.json`),
+	"place-index.json",
 ]
 	.flatMap((file) =>
 		file.endsWith(".json")
@@ -109,6 +133,7 @@ test("builds each artifact from the current version of what it records", () => {
 	const stale: string[] = [];
 	for (const [name, fields] of Object.entries(RECORDED_UPSTREAM)) {
 		if (
+			name !== "place-index.json" &&
 			!geographyCatalogues.includes(name.replace(/\.json$/, "")) &&
 			!storedTextExists(join(publicRoot, name))
 		)

@@ -293,3 +293,22 @@ static URLs with one stored copy. Both directories must share a filesystem.
 Only the small `tiles.json` manifest is copied. See `deploy/README.md` for
 transferring a built tree without duplicating the archives. Publish API map assets from
 `data/build/map-resources/`, keeping the `map-resources/` URL prefix.
+
+### Place search
+
+`place_index_meta`, `place_index_places`, `place_index_names` and
+`place_index_codes` store the place search index in `atlas.sqlite`. Places,
+names and codes retain their sorted integer positions, so the resolver reads
+only the rows touched by its existing binary search. Labels and code references
+retain their packed representation. Metadata records normalization rules and
+upstream area and named-location hashes, which readers validate before use.
+
+The `place-index` stage runs after the base database and geography catalogues.
+It replaces only its own tables in a temporary copy of the shared database and
+publishes it atomically, preserving other datasets. Successful builds remove
+`services/api/public/place-index.sqlite` and both old JSON variants. No source
+release changes are needed. Rebuild with `pnpm data:build --only place-index`.
+
+Run `node --import tsx scripts/verify-place-index.mts` to compare every place,
+name, label and code with freshly compiled inputs and check representative
+search results.
