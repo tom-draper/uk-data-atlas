@@ -122,6 +122,10 @@ export interface HousingTenureOptions extends ColorRangeOption {
 		| "rentFree";
 }
 
+export interface GeneralHealthOptions extends ColorRangeOption {
+	measure: "goodHealth" | "veryGood" | "good" | "fair" | "bad" | "veryBad";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -151,6 +155,7 @@ export type ChartMapOptions = Omit<
 	| "planningApplications"
 	| "workplaceIncome"
 	| "housingTenure"
+	| "generalHealth"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -175,6 +180,7 @@ export type ChartMapOptions = Omit<
 	planningApplications: PlanningApplicationsOptions;
 	workplaceIncome: WorkplaceIncomeOptions;
 	housingTenure: HousingTenureOptions;
+	generalHealth: GeneralHealthOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;

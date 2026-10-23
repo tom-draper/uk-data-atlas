@@ -17,6 +17,7 @@ import type { ethnicityDatasetDefinition } from "./definitions/ethnicity";
 import type { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty";
 import type { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption";
 import type { generalElectionDatasetDefinition } from "./definitions/generalElection";
+import type { generalHealthDatasetDefinition } from "./definitions/generalHealth";
 import type { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions";
 import type { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection";
 import type { homelessnessDatasetDefinition } from "./definitions/homelessness";
@@ -104,6 +105,9 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof generalElectionDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof generalHealthDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof ghgEmissionsDatasetDefinition.precompile>
@@ -254,6 +258,9 @@ export type CatalogueDatasetRecords = {
 	>;
 	generalElection: Awaited<
 		ReturnType<typeof generalElectionDatasetDefinition.precompile>
+	>;
+	generalHealth: Awaited<
+		ReturnType<typeof generalHealthDatasetDefinition.precompile>
 	>;
 	ghgEmissions: Awaited<
 		ReturnType<typeof ghgEmissionsDatasetDefinition.precompile>
