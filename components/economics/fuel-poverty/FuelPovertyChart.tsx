@@ -9,6 +9,7 @@ import {
 } from "@lib/types";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import { fetchLsoaToLad } from "@/lib/data/boundaries/lsoaLadMappings";
@@ -54,6 +55,37 @@ export function resolveFuelPovertyStats(
 	return ladCode ? (ladStats?.[ladCode] ?? null) : null;
 }
 
+function fuelPovertyDisplay(
+	stats: AggregatedFuelPovertyData | null,
+	measure: "rate" | "count",
+) {
+	if (!stats)
+		return {
+			value: undefined,
+			formatted: "",
+			unit: "",
+			secondary: undefined,
+			barWidth: 0,
+		};
+	if (measure === "count")
+		return {
+			value: stats.fuelPoorHouseholdCount,
+			formatted: Math.round(stats.fuelPoorHouseholdCount).toLocaleString(
+				"en-GB",
+			),
+			unit: "households",
+			secondary: `${stats.fuelPovertyRate.toFixed(1)}% of households`,
+			barWidth: Math.min(stats.fuelPoorHouseholdCount / 1000, 1) * 100,
+		};
+	return {
+		value: stats.fuelPovertyRate,
+		formatted: stats.fuelPovertyRate.toFixed(1),
+		unit: "% households",
+		secondary: `${formatCount(stats.fuelPoorHouseholdCount)} affected`,
+		barWidth: Math.min(stats.fuelPovertyRate / 20, 1) * 100,
+	};
+}
+
 export default function FuelPovertyChart({
 	activeDataset,
 	availableDatasets,
@@ -63,6 +95,7 @@ export default function FuelPovertyChart({
 	codeMapper,
 	setActiveViz,
 }: Props) {
+	const measure = useCurrentMapOptions().fuelPoverty.measure;
 	const dataset = availableDatasets[year];
 	const isDark = useIsDark();
 	const [lsoaToLad, setLsoaToLad] = useState<Record<string, string> | null>(
@@ -110,9 +143,9 @@ export default function FuelPovertyChart({
 	const active =
 		activeDataset?.type === "fuelPoverty" &&
 		activeDataset.id === dataset?.id;
-	const accent = useHeatmapValueColor("fuelPoverty", stats?.fuelPovertyRate);
+	const display = fuelPovertyDisplay(stats, measure);
+	const accent = useHeatmapValueColor("fuelPoverty", display.value);
 	if (!dataset) return null;
-	const barWidth = (Math.min(stats?.fuelPovertyRate ?? 0, 20) / 20) * 100;
 	return (
 		<ChartCard
 			heading="Fuel Poverty [2024]"
@@ -136,14 +169,10 @@ export default function FuelPovertyChart({
 		>
 			<ChartCardValueBar
 				hasData={stats !== null}
-				value={stats?.fuelPovertyRate.toFixed(1) ?? ""}
-				unit="% households"
-				secondary={
-					stats
-						? `${formatCount(stats.fuelPoorHouseholdCount)} affected`
-						: undefined
-				}
-				barWidth={barWidth}
+				value={display.formatted}
+				unit={display.unit}
+				secondary={display.secondary}
+				barWidth={display.barWidth}
 				barColor={accent ?? undefined}
 			/>
 		</ChartCard>

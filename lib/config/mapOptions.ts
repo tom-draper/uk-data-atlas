@@ -39,6 +39,7 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 		definition.type,
 		{
 			colorRange: definition.map?.colorRange ?? { min: 0, max: 1 },
+			...(definition.type === "fuelPoverty" ? { measure: "rate" } : {}),
 			...(definition.type === "claimantCount" ? { measure: "rate" } : {}),
 			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
 			...(definition.type === "schoolPerformance"
