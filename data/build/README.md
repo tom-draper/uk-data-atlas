@@ -93,7 +93,7 @@ deploying the API.
 The `documents` stage depends on `atlas-sqlite` because it loads API catalogues.
 
 `services/api/public/terrain-catalogue.json` remains a build intermediate for
-release fingerprints and immutable release snapshots. The API terrain loader
+the shared SQLite writer. The API terrain loader
 no longer reads it. The API catalogue compiler, API atlas pages and website SEO compilers read
 dataset payloads from SQLite.
 Gazetteer core and boundary assets remain API build intermediates under
@@ -145,7 +145,7 @@ place-index, area-search-index, postcode-area, and atlas-lookup consumers.
 The area inventory and `areas/*.json` remain build intermediates. Geometry
 registry, crosswalk compilation, named-location compilation, compatibility, lookup manifest, validation,
 geography inventory, location projections, relationship candidates, docs catalogue,
-map resources, proposals, benchmarks, and release snapshots
+map resources, proposals, benchmarks
 still read them. Atlas lookups use the migrated loader. Atlas pages read boundary
 properties for area sizes. `scripts/copy-atlas-data.mts` copies only compiled
 atlas lookups and pages, so it needs no area-inventory copy.
@@ -192,7 +192,7 @@ The API crosswalk inventory and bounded lazy artifact loader read SQLite and
 close each connection after a read. JSON inventories and compressed crosswalk
 artifacts remain inputs to relationship paths, analysis geographies and their
 validation, location projections, relationship candidates, geography inventory,
-lookup manifests, validation reports, proposals, and release snapshots.
+lookup manifests, validation reports, proposals.
 Atlas lookups and pages use the migrated loader. The website copy step still
 copies their generated outputs and never reads crosswalk JSON directly.
 
@@ -238,7 +238,7 @@ not parse geometry.
 The named-location compiler reads area JSON intermediates before SQLite is
 built, avoiding a dependency cycle. The API inventory loader and place-index
 compiler read named locations from SQLite. Full named-location JSON remains for
-location projections, lookup exports and release snapshots. Packed metadata and
+location projections, lookup exports. Packed metadata and
 geometry JSON remain build outputs of the same compiler, although the API no
 longer reads them. Atlas pages use the resolver's migrated loader. The website
 copy step copies only generated atlas lookups and pages.
@@ -257,9 +257,9 @@ bytes and provenance hashes. Runtime inventory and projection reads use only
 shard dictionaries. The shared writer replaces the database atomically, then
 removes the obsolete `services/api/public/location-projections.sqlite`.
 
-The `location-projections` stage writes JSON shards and their inventory as inputs
-to the shared writer and immutable release snapshots. These intermediates remain
-until those snapshot readers migrate. Rebuilding projections invalidates the
+The `location-projections` stage writes JSON shards and their inventory under
+`data/build/location-projections/` for the shared SQLite writer. They are omitted
+from the current-build manifest and removed from the API public directory. Rebuilding projections invalidates the
 shared database and its downstream consumers.
 
 Run `node --import tsx scripts/verify-location-projections.mts` after building to

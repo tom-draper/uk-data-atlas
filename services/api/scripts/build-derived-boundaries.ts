@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	writeFileSync,
+	rmSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -6,7 +12,6 @@ import {
 	type AreaSourceAdapterManifest,
 } from "../src/areaSourceAdapters";
 import { sourceGeoJsonPath } from "../src/areaInventory";
-import { sha256 } from "../src/contentHash";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -32,7 +37,7 @@ export const buildDerivedBoundaries = (
 			"Create the API public directory before building derived boundaries.",
 		);
 	}
-	const releases = Object.entries(adapters).map(([identity, adapter]) => {
+	for (const [identity, adapter] of Object.entries(adapters)) {
 		const [geography, boundaryRelease] = identity.split("/");
 		const sourceDirectory = join(
 			repositoryRoot,
@@ -76,25 +81,12 @@ export const buildDerivedBoundaries = (
 		mkdirSync(directory, { recursive: true });
 		const outputPath = join(directory, `${boundaryRelease}.geojson`);
 		writeFileSync(outputPath, content);
-		return {
-			geography,
-			boundaryRelease,
-			artifact: `boundaries/${geography}/${boundaryRelease}.geojson`,
-			featureCount: features.length,
-			contentHash: sha256(content),
-			derivedFrom: adapter,
-		};
-	});
-	const manifest = { schemaVersion: 1, releases };
-	const manifestPath = join(
-		repositoryRoot,
-		"services",
-		"api",
-		"public",
-		"derived-boundaries.json",
+	}
+	rmSync(
+		join(repositoryRoot, "services/api/public/derived-boundaries.json"),
+		{ force: true },
 	);
-	writeFileSync(manifestPath, `${JSON.stringify(manifest, null, "\t")}\n`);
-	return { manifestPath, releaseCount: releases.length };
+	return { releaseCount: Object.keys(adapters).length };
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
@@ -112,7 +104,5 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 			),
 		),
 	);
-	console.log(
-		`Wrote ${result.releaseCount} derived boundary release to ${result.manifestPath}`,
-	);
+	console.log(`Wrote ${result.releaseCount} derived boundary releases`);
 }

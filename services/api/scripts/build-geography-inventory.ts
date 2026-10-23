@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry";
@@ -34,18 +34,13 @@ export const buildGeographyInventory = (repositoryRoot: string) => {
 		areaInventory,
 		crosswalkInventory,
 	);
-	const sourcePath = join(outputDirectory, "source-inventory.json");
 	const geographyPath = join(outputDirectory, "geography-inventory.json");
-	writeFileSync(
-		sourcePath,
-		`${JSON.stringify(sourceInventory, null, "\t")}\n`,
-	);
 	writeFileSync(
 		geographyPath,
 		`${JSON.stringify(geographyInventory, null, "\t")}\n`,
 	);
+	rmSync(join(outputDirectory, "source-inventory.json"), { force: true });
 	return {
-		sourcePath,
 		geographyPath,
 		sourceCount: sourceInventory.sources.length,
 		releaseCount: geographyInventory.releases.length,

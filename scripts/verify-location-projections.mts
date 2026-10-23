@@ -12,9 +12,9 @@ import { readStoredText } from "../services/api/src/storedText";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = join(root, "services/api");
-const publicDirectory = join(apiRoot, "public");
+const projectionDirectory = join(root, "data/build/location-projections");
 const text = readFileSync(
-	join(publicDirectory, "location-projection-inventory.json"),
+	join(projectionDirectory, "location-projection-inventory.json"),
 	"utf8",
 );
 assert.equal(readAtlasPayload(root, "location-projection-inventory"), text);
@@ -24,7 +24,7 @@ let members = 0;
 let parents = 0;
 for (const shard of inventory.shards) {
 	const artifact: LocationProjectionArtifact = JSON.parse(
-		readStoredText(join(publicDirectory, shard.artifact)),
+		readStoredText(join(projectionDirectory, shard.artifact)),
 	);
 	for (const projection of artifact.projections) {
 		assert.equal(
@@ -43,7 +43,7 @@ for (const shard of inventory.shards) {
 }
 for (const shard of inventory.parentShards) {
 	const artifact: LocationParentProjectionArtifact = JSON.parse(
-		readStoredText(join(publicDirectory, shard.artifact)),
+		readStoredText(join(projectionDirectory, shard.artifact)),
 	);
 	for (const projection of artifact.parentProjections) {
 		assert.equal(
