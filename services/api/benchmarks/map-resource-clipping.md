@@ -71,7 +71,7 @@ to skip and still pay for tree traversal.
 
 These results cover complete uncached compilation of each release, including
 all geometry tiers and download formats. They do not measure the entire
-`build:data` pipeline or incremental cache hits. Changing the compiler source
+`data:build` pipeline or incremental cache hits. Changing the compiler source
 invalidates the map-resource build fingerprint, so the next build recompiles
 cached releases.
 

@@ -12,7 +12,7 @@ import {
 	serialiseRankings,
 } from "@/scripts/map-rankings";
 
-describe("map page data; run pnpm seo:build if stale", () => {
+describe("map page data; run pnpm data:build --only seo if stale", () => {
 	it("figures match the local datasets", async () => {
 		const compiled = await readFile(MAP_FIGURES_PATH, "utf8");
 		expect(serialiseMapFigures(await readFigureInputs())).toBe(compiled);

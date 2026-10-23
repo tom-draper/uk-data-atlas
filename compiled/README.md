@@ -2,12 +2,12 @@
 
 Data compiled once from the raw sources in `data/`, for both the website and the
 API. Everything here is generated, and only this README is tracked. Rebuild it
-with `pnpm data:compile` (see "One data build" in `ARCHITECTURE.md`).
+with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
 
 ```text
 data/                 raw sources, restored from the pinned data release
   │
-  ▼  pnpm datasets:compile
+  ▼  pnpm data:build --only datasets
 compiled/
   datasets/
     dataset-manifest.json     one entry per catalogue dataset
@@ -44,8 +44,7 @@ number maps stored as arrays (`@uk-data-atlas/catalogue/compactPayload`).
 A later run reuses a payload when its `fingerprint` is unchanged, every input
 still has the recorded size and mtime (or belongs to the pinned data release),
 and the payload still matches `compiled`. Otherwise the dataset is compiled
-again. `pnpm datasets:compile --only <type>` recompiles just the named
-datasets.
+again. `pnpm data:build --only datasets` builds this stage and its prerequisites.
 
 ## atlas.sqlite
 
@@ -111,13 +110,12 @@ hashes return 404 with `Cache-Control: no-store`, never a different payload at
 an old URL. A database deployment can therefore invalidate uncached old URLs;
 pages and the compiled release must deploy together.
 
-Website precompile still reads `compiled/datasets/` to cut regional chunks. It
+The website data build still reads `compiled/datasets/` to cut regional chunks. It
 does not copy catalogue payloads into `public/data/datasets/`. That directory
 still holds generated gazetteer, road-safety, regional chunk and SEO assets,
 plus the website build manifest. The graph compiles shared datasets and SQLite
-before running the website compilation stage. `pnpm datasets:rebuild <dataset>`
-refreshes SQLite after selectively compiling datasets against existing website
-outputs. `pnpm data:verify --target website` checks the website manifest and assets,
+before running the website compilation stage. `pnpm data:build --from datasets`
+rebuilds shared datasets, SQLite and their downstream consumers. `pnpm data:verify --target website` checks the website manifest and assets,
 including catalogue payload hashes in SQLite. It does not validate the relational
 API tables or the complete compiled release.
 

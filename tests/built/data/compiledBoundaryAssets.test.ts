@@ -113,7 +113,7 @@ describe("upload match index", () => {
 			const level = parseMatchIndexLevel(index[boundaryType] ?? {});
 			expect(
 				Object.keys(level).map(Number).sort(),
-				`${boundaryType} vintages; rerun pnpm data:compile --target website`,
+				`${boundaryType} vintages; rerun pnpm data:build --target website`,
 			).toEqual(Object.keys(definition.vintages).map(Number).sort());
 		}
 	});
@@ -156,7 +156,8 @@ describe("constituency to local authority crosswalk", () => {
 		targetLocalAuthorityRelease: string;
 		releases: Record<string, unknown>;
 	};
-	const rerun = "rebuild the API, then run pnpm atlas-data:copy";
+	const rerun =
+		"rebuild the API, then run pnpm data:build --only website-lookups";
 
 	it("has a table for every constituency release the catalogue serves", () => {
 		const { releases, vintages } = BOUNDARY_CATALOG.constituency;

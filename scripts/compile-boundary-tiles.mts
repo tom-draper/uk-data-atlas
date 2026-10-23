@@ -8,7 +8,7 @@
  * share one tile format. A release that is not a coverage cannot be tiled; it
  * is recorded as untiled and the map keeps drawing its TopoJSON.
  *
- * Run `pnpm boundaries:tiles --force` after changing the tiler, or add
+ * Run `node --import tsx scripts/compile-boundary-tiles.mts --force` after changing the tiler, or add
  * `--only=ward/2026-05-uk-bgc` to retile one release.
  */
 import { existsSync, readdirSync } from "fs";

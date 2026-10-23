@@ -4,7 +4,7 @@
  * from. The GeoJSON files remain in data/ as reproducible sources, and are the
  * only form of a release this repository commits.
  *
- * Run `pnpm boundaries:compile --force` after changing the compression values
+ * Run `node --import tsx scripts/compile-boundaries.mts --force` after changing the compression values
  * below. Preprocessing runs this automatically when a source is newer than
  * its generated TopoJSON asset.
  */

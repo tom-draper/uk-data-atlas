@@ -4,12 +4,12 @@ import { buildAtlasSqlite } from "../services/api/scripts/build-atlas-sqlite";
  * chunks, using the catalogue intermediates in compiled/datasets.
  * Catalogue payloads are served by Next.js from compiled/atlas.sqlite.
  *
- * Run via: pnpm data:compile --target website (which compiles the datasets first)
+ * Run via: pnpm data:build --target website (which compiles the datasets first)
  * Run before pnpm build. pnpm dev regenerates stale local output.
  *
- * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
- * type or output file, against the boundaries and gazetteer a full run has
- * already written: pnpm datasets:rebuild claimantCount
+ * The internal `--only <dataset>[,<dataset>...]` option rebuilds selected
+ * datasets against existing boundaries and gazetteer outputs. Public stage
+ * selection belongs to data:build; use --from datasets to refresh consumers.
  *
  * This file only sequences the run. Reading raw sources is in precompile/sources,
  * the cache that lets a run skip unchanged work is precompile/cache.mts, and each
@@ -21,8 +21,6 @@ import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
-import { compileBoundaryAssets } from "./compile-boundaries.mts";
-import { compileBoundaryTiles } from "./compile-boundary-tiles.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import { compileCatalogueDatasets } from "./compile-datasets.mts";
 import {
@@ -85,7 +83,7 @@ async function compileSelected(names: readonly string[]) {
 		manifestTimes = await stat(manifestPath);
 	} catch {
 		throw new Error(
-			"No dataset manifest to update. Run a full pnpm data:compile --target website first.",
+			"No dataset manifest to update. Run a full pnpm data:build --target website first.",
 		);
 	}
 
@@ -150,9 +148,6 @@ async function main() {
 
 	const startedAt = performance.now();
 	await mkdir(OUT_DIR, { recursive: true });
-	await compileBoundaryAssets();
-	// Serially, not beside the datasets: a national release takes up to 2 GB.
-	await compileBoundaryTiles();
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
 	// first means a malformed drop fails the build immediately, with the folder

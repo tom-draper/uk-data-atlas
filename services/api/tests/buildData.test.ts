@@ -67,125 +67,100 @@ process.exit(process.argv.at(-1) === process.env.BUILD_FAIL ? 23 : 0);
 	};
 }
 
-test("default build executes the complete pipeline in order from the API directory", (context) => {
-	const build = fixture(context);
-	const result = build.run([]);
+function stages(result: ReturnType<ReturnType<typeof fixture>["run"]>) {
 	assert.equal(result.status, 0, result.stderr);
-	assert.deepEqual(build.commands(), [
-		["--dir", "../..", "data:download"],
-		["build:operations"],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"scripts/generate-dataset-registry.ts",
-			"--catalogue-only",
-		],
-		["--dir", "../..", "datasets:compile"],
-		...[
-			"terrain-catalogue",
-			"boundary-registry",
-			"derived-boundaries",
-			"area-inventory",
-			"geometry-source-registry",
-			"crosswalk-inventory",
-			"geometry-store",
-			"datasets",
-			"named-locations",
-			"atlas-sqlite",
-			"place-index",
-			"area-search-index",
-			"postcode-index",
-			"data-catalog",
-			"measure-compatibility",
-			"export-manifest",
-			"postcode-areas",
-			"postcode-counts",
-			"relationship-paths",
-			"analysis-geographies",
-			"analysis-geography-validation",
-			"location-projections",
-			"relationship-candidates",
-			"geography-inventory",
-			"lookup-manifest",
-			"map-resource",
-			"validation-report",
-			"atlas-release",
-			"documents",
-			"atlas-lookups",
-			"atlas-release",
-		].map((name) => [`build:${name}`]),
-		["build:atlas-pages"],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"scripts/generate-sources-readme.mts",
-		],
-		["--dir", "../..", "atlas-data:copy"],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"--max-old-space-size=3072",
-			"scripts/compile-website-data.mts",
-		],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"scripts/generate-dataset-registry.ts",
-		],
+	return result.stdout
+		.trim()
+		.split("\n")
+		.filter(Boolean)
+		.map((line) => line.split(":")[0]);
+}
+
+const apiOrder = [
+	"sources",
+	"operations",
+	"query-rules",
+	"catalogue-registry",
+	"datasets",
+	"terrain-catalogue",
+	"boundary-registry",
+	"derived-boundaries",
+	"area-inventory",
+	"geometry-source-registry",
+	"crosswalk-inventory",
+	"geometry-store",
+	"api-datasets",
+	"named-locations",
+	"atlas-sqlite",
+	"place-index",
+	"area-search-index",
+	"postcode-index",
+	"data-catalog",
+	"measure-compatibility",
+	"export-manifest",
+	"postcode-areas",
+	"postcode-counts",
+	"relationship-paths",
+	"analysis-geographies",
+	"analysis-geography-validation",
+	"location-projections",
+	"relationship-candidates",
+	"geography-inventory",
+	"lookup-manifest",
+	"map-resource",
+	"validation-report",
+	"atlas-release-initial",
+	"documents",
+	"atlas-lookups",
+	"atlas-release",
+	"atlas-pages",
+];
+
+test("default build executes both products in dependency order", (context) => {
+	const build = fixture(context);
+	assert.deepEqual(stages(build.run([])), [
+		...apiOrder,
+		"boundaries",
+		"boundary-tiles",
+		"website-sources",
+		"website-lookups",
+		"website-datasets",
+		"website-registry",
+		"seo",
 	]);
+	assert.equal(build.commands().length, apiOrder.length + 7);
 });
 
 test("the api target builds every API stage and none of the website's", (context) => {
 	const build = fixture(context);
-	assert.equal(build.run(["--target", "api"]).status, 0);
-	const commands = build.commands();
-	assert.deepEqual(commands.at(-1), ["build:atlas-pages"]);
-	assert.ok(
-		!commands.some((args) =>
-			args.includes("scripts/compile-website-data.mts"),
-		),
-	);
-	assert.ok(!commands.some((args) => args.includes("atlas-data:copy")));
+	assert.deepEqual(stages(build.run(["--target", "api"])), apiOrder);
 });
 
-test("the website target ends with its own datasets, after copying the API's pages", (context) => {
+test("the website target ends with SEO after copying the API pages", (context) => {
 	const build = fixture(context);
-	const result = build.run(["--target", "website", "--from", "atlas-pages"]);
-	assert.equal(result.status, 0, result.stderr);
-	assert.deepEqual(build.commands(), [
-		["build:atlas-pages"],
-		["--dir", "../..", "atlas-data:copy"],
+	assert.deepEqual(
+		stages(build.run(["--target", "website", "--from", "atlas-pages"])),
 		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"--max-old-space-size=3072",
-			"scripts/compile-website-data.mts",
+			"atlas-pages",
+			"website-lookups",
+			"website-datasets",
+			"website-registry",
+			"seo",
 		],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"scripts/generate-dataset-registry.ts",
-		],
+	);
+	assert.deepEqual(build.commands().at(-1), [
+		"--dir",
+		"../..",
+		"exec",
+		"tsx",
+		"scripts/build-seo-data.mts",
 	]);
 });
 
-test("the website target skips the API's postcode, search, document and release stages", (context) => {
+test("the website target skips unrelated API stages", (context) => {
 	const build = fixture(context);
-	assert.equal(build.run(["--target", "website"]).status, 0);
-	const commands = build.commands().map((args) => args.join(" "));
-	for (const stage of [
+	const selected = stages(build.run(["--target", "website"]));
+	for (const name of [
 		"postcode-index",
 		"postcode-areas",
 		"area-search-index",
@@ -194,62 +169,49 @@ test("the website target skips the API's postcode, search, document and release 
 		"atlas-release",
 		"validation-report",
 	])
-		assert.ok(!commands.includes(`build:${stage}`), stage);
-	assert.ok(commands.includes("build:atlas-lookups"));
-	assert.ok(commands.includes("build:atlas-pages"));
-	assert.equal(
-		commands.at(-1),
-		"--dir ../.. exec tsx scripts/generate-dataset-registry.ts",
-	);
+		assert.ok(!selected.includes(name), name);
+	for (const name of [
+		"atlas-lookups",
+		"atlas-pages",
+		"boundaries",
+		"boundary-tiles",
+	])
+		assert.ok(selected.includes(name), name);
+	assert.equal(selected.at(-1), "seo");
 });
 
-test("dataset rebuild refreshes every consumer using existing upstream artifacts", (context) => {
+test("dataset rebuild refreshes consumers using existing upstream artifacts", (context) => {
 	const build = fixture(context);
-	const result = build.run(["--target", "api", "--from", "datasets"]);
-	assert.equal(result.status, 0, result.stderr);
-	const commands = build.commands().map((args) => args.join(" "));
-	assert.deepEqual(commands.slice(0, 2), [
-		"--dir ../.. datasets:compile",
-		"build:atlas-sqlite",
-	]);
-	assert.ok(!commands.includes("build:datasets"));
-	assert.ok(!commands.includes("build:named-locations"));
-	for (const consumer of ["data-catalog", "atlas-pages"])
-		assert.ok(commands.includes(`build:${consumer}`), consumer);
-	assert.equal(commands.at(-1), "build:atlas-pages");
-	assert.ok(!commands.includes("--dir ../.. data:download"));
-	assert.ok(!commands.includes("build:geometry-store"));
+	const selected = stages(
+		build.run(["--target", "api", "--from", "datasets"]),
+	);
+	assert.deepEqual(selected.slice(0, 2), ["datasets", "atlas-sqlite"]);
+	for (const name of [
+		"api-datasets",
+		"named-locations",
+		"sources",
+		"geometry-store",
+	])
+		assert.ok(!selected.includes(name), name);
+	for (const name of ["data-catalog", "atlas-pages"])
+		assert.ok(selected.includes(name), name);
+	assert.equal(selected.at(-1), "atlas-pages");
 });
 
-test("datasets compile once for both products", (context) => {
+test("datasets build once for both products", (context) => {
 	const build = fixture(context);
-	const result = build.run(["--from", "datasets"]);
-	assert.equal(result.status, 0, result.stderr);
-	const commands = build.commands().map((args) => args.join(" "));
-	assert.equal(commands[0], "--dir ../.. datasets:compile");
-	assert.equal(
-		commands.filter((command) => command.endsWith("datasets:compile"))
-			.length,
-		1,
-	);
-	assert.ok(commands.includes("build:atlas-sqlite"));
-	assert.equal(
-		commands.at(-1),
-		"--dir ../.. exec tsx scripts/generate-dataset-registry.ts",
-	);
+	const selected = stages(build.run(["--from", "datasets"]));
+	assert.equal(selected[0], "datasets");
+	assert.equal(selected.filter((name) => name === "datasets").length, 1);
+	assert.ok(selected.includes("atlas-sqlite"));
+	assert.equal(selected.at(-1), "seo");
 });
 
-test("crosswalk rebuild refreshes SQLite and downstream consumers without upstream work", (context) => {
+test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) => {
 	const build = fixture(context);
-	const result = build.run([
-		"--target",
-		"api",
-		"--from",
-		"crosswalk-inventory",
-	]);
-	assert.equal(result.status, 0, result.stderr);
-	assert.deepEqual(build.commands(), [
-		...[
+	assert.deepEqual(
+		stages(build.run(["--target", "api", "--from", "crosswalk-inventory"])),
+		[
 			"crosswalk-inventory",
 			"atlas-sqlite",
 			"place-index",
@@ -267,82 +229,90 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers without upstre
 			"geography-inventory",
 			"lookup-manifest",
 			"validation-report",
-			"atlas-release",
+			"atlas-release-initial",
 			"documents",
 			"atlas-lookups",
 			"atlas-release",
-		].map((name) => [`build:${name}`]),
-		["build:atlas-pages"],
+			"atlas-pages",
+		],
+	);
+});
+
+test("documents rebuild pins the final manifest without rebuilding the initial manifest", (context) => {
+	const build = fixture(context);
+	assert.deepEqual(stages(build.run(["--from", "documents"])), [
+		"documents",
+		"atlas-release",
+	]);
+	assert.deepEqual(build.commands(), [
+		[
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/build-evidence-documents.ts",
+		],
+		["exec", "tsx", "scripts/build-atlas-release.ts"],
 	]);
 });
 
-test("atlas lookups depend on SQLite, areas, crosswalks and relationship paths", (context) => {
+test("a plan selects the same stages without executing commands", (context) => {
 	const build = fixture(context);
-	const result = build.run(["--from", "atlas-lookups", "--plan"]);
-	assert.equal(result.status, 0, result.stderr);
+	const args = ["--target", "api", "--from", "operations"];
+	const result = build.run([...args, "--plan"]);
+	assert.deepEqual(stages(result), [
+		"operations",
+		"documents",
+		"atlas-release",
+	]);
 	assert.match(
 		result.stdout,
-		/^atlas-lookups: pnpm build:atlas-lookups \[depends on: atlas-sqlite, area-inventory, crosswalk-inventory, relationship-paths\]$/m,
-	);
-});
-
-test("documents rebuild pins the final manifest without rerunning the initial manifest", (context) => {
-	const build = fixture(context);
-	assert.equal(build.run(["--from", "documents"]).status, 0);
-	assert.deepEqual(build.commands(), [
-		["build:documents"],
-		["build:atlas-release"],
-	]);
-});
-
-test("a plan shows the same selected stages and dependencies without executing them", (context) => {
-	const build = fixture(context);
-	const result = build.run([
-		"--plan",
-		"--target",
-		"api",
-		"--from",
-		"operations",
-	]);
-	assert.equal(result.status, 0, result.stderr);
-	assert.equal(
-		result.stdout,
-		"operations: pnpm build:operations [depends on: none]\ndocuments: pnpm build:documents [depends on: atlas-sqlite, atlas-release-initial, operations, geometry-store]\natlas-release: pnpm build:atlas-release [depends on: atlas-release-initial, documents, atlas-lookups]\n",
+		/documents: .*\[depends on: atlas-sqlite, atlas-release-initial, operations, geometry-store\]/,
 	);
 	assert.deepEqual(build.commands(), []);
-	assert.equal(
-		build.run(["--target", "api", "--from", "operations"]).status,
-		0,
-	);
-	assert.deepEqual(build.commands(), [
-		["build:operations"],
-		["build:documents"],
-		["build:atlas-release"],
+	assert.deepEqual(stages(build.run(args)), [
+		"operations",
+		"documents",
+		"atlas-release",
 	]);
 });
 
-test("the first failing stage returns its exit code and prevents dependent execution", (context) => {
+test("--only builds a stage and its prerequisites without unrelated or downstream work", (context) => {
+	const build = fixture(context);
+	assert.deepEqual(stages(build.run(["--only", "boundary-tiles"])), [
+		"sources",
+		"boundaries",
+		"boundary-tiles",
+	]);
+	assert.deepEqual(build.commands(), [
+		["--dir", "../..", "data:download"],
+		["--dir", "../..", "exec", "tsx", "scripts/compile-boundaries.mts"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/compile-boundary-tiles.mts",
+		],
+	]);
+});
+
+test("the first failing stage returns its exit code and stops the build", (context) => {
 	const build = fixture(context);
 	const result = build.run(
 		["--from", "crosswalk-inventory"],
-		"build:relationship-paths",
+		"scripts/build-relationship-paths.ts",
 	);
 	assert.equal(result.status, 23);
 	assert.match(
 		result.stdout,
 		/Stage relationship-paths failed with exit code 23/,
 	);
-	assert.deepEqual(build.commands(), [
-		["build:crosswalk-inventory"],
-		["build:atlas-sqlite"],
-		["build:place-index"],
-		["build:area-search-index"],
-		["build:data-catalog"],
-		["build:measure-compatibility"],
-		["build:export-manifest"],
-		["build:postcode-areas"],
-		["build:postcode-counts"],
-		["build:relationship-paths"],
+	assert.equal(build.commands().length, 10);
+	assert.deepEqual(build.commands().at(-1), [
+		"exec",
+		"tsx",
+		"scripts/build-relationship-paths.ts",
 	]);
 });
 
@@ -350,10 +320,25 @@ test("invalid CLI arguments fail before executing stages", (context) => {
 	const build = fixture(context);
 	for (const [argv, message] of [
 		[["--from", "missing"], /Unknown stage: missing/],
+		[["--only", "missing"], /Unknown stage: missing/],
+		[["--only"], /--only requires a stage name/],
+		[["--only", "--plan"], /--only requires a stage name/],
+		[
+			["--only", "datasets", "--from", "datasets"],
+			/--only and --from cannot be combined/,
+		],
+		[
+			["--only", "datasets", "--only", "boundaries"],
+			/Unknown or repeated argument/,
+		],
 		[["--target", "missing"], /Unknown target: missing/],
 		[["--target"], /--target requires a target name/],
 		[
 			["--target", "api", "--from", "website-datasets"],
+			/not part of the selected target/,
+		],
+		[
+			["--target", "api", "--only", "boundary-tiles"],
 			/not part of the selected target/,
 		],
 		[

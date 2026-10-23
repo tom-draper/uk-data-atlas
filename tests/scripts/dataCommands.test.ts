@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import {
 	chmodSync,
+	existsSync,
 	mkdtempSync,
 	readFileSync,
 	rmSync,
@@ -9,6 +10,39 @@ import {
 import { tmpdir } from "node:os";
 import { delimiter, join, resolve } from "node:path";
 import { expect, onTestFinished, test } from "vitest";
+import { buildDataStages } from "@/scripts/build-data-graph.mjs";
+
+test("data stages invoke existing scripts without public command aliases", () => {
+	for (const stage of buildDataStages) {
+		if (stage.name === "sources") continue;
+		const script = stage.args.find((argument: string) =>
+			/\.(ts|mts)$/.test(argument),
+		);
+		expect(script, stage.name).toBeDefined();
+		const directory = stage.args.includes("--dir") ? "." : "services/api";
+		expect(existsSync(resolve(directory, script ?? "")), stage.name).toBe(
+			true,
+		);
+	}
+});
+
+test("data commands use one public vocabulary", () => {
+	const root = JSON.parse(readFileSync(resolve("package.json"), "utf8"));
+	const api = JSON.parse(
+		readFileSync(resolve("services/api/package.json"), "utf8"),
+	);
+	expect(
+		Object.keys(root.scripts)
+			.filter((name) => name.startsWith("data:"))
+			.sort(),
+	).toEqual(["data:build", "data:download", "data:publish", "data:verify"]);
+	for (const scripts of [root.scripts, api.scripts])
+		expect(
+			Object.keys(scripts).filter((name) =>
+				/^(build:|datasets:|boundaries:|atlas-data:|seo:)/.test(name),
+			),
+		).toEqual([]);
+});
 
 function runDevCheck(fresh: boolean, compileStatus = 0) {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-dev-data-"));
@@ -35,7 +69,7 @@ process.exit(args[0] === "data:verify" ? ${fresh ? 0 : 1} : ${compileStatus});
 				...process.env,
 				PATH: `${directory}${delimiter}${process.env.PATH}`,
 				COMMAND_TRACE: trace,
-				ATLAS_FORCE_PRECOMPILE: "0",
+				ATLAS_FORCE_DATA_BUILD: "0",
 			},
 		},
 	);
@@ -51,7 +85,7 @@ test("dev startup skips compilation when website data verifies", () => {
 	expect(result.status).toBe(0);
 	expect(commands).toEqual([
 		["data:verify", "--target", "website"],
-		["seo:build"],
+		["exec", "tsx", "scripts/build-seo-data.mts"],
 	]);
 });
 
@@ -60,8 +94,7 @@ test("dev startup builds missing data through the pipeline before any copy comma
 	expect(result.status).toBe(0);
 	expect(commands).toEqual([
 		["data:verify", "--target", "website"],
-		["data:compile", "--target", "website"],
-		["seo:build"],
+		["data:build", "--target", "website"],
 	]);
 });
 
@@ -70,7 +103,7 @@ test("dev startup propagates compilation failure without building SEO data", () 
 	expect(result.status).toBe(23);
 	expect(commands).toEqual([
 		["data:verify", "--target", "website"],
-		["data:compile", "--target", "website"],
+		["data:build", "--target", "website"],
 	]);
 });
 

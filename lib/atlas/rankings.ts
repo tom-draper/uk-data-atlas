@@ -26,7 +26,7 @@ import {
 
 /**
  * Every area of a map ranked, for the `/maps/{place}/{map}` pages. Rankings
- * are compiled from the committed datasets by `pnpm seo:build`, one file per
+ * are compiled from the committed datasets by `pnpm data:build --only seo`, one file per
  * map, and a page reads the areas within its place.
  *
  * A map is ranked when its areas are local authorities, or wards that name

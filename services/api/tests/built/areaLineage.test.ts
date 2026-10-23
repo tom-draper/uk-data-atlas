@@ -18,7 +18,10 @@ const SAMPLE_EVERY = 37;
 test("the area lineage served to the atlas answers as the resolver does", () => {
 	const { geographyResolver, atlasLookups } = readApiCatalogues(apiRoot);
 	const lineage = atlasLookups.get("area-lineage");
-	assert.ok(lineage, "Run pnpm build:atlas-lookups first.");
+	assert.ok(
+		lineage,
+		"Run pnpm --dir ../.. data:build --only atlas-lookups first.",
+	);
 	const lineages = JSON.parse(
 		gunzipSync(readFileSync(lineage.path)).toString("utf8"),
 	) as Record<string, AreaLineage>;

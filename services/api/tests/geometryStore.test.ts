@@ -280,7 +280,7 @@ test("rejects a stale compiled release before any request and reports the rebuil
 			new AreaGeometryCache(root, sources, 2, store, (release) =>
 				stale.push(release),
 			),
-		/does not match the registered source.*build:geometry-store/,
+		/does not match the registered source.*data:build --only geometry-store/,
 	);
 	assert.deepEqual(stale, ["ward/2025-05-uk-bgc"]);
 });
@@ -303,7 +303,7 @@ test("requires compiled metadata for every registered release before use", (t) =
 	writeFileSync(join(root, "data", source.input), "not JSON");
 	assert.throws(
 		() => new AreaGeometryCache(root, sources, 2, store),
-		/Cannot use compiled geometry for ward\/2024-05-uk-bgc.*build:geometry-store/,
+		/Cannot use compiled geometry for ward\/2024-05-uk-bgc.*data:build --only geometry-store/,
 	);
 });
 
@@ -320,7 +320,7 @@ test("rejects invalid compiled metadata instead of reading the raw source", (t) 
 	);
 	assert.throws(
 		() => new AreaGeometryCache(root, sources, 2, store),
-		/not a compiled geometry release.*build:geometry-store/,
+		/not a compiled geometry release.*data:build --only geometry-store/,
 	);
 });
 
@@ -352,7 +352,7 @@ test("rechecks missing and stale stores after eviction without a source fallback
 	rmSync(first);
 	assert.throws(
 		() => cache.get("ward", "2025-05-uk-bgc", "E05000001"),
-		/ENOENT.*build:geometry-store/,
+		/ENOENT.*data:build --only geometry-store/,
 	);
 	writeFileSync(
 		first,
@@ -360,7 +360,7 @@ test("rechecks missing and stale stores after eviction without a source fallback
 	);
 	assert.throws(
 		() => cache.get("ward", "2025-05-uk-bgc", "E05000001"),
-		/does not match the registered source.*build:geometry-store/,
+		/does not match the registered source.*data:build --only geometry-store/,
 	);
 	assert.equal(cache.stats().staleCompiledLoads, 1);
 	assert.equal(cache.stats().loads, 2);
@@ -389,7 +389,7 @@ test("the API factory validates the store and serves without raw boundary files"
 	);
 	assert.throws(
 		() => createAreaGeometryCache(apiRoot),
-		/Cannot use compiled geometry.*build:geometry-store/,
+		/Cannot use compiled geometry.*data:build --only geometry-store/,
 	);
 	const file = join(store, compiledGeometryFile("ward", "2025-05-uk-bgc"));
 	writeFileSync(

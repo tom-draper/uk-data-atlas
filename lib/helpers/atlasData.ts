@@ -2,7 +2,7 @@ import { withCDN } from "./cdn";
 
 /**
  * The containment and lineage lookups, place profiles and docs catalogue are
- * compiled by the API's build. `pnpm atlas-data:copy` copies them from its
+ * compiled by the API's build. `pnpm data:build --only website-lookups` copies them from its
  * output on disk into public/data, so the website serves and reads its own
  * copy and never needs a running API.
  */

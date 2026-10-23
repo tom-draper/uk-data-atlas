@@ -18,7 +18,7 @@ const outputPath = join(apiRoot, "src", "queryRules.ts");
 writeFileSync(
 	outputPath,
 	[
-		"// Generated from openapi.yaml by `pnpm build:query-rules`. Do not edit.",
+		"// Generated from openapi.yaml by `pnpm --dir ../.. data:build --only query-rules`. Do not edit.",
 		"",
 		`export const QUERY_RULES = ${JSON.stringify(rules, null, "\t")} as const;`,
 		"",

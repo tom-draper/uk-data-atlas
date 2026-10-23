@@ -182,7 +182,7 @@ export const readPlaceIndex = (
 		);
 	} catch (error) {
 		throw new Error(
-			`${(error as Error).message} Run pnpm build:place-index.`,
+			`${(error as Error).message} Run pnpm --dir ../.. data:build --only place-index.`,
 			{ cause: error },
 		);
 	}
@@ -200,7 +200,7 @@ export const readPostcodeIndex = (apiRoot: string): PostcodeIndex => {
 	const mismatch = postcodeIndexMismatch(artifact);
 	if (mismatch) {
 		throw new Error(
-			`The postcode index at ${path} ${mismatch}. Run pnpm build:postcode-index.`,
+			`The postcode index at ${path} ${mismatch}. Run pnpm --dir ../.. data:build --only postcode-index.`,
 		);
 	}
 	return new PostcodeIndex(artifact, (shard) =>
@@ -238,7 +238,7 @@ export const readPostcodeAreaIndex = (
 	});
 	if (mismatch) {
 		throw new Error(
-			`The postcode area index at ${path} ${mismatch}. Run pnpm build:postcode-areas.`,
+			`The postcode area index at ${path} ${mismatch}. Run pnpm --dir ../.. data:build --only postcode-areas.`,
 		);
 	}
 	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
@@ -263,7 +263,7 @@ export const readPostcodeCounts = (
 	);
 	if (mismatch)
 		throw new Error(
-			`The postcode counts at ${path} ${mismatch}. Run pnpm build:postcode-counts.`,
+			`The postcode counts at ${path} ${mismatch}. Run pnpm --dir ../.. data:build --only postcode-counts.`,
 		);
 	return new PostcodeCountsIndex(
 		artifact,
@@ -286,7 +286,7 @@ export const readAreaSearchIndex = (
 		);
 	} catch (error) {
 		throw new Error(
-			`${(error as Error).message} Run pnpm build:area-search-index.`,
+			`${(error as Error).message} Run pnpm --dir ../.. data:build --only area-search-index.`,
 			{ cause: error },
 		);
 	}

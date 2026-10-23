@@ -46,7 +46,7 @@ and the original clipper still decides which rings survive. Single polygons use
 the existing direct path. Only the current zoom's index is held per feature.
 Clipping the remaining candidates and compressing the artifacts still cost time.
 
-This measures a complete compilation of one release, not the entire `build:data`
+This measures a complete compilation of one release, not the entire `data:build`
 pipeline or a cached map build. The source change invalidates the existing map
 compiler fingerprint, so the first incremental build after upgrading recompiles
 map resources.

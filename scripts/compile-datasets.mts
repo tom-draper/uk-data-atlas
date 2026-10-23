@@ -3,7 +3,7 @@
  * copy the website and the API both read. A dataset whose inputs and compiler
  * are unchanged since the last run is reused rather than compiled again.
  *
- * Run via: pnpm datasets:compile
+ * Run via: pnpm data:build --only datasets
  *
  * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
  * type or output file, and keeps the rest of the manifest as it was.
@@ -37,7 +37,7 @@ const readManifest = async (): Promise<{ datasets: ManifestEntry[] }> => {
 		return JSON.parse(await readFile(COMPILED_MANIFEST, "utf8"));
 	} catch {
 		throw new Error(
-			"No compiled dataset manifest to update. Run a full pnpm datasets:compile first.",
+			"No compiled dataset manifest to update. Run a full pnpm data:build --only datasets first.",
 		);
 	}
 };

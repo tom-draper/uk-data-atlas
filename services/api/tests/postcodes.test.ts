@@ -240,7 +240,7 @@ test("refuses a shard that no longer matches its manifest", () => {
 	);
 	assert.throws(
 		() => index.lookup(unit("M1 1AA")),
-		/Run pnpm build:postcode-index/,
+		/Run pnpm --dir \.\.\/\.\. data:build --only postcode-index/,
 	);
 });
 

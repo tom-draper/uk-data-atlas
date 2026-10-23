@@ -12,7 +12,7 @@
  * as superOutputArea/2011-ni). To reproduce or update it:
  *   1. Convert the shapefile to source.geojson (outside this repo).
  *   2. npx tsx scripts/reproject-datazone-boundary.mts
- *   3. pnpm boundaries:compile
+ *   3. pnpm data:build --only boundaries
  *   4. cp public/data/boundaries/data-zone/2011-12-sc-bfc/boundaries.topojson \
  *        data/boundaries/data-zone/2011-12-sc-bfc/boundaries.topojson
  */
