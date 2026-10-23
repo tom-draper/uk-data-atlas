@@ -330,3 +330,27 @@ Rebuild with `pnpm data:build --only area-search-index`. Run
 `node --import tsx scripts/verify-area-search-index.mts` to compare every stored
 code, term and posting with freshly compiled inputs, along with filtered search
 pages and exact matches. No source release changes are needed.
+
+### Postcode search
+
+`postcodes` holds one relational row per unit postcode. Its primary key is
+`(district, position)`, and `postcode` is unique for direct code lookup. Columns
+hold the grid coordinates, quality indicator, country, introduction and termination
+months, and large-user flag. Missing coordinates stay null, and a zero termination
+month denotes a live postcode. The table uses `WITHOUT ROWID`.
+
+The `postcode-index` payload stores source attribution, counts, exclusions and
+original district hashes. The runtime reconstructs and verifies one district at a
+time and retains its existing bounded cache. Stable district ordering preserves
+postcode-to-area positional joins. The postcode count builder also reads SQLite.
+
+The `postcode-index` stage runs after the base atlas database, replaces only its
+own table and payload in a temporary copy, then publishes atomically. It removes
+`services/api/public/postcode-index.json` and the old `postcodes/` district files
+after success. Postcode-to-area files and postcode counts remain separate outputs.
+
+Rebuild with `pnpm data:build --only postcode-index`. Run
+`node --import tsx scripts/verify-postcode-index.mts` to verify every postcode,
+district hash and row count, and sample district positions. A full `pnpm data:build`
+refreshes downstream postcode-area and count outputs too. No new source release
+is needed.

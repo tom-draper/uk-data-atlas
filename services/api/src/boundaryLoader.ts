@@ -16,11 +16,8 @@ import {
 	openAreaSearchIndexDatabase,
 	type AreaSearchIndex,
 } from "./areaSearch";
-import {
-	PostcodeIndex,
-	postcodeIndexMismatch,
-	type PostcodeIndexArtifact,
-} from "./postcodes";
+import type { PostcodeIndex } from "./postcodes";
+import { readSqlitePostcodeIndex } from "./atlasPostcodes";
 import {
 	PostcodeAreaIndex,
 	postcodeAreasMismatch,
@@ -184,25 +181,8 @@ export const readPlaceIndex = (
 	}
 };
 
-/**
- * The compiled postcode index. Only its manifest is read here; each area's
- * shard is read, and checked against the manifest, on first use.
- */
-export const readPostcodeIndex = (apiRoot: string): PostcodeIndex => {
-	const path = publicPath(apiRoot, "postcode-index.json");
-	const artifact = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as PostcodeIndexArtifact;
-	const mismatch = postcodeIndexMismatch(artifact);
-	if (mismatch) {
-		throw new Error(
-			`The postcode index at ${path} ${mismatch}. Run pnpm --dir ../.. data:build --only postcode-index.`,
-		);
-	}
-	return new PostcodeIndex(artifact, (shard) =>
-		readStoredText(publicPath(apiRoot, shard)),
-	);
-};
+/** The compiled postcode index and district records, read from atlas.sqlite. */
+export const readPostcodeIndex = readSqlitePostcodeIndex;
 
 /**
  * The compiled postcode area index, refused unless built from this postcode

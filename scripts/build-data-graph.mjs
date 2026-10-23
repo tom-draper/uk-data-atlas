@@ -143,7 +143,7 @@ const apiStages = [
 		"named-locations",
 	]),
 	stage("area-search-index", ["atlas-sqlite"]),
-	stage("postcode-index", ["sources"]),
+	stage("postcode-index", ["sources", "atlas-sqlite"]),
 	stage("data-catalog", ["atlas-sqlite"]),
 	stage("measure-compatibility", [
 		"data-catalog",

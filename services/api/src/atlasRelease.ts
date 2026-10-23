@@ -20,7 +20,6 @@ export type AtlasRelease = {
 
 // Catalogues that still have runtime JSON readers. Migrated data is covered by atlas.sqlite.
 const JSON_ARTIFACTS = [
-	"postcode-index",
 	"postcode-areas",
 	"postcode-counts",
 	"data-catalog",

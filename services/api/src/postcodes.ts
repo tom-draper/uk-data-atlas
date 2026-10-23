@@ -12,12 +12,10 @@ import { sha256 } from "./contentHash";
  * postcode resolves into every geography and vintage the Atlas holds, by the
  * same method and with the same caveats as any other point.
  *
- * The directory is too large to hold in memory, so postcodes are sharded by
- * postcode district (the outward code, such as SW1A) and a shard is read on
- * first use. A district holds some 900 postcodes on average, so a lookup reads
- * a few kilobytes, and a batch spread across the country keeps every district
- * it touches in memory at once. The manifest records each shard's hash, so pinning the manifest pins
- * every shard, and a shard that no longer matches it is refused.
+ * Runtime records live in atlas.sqlite. The reader reconstructs one district
+ * (the outward code, such as SW1A) on first use and caches a bounded number.
+ * The manifest retains each district's original content hash and ordering,
+ * preserving postcode-to-area joins and refusing changed district records.
  */
 export type PostcodeIndexArtifact = {
 	schemaVersion: 1;
@@ -381,7 +379,7 @@ export type PostcodeLookup =
 	| { status: "excluded"; reason: string }
 	| { status: "not-found" };
 
-/** Unit postcodes read from the shards a manifest pins, a few districts at a time. */
+/** Unit postcodes read through a hash-checked district reader, a few districts at a time. */
 export class PostcodeIndex {
 	private readonly shards = new Map<string, PostcodeShard>();
 	private readonly districts: string[];

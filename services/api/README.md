@@ -991,9 +991,9 @@ fetch the postcode directory from ONS.
       `POST /v1/postcodes:batch`, with a JSON `postcodes` array. Each postcode is reported in its own
       entry, so one that is malformed, unknown, unserved or without a grid
       reference does not fail the batch, and the placed centroids are tested
-      together, reading each boundary release once. District shards keep a
-      batch spread across the country in memory: 97 postcodes in 84 postcode
-      areas take about a quarter of a second once their releases are loaded.
+      together, reading each boundary release once. Postcode records live in
+      `data/build/atlas.sqlite`, and the API reads and caches only the
+      districts a batch touches.
 - [x] Recognise a unit postcode in `GET /v1/places?q=` as a place of its own,
       listed first with a `postcode/{code}` reference that a value request
       accepts as `place`. A query reading as a postcode district or sector, or
