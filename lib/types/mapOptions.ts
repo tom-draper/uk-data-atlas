@@ -53,6 +53,17 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
+export interface HousingTenureOptions extends ColorRangeOption {
+	measure:
+		| "owned"
+		| "outright"
+		| "mortgage"
+		| "shared"
+		| "social"
+		| "private"
+		| "rentFree";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -75,6 +86,7 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| "housingTenure"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -92,6 +104,7 @@ export type ChartMapOptions = Omit<
 	| "homelessness"
 	| "schoolPerformance"
 > & {
+	housingTenure: HousingTenureOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
