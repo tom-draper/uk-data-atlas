@@ -17,7 +17,8 @@ it("filters the full-year total and uses sessions or enrolments as appropriate",
 		enrolments_pa_10_exact: "20",
 		enrolments_pa_50_exact: "2",
 	};
-	const result = await loadPupilAbsence(async (_path, visit) => {
+	const result = await loadPupilAbsence(async (_path, visit, member) => {
+		expect(member).toBe("data/1_Absence_3term_nat_reg_la.csv");
 		visit(row);
 		visit({
 			...row,

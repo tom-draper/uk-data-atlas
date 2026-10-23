@@ -32,13 +32,6 @@ export const DATA_TOPICS: DataTopic[] = [
 
 export const DATA_PAGES: DataPage[] = [
 	{
-		slug: "pupil-absence",
-		title: "Pupil absence",
-		topic: "people",
-		datasets: ["pupil-attendance"],
-		intro: "Enable the Pupil Absence card to map full-year 2024/25 absence in English state-funded primary, secondary and special schools. The map uses counties and unitary authorities. Overall, authorised and unauthorised absence are percentages of possible sessions. Persistent and severe absence count enrolments missing at least 10% and 50% of sessions. Regional rates divide summed counts by the corresponding summed denominators.",
-	},
-	{
 		slug: "population",
 		title: "Population",
 		topic: "people",

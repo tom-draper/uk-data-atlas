@@ -141,8 +141,10 @@ export const createTrackedReader = () => {
 			);
 		},
 		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),
-		zipCsvRows: (path, visit) =>
-			trackStream("zipCsvRows", path, () => visitZipCsvRows(path, visit)),
+		zipCsvRows: (path, visit, member) =>
+			trackStream("zipCsvRows", path, () =>
+				visitZipCsvRows(path, visit, member),
+			),
 	};
 	return { reader, artifacts };
 };
