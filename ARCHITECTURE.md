@@ -161,15 +161,27 @@ Stage commands live in the graph rather than package scripts. The API package's
 Next.js application using existing data. `pnpm dev` verifies website data first and runs the
 complete data build only when that verification fails or a rebuild is forced.
 
-The build skips a stage that ran before when nothing it reads has changed:
-the repo's code, the size and mtime of raw files in `data/source/`, its command, and
-the outputs of the stages it depends on. The files it wrote under `data/build/`,
-`public/data/` and `services/api/public/` must also be unchanged. Repeated builds reuse unchanged compiled stages.
+The build skips a stage when its inputs and outputs are unchanged. Its key
+includes its command, local imports, declared `codeInputs`, shared configuration,
+the size and mtime of raw files in `data/source/`, and upstream output digests.
+The files it wrote under `data/build/`, `public/data/` and `services/api/public/`
+must also be unchanged.
+
+`scripts/build-data-code.mjs` uses esbuild's dependency metadata to trace local
+imports without executing builders. Shared workspace packages, `shared/`, API
+configuration, dependency manifests and lockfiles remain conservative inputs to
+all stages. Ordinary UI files are excluded unless a builder imports them.
+Builders that read code or templates directly from disk declare those paths in
+`codeInputs` in the build graph. Include worker entry points there too. Added and
+removed files under declared directories change the cache key. Generated files
+are tracked as stage outputs rather than bundled as code inputs. Unresolved
+local imports fail the check rather than reuse a stale result.
+
 Download, catalogue registry generation, source documentation and website
-registry generation always run. These generated source files live outside
-the compiled output cache. A code change reruns every compiled stage.
-`scripts/build-data-cache.mjs` keeps this in `.cache/data-build/`. `--from`
-and `--no-cache` rerun the stages they select regardless.
+registry generation always run. Their generated code is inspected again before
+later stage keys are computed. `scripts/build-data-cache.mjs` stores the cache in
+`.cache/data-build/`. The scoped key format invalidates old entries once.
+`--from` and `--no-cache` rerun the stages they select regardless.
 
 The `atlas-sqlite` stage writes the terrain catalogue to `data/build/atlas.sqlite`,
 alongside catalogue datasets, relational areas, crosswalk source/target rows and
