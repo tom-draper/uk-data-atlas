@@ -1,3 +1,4 @@
+import { buildLocationProjections } from "../scripts/build-location-projections";
 import { createNamedLocationLookup } from "../src/namedLocations";
 import {
 	compileLocationProjections,
@@ -76,8 +77,14 @@ const fixture = (context: TestContext) => {
 		join(root, "data/build/datasets/dataset-manifest.json"),
 		JSON.stringify({ version: 1, datasets: [] }),
 	);
+	mkdirSync(join(root, "data/build/location-projections"), {
+		recursive: true,
+	});
 	writeFileSync(
-		join(root, "services/api/public/location-projection-inventory.json"),
+		join(
+			root,
+			"data/build/location-projections/location-projection-inventory.json",
+		),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "projections",
@@ -255,7 +262,7 @@ test("shared atlas serves projection routes without projection JSON or a second 
 		[containmentCrosswalk],
 		areaLookup,
 	);
-	const directory = join(apiRoot, "public");
+	const directory = join(root, "data/build/location-projections");
 	writeFileSync(
 		join(directory, "location-projection-inventory.json"),
 		JSON.stringify(compiled.inventory),
@@ -281,7 +288,7 @@ test("shared atlas serves projection routes without projection JSON or a second 
 			JSON.stringify(artifact),
 		);
 	}
-	const obsolete = join(directory, "location-projections.sqlite");
+	const obsolete = join(apiRoot, "public/location-projections.sqlite");
 	writeFileSync(obsolete, "obsolete database");
 	buildAtlasSqlite(root);
 	assert.equal(existsSync(obsolete), false);
@@ -353,5 +360,48 @@ test("shared atlas serves projection routes without projection JSON or a second 
 				crosswalkInventory,
 			),
 		/Invalid location projection inventory/,
+	);
+});
+
+test("projection compilation writes build intermediates and removes old public copies", (context) => {
+	const { root, apiRoot } = fixture(context);
+	const publicDirectory = join(apiRoot, "public");
+	for (const name of [
+		"location-projections",
+		"location-parent-projections",
+	]) {
+		mkdirSync(join(publicDirectory, name));
+		writeFileSync(join(publicDirectory, name, "obsolete.json"), "obsolete");
+	}
+	writeFileSync(
+		join(publicDirectory, "location-projection-inventory.json"),
+		"obsolete",
+	);
+	const result = buildLocationProjections(root);
+	assert.equal(
+		result.inventoryPath,
+		join(
+			root,
+			"data/build/location-projections/location-projection-inventory.json",
+		),
+	);
+	assert.deepEqual(
+		JSON.parse(readFileSync(result.inventoryPath, "utf8")).shards,
+		[],
+	);
+	for (const name of [
+		"location-projections",
+		"location-parent-projections",
+		"location-projection-inventory.json",
+	])
+		assert.equal(existsSync(join(publicDirectory, name)), false);
+	buildAtlasSqlite(root);
+	assert.deepEqual(
+		readLocationProjectionInventory(
+			apiRoot,
+			{ ...namedLocationInventory, contentHash: "locations" },
+			{ ...crosswalkInventory, contentHash: "crosswalks" },
+		).shards,
+		[],
 	);
 });

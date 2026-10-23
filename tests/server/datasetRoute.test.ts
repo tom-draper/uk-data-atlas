@@ -72,8 +72,14 @@ beforeEach(() => {
 			locations: [],
 		}),
 	);
+	mkdirSync(join(root, "data/build/location-projections"), {
+		recursive: true,
+	});
 	writeFileSync(
-		join(root, "services/api/public/location-projection-inventory.json"),
+		join(
+			root,
+			"data/build/location-projections/location-projection-inventory.json",
+		),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "projections",

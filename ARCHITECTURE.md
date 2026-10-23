@@ -204,3 +204,20 @@ SEO artifacts. Then `pnpm check:full` runs the quick checks, verifies local
 generated data, and runs the built website and API tests. It needs `data/source/`
 restored and both products built, with the API running for the API's own
 tests. The check does not build or deploy either product.
+
+## Current-build provenance
+
+`services/api/public/atlas-release.json` identifies the current build. It records
+repository-relative paths and SHA-256 hashes of the stored `atlas.sqlite`, API
+PMTiles, and JSON catalogues that still have runtime readers. The export and
+map catalogues record the hashes of observation and flat boundary downloads. Gzipped files are identified by their stored bytes. The file has no
+historical snapshots or per-resource comparison index.
+
+Migrated SQLite data is covered by the database hash. JSON used only by the
+SQLite writer is a build intermediate, not a release dependency. Projection
+intermediates live under `data/build/location-projections/`. Consumers can keep a
+build id for provenance and use download ETags or export lists for syncing.
+
+The derived-boundary and source-inventory JSON summaries had no readers beyond
+the old fingerprint builder. Their compilers no longer write them; derived
+geometries and the runtime geography catalogue remain.

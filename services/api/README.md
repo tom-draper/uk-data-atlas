@@ -1048,19 +1048,11 @@ fetch the postcode directory from ONS.
       that remain are published with their reasons, 47 waived checks in the
       current report, such as 2016 to 2019 ward election codes from outside
       their year's release.
-- [x] Machine-readable change log, worked out by the client. The API retains
-      no releases, so it cannot answer "what changed since X". Instead
-      `GET /v1/atlas-release` records a fingerprint for every dataset,
-      measure, boundary release, area identity set, geometry source,
-      crosswalk, validation exception, named location, export, lookup and
-      terrain layer, which changes exactly when that resource's published
-      entry does. A consumer keeps the manifest it last synced and compares
-      the two: `examples/releaseChanges.ts` does that in a few lines, naming
-      each resource added, removed or changed, and
-      `examples/reliable-sync.ts` uses it to fetch only the exports and
-      lookups that moved. It names a changed resource, not the field or rows
-      that changed. The [operations contract](#operations-contract) sets out
-      the deprecation policy.
+- [x] Current-build provenance through `GET /v1/atlas-release`. The manifest
+      hashes `atlas.sqlite`, PMTiles and remaining runtime JSON catalogues.
+      Export and map catalogues record hashes for individual downloads. Paths are relative to the repository root. No history
+      or per-resource change log is retained. Consumers can revalidate individual
+      downloads with ETags or compare the export and lookup lists they keep.
 - [ ] Release notifications, such as a feed or webhook announcing a new
       Atlas release. Until then a consumer polls `GET /v1/atlas-release`,
       which answers `304` to its `ETag` while nothing has changed.
@@ -2357,8 +2349,8 @@ line up.
 - **Location projections:** read one at a time from
   `data/build/atlas.sqlite`, written by
   `pnpm data:build --only atlas-sqlite` after compiling location projections.
-  The inventory lives in the shared database too. JSON shards remain build
-  inputs for immutable release snapshots. Each projection is deflated against a dictionary
+  The inventory lives in the shared database too. JSON shards are build intermediates under
+  `data/build/location-projections/`. Each projection is deflated against a dictionary
   drawn from its shard, so a read decompresses a few kilobytes rather than
   parsing a shard of up to 13 MB. Nothing is cached but each shard's 32 KB
   dictionary, so the server no longer exports location projection cache

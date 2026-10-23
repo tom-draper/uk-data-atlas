@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -41,22 +41,27 @@ const readAreaLookup = (directory: string) => {
 };
 
 export const buildLocationProjections = (repositoryRoot: string) => {
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const publicDirectory = join(repositoryRoot, "services/api/public");
+	const outputDirectory = join(
+		repositoryRoot,
+		"data/build/location-projections",
+	);
+	mkdirSync(outputDirectory, { recursive: true });
 	const namedLocations = read<NamedLocationInventory>(
-		outputDirectory,
+		publicDirectory,
 		"named-locations.json",
 	);
 	const crosswalkInventory = read<CrosswalkInventory>(
-		outputDirectory,
+		publicDirectory,
 		"crosswalk-inventory.json",
 	);
 	const projections = compileLocationProjections(
 		namedLocations,
 		crosswalkInventory,
 		crosswalkInventory.crosswalks.map((crosswalk) =>
-			read<CrosswalkArtifact>(outputDirectory, crosswalk.artifact),
+			read<CrosswalkArtifact>(publicDirectory, crosswalk.artifact),
 		),
-		readAreaLookup(outputDirectory),
+		readAreaLookup(publicDirectory),
 	);
 	for (const artifact of projections.parentArtifacts) {
 		const outputPath = join(
@@ -90,6 +95,13 @@ export const buildLocationProjections = (repositoryRoot: string) => {
 		inventoryPath,
 		`${JSON.stringify(projections.inventory, null, "\t")}\n`,
 	);
+	for (const name of [
+		"location-projection-inventory.json",
+		"location-projections",
+		"location-parent-projections",
+	])
+		rmSync(join(publicDirectory, name), { recursive: true, force: true });
+
 	return {
 		inventoryPath,
 		shardCount: projections.artifacts.length,

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	existsSync,
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
@@ -63,8 +64,12 @@ test("writes a derived GeoJSON artifact from the configured raw source selection
 		assert.deepEqual(artifact.features, [
 			{ properties: { LSOA11CD: "W01000001" } },
 		]);
-		const manifest = JSON.parse(readFileSync(result.manifestPath, "utf8"));
-		assert.deepEqual(manifest.releases[0].derivedFrom, adapter);
+		assert.equal(
+			existsSync(
+				join(root, "services/api/public/derived-boundaries.json"),
+			),
+			false,
+		);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}

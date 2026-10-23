@@ -38,8 +38,9 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 		}[];
 	};
 	const publicDirectory = join(repositoryRoot, "services/api/public");
+	const projectionDirectory = join(directory, "location-projections");
 	const projectionPayload = readFileSync(
-		join(publicDirectory, "location-projection-inventory.json"),
+		join(projectionDirectory, "location-projection-inventory.json"),
 		"utf8",
 	);
 	const projectionInventory: LocationProjectionInventory =
@@ -55,7 +56,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 	const readProjectionArtifact = (
 		shard: LocationProjectionInventory["shards"][number],
 	) => {
-		const text = readStoredText(join(publicDirectory, shard.artifact));
+		const text = readStoredText(join(projectionDirectory, shard.artifact));
 		const artifact:
 			LocationProjectionArtifact | LocationParentProjectionArtifact =
 			JSON.parse(text);
