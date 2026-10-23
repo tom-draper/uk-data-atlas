@@ -40,6 +40,7 @@ import type { planningApplicationsDatasetDefinition } from "./definitions/planni
 import type { populationDatasetDefinition } from "./definitions/population";
 import type { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency";
 import type { populationUkDatasetDefinition } from "./definitions/populationUk";
+import type { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence";
 import type { qualificationDatasetDefinition } from "./definitions/qualification";
 import type { regionalGdpItl1DatasetDefinition } from "./definitions/regionalGdpItl1";
 import type { regionalGdpItl2DatasetDefinition } from "./definitions/regionalGdpItl2";
@@ -166,6 +167,9 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof populationUkDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof pupilAbsenceDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof qualificationDatasetDefinition.precompile>
@@ -317,6 +321,9 @@ export type CatalogueDatasetRecords = {
 	>;
 	populationUk: Awaited<
 		ReturnType<typeof populationUkDatasetDefinition.precompile>
+	>;
+	pupilAbsence: Awaited<
+		ReturnType<typeof pupilAbsenceDatasetDefinition.precompile>
 	>;
 	qualification: Awaited<
 		ReturnType<typeof qualificationDatasetDefinition.precompile>

@@ -257,6 +257,7 @@ export const CHART_PRESENTATIONS = {
 	"demographics-populationDensity": Chart19Presentation,
 	"demographics-age": Chart20Presentation,
 	"demographics-gender": Chart21Presentation,
+	"education-pupilAbsence": Chart0Presentation,
 	"education-qualifications": Chart22Presentation,
 	"economics-regionalGdpItl3": Chart0Presentation,
 	"education-schoolPerformance": Chart23Presentation,
