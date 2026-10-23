@@ -10,9 +10,9 @@ import { fileURLToPath } from "node:url";
 import { precompileFingerprints } from "./precompile-fingerprint.mjs";
 
 const args = process.argv.slice(2);
-if (args.length !== 2 || args[0] !== "--target" || args[1] !== "website") {
+if (args.length !== 0) {
 	throw new Error(
-		"Usage: pnpm data:verify --target website. Only website verification is currently supported.",
+		"Usage: pnpm data:verify. This command accepts no arguments.",
 	);
 }
 

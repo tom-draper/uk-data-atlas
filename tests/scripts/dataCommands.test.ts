@@ -84,7 +84,7 @@ test("dev startup skips compilation when website data verifies", () => {
 	const { result, commands } = runDevCheck(true);
 	expect(result.status).toBe(0);
 	expect(commands).toEqual([
-		["data:verify", "--target", "website"],
+		["data:verify"],
 		["exec", "tsx", "scripts/build-seo-data.mts"],
 	]);
 });
@@ -92,19 +92,13 @@ test("dev startup skips compilation when website data verifies", () => {
 test("dev startup builds missing data through the pipeline before any copy command", () => {
 	const { result, commands } = runDevCheck(false);
 	expect(result.status).toBe(0);
-	expect(commands).toEqual([
-		["data:verify", "--target", "website"],
-		["data:build"],
-	]);
+	expect(commands).toEqual([["data:verify"], ["data:build"]]);
 });
 
 test("dev startup propagates compilation failure without building SEO data", () => {
 	const { result, commands } = runDevCheck(false, 23);
 	expect(result.status).toBe(23);
-	expect(commands).toEqual([
-		["data:verify", "--target", "website"],
-		["data:build"],
-	]);
+	expect(commands).toEqual([["data:verify"], ["data:build"]]);
 });
 
 test("dev startup propagates SEO data failure", () => {
@@ -113,12 +107,12 @@ test("dev startup propagates SEO data failure", () => {
 });
 
 test.each([
-	[],
+	["--target", "website"],
 	["--target", "api"],
 	["--target", "all"],
 	["--target", "website", "--extra"],
 ])(
-	"verification rejects unsupported scope %j before accessing data",
+	"verification rejects arguments %j before accessing data",
 	(...args: string[]) => {
 		const result = spawnSync(
 			process.execPath,
@@ -128,8 +122,6 @@ test.each([
 			},
 		);
 		expect(result.status).not.toBe(0);
-		expect(result.stderr).toContain(
-			"Only website verification is currently supported",
-		);
+		expect(result.stderr).toContain("This command accepts no arguments.");
 	},
 );
