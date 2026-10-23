@@ -48,6 +48,10 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 		topic: "education",
 		about: "Full-year 2024/25 pupil absence in English state-funded primary, secondary and special schools, mapped on county and unitary authority boundaries. Overall, authorised and unauthorised measures divide missed sessions by possible sessions. Persistent and severe absence count enrolments missing at least 10% and 50% of sessions. Regional rates divide summed counts by the corresponding summed denominators.",
 	},
+	"public-health": {
+		topic: "health-and-care",
+		about: "Enable the Public Health card to compare smoking, adult overweight including obesity, physical activity, childhood excess weight and preventable mortality under 75. Figures cover persons in English counties and unitary authorities. Smoking and mortality use 2024, and the other measures use 2024/25. Regional summaries average available authority estimates without population weighting. Mortality is age-standardised per 100,000. Missing estimates remain unavailable.",
+	},
 	"population-uk": {
 		topic: "people-and-places",
 		about: "How many people live in each local authority across the UK, estimated every year by the Office for National Statistics between censuses. It's the standard yardstick for comparing places of different sizes, and many per-person figures in the Atlas are worked out from it.",
