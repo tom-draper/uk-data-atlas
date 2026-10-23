@@ -36,6 +36,26 @@ export const regionalGdpItl3Definition: ChartDatasetDefinition<RegionalGdpItl3Da
 				value: (record) => record.gdpMillionGbp,
 				secondary: (record) => `${formatGdp(record.gvaMillionGbp)} GVA`,
 			}),
+			cardForOptions: (options) =>
+				defineValueCard<
+					RegionalGdpItl3Dataset,
+					RegionalGdpMetrics,
+					AggregatedRegionalGdpData
+				>({
+					heading:
+						options.regionalGdpItl3.measure === "gva"
+							? "Regional GVA"
+							: "Regional GDP",
+					coverage: "UK",
+					source: "Office for National Statistics. Regional gross domestic product and gross value added. ons.gov.uk",
+					format: formatGdp,
+					maximum: 210_000,
+					aggregate: (aggregate) => aggregate,
+					value: (record) =>
+						options.regionalGdpItl3.measure === "gva"
+							? record.gvaMillionGbp
+							: record.gdpMillionGbp,
+				}),
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
 				aggregator.aggregate(
 					regionalGdpItl3Aggregation,
@@ -47,8 +67,18 @@ export const regionalGdpItl3Definition: ChartDatasetDefinition<RegionalGdpItl3Da
 			year: 2023,
 		},
 		map: {
-			valueKey: "gdpMillionGbp",
+			valueFor: (dataset, code, options) =>
+				(options.regionalGdpItl3.measure === "gva"
+					? dataset.data[code]?.gvaMillionGbp
+					: dataset.data[code]?.gdpMillionGbp) ?? null,
+			sourceMode: (_dataset, options) =>
+				`regional-output:${options.regionalGdpItl3.measure}`,
 			colorRange: { min: 0, max: 50_000 },
-			legend: { min: 0, max: 210_000, format: formatGdp },
+			legend: {
+				min: 0,
+				max: 210_000,
+				format: (value, options) =>
+					`${formatGdp(value)} ${options.regionalGdpItl3.measure.toUpperCase()}`,
+			},
 		},
 	};
