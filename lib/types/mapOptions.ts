@@ -61,6 +61,16 @@ export interface RegionalGdpItl3Options extends ColorRangeOption {
 	measure: "gdp" | "gva";
 }
 
+export interface MobileCoverageOptions extends ColorRangeOption {
+	measure:
+		| "pct5GOutdoorAll"
+		| "pct5GOutdoorAny"
+		| "pct4GIndoorAll"
+		| "pct4GIndoorAny"
+		| "pct4GGeoAll"
+		| "pct5GGeoAny";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -84,6 +94,7 @@ export interface NetworkOptions {
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
 	| "regionalGdpItl3"
+	| "mobileCoverage"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -102,6 +113,7 @@ export type ChartMapOptions = Omit<
 	| "schoolPerformance"
 > & {
 	regionalGdpItl3: RegionalGdpItl3Options;
+	mobileCoverage: MobileCoverageOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
