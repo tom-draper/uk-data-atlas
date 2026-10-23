@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { buildArtifactPath } from "./geography-build-path";
+import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateAnalysisGeographies } from "../src/analysisGeographyValidation";
@@ -21,12 +22,19 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 		"data-catalog.json",
 		"crosswalk-inventory.json",
 	];
-	if (required.some((name) => !existsSync(join(directory, name))))
+	if (
+		required.some(
+			(name) => !existsSync(buildArtifactPath(repositoryRoot, name)),
+		)
+	)
 		throw new Error(
 			"Build analysis geographies, the data catalogue and crosswalk inventory before analysis validation.",
 		);
 	const analysisGeographies = JSON.parse(
-		readFileSync(join(directory, "analysis-geographies.json"), "utf8"),
+		readFileSync(
+			buildArtifactPath(repositoryRoot, "analysis-geographies.json"),
+			"utf8",
+		),
 	) as AnalysisGeographyInventory;
 	const dataCatalog = JSON.parse(
 		readFileSync(join(directory, "data-catalog.json"), "utf8"),
@@ -68,7 +76,11 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 		crosswalkLookup,
 		observations,
 	);
-	const outputPath = join(directory, "analysis-geography-validation.json");
+	const outputPath = buildArtifactPath(
+		repositoryRoot,
+		"analysis-geography-validation.json",
+	);
+	mkdirSync(dirname(outputPath), { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(inventory, null, "\t")}\n`);
 	return { outputPath, count: inventory.supports.length };
 };

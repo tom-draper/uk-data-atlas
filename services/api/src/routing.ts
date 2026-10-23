@@ -80,7 +80,7 @@ export type RouteContext = {
 	/** Full-tier map downloads, built from the geometry store on request. */
 	fullDetailDownloads?: FullDetailSource;
 	/** Immutable build artifacts published as evidence documents. */
-	documents?: Map<string, StoredFile>;
+	documents?: Map<string, StoredFile | { body: string; contentHash: string }>;
 	/** The atlas's containment and lineage lookups, by id. */
 	atlasLookups?: Map<string, StoredFile>;
 	atlasPages?: Map<string, StoredFile>;

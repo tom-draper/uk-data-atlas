@@ -1,3 +1,4 @@
+import { readGeographyCatalogue } from "./geographyCatalogue";
 import { readSqliteAreaInventory, readSqliteAreas } from "./atlasAreas";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -37,21 +38,21 @@ import {
 } from "./postcodeCounts";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
-import { publicPath, readPublicManifest } from "./publicManifest";
+import { publicPath } from "./publicManifest";
 import { readStoredText } from "./storedText";
 
 export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry =>
-	readPublicManifest<BoundaryRegistry>(
+	readGeographyCatalogue<BoundaryRegistry>(
 		apiRoot,
-		"boundary-releases.json",
+		"boundary-releases",
 		"releases",
 		"boundary registry",
 	);
 
 export const readGeographyInventory = (apiRoot: string): GeographyInventory =>
-	readPublicManifest<GeographyInventory>(
+	readGeographyCatalogue<GeographyInventory>(
 		apiRoot,
-		"geography-inventory.json",
+		"geography-inventory",
 		"releases",
 		"geography inventory",
 	);

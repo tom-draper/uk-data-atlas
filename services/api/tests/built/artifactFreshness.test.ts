@@ -1,3 +1,5 @@
+import { readAtlasPayload } from "../../../../shared/atlasSqlite";
+import { geographyCatalogues } from "../../scripts/geography-build-path";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -22,7 +24,14 @@ import {
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const publicRoot = join(apiRoot, "public");
 const read = (path: string) =>
-	JSON.parse(readStoredText(join(publicRoot, path))) as Record<string, any>;
+	JSON.parse(
+		geographyCatalogues.includes(path.replace(/\.json$/, ""))
+			? readAtlasPayload(
+					resolve(apiRoot, "../.."),
+					path.replace(/\.json$/, ""),
+				)
+			: readStoredText(join(publicRoot, path)),
+	) as Record<string, any>;
 const hashOf = (path: string) => read(path).contentHash as string;
 
 const ARTIFACTS: Record<string, string> = {
@@ -60,7 +69,10 @@ const RECORDED_UPSTREAM: Record<string, string[]> = {
 	],
 };
 
-const compiled = readdirSync(publicRoot)
+const compiled = [
+	...readdirSync(publicRoot),
+	...geographyCatalogues.map((id) => `${id}.json`),
+]
 	.flatMap((file) =>
 		file.endsWith(".json")
 			? [file]
@@ -96,7 +108,11 @@ test("declares every upstream hash an artifact records", () => {
 test("builds each artifact from the current version of what it records", () => {
 	const stale: string[] = [];
 	for (const [name, fields] of Object.entries(RECORDED_UPSTREAM)) {
-		if (!storedTextExists(join(publicRoot, name))) continue;
+		if (
+			!geographyCatalogues.includes(name.replace(/\.json$/, "")) &&
+			!storedTextExists(join(publicRoot, name))
+		)
+			continue;
 		const artifact = read(name);
 		for (const field of fields) {
 			const upstream = ARTIFACTS[field.slice(0, -"Hash".length)]!;

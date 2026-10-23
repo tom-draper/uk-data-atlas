@@ -41,13 +41,14 @@ const stage = (
 	name,
 	dependencies = [],
 	args = apiCommands[name] ?? ["exec", "tsx", `scripts/build-${name}.ts`],
-	{ cacheable = true, outputs = [] } = {},
+	{ cacheable = true, outputs = [], requiredOutputs = [] } = {},
 ) => ({
 	name,
 	dependencies,
 	args,
 	cacheable,
 	outputs,
+	requiredOutputs,
 });
 
 const apiStages = [
@@ -87,14 +88,19 @@ const apiStages = [
 		},
 	),
 	stage("terrain-catalogue"),
-	stage("atlas-sqlite", [
-		"terrain-catalogue",
-		"datasets",
-		"area-inventory",
-		"crosswalk-inventory",
-		"named-locations",
-		"location-projections",
-	]),
+	stage(
+		"atlas-sqlite",
+		[
+			"terrain-catalogue",
+			"datasets",
+			"area-inventory",
+			"crosswalk-inventory",
+			"named-locations",
+			"location-projections",
+		],
+		undefined,
+		{ requiredOutputs: ["data/build/atlas.sqlite"] },
+	),
 	stage(
 		"api-datasets",
 		["sources"],
@@ -118,6 +124,7 @@ const apiStages = [
 		"api-datasets",
 	]),
 	stage("place-index", [
+		"geography-catalogues",
 		"atlas-sqlite",
 		"boundary-registry",
 		"area-inventory",
@@ -133,6 +140,7 @@ const apiStages = [
 	]),
 	stage("export-manifest", ["data-catalog"]),
 	stage("postcode-areas", [
+		"geography-catalogues",
 		"atlas-sqlite",
 		"postcode-index",
 		"area-inventory",
@@ -154,6 +162,14 @@ const apiStages = [
 		"analysis-geographies",
 		"data-catalog",
 		"crosswalk-inventory",
+	]),
+	stage("geography-catalogues", [
+		"atlas-sqlite",
+		"boundary-registry",
+		"geography-inventory",
+		"relationship-paths",
+		"analysis-geographies",
+		"analysis-geography-validation",
 	]),
 	stage("location-projections", [
 		"named-locations",
@@ -190,6 +206,7 @@ const apiStages = [
 	stage(
 		"atlas-release-initial",
 		[
+			"geography-catalogues",
 			"atlas-sqlite",
 			"boundary-registry",
 			"derived-boundaries",
@@ -225,6 +242,7 @@ const apiStages = [
 		"geometry-store",
 	]),
 	stage("atlas-lookups", [
+		"geography-catalogues",
 		"atlas-sqlite",
 		"area-inventory",
 		"crosswalk-inventory",
@@ -238,6 +256,7 @@ const apiStages = [
 	// Place pages read areas, crosswalks, geometry and named locations; the
 	// docs catalogue reads the API's catalogue and map resource manifests.
 	stage("atlas-pages", [
+		"geography-catalogues",
 		"api-datasets",
 		"boundary-registry",
 		"geometry-store",

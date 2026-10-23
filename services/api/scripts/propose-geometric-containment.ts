@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -66,7 +67,9 @@ export const proposeGeometricContainment = (
 ) => {
 	const directory = join(repositoryRoot, "services", "api", "public");
 	const read = <T>(path: string) =>
-		JSON.parse(readFileSync(join(directory, path), "utf8")) as T;
+		JSON.parse(
+			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),
+		) as T;
 	const geometrySources = readGeometrySourceLookup(
 		join(repositoryRoot, "services", "api"),
 	);

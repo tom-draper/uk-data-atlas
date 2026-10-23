@@ -215,7 +215,10 @@ historical snapshots or per-resource comparison index.
 
 Migrated SQLite data is covered by the database hash. JSON used only by the
 SQLite writer is a build intermediate, not a release dependency. Projection
-intermediates live under `data/build/location-projections/`. Consumers can keep a
+intermediates live under `data/build/location-projections/`. Geography catalogue
+intermediates live under `data/build/geography/`; the `geography-catalogues` stage
+adds them to the database after analysis compilation. Runtime readers and the
+corresponding evidence document endpoints read SQLite. Consumers can keep a
 build id for provenance and use download ETags or export lists for syncing.
 
 The derived-boundary and source-inventory JSON summaries had no readers beyond

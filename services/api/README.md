@@ -3249,7 +3249,7 @@ catalogues by the contract tests:
 
 The build scans every `../../data/**/meta.json`, so a newly added dataset becomes
 visible to the source inventory on the next build without changing API code.
-Boundary releases also feed `public/geography-inventory.json`, which reports
+Boundary releases also feed the `geography-inventory` payload in `data/build/atlas.sqlite`, which reports
 the input formats and whether area identity and conversion compilers are
 available. GeoJSON releases with one unambiguous code/name property pair also
 produce release-specific area artifacts for exact identity lookup. Exceptional
@@ -3283,7 +3283,7 @@ lookup's own names as record labels. Its records are
 marked `official-lookup` and `publisher-supplied`, but deliberately have
 `weighting.status: not-provided`: they may support relationship discovery, not
 value apportionment or an implied one-to-one identity conversion. Published
-crosswalks also feed `public/geography-inventory.json`, which reports each
+crosswalks also feed the `geography-inventory` payload in `data/build/atlas.sqlite`, which reports each
 boundary release's known relationships (direction, method, quality and
 weighting) or an explicit gap when no crosswalk references it yet.
 
@@ -3550,7 +3550,7 @@ country it holds no area of is not credited with it, and an area whose code
 names no country is counted apart rather than dropped. A ranking of UK wards
 would leave two countries out; this is how a caller learns that first.
 
-`public/relationship-paths.json` publishes every crosswalk as a one-step
+The `relationship-paths` payload in `data/build/atlas.sqlite` publishes every crosswalk as a one-step
 path in each direction, the reviewed compositions declared in
 `config/relationship-paths.json`, and the compositions the build's path search
 finds between every pair of releases that neither covers. The search takes

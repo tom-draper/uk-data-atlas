@@ -75,7 +75,7 @@ test("identifies binary data and remaining runtime files without migrated JSON o
 
 	assert.equal(
 		release.artifacts.some((x) =>
-			/location-projection|terrain-catalogue|named-locations|area-inventory|crosswalk-inventory/.test(
+			/boundary-releases|geography-inventory|relationship-paths|analysis-geograph|location-projection|terrain-catalogue|named-locations|area-inventory|crosswalk-inventory/.test(
 				x.path,
 			),
 		),

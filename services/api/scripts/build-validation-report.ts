@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path";
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -23,7 +24,7 @@ import { readStoredText, storedTextExists } from "../src/storedText";
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
 	const read = <T>(path: string): T => {
-		const fullPath = join(outputDirectory, path);
+		const fullPath = buildArtifactPath(repositoryRoot, path);
 		if (!storedTextExists(fullPath)) {
 			throw new Error(`Build ${path} before the validation report.`);
 		}

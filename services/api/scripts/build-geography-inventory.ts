@@ -1,4 +1,11 @@
-import { existsSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { buildArtifactPath } from "./geography-build-path";
+import {
+	mkdirSync,
+	existsSync,
+	readFileSync,
+	writeFileSync,
+	rmSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry";
@@ -34,7 +41,11 @@ export const buildGeographyInventory = (repositoryRoot: string) => {
 		areaInventory,
 		crosswalkInventory,
 	);
-	const geographyPath = join(outputDirectory, "geography-inventory.json");
+	const geographyPath = buildArtifactPath(
+		repositoryRoot,
+		"geography-inventory.json",
+	);
+	mkdirSync(dirname(geographyPath), { recursive: true });
 	writeFileSync(
 		geographyPath,
 		`${JSON.stringify(geographyInventory, null, "\t")}\n`,

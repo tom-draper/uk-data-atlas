@@ -120,3 +120,30 @@ test("links measures to immutable reports and retires evidence query endpoints",
 		400,
 	);
 });
+
+test("serves geography evidence from SQLite with exact bytes and conditional ETags", async (t) => {
+	const { readAtlasPayload } = await import("../../../../shared/atlasSqlite");
+	const server = createApiServer(readApiCatalogues(apiRoot));
+	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
+	t.after(() => {
+		server.closeAllConnections();
+		server.close();
+	});
+	const address = server.address();
+	assert.ok(address && typeof address !== "string");
+	for (const id of ["geography-inventory", "analysis-geography-validation"]) {
+		const url: string = `http://127.0.0.1:${address.port}/v1/documents/${id}.json`;
+		const response: Response = await fetch(url);
+		assert.equal(response.status, 200);
+		assert.equal(
+			await response.text(),
+			readAtlasPayload(resolve(apiRoot, "../.."), id),
+		);
+		const etag = response.headers.get("etag");
+		assert.ok(etag);
+		assert.equal(
+			(await fetch(url, { headers: { "if-none-match": etag } })).status,
+			304,
+		);
+	}
+});

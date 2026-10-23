@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path";
 import {
 	existsSync,
 	mkdirSync,
@@ -80,7 +81,7 @@ export const buildMapResources = (
 			"Create the API public directory before building map resources.",
 		);
 	const registry = JSON.parse(
-		readFileSync(join(out, "boundary-releases.json"), "utf8"),
+		readFileSync(buildArtifactPath(root, "boundary-releases.json"), "utf8"),
 	) as { releases: BoundaryReleaseSummary[] };
 	const inventory = JSON.parse(
 		readFileSync(join(out, "area-inventory.json"), "utf8"),

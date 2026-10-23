@@ -50,9 +50,12 @@ again. `pnpm data:build --only datasets` builds this stage and its prerequisites
 
 The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, `crosswalk-inventory`, `named-locations`, and `location-projections` and writes this database
 with the existing `node:sqlite` library. It replaces the whole database through
-a temporary file and atomic rename. Every run writes every table, so the stage
-cache detects its output without a retained-file `outputs` declaration.
-Future tables must join this writer before their loaders migrate.
+a temporary file and atomic rename. Every run writes the base tables. The stage cache requires the database file
+to exist even after the catalogue stage takes ownership of its current bytes.
+The later `geography-catalogues` stage stores geography catalogue payloads after
+analysis compilation. It updates a temporary copy and atomically replaces the
+database, retaining the existing tables. Its temporary copy is removed after a
+failure. Run the complete API or website target to include both stages.
 
 The database contains these tables:
 
@@ -269,3 +272,15 @@ compare every stored member and parent projection with its release shard.
 
 Other ready-to-send payloads will follow in `atlas.sqlite`.
 `tiles/*.pmtiles` will hold boundaries.
+
+## geography/
+
+Compiler intermediates for boundary releases, geography inventory, relationship
+paths, analysis geographies and analysis validation live here. The
+`geography-catalogues` stage stores their exact JSON bytes in `payloads`, keyed
+by filename without `.json`. The API reads SQLite only. Two evidence document
+endpoints also serve these stored bytes, preserving their hashes and ETags.
+
+Run `pnpm data:build --only geography-catalogues` to build this group and its
+prerequisites. Run `node --import tsx scripts/verify-geography-catalogues.mts`
+to compare every payload with its compiler intermediate byte for byte.

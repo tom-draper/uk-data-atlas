@@ -1004,7 +1004,9 @@ const capabilityAnswers = (url: string) => {
 		const id = requested.pathname.split("/")[3]!;
 		const file = catalogues.documents.get(`measure-${id}`);
 		assert.ok(file, id);
-		const document = JSON.parse(readFileSync(file.path, "utf8"));
+		const document = JSON.parse(
+			"body" in file ? file.body : readFileSync(file.path, "utf8"),
+		);
 		const target = document.data.coveragePlans.find(
 			(entry: { geography: string; release: string }) =>
 				entry.geography === requested.searchParams.get("geography") &&
