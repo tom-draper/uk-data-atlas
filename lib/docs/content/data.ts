@@ -230,7 +230,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Greenhouse gas emissions",
 		topic: "environment",
 		datasets: ["ghg-emissions"],
-		intro: "Net greenhouse gas emissions produced within each UK local authority every year from 2005 to 2024, in kilotonnes of CO2 equivalent.",
+		intro: "Net greenhouse gas emissions produced within each UK local authority every year from 2005 to 2024, in kilotonnes of CO2 equivalent. The legend also maps transport, domestic, industrial, commercial, public-sector, agricultural, waste and land-use emissions separately in kt CO2e. Land use can be negative where removals exceed emissions; regional sector totals sum the authorities.",
 	},
 	{
 		slug: "energy-consumption",

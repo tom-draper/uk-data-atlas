@@ -241,6 +241,13 @@ export function aggregateChildPoverty(
 export function aggregateGhgEmissions(
 	records: GhgEmissionsDataset["data"][string][],
 ): AggregatedGhgEmissionsData | null {
+	const sectors = {
+		commercial: 0,
+		publicSector: 0,
+		agriculture: 0,
+		waste: 0,
+		landUse: 0,
+	};
 	let totalKtCO2e = 0,
 		excludingLandUseKtCO2e = 0,
 		populationThousands = 0,
@@ -250,6 +257,12 @@ export function aggregateGhgEmissions(
 		count = 0;
 	for (const record of records) {
 		totalKtCO2e += record.totalKtCO2e;
+		sectors.commercial += record.commercial;
+		sectors.publicSector += record.publicSector;
+		sectors.agriculture += record.agriculture;
+		sectors.waste += record.waste;
+		sectors.landUse += record.landUse;
+
 		excludingLandUseKtCO2e += record.excludingLandUseKtCO2e;
 		populationThousands += record.populationThousands;
 		transport += record.transport;
@@ -269,6 +282,7 @@ export function aggregateGhgEmissions(
 				transport,
 				domestic,
 				industry,
+				...sectors,
 			};
 }
 
