@@ -28,7 +28,7 @@ import { decodeTile } from "../vectorTileFixtures";
  *
  * A descriptor whose hashes no longer match the archive beside it is worse
  * than none: it is the thing a client cites to prove a drawing came from a
- * stated release. Everything here is read from `public/` exactly as a client
+ * stated release. Everything here is read from `data/build/` exactly as a client
  * would read it, so a rebuild that is not committed fails rather than drifting.
  */
 
@@ -61,7 +61,8 @@ const downloadBytes = (
 	resource: MapResourceDescriptor,
 	entry: MapResourceDescriptor["features"][number],
 ): Buffer => {
-	if (entry.artifact) return readFileSync(join(publicRoot, entry.artifact));
+	if (entry.artifact)
+		return readFileSync(join(apiRoot, "../../data/build", entry.artifact));
 	const release = areaInventory.releases.find(
 		(candidate) =>
 			candidate.geography === resource.geography &&
@@ -96,7 +97,9 @@ test("recomputes the manifest's own content hash", () => {
 
 test("matches every archive to the hash and size its descriptor gives", () => {
 	for (const resource of manifest.resources) {
-		const archive = readFileSync(join(publicRoot, resource.tiles.artifact));
+		const archive = readFileSync(
+			join(apiRoot, "../../data/build", resource.tiles.artifact),
+		);
 		assert.equal(
 			archive.length,
 			resource.tiles.bytes,
@@ -112,7 +115,9 @@ test("matches every archive to the hash and size its descriptor gives", () => {
 
 test("describes the archive the way the archive describes itself", () => {
 	for (const resource of manifest.resources) {
-		const archive = readFileSync(join(publicRoot, resource.tiles.artifact));
+		const archive = readFileSync(
+			join(apiRoot, "../../data/build", resource.tiles.artifact),
+		);
 		const header = readHeader(archive);
 		assert.equal(header.magic, "PMTiles");
 		assert.equal(header.tileType, TILE_TYPE_MVT);
@@ -173,7 +178,9 @@ test("carries a real name, not the code again, into the tiles", () => {
 	);
 	for (const resource of manifest.resources) {
 		if (unnamed.has(resource.id)) continue;
-		const archive = readFileSync(join(publicRoot, resource.tiles.artifact));
+		const archive = readFileSync(
+			join(apiRoot, "../../data/build", resource.tiles.artifact),
+		);
 		// Zoom 0 holds the whole release in one tile, so every area is in it.
 		const tile = readTile(archive, tileId(0, 0, 0));
 		assert.ok(tile, `${resource.id} has no zoom 0 tile`);
@@ -245,7 +252,9 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 			parquet.map((entry) => entry.tier),
 			Object.keys(GEOMETRY_TIERS),
 		);
-		const archive = readFileSync(join(publicRoot, resource.tiles.artifact));
+		const archive = readFileSync(
+			join(apiRoot, "../../data/build", resource.tiles.artifact),
+		);
 		const [layer] = decodeTile(readTile(archive, tileId(0, 0, 0))!);
 		const inTiles = new Map(
 			layer!.features.map((feature) => [
@@ -377,7 +386,9 @@ test("publishes the coarser tiers as GeoJSON holding the GeoParquet's features",
 			resource.id,
 		);
 		for (const entry of geoJson) {
-			const stored = readFileSync(join(publicRoot, entry.artifact!));
+			const stored = readFileSync(
+				join(apiRoot, "../../data/build", entry.artifact!),
+			);
 			assert.equal(
 				stored.length,
 				entry.gzipBytes,
@@ -407,7 +418,7 @@ test("publishes the coarser tiers as GeoJSON holding the GeoParquet's features",
 			const parquet = readParquet(
 				readFileSync(
 					join(
-						publicRoot,
+						join(apiRoot, "../../data/build"),
 						resource.features.find(
 							(candidate) =>
 								candidate.tier === entry.tier &&

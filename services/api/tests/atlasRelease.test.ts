@@ -43,7 +43,7 @@ const fixture = (context: TestContext) => {
 		'{"resources":[{"id":"ward/test","tiles":{"artifact":"boundaries.pmtiles"},"features":[{"tier":"low","format":"geojson","artifact":"boundaries.geojson.gz"}]}]}',
 	);
 	writeFileSync(
-		join(directory, "boundaries.pmtiles"),
+		join(root, "data/build/boundaries.pmtiles"),
 		Buffer.from([255, 0, 128, 4]),
 	);
 	return { root, directory };
@@ -69,7 +69,7 @@ test("identifies binary data and remaining runtime files without migrated JSON o
 	);
 	assert.ok(
 		release.artifacts.some(
-			(x) => x.path === "services/api/public/boundaries.pmtiles",
+			(x) => x.path === "data/build/boundaries.pmtiles",
 		),
 	);
 
@@ -100,7 +100,7 @@ test("binary changes and runtime catalogue changes change the build id; unused i
 	const sqlite = createAtlasRelease(root).releaseId;
 	assert.notEqual(sqlite, initial);
 	writeFileSync(
-		join(directory, "boundaries.pmtiles"),
+		join(root, "data/build/boundaries.pmtiles"),
 		Buffer.from([255, 0, 128, 5]),
 	);
 	const tiles = createAtlasRelease(root).releaseId;
@@ -142,7 +142,7 @@ test("download descriptors cover individual observations without requiring their
 
 test("refuses a build with a missing database or declared boundary archive", (context) => {
 	const { root, directory } = fixture(context);
-	rmSync(join(directory, "boundaries.pmtiles"));
+	rmSync(join(root, "data/build/boundaries.pmtiles"));
 	assert.throws(() => createAtlasRelease(root), /boundary-tiles/);
 	rmSync(join(root, "data/build/atlas.sqlite"));
 	assert.throws(() => createAtlasRelease(root), /atlas-sqlite/);

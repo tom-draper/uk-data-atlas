@@ -188,11 +188,12 @@ const apiStages = [
 		"crosswalk-inventory",
 		"named-locations",
 	]),
-	stage("map-resource", [
-		"boundary-registry",
-		"area-inventory",
-		"geometry-source-registry",
-	]),
+	stage(
+		"map-resource",
+		["boundary-registry", "area-inventory", "geometry-source-registry"],
+		undefined,
+		{ outputs: ["data/build/map-resources"] },
+	),
 	stage("validation-report", [
 		"boundary-registry",
 		"area-inventory",
@@ -291,7 +292,7 @@ const websiteStages = [
 			"--max-old-space-size=3072",
 			"scripts/compile-boundary-tiles.mts",
 		],
-		{ outputs: ["public/data/boundaries"] },
+		{ outputs: ["data/build/boundaries", "public/data/boundaries"] },
 	),
 	stage(
 		"website-sources",

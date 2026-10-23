@@ -1,6 +1,6 @@
 /**
  * Compiles the finer boundary families into PMTiles vector tiles, written
- * beside each release's TopoJSON in public/data, so the map can fetch only the
+ * into data/build, then copied to public/data so the map can fetch only the
  * tiles in view rather than a whole release.
  *
  * The tiles come from the same corrected source as the TopoJSON, and are cut by
@@ -23,6 +23,7 @@ import { compileTileset } from "@uk-data-atlas/map-tiles/compileTileset";
 import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles/tileset";
 import type { GeoJsonGeometry } from "@uk-data-atlas/map-tiles/types";
 import { correctedSource, releaseSources } from "./compile-boundaries.mts";
+import { copyBoundaryTiles } from "./copy-boundary-tiles.ts";
 import { elapsedSince, formatKb, logArtifact } from "./timing.mts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -112,7 +113,7 @@ export async function compileBoundaryTiles(
 			boundaryServesVectorTiles(type) && (!only || label === only),
 	);
 	console.log(`Preparing ${sources.length} vector tile archives...`);
-	const manifest: BoundaryTilesManifest = {
+	const manifest: { releases: Record<string, unknown> } = {
 		minZoom: MIN_ZOOM,
 		maxZoom: MAX_ZOOM,
 		releases: {},
@@ -123,7 +124,7 @@ export async function compileBoundaryTiles(
 		const untiledPath = join(directory, UNTILED_FILENAME);
 		if (existsSync(tilesPath))
 			manifest.releases[label] = {
-				href: `/data/${relative(outputDirectory, tilesPath)}`,
+				href: `/data/${relative(join(ROOT, "data/build"), tilesPath)}`,
 				bytes: (await stat(tilesPath)).size,
 			};
 		else if (existsSync(untiledPath))
@@ -137,7 +138,11 @@ export async function compileBoundaryTiles(
 	for (const source of sources) {
 		const releaseStartedAt = performance.now();
 		const { label, sourcePath, outputPath, codeKey, nameKey } = source;
-		const directory = dirname(outputPath);
+		const directory = join(
+			ROOT,
+			"data/build",
+			relative(outputDirectory, dirname(outputPath)),
+		);
 		const tilesPath = join(directory, TILES_FILENAME);
 		const untiledPath = join(directory, UNTILED_FILENAME);
 		const built = existsSync(tilesPath) ? tilesPath : untiledPath;
@@ -223,13 +228,14 @@ export async function compileBoundaryTiles(
 		await record(label, directory);
 	}
 
-	const manifestPath = join(outputDirectory, TILES_MANIFEST);
+	const manifestPath = join(ROOT, "data/build", TILES_MANIFEST);
 	await mkdir(dirname(manifestPath), { recursive: true });
 	await writeFile(manifestPath, JSON.stringify(manifest, null, "\t") + "\n");
 	console.log(
 		`Vector tiles complete: ${Object.keys(manifest.releases).length} tiled, ` +
 			`${Object.keys(manifest.untiled).length} untiled (${elapsedSince(startedAt)}).`,
 	);
+	await copyBoundaryTiles(ROOT, outputDirectory);
 	return manifest;
 }
 

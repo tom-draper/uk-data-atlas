@@ -104,7 +104,8 @@ export const buildMapResources = (
 		undefined,
 		roundKeepingValidity,
 	);
-	const directory = join(out, "map-resources");
+	const assets = join(root, "data/build");
+	const directory = join(assets, "map-resources");
 	mkdirSync(directory, { recursive: true });
 
 	const compiler = sha256(
@@ -165,7 +166,7 @@ export const buildMapResources = (
 		// A full-tier download has no file: it is built from the geometry
 		// store when asked for.
 		const stored = (entry: { artifact?: string }) =>
-			!entry.artifact || existsSync(join(out, entry.artifact));
+			!entry.artifact || existsSync(join(assets, entry.artifact));
 		if (
 			kept?.key === key &&
 			"descriptor" in kept &&
@@ -213,9 +214,9 @@ export const buildMapResources = (
 			continue;
 		}
 		const { archive, features, descriptor } = compiled;
-		writeFileSync(join(out, artifact), archive);
+		writeFileSync(join(assets, artifact), archive);
 		for (const feature of features)
-			writeFileSync(join(out, feature.artifact), feature.body);
+			writeFileSync(join(assets, feature.artifact), feature.body);
 		resources.push(descriptor);
 		compiledIds.add(id);
 		state[id] = { key, descriptor };
@@ -254,6 +255,7 @@ export const buildMapResources = (
 			.digest("hex")}`,
 	};
 	writeFileSync(manifestPath, JSON.stringify(manifest, null, "\t") + "\n");
+	rmSync(join(out, "map-resources"), { recursive: true, force: true });
 	return { path: manifestPath, resources, unavailable };
 };
 
