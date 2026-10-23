@@ -171,5 +171,13 @@ describe("EventHandler", () => {
 		// Moving onto a hidden area leaves the shown one.
 		expect(onAreaHover).toHaveBeenLastCalledWith(null);
 		expect(onAreaClick).not.toHaveBeenCalled();
+		(handler as any).handleMouseMove({ features: [hidden, shown] });
+		click({ features: [hidden, shown] });
+		expect(onAreaHover).toHaveBeenLastCalledWith(
+			expect.objectContaining({ code: "E09000001" }),
+		);
+		expect(onAreaClick).toHaveBeenCalledWith(
+			expect.objectContaining({ code: "E09000001" }),
+		);
 	});
 });

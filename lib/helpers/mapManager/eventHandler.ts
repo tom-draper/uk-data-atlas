@@ -25,12 +25,10 @@ type MapFeature = {
  * The area under the pointer, unless it is one the boundary layer is keeping
  * hidden because the drawn dataset leaves it out.
  */
-const shownFeature = (features?: MapFeature[]): MapFeature | undefined => {
-	const feature = features?.[0];
-	return feature?.state?.[OUTSIDE_DATASET_STATE] === true
-		? undefined
-		: feature;
-};
+const shownFeature = (features?: MapFeature[]): MapFeature | undefined =>
+	features?.find(
+		(feature) => feature.state?.[OUTSIDE_DATASET_STATE] !== true,
+	);
 
 function rafThrottle<T extends unknown[]>(
 	func: (...args: T) => void,
