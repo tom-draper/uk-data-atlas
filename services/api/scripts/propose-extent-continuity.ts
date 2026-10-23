@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -31,7 +32,9 @@ const toKebabCase = (value: string) =>
 export const proposeExtentContinuity = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "services", "api", "public");
 	const read = <T>(path: string) =>
-		JSON.parse(readFileSync(join(directory, path), "utf8")) as T;
+		JSON.parse(
+			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),
+		) as T;
 	const registry = read<BoundaryRegistry>("boundary-releases.json");
 	const geometrySources = new Map(
 		read<{

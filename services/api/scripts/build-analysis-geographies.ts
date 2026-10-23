@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { buildArtifactPath } from "./geography-build-path";
+import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -19,7 +20,10 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 		);
 	// Read only if built: a path-backed support needs it, and compiling
 	// refuses one without it.
-	const pathsPath = join(directory, "relationship-paths.json");
+	const pathsPath = buildArtifactPath(
+		repositoryRoot,
+		"relationship-paths.json",
+	);
 	const relationshipPaths = existsSync(pathsPath)
 		? (JSON.parse(
 				readFileSync(pathsPath, "utf8"),
@@ -39,7 +43,11 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 		JSON.parse(readFileSync(crosswalkPath, "utf8")) as CrosswalkInventory,
 		relationshipPaths,
 	);
-	const outputPath = join(directory, "analysis-geographies.json");
+	const outputPath = buildArtifactPath(
+		repositoryRoot,
+		"analysis-geographies.json",
+	);
+	mkdirSync(dirname(outputPath), { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(inventory, null, "\t")}\n`);
 	return { outputPath, count: inventory.supports.length };
 };

@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path";
 import {
 	existsSync,
 	mkdirSync,
@@ -175,7 +176,11 @@ export const createBoundaryRegistry = (
 export const buildBoundaryRegistry = (repositoryRoot: string) => {
 	const registry = createBoundaryRegistry(repositoryRoot);
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
-	const outputPath = join(outputDirectory, "boundary-releases.json");
+	const outputPath = buildArtifactPath(
+		repositoryRoot,
+		"boundary-releases.json",
+	);
+	mkdirSync(dirname(outputPath), { recursive: true });
 	mkdirSync(outputDirectory, { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(registry, null, "\t")}\n`);
 	return { outputPath, releaseCount: registry.releases.length };

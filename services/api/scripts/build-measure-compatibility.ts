@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path";
 import {
 	readSourceObservations,
 	type MeasureTableArtifact,
@@ -21,7 +22,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		"area-inventory.json",
 	];
 	for (const file of required) {
-		if (!existsSync(join(publicDirectory, file))) {
+		if (!existsSync(buildArtifactPath(repositoryRoot, file))) {
 			throw new Error(`Build ${file} before measure compatibility.`);
 		}
 	}
@@ -41,7 +42,9 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 	const tables = new Map<string, MeasureTableArtifact>();
 	const compatibility = compileMeasureCompatibility(
 		dataCatalog,
-		read<BoundaryRegistry>(join(publicDirectory, "boundary-releases.json")),
+		read<BoundaryRegistry>(
+			buildArtifactPath(repositoryRoot, "boundary-releases.json"),
+		),
 		artifacts,
 		dataCatalog.measures.flatMap((measure) =>
 			measure.sources.map((source) =>

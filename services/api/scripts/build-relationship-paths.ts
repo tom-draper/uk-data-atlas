@@ -1,3 +1,5 @@
+import { mkdirSync } from "node:fs";
+import { buildArtifactPath } from "./geography-build-path";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -46,7 +48,11 @@ export const buildRelationshipPaths = (repositoryRoot: string) => {
 		),
 		{ shapes, maximumSteps: MAXIMUM_DISCOVERED_STEPS },
 	);
-	const outputPath = join(directory, "relationship-paths.json");
+	const outputPath = buildArtifactPath(
+		repositoryRoot,
+		"relationship-paths.json",
+	);
+	mkdirSync(dirname(outputPath), { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(paths, null, "\t")}\n`);
 	return { outputPath, count: paths.paths.length };
 };

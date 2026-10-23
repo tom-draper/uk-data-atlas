@@ -20,7 +20,6 @@ export type AtlasRelease = {
 
 // Catalogues that still have runtime JSON readers. Migrated data is covered by atlas.sqlite.
 const JSON_ARTIFACTS = [
-	"boundary-releases",
 	"place-index",
 	"area-search-index",
 	"postcode-index",
@@ -32,11 +31,7 @@ const JSON_ARTIFACTS = [
 	"lookup-manifest",
 	"map-resources",
 	"geometry-sources",
-	"analysis-geographies",
-	"analysis-geography-validation",
-	"relationship-paths",
 	"relationship-candidates",
-	"geography-inventory",
 	"validation-report",
 ];
 

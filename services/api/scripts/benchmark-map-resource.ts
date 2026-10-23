@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -15,7 +16,7 @@ const root = resolve(process.argv[2] ?? ".");
 const id = process.argv[3] ?? "country/2025-12-uk-bgc";
 const out = join(root, "services/api/public");
 const registry: { releases: BoundaryReleaseSummary[] } = JSON.parse(
-	readFileSync(join(out, "boundary-releases.json"), "utf8"),
+	readFileSync(buildArtifactPath(root, "boundary-releases.json"), "utf8"),
 );
 const release = registry.releases.find(
 	(entry) => `${entry.geography}/${entry.id}` === id,

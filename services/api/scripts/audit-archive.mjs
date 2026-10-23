@@ -1,3 +1,4 @@
+import { buildArtifactPath } from "./geography-build-path.ts";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,7 +8,7 @@ const repositoryRoot = resolve(apiRoot, "../..");
 const inputs = {};
 const read = (name, field) => {
 	const artifact = JSON.parse(
-		readFileSync(resolve(apiRoot, "public", name), "utf8"),
+		readFileSync(buildArtifactPath(repositoryRoot, name), "utf8"),
 	);
 	if (artifact.schemaVersion !== 1 || !Array.isArray(artifact[field]))
 		throw new Error(

@@ -1,3 +1,5 @@
+import { readAtlasPayload } from "../../../shared/atlasSqlite";
+import { resolve } from "node:path";
 import { readFileSync } from "node:fs";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
@@ -100,9 +102,9 @@ export const readAnalysisGeographyInventory = (
 	dataCatalog: DataCatalog,
 	crosswalkInventory: CrosswalkInventory,
 ): AnalysisGeographyInventory => {
-	const path = publicPath(apiRoot, "analysis-geographies.json");
+	const path = "data/build/atlas.sqlite:analysis-geographies";
 	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
+		readAtlasPayload(resolve(apiRoot, "../.."), "analysis-geographies"),
 	) as AnalysisGeographyInventory;
 	if (
 		inventory.schemaVersion !== 1 ||
@@ -121,9 +123,12 @@ export const readAnalysisGeographyValidationInventory = (
 	dataCatalog: DataCatalog,
 	crosswalkInventory: CrosswalkInventory,
 ): AnalysisGeographyValidationInventory => {
-	const path = publicPath(apiRoot, "analysis-geography-validation.json");
+	const path = "data/build/atlas.sqlite:analysis-geography-validation";
 	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
+		readAtlasPayload(
+			resolve(apiRoot, "../.."),
+			"analysis-geography-validation",
+		),
 	) as AnalysisGeographyValidationInventory;
 	if (
 		inventory.schemaVersion !== 1 ||

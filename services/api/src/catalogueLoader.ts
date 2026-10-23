@@ -1,3 +1,5 @@
+import { readAtlasPayload } from "../../../shared/atlasSqlite";
+import { sha256 } from "./contentHash";
 import { FullDetailDownloads } from "./fullDetailDownloads";
 import type { EvidenceManifest } from "./evidenceReports";
 import { lazyValue } from "./lazyValue";
@@ -63,8 +65,20 @@ const readEvidenceDocuments = (
 	atlasRelease: RouteContext["atlasRelease"],
 	dataCatalogHash: string,
 ) => {
-	const documents = new Map<string, StoredFile>(
-		EVIDENCE_DOCUMENTS.flatMap((id) => {
+	const documents = new Map<
+		string,
+		StoredFile | { body: string; contentHash: string }
+	>(
+		EVIDENCE_DOCUMENTS.flatMap<
+			[string, StoredFile | { body: string; contentHash: string }]
+		>((id) => {
+			if (
+				id === "geography-inventory" ||
+				id === "analysis-geography-validation"
+			) {
+				const body = readAtlasPayload(resolve(apiRoot, "../.."), id);
+				return [[id, { body, contentHash: sha256(body) }]];
+			}
 			const path = `${id}.json`;
 			const artifact = atlasRelease?.artifacts.find(
 				(candidate) => candidate.id === id,

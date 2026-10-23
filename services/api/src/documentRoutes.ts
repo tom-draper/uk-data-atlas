@@ -29,7 +29,8 @@ export const handleDocumentRoutes = ({
 				}),
 				representation: {
 					contentType: "application/json",
-					body: document,
+					body: "body" in document ? document.body : document,
+					contentHash: document.contentHash,
 				},
 			}
 		: problem(
