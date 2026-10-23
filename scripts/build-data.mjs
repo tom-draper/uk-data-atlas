@@ -70,7 +70,7 @@ export function planBuild(stages, from, roots) {
 const ALWAYS_RUNS = "always-runs";
 
 /**
- * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, outputs?: string[] }} Stage
+ * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, outputs?: string[], requiredOutputs?: string[] }} Stage
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],

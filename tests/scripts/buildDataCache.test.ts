@@ -185,3 +185,47 @@ test("a stage owns the files in its declared folders, even ones it kept", () => 
 	unlinkSync(join(root, "data/build/datasets/kept.json"));
 	assert.deepEqual(runs(), ["download", "compile", "report"]);
 });
+
+test("a later writer can update a shared database while its builder still rebuilds a missing file", () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-shared-build-"));
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data/build"), { recursive: true });
+	const path = join(root, "data/build/atlas.sqlite");
+	const sharedStages = [
+		{
+			name: "base",
+			dependencies: [],
+			args: [],
+			requiredOutputs: ["data/build/atlas.sqlite"],
+		},
+		{ name: "final", dependencies: ["base"], args: [] },
+	];
+	const run = () => {
+		const executed: string[] = [];
+		assert.equal(
+			runBuild({
+				stages: sharedStages,
+				log: () => {},
+				createCache: () =>
+					createStageCache({
+						root,
+						stateFile: join(root, ".cache/stages.json"),
+						codeFiles: () => [],
+						environment: {},
+					}),
+				execute: (current: { name: string }) => {
+					executed.push(current.name);
+					writeFileSync(path, current.name);
+					return 0;
+				},
+			}),
+			0,
+		);
+		return executed;
+	};
+	assert.deepEqual(run(), ["base", "final"]);
+	assert.deepEqual(run(), []);
+	unlinkSync(path);
+	assert.deepEqual(run(), ["base", "final"]);
+	assert.deepEqual(run(), []);
+});
