@@ -284,3 +284,10 @@ endpoints also serve these stored bytes, preserving their hashes and ETags.
 Run `pnpm data:build --only geography-catalogues` to build this group and its
 prerequisites. Run `node --import tsx scripts/verify-geography-catalogues.mts`
 to compare every payload with its compiler intermediate byte for byte.
+
+Boundary tiles are built in `data/build/boundaries/` for the website and
+`data/build/map-resources/` for the API, alongside its feature downloads and
+resumable build state. The API reads these assets directly. The website copies
+its archives and `tiles.json` to `public/data/boundaries/` during data and app
+builds, preserving static URLs. Publish API map assets from
+`data/build/map-resources/`, keeping the `map-resources/` URL prefix.

@@ -151,7 +151,9 @@ export const readMapAssets = (
 		(mapResources.assetBaseUrl ? [] : mapResources.resources).map(
 			(resource) => [
 				resource.id,
-				openArchive(join(apiRoot, "public", resource.tiles.artifact)),
+				openArchive(
+					join(apiRoot, "../../data/build", resource.tiles.artifact),
+				),
 			],
 		),
 	),
@@ -163,7 +165,7 @@ export const readMapAssets = (
 			.map((entry) => [
 				entry.artifact,
 				{
-					path: join(apiRoot, "public", entry.artifact),
+					path: join(apiRoot, "../../data/build", entry.artifact),
 					bytes: entry.bytes,
 					contentHash: entry.contentHash,
 					...(entry.gzipBytes === undefined

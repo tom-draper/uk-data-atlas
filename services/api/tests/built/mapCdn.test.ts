@@ -99,7 +99,9 @@ test("joins GeoJSON fetched from object storage through the real HTTP server", a
 		if (path.endsWith(".gz"))
 			response.setHeader("content-encoding", "gzip");
 		response.end(
-			readFileSync(join(apiRoot, "public", path.slice("/maps/".length))),
+			readFileSync(
+				join(apiRoot, "../../data/build", path.slice("/maps/".length)),
+			),
 		);
 	});
 	await new Promise<void>((ready) => assets.listen(0, "127.0.0.1", ready));

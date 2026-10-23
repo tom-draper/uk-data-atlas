@@ -67,7 +67,7 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 		artifacts.push(
 			artifactReference(
 				`boundary-tiles/${resource.id}`,
-				join(publicDirectory, resource.tiles.artifact),
+				join(repositoryRoot, "data/build", resource.tiles.artifact),
 			),
 		);
 	}

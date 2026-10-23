@@ -169,3 +169,9 @@ The website serves its own copy of the atlas lookups and pages from
 `public/data/` and never fetches from the API. Restart
 the API and website in either order. On a memory-constrained local machine,
 stop the API before `pnpm data:build --target website`.
+
+API PMTiles and map feature downloads live in `data/build/map-resources/`.
+Include this directory alongside `data/build/atlas.sqlite` in API deployments.
+For an asset CDN, upload it under the `map-resources/` prefix. Website builds
+copy `data/build/boundaries/` archives into `public/data/boundaries/` for static
+serving. Source release publishing still packages only `data/source/`.
