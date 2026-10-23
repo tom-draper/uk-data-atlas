@@ -42,6 +42,9 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "regionalGdpItl3"
 				? { measure: "gdp" }
 				: {}),
+			...(definition.type === "mobileCoverage"
+				? { measure: "pct5GOutdoorAll" }
+				: {}),
 			...(definition.type === "claimantCount" ? { measure: "rate" } : {}),
 			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
 			...(definition.type === "schoolPerformance"

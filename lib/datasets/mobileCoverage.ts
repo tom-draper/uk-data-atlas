@@ -1,3 +1,4 @@
+import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { mobileCoverageDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { mobileCoverageAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { MobileCoverageDataset } from "@/lib/types/mobileCoverage";
@@ -23,14 +24,16 @@ export const mobileCoverageDefinition: ChartDatasetDefinition<MobileCoverageData
 			year: 2025,
 		},
 		map: {
-			// 5G from all four operators, the one measure with real spread:
-			// indoor 4G from at least one is above 94% almost everywhere.
-			valueKey: "pct5GOutdoorAll",
+			valueFor: (dataset, code, options) =>
+				dataset.data[code]?.[options.mobileCoverage.measure] ?? null,
+			sourceMode: (_dataset, options) =>
+				`mobile:${options.mobileCoverage.measure}`,
 			colorRange: { min: 5, max: 75 },
 			legend: {
 				min: 0,
 				max: 100,
-				format: (value) => `${value.toFixed(0)}%`,
+				format: (value, options) =>
+					`${value.toFixed(0)}% ${MOBILE_COVERAGE_MEASURES.find(({ value }) => value === options.mobileCoverage.measure)?.label}`,
 			},
 		},
 	};
