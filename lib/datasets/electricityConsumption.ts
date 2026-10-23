@@ -1,5 +1,9 @@
 import { electricityConsumptionDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { electricityConsumptionAggregation } from "@/lib/helpers/datasetAggregation/specifications";
+import {
+	energyConsumptionValue,
+	ENERGY_SECTORS,
+} from "@/lib/helpers/energyConsumptionMeasures";
 import { formatCompactCount } from "@/lib/helpers/formatCount";
 import type {
 	AggregatedEnergyConsumptionData,
@@ -41,6 +45,24 @@ export const electricityConsumptionDefinition: ChartDatasetDefinition<Electricit
 				value: (record) => record.allMetersGwh,
 				secondary: domesticShare,
 			}),
+			cardForOptions: (options) =>
+				defineValueCard<
+					ElectricityConsumptionDataset,
+					EnergyConsumptionMetrics,
+					AggregatedEnergyConsumptionData
+				>({
+					heading: "Electricity consumption",
+					coverage: "Great Britain",
+					source: "Department for Energy Security and Net Zero. Subnational electricity consumption. gov.uk",
+					unit: "GWh",
+					format: formatCompactCount,
+					maximum: 4000,
+					aggregate: (record) => record,
+					value: (record) =>
+						record[options.electricityConsumption.sector],
+					secondary: () =>
+						`${ENERGY_SECTORS.find((sector) => sector.value === options.electricityConsumption.sector)?.label ?? "All meters"} total`,
+				}),
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
 				aggregator.aggregate(
 					electricityConsumptionAggregation,
@@ -52,15 +74,14 @@ export const electricityConsumptionDefinition: ChartDatasetDefinition<Electricit
 			year: 2024,
 		},
 		map: {
-			valueFor: (dataset, code, mapOptions) => {
-				const record = dataset.data[code];
-				return mapOptions.electricityConsumption.measure ===
-					"perPopulation"
-					? (record?.metrics?.per100kPopulation ?? null)
-					: (record?.allMetersGwh ?? null);
-			},
-			sourceMode: (_dataset, mapOptions) =>
-				`electricityConsumption:${mapOptions.electricityConsumption.measure}`,
+			valueFor: (dataset, code, options) =>
+				energyConsumptionValue(
+					dataset.data[code],
+					options.electricityConsumption.sector,
+					options.electricityConsumption.measure,
+				),
+			sourceMode: (_dataset, options) =>
+				`electricityConsumption:${options.electricityConsumption.measure}:${options.electricityConsumption.sector}`,
 			colorRange: { min: 0, max: 2_500 },
 			legend: {
 				min: 0,

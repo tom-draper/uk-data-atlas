@@ -237,7 +237,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Energy consumption",
 		topic: "environment",
 		datasets: ["electricity-consumption", "gas-consumption"],
-		intro: "Metered electricity and gas used in each Great Britain local authority from 2015 to 2024, split between domestic and non-domestic meters. These are meter readings rather than a model, so they add up over areas exactly.",
+		intro: "Metered electricity and gas used in each Great Britain local authority from 2015 to 2024, split between domestic and non-domestic meters. These are meter readings rather than a model, so they add up over areas exactly. The map legend switches between all, domestic and non-domestic meters, in total GWh or GWh per 100,000 residents. Cards show the selected meter group in total GWh; regional figures sum consumption.",
 	},
 	{
 		slug: "waste",
