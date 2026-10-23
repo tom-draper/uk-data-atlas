@@ -1,3 +1,7 @@
+import {
+	fixtureObservationDatabase,
+	writeObservationFixture,
+} from "./observationFixtures";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -57,7 +61,7 @@ const catalog = {
 const withArtifact = (artifact: object, run: (directory: string) => void) => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-export-"));
 	try {
-		writeFileSync(
+		writeObservationFixture(
 			join(directory, "fixture-observations.json"),
 			JSON.stringify(artifact),
 		);
@@ -92,7 +96,11 @@ const artifact = {
 
 test("describes each export's records, schema and provenance from its artifact", () => {
 	withArtifact(artifact, (directory) => {
-		const manifest = compileExportManifest(directory, catalog);
+		const manifest = compileExportManifest(
+			directory,
+			catalog,
+			fixtureObservationDatabase(directory),
+		);
 		assert.equal(manifest.schemaVersion, 1);
 		assert.match(manifest.contentHash, /^sha256:[a-f0-9]{64}$/);
 		const [entry] = manifest.exports;
@@ -170,7 +178,12 @@ test("refuses a record field the export schema does not describe", () => {
 		},
 		(directory) =>
 			assert.throws(
-				() => compileExportManifest(directory, catalog),
+				() =>
+					compileExportManifest(
+						directory,
+						catalog,
+						fixtureObservationDatabase(directory),
+					),
 				/records carry rank, which the export schema does not describe/,
 			),
 	);
@@ -179,9 +192,15 @@ test("refuses a record field the export schema does not describe", () => {
 test("fails before a catalogued observation artifact exists", () => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-export-"));
 	try {
+		writeObservationFixture(join(directory, "placeholder.json"), "{}");
 		assert.throws(
-			() => compileExportManifest(directory, catalog),
-			/fixture-observations.json/,
+			() =>
+				compileExportManifest(
+					directory,
+					catalog,
+					fixtureObservationDatabase(directory),
+				),
+			/Missing SQLite measure observations: fixture-observations/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
@@ -190,7 +209,11 @@ test("fails before a catalogued observation artifact exists", () => {
 
 test("publishes deterministic CSV and Parquet with exact byte sizes and hashes", () => {
 	withArtifact(artifact, (directory) => {
-		const entry = compileExportManifest(directory, catalog).exports[0];
+		const entry = compileExportManifest(
+			directory,
+			catalog,
+			fixtureObservationDatabase(directory),
+		).exports[0];
 		assert.deepEqual(
 			entry.formats?.map((file) => file.format),
 			["csv", "parquet"],
@@ -233,18 +256,34 @@ test("publishes deterministic CSV and Parquet with exact byte sizes and hashes",
 		assert.equal(rows[0].unit, "count");
 		assert.equal(rows[0].datasetId, "fixture-dataset");
 		assert.deepEqual(
-			compileExportManifest(directory, catalog),
-			compileExportManifest(directory, catalog),
+			compileExportManifest(
+				directory,
+				catalog,
+				fixtureObservationDatabase(directory),
+			),
+			compileExportManifest(
+				directory,
+				catalog,
+				fixtureObservationDatabase(directory),
+			),
 		);
 	});
 });
 
 test("replaces an uncompressed CSV an earlier build wrote", () => {
 	withArtifact(artifact, (directory) => {
-		const id = compileExportManifest(directory, catalog).exports[0].id;
+		const id = compileExportManifest(
+			directory,
+			catalog,
+			fixtureObservationDatabase(directory),
+		).exports[0].id;
 		const stale = join(directory, "exports", `${id}.csv`);
 		writeFileSync(stale, "stale");
-		compileExportManifest(directory, catalog);
+		compileExportManifest(
+			directory,
+			catalog,
+			fixtureObservationDatabase(directory),
+		);
 		assert.equal(existsSync(stale), false);
 		assert.equal(existsSync(`${stale}.gz`), true);
 	});
@@ -269,7 +308,11 @@ test("preserves categorical strings, CSV quoting and publisher codes", () => {
 			],
 		},
 		(directory) => {
-			const entry = compileExportManifest(directory, catalog).exports[0];
+			const entry = compileExportManifest(
+				directory,
+				catalog,
+				fixtureObservationDatabase(directory),
+			).exports[0];
 			const csv = gunzipSync(
 				readFileSync(join(directory, entry.formats![0].artifact)),
 			).toString("utf8");
@@ -301,7 +344,11 @@ test("projects shared tables to the named measure without losing null or zero", 
 			],
 		},
 		(directory) => {
-			const entry = compileExportManifest(directory, catalog).exports[0];
+			const entry = compileExportManifest(
+				directory,
+				catalog,
+				fixtureObservationDatabase(directory),
+			).exports[0];
 			const rows = readParquet(
 				readFileSync(join(directory, entry.formats![1].artifact)),
 			).rows;
@@ -320,7 +367,11 @@ test("exports an empty partition with column headers and a readable Parquet sche
 	withArtifact(
 		{ ...artifact, periods: [{ period: "2024", records: [] }] },
 		(directory) => {
-			const entry = compileExportManifest(directory, catalog).exports[0];
+			const entry = compileExportManifest(
+				directory,
+				catalog,
+				fixtureObservationDatabase(directory),
+			).exports[0];
 			const file = readParquet(
 				readFileSync(join(directory, entry.formats![1].artifact)),
 			);

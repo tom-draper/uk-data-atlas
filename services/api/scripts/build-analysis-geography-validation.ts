@@ -1,3 +1,9 @@
+import {
+	assertObservationCatalogue,
+	observationDatabasePath,
+	readObservationText,
+} from "../src/atlasObservations";
+import { observationArtifactName } from "../src/dataCatalog";
 import { buildArtifactPath } from "./geography-build-path";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -50,25 +56,24 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 			return [entry.id, artifact] as const;
 		}),
 	);
-	const observations = new Map(
+	const databasePath = observationDatabasePath(
+		resolve(repositoryRoot, "services/api"),
+	);
+	assertObservationCatalogue(databasePath, dataCatalog);
+	const names = new Set(
 		dataCatalog.measures.flatMap((measure) =>
-			measure.sources.flatMap((source) => {
-				const artifact =
-					source.observationArtifact ?? `${measure.id}-observations`;
-				const path = join(directory, `${artifact}.json`);
-				if (!existsSync(path)) return [];
-				// A table is kept whole: the validator reads each measure's
-				// column from it, since several measures share the one name.
-				return [
-					[
-						artifact,
-						JSON.parse(readFileSync(path, "utf8")) as
-							| AnyMeasureObservationArtifact
-							| MeasureTableArtifact,
-					] as const,
-				];
-			}),
+			measure.sources.map((source) =>
+				observationArtifactName(measure.id, source),
+			),
 		),
+	);
+	// Shared tables remain whole so validation can read each measure's column.
+	const observations = new Map(
+		[...names].map((id) => [
+			id,
+			JSON.parse(readObservationText(databasePath, id)) as
+				AnyMeasureObservationArtifact | MeasureTableArtifact,
+		]),
 	);
 	const inventory = validateAnalysisGeographies(
 		analysisGeographies,
