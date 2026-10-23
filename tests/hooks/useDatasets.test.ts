@@ -37,6 +37,7 @@ describe("datasetIsNeeded", () => {
 		expect(hiddenByDefault.map((d) => d.type).sort()).toEqual([
 			"adultSocialCareOutcomes",
 			"brexitConstituency",
+			"generalHealth",
 			"housingTenure",
 			"localGovernmentFinance",
 			"netAdditionalDwellings",
