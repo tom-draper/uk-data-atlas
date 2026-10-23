@@ -1,3 +1,5 @@
+import { readPostcodeIndex } from "../src/boundaryLoader";
+import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,16 +11,19 @@ import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,
 } from "../src/postcodeAreas";
-import type { PostcodeIndexArtifact, PostcodeShard } from "../src/postcodes";
+import type { PostcodeShard } from "../src/postcodes";
 import { readStoredText } from "../src/storedText";
 
-// Shards are stored gzipped; the index files beside them are plain.
+// Postcode-to-area shards remain gzipped; postcode records come from SQLite.
 const read = <T>(path: string): T => JSON.parse(readStoredText(path)) as T;
 
 export const buildPostcodeCounts = (repositoryRoot: string) => {
 	const publicRoot = join(repositoryRoot, "services", "api", "public");
-	const postcodeIndex = read<PostcodeIndexArtifact>(
-		join(publicRoot, "postcode-index.json"),
+	const postcodeIndex = readPostcodeIndex(
+		join(repositoryRoot, "services/api"),
+	).artifact;
+	const entries = new Map(
+		postcodeIndex.shards.map((entry) => [entry.path, entry]),
 	);
 	const postcodeAreas = read<PostcodeAreasArtifact>(
 		join(publicRoot, "postcode-areas.json"),
@@ -26,7 +31,17 @@ export const buildPostcodeCounts = (repositoryRoot: string) => {
 	const artifact = compilePostcodeCounts(
 		postcodeIndex,
 		postcodeAreas,
-		(path) => read<PostcodeShard>(join(publicRoot, path)),
+		(path) => {
+			const entry = entries.get(path);
+			if (!entry) throw new Error(`Unknown postcode district ${path}`);
+			const shard: PostcodeShard = JSON.parse(
+				readSqlitePostcodeShard(
+					join(repositoryRoot, "services/api"),
+					entry,
+				),
+			);
+			return shard;
+		},
 		(path) => read<PostcodeAreasShard>(join(publicRoot, path)),
 	);
 	const outputPath = join(publicRoot, "postcode-counts.json");

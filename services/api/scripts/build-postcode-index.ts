@@ -1,12 +1,5 @@
 import { spawn } from "node:child_process";
-import {
-	existsSync,
-	mkdirSync,
-	readdirSync,
-	readFileSync,
-	rmSync,
-	writeFileSync,
-} from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
@@ -15,12 +8,12 @@ import {
 	type PostcodeSource,
 	type PostcodeSourceRow,
 } from "../src/postcodes";
-import { writeStoredText } from "../src/storedText";
+import { storePostcodeIndex } from "./store-postcode-index";
 
 /**
  * Compile the newest filtered ONS Postcode Directory under
- * data/source/postcodes/onspd into services/api/public/postcode-index.json and one shard per
- * postcode district under services/api/public/postcodes. The stored source excludes
+ * data/source/postcodes/onspd into the shared atlas.sqlite database.
+ * District ordering is retained for postcode-to-area joins. The stored source excludes
  * Northern Ireland before it is included in the public data release.
  */
 
@@ -120,17 +113,13 @@ export const buildPostcodeIndex = async (repositoryRoot: string) => {
 		rows.push(row);
 	}
 	const { artifact, files } = compilePostcodeIndex(rows, source);
-	const publicRoot = join(repositoryRoot, "services", "api", "public");
-	// Every shard is rewritten, so one for a district no longer compiled, such
-	// as BT1 after a build that included Northern Ireland, cannot linger.
-	rmSync(join(publicRoot, "postcodes"), { recursive: true, force: true });
-	mkdirSync(join(publicRoot, "postcodes"));
-	for (const file of files) {
-		mkdirSync(dirname(join(publicRoot, file.path)), { recursive: true });
-		writeStoredText(join(publicRoot, file.path), file.text);
-	}
-	const outputPath = join(publicRoot, "postcode-index.json");
-	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
+	const texts = new Map(files.map((file) => [file.path, file.text]));
+	const outputPath = storePostcodeIndex(repositoryRoot, artifact, (path) => {
+		const text = texts.get(path);
+		if (text === undefined)
+			throw new Error(`Missing compiled postcode shard ${path}`);
+		return text;
+	});
 	return { outputPath, artifact };
 };
 

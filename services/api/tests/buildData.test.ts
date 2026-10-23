@@ -189,6 +189,7 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"geography-catalogues",
 		"place-index",
 		"area-search-index",
+		"postcode-index",
 		"measure-compatibility",
 		"export-manifest",
 		"postcode-areas",
