@@ -40,6 +40,10 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 		topic: "housing",
 		about: "Census 2021 household tenure for LSOAs in England and Wales. The legend selects owned, owned outright, owned with a mortgage or loan, shared ownership, social rent, private rent or rent free. Regional percentages divide summed category household counts by summed total households.",
 	},
+	"general-health": {
+		topic: "health-and-care",
+		about: "Self-reported general health in Census 2021 for LSOAs in England and Wales. The legend selects good or very good health, each separate good-health category, fair, bad or very bad health. Regional percentages divide summed resident category counts by summed total residents. These are crude percentages and do not adjust for differences in age.",
+	},
 	"population-uk": {
 		topic: "people-and-places",
 		about: "How many people live in each local authority across the UK, estimated every year by the Office for National Statistics between censuses. It's the standard yardstick for comparing places of different sizes, and many per-person figures in the Atlas are worked out from it.",
