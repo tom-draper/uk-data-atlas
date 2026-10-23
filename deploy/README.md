@@ -27,7 +27,7 @@ Then build the website from the same checkout. It does not need the API
 running:
 
 ```sh
-pnpm data:build --target website
+pnpm data:compile --target website
 pnpm build
 ```
 
@@ -37,7 +37,7 @@ The API build also checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/` and the terrain catalogue
 payload to `compiled/atlas.sqlite`. Keep `compiled/atlas.sqlite` under the repository
 root when deploying either server. Both read it in read-only mode.
-`pnpm data:build --target website` builds missing or stale dependencies, copies
+`pnpm data:compile --target website` builds missing or stale dependencies, copies
 the atlas lookups and pages from the API's build output with `pnpm atlas-data:copy`, then writes browser data to `public/data/`.
 Neither output directory is tracked in Git.
 `pnpm build` copies the atlas lookups and pages again, verifies local
@@ -48,15 +48,15 @@ Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.
 
-`pnpm --dir services/api build:data` runs `pnpm data:build --target api`.
-`pnpm data:build --target website` runs only the stages the website's data
-needs, ending with the website's datasets, and `pnpm data:build` runs both.
+`pnpm --dir services/api build:data` runs `pnpm data:compile --target api`.
+`pnpm data:compile --target website` runs only the stages the website's data
+needs, ending with the website's datasets, and `pnpm data:compile` runs both.
 Stages whose inputs and outputs are unchanged since they last ran are skipped
 (see "One data build" in `ARCHITECTURE.md`); add `--no-cache` to run them all.
 To inspect the complete local data build without executing commands, run:
 
 ```sh
-pnpm data:build --plan
+pnpm data:compile --plan
 ```
 
 After a complete build, rebuild a named stage and every affected downstream
@@ -166,4 +166,4 @@ certificates or swap files. The API build compiles the website docs catalogue an
 The website serves its own copy of the atlas lookups and pages from
 `public/data/` and never fetches from the API. Restart
 the API and website in either order. On a memory-constrained local machine,
-stop the API before `pnpm data:build --target website`.
+stop the API before `pnpm data:compile --target website`.

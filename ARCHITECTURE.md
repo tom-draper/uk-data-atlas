@@ -37,11 +37,11 @@ public/data/            the atlas's compiled data, served by the website
 
 ## Where the data lives
 
-| Where                  | What                                                                     | In git | Made by                                                                                   |
-| ---------------------- | ------------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------- |
-| `data/`                | Raw files as publishers supplied them                                    | No     | `pnpm data:download`, from the release pinned in `data-release.json`                      |
-| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No     | `pnpm --dir services/api build`, run where the API is served                              |
-| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No     | `pnpm data:build --target website`, `pnpm boundaries:compile` and `pnpm boundaries:tiles` |
+| Where                  | What                                                                     | In git | Made by                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------- |
+| `data/`                | Raw files as publishers supplied them                                    | No     | `pnpm data:download`, from the release pinned in `data-release.json`                        |
+| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No     | `pnpm --dir services/api build`, run where the API is served                                |
+| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No     | `pnpm data:compile --target website`, `pnpm boundaries:compile` and `pnpm boundaries:tiles` |
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
 headlines and ranked areas, compiled by `pnpm seo:build` from the datasets.
@@ -133,14 +133,14 @@ there is no build step.
 ## One data build
 
 `scripts/build-data-graph.mjs` lists every data build stage for both
-products, with its dependencies. `pnpm data:build` runs them in order, and
+products, with its dependencies. `pnpm data:compile` runs them in order, and
 `--target` limits it to one product:
 
-| Command                            | Builds                                                          |
-| ---------------------------------- | --------------------------------------------------------------- |
-| `pnpm data:build --target api`     | Every API stage. `pnpm --dir services/api build:data` runs this |
-| `pnpm data:build --target website` | Only the stages the website's data needs, then its datasets     |
-| `pnpm data:build`                  | Both                                                            |
+| Command                              | Builds                                                          |
+| ------------------------------------ | --------------------------------------------------------------- |
+| `pnpm data:compile --target api`     | Every API stage. `pnpm --dir services/api build:data` runs this |
+| `pnpm data:compile --target website` | Only the stages the website's data needs, then its datasets     |
+| `pnpm data:compile`                  | Both                                                            |
 
 A target runs only the stages its outputs depend on, so building one target
 and then the other gives the same output as building both. `--plan` lists the
@@ -151,8 +151,10 @@ The build skips a stage that ran before when nothing it reads has changed:
 the repo's code, the size and mtime of every file in `data/`, its command, and
 the outputs of the stages it depends on. The files it wrote under `compiled/`,
 `public/data/` and `services/api/public/` must also be unchanged. So once one
-target is built, the other reruns none of the stages they share, and a second
-build of either runs only `download`. A code change reruns every stage.
+target is built, the other reuses unchanged compiled stages. Download and
+catalogue registry generation always run. Website builds also regenerate source
+documentation and the website registry. These generated source files live outside
+the compiled output cache. A code change reruns every compiled stage.
 `scripts/build-data-cache.mjs` keeps this in `.cache/data-build/`. `--from`
 and `--no-cache` rerun the stages they select regardless.
 
@@ -166,11 +168,11 @@ See [compiled/README.md](compiled/README.md) for the database schema.
 
 ## Rebuilding after a change
 
-| You changed                            | Run                                                             |
-| -------------------------------------- | --------------------------------------------------------------- |
-| Shared datasets or their loaders       | `pnpm data:build --from datasets`, then `pnpm seo:build`        |
-| How the API compiles geography or data | `pnpm data:build`, then `pnpm --dir services/api build:runtime` |
-| Anything, before a release             | `pnpm check:full`                                               |
+| You changed                            | Run                                                               |
+| -------------------------------------- | ----------------------------------------------------------------- |
+| Shared datasets or their loaders       | `pnpm data:compile --from datasets`, then `pnpm seo:build`        |
+| How the API compiles geography or data | `pnpm data:compile`, then `pnpm --dir services/api build:runtime` |
+| Anything, before a release             | `pnpm check:full`                                                 |
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`

@@ -2,7 +2,7 @@
 
 Data compiled once from the raw sources in `data/`, for both the website and the
 API. Everything here is generated, and only this README is tracked. Rebuild it
-with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
+with `pnpm data:compile` (see "One data build" in `ARCHITECTURE.md`).
 
 ```text
 data/                 raw sources, restored from the pinned data release
@@ -114,8 +114,12 @@ pages and the compiled release must deploy together.
 Website precompile still reads `compiled/datasets/` to cut regional chunks. It
 does not copy catalogue payloads into `public/data/datasets/`. That directory
 still holds generated gazetteer, road-safety, regional chunk and SEO assets,
-plus the website build manifest. `pnpm precompile:generate` and
-`pnpm precompile:only` refresh SQLite after compiling datasets.
+plus the website build manifest. The graph compiles shared datasets and SQLite
+before running the website compilation stage. `pnpm datasets:rebuild <dataset>`
+refreshes SQLite after selectively compiling datasets against existing website
+outputs. `pnpm data:verify --target website` checks the website manifest and assets,
+including catalogue payload hashes in SQLite. It does not validate the relational
+API tables or the complete compiled release.
 
 ### Areas
 
