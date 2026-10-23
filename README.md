@@ -12,28 +12,6 @@
 
 <img width="2750" height="2076" alt="UK-Data-Atlas-12-31-2025_03_41_PM (1)" src="https://github.com/user-attachments/assets/fb52d8fa-40ac-4497-a598-335a33486d5a" />
 
-## Development builds
-
-Shared browser-safe compilers live in `packages/datasets/`. Run
-`pnpm data:compile` to build all data, or select `--target api` or `--target website`.
-The pipeline builds dependencies in order and skips unchanged stages. Both servers
-read the shared release in `compiled/`. The website copies atlas lookups and pages
-from the API build outputs on disk and never needs a running API.
-See [ARCHITECTURE.md](ARCHITECTURE.md)
-for dependencies and rebuild commands. Raw data and generated browser/API data
-are ignored by Git with no per-file exceptions. See [deploy/README.md](deploy/README.md)
-for the complete build order. `pnpm data:verify --target website` checks local compiler fingerprints, raw input
-modification times, dataset hashes and boundary chunks. Run `pnpm data:compile --target website` when they
-report stale or missing output. CI runs `pnpm check` only; run built tests and
-full builds locally.
-
-Verification currently supports only `--target website`. It checks website
-compiler fingerprints, raw input timestamps, catalogue payload hashes in SQLite,
-boundary chunks and tile file sizes. It does not verify the complete API release.
-`pnpm data:verify` without a target fails rather than implying full verification.
-Use `pnpm datasets:rebuild <dataset>` to selectively rebuild a dataset against
-existing website boundary and gazetteer outputs.
-
 ## Datasets
 
 <!-- sources:start -->
