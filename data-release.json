@@ -1,33 +1,38 @@
 {
 	"version": 2,
-	"tag": "data-2026-10-05",
-	"commit": "35d47aad580f5b20d81ec444e06758d4f051494c",
+	"tag": "data-2026-10-23",
+	"commit": "cfe9635c631794fb905b8c87fb353af77290ec20",
 	"repository": "tom-draper/uk-data-atlas",
 	"assets": [
 		{
-			"name": "data-2026-10-05.1.tar.gz",
-			"bytes": 628180158,
-			"sha256": "8eaeefa972ddf08fe5b45d834012fed94f7fdf2681f3744dd5cce62a550c6f53"
+			"name": "data-2026-10-23.1.tar.gz",
+			"bytes": 632235260,
+			"sha256": "2079bceb32ed5c11247ca3298e53ff75565f1501fe0226069083a8fb0d2a129f"
 		},
 		{
-			"name": "data-2026-10-05.2.tar.gz",
-			"bytes": 922803592,
-			"sha256": "c09a2eea366b0e4c4087765bad5fbeae99944dcd6148c6ec9f5b4c9c44e1d2ab"
+			"name": "data-2026-10-23.2.tar.gz",
+			"bytes": 586882090,
+			"sha256": "4d3cc92fc5d82179b7730fd91a8cf75cf7269240ce158276c5c4f88e65d55cbb"
 		},
 		{
-			"name": "data-2026-10-05.3.tar.gz",
-			"bytes": 975083103,
-			"sha256": "ef792b0cc72d92a457f1c90d5db710885a5532f1d3c14298c2fb32adde8a8786"
+			"name": "data-2026-10-23.3.tar.gz",
+			"bytes": 755304716,
+			"sha256": "51ba0703bfbb705803fca4afc557aaabb41be925af22f9c35f8028c381974f73"
 		},
 		{
-			"name": "data-2026-10-05.4.tar.gz",
-			"bytes": 422101727,
-			"sha256": "814b7f994bcacc91feada0e77fd2698eb243c9c337706a21e190688bf89f25f9"
+			"name": "data-2026-10-23.4.tar.gz",
+			"bytes": 975529092,
+			"sha256": "b42bfb73868d71128f0064c464caf4d55548907e4ac5696ccc62c02b513aab5d"
 		},
 		{
-			"name": "data-2026-10-05.5.tar.gz",
-			"bytes": 1012851422,
-			"sha256": "be7c00fc61f3b81b6141bad5c4bd3a00c35e11b68de045d02495dc47808c4585"
+			"name": "data-2026-10-23.5.tar.gz",
+			"bytes": 421899007,
+			"sha256": "05468005684e2ea3c055341fbad689ca5ab552fffa0b18abf5b8a45fc90c6f43"
+		},
+		{
+			"name": "data-2026-10-23.6.tar.gz",
+			"bytes": 1017115104,
+			"sha256": "90cf04244fa8e4e90657beef798037cba328db691800147277b40755286e9108"
 		}
 	]
 }
