@@ -111,6 +111,17 @@ export interface WorkplaceIncomeOptions extends ColorRangeOption {
 	measure: "annualMedian" | "annualMean" | "hourlyMedian" | "hourlyMean";
 }
 
+export interface HousingTenureOptions extends ColorRangeOption {
+	measure:
+		| "owned"
+		| "outright"
+		| "mortgage"
+		| "shared"
+		| "social"
+		| "private"
+		| "rentFree";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -139,6 +150,7 @@ export type ChartMapOptions = Omit<
 	| "imd"
 	| "planningApplications"
 	| "workplaceIncome"
+	| "housingTenure"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -162,6 +174,7 @@ export type ChartMapOptions = Omit<
 	imd: ImdOptions;
 	planningApplications: PlanningApplicationsOptions;
 	workplaceIncome: WorkplaceIncomeOptions;
+	housingTenure: HousingTenureOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;

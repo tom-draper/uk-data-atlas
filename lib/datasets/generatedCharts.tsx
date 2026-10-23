@@ -233,6 +233,7 @@ export const CHART_PRESENTATIONS = {
 	"economics-homelessness": Chart11Presentation,
 	"economics-housePrice": Chart12Presentation,
 	"economics-housingAffordability": Chart0Presentation,
+	"economics-housingTenure": Chart0Presentation,
 	"deprivation-imd": Chart13Presentation,
 	"economics-income": Chart14Presentation,
 	"economics-jobs": Chart0Presentation,
