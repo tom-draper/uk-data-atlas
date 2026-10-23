@@ -13,7 +13,6 @@ import type { GeographyInventory } from "./geographyInventory";
 import type { NamedLocationInventory } from "./namedLocations";
 import { openPlaceIndexDatabase, type PlaceIndex } from "./placeIndex";
 import {
-	AREA_SEARCH_INDEX_DATABASE,
 	openAreaSearchIndexDatabase,
 	type AreaSearchIndex,
 } from "./areaSearch";
@@ -278,7 +277,7 @@ export const readAreaSearchIndex = (
 ): AreaSearchIndex => {
 	try {
 		return openAreaSearchIndexDatabase(
-			publicPath(apiRoot, AREA_SEARCH_INDEX_DATABASE),
+			resolve(apiRoot, "../../data/build/atlas.sqlite"),
 			areaInventory.contentHash,
 		);
 	} catch (error) {
