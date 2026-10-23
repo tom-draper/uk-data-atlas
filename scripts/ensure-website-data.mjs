@@ -18,5 +18,13 @@ if (fresh) {
 	});
 	if (child.error) throw child.error;
 	if (child.signal) process.kill(process.pid, child.signal);
-	else process.exit(child.status ?? 1);
+	else if (child.status !== 0) process.exit(child.status ?? 1);
 }
+
+const seo = spawnSync("pnpm", ["seo:build"], {
+	...options,
+	stdio: "inherit",
+});
+if (seo.error) throw seo.error;
+if (seo.signal) process.kill(process.pid, seo.signal);
+else process.exit(seo.status ?? 1);
