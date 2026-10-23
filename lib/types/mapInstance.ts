@@ -1,6 +1,6 @@
 import type { LngLatLike, Map as MapLibreMap } from "maplibre-gl";
 
-/** Map methods shared by the MapLibre and Mapbox providers used by the app. */
+/** MapLibre methods used by the app. */
 export type MapEngine = Pick<
 	MapLibreMap,
 	| "addLayer"
@@ -43,7 +43,7 @@ export interface MapPopup {
 	setLngLat(lngLat: LngLatLike): MapPopup;
 }
 
-/** The provider-neutral map interface used by hooks and rendering modules. */
+/** The map interface used by hooks and rendering modules. */
 export type MapInstance = MapEngine & {
 	createPopup(options?: MapPopupOptions): MapPopup;
 };
