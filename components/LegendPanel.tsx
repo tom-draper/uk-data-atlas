@@ -18,6 +18,8 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
+import MeasureSelect from "./legend/MeasureSelect";
+import { ENERGY_SECTORS } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -176,6 +178,28 @@ export default function LegendPanel({
 							measure,
 							colorRange: { min: 0, max: 100 },
 						})
+					}
+				/>
+			)}
+			{activeDataset?.type === "electricityConsumption" && (
+				<MeasureSelect
+					label="Electricity meters"
+					value={
+						controls.displayOptions.electricityConsumption.sector
+					}
+					options={ENERGY_SECTORS}
+					onChange={(sector) =>
+						onMapOptionsChange("electricityConsumption", { sector })
+					}
+				/>
+			)}
+			{activeDataset?.type === "gasConsumption" && (
+				<MeasureSelect
+					label="Gas meters"
+					value={controls.displayOptions.gasConsumption.sector}
+					options={ENERGY_SECTORS}
+					onChange={(sector) =>
+						onMapOptionsChange("gasConsumption", { sector })
 					}
 				/>
 			)}

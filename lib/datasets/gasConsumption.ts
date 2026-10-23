@@ -1,5 +1,9 @@
 import { gasConsumptionDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { gasConsumptionAggregation } from "@/lib/helpers/datasetAggregation/specifications";
+import {
+	energyConsumptionValue,
+	ENERGY_SECTORS,
+} from "@/lib/helpers/energyConsumptionMeasures";
 import { formatCompactCount } from "@/lib/helpers/formatCount";
 import type {
 	AggregatedEnergyConsumptionData,
@@ -41,6 +45,23 @@ export const gasConsumptionDefinition: ChartDatasetDefinition<GasConsumptionData
 				value: (record) => record.allMetersGwh,
 				secondary: domesticShare,
 			}),
+			cardForOptions: (options) =>
+				defineValueCard<
+					GasConsumptionDataset,
+					EnergyConsumptionMetrics,
+					AggregatedEnergyConsumptionData
+				>({
+					heading: "Gas consumption",
+					coverage: "Great Britain",
+					source: "Department for Energy Security and Net Zero. Subnational gas consumption. gov.uk",
+					unit: "GWh",
+					format: formatCompactCount,
+					maximum: 8000,
+					aggregate: (record) => record,
+					value: (record) => record[options.gasConsumption.sector],
+					secondary: () =>
+						`${ENERGY_SECTORS.find((sector) => sector.value === options.gasConsumption.sector)?.label ?? "All meters"} total`,
+				}),
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
 				aggregator.aggregate(
 					gasConsumptionAggregation,
@@ -52,14 +73,14 @@ export const gasConsumptionDefinition: ChartDatasetDefinition<GasConsumptionData
 			year: 2024,
 		},
 		map: {
-			valueFor: (dataset, code, mapOptions) => {
-				const record = dataset.data[code];
-				return mapOptions.gasConsumption.measure === "perPopulation"
-					? (record?.metrics?.per100kPopulation ?? null)
-					: (record?.allMetersGwh ?? null);
-			},
-			sourceMode: (_dataset, mapOptions) =>
-				`gasConsumption:${mapOptions.gasConsumption.measure}`,
+			valueFor: (dataset, code, options) =>
+				energyConsumptionValue(
+					dataset.data[code],
+					options.gasConsumption.sector,
+					options.gasConsumption.measure,
+				),
+			sourceMode: (_dataset, options) =>
+				`gasConsumption:${options.gasConsumption.measure}:${options.gasConsumption.sector}`,
 			colorRange: { min: 0, max: 5_000 },
 			legend: {
 				min: 0,
