@@ -49,7 +49,10 @@ process.exit(args[0] === "data:verify" ? ${fresh ? 0 : 1} : ${compileStatus});
 test("dev startup skips compilation when website data verifies", () => {
 	const { result, commands } = runDevCheck(true);
 	expect(result.status).toBe(0);
-	expect(commands).toEqual([["data:verify", "--target", "website"]]);
+	expect(commands).toEqual([
+		["data:verify", "--target", "website"],
+		["seo:build"],
+	]);
 });
 
 test("dev startup builds missing data through the pipeline before any copy command", () => {
@@ -58,11 +61,21 @@ test("dev startup builds missing data through the pipeline before any copy comma
 	expect(commands).toEqual([
 		["data:verify", "--target", "website"],
 		["data:compile", "--target", "website"],
+		["seo:build"],
 	]);
 });
 
-test("dev startup propagates compilation failure", () => {
-	const { result } = runDevCheck(false, 23);
+test("dev startup propagates compilation failure without building SEO data", () => {
+	const { result, commands } = runDevCheck(false, 23);
+	expect(result.status).toBe(23);
+	expect(commands).toEqual([
+		["data:verify", "--target", "website"],
+		["data:compile", "--target", "website"],
+	]);
+});
+
+test("dev startup propagates SEO data failure", () => {
+	const { result } = runDevCheck(true, 23);
 	expect(result.status).toBe(23);
 });
 
