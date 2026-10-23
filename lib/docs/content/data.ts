@@ -51,7 +51,7 @@ export const DATA_PAGES: DataPage[] = [
 			"census-2021-ts054",
 			"census-2021-ts066",
 		],
-		intro: "Detailed Census 2021 counts for small areas in England and Wales: residents by age, ethnic group, health and economic activity, and households by composition and tenure. Data is available for lower and middle layer super output areas.",
+		intro: "Detailed Census 2021 counts for small areas in England and Wales: residents by age, ethnic group, health and economic activity, and households by composition and tenure. Data is available for lower and middle layer super output areas. Enable the Housing tenure card to map Census 2021 LSOA percentages in England and Wales. The legend selects a category. Regional percentages divide summed category counts by summed household counts.",
 	},
 	{
 		slug: "ethnicity",

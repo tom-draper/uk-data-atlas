@@ -19,6 +19,8 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { imdRange } from "@/lib/helpers/imdMeasures";
+import MeasureSelect from "./legend/MeasureSelect";
+import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -264,6 +266,19 @@ export default function LegendPanel({
 					measure={controls.displayOptions.mobileCoverage.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("mobileCoverage", {
+							measure,
+							colorRange: { min: 0, max: 100 },
+						})
+					}
+				/>
+			)}
+			{activeDataset?.type === "housingTenure" && (
+				<MeasureSelect
+					label="Housing tenure"
+					value={controls.displayOptions.housingTenure.measure}
+					options={TENURE_MEASURES}
+					onChange={(measure) =>
+						onMapOptionsChange("housingTenure", {
 							measure,
 							colorRange: { min: 0, max: 100 },
 						})

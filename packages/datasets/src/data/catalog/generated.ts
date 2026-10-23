@@ -22,6 +22,7 @@ import type { historicalGeneralElectionDatasetDefinition } from "./definitions/h
 import type { homelessnessDatasetDefinition } from "./definitions/homelessness";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice";
 import type { housingAffordabilityDatasetDefinition } from "./definitions/housingAffordability";
+import type { housingTenureDatasetDefinition } from "./definitions/housingTenure";
 import type { imdDatasetDefinition } from "./definitions/imd";
 import type { incomeDatasetDefinition } from "./definitions/income";
 import type { jobsDatasetDefinition } from "./definitions/jobs";
@@ -118,6 +119,9 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof housingAffordabilityDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof housingTenureDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>[string]
@@ -265,6 +269,9 @@ export type CatalogueDatasetRecords = {
 	>;
 	housingAffordability: Awaited<
 		ReturnType<typeof housingAffordabilityDatasetDefinition.precompile>
+	>;
+	housingTenure: Awaited<
+		ReturnType<typeof housingTenureDatasetDefinition.precompile>
 	>;
 	imd: Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>;
 	income: Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>;
