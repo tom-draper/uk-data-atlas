@@ -189,7 +189,7 @@ export const fetchOnsBoundary = async ({
 		.toLowerCase();
 	const parent = join(
 		repositoryRoot,
-		"data",
+		"data/source",
 		"boundaries",
 		geographyDirectory,
 	);

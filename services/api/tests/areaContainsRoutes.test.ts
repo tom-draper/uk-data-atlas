@@ -98,7 +98,7 @@ const publish = (
 ) => {
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		geography,
 		boundaryRelease,

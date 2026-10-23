@@ -161,7 +161,7 @@ test("states the releases holding a code and its release-pinned extent", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2023-05-en-ward",

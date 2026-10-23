@@ -38,9 +38,11 @@ test("measures how two areas overlap beside any published relationship", () => {
 			codeProperty: string,
 			features: Array<[string, unknown]>,
 		) => {
-			mkdirSync(join(root, "data", path, ".."), { recursive: true });
+			mkdirSync(join(root, "data/source", path, ".."), {
+				recursive: true,
+			});
 			writeFileSync(
-				join(root, "data", path),
+				join(root, "data/source", path),
 				JSON.stringify({
 					type: "FeatureCollection",
 					features: features.map(([code, geometry]) => ({

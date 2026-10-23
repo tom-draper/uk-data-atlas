@@ -21,7 +21,7 @@ test("finds the areas meeting a box, and says how each meets it", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",
@@ -136,7 +136,7 @@ test("bounds a box query by result count and rejects a malformed one", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",
@@ -233,7 +233,7 @@ test("does not materialise geometry beyond the requested box-result limit", () =
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",
@@ -322,7 +322,7 @@ test("pages through every area a box meets", (t) => {
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		"ward",
 		"2025-01-en-ward",

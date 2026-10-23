@@ -64,7 +64,7 @@ const crs = (path: string) => {
 	return m?.[1] ?? "EPSG:4326";
 };
 // Grid corrections a release declares, by the id of their shared definition
-// in data/boundaries/, which the website's boundary compiler also applies.
+// in data/source/boundaries/, which the website's boundary compiler also applies.
 const declaredCorrections = (directory: string): string[] => {
 	const meta = JSON.parse(
 		readFileSync(join(directory, "meta.json"), "utf8"),
@@ -82,7 +82,7 @@ export const createGeometrySourceRegistry = (
 		const source = a.derivedFrom?.source;
 		const g = source?.geography ?? a.geography;
 		const r = source?.boundaryRelease ?? a.boundaryRelease;
-		const dir = join(root, "data", "boundaries", kebab(g), r);
+		const dir = join(root, "data/source", "boundaries", kebab(g), r);
 		const path = existsSync(join(dir, "meta.json"))
 			? sourcePath(dir)
 			: undefined;

@@ -16,7 +16,7 @@ import {
 import { parseDatasetMeta } from "@/lib/data/catalog/meta";
 import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
-const ROOT = join(process.cwd(), "data", "boundaries");
+const ROOT = join(process.cwd(), "data/source", "boundaries");
 
 /** Every file in a release folder, directories walked, meta.json excluded. */
 const filesIn = (dir: string, prefix = ""): string[] =>

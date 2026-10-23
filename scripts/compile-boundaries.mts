@@ -73,12 +73,12 @@ const readReleaseMeta = (releaseDir: string) =>
 
 /**
  * The corrections a release's meta.json declares, loaded from their
- * definitions in data/boundaries/, with the paths that define them so a
+ * definitions in data/source/boundaries/, with the paths that define them so a
  * change to either recompiles the release.
  */
 const correctionsFromMeta = (releaseDir: string) =>
 	(readReleaseMeta(releaseDir).corrections ?? []).map((id) => {
-		const path = join(ROOT, "data", "boundaries", `${id}.json`);
+		const path = join(ROOT, "data/source", "boundaries", `${id}.json`);
 		return {
 			path,
 			offset: parseGridOffset(
@@ -112,7 +112,7 @@ const releaseDirFor = (asset: string) =>
 	dirname(
 		join(
 			ROOT,
-			"data",
+			"data/source",
 			// withCDN appends a version query outside development.
 			asset.split("?")[0]!.replace(/^\/data\//, ""),
 		),
@@ -159,13 +159,13 @@ export type SubstitutionSource = ReturnType<typeof substitutionSources>[number];
 
 /**
  * The grid offsets a WGS84 release carries backwards, loaded from their
- * definitions in data/boundaries/ as the forward corrections are.
+ * definitions in data/source/boundaries/ as the forward corrections are.
  */
 const reversedOffsetSources = (type: string, releaseId: string) =>
 	reversedOffsetsFor(type, releaseId).map((reversed) => {
 		const path = join(
 			ROOT,
-			"data",
+			"data/source",
 			"boundaries",
 			`${reversed.offset}.json`,
 		);
@@ -209,7 +209,7 @@ export const releaseSources = (outputDirectory: string) =>
 			// The release folder in data/ holds the meta and the published
 			// GeoJSON; the compiled asset is written straight to where it is
 			// served from, rather than into data/ and copied across after.
-			const releaseDir = dirname(join(ROOT, "data", relative));
+			const releaseDir = dirname(join(ROOT, "data/source", relative));
 			const outputPath = join(outputDirectory, relative);
 			const propertiesPath = join(
 				dirname(outputPath),
@@ -290,7 +290,7 @@ export const releaseSources = (outputDirectory: string) =>
 					// A small number of releases are held only as TopoJSON. They
 					// cannot be recompiled, but their existing topology is enough to
 					// derive the sidecar the runtime reads.
-					topologySourcePath: join(ROOT, "data", relative),
+					topologySourcePath: join(ROOT, "data/source", relative),
 					outputPath,
 					propertiesPath,
 				},

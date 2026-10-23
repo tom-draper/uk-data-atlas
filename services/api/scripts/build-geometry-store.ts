@@ -72,9 +72,9 @@ export const buildGeometryStore = (
 	const state: Record<string, string> = {};
 	const saveState = () =>
 		writeFileSync(statePath, JSON.stringify(state, null, "\t") + "\n");
-	// Grid offsets are read from data/boundaries rather than named by hash in
+	// Grid offsets are read from data/source/boundaries rather than named by hash in
 	// the source entry, so their files are part of every key too.
-	const boundaries = join(root, "data", "boundaries");
+	const boundaries = join(root, "data/source", "boundaries");
 	const offsets = sha256(
 		readdirSync(boundaries)
 			.filter((name) => name.endsWith(".json"))

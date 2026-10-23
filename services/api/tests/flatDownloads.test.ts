@@ -22,7 +22,7 @@ const square = (west: number, south: number) => [
 test("publishes a release that cannot be tiled whole, at full detail, built on request", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-flat-downloads-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
-	const directory = join(root, "data", "boundaries", "ward");
+	const directory = join(root, "data/source", "boundaries", "ward");
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(
 		join(directory, "wards.geojson"),
@@ -160,9 +160,9 @@ test("publishes a release that cannot be tiled whole, at full detail, built on r
 test("builds a full-detail download off the main thread, once for callers asking together", async (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-full-detail-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
-	mkdirSync(join(root, "data"), { recursive: true });
+	mkdirSync(join(root, "data/source"), { recursive: true });
 	writeFileSync(
-		join(root, "data", "wards.geojson"),
+		join(root, "data/source", "wards.geojson"),
 		JSON.stringify({
 			type: "FeatureCollection",
 			features: ["A", "B", "C"].map((code, index) => ({

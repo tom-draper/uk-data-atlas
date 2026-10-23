@@ -15,7 +15,9 @@ import { atlasLookupPath } from "@/scripts/atlas-lookups";
 const localBoundaryPath = (path: string) => {
 	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
 	const served = join(process.cwd(), "public", "data", relative);
-	return existsSync(served) ? served : join(process.cwd(), "data", relative);
+	return existsSync(served)
+		? served
+		: join(process.cwd(), "data/source", relative);
 };
 
 const WARD_VINTAGES = Object.keys(BOUNDARY_CATALOG.ward.vintages).map(Number);

@@ -13,7 +13,13 @@ test("keeps the ONS names-and-codes table out of boundary release selection", (t
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	let namesAndCodesMetadata = "";
 	for (const id of ["2011-12-sc-nc", "2011-12-sc-bfc"]) {
-		const directory = join(root, "data", "boundaries", "data-zone", id);
+		const directory = join(
+			root,
+			"data/source",
+			"boundaries",
+			"data-zone",
+			id,
+		);
 		mkdirSync(directory, { recursive: true });
 		const raw = JSON.stringify({
 			id,

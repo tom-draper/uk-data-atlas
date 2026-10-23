@@ -14,7 +14,7 @@ import {
  * A correction to a publisher's grid coordinates, applied before they are
  * reprojected. Releases opt in from their meta.json `corrections`, and the
  * definition, shared with the website's boundary compiler, lives in
- * data/boundaries/ beside them with the evidence it was fitted from.
+ * data/source/boundaries/ beside them with the evidence it was fitted from.
  */
 export type GridOffset = {
 	id: string;
@@ -37,7 +37,12 @@ export const readGridOffset = (
 	repositoryRoot: string,
 	id: string,
 ): GridOffset => {
-	const path = join(repositoryRoot, "data", "boundaries", `${id}.json`);
+	const path = join(
+		repositoryRoot,
+		"data/source",
+		"boundaries",
+		`${id}.json`,
+	);
 	const record = JSON.parse(readFileSync(path, "utf8")) as Record<
 		string,
 		unknown

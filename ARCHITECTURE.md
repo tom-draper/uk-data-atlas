@@ -31,7 +31,8 @@ packages/map-tiles/     the boundary tiler: shared-arc generalisation and
                         PMTiles archives, for the API and the website data build
 services/api/           the API: src/, scripts/, config/, openapi.yaml
 scripts/                build orchestration and file readers for both products
-data/                   raw source files, restored from the data release
+data/
+  source/               raw source files, restored from the data release
   build/                shared generated datasets and atlas.sqlite
 public/data/            the atlas's compiled data, served by the website
 ```
@@ -40,10 +41,15 @@ public/data/            the atlas's compiled data, served by the website
 
 | Where                  | What                                                                     | In git      | Made by                                                                                                             |
 | ---------------------- | ------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| `data/`                | Raw files as publishers supplied them                                    | No          | `pnpm data:download`, from the release pinned in `data-release.json`                                                |
+| `data/source/`         | Raw files as publishers supplied them                                    | No          | `pnpm data:download`, from the release pinned in `data-release.json`                                                |
 | `data/build/`          | Shared generated datasets and `atlas.sqlite`                             | README only | `pnpm data:build`                                                                                                   |
 | `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No          | `pnpm data:build --target api`                                                                                      |
 | `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No          | `pnpm data:build --target website`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
+
+Raw release archives keep their paths relative to the source root. The existing
+pinned release restores into `data/source/` without republishing. For an existing
+checkout, move its raw folders and `.source-release.json` from `data/` into
+`data/source/`, leaving `data/build/` in place.
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
 headlines and ranked areas, compiled by `pnpm data:build --only seo` from the datasets.
@@ -162,7 +168,7 @@ Stage commands live in the graph rather than package scripts. The API package's
 Next.js application using existing data.
 
 The build skips a stage that ran before when nothing it reads has changed:
-the repo's code, the size and mtime of raw files in `data/` excluding `data/build/`, its command, and
+the repo's code, the size and mtime of raw files in `data/source/`, its command, and
 the outputs of the stages it depends on. The files it wrote under `data/build/`,
 `public/data/` and `services/api/public/` must also be unchanged. So once one
 target is built, the other reuses unchanged compiled stages. Download and
@@ -190,10 +196,10 @@ See [data/build/README.md](data/build/README.md) for the database schema.
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`
-instead. Tests that read the real generated data, or the raw data in `data/`,
+instead. Tests that read the real generated data, or the raw data in `data/source/`,
 live in `tests/built/` and run locally only. First follow the build order in
 [deploy/README.md](deploy/README.md), including the website build that generates
 SEO artifacts. Then `pnpm check:full` runs the quick checks, verifies local
-generated data, and runs the built website and API tests. It needs `data/`
+generated data, and runs the built website and API tests. It needs `data/source/`
 restored and both products built, with the API running for the API's own
 tests. The check does not build or deploy either product.

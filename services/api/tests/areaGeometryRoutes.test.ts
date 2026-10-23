@@ -21,7 +21,7 @@ test("gets an area's geometry as a GeoJSON Feature", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",
@@ -178,7 +178,7 @@ test("serves geometry at a named generalisation tier", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",

@@ -15,7 +15,7 @@ test("writes a derived GeoJSON artifact from the configured raw source selection
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const sourceDirectory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		"lsoa",
 		"2011-12-ew-bgc-v3",

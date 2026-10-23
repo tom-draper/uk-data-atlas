@@ -35,7 +35,14 @@ const readCountyShapes = (
 	excludeScottishLieutenancy = false,
 ): CountyShape[] =>
 	readShapefileFeatures(
-		join(repositoryRoot, "data", "geography", directory, "source", file),
+		join(
+			repositoryRoot,
+			"data/source",
+			"geography",
+			directory,
+			"source",
+			file,
+		),
 	)
 		.filter(
 			({ properties }) =>

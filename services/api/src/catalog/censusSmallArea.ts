@@ -15,7 +15,7 @@ import { sha256 } from "./values";
 /**
  * Census 2021 tables for England and Wales at the two statistical small-area
  * geographies, read from the Nomis bulk files kept unchanged under
- * data/demographics/census-2021-small-area.
+ * data/source/demographics/census-2021-small-area.
  *
  * Each category is a count, so it adds over areas and converts exactly
  * through a containment crosswalk. Only leaf categories are served, which
@@ -544,7 +544,7 @@ export const compileCensusSmallArea = (
 	for (const table of tablesToCompile) {
 		const directory = join(
 			repositoryRoot,
-			"data",
+			"data/source",
 			DATA_DIRECTORY,
 			table.table,
 		);

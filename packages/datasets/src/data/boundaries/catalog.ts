@@ -6,7 +6,7 @@ export type BoundaryExtent = "uk" | "gb" | "ew" | "en" | "w" | "sc" | "ni";
 /**
  * One published boundary release.
  *
- * `id` is the folder it occupies under `data/boundaries/<geography>/` and its
+ * `id` is the folder it occupies under `data/source/boundaries/<geography>/` and its
  * identity everywhere else. It leads with the publication date so string order
  * is chronological, and it carries the month because ONS republishes a
  * geography more than once a year, May and December 2023 wards are different
@@ -1141,7 +1141,7 @@ export type BoundaryYear<T extends BoundaryType> =
 export const BOUNDARY_TYPES = Object.keys(CATALOG) as BoundaryType[];
 
 /**
- * Geographies under `data/boundaries/` that the API serves and the map does
+ * Geographies under `data/source/boundaries/` that the API serves and the map does
  * not, keyed by folder, with the reason. They are not boundary types: every
  * family in the catalogue is one the map can draw.
  */

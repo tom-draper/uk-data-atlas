@@ -30,7 +30,7 @@ const fixture = (donorCodes: string[]) => {
 	const write = (release: string, file: string, collection: unknown) => {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"constituency",
 			release,
@@ -127,7 +127,7 @@ test("refuses a substitution whose releases hold different codes", () => {
 test("undoes a grid offset a WGS84 release carries backwards", () => {
 	const root = mkdtempSync(join(tmpdir(), "reversed-offset-"));
 	try {
-		const boundaries = join(root, "data", "boundaries");
+		const boundaries = join(root, "data/source", "boundaries");
 		const directory = join(boundaries, "travel-to-work-area", "2011");
 		mkdirSync(directory, { recursive: true });
 		// The published definition's values, so the test needs no raw data.

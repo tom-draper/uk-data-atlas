@@ -8,7 +8,7 @@
  * future domain cannot accidentally produce an invalid release asset.
  */
 import { createHash } from "node:crypto";
-import { createReadStream, existsSync } from "node:fs";
+import { createReadStream } from "node:fs";
 import {
 	cp,
 	mkdir,
@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const DATA = join(ROOT, "data");
+const DATA = join(ROOT, "data/source");
 const CONFIG = join(ROOT, "data-release.json");
 const LOCAL_MARKER = join(DATA, ".source-release.json");
 const STAGING = join(ROOT, ".data-release");
@@ -90,11 +90,7 @@ const fileSize = async (path) => (await stat(path)).size;
 export async function filesUnder(directory, prefix = "") {
 	const files = [];
 	for (const entry of await readdir(directory, { withFileTypes: true })) {
-		if (
-			entry.name === ".source-release.json" ||
-			(prefix === "" && entry.name === "build")
-		)
-			continue;
+		if (entry.name === ".source-release.json") continue;
 		const entryPath = join(directory, entry.name);
 		const archivePath = join(prefix, entry.name);
 		if (entry.isDirectory())
@@ -160,10 +156,7 @@ async function readConfig() {
 async function hasLocalSources() {
 	try {
 		return (await readdir(DATA)).some(
-			(name) =>
-				name !== ".source-release.json" &&
-				name !== ".DS_Store" &&
-				name !== "build",
+			(name) => name !== ".source-release.json" && name !== ".DS_Store",
 		);
 	} catch (error) {
 		if (error?.code === "ENOENT") return false;
@@ -173,7 +166,8 @@ async function hasLocalSources() {
 
 async function createArchives(tag) {
 	const files = await filesUnder(DATA);
-	if (files.length === 0) fail("data/ has no source files to publish.");
+	if (files.length === 0)
+		fail("data/source/ has no source files to publish.");
 	const output = join(STAGING, tag);
 	await mkdir(output, { recursive: true });
 	const tar = gnuTar();
@@ -365,6 +359,7 @@ export async function replaceSources(
 	const previous = join(workspace, `previous-${process.pid}`);
 	await rm(replacement, { recursive: true, force: true });
 	await rm(previous, { recursive: true, force: true });
+	await mkdir(dirname(data), { recursive: true });
 	await cp(staging, replacement, { recursive: true });
 
 	let hadPrevious = true;
@@ -375,19 +370,9 @@ export async function replaceSources(
 		else throw error;
 	}
 	try {
-		// Preserve generated artifacts when restoring only raw sources.
-		if (hadPrevious && existsSync(join(previous, "build")))
-			await rename(join(previous, "build"), join(replacement, "build"));
 		await rename(replacement, data);
 	} catch (error) {
-		if (hadPrevious) {
-			if (existsSync(join(replacement, "build")))
-				await rename(
-					join(replacement, "build"),
-					join(previous, "build"),
-				);
-			await rename(previous, data);
-		}
+		if (hadPrevious) await rename(previous, data);
 		throw error;
 	}
 	if (hadPrevious) await rm(previous, { recursive: true, force: true });

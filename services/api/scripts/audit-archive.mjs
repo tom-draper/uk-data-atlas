@@ -56,7 +56,10 @@ const deliveryGaps = registry.releases.flatMap((release) => {
 	// boundary file merely to audit the manifest.
 	if (downloads.length === 0 && source?.input?.endsWith(".geojson")) {
 		const raw = JSON.parse(
-			readFileSync(resolve(repositoryRoot, "data", source.input), "utf8"),
+			readFileSync(
+				resolve(repositoryRoot, "data/source", source.input),
+				"utf8",
+			),
 		);
 		if (!Array.isArray(raw.features))
 			throw new Error(`No features array in ${source.input}.`);

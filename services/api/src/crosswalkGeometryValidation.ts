@@ -74,7 +74,7 @@ export const geometryContainmentInputs = (
 					readFileSync(
 						join(
 							repositoryRoot,
-							"data",
+							"data/source",
 							"boundaries",
 							`${id}.json`,
 						),
@@ -89,7 +89,7 @@ export const geometryContainmentInputs = (
 								readFileSync(
 									join(
 										repositoryRoot,
-										"data",
+										"data/source",
 										"boundaries",
 										`${reversedGridOffset(id).offset}.json`,
 									),

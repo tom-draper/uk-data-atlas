@@ -68,7 +68,7 @@ export const readGeometries = (
 			`${crosswalkId}: ${identity} has a correction for a different CRS.`,
 		);
 	}
-	const inputPath = join(repositoryRoot, "data", source.input);
+	const inputPath = join(repositoryRoot, "data/source", source.input);
 	const content = readFileSync(inputPath);
 	// Shapefiles are read as the geometry cache reads them; the hash is of the
 	// input file's bytes either way, as the geometry source registry records.

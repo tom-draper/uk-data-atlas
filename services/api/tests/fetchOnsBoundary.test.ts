@@ -178,7 +178,7 @@ test("rejects duplicates and missing geometry without publishing a snapshot", as
 			readdirSync(
 				join(
 					repositoryRoot,
-					"data",
+					"data/source",
 					"boundaries",
 					"senedd-constituency",
 				),
@@ -208,7 +208,10 @@ test("rejects a changed publisher count before downloading pages", async (contex
 		urls.some((url) => url.searchParams.has("resultOffset")),
 		false,
 	);
-	assert.equal(existsSync(join(repositoryRoot, "data", "boundaries")), false);
+	assert.equal(
+		existsSync(join(repositoryRoot, "data/source", "boundaries")),
+		false,
+	);
 });
 
 test("removes partial pages after a failed download", async (context) => {
@@ -235,7 +238,12 @@ test("removes partial pages after a failed download", async (context) => {
 	);
 	assert.deepEqual(
 		readdirSync(
-			join(repositoryRoot, "data", "boundaries", "senedd-constituency"),
+			join(
+				repositoryRoot,
+				"data/source",
+				"boundaries",
+				"senedd-constituency",
+			),
 		),
 		[],
 	);
@@ -329,7 +337,12 @@ test("rejects changed publisher bytes even when every code and the count match",
 	);
 	assert.deepEqual(
 		readdirSync(
-			join(repositoryRoot, "data", "boundaries", "senedd-constituency"),
+			join(
+				repositoryRoot,
+				"data/source",
+				"boundaries",
+				"senedd-constituency",
+			),
 		),
 		[],
 	);
@@ -368,7 +381,10 @@ test("rejects publisher changes during acquisition and removes staging", async (
 		);
 		assert.deepEqual(
 			readdirSync(
-				join(repositoryRoot, "data/boundaries/senedd-constituency"),
+				join(
+					repositoryRoot,
+					"data/source/boundaries/senedd-constituency",
+				),
 			),
 			[],
 		);

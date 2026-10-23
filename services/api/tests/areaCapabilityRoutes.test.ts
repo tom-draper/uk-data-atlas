@@ -184,7 +184,7 @@ test("reports published geometry capability through the resolver", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2023-05-uk-bgc",

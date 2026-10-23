@@ -52,7 +52,7 @@ const writeCollection = (
 	codeProperty: string,
 	features: Array<[string, Polygon]>,
 ) => {
-	const file = join(root, "data", path);
+	const file = join(root, "data/source", path);
 	mkdirSync(join(file, ".."), { recursive: true });
 	writeFileSync(
 		file,

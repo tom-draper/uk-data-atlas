@@ -301,7 +301,7 @@ export const compileAreas = (
 		const sourceAdapter = sourceAdapters[identity];
 		const directory = join(
 			repositoryRoot,
-			"data",
+			"data/source",
 			"boundaries",
 			toKebabCase(sourceAdapter?.source.geography ?? release.geography),
 			sourceAdapter?.source.boundaryRelease ?? release.id,

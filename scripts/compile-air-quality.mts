@@ -20,10 +20,10 @@ import {
 } from "../lib/data/air-quality/pcmGrid";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const DIRECTORY = join(ROOT, "data", "environment", "air-quality");
+const DIRECTORY = join(ROOT, "data/source", "environment", "air-quality");
 const BOUNDARIES = join(
 	ROOT,
-	"data",
+	"data/source",
 	"boundaries",
 	"local-authority",
 	"2024-12-uk-bgc",

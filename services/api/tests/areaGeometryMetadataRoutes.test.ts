@@ -21,7 +21,7 @@ test("measures an area's geometry without returning its coordinates", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",
@@ -130,7 +130,7 @@ test("refuses to measure geometry that carries no polygon", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",
