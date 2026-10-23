@@ -18,15 +18,15 @@ const request = (hash = sha256, output = "sample.json") =>
 
 beforeEach(() => {
 	root = mkdtempSync(join(tmpdir(), "dataset-route-"));
-	mkdirSync(join(root, "compiled/datasets"), { recursive: true });
+	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
 	mkdirSync(join(root, "services/api/public"), { recursive: true });
 	writeFileSync(
 		join(root, "services/api/public/terrain-catalogue.json"),
 		"{}",
 	);
-	writeFileSync(join(root, "compiled/datasets/sample.json"), payload);
+	writeFileSync(join(root, "data/build/datasets/sample.json"), payload);
 	writeFileSync(
-		join(root, "compiled/datasets/dataset-manifest.json"),
+		join(root, "data/build/datasets/dataset-manifest.json"),
 		JSON.stringify({
 			version: 1,
 			datasets: [
@@ -74,7 +74,7 @@ beforeEach(() => {
 	);
 	buildAtlasSqlite(root);
 	// The request must work without either product's JSON copies.
-	rmSync(join(root, "compiled/datasets"), { recursive: true });
+	rmSync(join(root, "data/build/datasets"), { recursive: true });
 	rmSync(join(root, "services"), { recursive: true });
 	vi.spyOn(process, "cwd").mockReturnValue(root);
 });

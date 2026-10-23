@@ -70,7 +70,7 @@ const apiStages = [
 		],
 		{ cacheable: false },
 	),
-	// Compiled once into compiled/datasets, for the website and the API.
+	// Compiled once into data/build/datasets, for the website and the API.
 	stage(
 		"datasets",
 		["catalogue-registry"],
@@ -83,7 +83,7 @@ const apiStages = [
 			"scripts/compile-datasets.mts",
 		],
 		{
-			outputs: ["compiled/datasets"],
+			outputs: ["data/build/datasets"],
 		},
 	),
 	stage("terrain-catalogue"),

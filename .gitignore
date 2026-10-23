@@ -59,7 +59,8 @@ next-env.d.ts
 
 # Raw sources live in immutable GitHub Release assets. Browser-ready payloads
 # and compiled map assets live under public/data instead.
-/data
+/data/*
+!/data/build/
 /.data-release/
 
 AGENTS.md
@@ -73,5 +74,5 @@ CLAUDE.md
 
 # Compiled output the website and the API share, rebuilt by pnpm data:build.
 # Only its README is tracked.
-/compiled/*
-!/compiled/README.md
+/data/build/*
+!/data/build/README.md

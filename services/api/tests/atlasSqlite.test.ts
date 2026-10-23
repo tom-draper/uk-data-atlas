@@ -55,9 +55,9 @@ const fixture = (context: TestContext) => {
 			releases: [],
 		}),
 	);
-	mkdirSync(join(root, "compiled/datasets"), { recursive: true });
+	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
 	writeFileSync(
-		join(root, "compiled/datasets/dataset-manifest.json"),
+		join(root, "data/build/datasets/dataset-manifest.json"),
 		JSON.stringify({ version: 1, datasets: [] }),
 	);
 	return { root, apiRoot };
@@ -178,7 +178,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 			sha256: createHash("sha256").update(content).digest("hex"),
 		},
 	};
-	const directory = join(root, "compiled/datasets");
+	const directory = join(root, "data/build/datasets");
 	writeFileSync(join(directory, "sample.json"), content);
 	const manifest = JSON.stringify({ version: 1, datasets: [entry] });
 	writeFileSync(join(directory, "dataset-manifest.json"), manifest);

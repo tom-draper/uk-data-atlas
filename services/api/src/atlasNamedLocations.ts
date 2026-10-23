@@ -155,7 +155,7 @@ export const namedLocationTables = (
 export const readSqliteNamedLocationInventory = (
 	apiRoot: string,
 ): NamedLocationInventory => {
-	const path = resolve(apiRoot, "../../compiled/atlas.sqlite");
+	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		const header = database

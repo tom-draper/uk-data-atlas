@@ -73,7 +73,7 @@ export async function reuseDataset(
 }
 
 /**
- * Compiles one dataset into compiled/datasets, or reuses the file an earlier
+ * Compiles one dataset into data/build/datasets, or reuses the file an earlier
  * run left when none of its inputs have changed. Returns the manifest entry.
  */
 export async function compileDataset(

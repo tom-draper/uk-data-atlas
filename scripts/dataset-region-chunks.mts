@@ -212,7 +212,7 @@ const COUNTRY_BY_PREFIX: Readonly<Record<string, string>> = {
 const readCouncilPopulations = async (root: string) => {
 	const editions = JSON.parse(
 		await readFile(
-			join(root, "compiled", "datasets", "population-uk.json"),
+			join(root, "data/build", "datasets", "population-uk.json"),
 			"utf8",
 		),
 	) as Record<

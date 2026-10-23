@@ -8,7 +8,7 @@
  * future domain cannot accidentally produce an invalid release asset.
  */
 import { createHash } from "node:crypto";
-import { createReadStream } from "node:fs";
+import { createReadStream, existsSync } from "node:fs";
 import {
 	cp,
 	mkdir,
@@ -87,10 +87,14 @@ const sha256OrNull = async (path) => {
 
 const fileSize = async (path) => (await stat(path)).size;
 
-async function filesUnder(directory, prefix = "") {
+export async function filesUnder(directory, prefix = "") {
 	const files = [];
 	for (const entry of await readdir(directory, { withFileTypes: true })) {
-		if (entry.name === ".source-release.json") continue;
+		if (
+			entry.name === ".source-release.json" ||
+			(prefix === "" && entry.name === "build")
+		)
+			continue;
 		const entryPath = join(directory, entry.name);
 		const archivePath = join(prefix, entry.name);
 		if (entry.isDirectory())
@@ -156,7 +160,10 @@ async function readConfig() {
 async function hasLocalSources() {
 	try {
 		return (await readdir(DATA)).some(
-			(name) => name !== ".source-release.json" && name !== ".DS_Store",
+			(name) =>
+				name !== ".source-release.json" &&
+				name !== ".DS_Store" &&
+				name !== "build",
 		);
 	} catch (error) {
 		if (error?.code === "ENOENT") return false;
@@ -350,24 +357,37 @@ async function downloadFile(url, destination) {
 	});
 }
 
-async function replaceSources(staging) {
-	const replacement = join(STAGING, `restore-${process.pid}`);
-	const previous = join(STAGING, `previous-${process.pid}`);
+export async function replaceSources(
+	staging,
+	{ data = DATA, workspace = STAGING } = {},
+) {
+	const replacement = join(workspace, `restore-${process.pid}`);
+	const previous = join(workspace, `previous-${process.pid}`);
 	await rm(replacement, { recursive: true, force: true });
 	await rm(previous, { recursive: true, force: true });
 	await cp(staging, replacement, { recursive: true });
 
 	let hadPrevious = true;
 	try {
-		await rename(DATA, previous);
+		await rename(data, previous);
 	} catch (error) {
 		if (error?.code === "ENOENT") hadPrevious = false;
 		else throw error;
 	}
 	try {
-		await rename(replacement, DATA);
+		// Preserve generated artifacts when restoring only raw sources.
+		if (hadPrevious && existsSync(join(previous, "build")))
+			await rename(join(previous, "build"), join(replacement, "build"));
+		await rename(replacement, data);
 	} catch (error) {
-		if (hadPrevious) await rename(previous, DATA);
+		if (hadPrevious) {
+			if (existsSync(join(replacement, "build")))
+				await rename(
+					join(replacement, "build"),
+					join(previous, "build"),
+				);
+			await rename(previous, data);
+		}
 		throw error;
 	}
 	if (hadPrevious) await rm(previous, { recursive: true, force: true });
@@ -604,4 +624,5 @@ async function main() {
 	}
 }
 
-await main();
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1])
+	await main();

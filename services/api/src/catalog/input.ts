@@ -15,7 +15,7 @@ export class AtlasDatasetInput {
 		);
 	}
 	toString() {
-		return `compiled/atlas.sqlite:${this.output}`;
+		return `data/build/atlas.sqlite:${this.output}`;
 	}
 }
 

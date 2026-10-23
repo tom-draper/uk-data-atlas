@@ -15,7 +15,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 	const apiRoot = join(root, "services/api");
 	const directory = join(apiRoot, "public");
 	mkdirSync(directory, { recursive: true });
-	mkdirSync(join(root, "compiled"));
+	mkdirSync(join(root, "data/build"), { recursive: true });
 	const inventory: AreaInventory = {
 		schemaVersion: 1,
 		contentHash: "inventory",
@@ -52,7 +52,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 		join(directory, "ward.json"),
 		JSON.stringify({ schemaVersion: 1, contentHash: "release", areas }),
 	);
-	const path = join(root, "compiled/atlas.sqlite");
+	const path = join(root, "data/build/atlas.sqlite");
 	writeSqliteIndex(path, {}, areaTables(directory));
 	rmSync(directory, { recursive: true });
 	assert.equal(

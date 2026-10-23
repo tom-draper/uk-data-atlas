@@ -57,7 +57,7 @@ export const readGeographyInventory = (apiRoot: string): GeographyInventory =>
 	);
 
 export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
-	const path = resolve(apiRoot, "../../compiled/atlas.sqlite");
+	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		const row = database

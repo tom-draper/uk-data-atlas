@@ -14,7 +14,7 @@ import { testContext } from "../services/api/tests/routeFixtures";
 
 const root = resolve(import.meta.dirname, "..");
 const manifestText = readFileSync(
-	join(root, "compiled/datasets/dataset-manifest.json"),
+	join(root, "data/build/datasets/dataset-manifest.json"),
 	"utf8",
 );
 assert.equal(readAtlasPayload(root, "dataset-manifest"), manifestText);
@@ -23,7 +23,10 @@ assert.ok(manifest.datasets.length > 0);
 for (const { output } of manifest.datasets)
 	assert.equal(
 		readAtlasPayload(root, `dataset:${output}`),
-		readFileSync(join(root, "compiled/datasets", `${output}.json`), "utf8"),
+		readFileSync(
+			join(root, "data/build/datasets", `${output}.json`),
+			"utf8",
+		),
 		output,
 	);
 const sqliteInputs = datasetCatalogInputs(root);
@@ -33,7 +36,7 @@ const jsonInputs = Object.fromEntries(
 	Object.entries(sqliteInputs).map(([key, value]) => [
 		key,
 		value instanceof AtlasDatasetInput
-			? join(root, "compiled/datasets", `${value.output}.json`)
+			? join(root, "data/build/datasets", `${value.output}.json`)
 			: value,
 	]),
 ) as DataCatalogInputs;

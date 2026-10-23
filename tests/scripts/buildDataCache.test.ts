@@ -31,7 +31,7 @@ const stage = (
 // download feeds data/; compile and summary write outputs; report reads compile.
 const stages = [
 	stage("download", [], false),
-	stage("compile", ["download"], true, ["compiled/datasets"]),
+	stage("compile", ["download"], true, ["data/build/datasets"]),
 	stage("summary", ["download"]),
 	stage("report", ["compile"]),
 ];
@@ -48,7 +48,7 @@ function fixture() {
 	write("data/source.csv", "a,b\n");
 	write("code.ts", "export {};\n");
 	const outputs: Record<string, string> = {
-		compile: "compiled/datasets/compiled.json",
+		compile: "data/build/datasets/compiled.json",
 		summary: "services/api/public/summary.json",
 		report: "public/data/report.json",
 	};
@@ -179,9 +179,9 @@ test("a plan marks the stages it would skip", () => {
 
 test("a stage owns the files in its declared folders, even ones it kept", () => {
 	const { runs, root, write } = fixture();
-	write("compiled/datasets/kept.json", "from an earlier build\n");
+	write("data/build/datasets/kept.json", "from an earlier build\n");
 	runs();
 	// compile does not rewrite kept.json, but it is still compile's.
-	unlinkSync(join(root, "compiled/datasets/kept.json"));
+	unlinkSync(join(root, "data/build/datasets/kept.json"));
 	assert.deepEqual(runs(), ["download", "compile", "report"]);
 });

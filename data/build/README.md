@@ -1,14 +1,15 @@
-# compiled/
+# data/build/
 
 Data compiled once from the raw sources in `data/`, for both the website and the
-API. Everything here is generated, and only this README is tracked. Rebuild it
+API. Raw-source downloads exclude this folder, and `data:download --replace`
+preserves it. Everything here is generated, and only this README is tracked. Rebuild it
 with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
 
 ```text
 data/                 raw sources, restored from the pinned data release
   │
   ▼  pnpm data:build --only datasets
-compiled/
+data/build/
   datasets/
     dataset-manifest.json     one entry per catalogue dataset
     <output>.json             one compiled payload per entry
@@ -19,7 +20,7 @@ compiled/
 ```
 
 Neither product writes here. The data pipeline writes this release. Both servers
-read catalogue datasets from `compiled/atlas.sqlite` on disk. The browser reads
+read catalogue datasets from `data/build/atlas.sqlite` on disk. The browser reads
 JSON from the Next.js server and never opens SQLite or fetches from the API.
 
 ## datasets/
@@ -85,10 +86,10 @@ retaining all payloads in memory. Incremental row updates would require copying
 the database before mutation to retain atomic publication, so they are deferred.
 The stage cache skips the whole write when inputs are unchanged.
 
-`readTerrainCatalogue(apiRoot)` opens `../../compiled/atlas.sqlite` relative to
+`readTerrainCatalogue(apiRoot)` opens `../../data/build/atlas.sqlite` relative to
 the API root in read-only mode, reads the `terrain-catalogue` row, validates its
 schema version and products array, then closes the connection. It does not fall
-back to JSON. Keep `compiled/atlas.sqlite` under the repository root when
+back to JSON. Keep `data/build/atlas.sqlite` under the repository root when
 deploying the API.
 The `documents` stage depends on `atlas-sqlite` because it loads API catalogues.
 
@@ -110,7 +111,7 @@ hashes return 404 with `Cache-Control: no-store`, never a different payload at
 an old URL. A database deployment can therefore invalidate uncached old URLs;
 pages and the compiled release must deploy together.
 
-The website data build still reads `compiled/datasets/` to cut regional chunks. It
+The website data build still reads `data/build/datasets/` to cut regional chunks. It
 does not copy catalogue payloads into `public/data/datasets/`. That directory
 still holds generated gazetteer, road-safety, regional chunk and SEO assets,
 plus the website build manifest. The graph compiles shared datasets and SQLite

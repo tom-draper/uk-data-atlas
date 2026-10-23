@@ -35,7 +35,7 @@ The build order is raw data download, API data and runtime build, website
 data build, then website build. Run these steps serially.
 The API data build checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/` and the terrain catalogue
-payload to `compiled/atlas.sqlite`. Keep `compiled/atlas.sqlite` under the repository
+payload to `data/build/atlas.sqlite`. Keep `data/build/atlas.sqlite` under the repository
 root when deploying either server. Both read it in read-only mode.
 `pnpm data:build --target website` builds missing or stale dependencies, copies
 the atlas lookups and pages from the API's build output, then writes browser
@@ -84,8 +84,8 @@ outputs also need to be refreshed.
 stage pins them in the final manifest. Both manifest stages use the existing
 `services/api/scripts/build-atlas-release.ts` script. `atlas-pages` compiles the website place profiles, facts and docs catalogue.
 The `datasets` stage runs after `download` and compiles every catalogue dataset
-once into `compiled/datasets/`, for both products (see `compiled/README.md`).
-`atlas-sqlite` stores catalogue payloads in `compiled/atlas.sqlite` for the
+once into `data/build/datasets/`, for both products (see `data/build/README.md`).
+`atlas-sqlite` stores catalogue payloads in `data/build/atlas.sqlite` for the
 API catalogue compiler, atlas pages and Next.js dataset route. `api-datasets` builds gazetteer core
 and boundary assets under `services/api/public/source-data/` for named
 locations and atlas pages. The API build does not need website output in

@@ -5,7 +5,10 @@
 /pnpm-lock.yaml
 
 # Restored raw source data and transient data-release workspaces.
-/data/
+/data/*
+!/data/build/
+/data/build/*
+!/data/build/README.md
 /.data-release/
 
 # Local tool state is not project source.

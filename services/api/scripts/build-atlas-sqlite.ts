@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { writeSqliteIndex } from "../src/sqliteIndex";
 
 export const buildAtlasSqlite = (repositoryRoot: string) => {
-	const directory = join(repositoryRoot, "compiled");
+	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
 	const path = join(directory, "atlas.sqlite");
 	const payload = readFileSync(
