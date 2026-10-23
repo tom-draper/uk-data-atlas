@@ -1,3 +1,4 @@
+import { featureIds } from "./featureIds";
 import { decomposeArcs } from "./arcs";
 import { compileArchive, type ArchiveOptions } from "./compileArchive";
 import type { GeometryTier } from "./simplifyGeometry";
@@ -8,7 +9,15 @@ import type { GeoJsonGeometry } from "./types";
 export { LAYER_NAME } from "./compileArchive";
 export type TilesetOptions = ArchiveOptions;
 
-export class NonCoverageError extends Error {}
+export class NonCoverageError extends Error {
+	constructor(
+		message: string,
+		readonly edgeCount: number,
+		readonly areaCodes: readonly string[],
+	) {
+		super(message);
+	}
+}
 
 export type CompiledTileset = {
 	archive: Uint8Array;
@@ -53,12 +62,15 @@ export const compileTileset = (
 			codes.length > 20 ? `, ... (${codes.length - 20} more)` : "";
 		throw new NonCoverageError(
 			`${options.name} is not a coverage: ${topology.overlappingEdges} edges lie on more than two areas, so it cannot be tiled without drawing one over another. Offending area codes: ${sample}${remaining}.`,
+			topology.overlappingEdges,
+			codes,
 		);
 	}
 
 	const compiledTiers = compileTiers(topology);
 	const archive = compileArchive(
 		(tier) => compiledTiers.get(tier)!.areas,
+		featureIds([...areas.keys()]),
 		options,
 	);
 	const tiers = ZOOM_TIERS.map((band) => {

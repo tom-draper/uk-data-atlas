@@ -25,16 +25,12 @@ export type ArchiveOptions = {
 /** One archive writer for shared-arc tiers and already compiled polygons. */
 export function compileArchive(
 	areasForTier: (tier: GeometryTier) => Map<string, GeoJsonGeometry>,
+	ids: Map<string, number>,
 	options: ArchiveOptions,
 ) {
 	const areas = areasForTier(ZOOM_TIERS[0]!.tier);
 	if (!areas.size)
 		throw new Error(`No geometry is available for ${options.name}.`);
-	// A feature keeps its number at every zoom, and the number comes from
-	// sorted code order rather than the order the geometry file happens to
-	// list its features in, so a join table can work it out from the codes
-	// alone instead of having to be told it.
-	const ids = featureIds([...areas.keys()]);
 
 	const bounds: TileBox = [Infinity, Infinity, -Infinity, -Infinity];
 	const tiles: ArchiveTile[] = [];
@@ -114,4 +110,4 @@ export function compileArchive(
 export const compilePolygonArchive = (
 	areas: Map<string, GeoJsonGeometry>,
 	options: ArchiveOptions,
-) => compileArchive(() => areas, options);
+) => compileArchive(() => areas, featureIds([...areas.keys()]), options);

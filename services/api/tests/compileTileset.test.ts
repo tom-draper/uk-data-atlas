@@ -102,3 +102,36 @@ test("compiled polygon archives retain overlapping areas while strict compilatio
 	assert.ok(layer.features.every((feature) => feature.rings.length === 1));
 	assert.deepEqual(areas.get("E05000001"), square(0, 51, 0.1));
 });
+
+test("reserves input IDs when a degenerate area disappears from generalised geometry", async () => {
+	const { readTile } = await import("./pmtilesFixtures");
+	const { decodeTile } = await import("./vectorTileFixtures");
+	const result = compileTileset(
+		new Map([
+			["A", square(0, 51, 0.1)],
+			["B", square(0.2, 51, 0)],
+			["C", square(0.3, 51, 0.1)],
+		]),
+		options,
+	);
+	assert.deepEqual(
+		[...result.ids],
+		[
+			["A", 1],
+			["B", 2],
+			["C", 3],
+		],
+	);
+	const tile = readTile(result.archive, 0);
+	assert.ok(tile);
+	assert.deepEqual(
+		decodeTile(tile)[0]?.features.map(({ id, properties }) => [
+			properties.code,
+			id,
+		]),
+		[
+			["A", 1],
+			["C", 3],
+		],
+	);
+});
