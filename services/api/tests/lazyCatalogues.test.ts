@@ -22,7 +22,7 @@ const storeAreas = (
 		join(directory, "area-inventory.json"),
 		JSON.stringify(inventory),
 	);
-	const compiled = join(apiRoot, "../../compiled");
+	const compiled = join(apiRoot, "../../data/build");
 	mkdirSync(compiled, { recursive: true });
 	writeSqliteIndex(join(compiled, "atlas.sqlite"), {}, areaTables(directory));
 };
@@ -113,7 +113,7 @@ test("area releases stay parsed until their records exceed the budget", () =>
 		lookup.get("ward/2022");
 		lookup.get("ward/2024");
 		const database = new DatabaseSync(
-			join(root, "../../compiled/atlas.sqlite"),
+			join(root, "../../data/build/atlas.sqlite"),
 		);
 		database
 			.prepare("DELETE FROM areas WHERE boundaryRelease = ?")
@@ -231,7 +231,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 			join(directory, "named-locations.json"),
 			JSON.stringify(inventory),
 		);
-		const compiled = join(root, "../../compiled");
+		const compiled = join(root, "../../data/build");
 		mkdirSync(compiled, { recursive: true });
 		const path = join(compiled, "atlas.sqlite");
 		writeSqliteIndex(path, {}, namedLocationTables(directory));

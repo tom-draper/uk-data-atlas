@@ -7,6 +7,6 @@ export const SOURCE_DATA = join(ROOT, "data");
 // Browser-ready output is built where Next serves it from. Raw
 // inputs remain in data/, which is restored from the pinned data release.
 export const OUT_DIR = join(PUBLIC_DATA, "datasets");
-// Compiled output the website and the API share. See compiled/README.md.
-export const COMPILED = join(ROOT, "compiled");
+// Compiled output the website and the API share. See data/build/README.md.
+export const COMPILED = join(ROOT, "data/build");
 export const COMPILED_DATASETS = join(COMPILED, "datasets");

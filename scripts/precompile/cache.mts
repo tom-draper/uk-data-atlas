@@ -304,7 +304,7 @@ const byType = (manifest: ExistingManifest) =>
 
 /**
  * The reuse context for compiling the catalogue datasets into
- * compiled/datasets. A dataset is reused only if what compiles it is
+ * data/build/datasets. A dataset is reused only if what compiles it is
  * unchanged, which its own fingerprint says.
  */
 export const loadDatasetReuseContext = async (): Promise<ReuseContext> => {

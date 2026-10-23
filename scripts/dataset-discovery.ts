@@ -15,7 +15,7 @@ export interface DiscoveredDataset {
 	meta: DatasetMeta;
 }
 
-const SKIP_DIRECTORIES = new Set(["node_modules"]);
+const SKIP_DIRECTORIES = new Set(["node_modules", "build"]);
 
 async function* walk(dir: string): AsyncGenerator<string> {
 	const entries = await readdir(dir, { withFileTypes: true });

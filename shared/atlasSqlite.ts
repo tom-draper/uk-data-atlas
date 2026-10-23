@@ -3,7 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 
 /** Server-only access to the shared compiled release. Connections close before atomic replacements. */
 export function readAtlasPayload(repositoryRoot: string, id: string): string {
-	const path = join(repositoryRoot, "compiled/atlas.sqlite");
+	const path = join(repositoryRoot, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		const row = database
@@ -21,7 +21,7 @@ export function readAtlasDatasetUrls(
 	repositoryRoot: string,
 ): Record<string, string> {
 	const database = new DatabaseSync(
-		join(repositoryRoot, "compiled/atlas.sqlite"),
+		join(repositoryRoot, "data/build/atlas.sqlite"),
 		{ readOnly: true },
 	);
 	try {
@@ -45,7 +45,7 @@ export function readVersionedAtlasDataset(
 	sha256: string,
 ): string | undefined {
 	const database = new DatabaseSync(
-		join(repositoryRoot, "compiled/atlas.sqlite"),
+		join(repositoryRoot, "data/build/atlas.sqlite"),
 		{ readOnly: true },
 	);
 	try {

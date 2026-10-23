@@ -32,7 +32,7 @@ their shape and filenames must remain free to change.
 
 The API builds directly from raw `data/` without website output.
 `pnpm data:build --only datasets` at the repository root compiles catalogue datasets.
-The `atlas-sqlite` stage stores them in `compiled/atlas.sqlite` for the API to read.
+The `atlas-sqlite` stage stores them in `data/build/atlas.sqlite` for the API to read.
 `pnpm --dir ../.. data:build --only api-datasets` builds gazetteer core and boundary assets under
 `services/api/public/source-data/`. These outputs are gitignored.
 After changing shared dataset compilers, run `pnpm --dir ../.. data:build --target api --from datasets`

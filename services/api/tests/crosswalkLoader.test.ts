@@ -27,9 +27,9 @@ const store = (apiRoot: string, inventory: CrosswalkInventory) => {
 		join(directory, "crosswalk-inventory.json"),
 		JSON.stringify(inventory),
 	);
-	mkdirSync(join(apiRoot, "../../compiled"), { recursive: true });
+	mkdirSync(join(apiRoot, "../../data/build"), { recursive: true });
 	writeSqliteIndex(
-		join(apiRoot, "../../compiled/atlas.sqlite"),
+		join(apiRoot, "../../data/build/atlas.sqlite"),
 		{},
 		crosswalkTables(directory),
 	);
@@ -123,7 +123,7 @@ test("refuses a missing database and stale SQLite artifact", () => {
 		artifact(directory, "ward-to-lad");
 		store(directory, inventory);
 		const database = new DatabaseSync(
-			join(directory, "../../compiled/atlas.sqlite"),
+			join(directory, "../../data/build/atlas.sqlite"),
 		);
 		database.prepare("UPDATE crosswalks SET contentHash = 'stale'").run();
 		database.close();

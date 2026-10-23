@@ -226,7 +226,7 @@ export const readSqliteCrosswalkInventory = (
 	apiRoot: string,
 ): CrosswalkInventory => {
 	const database = new DatabaseSync(
-		resolve(apiRoot, "../../compiled/atlas.sqlite"),
+		resolve(apiRoot, "../../data/build/atlas.sqlite"),
 		{ readOnly: true },
 	);
 	try {
@@ -285,7 +285,7 @@ export const readSqliteCrosswalk = (
 	expected: CrosswalkInventory["crosswalks"][number],
 ) => {
 	const database = new DatabaseSync(
-		resolve(apiRoot, "../../compiled/atlas.sqlite"),
+		resolve(apiRoot, "../../data/build/atlas.sqlite"),
 		{ readOnly: true },
 	);
 	try {

@@ -15,14 +15,15 @@ const VERSION = 1;
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 // Where the stages write. A stage's outputs are the files here it changes.
-const OUTPUT_ROOTS = ["compiled", "public/data", "services/api/public"];
+const OUTPUT_ROOTS = ["data/build", "public/data", "services/api/public"];
 // Environment variables a stage's output depends on.
 const ENVIRONMENT = ["MAXIMUM_DISCOVERED_STEPS"];
 
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 
 /** Size and mtime of every file under `directory`, keyed by repo path. */
-function stampFiles(root, directory, stamps = new Map()) {
+function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
+	if (excluded.has(directory)) return stamps;
 	let entries;
 	try {
 		entries = readdirSync(join(root, directory), { withFileTypes: true });
@@ -35,7 +36,7 @@ function stampFiles(root, directory, stamps = new Map()) {
 		const path = join(directory, entry.name);
 		const stats = statSync(join(root, path), { throwIfNoEntry: false });
 		if (!stats) continue;
-		if (stats.isDirectory()) stampFiles(root, path, stamps);
+		if (stats.isDirectory()) stampFiles(root, path, stamps, excluded);
 		else if (stats.isFile())
 			stamps.set(path, `${stats.size}:${stats.mtimeMs}`);
 	}
@@ -127,7 +128,12 @@ export function createStageCache({
 	let inputs = null;
 	const currentInputs = () => {
 		if (inputs) return inputs;
-		const data = stampFiles(root, dataDirectory);
+		const data = stampFiles(
+			root,
+			dataDirectory,
+			new Map(),
+			new Set(outputRoots),
+		);
 		data.delete(join(dataDirectory, ".source-release.json"));
 		inputs = sha256(
 			JSON.stringify({

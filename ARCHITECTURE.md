@@ -32,16 +32,18 @@ packages/map-tiles/     the boundary tiler: shared-arc generalisation and
 services/api/           the API: src/, scripts/, config/, openapi.yaml
 scripts/                build orchestration and file readers for both products
 data/                   raw source files, restored from the data release
+  build/                shared generated datasets and atlas.sqlite
 public/data/            the atlas's compiled data, served by the website
 ```
 
 ## Where the data lives
 
-| Where                  | What                                                                     | In git | Made by                                                                                                             |
-| ---------------------- | ------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------- |
-| `data/`                | Raw files as publishers supplied them                                    | No     | `pnpm data:download`, from the release pinned in `data-release.json`                                                |
-| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No     | `pnpm data:build --target api`                                                                                      |
-| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No     | `pnpm data:build --target website`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
+| Where                  | What                                                                     | In git      | Made by                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| `data/`                | Raw files as publishers supplied them                                    | No          | `pnpm data:download`, from the release pinned in `data-release.json`                                                |
+| `data/build/`          | Shared generated datasets and `atlas.sqlite`                             | README only | `pnpm data:build`                                                                                                   |
+| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No          | `pnpm data:build --target api`                                                                                      |
+| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No          | `pnpm data:build --target website`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
 headlines and ranked areas, compiled by `pnpm data:build --only seo` from the datasets.
@@ -70,9 +72,9 @@ website on focus. A missing copy fails rendering rather than returning a false
 missing place.
 
 The API builds from raw `data/` without `public/data/`. The shared `datasets`
-stage compiles every catalogue dataset once into `compiled/datasets/` (see
-[compiled/README.md](compiled/README.md)). The `atlas-sqlite` stage stores their
-metadata and exact payload bytes in `compiled/atlas.sqlite`. The API catalogue
+stage compiles every catalogue dataset once into `data/build/datasets/` (see
+[data/build/README.md](data/build/README.md)). The `atlas-sqlite` stage stores their
+metadata and exact payload bytes in `data/build/atlas.sqlite`. The API catalogue
 compiler and atlas pages read it directly through the server-only reader in
 `shared/atlasSqlite.ts`. The `api-datasets` stage only builds
 gazetteer core and boundary assets under `services/api/public/source-data/`.
@@ -82,7 +84,7 @@ and passes dataset URLs containing their payload SHA-256 to the browser. Its
 immutable caching and negotiated gzip compression. Neither product fetches
 catalogue datasets from the other product.
 
-The website data build reads `compiled/datasets/` when cutting regional chunks,
+The website data build reads `data/build/datasets/` when cutting regional chunks,
 without copying the catalogue payloads. `public/data/datasets/` retains
 gazetteer, road-safety, chunk and SEO assets and the website build manifest.
 
@@ -160,8 +162,8 @@ Stage commands live in the graph rather than package scripts. The API package's
 Next.js application using existing data.
 
 The build skips a stage that ran before when nothing it reads has changed:
-the repo's code, the size and mtime of every file in `data/`, its command, and
-the outputs of the stages it depends on. The files it wrote under `compiled/`,
+the repo's code, the size and mtime of raw files in `data/` excluding `data/build/`, its command, and
+the outputs of the stages it depends on. The files it wrote under `data/build/`,
 `public/data/` and `services/api/public/` must also be unchanged. So once one
 target is built, the other reuses unchanged compiled stages. Download and
 catalogue registry generation always run. Website builds also regenerate source
@@ -170,13 +172,13 @@ the compiled output cache. A code change reruns every compiled stage.
 `scripts/build-data-cache.mjs` keeps this in `.cache/data-build/`. `--from`
 and `--no-cache` rerun the stages they select regardless.
 
-The `atlas-sqlite` stage writes the terrain catalogue to `compiled/atlas.sqlite`,
+The `atlas-sqlite` stage writes the terrain catalogue to `data/build/atlas.sqlite`,
 alongside catalogue datasets, relational areas, crosswalk source/target rows and
 named locations with membership tables and lazy geometry. The API reads these
 directly. Their JSON outputs remain build and release intermediates. Named
 locations compile from area JSON before the shared SQLite database is written.
 Other API loaders still read their JSON outputs.
-See [compiled/README.md](compiled/README.md) for the database schema.
+See [data/build/README.md](data/build/README.md) for the database schema.
 
 ## Rebuilding after a change
 

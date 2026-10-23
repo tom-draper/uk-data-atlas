@@ -11,7 +11,7 @@ import type {
 const RUN_COMPILE = "Run pnpm data:build --only datasets first.";
 
 /**
- * Reads the named catalogue datasets from compiled/datasets and returns their
+ * Reads the named catalogue datasets from data/build/datasets and returns their
  * manifest entries in the order given.
  * Regional datasets are registered in `compiledDatasets` so their region
  * chunks can be cut. Fails if a dataset is missing or was compiled by a
@@ -43,11 +43,11 @@ export async function publishDatasets(
 			const entry = entries.get(definition.type);
 			if (!entry || entry.output !== definition.precompiledFile)
 				throw new Error(
-					`compiled/datasets has no ${definition.type}. ${RUN_COMPILE}`,
+					`data/build/datasets has no ${definition.type}. ${RUN_COMPILE}`,
 				);
 			if (entry.fingerprint !== fingerprints[definition.type])
 				throw new Error(
-					`compiled/datasets/${entry.output}.json is out of date. ${RUN_COMPILE}`,
+					`data/build/datasets/${entry.output}.json is out of date. ${RUN_COMPILE}`,
 				);
 			readCompiledFromDisk(definition, compiledDatasets);
 			return entry;

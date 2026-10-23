@@ -23,9 +23,9 @@ const nextConfig: NextConfig = {
 	// Place pages read their profiles from disk while rendering on demand.
 	outputFileTracingIncludes: {
 		"/places/*": ["./public/data/atlas-pages/**/*"],
-		"/atlas": ["./compiled/atlas.sqlite"],
-		"/atlas/*": ["./compiled/atlas.sqlite"],
-		"/data/catalogue/*": ["./compiled/atlas.sqlite"],
+		"/atlas": ["./data/build/atlas.sqlite"],
+		"/atlas/*": ["./data/build/atlas.sqlite"],
+		"/data/catalogue/*": ["./data/build/atlas.sqlite"],
 	},
 
 	env: {

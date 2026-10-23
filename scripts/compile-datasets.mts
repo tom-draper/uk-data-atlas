@@ -1,5 +1,5 @@
 /**
- * Compiles every catalogue dataset from data/ into compiled/datasets, the one
+ * Compiles every catalogue dataset from data/ into data/build/datasets, the one
  * copy the website and the API both read. A dataset whose inputs and compiler
  * are unchanged since the last run is reused rather than compiled again.
  *
@@ -44,7 +44,7 @@ const readManifest = async (): Promise<{ datasets: ManifestEntry[] }> => {
 
 /**
  * Compiles the catalogue datasets, or only those named, into
- * compiled/datasets and rewrites its manifest. Regional datasets are
+ * data/build/datasets and rewrites its manifest. Regional datasets are
  * registered in `compiledDatasets` for anything that cuts chunks from them.
  */
 export async function compileCatalogueDatasets(

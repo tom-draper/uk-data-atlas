@@ -24,7 +24,7 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 	const apiRoot = join(root, "services/api");
 	const directory = join(apiRoot, "public/crosswalks");
 	mkdirSync(directory, { recursive: true });
-	mkdirSync(join(root, "compiled"));
+	mkdirSync(join(root, "data/build"), { recursive: true });
 	const records = [
 		{
 			source: {
@@ -68,7 +68,7 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 	);
 	const input = join(directory, `${artifact.id}.json`);
 	writeFileSync(input, JSON.stringify(artifact));
-	const path = join(root, "compiled/atlas.sqlite");
+	const path = join(root, "data/build/atlas.sqlite");
 	writeSqliteIndex(path, {}, crosswalkTables(join(apiRoot, "public")));
 	assert.equal(
 		JSON.stringify(readCrosswalkInventory(apiRoot)),

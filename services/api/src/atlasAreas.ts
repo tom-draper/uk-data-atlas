@@ -122,7 +122,7 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 
 export const readSqliteAreaInventory = (apiRoot: string): AreaInventory => {
 	const database = new DatabaseSync(
-		resolve(apiRoot, "../../compiled/atlas.sqlite"),
+		resolve(apiRoot, "../../data/build/atlas.sqlite"),
 		{ readOnly: true },
 	);
 	try {
@@ -183,7 +183,7 @@ export const readSqliteAreas = (
 	>,
 ): AreaRecord[] => {
 	const database = new DatabaseSync(
-		resolve(apiRoot, "../../compiled/atlas.sqlite"),
+		resolve(apiRoot, "../../data/build/atlas.sqlite"),
 		{ readOnly: true },
 	);
 	try {
