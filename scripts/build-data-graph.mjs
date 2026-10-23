@@ -1,7 +1,46 @@
+const apiCommands = {
+	"atlas-pages": [
+		"exec",
+		"tsx",
+		"--max-old-space-size=3072",
+		"scripts/build-atlas-pages.ts",
+	],
+	"atlas-lookups": [
+		"exec",
+		"tsx",
+		"--max-old-space-size=3072",
+		"scripts/build-atlas-lookups.ts",
+	],
+	"crosswalk-inventory": [
+		"exec",
+		"tsx",
+		"--max-old-space-size=4096",
+		"scripts/build-crosswalk-inventory.ts",
+	],
+	"geometry-store": [
+		"exec",
+		"tsx",
+		"--max-old-space-size=3072",
+		"scripts/build-geometry-store.ts",
+	],
+	"map-resource": [
+		"exec",
+		"tsx",
+		"--max-old-space-size=3072",
+		"scripts/build-map-resource.ts",
+	],
+	documents: [
+		"exec",
+		"tsx",
+		"--max-old-space-size=3072",
+		"scripts/build-evidence-documents.ts",
+	],
+};
+
 const stage = (
 	name,
 	dependencies = [],
-	args = [`build:${name}`],
+	args = apiCommands[name] ?? ["exec", "tsx", `scripts/build-${name}.ts`],
 	{ cacheable = true, outputs = [] } = {},
 ) => ({
 	name,
@@ -13,13 +52,14 @@ const stage = (
 
 const apiStages = [
 	// Always runs. It is quick when data/ already matches the pinned release.
-	stage("download", [], ["--dir", "../..", "data:download"], {
+	stage("sources", [], ["--dir", "../..", "data:download"], {
 		cacheable: false,
 	}),
 	stage("operations"),
+	stage("query-rules", [], undefined, { cacheable: false }),
 	stage(
 		"catalogue-registry",
-		["download"],
+		["sources"],
 		[
 			"--dir",
 			"../..",
@@ -34,7 +74,14 @@ const apiStages = [
 	stage(
 		"datasets",
 		["catalogue-registry"],
-		["--dir", "../..", "datasets:compile"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/compile-datasets.mts",
+		],
 		{
 			outputs: ["compiled/datasets"],
 		},
@@ -47,9 +94,20 @@ const apiStages = [
 		"crosswalk-inventory",
 		"named-locations",
 	]),
-	stage("api-datasets", ["download"], ["build:datasets"]),
-	stage("boundary-registry", ["download"]),
-	stage("derived-boundaries", ["download"]),
+	stage(
+		"api-datasets",
+		["sources"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/build-api-datasets.mts",
+		],
+	),
+	stage("boundary-registry", ["sources"]),
+	stage("derived-boundaries", ["sources"]),
 	stage("area-inventory", ["boundary-registry", "derived-boundaries"]),
 	stage("geometry-source-registry", ["area-inventory"]),
 	stage("geometry-store", ["geometry-source-registry"]),
@@ -65,7 +123,7 @@ const apiStages = [
 		"named-locations",
 	]),
 	stage("area-search-index", ["atlas-sqlite"]),
-	stage("postcode-index", ["download"]),
+	stage("postcode-index", ["sources"]),
 	stage("data-catalog", ["atlas-sqlite"]),
 	stage("measure-compatibility", [
 		"data-catalog",
@@ -103,7 +161,7 @@ const apiStages = [
 	]),
 	stage("relationship-candidates", ["area-inventory", "crosswalk-inventory"]),
 	stage("geography-inventory", [
-		"download",
+		"sources",
 		"boundary-registry",
 		"area-inventory",
 		"crosswalk-inventory",
@@ -156,7 +214,7 @@ const apiStages = [
 			"validation-report",
 			"terrain-catalogue",
 		],
-		["build:atlas-release"],
+		["exec", "tsx", "scripts/build-atlas-release.ts"],
 	),
 	stage("documents", [
 		"atlas-sqlite",
@@ -196,6 +254,25 @@ const apiStages = [
 // them. The API reads none of it.
 const websiteStages = [
 	stage(
+		"boundaries",
+		["sources"],
+		["--dir", "../..", "exec", "tsx", "scripts/compile-boundaries.mts"],
+		{ outputs: ["public/data/boundaries"] },
+	),
+	stage(
+		"boundary-tiles",
+		["boundaries"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/compile-boundary-tiles.mts",
+		],
+		{ outputs: ["public/data/boundaries"] },
+	),
+	stage(
 		"website-sources",
 		["catalogue-registry"],
 		[
@@ -210,11 +287,16 @@ const websiteStages = [
 	stage(
 		"website-lookups",
 		["atlas-lookups", "atlas-pages"],
-		["--dir", "../..", "atlas-data:copy"],
+		["--dir", "../..", "exec", "tsx", "scripts/copy-atlas-data.mts"],
 	),
 	stage(
 		"website-datasets",
-		["atlas-sqlite", "website-lookups", "website-sources"],
+		[
+			"atlas-sqlite",
+			"website-lookups",
+			"website-sources",
+			"boundary-tiles",
+		],
 		[
 			"--dir",
 			"../..",
@@ -225,7 +307,7 @@ const websiteStages = [
 		],
 		// It keeps unchanged files from its last run. The lookups and pages in
 		// public/data belong to website-lookups.
-		{ outputs: ["public/data"] },
+		{ outputs: ["public/data/datasets", "public/data/precompiled"] },
 	),
 	stage(
 		"website-registry",
@@ -239,6 +321,11 @@ const websiteStages = [
 		],
 		{ cacheable: false },
 	),
+	stage(
+		"seo",
+		["website-registry"],
+		["--dir", "../..", "exec", "tsx", "scripts/build-seo-data.mts"],
+	),
 ];
 
 export const buildDataStages = [...apiStages, ...websiteStages];
@@ -250,5 +337,5 @@ export const buildDataStages = [...apiStages, ...websiteStages];
  */
 export const buildDataTargets = {
 	api: apiStages.map(({ name }) => name),
-	website: ["website-registry"],
+	website: ["seo"],
 };

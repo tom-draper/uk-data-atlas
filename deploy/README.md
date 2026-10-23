@@ -19,7 +19,7 @@ memory for the data download and geometry builds; these can take hours.
 export PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
 cd /root/uk-data-atlas
 pnpm install --frozen-lockfile
-pnpm data:download
+pnpm data:build --target api
 pnpm --dir services/api build
 ```
 
@@ -27,59 +27,62 @@ Then build the website from the same checkout. It does not need the API
 running:
 
 ```sh
-pnpm data:compile --target website
+pnpm data:build --target website
 pnpm build
 ```
 
 The build order is raw data download, API data and runtime build, website
-website data build, then website build. Run these steps serially.
-The API build also checks the source release pinned by `data-release.json` and
+data build, then website build. Run these steps serially.
+The API data build checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/` and the terrain catalogue
 payload to `compiled/atlas.sqlite`. Keep `compiled/atlas.sqlite` under the repository
 root when deploying either server. Both read it in read-only mode.
-`pnpm data:compile --target website` builds missing or stale dependencies, copies
-the atlas lookups and pages from the API's build output with `pnpm atlas-data:copy`, then writes browser data to `public/data/`.
+`pnpm data:build --target website` builds missing or stale dependencies, copies
+the atlas lookups and pages from the API's build output, then writes browser
+data and SEO files to `public/data/`.
 Neither output directory is tracked in Git.
 `pnpm build` copies the atlas lookups and pages again, verifies local
-precompiled data, generates map headlines and rankings with `pnpm seo:build`,
+generated data, generates map headlines and rankings,
 then runs Next.js. A nonzero
 exit from any command means that step failed; stop before the next step.
 Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.
 
-`pnpm --dir services/api build:data` runs `pnpm data:compile --target api`.
-`pnpm data:compile --target website` runs only the stages the website's data
-needs, ending with the website's datasets, and `pnpm data:compile` runs both.
+`pnpm data:build --target api` builds the API data.
+`pnpm --dir services/api build` bundles the server.
+`pnpm data:build --target website` runs only the stages the website's data
+needs, including SEO data, and `pnpm data:build` runs both.
 Stages whose inputs and outputs are unchanged since they last ran are skipped
 (see "One data build" in `ARCHITECTURE.md`); add `--no-cache` to run them all.
 To inspect the complete local data build without executing commands, run:
 
 ```sh
-pnpm data:compile --plan
+pnpm data:build --plan
 ```
 
 After a complete build, rebuild a named stage and every affected downstream
 stage with `--from`. Preview the selection before running it:
 
 ```sh
-pnpm --dir services/api build:data --from crosswalk-inventory --plan
-pnpm --dir services/api build:data --from crosswalk-inventory
+pnpm data:build --target api --from crosswalk-inventory --plan
+pnpm data:build --target api --from crosswalk-inventory
 ```
 
 Stage names appear in the plan alongside their commands and dependencies.
 `--from` reuses existing upstream artifacts and leaves unrelated stages out.
-Downloads run only when you select `download` or run the complete build.
+`--only <stage>` builds the named stage and its prerequisites, including
+downloads when required. It reuses valid cached results.
 If upstream inputs changed, select their stage instead, or run
-`pnpm --dir services/api build:data` for the complete build.
-The runner executes serially and stops at the first failure. Compilers retain
-their existing artifact reuse checks. Existing per-stage scripts still work,
-but only `build:data --from` also regenerates affected downstream artifacts.
+`pnpm data:build --target api` for the complete build.
+The runner executes serially and stops at the first failure. Individual builders
+retain their existing artifact reuse checks. Use `--from` when downstream
+outputs also need to be refreshed.
 
 `atlas-release-initial` writes the manifest consumed by evidence documents.
 `documents` rebuilds those documents and then the downstream `atlas-release`
 stage pins them in the final manifest. Both manifest stages use the existing
-`build:atlas-release` script. `atlas-pages` compiles the website place profiles, facts and docs catalogue.
+`services/api/scripts/build-atlas-release.ts` script. `atlas-pages` compiles the website place profiles, facts and docs catalogue.
 The `datasets` stage runs after `download` and compiles every catalogue dataset
 once into `compiled/datasets/`, for both products (see `compiled/README.md`).
 `atlas-sqlite` stores catalogue payloads in `compiled/atlas.sqlite` for the
@@ -166,4 +169,4 @@ certificates or swap files. The API build compiles the website docs catalogue an
 The website serves its own copy of the atlas lookups and pages from
 `public/data/` and never fetches from the API. Restart
 the API and website in either order. On a memory-constrained local machine,
-stop the API before `pnpm data:compile --target website`.
+stop the API before `pnpm data:build --target website`.

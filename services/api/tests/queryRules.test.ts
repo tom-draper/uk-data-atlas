@@ -15,7 +15,7 @@ test("the committed query rules are the ones openapi.yaml states", () => {
 	assert.deepEqual(
 		QUERY_RULES,
 		compileQueryRules(parse(openapiDocument)),
-		"Run pnpm build:query-rules.",
+		"Run pnpm --dir ../.. data:build --only query-rules.",
 	);
 });
 

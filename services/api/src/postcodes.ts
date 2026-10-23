@@ -417,7 +417,7 @@ export class PostcodeIndex {
 		if (!this.verified.has(entry.path)) {
 			if (sha256(text) !== entry.contentHash)
 				throw new Error(
-					`The postcode shard ${entry.path} does not match the postcode index. Run pnpm build:postcode-index.`,
+					`The postcode shard ${entry.path} does not match the postcode index. Run pnpm --dir ../.. data:build --only postcode-index.`,
 				);
 			this.verified.add(entry.path);
 		}

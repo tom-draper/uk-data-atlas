@@ -7,7 +7,7 @@ import {
 
 /**
  * The containment and lineage lookups the API build compiles for the atlas.
- * `pnpm atlas-data:copy` copies them from the API's output on disk into
+ * `pnpm data:build --only website-lookups` copies them from the API's output on disk into
  * public/data/atlas-lookups. The browser fetches them from there, and the
  * precompile reads the same files, so the chunks it cuts agree with them.
  */

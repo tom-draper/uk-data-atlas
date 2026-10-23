@@ -181,7 +181,7 @@ const requireCompiledGeometry = (
 		);
 	} catch (error) {
 		throw new Error(
-			`Cannot use compiled geometry for ${identity} at ${path}: ${error instanceof Error ? error.message : String(error)} Remove the unusable compiled file if present, then run pnpm --dir services/api build:geometry-store before starting the API.`,
+			`Cannot use compiled geometry for ${identity} at ${path}: ${error instanceof Error ? error.message : String(error)} Remove the unusable compiled file if present, then run pnpm data:build --only geometry-store before starting the API.`,
 			{ cause: error },
 		);
 	}
@@ -206,7 +206,7 @@ export class AreaGeometryCache {
 		private readonly sources: GeometrySourceLookup,
 		private readonly maxReleases = 2,
 		/**
-		 * Where compiled releases are kept (`build:geometry-store`). A release
+		 * Where compiled releases are kept (`data:build --only geometry-store`). A release
 		 * must match the registered source. Missing, stale or invalid stores
 		 * are refused; omit the directory only for source-based build tools.
 		 */

@@ -105,7 +105,7 @@ test("matches every archive to the hash and size its descriptor gives", () => {
 		assert.equal(
 			sha256(archive),
 			resource.tiles.contentHash,
-			`${resource.id} does not hash to what its descriptor records; rebuild with \`pnpm build:map-resource\``,
+			`${resource.id} does not hash to what its descriptor records; rebuild with \`pnpm --dir ../.. data:build --only map-resource\``,
 		);
 	}
 });
@@ -262,7 +262,7 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 			assert.equal(
 				sha256(bytes),
 				entry.contentHash,
-				`${name} does not hash to what its descriptor records; rebuild with \`pnpm build:map-resource\``,
+				`${name} does not hash to what its descriptor records; rebuild with \`pnpm --dir ../.. data:build --only map-resource\``,
 			);
 			const file = readParquet(bytes);
 			assert.equal(file.rowCount, entry.rowCount);
@@ -392,7 +392,7 @@ test("publishes the coarser tiers as GeoJSON holding the GeoParquet's features",
 			assert.equal(
 				sha256(text),
 				entry.contentHash,
-				`${entry.artifact} does not hash to what its descriptor records; rebuild with \`pnpm build:map-resource\``,
+				`${entry.artifact} does not hash to what its descriptor records; rebuild with \`pnpm --dir ../.. data:build --only map-resource\``,
 			);
 			const collection = JSON.parse(text.toString("utf8")) as {
 				type: string;

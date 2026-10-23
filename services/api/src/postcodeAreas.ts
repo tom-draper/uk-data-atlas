@@ -493,7 +493,7 @@ export class PostcodeAreaIndex {
 		if (!this.verified.has(entry.path)) {
 			if (sha256(text) !== entry.contentHash)
 				throw new Error(
-					`The postcode area shard ${entry.path} does not match the postcode area index. Run pnpm build:postcode-areas.`,
+					`The postcode area shard ${entry.path} does not match the postcode area index. Run pnpm --dir ../.. data:build --only postcode-areas.`,
 				);
 			this.verified.add(entry.path);
 		}

@@ -42,7 +42,7 @@ export const readOperations = (
 		openapiDocumentHash(openapiDocument)
 	) {
 		throw new Error(
-			`${publicPath(apiRoot, "operations.json")} was compiled from another openapi.yaml; run pnpm build:operations.`,
+			`${publicPath(apiRoot, "operations.json")} was compiled from another openapi.yaml; run pnpm --dir ../.. data:build --only operations.`,
 		);
 	}
 	return artifact;

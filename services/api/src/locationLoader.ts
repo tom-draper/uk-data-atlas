@@ -42,7 +42,7 @@ export const createLocationProjectionStore = (
 	const path = publicPath(apiRoot, LOCATION_PROJECTION_DATABASE);
 	if (!existsSync(path))
 		throw new Error(
-			`Missing ${LOCATION_PROJECTION_DATABASE}. Run pnpm build:location-projections.`,
+			`Missing ${LOCATION_PROJECTION_DATABASE}. Run pnpm --dir ../.. data:build --only location-projections.`,
 		);
 	return new LocationProjectionDatabase(path, inventory);
 };

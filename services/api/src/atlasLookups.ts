@@ -10,7 +10,7 @@ import type { RouteRequest } from "./routing";
 
 /**
  * The atlas's containment and lineage lookups, compiled by
- * `pnpm build:atlas-lookups` for the boundary releases the atlas draws: where
+ * `pnpm --dir ../.. data:build --only atlas-lookups` for the boundary releases the atlas draws: where
  * each ward, LSOA and parish sits, which authorities each constituency
  * overlaps, and where each area goes between releases. The atlas cannot hold
  * the crosswalks, so it reads these instead.

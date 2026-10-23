@@ -3,6 +3,7 @@
 Build the API data on a build machine with the pinned Node and pnpm versions:
 
 ```sh
+pnpm data:build --target api
 pnpm --dir services/api build
 ```
 
@@ -28,7 +29,7 @@ unusable file, the request fails instead of parsing raw boundaries.
 Remove an unusable compiled file if present, then rebuild on the build machine:
 
 ```sh
-pnpm --dir services/api build:geometry-store
+pnpm data:build --only geometry-store
 ```
 
 Deploy the rebuilt store with its matching `geometry-sources.json` registry and

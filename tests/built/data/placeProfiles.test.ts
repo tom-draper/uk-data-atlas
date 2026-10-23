@@ -44,7 +44,7 @@ describe("place profiles", () => {
 			hash.update(name).update(files.get(name)!);
 		expect(
 			`sha256:${hash.digest("hex")}`,
-			"run pnpm --dir services/api build:atlas-pages, then pnpm atlas-data:copy",
+			"run pnpm data:build --only atlas-pages, then pnpm data:build --only website-lookups",
 		).toBe(index.contentHash);
 	});
 

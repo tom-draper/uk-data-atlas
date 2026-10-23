@@ -53,7 +53,7 @@ describe("place data reads", () => {
 			.mockResolvedValueOnce(JSON.stringify(index));
 		const { placeEntry } = await load();
 		await expect(placeEntry("E06000063")).rejects.toThrow(
-			"pnpm atlas-data:copy",
+			"pnpm data:build --only website-lookups",
 		);
 		expect((await placeEntry("E06000063"))?.[1]).toBe("Cumberland");
 	});

@@ -59,7 +59,7 @@ The website precompile writes its artifacts to `public/data/datasets/`. The
 API `api-datasets` stage writes its own `gazetteer.core.json` under
 `services/api/public/source-data/` for the `named-locations` stage. Both use the
 shared dataset package. The API builds the lookup artifacts separately, and
-`pnpm atlas-data:copy` copies them to `public/data/atlas-lookups/`, where the
+`pnpm data:build --only website-lookups` copies them to `public/data/atlas-lookups/`, where the
 website serves them. Sizes as of 2026-09-27.
 
 | Artifact                         | Built by                   | Loaded                                  | Size (raw / gz) |

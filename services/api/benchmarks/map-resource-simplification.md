@@ -87,7 +87,7 @@ Combined-authority runs each produced 15 areas, 2,578 tiles, and 3,340,006 bytes
 ```
 
 These measurements cover complete uncached release compilation, including all
-geometry tiers and artifact formats. They do not measure all of `build:data` or
+geometry tiers and artifact formats. They do not measure all of `data:build` or
 incremental cache hits. Tiling, topology construction, and compression remain
 costs outside this optimization. Changing the compiler source invalidates the
 map-resource build fingerprint, so the next build recompiles cached releases.

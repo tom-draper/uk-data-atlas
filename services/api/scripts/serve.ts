@@ -95,7 +95,7 @@ function startWorker() {
 				event: "geometry.store_stale",
 				release,
 				path,
-				fix: "pnpm --dir services/api build:geometry-store",
+				fix: "pnpm data:build --only geometry-store",
 			}),
 		terrainRemoteEndpoint: configuration.terrainRemoteEndpoint,
 		terrainCoverageEndpoint: configuration.terrainCoverageEndpoint,

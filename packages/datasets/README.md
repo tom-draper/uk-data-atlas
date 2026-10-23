@@ -9,7 +9,7 @@ caller-supplied `DatasetReader`. The caller reads files and passes their
 contents through that reader. The package does not import Node APIs or read
 files. Callers own caches, worker pools, validation and output writing.
 
-`pnpm datasets:compile` (`scripts/compile-datasets.mts`) compiles every
+`pnpm data:build --only datasets` (`scripts/compile-datasets.mts`) compiles every
 definition once into `compiled/datasets/`, with the cache and worker pool in
 `scripts/precompile/`. The website precompile reads these intermediates to cut
 regional chunks. The `atlas-sqlite` stage stores the catalogue payloads in

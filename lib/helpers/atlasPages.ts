@@ -22,7 +22,7 @@ export function readAtlasPage<T>(id: string): Promise<T> {
 		read = readFile(path, "utf8").then(JSON.parse, (error: unknown) => {
 			reads.delete(id);
 			throw new Error(
-				`Atlas page ${id} is missing. Run pnpm atlas-data:copy after the API build.`,
+				`Atlas page ${id} is missing. Run pnpm data:build --only website-lookups after the API build.`,
 				{ cause: error },
 			);
 		});

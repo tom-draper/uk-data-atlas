@@ -8,7 +8,7 @@ import type {
 	ExistingManifestDataset,
 } from "./types.mts";
 
-const RUN_COMPILE = "Run pnpm datasets:compile first.";
+const RUN_COMPILE = "Run pnpm data:build --only datasets first.";
 
 /**
  * Reads the named catalogue datasets from compiled/datasets and returns their

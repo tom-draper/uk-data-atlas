@@ -132,7 +132,7 @@ test("builds the validation report from the current catalogue and config", () =>
 	assert.deepEqual(
 		Object.keys(inputs).filter((key) => inputs[key] !== expected[key]),
 		[],
-		"rebuild the validation report: pnpm build:validation-report",
+		"rebuild the validation report: pnpm --dir ../.. data:build --only validation-report",
 	);
 });
 
@@ -189,7 +189,7 @@ test("builds measure compatibility from the current observations and areas", () 
 	assert.deepEqual(
 		stale,
 		[],
-		"rebuild measure compatibility: pnpm build:measure-compatibility",
+		"rebuild measure compatibility: pnpm --dir ../.. data:build --only measure-compatibility",
 	);
 });
 
@@ -199,6 +199,6 @@ test("compiles the operations from the current OpenAPI document", () => {
 		openapiDocumentHash(
 			readFileSync(join(apiRoot, "openapi.yaml"), "utf8"),
 		),
-		"rebuild the operations: pnpm build:operations",
+		"rebuild the operations: pnpm --dir ../.. data:build --only operations",
 	);
 });

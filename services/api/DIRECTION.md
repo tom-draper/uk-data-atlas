@@ -218,7 +218,7 @@ The current contract has 71 paths after aggregation and evidence routes were fol
 routes. These are the evidence that the archive is correct. Link them from
 the release and measure resources, and serve them as static files.
 
-The evidence routes now ship as static documents at `/documents/{document-id}.json`. Every measure links to its quality, coverage plans, compatibility, conversion support and period-by-period reconciliations. Releases link to archive validation and geography health. `pnpm build:documents` produces the reports before `build:atlas-release` pins their manifest.
+The evidence routes now ship as static documents at `/documents/{document-id}.json`. Every measure links to its quality, coverage plans, compatibility, conversion support and period-by-period reconciliations. Releases link to archive validation and geography health. `pnpm --dir ../.. data:build --only documents` produces the reports before the `atlas-release` stage pins their manifest.
 
 ### Park
 
@@ -296,7 +296,7 @@ geography. The output records the compiled manifests' hashes, so a report can
 be tied to the exact inputs inspected. It audits the held archive, not every
 release available from publishers.
 
-Per-area geometry validity reports are implemented. `build:geometry-store`
+Per-area geometry validity reports are implemented. `data:build --only geometry-store`
 compiles them without repairing coordinates, and `include=metrics` and geometry
 responses expose them in source provenance. Reports identify invalid geometry
 and areas not checked, including those above the validator's position limit.

@@ -31,11 +31,11 @@ The dataset JSON and browser-facing TopoJSON are internal build products;
 their shape and filenames must remain free to change.
 
 The API builds directly from raw `data/` without website output.
-`pnpm datasets:compile` at the repository root compiles catalogue datasets.
+`pnpm data:build --only datasets` at the repository root compiles catalogue datasets.
 The `atlas-sqlite` stage stores them in `compiled/atlas.sqlite` for the API to read.
-`pnpm build:datasets` builds gazetteer core and boundary assets under
+`pnpm --dir ../.. data:build --only api-datasets` builds gazetteer core and boundary assets under
 `services/api/public/source-data/`. These outputs are gitignored.
-After changing shared dataset compilers, run `pnpm build:data --from datasets`
+After changing shared dataset compilers, run `pnpm --dir ../.. data:build --target api --from datasets`
 from `services/api` to rebuild every affected stage.
 
 ## Capability checklist
@@ -487,7 +487,7 @@ only **available** when its endpoint, contract and provenance are published.
       slivers, the widest 18.7 m. A pair near the sliver threshold is
       `indeterminate` rather than guessed, and any published relationship
       between the two is listed beside the measurement.
-- [x] Add per-area geometry validity reports. `build:geometry-store` checks
+- [x] Add per-area geometry validity reports. `data:build --only geometry-store` checks
       Polygon and MultiPolygon self-intersections, holes and degenerate rings
       with JSTS IsValidOp. `include=metrics` exposes the first finding through
       `metrics.geometrySource.validity`, beside the source file and SHA-256;
@@ -1001,7 +1001,7 @@ fetch the postcode directory from ONS.
       postcode answers read by default: each default geography's release at
       the directory's edition, the release each measure source's codes are
       found in, and the country release that settles a postcode matching
-      nothing. `pnpm build:postcode-areas` places each release's 2.64 million
+      nothing. `pnpm --dir ../.. data:build --only postcode-areas` places each release's 2.64 million
       centroids by the live lookup's own containment test and nearest-edge
       distance, and checks a sample of each against a live lookup, failing on
       any difference. A postcode lookup, batch or value then reads a district
@@ -2175,10 +2175,10 @@ Two things can change under a client, and each is pinned separately.
   names and checks each body against its operation's response schema. The
   server reads each operation's query parameters from
   `public/operations.json`, compiled from `openapi.yaml` by
-  `pnpm build:operations`, and refuses to start with one compiled from an
+  `pnpm --dir ../.. data:build --only operations`, and refuses to start with one compiled from an
   older document. What a parameter's schema states outright, an enum's
   values or a whole number's range and default, handlers read from
-  `src/queryRules.ts`, which `pnpm build:query-rules` writes from the same
+  `src/queryRules.ts`, which `pnpm --dir ../.. data:build --only query-rules` writes from the same
   document and a test holds to it.
 - **The data** is identified by the current Atlas release. Every response
   carries an `Atlas-Release` header, and JSON responses name it in the envelope
@@ -2342,7 +2342,7 @@ line up.
   every area's geometry.
 
     Remove an unusable compiled file if present, then run
-    `pnpm --dir services/api build:geometry-store` before deploying the API
+    `pnpm data:build --only geometry-store` before deploying the API
     and ship the complete store with its matching geometry source registry.
     Releases load compact metadata and indexes, then read individual geometries
     from disk. The cache never parses a whole raw boundary file while serving.
@@ -2356,7 +2356,7 @@ line up.
 
 - **Location projections:** read one at a time from
   `public/location-projections.sqlite`, which
-  `pnpm --dir services/api build:location-projections` writes beside the JSON
+  `pnpm data:build --only location-projections` writes beside the JSON
   shards the release pins. Each projection is deflated against a dictionary
   drawn from its shard, so a read decompresses a few kilobytes rather than
   parsing a shard of up to 13 MB. Nothing is cached but each shard's 32 KB

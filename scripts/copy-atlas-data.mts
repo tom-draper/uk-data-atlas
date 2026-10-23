@@ -63,7 +63,7 @@ async function copy(
 	const absent = required.filter((id) => !ids.has(id));
 	if (absent.length > 0)
 		throw new Error(
-			`The API build has no ${absent.join(", ")}. Rebuild it with pnpm --dir services/api build:data --from atlas-${list}.`,
+			`The API build has no ${absent.join(", ")}. Rebuild it with pnpm data:build --target api --from atlas-${list}.`,
 		);
 
 	await mkdir(destination, { recursive: true });
@@ -128,7 +128,7 @@ for (const { manifest, list, destination, required } of outputs) {
 		);
 	} else {
 		console.error(
-			`No atlas ${list} in services/api/public. Build the API data first: pnpm --dir services/api build:data`,
+			`No atlas ${list} in services/api/public. Build the API data first: pnpm data:build --target api`,
 		);
 		failed = true;
 	}
