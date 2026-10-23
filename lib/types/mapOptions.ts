@@ -57,6 +57,10 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
+export interface RegionalGdpItl3Options extends ColorRangeOption {
+	measure: "gdp" | "gva";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -79,6 +83,7 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| "regionalGdpItl3"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -96,6 +101,7 @@ export type ChartMapOptions = Omit<
 	| "homelessness"
 	| "schoolPerformance"
 > & {
+	regionalGdpItl3: RegionalGdpItl3Options;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;

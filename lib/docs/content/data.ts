@@ -111,7 +111,7 @@ export const DATA_PAGES: DataPage[] = [
 			"regional-gdp-itl2",
 			"regional-gdp-itl3",
 		],
-		intro: "Gross domestic product and gross value added for every UK region, from 1998 to 2023, on all three tiers of the International Territorial Level geography that economic statistics are published on. Output is counted where it is produced, not where the people who earn it live.",
+		intro: "Gross domestic product and gross value added for every UK region, from 1998 to 2023, on all three tiers of the International Territorial Level geography that economic statistics are published on. Output is counted where it is produced, not where the people who earn it live. Use the map legend to switch between GDP at market prices and GVA at basic prices. Both measures are monetary totals, summed across selected ITL3 areas.",
 	},
 	{
 		slug: "unemployment",
