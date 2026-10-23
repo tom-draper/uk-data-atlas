@@ -265,6 +265,7 @@ export const CHART_PRESENTATIONS = {
 	"economics-unemployment": Chart26Presentation,
 	"environment-waste": Chart27Presentation,
 	"deprivation-wimd": Chart28Presentation,
+	"economics-workplaceIncome": Chart0Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;
