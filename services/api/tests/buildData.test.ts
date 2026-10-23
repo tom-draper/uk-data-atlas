@@ -74,6 +74,14 @@ test("default build executes the complete pipeline in order from the API directo
 	assert.deepEqual(build.commands(), [
 		["--dir", "../..", "data:download"],
 		["build:operations"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"scripts/generate-dataset-registry.ts",
+			"--catalogue-only",
+		],
 		["--dir", "../..", "datasets:compile"],
 		...[
 			"terrain-catalogue",
@@ -109,8 +117,29 @@ test("default build executes the complete pipeline in order from the API directo
 			"atlas-release",
 		].map((name) => [`build:${name}`]),
 		["build:atlas-pages"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"scripts/generate-sources-readme.mts",
+		],
 		["--dir", "../..", "atlas-data:copy"],
-		["--dir", "../..", "precompile:generate"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/compile-website-data.mts",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"scripts/generate-dataset-registry.ts",
+		],
 	]);
 });
 
@@ -119,7 +148,11 @@ test("the api target builds every API stage and none of the website's", (context
 	assert.equal(build.run(["--target", "api"]).status, 0);
 	const commands = build.commands();
 	assert.deepEqual(commands.at(-1), ["build:atlas-pages"]);
-	assert.ok(!commands.some((args) => args.includes("precompile:generate")));
+	assert.ok(
+		!commands.some((args) =>
+			args.includes("scripts/compile-website-data.mts"),
+		),
+	);
 	assert.ok(!commands.some((args) => args.includes("atlas-data:copy")));
 });
 
@@ -130,7 +163,21 @@ test("the website target ends with its own datasets, after copying the API's pag
 	assert.deepEqual(build.commands(), [
 		["build:atlas-pages"],
 		["--dir", "../..", "atlas-data:copy"],
-		["--dir", "../..", "precompile:generate"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/compile-website-data.mts",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"scripts/generate-dataset-registry.ts",
+		],
 	]);
 });
 
@@ -150,7 +197,10 @@ test("the website target skips the API's postcode, search, document and release 
 		assert.ok(!commands.includes(`build:${stage}`), stage);
 	assert.ok(commands.includes("build:atlas-lookups"));
 	assert.ok(commands.includes("build:atlas-pages"));
-	assert.equal(commands.at(-1), "--dir ../.. precompile:generate");
+	assert.equal(
+		commands.at(-1),
+		"--dir ../.. exec tsx scripts/generate-dataset-registry.ts",
+	);
 });
 
 test("dataset rebuild refreshes every consumer using existing upstream artifacts", (context) => {
@@ -183,7 +233,10 @@ test("datasets compile once for both products", (context) => {
 		1,
 	);
 	assert.ok(commands.includes("build:atlas-sqlite"));
-	assert.equal(commands.at(-1), "--dir ../.. precompile:generate");
+	assert.equal(
+		commands.at(-1),
+		"--dir ../.. exec tsx scripts/generate-dataset-registry.ts",
+	);
 });
 
 test("crosswalk rebuild refreshes SQLite and downstream consumers without upstream work", (context) => {

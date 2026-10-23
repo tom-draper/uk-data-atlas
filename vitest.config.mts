@@ -40,7 +40,7 @@ export default defineConfig({
 			},
 			{
 				extends: true,
-				// Built tests need `pnpm data:build --target website` (and `data/` restored), so
+				// Built tests need `pnpm data:compile --target website` (and `data/` restored), so
 				// they run locally only. Some parse whole compiled artifacts
 				// of up to 120 MB, so they run one file at a time to stay out
 				// of swap.

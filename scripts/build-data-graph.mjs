@@ -17,10 +17,28 @@ const apiStages = [
 		cacheable: false,
 	}),
 	stage("operations"),
+	stage(
+		"catalogue-registry",
+		["download"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"scripts/generate-dataset-registry.ts",
+			"--catalogue-only",
+		],
+		{ cacheable: false },
+	),
 	// Compiled once into compiled/datasets, for the website and the API.
-	stage("datasets", ["download"], ["--dir", "../..", "datasets:compile"], {
-		outputs: ["compiled/datasets"],
-	}),
+	stage(
+		"datasets",
+		["catalogue-registry"],
+		["--dir", "../..", "datasets:compile"],
+		{
+			outputs: ["compiled/datasets"],
+		},
+	),
 	stage("terrain-catalogue"),
 	stage("atlas-sqlite", [
 		"terrain-catalogue",
@@ -178,17 +196,48 @@ const apiStages = [
 // them. The API reads none of it.
 const websiteStages = [
 	stage(
+		"website-sources",
+		["catalogue-registry"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"scripts/generate-sources-readme.mts",
+		],
+		{ cacheable: false },
+	),
+	stage(
 		"website-lookups",
 		["atlas-lookups", "atlas-pages"],
 		["--dir", "../..", "atlas-data:copy"],
 	),
 	stage(
 		"website-datasets",
-		["atlas-sqlite", "website-lookups"],
-		["--dir", "../..", "precompile:generate"],
+		["atlas-sqlite", "website-lookups", "website-sources"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"scripts/compile-website-data.mts",
+		],
 		// It keeps unchanged files from its last run. The lookups and pages in
 		// public/data belong to website-lookups.
 		{ outputs: ["public/data"] },
+	),
+	stage(
+		"website-registry",
+		["website-datasets"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"scripts/generate-dataset-registry.ts",
+		],
+		{ cacheable: false },
 	),
 ];
 
@@ -201,5 +250,5 @@ export const buildDataStages = [...apiStages, ...websiteStages];
  */
 export const buildDataTargets = {
 	api: apiStages.map(({ name }) => name),
-	website: ["website-datasets"],
+	website: ["website-registry"],
 };

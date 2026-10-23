@@ -114,7 +114,7 @@ export function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: build-data [--target <name>] [--from <stage>] [--plan] [--no-cache]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:compile [--target <name>] [--from <stage>] [--plan] [--no-cache]`,
 			);
 		}
 	}

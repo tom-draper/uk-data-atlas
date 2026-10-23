@@ -37,7 +37,7 @@ const pipelineInputs = [
 	"scripts/generate-dataset-registry.ts",
 	"scripts/generate-sources-readme.mts",
 	"scripts/precompile",
-	"scripts/precompile-data.mts",
+	"scripts/compile-website-data.mts",
 	"scripts/precompile-selection.ts",
 	"packages/geography/package.json",
 	"packages/geography/src",

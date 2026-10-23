@@ -33,7 +33,7 @@ const createRepository = async () => {
 		"scripts/dataset-region-chunks.mts",
 		"scripts/generate-dataset-registry.ts",
 		"scripts/generate-sources-readme.mts",
-		"scripts/precompile-data.mts",
+		"scripts/compile-website-data.mts",
 		"scripts/precompile-fingerprint.mjs",
 		"scripts/precompile-selection.ts",
 		"packages/datasets/src/compileDataset.ts",
@@ -124,7 +124,7 @@ describe("precompile fingerprints", () => {
 
 	it("ignores generated output reached through compiler imports", async () => {
 		await write(
-			"scripts/precompile-data.mts",
+			"scripts/compile-website-data.mts",
 			'import core from "../public/data/datasets/gazetteer.core.json";',
 		);
 		const before = await precompileFingerprints(root);
