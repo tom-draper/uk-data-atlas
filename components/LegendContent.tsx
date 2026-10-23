@@ -241,8 +241,14 @@ export default function LegendContent({
 				{...rangeControls}
 				datasetKey={activeDataset.type as ColorRangeDatasetKey}
 				absoluteRange={{
-					min: dynamicRange?.min ?? measureLegend.min,
-					max: dynamicRange?.max ?? measureLegend.max,
+					min:
+						dynamicRange?.min ??
+						legend.bounds?.(displayOptions).min ??
+						measureLegend.min,
+					max:
+						dynamicRange?.max ??
+						legend.bounds?.(displayOptions).max ??
+						measureLegend.max,
 				}}
 				defaultRange={{
 					min: dynamicRange?.min ?? colorRange.min,
