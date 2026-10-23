@@ -41,7 +41,12 @@ const stage = (
 	name,
 	dependencies = [],
 	args = apiCommands[name] ?? ["exec", "tsx", `scripts/build-${name}.ts`],
-	{ cacheable = true, outputs = [], requiredOutputs = [] } = {},
+	{
+		cacheable = true,
+		outputs = [],
+		requiredOutputs = [],
+		codeInputs = [],
+	} = {},
 ) => ({
 	name,
 	dependencies,
@@ -49,6 +54,7 @@ const stage = (
 	cacheable,
 	outputs,
 	requiredOutputs,
+	codeInputs,
 });
 
 const apiStages = [
@@ -85,6 +91,7 @@ const apiStages = [
 		],
 		{
 			outputs: ["data/build/datasets"],
+			codeInputs: ["scripts/precompile"],
 		},
 	),
 	stage("terrain-catalogue"),
@@ -117,7 +124,12 @@ const apiStages = [
 	stage("derived-boundaries", ["sources"]),
 	stage("area-inventory", ["boundary-registry", "derived-boundaries"]),
 	stage("geometry-source-registry", ["area-inventory"]),
-	stage("geometry-store", ["geometry-source-registry"]),
+	stage("geometry-store", ["geometry-source-registry"], undefined, {
+		codeInputs: [
+			"services/api/src",
+			"services/api/scripts/compileGeometryValidity.ts",
+		],
+	}),
 	stage("named-locations", [
 		"area-inventory",
 		"geometry-store",
@@ -192,7 +204,13 @@ const apiStages = [
 		"map-resource",
 		["boundary-registry", "area-inventory", "geometry-source-registry"],
 		undefined,
-		{ outputs: ["data/build/map-resources"] },
+		{
+			outputs: ["data/build/map-resources"],
+			codeInputs: [
+				"services/api/src/mapResource",
+				"services/api/scripts/compileGeometryValidity.ts",
+			],
+		},
 	),
 	stage("validation-report", [
 		"boundary-registry",
@@ -329,7 +347,10 @@ const websiteStages = [
 		],
 		// It keeps unchanged files from its last run. The lookups and pages in
 		// public/data belong to website-lookups.
-		{ outputs: ["public/data/datasets", "public/data/precompiled"] },
+		{
+			outputs: ["public/data/datasets", "public/data/precompiled"],
+			codeInputs: ["scripts"],
+		},
 	),
 	stage(
 		"website-registry",

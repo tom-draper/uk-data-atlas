@@ -1,3 +1,4 @@
+import { stageCodeFiles } from "./build-data-code.mjs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
@@ -11,7 +12,7 @@ import {
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const VERSION = 1;
+const VERSION = 2;
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 // Where the stages write. A stage's outputs are the files here it changes.
@@ -45,7 +46,7 @@ function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
 
 /**
  * The repo's code and config files: everything git tracks or would track,
- * less tests and docs. A coarse input, so any code change reruns every stage.
+ * less tests and docs. Stage-specific code inputs are selected from this list.
  */
 function gitCodeFiles(root) {
 	return execFileSync(
@@ -89,8 +90,8 @@ function hashStamps(stamps) {
  * Remembers each stage's inputs and outputs between builds, so a stage is
  * skipped when nothing it reads has changed and what it wrote is still there.
  *
- * A stage's key hashes its command, the repo's code, the size and mtime of
- * every file in data/source/, the relevant environment, and its dependencies'
+ * A stage's key hashes its command, local imports and shared config, raw-file
+ * sizes and mtimes in data/source/, the relevant environment, and dependencies'
  * outputs. Its outputs are the files under OUTPUT_ROOTS it created or
  * changed, plus any in the folders it declares as `outputs`, recorded by size
  * and mtime. A file belongs to the last stage that wrote it.
@@ -100,7 +101,7 @@ function hashStamps(stamps) {
  *   stateFile?: string,
  *   outputRoots?: string[],
  *   dataDirectory?: string,
- *   codeFiles?: () => string[],
+ *   codeFiles?: (stage: { name: string, args: string[], codeInputs?: string[] }) => string[],
  *   environment?: Record<string, string | undefined>,
  * }} [options]
  */
@@ -113,7 +114,7 @@ export function createStageCache({
 	),
 	outputRoots = OUTPUT_ROOTS,
 	dataDirectory = "data/source",
-	codeFiles = () => gitCodeFiles(root),
+	codeFiles,
 	environment = process.env,
 } = {}) {
 	let state;
@@ -126,6 +127,8 @@ export function createStageCache({
 	state ??= { version: VERSION, stages: {} };
 
 	let inputs = null;
+	let files = null;
+	const stageInputs = new Map();
 	const currentInputs = () => {
 		if (inputs) return inputs;
 		const data = stampFiles(
@@ -137,7 +140,6 @@ export function createStageCache({
 		data.delete(join(dataDirectory, ".source-release.json"));
 		inputs = sha256(
 			JSON.stringify({
-				code: hashCode(root, codeFiles()),
 				data: hashStamps(data),
 				environment: ENVIRONMENT.map(
 					(name) => environment[name] ?? null,
@@ -146,6 +148,22 @@ export function createStageCache({
 			}),
 		);
 		return inputs;
+	};
+
+	const codeFor = (stage) => {
+		if (!stageInputs.has(stage.name)) {
+			if (!codeFiles) files ??= gitCodeFiles(root);
+			stageInputs.set(
+				stage.name,
+				hashCode(
+					root,
+					codeFiles
+						? codeFiles(stage)
+						: stageCodeFiles(root, stage, files),
+				),
+			);
+		}
+		return stageInputs.get(stage.name);
 	};
 
 	let snapshot = null;
@@ -162,6 +180,7 @@ export function createStageCache({
 			JSON.stringify({
 				args: stage.args,
 				inputs: currentInputs(),
+				code: codeFor(stage),
 				dependencies: dependencyDigests,
 			}),
 		);
@@ -221,6 +240,8 @@ export function createStageCache({
 			const after = currentSnapshot();
 			if (!cacheable) {
 				inputs = null;
+				files = null;
+				stageInputs.clear();
 				return null;
 			}
 			const outputs = new Map();
