@@ -6653,19 +6653,19 @@ paths:
     get:
       operationId: getAtlasRelease
       tags: ["Sync"]
-      summary: Get the current immutable atlas release manifest
+      summary: Get the current build manifest
       x-likely-refusal:
         status: 503
         when:
           "Takes no input. Refused only when the server was started without the
           release manifest built."
       description: >
-        References the boundary registry, derived boundaries, area inventory,
-        named-location inventory, geometry source registry, crosswalk inventory,
-        relationship-candidate inventory, geography inventory, validation report
-        and source inventory by content hash, plus a single `releaseId` hash of
-        that set. Rebuilding without changing any input reproduces the same
-        `releaseId`.
+        Identifies the current build by hashes of atlas.sqlite, boundary PMTiles, and
+        catalogues still served as JSON. Export and map catalogues describe the
+        observation and flat boundary downloads. Paths are
+        relative to the repository root and hashes cover the actual on-disk
+        bytes, including gzip encoding where present. The API retains no earlier
+        builds. JSON intermediates already represented in SQLite are omitted.
       responses:
         "200":
           description: The current atlas release manifest.
@@ -6681,53 +6681,9 @@ paths:
                   schemaVersion: 1
                   releaseId: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                   artifacts:
-                    - id: boundary-registry
-                      path: boundary-releases.json
+                    - id: atlas-sqlite
+                      path: data/build/atlas.sqlite
                       contentHash: sha256:6516841abb2149d864316bde871efceafbedeb0e6b681bbab588def86e06e0f2
-                  resources:
-                    datasets:
-                      air-quality: sha256:298235aea52aaa0bfdc40b99b8f4d069f4cc8f149d0c7618100d4798ba17391f
-                      brexit: sha256:0ec6e449c5f0b597e464066c65411e507fe5bbde99fa164d0d62babed779337c
-                      brexit-constituency: sha256:b9f2a2369e2ebaa243155e16f74fe20662a67972774a7a64c9069fb8d729a931
-                    measures:
-                      air-quality-grid-cells: sha256:22b496a24ae5ea228a90ae28834e615610aae3fcab6de60fbd406dde42638b5e
-                      broadband-full-fibre-availability: sha256:75c5f4ab3ad7d5bf3a6927c0e89c0f25ba2ccca741558310517186e4e1d5efb3
-                      broadband-gigabit-availability: sha256:42403d33b12abf4c70ef7d6ad12141091438e24f23b951ca0e01964ef0937a0f
-                    boundaryReleases:
-                      combinedAuthority/2025-12-en-bgc: sha256:562e6613e32c2ab3c9a6fadda26787fe6334e45a90c569743f71b4dc92fad360
-                      communitySafetyPartnership/2023-12-ew-bgc: sha256:bfb385ac91c582e9040ba33234a3e7cfb0f7396f12c3a7429e9fcadf205320b9
-                      constituency/2015-12-gb-bgc: sha256:9b84fcdd92aeaf87c9b9a87db04297a13399f683e0eca3cf3979270cab5b9f0a
-                    areaIdentities:
-                      combinedAuthority/2025-12-en-bgc: sha256:7d92965736e95d7e8a9bb0ec8cfdd1bf522d0958259ca8edc88338b0c2551446
-                      communitySafetyPartnership/2023-12-ew-bgc: sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12
-                      constituency/2015-12-gb-bgc: sha256:c5b97468289a1adb7c4415faa751ac06475931585b2e4f5871f201a1364cd9e3
-                    geometrySources:
-                      combinedAuthority/2025-12-en-bgc: sha256:40afe13d45f67a5a67dbf1c8a71e3a0c4d6da175bff3e85ce112d72d49c294e5
-                      communitySafetyPartnership/2023-12-ew-bgc: sha256:8c9388ddb1be325fde9e6cad29d00e4d86d1623707e2b784b2af3bf98ee198da
-                      constituency/2015-12-gb-bgc: sha256:7ebadb3a6199a789146d4d3919d5d2f26e9417497dc8c77e9fea81757221f936
-                    crosswalks:
-                      constituency-2010-to-2024-official-lookup-v2: sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82
-                      constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
-                      local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap: sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9
-                    validationExceptions:
-                      crosswalks/constituency-2010-to-2024-official-lookup-v2 source-names-consistent: sha256:9a3865df66e5a039378327900eddbeeba44c8b2dc782605aed352acbbb36ba42
-                      exports/house-price-median-observations records-resolve: sha256:54165bd7f3d2e901e64f5f33f9ae949f51eacb5e4a2c1f3c1905d594fa0df487
-                    namedLocations:
-                      aberdeen: sha256:47f33490b901a4fc7f27e09b784369b9a23faa95a8a4e347fbac2d78a8eac3a5
-                      aberystwyth: sha256:d04c975edf3c45d63d521e6f2084fc4fcbadff11d758ac95d0af55d2b9088016
-                      armagh-down-and-newry: sha256:89a0303432937e9c13bdaa9000f7ec61e486f5e1f21aefa86ef1ba59a97d0ae7
-                    exports:
-                      air-quality-grid-cells-observations: sha256:28c7d88c02cc1e686e1a5a74a39daf2b009c89df48f83b233138858857923603
-                      broadband-full-fibre-availability-observations: sha256:befe13a38c77c602110ffd824fed7abd96b3157b989b3fb47c5e1b7cf2e05a9b
-                      broadband-gigabit-availability-observations: sha256:0ceec568db3d3e9288aa542d5f5a405236ea7f30a2c5a1a4a40f4081be0b2eae
-                    lookups:
-                      areas-combinedAuthority-2025-12-en-bgc: sha256:c16596703c7eafca73c9ed4fcf90e5c89f67e5591ba2ac044a2f27de547da50c
-                      areas-communitySafetyPartnership-2023-12-ew-bgc: sha256:7ebc8ad95e6e2f99639050ef6e6f2b0c5deeaac929b2242957d8d720c3564bb4
-                      areas-constituency-2015-12-gb-bgc: sha256:5f67da9c8ca631f5f59ebad11d33a13dc63b5eebb349a494d3bc9071fb9c9517
-                meta:
-                  nextCursor: null
-        "503":
-          $ref: "#/components/responses/CatalogueUnavailable"
 
   /atlas-lookups/{lookup-id}.json:
     get:
@@ -12233,8 +12189,10 @@ components:
           type: string
         path:
           type: string
+          description: On-disk path relative to the repository root.
         contentHash:
           type: string
+          description: SHA-256 of the actual stored bytes.
 
     AtlasRelease:
       type: object
@@ -12248,134 +12206,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AtlasReleaseArtifactRef"
-        resources:
-          type: object
-          description: >
-            A fingerprint per resource id for each kind, read from artifacts the
-            release already hashes, so it does not enter `releaseId`. A kind the
-            release did not record is absent.
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: string
-
-    ResourceChanges:
-      oneOf:
-        - type: object
-          required: [status, added, removed, changed, unchanged]
-          properties:
-            status:
-              const: compared
-            added:
-              type: array
-              items: { type: string }
-            removed:
-              type: array
-              items: { type: string }
-            changed:
-              type: array
-              items: { type: string }
-            unchanged:
-              type: integer
-        - type: object
-          required: [status, reason]
-          properties:
-            status:
-              const: not-recorded
-            reason:
-              type: string
-
-    SemanticResourceChange:
-      type: object
-      required: [kind, id, fields]
-      properties:
-        kind:
-          enum:
-            [
-              datasets,
-              measures,
-              boundaryReleases,
-              areaIdentities,
-              geometrySources,
-              crosswalks,
-              validationExceptions,
-              namedLocations,
-              exports,
-              lookups,
-            ]
-        id:
-          type: string
-        fields:
-          type: array
-          description: >
-            Changed dot paths in this published resource entry. Array-valued
-            fields are named as one path, and no observation-record paths are
-            inferred.
-          items: { type: string }
-
-    SemanticReleaseChanges:
-      oneOf:
-        - type: object
-          required: [status, changes]
-          properties:
-            status:
-              const: available
-            changes:
-              type: array
-              items:
-                $ref: "#/components/schemas/SemanticResourceChange"
-        - type: object
-          required: [status, reason]
-          properties:
-            status:
-              const: unavailable
-            reason:
-              type: string
-
-    AtlasReleaseComparison:
-      type: object
-      required: [from, to, summary, artifacts, resources, note]
-      properties:
-        from:
-          type: object
-        to:
-          type: object
-        summary:
-          type: object
-          description: Counts of artifacts added, removed, changed and unchanged.
-        artifacts:
-          type: object
-        resources:
-          type: object
-          description: >
-            For each resource kind, the ids added, removed and changed, or
-            `not-recorded` when either release lacks that kind's fingerprints.
-          properties:
-            datasets: { $ref: "#/components/schemas/ResourceChanges" }
-            measures: { $ref: "#/components/schemas/ResourceChanges" }
-            boundaryReleases: { $ref: "#/components/schemas/ResourceChanges" }
-            areaIdentities: { $ref: "#/components/schemas/ResourceChanges" }
-            geometrySources: { $ref: "#/components/schemas/ResourceChanges" }
-            crosswalks: { $ref: "#/components/schemas/ResourceChanges" }
-            validationExceptions:
-              { $ref: "#/components/schemas/ResourceChanges" }
-            namedLocations: { $ref: "#/components/schemas/ResourceChanges" }
-            exports: { $ref: "#/components/schemas/ResourceChanges" }
-            lookups: { $ref: "#/components/schemas/ResourceChanges" }
-        semantic:
-          allOf:
-            - $ref: "#/components/schemas/SemanticReleaseChanges"
-          description: Present only when `detail=fields` was requested.
-        note:
-          type: string
-
-    AtlasReleaseComparisonEnvelope:
-      allOf:
-        - $ref: "#/components/schemas/Envelope"
-        - type: object
-          properties:
-            data:
-              $ref: "#/components/schemas/AtlasReleaseComparison"
 
     AtlasReleaseEnvelope:
       allOf:

@@ -1,46 +1,24 @@
 import { createHash } from "node:crypto";
 import { type AtlasClient, createClient, type Step } from "./client";
-import {
-	type AtlasReleaseManifest,
-	compareReleases,
-	syncPlan,
-} from "./releaseChanges";
+import type { AtlasRelease } from "../src/atlasRelease";
 
 /**
  * Reliable sync: ingest current data, verify what arrived, and on the next
  * run fetch only what changed.
  *
  * The Atlas release is the version of everything. A warehouse pins it, checks
- * each download against the hash the manifest publishes, and keeps the
- * manifest alongside the imported data. The API holds no history, so the
- * kept manifest is what the next run compares against.
+ * each download against the hash the export list publishes, and keeps the
+ * build id alongside the imported data. The API holds no history.
  */
-export const run = async (
-	client: AtlasClient,
-	previous?: AtlasReleaseManifest,
-): Promise<Step[]> => {
+export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const steps: Step[] = [];
 
 	// 1. Record the release. Every response names it, so a table can record the
 	//    exact set of artifacts it was built from.
-	const release = await client.get<
-		AtlasReleaseManifest & { artifacts: unknown[] }
-	>("/v1/atlas-release");
+	const release = await client.get<AtlasRelease>("/v1/atlas-release");
 	steps.push({
 		title: "Record the Atlas release",
 		detail: `${release.data.releaseId} covers ${release.data.artifacts.length} artifacts.`,
-	});
-
-	// 2. Work out what to fetch by comparing resource fingerprints with the
-	//    manifest kept from the last run. Without one, take everything.
-	const changes = compareReleases(previous, release.data);
-	const exportPlan = syncPlan(changes, release.data, "exports");
-	const lookupPlan = syncPlan(changes, release.data, "lookups");
-	steps.push({
-		title: "Work out what changed since the last sync",
-		detail: previous
-			? `Since ${previous.releaseId.slice(0, 19)}…, ${exportPlan.fetch.length} exports and ${lookupPlan.fetch.length} lookups to fetch, ${exportPlan.drop.length + lookupPlan.drop.length} to drop.`
-			: `No manifest kept yet, so this is a first sync: take all ${exportPlan.fetch.length} exports and ${lookupPlan.fetch.length} lookups.`,
 	});
 
 	// 3. Take a whole partition as one immutable download, rather than paging
@@ -109,15 +87,13 @@ export const run = async (
 		detail: `${lookups.data.lookups.length} lookups, such as ${lookup?.id} at ${lookup?.rowCount.toLocaleString("en-GB")} rows.`,
 	});
 
-	// 7. The next scheduled run compares the manifest just kept with the
-	//    current one, and fetches nothing unless a fingerprint moved.
-	const next = await client.get<AtlasReleaseManifest>("/v1/atlas-release");
-	const resync = compareReleases(release.data, next.data);
-	const nextExports = syncPlan(resync, next.data, "exports");
-	const nextLookups = syncPlan(resync, next.data, "lookups");
+	const next = await client.get<AtlasRelease>("/v1/atlas-release");
 	steps.push({
-		title: "Resync only what changed",
-		detail: `Against the kept manifest, the next run has ${nextExports.fetch.length} exports and ${nextLookups.fetch.length} lookups to fetch, and ${nextExports.drop.length + nextLookups.drop.length} to drop.`,
+		title: "Check the current build",
+		detail:
+			next.data.releaseId === release.data.releaseId
+				? "The build is unchanged. Keep using per-download ETags to avoid downloading unchanged files."
+				: "The build changed. Refresh the export and lookup lists before the next sync.",
 	});
 	return steps;
 };

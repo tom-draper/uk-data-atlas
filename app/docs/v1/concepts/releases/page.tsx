@@ -24,9 +24,10 @@ export default function ReleasesPage() {
 			<H2 id="what">What a release is</H2>
 			<P>
 				A release is identified by a hash, like `sha256:a1d2505a…`. It's
-				calculated from the fingerprints of every file the Atlas
-				publishes, so building from the same inputs always gives the
-				same id, and any change gives a new one.
+				calculated from the hashes of the current SQLite database,
+				boundary archives and remaining runtime JSON catalogues. Export
+				and map catalogues describe individual downloads. Paths are
+				relative to the repository root, and hashes cover stored bytes.
 			</P>
 			<P>
 				Every response includes the release that produced it, as
@@ -38,7 +39,7 @@ export default function ReleasesPage() {
 				items={[
 					"**Consistency.** If two responses share an `atlasRelease`, they came from exactly the same data.",
 					"**Provenance.** Record the release alongside a chart or report, and anyone can see precisely which compiled artifacts it used.",
-					"**Integrity.** The manifest records a hash for every published artifact.",
+					"**Integrity.** The manifest records file hashes, including binary SQLite and PMTiles files.",
 				]}
 			/>
 
