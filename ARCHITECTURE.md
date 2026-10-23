@@ -37,11 +37,11 @@ public/data/            the atlas's compiled data, served by the website
 
 ## Where the data lives
 
-| Where                  | What                                                                     | In git | Made by                                                                  |
-| ---------------------- | ------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------ |
-| `data/`                | Raw files as publishers supplied them                                    | No     | `pnpm data:download`, from the release pinned in `data-release.json`     |
-| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No     | `pnpm --dir services/api build`, run where the API is served             |
-| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No     | `pnpm precompile`, `pnpm boundaries:compile` and `pnpm boundaries:tiles` |
+| Where                  | What                                                                     | In git | Made by                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------- |
+| `data/`                | Raw files as publishers supplied them                                    | No     | `pnpm data:download`, from the release pinned in `data-release.json`                      |
+| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No     | `pnpm --dir services/api build`, run where the API is served                              |
+| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No     | `pnpm data:build --target website`, `pnpm boundaries:compile` and `pnpm boundaries:tiles` |
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
 headlines and ranked areas, compiled by `pnpm seo:build` from the datasets.
@@ -92,7 +92,7 @@ The atlas's containment and lineage lookups (`area-lineage`,
 compiles them with `@uk-data-atlas/geography` for the boundary releases
 `@uk-data-atlas/catalogue` lists, and also serves them at
 `/v1/atlas-lookups/{id}.json`. The website never reads them from the API.
-`pnpm atlas-data:copy`, the first step of `pnpm precompile`, copies them from
+The website pipeline runs `pnpm atlas-data:copy` to copy them from
 the API's build output on disk into the gitignored `public/data/atlas-lookups/`.
 The browser fetches them from the website there, and the precompile cuts
 chunks with the same files, so the two agree. The place profiles, place facts,

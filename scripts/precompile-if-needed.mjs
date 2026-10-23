@@ -10,7 +10,7 @@ const fresh =
 if (fresh) {
 	console.log("Local precompiled data is up to date; skipping regeneration.");
 } else {
-	const child = spawnSync("pnpm", ["precompile"], {
+	const child = spawnSync("pnpm", ["data:build", "--target", "website"], {
 		...options,
 		stdio: "inherit",
 	});

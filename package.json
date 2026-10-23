@@ -11,7 +11,6 @@
 		"data:download": "node scripts/data-release.mjs download",
 		"data:publish": "node scripts/data-release.mjs publish",
 		"data:verify-precompiled": "pnpm precompile:verify",
-		"precompile": "pnpm data:download && pnpm atlas-data:copy && pnpm precompile:generate",
 		"precompile:generate": "tsx scripts/generate-dataset-registry.ts --catalogue-only && tsx scripts/generate-sources-readme.mts && pnpm datasets:compile && pnpm --dir services/api build:atlas-sqlite && tsx --max-old-space-size=3072 scripts/precompile-data.mts && tsx scripts/generate-dataset-registry.ts",
 		"datasets:compile": "tsx --max-old-space-size=3072 scripts/compile-datasets.mts",
 		"precompile:only": "tsx scripts/generate-dataset-registry.ts --catalogue-only && tsx scripts/generate-sources-readme.mts && tsx --max-old-space-size=3072 scripts/precompile-data.mts --only",

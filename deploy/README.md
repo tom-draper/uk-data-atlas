@@ -27,18 +27,18 @@ Then build the website from the same checkout. It does not need the API
 running:
 
 ```sh
-pnpm precompile
+pnpm data:build --target website
 pnpm build
 ```
 
 The build order is raw data download, API data and runtime build, website
-precompile, then website build. Run these steps serially.
+website data build, then website build. Run these steps serially.
 The API build also checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/` and the terrain catalogue
 payload to `compiled/atlas.sqlite`. Keep `compiled/atlas.sqlite` under the repository
-root when deploying either server. Both read it in read-only mode. `pnpm precompile` checks
-the raw download, copies the atlas lookups and pages from the API's build
-output with `pnpm atlas-data:copy`, then writes browser data to `public/data/`.
+root when deploying either server. Both read it in read-only mode.
+`pnpm data:build --target website` builds missing or stale dependencies, copies
+the atlas lookups and pages from the API's build output with `pnpm atlas-data:copy`, then writes browser data to `public/data/`.
 Neither output directory is tracked in Git.
 `pnpm build` copies the atlas lookups and pages again, verifies local
 precompiled data, generates map headlines and rankings with `pnpm seo:build`,
@@ -166,4 +166,4 @@ certificates or swap files. The API build compiles the website docs catalogue an
 The website serves its own copy of the atlas lookups and pages from
 `public/data/` and never fetches from the API. Restart
 the API and website in either order. On a memory-constrained local machine,
-stop the API before `pnpm precompile`.
+stop the API before `pnpm data:build --target website`.
