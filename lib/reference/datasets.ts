@@ -36,6 +36,10 @@ export const DATASET_TOPICS: DatasetTopic[] = [
 ];
 
 export const DATASET_GUIDES: Record<string, DatasetGuide> = {
+	"housing-tenure": {
+		topic: "housing",
+		about: "Census 2021 household tenure for LSOAs in England and Wales. The legend selects owned, owned outright, owned with a mortgage or loan, shared ownership, social rent, private rent or rent free. Regional percentages divide summed category household counts by summed total households.",
+	},
 	"population-uk": {
 		topic: "people-and-places",
 		about: "How many people live in each local authority across the UK, estimated every year by the Office for National Statistics between censuses. It's the standard yardstick for comparing places of different sizes, and many per-person figures in the Atlas are worked out from it.",
