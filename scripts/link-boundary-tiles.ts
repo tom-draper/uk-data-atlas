@@ -59,7 +59,10 @@ if (
 	process.argv[1] &&
 	resolve(process.argv[1]) === resolve("scripts/link-boundary-tiles.ts")
 ) {
-	void linkBoundaryTiles().catch((error: unknown) => {
+	void linkBoundaryTiles(
+		undefined,
+		process.argv[2] ? resolve(process.argv[2]) : undefined,
+	).catch((error: unknown) => {
 		console.error(error);
 		process.exitCode = 1;
 	});

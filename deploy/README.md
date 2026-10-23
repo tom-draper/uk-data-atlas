@@ -19,9 +19,12 @@ memory for the data download and geometry builds; these can take hours.
 export PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
 cd /root/uk-data-atlas
 pnpm install --frozen-lockfile
+umask 022
 pnpm data:build
 pnpm --dir services/api build
 pnpm build
+install -d -m 0755 /var/www/uk-data-atlas
+node --import tsx scripts/link-boundary-tiles.ts /var/www/uk-data-atlas
 ```
 
 The data build downloads raw inputs and builds all API and website data.
@@ -106,9 +109,18 @@ AAAA only when IPv6 reaches this host. Permit TCP 22, 80 and 443 through UFW,
 including the active SSH port before enabling the firewall. Keep Node ports
 3000 and 3001 private. The current host also runs Fail2ban for SSH.
 
-`nginx.conf` mirrors the live default site. It belongs in
+`nginx.conf` defines the deployment default site. It belongs in
 `/etc/nginx/sites-available/default` with the standard sites-enabled symlink.
 `atlas-tls.conf` belongs in `/etc/nginx/snippets/atlas-tls.conf`.
+`atlas-pmtiles.conf` belongs in `/etc/nginx/snippets/atlas-pmtiles.conf`.
+Install the PMTiles snippet before loading either HTTP or HTTPS server blocks.
+It serves only website boundary archives directly, keeping their existing URLs.
+Other website requests and all API requests retain their proxy routes.
+
+```sh
+install -d -m 0755 /etc/nginx/snippets
+install -m 0644 deploy/atlas-pmtiles.conf /etc/nginx/snippets/atlas-pmtiles.conf
+```
 
 For a new host, install Nginx and Certbot and first serve only the HTTP blocks
 from `nginx.conf`: the HTTPS blocks require certificates that do not yet
@@ -137,7 +149,34 @@ serve the website. Certificates and their private keys stay on the host.
 
 ## Updates and operation
 
-Build the intended revision, then restart the affected service. The generated
+Build the intended revision, then refresh the Nginx archive links and restart
+the affected service:
+
+```sh
+node --import tsx scripts/link-boundary-tiles.ts /var/www/uk-data-atlas
+```
+
+Nginx reads archives from `/var/www/uk-data-atlas/boundaries/`. The export uses
+hard links to `data/build/boundaries/`, so archives still occupy one file's worth
+of storage. Both paths must be on the same filesystem. A failed cross-filesystem
+link stops the command. Adjust the export destination and snippet alias together
+if this deployment uses a different serving directory. Re-run the link command
+after each tile rebuild or deployment so replaced archives are republished.
+
+`umask 022` during the build makes exported directories traversable and files
+readable by Nginx workers. For older builds made with restrictive permissions:
+
+```sh
+find /var/www/uk-data-atlas/boundaries -type d -exec chmod 0755 {} +
+find /var/www/uk-data-atlas/boundaries -type f -name '*.pmtiles' -exec chmod 0644 {} +
+```
+
+PMTiles responses support byte ranges and ETag revalidation. The stable URLs use
+`Cache-Control: public, max-age=0, must-revalidate`, so updated archives require
+revalidation rather than being marked immutable. Whole-file gzip is disabled.
+The website continues using Next.js to serve tiles during local development.
+
+Build and restart the affected services as needed. The generated
 API files are read at runtime; for a full data rebuild, stop the API first or
 build in a separate staging checkout and switch it into place when complete.
 The API drains active requests on SIGTERM.
