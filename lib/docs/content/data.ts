@@ -32,6 +32,13 @@ export const DATA_TOPICS: DataTopic[] = [
 
 export const DATA_PAGES: DataPage[] = [
 	{
+		slug: "public-health",
+		title: "Public health indicators",
+		topic: "people",
+		datasets: ["public-health-outcomes-framework"],
+		intro: "Enable the Public Health card to map smoking, adult overweight including obesity, physical activity, Reception and Year 6 overweight including obesity, or preventable mortality under age 75. Figures cover persons in English counties and unitary authorities. Smoking and mortality use 2024; the other measures use 2024/25. Regional summaries are unweighted averages of available authority estimates, not pooled population rates. Preventable mortality is age-standardised per 100,000 residents. Missing or suppressed estimates remain unavailable.",
+	},
+	{
 		slug: "population",
 		title: "Population",
 		topic: "people",
