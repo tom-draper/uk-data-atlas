@@ -43,17 +43,20 @@ const CHANGES = [
 		label: "JavaScript",
 		code: `import { readFile, writeFile } from "node:fs/promises";
 
-// The manifest you kept from your last run, and the current one.
-const kept = JSON.parse(await readFile("atlas-release.json", "utf8"));
-const current = (await (await fetch("${API}/atlas-release")).json()).data;
+// The export list you kept from your last run, and the current one.
+const kept = JSON.parse(await readFile("atlas-exports.json", "utf8"));
+const current = (await (await fetch("${API}/exports")).json()).data;
 
-const before = kept.resources.exports;
-const after = current.resources.exports;
+const hashes = (list) => Object.fromEntries(
+  list.exports.map((entry) => [entry.id, entry.contentHash])
+);
+const before = hashes(kept);
+const after = hashes(current);
 const fetchNow = Object.keys(after).filter((id) => before[id] !== after[id]);
 const drop = Object.keys(before).filter((id) => !(id in after));
 
-// Fetch fetchNow, delete drop, then keep the current manifest.
-await writeFile("atlas-release.json", JSON.stringify(current));`,
+// Fetch fetchNow, delete drop, then keep the current export list.
+await writeFile("atlas-exports.json", JSON.stringify(current));`,
 	},
 ];
 
@@ -121,13 +124,11 @@ export default function SyncGuidePage() {
 
 				<Step id="changes" title="Fetch only what changed">
 					<P>
-						The API only serves the current release, so keep the
-						manifest from your last run. Its `resources` give a
-						fingerprint for every dataset, measure, crosswalk,
-						export and lookup, which changes exactly when that
-						resource does. Compare the kept fingerprints with the
-						current ones, fetch what was added or changed, and drop
-						what was removed.
+						Keep the export list from your last run. Compare its
+						published content hashes with the current export list,
+						fetch new or changed exports, and remove entries that
+						are no longer listed. The build manifest identifies the
+						current files without keeping a history of resources.
 					</P>
 					<RequestSamples samples={CHANGES} />
 				</Step>

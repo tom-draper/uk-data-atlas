@@ -45,7 +45,6 @@ Neither output directory is tracked in Git.
 generated data, generates map headlines and rankings,
 then runs Next.js. A nonzero
 exit from any command means that step failed; stop before the next step.
-Keep `services/api/public/atlas-releases/` on persistent storage during updates.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.
 

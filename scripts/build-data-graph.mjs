@@ -190,6 +190,7 @@ const apiStages = [
 	stage(
 		"atlas-release-initial",
 		[
+			"atlas-sqlite",
 			"boundary-registry",
 			"derived-boundaries",
 			"area-inventory",

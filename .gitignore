@@ -53,10 +53,6 @@ next-env.d.ts
 # Generated browser datasets and boundaries.
 /public/data/
 
-# Immutable release snapshots are retained by the deployment volume or object
-# store. Their contents are intentionally not duplicated in source control.
-/services/api/public/atlas-releases/
-
 # Raw sources live in immutable GitHub Release assets. Browser-ready payloads
 # and compiled map assets live under public/data instead.
 /data/*

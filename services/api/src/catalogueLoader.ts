@@ -67,7 +67,7 @@ const readEvidenceDocuments = (
 		EVIDENCE_DOCUMENTS.flatMap((id) => {
 			const path = `${id}.json`;
 			const artifact = atlasRelease?.artifacts.find(
-				(candidate) => candidate.path === path,
+				(candidate) => candidate.id === id,
 			);
 			if (!artifact) return [];
 			const file = resolve(apiRoot, "public", path);

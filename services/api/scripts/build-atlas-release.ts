@@ -10,7 +10,7 @@ export const buildAtlasRelease = (repositoryRoot: string) => {
 			`Create the API public directory before building: ${outputDirectory}`,
 		);
 	}
-	const release = createAtlasRelease(outputDirectory);
+	const release = createAtlasRelease(repositoryRoot);
 	const releasePath = join(outputDirectory, "atlas-release.json");
 	writeFileSync(releasePath, `${JSON.stringify(release, null, "\t")}\n`);
 	return { releasePath, releaseId: release.releaseId };
