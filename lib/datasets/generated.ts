@@ -48,6 +48,7 @@ import { travelToWorkDefinition } from "./travelToWork";
 import { unemploymentDefinition } from "./unemployment";
 import { wasteDefinition } from "./waste";
 import { wimdDefinition } from "./wimd";
+import { workplaceIncomeDefinition } from "./workplaceIncome";
 
 export type ChartDatasetType = CatalogueDatasetType;
 export type ChartDataset = CatalogueDataset;
@@ -98,4 +99,5 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		unemploymentDefinition,
 		wasteDefinition,
 		wimdDefinition,
+		workplaceIncomeDefinition,
 	];
