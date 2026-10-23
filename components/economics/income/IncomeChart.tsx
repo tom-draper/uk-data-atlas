@@ -102,7 +102,7 @@ export default function IncomeChart({
 	const dataset = availableDatasets?.[year];
 
 	// Get income data for selected area or aggregated data
-	const measure = useCurrentMapOptions().income.measure;
+	const { measure, period } = useCurrentMapOptions().income;
 	let income: number | null = null;
 
 	// We calculate data first so we can use it for the particle effects
@@ -113,16 +113,23 @@ export default function IncomeChart({
 			aggregatedData[dataset.year]
 		) {
 			income =
-				measure === "mean"
-					? aggregatedData[dataset.year].averageMeanIncome || null
-					: aggregatedData[dataset.year].averageMedianIncome || null;
+				period === "hourly"
+					? ((measure === "mean"
+							? aggregatedData[dataset.year]
+									.averageHourlyMeanIncome
+							: aggregatedData[dataset.year]
+									.averageHourlyMedianIncome) ?? null)
+					: measure === "mean"
+						? aggregatedData[dataset.year].averageMeanIncome || null
+						: aggregatedData[dataset.year].averageMedianIncome ||
+							null;
 		} else if (selectedArea) {
 			const annual = selectedAreaLadRecord(
 				dataset.data,
 				selectedArea,
 				codeMapper,
 				year,
-			)?.annual;
+			)?.[period];
 			income =
 				measure === "mean"
 					? (annual?.mean ?? null)
@@ -138,14 +145,16 @@ export default function IncomeChart({
 		activeDataset.id === `income${dataset.year}`
 	);
 	const formattedIncome = income
-		? `£${formatCount(Math.round(income))}`
+		? period === "hourly"
+			? `£${income.toFixed(2)}/hour`
+			: `£${formatCount(Math.round(income))}`
 		: null;
 
 	if (!dataset) return null;
 
 	return (
 		<ChartCard
-			heading={`${measure === "mean" ? "Mean" : "Median"} Income [${dataset.year}]`}
+			heading={`${selectedArea ? "" : "Average authority "}${measure === "mean" ? "mean" : "median"} ${period} pay [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, income !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
@@ -159,7 +168,7 @@ export default function IncomeChart({
 			accent="#10b981"
 			isActive={isActive}
 			minHeightClassName="isolate min-h-20"
-			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
+			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Residence-based pay. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,

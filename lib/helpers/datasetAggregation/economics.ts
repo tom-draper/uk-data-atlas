@@ -165,11 +165,18 @@ export function aggregateIncome(
 	codeProperty: PropertyKeys,
 	data: IncomeDataset["data"],
 ): AggregatedIncomeData {
+	const hourlyMedians: number[] = [];
+	const hourlyMeans: number[] = [];
 	let totalMedianIncome = 0,
 		medianCount = 0,
 		totalMeanIncome = 0,
 		meanCount = 0;
 	for (const feature of features) {
+		const hourly =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""]
+				?.hourly;
+		if (hourly?.median != null) hourlyMedians.push(hourly.median);
+		if (hourly?.mean != null) hourlyMeans.push(hourly.mean);
 		const annual =
 			data[getFeatureProp(feature.properties, codeProperty) ?? ""]
 				?.annual;
@@ -185,6 +192,12 @@ export function aggregateIncome(
 		}
 	}
 	return {
+		averageHourlyMedianIncome: hourlyMedians.length
+			? hourlyMedians.reduce((a, b) => a + b, 0) / hourlyMedians.length
+			: null,
+		averageHourlyMeanIncome: hourlyMeans.length
+			? hourlyMeans.reduce((a, b) => a + b, 0) / hourlyMeans.length
+			: null,
 		averageMedianIncome:
 			medianCount > 0 ? totalMedianIncome / medianCount : 0,
 		averageMeanIncome: meanCount > 0 ? totalMeanIncome / meanCount : 0,
