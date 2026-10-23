@@ -18,6 +18,8 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
+import MeasureSelect from "./legend/MeasureSelect";
+import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";
 import { imdRange } from "@/lib/helpers/imdMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
@@ -265,6 +267,19 @@ export default function LegendPanel({
 					measure={controls.displayOptions.mobileCoverage.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("mobileCoverage", {
+							measure,
+							colorRange: { min: 0, max: 100 },
+						})
+					}
+				/>
+			)}
+			{activeDataset?.type === "generalHealth" && (
+				<MeasureSelect
+					label="General health"
+					value={controls.displayOptions.generalHealth.measure}
+					options={HEALTH_MEASURES}
+					onChange={(measure) =>
+						onMapOptionsChange("generalHealth", {
 							measure,
 							colorRange: { min: 0, max: 100 },
 						})

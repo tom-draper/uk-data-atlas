@@ -18,6 +18,7 @@ import { ethnicityDatasetDefinition } from "./definitions/ethnicity";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty";
 import { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption";
 import { generalElectionDatasetDefinition } from "./definitions/generalElection";
+import { generalHealthDatasetDefinition } from "./definitions/generalHealth";
 import { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions";
 import { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection";
 import { homelessnessDatasetDefinition } from "./definitions/homelessness";
@@ -75,6 +76,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	fuelPovertyDatasetDefinition,
 	gasConsumptionDatasetDefinition,
 	generalElectionDatasetDefinition,
+	generalHealthDatasetDefinition,
 	ghgEmissionsDatasetDefinition,
 	historicalGeneralElectionDatasetDefinition,
 	homelessnessDatasetDefinition,

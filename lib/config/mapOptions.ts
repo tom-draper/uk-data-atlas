@@ -56,6 +56,9 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "housingTenure"
 				? { measure: "owned" }
 				: {}),
+			...(definition.type === "generalHealth"
+				? { measure: "goodHealth" }
+				: {}),
 			...(definition.type === "claimantCount" ? { measure: "rate" } : {}),
 			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
 			...(definition.type === "schoolPerformance"

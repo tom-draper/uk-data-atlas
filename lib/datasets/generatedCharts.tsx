@@ -229,6 +229,7 @@ export const CHART_PRESENTATIONS = {
 	"generalElection-2017": Chart9Presentation,
 	"generalElection-2015": Chart9Presentation,
 	"generalElection-2010": Chart9Presentation,
+	"health-generalHealth": Chart0Presentation,
 	"environment-ghgEmissions": Chart10Presentation,
 	"economics-homelessness": Chart11Presentation,
 	"economics-housePrice": Chart12Presentation,
