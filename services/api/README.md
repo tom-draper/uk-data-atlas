@@ -2355,9 +2355,10 @@ line up.
     `AreaGeometryCache` without a store directory.
 
 - **Location projections:** read one at a time from
-  `public/location-projections.sqlite`, which
-  `pnpm data:build --only location-projections` writes beside the JSON
-  shards the release pins. Each projection is deflated against a dictionary
+  `data/build/atlas.sqlite`, written by
+  `pnpm data:build --only atlas-sqlite` after compiling location projections.
+  The inventory lives in the shared database too. JSON shards remain build
+  inputs for immutable release snapshots. Each projection is deflated against a dictionary
   drawn from its shard, so a read decompresses a few kilobytes rather than
   parsing a shard of up to 13 MB. Nothing is cached but each shard's 32 KB
   dictionary, so the server no longer exports location projection cache

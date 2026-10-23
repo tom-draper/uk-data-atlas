@@ -72,6 +72,17 @@ beforeEach(() => {
 			locations: [],
 		}),
 	);
+	writeFileSync(
+		join(root, "services/api/public/location-projection-inventory.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "projections",
+			namedLocationInventoryHash: "locations",
+			crosswalkInventoryHash: "crosswalks",
+			shards: [],
+			parentShards: [],
+		}),
+	);
 	buildAtlasSqlite(root);
 	// The request must work without either product's JSON copies.
 	rmSync(join(root, "data/build/datasets"), { recursive: true });

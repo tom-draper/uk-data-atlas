@@ -10,11 +10,7 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "../src/crosswalkInventory";
-import {
-	compileLocationProjections,
-	LOCATION_PROJECTION_DATABASE,
-	writeLocationProjectionDatabase,
-} from "../src/locationProjections";
+import { compileLocationProjections } from "../src/locationProjections";
 import type { NamedLocationInventory } from "../src/namedLocations";
 import {
 	readStoredText,
@@ -86,10 +82,6 @@ export const buildLocationProjections = (repositoryRoot: string) => {
 			`${JSON.stringify(artifact, null, "\t")}\n`,
 		);
 	}
-	writeLocationProjectionDatabase(
-		join(outputDirectory, LOCATION_PROJECTION_DATABASE),
-		projections,
-	);
 	const inventoryPath = join(
 		outputDirectory,
 		"location-projection-inventory.json",

@@ -23,7 +23,7 @@ import {
 	packJson,
 	SqliteIndex,
 	unpackJson,
-	writeSqliteIndex,
+	type SqliteTable,
 } from "./sqliteIndex";
 
 export type LocationProjection = {
@@ -592,26 +592,19 @@ export class LocationProjectionStore extends LocationProjections {
 	}
 }
 
-/** Where the server reads projections from, beside their JSON shards. */
-export const LOCATION_PROJECTION_DATABASE = "location-projections.sqlite";
-
 /**
  * Write every member and parent projection to one database, each found by
  * its crosswalk and location, and deflated against a dictionary drawn from
  * its shard. A request then reads the one projection it needs rather than
  * parsing its whole shard.
  */
-export const writeLocationProjectionDatabase = (
-	path: string,
-	{
-		inventory,
-		artifacts,
-		parentArtifacts,
-	}: Pick<
-		ReturnType<typeof compileLocationProjections>,
-		"inventory" | "artifacts" | "parentArtifacts"
-	>,
-) => {
+export const locationProjectionTables = ({
+	artifacts,
+	parentArtifacts,
+}: Pick<
+	ReturnType<typeof compileLocationProjections>,
+	"artifacts" | "parentArtifacts"
+>) => {
 	const shards = [
 		...artifacts.map((artifact) => ({
 			table: "members",
@@ -646,37 +639,39 @@ export const writeLocationProjectionDatabase = (
 					packJson(projection, dictionary),
 				]),
 			);
-	writeSqliteIndex(
-		path,
-		{
-			schemaVersion: "1",
-			inventoryHash: inventory.contentHash,
-			namedLocationInventoryHash: inventory.namedLocationInventoryHash,
-			crosswalkInventoryHash: inventory.crosswalkInventoryHash,
+	return {
+		location_projection_dictionaries: {
+			columns: [
+				"kind TEXT NOT NULL",
+				"crosswalkId TEXT NOT NULL",
+				"dictionary BLOB NOT NULL",
+			],
+			key: ["kind", "crosswalkId"],
+			rows: shards.map(({ table, crosswalkId, dictionary }) => [
+				table,
+				crosswalkId,
+				dictionary,
+			]),
 		},
-		{
-			dictionaries: {
-				columns: ["kind", "crosswalkId", "dictionary"],
-				key: ["kind", "crosswalkId"],
-				rows: shards.map(({ table, crosswalkId, dictionary }) => [
-					table,
-					crosswalkId,
-					dictionary,
-				]),
-			},
-			members: {
-				columns: ["crosswalkId", "key", "value"],
-				key: ["crosswalkId", "key"],
-				rows: rows("members"),
-			},
-			parents: {
-				columns: ["crosswalkId", "key", "value"],
-				key: ["crosswalkId", "key"],
-				rows: rows("parents"),
-			},
+		location_projection_members: {
+			columns: [
+				"crosswalkId TEXT NOT NULL",
+				"key TEXT NOT NULL",
+				"value BLOB NOT NULL",
+			],
+			key: ["crosswalkId", "key"],
+			rows: rows("members"),
 		},
-		1024,
-	);
+		location_projection_parents: {
+			columns: [
+				"crosswalkId TEXT NOT NULL",
+				"key TEXT NOT NULL",
+				"value BLOB NOT NULL",
+			],
+			key: ["crosswalkId", "key"],
+			rows: rows("parents"),
+		},
+	} satisfies Record<string, SqliteTable>;
 };
 
 /** Projections read a row at a time from their database. */
@@ -695,31 +690,37 @@ export class LocationProjectionDatabase extends LocationProjections {
 	constructor(path: string, inventory: LocationProjectionInventory) {
 		super(inventory);
 		this.database = new SqliteIndex(path);
-		const recorded = (key: string) => this.database.meta.get(key);
+		const payload = this.database.lookup(
+			"payloads",
+			["id"],
+			"payload",
+		)("location-projection-inventory");
+		if (typeof payload !== "string")
+			throw new Error(`Missing location projection inventory at ${path}`);
+		const recorded: LocationProjectionInventory = JSON.parse(payload);
 		if (
-			recorded("schemaVersion") !== "1" ||
-			recorded("inventoryHash") !== inventory.contentHash ||
-			recorded("namedLocationInventoryHash") !==
+			recorded.schemaVersion !== 1 ||
+			recorded.contentHash !== inventory.contentHash ||
+			recorded.namedLocationInventoryHash !==
 				inventory.namedLocationInventoryHash ||
-			recorded("crosswalkInventoryHash") !==
-				inventory.crosswalkInventoryHash
+			recorded.crosswalkInventoryHash !== inventory.crosswalkInventoryHash
 		)
 			throw new Error(
 				`The location projections at ${path} were built from another projection inventory.`,
 			);
 		this.dictionary = this.database.lookup(
-			"dictionaries",
+			"location_projection_dictionaries",
 			["kind", "crosswalkId"],
 			"dictionary",
 		);
 		this.rows = {
 			members: this.database.lookup(
-				"members",
+				"location_projection_members",
 				["crosswalkId", "key"],
 				"value",
 			),
 			parents: this.database.lookup(
-				"parents",
+				"location_projection_parents",
 				["crosswalkId", "key"],
 				"value",
 			),

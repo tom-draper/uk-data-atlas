@@ -1,0 +1,61 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { readAtlasPayload } from "../shared/atlasSqlite";
+import { createLocationProjectionStore } from "../services/api/src/locationLoader";
+import type {
+	LocationProjectionInventory,
+	LocationProjectionArtifact,
+	LocationParentProjectionArtifact,
+} from "../services/api/src/locationProjections";
+import { readStoredText } from "../services/api/src/storedText";
+
+const root = resolve(import.meta.dirname, "..");
+const apiRoot = join(root, "services/api");
+const publicDirectory = join(apiRoot, "public");
+const text = readFileSync(
+	join(publicDirectory, "location-projection-inventory.json"),
+	"utf8",
+);
+assert.equal(readAtlasPayload(root, "location-projection-inventory"), text);
+const inventory: LocationProjectionInventory = JSON.parse(text);
+const database = createLocationProjectionStore(apiRoot, inventory);
+let members = 0;
+let parents = 0;
+for (const shard of inventory.shards) {
+	const artifact: LocationProjectionArtifact = JSON.parse(
+		readStoredText(join(publicDirectory, shard.artifact)),
+	);
+	for (const projection of artifact.projections) {
+		assert.equal(
+			JSON.stringify(
+				database.get(
+					projection.locationId,
+					projection.geography,
+					projection.boundaryRelease,
+					shard.crosswalkId,
+				),
+			),
+			JSON.stringify(projection),
+		);
+		members += 1;
+	}
+}
+for (const shard of inventory.parentShards) {
+	const artifact: LocationParentProjectionArtifact = JSON.parse(
+		readStoredText(join(publicDirectory, shard.artifact)),
+	);
+	for (const projection of artifact.parentProjections) {
+		assert.equal(
+			JSON.stringify(
+				database.parents(projection.locationId, shard.crosswalkId),
+			),
+			JSON.stringify(projection),
+		);
+		parents += 1;
+	}
+}
+assert.ok(members > 0 && parents > 0);
+console.log(
+	`Matched ${members} member projections and ${parents} parent projections byte for byte against release shards.`,
+);

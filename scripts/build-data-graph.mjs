@@ -93,6 +93,7 @@ const apiStages = [
 		"area-inventory",
 		"crosswalk-inventory",
 		"named-locations",
+		"location-projections",
 	]),
 	stage(
 		"api-datasets",
