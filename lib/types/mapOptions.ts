@@ -76,6 +76,10 @@ export interface MobileCoverageOptions extends ColorRangeOption {
 		| "pct5GGeoAny";
 }
 
+export interface FuelPovertyOptions extends ColorRangeOption {
+	measure: "rate" | "count";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -100,6 +104,7 @@ export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
 	| "regionalGdpItl3"
 	| "mobileCoverage"
+	| "fuelPoverty"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -119,6 +124,7 @@ export type ChartMapOptions = Omit<
 > & {
 	regionalGdpItl3: RegionalGdpItl3Options;
 	mobileCoverage: MobileCoverageOptions;
+	fuelPoverty: FuelPovertyOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
