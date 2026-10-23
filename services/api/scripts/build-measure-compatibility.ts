@@ -1,3 +1,7 @@
+import {
+	observationDatabasePath,
+	assertObservationCatalogue,
+} from "../src/atlasObservations";
 import { buildArtifactPath } from "./geography-build-path";
 import {
 	readSourceObservations,
@@ -38,6 +42,10 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 	const dataCatalog = read<DataCatalog>(
 		join(publicDirectory, "data-catalog.json"),
 	);
+	const databasePath = observationDatabasePath(
+		resolve(repositoryRoot, "services/api"),
+	);
+	assertObservationCatalogue(databasePath, dataCatalog);
 	// A table serves several measures, so it is read once.
 	const tables = new Map<string, MeasureTableArtifact>();
 	const compatibility = compileMeasureCompatibility(
@@ -49,7 +57,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		dataCatalog.measures.flatMap((measure) =>
 			measure.sources.map((source) =>
 				readSourceObservations(
-					publicDirectory,
+					databasePath,
 					observationArtifactName(measure.id, source),
 					measure.id,
 					tables,

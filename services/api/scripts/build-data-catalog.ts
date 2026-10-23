@@ -6,6 +6,7 @@ import {
 	compileDataCatalog,
 	type DataCatalogInputs,
 } from "../src/catalog/compileDataCatalog";
+import { storeObservations } from "./store-observations";
 import { observationArtifactName } from "../src/dataCatalog";
 
 export const datasetCatalogInputs = (
@@ -84,19 +85,8 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		censusTables,
 	} = compileDataCatalog(inputs);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
-	const ghgEmissionsObservationsPath = join(
-		outputDirectory,
-		"ghg-emissions-observations.json",
-	);
-	// The catalogue is read by people, so it stays indented. Observation
-	// artifacts are read only by the server and run to hundreds of thousands of
-	// records, where indentation roughly doubles the size on disk.
-	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
-	writeFileSync(
-		ghgEmissionsObservationsPath,
-		`${JSON.stringify(ghgEmissionsObservations)}\n`,
-	);
-	const measureObservationPaths = [
+	const observationArtifacts = [
+		ghgEmissionsObservations,
 		...populationObservations,
 		jobsObservations,
 		...mobileCoverageObservations,
@@ -110,40 +100,41 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		nimdmObservations,
 		...lifeExpectancyObservations,
 		...electionObservations,
-	].map((observations) => {
-		const measure = catalog.measures.find(
-			(candidate) => candidate.id === observations.measureId,
-		);
-		const source = measure?.sources.find(
-			(candidate) =>
-				candidate.sourceGeography.type ===
-					observations.sourceGeography.type &&
-				candidate.sourceGeography.boundaryYear ===
-					observations.sourceGeography.boundaryYear,
-		);
-		if (!measure || !source) {
-			throw new Error(
-				`No catalogue source matches ${observations.measureId} on ${observations.sourceGeography.type} ${observations.sourceGeography.boundaryYear}.`,
+	];
+	function* observationEntries(): Generator<readonly [string, string]> {
+		for (const observations of observationArtifacts) {
+			const measure = catalog.measures.find(
+				(candidate) => candidate.id === observations.measureId,
 			);
+			const source = measure?.sources.find(
+				(candidate) =>
+					candidate.sourceGeography.type ===
+						observations.sourceGeography.type &&
+					candidate.sourceGeography.boundaryYear ===
+						observations.sourceGeography.boundaryYear,
+			);
+			if (!measure || !source) {
+				throw new Error(
+					`No catalogue source matches ${observations.measureId} on ${observations.sourceGeography.type} ${observations.sourceGeography.boundaryYear}.`,
+				);
+			}
+			yield [
+				observationArtifactName(observations.measureId, source),
+				`${JSON.stringify(observations)}\n`,
+			] as const;
 		}
-		const path = join(
-			outputDirectory,
-			`${observationArtifactName(observations.measureId, source)}.json`,
-		);
-		writeFileSync(path, `${JSON.stringify(observations)}\n`);
-		return path;
-	});
-	// A table serves several measures, which each name it, so it is written
-	// once under its own name.
-	const tablePaths = censusTables.map((table) => {
-		const path = join(outputDirectory, `${table.id}.json`);
-		writeFileSync(path, `${JSON.stringify(table)}\n`);
-		return path;
-	});
+		for (const table of censusTables)
+			yield [table.id, `${JSON.stringify(table)}\n`];
+	}
+	const databasePath = storeObservations(
+		repositoryRoot,
+		catalog,
+		observationEntries(),
+	);
+	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
 	return {
 		catalogPath,
-		ghgEmissionsObservationsPath,
-		measureObservationPaths: [...measureObservationPaths, ...tablePaths],
+		databasePath,
 		populationRecordCount: populationObservations.reduce(
 			(count, observations) =>
 				count +

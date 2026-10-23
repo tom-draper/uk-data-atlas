@@ -1,6 +1,10 @@
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import {
+	assertObservationCatalogue,
+	readObservationInventory,
+	readObservationText,
+} from "./atlasObservations";
 import type {
+	DataCatalog,
 	AnyMeasureObservationArtifact,
 	MeasureObservationArtifact,
 	PopulationObservation,
@@ -40,6 +44,11 @@ const tableOfView = new WeakMap<object, MeasureTableArtifact>();
 
 /** What each lazily read view reads, and so stands for, when asked. */
 const loaderOfView = new WeakMap<object, () => AnyMeasureObservationArtifact>();
+const textOfView = new WeakMap<object, () => string>();
+
+/** Exact stored bytes for a lazy SQLite artifact, including shared tables. */
+export const observationTextOf = (artifact: object): string | undefined =>
+	textOfView.get(artifact)?.();
 
 type RecordLookup = (areaCode: string) => PopulationObservation | undefined;
 
@@ -143,6 +152,10 @@ type ObservationCacheEntry = {
 export class ObservationCache {
 	private readonly entries = new Map<string, ObservationCacheEntry>();
 	private bytes = 0;
+	private readonly inventories = new Map<
+		string,
+		ReturnType<typeof readObservationInventory>
+	>();
 
 	constructor(private readonly maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES) {
 		if (!Number.isSafeInteger(maxBytes) || maxBytes < 0)
@@ -151,18 +164,46 @@ export class ObservationCache {
 			);
 	}
 
+	bindCatalogue(databasePath: string, catalog: DataCatalog) {
+		this.inventories.set(
+			databasePath,
+			assertObservationCatalogue(databasePath, catalog),
+		);
+	}
+
+	private inventory(databasePath: string) {
+		let inventory = this.inventories.get(databasePath);
+		if (!inventory) {
+			inventory = readObservationInventory(databasePath);
+			this.inventories.set(databasePath, inventory);
+		}
+		return inventory;
+	}
+
+	has(databasePath: string, artifactName: string): boolean {
+		return this.inventory(databasePath).names.has(artifactName);
+	}
+
+	text(databasePath: string, artifactName: string): string {
+		return readObservationText(
+			databasePath,
+			artifactName,
+			this.inventory(databasePath).generationHash,
+		);
+	}
+
 	read(
-		publicDirectory: string,
+		databasePath: string,
 		artifactName: string,
 		measureId: string,
 	): AnyMeasureObservationArtifact {
-		const path = join(publicDirectory, `${artifactName}.json`);
+		const path = `${databasePath}:${artifactName}`;
 		let entry = this.entries.get(path);
 		if (entry) {
 			this.entries.delete(path);
 			this.entries.set(path, entry);
 		} else {
-			const text = readFileSync(path, "utf8");
+			const text = this.text(databasePath, artifactName);
 			entry = {
 				artifact: JSON.parse(text),
 				views: new Map(),
@@ -189,12 +230,12 @@ export class ObservationCache {
 }
 
 /**
- * Read the observations a measure source names from the public directory,
+ * Read the observations a measure source names from SQLite,
  * whether the artifact is the measure's own or a table it shares. Tables are
  * read once per cache, however many of their measures are asked for.
  */
 export const readSourceObservations = (
-	publicDirectory: string,
+	databasePath: string,
 	artifactName: string,
 	measureId: string,
 	tables: Map<string, MeasureTableArtifact> = new Map(),
@@ -202,7 +243,7 @@ export const readSourceObservations = (
 	const cached = tables.get(artifactName);
 	if (cached) return tableMeasureObservations(cached, measureId);
 	const parsed = JSON.parse(
-		readFileSync(join(publicDirectory, `${artifactName}.json`), "utf8"),
+		readObservationText(databasePath, artifactName),
 	) as unknown;
 	if (isMeasureTable(parsed)) {
 		tables.set(artifactName, parsed);
@@ -218,25 +259,21 @@ export const readSourceObservations = (
  * request reads nothing; its content hash and periods use the shared cache.
  * Reading every artifact before listening cost seconds of start-up and held
  * every measure in memory, though a request touches few of them. A missing
- * file still stops the server starting; one that is malformed or does not
+ * artifact still stops the server starting; one that is malformed or does not
  * match the catalogue is refused when read.
  */
 export const lazySourceObservations = (
-	publicDirectory: string,
+	databasePath: string,
 	artifactName: string,
 	measureId: string,
 	sourceGeography: SourceGeography,
 	cache: ObservationCache = new ObservationCache(),
 ): AnyMeasureObservationArtifact => {
-	const path = join(publicDirectory, `${artifactName}.json`);
-	if (!existsSync(path))
+	const path = `${databasePath}:${artifactName}`;
+	if (!cache.has(databasePath, artifactName))
 		throw new Error(`Missing measure observations at ${path}`);
 	const load = () => {
-		const observations = cache.read(
-			publicDirectory,
-			artifactName,
-			measureId,
-		);
+		const observations = cache.read(databasePath, artifactName, measureId);
 		if (
 			observations.schemaVersion !== 1 ||
 			observations.measureId !== measureId ||
@@ -262,5 +299,6 @@ export const lazySourceObservations = (
 		},
 	} as AnyMeasureObservationArtifact;
 	loaderOfView.set(view, load);
+	textOfView.set(view, () => cache.text(databasePath, artifactName));
 	return view;
 };

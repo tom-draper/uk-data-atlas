@@ -1,3 +1,15 @@
+import {
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
+import { buildAnalysisGeographyValidation } from "../scripts/build-analysis-geography-validation";
+import { storeObservations } from "../scripts/store-observations";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateAnalysisGeographies } from "../src/analysisGeographyValidation";
@@ -302,4 +314,55 @@ test("gates a reviewed measure read from a shared census table", () => {
 	});
 	assert.equal(support?.periods[0]?.inputTotal, 100);
 	assert.equal(support?.periods[0]?.outputTotal, 100);
+});
+
+test("analysis validation builds from SQLite after observation JSON removal", (t) => {
+	const root = mkdtempSync(join(tmpdir(), "analysis-observations-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	const publicRoot = join(root, "services/api/public");
+	mkdirSync(join(publicRoot, "crosswalks"), { recursive: true });
+	mkdirSync(join(root, "data/build/geography"), { recursive: true });
+	new DatabaseSync(join(root, "data/build/atlas.sqlite")).close();
+	writeFileSync(
+		join(publicRoot, "data-catalog.json"),
+		JSON.stringify(catalogue),
+	);
+	writeFileSync(
+		join(publicRoot, "crosswalk-inventory.json"),
+		JSON.stringify({
+			crosswalks: [
+				{ id: crosswalk.id, artifact: "crosswalks/fixture.json" },
+			],
+		}),
+	);
+	writeFileSync(
+		join(publicRoot, "crosswalks/fixture.json"),
+		JSON.stringify(crosswalk),
+	);
+	writeFileSync(
+		join(root, "data/build/geography/analysis-geographies.json"),
+		JSON.stringify(analysisGeographies),
+	);
+	const artifacts = observations([
+		{ areaCode: "E01000001", value: 40 },
+		{ areaCode: "E01000002", value: 60 },
+	]);
+	storeObservations(
+		root,
+		catalogue,
+		[...artifacts].map(
+			([id, artifact]) => [id, `${JSON.stringify(artifact)}\n`] as const,
+		),
+	);
+	const result = buildAnalysisGeographyValidation(root);
+	assert.equal(result.count, 1);
+	assert.deepEqual(
+		JSON.parse(readFileSync(result.outputPath, "utf8")),
+		validateAnalysisGeographies(
+			analysisGeographies,
+			catalogue,
+			new Map([[crosswalk.id, crosswalk]]),
+			artifacts,
+		),
+	);
 });

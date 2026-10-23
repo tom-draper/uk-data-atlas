@@ -14,7 +14,7 @@ import {
 	type ApiResponse,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { observationTableOf } from "./observationTables";
+import { observationTableOf, observationTextOf } from "./observationTables";
 import { choices, readChoice } from "./queryParameters";
 import { QUERY_RULES } from "./queryRules";
 
@@ -142,13 +142,25 @@ export const handleBulkRoutes = ({
 				"Export Unavailable",
 				"The catalogued export artifact is unavailable or does not match its manifest hash.",
 			);
+		const storedText = observationTextOf(artifact);
+		if (
+			storedText !== undefined &&
+			Buffer.byteLength(storedText) !== listedExport.bytes
+		)
+			return problem(
+				503,
+				"Export Unavailable",
+				"The stored observation bytes do not match the export manifest.",
+			);
 		return {
 			status: 200,
 			body: envelope(releaseId, listedExport),
 			representation: {
 				contentType: "application/json",
 				// A table-backed export is the whole table, the artifact read.
-				body: `${JSON.stringify(observationTableOf(artifact) ?? artifact)}\n`,
+				body:
+					storedText ??
+					`${JSON.stringify(observationTableOf(artifact) ?? artifact)}\n`,
 				headers: {
 					"content-disposition": `attachment; filename=\"${listedExport.artifact}.json\"`,
 				},

@@ -1,7 +1,10 @@
+import {
+	observationDatabasePath,
+	readObservationText,
+} from "../../src/atlasObservations";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { route } from "../../src/routes";
@@ -78,19 +81,13 @@ test("names an artifact that exists and hashes to what it says", () => {
 		const { observations } = answered(partition.url).data.provenance.source;
 		let recomputed = checked.get(observations.artifact);
 		if (recomputed === undefined) {
-			const path = join(
-				apiRoot,
-				"public",
-				`${observations.artifact}.json`,
-			);
-			if (!existsSync(path)) {
-				wrong.push(`${partition.url}: no artifact at ${path}`);
-				continue;
-			}
 			// The same rule the validation report applies at build time: the
 			// artifact without its hash must hash to its hash.
 			const { contentHash, ...content } = JSON.parse(
-				readFileSync(path, "utf8"),
+				readObservationText(
+					observationDatabasePath(apiRoot),
+					observations.artifact,
+				),
 			) as { contentHash: string };
 			recomputed = sha256(JSON.stringify(content));
 			if (recomputed !== contentHash)

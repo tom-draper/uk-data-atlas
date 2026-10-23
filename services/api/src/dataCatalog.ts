@@ -39,9 +39,9 @@ export type MeasureSource = {
 	periods: string[];
 	sourceGeography: SourceGeography;
 	/**
-	 * The observation artifact's filename stem, when one dataset contributes
+	 * The observation artifact's storage identity, when one dataset contributes
 	 * more than one source-geography partition to the same measure. Most
-	 * measures retain the conventional measure-id filename.
+	 * measures retain the conventional measure-id identity.
 	 */
 	observationArtifact?: string;
 	coverage: {
@@ -219,7 +219,7 @@ export type AnyMeasureObservationArtifact =
 	| MeasureObservationArtifact<CategoricalObservation>;
 
 /**
- * The published file, without its extension, holding one measure source's
+ * The SQLite artifact identity holding one measure source's
  * observations: `{measure-id}-observations`, unless the source names its own
  * because the measure has several.
  */

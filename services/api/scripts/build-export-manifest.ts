@@ -1,3 +1,7 @@
+import {
+	observationDatabasePath,
+	assertObservationCatalogue,
+} from "../src/atlasObservations";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,7 +14,15 @@ export const buildExportManifest = (repositoryRoot: string) => {
 	const dataCatalog = JSON.parse(
 		readFileSync(dataCatalogPath, "utf8"),
 	) as DataCatalog;
-	const manifest = compileExportManifest(publicDirectory, dataCatalog);
+	const databasePath = observationDatabasePath(
+		resolve(repositoryRoot, "services/api"),
+	);
+	assertObservationCatalogue(databasePath, dataCatalog);
+	const manifest = compileExportManifest(
+		publicDirectory,
+		dataCatalog,
+		databasePath,
+	);
 	const outputPath = join(publicDirectory, "export-manifest.json");
 	writeFileSync(outputPath, `${JSON.stringify(manifest, null, "\t")}\n`);
 	return { outputPath, exportCount: manifest.exports.length };

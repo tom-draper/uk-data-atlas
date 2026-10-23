@@ -1,5 +1,4 @@
-import { existsSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { readObservationText } from "./atlasObservations";
 import {
 	type DataCatalog,
 	type MeasureSource,
@@ -202,18 +201,13 @@ const exportDataset = (dataCatalog: DataCatalog, id: string): ExportDataset => {
 export const compileExportManifest = (
 	publicDirectory: string,
 	dataCatalog: DataCatalog,
+	databasePath: string,
 ): ExportManifest => {
 	const exports = dataCatalog.measures
 		.flatMap((measure) =>
 			measure.sources.map((source): BulkExport => {
 				const artifact = observationArtifactName(measure.id, source);
-				const path = join(publicDirectory, `${artifact}.json`);
-				if (!existsSync(path)) {
-					throw new Error(
-						`Build ${artifact}.json before building the export manifest.`,
-					);
-				}
-				const content = readFileSync(path, "utf8");
+				const content = readObservationText(databasePath, artifact);
 				const table = JSON.parse(content) as unknown;
 				// A table is several measures' artifact, so each of them
 				// exports the whole table under an id of its own.
@@ -222,7 +216,7 @@ export const compileExportManifest = (
 						measure,
 						source,
 						table,
-						statSync(path).size,
+						Buffer.byteLength(content),
 					);
 					entry.formats = compileObservationDownloads(
 						publicDirectory,
@@ -257,7 +251,7 @@ export const compileExportManifest = (
 					format: "json",
 					artifact,
 					contentHash: parsed.contentHash,
-					bytes: statSync(path).size,
+					bytes: Buffer.byteLength(content),
 					href: `/v1/exports/${artifact}`,
 					recordCount: records.length,
 					recordCountByPeriod: Object.fromEntries(

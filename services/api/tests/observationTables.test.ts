@@ -1,5 +1,10 @@
+import {
+	fixtureObservationDatabase,
+	writeObservationFixture,
+	removeObservationFixture,
+} from "./observationFixtures";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, rmSync, renameSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -128,7 +133,7 @@ test("retains zeros and row order while omitting unpublished column values", () 
 test("reads a shared table once and a measure's own artifact as it is", () => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-tables-"));
 	try {
-		writeFileSync(
+		writeObservationFixture(
 			join(directory, "fixture-table.json"),
 			JSON.stringify(table),
 		);
@@ -139,23 +144,23 @@ test("reads a shared table once and a measure's own artifact as it is", () => {
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
 			periods: [{ period: "2022", records: [] }],
 		};
-		writeFileSync(
+		writeObservationFixture(
 			join(directory, "population-observations.json"),
 			JSON.stringify(own),
 		);
 		const tables = new Map<string, MeasureTableArtifact>();
 
 		const owned = readSourceObservations(
-			directory,
+			fixtureObservationDatabase(directory),
 			"fixture-table",
 			"owned",
 			tables,
 		);
 		assert.equal(tables.size, 1);
-		// The second measure comes from the cached table, not the file.
-		rmSync(join(directory, "fixture-table.json"));
+		// The second measure comes from the cached table, not SQLite.
+		removeObservationFixture(join(directory, "fixture-table.json"));
 		const rented = readSourceObservations(
-			directory,
+			fixtureObservationDatabase(directory),
 			"fixture-table",
 			"rented",
 			tables,
@@ -170,7 +175,7 @@ test("reads a shared table once and a measure's own artifact as it is", () => {
 		);
 		assert.deepEqual(
 			readSourceObservations(
-				directory,
+				fixtureObservationDatabase(directory),
 				"population-observations",
 				"population",
 				tables,
@@ -182,7 +187,7 @@ test("reads a shared table once and a measure's own artifact as it is", () => {
 	}
 });
 
-test("reads a lazy source's file only when its hash or periods are asked for", () => {
+test("reads a lazy source's payload only when its hash or periods are asked for", () => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-lazy-"));
 	try {
 		const own = {
@@ -193,24 +198,24 @@ test("reads a lazy source's file only when its hash or periods are asked for", (
 			periods: [{ period: "2022", records: [] }],
 		};
 		const path = join(directory, "population-observations.json");
-		writeFileSync(path, JSON.stringify(own));
+		writeObservationFixture(path, JSON.stringify(own));
 		const view = lazySourceObservations(
-			directory,
+			fixtureObservationDatabase(directory),
 			"population-observations",
 			"population",
 			{ type: "ward", boundaryYear: 2023 },
 		);
 
-		// What the catalogue says is known, so the file can be gone until a
+		// What the catalogue says is known, so the row can be gone until a
 		// caller wants its content.
-		rmSync(path);
+		removeObservationFixture(path);
 		assert.equal(view.measureId, "population");
 		assert.deepEqual(view.sourceGeography, own.sourceGeography);
-		writeFileSync(path, JSON.stringify(own));
+		writeObservationFixture(path, JSON.stringify(own));
 
 		assert.equal(view.contentHash, "sha256:own");
 		assert.deepEqual(view.periods, own.periods);
-		// Once read, it is the artifact's own and spreads as the file reads.
+		// Once read, its serialized contract matches the stored artifact.
 		assert.deepEqual(JSON.parse(JSON.stringify(view)), own);
 		assert.deepEqual(Object.keys({ ...view }), Object.keys(own));
 		assert.equal(observationTableOf(view), undefined);
@@ -219,26 +224,27 @@ test("reads a lazy source's file only when its hash or periods are asked for", (
 	}
 });
 
-test("a lazy table view resolves to its table and a missing or mismatched file is refused", () => {
+test("a lazy table view resolves to its table and a missing or mismatched payload is refused", () => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-lazy-"));
 	try {
+		writeObservationFixture(join(directory, "placeholder.json"), "{}");
 		assert.throws(
 			() =>
 				lazySourceObservations(
-					directory,
+					fixtureObservationDatabase(directory),
 					"absent-observations",
 					"population",
 					{ type: "ward", boundaryYear: 2023 },
 				),
 			/Missing measure observations at /,
 		);
-		writeFileSync(
+		writeObservationFixture(
 			join(directory, "fixture-table.json"),
 			JSON.stringify(table),
 		);
 		const tables = new ObservationCache();
 		const rented = lazySourceObservations(
-			directory,
+			fixtureObservationDatabase(directory),
 			"fixture-table",
 			"rented",
 			table.sourceGeography,
@@ -248,7 +254,7 @@ test("a lazy table view resolves to its table and a missing or mismatched file i
 		assert.equal(rented.periods[0]?.records.length, 1);
 
 		const wrongYear = lazySourceObservations(
-			directory,
+			fixtureObservationDatabase(directory),
 			"fixture-table",
 			"owned",
 			{ type: "lsoa", boundaryYear: 2011 },
@@ -267,24 +273,24 @@ test("evicts least recently used artifacts and reloads through live lazy views",
 	t.after(() => rmSync(directory, { recursive: true, force: true }));
 	const text = JSON.stringify(table);
 	for (const name of ["a", "b", "c"])
-		writeFileSync(join(directory, `${name}.json`), text);
+		writeObservationFixture(join(directory, `${name}.json`), text);
 	const cache = new ObservationCache(Buffer.byteLength(text) * 2);
 	const a = lazySourceObservations(
-		directory,
+		fixtureObservationDatabase(directory),
 		"a",
 		"owned",
 		table.sourceGeography,
 		cache,
 	);
 	const rented = lazySourceObservations(
-		directory,
+		fixtureObservationDatabase(directory),
 		"a",
 		"rented",
 		table.sourceGeography,
 		cache,
 	);
 	const b = lazySourceObservations(
-		directory,
+		fixtureObservationDatabase(directory),
 		"b",
 		"owned",
 		table.sourceGeography,
@@ -294,7 +300,7 @@ test("evicts least recently used artifacts and reloads through live lazy views",
 	const bPeriods = b.periods;
 	assert.equal(observationTableOf(rented), aTable);
 	const aPeriods = a.periods;
-	cache.read(directory, "c", "owned");
+	cache.read(fixtureObservationDatabase(directory), "c", "owned");
 	assert.equal(a.periods, aPeriods);
 	assert.equal(observationTableOf(a), aTable);
 	assert.notEqual(b.periods, bPeriods);
@@ -311,8 +317,8 @@ test("does not retain oversized observations or displace a cached small artifact
 	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
 	t.after(() => rmSync(directory, { recursive: true, force: true }));
 	const text = JSON.stringify(table);
-	writeFileSync(join(directory, "small.json"), text);
-	writeFileSync(
+	writeObservationFixture(join(directory, "small.json"), text);
+	writeObservationFixture(
 		join(directory, "large.json"),
 		JSON.stringify({
 			...table,
@@ -320,18 +326,25 @@ test("does not retain oversized observations or displace a cached small artifact
 		}),
 	);
 	const cache = new ObservationCache(Buffer.byteLength(text));
-	const small = cache.read(directory, "small", "owned");
+	const small = cache.read(
+		fixtureObservationDatabase(directory),
+		"small",
+		"owned",
+	);
 	const large = lazySourceObservations(
-		directory,
+		fixtureObservationDatabase(directory),
 		"large",
 		"owned",
 		table.sourceGeography,
 		cache,
 	);
 	assert.notEqual(large.periods, large.periods);
-	assert.equal(cache.read(directory, "small", "owned"), small);
+	assert.equal(
+		cache.read(fixtureObservationDatabase(directory), "small", "owned"),
+		small,
+	);
 	const uncached = lazySourceObservations(
-		directory,
+		fixtureObservationDatabase(directory),
 		"small",
 		"owned",
 		table.sourceGeography,
@@ -359,10 +372,10 @@ test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 	};
 	const text = JSON.stringify(own);
 	for (const name of ["a", "b"])
-		writeFileSync(join(directory, `${name}.json`), text);
+		writeObservationFixture(join(directory, `${name}.json`), text);
 	const cache = new ObservationCache(Buffer.byteLength(text));
 	const view = lazySourceObservations(
-		directory,
+		fixtureObservationDatabase(directory),
 		"a",
 		"population",
 		own.sourceGeography,
@@ -370,7 +383,7 @@ test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 	);
 	const periods = view.periods;
 	assert.equal(view.periods, periods);
-	cache.read(directory, "b", "population");
+	cache.read(fixtureObservationDatabase(directory), "b", "population");
 	assert.notEqual(view.periods, periods);
 	assert.deepEqual(view.periods, periods);
 	for (const bytes of [-1, 0.5, NaN, Infinity])
@@ -383,10 +396,10 @@ test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 test("catalogue views share the configured observation budget", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-catalogue-"));
 	t.after(() => rmSync(directory, { recursive: true, force: true }));
-	mkdirSync(join(directory, "public"));
+	mkdirSync(join(directory, "services/api/public"), { recursive: true });
 	const text = JSON.stringify(table);
 	for (const name of ["a", "b"])
-		writeFileSync(join(directory, "public", `${name}.json`), text);
+		writeObservationFixture(join(directory, `${name}.json`), text);
 	const catalogue: DataCatalog = {
 		schemaVersion: 1,
 		contentHash: "sha256:catalogue",
@@ -427,8 +440,13 @@ test("catalogue views share the configured observation budget", (t) => {
 			),
 		})),
 	};
+	mkdirSync(join(directory, "data/build"), { recursive: true });
+	renameSync(
+		fixtureObservationDatabase(directory),
+		join(directory, "data/build/atlas.sqlite"),
+	);
 	const [a, b, rented] = readMeasureObservations(
-		directory,
+		join(directory, "services/api"),
 		catalogue,
 		Buffer.byteLength(text),
 	);

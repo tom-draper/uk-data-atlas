@@ -1,3 +1,7 @@
+import {
+	observationDatabasePath,
+	assertObservationCatalogue,
+} from "../src/atlasObservations";
 import { buildArtifactPath } from "./geography-build-path";
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -35,6 +39,11 @@ export const buildValidationReport = (repositoryRoot: string) => {
 		"crosswalk-inventory.json",
 	);
 	const exportManifest = read<ExportManifest>("export-manifest.json");
+	const dataCatalog = read<DataCatalog>("data-catalog.json");
+	const databasePath = observationDatabasePath(
+		resolve(repositoryRoot, "services/api"),
+	);
+	assertObservationCatalogue(databasePath, dataCatalog);
 	const report = compileValidationReport({
 		boundaryRegistry: read<BoundaryRegistry>("boundary-releases.json"),
 		areaInventory,
@@ -54,13 +63,13 @@ export const buildValidationReport = (repositoryRoot: string) => {
 		geographyInventory: read<GeographyInventory>(
 			"geography-inventory.json",
 		),
-		dataCatalog: read<DataCatalog>("data-catalog.json"),
+		dataCatalog,
 		exportManifest,
 		observationArtifacts: Object.fromEntries(
 			exportManifest.exports.map((entry) => [
 				entry.id,
 				readSourceObservations(
-					outputDirectory,
+					databasePath,
 					entry.artifact,
 					entry.measureId,
 				),

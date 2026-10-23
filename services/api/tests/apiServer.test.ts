@@ -1,3 +1,7 @@
+import {
+	fixtureObservationDatabase,
+	writeObservationFixture,
+} from "./observationFixtures";
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer, request as httpRequest } from "node:http";
@@ -865,7 +869,7 @@ test(
 		const observations = measureObservations.find(
 			(item) => item.measureId === measure.id,
 		)!;
-		writeFileSync(
+		writeObservationFixture(
 			join(
 				directory,
 				`${observationArtifactName(measure.id, source)}.json`,
@@ -877,7 +881,11 @@ test(
 			measures: [measure],
 			datasets: [{ ...dataCatalog.datasets[0], id: source.datasetId }],
 		};
-		const manifest = compileExportManifest(directory, catalog);
+		const manifest = compileExportManifest(
+			directory,
+			catalog,
+			fixtureObservationDatabase(directory),
+		);
 		const files = manifest.exports[0].formats!;
 		const exportFiles = new Map<string, StoredFile>(
 			files.map((file) => [
