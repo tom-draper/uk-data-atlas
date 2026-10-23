@@ -1,4 +1,4 @@
-// Generated from openapi.yaml by `pnpm --dir ../.. data:build --only query-rules`. Do not edit.
+// Generated from openapi.yaml by `pnpm --dir services/api generate:query-rules`. Do not edit.
 
 export const QUERY_RULES = {
 	"GET /map-resources/{geography}/{release}/features": {
