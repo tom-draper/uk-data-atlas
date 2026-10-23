@@ -1,3 +1,8 @@
+import {
+	readSqlitePostcodeAreas,
+	readSqlitePostcodeAreaShard,
+	readSqlitePostcodeCounts,
+} from "./atlasPostcodeDerived";
 import { readGeographyCatalogue } from "./geographyCatalogue";
 import { readSqliteAreaInventory, readSqliteAreas } from "./atlasAreas";
 import { existsSync, readFileSync } from "node:fs";
@@ -18,20 +23,11 @@ import {
 } from "./areaSearch";
 import type { PostcodeIndex } from "./postcodes";
 import { readSqlitePostcodeIndex } from "./atlasPostcodes";
-import {
-	PostcodeAreaIndex,
-	postcodeAreasMismatch,
-	type PostcodeAreasArtifact,
-} from "./postcodeAreas";
-import {
-	PostcodeCountsIndex,
-	postcodeCountsMismatch,
-	type PostcodeCountsArtifact,
-} from "./postcodeCounts";
+import { PostcodeAreaIndex, postcodeAreasMismatch } from "./postcodeAreas";
+import { PostcodeCountsIndex, postcodeCountsMismatch } from "./postcodeCounts";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 import { publicPath } from "./publicManifest";
-import { readStoredText } from "./storedText";
 
 export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry =>
 	readGeographyCatalogue<BoundaryRegistry>(
@@ -194,10 +190,8 @@ export const readPostcodeAreaIndex = (
 	areaInventory: AreaInventory,
 	geometrySources: GeometrySourceLookup,
 ): PostcodeAreaIndex => {
-	const path = publicPath(apiRoot, "postcode-areas.json");
-	const artifact = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as PostcodeAreasArtifact;
+	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const artifact = readSqlitePostcodeAreas(apiRoot);
 	const mismatch = postcodeAreasMismatch(artifact, postcodeIndex.artifact, {
 		areaRelease: (geography, boundaryRelease) => {
 			const release = areaInventory.releases.find(
@@ -218,7 +212,7 @@ export const readPostcodeAreaIndex = (
 		);
 	}
 	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
-		readStoredText(publicPath(apiRoot, shard)),
+		readSqlitePostcodeAreaShard(apiRoot, shard),
 	);
 };
 
@@ -228,10 +222,8 @@ export const readPostcodeCounts = (
 	postcodeIndex: PostcodeIndex,
 	postcodeAreas: PostcodeAreaIndex,
 ): PostcodeCountsIndex => {
-	const path = publicPath(apiRoot, "postcode-counts.json");
-	const artifact = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as PostcodeCountsArtifact;
+	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const artifact = readSqlitePostcodeCounts(apiRoot);
 	const mismatch = postcodeCountsMismatch(
 		artifact,
 		postcodeIndex.artifact,
