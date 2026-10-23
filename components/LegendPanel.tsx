@@ -18,6 +18,7 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
+import MeasureSelect from "./legend/MeasureSelect";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -48,6 +49,7 @@ interface LegendPanelProps {
 	activeViz: ActiveViz;
 	mapOptions: MapOptions;
 	onMapOptionsChange: MapOptionsChangeHandler;
+	setActiveViz?: (viz: ActiveViz) => void;
 	mapManager: MapManager | null;
 	boundaryData: BoundaryData;
 	location: string | null;
@@ -59,6 +61,7 @@ export default function LegendPanel({
 	activeViz,
 	mapOptions,
 	onMapOptionsChange,
+	setActiveViz,
 	mapManager,
 	boundaryData,
 	location,
@@ -154,6 +157,28 @@ export default function LegendPanel({
 				</div>
 			</div>
 
+			{activeDataset?.type === "lifeExpectancy" && setActiveViz && (
+				<MeasureSelect
+					label="Life expectancy indicator"
+					value={activeDataset.id === "hle" ? "hle" : "le"}
+					options={[
+						{ value: "le", label: "Life expectancy" },
+						{ value: "hle", label: "Healthy life expectancy" },
+					]}
+					onChange={(id) => {
+						const dataset = datasets.lifeExpectancy[id];
+						if (dataset)
+							setActiveViz({
+								datasetId: dataset.id,
+								datasetType: dataset.type,
+								datasetYear: dataset.year,
+								...(id === "hle"
+									? { view: "healthy-life-expectancy" }
+									: {}),
+							});
+					}}
+				/>
+			)}
 			{activeDataset?.type === "housePrice" && (
 				<HousePriceMeasurePanel
 					measure={controls.displayOptions.housePrice.measure}

@@ -72,7 +72,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Life expectancy",
 		topic: "people",
 		datasets: ["life-expectancy-series"],
-		intro: "Life expectancy at birth for men and women in local authorities across the UK, for every three-year period since 2001 to 2003, with confidence intervals.",
+		intro: "Life expectancy at birth for men and women in local authorities across the UK, for every three-year period since 2001 to 2003, with confidence intervals. The map legend switches between life expectancy and healthy life expectancy, while retaining the male, female or average selection. Healthy life expectancy estimates the years lived in good health and uses its own scale and coverage. The separate Healthy Life Expectancy card is also available in the chart picker.",
 	},
 	{
 		slug: "jobs",
