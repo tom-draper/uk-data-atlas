@@ -25,6 +25,10 @@ export interface WasteOptions extends CountMetricOptions {
 	metric: "collected" | "recycled" | "recyclingShare";
 }
 
+export interface EnergyConsumptionOptions extends CountMetricOptions {
+	sector: "allMetersGwh" | "domesticGwh" | "nonDomesticGwh";
+}
+
 export interface BroadbandOptions extends ColorRangeOption {
 	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
 }
@@ -118,8 +122,8 @@ export type ChartMapOptions = Omit<
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
 	electricVehicleChargers: CountMetricOptions;
-	electricityConsumption: CountMetricOptions;
-	gasConsumption: CountMetricOptions;
+	electricityConsumption: EnergyConsumptionOptions;
+	gasConsumption: EnergyConsumptionOptions;
 	waste: WasteOptions;
 	jobs: CountMetricOptions;
 	broadband: BroadbandOptions;
