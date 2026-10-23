@@ -24,12 +24,26 @@ export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =
 			year: 2024,
 		},
 		map: {
-			valueKey: "fuelPovertyRate",
+			valueFor: (dataset, code, options) =>
+				dataset.data[code]?.[
+					options.fuelPoverty.measure === "count"
+						? "fuelPoorHouseholdCount"
+						: "fuelPovertyRate"
+				] ?? null,
+			sourceMode: (_dataset, options) =>
+				`fuelPoverty:${options.fuelPoverty.measure}`,
 			colorRange: { min: 5, max: 15 },
 			legend: {
 				min: 0,
 				max: 30,
-				format: (value) => `${value.toFixed(0)}% households`,
+				bounds: (options) => ({
+					min: 0,
+					max: options.fuelPoverty.measure === "count" ? 1000 : 30,
+				}),
+				format: (value, options) =>
+					options.fuelPoverty.measure === "count"
+						? `${Math.round(value).toLocaleString("en-GB")} households`
+						: `${value.toFixed(0)}% households`,
 			},
 		},
 	};

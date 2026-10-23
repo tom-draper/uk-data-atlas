@@ -45,6 +45,7 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "mobileCoverage"
 				? { measure: "pct5GOutdoorAll" }
 				: {}),
+			...(definition.type === "fuelPoverty" ? { measure: "rate" } : {}),
 			...(definition.type === "claimantCount" ? { measure: "rate" } : {}),
 			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
 			...(definition.type === "schoolPerformance"
