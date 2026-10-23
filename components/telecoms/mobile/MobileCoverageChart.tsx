@@ -52,9 +52,9 @@ export default function MobileCoverageChart({
 }: MobileCoverageChartProps) {
 	const isDark = useIsDark();
 	const measure = useCurrentMapOptions().mobileCoverage.measure;
-	const measureLabel = MOBILE_COVERAGE_MEASURES.find(
-		({ value }) => value === measure,
-	)!.label;
+	const measureLabel =
+		MOBILE_COVERAGE_MEASURES.find(({ value }) => value === measure)
+			?.label ?? "5G outdoors, all four operators";
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
