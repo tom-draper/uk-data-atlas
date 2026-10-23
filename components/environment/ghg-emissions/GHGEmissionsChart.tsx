@@ -49,6 +49,54 @@ const MEASURES = {
 		format: (value: number) => (value / 1000).toFixed(1),
 		unit: "Mt CO₂e excl. land use",
 	},
+	transport: {
+		key: "transport",
+		label: "Transport",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, transport",
+	},
+	domestic: {
+		key: "domestic",
+		label: "Domestic",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, domestic",
+	},
+	industry: {
+		key: "industry",
+		label: "Industry",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, industry",
+	},
+	commercial: {
+		key: "commercial",
+		label: "Commercial",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, commercial",
+	},
+	publicSector: {
+		key: "publicSector",
+		label: "Public sector",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, public sector",
+	},
+	agriculture: {
+		key: "agriculture",
+		label: "Agriculture",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, agriculture",
+	},
+	waste: {
+		key: "waste",
+		label: "Waste",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, waste",
+	},
+	landUse: {
+		key: "landUse",
+		label: "Land use and forestry",
+		format: (value: number) => value.toFixed(0),
+		unit: "kt CO₂e, land use and forestry",
+	},
 } as const;
 
 // The UK average is a little over 5 tonnes a head, so the bands sit either
@@ -121,6 +169,11 @@ export default function GHGEmissionsChart({
 					transport: record.transport,
 					domestic: record.domestic,
 					industry: record.industry,
+					commercial: record.commercial,
+					publicSector: record.publicSector,
+					agriculture: record.agriculture,
+					waste: record.waste,
+					landUse: record.landUse,
 				}),
 			)
 		: null;
