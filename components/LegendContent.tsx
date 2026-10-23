@@ -101,24 +101,6 @@ export default function LegendContent({
 				: airQualityMeasure === "pm10"
 					? "PM10"
 					: "NO₂";
-		const ghgMeasure =
-			activeDataset.type === "ghgEmissions"
-				? displayOptions.ghgEmissions.measure
-				: null;
-		const ghgLegend = ghgMeasure
-			? {
-					min: 0,
-					max: ghgMeasure === "perPerson" ? 20 : 6000,
-					format: (value: number) =>
-						ghgMeasure === "perPerson"
-							? `${value.toFixed(0)} t CO₂e per person`
-							: `${(value / 1000).toFixed(1)} Mt CO₂e${
-									ghgMeasure === "excludingLandUse"
-										? " excluding land use"
-										: ""
-								}`,
-				}
-			: null;
 		const unemploymentMeasure =
 			activeDataset.type === "unemployment"
 				? displayOptions.unemployment.measure
@@ -212,7 +194,6 @@ export default function LegendContent({
 						homelessnessLegend ??
 						claimantCountLegend ??
 						unemploymentLegend ??
-						ghgLegend ??
 						legend);
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
@@ -248,7 +229,6 @@ export default function LegendContent({
 					schoolPerformanceLegend?.format ??
 					claimantCountLegend?.format ??
 					unemploymentLegend?.format ??
-					ghgLegend?.format ??
 					((value) => measureLegend.format(value, displayOptions))
 				}
 				currentRange={usesInitialRange ? dynamicRange : undefined}

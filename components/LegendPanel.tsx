@@ -18,6 +18,8 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
+import MeasureSelect from "./legend/MeasureSelect";
+import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -31,7 +33,6 @@ import {
 	BroadbandMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
-	GhgEmissionsMeasurePanel,
 	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
@@ -154,6 +155,24 @@ export default function LegendPanel({
 				</div>
 			</div>
 
+			{activeDataset?.type === "ghgEmissions" && (
+				<MeasureSelect
+					label="Emissions measure"
+					value={controls.displayOptions.ghgEmissions.measure}
+					options={GHG_EMISSIONS_MEASURES}
+					onChange={(measure) =>
+						onMapOptionsChange("ghgEmissions", {
+							measure,
+							colorRange:
+								measure === "perPerson"
+									? { min: 3, max: 12 }
+									: measure === "landUse"
+										? { min: -500, max: 500 }
+										: { min: 0, max: 2500 },
+						})
+					}
+				/>
+			)}
 			{activeDataset?.type === "housePrice" && (
 				<HousePriceMeasurePanel
 					measure={controls.displayOptions.housePrice.measure}
@@ -184,23 +203,6 @@ export default function LegendPanel({
 									: measure === "pm10"
 										? { min: 8, max: 25 }
 										: { min: 2, max: 20 },
-						})
-					}
-				/>
-			)}
-
-			{activeDataset?.type === "ghgEmissions" && (
-				<GhgEmissionsMeasurePanel
-					measure={controls.displayOptions.ghgEmissions.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("ghgEmissions", {
-							measure,
-							colorRange:
-								measure === "total"
-									? { min: 300, max: 2500 }
-									: measure === "excludingLandUse"
-										? { min: 300, max: 2400 }
-										: { min: 3, max: 12 },
 						})
 					}
 				/>

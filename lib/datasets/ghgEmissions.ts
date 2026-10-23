@@ -31,8 +31,10 @@ export const ghgEmissionsDefinition: ChartDatasetDefinition<GhgEmissionsDataset>
 						return area?.totalKtCO2e ?? null;
 					case "excludingLandUse":
 						return area?.excludingLandUseKtCO2e ?? null;
-					default:
+					case "perPerson":
 						return area?.perPersonTCO2e ?? null;
+					default:
+						return area?.[mapOptions.ghgEmissions.measure] ?? null;
 				}
 			},
 			sourceMode: (_dataset, mapOptions) =>
@@ -41,7 +43,17 @@ export const ghgEmissionsDefinition: ChartDatasetDefinition<GhgEmissionsDataset>
 			legend: {
 				min: 0,
 				max: 20,
-				format: (value) => `${value.toFixed(0)} t`,
+				bounds: (options) => ({
+					min: options.ghgEmissions.measure === "landUse" ? -2000 : 0,
+					max:
+						options.ghgEmissions.measure === "perPerson"
+							? 20
+							: 6000,
+				}),
+				format: (value, options) =>
+					options.ghgEmissions.measure === "perPerson"
+						? `${value.toFixed(1)} t CO₂e per person`
+						: `${value.toFixed(0)} kt CO₂e`,
 			},
 		},
 	};
