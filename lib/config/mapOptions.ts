@@ -59,6 +59,9 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "generalHealth"
 				? { measure: "goodHealth" }
 				: {}),
+			...(definition.type === "pupilAbsence"
+				? { measure: "overall" }
+				: {}),
 			...(definition.type === "claimantCount" ? { measure: "rate" } : {}),
 			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
 			...(definition.type === "schoolPerformance"

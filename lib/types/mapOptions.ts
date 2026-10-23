@@ -126,6 +126,11 @@ export interface GeneralHealthOptions extends ColorRangeOption {
 	measure: "goodHealth" | "veryGood" | "good" | "fair" | "bad" | "veryBad";
 }
 
+export interface PupilAbsenceOptions extends ColorRangeOption {
+	measure:
+		"overall" | "authorised" | "unauthorised" | "persistent" | "severe";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -156,6 +161,7 @@ export type ChartMapOptions = Omit<
 	| "workplaceIncome"
 	| "housingTenure"
 	| "generalHealth"
+	| "pupilAbsence"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -181,6 +187,7 @@ export type ChartMapOptions = Omit<
 	workplaceIncome: WorkplaceIncomeOptions;
 	housingTenure: HousingTenureOptions;
 	generalHealth: GeneralHealthOptions;
+	pupilAbsence: PupilAbsenceOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
