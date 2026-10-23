@@ -131,6 +131,16 @@ export interface PupilAbsenceOptions extends ColorRangeOption {
 		"overall" | "authorised" | "unauthorised" | "persistent" | "severe";
 }
 
+export interface PublicHealthOptions extends ColorRangeOption {
+	measure:
+		| "smoking"
+		| "adultExcessWeight"
+		| "activity"
+		| "receptionExcessWeight"
+		| "year6ExcessWeight"
+		| "preventableMortality";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -162,6 +172,7 @@ export type ChartMapOptions = Omit<
 	| "housingTenure"
 	| "generalHealth"
 	| "pupilAbsence"
+	| "publicHealth"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -188,6 +199,7 @@ export type ChartMapOptions = Omit<
 	housingTenure: HousingTenureOptions;
 	generalHealth: GeneralHealthOptions;
 	pupilAbsence: PupilAbsenceOptions;
+	publicHealth: PublicHealthOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;

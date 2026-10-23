@@ -40,6 +40,7 @@ export { planningApplicationsDatasetDefinition } from "./planningApplications";
 export { populationDatasetDefinition } from "./population";
 export { populationConstituencyDatasetDefinition } from "./populationConstituency";
 export { populationUkDatasetDefinition } from "./populationUk";
+export { publicHealthDatasetDefinition } from "./publicHealth";
 export { pupilAbsenceDatasetDefinition } from "./pupilAbsence";
 export { qualificationDatasetDefinition } from "./qualification";
 export { regionalGdpItl1DatasetDefinition } from "./regionalGdpItl1";
