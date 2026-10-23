@@ -19,11 +19,12 @@ export const readZip = (path: string): Promise<string> => {
 export const visitZipCsvRows = async (
 	path: string,
 	visit: (row: Readonly<Record<string, string>>) => void,
+	member = "*.csv",
 ): Promise<{ bytes: number; sha256: string }> => {
 	const fullPath = join(SOURCE_DATA, path);
 	await stat(fullPath);
 	return new Promise((resolve, reject) => {
-		const unzip = spawn("unzip", ["-p", fullPath, "*.csv"]);
+		const unzip = spawn("unzip", ["-p", fullPath, member]);
 		if (!unzip.stdout) {
 			reject(new Error(`Could not stream ${path}.`));
 			return;

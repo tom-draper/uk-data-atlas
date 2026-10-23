@@ -40,6 +40,7 @@ export async function loadPupilAbsence(
 				metrics,
 			};
 		},
+		"data/1_Absence_3term_nat_reg_la.csv",
 	);
 	return {
 		2025: {

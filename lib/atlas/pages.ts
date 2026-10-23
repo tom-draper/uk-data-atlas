@@ -41,6 +41,7 @@ export const MAP_NAMES: Readonly<Record<string, string>> = {
 	"workplace-income": "Workplace Pay",
 	"housing-tenure": "Housing Tenure",
 	"general-health": "General Health",
+	"pupil-absence": "Pupil Absence",
 	"adult-social-care-activity": "Adult Social Care Support",
 	"adult-social-care-outcomes": "Adult Social Care Quality of Life",
 	"air-quality": "Air Pollution (NO₂)",
