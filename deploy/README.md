@@ -210,7 +210,11 @@ API PMTiles and map feature downloads live in `data/build/map-resources/`.
 Include this directory alongside `data/build/atlas.sqlite` in API deployments.
 For an asset CDN, upload it under the `map-resources/` prefix. Website builds
 hard-link `data/build/boundaries/` archives into `public/data/boundaries/` for static
-serving. Both paths share one file on disk. These directories must be on the same
+serving. Every website boundary release is served as PMTiles with a properties sidecar.
+TopoJSON in `data/build/website-boundaries/` is a build intermediate and is not
+needed by the running website. Before the first build, run `pnpm data:download` if the checkout lacks the complete pinned source release. Publication removes legacy public TopoJSON and
+regional geometry chunks after validating the complete generation.
+Both paths share one file on disk. These directories must be on the same
 filesystem; the build fails rather than falling back to copying archives.
 Deploy from the built checkout. When transferring a built tree, preserve hard links
 with `rsync -aH` or recreate them with

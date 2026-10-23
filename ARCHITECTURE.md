@@ -44,7 +44,7 @@ public/data/            the atlas's compiled data, served by the website
 | `data/source/`         | Raw files as publishers supplied them                                    | No          | `pnpm data:download`, from the release pinned in `data-release.json`                               |
 | `data/build/`          | Shared generated datasets and `atlas.sqlite`                             | README only | `pnpm data:build`                                                                                  |
 | `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No          | `pnpm data:build`                                                                                  |
-| `public/data/`         | The atlas's compiled datasets, boundaries and boundary vector tiles      | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
+| `public/data/`         | The atlas's compiled datasets, boundary properties and PMTiles           | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
 
 Raw release archives keep their paths relative to the source root. The existing
 pinned release restores into `data/source/` without republishing. For an existing
