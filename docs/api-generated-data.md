@@ -1,6 +1,6 @@
 # Generated API data
 
-This audit follows the postcode search, area mapping, and count migrations to
+This audit follows the postcode and API observation migrations to
 `data/build/atlas.sqlite`. It describes consumers in the source, rather than
 assuming that every file left by an older local build is still required.
 
@@ -23,11 +23,18 @@ assuming that every file left by an older local build is still required.
 | `atlas-lookups.json`, `atlas-lookups/*.json.gz` | `atlasLookups.ts`, website copy stage          | Published lookup downloads                                               |
 | `atlas-pages.json`, `atlas-pages/*.json.gz`     | `atlasPages.ts`, website copy stage            | Published place page data                                                |
 
-Observation files are derived from the compiled datasets also held in SQLite,
-but they are not interchangeable copies. `build-data-catalog.ts` compiles API
-observation contracts, and the API reads those contracts on demand.
-Removing this output requires migrating observation loading, compatibility
-validation, and exports together.
+Observation contracts are stored in `observation_artifacts` in SQLite, keyed by
+artifact identity. `build-data-catalog.ts` compiles and publishes them atomically;
+`observation_catalogue` links them to the data catalogue hash. Each shared census
+table is stored once, while measure views retain the existing lazy loading and
+byte-budgeted cache. Payload byte hashes detect corruption on read. Cached views remember their
+observation generation and refuse to read a newer generation until the API
+restarts. JSON exports return the stored text and verify its byte count.
+
+Compatibility checks, analysis-geography validation, the validation report,
+and JSON, CSV, and Parquet exports read those
+same SQLite payloads. JSON download contracts and their content hashes are
+unchanged. Public observation JSON files are removed after successful publication.
 
 Boundary geometry served to map clients is in PMTiles. Geometry source lookup
 and geometry-store data still support server-side spatial processing.
@@ -60,9 +67,30 @@ from `data:build`; the API `build` and `typecheck` commands now generate it.
 The explicit command is `pnpm --dir services/api generate:query-rules`.
 The existing query rule test checks the generated values against OpenAPI.
 
-No remaining JSON-producing data stage above can be deleted without replacing
-an active consumer. A useful next migration is the catalogue and observation
-contract group, including compatibility and export compilation. Moving only
-its manifest would leave the bulk of the files and their build work intact.
+The data-catalog stage remains necessary: it compiles the measure catalogue and
+observation contracts, then stores the observations in SQLite. It no longer
+publishes separate observation JSON files. Compatibility and export stages also
+remain necessary because they compile distinct derived metadata and downloads.
 
-This audit does not delete generated local data or run a full data rebuild.
+To deploy this migration, run `pnpm data:build` before starting the servers.
+A code build alone does not populate the new observation tables.
+
+## Observation storage design
+
+The publisher accepts `(artifact identity, exact text)` entries and requires one
+entry for every artifact referenced by the catalogue. Shared census tables have
+one entry even when several measures reference them. Duplicate, missing, and
+unexpected entries fail before publication.
+
+Exact payloads preserve field order, optional publisher codes, categorical
+values, confidence intervals, and table nulls without a second serializer.
+Relational record storage was considered, but current queries mostly consume
+whole periods and exports require the complete artifact. Splitting the contracts
+into rows would add reconstruction logic while retaining those reads.
+
+Publication uses a unique temporary database, one transaction, and an atomic
+rename. Readers open short-lived read-only connections and compare the published
+generation with the one held by their cache. They reject replacement data rather
+than serving it under an older catalogue. This keeps connection lifetime outside
+the route and server interfaces. Data builds remain sequential, as other atlas
+SQLite publishers also replace the shared file.

@@ -32,8 +32,12 @@ Then build the API runtime and Next.js app from the same checkout.
 Run these steps serially. Neither server needs to be running during the build.
 The API data build checks the source release pinned by `data-release.json` and
 writes generated catalogues to `services/api/public/` and the terrain catalogue
-payload to `data/build/atlas.sqlite`. Keep `data/build/atlas.sqlite` under the repository
-root when deploying either server. Both read it in read-only mode.
+payload to `data/build/atlas.sqlite`. API observation payloads, including shared
+census tables, also live in this database. After updating the code, run
+`pnpm data:build` before restarting the API to populate the observation tables
+and regenerate compatibility, validation, and exports.
+Keep `data/build/atlas.sqlite` under the repository root when deploying either
+server. Both read it in read-only mode.
 `pnpm data:build` builds missing or stale dependencies, copies
 the atlas lookups and pages from the API's build output, then writes browser
 data and SEO files to `public/data/`.
