@@ -89,6 +89,7 @@ export function runBuild({
 	createCache = () => null,
 } = {}) {
 	let from;
+	let only;
 	let target;
 	let plan = false;
 	let useCache = true;
@@ -98,6 +99,11 @@ export function runBuild({
 			plan = true;
 		} else if (argument === "--no-cache" && useCache) {
 			useCache = false;
+		} else if (argument === "--only" && only === undefined) {
+			only = argv[index + 1];
+			if (!only || only.startsWith("--"))
+				throw new Error("--only requires a stage name.");
+			index += 1;
 		} else if (argument === "--from" && from === undefined) {
 			from = argv[index + 1];
 			if (!from || from.startsWith("--"))
@@ -114,14 +120,31 @@ export function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: pnpm data:compile [--target <name>] [--from <stage>] [--plan] [--no-cache]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--target <name>] [--only <stage> | --from <stage>] [--plan] [--no-cache]`,
 			);
 		}
 	}
-	const selected = planBuild(
+	if (only !== undefined && from !== undefined)
+		throw new Error("--only and --from cannot be combined.");
+	const targetStages = planBuild(
 		stages,
-		from,
+		undefined,
 		target === undefined || target === "all" ? undefined : targets[target],
+	);
+	const selectedStage = only ?? from;
+	if (
+		selectedStage !== undefined &&
+		!targetStages.some((stage) => stage.name === selectedStage)
+	)
+		throw new Error(
+			stages.some((stage) => stage.name === selectedStage)
+				? `Stage ${selectedStage} is not part of the selected target.`
+				: `Unknown stage: ${selectedStage}. Available stages: ${stages.map((stage) => stage.name).join(", ")}`,
+		);
+	const selected = planBuild(
+		targetStages,
+		from,
+		only === undefined ? undefined : [only],
 	);
 	const cache = createCache();
 	// --from and --no-cache rerun every stage they select, and record them.
