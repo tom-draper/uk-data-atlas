@@ -290,6 +290,16 @@ Boundary tiles are built in `data/build/boundaries/` for the website and
 resumable build state. The API reads these assets directly. The website hard-links
 its archives into `public/data/boundaries/` during data and app builds, preserving
 static URLs with one stored copy. Both directories must share a filesystem.
+Every website release has an archive. Releases rejected by shared-arc
+compilation use the polygons previously drawn from the compiled topology, with
+no further generalisation. This is restricted to ward 2017 and LSOA 2001 with their expected counts of over-shared edges. The manifest records this method and its reason;
+the API's strict coverage policy is unchanged.
+
+Website TopoJSON and its properties intermediates live in
+`data/build/website-boundaries/`. Gazetteer and matching builds read that private
+directory. Only PMTiles, properties sidecars, and the manifest are published to
+`public/data/boundaries/`; regional topology chunks are no longer built.
+
 Only the small `tiles.json` manifest is copied. See `deploy/README.md` for
 transferring a built tree without duplicating the archives. Publish API map assets from
 `data/build/map-resources/`, keeping the `map-resources/` URL prefix.
