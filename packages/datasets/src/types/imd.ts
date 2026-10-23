@@ -8,7 +8,7 @@ export interface IMDLSOAData {
 	imdScore: number;
 	imdRank: number;
 	imdDecile: number;
-	/** Mid-2015 population excluding prisoners, the index's own denominator. */
+	/** Mid-2022 population used for area summaries. */
 	population: number;
 	incomeScore: number;
 	employmentScore: number;
@@ -34,4 +34,17 @@ export interface IMDDataset {
 }
 
 /** A group of areas: its population-weighted average score, and its share in the most deprived tenth. */
-export type AggregatedIMDData = ScoredDeprivationSummary;
+export interface AggregatedIMDData extends ScoredDeprivationSummary {
+	domainScores?: Partial<
+		Record<
+			| "incomeScore"
+			| "employmentScore"
+			| "educationScore"
+			| "healthScore"
+			| "crimeScore"
+			| "housingScore"
+			| "livingEnvironmentScore",
+			number | null
+		>
+	>;
+}
