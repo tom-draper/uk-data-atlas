@@ -1,33 +1,22 @@
+import {
+	readSqlitePostcodeAreas,
+	readSqlitePostcodeAreaShard,
+} from "../src/atlasPostcodeDerived";
+import { storePostcodeCounts } from "./store-postcode-derived";
 import { readPostcodeIndex } from "../src/boundaryLoader";
 import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
-import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-	compilePostcodeCounts,
-	type PostcodeCountsArtifact,
-} from "../src/postcodeCounts";
-import type {
-	PostcodeAreasArtifact,
-	PostcodeAreasShard,
-} from "../src/postcodeAreas";
+import { compilePostcodeCounts } from "../src/postcodeCounts";
 import type { PostcodeShard } from "../src/postcodes";
-import { readStoredText } from "../src/storedText";
-
-// Postcode-to-area shards remain gzipped; postcode records come from SQLite.
-const read = <T>(path: string): T => JSON.parse(readStoredText(path)) as T;
 
 export const buildPostcodeCounts = (repositoryRoot: string) => {
-	const publicRoot = join(repositoryRoot, "services", "api", "public");
-	const postcodeIndex = readPostcodeIndex(
-		join(repositoryRoot, "services/api"),
-	).artifact;
+	const apiRoot = join(repositoryRoot, "services/api");
+	const postcodeIndex = readPostcodeIndex(apiRoot).artifact;
 	const entries = new Map(
 		postcodeIndex.shards.map((entry) => [entry.path, entry]),
 	);
-	const postcodeAreas = read<PostcodeAreasArtifact>(
-		join(publicRoot, "postcode-areas.json"),
-	);
+	const postcodeAreas = readSqlitePostcodeAreas(apiRoot);
 	const artifact = compilePostcodeCounts(
 		postcodeIndex,
 		postcodeAreas,
@@ -35,17 +24,13 @@ export const buildPostcodeCounts = (repositoryRoot: string) => {
 			const entry = entries.get(path);
 			if (!entry) throw new Error(`Unknown postcode district ${path}`);
 			const shard: PostcodeShard = JSON.parse(
-				readSqlitePostcodeShard(
-					join(repositoryRoot, "services/api"),
-					entry,
-				),
+				readSqlitePostcodeShard(apiRoot, entry),
 			);
 			return shard;
 		},
-		(path) => read<PostcodeAreasShard>(join(publicRoot, path)),
+		(path) => JSON.parse(readSqlitePostcodeAreaShard(apiRoot, path)),
 	);
-	const outputPath = join(publicRoot, "postcode-counts.json");
-	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
+	const outputPath = storePostcodeCounts(repositoryRoot, artifact);
 	const countedAreas = artifact.releases.reduce(
 		(count, release) => count + Object.keys(release.areas).length,
 		0,

@@ -1,10 +1,8 @@
-import {
-	existsSync,
-	mkdirSync,
-	readFileSync,
-	rmSync,
-	writeFileSync,
-} from "node:fs";
+import { readAtlasPayload } from "../../../shared/atlasSqlite";
+import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
+import { readSqlitePostcodeAreaShard } from "../src/atlasPostcodeDerived";
+import { storePostcodeAreas } from "./store-postcode-derived";
+
 import { availableParallelism } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -47,11 +45,9 @@ import {
 	postcodeLookupPoint,
 	type PostcodeShard,
 } from "../src/postcodes";
-import { readStoredText, writeStoredText } from "../src/storedText";
 
 /**
- * Compile services/api/public/postcode-areas.json and one shard per postcode district
- * under services/api/public/postcode-areas: the areas each postcode's centroid lies in,
+ * Compile postcode placements into atlas.sqlite: the areas each postcode's centroid lies in,
  * for the releases postcode answers read by default.
  *
  * Each release is placed in a worker thread holding that release's geometry,
@@ -169,12 +165,19 @@ const runJob = (job: Job) =>
 	});
 
 /** The previous build, when it placed these very postcodes. */
-const previousBuild = (publicRoot: string, postcodeIndex: string) => {
-	const path = join(publicRoot, "postcode-areas.json");
-	if (!existsSync(path)) return undefined;
-	const artifact = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as PostcodeAreasArtifact;
+const previousBuild = (repositoryRoot: string, postcodeIndex: string) => {
+	let text: string;
+	try {
+		text = readAtlasPayload(repositoryRoot, "postcode-areas");
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			error.message.startsWith("Missing payload postcode-areas")
+		)
+			return undefined;
+		throw error;
+	}
+	const artifact: PostcodeAreasArtifact = JSON.parse(text);
 	if (
 		artifact.schemaVersion !== 1 ||
 		artifact.postcodeIndex !== postcodeIndex
@@ -188,7 +191,6 @@ export const buildPostcodeAreas = async (
 	options: { workers?: number; verifyEvery?: number; rebuild?: boolean } = {},
 ) => {
 	const apiRoot = join(repositoryRoot, "services", "api");
-	const publicRoot = join(apiRoot, "public");
 	const postcodeIndex = readPostcodeIndex(apiRoot);
 	const areaInventory = readAreaInventory(apiRoot);
 	const geometrySources = readGeometrySources(apiRoot);
@@ -229,7 +231,7 @@ export const buildPostcodeAreas = async (
 	let at = 0;
 	for (const entry of postcodeIndex.artifact.shards) {
 		const shard = JSON.parse(
-			readStoredText(join(publicRoot, entry.path)),
+			readSqlitePostcodeShard(apiRoot, entry),
 		) as PostcodeShard;
 		for (const postcode of shard.postcodes) {
 			const found = postcodeIndex.lookup(
@@ -253,7 +255,7 @@ export const buildPostcodeAreas = async (
 
 	const previous = options.rebuild
 		? undefined
-		: previousBuild(publicRoot, postcodeIndex.artifact.contentHash);
+		: previousBuild(repositoryRoot, postcodeIndex.artifact.contentHash);
 	const reusable = new Set(
 		(previous?.releases ?? []).flatMap((release) => {
 			const current = inputsOf(
@@ -277,7 +279,7 @@ export const buildPostcodeAreas = async (
 			let offset = 0;
 			for (const [index, entry] of previous.shards.entries()) {
 				const shard = JSON.parse(
-					readStoredText(join(publicRoot, entry.path)),
+					readSqlitePostcodeAreaShard(apiRoot, entry.path),
 				) as PostcodeAreasShard;
 				yield { offset, shard };
 				offset += postcodeIndex.artifact.shards[index]!.postcodes;
@@ -353,16 +355,13 @@ export const buildPostcodeAreas = async (
 		postcodeIndex.artifact,
 		releases,
 	);
-	rmSync(join(publicRoot, "postcode-areas"), {
-		recursive: true,
-		force: true,
+	const texts = new Map(files.map((file) => [file.path, file.text]));
+	const outputPath = storePostcodeAreas(repositoryRoot, artifact, (path) => {
+		const text = texts.get(path);
+		if (text === undefined)
+			throw new Error(`Missing postcode area shard ${path}`);
+		return text;
 	});
-	for (const file of files) {
-		mkdirSync(dirname(join(publicRoot, file.path)), { recursive: true });
-		writeStoredText(join(publicRoot, file.path), file.text);
-	}
-	const outputPath = join(publicRoot, "postcode-areas.json");
-	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
 	return { outputPath, artifact };
 };
 
