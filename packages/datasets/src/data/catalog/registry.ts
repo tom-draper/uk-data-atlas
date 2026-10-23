@@ -41,6 +41,7 @@ import { planningApplicationsDatasetDefinition } from "./definitions/planningApp
 import { populationDatasetDefinition } from "./definitions/population";
 import { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency";
 import { populationUkDatasetDefinition } from "./definitions/populationUk";
+import { publicHealthDatasetDefinition } from "./definitions/publicHealth";
 import { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence";
 import { qualificationDatasetDefinition } from "./definitions/qualification";
 import { regionalGdpItl1DatasetDefinition } from "./definitions/regionalGdpItl1";
@@ -100,6 +101,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	populationDatasetDefinition,
 	populationConstituencyDatasetDefinition,
 	populationUkDatasetDefinition,
+	publicHealthDatasetDefinition,
 	pupilAbsenceDatasetDefinition,
 	qualificationDatasetDefinition,
 	regionalGdpItl1DatasetDefinition,
