@@ -52,31 +52,7 @@ export const writeSqliteIndex = (
 		const insertMeta = database.prepare("INSERT INTO meta VALUES (?, ?)");
 		for (const [key, value] of Object.entries(meta))
 			insertMeta.run(key, value);
-		for (const [name, table] of Object.entries(tables)) {
-			const placeholders = table.columns.map(() => "?");
-			if (table.key) {
-				database.exec(
-					`CREATE TABLE ${name} (${[...table.columns, ...(table.constraints ?? [])].join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID`,
-				);
-				const insert = database.prepare(
-					`INSERT INTO ${name} VALUES (${placeholders.join(", ")})`,
-				);
-				for (const row of table.rows) insert.run(...row);
-				for (const [index, columns] of (table.indexes ?? []).entries())
-					database.exec(
-						`CREATE INDEX ${name}_${index} ON ${name} (${columns.join(", ")})`,
-					);
-				continue;
-			}
-			database.exec(
-				`CREATE TABLE ${name} (position INTEGER PRIMARY KEY, ${table.columns.join(", ")})`,
-			);
-			const insert = database.prepare(
-				`INSERT INTO ${name} VALUES (${["?", ...placeholders].join(", ")})`,
-			);
-			let position = 0;
-			for (const row of table.rows) insert.run(position++, ...row);
-		}
+		writeSqliteTables(database, tables);
 		database.exec("COMMIT; VACUUM;");
 	} finally {
 		database.close();
@@ -84,17 +60,52 @@ export const writeSqliteIndex = (
 	renameSync(temporary, path);
 };
 
+/** Write declared tables into a database owned by the caller's transaction. */
+export const writeSqliteTables = (
+	database: DatabaseSync,
+	tables: Record<string, SqliteTable>,
+) => {
+	for (const [name, table] of Object.entries(tables)) {
+		const placeholders = table.columns.map(() => "?");
+		if (table.key) {
+			database.exec(
+				`CREATE TABLE ${name} (${[...table.columns, ...(table.constraints ?? [])].join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID`,
+			);
+			const insert = database.prepare(
+				`INSERT INTO ${name} VALUES (${placeholders.join(", ")})`,
+			);
+			for (const row of table.rows) insert.run(...row);
+			for (const [index, columns] of (table.indexes ?? []).entries())
+				database.exec(
+					`CREATE INDEX ${name}_${index} ON ${name} (${columns.join(", ")})`,
+				);
+			continue;
+		}
+		database.exec(
+			`CREATE TABLE ${name} (position INTEGER PRIMARY KEY, ${table.columns.join(", ")})`,
+		);
+		const insert = database.prepare(
+			`INSERT INTO ${name} VALUES (${["?", ...placeholders].join(", ")})`,
+		);
+		let position = 0;
+		for (const row of table.rows) insert.run(position++, ...row);
+	}
+};
+
 /** An index opened for reading. */
 export class SqliteIndex {
 	private readonly database: DatabaseSync;
 	readonly meta: Map<string, string>;
 
-	constructor(readonly path: string) {
+	constructor(
+		readonly path: string,
+		private readonly prefix = "",
+	) {
 		this.database = new DatabaseSync(path, { readOnly: true });
 		this.meta = new Map(
 			(
 				this.database
-					.prepare("SELECT key, value FROM meta")
+					.prepare(`SELECT key, value FROM ${prefix}meta`)
 					.all() as Array<{ key: string; value: string }>
 			).map(({ key, value }) => [key, value]),
 		);
@@ -104,6 +115,7 @@ export class SqliteIndex {
 	 * Find a row of a keyed table by its key columns, returning one column.
 	 */
 	lookup(name: string, key: string[], column: string) {
+		name = `${this.prefix}${name}`;
 		const statement = this.database.prepare(
 			`SELECT ${column} AS value FROM ${name} WHERE ${key.map((part) => `${part} = ?`).join(" AND ")}`,
 		);
@@ -114,6 +126,7 @@ export class SqliteIndex {
 
 	/** A table's rows, read by position. */
 	table(name: string) {
+		name = `${this.prefix}${name}`;
 		const { length } = this.database
 			.prepare(`SELECT count(*) AS length FROM ${name}`)
 			.get() as { length: number };
