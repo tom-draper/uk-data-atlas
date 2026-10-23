@@ -189,6 +189,10 @@ export function createStageCache({
 			if (!record || record.key !== keyFor(stage, dependencyDigests))
 				return null;
 			const files = currentSnapshot();
+			// A later stage can own the current bytes of a shared output. Its
+			// original builder must still recreate it when the file is missing.
+			if (stage.requiredOutputs?.some((path) => !files.has(path)))
+				return null;
 			for (const [path, stamp] of Object.entries(record.outputs))
 				if (files.get(path) !== stamp) return null;
 			return record.digest;
