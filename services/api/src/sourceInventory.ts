@@ -63,7 +63,7 @@ const sourceFiles = (value: unknown): SourceFile[] => {
 export const createSourceInventory = (
 	repositoryRoot: string,
 ): SourceInventory => {
-	const dataRoot = join(repositoryRoot, "data");
+	const dataRoot = join(repositoryRoot, "data/source");
 	const sources = metadataPaths(dataRoot)
 		.map((metadataPath) => {
 			const raw = readFileSync(metadataPath, "utf8");

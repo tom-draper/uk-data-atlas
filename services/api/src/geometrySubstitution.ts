@@ -70,7 +70,9 @@ export const loadSubstitutions = (
 			throw new Error(
 				`${identity}: ${id} takes areas from a Shapefile, which is not supported.`,
 			);
-		const content = readFileSync(join(repositoryRoot, "data", donor.input));
+		const content = readFileSync(
+			join(repositoryRoot, "data/source", donor.input),
+		);
 		const collection = JSON.parse(content.toString("utf8")) as Collection;
 		if (
 			collection.type !== "FeatureCollection" ||

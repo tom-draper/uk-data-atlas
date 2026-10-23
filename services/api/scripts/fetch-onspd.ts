@@ -93,7 +93,7 @@ const fileSha256 = (path: string) =>
 	new Promise<string>((done, fail) => {
 		const hash = createHash("sha256");
 		createReadStream(path)
-			.on("data", (chunk) => hash.update(chunk))
+			.on("data/source", (chunk) => hash.update(chunk))
 			.on("end", () => done(hash.digest("hex")))
 			.on("error", fail);
 	});
@@ -172,7 +172,7 @@ export const fetchOnspd = async (
 	const { edition, item } = await latestEdition();
 	const directory = join(
 		repositoryRoot,
-		"data",
+		"data/source",
 		"postcodes",
 		"onspd",
 		`${edition}-uk`,

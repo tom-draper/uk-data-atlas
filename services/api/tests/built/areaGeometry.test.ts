@@ -16,7 +16,7 @@ import {
 import { toWgs84Geometry } from "../../src/reprojection";
 
 const writeSource = (root: string, input: string, geojson: unknown) => {
-	const path = join(root, "data", input);
+	const path = join(root, "data/source", input);
 	mkdirSync(join(path, ".."), { recursive: true });
 	writeFileSync(path, JSON.stringify(geojson));
 };
@@ -249,7 +249,13 @@ test("re-reads a source after it is evicted from a bounded cache", () => {
 test("reprojects British National Grid geometry to WGS84 when an area is read", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
-		const directory = join(root, "data", "boundaries", "ward", "2016");
+		const directory = join(
+			root,
+			"data/source",
+			"boundaries",
+			"ward",
+			"2016",
+		);
 		mkdirSync(directory, { recursive: true });
 		writeFileSync(
 			join(directory, "wards.geojson"),
@@ -282,10 +288,15 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 		);
 		// The cache reads the shared correction from the repository.
 		writeFileSync(
-			join(root, "data", "boundaries", "northern-ireland-offset.json"),
+			join(
+				root,
+				"data/source",
+				"boundaries",
+				"northern-ireland-offset.json",
+			),
 			readFileSync(
 				new URL(
-					"../../../../data/boundaries/northern-ireland-offset.json",
+					"../../../../data/source/boundaries/northern-ireland-offset.json",
 					import.meta.url,
 				),
 				"utf8",

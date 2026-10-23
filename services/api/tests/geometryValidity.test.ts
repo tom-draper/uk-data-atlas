@@ -213,7 +213,7 @@ test("compiles deterministic reports and serves them with metrics and provenance
 	const apiRoot = join(root, "services", "api");
 	const publicRoot = join(apiRoot, "public");
 	mkdirSync(publicRoot, { recursive: true });
-	mkdirSync(join(root, "data", "boundaries"), { recursive: true });
+	mkdirSync(join(root, "data/source", "boundaries"), { recursive: true });
 	for (const directory of ["src", "scripts"])
 		symlinkSync(
 			new URL(`../${directory}`, import.meta.url),
@@ -243,7 +243,7 @@ test("compiles deterministic reports and serves them with metrics and provenance
 		crs: "EPSG:4326",
 		codeProperty: "CODE",
 	};
-	const sourcePath = join(root, "data", source.input);
+	const sourcePath = join(root, "data/source", source.input);
 	writeFileSync(sourcePath, sourceBytes);
 	writeFileSync(
 		join(publicRoot, "geometry-sources.json"),

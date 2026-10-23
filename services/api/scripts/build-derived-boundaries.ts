@@ -36,7 +36,7 @@ export const buildDerivedBoundaries = (
 		const [geography, boundaryRelease] = identity.split("/");
 		const sourceDirectory = join(
 			repositoryRoot,
-			"data",
+			"data/source",
 			"boundaries",
 			toKebabCase(adapter.source.geography),
 			adapter.source.boundaryRelease,

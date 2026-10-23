@@ -222,7 +222,7 @@ const reusablePopulationOverlap = (
 		);
 		const populationHash = sha256(
 			readFileSync(
-				join(repositoryRoot, "data", adapter.population.input),
+				join(repositoryRoot, "data/source", adapter.population.input),
 				"utf8",
 			),
 		);
@@ -293,7 +293,10 @@ const reusableCleanContainment = (
 			adapter.to,
 		);
 		const inputHash = sha256(
-			readFileSync(join(repositoryRoot, "data", adapter.input), "utf8"),
+			readFileSync(
+				join(repositoryRoot, "data/source", adapter.input),
+				"utf8",
+			),
 		);
 		const containment = artifact.validation.geometryContainment;
 		return contentHash === sha256(JSON.stringify(withoutHash)) &&

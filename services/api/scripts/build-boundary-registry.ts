@@ -58,7 +58,7 @@ const countryCodes = (value: unknown, location: string): string[] => {
 const readRelease = (metaPath: string): BoundaryRelease => {
 	const raw = readFileSync(metaPath, "utf8");
 	const metadata = JSON.parse(raw) as BoundaryMetadata;
-	const location = metaPath.replace(/.*data\/boundaries\//, "");
+	const location = metaPath.replace(/.*data\/source\/boundaries\//, "");
 	const [directoryGeography, directoryRelease] = location.split("/");
 
 	if (metadata.kind !== "boundary") {
@@ -132,7 +132,7 @@ const readRelease = (metaPath: string): BoundaryRelease => {
 export const createBoundaryRegistry = (
 	repositoryRoot: string,
 ): BoundaryRegistry => {
-	const boundariesRoot = join(repositoryRoot, "data", "boundaries");
+	const boundariesRoot = join(repositoryRoot, "data/source", "boundaries");
 	if (!existsSync(boundariesRoot)) {
 		throw new Error(`No boundary source directory at ${boundariesRoot}`);
 	}

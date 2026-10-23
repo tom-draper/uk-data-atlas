@@ -20,7 +20,7 @@ export async function buildDatasets(repositoryRoot: string) {
 			join(
 				path.startsWith("boundaries/")
 					? directory
-					: join(repositoryRoot, "data"),
+					: join(repositoryRoot, "data/source"),
 				path,
 			),
 			"utf8",

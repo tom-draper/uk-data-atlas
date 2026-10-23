@@ -10,7 +10,7 @@ browser.
    Hub](https://osdatahub.os.uk/downloads/open/OpenRoads). The dataset is free
    under the Open Government Licence.
 2. Extract `Data/oproad_gb.mbtiles` to
-   `data/transport/os-open-roads/oproad_gb.mbtiles`. The archive and extracted
+   `data/source/transport/os-open-roads/oproad_gb.mbtiles`. The archive and extracted
    database are ignored by Git.
 3. Start the local CORS-enabled vector-tile service in one terminal:
 

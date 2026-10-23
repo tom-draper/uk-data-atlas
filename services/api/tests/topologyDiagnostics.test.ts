@@ -49,9 +49,9 @@ const assertCompilationError = (
 ) => {
 	const root = mkdtempSync(join(tmpdir(), "topology-diagnostics-"));
 	try {
-		mkdirSync(join(root, "data"));
+		mkdirSync(join(root, "data/source"), { recursive: true });
 		writeFileSync(
-			join(root, "data/boundaries.geojson"),
+			join(root, "data/source/boundaries.geojson"),
 			JSON.stringify({
 				type: "FeatureCollection",
 				features: [...areas].map(([code, geometry]) => ({

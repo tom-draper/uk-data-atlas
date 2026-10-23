@@ -30,7 +30,7 @@ an implementation proposal, not a promise that every listed endpoint is ready.
 The dataset JSON and browser-facing TopoJSON are internal build products;
 their shape and filenames must remain free to change.
 
-The API builds directly from raw `data/` without website output.
+The API builds directly from raw `data/source/` without website output.
 `pnpm data:build --only datasets` at the repository root compiles catalogue datasets.
 The `atlas-sqlite` stage stores them in `data/build/atlas.sqlite` for the API to read.
 `pnpm --dir ../.. data:build --only api-datasets` builds gazetteer core and boundary assets under
@@ -179,7 +179,7 @@ only **available** when its endpoint, contract and provenance are published.
       claim, nor a shared code on its own.
 - [x] Extend `population-overlap` weighting to Northern Ireland. Its 2021
       Data Zones use Census 2021 usual-resident population from NISRA CT0102
-      (`data/demographics/population/census-2021-ni-data-zone/`), alongside
+      (`data/source/demographics/population/census-2021-ni-data-zone/`), alongside
       Scotland's 2011 data zones and SIMD 2020v2 small-area estimates.
 - [x] Publish the official Welsh local authority → local health board
       (December 2023) and English sub-ICB location → NHS England region
@@ -958,7 +958,7 @@ only **available** when its endpoint, contract and provenance are published.
 
 Refresh the stored postcode source with `pnpm --dir services/api refresh:onspd`. The
 command downloads the current ONS Postcode Directory, removes Northern Ireland
-rows before writing the compact permitted source under `data/postcodes/onspd/`,
+rows before writing the compact permitted source under `data/source/postcodes/onspd/`,
 and records its edition, source hash and required attribution. To carry that
 edition into future builds, publish a new immutable source snapshot with
 `pnpm data:publish data-YYYY-MM-DD` and commit the updated `data-release.json`.
@@ -3049,7 +3049,7 @@ Depth and traceability are more credible than breadth.
 ## Initial standalone implementation
 
 The first build artifact is an API-safe boundary-release registry generated
-directly from `../../data/boundaries/**/meta.json`. It deliberately does not import
+directly from `../../data/source/boundaries/**/meta.json`. It deliberately does not import
 the website's boundary catalogue or expose its browser asset URLs.
 
 Run it from this directory:
@@ -3464,7 +3464,7 @@ over its land, and they rarely are: Luton is 21% of the land of Luton South
 and South Bedfordshire but holds 88% of its residents, so area weighting
 would put most of Luton's people in rural Bedfordshire. The building blocks
 are 2021 LSOAs with their Census 2021 usual residents (table TS001, under
-`data/demographics/population/census-2021-lsoa`). Each block's residents are
+`data/source/demographics/population/census-2021-lsoa`). Each block's residents are
 split among the source and target pairs it falls in, in proportion to its
 area in each, so the assumption of evenness shrinks from a whole constituency
 to about 1,500 people.
@@ -3736,7 +3736,7 @@ east at Belfast, and no published transformation reproduces the shift. The 15
 releases measured to carry it declare `northern-ireland-offset` in their
 `meta.json`. The website's boundary compiler and this API both move those
 releases' Northern Ireland areas by the correction fitted in
-`data/boundaries/northern-ireland-offset.json` before reprojecting, which puts
+`data/source/boundaries/northern-ireland-offset.json` before reprojecting, which puts
 them within a metre of NISRA's native boundaries; the geometry registry
 records each release's declared corrections, and a corrected area's
 `properties.geometrySource.corrections` names the correction applied.

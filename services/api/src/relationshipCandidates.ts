@@ -148,7 +148,7 @@ const sourceFor = (repositoryRoot: string, artifact: AreaReleaseArtifact) => {
 	const boundaryRelease = source?.boundaryRelease ?? artifact.boundaryRelease;
 	const directory = join(
 		repositoryRoot,
-		"data",
+		"data/source",
 		"boundaries",
 		toKebabCase(geography),
 		boundaryRelease,

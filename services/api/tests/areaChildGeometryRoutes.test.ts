@@ -23,7 +23,7 @@ test("draws every child of an area as one FeatureCollection", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",
@@ -132,7 +132,7 @@ test("lists the children it could not draw rather than dropping them", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",

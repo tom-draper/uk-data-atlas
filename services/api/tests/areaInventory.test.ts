@@ -29,7 +29,7 @@ test("compiles canonical area identities from an unambiguous GeoJSON source", ()
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		"combined-authority",
 		"2025-12-en-bgc",
@@ -79,7 +79,7 @@ test("uses a release-specific adapter when a source contains parent fields", () 
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		"combined-authority",
 		"2025-12-en-bgc",
@@ -125,7 +125,7 @@ test("coalesces matching feature fragments for one official area code", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		"combined-authority",
 		"2025-12-en-bgc",
@@ -168,7 +168,7 @@ test("derives a target release from a filtered raw GeoJSON source", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const sourceDirectory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		"lsoa",
 		"2011-12-ew-bgc-v3",

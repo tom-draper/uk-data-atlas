@@ -74,7 +74,7 @@ export const extractOnsWardHistory = (
 				`${right.properties.PREDECESSORCD}|${right.properties.SUCCESSORCD}`,
 			),
 		);
-	const directory = join(repositoryRoot, "data", "lookups", DIRECTORY);
+	const directory = join(repositoryRoot, "data/source", "lookups", DIRECTORY);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(
 		join(directory, FILE),

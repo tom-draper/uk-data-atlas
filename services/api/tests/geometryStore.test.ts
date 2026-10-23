@@ -27,9 +27,9 @@ const square = (west: number, south: number, size: number) => [
 test("compiles repeated codes and ignores non-object features, keeping seven decimal places", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-geometry-source-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
-	mkdirSync(join(root, "data"));
+	mkdirSync(join(root, "data/source"), { recursive: true });
 	writeFileSync(
-		join(root, "data", "source.geojson"),
+		join(root, "data/source", "source.geojson"),
 		'{"type":"FeatureCollection","features":[null,17,[],{"properties":{"CODE":"A"},"geometry":{"type":"Point","coordinates":[-0,1.2345678901234567]}},{"properties":{"CODE":"A"},"geometry":{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1e-7,53.123456789012344]}]}}]}',
 	);
 	const source: GeometrySource = {
@@ -164,7 +164,7 @@ test("reads back every kind of packed area exactly as it was written", (t) => {
 const gridRelease = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-geometry-store-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
-	const directory = join(root, "data", "boundaries", "ward");
+	const directory = join(root, "data/source", "boundaries", "ward");
 	mkdirSync(directory, { recursive: true });
 	const metres = (east: number, north: number) => square(east, north, 1000);
 	writeFileSync(
@@ -274,7 +274,7 @@ test("rejects a stale compiled release before any request and reports the rebuil
 		),
 	);
 	const stale: string[] = [];
-	writeFileSync(join(root, "data", source.input), "not JSON");
+	writeFileSync(join(root, "data/source", source.input), "not JSON");
 	assert.throws(
 		() =>
 			new AreaGeometryCache(root, sources, 2, store, (release) =>
@@ -300,7 +300,7 @@ test("requires compiled metadata for every registered release before use", (t) =
 		),
 	);
 	sources.set("ward/2024-05-uk-bgc", source);
-	writeFileSync(join(root, "data", source.input), "not JSON");
+	writeFileSync(join(root, "data/source", source.input), "not JSON");
 	assert.throws(
 		() => new AreaGeometryCache(root, sources, 2, store),
 		/Cannot use compiled geometry for ward\/2024-05-uk-bgc.*data:build --only geometry-store/,
@@ -315,7 +315,7 @@ test("rejects invalid compiled metadata instead of reading the raw source", (t) 
 		Buffer.alloc(64),
 	);
 	writeFileSync(
-		join(root, "data", sources.get("ward/2025-05-uk-bgc")!.input),
+		join(root, "data/source", sources.get("ward/2025-05-uk-bgc")!.input),
 		"not JSON",
 	);
 	assert.throws(
@@ -348,7 +348,7 @@ test("rechecks missing and stale stores after eviction without a source fallback
 		cache.get("ward", "2024-05-uk-bgc", "E05000001"),
 		expected,
 	);
-	writeFileSync(join(root, "data", source.input), "not JSON");
+	writeFileSync(join(root, "data/source", source.input), "not JSON");
 	rmSync(first);
 	assert.throws(
 		() => cache.get("ward", "2025-05-uk-bgc", "E05000001"),
@@ -402,7 +402,7 @@ test("the API factory validates the store and serves without raw boundary files"
 			),
 		),
 	);
-	rmSync(join(root, "data", source.input));
+	rmSync(join(root, "data/source", source.input));
 	const cache = createAreaGeometryCache(apiRoot);
 	assert.deepEqual(cache.stats().loadedReleases, []);
 	assert.ok(cache.get("ward", "2025-05-uk-bgc", "E05000001"));

@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const repositoryRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const dataDirectory = join(
 	repositoryRoot,
-	"data",
+	"data/source",
 	"transport",
 	"os-open-roads",
 );
@@ -14,7 +14,7 @@ const mbtilesFile = join(dataDirectory, "oproad_gb.mbtiles");
 
 if (!existsSync(mbtilesFile)) {
 	console.error(
-		"OS Open Roads MBTiles not found at data/transport/os-open-roads/oproad_gb.mbtiles. Download and extract the OS Open Roads Vector Tiles archive first.",
+		"OS Open Roads MBTiles not found at data/source/transport/os-open-roads/oproad_gb.mbtiles. Download and extract the OS Open Roads Vector Tiles archive first.",
 	);
 	process.exit(1);
 }

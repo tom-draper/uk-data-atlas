@@ -18,7 +18,9 @@ import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 const localBoundaryPath = (path: string) => {
 	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
 	const served = join(process.cwd(), "public", "data", relative);
-	return existsSync(served) ? served : join(process.cwd(), "data", relative);
+	return existsSync(served)
+		? served
+		: join(process.cwd(), "data/source", relative);
 };
 
 const catalogued = BOUNDARY_TYPES.flatMap((type) =>
@@ -32,12 +34,17 @@ const toCamelCase = (value: string) =>
 	value.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 
 const sourceBoundaryReleases = readdirSync(
-	join(process.cwd(), "data", "boundaries"),
+	join(process.cwd(), "data/source", "boundaries"),
 	{ withFileTypes: true },
 ).flatMap((geography) =>
 	geography.isDirectory()
 		? readdirSync(
-				join(process.cwd(), "data", "boundaries", geography.name),
+				join(
+					process.cwd(),
+					"data/source",
+					"boundaries",
+					geography.name,
+				),
 				{ withFileTypes: true },
 			)
 				.filter((release) => release.isDirectory())

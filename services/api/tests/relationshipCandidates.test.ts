@@ -82,7 +82,7 @@ const writeSource = (
 ) => {
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		geography,
 		boundaryRelease,
@@ -474,7 +474,13 @@ test("skips a release whose declared source file is missing, and is deterministi
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		// meta.json declares a source, but the file itself was never written.
-		const directory = join(root, "data", "boundaries", "ward", "2025");
+		const directory = join(
+			root,
+			"data/source",
+			"boundaries",
+			"ward",
+			"2025",
+		);
 		mkdirSync(directory, { recursive: true });
 		writeFileSync(
 			join(directory, "meta.json"),

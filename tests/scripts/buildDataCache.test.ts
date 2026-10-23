@@ -45,7 +45,7 @@ function fixture() {
 		mkdirSync(dirname(join(root, path)), { recursive: true });
 		writeFileSync(join(root, path), content);
 	};
-	write("data/source.csv", "a,b\n");
+	write("data/source/input.csv", "a,b\n");
 	write("code.ts", "export {};\n");
 	const outputs: Record<string, string> = {
 		compile: "data/build/datasets/compiled.json",
@@ -111,12 +111,12 @@ test("--only builds prerequisites on a clean run and reuses their cached outputs
 test("changed data or code reruns every cached stage", () => {
 	const { runs, write } = fixture();
 	runs();
-	write("data/source.csv", "a,b,c\n");
+	write("data/source/input.csv", "a,b,c\n");
 	assert.deepEqual(runs(), ["download", "compile", "summary", "report"]);
 	write("code.ts", "export const changed = true;\n");
 	assert.deepEqual(runs(), ["download", "compile", "summary", "report"]);
 	// The download marker records the release, not the data itself.
-	write("data/.source-release.json", "{}\n");
+	write("data/source/.source-release.json", "{}\n");
 	assert.deepEqual(runs(), ["download"]);
 });
 

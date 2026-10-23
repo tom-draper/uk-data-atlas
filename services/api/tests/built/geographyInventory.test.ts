@@ -131,7 +131,7 @@ test("discovers new source metadata without a hard-coded dataset list", () => {
 	const temporaryRoot = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const sourceDirectory = join(
 		temporaryRoot,
-		"data",
+		"data/source",
 		"environment",
 		"rainfall",
 	);

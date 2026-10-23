@@ -1,6 +1,6 @@
 /**
- * Finds every dataset in `data/` by looking for `meta.json`. A dataset's id is
- * its folder path relative to `data/`, so dropping a well-formed folder in is
+ * Finds every dataset in `data/source/` by looking for `meta.json`. A dataset's id is
+ * its folder path relative to `data/source/`, so dropping a well-formed folder in is
  * all that is needed for the build to see it.
  */
 import { readdir, readFile } from "fs/promises";
@@ -15,7 +15,7 @@ export interface DiscoveredDataset {
 	meta: DatasetMeta;
 }
 
-const SKIP_DIRECTORIES = new Set(["node_modules", "build"]);
+const SKIP_DIRECTORIES = new Set(["node_modules"]);
 
 async function* walk(dir: string): AsyncGenerator<string> {
 	const entries = await readdir(dir, { withFileTypes: true });

@@ -60,7 +60,7 @@ const readPopulation = (
 		valueColumn,
 	}: PopulationOverlapCrosswalkAdapter["population"],
 ) => {
-	const content = readFileSync(join(repositoryRoot, "data", input));
+	const content = readFileSync(join(repositoryRoot, "data/source", input));
 	const [header, ...lines] = content
 		.toString("utf8")
 		.replace(/^\uFEFF/, "")

@@ -555,7 +555,7 @@ const compilePropertyCrosswalk = (
 	geometrySources: GeometrySourceLookup | undefined,
 	geometryCache?: AreaGeometryCache,
 ): PropertyCrosswalkArtifact => {
-	const inputPath = join(repositoryRoot, "data", adapter.input);
+	const inputPath = join(repositoryRoot, "data/source", adapter.input);
 	const input = readFileSync(inputPath, "utf8");
 	const source = JSON.parse(input) as FeatureCollection;
 	if (

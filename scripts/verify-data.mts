@@ -45,7 +45,7 @@ async function verifyRawInputs(path: string): Promise<void> {
 			await verifyRawInputs(join(path, name));
 	}
 }
-await verifyRawInputs(join(root, "data"));
+await verifyRawInputs(join(root, "data/source"));
 
 const expectedFingerprint = manifest.precompiler?.fingerprint;
 if (!expectedFingerprint) fail("Precompiled data has no compiler fingerprint.");

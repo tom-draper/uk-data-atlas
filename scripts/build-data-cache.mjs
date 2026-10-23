@@ -90,7 +90,7 @@ function hashStamps(stamps) {
  * skipped when nothing it reads has changed and what it wrote is still there.
  *
  * A stage's key hashes its command, the repo's code, the size and mtime of
- * every file in data/, the relevant environment, and its dependencies'
+ * every file in data/source/, the relevant environment, and its dependencies'
  * outputs. Its outputs are the files under OUTPUT_ROOTS it created or
  * changed, plus any in the folders it declares as `outputs`, recorded by size
  * and mtime. A file belongs to the last stage that wrote it.
@@ -112,7 +112,7 @@ export function createStageCache({
 		"stages.json",
 	),
 	outputRoots = OUTPUT_ROOTS,
-	dataDirectory = "data",
+	dataDirectory = "data/source",
 	codeFiles = () => gitCodeFiles(root),
 	environment = process.env,
 } = {}) {

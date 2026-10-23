@@ -47,7 +47,7 @@ export const proposeExtentContinuity = (repositoryRoot: string) => {
 		const input = geometrySources.get(identity);
 		if (!input) return false;
 		if (!holdsGeometry.has(identity)) {
-			const path = join(repositoryRoot, "data", input);
+			const path = join(repositoryRoot, "data/source", input);
 			const features = path.toLowerCase().endsWith(".shp")
 				? readShapefileFeatures(path)
 				: (

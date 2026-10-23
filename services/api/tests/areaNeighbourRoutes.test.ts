@@ -21,7 +21,7 @@ test("lists an area's neighbours with the border each shares", () => {
 	try {
 		const directory = join(
 			root,
-			"data",
+			"data/source",
 			"boundaries",
 			"ward",
 			"2025-01-en-ward",

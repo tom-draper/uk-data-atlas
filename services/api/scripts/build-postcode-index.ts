@@ -19,7 +19,7 @@ import { writeStoredText } from "../src/storedText";
 
 /**
  * Compile the newest filtered ONS Postcode Directory under
- * data/postcodes/onspd into services/api/public/postcode-index.json and one shard per
+ * data/source/postcodes/onspd into services/api/public/postcode-index.json and one shard per
  * postcode district under services/api/public/postcodes. The stored source excludes
  * Northern Ireland before it is included in the public data release.
  */
@@ -35,7 +35,7 @@ const COLUMNS = [
 ] as const;
 
 const latestDirectory = (repositoryRoot: string) => {
-	const root = join(repositoryRoot, "data", "postcodes", "onspd");
+	const root = join(repositoryRoot, "data/source", "postcodes", "onspd");
 	const editions = existsSync(root)
 		? readdirSync(root)
 				.filter((name) => existsSync(join(root, name, "meta.json")))

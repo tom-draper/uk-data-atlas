@@ -84,9 +84,11 @@ const geometrySources = new Map<
 	{ input: string; crs: string; codeProperty: string }
 >();
 for (const [key, features] of Object.entries(layers)) {
-	mkdirSync(join(root, "data", "boundaries", key), { recursive: true });
+	mkdirSync(join(root, "data/source", "boundaries", key), {
+		recursive: true,
+	});
 	writeFileSync(
-		join(root, "data", "boundaries", key, "areas.geojson"),
+		join(root, "data/source", "boundaries", key, "areas.geojson"),
 		JSON.stringify({
 			type: "FeatureCollection",
 			features: features.map(({ code, geometry }) => ({

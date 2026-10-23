@@ -22,7 +22,7 @@ const writeBoundarySource = (
 ) => {
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"boundaries",
 		geography,
 		boundaryRelease,
@@ -38,7 +38,7 @@ const writeBoundarySource = (
 /** The hash the registry should record for a source file it reads. */
 const hashOf = (root: string, input: string) =>
 	`sha256:${createHash("sha256")
-		.update(readFileSync(join(root, "data", input)))
+		.update(readFileSync(join(root, "data/source", input)))
 		.digest("hex")}`;
 
 const artifact = (
@@ -158,7 +158,13 @@ test("records the grid corrections a release declares", () => {
 			crs: { type: "name", properties: { name: "EPSG:27700" } },
 			features: [],
 		});
-		const directory = join(root, "data", "boundaries", "ward", "2025");
+		const directory = join(
+			root,
+			"data/source",
+			"boundaries",
+			"ward",
+			"2025",
+		);
 		writeFileSync(
 			join(directory, "meta.json"),
 			JSON.stringify({

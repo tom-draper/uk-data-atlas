@@ -326,7 +326,7 @@ that, so it stays as is.
 
 Decided 2026-09-27: rather than reverse the build so the gazetteer consumes the
 API, official places take their members from the ONS lookups already in
-`data/lookups`, and every named location says what it is. The build order is
+`data/source/lookups`, and every named location says what it is. The build order is
 unchanged; the API reads the result from the core as before.
 
 - `lib/data/gazetteer/places.ts` lists the official places: the 9 English
@@ -368,7 +368,7 @@ LSOAs, which cover England and Wales only, so:
   residents took most of its weight.
 
 The building blocks now cover the UK, each nation weighted by the best measure
-in `data/`: Census 2021 usual residents by 2021 LSOA (England and Wales), SIMD
+in `data/source/`: Census 2021 usual residents by 2021 LSOA (England and Wales), SIMD
 2020 total population by 2011 data zone (Scotland), and area by 2011 SOA
 (Northern Ireland, which has no small-area population source here yet; adding
 one is a data change, not a code one). The file records this in `weighting`.

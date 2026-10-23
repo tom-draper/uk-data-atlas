@@ -14,7 +14,7 @@ const OFFSET = parseGridOffset(
 		readFileSync(
 			join(
 				process.cwd(),
-				"data",
+				"data/source",
 				"boundaries",
 				"northern-ireland-offset.json",
 			),

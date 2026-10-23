@@ -31,7 +31,7 @@ const writeCollection = (
 	path: string,
 	features: Array<[string, Polygon]>,
 ) => {
-	const file = join(root, "data", path);
+	const file = join(root, "data/source", path);
 	mkdirSync(join(file, ".."), { recursive: true });
 	writeFileSync(
 		file,
@@ -60,7 +60,10 @@ const writeFixture = (root: string, counts = "B1,900\nB2,100\nB3,200\n") => {
 		["B2", box(1.5 * D, 2 * D)],
 		["B3", box(0.5 * D, 1.5 * D)],
 	]);
-	writeFileSync(join(root, "data", "people.csv"), `code,people\n${counts}`);
+	writeFileSync(
+		join(root, "data/source", "people.csv"),
+		`code,people\n${counts}`,
+	);
 };
 
 const geometrySources: GeometrySourceLookup = new Map([

@@ -26,7 +26,7 @@ const repository = (
 	const root = mkdtempSync(join(tmpdir(), "census-small-area-"));
 	const directory = join(
 		root,
-		"data",
+		"data/source",
 		"demographics",
 		"census-2021-small-area",
 		table.table,

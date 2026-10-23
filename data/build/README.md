@@ -1,12 +1,11 @@
 # data/build/
 
-Data compiled once from the raw sources in `data/`, for both the website and the
-API. Raw-source downloads exclude this folder, and `data:download --replace`
-preserves it. Everything here is generated, and only this README is tracked. Rebuild it
+Data compiled once from the raw sources in `data/source/`, for both the website and the
+API. Raw-source downloads restore `data/source/` and leave this folder intact. Everything here is generated, and only this README is tracked. Rebuild it
 with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
 
 ```text
-data/                 raw sources, restored from the pinned data release
+data/source/          raw sources, restored from the pinned data release
   │
   ▼  pnpm data:build --only datasets
 data/build/
@@ -28,16 +27,16 @@ JSON from the Next.js server and never opens SQLite or fetches from the API.
 `dataset-manifest.json` is `{ "version": 1, "datasets": [...] }`, with one entry
 per dataset in `CATALOGUE_DATASET_DEFINITIONS`, in catalogue order.
 
-| Field         | Meaning                                                                                                              |
-| ------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `type`        | The dataset's id in the catalogue, e.g. `claimantCount`.                                                             |
-| `output`      | Its payload file, `<output>.json` beside the manifest.                                                               |
-| `source`      | Where the data comes from and its licence, from the definition.                                                      |
-| `contract`    | The ingestion contract the source was checked against.                                                               |
-| `inputs[]`    | Each raw file read: `kind`, `path` under `data/`, `bytes`, `sha256`, and the file's size and mtime when it was read. |
-| `summary`     | `datasetCount`, `dataRecordCount` and `boundaryYears`, from validation.                                              |
-| `compiled`    | The payload's `bytes` and `sha256`, and its mtime when written.                                                      |
-| `fingerprint` | A hash of the code that compiled it.                                                                                 |
+| Field         | Meaning                                                                                                                     |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `type`        | The dataset's id in the catalogue, e.g. `claimantCount`.                                                                    |
+| `output`      | Its payload file, `<output>.json` beside the manifest.                                                                      |
+| `source`      | Where the data comes from and its licence, from the definition.                                                             |
+| `contract`    | The ingestion contract the source was checked against.                                                                      |
+| `inputs[]`    | Each raw file read: `kind`, `path` under `data/source/`, `bytes`, `sha256`, and the file's size and mtime when it was read. |
+| `summary`     | `datasetCount`, `dataRecordCount` and `boundaryYears`, from validation.                                                     |
+| `compiled`    | The payload's `bytes` and `sha256`, and its mtime when written.                                                             |
+| `fingerprint` | A hash of the code that compiled it.                                                                                        |
 
 A payload is the dataset's compiled records, keyed by dataset id, with dense
 number maps stored as arrays (`@uk-data-atlas/catalogue/compactPayload`).

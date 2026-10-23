@@ -193,7 +193,12 @@ export const fetchScottishLookup = async (
 			},
 		};
 	});
-	const directory = join(repositoryRoot, "data", "lookups", source.directory);
+	const directory = join(
+		repositoryRoot,
+		"data/source",
+		"lookups",
+		source.directory,
+	);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(
 		join(directory, source.file),

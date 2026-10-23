@@ -508,7 +508,11 @@ export class AreaGeometryCache {
 		boundaryRelease: string,
 	): CachedRelease {
 		const source = this.source(geography, boundaryRelease);
-		const inputPath = join(this.repositoryRoot, "data", source.input);
+		const inputPath = join(
+			this.repositoryRoot,
+			"data/source",
+			source.input,
+		);
 		const data: GeoJsonFeatures = inputPath.toLowerCase().endsWith(".shp")
 			? {
 					type: "FeatureCollection",
