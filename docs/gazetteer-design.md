@@ -62,13 +62,13 @@ shared dataset package. The API builds the lookup artifacts separately, and
 `pnpm atlas-data:copy` copies them to `public/data/atlas-lookups/`, where the
 website serves them. Sizes as of 2026-09-27.
 
-| Artifact                         | Built by                 | Loaded                                  | Size (raw / gz) |
-| -------------------------------- | ------------------------ | --------------------------------------- | --------------- |
-| `gazetteer.core.json`            | `precompile-data.mts`    | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
-| `constituency-lad-overlaps.json` | `build-atlas-lookups.ts` | on demand, constituency location filter | 305 KB / 44 KB  |
-| `gazetteer.matchindex.json`      | `precompile-data.mts`    | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
-| `boundary-mappings.json`         | `build-atlas-lookups.ts` | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
-| `lsoa-lad-mappings-<year>.json`  | `build-atlas-lookups.ts` | on demand, LSOA location filter         | small           |
+| Artifact                         | Built by                   | Loaded                                  | Size (raw / gz) |
+| -------------------------------- | -------------------------- | --------------------------------------- | --------------- |
+| `gazetteer.core.json`            | `compile-website-data.mts` | **bundled** (`gazetteer/static.ts`)     | unknown / 53 KB |
+| `constituency-lad-overlaps.json` | `build-atlas-lookups.ts`   | on demand, constituency location filter | 305 KB / 44 KB  |
+| `gazetteer.matchindex.json`      | `compile-website-data.mts` | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
+| `boundary-mappings.json`         | `build-atlas-lookups.ts`   | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
+| `lsoa-lad-mappings-<year>.json`  | `build-atlas-lookups.ts`   | on demand, LSOA location filter         | small           |
 
 **Core contents.** 361 LADs (2025) plus 45 superseded 2016 and 2 2024 LADs that
 named locations still reference, 650 constituencies (2024), the 9 English
@@ -276,7 +276,7 @@ it covers.
 
 The match index used to be built by a standalone script and went stale that
 way: 22 catalogue releases (LSOA 2021, LAD 2026 among them) were unmatchable
-until 2026-09-27. It is now built by `precompile-data.mts`
+until 2026-09-27. It is now built by `compile-website-data.mts`
 (`lib/data/gazetteer/matchIndex.ts`), straight after the boundary mappings it
 takes ward parents from.
 
