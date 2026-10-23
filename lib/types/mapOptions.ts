@@ -53,6 +53,18 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
+export interface ImdOptions extends ColorRangeOption {
+	measure:
+		| "imdScore"
+		| "incomeScore"
+		| "employmentScore"
+		| "educationScore"
+		| "healthScore"
+		| "crimeScore"
+		| "housingScore"
+		| "livingEnvironmentScore";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -75,6 +87,7 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| "imd"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -92,6 +105,7 @@ export type ChartMapOptions = Omit<
 	| "homelessness"
 	| "schoolPerformance"
 > & {
+	imd: ImdOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
