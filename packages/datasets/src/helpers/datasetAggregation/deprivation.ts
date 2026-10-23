@@ -90,13 +90,40 @@ export function summariseDeprivationBy<TRecord, TSummary>(
 }
 
 /** The IMD summary of a group of LSOAs. */
-export const summariseIMD = (records: Iterable<IMDLSOAData>) =>
-	summariseScoredDeprivation(
-		records,
+export const summariseIMD = (records: Iterable<IMDLSOAData>) => {
+	const group = [...records];
+	const summary = summariseScoredDeprivation(
+		group,
 		isMostDeprivedIMD,
 		(record) => record.imdScore,
 		(record) => record.population,
 	);
+	if (!summary) return null;
+	const domainScores = Object.fromEntries(
+		(
+			[
+				"incomeScore",
+				"employmentScore",
+				"educationScore",
+				"healthScore",
+				"crimeScore",
+				"housingScore",
+				"livingEnvironmentScore",
+			] as const
+		).map((key) => {
+			let weighted = 0,
+				population = 0;
+			for (const record of group) {
+				if (Number.isFinite(record[key]) && record.population > 0) {
+					weighted += record[key] * record.population;
+					population += record.population;
+				}
+			}
+			return [key, population > 0 ? weighted / population : null];
+		}),
+	);
+	return { ...summary, domainScores };
+};
 
 /** The WIMD summary of a group of LSOAs. */
 export const summariseWIMD = (records: Iterable<WIMDLSOAData>) =>

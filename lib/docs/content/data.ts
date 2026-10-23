@@ -160,7 +160,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Deprivation",
 		topic: "housing",
 		datasets: ["imd", "wimd", "simd", "nimdm"],
-		intro: "The official indices of deprivation for all four UK nations, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders. The separate fuel poverty map for England switches between the household rate and the number of affected households. Area summaries sum household counts and recompute the rate.",
+		intro: "The official indices of deprivation for all four UK nations, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders. The English IMD legend switches between the overall index and its seven domain scores. Income and employment scores are rates; health and crime scores can be negative. Each domain uses its own scale. Area summaries show population-weighted scores, and domain views do not imply domain deciles. The separate fuel poverty map for England switches between the household rate and the number of affected households. Area summaries sum household counts and recompute the rate.",
 	},
 	{
 		slug: "general-elections",

@@ -91,6 +91,18 @@ export interface FuelPovertyOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
 
+export interface ImdOptions extends ColorRangeOption {
+	measure:
+		| "imdScore"
+		| "incomeScore"
+		| "employmentScore"
+		| "educationScore"
+		| "healthScore"
+		| "crimeScore"
+		| "housingScore"
+		| "livingEnvironmentScore";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -116,6 +128,7 @@ export type ChartMapOptions = Omit<
 	| "regionalGdpItl3"
 	| "mobileCoverage"
 	| "fuelPoverty"
+	| "imd"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -136,6 +149,7 @@ export type ChartMapOptions = Omit<
 	regionalGdpItl3: RegionalGdpItl3Options;
 	mobileCoverage: MobileCoverageOptions;
 	fuelPoverty: FuelPovertyOptions;
+	imd: ImdOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
