@@ -5,13 +5,14 @@ import {
 	writeFile,
 	rm,
 	stat,
+	rename,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, onTestFinished, test } from "vitest";
-import { copyBoundaryTiles } from "@/scripts/copy-boundary-tiles";
+import { linkBoundaryTiles } from "@/scripts/link-boundary-tiles";
 
-test("publishes exact archive bytes and removes obsolete tiles while retaining topology", async () => {
+test("shares archive storage, repairs old copies and removes obsolete tiles while retaining topology", async () => {
 	const root = await mkdtemp(join(tmpdir(), "boundary-publish-"));
 	onTestFinished(() => rm(root, { recursive: true, force: true }));
 	const source = join(root, "data/build/boundaries");
@@ -34,8 +35,31 @@ test("publishes exact archive bytes and removes obsolete tiles while retaining t
 	await writeFile(join(source, "ward/current/boundaries.pmtiles"), bytes);
 	await writeFile(join(target, "ward/old/boundaries.pmtiles"), "old");
 	await writeFile(join(target, "ward/old/boundaries.json"), "topology");
-	await copyBoundaryTiles(root);
-	await copyBoundaryTiles(root);
+	await mkdir(join(target, "ward/current"), { recursive: true });
+	await writeFile(
+		join(target, "ward/current/boundaries.pmtiles"),
+		"old copy",
+	);
+	await linkBoundaryTiles(root);
+	await linkBoundaryTiles(root);
+	const original = await stat(
+		join(source, "ward/current/boundaries.pmtiles"),
+	);
+	const published = await stat(
+		join(target, "ward/current/boundaries.pmtiles"),
+	);
+	expect(published.dev).toBe(original.dev);
+	expect(published.ino).toBe(original.ino);
+	expect(original.nlink).toBe(2);
+	await writeFile(join(source, "ward/current/replacement.pmtiles"), bytes);
+	await rename(
+		join(source, "ward/current/replacement.pmtiles"),
+		join(source, "ward/current/boundaries.pmtiles"),
+	);
+	await linkBoundaryTiles(root);
+	expect(
+		(await stat(join(target, "ward/current/boundaries.pmtiles"))).ino,
+	).toBe((await stat(join(source, "ward/current/boundaries.pmtiles"))).ino);
 	expect(
 		await readFile(join(target, "ward/current/boundaries.pmtiles")),
 	).toEqual(bytes);

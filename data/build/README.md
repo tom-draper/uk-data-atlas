@@ -287,7 +287,9 @@ to compare every payload with its compiler intermediate byte for byte.
 
 Boundary tiles are built in `data/build/boundaries/` for the website and
 `data/build/map-resources/` for the API, alongside its feature downloads and
-resumable build state. The API reads these assets directly. The website copies
-its archives and `tiles.json` to `public/data/boundaries/` during data and app
-builds, preserving static URLs. Publish API map assets from
+resumable build state. The API reads these assets directly. The website hard-links
+its archives into `public/data/boundaries/` during data and app builds, preserving
+static URLs with one stored copy. Both directories must share a filesystem.
+Only the small `tiles.json` manifest is copied. See `deploy/README.md` for
+transferring a built tree without duplicating the archives. Publish API map assets from
 `data/build/map-resources/`, keeping the `map-resources/` URL prefix.

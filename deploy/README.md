@@ -173,5 +173,10 @@ stop the API before `pnpm data:build --target website`.
 API PMTiles and map feature downloads live in `data/build/map-resources/`.
 Include this directory alongside `data/build/atlas.sqlite` in API deployments.
 For an asset CDN, upload it under the `map-resources/` prefix. Website builds
-copy `data/build/boundaries/` archives into `public/data/boundaries/` for static
-serving. Source release publishing still packages only `data/source/`.
+hard-link `data/build/boundaries/` archives into `public/data/boundaries/` for static
+serving. Both paths share one file on disk. These directories must be on the same
+filesystem; the build fails rather than falling back to copying archives.
+Deploy from the built checkout. When transferring a built tree, preserve hard links
+with `rsync -aH` or recreate them with
+`node --import tsx scripts/link-boundary-tiles.ts` on the destination before starting
+Next.js. Re-run that command after replacing archives independently of an app build. Source release publishing still packages only `data/source/`.

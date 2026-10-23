@@ -1,10 +1,18 @@
-import { copyFile, mkdir, readFile, readdir, rm } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import {
+	copyFile,
+	link,
+	mkdir,
+	readFile,
+	readdir,
+	rename,
+	rm,
+} from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 
-/** Publish the website's built archives at their existing static URLs. */
-export async function copyBoundaryTiles(
-	root = resolve(import.meta.dirname, ".."),
+/** Publish static archive paths without duplicating their storage. */
+export async function linkBoundaryTiles(
+	root = resolve("."),
 	destination = join(root, "public/data"),
 ) {
 	const source = join(root, "data/build/boundaries");
@@ -19,7 +27,13 @@ export async function copyBoundaryTiles(
 			"boundaries.pmtiles",
 		);
 		await mkdir(dirname(target), { recursive: true });
-		await copyFile(join(source, release, "boundaries.pmtiles"), target);
+		const temporary = `${target}.${randomUUID()}.tmp`;
+		try {
+			await link(join(source, release, "boundaries.pmtiles"), temporary);
+			await rename(temporary, target);
+		} finally {
+			await rm(temporary, { force: true });
+		}
 	}
 	const boundaryDirectory = join(destination, "boundaries");
 	await mkdir(boundaryDirectory, { recursive: true });
@@ -43,7 +57,10 @@ export async function copyBoundaryTiles(
 
 if (
 	process.argv[1] &&
-	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+	resolve(process.argv[1]) === resolve("scripts/link-boundary-tiles.ts")
 ) {
-	await copyBoundaryTiles();
+	void linkBoundaryTiles().catch((error: unknown) => {
+		console.error(error);
+		process.exitCode = 1;
+	});
 }
