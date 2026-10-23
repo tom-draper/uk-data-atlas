@@ -14,6 +14,7 @@ export interface HousePriceOptions extends ColorRangeOption {
 }
 
 export interface IncomeOptions extends ColorRangeOption {
+	period: "annual" | "hourly";
 	measure: "median" | "mean";
 }
 
