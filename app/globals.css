@@ -27,17 +27,6 @@ body {
 	font-family: var(--font-ui);
 }
 
-.mapboxgl-popup-content {
-	pointer-events: none !important;
-	padding: 10px 10px 10px !important;
-	background: rgba(255, 255, 255, 0.8) !important;
-	backdrop-filter: blur(12px) !important;
-}
-
-.mapboxgl-popup-close-button {
-	display: none;
-}
-
 /* Point-detail popups share the liquid-glass treatment used by the atlas panes. */
 .maplibregl-popup.atlas-point-popup .maplibregl-popup-content {
 	padding: 0 !important;

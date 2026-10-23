@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Map as MapLibreMap } from "maplibre-gl";
-import { MAPLIBRE_CONFIG } from "@/lib/config/map";
+import { MAP_CONFIG } from "@/lib/config/map";
 import {
 	decodeOutline,
 	type BoundingBox,
@@ -51,10 +51,10 @@ export default function PlaceMap({
 			if (cancelled || !container.current) return;
 			map = new Map({
 				container: container.current,
-				style: MAPLIBRE_CONFIG.style,
+				style: MAP_CONFIG.style,
 				bounds: bbox,
 				fitBoundsOptions: { padding: 32 },
-				maxBounds: MAPLIBRE_CONFIG.maxBounds,
+				maxBounds: MAP_CONFIG.maxBounds,
 				attributionControl: { compact: true },
 				cooperativeGestures: true,
 			});

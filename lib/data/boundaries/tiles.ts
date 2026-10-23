@@ -100,10 +100,7 @@ export async function fetchMapBoundaries(
 	path: string,
 	filter: BoundaryGeometryFilter,
 ): Promise<BoundaryGeojson> {
-	const tiles =
-		process.env.NEXT_PUBLIC_MAP_PROVIDER === "mapbox"
-			? null
-			: selectBoundaryTiles(await fetchManifest(), filter.type, path);
+	const tiles = selectBoundaryTiles(await fetchManifest(), filter.type, path);
 	if (!tiles) return fetchBoundaryFile(path, filter);
 	const properties = await fetchBoundaryProperties(propertiesAsset(path));
 	const ids = featureIds([

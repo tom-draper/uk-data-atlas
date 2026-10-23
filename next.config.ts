@@ -1,20 +1,6 @@
 import type { NextConfig } from "next";
 import packageJson from "./package.json";
 
-// Pick the map renderer at build time. The value is inlined into the client
-// bundle, so the provider not chosen is never shipped (see
-// lib/hooks/useMapInitialization.ts).
-const mapProvider = process.env.NEXT_PUBLIC_MAP_PROVIDER || "maplibre";
-if (mapProvider !== "maplibre" && mapProvider !== "mapbox") {
-	throw new Error(
-		`NEXT_PUBLIC_MAP_PROVIDER must be "maplibre" or "mapbox", got "${mapProvider}"`,
-	);
-}
-if (mapProvider === "mapbox" && !process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
-	throw new Error(
-		"NEXT_PUBLIC_MAP_PROVIDER=mapbox needs NEXT_PUBLIC_MAPBOX_TOKEN",
-	);
-}
 const dataVersion =
 	process.env.VERCEL_GIT_COMMIT_SHA ?? `v${packageJson.version}`;
 
@@ -31,7 +17,6 @@ const nextConfig: NextConfig = {
 	env: {
 		NEXT_PUBLIC_DATA_VERSION: dataVersion,
 		NEXT_PUBLIC_DATA_BASE_URL: "",
-		NEXT_PUBLIC_MAP_PROVIDER: mapProvider,
 	},
 	async redirects() {
 		// The datasets page used to live at /sources.
