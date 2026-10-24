@@ -556,6 +556,16 @@ const CATALOG = {
 				asset: asset("lsoa", "2011-12-w-bgc"),
 			},
 			{
+				id: "2001-12-ew-bgc-v2",
+				year: 2001,
+				month: 12,
+				extent: "ew",
+				codeKey: "LSOA01CD",
+				nameKey: "LSOA01NM",
+				holdReason:
+					"The revised source is available in the API but has not been compiled into website map tiles.",
+			},
+			{
 				id: "2001-12-ew-bgc",
 				year: 2001,
 				month: 12,
@@ -744,6 +754,26 @@ const CATALOG = {
 				nameKey: "MSOA21NM",
 				asset: asset("msoa", "2021-12-ew-bgc-v3"),
 			},
+			{
+				id: "2011-12-ew-bgc-v3",
+				year: 2011,
+				month: 12,
+				extent: "ew",
+				codeKey: "MSOA11CD",
+				nameKey: "MSOA11NM",
+				holdReason:
+					"The historical source is available in the API but has not been compiled into website map tiles.",
+			},
+			{
+				id: "2001-12-ew-bgc-v2",
+				year: 2001,
+				month: 12,
+				extent: "ew",
+				codeKey: "MSOA01CD",
+				nameKey: "MSOA01NM",
+				holdReason:
+					"The historical source is available in the API but has not been compiled into website map tiles.",
+			},
 		],
 	},
 	communitySafetyPartnership: {
@@ -931,6 +961,16 @@ const CATALOG = {
 	},
 	seneddConstituency: {
 		releases: [
+			{
+				id: "2026-05-w-bgc",
+				year: 2026,
+				month: 5,
+				extent: "w",
+				codeKey: "SENC26CD",
+				nameKey: "SENC26NM",
+				holdReason:
+					"The new constituency source is available in the API but has not been compiled into website map tiles.",
+			},
 			{
 				id: "2022-12-w-bgc",
 				year: 2022,
