@@ -134,3 +134,9 @@ for (const { manifest, list, destination, required } of outputs) {
 	}
 }
 if (failed) process.exit(1);
+
+// Earlier compilers published full dataset copies and temporary files here.
+await rm(join(root, "public/data/precompiled"), {
+	recursive: true,
+	force: true,
+});

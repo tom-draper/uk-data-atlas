@@ -329,6 +329,7 @@ const websiteStages = [
 		"website-lookups",
 		["atlas-lookups", "atlas-pages"],
 		["--dir", "../..", "exec", "tsx", "scripts/copy-atlas-data.mts"],
+		{ cacheable: false },
 	),
 	stage(
 		"website-datasets",
@@ -349,7 +350,7 @@ const websiteStages = [
 		// It keeps unchanged files from its last run. The lookups and pages in
 		// public/data belong to website-lookups.
 		{
-			outputs: ["public/data/datasets", "public/data/precompiled"],
+			outputs: ["public/data/datasets"],
 			codeInputs: ["scripts"],
 		},
 	),
