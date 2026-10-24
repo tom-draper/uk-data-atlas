@@ -1,3 +1,4 @@
+import type { MapOptions } from "@/lib/types/mapOptions";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
@@ -17,4 +18,5 @@ export interface ChartComponentProps {
 	boundaryData: BoundaryData;
 	/** The declarative card, for charts rendered by the shared value card. */
 	card?: ValueCardConfig;
+	cardForOptions?(options: MapOptions): ValueCardConfig;
 }
