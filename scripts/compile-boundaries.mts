@@ -613,7 +613,13 @@ export async function compileBoundaryAssets(
 				outputPath,
 			);
 			const propertiesChanged = await shouldCompile(
-				[topologySourcePath],
+				[
+					topologySourcePath,
+					join(
+						ROOT,
+						"packages/datasets/src/data/boundaries/capabilities.ts",
+					),
+				],
 				propertiesPath,
 			);
 			if (!topologyChanged && !propertiesChanged) {
@@ -660,7 +666,15 @@ export async function compileBoundaryAssets(
 
 		if (
 			!(await shouldCompile([sourcePath, ...inputs], outputPath)) &&
-			(await exists(propertiesPath))
+			!(await shouldCompile(
+				[
+					join(
+						ROOT,
+						"packages/datasets/src/data/boundaries/capabilities.ts",
+					),
+				],
+				propertiesPath,
+			))
 		) {
 			logArtifact("boundary", label, [
 				"cached",

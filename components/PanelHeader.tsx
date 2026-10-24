@@ -66,6 +66,12 @@ export function panelHeaderDetails(
 		};
 	}
 
+	const fallback = {
+		title: selectedArea.name || selectedArea.code,
+		subtitle: "",
+		code: selectedArea.code,
+	};
+
 	switch (selectedArea.type) {
 		case "ward":
 			return {
@@ -137,6 +143,8 @@ export function panelHeaderDetails(
 				code: selectedArea.code,
 			};
 	}
+
+	return fallback;
 }
 
 export default function PanelHeader({

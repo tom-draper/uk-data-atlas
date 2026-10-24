@@ -10,6 +10,7 @@ export type BoundaryLocationScope =
 	| { kind: "direct-membership" }
 	| { kind: "parent-map"; mapping: "wardToLad" | "lsoaToLad" }
 	| { kind: "crosswalk"; crosswalk: "constituencyLad" }
+	| { kind: "itl-membership" }
 	| { kind: "bbox" };
 
 export type BoundaryCapability = {
@@ -70,9 +71,18 @@ export const BOUNDARY_CAPABILITIES = {
 	communitySafetyPartnership: COUNTRY_PREFIX_ONLY,
 	policeForceArea: COUNTRY_PREFIX_ONLY,
 	combinedAuthority: COUNTRY_PREFIX_ONLY,
-	itl1: COUNTRY_PREFIX_ONLY,
-	itl2: COUNTRY_PREFIX_ONLY,
-	itl3: COUNTRY_PREFIX_ONLY,
+	itl1: {
+		countryPrefixFilter: true,
+		locationScope: { kind: "itl-membership" },
+	},
+	itl2: {
+		countryPrefixFilter: true,
+		locationScope: { kind: "itl-membership" },
+	},
+	itl3: {
+		countryPrefixFilter: true,
+		locationScope: { kind: "itl-membership" },
+	},
 	majorTownAndCity: COUNTRY_PREFIX_ONLY,
 	scottishParliamentaryConstituency: COUNTRY_PREFIX_ONLY,
 	scottishParliamentaryRegion: COUNTRY_PREFIX_ONLY,
@@ -101,6 +111,7 @@ export const boundaryReadsFeatureExtent = (type: BoundaryType): boolean => {
 	const scope = BOUNDARY_CAPABILITIES[type].locationScope;
 	return (
 		scope.kind === "bbox" ||
+		scope.kind === "itl-membership" ||
 		scope.kind === "crosswalk" ||
 		(scope.kind === "parent-map" && scope.mapping === "lsoaToLad")
 	);
