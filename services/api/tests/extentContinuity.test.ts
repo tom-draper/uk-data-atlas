@@ -11,7 +11,7 @@ import {
 	readCrosswalkAdapters,
 	type ExtentContinuityCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
-import { compileCrosswalks } from "../src/crosswalkInventory";
+import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { createGeographyResolver } from "../src/geographyResolver";
 import {
 	compileRelationshipPaths,

@@ -11,7 +11,7 @@ import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
-import { compileCrosswalks } from "../src/crosswalkInventory";
+import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { measureContainment } from "../src/geometricContainment";
 
 // Squares near the equator, in degrees; D is about 1.1 km.

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { join } from "node:path";
 import test from "node:test";
 import { readCrosswalkAdapters } from "../src/crosswalkAdapters";
-import { compileCrosswalks } from "../src/crosswalkInventory";
+import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { readAreaLookup } from "../src/boundaryLoader";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 
