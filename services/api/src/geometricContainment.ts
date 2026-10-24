@@ -1,3 +1,4 @@
+import { CrosswalkSpatialIndex } from "./crosswalkSpatialIndex";
 import { sha256 } from "./contentHash";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
@@ -102,6 +103,12 @@ export const measureContainment = (
 	};
 	const children = release(from);
 	const parents = release(to);
+	const parentIndex = new CrosswalkSpatialIndex(
+		[...parents.geometries].map((value) => ({
+			value,
+			bounds: value[1].bounds,
+		})),
+	);
 	const clipper = new BoundedClipper(CLIP_TIMEOUT_MS);
 	const areas: ContainedArea[] = [];
 	let abandoned: ContainmentMeasurement["abandoned"];
@@ -137,7 +144,9 @@ export const measureContainment = (
 			};
 			let best: { code: string; areaM2: number } | undefined;
 			let failure: string | undefined;
-			for (const [parentCode, parent] of parents.geometries) {
+			for (const [parentCode, parent] of parentIndex.query(
+				child.bounds,
+			)) {
 				if (!boundsIntersect(child.bounds, parent.bounds)) continue;
 				const overlap = clip("intersection", parentCode);
 				if (overlap.status !== "clipped") {

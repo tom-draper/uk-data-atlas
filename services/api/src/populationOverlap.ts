@@ -1,3 +1,4 @@
+import { CrosswalkSpatialIndex } from "./crosswalkSpatialIndex";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MultiPolygon } from "polygon-clipping";
@@ -182,6 +183,12 @@ export const compilePopulationOverlapCrosswalk = (
 		);
 	}
 	const sourceCodes = [...keptTargets.keys()].sort();
+	const sourceIndex = new CrosswalkSpatialIndex(
+		sourceCodes.map((value) => ({
+			value,
+			bounds: sources.geometries.get(value)!.bounds,
+		})),
+	);
 	const clipper = new BoundedClipper(CLIP_TIMEOUT_MS);
 	for (const code of sourceCodes)
 		clipper.register(
@@ -240,7 +247,7 @@ export const compilePopulationOverlapCrosswalk = (
 			const blockGeometry = areaMultiPolygon(block);
 			let placed = 0;
 			let failure: string | undefined;
-			for (const sourceCode of sourceCodes) {
+			for (const sourceCode of sourceIndex.query(block.bounds)) {
 				const source = sources.geometries.get(sourceCode)!;
 				if (!boundsIntersect(block.bounds, source.bounds)) continue;
 				const inSource = intersectionAreaM2(
