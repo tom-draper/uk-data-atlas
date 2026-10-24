@@ -160,7 +160,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Deprivation",
 		topic: "housing",
 		datasets: ["imd", "wimd", "simd", "nimdm"],
-		intro: "The official indices of deprivation for all four UK nations, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders.",
+		intro: "The official indices of deprivation for all four UK nations, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders. The separate fuel poverty map for England switches between the household rate and the number of affected households. Area summaries sum household counts and recompute the rate.",
 	},
 	{
 		slug: "general-elections",
