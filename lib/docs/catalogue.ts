@@ -249,9 +249,7 @@ function isDocsCatalogueSnapshot(
 async function readSnapshot(): Promise<DocsCatalogueSnapshot> {
 	const snapshot = await readAtlasPage<unknown>("docs-catalogue");
 	if (!isDocsCatalogueSnapshot(snapshot)) {
-		throw new Error(
-			`Invalid docs catalogue snapshot in public/data/atlas-pages`,
-		);
+		throw new Error(`Invalid docs catalogue snapshot in atlas.sqlite`);
 	}
 	return snapshot;
 }

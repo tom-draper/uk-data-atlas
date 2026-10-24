@@ -1,8 +1,7 @@
 import { readAtlasPayload } from "@/shared/atlasSqlite";
-import { readFileSync } from "fs";
 import { describe, expect, it } from "vitest";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
-import { atlasLookupPath } from "@/scripts/atlas-lookups";
+import { readAtlasLookup } from "@/scripts/atlas-lookups";
 
 const read = (file: string) =>
 	JSON.parse(
@@ -35,12 +34,9 @@ describe("LSOA datasets", () => {
 				);
 				if (codes.length === 0) continue;
 				const { lsoaToLad } = JSON.parse(
-					readFileSync(
-						atlasLookupPath(
-							process.cwd(),
-							`lsoa-lad-mappings-${edition.boundaryYear}.json`,
-						),
-						"utf8",
+					readAtlasLookup(
+						process.cwd(),
+						`lsoa-lad-mappings-${edition.boundaryYear}.json`,
 					),
 				) as { lsoaToLad: Record<string, string> };
 				const missing = codes.filter((code) => !(code in lsoaToLad));

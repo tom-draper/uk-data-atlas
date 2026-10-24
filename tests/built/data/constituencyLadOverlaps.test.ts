@@ -7,13 +7,10 @@ import {
 } from "@/lib/data/boundaries/constituencyLadOverlaps";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import { gazetteer } from "@/lib/data/gazetteer/static";
-import { atlasLookupPath } from "@/scripts/atlas-lookups";
+import { readAtlasLookup } from "@/scripts/atlas-lookups";
 
 const overlaps = JSON.parse(
-	readFileSync(
-		atlasLookupPath(process.cwd(), "constituency-lad-overlaps.json"),
-		"utf8",
-	),
+	readAtlasLookup(process.cwd(), "constituency-lad-overlaps.json"),
 ) as ConstituencyLadOverlaps;
 
 describe("constituency-to-LAD overlaps", () => {

@@ -270,6 +270,7 @@ const apiStages = [
 		"atlas-release-initial",
 		"documents",
 		"atlas-lookups",
+		"website-lookups",
 	]),
 	// Place pages read areas, crosswalks, geometry and named locations; the
 	// docs catalogue reads the API's catalogue and map resource manifests.
@@ -288,7 +289,7 @@ const apiStages = [
 	]),
 ];
 
-// The website's own data: it copies the API's lookups and pages from disk,
+// The website's own data: it imports the API's lookups and pages into SQLite,
 // and the compiled datasets, then builds its boundaries and chunks against
 // them. The API reads none of it.
 const websiteStages = [
@@ -326,7 +327,8 @@ const websiteStages = [
 	stage(
 		"website-lookups",
 		["atlas-lookups", "atlas-pages"],
-		["--dir", "../..", "exec", "tsx", "scripts/copy-atlas-data.mts"],
+		["--dir", "../..", "exec", "tsx", "scripts/build-website-assets.ts"],
+		{ requiredOutputs: ["data/build/atlas.sqlite"] },
 	),
 	stage(
 		"website-datasets",
@@ -347,7 +349,7 @@ const websiteStages = [
 		// It keeps unchanged files from its last run. The lookups and pages in
 		// public/data belong to website-lookups.
 		{
-			outputs: ["public/data/datasets", "public/data/precompiled"],
+			outputs: ["public/data/datasets"],
 			codeInputs: ["scripts"],
 		},
 	),

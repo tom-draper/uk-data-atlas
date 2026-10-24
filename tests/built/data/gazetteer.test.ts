@@ -3,7 +3,8 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "@/lib/data/gazetteer/types";
-import { fetchConstituencyLadOverlaps } from "@/lib/data/boundaries/constituencyLadOverlaps";
+import { readAtlasLookup } from "@/scripts/atlas-lookups";
+import type { ConstituencyLadOverlaps } from "@/lib/data/boundaries/constituencyLadOverlaps";
 import { LOCATIONS } from "@/lib/data/locations";
 import { OFFICIAL_PLACES } from "@/lib/data/gazetteer/places";
 
@@ -11,9 +12,11 @@ const PRECOMPILED = join(process.cwd(), "public", "data", "datasets");
 const core = JSON.parse(
 	readFileSync(join(PRECOMPILED, "gazetteer.core.json"), "utf8"),
 ) as GazetteerCore;
-const crosswalk = (await fetchConstituencyLadOverlaps()).releases[
-	"2024-07-uk-bgc"
-];
+const overlaps: ConstituencyLadOverlaps = JSON.parse(
+	readAtlasLookup(process.cwd(), "constituency-lad-overlaps.json"),
+);
+const crosswalk = overlaps.releases["2024-07-uk-bgc"];
+
 expect(Object.keys(crosswalk)).toHaveLength(650);
 
 const g = new Gazetteer(core, {

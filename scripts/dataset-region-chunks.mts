@@ -7,7 +7,7 @@ import {
 	lsoaLadMappingsFile,
 	type PrecompiledBoundaryMappings,
 } from "@uk-data-atlas/geography";
-import { atlasLookupPath } from "./atlas-lookups";
+import { readAtlasLookup } from "./atlas-lookups";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import { getProp } from "../lib/data/boundaries/properties";
 import {
@@ -118,8 +118,8 @@ const regionForRecord = (
  * year, so the chunk a record is placed in agrees with the filter.
  */
 const readLsoaToLad = async (root: string, boundaryYear: number) => {
-	const path = atlasLookupPath(root, lsoaLadMappingsFile(boundaryYear));
-	const parsed = JSON.parse(await readFile(path, "utf8")) as {
+	const path = lsoaLadMappingsFile(boundaryYear);
+	const parsed = JSON.parse(readAtlasLookup(root, path)) as {
 		lsoaToLad?: Record<string, string>;
 	};
 	if (!parsed.lsoaToLad) throw new Error(`${path} holds no lsoaToLad lookup`);

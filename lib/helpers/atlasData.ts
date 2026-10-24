@@ -1,11 +1,6 @@
 import { withCDN } from "./cdn";
 
-/**
- * The containment and lineage lookups, place profiles and docs catalogue are
- * compiled by the API's build. `pnpm data:build --only website-lookups` copies them from its
- * output on disk into public/data, so the website serves and reads its own
- * copy and never needs a running API.
- */
+/** Cacheable browser URLs backed by the shared compiled SQLite database. */
 export const ATLAS_LOOKUPS_PATH = "/data/atlas-lookups";
 export const ATLAS_PAGES_PATH = "/data/atlas-pages";
 

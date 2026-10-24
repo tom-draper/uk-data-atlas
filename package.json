@@ -12,7 +12,7 @@
 		"data:download": "node scripts/data-release.mjs download",
 		"data:publish": "node scripts/data-release.mjs publish",
 		"dev": "node scripts/ensure-website-data.mjs && next dev --turbopack",
-		"build": "node --import tsx scripts/link-boundary-tiles.ts && node --import tsx scripts/copy-atlas-data.mts && pnpm data:verify && node --import tsx scripts/build-seo-data.mts && next build --turbopack",
+		"build": "node --import tsx scripts/link-boundary-tiles.ts && node --import tsx scripts/build-website-assets.ts && pnpm data:verify && node --import tsx scripts/build-seo-data.mts && next build --turbopack",
 		"start": "next start",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",

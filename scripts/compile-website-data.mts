@@ -1,3 +1,4 @@
+import { buildWebsiteAssets } from "./build-website-assets";
 import { buildAtlasSqlite } from "../services/api/scripts/build-atlas-sqlite";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
@@ -32,7 +33,7 @@ import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
 import { fileSnapshots, loadReuseContext } from "./precompile/cache.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
 import { chunksSize, out } from "./precompile/output.mts";
-import { atlasLookupPath } from "./atlas-lookups";
+import { readAtlasLookup } from "./atlas-lookups";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./precompile/paths.mts";
 import {
 	compileRegionChunks,
@@ -89,6 +90,7 @@ async function compileSelected(names: readonly string[]) {
 
 	await compileCatalogueDatasets(names);
 	buildAtlasSqlite(ROOT);
+	buildWebsiteAssets(ROOT);
 	const { datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const compiledDatasets: CompiledDatasets = new Map();
@@ -111,12 +113,7 @@ async function compileSelected(names: readonly string[]) {
 			),
 			boundaryMappings: {
 				wardToLad: parseBoundaryWardToLad(
-					JSON.parse(
-						await readFile(
-							atlasLookupPath(ROOT, "boundary-mappings.json"),
-							"utf8",
-						),
-					),
+					JSON.parse(readAtlasLookup(ROOT, "boundary-mappings.json")),
 				),
 			},
 		});

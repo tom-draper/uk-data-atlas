@@ -2,7 +2,8 @@ import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,
 } from "../shared/boundaryResources";
-import { readAtlasPayload } from "../shared/atlasSqlite";
+import { readAtlasAssetText, readAtlasPayload } from "../shared/atlasSqlite";
+import { ATLAS_LOOKUP_NAMES } from "./atlas-lookups";
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -33,6 +34,19 @@ type Manifest = {
 const fail = (message: string): never => {
 	throw new Error(`${message} Run pnpm data:build locally.`);
 };
+
+for (const name of ATLAS_LOOKUP_NAMES)
+	readAtlasAssetText(root, "lookups", name.replace(/\.json$/, ""));
+for (const id of [
+	"places-index",
+	"place-facts",
+	"ward-areas",
+	"docs-catalogue",
+])
+	readAtlasAssetText(root, "pages", id);
+for (const directory of ["precompiled", "atlas-lookups", "atlas-pages"])
+	if (await stat(join(root, "public/data", directory)).catch(() => undefined))
+		fail(`Obsolete public data remains in ${directory}.`);
 
 const manifest = JSON.parse(
 	await readFile(manifestPath, "utf8").catch(() =>

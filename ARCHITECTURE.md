@@ -53,14 +53,15 @@ checkout, move its raw folders and `.source-release.json` from `data/` into
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
 headlines and ranked areas, compiled by `pnpm data:build --only seo` from the datasets.
-Rankings read ward areas from the website's copy of the `ward-areas` page.
+Rankings read the precomputed `ward-areas` page from SQLite.
 
 The API builds website artifacts with `pnpm data:build --only atlas-pages`.
 That stage reads only the areas, crosswalks, geometry, named locations and
 catalogue manifests it uses, not the API's release manifest. It stores gzipped files and a manifest under
 `services/api/public/atlas-pages/` and `atlas-pages.json`, and serves them at
-`/v1/atlas-pages/{page-id}.json`. `pnpm data:build --only website-lookups` copies them to
-`public/data/atlas-pages/{page-id}.json` for the website:
+`/v1/atlas-pages/{page-id}.json`. `pnpm data:build --only website-lookups` stores their
+precompressed bytes in `data/build/atlas.sqlite`. The website reads them directly
+for server rendering and serves browser requests at `/data/atlas-pages/{page-id}.json`:
 
 | Page id               | Contents                                                   |
 | --------------------- | ---------------------------------------------------------- |
@@ -100,13 +101,15 @@ The atlas's containment and lineage lookups (`area-lineage`,
 compiles them with `@uk-data-atlas/geography` for the boundary releases
 `@uk-data-atlas/catalogue` lists, and also serves them at
 `/v1/atlas-lookups/{id}.json`. The website never reads them from the API.
-The website pipeline runs `pnpm data:build --only website-lookups` to copy them from
-the API's build output on disk into the gitignored `public/data/atlas-lookups/`.
-The browser fetches them from the website there, and the website data build cuts
-chunks with the same files, so the two agree. The place profiles, place facts,
-ward areas and docs catalogue the API build compiles into `atlas-pages` are
-copied the same way to `public/data/atlas-pages/`. Building and running the
-website needs the API's data build on disk, never a running API.
+The website pipeline runs `pnpm data:build --only website-lookups` to import them
+from the API's build output into the shared database. The browser fetches them at
+`/data/atlas-lookups/{id}.json`, and the precompiler reads the same database rows
+when cutting regional chunks. The import also stores place profiles, facts, ward
+areas and the docs catalogue. It validates source hashes before replacing rows
+in one transaction, leaves unchanged imports untouched, and removes old public
+copies after success. The final API release manifest hashes the database after
+this import. Building needs the API's data build on disk. Running the website
+needs the shared database, without a running API.
 
 Everything in `services/api/public` is build output, so its layout on disk is
 the API's own business. Clients reach every file through a route, and a route
