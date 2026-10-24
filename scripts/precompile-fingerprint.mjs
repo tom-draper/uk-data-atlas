@@ -106,7 +106,7 @@ const readAliases = async (root) => {
 	);
 };
 
-const importedFiles = async (root, aliases, file) => {
+const importedFiles = async (root, aliases, file, resolveImport) => {
 	const imported = [];
 	const source = await readFile(file, "utf8");
 	for (const match of source.matchAll(importSpecifier)) {
@@ -138,7 +138,7 @@ const importedFiles = async (root, aliases, file) => {
 			}
 		}
 		for (const base of bases) {
-			const found = await resolveFile(base);
+			const found = await resolveImport(base);
 			if (found) {
 				imported.push(found);
 				break;
@@ -200,6 +200,7 @@ const filesUnder = async (root, path) => {
 const createContext = async (root) => {
 	const aliases = await readAliases(root);
 	const imports = new Map();
+	const resolutions = new Map();
 	const digests = new Map();
 	const memoised = (cache, key, compute) => {
 		if (!cache.has(key)) cache.set(key, compute());
@@ -208,7 +209,11 @@ const createContext = async (root) => {
 	return {
 		root,
 		importsOf: (file) =>
-			memoised(imports, file, () => importedFiles(root, aliases, file)),
+			memoised(imports, file, () =>
+				importedFiles(root, aliases, file, (base) =>
+					memoised(resolutions, base, () => resolveFile(base)),
+				),
+			),
 		digestOf: (file) =>
 			memoised(digests, file, async () =>
 				createHash("sha256")

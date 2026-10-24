@@ -146,6 +146,29 @@ describe("precompile fingerprints", () => {
 		expect(await precompileFingerprints(root)).toEqual(before);
 	});
 
+	it("resolves imports afresh when a preferred extension appears", async () => {
+		await write(
+			"packages/datasets/src/data/catalog/definitions/alpha.ts",
+			definition(
+				"alpha",
+				'import { load } from "../../alpha/new-loader";',
+			),
+		);
+		await write(
+			"packages/datasets/src/data/alpha/new-loader.js",
+			"export const load = 1;",
+		);
+		const before = await datasetFingerprints(root);
+		await write(
+			"packages/datasets/src/data/alpha/new-loader.ts",
+			"export const load = 2;",
+		);
+		const after = await datasetFingerprints(root);
+
+		expect(after.alpha).not.toEqual(before.alpha);
+		expect(after.beta).toEqual(before.beta);
+	});
+
 	it("changes only a dataset's own fingerprint when its loader changes", async () => {
 		const before = await precompileFingerprints(root);
 		await write(
