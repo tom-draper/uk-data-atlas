@@ -159,10 +159,12 @@ const apiStages = [
 		"measure-compatibility",
 	]),
 	stage("postcode-counts", ["postcode-index", "postcode-areas"]),
-	stage("crosswalk-inventory", [
-		"area-inventory",
-		"geometry-source-registry",
-	]),
+	stage(
+		"crosswalk-inventory",
+		["area-inventory", "geometry-source-registry"],
+		undefined,
+		{ codeInputs: ["services/api/scripts/crosswalk-worker.ts"] },
+	),
 	stage("relationship-paths", ["crosswalk-inventory"]),
 	stage("analysis-geographies", [
 		"data-catalog",

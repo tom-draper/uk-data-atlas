@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { writeCrosswalkArtifact } from "./crosswalk-artifact";
+import {
+	compileCrosswalksInWorkers,
+	crosswalkWorkerCount,
+} from "./crosswalk-workers";
+import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -32,46 +38,9 @@ import {
 	type RelatedCodesByRelease,
 } from "../src/relatedCodes";
 import { readGeometrySourceLookup } from "../src/geometrySources";
-import {
-	createAreaLookup,
-	type AreaInventory,
-	type AreaReleaseArtifact,
-} from "../src/areaInventory";
 import { sha256 } from "../src/contentHash";
 import { BOUNDED_CLIPPING_VERSION } from "../src/boundedClipping";
-import {
-	readStoredText,
-	storedTextExists,
-	writeStoredText,
-} from "../src/storedText";
-
-const readCompiledAreaLookup = (outputDirectory: string) => {
-	const inventory = JSON.parse(
-		readFileSync(join(outputDirectory, "area-inventory.json"), "utf8"),
-	) as AreaInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
-		throw new Error("Invalid area inventory before compiling crosswalks.");
-	}
-	const artifacts = inventory.releases.flatMap((release) => {
-		if (release.status !== "available") return [];
-		const path = join(outputDirectory, release.artifact);
-		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as AreaReleaseArtifact;
-		if (
-			artifact.schemaVersion !== 1 ||
-			artifact.contentHash !== release.contentHash ||
-			!Array.isArray(artifact.areas)
-		) {
-			throw new Error(`Invalid area release artifact at ${path}`);
-		}
-		return [artifact];
-	});
-	return {
-		areaLookup: createAreaLookup(artifacts),
-		areaInventoryHash: inventory.contentHash,
-	};
-};
+import { readStoredText, storedTextExists } from "../src/storedText";
 
 type GeometryCrosswalkAdapter =
 	| AreaOverlapCrosswalkAdapter
@@ -337,7 +306,8 @@ const reusableCleanContainment = (
 	}
 };
 
-export const buildCrosswalkInventory = (repositoryRoot: string) => {
+export const buildCrosswalkInventory = async (repositoryRoot: string) => {
+	const workers = crosswalkWorkerCount();
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
 	if (!existsSync(outputDirectory)) {
 		throw new Error(
@@ -416,26 +386,54 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	console.log(
 		`Reusing ${entries.size} validated crosswalks; compiling ${pending.length} changed or uncached crosswalks.`,
 	);
-	const writeArtifact = (artifact: CrosswalkArtifact) => {
-		const path = join(outputDirectory, "crosswalks", `${artifact.id}.json`);
-		mkdirSync(dirname(path), { recursive: true });
-		writeStoredText(path, `${JSON.stringify(artifact, null, "\t")}\n`);
-	};
+
 	// Geometry crosswalks take minutes each, so each is written as it compiles:
 	// a build stopped part way reuses those on its next run, which revalidates
 	// every one against its inputs before trusting it. Reused artifacts are
 	// already on disk as they were checked, so they are not written again.
 	const { areaLookup, areaInventoryHash } =
 		readCompiledAreaLookup(outputDirectory);
-	for (const artifact of compileCrosswalks(
-		repositoryRoot,
-		pending,
-		areaLookup,
-		geometrySources,
-		pairs,
-	)) {
-		writeArtifact(artifact);
+	const report = (artifact: CrosswalkArtifact, seconds: number) => {
 		keep(artifact);
+		console.log(
+			`Compiled ${artifact.id} (${artifact.method}) in ${seconds.toFixed(2)}s.`,
+		);
+	};
+	console.log(
+		`Compiling with ${workers} crosswalk worker${workers === 1 ? "" : "s"}.`,
+	);
+	if (workers === 1) {
+		let started = performance.now();
+		for (const artifact of compileCrosswalks(
+			repositoryRoot,
+			pending,
+			areaLookup,
+			geometrySources,
+			pairs,
+		)) {
+			writeCrosswalkArtifact(outputDirectory, artifact);
+			report(artifact, (performance.now() - started) / 1000);
+			started = performance.now();
+		}
+	} else {
+		const prior = new Map(
+			[...pairs].map(([id, artifact]) => [
+				id,
+				{
+					path: join(outputDirectory, "crosswalks", `${id}.json`),
+					contentHash: artifact.contentHash,
+				},
+			]),
+		);
+		pairs.clear();
+		await compileCrosswalksInWorkers({
+			repositoryRoot,
+			outputDirectory,
+			adapters: pending,
+			prior,
+			workers,
+			onCompiled: report,
+		});
 	}
 
 	const inventory = crosswalkInventoryFromEntries(
@@ -455,7 +453,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
-	const result = buildCrosswalkInventory(repositoryRoot);
+	const result = await buildCrosswalkInventory(repositoryRoot);
 	console.log(
 		`Wrote ${result.crosswalkCount} crosswalks to ${result.inventoryPath}`,
 	);
