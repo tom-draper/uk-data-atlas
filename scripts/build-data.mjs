@@ -123,6 +123,30 @@ export function runBuild({
 		from,
 		only === undefined ? undefined : [only],
 	);
+	const startedAt = performance.now();
+	const timings = [];
+	const recordTiming = (name, startedAt, command = 0, skipped = false) => {
+		const total = performance.now() - startedAt;
+		timings.push({
+			name,
+			total,
+			command,
+			overhead: total - command,
+			skipped,
+		});
+	};
+	const reportTimings = () => {
+		if (plan) return;
+		log(
+			`Data build took ${((performance.now() - startedAt) / 1000).toFixed(1)}s.`,
+		);
+		for (const timing of [...timings]
+			.sort((a, b) => b.total - a.total)
+			.slice(0, 5))
+			log(
+				`  ${timing.name}: ${(timing.total / 1000).toFixed(1)}s total, ${(timing.command / 1000).toFixed(1)}s command, ${(timing.overhead / 1000).toFixed(1)}s overhead${timing.skipped ? " (skipped)" : ""}`,
+			);
+	};
 	const cache = createCache();
 	// --from and --no-cache rerun every stage they select, and record them.
 	const reuse = cache !== null && useCache && from === undefined;
@@ -140,6 +164,7 @@ export function runBuild({
 				: (cache?.outputDigest(name) ?? null),
 		);
 	for (const stage of selected) {
+		const stageStartedAt = performance.now();
 		const description = `${stage.name}: pnpm ${stage.args.join(" ")} [depends on: ${stage.dependencies.join(", ") || "none"}]`;
 		const dependencies = dependencyDigests(stage);
 		const reused =
@@ -149,6 +174,7 @@ export function runBuild({
 		if (reused !== null) {
 			log(`${description} (unchanged, skipped)`);
 			digests.set(stage.name, reused);
+			recordTiming(stage.name, stageStartedAt, 0, true);
 			continue;
 		}
 		log(description);
@@ -157,18 +183,24 @@ export function runBuild({
 			continue;
 		}
 		cache?.begin(stage.name);
+		const commandStartedAt = performance.now();
 		const status = execute(stage);
+		const command = performance.now() - commandStartedAt;
 		if (status !== 0) {
 			log(
 				`Stage ${stage.name} failed with exit code ${status}. Build stopped.`,
 			);
+			recordTiming(stage.name, stageStartedAt, command);
+			reportTimings();
 			return status;
 		}
 		const digest = cache?.record(stage, dependencies, {
 			cacheable: stage.cacheable !== false,
 		});
 		if (stage.cacheable !== false) digests.set(stage.name, digest ?? null);
+		recordTiming(stage.name, stageStartedAt, command);
 	}
+	reportTimings();
 	return 0;
 }
 

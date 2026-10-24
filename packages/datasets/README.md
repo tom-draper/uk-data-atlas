@@ -15,6 +15,11 @@ definition once into `data/build/datasets/`, with the cache and worker pool in
 regional chunks. The `atlas-sqlite` stage stores the catalogue payloads in
 `data/build/atlas.sqlite` for both servers to read. See `data/build/README.md`.
 
+`pnpm data:build` reports the five slowest stages after a build completes or a
+stage returns a failure status. Each entry separates command time from overhead,
+including cache checks and recording. Cached stages have zero command time.
+`--plan` does not report timings because it does not execute the commands.
+
 Run `pnpm --filter @uk-data-atlas/datasets typecheck` for the package type check.
 The root Vitest unit project includes package tests and checks that shared
 packages only import declared dependencies.
