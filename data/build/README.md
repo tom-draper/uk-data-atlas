@@ -150,8 +150,13 @@ registry, crosswalk compilation, named-location compilation, compatibility, look
 geography inventory, location projections, relationship candidates, docs catalogue,
 map resources, proposals, benchmarks
 still read them. Atlas lookups use the migrated loader. Atlas pages read boundary
-properties for area sizes. `scripts/copy-atlas-data.mts` copies only compiled
-atlas lookups and pages, so it needs no area-inventory copy.
+properties for area sizes. `scripts/build-website-assets.ts` imports compiled
+atlas lookups and pages into the `website_assets` table before the final release
+manifest hashes the database. Its primary key is `(kind, id)`, where `kind` is
+`pages` or `lookups`. Each row stores a SHA-256 hash and the original gzipped
+JSON bytes. Website routes serve those bytes directly to gzip-capable clients;
+server rendering and precompilation decompress the selected row. Old public
+copies are removed only after a validated import succeeds.
 
 ### Crosswalks
 

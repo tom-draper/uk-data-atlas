@@ -1,8 +1,8 @@
+import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-const readFile = vi.hoisted(() => vi.fn());
-vi.mock("node:fs/promises", () => ({ readFile }));
+import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
+import { buildWebsiteAssets } from "@/scripts/build-website-assets";
 
 const index = {
 	version: 1,
@@ -11,57 +11,58 @@ const index = {
 	areas: [["E06000063", "Cumberland", "localAuthority", null, 2023, null]],
 	named: [["cumbria", "Cumbria", "county", null, 0, null]],
 };
-const pages = join(process.cwd(), "public", "data", "atlas-pages");
 
-// Each test gets fresh modules, so no page is already cached.
+let fixture: ReturnType<typeof websiteAssetsFixture>;
+const profile = { type: "area", code: "E06000063" };
 const load = () => import("@/lib/places/load");
-beforeEach(() => vi.resetModules());
+beforeEach(() => {
+	vi.resetModules();
+	fixture = websiteAssetsFixture({
+		"places-index": index,
+		"places-area-E060000": { E06000063: profile },
+	});
+	vi.spyOn(process, "cwd").mockReturnValue(fixture.root);
+});
 afterEach(() => {
-	readFile.mockReset();
+	vi.restoreAllMocks();
 	vi.unstubAllGlobals();
+	rmSync(fixture.root, { recursive: true, force: true });
 });
 
 describe("place data reads", () => {
-	it("reads index and profile shards from the website's own copy", async () => {
-		const profile = { type: "area", code: "E06000063" };
-		readFile.mockImplementation(async (path: string) =>
-			JSON.stringify(
-				path.includes("places-index") ? index : { E06000063: profile },
-			),
+	it("reads index and profiles from SQLite without public copies or a running API", async () => {
+		rmSync(join(fixture.root, "services"), { recursive: true });
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(() => {
+				throw new Error("Unexpected network request");
+			}),
 		);
-		const fetcher = vi.fn();
-		vi.stubGlobal("fetch", fetcher);
 		const { loadAreaProfile } = await load();
 		expect(await loadAreaProfile("E06000063")).toEqual(profile);
-		expect(readFile.mock.calls.map(([path]) => path)).toEqual([
-			join(pages, "places-index.json"),
-			join(pages, "places-area-E060000.json"),
-		]);
-		expect(fetcher).not.toHaveBeenCalled();
 	});
-
-	it("returns missing only when the index excludes the place", async () => {
-		readFile.mockResolvedValue(JSON.stringify(index));
+	it("returns missing when the index excludes the place", async () => {
 		const { loadNamedProfile } = await load();
 		expect(await loadNamedProfile("unknown")).toBeUndefined();
-		expect(readFile).toHaveBeenCalledTimes(1);
 	});
-
-	it("reports a missing copy and permits a later retry", async () => {
-		readFile
-			.mockRejectedValueOnce(new Error("ENOENT"))
-			.mockResolvedValueOnce(JSON.stringify(index));
-		const { placeEntry } = await load();
-		await expect(placeEntry("E06000063")).rejects.toThrow(
-			"pnpm data:build --only website-lookups",
+	it("permits a retry after a missing asset is restored", async () => {
+		const { readAtlasPage } = await import("@/lib/helpers/atlasPages");
+		await expect(readAtlasPage("restored")).rejects.toThrow(
+			"website-lookups",
 		);
-		expect((await placeEntry("E06000063"))?.[1]).toBe("Cumberland");
+		fixture.write("pages", {
+			"docs-catalogue": {},
+			"place-facts": {},
+			"places-index": index,
+			"ward-areas": {},
+			restored: { value: 42 },
+		});
+		buildWebsiteAssets(fixture.root);
+		expect(await readAtlasPage("restored")).toEqual({ value: 42 });
 	});
-
-	it("rejects an id that would leave the pages directory", async () => {
+	it("rejects an invalid asset id", async () => {
 		const { readAtlasPage } = await import("@/lib/helpers/atlasPages");
 		await expect(readAtlasPage("../secret")).rejects.toThrow("Invalid");
-		expect(readFile).not.toHaveBeenCalled();
 	});
 });
 

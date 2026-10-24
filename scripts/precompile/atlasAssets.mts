@@ -14,7 +14,7 @@ import {
 	snapshotFileContents,
 } from "./cache.mts";
 import { out } from "./output.mts";
-import { atlasLookupPath } from "../atlas-lookups";
+import { readAtlasLookup } from "../atlas-lookups";
 import { OUT_DIR, BOUNDARY_DATA, ROOT } from "./paths.mts";
 import { readBoundaryAsset } from "./sources/read.mts";
 import type { ReuseContext } from "./types.mts";
@@ -88,17 +88,15 @@ export async function compileAtlasAssets({
 				return { data, compiled };
 			});
 	// Ward and parish containment come from the API's geography resolver,
-	// copied by `pnpm data:build --only website-lookups`; upload matching reads
+	// stored by `pnpm data:build --only website-lookups`; upload matching reads
 	// ward and parish parents from them, so the index is compiled in step.
 	// Both files are part of the precompiler fingerprint, so a cached index
 	// is only reused while they are unchanged.
-	const boundaryMappings = readFile(
-		atlasLookupPath(ROOT, "boundary-mappings.json"),
-		"utf8",
+	const boundaryMappings = Promise.resolve(
+		readAtlasLookup(ROOT, "boundary-mappings.json"),
 	).then((json) => ({ wardToLad: parseBoundaryWardToLad(JSON.parse(json)) }));
-	const parishToLad = readFile(
-		atlasLookupPath(ROOT, "parish-lad-mappings.json"),
-		"utf8",
+	const parishToLad = Promise.resolve(
+		readAtlasLookup(ROOT, "parish-lad-mappings.json"),
 	).then((json) => parseParishLadMappings(JSON.parse(json)));
 	const matchIndex = canReuseAtlasAssets
 		? Promise.resolve(cachedAtlasAssets.outputs.matchIndex)

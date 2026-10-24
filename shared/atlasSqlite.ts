@@ -1,3 +1,4 @@
+import { gunzipSync } from "node:zlib";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
@@ -58,4 +59,41 @@ export function readVersionedAtlasDataset(
 	} finally {
 		database.close();
 	}
+}
+
+export type AtlasAssetKind = "pages" | "lookups";
+
+/** Read precompressed website data without keeping a database connection open. */
+export function readAtlasAsset(root: string, kind: AtlasAssetKind, id: string) {
+	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"), {
+		readOnly: true,
+	});
+	try {
+		const row = database
+			.prepare(
+				"SELECT sha256, gzip FROM website_assets WHERE kind = ? AND id = ?",
+			)
+			.get(kind, id);
+		if (!row) return undefined;
+		if (typeof row.sha256 !== "string" || !(row.gzip instanceof Uint8Array))
+			throw new Error(`Invalid atlas ${kind} asset ${id}`);
+		return { sha256: row.sha256, gzip: row.gzip };
+	} finally {
+		database.close();
+	}
+}
+
+export function readAtlasAssetText(
+	root: string,
+	kind: AtlasAssetKind,
+	id: string,
+): string {
+	if (!/^[A-Za-z0-9-]+$/.test(id))
+		throw new Error(`Invalid atlas asset id ${id}`);
+	const asset = readAtlasAsset(root, kind, id);
+	if (!asset)
+		throw new Error(
+			`Missing atlas ${kind} asset ${id}. Run pnpm data:build --only website-lookups.`,
+		);
+	return gunzipSync(asset.gzip).toString("utf8");
 }

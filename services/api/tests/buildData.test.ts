@@ -112,8 +112,9 @@ const apiOrder = [
 	"atlas-release-initial",
 	"documents",
 	"atlas-lookups",
-	"atlas-release",
 	"atlas-pages",
+	"website-lookups",
+	"atlas-release",
 ];
 
 test("default build executes both products in dependency order", (context) => {
@@ -123,19 +124,19 @@ test("default build executes both products in dependency order", (context) => {
 		"boundaries",
 		"boundary-tiles",
 		"website-sources",
-		"website-lookups",
 		"website-datasets",
 		"website-registry",
 		"seo",
 	]);
-	assert.equal(build.commands().length, apiOrder.length + 7);
+	assert.equal(build.commands().length, apiOrder.length + 6);
 });
 
-test("rebuilding atlas pages refreshes website copies and SEO", (context) => {
+test("rebuilding atlas pages imports SQLite assets before sealing the release and refreshing SEO", (context) => {
 	const build = fixture(context);
 	assert.deepEqual(stages(build.run(["--from", "atlas-pages"])), [
 		"atlas-pages",
 		"website-lookups",
+		"atlas-release",
 		"website-datasets",
 		"website-registry",
 		"seo",
@@ -199,9 +200,9 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"atlas-release-initial",
 		"documents",
 		"atlas-lookups",
-		"atlas-release",
 		"atlas-pages",
 		"website-lookups",
+		"atlas-release",
 		"website-datasets",
 		"website-registry",
 		"seo",

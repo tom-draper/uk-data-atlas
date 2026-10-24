@@ -40,8 +40,8 @@ const createRepository = async () => {
 		"packages/geography/src/index.ts",
 		"packages/map-tiles/package.json",
 		"packages/map-tiles/src/compileTileset.ts",
-		"public/data/atlas-lookups/boundary-mappings.json",
-		"public/data/atlas-lookups/parish-lad-mappings.json",
+		"services/api/public/atlas-lookups/boundary-mappings.json.gz",
+		"services/api/public/atlas-lookups/parish-lad-mappings.json.gz",
 	])
 		await write(file, `// ${file}`);
 	await write(
@@ -107,10 +107,16 @@ describe("precompile fingerprints", () => {
 	it("fingerprints datasets alone without the website's lookups", async () => {
 		const { datasets } = await precompileFingerprints(root);
 		await unlink(
-			join(root, "public/data/atlas-lookups/boundary-mappings.json"),
+			join(
+				root,
+				"services/api/public/atlas-lookups/boundary-mappings.json.gz",
+			),
 		);
 		await unlink(
-			join(root, "public/data/atlas-lookups/parish-lad-mappings.json"),
+			join(
+				root,
+				"services/api/public/atlas-lookups/parish-lad-mappings.json.gz",
+			),
 		);
 
 		expect(await datasetFingerprints(root)).toEqual(datasets);

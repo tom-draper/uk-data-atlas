@@ -1,11 +1,9 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import { ATLAS_PAGES_PATH } from "./atlasData";
+import { readAtlasAssetText } from "@/shared/atlasSqlite";
 
 const reads = new Map<string, Promise<unknown>>();
 
 /**
- * A page from the website's own copy in public/data, read once per server
+ * A page from the shared database, read once per server
  * instance. A failed read is not remembered, so a later request retries.
  */
 export function readAtlasPage<T>(id: string): Promise<T> {
@@ -13,19 +11,13 @@ export function readAtlasPage<T>(id: string): Promise<T> {
 		return Promise.reject(new Error(`Invalid atlas page id ${id}`));
 	let read = reads.get(id);
 	if (!read) {
-		const path = join(
-			process.cwd(),
-			"public",
-			ATLAS_PAGES_PATH,
-			`${id}.json`,
-		);
-		read = readFile(path, "utf8").then(JSON.parse, (error: unknown) => {
-			reads.delete(id);
-			throw new Error(
-				`Atlas page ${id} is missing. Run pnpm data:build --only website-lookups after the API build.`,
-				{ cause: error },
-			);
-		});
+		read = Promise.resolve()
+			.then(() => readAtlasAssetText(process.cwd(), "pages", id))
+			.then(JSON.parse)
+			.catch((error: unknown) => {
+				reads.delete(id);
+				throw error;
+			});
 		reads.set(id, read);
 	}
 	return read as Promise<T>;
