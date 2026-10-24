@@ -1,6 +1,7 @@
 "use client";
 
-import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
+import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { IncomeCardBackground } from "@/components/economics/income/IncomeCardBackground";
 import {
@@ -77,11 +78,11 @@ export default function ValueCard({
 	if (!card || !dataset) return null;
 
 	const heading = `${card.heading} [${card.period ?? dataset.year}]`;
-	const note = card.coverage;
 	const value = resolved?.stats.value;
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset) ?? card.coverage}
 			heading={heading}
 			headingClassName="min-w-0 truncate"
 			headingTitle={card.headingTitle ?? heading}
@@ -92,13 +93,6 @@ export default function ValueCard({
 				)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
-			}
-			headerEnd={
-				note && (
-					<ChartCardHeaderNote isDark={isDark}>
-						{note}
-					</ChartCardHeaderNote>
-				)
 			}
 			accent={card.accent ?? (resolved ? color : null)}
 			background={

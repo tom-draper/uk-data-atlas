@@ -22,6 +22,7 @@ export const childPovertyDefinition: ChartDatasetDefinition<ChildPovertyDataset>
 				AggregatedChildPovertyData
 			>({
 				heading: "Child Poverty",
+				coverage: "United Kingdom",
 				source: "DWP. Children in relative low-income families, before housing costs.",
 				unit: "% children",
 				digits: 1,

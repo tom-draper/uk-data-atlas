@@ -1,6 +1,7 @@
 "use client";
 
-import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
+import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import {
 	isLocalAuthorityEstimate,
@@ -76,16 +77,12 @@ export default function SchoolPerformanceChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading="GCSE Performance [2024/25]"
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
-			}
-			headerEnd={
-				<ChartCardHeaderNote isDark={isDark}>
-					England
-				</ChartCardHeaderNote>
 			}
 			accent={hasData ? color : null}
 			isActive={

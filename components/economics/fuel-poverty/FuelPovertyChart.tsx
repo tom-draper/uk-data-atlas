@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { useEffect, useMemo, useState } from "react";
 import {
 	ActiveViz,
@@ -148,13 +150,16 @@ export default function FuelPovertyChart({
 	if (!dataset) return null;
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset) ?? "England"}
 			heading="Fuel Poverty [2024]"
 			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					{isLocalAuthoritySummary ? "Local authority" : "England"}
-				</span>
+				isLocalAuthoritySummary && (
+					<span
+						className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+					>
+						Local authority
+					</span>
+				)
 			}
 			accent={accent}
 			isActive={active}

@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedLifeExpectancyData,
@@ -192,6 +194,7 @@ export default function LifeExpectancyChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Life Expectancy [${dataset.dataPeriod}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, leStats !== null)

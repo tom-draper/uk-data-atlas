@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedBrexitData,
@@ -11,7 +13,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import { ChartCard } from "@/components/ChartCard";
 import {
 	CONSTITUENCY_ESTIMATE_NOTE,
 	isConstituencyEstimate,
@@ -104,16 +106,12 @@ export default function BrexitHanrettyEstimatesChart({
 				: null;
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Hanretty Estimates [${dataset?.year ?? year}]`}
 			estimateNote={
 				isConstituencyEstimate(selectedArea, hasData)
 					? CONSTITUENCY_ESTIMATE_NOTE
 					: undefined
-			}
-			headerEnd={
-				<ChartCardHeaderNote isDark={isDark}>
-					England
-				</ChartCardHeaderNote>
 			}
 			accent={accentColor}
 			isActive={isActive}

@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedBrexitData,
@@ -118,6 +120,7 @@ export default function BrexitElectoralChart({
 				: null;
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset) ?? "United Kingdom"}
 			heading={`Electoral Commission [${dataset?.year ?? year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)

@@ -1,3 +1,4 @@
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 // components/population/age/AgeDistribution.tsx
 import {
 	ActiveViz,
@@ -380,6 +381,7 @@ function AgeDistribution({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Age Distribution [${dataset.year}]`}
 			headerEnd={
 				medianAge > 0 && (
