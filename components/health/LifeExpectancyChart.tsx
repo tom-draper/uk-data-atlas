@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedLifeExpectancyData,
@@ -181,6 +183,7 @@ export default function LifeExpectancyChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`${dataset.label} [${dataset.dataPeriod}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, leStats !== null)

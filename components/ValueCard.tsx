@@ -1,13 +1,13 @@
 "use client";
 
-import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
+import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
-import { useIsDark } from "@/lib/context/ThemeContext";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
@@ -46,7 +46,6 @@ export default function ValueCard({
 	codeMapper,
 	setActiveViz,
 }: ChartComponentProps) {
-	const isDark = useIsDark();
 	const dataset = (
 		availableDatasets as Record<string, CardDataset> | undefined
 	)?.[year];
@@ -72,11 +71,11 @@ export default function ValueCard({
 	if (!card || !dataset) return null;
 
 	const heading = `${card.heading} [${card.period ?? dataset.year}]`;
-	const note = card.coverage;
 	const value = resolved?.stats.value;
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset) ?? card.coverage}
 			heading={heading}
 			headingClassName="min-w-0 truncate"
 			headingTitle={card.headingTitle ?? heading}
@@ -87,13 +86,6 @@ export default function ValueCard({
 				)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
-			}
-			headerEnd={
-				note && (
-					<ChartCardHeaderNote isDark={isDark}>
-						{note}
-					</ChartCardHeaderNote>
-				)
 			}
 			accent={resolved ? color : null}
 			isActive={isActive}

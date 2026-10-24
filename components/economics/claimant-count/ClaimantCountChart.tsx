@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
@@ -47,6 +48,7 @@ export default function ClaimantCountChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset) ?? "Great Britain"}
 			heading={`Claimant Count [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)

@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedBroadbandData,
@@ -130,6 +132,7 @@ export default function BroadbandChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset) ?? "United Kingdom"}
 			heading={`${measureInfo.label[0].toUpperCase()}${measureInfo.label.slice(1)} Broadband [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)

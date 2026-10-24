@@ -2,7 +2,6 @@
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { ChartCard } from "@/components/ChartCard";
 import { useChartsLoading } from "@/components/ChartLoadingPlaceholder";
-import { useIsDark } from "@/lib/context/ThemeContext";
 import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 
 const LEAST_DEPRIVED = "#15803d";
@@ -58,7 +57,6 @@ export default function DecileChart({
 	onClick,
 }: DecileChartProps) {
 	const chartsLoading = useChartsLoading();
-	const isDark = useIsDark();
 
 	const showData = hasData && !chartsLoading;
 	const color = hasData ? deprivationColor(severity) : "#9ca3af";
@@ -66,13 +64,7 @@ export default function DecileChart({
 	return (
 		<ChartCard
 			heading={heading}
-			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					{region}
-				</span>
-			}
+			coverage={region}
 			accent={showData ? color : null}
 			isActive={isActive}
 			title={title}

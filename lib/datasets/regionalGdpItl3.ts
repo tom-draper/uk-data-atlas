@@ -28,7 +28,7 @@ export const regionalGdpItl3Definition: ChartDatasetDefinition<RegionalGdpItl3Da
 				AggregatedRegionalGdpData
 			>({
 				heading: "Regional GDP",
-				coverage: "UK",
+				coverage: "United Kingdom",
 				source: "Office for National Statistics. Regional gross domestic product. ons.gov.uk",
 				format: formatGdp,
 				maximum: 210_000,

@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedMobileCoverageData,
@@ -79,6 +81,7 @@ export default function MobileCoverageChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Mobile Coverage [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, stats !== null)

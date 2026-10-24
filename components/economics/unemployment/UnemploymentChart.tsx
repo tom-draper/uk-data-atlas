@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedUnemploymentData,
@@ -150,6 +152,7 @@ export default function UnemploymentChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Historic Unemployment [1996-${dataset.latestYear}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
