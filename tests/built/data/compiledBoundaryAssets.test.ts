@@ -6,7 +6,7 @@ import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/deco
 import { getProp } from "@/lib/data/boundaries/properties";
 import { parseMatchIndexLevel } from "@/lib/data/areaBank";
 import type { GazetteerCore } from "@/lib/data/gazetteer/types";
-import { atlasLookupPath } from "@/scripts/atlas-lookups";
+import { readAtlasLookup } from "@/scripts/atlas-lookups";
 
 /**
  * Compiled topology intermediates live in data/build/website-boundaries; the two
@@ -157,10 +157,7 @@ describe("upload match index parents", () => {
 
 describe("constituency to local authority crosswalk", () => {
 	const overlaps = JSON.parse(
-		readFileSync(
-			atlasLookupPath(process.cwd(), "constituency-lad-overlaps.json"),
-			"utf8",
-		),
+		readAtlasLookup(process.cwd(), "constituency-lad-overlaps.json"),
 	) as {
 		targetLocalAuthorityRelease: string;
 		releases: Record<string, unknown>;

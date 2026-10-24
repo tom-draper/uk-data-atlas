@@ -1,5 +1,4 @@
 import { createHash } from "crypto";
-import { readFile } from "fs/promises";
 import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "../../lib/data/gazetteer/types";
@@ -14,7 +13,7 @@ import {
 	snapshotFileContents,
 } from "./cache.mts";
 import { chunksSize } from "./output.mts";
-import { ATLAS_LOOKUP_NAMES, atlasLookupPath } from "../atlas-lookups";
+import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlas-lookups";
 import { OUT_DIR, ROOT } from "./paths.mts";
 import type {
 	CompiledDatasets,
@@ -52,7 +51,7 @@ export async function regionChunkLookupFingerprints(): Promise<
 			names.map(async (name) => [
 				`lookup:${name}`,
 				createHash("sha256")
-					.update(await readFile(atlasLookupPath(ROOT, name)))
+					.update(readAtlasLookup(ROOT, name))
 					.digest("hex"),
 			]),
 		),

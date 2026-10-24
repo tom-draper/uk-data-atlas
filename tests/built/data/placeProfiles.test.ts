@@ -1,7 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import { ATLAS_PAGES_PATH } from "@/lib/helpers/atlasData";
+import { readAtlasAssetText } from "@/shared/atlasSqlite";
 import { readAtlasPage } from "@/lib/helpers/atlasPages";
 import { describe, expect, it } from "vitest";
 import {
@@ -22,13 +20,7 @@ for (const name of names) {
 		.replace("areas/", "area-")
 		.replace("named/", "named-")
 		.replace(/\.json$/, "")}`;
-	files.set(
-		name,
-		await readFile(
-			join(process.cwd(), "public", ATLAS_PAGES_PATH, `${id}.json`),
-			"utf8",
-		),
-	);
+	files.set(name, readAtlasAssetText(process.cwd(), "pages", id));
 }
 const shards = new Map<string, Record<string, AreaProfile>>();
 const area = (code: string) => {

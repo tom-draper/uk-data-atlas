@@ -6,9 +6,11 @@ const dataVersion =
 
 const nextConfig: NextConfig = {
 	reactCompiler: true,
-	// Place pages read their profiles from disk while rendering on demand.
+	// Server-rendered pages and browser data routes share the compiled database.
 	outputFileTracingIncludes: {
-		"/places/*": ["./public/data/atlas-pages/**/*"],
+		"/places/*": ["./data/build/atlas.sqlite"],
+		"/data/atlas-pages/*": ["./data/build/atlas.sqlite"],
+		"/data/atlas-lookups/*": ["./data/build/atlas.sqlite"],
 		"/atlas": ["./data/build/atlas.sqlite"],
 		"/atlas/*": ["./data/build/atlas.sqlite"],
 		"/data/catalogue/*": ["./data/build/atlas.sqlite"],
@@ -46,7 +48,7 @@ const nextConfig: NextConfig = {
 				: "no-cache";
 		return [
 			{
-				source: "/data/:path((?!catalogue(?:/|$)).*)",
+				source: "/data/:path((?!(?:catalogue|atlas-pages|atlas-lookups)(?:/|$)).*)",
 				headers: [{ key: "Cache-Control", value: cacheControl }],
 			},
 		];

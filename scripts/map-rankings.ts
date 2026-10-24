@@ -1,5 +1,4 @@
 import { readAtlasPayload } from "../shared/atlasSqlite";
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ATLAS_LOCATIONS } from "../lib/atlas/pages";
 import { decodeCompactPayload } from "../lib/data/compactPayload";
@@ -11,7 +10,7 @@ import {
 } from "../lib/atlas/rankings";
 import type { Editions } from "../lib/atlas/rankingRecipes";
 import { readAtlasPage } from "../lib/helpers/atlasPages";
-import { atlasLookupPath } from "./atlas-lookups";
+import { readAtlasLookup } from "./atlas-lookups";
 
 const DATASETS = join(process.cwd(), "public", "data", "datasets");
 export const RANKINGS_DIR = join(DATASETS, "rankings");
@@ -33,13 +32,7 @@ const SPECIAL_INPUTS: Readonly<Record<string, () => Promise<unknown>>> = {
 	"ward-areas": readWardAreas,
 	"constituency-lad-overlaps": async () =>
 		JSON.parse(
-			await readFile(
-				atlasLookupPath(
-					process.cwd(),
-					"constituency-lad-overlaps.json",
-				),
-				"utf8",
-			),
+			readAtlasLookup(process.cwd(), "constituency-lad-overlaps.json"),
 		),
 };
 
