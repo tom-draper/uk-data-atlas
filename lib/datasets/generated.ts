@@ -23,6 +23,7 @@ import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { gasConsumptionDefinition } from "./gasConsumption";
 import { generalElectionDefinition } from "./generalElection";
+import { generalHealthDefinition } from "./generalHealth";
 import { ghgEmissionsDefinition } from "./ghgEmissions";
 import { homelessnessDefinition } from "./homelessness";
 import { housePriceDefinition } from "./housePrice";
@@ -73,6 +74,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		fuelPovertyDefinition,
 		gasConsumptionDefinition,
 		generalElectionDefinition,
+		generalHealthDefinition,
 		ghgEmissionsDefinition,
 		homelessnessDefinition,
 		housePriceDefinition,

@@ -17,6 +17,7 @@ export { ethnicityDatasetDefinition } from "./ethnicity";
 export { fuelPovertyDatasetDefinition } from "./fuelPoverty";
 export { gasConsumptionDatasetDefinition } from "./gasConsumption";
 export { generalElectionDatasetDefinition } from "./generalElection";
+export { generalHealthDatasetDefinition } from "./generalHealth";
 export { ghgEmissionsDatasetDefinition } from "./ghgEmissions";
 export { historicalGeneralElectionDatasetDefinition } from "./historicalGeneralElection";
 export { homelessnessDatasetDefinition } from "./homelessness";
