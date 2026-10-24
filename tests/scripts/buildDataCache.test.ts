@@ -9,7 +9,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { onTestFinished, test } from "vitest";
+import { onTestFinished, test, vi } from "vitest";
 import { createStageCache } from "@/scripts/build-data-cache.mjs";
 import { runBuild } from "@/scripts/build-data.mjs";
 
@@ -161,6 +161,10 @@ test("a plan marks the stages it would skip", () => {
 	ran.length = 0;
 	const { log } = build(["--plan"]);
 	assert.deepEqual(ran, []);
+	assert.equal(
+		log.some((line) => line.startsWith("Data build took")),
+		false,
+	);
 	assert.deepEqual(
 		log.map((line) => [
 			line.split(":")[0],
@@ -227,4 +231,68 @@ test("a later writer can update a shared database while its builder still rebuil
 	unlinkSync(path);
 	assert.deepEqual(run(), ["base", "final"]);
 	assert.deepEqual(run(), []);
+});
+
+test("build timings rank the five slowest commands and include overhead", () => {
+	let now = 0;
+	const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
+	onTestFinished(() => clock.mockRestore());
+	const log: string[] = [];
+	const status = runBuild({
+		stages: Array.from({ length: 6 }, (_, index) =>
+			stage(`stage-${index + 1}`),
+		),
+		execute: (stage: Stage) => {
+			now += Number(stage.name.slice(-1)) * 1000;
+			return 0;
+		},
+		log: (line: string) => {
+			log.push(line);
+			if (line.includes("[depends on:")) now += 500;
+		},
+	});
+	assert.equal(status, 0);
+	assert.deepEqual(log.slice(6), [
+		"Data build took 24.0s.",
+		"  stage-6: 6.5s total, 6.0s command, 0.5s overhead",
+		"  stage-5: 5.5s total, 5.0s command, 0.5s overhead",
+		"  stage-4: 4.5s total, 4.0s command, 0.5s overhead",
+		"  stage-3: 3.5s total, 3.0s command, 0.5s overhead",
+		"  stage-2: 2.5s total, 2.0s command, 0.5s overhead",
+	]);
+});
+
+test("build timings include failed stages and preserve their exit status", () => {
+	let now = 0;
+	const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
+	onTestFinished(() => clock.mockRestore());
+	const log: string[] = [];
+	const status = runBuild({
+		stages: [stage("failing"), stage("unreached")],
+		execute: () => {
+			now += 1250;
+			return 2;
+		},
+		log: (line: string) => log.push(line),
+	});
+	assert.equal(status, 2);
+	assert.deepEqual(log.slice(1), [
+		"Stage failing failed with exit code 2. Build stopped.",
+		"Data build took 1.3s.",
+		"  failing: 1.3s total, 1.3s command, 0.0s overhead",
+	]);
+});
+
+test("build timings mark cached stages without claiming command time", () => {
+	const { runs, build } = fixture();
+	runs();
+	const { status, log } = build();
+	assert.equal(status, 0);
+	const summaries = log.filter((line) => line.startsWith("  "));
+	assert.equal(summaries.length, 4);
+	for (const name of ["compile", "summary", "report"])
+		assert.match(
+			summaries.find((line) => line.startsWith(`  ${name}:`))!,
+			/0\.0s command, [\d.]+s overhead \(skipped\)$/,
+		);
 });
