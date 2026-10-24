@@ -30,7 +30,18 @@ export interface AirQualityOptions extends ColorRangeOption {
 }
 
 export interface GhgEmissionsOptions extends ColorRangeOption {
-	measure: "perPerson" | "total" | "excludingLandUse";
+	measure:
+		| "perPerson"
+		| "total"
+		| "excludingLandUse"
+		| "transport"
+		| "domestic"
+		| "industry"
+		| "commercial"
+		| "publicSector"
+		| "agriculture"
+		| "waste"
+		| "landUse";
 }
 
 export interface UnemploymentOptions extends ColorRangeOption {

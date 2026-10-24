@@ -227,7 +227,7 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 	},
 	"ghg-emissions": {
 		topic: "energy-and-environment",
-		about: "Estimated greenhouse gas emissions produced within each local authority, broken down by sector, such as transport, homes, industry and agriculture. The Atlas shows emissions per person so areas of different sizes can be compared.",
+		about: "Estimated greenhouse gas emissions produced within each local authority. The map defaults to emissions per person so areas of different sizes can be compared. Select total emissions, emissions excluding land use or a sector such as transport, homes, industry or agriculture in the legend. Sector figures are totals in kilotonnes of carbon dioxide equivalent; land use can be negative where it removes more emissions than it produces.",
 	},
 	"air-quality": {
 		topic: "energy-and-environment",

@@ -38,4 +38,9 @@ export interface AggregatedGhgEmissionsData {
 	transport: number;
 	domestic: number;
 	industry: number;
+	commercial: number;
+	publicSector: number;
+	agriculture: number;
+	waste: number;
+	landUse: number;
 }
