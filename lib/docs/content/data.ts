@@ -244,7 +244,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Waste and recycling",
 		topic: "environment",
 		datasets: ["waste"],
-		intro: "Local-authority collected waste in England, including material sent for recycling, composting and reuse.",
+		intro: "Local-authority collected waste in England, including material sent for recycling, composting and reuse. The atlas legend switches between collected tonnes, recycled tonnes and the recycling percentage. Tonnage measures can also be shown per 100,000 residents. For authorities with data, regional recycling percentages divide summed recycled tonnes by summed collected tonnes.",
 	},
 	{
 		slug: "crime",

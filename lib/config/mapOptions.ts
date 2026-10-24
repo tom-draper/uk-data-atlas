@@ -46,6 +46,7 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 				: {}),
 			...(definition.type === "housePrice" ? { measure: "median" } : {}),
 			...(definition.type === "income" ? { measure: "median" } : {}),
+			...(definition.type === "waste" ? { metric: "collected" } : {}),
 			...(definition.type === "ghgEmissions"
 				? { measure: "perPerson" }
 				: {}),

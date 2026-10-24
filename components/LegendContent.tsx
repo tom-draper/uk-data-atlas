@@ -182,6 +182,16 @@ export default function LegendContent({
 								: `${value.toFixed(0)}% grade ${schoolPerformanceMeasure === "grade5" ? "5+" : "4+"}`,
 				}
 			: null;
+		const wasteLegend =
+			activeDataset.type === "waste"
+				? {
+						...legend,
+						max:
+							displayOptions.waste.metric === "recyclingShare"
+								? 100
+								: 500_000,
+					}
+				: null;
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -208,7 +218,8 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: (schoolPerformanceLegend ??
+					: (wasteLegend ??
+						schoolPerformanceLegend ??
 						homelessnessLegend ??
 						claimantCountLegend ??
 						unemploymentLegend ??

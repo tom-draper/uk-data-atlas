@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import LegendPanel from "@/components/LegendPanel";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { EMPTY_BOUNDARY_DATA } from "@/lib/data/boundaries/propertyLoader";
-import type { Datasets, LocalElectionDataset } from "@/lib/types";
+import type { Dataset, Datasets, LocalElectionDataset } from "@/lib/types";
 import type { LegendAggregates } from "@/components/legend/types";
 
 const state = vi.hoisted(() => ({ aggregates: {} as LegendAggregates }));
@@ -37,16 +37,19 @@ const dataset: LocalElectionDataset = {
 	},
 };
 
-function renderLegend() {
+function renderLegend(
+	activeDataset: Dataset = dataset,
+	mapOptions = DEFAULT_MAP_OPTIONS,
+) {
 	return renderToStaticMarkup(
 		createElement(LegendPanel, {
-			activeDataset: dataset,
+			activeDataset,
 			activeViz: {
-				datasetId: dataset.id,
-				datasetType: dataset.type,
-				datasetYear: dataset.year,
+				datasetId: activeDataset.id,
+				datasetType: activeDataset.type,
+				datasetYear: activeDataset.year,
 			},
-			mapOptions: DEFAULT_MAP_OPTIONS,
+			mapOptions,
 			onMapOptionsChange: () => {},
 			mapManager: null,
 			boundaryData: EMPTY_BOUNDARY_DATA,
@@ -76,5 +79,36 @@ describe("legend loading", () => {
 			localElection: { 2023: { partyVotes: { LAB: 100 } } },
 		};
 		expect(renderLegend()).toBe("");
+	});
+});
+
+describe("waste legend", () => {
+	const waste: Extract<Dataset, { type: "waste" }> = {
+		id: "waste2025",
+		type: "waste",
+		year: 2025,
+		boundaryType: "localAuthority",
+		boundaryYear: 2025,
+		data: {},
+	};
+	it("shows waste measures alongside the population toggle", () => {
+		const html = renderLegend(waste);
+		expect(html).toContain("Collected");
+		expect(html).toContain("Recycled");
+		expect(html).toContain("Recycling %");
+		expect(html).toContain("Per pop.");
+	});
+	it("uses a percentage legend and hides population scaling for recycling share", () => {
+		const html = renderLegend(waste, {
+			...DEFAULT_MAP_OPTIONS,
+			waste: {
+				...DEFAULT_MAP_OPTIONS.waste,
+				metric: "recyclingShare",
+				colorRange: { min: 0, max: 100 },
+			},
+		});
+		expect(html).toContain("100.0% recycled");
+		expect(html).not.toContain("Per pop.");
+		expect(html).not.toContain("per 100k");
 	});
 });

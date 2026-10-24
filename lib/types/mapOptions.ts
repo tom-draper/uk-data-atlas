@@ -21,6 +21,10 @@ export interface CountMetricOptions extends ColorRangeOption {
 	measure: "total" | "perPopulation";
 }
 
+export interface WasteOptions extends CountMetricOptions {
+	metric: "collected" | "recycled" | "recyclingShare";
+}
+
 export interface BroadbandOptions extends ColorRangeOption {
 	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
 }
@@ -98,7 +102,7 @@ export type ChartMapOptions = Omit<
 	electricVehicleChargers: CountMetricOptions;
 	electricityConsumption: CountMetricOptions;
 	gasConsumption: CountMetricOptions;
-	waste: CountMetricOptions;
+	waste: WasteOptions;
 	jobs: CountMetricOptions;
 	broadband: BroadbandOptions;
 	airQuality: AirQualityOptions;

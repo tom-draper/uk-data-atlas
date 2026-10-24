@@ -1,5 +1,6 @@
 "use client";
 
+import type { WasteOptions } from "@/lib/types/mapOptions";
 import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
@@ -355,6 +356,28 @@ export function LifeExpectancyMeasurePanel({
 		<GlassSegmentedMeasurePanel
 			measure={measure}
 			measures={LIFE_EXPECTANCY_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
+const WASTE_METRICS = [
+	["collected", "Collected"],
+	["recycled", "Recycled"],
+	["recyclingShare", "Recycling %"],
+] as const;
+
+export function WasteMetricPanel({
+	metric,
+	onChange,
+}: {
+	metric: WasteOptions["metric"];
+	onChange: (metric: WasteOptions["metric"]) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={metric}
+			measures={WASTE_METRICS}
 			onChange={onChange}
 		/>
 	);
