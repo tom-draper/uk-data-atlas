@@ -33,23 +33,8 @@ interface ChartCardProps {
 	style?: CSSProperties;
 	activeStyle?: CSSProperties;
 	title?: string;
+	coverage?: string;
 	minHeightClassName?: string;
-}
-
-export function ChartCardHeaderNote({
-	children,
-	isDark,
-}: {
-	children: ReactNode;
-	isDark: boolean;
-}) {
-	return (
-		<span
-			className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-		>
-			{children}
-		</span>
-	);
 }
 
 function useActiveHeightFloor(isActive: boolean) {
@@ -98,6 +83,7 @@ export function ChartCard({
 	style: customStyle,
 	activeStyle,
 	title,
+	coverage,
 	minHeightClassName = "min-h-20",
 }: ChartCardProps) {
 	const isDark = useIsDark();
@@ -138,7 +124,7 @@ export function ChartCard({
 			}}
 			className={cardClass(isActive, isDark, minHeightClassName)}
 			data-active={isActive}
-			title={title}
+			title={[title, coverage].filter(Boolean).join("\n") || undefined}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>

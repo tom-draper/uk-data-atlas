@@ -5,7 +5,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import { ChartCard } from "@/components/ChartCard";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
@@ -109,16 +109,12 @@ export function BreakdownChart<K extends string>({
 
 	return (
 		<ChartCard
+			coverage={config.coverage}
 			heading={`${config.heading} [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
-			}
-			headerEnd={
-				<ChartCardHeaderNote isDark={isDark}>
-					{config.coverage}
-				</ChartCardHeaderNote>
 			}
 			accent={hasData ? config.colors[config.accent] : null}
 			isActive={isActive}

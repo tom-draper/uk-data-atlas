@@ -1,3 +1,4 @@
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 // components/population/gender/Gender.tsx
 import {
 	ActiveViz,
@@ -209,6 +210,7 @@ function Gender({
 			: FEMALE_COLOR;
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Gender [${dataset.year}]`}
 			headerEnd={
 				hasData && (

@@ -1,3 +1,4 @@
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import type {
 	ActiveViz,
 	AggregatedPopulationData,
@@ -138,14 +139,8 @@ export default function PopulationDensityChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Population Density [${dataset.year}]`}
-			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					England &amp; Wales
-				</span>
-			}
 			accent={accentColor}
 			isActive={isActive}
 			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"

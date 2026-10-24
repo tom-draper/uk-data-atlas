@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	EthnicityDataset,
@@ -12,7 +13,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import { ChartCard } from "@/components/ChartCard";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
@@ -182,16 +183,12 @@ export default function EthnicityChart({
 	const accentColor = processedData.ethnicityData[0]?.color ?? null;
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Ethnicity [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, processedData.hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
-			}
-			headerEnd={
-				<ChartCardHeaderNote isDark={isDark}>
-					England & Wales
-				</ChartCardHeaderNote>
 			}
 			accent={accentColor}
 			isActive={isActive}

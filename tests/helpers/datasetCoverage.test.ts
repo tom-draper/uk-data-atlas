@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
+import {
+	formatDatasetCoverage,
+	filterGeometryToDatasetCoverage,
+} from "@/lib/helpers/datasetCoverage";
 
 const geometry = {
 	type: "FeatureCollection",
@@ -112,5 +115,29 @@ describe("filterGeometryToDatasetCoverage", () => {
 						.LAD24CD,
 			),
 		).toEqual(["E06000001", "W06000001"]);
+	});
+});
+
+describe("formatDatasetCoverage", () => {
+	it.each([
+		[["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"], "United Kingdom"],
+		[["GB-SCT", "GB-WLS", "GB-ENG"], "Great Britain"],
+		[["GB-WLS", "GB-ENG"], "England & Wales"],
+		[["GB-NIR", "GB-ENG", "GB-WLS"], "England, Wales & Northern Ireland"],
+		[["GB-NIR"], "Northern Ireland"],
+		[["GB-ENG"], "England"],
+		[["GB-ENG", "GB-WLS", "GB-ENG"], "England & Wales"],
+	] as const)("formats %j as %s", (coverageCountries, expected) => {
+		expect(
+			formatDatasetCoverage({ type: "example", coverageCountries }),
+		).toBe(expected);
+	});
+
+	it("does not invent coverage when it is undeclared", () => {
+		expect(formatDatasetCoverage(undefined)).toBeUndefined();
+		expect(formatDatasetCoverage({ type: "example" })).toBeUndefined();
+		expect(
+			formatDatasetCoverage({ type: "example", coverageCountries: [] }),
+		).toBeUndefined();
 	});
 });

@@ -75,7 +75,6 @@ function RoadSafetyCard({
 	setActiveViz: (value: ActiveViz) => void;
 	location: string;
 }) {
-	const isDark = useIsDark();
 	const mapOptions = useCurrentMapOptions();
 	const { excludedPointValues, selectedPointValue } = useExcludedCategories();
 	const loadedPoints = dataset.points;
@@ -127,13 +126,7 @@ function RoadSafetyCard({
 	return (
 		<ChartCard
 			heading={dataset.dataColumn}
-			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					Great Britain
-				</span>
-			}
+			coverage="Great Britain"
 			accent={accent}
 			isActive={isActive}
 			onClick={() =>
@@ -175,13 +168,7 @@ function NetworkCard({
 	return (
 		<ChartCard
 			heading={dataset.dataColumn}
-			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					Great Britain
-				</span>
-			}
+			coverage="Great Britain"
 			accent="#c2410c"
 			isActive={isActive}
 			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${isActive ? "min-h-[150px]" : "min-h-[65px]"} block w-full text-left`}

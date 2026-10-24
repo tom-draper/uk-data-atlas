@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import {
@@ -53,6 +54,7 @@ export default function HomelessnessChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`Homelessness [${dataset.year}]`}
 			headingTitle="Homelessness: temporary accommodation"
 			estimateNote={
