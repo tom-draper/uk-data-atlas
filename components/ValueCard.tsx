@@ -7,6 +7,7 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
@@ -37,7 +38,8 @@ const formatValue = (config: ValueCardConfig, value: number) => {
  * a bar scaled against the card's maximum and an optional secondary note.
  */
 export default function ValueCard({
-	card,
+	card: defaultCard,
+	cardForOptions,
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -47,6 +49,8 @@ export default function ValueCard({
 	setActiveViz,
 }: ChartComponentProps) {
 	const isDark = useIsDark();
+	const options = useCurrentMapOptions();
+	const card = cardForOptions?.(options) ?? defaultCard;
 	const dataset = (
 		availableDatasets as Record<string, CardDataset> | undefined
 	)?.[year];
