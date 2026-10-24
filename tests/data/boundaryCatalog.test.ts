@@ -22,6 +22,32 @@ describe("boundary catalogue", () => {
 		}
 	});
 
+	it("records API imports as held until website tiles are compiled", () => {
+		const imported = [
+			["lsoa", "2001-12-ew-bgc-v2", "LSOA01CD", "LSOA01NM"],
+			["msoa", "2001-12-ew-bgc-v2", "MSOA01CD", "MSOA01NM"],
+			["msoa", "2011-12-ew-bgc-v3", "MSOA11CD", "MSOA11NM"],
+			["seneddConstituency", "2026-05-w-bgc", "SENC26CD", "SENC26NM"],
+		] as const;
+		for (const [type, id, codeKey, nameKey] of imported) {
+			const release = BOUNDARY_CATALOG[type].releases.find(
+				(entry) => entry.id === id,
+			);
+			expect(release, `${type}/${id}`).toMatchObject({
+				id,
+				codeKey,
+				nameKey,
+			});
+			expect(release?.asset).toBeUndefined();
+			expect(release?.holdReason).toContain("not been compiled");
+		}
+		expect(boundaryYears("msoa")).toEqual([2021]);
+		expect(boundaryYears("seneddConstituency")).toEqual([2022]);
+		expect(BOUNDARY_CATALOG.lsoa.vintages[2001]).toContain(
+			"/2001-12-ew-bgc/",
+		);
+	});
+
 	it("keeps each boundary family's paths and property keys together", () => {
 		for (const definition of Object.values(BOUNDARY_CATALOG)) {
 			expect(definition.properties.code).not.toBe(
