@@ -146,7 +146,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Housing supply and planning",
 		topic: "housing",
 		datasets: ["net-additional-dwellings", "planning-applications"],
-		intro: "New homes added and planning applications received by English local authorities.",
+		intro: "New homes added and planning applications received by English local authorities. The planning legend switches between applications received, decided and withdrawn during 2026 Q1. Outstanding counts are unavailable in this release. Regional cards sum available authority counts; suppressed measures remain unavailable.",
 	},
 	{
 		slug: "adult-social-care",

@@ -312,7 +312,23 @@ export async function loadPlanningApplications(
 				value === null
 			)
 				return;
-			records[code] = { code, name: row.LPANM?.trim() || code, value };
+			const metrics = Object.fromEntries(
+				(
+					[
+						["decided", "Applications decided"],
+						["withdrawn", "Applications withdrawn"],
+					] as const
+				).flatMap(([key, column]) => {
+					const number = numeric(row[column]);
+					return number === null ? [] : [[key, number]];
+				}),
+			);
+			records[code] = {
+				code,
+				name: row.LPANM?.trim() || code,
+				value,
+				metrics,
+			};
 		},
 	);
 	return dataset(
