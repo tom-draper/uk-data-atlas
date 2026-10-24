@@ -175,3 +175,37 @@ Deploy the API before the website. Confirm `/v1/atlas-pages/places-index.json`
 and `/v1/atlas-pages/docs-catalogue.json` return 200 before starting the website
 build. These artifact shapes follow the website; clients needing stable
 responses should use the area and catalogue routes.
+
+## Crosswalk compilation
+
+Crosswalk builds reuse validated artifacts and log each newly compiled crosswalk's
+method and elapsed time. New artifacts are published atomically as checkpoints.
+If a build fails, restart it to reuse completed checkpoints.
+
+Compilation defaults to at most two workers, limited by CPU count and available
+memory. The budget reserves 2 GiB for the parent plus 6 GiB per worker. Each child
+has a 4 GiB V8 heap limit. These are scheduling budgets, not hard RSS limits.
+Machines below the parallel budget use the serial compiler.
+
+Set `CROSSWALK_WORKERS=1` to force serial compilation. Request more workers only
+when the machine has enough available memory and CPUs:
+
+```sh
+CROSSWALK_WORKERS=2 pnpm data:build --only crosswalk-inventory
+```
+
+Each worker owns its geometry caches. Population crosswalks start after their
+area-overlap dependency is available and verify its content hash. The final
+inventory follows adapter order regardless of completion order.
+
+To force selected crosswalks to compile without replacing build outputs, run:
+
+```sh
+pnpm --dir services/api exec tsx --max-old-space-size=4096 scripts/profile-crosswalks.ts --workers=1 <crosswalk-id>
+```
+
+The profiler includes population dependencies, writes to a temporary directory,
+and reports per-crosswalk timings, record counts and content hashes. It rejects
+results that differ from an existing stored baseline. Its summary reports wall
+time and the parent's peak RSS, which excludes child memory in parallel mode.
+Raw sources, area artifacts and the geometry source registry must already exist.

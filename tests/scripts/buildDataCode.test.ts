@@ -179,6 +179,11 @@ test("production builders resolve without UI code and include declared workers a
 	);
 	assert.ok(
 		inputs
+			.get("crosswalk-inventory")!
+			.includes("services/api/scripts/crosswalk-worker.ts"),
+	);
+	assert.ok(
+		inputs
 			.get("geometry-store")!
 			.includes("services/api/src/geometryValidity.ts"),
 	);
