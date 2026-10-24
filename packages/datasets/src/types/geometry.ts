@@ -297,6 +297,16 @@ interface IntegratedCareBoardProperties2026 {
 }
 
 // Middle layer super output area properties by year
+interface MSOAProperties2001 {
+	MSOA01CD: string;
+	MSOA01NM: string;
+}
+
+interface MSOAProperties2011 {
+	MSOA11CD: string;
+	MSOA11NM: string;
+}
+
 interface MSOAProperties2021 {
 	MSOA21CD: string;
 	MSOA21NM: string;
@@ -375,6 +385,11 @@ interface ScottishParliamentaryConstituencyProperties2016 {
 interface ScottishParliamentaryRegionProperties2022 {
 	SPR22CD: string;
 	SPR22NM: string;
+}
+
+interface SeneddConstituencyProperties2026 {
+	SENC26CD: string;
+	SENC26NM: string;
 }
 
 interface SeneddConstituencyProperties2022 {
@@ -538,6 +553,8 @@ export type YearToProperties = {
 	// Integrated care boards
 	integratedCareBoard_2026: IntegratedCareBoardProperties2026;
 	// Middle layer super output areas
+	msoa_2001: MSOAProperties2001;
+	msoa_2011: MSOAProperties2011;
 	msoa_2021: MSOAProperties2021;
 	communitySafetyPartnership_2023: CommunitySafetyPartnershipProperties2023;
 	policeForceArea_2023: PoliceForceAreaProperties2023;
@@ -554,6 +571,7 @@ export type YearToProperties = {
 	scottishParliamentaryConstituency_2026: ScottishParliamentaryConstituencyProperties2026;
 	scottishParliamentaryConstituency_2016: ScottishParliamentaryConstituencyProperties2016;
 	scottishParliamentaryRegion_2022: ScottishParliamentaryRegionProperties2022;
+	seneddConstituency_2026: SeneddConstituencyProperties2026;
 	seneddConstituency_2022: SeneddConstituencyProperties2022;
 	seneddElectoralRegion_2022: SeneddElectoralRegionProperties2022;
 	localHealthBoard_2023: LocalHealthBoardProperties2023;
