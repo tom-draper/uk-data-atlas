@@ -11,7 +11,7 @@ import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
-import { compileCrosswalks } from "../src/crosswalkInventory";
+import { compileCrosswalks } from "./helpers/compileCrosswalks";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;

@@ -14,7 +14,7 @@ import {
 import type { GeometrySourceLookup } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
 import type { AreaOverlapCrosswalkAdapter } from "../src/crosswalkAdapters";
-import { compileCrosswalks } from "../src/crosswalkInventory";
+import { compileCrosswalks } from "./helpers/compileCrosswalks";
 
 // Squares near the equator, in degrees. D is about 1.1 km; SLIVER is about
 // 5.6 m, the kind of disagreement two generalised boundaries leave behind.

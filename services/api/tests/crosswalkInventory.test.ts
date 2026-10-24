@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import { compileCrosswalks } from "../src/crosswalkInventory";
+import { compileCrosswalks } from "./helpers/compileCrosswalks";
 
 test("compiles a published lookup without inventing apportionment weights", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));

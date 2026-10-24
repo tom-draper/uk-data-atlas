@@ -372,10 +372,11 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	// What each release's areas are related to is counted as every artifact
 	// passes through, so reporting it needs none of them read again.
 	const related: RelatedCodesByRelease = new Map();
-	const keep = (artifact: CrosswalkArtifact) => {
+	const keep = (artifact: CrosswalkArtifact, retainPair = false) => {
 		entries.set(artifact.id, crosswalkInventoryEntry(artifact));
 		addRelatedCodes(related, artifact);
-		if (pairIds.has(artifact.id)) pairs.set(artifact.id, artifact);
+		if (retainPair && pairIds.has(artifact.id))
+			pairs.set(artifact.id, artifact);
 	};
 	for (const adapter of adapters) {
 		let artifact: CrosswalkArtifact | undefined;
@@ -398,7 +399,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 				geometrySources,
 			);
 		}
-		if (artifact) keep(artifact);
+		if (artifact) keep(artifact, true);
 	}
 	for (const adapter of adapters) {
 		if (adapter.method !== "population-overlap") continue;
@@ -409,7 +410,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 			geometrySources,
 			pairs.get(adapter.pairs),
 		);
-		if (artifact) keep(artifact);
+		if (artifact) keep(artifact, true);
 	}
 	const pending = adapters.filter((adapter) => !entries.has(adapter.id));
 	console.log(
@@ -426,17 +427,17 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	// already on disk as they were checked, so they are not written again.
 	const { areaLookup, areaInventoryHash } =
 		readCompiledAreaLookup(outputDirectory);
-	compileCrosswalks(
+	for (const artifact of compileCrosswalks(
 		repositoryRoot,
 		pending,
 		areaLookup,
 		geometrySources,
 		pairs,
-		(artifact) => {
-			writeArtifact(artifact);
-			keep(artifact);
-		},
-	);
+	)) {
+		writeArtifact(artifact);
+		keep(artifact);
+	}
+
 	const inventory = crosswalkInventoryFromEntries(
 		adapters.map((adapter) => {
 			const entry = entries.get(adapter.id);
