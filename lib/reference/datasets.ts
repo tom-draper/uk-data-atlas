@@ -36,6 +36,10 @@ export const DATASET_TOPICS: DatasetTopic[] = [
 ];
 
 export const DATASET_GUIDES: Record<string, DatasetGuide> = {
+	"pupil-absence": {
+		topic: "education",
+		about: "Full-year 2024/25 pupil absence in English state-funded primary, secondary and special schools, mapped on county and unitary authority boundaries. Overall, authorised and unauthorised measures divide missed sessions by possible sessions. Persistent and severe absence count enrolments missing at least 10% and 50% of sessions. Regional rates divide summed counts by the corresponding summed denominators.",
+	},
 	"population-uk": {
 		topic: "people-and-places",
 		about: "How many people live in each local authority across the UK, estimated every year by the Office for National Statistics between censuses. It's the standard yardstick for comparing places of different sizes, and many per-person figures in the Atlas are worked out from it.",

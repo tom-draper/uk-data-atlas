@@ -39,6 +39,7 @@ import { nhsWaitingDefinition } from "./nhsWaiting";
 import { nimdmDefinition } from "./nimdm";
 import { planningApplicationsDefinition } from "./planningApplications";
 import { populationDefinition } from "./population";
+import { pupilAbsenceDefinition } from "./pupilAbsence";
 import { qualificationDefinition } from "./qualification";
 import { regionalGdpItl3Definition } from "./regionalGdpItl3";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
@@ -89,6 +90,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		nimdmDefinition,
 		planningApplicationsDefinition,
 		populationDefinition,
+		pupilAbsenceDefinition,
 		qualificationDefinition,
 		regionalGdpItl3Definition,
 		schoolPerformanceDefinition,

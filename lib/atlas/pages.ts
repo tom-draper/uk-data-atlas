@@ -38,6 +38,7 @@ const COVERAGE_OVERRIDES: Partial<
 
 /** What each map shows, as people search for it. Keyed by map slug. */
 export const MAP_NAMES: Readonly<Record<string, string>> = {
+	"pupil-absence": "Pupil Absence",
 	"adult-social-care-activity": "Adult Social Care Support",
 	"adult-social-care-outcomes": "Adult Social Care Quality of Life",
 	"air-quality": "Air Pollution (NO₂)",

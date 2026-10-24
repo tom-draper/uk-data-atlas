@@ -53,6 +53,11 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
+export interface PupilAbsenceOptions extends ColorRangeOption {
+	measure:
+		"overall" | "authorised" | "unauthorised" | "persistent" | "severe";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -75,6 +80,7 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| "pupilAbsence"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -92,6 +98,7 @@ export type ChartMapOptions = Omit<
 	| "homelessness"
 	| "schoolPerformance"
 > & {
+	pupilAbsence: PupilAbsenceOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
