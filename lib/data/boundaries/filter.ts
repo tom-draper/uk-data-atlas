@@ -6,6 +6,8 @@ import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 import { boundaryCapabilityFor } from "./capabilities";
 import { getProp, countryPrefixForBoundaryCode } from "./properties";
 
+import localAuthorityItl from "./localAuthorityItl.json";
+
 const COUNTRY_PREFIXES: Record<string, string> = {
 	England: "E",
 	Scotland: "S",
@@ -138,7 +140,58 @@ export const filterFeatures = (
 		};
 	}
 
-	if (capability.locationScope.kind === "bbox" && loc.bbox) {
+	if (
+		capability.locationScope.kind === "itl-membership" &&
+		loc.memberCodes?.length
+	) {
+		// English regions nest exactly in ITL1, including councils reorganised
+		// since the LAD21 lookup. Resolve these by region rather than a box.
+		const regionItlCodes: Record<string, string> = {
+			E12000001: "TLC",
+			E12000002: "TLD",
+			E12000003: "TLE",
+			E12000004: "TLF",
+			E12000005: "TLG",
+			E12000006: "TLH",
+			E12000007: "TLI",
+			E12000008: "TLJ",
+			E12000009: "TLK",
+		};
+		const regionCode =
+			loc.kind === "region" && loc.source?.code
+				? regionItlCodes[loc.source.code]
+				: undefined;
+		if (regionCode) {
+			return {
+				...geojson,
+				features: geojson.features.filter((f) =>
+					getProp(f.properties, codeKeys)?.startsWith(regionCode),
+				),
+			};
+		}
+		// ONS LAD21 → ITL21 lookup. ITL1/2 codes are prefixes of ITL3.
+		const lookup: Record<string, string> = localAuthorityItl;
+		const length = type === "itl1" ? 3 : type === "itl2" ? 4 : 5;
+		const codes = new Set(
+			loc.memberCodes.flatMap((code) =>
+				lookup[code] ? [lookup[code].slice(0, length)] : [],
+			),
+		);
+		if (codes.size && loc.memberCodes.every((code) => lookup[code])) {
+			return {
+				...geojson,
+				features: geojson.features.filter((f) =>
+					codes.has(getProp(f.properties, codeKeys) ?? ""),
+				),
+			};
+		}
+	}
+
+	if (
+		(capability.locationScope.kind === "bbox" ||
+			capability.locationScope.kind === "itl-membership") &&
+		loc.bbox
+	) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>
