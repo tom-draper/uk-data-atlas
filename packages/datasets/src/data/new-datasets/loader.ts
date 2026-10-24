@@ -317,7 +317,6 @@ export async function loadPlanningApplications(
 					[
 						["decided", "Applications decided"],
 						["withdrawn", "Applications withdrawn"],
-						["outstanding", "Applications at end of the quarter"],
 					] as const
 				).flatMap(([key, column]) => {
 					const number = numeric(row[column]);

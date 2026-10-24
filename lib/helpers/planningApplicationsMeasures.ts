@@ -3,7 +3,6 @@ export const PLANNING_MEASURES = [
 	{ value: "received", label: "Applications received" },
 	{ value: "decided", label: "Applications decided" },
 	{ value: "withdrawn", label: "Applications withdrawn" },
-	{ value: "outstanding", label: "Outstanding at quarter end" },
 ] as const;
 export function planningValue(
 	record: IndicatorRecord | undefined,

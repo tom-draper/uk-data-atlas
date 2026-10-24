@@ -104,7 +104,7 @@ export interface ImdOptions extends ColorRangeOption {
 }
 
 export interface PlanningApplicationsOptions extends ColorRangeOption {
-	measure: "received" | "decided" | "withdrawn" | "outstanding";
+	measure: "received" | "decided" | "withdrawn";
 }
 
 export interface CustomOptions extends ColorRangeOption {
