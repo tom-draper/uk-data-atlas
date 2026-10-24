@@ -81,7 +81,7 @@ function getWorker(): Worker | null {
 	if (!worker) {
 		try {
 			worker = new Worker(
-				new URL("../workers/data-worker.ts", import.meta.url),
+				new URL("../workers/dataWorker.ts", import.meta.url),
 			);
 		} catch {
 			return null;

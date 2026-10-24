@@ -29,7 +29,7 @@ const density: ChartDefinition<PopulationDataset> = {
 	label: "Population Density [2022]",
 	view: "density",
 	defaultVisible: true,
-	componentPath: "@/components/demographics/population-density-registry",
+	componentPath: "@/components/demographics/PopulationDensityRegistry",
 	calculateStats,
 	year: 2022,
 };
@@ -39,7 +39,7 @@ const age: ChartDefinition<PopulationDataset> = {
 	label: "Age Distribution [2022]",
 	view: "age",
 	defaultVisible: true,
-	componentPath: "@/components/demographics/population-age-registry",
+	componentPath: "@/components/demographics/PopulationAgeRegistry",
 	calculateStats,
 	year: 2022,
 };
@@ -49,7 +49,7 @@ const gender: ChartDefinition<PopulationDataset> = {
 	label: "Gender Balance [2022]",
 	view: "gender",
 	defaultVisible: true,
-	componentPath: "@/components/demographics/population-gender-registry",
+	componentPath: "@/components/demographics/PopulationGenderRegistry",
 	calculateStats,
 	year: 2022,
 };
