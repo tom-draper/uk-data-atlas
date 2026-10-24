@@ -17,14 +17,23 @@ export const incomeDefinition: ChartDatasetDefinition<IncomeDataset> = {
 	},
 	map: {
 		valueFor: (dataset, code, mapOptions) => {
-			const annual = dataset.data[code]?.annual;
+			const annual = dataset.data[code]?.[mapOptions.income.period];
 			return mapOptions.income.measure === "mean"
 				? (annual?.mean ?? null)
 				: (annual?.median ?? null);
 		},
 		sourceMode: (_dataset, mapOptions) =>
-			`income:${mapOptions.income.measure}`,
+			`income:${mapOptions.income.measure}:${mapOptions.income.period}`,
 		colorRange: { min: 25000, max: 45000 },
-		legend: { min: 0, max: 80000, format: (v) => `£${v.toFixed(0)}` },
+		legend: {
+			min: 0,
+			max: 80000,
+			bounds: (options) => ({
+				min: 0,
+				max: options.income.period === "hourly" ? 60 : 80000,
+			}),
+			format: (v, options) =>
+				`£${v.toFixed(options.income.period === "hourly" ? 2 : 0)}${options.income.period === "hourly" ? "/hour" : ""}`,
+		},
 	},
 };
