@@ -24,8 +24,8 @@ it("collects planning counts and preserves suppressed values", async () => {
 	expect(
 		planningValue(
 			sumPlanningRecords([record, record]) ?? undefined,
-			"outstanding",
+			"decided",
 		),
-	).toBe(280);
+	).toBe(160);
 	expect(sumPlanningRecords([])).toBeNull();
 });

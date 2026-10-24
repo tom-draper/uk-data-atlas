@@ -19,7 +19,7 @@ export const planningApplicationsDatasetDefinition: DatasetDefinition<
 		licenceUrl:
 			"https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Planning applications received, decided, withdrawn and outstanding by English local planning authority during 2026 Q1.",
+			"Planning applications received, decided and withdrawn by English local planning authority during 2026 Q1.",
 	},
 	ingestion: {
 		minimumDataRecords: 100,

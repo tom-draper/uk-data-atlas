@@ -22,6 +22,7 @@ describe("loadPlanningApplications", () => {
 			code: "E06000001",
 			name: "Hartlepool",
 			value: 100,
+			metrics: {},
 		});
 	});
 });
