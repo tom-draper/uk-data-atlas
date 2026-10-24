@@ -19,7 +19,7 @@ export const jobsDefinition: ChartDatasetDefinition<JobsDataset> = {
 		componentPath: "@/components/ValueCard",
 		card: defineValueCard<JobsDataset, JobsLADData, AggregatedJobsData>({
 			heading: "Jobs",
-			coverage: "UK",
+			coverage: "United Kingdom",
 			source: "Office for National Statistics. Jobs. nomisweb.co.uk",
 			unit: "jobs",
 			format: formatCompactCount,

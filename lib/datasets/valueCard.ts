@@ -24,7 +24,7 @@ export interface ValueCardConfig {
 	period?: string;
 	/** Full heading for the tooltip when the visible one may be truncated. */
 	headingTitle?: string;
-	/** The nations the source covers, shown in the card's header. */
+	/** The nations the source covers, shown after the source in the card's tooltip. */
 	coverage?: string;
 	/** Source and methodology note shown as the card's tooltip. */
 	source: string;

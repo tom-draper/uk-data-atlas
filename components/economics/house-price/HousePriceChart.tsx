@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import type {
 	ActiveViz,
 	AggregatedHousePriceData,
@@ -97,6 +98,7 @@ function PriceChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`${measure === "mean" ? "Mean" : "Median"} House Price [${dataset.year}]`}
 			accent={LINE_COLOR}
 			isActive={isActive}

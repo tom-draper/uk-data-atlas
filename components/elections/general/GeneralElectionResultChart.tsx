@@ -1,6 +1,7 @@
 // components/GeneralElectionResultChart.tsx
 "use client";
 
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { ActiveViz, GeneralElectionDataset, SelectedArea } from "@lib/types";
 import {
 	ChartContentPlaceholder,
@@ -100,6 +101,7 @@ export default function GeneralElectionResultChart({
 	const accentColor = winnerColor ?? "#6366f1";
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(data.dataset) ?? "United Kingdom"}
 			heading={`${data.year} General Election`}
 			estimateNote={
 				isConstituencyEstimate(selectedArea, data.viaConstituency)

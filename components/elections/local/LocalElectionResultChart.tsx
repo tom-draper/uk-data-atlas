@@ -1,6 +1,7 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { LocalElectionDataset, ActiveViz } from "@lib/types";
 import {
 	ChartContentPlaceholder,
@@ -61,6 +62,7 @@ export default function LocalElectionResultChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(data.dataset)}
 			heading={`${data.year} Local Elections`}
 			headerEnd={
 				data.turnout || data.boundariesRedrawn ? (

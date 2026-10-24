@@ -1,4 +1,6 @@
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedAirQualityData,
@@ -75,6 +77,7 @@ export default function AirQualityChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset) ?? "United Kingdom"}
 			heading={`Air Quality [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, stats !== null)

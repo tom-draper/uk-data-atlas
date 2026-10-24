@@ -1,5 +1,7 @@
 // components/IncomeChart.tsx
 "use client";
+
+import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import {
 	ActiveViz,
 	AggregatedIncomeData,
@@ -11,7 +13,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import { ChartCard } from "@/components/ChartCard";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
@@ -100,16 +102,12 @@ export default function IncomeChart({
 
 	return (
 		<ChartCard
+			coverage={formatDatasetCoverage(dataset)}
 			heading={`${measure === "mean" ? "Mean" : "Median"} Income [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, income !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
-			}
-			headerEnd={
-				<ChartCardHeaderNote isDark={isDark}>
-					England
-				</ChartCardHeaderNote>
 			}
 			accent="#10b981"
 			isActive={isActive}
