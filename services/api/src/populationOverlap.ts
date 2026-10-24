@@ -112,6 +112,7 @@ export const compilePopulationOverlapCrosswalk = (
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
 	pairs: CrosswalkArtifact | undefined,
+	readGeometry: typeof readGeometries = readGeometries,
 ): PopulationOverlapCrosswalkArtifact => {
 	if (!pairs || pairs.method !== "area-overlap")
 		throw new Error(
@@ -134,20 +135,20 @@ export const compilePopulationOverlapCrosswalk = (
 			);
 		}
 	}
-	const sources = readGeometries(
+	const sources = readGeometry(
 		repositoryRoot,
 		adapter.id,
 		adapter.from,
 		geometrySources,
 		sourceCodePattern,
 	);
-	const targets = readGeometries(
+	const targets = readGeometry(
 		repositoryRoot,
 		adapter.id,
 		adapter.to,
 		geometrySources,
 	);
-	const blocks = readGeometries(
+	const blocks = readGeometry(
 		repositoryRoot,
 		adapter.id,
 		adapter.weighting.blocks,

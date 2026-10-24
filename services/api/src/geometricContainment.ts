@@ -84,6 +84,7 @@ export const measureContainment = (
 	abandonAfter = Infinity,
 	/** Reuse releases already read, when many pairs share a side. */
 	cache?: Map<string, ReturnType<typeof readGeometries>>,
+	readGeometry: typeof readGeometries = readGeometries,
 ): ContainmentMeasurement => {
 	const release = (endpoint: {
 		geography: GeographyKind;
@@ -92,7 +93,7 @@ export const measureContainment = (
 		const key = releaseKey(endpoint.geography, endpoint.boundaryRelease);
 		const held = cache?.get(key);
 		if (held) return held;
-		const read = readGeometries(
+		const read = readGeometry(
 			repositoryRoot,
 			crosswalkId,
 			endpoint,
@@ -246,7 +247,9 @@ export const compileGeometricContainmentCrosswalk = (
 	adapter: GeometricContainmentCrosswalkAdapter,
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
+	readGeometry: typeof readGeometries = readGeometries,
 ): GeometricContainmentCrosswalkArtifact => {
+	const cache = new Map<string, ReturnType<typeof readGeometries>>();
 	const measured = measureContainment(
 		repositoryRoot,
 		adapter.id,
@@ -254,6 +257,9 @@ export const compileGeometricContainmentCrosswalk = (
 		adapter.to,
 		geometrySources,
 		adapter.sliverWidthM,
+		Infinity,
+		cache,
+		readGeometry,
 	);
 	const refused = measured.areas.filter((area) => area.relation !== "within");
 	if (refused.length > 0)
@@ -285,18 +291,12 @@ export const compileGeometricContainmentCrosswalk = (
 			},
 		],
 	}));
-	const sources = readGeometries(
-		repositoryRoot,
-		adapter.id,
-		adapter.from,
-		geometrySources,
-	);
-	const targets = readGeometries(
-		repositoryRoot,
-		adapter.id,
-		adapter.to,
-		geometrySources,
-	);
+	const sources = cache.get(
+		releaseKey(adapter.from.geography, adapter.from.boundaryRelease),
+	)!;
+	const targets = cache.get(
+		releaseKey(adapter.to.geography, adapter.to.boundaryRelease),
+	)!;
 	const artifactWithoutHash = {
 		schemaVersion: 1 as const,
 		id: adapter.id,
@@ -378,6 +378,7 @@ export const compileBestFitCrosswalk = (
 	adapter: BestFitCrosswalkAdapter,
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
+	readGeometry: typeof readGeometries = readGeometries,
 ): BestFitCrosswalkArtifact => {
 	const cache = new Map<string, ReturnType<typeof readGeometries>>();
 	const measured = measureContainment(
@@ -389,6 +390,7 @@ export const compileBestFitCrosswalk = (
 		adapter.sliverWidthM,
 		Infinity,
 		cache,
+		readGeometry,
 	);
 	const unplaced = measured.areas.filter(
 		(area) => area.relation === "unmeasured" || area.parent === undefined,

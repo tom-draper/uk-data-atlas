@@ -52,6 +52,7 @@ export const compileAreaOverlapCrosswalk = (
 	adapter: AreaOverlapCrosswalkAdapter,
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
+	readGeometry: typeof readGeometries = readGeometries,
 ): AreaOverlapCrosswalkArtifact => {
 	const minimumTargetCoverage =
 		adapter.minimumTargetCoverage ?? adapter.minimumCoverage;
@@ -94,14 +95,14 @@ export const compileAreaOverlapCrosswalk = (
 			);
 		}
 	}
-	const sources = readGeometries(
+	const sources = readGeometry(
 		repositoryRoot,
 		adapter.id,
 		adapter.from,
 		geometrySources,
 		sourceCodePattern,
 	);
-	const targets = readGeometries(
+	const targets = readGeometry(
 		repositoryRoot,
 		adapter.id,
 		adapter.to,

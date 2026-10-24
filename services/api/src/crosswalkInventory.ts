@@ -1,3 +1,4 @@
+import { RawGeometryCache } from "./rawAreaGeometries";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
@@ -809,6 +810,7 @@ export const compileCrosswalks = (
 	onCompiled?: (artifact: CrosswalkArtifact) => void,
 ): { inventory: CrosswalkInventory; artifacts: CrosswalkArtifact[] } => {
 	const compiled = new Map(prior);
+	const rawGeometryCache = new RawGeometryCache();
 	const geometryCache = geometrySources
 		? new AreaGeometryCache(repositoryRoot, geometrySources, 2)
 		: undefined;
@@ -837,6 +839,7 @@ export const compileCrosswalks = (
 					adapter,
 					geometrySources,
 					areaLookup,
+					rawGeometryCache.read,
 				);
 			}
 			if (adapter.method === "best-fit") {
@@ -845,6 +848,7 @@ export const compileCrosswalks = (
 					adapter,
 					geometrySources,
 					areaLookup,
+					rawGeometryCache.read,
 				);
 			}
 			if (adapter.method === "extent-continuity") {
@@ -853,6 +857,7 @@ export const compileCrosswalks = (
 					adapter,
 					geometrySources,
 					areaLookup,
+					rawGeometryCache.read,
 				);
 			}
 			if (adapter.method === "population-overlap") {
@@ -862,6 +867,7 @@ export const compileCrosswalks = (
 					geometrySources,
 					areaLookup,
 					compiled.get(adapter.pairs),
+					rawGeometryCache.read,
 				);
 			}
 			if (adapter.method === "area-overlap") {
@@ -870,6 +876,7 @@ export const compileCrosswalks = (
 					adapter,
 					geometrySources,
 					areaLookup,
+					rawGeometryCache.read,
 				);
 			}
 			throw new Error(

@@ -264,14 +264,15 @@ export const compileExtentContinuityCrosswalk = (
 	adapter: ExtentContinuityCrosswalkAdapter,
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
+	readGeometry: typeof readGeometries = readGeometries,
 ): ExtentContinuityCrosswalkArtifact => {
-	const sources = readGeometries(
+	const sources = readGeometry(
 		repositoryRoot,
 		adapter.id,
 		adapter.from,
 		geometrySources,
 	);
-	const targets = readGeometries(
+	const targets = readGeometry(
 		repositoryRoot,
 		adapter.id,
 		adapter.to,
