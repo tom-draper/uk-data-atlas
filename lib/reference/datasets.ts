@@ -107,7 +107,7 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 	},
 	"workplace-income": {
 		topic: "work-and-economy",
-		about: "Typical annual pay for jobs based in each local authority in England, whoever does them. Comparing it with pay by where people live shows which places people commute into for better-paid work.",
+		about: "Pay for jobs based in each local authority in England, whoever does them. Enable the Workplace Pay card and select annual or hourly pay, median or mean. Regional figures average the available authority estimates without population weighting. Compare it with the resident Income card to see differences between where people work and live.",
 	},
 	"claimant-count": {
 		topic: "work-and-economy",
