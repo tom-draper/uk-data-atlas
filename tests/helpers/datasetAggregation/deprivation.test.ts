@@ -72,6 +72,15 @@ describe("aggregateIMD", () => {
 			mostDeprivedCount: 2,
 			population: 6000,
 			averageScore: 35,
+			domainScores: {
+				incomeScore: null,
+				employmentScore: null,
+				educationScore: null,
+				healthScore: null,
+				crimeScore: null,
+				housingScore: null,
+				livingEnvironmentScore: null,
+			},
 		});
 	});
 
