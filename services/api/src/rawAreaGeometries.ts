@@ -194,3 +194,92 @@ export const readGeometries = (
 		},
 	};
 };
+
+/**
+ * Reuse decoded releases within one build's immutable source snapshot.
+ * Both release count and retained coordinate count are bounded. Oversized
+ * releases are returned to their caller but are never retained here.
+ */
+export class RawGeometryCache {
+	private readonly entries = new Map<
+		string,
+		{
+			sources: GeometrySourceLookup;
+			value: ReturnType<typeof readGeometries>;
+			vertices: number;
+		}
+	>();
+	private retainedVertices = 0;
+	private hits = 0;
+	private loads = 0;
+
+	constructor(
+		private readonly maxReleases = 2,
+		private readonly maxVertices = 1_000_000,
+	) {
+		if (
+			!Number.isSafeInteger(maxReleases) ||
+			maxReleases < 0 ||
+			!Number.isSafeInteger(maxVertices) ||
+			maxVertices < 0
+		)
+			throw new Error(
+				"Geometry cache limits must be non-negative integers.",
+			);
+	}
+
+	stats() {
+		return {
+			hits: this.hits,
+			loads: this.loads,
+			releases: this.entries.size,
+			vertices: this.retainedVertices,
+		};
+	}
+
+	readonly read: typeof readGeometries = (
+		root,
+		id,
+		endpoint,
+		sources,
+		pattern,
+	) => {
+		const key = JSON.stringify([
+			root,
+			endpoint.geography,
+			endpoint.boundaryRelease,
+			pattern?.source,
+			pattern?.flags,
+		]);
+		const cached = this.entries.get(key);
+		if (cached?.sources === sources) {
+			this.entries.delete(key);
+			this.entries.set(key, cached);
+			this.hits++;
+			return cached.value;
+		}
+		const value = readGeometries(root, id, endpoint, sources, pattern);
+		this.loads++;
+		let vertices = 0;
+		for (const area of value.geometries.values())
+			for (const piece of area.pieces)
+				for (const ring of piece.geometry) vertices += ring.length;
+		if (cached) {
+			this.entries.delete(key);
+			this.retainedVertices -= cached.vertices;
+		}
+		if (this.maxReleases === 0 || vertices > this.maxVertices) return value;
+		while (
+			this.entries.size >= this.maxReleases ||
+			this.retainedVertices + vertices > this.maxVertices
+		) {
+			const oldest = this.entries.entries().next().value;
+			if (!oldest) break;
+			this.entries.delete(oldest[0]);
+			this.retainedVertices -= oldest[1].vertices;
+		}
+		this.entries.set(key, { sources, value, vertices });
+		this.retainedVertices += vertices;
+		return value;
+	};
+}
