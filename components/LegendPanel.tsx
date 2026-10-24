@@ -18,6 +18,8 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
+import MeasureSelect from "./legend/MeasureSelect";
+import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -154,6 +156,21 @@ export default function LegendPanel({
 				</div>
 			</div>
 
+			{activeDataset?.type === "workplaceIncome" && (
+				<MeasureSelect
+					label="Workplace pay"
+					value={controls.displayOptions.workplaceIncome.measure}
+					options={WORKPLACE_PAY_MEASURES}
+					onChange={(measure) =>
+						onMapOptionsChange("workplaceIncome", {
+							measure,
+							colorRange: measure.startsWith("hourly")
+								? { min: 10, max: 30 }
+								: { min: 25000, max: 45000 },
+						})
+					}
+				/>
+			)}
 			{activeDataset?.type === "housePrice" && (
 				<HousePriceMeasurePanel
 					measure={controls.displayOptions.housePrice.measure}

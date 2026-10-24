@@ -53,6 +53,10 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
+export interface WorkplaceIncomeOptions extends ColorRangeOption {
+	measure: "annualMedian" | "annualMean" | "hourlyMedian" | "hourlyMean";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -75,6 +79,7 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| "workplaceIncome"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -92,6 +97,7 @@ export type ChartMapOptions = Omit<
 	| "homelessness"
 	| "schoolPerformance"
 > & {
+	workplaceIncome: WorkplaceIncomeOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;

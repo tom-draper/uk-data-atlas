@@ -86,7 +86,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Pay",
 		topic: "work",
 		datasets: ["income", "workplace-income"],
-		intro: "Median annual and hourly pay for employees in each English local authority, both by where workers live and where their jobs are located.",
+		intro: "Median annual and hourly pay for employees in each English local authority, both by where workers live and where their jobs are located. Enable the Workplace Pay card to map earnings where jobs are located. Its legend offers annual or hourly median and mean pay, separately from the resident Income card. Regional workplace figures average available authority estimates; suppressed estimates remain unavailable.",
 	},
 	{
 		slug: "businesses",

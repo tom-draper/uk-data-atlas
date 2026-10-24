@@ -8,7 +8,6 @@ export const workplaceIncomeDatasetDefinition: DatasetDefinition<WorkplaceIncome
 		precompiledFile: "workplace-income",
 		boundaryType: "localAuthority",
 		coverageCountries: ["GB-ENG"],
-		chartPending: true,
 		source: {
 			name: "Workplace income",
 			source: "Office for National Statistics",
