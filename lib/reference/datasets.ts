@@ -103,7 +103,7 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 	},
 	income: {
 		topic: "work-and-economy",
-		about: "Typical annual pay for employees who live in each local authority in England, from the Annual Survey of Hours and Earnings. The Atlas uses the median, the middle value, so a few very high earners don't skew it.",
+		about: "Pay for employees who live in each local authority in England, from the Annual Survey of Hours and Earnings. Select annual or hourly pay and median or mean. The median is the middle value, so a few very high earners don't skew it. Regional hourly figures average the available authority estimates without population weighting.",
 	},
 	"workplace-income": {
 		topic: "work-and-economy",
