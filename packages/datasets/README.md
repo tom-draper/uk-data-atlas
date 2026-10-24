@@ -15,6 +15,12 @@ definition once into `data/build/datasets/`, with the cache and worker pool in
 regional chunks. The `atlas-sqlite` stage stores the catalogue payloads in
 `data/build/atlas.sqlite` for both servers to read. See `data/build/README.md`.
 
+The dataset worker pool uses currently available memory, reserves 1 GiB for the
+parent process, and budgets 2 GiB per worker. Automatic concurrency is at least
+one and at most four, and leaves one CPU available when possible.
+`ATLAS_PRECOMPILE_JOBS` overrides this automatic sizing. A value of `1` compiles
+on the main thread. A positive integer override bypasses the resource budget.
+
 `pnpm data:build` reports the five slowest stages after a build completes or a
 stage returns a failure status. Each entry separates command time from overhead,
 including cache checks and recording. Cached stages have zero command time.

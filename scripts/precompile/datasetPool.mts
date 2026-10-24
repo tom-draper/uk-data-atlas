@@ -1,4 +1,4 @@
-import { availableParallelism, totalmem } from "os";
+import { datasetConcurrency } from "./datasetConcurrency.mjs";
 import { Worker } from "worker_threads";
 import {
 	compileStaleDataset,
@@ -14,29 +14,8 @@ import type {
 
 type ManifestEntry = Awaited<ReturnType<typeof compileStaleDataset>>;
 
-const GIGABYTE = 1024 ** 3;
 // Matches the heap the precompile scripts give the main thread.
 const WORKER_HEAP_MB = 3072;
-const MAX_WORKERS = 4;
-
-/**
- * How many datasets to compile at once. A loader can hold its source text,
- * parsed rows, compiled records and output JSON together, which is over a
- * gigabyte for the largest, so the count is bounded by memory as well as
- * cores. ATLAS_PRECOMPILE_JOBS overrides it; 1 compiles on the main thread.
- */
-export const datasetConcurrency = () => {
-	const requested = Number(process.env.ATLAS_PRECOMPILE_JOBS);
-	if (Number.isInteger(requested) && requested > 0) return requested;
-	return Math.max(
-		1,
-		Math.min(
-			MAX_WORKERS,
-			availableParallelism() - 1,
-			Math.floor(totalmem() / (2 * GIGABYTE)),
-		),
-	);
-};
 
 /** Runs every job on a pool of `size` workers. Rejects on the first failure. */
 const runJobs = (jobs: readonly DatasetJob[], size: number) =>
