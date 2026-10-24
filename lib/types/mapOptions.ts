@@ -21,6 +21,10 @@ export interface CountMetricOptions extends ColorRangeOption {
 	measure: "total" | "perPopulation";
 }
 
+export interface EnergyConsumptionOptions extends CountMetricOptions {
+	sector: "allMetersGwh" | "domesticGwh" | "nonDomesticGwh";
+}
+
 export interface BroadbandOptions extends ColorRangeOption {
 	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
 }
@@ -96,8 +100,8 @@ export type ChartMapOptions = Omit<
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
 	electricVehicleChargers: CountMetricOptions;
-	electricityConsumption: CountMetricOptions;
-	gasConsumption: CountMetricOptions;
+	electricityConsumption: EnergyConsumptionOptions;
+	gasConsumption: EnergyConsumptionOptions;
 	waste: CountMetricOptions;
 	jobs: CountMetricOptions;
 	broadband: BroadbandOptions;

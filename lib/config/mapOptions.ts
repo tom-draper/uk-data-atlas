@@ -49,6 +49,11 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "ghgEmissions"
 				? { measure: "perPerson" }
 				: {}),
+			...(["electricityConsumption", "gasConsumption"].includes(
+				definition.type,
+			)
+				? { sector: "allMetersGwh" }
+				: {}),
 			...(hasPopulationMetric(definition.type)
 				? { measure: "total" }
 				: {}),
