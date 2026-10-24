@@ -1,3 +1,4 @@
+import { CrosswalkSpatialIndex } from "./crosswalkSpatialIndex";
 import { createHash } from "node:crypto";
 import polygonClipping from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
@@ -107,6 +108,18 @@ export const compileAreaOverlapCrosswalk = (
 		geometrySources,
 	);
 
+	const targetIndex = new CrosswalkSpatialIndex(
+		[...targets.geometries].map((value) => ({
+			value,
+			bounds: value[1].bounds,
+		})),
+	);
+	for (const [sourceCode, excluded] of Object.entries(excludedPairs))
+		if (sources.geometries.has(sourceCode))
+			for (const targetCode of Object.keys(excluded))
+				if (targets.geometries.has(targetCode))
+					appliedExcludedPairs.add(`${sourceCode}|${targetCode}`);
+
 	let candidatePairCount = 0;
 	let intersectingPairCount = 0;
 	let sliverPairCount = 0;
@@ -120,7 +133,7 @@ export const compileAreaOverlapCrosswalk = (
 
 	for (const [sourceCode, source] of sources.geometries) {
 		const overlaps: Array<{ code: string; overlapAreaM2: number }> = [];
-		for (const [targetCode, target] of targets.geometries) {
+		for (const [targetCode, target] of targetIndex.query(source.bounds)) {
 			const excluded = excludedPairs[sourceCode]?.[targetCode];
 			if (excluded !== undefined) {
 				appliedExcludedPairs.add(`${sourceCode}|${targetCode}`);
