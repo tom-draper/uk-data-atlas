@@ -28,6 +28,7 @@ export interface ChartDatasetMap<T = unknown> {
 	sourceMode?(dataset: T, mapOptions: MapOptions): string;
 	colorRange: { min: number; max: number };
 	legend: {
+		bounds?(options: MapOptions): { min: number; max: number };
 		min: number;
 		max: number;
 		format: (value: number, mapOptions: MapOptions) => string;
@@ -88,6 +89,7 @@ export interface ChartDefinition<
 	// Declares the card for charts rendered by the shared value card
 	// (`@/components/ValueCard`) rather than a component of their own.
 	card?: ValueCardConfig;
+	cardForOptions?(options: MapOptions): ValueCardConfig;
 }
 
 export type ChartDatasetLegendAggregation<

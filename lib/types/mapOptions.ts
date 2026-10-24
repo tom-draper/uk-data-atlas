@@ -53,6 +53,16 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
+export interface PublicHealthOptions extends ColorRangeOption {
+	measure:
+		| "smoking"
+		| "adultExcessWeight"
+		| "activity"
+		| "receptionExcessWeight"
+		| "year6ExcessWeight"
+		| "preventableMortality";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -75,6 +85,7 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| "publicHealth"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -92,6 +103,7 @@ export type ChartMapOptions = Omit<
 	| "homelessness"
 	| "schoolPerformance"
 > & {
+	publicHealth: PublicHealthOptions;
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
