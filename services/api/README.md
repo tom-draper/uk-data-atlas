@@ -65,7 +65,8 @@ per-table `*_decoded` views retain the wide format.
 rules and weights, concepts and uncertainty metadata. Missing catalogue entries
 have NULL metadata. Join `observation_series.datasetId` to
 `observation_datasets.datasetId` for publisher, source URL, temporal coverage,
-licence and description. All observation tables remain STRICT.
+licence and description. All observation tables remain STRICT. `observations` has an index on
+`(areaId, seriesId, periodId)` for queries across measures for one area.
 
 For example:
 
@@ -76,8 +77,7 @@ WHERE areaCode = 'E06000001'
 ORDER BY measureId, period;
 ```
 
-Road
-collisions store the total beside its slight, serious and fatal measures, as
+Road collisions store the total beside its slight, serious and fatal measures, as
 the API serves all four.
 
 The API rebuilds each artifact's JSON from these rows and checks it against the
