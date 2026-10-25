@@ -44,6 +44,29 @@ preserve the original JSON property order. The `crosswalk_sources_decoded` and
 `crosswalk_targets_decoded` views expose the text `crosswalkId`, field lists, and
 endpoint values for direct SQL queries.
 
+Observations are stored as rows, not as JSON text. `observation_series` has one
+row per artifact (`artifactId`, `contentHash`, source geography and the hash of
+the JSON the API serves), and `observation_measures`, `observation_periods`,
+`observation_areas` and `observation_statuses` give each measure, period label,
+area code and status an integer id in sort order. `observations` holds one row
+per `(seriesId, periodId, areaId)` with `value` and `statusId`. The rarer record
+fields live in sparse tables keyed the same way: `observation_source_areas`
+(`sourceAreaCode`), `observation_categories` (`category`) and
+`observation_intervals` (`lower`, `upper`). Each shared census table has one
+wide `observation_<table>` table with a REAL column per measure, and
+`observation_tables` and `observation_table_columns` map the artifact to it.
+`observations_decoded` and the per-table `*_decoded` views expose area codes,
+period labels, statuses and measure names for direct SQL queries. Road
+collisions store the total beside its slight, serious and fatal measures, as
+the API serves all four.
+
+The API rebuilds each artifact's JSON from these rows and checks it against the
+stored hash, so responses, hashes and ETags are unchanged. An artifact is only
+stored if its rows rebuild its exact bytes, which means records must use the
+compilers' key order, periods and areas must ascend, and a period must have
+records. The `data-catalog` stage vacuums the database after replacing the
+tables. Run `pnpm data:build --from data-catalog` to rebuild them.
+
 Databases built with text crosswalk IDs in endpoint rows require a rebuild for
 this reader. From the repository root, run
 `pnpm data:build --from atlas-sqlite --no-cache` to rebuild SQLite and its downstream
