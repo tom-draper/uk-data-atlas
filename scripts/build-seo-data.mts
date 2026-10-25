@@ -7,6 +7,10 @@ import {
 	serialiseMapFigures,
 } from "./map-figures";
 import {
+	PLACE_ELECTIONS_PATH,
+	serialisePlaceElections,
+} from "./place-elections";
+import {
 	RANKING_PAGES_PATH,
 	RANKINGS_DIR,
 	serialiseRankings,
@@ -25,3 +29,6 @@ for (const [slug, contents] of files)
 	await writeFile(join(RANKINGS_DIR, `${slug}.json`), contents);
 await writeFile(RANKING_PAGES_PATH, pages);
 console.log(`Wrote ${files.size} rankings to ${RANKINGS_DIR}`);
+
+await writeFile(PLACE_ELECTIONS_PATH, serialisePlaceElections());
+console.log(`Wrote ${PLACE_ELECTIONS_PATH}`);
