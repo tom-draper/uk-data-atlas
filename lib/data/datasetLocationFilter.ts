@@ -1,3 +1,4 @@
+import localAuthorityCounty from "./boundaries/localAuthorityCounty.json";
 import { gazetteer } from "./gazetteer/static";
 import type { Crosswalk } from "./gazetteer/types";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./boundaries/catalog";
@@ -229,6 +230,14 @@ const matcherFor = async (
 	const memberCodes = new Set(location.memberCodes ?? []);
 
 	switch (capability.locationScope.kind) {
+		case "county-membership": {
+			if (!memberCodes.size) return null;
+			const lookup: Record<string, string> = localAuthorityCounty;
+			const codes = new Set(
+				[...memberCodes].map((code) => lookup[code] ?? code),
+			);
+			return (code) => codes.has(code);
+		}
 		case "direct-membership":
 			return memberCodes.size > 0
 				? (code) => memberCodes.has(code)

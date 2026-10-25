@@ -6,9 +6,41 @@ const greaterManchester = gazetteer.namedLocation("Greater Manchester")!;
 
 afterEach(() => {
 	vi.unstubAllGlobals();
+	vi.restoreAllMocks();
 });
 
 describe("location-scoped chart datasets", () => {
+	it.each([
+		["Greater Manchester", "E08000003"],
+		["Norfolk", "E10000020"],
+		["Norwich", "E10000020"],
+	])(
+		"scopes pupil absence records to %s using county membership",
+		async (location, code) => {
+			if (location === "Norfolk")
+				vi.spyOn(gazetteer, "namedLocation").mockReturnValueOnce({
+					memberCodes: ["E07000148", "E07000149"],
+					bbox: [0.1541, 52.3, 1.8, 53],
+					kind: "county",
+				});
+			const payload = {
+				2025: {
+					boundaryYear: 2025,
+					data: {
+						E08000003: { value: 7 },
+						E10000020: { value: 8 },
+						E10000007: { value: 9 },
+					},
+				},
+			};
+			const filtered = (await filterDatasetPayloadForLocation(payload, {
+				location,
+				boundaryType: "countyAndUnitaryAuthority",
+			})) as typeof payload;
+			expect(Object.keys(filtered[2025].data)).toEqual([code]);
+		},
+	);
+
 	it.each([
 		["England", "TLC31"],
 		["Wales", "TLL11"],

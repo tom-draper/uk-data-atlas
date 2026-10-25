@@ -6,6 +6,8 @@ import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 import { boundaryCapabilityFor } from "./capabilities";
 import { getProp, countryPrefixForBoundaryCode } from "./properties";
 
+// ONS LAD25 → CTYUA25 lookup (April 2025, UK, v2).
+import localAuthorityCounty from "./localAuthorityCounty.json";
 import localAuthorityItl from "./localAuthorityItl.json";
 
 const COUNTRY_PREFIXES: Record<string, string> = {
@@ -123,6 +125,22 @@ export const filterFeatures = (
 				ladCode = ladCode || mappedLadCode;
 				return ladCode && ladCodeSet.has(ladCode);
 			}),
+		};
+	}
+
+	if (
+		capability.locationScope.kind === "county-membership" &&
+		loc.memberCodes?.length
+	) {
+		const lookup: Record<string, string> = localAuthorityCounty;
+		const codes = new Set(
+			loc.memberCodes.map((code) => lookup[code] ?? code),
+		);
+		return {
+			...geojson,
+			features: geojson.features.filter((feature) =>
+				codes.has(getProp(feature.properties, codeKeys) ?? ""),
+			),
 		};
 	}
 
