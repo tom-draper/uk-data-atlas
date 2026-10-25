@@ -73,7 +73,7 @@ For example:
 ```sql
 SELECT measureId, period, value, category, status
 FROM observations_all
-WHERE areaCode = 'E06000001'
+WHERE areaCode = 'E01000001'
 ORDER BY measureId, period;
 ```
 
@@ -2353,9 +2353,9 @@ line up.
   no body to keep. `/metrics` reports the cache's size, hits, misses and
   evictions.
 - **Observation cache:** `ATLAS_OBSERVATION_CACHE_MB`, 64 MiB per worker by
-  default, bounds retained observation artifacts by their uncompressed JSON
-  bytes. Shared tables and ordinary measure artifacts use one least recently
-  used cache. Eviction releases cached measure views, materialised records and
+  default, budgets rebuilt text at two bytes per code unit plus the source
+  UTF-8 JSON byte allowance for parsed data. Shared tables, ordinary measure
+  artifacts and bulk JSON text use one least recently used cache. Eviction releases cached measure views, materialised records and
   row indexes once active callers release them. A larger artifact is served
   without retention. Set `0` to disable retention. Long-lived catalogue views
   reload evicted artifacts on demand. Parsed objects, derived records and
