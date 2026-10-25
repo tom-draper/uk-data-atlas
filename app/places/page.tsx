@@ -24,7 +24,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
 	subject: "Places",
 	description:
-		"Look up any UK ward, local authority, constituency or named place by code or name: its map, its boundary history, the areas it sits within and the data published for it.",
+		"Look up any UK ward, parish, local authority, constituency, major town or city, or named place by code or name: its map, its boundary history, the areas it sits within and the data published for it.",
 	path: "/places",
 });
 
@@ -110,6 +110,9 @@ export default async function PlacesPage() {
 		),
 		(district) => /^[A-Z]+/.exec(district)![0],
 	);
+	const towns = PLACE_INDEX.areas.filter(
+		([, , geography]) => geography === "majorTownAndCity",
+	);
 	const named = NAMED_KINDS.map((kind) => ({
 		kind,
 		entries: PLACE_INDEX.named.filter((entry) => entry[2] === kind),
@@ -147,6 +150,10 @@ export default async function PlacesPage() {
 					})),
 				})),
 				{
+					title: "Major towns and cities",
+					links: [{ id: "towns", title: "England and Wales" }],
+				},
+				{
 					title: "Wards",
 					links: wards.map(({ region }) => ({
 						id: `wards-${region.id}`,
@@ -172,12 +179,13 @@ export default async function PlacesPage() {
 			lede={
 				<>
 					<p>
-						Every ward, local authority and Westminster constituency
-						published since the archive began, current or abolished,
-						and the counties, regions and groupings people know them
-						by. Each has a page with its map, its boundary history,
-						what it sits within and borders, and the data published
-						for it.
+						Every ward, parish, local authority and Westminster
+						constituency published since the archive began, current
+						or abolished, the major towns and cities, and the
+						counties, regions and groupings people know them by.
+						Each has a page with its map, its boundary history, what
+						it sits within and borders, and the data published for
+						it.
 					</p>
 					<div className="mt-8">
 						<PlaceSearch />
@@ -185,7 +193,15 @@ export default async function PlacesPage() {
 					<p className="mt-3 text-[13px] text-slate-500">
 						{PLACE_INDEX.areas.length.toLocaleString("en-GB")}{" "}
 						areas:{" "}
-						{(["ward", "localAuthority", "constituency"] as const)
+						{(
+							[
+								"ward",
+								"parish",
+								"localAuthority",
+								"constituency",
+								"majorTownAndCity",
+							] as const
+						)
 							.map(
 								(geography) =>
 									`${(counts[geography] ?? 0).toLocaleString("en-GB")} ${geographyNoun(geography, true)}`,
@@ -242,6 +258,17 @@ export default async function PlacesPage() {
 					))}
 				</section>
 			))}
+
+			<H2 id="towns">
+				Major towns and cities
+				<Count count={towns.length} />
+			</H2>
+			<P>
+				The largest towns and cities in England and Wales, as ONS drew
+				them in 2015 from their built-up areas rather than council
+				boundaries. Each page lists the wards inside it.
+			</P>
+			<PlaceList entries={towns} />
 
 			<H2 id="wards">Current wards</H2>
 			<P>
