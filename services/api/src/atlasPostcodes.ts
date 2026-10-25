@@ -10,6 +10,19 @@ import {
 } from "./postcodes";
 import type { SqliteTable } from "./sqliteIndex";
 
+export const postcodeFields = [
+	"postcode",
+	"easting",
+	"northing",
+	"quality",
+	"country",
+	"introduced",
+	"terminated",
+	"largeUser",
+];
+export const postcodeDistrictWhere =
+	"postcode >= ? AND postcode < ? AND length(postcode) = ?";
+
 export const postcodeTables = (
 	artifact: PostcodeIndexArtifact,
 	readShard: (path: string) => string,
@@ -36,8 +49,6 @@ export const postcodeTables = (
 				throw new Error(`Invalid postcode district ${entry.district}`);
 			for (const [position, postcode] of shard.postcodes.entries())
 				yield [
-					entry.district,
-					position,
 					postcode,
 					shard.grid[position * 2]!,
 					shard.grid[position * 2 + 1]!,
@@ -52,9 +63,7 @@ export const postcodeTables = (
 	return {
 		postcodes: {
 			columns: [
-				"district TEXT NOT NULL",
-				"position INTEGER NOT NULL",
-				"postcode TEXT NOT NULL UNIQUE",
+				"postcode TEXT NOT NULL",
 				"easting INTEGER",
 				"northing INTEGER",
 				"quality TEXT NOT NULL",
@@ -63,7 +72,7 @@ export const postcodeTables = (
 				"terminated INTEGER NOT NULL",
 				"largeUser TEXT NOT NULL",
 			],
-			key: ["district", "position"],
+			key: ["postcode"],
 			rows: rows(),
 		},
 	};
@@ -81,9 +90,13 @@ export const readSqlitePostcodeShard = (
 	try {
 		const rows = database
 			.prepare(
-				"SELECT * FROM postcodes WHERE district = ? ORDER BY position",
+				`SELECT ${postcodeFields.join(", ")} FROM postcodes WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
 			)
-			.all(entry.district);
+			.all(
+				entry.district,
+				`${entry.district}\x7f`,
+				entry.district.length + 3,
+			);
 		const shard: PostcodeShard = {
 			schemaVersion: 1,
 			district: entry.district,

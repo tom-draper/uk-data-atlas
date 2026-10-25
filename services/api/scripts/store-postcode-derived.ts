@@ -2,7 +2,7 @@ import { copyFileSync, renameSync, rmSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { deflateSync } from "node:zlib";
+import { writePostcodeAreas } from "../src/atlasPostcodeAreas";
 import { sha256 } from "../src/contentHash";
 import type { PostcodeAreasArtifact } from "../src/postcodeAreas";
 import type { PostcodeCountsArtifact } from "../src/postcodeCounts";
@@ -19,9 +19,10 @@ function store(
 		copyFileSync(path, temporary);
 		const database = new DatabaseSync(temporary);
 		try {
-			database.exec("BEGIN");
+			database.exec("PRAGMA foreign_keys = ON; BEGIN");
 			write(database);
 			database.exec("COMMIT");
+			if (id === "postcode-areas") database.exec("VACUUM");
 		} finally {
 			database.close();
 		}
@@ -42,18 +43,7 @@ export function storePostcodeAreas(
 	readShard: (path: string) => string,
 ) {
 	return store(root, "postcode-areas", (database) => {
-		database.exec(
-			"DROP TABLE IF EXISTS postcode_area_shards; CREATE TABLE postcode_area_shards (path TEXT PRIMARY KEY, payload BLOB NOT NULL) WITHOUT ROWID",
-		);
-		const insert = database.prepare(
-			"INSERT INTO postcode_area_shards VALUES (?, ?)",
-		);
-		for (const entry of artifact.shards) {
-			const text = readShard(entry.path);
-			if (sha256(text) !== entry.contentHash)
-				throw new Error(`Invalid postcode area shard ${entry.path}`);
-			insert.run(entry.path, deflateSync(text));
-		}
+		writePostcodeAreas(database, artifact, readShard);
 		database
 			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
 			.run("postcode-areas", JSON.stringify(artifact));
