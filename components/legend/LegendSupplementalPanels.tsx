@@ -6,6 +6,7 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
+import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
 
 export function PercentageRangePanel({
@@ -100,6 +101,28 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 				})}
 			</div>
 		</div>
+	);
+}
+
+const ENERGY_SECTOR_SEGMENTS = [
+	["allMetersGwh", "All"],
+	["domesticGwh", "Domestic"],
+	["nonDomesticGwh", "Non-domestic"],
+] as const;
+
+export function EnergySectorPanel({
+	sector,
+	onChange,
+}: {
+	sector: EnergySector;
+	onChange: (sector: EnergySector) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={sector}
+			measures={ENERGY_SECTOR_SEGMENTS}
+			onChange={onChange}
+		/>
 	);
 }
 
