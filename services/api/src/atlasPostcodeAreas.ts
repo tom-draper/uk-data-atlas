@@ -220,7 +220,7 @@ export function writePostcodeAreas(
 				`Invalid postcode area reconstruction ${entry.path}`,
 			);
 	}
-	database.exec(`DROP TABLE postcodes; ALTER TABLE postcodes_next RENAME TO postcodes; DROP TABLE IF EXISTS postcode_area_shards;
+	database.exec(`DROP TABLE postcodes; ALTER TABLE postcodes_next RENAME TO postcodes;
 		CREATE VIEW postcodes_decoded AS SELECT p.*${columns.map((c, i) => `, a${i}.code AS ${quote(c.area.replace(/AreaId$/, "Code"))}`).join("")} FROM postcodes p ${columns.map((c, i) => `LEFT JOIN areas a${i} ON a${i}.id = p.${quote(c.area)}`).join(" ")};
 		CREATE VIEW postcode_area_matches_decoded AS SELECT m.*, r.geography, r.boundaryRelease, a.code, a.name FROM postcode_area_matches m JOIN postcode_area_releases r ON r.position = m.releasePosition JOIN areas a ON a.id = m.areaId;`);
 }

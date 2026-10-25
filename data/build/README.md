@@ -373,8 +373,7 @@ even when the postcode content hash is unchanged. No new source release is neede
 
 ### Postcode areas
 
-The `postcode-areas` stage replaces the compressed `postcode_area_shards` table
-with integer area references on `postcodes`. Each compiled release has an
+The `postcode-areas` stage stores integer area references on `postcodes`. Each compiled release has an
 `AreaId` column referencing `areas(id)` and a `DistanceCm` column. A geography
 with one release uses names such as `countryAreaId`. Multiple releases use
 release-qualified names such as `"localAuthority_2026-05-uk-bgcAreaId"`.
@@ -409,12 +408,10 @@ the compiler's code-unit order, including districts such as M1, M10 and M1A.
 It reconstructs the original district JSON and verifies the manifest SHA-256
 before returning it. Postcode and area content hashes and API ETags are unchanged.
 
-To convert an existing blob-based database after building the area-ID schema,
-run `NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/normalize-postcode-areas.ts`
-from the repository root. This reads existing shards, writes a temporary database,
-checks every reconstructed area shard, vacuums and publishes atomically. It does
-not run postcode placement or any precompile stage. Normal builds write the same
-schema through `storePostcodeAreas`.
+Build this schema through the normal atlas and postcode build stages. The
+postcode-area writer checks every reconstructed area shard before publishing its
+temporary database atomically. Rebuild older databases with the current builders;
+the runtime supports only the normalized schema.
 
 Compare an old database with the rebuilt database using
 `NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/compare-postcode-sqlite.ts BEFORE.sqlite services/api services/api/benchmarks/sqlite-postcode-areas.json`.
