@@ -57,9 +57,14 @@ async function placeEntries(): Promise<MetadataRoute.Sitemap> {
 			([id, , kind, , , lastYear]) => ({
 				url: `${SITE_URL}/places/${id}`,
 				changeFrequency: "monthly" as const,
-				// Current councils and named places lead; wards and areas no
-				// longer in use are many and narrow.
-				priority: lastYear !== null ? 0.3 : kind === "ward" ? 0.4 : 0.6,
+				// Current councils and named places lead; wards, parishes and
+				// areas no longer in use are many and narrow.
+				priority:
+					lastYear !== null
+						? 0.3
+						: kind === "ward" || kind === "parish"
+							? 0.4
+							: 0.6,
 			}),
 		),
 	];

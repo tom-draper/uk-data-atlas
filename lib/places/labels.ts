@@ -13,6 +13,7 @@ const GEOGRAPHY_NAMES: Record<string, [singular: string, plural: string]> = {
 	msoa: ["MSOA", "MSOAs"],
 	outputArea: ["Output area", "Output areas"],
 	parish: ["Parish", "Parishes"],
+	majorTownAndCity: ["Major town or city", "Major towns and cities"],
 	dataZone: ["Data zone", "Data zones"],
 	intermediateZone: ["Intermediate zone", "Intermediate zones"],
 	countyAndUnitaryAuthority: [
@@ -27,11 +28,33 @@ const GEOGRAPHY_NAMES: Record<string, [singular: string, plural: string]> = {
 	country: ["Country", "Countries"],
 };
 
+// Acronyms and proper nouns keep their capitals.
+const inSentence = (name: string) =>
+	/^([A-Z]{2,}|Westminster)/.test(name) ? name : name.toLowerCase();
+
 /** A geography's name inside a sentence: lower case, except an acronym. */
-export const geographyNoun = (geography: string, plural = false) => {
-	const name = geographyName(geography, plural);
-	// Acronyms and proper nouns keep their capitals.
-	return /^([A-Z]{2,}|Westminster)/.test(name) ? name : name.toLowerCase();
+export const geographyNoun = (geography: string, plural = false) =>
+	inSentence(geographyName(geography, plural));
+
+/**
+ * Parishes that are something else by their code: Wales has communities, and
+ * the parts of England with no parish are each counted as an unparished area.
+ */
+const PARISH_KINDS: Record<string, string> = {
+	W04: "Community",
+	E43: "Unparished area",
+};
+
+/** What an area is, "Parish" or "Community", where its code tells them apart. */
+export const areaKindName = (area: Pick<AreaRef, "geography" | "code">) =>
+	(area.geography === "parish"
+		? PARISH_KINDS[area.code.slice(0, 3)]
+		: undefined) ?? geographyName(area.geography);
+
+/** What an area is inside a sentence, after "a" or "an". */
+export const areaKindNoun = (area: Pick<AreaRef, "geography" | "code">) => {
+	const noun = inSentence(areaKindName(area));
+	return `${/^[aeiou]/i.test(noun) ? "an" : "a"} ${noun}`;
 };
 
 /** "Ward", or "wards" with `plural`. */
@@ -56,9 +79,9 @@ export const namedKindName = (kind: string, plural = false) =>
 	KIND_NAMES[kind]?.[plural ? 1 : 0] ?? kind.replace(/-/g, " ");
 
 /** What any index row's kind means: a geography or a named place's kind. */
-export const placeKindName = (kind: string) =>
+export const placeKindName = (kind: string, id = "") =>
 	(PLACE_GEOGRAPHIES as readonly string[]).includes(kind)
-		? geographyName(kind)
+		? areaKindName({ geography: kind, code: id })
 		: namedKindName(kind);
 
 const COUNTRY_NAMES: Record<string, string> = {

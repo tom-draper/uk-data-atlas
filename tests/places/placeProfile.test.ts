@@ -5,7 +5,13 @@ import {
 	operationHref,
 } from "@/lib/docs/openapi";
 import { PLACE_OPERATIONS } from "@/lib/places/api";
-import { dateLabel, listNames, namedKindName } from "@/lib/places/labels";
+import {
+	areaKindName,
+	areaKindNoun,
+	dateLabel,
+	listNames,
+	namedKindName,
+} from "@/lib/places/labels";
 import {
 	decodeOutline,
 	encodeOutline,
@@ -72,6 +78,16 @@ describe("place labels", () => {
 		expect(namedKindName("ceremonial-county", true)).toBe(
 			"Ceremonial counties",
 		);
+	});
+
+	it("name a parish by what its code says it is", () => {
+		const parish = (code: string) => ({ geography: "parish", code });
+		expect(areaKindName(parish("E04000001"))).toBe("Parish");
+		expect(areaKindName(parish("W04000001"))).toBe("Community");
+		expect(areaKindNoun(parish("E43000030"))).toBe("an unparished area");
+		expect(
+			areaKindNoun({ geography: "majorTownAndCity", code: "J01000001" }),
+		).toBe("a major town or city");
 	});
 });
 
