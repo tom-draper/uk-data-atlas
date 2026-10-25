@@ -18,8 +18,6 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
-import { FUEL_POVERTY_MEASURES } from "@/lib/helpers/fuelPovertyMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -35,6 +33,7 @@ import {
 	ElectionMetricPanel,
 	EnergySectorPanel,
 	GhgEmissionsMeasurePanel,
+	FuelPovertyMeasurePanel,
 	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
@@ -187,10 +186,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "fuelPoverty" && (
-				<MeasureSelect
-					label="Fuel poverty"
-					value={controls.displayOptions.fuelPoverty.measure}
-					options={FUEL_POVERTY_MEASURES}
+				<FuelPovertyMeasurePanel
+					measure={controls.displayOptions.fuelPoverty.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("fuelPoverty", {
 							measure,
