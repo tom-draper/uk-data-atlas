@@ -26,7 +26,6 @@ import {
 const table: MeasureTableArtifact = {
 	schemaVersion: 1,
 	kind: "measure-table",
-	contentHash: "sha256:table",
 	id: "fixture-table",
 	datasetId: "fixture",
 	sourceGeography: { type: "lsoa", boundaryYear: 2021 },
@@ -36,6 +35,7 @@ const table: MeasureTableArtifact = {
 		["E01000001", 10, 5],
 		["E01000002", 7, null],
 	],
+	contentHash: "sha256:table",
 };
 
 test("serves one measure's column as an ordinary observation artifact", () => {
@@ -142,7 +142,14 @@ test("reads a shared table once and a measure's own artifact as it is", () => {
 			contentHash: "sha256:own",
 			measureId: "population",
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
-			periods: [{ period: "2022", records: [] }],
+			periods: [
+				{
+					period: "2022",
+					records: [
+						{ areaCode: "E05000001", value: 5, status: "observed" },
+					],
+				},
+			],
 		};
 		writeObservationFixture(
 			join(directory, "population-observations.json"),
@@ -195,7 +202,14 @@ test("reads a lazy source's payload only when its hash or periods are asked for"
 			contentHash: "sha256:own",
 			measureId: "population",
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
-			periods: [{ period: "2022", records: [] }],
+			periods: [
+				{
+					period: "2022",
+					records: [
+						{ areaCode: "E05000001", value: 5, status: "observed" },
+					],
+				},
+			],
 		};
 		const path = join(directory, "population-observations.json");
 		writeObservationFixture(path, JSON.stringify(own));
@@ -370,7 +384,7 @@ test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 			},
 		],
 	};
-	const text = JSON.stringify(own);
+	const text = `${JSON.stringify(own)}\n`;
 	for (const name of ["a", "b"])
 		writeObservationFixture(join(directory, `${name}.json`), text);
 	const cache = new ObservationCache(Buffer.byteLength(text));
