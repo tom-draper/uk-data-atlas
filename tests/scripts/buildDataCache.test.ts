@@ -6,12 +6,14 @@ import {
 	rmSync,
 	unlinkSync,
 	writeFileSync,
+	readFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { onTestFinished, test, vi } from "vitest";
 import { createStageCache } from "@/scripts/build-data-cache.mjs";
 import { runBuild } from "@/scripts/build-data.mjs";
+import { buildDataStages } from "@/scripts/build-data-graph.mjs";
 
 type Stage = {
 	name: string;
@@ -295,4 +297,62 @@ test("build timings mark cached stages without claiming command time", () => {
 			summaries.find((line) => line.startsWith(`  ${name}:`))!,
 			/0\.0s command, [\d.]+s overhead \(skipped\)$/,
 		);
+});
+
+test("restoring a deleted shared API cache rebuilds every component", () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-component-build-"));
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data/build"), { recursive: true });
+	const path = join(root, "data/build/atlas-cache.sqlite");
+	const components = ["place-index", "area-search-index", "postcode-counts"];
+	const selected = components.map((name) => {
+		const original = buildDataStages.find(
+			(entry: Stage) => entry.name === name,
+		);
+		assert.ok(original);
+		return { ...original, dependencies: ["base"] };
+	});
+	const run = () => {
+		assert.equal(
+			runBuild({
+				stages: [
+					{
+						name: "base",
+						dependencies: [],
+						args: [],
+						requiredOutputs: ["data/build/atlas-cache.sqlite"],
+					},
+					...selected,
+				],
+				log: () => {},
+				createCache: () =>
+					createStageCache({
+						root,
+						stateFile: join(root, ".cache/stages.json"),
+						codeFiles: () => [],
+						environment: {},
+					}),
+				execute: (current: { name: string }) => {
+					const values =
+						current.name === "base"
+							? []
+							: JSON.parse(readFileSync(path, "utf8"));
+					writeFileSync(
+						path,
+						JSON.stringify([...new Set([...values, current.name])]),
+					);
+					return 0;
+				},
+			}),
+			0,
+		);
+		assert.deepEqual(JSON.parse(readFileSync(path, "utf8")), [
+			"base",
+			...components,
+		]);
+	};
+	run();
+	run();
+	unlinkSync(path);
+	run();
 });

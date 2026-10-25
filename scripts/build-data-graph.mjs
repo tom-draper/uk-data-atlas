@@ -105,7 +105,12 @@ const apiStages = [
 			"location-projections",
 		],
 		undefined,
-		{ requiredOutputs: ["data/build/atlas.sqlite"] },
+		{
+			requiredOutputs: [
+				"data/build/atlas.sqlite",
+				"data/build/atlas-cache.sqlite",
+			],
+		},
 	),
 	stage(
 		"api-datasets",
@@ -134,14 +139,21 @@ const apiStages = [
 		"geometry-store",
 		"api-datasets",
 	]),
-	stage("place-index", [
-		"geography-catalogues",
-		"atlas-sqlite",
-		"boundary-registry",
-		"area-inventory",
-		"named-locations",
-	]),
-	stage("area-search-index", ["atlas-sqlite"]),
+	stage(
+		"place-index",
+		[
+			"geography-catalogues",
+			"atlas-sqlite",
+			"boundary-registry",
+			"area-inventory",
+			"named-locations",
+		],
+		undefined,
+		{ cacheable: false },
+	),
+	stage("area-search-index", ["atlas-sqlite"], undefined, {
+		cacheable: false,
+	}),
 	stage("postcode-index", ["sources", "atlas-sqlite"]),
 	stage("data-catalog", ["atlas-sqlite"]),
 	stage("measure-compatibility", [
@@ -158,7 +170,9 @@ const apiStages = [
 		"geometry-store",
 		"measure-compatibility",
 	]),
-	stage("postcode-counts", ["postcode-index", "postcode-areas"]),
+	stage("postcode-counts", ["postcode-index", "postcode-areas"], undefined, {
+		cacheable: false,
+	}),
 	stage(
 		"crosswalk-inventory",
 		["area-inventory", "geometry-source-registry"],
