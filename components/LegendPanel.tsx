@@ -18,8 +18,7 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
-import { imdRange, IMD_MEASURES } from "@/lib/helpers/imdMeasures";
+import { imdRange } from "@/lib/helpers/imdMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -40,6 +39,7 @@ import {
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
 	IncomePeriodPanel,
+	ImdMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	MobileCoverageMeasurePanel,
 	PercentageRangePanel,
@@ -174,10 +174,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "imd" && (
-				<MeasureSelect
-					label="Deprivation domain"
-					value={controls.displayOptions.imd.measure}
-					options={IMD_MEASURES}
+				<ImdMeasurePanel
+					measure={controls.displayOptions.imd.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("imd", {
 							measure,
