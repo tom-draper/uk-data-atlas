@@ -38,11 +38,26 @@ The `atlas-sqlite` stage stores them in `data/build/atlas.sqlite` for the API to
 After changing shared dataset compilers, run `pnpm --dir ../.. data:build --target api --from datasets`
 from `services/api` to rebuild every affected stage.
 
-Crosswalk endpoint tables use `crosswalkPosition` to reference `crosswalks.position`
-and `fieldSetId` to reference `crosswalk_field_sets.position`. Shared field lists
-preserve the original JSON property order. The `crosswalk_sources_decoded` and
-`crosswalk_targets_decoded` views expose the text `crosswalkId`, field lists, and
-endpoint values for direct SQL queries.
+Areas use an integer `areas.id` primary key. `areas.releasePosition` references
+`area_releases.position`, with a unique `(releasePosition, code)` lookup. IDs
+follow area artifact order, so release reads order by `id` without a separate
+ordering index. `inInventory = 1` selects the published area inventory. Missing
+crosswalk endpoints become supplemental rows with `inInventory = 0` and do not
+change area API responses.
+
+Crosswalk endpoint tables reference `crosswalks.position` through
+`crosswalkPosition`, `areas.id` through `areaId`, and
+`crosswalk_field_sets.position` through `fieldSetId`. Shared field lists preserve
+JSON property order and optional-field presence. Source `areaM2` and `population`
+are stored on `areas`. The build rejects conflicting facts for the same area.
+Target population values remain on target rows because they describe an overlap.
+
+Endpoint labels normally equal `[name, ...aliases]`. Differences in spelling,
+language order, duplicates, and empty labels are preserved in
+`crosswalk_label_exceptions`, referenced by nullable `labelsId`. The
+`crosswalk_sources_decoded` and `crosswalk_targets_decoded` views join these tables
+to expose the original codes, labels, field lists, and facts. Both endpoint tables
+have a `(crosswalkPosition, areaId)` lookup index for direct SQL queries.
 
 Observations are stored as rows, not as JSON text. `observation_series` has one
 row per artifact (`artifactId`, `contentHash`, source geography and the hash of
@@ -90,11 +105,21 @@ compilers' key order, periods and areas must ascend, and a period must have
 records. The `data-catalog` stage runs `ANALYZE`, then `VACUUM`, after replacing the
 tables. Run `pnpm data:build --from data-catalog` to rebuild them.
 
-Databases built with text crosswalk IDs in endpoint rows require a rebuild for
-this reader. From the repository root, run
+The old reader cannot read this database schema. Deploy the rebuilt database and
+matching API code together. From the repository root, run
 `pnpm data:build --from atlas-sqlite --no-cache` to rebuild SQLite and its downstream
-stages before starting the API. Deploy the rebuilt database with the matching
-API code.
+stages before starting the API. Observation storage is unchanged. Unifying the
+separate `observation_areas` code list from PR #387 with `areas` is a follow-up
+after both PRs land.
+
+To compare a baseline database built before this area schema change with the
+current API's area and crosswalk output, run this command from the repository root. A nonzero exit indicates a mismatch or
+an invalid input. The JSON report includes comparison counts, load timings, file
+sizes, and per-table and per-index `dbstat` sizes.
+
+```sh
+pnpm exec tsx --max-old-space-size=2560 services/api/scripts/compare-atlas-sqlite.ts path/to/baseline.sqlite services/api
+```
 
 ## Capability checklist
 
