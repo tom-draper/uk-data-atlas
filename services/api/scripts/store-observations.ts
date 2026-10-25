@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { copyFileSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { replaceObservationTables } from "../src/atlasObservationTables";
 import { sha256 } from "../src/contentHash";
 import { observationArtifactName, type DataCatalog } from "../src/dataCatalog";
 
@@ -21,32 +22,30 @@ export function storeObservations(
 		),
 	);
 	const fingerprints: Array<readonly [string, string]> = [];
+	const entries: Array<readonly [string, string]> = [];
+	for (const [id, text] of artifacts) {
+		if (!required.delete(id))
+			throw new Error(
+				`Unexpected or duplicate observation artifact: ${id}`,
+			);
+		JSON.parse(text);
+		fingerprints.push([id, sha256(text)]);
+		entries.push([id, text]);
+	}
+	if (required.size)
+		throw new Error(
+			`Missing observation artifacts: ${[...required].join(", ")}`,
+		);
 	try {
 		copyFileSync(path, temporary);
 		const database = new DatabaseSync(temporary);
 		try {
-			database.exec(`BEGIN;
-DROP TABLE IF EXISTS observation_artifacts;
-CREATE TABLE observation_artifacts (id TEXT PRIMARY KEY, payload TEXT NOT NULL, payloadHash TEXT NOT NULL);
-DROP TABLE IF EXISTS observation_catalogue;
-CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHash TEXT NOT NULL);`);
-			const insert = database.prepare(
-				"INSERT INTO observation_artifacts VALUES (?, ?, ?)",
+			database.exec(
+				"PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF",
 			);
-			for (const [id, text] of artifacts) {
-				if (!required.delete(id))
-					throw new Error(
-						`Unexpected or duplicate observation artifact: ${id}`,
-					);
-				JSON.parse(text);
-				const hash = sha256(text);
-				fingerprints.push([id, hash]);
-				insert.run(id, text, hash);
-			}
-			if (required.size)
-				throw new Error(
-					`Missing observation artifacts: ${[...required].join(", ")}`,
-				);
+			replaceObservationTables(database, entries);
+			database.exec(`BEGIN;
+CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHash TEXT NOT NULL);`);
 			database
 				.prepare("INSERT INTO observation_catalogue VALUES (?, ?)")
 				.run(
@@ -60,7 +59,8 @@ CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHas
 						}),
 					),
 				);
-			database.exec("COMMIT");
+			// Return the pages the replaced tables held, so the file shrinks.
+			database.exec("COMMIT; VACUUM");
 		} finally {
 			database.close();
 		}

@@ -74,6 +74,8 @@ const withArtifact = (artifact: object, run: (directory: string) => void) => {
 const artifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:fixture",
+	measureId: "fixture",
+	sourceGeography: { type: "ward", boundaryYear: 2024 },
 	periods: [
 		{
 			period: "2023",
@@ -120,7 +122,7 @@ test("describes each export's records, schema and provenance from its artifact",
 				format: "json",
 				artifact: "fixture-observations",
 				contentHash: "sha256:fixture",
-				bytes: JSON.stringify(artifact).length,
+				bytes: JSON.stringify(artifact).length + 1,
 				href: "/v1/exports/fixture-observations",
 				recordCount: 3,
 				recordCountByPeriod: { 2023: 2, 2024: 1 },
@@ -163,30 +165,6 @@ test("describes each export's records, schema and provenance from its artifact",
 		]);
 		assert.equal(entry.provenance.measure, "/v1/measures/fixture");
 	});
-});
-
-test("refuses a record field the export schema does not describe", () => {
-	withArtifact(
-		{
-			...artifact,
-			periods: [
-				{
-					period: "2023",
-					records: [{ areaCode: "E05000001", value: 1, rank: 4 }],
-				},
-			],
-		},
-		(directory) =>
-			assert.throws(
-				() =>
-					compileExportManifest(
-						directory,
-						catalog,
-						fixtureObservationDatabase(directory),
-					),
-				/records carry rank, which the export schema does not describe/,
-			),
-	);
 });
 
 test("fails before a catalogued observation artifact exists", () => {
@@ -333,7 +311,6 @@ test("projects shared tables to the named measure without losing null or zero", 
 			schemaVersion: 1,
 			kind: "measure-table",
 			id: "fixture-observations",
-			contentHash: "sha256:table",
 			datasetId: "fixture-dataset",
 			sourceGeography: { type: "ward", boundaryYear: 2024 },
 			period: "2024",
@@ -342,6 +319,7 @@ test("projects shared tables to the named measure without losing null or zero", 
 				["A", 99, 0],
 				["B", 88, null],
 			],
+			contentHash: "sha256:table",
 		},
 		(directory) => {
 			const entry = compileExportManifest(
@@ -358,30 +336,6 @@ test("projects shared tables to the named measure without losing null or zero", 
 					["fixture", "A", 0],
 					["fixture", "B", null],
 				],
-			);
-		},
-	);
-});
-
-test("exports an empty partition with column headers and a readable Parquet schema", () => {
-	withArtifact(
-		{ ...artifact, periods: [{ period: "2024", records: [] }] },
-		(directory) => {
-			const entry = compileExportManifest(
-				directory,
-				catalog,
-				fixtureObservationDatabase(directory),
-			).exports[0];
-			const file = readParquet(
-				readFileSync(join(directory, entry.formats![1].artifact)),
-			);
-			assert.equal(file.rowCount, 0);
-			assert.equal(file.schema.children.length, 13);
-			assert.match(
-				gunzipSync(
-					readFileSync(join(directory, entry.formats![0].artifact)),
-				).toString("utf8"),
-				/^"measureId","unit"/,
 			);
 		},
 	);

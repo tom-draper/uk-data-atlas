@@ -45,7 +45,6 @@ const numeric: AnyMeasureObservationArtifact = {
 const table: MeasureTableArtifact = {
 	schemaVersion: 1,
 	kind: "measure-table",
-	contentHash: "sha256:table",
 	id: "shared-table",
 	datasetId: "population",
 	sourceGeography: numeric.sourceGeography,
@@ -55,6 +54,7 @@ const table: MeasureTableArtifact = {
 		["E01000001", 0, 7],
 		["E01000002", 12, null],
 	],
+	contentHash: "sha256:table",
 };
 const catalog: DataCatalog = {
 	...dataCatalog,
@@ -234,7 +234,7 @@ test("rejects stale catalogues, missing SQLite rows and corrupted bytes without 
 	);
 	mutate(
 		path,
-		"UPDATE observation_artifacts SET payload = '{}' WHERE id = 'numeric-observations'",
+		"UPDATE observations SET value = value + 1 WHERE seriesId = (SELECT position FROM observation_series WHERE artifactId = 'numeric-observations')",
 	);
 	assert.throws(
 		() => readMeasureObservations(apiRoot, catalog)[0].periods,
@@ -246,7 +246,7 @@ test("rejects stale catalogues, missing SQLite rows and corrupted bytes without 
 	);
 	mutate(
 		path,
-		"DELETE FROM observation_artifacts WHERE id = 'numeric-observations'",
+		"PRAGMA foreign_keys = OFF; DELETE FROM observation_series WHERE artifactId = 'numeric-observations'",
 	);
 	assert.throws(
 		() => assertObservationCatalogue(path, catalog),
@@ -273,14 +273,9 @@ test("live lazy views reject a newly published generation after cache eviction",
 	assert.deepEqual(readMeasureObservations(apiRoot, catalog)[0].periods, []);
 });
 
-test("JSON downloads return stored key order and refuse mismatched manifest bytes", (t) => {
+test("JSON downloads return the stored bytes and refuse mismatched manifest bytes", (t) => {
 	const { root, apiRoot, publicDirectory, path } = fixture(t);
-	const reordered = entries();
-	reordered[0] = [
-		reordered[0][0],
-		`${JSON.stringify({ periods: numeric.periods, sourceGeography: numeric.sourceGeography, measureId: numeric.measureId, contentHash: numeric.contentHash, schemaVersion: numeric.schemaVersion })}\n`,
-	];
-	storeObservations(root, catalog, reordered);
+	storeObservations(root, catalog, entries());
 	const manifest = compileExportManifest(publicDirectory, catalog, path);
 	const observations = readMeasureObservations(apiRoot, catalog);
 	const context = testContext({
@@ -291,7 +286,7 @@ test("JSON downloads return stored key order and refuse mismatched manifest byte
 	assert.equal(
 		route("GET", "/v1/exports/numeric-observations", context).representation
 			?.body,
-		reordered[0][1],
+		entries()[0][1],
 	);
 	manifest.exports.find((entry) => entry.id === "numeric-observations")!
 		.bytes++;
@@ -299,6 +294,18 @@ test("JSON downloads return stored key order and refuse mismatched manifest byte
 		route("GET", "/v1/exports/numeric-observations", context).status,
 		503,
 	);
+});
+
+test("refuses artifacts whose bytes the rows could not rebuild", (t) => {
+	const { root, path } = fixture(t);
+	const before = readFileSync(path);
+	const reordered = entries();
+	reordered[0] = [
+		reordered[0][0],
+		`${JSON.stringify({ periods: numeric.periods, sourceGeography: numeric.sourceGeography, measureId: numeric.measureId, contentHash: numeric.contentHash, schemaVersion: numeric.schemaVersion })}\n`,
+	];
+	assert.throws(() => storeObservations(root, catalog, reordered));
+	assert.deepEqual(readFileSync(path), before);
 });
 
 test("republishing a smaller catalogue removes obsolete SQLite artifacts", (t) => {
