@@ -479,14 +479,53 @@ export const replaceObservationTables = (
 	// Foreign keys are checked once at the end rather than for every row.
 	database.exec("PRAGMA foreign_keys = OFF; BEGIN");
 	try {
+		const owned = new Set([
+			"observation_artifacts",
+			"observation_statuses",
+			"observation_periods",
+			"observation_areas",
+			"observation_measures",
+			"observation_datasets",
+			"observation_series",
+			"observation_tables",
+			"observation_table_columns",
+			"observations",
+			"observation_intervals",
+			"observation_source_areas",
+			"observation_categories",
+			"observations_decoded",
+			"observations_census",
+			"observations_all",
+			...Object.keys(tables),
+			...Object.values(tables).flatMap((table) =>
+				Object.keys(table.views ?? {}),
+			),
+		]);
+		if (
+			database
+				.prepare(
+					"SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'observation_tables'",
+				)
+				.get()
+		) {
+			for (const row of database
+				.prepare("SELECT valueTable FROM observation_tables")
+				.all()) {
+				const name = String(row.valueTable);
+				if (/^observation_[a-z0-9_]+$/.test(name)) {
+					owned.add(name);
+					owned.add(`${name}_decoded`);
+				}
+			}
+		}
 		const stale = database
 			.prepare(
-				"SELECT type, name FROM sqlite_master WHERE type IN ('table', 'view') AND name LIKE 'observation%'",
+				"SELECT type, name FROM sqlite_master WHERE type IN ('table', 'view')",
 			)
 			.all() as Array<{ type: string; name: string }>;
-		for (const { type, name } of stale.sort((a, b) =>
-			b.type.localeCompare(a.type),
-		))
+		for (const { type, name } of stale
+			.filter(({ name }) => owned.has(name))
+			.sort((a, b) => b.type.localeCompare(a.type)))
 			database.exec(`DROP ${type} "${name}"`);
 		writeSqliteTables(database, tables);
 		for (const [id, text] of entries)

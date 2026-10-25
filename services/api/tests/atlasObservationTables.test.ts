@@ -295,3 +295,41 @@ test("unifies census cells with ordinary observations, including zero and null c
 	);
 	database.close();
 });
+
+test("cleanup preserves unrelated observation objects and the catalogue", () => {
+	const database = store([
+		["own-observations", text(own)],
+		["shared", text(table)],
+	]);
+	database.exec(
+		"CREATE TABLE observation_custom (value TEXT); INSERT INTO observation_custom VALUES ('keep'); CREATE VIEW observation_custom_view AS SELECT * FROM observation_custom; CREATE TABLE observation_catalogue (generationHash TEXT); INSERT INTO observation_catalogue VALUES ('keep'); CREATE TABLE observation_census_unregistered (value TEXT)",
+	);
+	replaceObservationTables(database, [["own-observations", text(own)]]);
+	assert.equal(
+		database.prepare("SELECT value FROM observation_custom_view").get()
+			?.value,
+		"keep",
+	);
+	assert.equal(
+		database
+			.prepare("SELECT generationHash FROM observation_catalogue")
+			.get()?.generationHash,
+		"keep",
+	);
+	assert.ok(
+		database
+			.prepare(
+				"SELECT 1 FROM sqlite_master WHERE name = 'observation_census_unregistered'",
+			)
+			.get(),
+	);
+	assert.equal(
+		database
+			.prepare(
+				"SELECT 1 FROM sqlite_master WHERE name IN ('observation_shared', 'observation_shared_decoded')",
+			)
+			.get(),
+		undefined,
+	);
+	database.close();
+});
