@@ -125,6 +125,9 @@ const HEADLINES: Readonly<Record<PlaceGeography, readonly HeadlineSpec[]>> = {
 			about: "Estimated share voting Leave",
 		},
 	],
+	// No ranked map is drawn by parish or by town.
+	parish: [],
+	majorTownAndCity: [],
 };
 
 export type Rank = { rank: number; of: number; href?: string };
