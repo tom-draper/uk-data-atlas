@@ -11,6 +11,7 @@ import {
 	serialisePlaceElections,
 } from "./place-elections";
 import {
+	PLACE_POSTCODE_SECTORS_PATH,
 	PLACE_POSTCODES_PATH,
 	serialisePlacePostcodes,
 } from "./place-postcodes.mts";
@@ -37,5 +38,7 @@ console.log(`Wrote ${files.size} rankings to ${RANKINGS_DIR}`);
 await writeFile(PLACE_ELECTIONS_PATH, serialisePlaceElections());
 console.log(`Wrote ${PLACE_ELECTIONS_PATH}`);
 
-await writeFile(PLACE_POSTCODES_PATH, serialisePlacePostcodes());
-console.log(`Wrote ${PLACE_POSTCODES_PATH}`);
+const postcodes = serialisePlacePostcodes();
+await writeFile(PLACE_POSTCODES_PATH, postcodes.districts);
+await writeFile(PLACE_POSTCODE_SECTORS_PATH, postcodes.sectors);
+console.log(`Wrote ${PLACE_POSTCODES_PATH} and ${PLACE_POSTCODE_SECTORS_PATH}`);
