@@ -22,13 +22,22 @@ const normalise = (text: string) =>
  * "ls6 1" gives the LS6 1 sector and the LS6 district, "ls6" the district.
  */
 function postcodePages(query: string) {
-	const match = /^([a-z]{1,2}\d[a-z\d]?)(?:\s*(\d)(?:[a-z]{2})?)?$/i.exec(
+	const match = /^([a-z]{1,2}\d[a-z\d]?)(?:\s*(\d)([a-z]{2})?)?$/i.exec(
 		query.trim(),
 	);
 	if (!match) return [];
 	const district = match[1]!.toUpperCase();
 	const sector = match[2];
+	const unit = match[3]?.toUpperCase();
 	return [
+		...(sector && unit
+			? [
+					{
+						label: `The ${district} ${sector}${unit} postcode`,
+						href: `/places/postcodes/${district}/${sector}${unit}`,
+					},
+				]
+			: []),
 		...(sector
 			? [
 					{
