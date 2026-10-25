@@ -61,7 +61,7 @@ CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHas
 					),
 				);
 			// Return the pages the replaced tables held, so the file shrinks.
-			database.exec("COMMIT; VACUUM");
+			database.exec("COMMIT; ANALYZE; VACUUM");
 		} finally {
 			database.close();
 		}

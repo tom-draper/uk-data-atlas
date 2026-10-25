@@ -87,7 +87,7 @@ two bytes per text code unit plus its UTF-8 source byte count for parsed data.
 The default budget is 64 MiB; oversized entries are served without retention. An artifact is only
 stored if its rows rebuild its exact bytes, which means records must use the
 compilers' key order, periods and areas must ascend, and a period must have
-records. The `data-catalog` stage vacuums the database after replacing the
+records. The `data-catalog` stage runs `ANALYZE`, then `VACUUM`, after replacing the
 tables. Run `pnpm data:build --from data-catalog` to rebuild them.
 
 Databases built with text crosswalk IDs in endpoint rows require a rebuild for

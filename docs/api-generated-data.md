@@ -106,7 +106,7 @@ Publication uses a unique temporary database, one transaction, and an atomic
 rename. Replacement drops only fixed owned objects and wide tables and decoded
 views named by the previous `observation_tables.valueTable` registry. Unrelated
 `observation*` objects survive. The store step explicitly recreates its
-`observation_catalogue` marker. Readers open short-lived read-only connections and compare the published
+`observation_catalogue` marker, then runs `ANALYZE` before `VACUUM`. Readers open short-lived read-only connections and compare the published
 generation with the one held by their cache. They reject replacement data rather
 than serving it under an older catalogue. This keeps connection lifetime outside
 the route and server interfaces. Data builds remain sequential, as other atlas
