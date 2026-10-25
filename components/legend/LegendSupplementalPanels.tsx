@@ -8,6 +8,7 @@ import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures"
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
+import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";
 import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
 import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
@@ -137,6 +138,29 @@ export function WorkplacePayMeasurePanel({
 				}
 			/>
 		</>
+	);
+}
+
+const HOUSING_TENURE_SEGMENTS = TENURE_MEASURES.map(
+	({ value, label }) => [value, label] as const,
+);
+
+type HousingTenureMeasure = (typeof TENURE_MEASURES)[number]["value"];
+
+export function HousingTenureMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: HousingTenureMeasure;
+	onChange: (measure: HousingTenureMeasure) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={HOUSING_TENURE_SEGMENTS}
+			onChange={onChange}
+			vertical
+		/>
 	);
 }
 
