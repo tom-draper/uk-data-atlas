@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	compareDistricts,
-	compilePostcodeDistricts,
+	compilePostcodes,
 	type SourceDistrict,
 } from "@/lib/places/postcodes";
 
@@ -33,10 +33,13 @@ const district = (
 			postcodes.map((_, i) => (i === 1 ? -1 : 0)),
 		),
 	},
+	deprivation: postcodes.map((_, i) =>
+		i === 0 ? undefined : (["imd", i] as const),
+	),
 });
 
-describe("compilePostcodeDistricts", () => {
-	const compiled = compilePostcodeDistricts(
+describe("compilePostcodes", () => {
+	const { districts: compiled, sectors } = compilePostcodes(
 		[
 			district(
 				"LS6",
@@ -70,6 +73,25 @@ describe("compilePostcodeDistricts", () => {
 				["W1", 1],
 			],
 			constituency: [["C1", 2]],
+		});
+	});
+
+	it("counts live postcodes by deprivation decile", () => {
+		expect(compiled.LS6!.deprivation).toEqual({
+			imd: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+		});
+	});
+
+	it("compiles each sector with its own nearest sectors", () => {
+		expect(Object.keys(sectors).sort()).toEqual([
+			"LS1 1",
+			"LS6 1",
+			"LS6 2",
+		]);
+		expect(sectors["LS6 1"]).toMatchObject({
+			live: 2,
+			bbox: [1, 1, 1.1, 1],
+			nearby: ["LS6 2", "LS1 1"],
 		});
 	});
 
