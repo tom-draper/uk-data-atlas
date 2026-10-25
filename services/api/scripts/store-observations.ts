@@ -45,6 +45,7 @@ export function storeObservations(
 			);
 			replaceObservationTables(database, entries, catalog);
 			database.exec(`BEGIN;
+DROP TABLE IF EXISTS observation_catalogue;
 CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHash TEXT NOT NULL);`);
 			database
 				.prepare("INSERT INTO observation_catalogue VALUES (?, ?)")
