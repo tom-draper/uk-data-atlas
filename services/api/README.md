@@ -1082,19 +1082,23 @@ fetch the postcode directory from ONS.
       accepts as `place`. A query reading as a postcode district or sector, or
       a postcode the directory lacks or this API may not serve, carries a
       `postcodeHint` rather than silently matching nothing.
-- [x] Precompile the areas every postcode falls in for the 30 releases
+- [x] Precompile the areas every postcode falls in for the releases
       postcode answers read by default: each default geography's release at
       the directory's edition, the release each measure source's codes are
       found in, and the country release that settles a postcode matching
-      nothing. `pnpm --dir ../.. data:build --only postcode-areas` places each release's 2.64 million
+      nothing. `pnpm --dir ../.. data:build --only postcode-areas` places each release's postcode
       centroids by the live lookup's own containment test and nearest-edge
       distance, and checks a sample of each against a live lookup, failing on
       any difference. A postcode lookup, batch or value then reads a district
-      shard rather than loading national geometry: from a cold start, a
-      lookup takes about 25 ms rather than 3 to 12 seconds, and loads no
-      geometry. Any other release is still placed live. The build takes about
+      shard rather than loading national geometry. Any other release is still
+      placed live. The build takes about
       20 minutes with three workers, reuses any release whose postcodes, areas
-      and geometry are unchanged, and writes some 630 MB of shards.
+      and geometry are unchanged. SQLite stores the placements as release-specific
+      integer area IDs and distances on `postcodes`, plus relational rows for
+      multiple matches. It reconstructs and hash-checks district shards on read.
+      `postcodes_decoded` exposes codes, and `postcode_area_releases` lists the
+      columns and their exact boundary releases. See
+      [the SQLite schema](../../data/build/README.md#postcode-areas).
 - [x] Count live and terminated postcodes in each compiled postcode-area
       release. `GET /v1/areas/{geography}/{release}/{code}` includes a
       `postcodes` block with `live`, `terminated`, `largeUser` and the ONS

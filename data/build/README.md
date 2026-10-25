@@ -349,7 +349,7 @@ pages and exact matches. No source release changes are needed.
 ### Postcode search
 
 `postcodes` holds one relational row per unit postcode. Its primary key is
-`(district, position)`, and `postcode` is unique for direct code lookup. Columns
+`postcode`, with no separate postcode autoindex or stored district position. Columns
 hold the grid coordinates, quality indicator, country, introduction and termination
 months, and large-user flag. Missing coordinates stay null, and a zero termination
 month denotes a live postcode. The table uses `WITHOUT ROWID`.
@@ -362,10 +362,63 @@ postcode-to-area positional joins. The postcode count builder also reads SQLite.
 The `postcode-index` stage runs after the base atlas database, replaces only its
 own table and payload in a temporary copy, then publishes atomically. It removes
 `services/api/public/postcode-index.json` and the old `postcodes/` district files
-after success. Postcode-to-area files and postcode counts remain separate outputs.
+after success. Postcode areas and postcode counts have their own build stages in the same database.
 
 Rebuild with `pnpm data:build --only postcode-index`. Run
 `node --import tsx scripts/verify-postcode-index.mts` to verify every postcode,
 district hash and row count, and sample district positions. A full `pnpm data:build`
-refreshes downstream postcode-area and count outputs too. No new source release
-is needed.
+refreshes downstream postcode-area and count outputs too. Running only the
+postcode-index stage removes the area columns, so rebuild postcode-areas afterward,
+even when the postcode content hash is unchanged. No new source release is needed.
+
+### Postcode areas
+
+The `postcode-areas` stage replaces the compressed `postcode_area_shards` table
+with integer area references on `postcodes`. Each compiled release has an
+`AreaId` column referencing `areas(id)` and a `DistanceCm` column. A geography
+with one release uses names such as `countryAreaId`. Multiple releases use
+release-qualified names such as `"localAuthority_2026-05-uk-bgcAreaId"`.
+`postcode_area_releases` lists each geography, boundary release and column name.
+All IDs refer to that exact boundary release. Missing inventory areas are added
+to `areas` with `inInventory=0` and an empty name, since shard inputs contain codes
+but no labels.
+
+```sql
+SELECT p.postcode, a.code, a.name
+FROM postcodes p JOIN areas a ON a.id = p.countryAreaId
+WHERE p.postcode = 'SW1A1AA';
+
+SELECT postcode, countryCode FROM postcodes_decoded
+WHERE postcode = 'SW1A1AA';
+
+SELECT geography, boundaryRelease, areaColumn, distanceColumn
+FROM postcode_area_releases;
+```
+
+A null area ID means no single interior match. `postcode_area_matches` holds
+multiple or boundary matches, with their containment, distance and original order.
+Its decoded view, `postcode_area_matches_decoded`, adds geography, boundary
+release, code and name. `postcode_area_columns` preserves release order and the
+presence of the optional several-match field per district. `postcode_area_codes`
+preserves each district's code dictionary as ordered references to `areas`.
+These small tables retain the details needed to reconstruct the original bytes.
+
+The reader selects a compact-postcode prefix range, filters to the district's
+postcode length, and orders by postcode using the primary key. This reproduces
+the compiler's code-unit order, including districts such as M1, M10 and M1A.
+It reconstructs the original district JSON and verifies the manifest SHA-256
+before returning it. Postcode and area content hashes and API ETags are unchanged.
+
+To convert an existing blob-based database after building the area-ID schema,
+run `NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/normalize-postcode-areas.ts`
+from the repository root. This reads existing shards, writes a temporary database,
+checks every reconstructed area shard, vacuums and publishes atomically. It does
+not run postcode placement or any precompile stage. Normal builds write the same
+schema through `storePostcodeAreas`.
+
+Compare an old database with the rebuilt database using
+`NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/compare-postcode-sqlite.ts BEFORE.sqlite services/api services/api/benchmarks/sqlite-postcode-areas.json`.
+The check requires nonempty shard inventories and exits nonzero on any byte or
+hash mismatch. It reports both shard counts, mismatch counts, database bytes,
+`dbstat` bytes per object, and nine warm timing samples for the largest area
+shard and a direct postcode lookup. Each timed read opens its own connection.
