@@ -3,7 +3,9 @@ import { DatabaseSync } from "node:sqlite";
 import { readAtlasPayload } from "../shared/atlasSqlite";
 import {
 	compilePostcodes,
+	DEPRIVATION,
 	POSTCODE_GEOGRAPHIES,
+	postcodeReleases,
 	type DeprivationIndex,
 	type PostcodeDistricts,
 	type PostcodeSectors,
@@ -35,16 +37,6 @@ export const PLACE_POSTCODE_SECTORS_PATH = join(
 	"place-postcode-sectors.json",
 );
 
-/** Each index's neighbourhoods, and the field holding their decile. */
-const DEPRIVATION: Record<
-	DeprivationIndex,
-	{ geography: string; year: string; decile: string }
-> = {
-	imd: { geography: "lsoa", year: "2021", decile: "imdDecile" },
-	wimd: { geography: "lsoa", year: "2011", decile: "wimdDecile" },
-	simd: { geography: "dataZone", year: "2011", decile: "simdDecile" },
-};
-
 /** Each index's deciles by neighbourhood code, from its latest edition. */
 function deprivationDeciles(root: string) {
 	return Object.entries(DEPRIVATION).map(([index, { decile }]) => {
@@ -72,32 +64,8 @@ export function serialisePlacePostcodes() {
 	const areas: PostcodeAreasArtifact = JSON.parse(
 		readAtlasPayload(root, "postcode-areas"),
 	);
-	// The release a default postcode lookup reads, for each geography.
-	const releases = Object.fromEntries(
-		POSTCODE_GEOGRAPHIES.map((geography) => {
-			const release = areas.releases.find(
-				(entry) =>
-					entry.geography === geography &&
-					entry.purposes.includes("default-lookup"),
-			);
-			if (!release)
-				throw new Error(`No default postcode release for ${geography}`);
-			return [geography, `${geography}/${release.boundaryRelease}`];
-		}),
-	);
-	// The release each deprivation index's neighbourhood codes come from.
-	const deprivationReleases = Object.entries(DEPRIVATION).map(
-		([index, { geography, year }]) => {
-			const release = areas.releases.find(
-				(entry) =>
-					entry.geography === geography &&
-					entry.boundaryRelease.startsWith(year),
-			);
-			if (!release)
-				throw new Error(`No ${geography} ${year} postcode release`);
-			return `${geography}/${release.boundaryRelease}`;
-		},
-	);
+	const { areas: releases, deprivation: deprivationReleases } =
+		postcodeReleases(areas.releases);
 	const deciles = deprivationDeciles(root);
 	const areaShards = new Map(
 		areas.shards.map((shard) => [shard.district, shard.path]),
@@ -133,7 +101,7 @@ export function serialisePlacePostcodes() {
 				largeUser: rows.map((row) => String(row.largeUser)).join(""),
 				areas: Object.fromEntries(
 					POSTCODE_GEOGRAPHIES.map((geography) => {
-						const column = shard.releases[releases[geography]!];
+						const column = shard.releases[releases[geography]];
 						if (!column)
 							throw new Error(
 								`No ${releases[geography]} placements for ${district}`,
@@ -142,8 +110,8 @@ export function serialisePlacePostcodes() {
 					}),
 				) as unknown as SourceDistrict["areas"],
 				deprivation: rows.map((_, at) => {
-					for (const [i, [index, byCode]] of deciles.entries()) {
-						const column = shard.releases[deprivationReleases[i]!];
+					for (const [index, byCode] of deciles) {
+						const column = shard.releases[deprivationReleases[index]];
 						const position = column?.area[at];
 						const code =
 							position !== undefined && position >= 0

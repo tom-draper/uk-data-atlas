@@ -28,6 +28,105 @@ export const DEPRIVATION_INDICES = ["imd", "wimd", "simd"] as const;
 
 export type DeprivationIndex = (typeof DEPRIVATION_INDICES)[number];
 
+/** Each index's neighbourhoods, and the fields its rows hold. */
+export const DEPRIVATION: Record<
+	DeprivationIndex,
+	{
+		geography: string;
+		/** The year its neighbourhoods' boundaries are from. */
+		year: string;
+		name: string;
+		rank: string;
+		decile: string;
+	}
+> = {
+	imd: {
+		geography: "lsoa",
+		year: "2021",
+		name: "lsoaName",
+		rank: "imdRank",
+		decile: "imdDecile",
+	},
+	wimd: {
+		geography: "lsoa",
+		year: "2011",
+		name: "lsoaName",
+		rank: "wimdRank",
+		decile: "wimdDecile",
+	},
+	simd: {
+		geography: "dataZone",
+		year: "2011",
+		name: "dzName",
+		rank: "simdRank",
+		decile: "simdDecile",
+	},
+};
+
+type AreaRelease = {
+	geography: string;
+	boundaryRelease: string;
+	purposes: readonly string[];
+};
+
+/**
+ * The postcode area releases a page reads, keyed as the area shards key
+ * them: each geography's default lookup, and each deprivation index's
+ * neighbourhoods.
+ */
+export function postcodeReleases(releases: readonly AreaRelease[]) {
+	const key = (release: AreaRelease | undefined, what: string) => {
+		if (!release) throw new Error(`No postcode release for ${what}`);
+		return `${release.geography}/${release.boundaryRelease}`;
+	};
+	return {
+		areas: Object.fromEntries(
+			POSTCODE_GEOGRAPHIES.map((geography) => [
+				geography,
+				key(
+					releases.find(
+						(entry) =>
+							entry.geography === geography &&
+							entry.purposes.includes("default-lookup"),
+					),
+					geography,
+				),
+			]),
+		) as Record<PostcodeGeography, string>,
+		deprivation: Object.fromEntries(
+			DEPRIVATION_INDICES.map((index) => {
+				const { geography, year } = DEPRIVATION[index];
+				return [
+					index,
+					key(
+						releases.find(
+							(entry) =>
+								entry.geography === geography &&
+								entry.boundaryRelease.startsWith(year),
+						),
+						`${geography} ${year}`,
+					),
+				];
+			}),
+		) as Record<DeprivationIndex, string>,
+	};
+}
+
+/** One release's placements for a district, as its area shard holds them. */
+export type AreaColumn = {
+	codes: string[];
+	area: number[];
+	several?: Record<string, ReadonlyArray<readonly [number, ...unknown[]]>>;
+};
+
+/** The area a district's postcode is placed in, the first where it lies on an edge. */
+export function areaCodeAt(column: AreaColumn | undefined, at: number) {
+	if (!column) return undefined;
+	const position =
+		column.area[at]! >= 0 ? column.area[at] : column.several?.[at]?.[0]?.[0];
+	return position === undefined ? undefined : column.codes[position];
+}
+
 /** A district's or sector's postcodes, as a page shows them. */
 export type PostcodeGroup = {
 	live: number;
@@ -81,17 +180,7 @@ export type SourceDistrict = {
 	terminated: number[];
 	largeUser: string;
 	/** For each geography, the position in `codes` of each postcode's area, or below 0 for none. */
-	areas: Record<
-		PostcodeGeography,
-		{
-			codes: string[];
-			area: number[];
-			several?: Record<
-				string,
-				ReadonlyArray<readonly [number, ...unknown[]]>
-			>;
-		}
-	>;
+	areas: Record<PostcodeGeography, AreaColumn>;
 	/** Each postcode's neighbourhood deprivation decile, where an index covers it. */
 	deprivation?: (readonly [DeprivationIndex, number] | undefined)[];
 };
@@ -260,16 +349,9 @@ export function compilePostcodes(
 		const district = new Tally();
 		const bySector = new Map<string, Tally>();
 		source.postcodes.forEach((postcode, at) => {
-			const codes = POSTCODE_GEOGRAPHIES.map((geography) => {
-				const column = source.areas[geography];
-				const position =
-					column.area[at]! >= 0
-						? column.area[at]!
-						: column.several?.[at]?.[0]?.[0];
-				return position === undefined
-					? undefined
-					: column.codes[position];
-			});
+			const codes = POSTCODE_GEOGRAPHIES.map((geography) =>
+				areaCodeAt(source.areas[geography], at),
+			);
 			const name = `${source.district} ${postcode[source.district.length]}`;
 			let sector = bySector.get(name);
 			if (!sector) bySector.set(name, (sector = new Tally()));
