@@ -1,0 +1,1395 @@
+{
+	"mismatches": 0,
+	"comparisons": [
+		{
+			"name": "area_inventory",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "area_releases",
+			"rows": 104,
+			"matches": true
+		},
+		{
+			"name": "area_search_codes",
+			"rows": 972419,
+			"matches": true
+		},
+		{
+			"name": "area_search_meta",
+			"rows": 5,
+			"matches": true
+		},
+		{
+			"name": "area_search_terms",
+			"rows": 391882,
+			"matches": true
+		},
+		{
+			"name": "area_search_title_terms",
+			"rows": 27,
+			"matches": true
+		},
+		{
+			"name": "areas",
+			"rows": 1005263,
+			"matches": true
+		},
+		{
+			"name": "crosswalk_coverage",
+			"rows": 104,
+			"matches": true
+		},
+		{
+			"name": "crosswalk_field_sets",
+			"rows": 10,
+			"matches": true
+		},
+		{
+			"name": "crosswalk_inventory",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "crosswalk_label_exceptions",
+			"rows": 5893,
+			"matches": true
+		},
+		{
+			"name": "crosswalk_sources",
+			"rows": 1924601,
+			"matches": true
+		},
+		{
+			"name": "crosswalk_targets",
+			"rows": 1929571,
+			"matches": true
+		},
+		{
+			"name": "crosswalks",
+			"rows": 181,
+			"matches": true
+		},
+		{
+			"name": "datasets",
+			"rows": 53,
+			"matches": true
+		},
+		{
+			"name": "location_projection_dictionaries",
+			"rows": 79,
+			"matches": true
+		},
+		{
+			"name": "location_projection_members",
+			"rows": 19783,
+			"matches": true
+		},
+		{
+			"name": "location_projection_parents",
+			"rows": 1626,
+			"matches": true
+		},
+		{
+			"name": "meta",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "named_location_assertions",
+			"rows": 2091,
+			"matches": true
+		},
+		{
+			"name": "named_location_geometries",
+			"rows": 249,
+			"matches": true
+		},
+		{
+			"name": "named_location_inventory",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "named_location_members",
+			"rows": 2091,
+			"matches": true
+		},
+		{
+			"name": "named_location_partial_members",
+			"rows": 2,
+			"matches": true
+		},
+		{
+			"name": "named_locations",
+			"rows": 271,
+			"matches": true
+		},
+		{
+			"name": "observation_areas",
+			"rows": 65597,
+			"matches": true
+		},
+		{
+			"name": "observation_catalogue",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "observation_categories",
+			"rows": 28109,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts001_lsoa_2021_table",
+			"rows": 35672,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts001_msoa_2021_table",
+			"rows": 7264,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts003_lsoa_2021_table",
+			"rows": 35672,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts003_msoa_2021_table",
+			"rows": 7264,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts007a_lsoa_2021_table",
+			"rows": 35672,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts007a_msoa_2021_table",
+			"rows": 7264,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts021_lsoa_2021_table",
+			"rows": 35672,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts021_msoa_2021_table",
+			"rows": 7264,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts037_lsoa_2021_table",
+			"rows": 35672,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts037_msoa_2021_table",
+			"rows": 7264,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts054_lsoa_2021_table",
+			"rows": 35672,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts054_msoa_2021_table",
+			"rows": 7264,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts066_lsoa_2021_table",
+			"rows": 35672,
+			"matches": true
+		},
+		{
+			"name": "observation_census_2021_ts066_msoa_2021_table",
+			"rows": 7264,
+			"matches": true
+		},
+		{
+			"name": "observation_datasets",
+			"rows": 60,
+			"matches": true
+		},
+		{
+			"name": "observation_intervals",
+			"rows": 35704,
+			"matches": true
+		},
+		{
+			"name": "observation_measures",
+			"rows": 228,
+			"matches": true
+		},
+		{
+			"name": "observation_periods",
+			"rows": 68,
+			"matches": true
+		},
+		{
+			"name": "observation_series",
+			"rows": 322,
+			"matches": true
+		},
+		{
+			"name": "observation_source_areas",
+			"rows": 259,
+			"matches": true
+		},
+		{
+			"name": "observation_statuses",
+			"rows": 2,
+			"matches": true
+		},
+		{
+			"name": "observation_table_columns",
+			"rows": 160,
+			"matches": true
+		},
+		{
+			"name": "observation_tables",
+			"rows": 14,
+			"matches": true
+		},
+		{
+			"name": "observations",
+			"rows": 1055848,
+			"matches": true
+		},
+		{
+			"name": "place_index_codes",
+			"rows": 299031,
+			"matches": true
+		},
+		{
+			"name": "place_index_meta",
+			"rows": 7,
+			"matches": true
+		},
+		{
+			"name": "place_index_names",
+			"rows": 290749,
+			"matches": true
+		},
+		{
+			"name": "place_index_places",
+			"rows": 301114,
+			"matches": true
+		},
+		{
+			"name": "postcode_area_codes",
+			"rows": 435199,
+			"matches": true
+		},
+		{
+			"name": "postcode_area_columns",
+			"rows": 88276,
+			"matches": true
+		},
+		{
+			"name": "postcode_area_matches",
+			"rows": 14928,
+			"matches": true
+		},
+		{
+			"name": "postcode_area_releases",
+			"rows": 29,
+			"matches": true
+		},
+		{
+			"name": "postcode_counts",
+			"rows": 179505,
+			"matches": true
+		},
+		{
+			"name": "postcodes",
+			"rows": 2665797,
+			"matches": true
+		},
+		{
+			"name": "payload:analysis-geographies",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:analysis-geography-validation",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:boundary-releases",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset-manifest",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:adult-social-care-activity",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:adult-social-care-outcomes",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:air-quality",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:brexit",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:brexit-constituency",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:broadband",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:business-activity",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:car-availability",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:child-poverty",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:claimant-count",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:council-tax",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:crime",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:electric-vehicle-chargers",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:electricity-consumption",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:ethnicity",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:fuel-poverty",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:gas-consumption",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:general-election",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:ghg-emissions",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:historical-general-election",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:homelessness",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:house-price",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:housing-affordability",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:imd",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:income",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:jobs",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:land-area",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:life-expectancy",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:life-expectancy-series",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:local-election",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:local-government-finance",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:mobile-coverage",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:net-additional-dwellings",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:nhs-waiting",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:nimdm",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:planning-applications",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:population",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:population-constituency",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:population-uk",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:qualification",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:regional-gdp-itl1",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:regional-gdp-itl2",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:regional-gdp-itl3",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:road-collisions",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:school-performance",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:school-performance-constituency",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:school-performance-disadvantage",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:simd",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:travel-to-work",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:unemployment",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:waste",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:wimd",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:dataset:workplace-income",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:geography-inventory",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:location-projection-inventory",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:postcode-areas",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:postcode-counts",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:postcode-index",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:relationship-paths",
+			"rows": 1,
+			"matches": true
+		},
+		{
+			"name": "payload:terrain-catalogue",
+			"rows": 1,
+			"matches": true
+		}
+	],
+	"files": [
+		{
+			"path": "data/baseline-normalized.sqlite",
+			"bytes": 1111654400,
+			"objects": [
+				{
+					"name": "area_inventory",
+					"bytes": 4096
+				},
+				{
+					"name": "area_releases",
+					"bytes": 24576
+				},
+				{
+					"name": "area_search_codes",
+					"bytes": 17575936
+				},
+				{
+					"name": "area_search_meta",
+					"bytes": 12288
+				},
+				{
+					"name": "area_search_terms",
+					"bytes": 13840384
+				},
+				{
+					"name": "area_search_title_terms",
+					"bytes": 4096
+				},
+				{
+					"name": "areas",
+					"bytes": 36614144
+				},
+				{
+					"name": "crosswalk_coverage",
+					"bytes": 4096
+				},
+				{
+					"name": "crosswalk_field_sets",
+					"bytes": 4096
+				},
+				{
+					"name": "crosswalk_inventory",
+					"bytes": 4096
+				},
+				{
+					"name": "crosswalk_label_exceptions",
+					"bytes": 208896
+				},
+				{
+					"name": "crosswalk_sources",
+					"bytes": 34045952
+				},
+				{
+					"name": "crosswalk_sources_0",
+					"bytes": 26189824
+				},
+				{
+					"name": "crosswalk_targets",
+					"bytes": 90783744
+				},
+				{
+					"name": "crosswalk_targets_0",
+					"bytes": 27541504
+				},
+				{
+					"name": "crosswalks",
+					"bytes": 1417216
+				},
+				{
+					"name": "crosswalks_0",
+					"bytes": 28672
+				},
+				{
+					"name": "datasets",
+					"bytes": 81920
+				},
+				{
+					"name": "location_projection_dictionaries",
+					"bytes": 2629632
+				},
+				{
+					"name": "location_projection_members",
+					"bytes": 29990912
+				},
+				{
+					"name": "location_projection_parents",
+					"bytes": 348160
+				},
+				{
+					"name": "meta",
+					"bytes": 4096
+				},
+				{
+					"name": "named_location_assertions",
+					"bytes": 94208
+				},
+				{
+					"name": "named_location_assertions_0",
+					"bytes": 94208
+				},
+				{
+					"name": "named_location_geometries",
+					"bytes": 26931200
+				},
+				{
+					"name": "named_location_inventory",
+					"bytes": 4096
+				},
+				{
+					"name": "named_location_members",
+					"bytes": 73728
+				},
+				{
+					"name": "named_location_members_0",
+					"bytes": 73728
+				},
+				{
+					"name": "named_location_partial_members",
+					"bytes": 4096
+				},
+				{
+					"name": "named_location_partial_members_0",
+					"bytes": 4096
+				},
+				{
+					"name": "named_locations",
+					"bytes": 114688
+				},
+				{
+					"name": "named_locations_0",
+					"bytes": 16384
+				},
+				{
+					"name": "named_locations_1",
+					"bytes": 16384
+				},
+				{
+					"name": "observation_areas",
+					"bytes": 1171456
+				},
+				{
+					"name": "observation_catalogue",
+					"bytes": 4096
+				},
+				{
+					"name": "observation_categories",
+					"bytes": 483328
+				},
+				{
+					"name": "observation_census_2021_ts001_lsoa_2021_table",
+					"bytes": 634880
+				},
+				{
+					"name": "observation_census_2021_ts001_msoa_2021_table",
+					"bytes": 143360
+				},
+				{
+					"name": "observation_census_2021_ts003_lsoa_2021_table",
+					"bytes": 1511424
+				},
+				{
+					"name": "observation_census_2021_ts003_msoa_2021_table",
+					"bytes": 385024
+				},
+				{
+					"name": "observation_census_2021_ts007a_lsoa_2021_table",
+					"bytes": 1781760
+				},
+				{
+					"name": "observation_census_2021_ts007a_msoa_2021_table",
+					"bytes": 479232
+				},
+				{
+					"name": "observation_census_2021_ts021_lsoa_2021_table",
+					"bytes": 1630208
+				},
+				{
+					"name": "observation_census_2021_ts021_msoa_2021_table",
+					"bytes": 393216
+				},
+				{
+					"name": "observation_census_2021_ts037_lsoa_2021_table",
+					"bytes": 946176
+				},
+				{
+					"name": "observation_census_2021_ts037_msoa_2021_table",
+					"bytes": 208896
+				},
+				{
+					"name": "observation_census_2021_ts054_lsoa_2021_table",
+					"bytes": 1093632
+				},
+				{
+					"name": "observation_census_2021_ts054_msoa_2021_table",
+					"bytes": 253952
+				},
+				{
+					"name": "observation_census_2021_ts066_lsoa_2021_table",
+					"bytes": 1200128
+				},
+				{
+					"name": "observation_census_2021_ts066_msoa_2021_table",
+					"bytes": 286720
+				},
+				{
+					"name": "observation_datasets",
+					"bytes": 32768
+				},
+				{
+					"name": "observation_intervals",
+					"bytes": 962560
+				},
+				{
+					"name": "observation_measures",
+					"bytes": 36864
+				},
+				{
+					"name": "observation_periods",
+					"bytes": 4096
+				},
+				{
+					"name": "observation_series",
+					"bytes": 81920
+				},
+				{
+					"name": "observation_source_areas",
+					"bytes": 12288
+				},
+				{
+					"name": "observation_statuses",
+					"bytes": 4096
+				},
+				{
+					"name": "observation_table_columns",
+					"bytes": 12288
+				},
+				{
+					"name": "observation_tables",
+					"bytes": 4096
+				},
+				{
+					"name": "observations",
+					"bytes": 17571840
+				},
+				{
+					"name": "observations_0",
+					"bytes": 13398016
+				},
+				{
+					"name": "payloads",
+					"bytes": 75292672
+				},
+				{
+					"name": "place_index_codes",
+					"bytes": 6926336
+				},
+				{
+					"name": "place_index_meta",
+					"bytes": 8192
+				},
+				{
+					"name": "place_index_names",
+					"bytes": 7671808
+				},
+				{
+					"name": "place_index_places",
+					"bytes": 11399168
+				},
+				{
+					"name": "postcode_area_codes",
+					"bytes": 6975488
+				},
+				{
+					"name": "postcode_area_columns",
+					"bytes": 1196032
+				},
+				{
+					"name": "postcode_area_matches",
+					"bytes": 454656
+				},
+				{
+					"name": "postcode_area_releases",
+					"bytes": 4096
+				},
+				{
+					"name": "postcode_counts",
+					"bytes": 7413760
+				},
+				{
+					"name": "postcodes",
+					"bytes": 620154880
+				},
+				{
+					"name": "sqlite_autoindex_area_releases_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_areas_1",
+					"bytes": 20168704
+				},
+				{
+					"name": "sqlite_autoindex_crosswalk_coverage_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_crosswalk_field_sets_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_crosswalk_label_exceptions_1",
+					"bytes": 208896
+				},
+				{
+					"name": "sqlite_autoindex_crosswalks_1",
+					"bytes": 20480
+				},
+				{
+					"name": "sqlite_autoindex_datasets_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_named_locations_1",
+					"bytes": 12288
+				},
+				{
+					"name": "sqlite_autoindex_observation_datasets_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_observation_measures_1",
+					"bytes": 12288
+				},
+				{
+					"name": "sqlite_autoindex_observation_periods_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_observation_series_1",
+					"bytes": 24576
+				},
+				{
+					"name": "sqlite_autoindex_observation_statuses_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_observation_tables_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_postcode_area_releases_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_postcode_area_releases_2",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_schema",
+					"bytes": 139264
+				},
+				{
+					"name": "sqlite_stat1",
+					"bytes": 12288
+				}
+			]
+		},
+		{
+			"path": "/home/tomdraper/.t3/worktrees/uk-data-atlas/feat-sqlite-cache-split/data/build/atlas.sqlite",
+			"bytes": 1013780480,
+			"objects": [
+				{
+					"name": "area_inventory",
+					"bytes": 4096
+				},
+				{
+					"name": "area_releases",
+					"bytes": 24576
+				},
+				{
+					"name": "areas",
+					"bytes": 36614144
+				},
+				{
+					"name": "crosswalk_coverage",
+					"bytes": 4096
+				},
+				{
+					"name": "crosswalk_field_sets",
+					"bytes": 4096
+				},
+				{
+					"name": "crosswalk_inventory",
+					"bytes": 4096
+				},
+				{
+					"name": "crosswalk_label_exceptions",
+					"bytes": 208896
+				},
+				{
+					"name": "crosswalk_sources",
+					"bytes": 34045952
+				},
+				{
+					"name": "crosswalk_sources_0",
+					"bytes": 26189824
+				},
+				{
+					"name": "crosswalk_targets",
+					"bytes": 90783744
+				},
+				{
+					"name": "crosswalk_targets_0",
+					"bytes": 27541504
+				},
+				{
+					"name": "crosswalks",
+					"bytes": 1417216
+				},
+				{
+					"name": "crosswalks_0",
+					"bytes": 28672
+				},
+				{
+					"name": "datasets",
+					"bytes": 81920
+				},
+				{
+					"name": "meta",
+					"bytes": 4096
+				},
+				{
+					"name": "named_location_assertions",
+					"bytes": 94208
+				},
+				{
+					"name": "named_location_assertions_0",
+					"bytes": 94208
+				},
+				{
+					"name": "named_location_geometries",
+					"bytes": 26931200
+				},
+				{
+					"name": "named_location_inventory",
+					"bytes": 4096
+				},
+				{
+					"name": "named_location_members",
+					"bytes": 73728
+				},
+				{
+					"name": "named_location_members_0",
+					"bytes": 73728
+				},
+				{
+					"name": "named_location_partial_members",
+					"bytes": 4096
+				},
+				{
+					"name": "named_location_partial_members_0",
+					"bytes": 4096
+				},
+				{
+					"name": "named_locations",
+					"bytes": 114688
+				},
+				{
+					"name": "named_locations_0",
+					"bytes": 16384
+				},
+				{
+					"name": "named_locations_1",
+					"bytes": 16384
+				},
+				{
+					"name": "observation_areas",
+					"bytes": 1171456
+				},
+				{
+					"name": "observation_catalogue",
+					"bytes": 4096
+				},
+				{
+					"name": "observation_categories",
+					"bytes": 483328
+				},
+				{
+					"name": "observation_census_2021_ts001_lsoa_2021_table",
+					"bytes": 634880
+				},
+				{
+					"name": "observation_census_2021_ts001_msoa_2021_table",
+					"bytes": 143360
+				},
+				{
+					"name": "observation_census_2021_ts003_lsoa_2021_table",
+					"bytes": 1511424
+				},
+				{
+					"name": "observation_census_2021_ts003_msoa_2021_table",
+					"bytes": 385024
+				},
+				{
+					"name": "observation_census_2021_ts007a_lsoa_2021_table",
+					"bytes": 1781760
+				},
+				{
+					"name": "observation_census_2021_ts007a_msoa_2021_table",
+					"bytes": 479232
+				},
+				{
+					"name": "observation_census_2021_ts021_lsoa_2021_table",
+					"bytes": 1630208
+				},
+				{
+					"name": "observation_census_2021_ts021_msoa_2021_table",
+					"bytes": 393216
+				},
+				{
+					"name": "observation_census_2021_ts037_lsoa_2021_table",
+					"bytes": 946176
+				},
+				{
+					"name": "observation_census_2021_ts037_msoa_2021_table",
+					"bytes": 208896
+				},
+				{
+					"name": "observation_census_2021_ts054_lsoa_2021_table",
+					"bytes": 1093632
+				},
+				{
+					"name": "observation_census_2021_ts054_msoa_2021_table",
+					"bytes": 253952
+				},
+				{
+					"name": "observation_census_2021_ts066_lsoa_2021_table",
+					"bytes": 1200128
+				},
+				{
+					"name": "observation_census_2021_ts066_msoa_2021_table",
+					"bytes": 286720
+				},
+				{
+					"name": "observation_datasets",
+					"bytes": 32768
+				},
+				{
+					"name": "observation_intervals",
+					"bytes": 962560
+				},
+				{
+					"name": "observation_measures",
+					"bytes": 36864
+				},
+				{
+					"name": "observation_periods",
+					"bytes": 4096
+				},
+				{
+					"name": "observation_series",
+					"bytes": 81920
+				},
+				{
+					"name": "observation_source_areas",
+					"bytes": 12288
+				},
+				{
+					"name": "observation_statuses",
+					"bytes": 4096
+				},
+				{
+					"name": "observation_table_columns",
+					"bytes": 12288
+				},
+				{
+					"name": "observation_tables",
+					"bytes": 4096
+				},
+				{
+					"name": "observations",
+					"bytes": 17571840
+				},
+				{
+					"name": "observations_0",
+					"bytes": 13398016
+				},
+				{
+					"name": "payloads",
+					"bytes": 75255808
+				},
+				{
+					"name": "postcode_area_codes",
+					"bytes": 6975488
+				},
+				{
+					"name": "postcode_area_columns",
+					"bytes": 1196032
+				},
+				{
+					"name": "postcode_area_matches",
+					"bytes": 454656
+				},
+				{
+					"name": "postcode_area_releases",
+					"bytes": 4096
+				},
+				{
+					"name": "postcodes",
+					"bytes": 620154880
+				},
+				{
+					"name": "sqlite_autoindex_area_releases_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_areas_1",
+					"bytes": 20168704
+				},
+				{
+					"name": "sqlite_autoindex_crosswalk_coverage_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_crosswalk_field_sets_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_crosswalk_label_exceptions_1",
+					"bytes": 208896
+				},
+				{
+					"name": "sqlite_autoindex_crosswalks_1",
+					"bytes": 20480
+				},
+				{
+					"name": "sqlite_autoindex_datasets_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_named_locations_1",
+					"bytes": 12288
+				},
+				{
+					"name": "sqlite_autoindex_observation_datasets_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_observation_measures_1",
+					"bytes": 12288
+				},
+				{
+					"name": "sqlite_autoindex_observation_periods_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_observation_series_1",
+					"bytes": 24576
+				},
+				{
+					"name": "sqlite_autoindex_observation_statuses_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_observation_tables_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_postcode_area_releases_1",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_autoindex_postcode_area_releases_2",
+					"bytes": 4096
+				},
+				{
+					"name": "sqlite_schema",
+					"bytes": 135168
+				},
+				{
+					"name": "sqlite_stat1",
+					"bytes": 4096
+				}
+			]
+		},
+		{
+			"path": "/home/tomdraper/.t3/worktrees/uk-data-atlas/feat-sqlite-cache-split/data/build/atlas-cache.sqlite",
+			"bytes": 97869824,
+			"objects": [
+				{
+					"name": "area_search_codes",
+					"bytes": 17575936
+				},
+				{
+					"name": "area_search_meta",
+					"bytes": 12288
+				},
+				{
+					"name": "area_search_terms",
+					"bytes": 13840384
+				},
+				{
+					"name": "area_search_title_terms",
+					"bytes": 4096
+				},
+				{
+					"name": "cache_generations",
+					"bytes": 4096
+				},
+				{
+					"name": "location_projection_dictionaries",
+					"bytes": 2629632
+				},
+				{
+					"name": "location_projection_members",
+					"bytes": 29990912
+				},
+				{
+					"name": "location_projection_parents",
+					"bytes": 348160
+				},
+				{
+					"name": "meta",
+					"bytes": 4096
+				},
+				{
+					"name": "payloads",
+					"bytes": 36864
+				},
+				{
+					"name": "place_index_codes",
+					"bytes": 6926336
+				},
+				{
+					"name": "place_index_meta",
+					"bytes": 8192
+				},
+				{
+					"name": "place_index_names",
+					"bytes": 7671808
+				},
+				{
+					"name": "place_index_places",
+					"bytes": 11399168
+				},
+				{
+					"name": "postcode_counts",
+					"bytes": 7413760
+				},
+				{
+					"name": "sqlite_schema",
+					"bytes": 4096
+				}
+			]
+		}
+	],
+	"http": {
+		"comparisons": 12,
+		"mismatches": 0
+	}
+}

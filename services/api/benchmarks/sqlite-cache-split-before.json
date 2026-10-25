@@ -1,0 +1,623 @@
+{
+	"fileBytes": 1111654400,
+	"objects": [
+		{
+			"name": "area_inventory",
+			"bytes": 4096
+		},
+		{
+			"name": "area_releases",
+			"bytes": 24576
+		},
+		{
+			"name": "area_search_codes",
+			"bytes": 17575936
+		},
+		{
+			"name": "area_search_meta",
+			"bytes": 12288
+		},
+		{
+			"name": "area_search_terms",
+			"bytes": 13840384
+		},
+		{
+			"name": "area_search_title_terms",
+			"bytes": 4096
+		},
+		{
+			"name": "areas",
+			"bytes": 36614144
+		},
+		{
+			"name": "crosswalk_coverage",
+			"bytes": 4096
+		},
+		{
+			"name": "crosswalk_field_sets",
+			"bytes": 4096
+		},
+		{
+			"name": "crosswalk_inventory",
+			"bytes": 4096
+		},
+		{
+			"name": "crosswalk_label_exceptions",
+			"bytes": 208896
+		},
+		{
+			"name": "crosswalk_sources",
+			"bytes": 34045952
+		},
+		{
+			"name": "crosswalk_sources_0",
+			"bytes": 26189824
+		},
+		{
+			"name": "crosswalk_targets",
+			"bytes": 90783744
+		},
+		{
+			"name": "crosswalk_targets_0",
+			"bytes": 27541504
+		},
+		{
+			"name": "crosswalks",
+			"bytes": 1417216
+		},
+		{
+			"name": "crosswalks_0",
+			"bytes": 28672
+		},
+		{
+			"name": "datasets",
+			"bytes": 81920
+		},
+		{
+			"name": "location_projection_dictionaries",
+			"bytes": 2629632
+		},
+		{
+			"name": "location_projection_members",
+			"bytes": 29990912
+		},
+		{
+			"name": "location_projection_parents",
+			"bytes": 348160
+		},
+		{
+			"name": "meta",
+			"bytes": 4096
+		},
+		{
+			"name": "named_location_assertions",
+			"bytes": 94208
+		},
+		{
+			"name": "named_location_assertions_0",
+			"bytes": 94208
+		},
+		{
+			"name": "named_location_geometries",
+			"bytes": 26931200
+		},
+		{
+			"name": "named_location_inventory",
+			"bytes": 4096
+		},
+		{
+			"name": "named_location_members",
+			"bytes": 73728
+		},
+		{
+			"name": "named_location_members_0",
+			"bytes": 73728
+		},
+		{
+			"name": "named_location_partial_members",
+			"bytes": 4096
+		},
+		{
+			"name": "named_location_partial_members_0",
+			"bytes": 4096
+		},
+		{
+			"name": "named_locations",
+			"bytes": 114688
+		},
+		{
+			"name": "named_locations_0",
+			"bytes": 16384
+		},
+		{
+			"name": "named_locations_1",
+			"bytes": 16384
+		},
+		{
+			"name": "observation_areas",
+			"bytes": 1171456
+		},
+		{
+			"name": "observation_catalogue",
+			"bytes": 4096
+		},
+		{
+			"name": "observation_categories",
+			"bytes": 483328
+		},
+		{
+			"name": "observation_census_2021_ts001_lsoa_2021_table",
+			"bytes": 634880
+		},
+		{
+			"name": "observation_census_2021_ts001_msoa_2021_table",
+			"bytes": 143360
+		},
+		{
+			"name": "observation_census_2021_ts003_lsoa_2021_table",
+			"bytes": 1511424
+		},
+		{
+			"name": "observation_census_2021_ts003_msoa_2021_table",
+			"bytes": 385024
+		},
+		{
+			"name": "observation_census_2021_ts007a_lsoa_2021_table",
+			"bytes": 1781760
+		},
+		{
+			"name": "observation_census_2021_ts007a_msoa_2021_table",
+			"bytes": 479232
+		},
+		{
+			"name": "observation_census_2021_ts021_lsoa_2021_table",
+			"bytes": 1630208
+		},
+		{
+			"name": "observation_census_2021_ts021_msoa_2021_table",
+			"bytes": 393216
+		},
+		{
+			"name": "observation_census_2021_ts037_lsoa_2021_table",
+			"bytes": 946176
+		},
+		{
+			"name": "observation_census_2021_ts037_msoa_2021_table",
+			"bytes": 208896
+		},
+		{
+			"name": "observation_census_2021_ts054_lsoa_2021_table",
+			"bytes": 1093632
+		},
+		{
+			"name": "observation_census_2021_ts054_msoa_2021_table",
+			"bytes": 253952
+		},
+		{
+			"name": "observation_census_2021_ts066_lsoa_2021_table",
+			"bytes": 1200128
+		},
+		{
+			"name": "observation_census_2021_ts066_msoa_2021_table",
+			"bytes": 286720
+		},
+		{
+			"name": "observation_datasets",
+			"bytes": 32768
+		},
+		{
+			"name": "observation_intervals",
+			"bytes": 962560
+		},
+		{
+			"name": "observation_measures",
+			"bytes": 36864
+		},
+		{
+			"name": "observation_periods",
+			"bytes": 4096
+		},
+		{
+			"name": "observation_series",
+			"bytes": 81920
+		},
+		{
+			"name": "observation_source_areas",
+			"bytes": 12288
+		},
+		{
+			"name": "observation_statuses",
+			"bytes": 4096
+		},
+		{
+			"name": "observation_table_columns",
+			"bytes": 12288
+		},
+		{
+			"name": "observation_tables",
+			"bytes": 4096
+		},
+		{
+			"name": "observations",
+			"bytes": 17571840
+		},
+		{
+			"name": "observations_0",
+			"bytes": 13398016
+		},
+		{
+			"name": "payloads",
+			"bytes": 75292672
+		},
+		{
+			"name": "place_index_codes",
+			"bytes": 6926336
+		},
+		{
+			"name": "place_index_meta",
+			"bytes": 8192
+		},
+		{
+			"name": "place_index_names",
+			"bytes": 7671808
+		},
+		{
+			"name": "place_index_places",
+			"bytes": 11399168
+		},
+		{
+			"name": "postcode_area_codes",
+			"bytes": 6975488
+		},
+		{
+			"name": "postcode_area_columns",
+			"bytes": 1196032
+		},
+		{
+			"name": "postcode_area_matches",
+			"bytes": 454656
+		},
+		{
+			"name": "postcode_area_releases",
+			"bytes": 4096
+		},
+		{
+			"name": "postcode_counts",
+			"bytes": 7413760
+		},
+		{
+			"name": "postcodes",
+			"bytes": 620154880
+		},
+		{
+			"name": "sqlite_autoindex_area_releases_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_areas_1",
+			"bytes": 20168704
+		},
+		{
+			"name": "sqlite_autoindex_crosswalk_coverage_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_crosswalk_field_sets_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_crosswalk_label_exceptions_1",
+			"bytes": 208896
+		},
+		{
+			"name": "sqlite_autoindex_crosswalks_1",
+			"bytes": 20480
+		},
+		{
+			"name": "sqlite_autoindex_datasets_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_named_locations_1",
+			"bytes": 12288
+		},
+		{
+			"name": "sqlite_autoindex_observation_datasets_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_observation_measures_1",
+			"bytes": 12288
+		},
+		{
+			"name": "sqlite_autoindex_observation_periods_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_observation_series_1",
+			"bytes": 24576
+		},
+		{
+			"name": "sqlite_autoindex_observation_statuses_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_observation_tables_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_postcode_area_releases_1",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_autoindex_postcode_area_releases_2",
+			"bytes": 4096
+		},
+		{
+			"name": "sqlite_schema",
+			"bytes": 139264
+		},
+		{
+			"name": "sqlite_stat1",
+			"bytes": 12288
+		}
+	],
+	"tables": [
+		{
+			"name": "meta",
+			"sql": "CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID"
+		},
+		{
+			"name": "area_inventory",
+			"sql": "CREATE TABLE area_inventory (position INTEGER PRIMARY KEY, schemaVersion INTEGER NOT NULL, contentHash TEXT NOT NULL, boundaryRegistryHash TEXT NOT NULL)"
+		},
+		{
+			"name": "area_releases",
+			"sql": "CREATE TABLE area_releases (geography TEXT NOT NULL, id TEXT NOT NULL, position INTEGER NOT NULL UNIQUE, status TEXT NOT NULL, recordCount INTEGER, artifact TEXT, contentHash TEXT, codeProperty TEXT, nameProperty TEXT, derivedFrom TEXT, reason TEXT, PRIMARY KEY (geography, id)) WITHOUT ROWID"
+		},
+		{
+			"name": "areas",
+			"sql": "CREATE TABLE areas (id INTEGER, releasePosition INTEGER NOT NULL REFERENCES area_releases(position), code TEXT NOT NULL, inInventory INTEGER NOT NULL CHECK (inInventory IN (0, 1)), name TEXT NOT NULL, aliases TEXT, areaM2 REAL, population REAL, UNIQUE (releasePosition, code), PRIMARY KEY (id))"
+		},
+		{
+			"name": "crosswalk_label_exceptions",
+			"sql": "CREATE TABLE crosswalk_label_exceptions (position INTEGER PRIMARY KEY, labels TEXT NOT NULL UNIQUE)"
+		},
+		{
+			"name": "crosswalk_inventory",
+			"sql": "CREATE TABLE crosswalk_inventory (position INTEGER PRIMARY KEY, schemaVersion INTEGER NOT NULL, contentHash TEXT NOT NULL, areaInventoryHash TEXT)"
+		},
+		{
+			"name": "crosswalk_coverage",
+			"sql": "CREATE TABLE crosswalk_coverage (geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, position INTEGER NOT NULL UNIQUE, areaCount INTEGER NOT NULL, relatedAreaCount INTEGER NOT NULL, PRIMARY KEY (geography, boundaryRelease)) WITHOUT ROWID"
+		},
+		{
+			"name": "crosswalks",
+			"sql": "CREATE TABLE crosswalks (id TEXT NOT NULL, position INTEGER NOT NULL UNIQUE, fromGeography TEXT NOT NULL, fromRelease TEXT NOT NULL, toGeography TEXT NOT NULL, toRelease TEXT NOT NULL, method TEXT NOT NULL, quality TEXT NOT NULL, relationshipPurpose TEXT, weighting TEXT NOT NULL, recordCount INTEGER NOT NULL, artifact TEXT NOT NULL, contentHash TEXT NOT NULL, header TEXT NOT NULL, bytes INTEGER NOT NULL, PRIMARY KEY (id)) WITHOUT ROWID"
+		},
+		{
+			"name": "crosswalk_field_sets",
+			"sql": "CREATE TABLE crosswalk_field_sets (position INTEGER PRIMARY KEY, fields TEXT NOT NULL UNIQUE)"
+		},
+		{
+			"name": "crosswalk_sources",
+			"sql": "CREATE TABLE crosswalk_sources (crosswalkPosition INTEGER NOT NULL REFERENCES crosswalks(position), position INTEGER NOT NULL, fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position), areaId INTEGER NOT NULL REFERENCES areas(id), labelsId INTEGER REFERENCES crosswalk_label_exceptions(position), \"coverage\" REAL, PRIMARY KEY (crosswalkPosition, position)) WITHOUT ROWID"
+		},
+		{
+			"name": "crosswalk_targets",
+			"sql": "CREATE TABLE crosswalk_targets (crosswalkPosition INTEGER NOT NULL, sourcePosition INTEGER NOT NULL, position INTEGER NOT NULL, fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position), areaId INTEGER NOT NULL REFERENCES areas(id), labelsId INTEGER REFERENCES crosswalk_label_exceptions(position), \"change\" TEXT, \"weight\" REAL, \"overlapAreaM2\" REAL, \"sourceShare\" REAL, \"targetShare\" REAL, \"population\" REAL, \"containedShare\" REAL, \"outsideWidthM\" REAL, \"match\" TEXT, \"widestDifferenceM\" REAL, \"claimedDifferenceM\" REAL, \"relation\" TEXT, FOREIGN KEY (crosswalkPosition, sourcePosition) REFERENCES crosswalk_sources(crosswalkPosition, position), PRIMARY KEY (crosswalkPosition, sourcePosition, position)) WITHOUT ROWID"
+		},
+		{
+			"name": "location_projection_dictionaries",
+			"sql": "CREATE TABLE location_projection_dictionaries (kind TEXT NOT NULL, crosswalkId TEXT NOT NULL, dictionary BLOB NOT NULL, PRIMARY KEY (kind, crosswalkId)) WITHOUT ROWID"
+		},
+		{
+			"name": "location_projection_members",
+			"sql": "CREATE TABLE location_projection_members (crosswalkId TEXT NOT NULL, key TEXT NOT NULL, value BLOB NOT NULL, PRIMARY KEY (crosswalkId, key)) WITHOUT ROWID"
+		},
+		{
+			"name": "location_projection_parents",
+			"sql": "CREATE TABLE location_projection_parents (crosswalkId TEXT NOT NULL, key TEXT NOT NULL, value BLOB NOT NULL, PRIMARY KEY (crosswalkId, key)) WITHOUT ROWID"
+		},
+		{
+			"name": "named_location_inventory",
+			"sql": "CREATE TABLE named_location_inventory (position INTEGER PRIMARY KEY, schemaVersion INTEGER NOT NULL, contentHash TEXT NOT NULL, artifact TEXT NOT NULL, gazetteerVersion INTEGER NOT NULL)"
+		},
+		{
+			"name": "named_locations",
+			"sql": "CREATE TABLE named_locations (id TEXT NOT NULL, position INTEGER NOT NULL UNIQUE, fields TEXT NOT NULL, label TEXT NOT NULL, kind TEXT NOT NULL, definitionRevision INTEGER NOT NULL, memberGeography TEXT NOT NULL, validFrom TEXT, validTo TEXT, minX REAL NOT NULL, minY REAL NOT NULL, maxX REAL NOT NULL, maxY REAL NOT NULL, source TEXT, PRIMARY KEY (id)) WITHOUT ROWID"
+		},
+		{
+			"name": "named_location_members",
+			"sql": "CREATE TABLE named_location_members (locationId TEXT NOT NULL REFERENCES named_locations(id), position INTEGER NOT NULL, code TEXT NOT NULL, PRIMARY KEY (locationId, position)) WITHOUT ROWID"
+		},
+		{
+			"name": "named_location_assertions",
+			"sql": "CREATE TABLE named_location_assertions (locationId TEXT NOT NULL REFERENCES named_locations(id), position INTEGER NOT NULL, code TEXT NOT NULL, validFrom TEXT, validTo TEXT, PRIMARY KEY (locationId, position)) WITHOUT ROWID"
+		},
+		{
+			"name": "named_location_partial_members",
+			"sql": "CREATE TABLE named_location_partial_members (locationId TEXT NOT NULL REFERENCES named_locations(id), position INTEGER NOT NULL, code TEXT NOT NULL, share REAL NOT NULL, memberOf TEXT NOT NULL REFERENCES named_locations(id), PRIMARY KEY (locationId, position)) WITHOUT ROWID"
+		},
+		{
+			"name": "named_location_geometries",
+			"sql": "CREATE TABLE named_location_geometries (locationId TEXT NOT NULL REFERENCES named_locations(id), boundaryRelease TEXT NOT NULL, minX REAL NOT NULL, minY REAL NOT NULL, maxX REAL NOT NULL, maxY REAL NOT NULL, geometry TEXT NOT NULL, PRIMARY KEY (locationId)) WITHOUT ROWID"
+		},
+		{
+			"name": "payloads",
+			"sql": "CREATE TABLE payloads (id TEXT NOT NULL, payload TEXT NOT NULL, PRIMARY KEY (id)) WITHOUT ROWID"
+		},
+		{
+			"name": "datasets",
+			"sql": "CREATE TABLE datasets (type TEXT NOT NULL, output TEXT NOT NULL UNIQUE, source TEXT NOT NULL, contract TEXT NOT NULL, summary TEXT NOT NULL, fingerprint TEXT NOT NULL, sha256 TEXT NOT NULL, bytes INTEGER NOT NULL, payloadId TEXT NOT NULL REFERENCES payloads(id), PRIMARY KEY (type)) WITHOUT ROWID"
+		},
+		{
+			"name": "place_index_meta",
+			"sql": "CREATE TABLE place_index_meta (key TEXT NOT NULL, value TEXT NOT NULL, PRIMARY KEY (key)) WITHOUT ROWID"
+		},
+		{
+			"name": "place_index_places",
+			"sql": "CREATE TABLE place_index_places (position INTEGER PRIMARY KEY, geography INTEGER, code TEXT, name TEXT, releases TEXT, extra TEXT)"
+		},
+		{
+			"name": "place_index_names",
+			"sql": "CREATE TABLE place_index_names (position INTEGER PRIMARY KEY, name TEXT, labels)"
+		},
+		{
+			"name": "place_index_codes",
+			"sql": "CREATE TABLE place_index_codes (position INTEGER PRIMARY KEY, code TEXT, places BLOB)"
+		},
+		{
+			"name": "area_search_meta",
+			"sql": "CREATE TABLE area_search_meta (key TEXT NOT NULL, value TEXT NOT NULL, PRIMARY KEY (key)) WITHOUT ROWID"
+		},
+		{
+			"name": "area_search_codes",
+			"sql": "CREATE TABLE area_search_codes (position INTEGER PRIMARY KEY, code TEXT)"
+		},
+		{
+			"name": "area_search_terms",
+			"sql": "CREATE TABLE area_search_terms (position INTEGER PRIMARY KEY, term TEXT, areas BLOB)"
+		},
+		{
+			"name": "area_search_title_terms",
+			"sql": "CREATE TABLE area_search_title_terms (position INTEGER PRIMARY KEY, term TEXT, areas BLOB)"
+		},
+		{
+			"name": "postcode_counts",
+			"sql": "CREATE TABLE postcode_counts (geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, code TEXT NOT NULL, live INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser INTEGER NOT NULL, PRIMARY KEY (geography, boundaryRelease, code)) WITHOUT ROWID"
+		},
+		{
+			"name": "observation_statuses",
+			"sql": "CREATE TABLE observation_statuses (position INTEGER PRIMARY KEY, label TEXT NOT NULL UNIQUE) STRICT"
+		},
+		{
+			"name": "observation_periods",
+			"sql": "CREATE TABLE observation_periods (position INTEGER PRIMARY KEY, label TEXT NOT NULL UNIQUE) STRICT"
+		},
+		{
+			"name": "observation_areas",
+			"sql": "CREATE TABLE observation_areas (position INTEGER PRIMARY KEY, code TEXT NOT NULL) STRICT"
+		},
+		{
+			"name": "observation_measures",
+			"sql": "CREATE TABLE observation_measures (position INTEGER PRIMARY KEY, measureId TEXT NOT NULL UNIQUE, label TEXT, unit TEXT, valueKind TEXT, concept TEXT, aggregationKind TEXT, aggregationOperation TEXT, aggregationAvailable INTEGER, aggregationStatistic TEXT, aggregationNote TEXT, weightDescription TEXT, weightDatasetField TEXT, weightMeasureId TEXT, uncertaintyKind TEXT, uncertaintyLevel REAL, uncertaintyNote TEXT) STRICT"
+		},
+		{
+			"name": "observation_datasets",
+			"sql": "CREATE TABLE observation_datasets (position INTEGER PRIMARY KEY, datasetId TEXT NOT NULL UNIQUE, label TEXT, publisher TEXT, sourceUrl TEXT, temporalCoverage TEXT, licenceName TEXT, licenceUrl TEXT, description TEXT) STRICT"
+		},
+		{
+			"name": "observation_series",
+			"sql": "CREATE TABLE observation_series (position INTEGER PRIMARY KEY, artifactId TEXT NOT NULL UNIQUE, datasetId TEXT, measurePosition INTEGER REFERENCES observation_measures(position), geographyType TEXT NOT NULL, boundaryYear INTEGER NOT NULL, contentHash TEXT NOT NULL, payloadHash TEXT NOT NULL) STRICT"
+		},
+		{
+			"name": "observation_tables",
+			"sql": "CREATE TABLE observation_tables (seriesPosition INTEGER NOT NULL REFERENCES observation_series(position), datasetId TEXT NOT NULL, period TEXT NOT NULL, valueTable TEXT NOT NULL UNIQUE, PRIMARY KEY (seriesPosition)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_table_columns",
+			"sql": "CREATE TABLE observation_table_columns (seriesPosition INTEGER NOT NULL REFERENCES observation_series(position), ordinal INTEGER NOT NULL, measurePosition INTEGER NOT NULL REFERENCES observation_measures(position), columnName TEXT NOT NULL, PRIMARY KEY (seriesPosition, ordinal)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observations",
+			"sql": "CREATE TABLE observations (seriesId INTEGER NOT NULL REFERENCES observation_series(position), periodId INTEGER NOT NULL REFERENCES observation_periods(position), areaId INTEGER NOT NULL REFERENCES observation_areas(position), value REAL, statusId INTEGER NOT NULL REFERENCES observation_statuses(position), PRIMARY KEY (seriesId, periodId, areaId)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_intervals",
+			"sql": "CREATE TABLE observation_intervals (seriesId INTEGER NOT NULL REFERENCES observation_series(position), periodId INTEGER NOT NULL REFERENCES observation_periods(position), areaId INTEGER NOT NULL REFERENCES observation_areas(position), lower REAL NOT NULL, upper REAL NOT NULL, PRIMARY KEY (seriesId, periodId, areaId)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_source_areas",
+			"sql": "CREATE TABLE observation_source_areas (seriesId INTEGER NOT NULL REFERENCES observation_series(position), periodId INTEGER NOT NULL REFERENCES observation_periods(position), areaId INTEGER NOT NULL REFERENCES observation_areas(position), sourceAreaId INTEGER NOT NULL REFERENCES observation_areas(position), PRIMARY KEY (seriesId, periodId, areaId)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_categories",
+			"sql": "CREATE TABLE observation_categories (seriesId INTEGER NOT NULL REFERENCES observation_series(position), periodId INTEGER NOT NULL REFERENCES observation_periods(position), areaId INTEGER NOT NULL REFERENCES observation_areas(position), category TEXT NOT NULL, PRIMARY KEY (seriesId, periodId, areaId)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts001_lsoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts001_lsoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"usual_residents_in_households\" REAL, \"usual_residents_in_communal_establishments\" REAL, \"usual_residents_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts001_msoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts001_msoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"usual_residents_in_households\" REAL, \"usual_residents_in_communal_establishments\" REAL, \"usual_residents_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts003_lsoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts003_lsoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"household_composition_one_person_66_plus\" REAL, \"household_composition_one_person_other\" REAL, \"household_composition_family_all_66_plus\" REAL, \"household_composition_married_no_children\" REAL, \"household_composition_married_dependent_children\" REAL, \"household_composition_married_non_dependent_children\" REAL, \"household_composition_cohabiting_no_children\" REAL, \"household_composition_cohabiting_dependent_children\" REAL, \"household_composition_cohabiting_non_dependent_children\" REAL, \"household_composition_lone_parent_dependent_children\" REAL, \"household_composition_lone_parent_non_dependent_children\" REAL, \"household_composition_other_family\" REAL, \"household_composition_other_with_dependent_children\" REAL, \"household_composition_other\" REAL, \"household_composition_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts003_msoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts003_msoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"household_composition_one_person_66_plus\" REAL, \"household_composition_one_person_other\" REAL, \"household_composition_family_all_66_plus\" REAL, \"household_composition_married_no_children\" REAL, \"household_composition_married_dependent_children\" REAL, \"household_composition_married_non_dependent_children\" REAL, \"household_composition_cohabiting_no_children\" REAL, \"household_composition_cohabiting_dependent_children\" REAL, \"household_composition_cohabiting_non_dependent_children\" REAL, \"household_composition_lone_parent_dependent_children\" REAL, \"household_composition_lone_parent_non_dependent_children\" REAL, \"household_composition_other_family\" REAL, \"household_composition_other_with_dependent_children\" REAL, \"household_composition_other\" REAL, \"household_composition_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts007a_lsoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts007a_lsoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"age_0_to_4\" REAL, \"age_5_to_9\" REAL, \"age_10_to_14\" REAL, \"age_15_to_19\" REAL, \"age_20_to_24\" REAL, \"age_25_to_29\" REAL, \"age_30_to_34\" REAL, \"age_35_to_39\" REAL, \"age_40_to_44\" REAL, \"age_45_to_49\" REAL, \"age_50_to_54\" REAL, \"age_55_to_59\" REAL, \"age_60_to_64\" REAL, \"age_65_to_69\" REAL, \"age_70_to_74\" REAL, \"age_75_to_79\" REAL, \"age_80_to_84\" REAL, \"age_85_plus\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts007a_msoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts007a_msoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"age_0_to_4\" REAL, \"age_5_to_9\" REAL, \"age_10_to_14\" REAL, \"age_15_to_19\" REAL, \"age_20_to_24\" REAL, \"age_25_to_29\" REAL, \"age_30_to_34\" REAL, \"age_35_to_39\" REAL, \"age_40_to_44\" REAL, \"age_45_to_49\" REAL, \"age_50_to_54\" REAL, \"age_55_to_59\" REAL, \"age_60_to_64\" REAL, \"age_65_to_69\" REAL, \"age_70_to_74\" REAL, \"age_75_to_79\" REAL, \"age_80_to_84\" REAL, \"age_85_plus\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts021_lsoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts021_lsoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"ethnicity_bangladeshi\" REAL, \"ethnicity_chinese\" REAL, \"ethnicity_indian\" REAL, \"ethnicity_pakistani\" REAL, \"ethnicity_other_asian\" REAL, \"ethnicity_african\" REAL, \"ethnicity_caribbean\" REAL, \"ethnicity_other_black\" REAL, \"ethnicity_white_and_asian\" REAL, \"ethnicity_white_and_black_african\" REAL, \"ethnicity_white_and_black_caribbean\" REAL, \"ethnicity_other_mixed\" REAL, \"ethnicity_white_british\" REAL, \"ethnicity_irish\" REAL, \"ethnicity_gypsy_or_irish_traveller\" REAL, \"ethnicity_roma\" REAL, \"ethnicity_other_white\" REAL, \"ethnicity_arab\" REAL, \"ethnicity_any_other\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts021_msoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts021_msoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"ethnicity_bangladeshi\" REAL, \"ethnicity_chinese\" REAL, \"ethnicity_indian\" REAL, \"ethnicity_pakistani\" REAL, \"ethnicity_other_asian\" REAL, \"ethnicity_african\" REAL, \"ethnicity_caribbean\" REAL, \"ethnicity_other_black\" REAL, \"ethnicity_white_and_asian\" REAL, \"ethnicity_white_and_black_african\" REAL, \"ethnicity_white_and_black_caribbean\" REAL, \"ethnicity_other_mixed\" REAL, \"ethnicity_white_british\" REAL, \"ethnicity_irish\" REAL, \"ethnicity_gypsy_or_irish_traveller\" REAL, \"ethnicity_roma\" REAL, \"ethnicity_other_white\" REAL, \"ethnicity_arab\" REAL, \"ethnicity_any_other\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts037_lsoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts037_lsoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"general_health_very_good\" REAL, \"general_health_good\" REAL, \"general_health_fair\" REAL, \"general_health_bad\" REAL, \"general_health_very_bad\" REAL, \"general_health_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts037_msoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts037_msoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"general_health_very_good\" REAL, \"general_health_good\" REAL, \"general_health_fair\" REAL, \"general_health_bad\" REAL, \"general_health_very_bad\" REAL, \"general_health_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts054_lsoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts054_lsoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"tenure_owned_outright\" REAL, \"tenure_owned_with_mortgage\" REAL, \"tenure_shared_ownership\" REAL, \"tenure_social_rented_council\" REAL, \"tenure_social_rented_other\" REAL, \"tenure_private_rented_landlord\" REAL, \"tenure_private_rented_other\" REAL, \"tenure_rent_free\" REAL, \"tenure_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts054_msoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts054_msoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"tenure_owned_outright\" REAL, \"tenure_owned_with_mortgage\" REAL, \"tenure_shared_ownership\" REAL, \"tenure_social_rented_council\" REAL, \"tenure_social_rented_other\" REAL, \"tenure_private_rented_landlord\" REAL, \"tenure_private_rented_other\" REAL, \"tenure_rent_free\" REAL, \"tenure_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts066_lsoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts066_lsoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"economic_activity_employed\" REAL, \"economic_activity_unemployed\" REAL, \"economic_activity_student_employed\" REAL, \"economic_activity_student_unemployed\" REAL, \"economic_activity_inactive_retired\" REAL, \"economic_activity_inactive_student\" REAL, \"economic_activity_inactive_looking_after_home\" REAL, \"economic_activity_inactive_long_term_sick\" REAL, \"economic_activity_inactive_other\" REAL, \"economic_activity_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_census_2021_ts066_msoa_2021_table",
+			"sql": "CREATE TABLE observation_census_2021_ts066_msoa_2021_table (position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES observation_areas(position), \"economic_activity_employed\" REAL, \"economic_activity_unemployed\" REAL, \"economic_activity_student_employed\" REAL, \"economic_activity_student_unemployed\" REAL, \"economic_activity_inactive_retired\" REAL, \"economic_activity_inactive_student\" REAL, \"economic_activity_inactive_looking_after_home\" REAL, \"economic_activity_inactive_long_term_sick\" REAL, \"economic_activity_inactive_other\" REAL, \"economic_activity_total\" REAL, PRIMARY KEY (position)) WITHOUT ROWID, STRICT"
+		},
+		{
+			"name": "observation_catalogue",
+			"sql": "CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHash TEXT NOT NULL)"
+		},
+		{
+			"name": "sqlite_stat1",
+			"sql": "CREATE TABLE sqlite_stat1(tbl,idx,stat)"
+		},
+		{
+			"name": "postcode_area_releases",
+			"sql": "CREATE TABLE postcode_area_releases (position INTEGER PRIMARY KEY, geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, areaColumn TEXT NOT NULL UNIQUE, distanceColumn TEXT NOT NULL UNIQUE)"
+		},
+		{
+			"name": "postcode_area_columns",
+			"sql": "CREATE TABLE postcode_area_columns (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), position INTEGER NOT NULL, hasSeveral INTEGER NOT NULL, PRIMARY KEY(district, releasePosition)) WITHOUT ROWID"
+		},
+		{
+			"name": "postcode_area_codes",
+			"sql": "CREATE TABLE postcode_area_codes (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES areas(id), PRIMARY KEY(district, releasePosition, position)) WITHOUT ROWID"
+		},
+		{
+			"name": "postcode_area_matches",
+			"sql": "CREATE TABLE postcode_area_matches (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), postcodePosition INTEGER NOT NULL, position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES areas(id), containment TEXT NOT NULL, distanceCm INTEGER NOT NULL, PRIMARY KEY(district, releasePosition, postcodePosition, position)) WITHOUT ROWID"
+		},
+		{
+			"name": "postcodes",
+			"sql": "CREATE TABLE \"postcodes\" (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL, \"communitySafetyPartnershipAreaId\" INTEGER REFERENCES areas(id), \"communitySafetyPartnershipDistanceCm\" INTEGER NOT NULL, \"constituency_2019-12-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"constituency_2019-12-uk-bgcDistanceCm\" INTEGER NOT NULL, \"constituency_2024-07-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"constituency_2024-07-uk-bgcDistanceCm\" INTEGER NOT NULL, \"countryAreaId\" INTEGER REFERENCES areas(id), \"countryDistanceCm\" INTEGER NOT NULL, \"dataZoneAreaId\" INTEGER REFERENCES areas(id), \"dataZoneDistanceCm\" INTEGER NOT NULL, \"itl1AreaId\" INTEGER REFERENCES areas(id), \"itl1DistanceCm\" INTEGER NOT NULL, \"itl2AreaId\" INTEGER REFERENCES areas(id), \"itl2DistanceCm\" INTEGER NOT NULL, \"itl3AreaId\" INTEGER REFERENCES areas(id), \"itl3DistanceCm\" INTEGER NOT NULL, \"localAuthority_2019-04-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"localAuthority_2019-04-uk-bgcDistanceCm\" INTEGER NOT NULL, \"localAuthority_2021-12-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"localAuthority_2021-12-uk-bgcDistanceCm\" INTEGER NOT NULL, \"localAuthority_2023-05-uk-bgc-v2AreaId\" INTEGER REFERENCES areas(id), \"localAuthority_2023-05-uk-bgc-v2DistanceCm\" INTEGER NOT NULL, \"localAuthority_2024-05-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"localAuthority_2024-05-uk-bgcDistanceCm\" INTEGER NOT NULL, \"localAuthority_2025-05-uk-bgc-v2AreaId\" INTEGER REFERENCES areas(id), \"localAuthority_2025-05-uk-bgc-v2DistanceCm\" INTEGER NOT NULL, \"localAuthority_2026-05-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"localAuthority_2026-05-uk-bgcDistanceCm\" INTEGER NOT NULL, \"lsoa_2011-12-w-bgcAreaId\" INTEGER REFERENCES areas(id), \"lsoa_2011-12-w-bgcDistanceCm\" INTEGER NOT NULL, \"lsoa_2021-12-ew-bgc-v5AreaId\" INTEGER REFERENCES areas(id), \"lsoa_2021-12-ew-bgc-v5DistanceCm\" INTEGER NOT NULL, \"msoaAreaId\" INTEGER REFERENCES areas(id), \"msoaDistanceCm\" INTEGER NOT NULL, \"superOutputAreaAreaId\" INTEGER REFERENCES areas(id), \"superOutputAreaDistanceCm\" INTEGER NOT NULL, \"ward_2016-12-gb-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2016-12-gb-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2017-12-gb-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2017-12-gb-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2018-12-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2018-12-uk-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2019-12-gb-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2019-12-gb-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2020-12-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2020-12-uk-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2021-12-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2021-12-uk-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2022-12-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2022-12-uk-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2023-05-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2023-05-uk-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2024-05-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2024-05-uk-bgcDistanceCm\" INTEGER NOT NULL, \"ward_2025-05-uk-bgc-v2AreaId\" INTEGER REFERENCES areas(id), \"ward_2025-05-uk-bgc-v2DistanceCm\" INTEGER NOT NULL, \"ward_2026-05-uk-bgcAreaId\" INTEGER REFERENCES areas(id), \"ward_2026-05-uk-bgcDistanceCm\" INTEGER NOT NULL) WITHOUT ROWID"
+		}
+	]
+}
