@@ -13,7 +13,6 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
-import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { MetricPill } from "@/components/MetricPill";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { localAuthorityStats } from "@/lib/helpers/localAuthorityStats";
@@ -52,9 +51,6 @@ export default function MobileCoverageChart({
 }: MobileCoverageChartProps) {
 	const isDark = useIsDark();
 	const measure = useCurrentMapOptions().mobileCoverage.measure;
-	const measureLabel =
-		MOBILE_COVERAGE_MEASURES.find(({ value }) => value === measure)
-			?.label ?? "5G outdoors, all four operators";
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
@@ -117,18 +113,18 @@ export default function MobileCoverageChart({
 							<span
 								className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
 							>
-								% {measureLabel}
+								%
 							</span>
 						</div>
-						<span
-							className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
-						>
-							{stats.pct5GOutdoorAny != null
-								? measure.includes("Geo")
-									? "Regional landmass figures are authority means"
-									: `${stats.pct5GOutdoorAny.toFixed(1)}% 5G on at least one`
-								: "—"}
-						</span>
+						{!measure.includes("Geo") && (
+							<span
+								className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+							>
+								{stats.pct5GOutdoorAny != null
+									? `${stats.pct5GOutdoorAny.toFixed(1)}% 5G on at least one`
+									: "—"}
+							</span>
+						)}
 					</div>
 					<div className="flex gap-1 shrink-0">
 						<MetricPill
