@@ -23,6 +23,7 @@ export type SqliteTable = {
 	 * `position`, one per position in order.
 	 */
 	key?: string[];
+	rowid?: boolean;
 	rows: Iterable<SQLInputValue[]>;
 	constraints?: string[];
 	/** Reject values that do not match their column's declared type. */
@@ -72,8 +73,11 @@ export const writeSqliteTables = (
 		const placeholders = table.columns.map(() => "?");
 		const strict = table.strict ? "STRICT" : "";
 		if (table.key) {
+			const options = [table.rowid ? "" : "WITHOUT ROWID", strict]
+				.filter(Boolean)
+				.join(", ");
 			database.exec(
-				`CREATE TABLE ${name} (${[...table.columns, ...(table.constraints ?? [])].join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID${strict && `, ${strict}`}`,
+				`CREATE TABLE ${name} (${[...table.columns, ...(table.constraints ?? [])].join(", ")}, PRIMARY KEY (${table.key.join(", ")})) ${options}`,
 			);
 			const insert = database.prepare(
 				`INSERT INTO ${name} VALUES (${placeholders.join(", ")})`,

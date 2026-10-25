@@ -13,7 +13,7 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 		readFileSync(join(directory, "area-inventory.json"), "utf8"),
 	);
 	function* areas() {
-		for (const release of inventory.releases) {
+		for (const [releasePosition, release] of inventory.releases.entries()) {
 			if (release.status !== "available") continue;
 			const artifact: AreaReleaseArtifact = JSON.parse(
 				readFileSync(join(directory, release.artifact), "utf8"),
@@ -26,16 +26,18 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 				throw new Error(
 					`Invalid area release ${release.geography}/${release.id}`,
 				);
-			for (const [position, area] of artifact.areas.entries())
+			for (const area of artifact.areas)
 				yield [
-					release.geography,
-					release.id,
+					null,
+					releasePosition,
 					area.code,
-					position,
+					1,
 					area.name,
 					area.aliases === undefined
 						? null
 						: JSON.stringify(area.aliases),
+					null,
+					null,
 				];
 		}
 	}
@@ -102,20 +104,20 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 			),
 		},
 		areas: {
+			rowid: true,
 			columns: [
-				"geography TEXT NOT NULL",
-				"boundaryRelease TEXT NOT NULL",
+				"id INTEGER",
+				"releasePosition INTEGER NOT NULL REFERENCES area_releases(position)",
 				"code TEXT NOT NULL",
-				"position INTEGER NOT NULL",
+				"inInventory INTEGER NOT NULL CHECK (inInventory IN (0, 1))",
 				"name TEXT NOT NULL",
 				"aliases TEXT",
+				"areaM2 REAL",
+				"population REAL",
 			],
-			key: ["geography", "boundaryRelease", "code"],
+			key: ["id"],
 			rows: areas(),
-			constraints: [
-				"FOREIGN KEY (geography, boundaryRelease) REFERENCES area_releases(geography, id)",
-			],
-			indexes: [["geography", "boundaryRelease", "position"]],
+			constraints: ["UNIQUE (releasePosition, code)"],
 		},
 	};
 };
@@ -189,7 +191,7 @@ export const readSqliteAreas = (
 	try {
 		const header = database
 			.prepare(
-				"SELECT contentHash FROM area_releases WHERE geography = ? AND id = ?",
+				"SELECT position, contentHash FROM area_releases WHERE geography = ? AND id = ?",
 			)
 			.get(release.geography, release.id);
 		if (header?.contentHash !== release.contentHash)
@@ -198,9 +200,9 @@ export const readSqliteAreas = (
 			);
 		const rows = database
 			.prepare(
-				"SELECT code, name, aliases FROM areas WHERE geography = ? AND boundaryRelease = ? ORDER BY position",
+				"SELECT code, name, aliases FROM areas WHERE releasePosition = ? AND inInventory = 1 ORDER BY id",
 			)
-			.all(release.geography, release.id);
+			.all(header.position);
 		if (rows.length !== release.recordCount)
 			throw new Error(
 				`Invalid area release ${release.geography}/${release.id}`,
