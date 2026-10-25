@@ -429,7 +429,7 @@ test("place-index stage preserves atlas data, replaces its tables and removes ol
 		database.exec(`
    INSERT INTO area_releases (geography, id, position, status, recordCount, artifact, contentHash, codeProperty, nameProperty)
    VALUES ('localAuthority', '2023-05-uk-bgc', 0, 'available', 1, 'areas/test.json', 'test-area', 'CODE', 'NAME');
-   INSERT INTO areas VALUES ('localAuthority', '2023-05-uk-bgc', 'E08000003', 0, 'Manchester', NULL);
+   INSERT INTO areas VALUES (NULL, 0, 'E08000003', 1, 'Manchester', NULL, NULL, NULL);
   `);
 	} finally {
 		database.close();
@@ -522,7 +522,7 @@ test("area-search stage replaces its index while retaining place search and othe
 		database.exec(`
    INSERT INTO area_releases (geography, id, position, status, recordCount, artifact, contentHash, codeProperty, nameProperty)
    VALUES ('localAuthority', '2023-05-uk-bgc', 0, 'available', 1, 'areas/test.json', 'test-area', 'CODE', 'NAME');
-   INSERT INTO areas VALUES ('localAuthority', '2023-05-uk-bgc', 'E08000003', 0, 'Manchester', NULL);
+   INSERT INTO areas VALUES (NULL, 0, 'E08000003', 1, 'Manchester', NULL, NULL, NULL);
   `);
 	} finally {
 		database.close();

@@ -116,7 +116,9 @@ test("area releases stay parsed until their records exceed the budget", () =>
 			join(root, "../../data/build/atlas.sqlite"),
 		);
 		database
-			.prepare("DELETE FROM areas WHERE boundaryRelease = ?")
+			.prepare(
+				"DELETE FROM areas WHERE releasePosition IN (SELECT position FROM area_releases WHERE id = ?)",
+			)
 			.run("2023");
 		database.close();
 		// 2023 was least recently used, so reading 2024 evicted it.

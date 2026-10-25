@@ -66,6 +66,22 @@ test("relational areas preserve inventory order, aliases and record order withou
 	const database = new DatabaseSync(path);
 	try {
 		assert.deepEqual(
+			database
+				.prepare("SELECT id, code FROM areas ORDER BY id")
+				.all()
+				.map((row) => ({ ...row })),
+			areas.map((area, index) => ({ id: index + 1, code: area.code })),
+		);
+		assert.throws(
+			() =>
+				database
+					.prepare(
+						"INSERT INTO areas VALUES (NULL, 0, 'A', 1, 'duplicate', NULL, NULL, NULL)",
+					)
+					.run(),
+			/UNIQUE/,
+		);
+		assert.deepEqual(
 			database.prepare("PRAGMA foreign_key_check").all(),
 			[],
 		);
@@ -73,7 +89,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 			() =>
 				database
 					.prepare(
-						"INSERT INTO areas VALUES ('missing', '2024', 'A', 0, 'name', NULL)",
+						"INSERT INTO areas VALUES (NULL, -1, 'A', 1, 'name', NULL, NULL, NULL)",
 					)
 					.run(),
 			/FOREIGN KEY/,
