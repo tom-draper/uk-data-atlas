@@ -17,11 +17,32 @@ const normalise = (text: string) =>
 		.replace(/[^a-z0-9]+/g, " ")
 		.trim();
 
-/** A full postcode or a district, as its district: "ls6 1aa" or "ls6" as "LS6". */
-const postcodeDistrict = (query: string) =>
-	/^([a-z]{1,2}\d[a-z\d]?)(?:\s*\d[a-z]{2})?$/i
-		.exec(query.trim())?.[1]
-		?.toUpperCase();
+/**
+ * The postcode pages a query names, most specific first: "ls6 1aa" or
+ * "ls6 1" gives the LS6 1 sector and the LS6 district, "ls6" the district.
+ */
+function postcodePages(query: string) {
+	const match = /^([a-z]{1,2}\d[a-z\d]?)(?:\s*(\d)(?:[a-z]{2})?)?$/i.exec(
+		query.trim(),
+	);
+	if (!match) return [];
+	const district = match[1]!.toUpperCase();
+	const sector = match[2];
+	return [
+		...(sector
+			? [
+					{
+						label: `The ${district} ${sector} postcode sector`,
+						href: `/places/postcodes/${district}/${sector}`,
+					},
+				]
+			: []),
+		{
+			label: `The ${district} postcode district`,
+			href: `/places/postcodes/${district}`,
+		},
+	];
+}
 
 type Result = { entry: PlaceIndexEntry; rank: number };
 
@@ -85,14 +106,10 @@ export default function PlaceSearch({
 		() => (index ? search(index, query) : []),
 		[index, query],
 	);
-	const district = postcodeDistrict(query);
-	const districtHref =
-		district && results.length === 0
-			? `/places/postcodes/${district}`
-			: undefined;
+	const postcodes = results.length === 0 ? postcodePages(query) : [];
 	const open = (entry: PlaceIndexEntry | undefined) => {
 		if (entry) router.push(`/places/${entry[0]}`);
-		else if (districtHref) router.push(districtHref);
+		else if (postcodes[active]) router.push(postcodes[active].href);
 	};
 
 	return (
@@ -112,7 +129,11 @@ export default function PlaceSearch({
 					onKeyDown={(event) => {
 						if (event.key === "ArrowDown")
 							setActive((value) =>
-								Math.min(value + 1, results.length - 1),
+								Math.min(
+									value + 1,
+									Math.max(results.length, postcodes.length) -
+										1,
+								),
 							);
 						else if (event.key === "ArrowUp")
 							setActive((value) => Math.max(value - 1, 0));
@@ -120,7 +141,7 @@ export default function PlaceSearch({
 						else return;
 						event.preventDefault();
 					}}
-					placeholder="A code like E05000954, or a name like Greater Manchester"
+					placeholder="A name like Greater Manchester, a code or a postcode"
 					className="min-w-0 flex-1 bg-transparent text-[16px] text-slate-900 outline-none placeholder:text-slate-400"
 					role="combobox"
 					aria-expanded={results.length > 0}
@@ -138,13 +159,18 @@ export default function PlaceSearch({
 						<p className="px-4 py-3 text-[14px] text-slate-500">
 							Loading places…
 						</p>
-					) : districtHref ? (
-						<Link
-							href={districtHref}
-							className="block px-4 py-3 text-[14px] text-slate-800 hover:bg-slate-50"
-						>
-							The {district} postcode district
-						</Link>
+					) : postcodes.length > 0 ? (
+						postcodes.map((page, position) => (
+							<Link
+								key={page.href}
+								href={page.href}
+								role="option"
+								aria-selected={position === active}
+								className={`block px-4 py-3 text-[14px] text-slate-800 hover:bg-slate-50 ${position === active ? "bg-slate-50" : ""}`}
+							>
+								{page.label}
+							</Link>
+						))
 					) : results.length === 0 ? (
 						<p className="px-4 py-3 text-[14px] text-slate-500">
 							No place matches that code or name.
