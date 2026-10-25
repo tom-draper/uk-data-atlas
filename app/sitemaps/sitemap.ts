@@ -44,33 +44,61 @@ function mapEntries(): MetadataRoute.Sitemap {
 	];
 }
 
-/** The places index, and a page for every place in it. */
-async function placeEntries(): Promise<MetadataRoute.Sitemap> {
+/**
+ * The sitemaps, each within Google's 50,000 URL limit: the site's own pages
+ * with its councils, constituencies, towns and named places, then the many
+ * narrow places in sitemaps of their own.
+ */
+export const SITEMAPS = ["site", "wards", "parishes", "former"] as const;
+
+type SitemapId = (typeof SITEMAPS)[number];
+
+/** Which sitemap an area's page is in. */
+const sitemapOf = (kind: string, lastYear: number | null): SitemapId =>
+	lastYear !== null
+		? "former"
+		: kind === "ward"
+			? "wards"
+			: kind === "parish"
+				? "parishes"
+				: "site";
+
+/** The places in one sitemap, and the places index in the site's own. */
+async function placeEntries(id: SitemapId): Promise<MetadataRoute.Sitemap> {
 	const PLACE_INDEX = await loadPlaceIndex();
 	return [
-		{
-			url: `${SITE_URL}/places`,
-			changeFrequency: "monthly" as const,
-			priority: 0.8,
-		},
-		...[...PLACE_INDEX.named, ...PLACE_INDEX.areas].map(
-			([id, , kind, , , lastYear]) => ({
-				url: `${SITE_URL}/places/${id}`,
+		...(id === "site"
+			? [
+					{
+						url: `${SITE_URL}/places`,
+						changeFrequency: "monthly" as const,
+						priority: 0.8,
+					},
+				]
+			: []),
+		...[...PLACE_INDEX.named, ...PLACE_INDEX.areas]
+			.filter(
+				([, , kind, , , lastYear]) => sitemapOf(kind, lastYear) === id,
+			)
+			.map(([place, , , , , lastYear]) => ({
+				url: `${SITE_URL}/places/${place}`,
 				changeFrequency: "monthly" as const,
 				// Current councils and named places lead; wards, parishes and
 				// areas no longer in use are many and narrow.
-				priority:
-					lastYear !== null
-						? 0.3
-						: kind === "ward" || kind === "parish"
-							? 0.4
-							: 0.6,
-			}),
-		),
+				priority: lastYear !== null ? 0.3 : id === "site" ? 0.6 : 0.4,
+			})),
 	];
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export async function generateSitemaps() {
+	return SITEMAPS.map((id) => ({ id }));
+}
+
+export default async function sitemap(props: {
+	id: Promise<string>;
+}): Promise<MetadataRoute.Sitemap> {
+	const id = (await props.id) as SitemapId;
+	if (id !== "site") return placeEntries(id);
 	return [
 		{
 			url: SITE_URL,
@@ -93,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			priority: 0.6,
 		},
 		...mapEntries(),
-		...(await placeEntries()),
+		...(await placeEntries("site")),
 		...docsEntries(),
 	];
 }
