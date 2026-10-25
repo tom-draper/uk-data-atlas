@@ -34,12 +34,15 @@ export default function PlaceMap({
 	bbox,
 	label,
 	geography,
+	marker,
 }: {
 	shapes: PlaceShape[];
 	bbox: BoundingBox;
 	label: string;
 	/** The geography drawn, which picks its colour. */
 	geography: string;
+	/** A point to mark, as longitude and latitude. */
+	marker?: [number, number];
 }) {
 	const container = useRef<HTMLDivElement>(null);
 	const router = useRouter();
@@ -104,6 +107,27 @@ export default function PlaceMap({
 						"line-opacity": 0.05,
 					},
 				});
+				if (marker) {
+					map.addSource("marker", {
+						type: "geojson",
+						data: {
+							type: "Feature",
+							properties: {},
+							geometry: { type: "Point", coordinates: marker },
+						},
+					});
+					map.addLayer({
+						id: "marker",
+						type: "circle",
+						source: "marker",
+						paint: {
+							"circle-radius": 7,
+							"circle-color": "#0f172a",
+							"circle-stroke-color": "#fff",
+							"circle-stroke-width": 2,
+						},
+					});
+				}
 				if (single) return;
 				let hovered: number | undefined;
 				map.on("mousemove", "place-fill", (event) => {
@@ -145,7 +169,7 @@ export default function PlaceMap({
 			cancelled = true;
 			map?.remove();
 		};
-	}, [shapes, bbox, router, geography]);
+	}, [shapes, bbox, router, geography, marker]);
 
 	return (
 		<div

@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
 	// Server-rendered pages and browser data routes share the compiled database.
 	outputFileTracingIncludes: {
 		"/places/*": ["./data/build/atlas.sqlite"],
+		// Postcode pages read their postcode's row when first rendered.
+		"/places/postcodes/[district]/[inward]": ["./data/build/atlas.sqlite"],
 		"/data/atlas-pages/*": ["./data/build/atlas.sqlite"],
 		"/data/atlas-lookups/*": ["./data/build/atlas.sqlite"],
 		"/atlas": ["./data/build/atlas.sqlite"],
