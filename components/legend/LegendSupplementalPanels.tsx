@@ -5,6 +5,7 @@ import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
+import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import GlassOverlays from "../GlassOverlays";
 
 export function PercentageRangePanel({
@@ -60,10 +61,12 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 	measure,
 	measures,
 	onChange,
+	vertical = false,
 }: {
 	measure: Value;
 	measures: readonly MeasureOption<Value>[];
 	onChange: (measure: Value) => void;
+	vertical?: boolean;
 }) {
 	const isDark = useIsDark();
 	const theme = panelTheme(isDark);
@@ -78,7 +81,7 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 		>
 			<GlassOverlays isDark={isDark} />
 			<div
-				className={`relative ${theme.section} flex rounded-sm p-1 text-xs`}
+				className={`relative ${theme.section} flex ${vertical ? "flex-col" : ""} rounded-sm p-1 text-xs`}
 				style={{ zIndex: 1 }}
 			>
 				{measures.map(([value, label]) => {
@@ -89,7 +92,7 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 							key={value}
 							aria-pressed={isSelected}
 							onClick={() => onChange(value)}
-							className={`cursor-pointer rounded-sm border px-2 py-1 backdrop-blur-md transition-all duration-200 ${isSelected ? selectedClass : isDark ? "border-transparent text-gray-400 hover:bg-white/10" : "border-transparent text-gray-500 hover:bg-white/20"}`}
+							className={`cursor-pointer rounded-sm border px-2 py-1 ${vertical ? "text-left" : ""} backdrop-blur-md transition-all duration-200 ${isSelected ? selectedClass : isDark ? "border-transparent text-gray-400 hover:bg-white/10" : "border-transparent text-gray-500 hover:bg-white/20"}`}
 						>
 							{label}
 						</button>
@@ -97,6 +100,29 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 				})}
 			</div>
 		</div>
+	);
+}
+
+const MOBILE_COVERAGE_SEGMENTS = MOBILE_COVERAGE_MEASURES.map(
+	({ value, label }) => [value, label] as const,
+);
+
+type MobileCoverageMeasure = (typeof MOBILE_COVERAGE_MEASURES)[number]["value"];
+
+export function MobileCoverageMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: MobileCoverageMeasure;
+	onChange: (measure: MobileCoverageMeasure) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={MOBILE_COVERAGE_SEGMENTS}
+			onChange={onChange}
+			vertical
+		/>
 	);
 }
 

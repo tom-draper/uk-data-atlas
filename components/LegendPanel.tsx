@@ -18,8 +18,6 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
-import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -38,6 +36,7 @@ import {
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
 	LifeExpectancyMeasurePanel,
+	MobileCoverageMeasurePanel,
 	PercentageRangePanel,
 	RegionalOutputMeasurePanel,
 	SchoolPerformanceMeasurePanel,
@@ -170,10 +169,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "mobileCoverage" && (
-				<MeasureSelect
-					label="Mobile coverage"
-					value={controls.displayOptions.mobileCoverage.measure}
-					options={MOBILE_COVERAGE_MEASURES}
+				<MobileCoverageMeasurePanel
+					measure={controls.displayOptions.mobileCoverage.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("mobileCoverage", {
 							measure,
