@@ -6,22 +6,21 @@ assuming that every file left by an older local build is still required.
 
 ## Runtime files
 
-| Files in `services/api/public` | Reader                       | Why they remain                           |
-| ------------------------------ | ---------------------------- | ----------------------------------------- |
-| `data-catalog.json`            | `catalogueManifestLoader.ts` | Measure definitions and source references |
-
-| `measure-compatibility.json` | `catalogueManifestLoader.ts` | Supported measure and boundary combinations |
-| `export-manifest.json` | `catalogueManifestLoader.ts`, bulk routes | Export metadata for observation artifacts |
-| `lookup-manifest.json` | `catalogueManifestLoader.ts` | Lookup catalogue metadata |
-| `map-resources.json` | `mapResourceLoader.ts` | Boundary tile resource metadata |
-| `geometry-sources.json` | `geometrySources.ts` | Source geometry lookup |
-| `relationship-candidates.json` | `governanceLoader.ts` | Candidate relationship governance |
-| `validation-report.json` | `catalogueManifestLoader.ts` | Validation results |
-| `operations.json` | `catalogueManifestLoader.ts` | OpenAPI query parameter validation, checked against the current document |
-| `atlas-release.json` | `catalogueManifestLoader.ts` | Release identity and artifact hashes |
-| `evidence-documents.json`, `documents/*.json` | `catalogueLoader.ts`, document routes | Evidence documents and their index |
-| `atlas-lookups.json`, `atlas-lookups/*.json.gz` | `atlasLookups.ts`, website copy stage | Published lookup downloads |
-| `atlas-pages.json`, `atlas-pages/*.json.gz` | `atlasPages.ts`, website copy stage | Published place page data |
+| Files in `services/api/public`                  | Reader                                    | Why they remain                                                          |
+| ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------ |
+| `data-catalog.json`                             | `catalogueManifestLoader.ts`              | Measure definitions and source references                                |
+| `measure-compatibility.json`                    | `catalogueManifestLoader.ts`              | Supported measure and boundary combinations                              |
+| `export-manifest.json`                          | `catalogueManifestLoader.ts`, bulk routes | Export metadata for observation artifacts                                |
+| `lookup-manifest.json`                          | `catalogueManifestLoader.ts`              | Lookup catalogue metadata                                                |
+| `map-resources.json`                            | `mapResourceLoader.ts`                    | Boundary tile resource metadata                                          |
+| `geometry-sources.json`                         | `geometrySources.ts`                      | Source geometry lookup                                                   |
+| `relationship-candidates.json`                  | `governanceLoader.ts`                     | Candidate relationship governance                                        |
+| `validation-report.json`                        | `catalogueManifestLoader.ts`              | Validation results                                                       |
+| `operations.json`                               | `catalogueManifestLoader.ts`              | OpenAPI query parameter validation, checked against the current document |
+| `atlas-release.json`                            | `catalogueManifestLoader.ts`              | Release identity and artifact hashes                                     |
+| `evidence-documents.json`, `documents/*.json`   | `catalogueLoader.ts`, document routes     | Evidence documents and their index                                       |
+| `atlas-lookups.json`, `atlas-lookups/*.json.gz` | `atlasLookups.ts`, website copy stage     | Published lookup downloads                                               |
+| `atlas-pages.json`, `atlas-pages/*.json.gz`     | `atlasPages.ts`, website copy stage       | Published place page data                                                |
 
 Observation contracts are stored as rows in SQLite (`observations`,
 `observation_series` and their dictionary and sparse tables, with one wide table
@@ -42,7 +41,7 @@ with identical columns. Per-table `observation_<table>_decoded` views stay wide.
 Join the views' measure ids to `observation_measures` for labels, units,
 aggregation rules and weights, concepts and uncertainty. Metadata absent from the
 catalogue is NULL. Join `observation_series.datasetId` to
-`observation_datasets.datasetId` for publisher, source URL, coverage and licence.
+`observation_datasets.datasetId` for publisher, source URL, temporal coverage and licence.
 These tables remain STRICT. An index on `observations (areaId, seriesId, periodId)`
 supports queries across measures for one area.
 
@@ -102,7 +101,7 @@ before committing. This preserves field order, optional publisher codes,
 categorical values, confidence intervals and table nulls. Any byte difference
 aborts publication. No JSON payload copy is stored.
 
-Publication uses a unique temporary database, one transaction, and an atomic
+Publication uses transactions in a unique temporary database and an atomic
 rename. Replacement drops only fixed owned objects and wide tables and decoded
 views named by the previous `observation_tables.valueTable` registry. Unrelated
 `observation*` objects survive. The store step explicitly recreates its
