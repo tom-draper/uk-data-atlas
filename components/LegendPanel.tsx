@@ -18,8 +18,6 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
-import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -39,6 +37,7 @@ import {
 	IncomeMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	PercentageRangePanel,
+	RegionalOutputMeasurePanel,
 	SchoolPerformanceMeasurePanel,
 	UnemploymentMeasurePanel,
 	WasteMetricPanel,
@@ -158,10 +157,8 @@ export default function LegendPanel({
 			</div>
 
 			{activeDataset?.type === "regionalGdpItl3" && (
-				<MeasureSelect
-					label="Economic output"
-					value={controls.displayOptions.regionalGdpItl3.measure}
-					options={REGIONAL_OUTPUT_MEASURES}
+				<RegionalOutputMeasurePanel
+					measure={controls.displayOptions.regionalGdpItl3.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("regionalGdpItl3", {
 							measure,
