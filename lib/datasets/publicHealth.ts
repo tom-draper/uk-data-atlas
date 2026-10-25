@@ -56,7 +56,7 @@ const card = (measure: PublicHealthMeasure) => {
 		value: (record) => record.metrics[measure] ?? null,
 		secondary: (record) =>
 			record.isAverage
-				? "Average of available authority estimates"
+				? undefined
 				: "County / unitary authority estimate",
 	});
 };
