@@ -69,9 +69,8 @@ function useActiveHeightFloor(isActive: boolean) {
 			const borderBox = Array.isArray(entry.borderBoxSize)
 				? entry.borderBoxSize[0]
 				: entry.borderBoxSize;
-			const height = Math.ceil(
-				borderBox?.blockSize ?? entry.contentRect.height,
-			);
+			const height =
+				borderBox?.blockSize ?? card.getBoundingClientRect().height;
 			setHeightFloor((current) =>
 				current === null || height > current ? height : current,
 			);
