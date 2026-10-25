@@ -1,20 +1,16 @@
 import { createElement } from "react";
 import { it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import MeasureSelect from "@/components/legend/MeasureSelect";
+import { LifeExpectancyKindPanel } from "@/components/legend/LegendSupplementalPanels";
 it("offers an accessible selector for the existing life and healthy life datasets", () => {
 	const html = renderToStaticMarkup(
-		createElement(MeasureSelect, {
-			label: "Life expectancy indicator",
-			value: "hle",
-			options: [
-				{ value: "le", label: "Life expectancy" },
-				{ value: "hle", label: "Healthy life expectancy" },
-			],
+		createElement(LifeExpectancyKindPanel, {
+			kind: "hle",
 			onChange: () => {},
 		}),
 	);
-	expect(html).toContain('Life expectancy indicator');
-	expect(html).toContain('value="hle" selected=""');
-	expect(html).toContain("Healthy life expectancy");
+	expect(html).toMatch(/aria-pressed="false"[^>]*>Life expectancy<\/button>/);
+	expect(html).toMatch(
+		/aria-pressed="true"[^>]*>Healthy life expectancy<\/button>/,
+	);
 });

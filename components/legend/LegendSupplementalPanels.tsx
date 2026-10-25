@@ -140,6 +140,28 @@ export function WorkplacePayMeasurePanel({
 	);
 }
 
+const LIFE_EXPECTANCY_KINDS = [
+	["le", "Life expectancy"],
+	["hle", "Healthy life expectancy"],
+] as const;
+
+export function LifeExpectancyKindPanel({
+	kind,
+	onChange,
+}: {
+	kind: "le" | "hle";
+	onChange: (kind: "le" | "hle") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={kind}
+			measures={LIFE_EXPECTANCY_KINDS}
+			onChange={onChange}
+			vertical
+		/>
+	);
+}
+
 const PLANNING_SEGMENTS = [
 	["received", "Received"],
 	["decided", "Decided"],

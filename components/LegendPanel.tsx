@@ -19,7 +19,6 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { imdRange } from "@/lib/helpers/imdMeasures";
-import MeasureSelect from "./legend/MeasureSelect";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -44,6 +43,7 @@ import {
 	PlanningMeasurePanel,
 	WorkplacePayMeasurePanel,
 	LifeExpectancyMeasurePanel,
+	LifeExpectancyKindPanel,
 	MobileCoverageMeasurePanel,
 	PercentageRangePanel,
 	RegionalOutputMeasurePanel,
@@ -289,13 +289,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "lifeExpectancy" && setActiveViz && (
-				<MeasureSelect
-					label="Life expectancy indicator"
-					value={activeDataset.id === "hle" ? "hle" : "le"}
-					options={[
-						{ value: "le", label: "Life expectancy" },
-						{ value: "hle", label: "Healthy life expectancy" },
-					]}
+				<LifeExpectancyKindPanel
+					kind={activeDataset.id === "hle" ? "hle" : "le"}
 					onChange={(id) => {
 						const dataset = datasets.lifeExpectancy[id];
 						if (dataset)
