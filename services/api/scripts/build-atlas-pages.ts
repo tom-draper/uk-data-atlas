@@ -9,6 +9,10 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readPlaceResolver } from "../src/catalogueLoader";
 import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
+import {
+	inBox,
+	pointInGeom,
+} from "@uk-data-atlas/datasets/data/gazetteer/geometry";
 import { buildDocsCatalogue } from "./build-docs-catalogue";
 import { writeAtlasPages } from "./write-atlas-pages";
 import {
@@ -39,14 +43,34 @@ const readDataset = (output: string) =>
 	);
 const BOUNDARIES = join(API_ROOT, "public", "source-data", "boundaries");
 
-/** Children listed by name rather than counted, up to this many. */
+/**
+ * Children listed by name rather than counted, up to this many. Parishes are
+ * always listed, as a council's page is the way into its parishes' pages.
+ */
 const LISTED_CHILDREN = 120;
-/** The generalisation tier each geography's outline is drawn at. */
-const OUTLINE_TIER = {
-	ward: "medium",
-	localAuthority: "medium",
-	constituency: "medium",
-} as const;
+const ALWAYS_LISTED = new Set(["parish"]);
+/**
+ * Each geography's boundary folder, the prefix of its code field, and the
+ * generalisation tier its outline is drawn at.
+ */
+const GEOGRAPHY_SOURCES: Record<
+	PlaceGeography,
+	{ folder: string; codeField: string; tier: "high" | "medium" | "low" }
+> = {
+	ward: { folder: "ward", codeField: "WD", tier: "medium" },
+	localAuthority: {
+		folder: "local-authority",
+		codeField: "LAD",
+		tier: "medium",
+	},
+	constituency: { folder: "constituency", codeField: "PCON", tier: "medium" },
+	parish: { folder: "parish", codeField: "PARNCP", tier: "medium" },
+	majorTownAndCity: {
+		folder: "major-town-and-city",
+		codeField: "TCITY",
+		tier: "medium",
+	},
+};
 /** A boundary counts as redrawn when its area moves by more than this. */
 const REDRAWN_SHARE = 0.02;
 const REDRAWN_KM2 = 0.05;
@@ -102,12 +126,105 @@ function boundsOf(shapes: number[][][][][]): BoundingBox {
 	return box.map((value) => Math.round(value * 1e4) / 1e4) as BoundingBox;
 }
 
+/** The newest release of a geography. */
+const newestRelease = (geography: string) =>
+	(
+		resolver.areaReleases() as {
+			geography: string;
+			boundaryRelease: string;
+		}[]
+	)
+		.filter((release) => release.geography === geography)
+		.map((release) => release.boundaryRelease)
+		.sort()
+		.at(-1)!;
+
+/** The area-weighted centre of a shape's outer rings. */
+function centreOf(polygons: number[][][][]): [number, number] | undefined {
+	let area = 0;
+	let x = 0;
+	let y = 0;
+	for (const [outer] of polygons)
+		for (let i = 0; i < (outer?.length ?? 0) - 1; i++) {
+			const [x0, y0] = outer![i]!;
+			const [x1, y1] = outer![i + 1]!;
+			const cross = x0! * y1! - x1! * y0!;
+			area += cross;
+			x += (x0! + x1!) * cross;
+			y += (y0! + y1!) * cross;
+		}
+	return area === 0 ? undefined : [x / (3 * area), y / (3 * area)];
+}
+
+/**
+ * The current wards in each major town and city. Towns are drawn from
+ * built-up areas, so no crosswalk places wards in them: a ward counts as in
+ * the town its centre falls inside.
+ */
+function townWards() {
+	const townRelease = newestRelease("majorTownAndCity");
+	const wardRelease = newestRelease("ward");
+	const towns = (resolver.areaCodes("majorTownAndCity", townRelease) ?? [])
+		.map((code) => {
+			const identity = {
+				geography: "majorTownAndCity",
+				boundaryRelease: townRelease,
+				code,
+			};
+			const polygons = polygonsOf(identity, "high");
+			return polygons
+				? {
+						ref: {
+							geography: "majorTownAndCity",
+							release: townRelease,
+							code,
+							name: resolver.area(identity)!.name as string,
+						},
+						geometry: {
+							type: "MultiPolygon",
+							coordinates: polygons,
+						} as GeoJSON.MultiPolygon,
+						bbox: boundsOf([polygons]),
+					}
+				: undefined;
+		})
+		.filter((town) => town !== undefined);
+	const townOf = new Map<string, AreaRef>();
+	const wardsOf = new Map<string, AreaRef[]>();
+	for (const code of resolver.areaCodes("ward", wardRelease) ?? []) {
+		const identity = {
+			geography: "ward",
+			boundaryRelease: wardRelease,
+			code,
+		};
+		const polygons = polygonsOf(identity, "medium");
+		const centre = polygons && centreOf(polygons);
+		if (!centre) continue;
+		const town = towns.find(
+			({ bbox, geometry }) =>
+				inBox(centre[0], centre[1], bbox) &&
+				pointInGeom(centre[0], centre[1], geometry),
+		);
+		if (!town) continue;
+		townOf.set(code, town.ref);
+		wardsOf.set(town.ref.code, [
+			...(wardsOf.get(town.ref.code) ?? []),
+			{
+				geography: "ward",
+				release: wardRelease,
+				code,
+				name: resolver.area(identity)!.name as string,
+			},
+		]);
+	}
+	return { wardRelease, townOf, wardsOf };
+}
+
 // Each release's published area for every code, from the atlas's own
 // boundary properties, to tell when an area's boundary was redrawn.
 function readAreas(geography: PlaceGeography) {
 	const areas = new Map<string, Map<string, number>>();
-	const folder =
-		geography === "localAuthority" ? "local-authority" : geography;
+	const { folder, codeField } = GEOGRAPHY_SOURCES[geography];
 	for (const release of readdirSync(join(BOUNDARIES, folder))) {
 		const path = join(BOUNDARIES, folder, release, "properties.json");
 		const { features } = JSON.parse(readFileSync(path, "utf8")) as {
@@ -115,14 +232,8 @@ function readAreas(geography: PlaceGeography) {
 		};
 		const byCode = new Map<string, number>();
 		for (const feature of features) {
-			const prefix =
-				geography === "ward"
-					? "WD"
-					: geography === "constituency"
-						? "PCON"
-						: "LAD";
 			const code = Object.entries(feature).find(([key]) =>
-				new RegExp(`^${prefix}\\d{2}CD$`, "i").test(key),
+				new RegExp(`^${codeField}\\d{2}CD$`, "i").test(key),
 			)?.[1];
 			if (
 				typeof code === "string" &&
@@ -289,7 +400,8 @@ function group(relationships: Relationship[], listed: boolean): AreaGroup[] {
 		geography,
 		release: members[0]!.counterpart.boundaryRelease,
 		count: members.length,
-		...(listed && members.length <= LISTED_CHILDREN
+		...(listed &&
+		(members.length <= LISTED_CHILDREN || ALWAYS_LISTED.has(geography))
 			? {
 					areas: members
 						.map(ref)
@@ -342,6 +454,8 @@ const uniqueRefs = (refs: AreaRef[]) => [
 		refs.map((area) => [`${area.release}/${area.code}`, area]),
 	).values(),
 ];
+
+const towns = townWards();
 
 function areaProfile(
 	geography: PlaceGeography,
@@ -557,6 +671,9 @@ function areaProfile(
 							),
 				)
 				.filter((parent): parent is AreaRef => parent !== undefined);
+	const town = towns.townOf.get(code);
+	if (geography === "ward" && last === towns.wardRelease && town)
+		parents.push(town);
 	const namedPlaces: NamedRef[] | undefined =
 		geography === "localAuthority"
 			? resolver.namedLocationsForArea(identity(last)).map(namedRef)
@@ -608,7 +725,10 @@ function areaProfile(
 		}
 	})();
 
-	const polygons = polygonsOf(identity(last), OUTLINE_TIER[geography]);
+	const polygons = polygonsOf(
+		identity(last),
+		GEOGRAPHY_SOURCES[geography].tier,
+	);
 	const dateOf = (event: TimelineEvent) =>
 		"date" in event ? event.date : `${event.release.slice(0, 7)}-01`;
 	return {
@@ -628,10 +748,24 @@ function areaProfile(
 		...(polygons ? { outline: encodeOutline(polygons) } : {}),
 		parents,
 		...(namedPlaces ? { namedPlaces } : {}),
-		children: group(
-			lastRelationships.filter(({ relation }) => relation === "contains"),
-			true,
-		),
+		children:
+			geography === "majorTownAndCity" && towns.wardsOf.has(code)
+				? [
+						{
+							geography: "ward",
+							release: towns.wardRelease,
+							count: towns.wardsOf.get(code)!.length,
+							areas: towns.wardsOf
+								.get(code)!
+								.sort((a, b) => a.name.localeCompare(b.name)),
+						},
+					]
+				: group(
+						lastRelationships.filter(
+							({ relation }) => relation === "contains",
+						),
+						true,
+					),
 		overlaps: group(
 			lastRelationships.filter(
 				({ relation, counterpart }) =>
@@ -663,7 +797,9 @@ const outputs = new Map<string, string>();
 const index: Pick<PlaceIndex, "areas" | "named" | "releases"> = {
 	areas: [],
 	named: [],
-	releases: { localAuthority: [], ward: [], constituency: [] },
+	releases: Object.fromEntries(
+		PLACE_GEOGRAPHIES.map((geography) => [geography, []]),
+	) as unknown as PlaceIndex["releases"],
 };
 const councilNames = new Map<string, string>();
 
@@ -719,13 +855,7 @@ for (const geography of PLACE_GEOGRAPHIES) {
 	);
 }
 
-const newestCouncilRelease = (
-	resolver.areaReleases() as { geography: string; boundaryRelease: string }[]
-)
-	.filter((release) => release.geography === "localAuthority")
-	.map((release) => release.boundaryRelease)
-	.sort()
-	.at(-1)!;
+const newestCouncilRelease = newestRelease("localAuthority");
 const currentCouncils =
 	resolver.areaCodes("localAuthority", newestCouncilRelease) ?? [];
 

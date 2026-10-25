@@ -14,6 +14,8 @@ export const PLACE_GEOGRAPHIES = [
 	"localAuthority",
 	"ward",
 	"constituency",
+	"parish",
+	"majorTownAndCity",
 ] as const;
 
 export type PlaceGeography = (typeof PLACE_GEOGRAPHIES)[number];
