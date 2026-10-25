@@ -36,7 +36,7 @@ const card = (measure: (typeof TENURE_MEASURES)[number]["value"]) =>
 		IndicatorRecord
 	>({
 		heading: "Housing tenure",
-		coverage: "England and Wales",
+		coverage: "England & Wales",
 		source: "ONS. Census 2021, TS054. LSOA 2021 boundaries.",
 		unit: "% households",
 		digits: 1,

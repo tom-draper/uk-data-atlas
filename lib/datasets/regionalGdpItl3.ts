@@ -46,7 +46,7 @@ export const regionalGdpItl3Definition: ChartDatasetDefinition<RegionalGdpItl3Da
 						options.regionalGdpItl3.measure === "gva"
 							? "Regional GVA"
 							: "Regional GDP",
-					coverage: "UK",
+					coverage: "United Kingdom",
 					source: "Office for National Statistics. Regional gross domestic product and gross value added. ons.gov.uk",
 					format: formatGdp,
 					maximum: 210_000,

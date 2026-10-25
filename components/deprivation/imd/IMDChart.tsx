@@ -57,10 +57,11 @@ export default function IMDChart(
 		"Deprivation";
 	return (
 		<ChartCard
+			coverage={IMD.region}
 			heading={`${label} [${dataset.year}]`}
 			accent="#f59e0b"
 			isActive={props.activeDataset?.id === dataset.id}
-			title="MHCLG. English Indices of Deprivation 2025. England only."
+			title="MHCLG. English Indices of Deprivation 2025."
 			onClick={() =>
 				props.setActiveViz({
 					datasetId: dataset.id,
