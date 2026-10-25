@@ -9,6 +9,8 @@ services:
       - "127.0.0.1:3001:3001"
     volumes:
       - ./public:/app/services/api/public:ro
+      - atlas-cache:/app/data/build
+      - ../../data/build/atlas.sqlite:/app/data/build/atlas.sqlite:ro
     environment:
       ATLAS_WORKERS: "2"
       ATLAS_TRUSTED_PROXY_HOPS: ${ATLAS_TRUSTED_PROXY_HOPS:-0}
@@ -16,3 +18,6 @@ services:
       ATLAS_MAP_TILE_BASE_URL: ${ATLAS_MAP_TILE_BASE_URL:-}
       ATLAS_METRICS_TOKEN: ${ATLAS_METRICS_TOKEN:-}
     stop_grace_period: 15s
+
+volumes:
+  atlas-cache:
