@@ -1,3 +1,5 @@
+import { areaTables, readSqliteAreas } from "../src/atlasAreas";
+import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import assert from "node:assert/strict";
 import {
 	mkdirSync,
@@ -31,6 +33,7 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 				code: "B",
 				labels: ["B", "Bee"],
 				population: 5,
+				areaM2: 10,
 				coverage: 1,
 			},
 			targets: [
@@ -88,8 +91,36 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 			join(directory, `${value.id}.json`),
 			JSON.stringify(value),
 		);
+	emptyCrosswalkAreas(join(apiRoot, "public"), inventory);
+	const areaInventoryPath = join(apiRoot, "public/area-inventory.json");
+	const areaInventory = JSON.parse(readFileSync(areaInventoryPath, "utf8"));
+	areaInventory.releases[0] = {
+		...areaInventory.releases[0],
+		status: "available",
+		artifact: "source-areas.json",
+		contentHash: "source-areas",
+		recordCount: 1,
+		codeProperty: "code",
+		nameProperty: "name",
+	};
+	writeFileSync(areaInventoryPath, JSON.stringify(areaInventory));
+	writeFileSync(
+		join(apiRoot, "public/source-areas.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "source-areas",
+			areas: [{ code: "B", name: "B", aliases: ["Bee"] }],
+		}),
+	);
 	const path = join(root, "data/build/atlas.sqlite");
-	writeSqliteIndex(path, {}, crosswalkTables(join(apiRoot, "public")));
+	writeSqliteIndex(
+		path,
+		{},
+		{
+			...areaTables(join(apiRoot, "public")),
+			...crosswalkTables(join(apiRoot, "public")),
+		},
+	);
 	assert.equal(
 		JSON.stringify(readCrosswalkInventory(apiRoot)),
 		JSON.stringify(inventory),
@@ -101,15 +132,56 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 			),
 			JSON.stringify(value),
 		);
+	assert.deepEqual(readSqliteAreas(apiRoot, areaInventory.releases[0]), [
+		{ code: "B", name: "B", aliases: ["Bee"] },
+	]);
 	const database = new DatabaseSync(path);
 	try {
 		assert.equal(
 			database
 				.prepare(
-					"SELECT weight FROM crosswalk_targets WHERE code = 'Y' AND crosswalkPosition = 0",
+					"SELECT weight FROM crosswalk_targets_decoded WHERE code = 'Y' AND crosswalkId = ?",
 				)
-				.get()?.weight,
+				.get(artifact.id)?.weight,
 			0,
+		);
+		assert.equal(
+			database
+				.prepare("SELECT count(*) AS n FROM areas WHERE code = 'B'")
+				.get()?.n,
+			1,
+		);
+		assert.equal(
+			database
+				.prepare("SELECT population FROM areas WHERE code = 'B'")
+				.get()?.population,
+			5,
+		);
+		assert.deepEqual(
+			database
+				.prepare(
+					"SELECT labelsId FROM crosswalk_sources WHERE position = 0 ORDER BY crosswalkPosition",
+				)
+				.all()
+				.map((row) => row.labelsId === null),
+			[true, false],
+		);
+		assert.ok(
+			!database
+				.prepare("PRAGMA table_info(crosswalk_sources)")
+				.all()
+				.some((row) =>
+					["code", "labels", "areaM2", "population"].includes(
+						row.name as string,
+					),
+				),
+		);
+		assert.throws(
+			() =>
+				database
+					.prepare("UPDATE crosswalk_sources SET areaId = -1")
+					.run(),
+			/FOREIGN KEY/,
 		);
 		const fieldSets = new Set(
 			artifacts.flatMap((value) =>
@@ -138,7 +210,7 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 		assert.equal(
 			database
 				.prepare(
-					"SELECT count(*) AS n FROM crosswalk_sources WHERE typeof(crosswalkPosition) != 'integer' OR typeof(fieldSetId) != 'integer'",
+					"SELECT count(*) AS n FROM crosswalk_sources WHERE typeof(crosswalkPosition) != 'integer' OR typeof(fieldSetId) != 'integer' OR typeof(areaId) != 'integer'",
 				)
 				.get()?.n,
 			0,
@@ -197,13 +269,58 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 		database.close();
 	}
 	const before = readFileSync(path);
+	const otherInput = join(directory, `${artifacts[1].id}.json`);
+	const rebuild = () =>
+		writeSqliteIndex(
+			path,
+			{},
+			{
+				...areaTables(join(apiRoot, "public")),
+				...crosswalkTables(join(apiRoot, "public")),
+			},
+		);
+	for (const [source, message] of [
+		[
+			{ code: "B", labels: ["B"], population: 6 },
+			/Conflicting crosswalk area fact/,
+		],
+		[
+			{ code: "B", labels: ["B"], areaM2: 11 },
+			/Conflicting crosswalk area fact/,
+		],
+		[{ code: "B", labels: [123] }, /Invalid crosswalk area/],
+		[
+			{ code: "B", labels: ["B"], unknown: 1 },
+			/Unknown crosswalk endpoint field/,
+		],
+	] as const) {
+		writeFileSync(
+			otherInput,
+			JSON.stringify({
+				...artifacts[1],
+				records: [{ source, targets: [] }, artifacts[1].records[1]],
+			}),
+		);
+		assert.throws(rebuild, message);
+		assert.deepEqual(readFileSync(path), before);
+	}
+	writeFileSync(otherInput, JSON.stringify(artifacts[1]));
+	writeFileSync(
+		areaInventoryPath,
+		JSON.stringify({ ...areaInventory, releases: [] }),
+	);
+	assert.throws(rebuild, /Missing crosswalk area release/);
+	writeFileSync(areaInventoryPath, JSON.stringify(areaInventory));
 	writeFileSync(input, JSON.stringify({ ...artifact, contentHash: "stale" }));
 	assert.throws(
 		() =>
 			writeSqliteIndex(
 				path,
 				{},
-				crosswalkTables(join(apiRoot, "public")),
+				{
+					...areaTables(join(apiRoot, "public")),
+					...crosswalkTables(join(apiRoot, "public")),
+				},
 			),
 		/Invalid crosswalk artifact/,
 	);

@@ -53,6 +53,126 @@ const endpointValues = (
 		),
 	];
 };
+const areaLabelsSql = `CASE WHEN a.aliases IS NULL OR a.aliases = '[]' THEN json_array(a.name) ELSE substr(json_array(a.name), 1, length(json_array(a.name)) - 1) || ',' || substr(a.aliases, 2) END`;
+const decodedColumn = (key: string, alias: string) =>
+	key === "code"
+		? "a.code"
+		: key === "labels"
+			? `coalesce(l.labels, ${areaLabelsSql}) AS labels`
+			: alias === "s" && (key === "areaM2" || key === "population")
+				? `a."${key}"`
+				: `${alias}."${key}"`;
+
+const areaEndpointValues = (
+	database: DatabaseSync,
+	fieldSets: Map<string, number>,
+) => {
+	const find = database.prepare(
+		"SELECT a.id, a.name, a.aliases, a.areaM2, a.population FROM areas a JOIN area_releases r ON r.position = a.releasePosition WHERE r.geography = ? AND r.id = ? AND a.code = ?",
+	);
+	const releasePosition = database.prepare(
+		"SELECT position FROM area_releases WHERE geography = ? AND id = ?",
+	);
+	const add = database.prepare(
+		"INSERT INTO areas (releasePosition, code, inInventory, name, aliases) VALUES ((SELECT position FROM area_releases WHERE geography = ? AND id = ?), ?, 0, ?, ?)",
+	);
+	const updateFacts = database.prepare(
+		"UPDATE areas SET areaM2 = coalesce(areaM2, ?), population = coalesce(population, ?) WHERE id = ?",
+	);
+	const findLabels = database.prepare(
+		"SELECT position FROM crosswalk_label_exceptions WHERE labels = ?",
+	);
+	const addLabels = database.prepare(
+		"INSERT INTO crosswalk_label_exceptions (labels) VALUES (?)",
+	);
+	return (
+		value: {
+			code: string;
+			labels: string[];
+			areaM2?: number;
+			population?: number;
+		},
+		columns: Record<string, string>,
+		geography: string,
+		release: string,
+	): SQLInputValue[] => {
+		if (
+			typeof value.code !== "string" ||
+			!Array.isArray(value.labels) ||
+			value.labels.some((label) => typeof label !== "string")
+		)
+			throw new Error(
+				`Invalid crosswalk area ${geography}/${release}/${value.code}`,
+			);
+		let area = find.get(geography, release, value.code);
+		if (!area) {
+			if (!releasePosition.get(geography, release))
+				throw new Error(
+					`Missing crosswalk area release ${geography}/${release}`,
+				);
+			add.run(
+				geography,
+				release,
+				value.code,
+				value.labels[0] ?? "",
+				JSON.stringify(value.labels.slice(1)),
+			);
+			area = find.get(geography, release, value.code)!;
+		}
+		if (columns === sourceColumns) {
+			for (const key of ["areaM2", "population"] as const) {
+				const fact = value[key];
+				if (
+					fact !== undefined &&
+					(!Number.isFinite(fact) ||
+						(area[key] !== null && area[key] !== fact))
+				)
+					throw new Error(
+						`Conflicting crosswalk area fact ${geography}/${release}/${value.code}/${key}`,
+					);
+			}
+			if (value.areaM2 !== undefined || value.population !== undefined)
+				updateFacts.run(
+					value.areaM2 ?? null,
+					value.population ?? null,
+					area.id,
+				);
+		}
+		const labels = JSON.stringify(value.labels);
+		const canonical = JSON.stringify([
+			area.name,
+			...JSON.parse((area.aliases as string) ?? "[]"),
+		]);
+		let labelsId: SQLInputValue = null;
+		if (labels !== canonical) {
+			let row = findLabels.get(labels);
+			if (!row) {
+				addLabels.run(labels);
+				row = findLabels.get(labels)!;
+			}
+			labelsId = row.position;
+		}
+		const keys = Object.keys(columns);
+		const [fields, ...values] = endpointValues(value, columns, fieldSets);
+		return [
+			fields,
+			area.id,
+			labelsId,
+			...values.filter((_, index) => {
+				const key = keys[index];
+				return (
+					key !== "code" &&
+					key !== "labels" &&
+					!(
+						columns === sourceColumns &&
+						(key === "areaM2" || key === "population")
+					)
+				);
+			}),
+		];
+	};
+};
+
 const endpoint = (row: Record<string, SQLOutputValue>) =>
 	Object.fromEntries(
 		(JSON.parse(row.fields as string) as string[]).map((key) => [
@@ -113,7 +233,8 @@ export const crosswalkTables = (
 			];
 		}
 	}
-	function* sources() {
+	function* sources(database: DatabaseSync) {
+		const values = areaEndpointValues(database, fieldSets);
 		for (const [
 			crosswalkPosition,
 			entry,
@@ -123,11 +244,17 @@ export const crosswalkTables = (
 				yield [
 					crosswalkPosition,
 					position,
-					...endpointValues(record.source, sourceColumns, fieldSets),
+					...values(
+						record.source,
+						sourceColumns,
+						entry.from.geography,
+						entry.from.boundaryRelease,
+					),
 				];
 		}
 	}
-	function* targets() {
+	function* targets(database: DatabaseSync) {
+		const values = areaEndpointValues(database, fieldSets);
 		for (const [
 			crosswalkPosition,
 			entry,
@@ -139,11 +266,20 @@ export const crosswalkTables = (
 						crosswalkPosition,
 						sourcePosition,
 						position,
-						...endpointValues(target, targetColumns, fieldSets),
+						...values(
+							target,
+							targetColumns,
+							entry.to.geography,
+							entry.to.boundaryRelease,
+						),
 					];
 		}
 	}
 	return {
+		crosswalk_label_exceptions: {
+			columns: ["labels TEXT NOT NULL UNIQUE"],
+			rows: [],
+		},
 		crosswalk_inventory: {
 			columns: [
 				"schemaVersion INTEGER NOT NULL",
@@ -212,22 +348,29 @@ export const crosswalkTables = (
 				"crosswalkPosition INTEGER NOT NULL REFERENCES crosswalks(position)",
 				"position INTEGER NOT NULL",
 				"fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position)",
-				...Object.entries(sourceColumns).map(
-					([key, type]) =>
-						`"${key}" ${type}${key === "code" || key === "labels" ? " NOT NULL" : ""}`,
-				),
+				"areaId INTEGER NOT NULL REFERENCES areas(id)",
+				"labelsId INTEGER REFERENCES crosswalk_label_exceptions(position)",
+				...Object.entries(sourceColumns)
+					.filter(
+						([key]) =>
+							key !== "code" &&
+							key !== "labels" &&
+							key !== "areaM2" &&
+							key !== "population",
+					)
+					.map(([key, type]) => `"${key}" ${type}`),
 			],
 			key: ["crosswalkPosition", "position"],
-			rows: sources(),
-			indexes: [["crosswalkPosition", "code"]],
+			rows: sources,
+			indexes: [["crosswalkPosition", "areaId"]],
 			views: {
 				crosswalk_sources_decoded: `SELECT c.id AS crosswalkId, s.position, f.fields, ${Object.keys(
 					sourceColumns,
 				)
-					.map((key) => `s."${key}"`)
+					.map((key) => decodedColumn(key, "s"))
 					.join(
 						", ",
-					)} FROM crosswalk_sources s JOIN crosswalks c ON c.position = s.crosswalkPosition JOIN crosswalk_field_sets f ON f.position = s.fieldSetId`,
+					)} FROM crosswalk_sources s JOIN crosswalks c ON c.position = s.crosswalkPosition JOIN crosswalk_field_sets f ON f.position = s.fieldSetId JOIN areas a ON a.id = s.areaId LEFT JOIN crosswalk_label_exceptions l ON l.position = s.labelsId`,
 			},
 		},
 		crosswalk_targets: {
@@ -236,25 +379,26 @@ export const crosswalkTables = (
 				"sourcePosition INTEGER NOT NULL",
 				"position INTEGER NOT NULL",
 				"fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position)",
-				...Object.entries(targetColumns).map(
-					([key, type]) =>
-						`"${key}" ${type}${key === "code" || key === "labels" ? " NOT NULL" : ""}`,
-				),
+				"areaId INTEGER NOT NULL REFERENCES areas(id)",
+				"labelsId INTEGER REFERENCES crosswalk_label_exceptions(position)",
+				...Object.entries(targetColumns)
+					.filter(([key]) => key !== "code" && key !== "labels")
+					.map(([key, type]) => `"${key}" ${type}`),
 			],
 			key: ["crosswalkPosition", "sourcePosition", "position"],
-			rows: targets(),
+			rows: targets,
 			constraints: [
 				"FOREIGN KEY (crosswalkPosition, sourcePosition) REFERENCES crosswalk_sources(crosswalkPosition, position)",
 			],
-			indexes: [["crosswalkPosition", "code"]],
+			indexes: [["crosswalkPosition", "areaId"]],
 			views: {
 				crosswalk_targets_decoded: `SELECT c.id AS crosswalkId, t.sourcePosition, t.position, f.fields, ${Object.keys(
 					targetColumns,
 				)
-					.map((key) => `t."${key}"`)
+					.map((key) => decodedColumn(key, "t"))
 					.join(
 						", ",
-					)} FROM crosswalk_targets t JOIN crosswalks c ON c.position = t.crosswalkPosition JOIN crosswalk_field_sets f ON f.position = t.fieldSetId`,
+					)} FROM crosswalk_targets t JOIN crosswalks c ON c.position = t.crosswalkPosition JOIN crosswalk_field_sets f ON f.position = t.fieldSetId JOIN areas a ON a.id = t.areaId LEFT JOIN crosswalk_label_exceptions l ON l.position = t.labelsId`,
 			},
 		},
 	};
@@ -337,9 +481,9 @@ export const readSqliteCrosswalk = (
 		const targets = new Map<number, object[]>();
 		for (const target of database
 			.prepare(
-				"SELECT t.*, f.fields FROM crosswalk_targets t JOIN crosswalk_field_sets f ON f.position = t.fieldSetId WHERE t.crosswalkPosition = ? ORDER BY t.sourcePosition, t.position",
+				"SELECT * FROM crosswalk_targets_decoded WHERE crosswalkId = ? ORDER BY sourcePosition, position",
 			)
-			.iterate(row.position)) {
+			.iterate(expected.id)) {
 			const position = target.sourcePosition as number;
 			let list = targets.get(position);
 			if (!list) targets.set(position, (list = []));
@@ -347,9 +491,9 @@ export const readSqliteCrosswalk = (
 		}
 		const records = database
 			.prepare(
-				"SELECT s.*, f.fields FROM crosswalk_sources s JOIN crosswalk_field_sets f ON f.position = s.fieldSetId WHERE s.crosswalkPosition = ? ORDER BY s.position",
+				"SELECT * FROM crosswalk_sources_decoded WHERE crosswalkId = ? ORDER BY position",
 			)
-			.all(row.position)
+			.all(expected.id)
 			.map((source) => ({
 				source: endpoint(source),
 				targets: targets.get(source.position as number) ?? [],
