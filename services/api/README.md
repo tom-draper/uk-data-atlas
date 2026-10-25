@@ -81,7 +81,10 @@ Road collisions store the total beside its slight, serious and fatal measures, a
 the API serves all four.
 
 The API rebuilds each artifact's JSON from these rows and checks it against the
-stored hash, so responses, hashes and ETags are unchanged. An artifact is only
+stored hash, so responses, hashes and ETags are unchanged. Bulk JSON exports
+reuse rebuilt text in the same LRU as parsed observations. Each entry charges
+two bytes per text code unit plus its UTF-8 source byte count for parsed data.
+The default budget is 64 MiB; oversized entries are served without retention. An artifact is only
 stored if its rows rebuild its exact bytes, which means records must use the
 compilers' key order, periods and areas must ascend, and a period must have
 records. The `data-catalog` stage vacuums the database after replacing the

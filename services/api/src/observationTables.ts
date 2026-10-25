@@ -143,12 +143,13 @@ export const tableMeasureObservations = (
 export const DEFAULT_OBSERVATION_CACHE_BYTES = 64 * 1024 * 1024;
 
 type ObservationCacheEntry = {
-	artifact: MeasureTableArtifact | AnyMeasureObservationArtifact;
+	text: string;
+	artifact?: MeasureTableArtifact | AnyMeasureObservationArtifact;
 	views: Map<string, AnyMeasureObservationArtifact>;
 	bytes: number;
 };
 
-/** Retains observations and table views by their source JSON byte budget. */
+/** Budgets retained UTF-16 text plus the source JSON byte allowance for parsed views. */
 export class ObservationCache {
 	private readonly entries = new Map<string, ObservationCacheEntry>();
 	private bytes = 0;
@@ -185,29 +186,28 @@ export class ObservationCache {
 	}
 
 	text(databasePath: string, artifactName: string): string {
-		return readObservationText(
-			databasePath,
-			artifactName,
-			this.inventory(databasePath).generationHash,
-		);
+		return this.entry(databasePath, artifactName).text;
 	}
 
-	read(
+	private entry(
 		databasePath: string,
 		artifactName: string,
-		measureId: string,
-	): AnyMeasureObservationArtifact {
+	): ObservationCacheEntry {
 		const path = `${databasePath}:${artifactName}`;
 		let entry = this.entries.get(path);
 		if (entry) {
 			this.entries.delete(path);
 			this.entries.set(path, entry);
 		} else {
-			const text = this.text(databasePath, artifactName);
+			const text = readObservationText(
+				databasePath,
+				artifactName,
+				this.inventory(databasePath).generationHash,
+			);
 			entry = {
-				artifact: JSON.parse(text),
+				text,
 				views: new Map(),
-				bytes: Buffer.byteLength(text),
+				bytes: Buffer.byteLength(text) + text.length * 2,
 			};
 			if (entry.bytes <= this.maxBytes) {
 				while (this.bytes + entry.bytes > this.maxBytes) {
@@ -219,10 +219,22 @@ export class ObservationCache {
 				this.bytes += entry.bytes;
 			}
 		}
-		if (!isMeasureTable(entry.artifact)) return entry.artifact;
+		return entry;
+	}
+
+	read(
+		databasePath: string,
+		artifactName: string,
+		measureId: string,
+	): AnyMeasureObservationArtifact {
+		const entry = this.entry(databasePath, artifactName);
+		const artifact: MeasureTableArtifact | AnyMeasureObservationArtifact =
+			entry.artifact ?? JSON.parse(entry.text);
+		entry.artifact = artifact;
+		if (!isMeasureTable(artifact)) return artifact;
 		let view = entry.views.get(measureId);
 		if (!view) {
-			view = tableMeasureObservations(entry.artifact, measureId);
+			view = tableMeasureObservations(artifact, measureId);
 			entry.views.set(measureId, view);
 		}
 		return view;
