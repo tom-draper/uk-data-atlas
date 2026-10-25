@@ -1,8 +1,10 @@
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
+import { observationArtifactName } from "./dataCatalog";
 import { rebuildObservationText } from "./atlasObservations";
 import { sha256 } from "./contentHash";
 import type {
 	AnyMeasureObservationArtifact,
+	DataCatalog,
 	MeasureObservation,
 } from "./dataCatalog";
 import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
@@ -47,7 +49,22 @@ const recordKeys = (record: object) => [
 /** The tables holding these artifacts, keyed by name in creation order. */
 export const observationTables = (
 	entries: ReadonlyArray<readonly [id: string, text: string]>,
+	catalog?: DataCatalog,
 ): Record<string, SqliteTable> => {
+	const catalogMeasures = new Map(
+		catalog?.measures.map((measure) => [measure.id, measure]),
+	);
+	const sourceDatasets = new Map(
+		catalog?.measures.flatMap((measure) =>
+			measure.sources.map(
+				(source) =>
+					[
+						observationArtifactName(measure.id, source),
+						source.datasetId,
+					] as const,
+			),
+		),
+	);
 	const measureSeries: MeasureSeries[] = [];
 	const tableSeries: TableSeries[] = [];
 	const series: Array<MeasureSeries | TableSeries> = [];
@@ -205,13 +222,85 @@ export const observationTables = (
 			rows: areas.map((code) => [code]),
 		},
 		observation_measures: {
-			columns: ["measureId TEXT NOT NULL UNIQUE"],
+			columns: [
+				"measureId TEXT NOT NULL UNIQUE",
+				"label TEXT",
+				"unit TEXT",
+				"valueKind TEXT",
+				"concept TEXT",
+				"aggregationKind TEXT",
+				"aggregationOperation TEXT",
+				"aggregationAvailable INTEGER",
+				"aggregationStatistic TEXT",
+				"aggregationNote TEXT",
+				"weightDescription TEXT",
+				"weightDatasetField TEXT",
+				"weightMeasureId TEXT",
+				"uncertaintyKind TEXT",
+				"uncertaintyLevel REAL",
+				"uncertaintyNote TEXT",
+			],
 			strict: true,
-			rows: measures.map((id) => [id]),
+			rows: measures.map((id) => {
+				const measure = catalogMeasures.get(id);
+				const aggregation = measure?.aggregation;
+				const weight =
+					aggregation && "weight" in aggregation
+						? aggregation.weight
+						: undefined;
+				return [
+					id,
+					measure?.label ?? null,
+					measure?.unit ?? null,
+					measure?.valueKind ?? null,
+					measure?.concept ?? null,
+					aggregation?.kind ?? null,
+					aggregation && "operation" in aggregation
+						? aggregation.operation
+						: null,
+					aggregation ? Number(aggregation.available) : null,
+					aggregation && "statistic" in aggregation
+						? aggregation.statistic
+						: null,
+					aggregation && "note" in aggregation
+						? aggregation.note
+						: null,
+					weight?.description ?? null,
+					weight?.datasetField ?? null,
+					weight?.measureId ?? null,
+					measure?.uncertainty?.kind ?? null,
+					measure?.uncertainty?.level ?? null,
+					measure?.uncertainty?.note ?? null,
+				];
+			}),
+		},
+		observation_datasets: {
+			columns: [
+				"datasetId TEXT NOT NULL UNIQUE",
+				"label TEXT",
+				"publisher TEXT",
+				"sourceUrl TEXT",
+				"temporalCoverage TEXT",
+				"licenceName TEXT",
+				"licenceUrl TEXT",
+				"description TEXT",
+			],
+			strict: true,
+			rows: (catalog?.datasets ?? []).map((dataset) => [
+				dataset.id,
+				dataset.label,
+				dataset.publisher,
+				dataset.sourceUrl,
+				dataset.temporalCoverage,
+				dataset.licence.name,
+				dataset.licence.url ?? null,
+				dataset.description ?? null,
+			]),
 		},
 		observation_series: {
 			columns: [
 				"artifactId TEXT NOT NULL UNIQUE",
+				"datasetId TEXT",
 				"measurePosition INTEGER REFERENCES observation_measures(position)",
 				"geographyType TEXT NOT NULL",
 				"boundaryYear INTEGER NOT NULL",
@@ -221,6 +310,9 @@ export const observationTables = (
 			strict: true,
 			rows: series.map((item) => [
 				item.id,
+				"datasetId" in item.artifact
+					? item.artifact.datasetId
+					: (sourceDatasets.get(item.id) ?? null),
 				"measureId" in item.artifact
 					? measurePositions.get(item.artifact.measureId)!
 					: null,
@@ -369,8 +461,9 @@ export const observationTables = (
 export const replaceObservationTables = (
 	database: DatabaseSync,
 	entries: ReadonlyArray<readonly [id: string, text: string]>,
+	catalog?: DataCatalog,
 ) => {
-	const tables = observationTables(entries);
+	const tables = observationTables(entries, catalog);
 	// Foreign keys are checked once at the end rather than for every row.
 	database.exec("PRAGMA foreign_keys = OFF; BEGIN");
 	try {
