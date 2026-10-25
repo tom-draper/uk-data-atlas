@@ -232,6 +232,27 @@ export function IncomeMeasurePanel({
 	);
 }
 
+const INCOME_PERIODS = [
+	["annual", "Annual"],
+	["hourly", "Hourly"],
+] as const;
+
+export function IncomePeriodPanel({
+	period,
+	onChange,
+}: {
+	period: "annual" | "hourly";
+	onChange: (period: "annual" | "hourly") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={period}
+			measures={INCOME_PERIODS}
+			onChange={onChange}
+		/>
+	);
+}
+
 const AIR_QUALITY_MEASURES = [
 	["no2", "NO₂"],
 	["pm25", "PM2.5"],

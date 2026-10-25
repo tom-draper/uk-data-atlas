@@ -18,7 +18,6 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -37,6 +36,7 @@ import {
 	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
+	IncomePeriodPanel,
 	LifeExpectancyMeasurePanel,
 	MobileCoverageMeasurePanel,
 	PercentageRangePanel,
@@ -171,13 +171,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "income" && (
-				<MeasureSelect
-					label="Pay period"
-					value={controls.displayOptions.income.period}
-					options={[
-						{ value: "annual", label: "Annual pay" },
-						{ value: "hourly", label: "Hourly pay" },
-					]}
+				<IncomePeriodPanel
+					period={controls.displayOptions.income.period}
 					onChange={(period) =>
 						onMapOptionsChange("income", {
 							period,
