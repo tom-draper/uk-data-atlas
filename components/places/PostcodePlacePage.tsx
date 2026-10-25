@@ -13,6 +13,7 @@ import {
 import { NATIONS, placeTrail, regionIn } from "@/components/places/trail";
 import { areaHref, geographyNoun, listNames } from "@/lib/places/labels";
 import { loadAreaProfiles, loadPlaceIndex } from "@/lib/places/load";
+import { postcodeHref } from "@/lib/places/postcodeUnit";
 import {
 	DEPRIVATION_INDICES,
 	POSTCODE_GEOGRAPHIES,
@@ -336,6 +337,7 @@ export async function PostcodePlacePage({
 	sectors,
 	entry,
 	source,
+	postcodes: units = [],
 }: {
 	/** "LS6" for a district, "LS6 1" for a sector. */
 	name: string;
@@ -344,6 +346,8 @@ export async function PostcodePlacePage({
 	sectors: [sector: string, live: number][];
 	entry: PostcodeGroup;
 	source: PostcodeSource;
+	/** A sector's live postcodes, each linking to its page. */
+	postcodes?: string[];
 }) {
 	const isSector = name !== district;
 	const kind = isSector ? "sector" : "district";
@@ -511,6 +515,26 @@ export async function PostcodePlacePage({
 					name={name}
 					deprivation={entry.deprivation}
 				/>
+				{units.length > 0 && (
+					<Section id="postcodes" title="Postcodes">
+						<p className="mb-4">
+							{name}&apos;s live postcodes, each with its own
+							page.
+						</p>
+						<ul className="grid grid-cols-3 gap-x-4 gap-y-1 text-[14px] sm:grid-cols-5 xl:grid-cols-6">
+							{units.map((postcode) => (
+								<li key={postcode}>
+									<Link
+										href={postcodeHref(postcode)}
+										className={linkClass}
+									>
+										{postcode}
+									</Link>
+								</li>
+							))}
+						</ul>
+					</Section>
+				)}
 				<Section id="api" title="Ask the API">
 					<p className="mb-4">
 						The UK Data Atlas API finds the council, ward and

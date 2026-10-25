@@ -234,3 +234,21 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 		database.close();
 	}
 }
+
+/** A sector's live postcodes, as written, in the directory's order. */
+export function sectorPostcodes(sector: string) {
+	const [district, digit] = sector.split(" ");
+	const database = new DatabaseSync(databasePath(), { readOnly: true });
+	try {
+		return database
+			.prepare(
+				"SELECT postcode FROM postcodes WHERE postcode >= ? AND postcode < ? AND length(postcode) = ? AND terminated = 0 ORDER BY postcode",
+			)
+			.all(...districtRange(district!))
+			.map((row) => String(row.postcode))
+			.filter((postcode) => postcode[district!.length] === digit)
+			.map(displayPostcode);
+	} finally {
+		database.close();
+	}
+}

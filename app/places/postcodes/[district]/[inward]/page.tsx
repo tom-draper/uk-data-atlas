@@ -10,6 +10,7 @@ import {
 	compactUnit,
 	lookupPostcodeUnit,
 	postcodeHref,
+	sectorPostcodes,
 } from "@/lib/places/postcodeUnit";
 import {
 	loadNeighbourhoods,
@@ -123,6 +124,7 @@ export default async function PostcodeInwardPage({
 							sectors={page.parent.sectors}
 							entry={page.entry}
 							source={page.source}
+							postcodes={sectorPostcodes(page.name)}
 						/>
 					) : (
 						<PostcodeUnitPage
