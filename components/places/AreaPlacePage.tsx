@@ -212,7 +212,9 @@ function AreaFacts({
 	);
 }
 
-/** "12th highest of 361 local authorities in England", linked to the ranking. */
+const rankClass = "block text-[12px] text-slate-500 hover:text-slate-800";
+
+/** "12th highest of 361 in England", linked to the ranking's table. */
 function RankLine({
 	headline,
 	rank,
@@ -222,13 +224,26 @@ function RankLine({
 	rank: Rank;
 	where: string;
 }) {
-	const text = `${rankPhrase(rank.rank, rank.of, headline.ends)} of ${rank.of.toLocaleString("en-GB")} ${where}`;
+	const text = `${rankPhrase(rank.rank, rank.of, headline.ends)} of ${rank.of.toLocaleString("en-GB")} in ${where}`;
 	return rank.href ? (
-		<Link href={rank.href} className={sourceClass}>
+		<Link href={rank.href} className={rankClass}>
 			{text}
 		</Link>
 	) : (
-		<span className={sourceClass}>{text}</span>
+		<span className={rankClass}>{text}</span>
+	);
+}
+
+/** Where a rank sits on a track, the lowest at the left and highest at the right. */
+function RankMarker({ rank }: { rank: Rank }) {
+	const position = rank.of > 1 ? (rank.of - rank.rank) / (rank.of - 1) : 0.5;
+	return (
+		<div className="relative mx-1.5 mb-1.5 h-1 rounded-full bg-slate-200">
+			<span
+				className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-800 ring-2 ring-white"
+				style={{ left: `${position * 100}%` }}
+			/>
+		</div>
 	);
 }
 
@@ -244,38 +259,48 @@ function AreaFigures({
 		<Section id="figures" title="Key figures">
 			<p>
 				How {profile.name} compares with other{" "}
-				{geographyNoun(profile.geography, true)}, from the Atlas&apos;s
-				rankings. Each figure links to its full table.
+				{geographyNoun(profile.geography, true)}. Each marker runs from
+				the lowest on the left to the highest on the right, and each
+				rank links to its full table.
 			</p>
-			<Facts
-				items={headlines.map((headline) => ({
-					label: /\b\d{4}\b/.test(headline.label)
-						? headline.label
-						: `${headline.label}, ${headline.year}`,
-					value: (
-						<>
-							{headline.value}
-							{headline.detail && (
-								<span className="block text-[12.5px] font-normal text-slate-600">
-									{headline.detail}
+			<Card className="mt-4 divide-y divide-slate-900/[0.06]">
+				{headlines.map((headline) => (
+					<div
+						key={headline.map}
+						className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-2 px-4 py-3 sm:grid-cols-[minmax(0,1fr)_7rem_14rem]"
+					>
+						<div className="min-w-0">
+							<p className="text-[14.5px] font-medium text-slate-900">
+								{headline.label}
+								<span className="ml-2 text-[12px] font-normal text-slate-400 tabular-nums">
+									{headline.year}
 								</span>
-							)}
+							</p>
+							<p className="text-[12.5px] leading-snug text-slate-500">
+								{headline.about}
+							</p>
+						</div>
+						<p className="text-right text-[17px] font-semibold text-slate-900 tabular-nums">
+							{headline.value}
+						</p>
+						<div className="col-span-2 sm:col-span-1">
+							<RankMarker rank={headline.national} />
 							<RankLine
 								headline={headline}
 								rank={headline.national}
-								where={`${headline.national.noun} in ${headline.national.scope}`}
+								where={headline.national.scope}
 							/>
 							{headline.local && (
 								<RankLine
 									headline={headline}
 									rank={headline.local}
-									where={`${headline.local.noun} in ${headline.local.name}`}
+									where={headline.local.name}
 								/>
 							)}
-						</>
-					),
-				}))}
-			/>
+						</div>
+					</div>
+				))}
+			</Card>
 		</Section>
 	);
 }
