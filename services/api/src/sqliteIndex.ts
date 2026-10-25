@@ -25,6 +25,8 @@ export type SqliteTable = {
 	key?: string[];
 	rows: Iterable<SQLInputValue[]>;
 	constraints?: string[];
+	/** Reject values that do not match their column's declared type. */
+	strict?: boolean;
 	indexes?: string[][];
 	views?: Record<string, string>;
 };
@@ -68,9 +70,10 @@ export const writeSqliteTables = (
 ) => {
 	for (const [name, table] of Object.entries(tables)) {
 		const placeholders = table.columns.map(() => "?");
+		const strict = table.strict ? "STRICT" : "";
 		if (table.key) {
 			database.exec(
-				`CREATE TABLE ${name} (${[...table.columns, ...(table.constraints ?? [])].join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID`,
+				`CREATE TABLE ${name} (${[...table.columns, ...(table.constraints ?? [])].join(", ")}, PRIMARY KEY (${table.key.join(", ")})) WITHOUT ROWID${strict && `, ${strict}`}`,
 			);
 			const insert = database.prepare(
 				`INSERT INTO ${name} VALUES (${placeholders.join(", ")})`,
@@ -83,7 +86,7 @@ export const writeSqliteTables = (
 			continue;
 		}
 		database.exec(
-			`CREATE TABLE ${name} (position INTEGER PRIMARY KEY, ${table.columns.join(", ")})`,
+			`CREATE TABLE ${name} (position INTEGER PRIMARY KEY, ${table.columns.join(", ")}) ${strict}`,
 		);
 		const insert = database.prepare(
 			`INSERT INTO ${name} VALUES (${["?", ...placeholders].join(", ")})`,
