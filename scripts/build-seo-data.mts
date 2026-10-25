@@ -11,6 +11,10 @@ import {
 	serialisePlaceElections,
 } from "./place-elections";
 import {
+	PLACE_POSTCODES_PATH,
+	serialisePlacePostcodes,
+} from "./place-postcodes.mts";
+import {
 	RANKING_PAGES_PATH,
 	RANKINGS_DIR,
 	serialiseRankings,
@@ -32,3 +36,6 @@ console.log(`Wrote ${files.size} rankings to ${RANKINGS_DIR}`);
 
 await writeFile(PLACE_ELECTIONS_PATH, serialisePlaceElections());
 console.log(`Wrote ${PLACE_ELECTIONS_PATH}`);
+
+await writeFile(PLACE_POSTCODES_PATH, serialisePlacePostcodes());
+console.log(`Wrote ${PLACE_POSTCODES_PATH}`);
