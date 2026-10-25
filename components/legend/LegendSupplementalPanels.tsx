@@ -4,6 +4,7 @@ import type { WasteOptions } from "@/lib/types/mapOptions";
 import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
+import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import GlassOverlays from "../GlassOverlays";
 
 export function PercentageRangePanel({
@@ -96,6 +97,26 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 				})}
 			</div>
 		</div>
+	);
+}
+
+const REGIONAL_OUTPUT_SEGMENTS = REGIONAL_OUTPUT_MEASURES.map(
+	({ value, label }) => [value, label] as const,
+);
+
+export function RegionalOutputMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "gdp" | "gva";
+	onChange: (measure: "gdp" | "gva") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={REGIONAL_OUTPUT_SEGMENTS}
+			onChange={onChange}
+		/>
 	);
 }
 
