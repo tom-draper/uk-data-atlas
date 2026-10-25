@@ -6,6 +6,7 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
+import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
 
@@ -321,24 +322,25 @@ export function BroadbandMeasurePanel({
 	);
 }
 
-const GHG_EMISSIONS_MEASURES = [
-	["perPerson", "Per person"],
-	["total", "Total"],
-	["excludingLandUse", "No land use"],
-] as const;
+const GHG_EMISSIONS_SEGMENTS = GHG_EMISSIONS_MEASURES.map(
+	({ value, label }) => [value, label] as const,
+);
+
+type GhgEmissionsMeasure = (typeof GHG_EMISSIONS_MEASURES)[number]["value"];
 
 export function GhgEmissionsMeasurePanel({
 	measure,
 	onChange,
 }: {
-	measure: "perPerson" | "total" | "excludingLandUse";
-	onChange: (measure: "perPerson" | "total" | "excludingLandUse") => void;
+	measure: GhgEmissionsMeasure;
+	onChange: (measure: GhgEmissionsMeasure) => void;
 }) {
 	return (
 		<GlassSegmentedMeasurePanel
 			measure={measure}
-			measures={GHG_EMISSIONS_MEASURES}
+			measures={GHG_EMISSIONS_SEGMENTS}
 			onChange={onChange}
+			vertical
 		/>
 	);
 }

@@ -18,8 +18,6 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
-import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -34,6 +32,7 @@ import {
 	CountMetricPanel,
 	ElectionMetricPanel,
 	EnergySectorPanel,
+	GhgEmissionsMeasurePanel,
 	FuelPovertyMeasurePanel,
 	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
@@ -201,10 +200,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "ghgEmissions" && (
-				<MeasureSelect
-					label="Emissions measure"
-					value={controls.displayOptions.ghgEmissions.measure}
-					options={GHG_EMISSIONS_MEASURES}
+				<GhgEmissionsMeasurePanel
+					measure={controls.displayOptions.ghgEmissions.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("ghgEmissions", {
 							measure,
