@@ -1,0 +1,481 @@
+{
+	"measuredOn": "2026-10-25",
+	"baselineCommit": "6e367873ceb70085c736a48908f17477da34eb54",
+	"command": "pnpm exec tsx --max-old-space-size=2560 services/api/scripts/compare-atlas-sqlite.ts data/sqlite-area-baseline/distribution-before.sqlite services/api",
+	"inputs": "Copied built artifacts from /home/tomdraper/dev/uk-data-atlas. Ran build-atlas-sqlite.ts at the baseline commit and with the new schema. Replaced only area and crosswalk tables in copies of the existing complete distribution, then vacuumed. Other tables, including observations, were retained unchanged.",
+	"timingMethod": "One warm-up and five loads per reader, median reported. Each load opens and closes the database. Includes SQL, joins and object reconstruction, excludes JSON serialization. Baseline uses the previous reader queries; after uses readSqliteCrosswalk.",
+	"node": "v26.12.1",
+	"foreignKeyViolationsBefore": 0,
+	"foreignKeyViolationsAfter": 0,
+	"endpointRecovery": {
+		"sourceRows": 1924601,
+		"targetRows": 1929571,
+		"missingAreaMatches": 0,
+		"sourceDistinctAreaKeys": 956087,
+		"conflictingSourceAreaM2Values": 0,
+		"conflictingSourcePopulationValues": 0,
+		"distinctLabelExceptions": 5893
+	},
+	"areaLayoutExperiment": {
+		"method": "Same 972419 inventory rows, excluding source facts, table plus unique index, after VACUUM. ID order follows artifact order; no extra ordering index.",
+		"textIdentityWithLocalPositionBytes": 102043648,
+		"releasePositionWithLocalPositionBytes": 55808000,
+		"releasePositionWithInventoryFlagBytes": 53391360
+	},
+	"crosswalksCompared": 181,
+	"areaReleasesCompared": 104,
+	"crosswalkMismatches": 0,
+	"areaMismatches": 0,
+	"benchmark": {
+		"id": "output-area-2021-12-ew-bgc-v2-to-lsoa-2021-12-ew-bgc-v5-official-lookup",
+		"recordCount": 188880,
+		"before": {
+			"medianMs": 1308.9702860000034,
+			"samplesMs": [
+				1269.6751100000038, 1280.7435039999982, 1308.9702860000034,
+				1348.457491000001, 1417.0691220000008
+			]
+		},
+		"after": {
+			"medianMs": 1427.6276100000032,
+			"samplesMs": [
+				1389.2699439999997, 1401.0254120000027, 1427.6276100000032,
+				1508.887294, 1526.704257999998
+			]
+		}
+	},
+	"before": {
+		"fileBytes": 946855936,
+		"objects": [
+			{
+				"name": "area_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "area_releases",
+				"bytes": 24576
+			},
+			{
+				"name": "area_search_codes",
+				"bytes": 17575936
+			},
+			{
+				"name": "area_search_meta",
+				"bytes": 12288
+			},
+			{
+				"name": "area_search_terms",
+				"bytes": 13840384
+			},
+			{
+				"name": "area_search_title_terms",
+				"bytes": 4096
+			},
+			{
+				"name": "areas",
+				"bytes": 55320576
+			},
+			{
+				"name": "areas_0",
+				"bytes": 42090496
+			},
+			{
+				"name": "crosswalk_coverage",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_field_sets",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_sources",
+				"bytes": 81498112
+			},
+			{
+				"name": "crosswalk_sources_0",
+				"bytes": 37867520
+			},
+			{
+				"name": "crosswalk_targets",
+				"bytes": 137072640
+			},
+			{
+				"name": "crosswalk_targets_0",
+				"bytes": 39956480
+			},
+			{
+				"name": "crosswalks",
+				"bytes": 1417216
+			},
+			{
+				"name": "crosswalks_0",
+				"bytes": 28672
+			},
+			{
+				"name": "datasets",
+				"bytes": 81920
+			},
+			{
+				"name": "location_projection_dictionaries",
+				"bytes": 2629632
+			},
+			{
+				"name": "location_projection_members",
+				"bytes": 29990912
+			},
+			{
+				"name": "location_projection_parents",
+				"bytes": 348160
+			},
+			{
+				"name": "meta",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_assertions",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_assertions_0",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_geometries",
+				"bytes": 26931200
+			},
+			{
+				"name": "named_location_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_members",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_members_0",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_partial_members",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_partial_members_0",
+				"bytes": 4096
+			},
+			{
+				"name": "named_locations",
+				"bytes": 114688
+			},
+			{
+				"name": "named_locations_0",
+				"bytes": 16384
+			},
+			{
+				"name": "named_locations_1",
+				"bytes": 16384
+			},
+			{
+				"name": "observation_artifacts",
+				"bytes": 78589952
+			},
+			{
+				"name": "observation_catalogue",
+				"bytes": 4096
+			},
+			{
+				"name": "payloads",
+				"bytes": 75292672
+			},
+			{
+				"name": "place_index_codes",
+				"bytes": 6926336
+			},
+			{
+				"name": "place_index_meta",
+				"bytes": 8192
+			},
+			{
+				"name": "place_index_names",
+				"bytes": 7671808
+			},
+			{
+				"name": "place_index_places",
+				"bytes": 11399168
+			},
+			{
+				"name": "postcode_area_shards",
+				"bytes": 118419456
+			},
+			{
+				"name": "postcode_counts",
+				"bytes": 7413760
+			},
+			{
+				"name": "postcodes",
+				"bytes": 103804928
+			},
+			{
+				"name": "sqlite_autoindex_area_releases_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_coverage_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_field_sets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalks_1",
+				"bytes": 20480
+			},
+			{
+				"name": "sqlite_autoindex_datasets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_named_locations_1",
+				"bytes": 12288
+			},
+			{
+				"name": "sqlite_autoindex_observation_artifacts_1",
+				"bytes": 24576
+			},
+			{
+				"name": "sqlite_autoindex_postcodes_1",
+				"bytes": 50028544
+			},
+			{
+				"name": "sqlite_schema",
+				"bytes": 16384
+			}
+		]
+	},
+	"after": {
+		"fileBytes": 787329024,
+		"objects": [
+			{
+				"name": "area_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "area_releases",
+				"bytes": 24576
+			},
+			{
+				"name": "area_search_codes",
+				"bytes": 17575936
+			},
+			{
+				"name": "area_search_meta",
+				"bytes": 12288
+			},
+			{
+				"name": "area_search_terms",
+				"bytes": 13840384
+			},
+			{
+				"name": "area_search_title_terms",
+				"bytes": 4096
+			},
+			{
+				"name": "areas",
+				"bytes": 35786752
+			},
+			{
+				"name": "crosswalk_coverage",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_field_sets",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_label_exceptions",
+				"bytes": 208896
+			},
+			{
+				"name": "crosswalk_sources",
+				"bytes": 34045952
+			},
+			{
+				"name": "crosswalk_sources_0",
+				"bytes": 26189824
+			},
+			{
+				"name": "crosswalk_targets",
+				"bytes": 90783744
+			},
+			{
+				"name": "crosswalk_targets_0",
+				"bytes": 27541504
+			},
+			{
+				"name": "crosswalks",
+				"bytes": 1417216
+			},
+			{
+				"name": "crosswalks_0",
+				"bytes": 28672
+			},
+			{
+				"name": "datasets",
+				"bytes": 81920
+			},
+			{
+				"name": "location_projection_dictionaries",
+				"bytes": 2629632
+			},
+			{
+				"name": "location_projection_members",
+				"bytes": 29990912
+			},
+			{
+				"name": "location_projection_parents",
+				"bytes": 348160
+			},
+			{
+				"name": "meta",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_assertions",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_assertions_0",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_geometries",
+				"bytes": 26931200
+			},
+			{
+				"name": "named_location_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_members",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_members_0",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_partial_members",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_partial_members_0",
+				"bytes": 4096
+			},
+			{
+				"name": "named_locations",
+				"bytes": 114688
+			},
+			{
+				"name": "named_locations_0",
+				"bytes": 16384
+			},
+			{
+				"name": "named_locations_1",
+				"bytes": 16384
+			},
+			{
+				"name": "observation_artifacts",
+				"bytes": 78589952
+			},
+			{
+				"name": "observation_catalogue",
+				"bytes": 4096
+			},
+			{
+				"name": "payloads",
+				"bytes": 75292672
+			},
+			{
+				"name": "place_index_codes",
+				"bytes": 6926336
+			},
+			{
+				"name": "place_index_meta",
+				"bytes": 8192
+			},
+			{
+				"name": "place_index_names",
+				"bytes": 7671808
+			},
+			{
+				"name": "place_index_places",
+				"bytes": 11399168
+			},
+			{
+				"name": "postcode_area_shards",
+				"bytes": 118419456
+			},
+			{
+				"name": "postcode_counts",
+				"bytes": 7413760
+			},
+			{
+				"name": "postcodes",
+				"bytes": 103804928
+			},
+			{
+				"name": "sqlite_autoindex_area_releases_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_areas_1",
+				"bytes": 19509248
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_coverage_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_field_sets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_label_exceptions_1",
+				"bytes": 208896
+			},
+			{
+				"name": "sqlite_autoindex_crosswalks_1",
+				"bytes": 20480
+			},
+			{
+				"name": "sqlite_autoindex_datasets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_named_locations_1",
+				"bytes": 12288
+			},
+			{
+				"name": "sqlite_autoindex_observation_artifacts_1",
+				"bytes": 24576
+			},
+			{
+				"name": "sqlite_autoindex_postcodes_1",
+				"bytes": 50028544
+			},
+			{
+				"name": "sqlite_schema",
+				"bytes": 20480
+			}
+		]
+	}
+}
