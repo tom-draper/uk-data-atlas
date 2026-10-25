@@ -74,7 +74,7 @@ function fuelPovertyDisplay(
 				"en-GB",
 			),
 			unit: "households",
-			secondary: `${stats.fuelPovertyRate.toFixed(1)}% of households`,
+			secondary: `${stats.fuelPovertyRate.toFixed(1)}%`,
 			barWidth: Math.min(stats.fuelPoorHouseholdCount / 1000, 1) * 100,
 		};
 	return {
