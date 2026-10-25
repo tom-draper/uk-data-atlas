@@ -43,7 +43,7 @@ export function storeObservations(
 			database.exec(
 				"PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF",
 			);
-			replaceObservationTables(database, entries);
+			replaceObservationTables(database, entries, catalog);
 			database.exec(`BEGIN;
 CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHash TEXT NOT NULL);`);
 			database

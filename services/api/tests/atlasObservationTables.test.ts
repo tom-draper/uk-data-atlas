@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
+import { dataCatalog } from "./routeFixtures";
 import { replaceObservationTables } from "../src/atlasObservationTables";
 import { rebuildObservationText } from "../src/atlasObservations";
 
@@ -184,4 +185,68 @@ test("refuses artifacts whose bytes rows could not rebuild, and keeps the tables
 			text(own),
 		);
 	}
+});
+
+test("describes catalogue measures and datasets while allowing unknown measures", () => {
+	const database = new DatabaseSync(":memory:");
+	const measure = dataCatalog.measures[0]!;
+	const catalog = {
+		...dataCatalog,
+		measures: [
+			{
+				...measure,
+				id: "population",
+				sources: measure.sources.slice(0, 1).map((source) => ({
+					...source,
+					observationArtifact: "own-observations",
+				})),
+			},
+		],
+	};
+	replaceObservationTables(
+		database,
+		[
+			["own-observations", text(own)],
+			["shared", text(table)],
+		],
+		catalog,
+	);
+	assert.deepEqual(
+		{
+			...database
+				.prepare(
+					"SELECT label, unit, valueKind, aggregationKind, aggregationAvailable FROM observation_measures WHERE measureId = 'population'",
+				)
+				.get(),
+		},
+		{
+			label: measure.label,
+			unit: measure.unit,
+			valueKind: measure.valueKind,
+			aggregationKind: measure.aggregation.kind,
+			aggregationAvailable: Number(measure.aggregation.available),
+		},
+	);
+	assert.equal(
+		database
+			.prepare(
+				"SELECT label FROM observation_measures WHERE measureId = 'owned'",
+			)
+			.get()?.label,
+		null,
+	);
+	assert.equal(
+		database
+			.prepare(
+				"SELECT datasetId FROM observation_series WHERE artifactId = 'own-observations'",
+			)
+			.get()?.datasetId,
+		measure.sources[0]!.datasetId,
+	);
+	assert.equal(
+		database.prepare("SELECT count(*) AS n FROM observation_datasets").get()
+			?.n,
+		catalog.datasets.length,
+	);
+	database.close();
 });
