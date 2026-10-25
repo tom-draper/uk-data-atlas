@@ -25,6 +25,12 @@ import {
 	geographyNoun,
 } from "@/lib/places/labels";
 import { placeFacts, type PlaceFacts } from "@/lib/places/facts";
+import {
+	placeHeadlines,
+	rankPhrase,
+	type PlaceHeadline,
+	type Rank,
+} from "@/lib/places/headlines";
 import { loadAreaProfile, loadPlaceIndex } from "@/lib/places/load";
 import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
 import { areaSummary } from "@/lib/places/summary";
@@ -206,6 +212,74 @@ function AreaFacts({
 	);
 }
 
+/** "12th highest of 361 local authorities in England", linked to the ranking. */
+function RankLine({
+	headline,
+	rank,
+	where,
+}: {
+	headline: PlaceHeadline;
+	rank: Rank;
+	where: string;
+}) {
+	const text = `${rankPhrase(rank.rank, rank.of, headline.ends)} of ${rank.of.toLocaleString("en-GB")} ${where}`;
+	return rank.href ? (
+		<Link href={rank.href} className={sourceClass}>
+			{text}
+		</Link>
+	) : (
+		<span className={sourceClass}>{text}</span>
+	);
+}
+
+/** The area's value on a few ranked maps, and where it ranks on each. */
+function AreaFigures({
+	profile,
+	headlines,
+}: {
+	profile: AreaProfile;
+	headlines: PlaceHeadline[];
+}) {
+	return (
+		<Section id="figures" title="Key figures">
+			<p>
+				How {profile.name} compares with other{" "}
+				{geographyNoun(profile.geography, true)}, from the Atlas&apos;s
+				rankings. Each figure links to its full table.
+			</p>
+			<Facts
+				items={headlines.map((headline) => ({
+					label: /\b\d{4}\b/.test(headline.label)
+						? headline.label
+						: `${headline.label}, ${headline.year}`,
+					value: (
+						<>
+							{headline.value}
+							{headline.detail && (
+								<span className="block text-[12.5px] font-normal text-slate-600">
+									{headline.detail}
+								</span>
+							)}
+							<RankLine
+								headline={headline}
+								rank={headline.national}
+								where={`${headline.national.noun} in ${headline.national.scope}`}
+							/>
+							{headline.local && (
+								<RankLine
+									headline={headline}
+									rank={headline.local}
+									where={`${headline.local.noun} in ${headline.local.name}`}
+								/>
+							)}
+						</>
+					),
+				}))}
+			/>
+		</Section>
+	);
+}
+
 function AreaWithin({
 	profile,
 	council,
@@ -362,8 +436,12 @@ function AreaApi({
 export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 	const releases = (await loadPlaceIndex()).releases[profile.geography];
 	const lastRelease = releases[profile.releases.at(-1)!]!;
-	const [{ council, councilProfile, region, namedPlaces }, facts] =
-		await Promise.all([loadAreaContext(profile), placeFacts(profile.code)]);
+	const [{ council, councilProfile, region, namedPlaces }, facts, headlines] =
+		await Promise.all([
+			loadAreaContext(profile),
+			placeFacts(profile.code),
+			placeHeadlines(profile.code, profile.geography),
+		]);
 
 	return (
 		<>
@@ -401,6 +479,9 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 					releases={releases}
 					facts={facts}
 				/>
+				{headlines.length > 0 && (
+					<AreaFigures profile={profile} headlines={headlines} />
+				)}
 				<AreaWithin
 					profile={profile}
 					council={council}
