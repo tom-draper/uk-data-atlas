@@ -1,9 +1,19 @@
 import { describe, expect, it } from "vitest";
-import sitemap from "@/app/sitemap";
+import sitemap, { generateSitemaps } from "@/app/sitemaps/sitemap";
 import robots from "@/app/robots";
+import { GET } from "@/app/sitemap.xml/route";
 import { SITE_URL } from "@/lib/site";
 
-const entries = await sitemap();
+const sitemaps = await Promise.all(
+	(await generateSitemaps()).map(async ({ id }) => ({
+		id,
+		entries: await sitemap({ id: Promise.resolve(id) }),
+	})),
+);
+const sitemapIndex = [
+	...(await GET().text()).matchAll(/<loc>([^<]+)<\/loc>/g),
+].map((match) => match[1]);
+const entries = sitemaps.flatMap((part) => part.entries);
 const paths = entries.map((entry) => new URL(entry.url).pathname);
 
 describe("sitemap", () => {
@@ -21,6 +31,9 @@ describe("sitemap", () => {
 				"/places",
 				"/places/aberdeen",
 				"/places/E08000003",
+				"/places/E05004705",
+				"/places/E04001132",
+				"/places/J01000046",
 				"/docs/v1",
 				"/docs/v1/datasets/population",
 				"/docs/v1/geographies/local-authorities",
@@ -45,10 +58,15 @@ describe("sitemap", () => {
 		);
 	});
 
-	it("advertises unique absolute URLs within the single sitemap limit", () => {
+	it("advertises each sitemap, every one within the URL limit", () => {
 		expect(robots().sitemap).toBe(`${SITE_URL}/sitemap.xml`);
-		expect(entries.length).toBeGreaterThan(0);
-		expect(entries.length).toBeLessThanOrEqual(50_000);
+		expect(sitemapIndex).toEqual(
+			sitemaps.map(({ id }) => `${SITE_URL}/sitemaps/sitemap/${id}.xml`),
+		);
+		for (const part of sitemaps) {
+			expect(part.entries.length).toBeGreaterThan(0);
+			expect(part.entries.length).toBeLessThanOrEqual(50_000);
+		}
 		expect(new Set(entries.map((entry) => entry.url)).size).toBe(
 			entries.length,
 		);
