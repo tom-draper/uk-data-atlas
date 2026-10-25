@@ -104,6 +104,27 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 	);
 }
 
+const FUEL_POVERTY_SEGMENTS = [
+	["rate", "Percentage"],
+	["count", "Total"],
+] as const;
+
+export function FuelPovertyMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "rate" | "count";
+	onChange: (measure: "rate" | "count") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={FUEL_POVERTY_SEGMENTS}
+			onChange={onChange}
+		/>
+	);
+}
+
 const ENERGY_SECTOR_SEGMENTS = [
 	["allMetersGwh", "All"],
 	["domesticGwh", "Domestic"],
