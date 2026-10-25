@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { deprivationSummary } from "@/components/places/PostcodePlacePage";
 import {
 	compareDistricts,
 	compilePostcodes,
@@ -106,5 +107,19 @@ describe("compareDistricts", () => {
 		expect(
 			["LS10", "E1W", "LS2", "E1", "EC1A", "LS1"].sort(compareDistricts),
 		).toEqual(["E1", "E1W", "EC1A", "LS1", "LS2", "LS10"]);
+	});
+});
+
+describe("deprivationSummary", () => {
+	it("gives the median decile and the shares at each end", () => {
+		expect(
+			deprivationSummary("LS6 1", [0, 1, 2, 1, 0, 0, 0, 1, 0, 0], {
+				nation: "England",
+				areas: "neighbourhoods",
+				area: "neighbourhood",
+			}),
+		).toBe(
+			"The typical postcode in LS6 1 is in a decile 3 neighbourhood, where decile 1 is England's most deprived 10% of neighbourhoods. 60.0% of its postcodes are in the most deprived 30%, and 20.0% in the least deprived 30%.",
+		);
 	});
 });
