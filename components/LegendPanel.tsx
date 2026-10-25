@@ -19,8 +19,6 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { imdRange } from "@/lib/helpers/imdMeasures";
-import MeasureSelect from "./legend/MeasureSelect";
-import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -39,6 +37,7 @@ import {
 	FuelPovertyMeasurePanel,
 	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
+	HousingTenureMeasurePanel,
 	IncomeMeasurePanel,
 	IncomePeriodPanel,
 	ImdMeasurePanel,
@@ -273,10 +272,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "housingTenure" && (
-				<MeasureSelect
-					label="Housing tenure"
-					value={controls.displayOptions.housingTenure.measure}
-					options={TENURE_MEASURES}
+				<HousingTenureMeasurePanel
+					measure={controls.displayOptions.housingTenure.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("housingTenure", {
 							measure,
