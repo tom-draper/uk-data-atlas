@@ -56,7 +56,9 @@ export default async function PostcodeDistrictPage({
 			<main className="mx-auto max-w-[1480px] px-3 sm:px-4">
 				<Sheet>
 					<PostcodePlacePage
+						name={district}
 						district={district}
+						sectors={entry.sectors}
 						entry={entry}
 						source={source}
 					/>
