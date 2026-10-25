@@ -9,6 +9,7 @@ import {
 } from "@/lib/helpers/workplaceIncomeMeasures";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";
+import { formatCount } from "@/lib/helpers/formatCount";
 const aggregation = createBoundaryAggregationSpec(
 	"workplace-pay",
 	"localAuthority",
@@ -26,11 +27,16 @@ const card = (
 		WorkplacePaySummary
 	>({
 		heading: "Workplace pay",
+		background: "income",
+		layout: "centered",
+		accent: "#10b981",
 		coverage: "England",
 		source: "ONS. ASHE Table 7, workplace-based pay, 2025.",
 		unit: measure.startsWith("hourly") ? "per hour" : "per year",
 		format: (value) =>
-			`£${value.toLocaleString("en-GB", { maximumFractionDigits: measure.startsWith("hourly") ? 2 : 0 })}`,
+			measure.startsWith("hourly")
+				? `£${value.toFixed(2)}/hour`
+				: `£${formatCount(Math.round(value))}`,
 		maximum: measure.startsWith("hourly") ? 60 : 80000,
 		aggregate: (record) => record,
 		value: (record) => workplacePay(record, measure),
@@ -71,7 +77,7 @@ export const workplaceIncomeDefinition: ChartDatasetDefinition<WorkplaceIncomeDa
 						: 80000,
 				}),
 				format: (value, options) =>
-					`£${value.toFixed(options.workplaceIncome.measure.startsWith("hourly") ? 2 : 0)}${options.workplaceIncome.measure.startsWith("hourly") ? "/hour" : "/year"}`,
+					`£${value.toFixed(options.workplaceIncome.measure.startsWith("hourly") ? 2 : 0)}${options.workplaceIncome.measure.startsWith("hourly") ? "/hour" : ""}`,
 			},
 		},
 	};

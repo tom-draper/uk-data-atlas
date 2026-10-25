@@ -14,6 +14,12 @@ export interface ValueCardStats {
  */
 export interface ValueCardConfig {
 	heading: string;
+	/** Optional decorative background shared with the income chart. */
+	background?: "income";
+	/** Centres the headline value without a bar or secondary text. */
+	layout?: "centered";
+	/** Fixed card highlight colour; otherwise uses the map colour scale. */
+	accent?: string;
 	/** Shown in brackets after the heading; defaults to the dataset's year. */
 	period?: string;
 	/** Full heading for the tooltip when the visible one may be truncated. */
