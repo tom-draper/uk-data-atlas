@@ -8,6 +8,7 @@ import type { BoundaryType } from "./catalog";
 export type BoundaryLocationScope =
 	| { kind: "none" }
 	| { kind: "direct-membership" }
+	| { kind: "county-membership" }
 	| { kind: "parent-map"; mapping: "wardToLad" | "lsoaToLad" }
 	| { kind: "crosswalk"; crosswalk: "constituencyLad" }
 	| { kind: "itl-membership" }
@@ -65,7 +66,10 @@ export const BOUNDARY_CAPABILITIES = {
 	country: COUNTRY_PREFIX_ONLY,
 	localPlanningAuthority: COUNTRY_PREFIX_ONLY,
 	region: COUNTRY_PREFIX_ONLY,
-	countyAndUnitaryAuthority: COUNTRY_PREFIX_ONLY,
+	countyAndUnitaryAuthority: {
+		countryPrefixFilter: true,
+		locationScope: { kind: "county-membership" },
+	},
 	integratedCareBoard: COUNTRY_PREFIX_ONLY,
 	msoa: COUNTRY_PREFIX_ONLY,
 	communitySafetyPartnership: COUNTRY_PREFIX_ONLY,

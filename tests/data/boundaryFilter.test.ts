@@ -4,6 +4,42 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { BoundaryGeojson } from "@/lib/types";
 
 describe("properties-only boundary filtering", () => {
+	it("filters pupil absence boundaries to the selected location", () => {
+		const boundaries = {
+			type: "FeatureCollection",
+			features: [
+				{
+					type: "Feature",
+					properties: {
+						CTYUA25CD: "E08000003",
+						bbox: gazetteer.boundsOf("Greater Manchester"),
+					},
+					geometry: null,
+				},
+				{
+					type: "Feature",
+					properties: {
+						CTYUA25CD: "E10000020",
+						bbox: [0.5, 52.5, 1.5, 53],
+					},
+					geometry: null,
+				},
+			],
+		} as unknown as BoundaryGeojson;
+		expect(
+			filterFeatures(boundaries, {
+				location: "Greater Manchester",
+				type: "countyAndUnitaryAuthority",
+			}).features,
+		).toEqual([boundaries.features[0]]);
+		expect(
+			filterFeatures(boundaries, {
+				location: "United Kingdom",
+				type: "countyAndUnitaryAuthority",
+			}),
+		).toBe(boundaries);
+	});
+
 	it.each([
 		["England", "TLC31"],
 		["Wales", "TLL11"],
