@@ -209,7 +209,7 @@ export default function PlaceSearch({
 											{name}
 										</span>
 										<span className="ml-2 text-[13px] text-slate-500">
-											{placeKindName(kind)}
+											{placeKindName(kind, id)}
 											{parent ? `, ${parent}` : ""}
 										</span>
 									</span>

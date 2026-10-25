@@ -20,6 +20,7 @@ import { NATIONS, placeTrail, regionIn } from "@/components/places/trail";
 import { areaRequests } from "@/lib/places/api";
 import {
 	areaHref,
+	areaKindName,
 	countryOf,
 	geographyName,
 	geographyNoun,
@@ -52,9 +53,11 @@ async function loadAreaContext(profile: AreaProfile) {
 	const councilProfile = council
 		? await loadAreaProfile(council.code)
 		: undefined;
-	// A constituency's region is that of a council it sits in or overlaps.
+	// A constituency's or town's region is that of a council it sits in or
+	// overlaps.
 	const regionCouncil =
-		profile.geography === "constituency"
+		profile.geography === "constituency" ||
+		profile.geography === "majorTownAndCity"
 			? [
 					...profile.parents,
 					...profile.overlaps.flatMap((group) => group.areas ?? []),
@@ -67,8 +70,11 @@ async function loadAreaContext(profile: AreaProfile) {
 				? (await loadAreaProfile(regionCouncil.code))?.namedPlaces
 				: undefined),
 	);
+	// A town can span councils, so it takes only their region.
 	const namedPlaces =
-		profile.namedPlaces ?? councilProfile?.namedPlaces ?? [];
+		profile.namedPlaces ??
+		councilProfile?.namedPlaces ??
+		(profile.geography === "majorTownAndCity" && region ? [region] : []);
 	return { council, councilProfile, region, namedPlaces };
 }
 
@@ -177,7 +183,7 @@ function AreaFacts({
 		<Facts
 			items={[
 				{ label: "Code", value: profile.code },
-				{ label: "Kind", value: geographyName(profile.geography) },
+				{ label: "Kind", value: areaKindName(profile) },
 				{
 					label: "Area",
 					value:
@@ -359,6 +365,10 @@ function AreaWithin({
 				<p className="mt-3 text-[13px] text-slate-500">
 					A ward is placed in the constituency holding most of it, so
 					a ward on a constituency boundary is listed in one.
+					{profile.parents.some(
+						(parent) => parent.geography === "majorTownAndCity",
+					) &&
+						" It is placed in a major town or city when its centre falls inside the town's boundary."}
 				</p>
 			)}
 		</Section>
@@ -370,10 +380,14 @@ function AreaNeighbours({ profile }: { profile: AreaProfile }) {
 		<Section id="neighbours" title="Neighbours">
 			<p>
 				{profile.neighbours.length}{" "}
-				{geographyNoun(
-					profile.geography,
-					profile.neighbours.length !== 1,
-				)}{" "}
+				{profile.code.startsWith("W04")
+					? profile.neighbours.length === 1
+						? "community"
+						: "communities"
+					: geographyNoun(
+							profile.geography,
+							profile.neighbours.length !== 1,
+						)}{" "}
 				{profile.neighbours.length === 1 ? "shares" : "share"} a border
 				with {profile.name}, longest border first.
 			</p>
@@ -554,7 +568,7 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 						: []),
 					{ label: profile.name },
 				)}
-				eyebrow={`${geographyName(profile.geography)} · ${profile.code}`}
+				eyebrow={`${areaKindName(profile)} · ${profile.code}`}
 				title={profile.name}
 				lede={await areaSummary(profile)}
 				pill={
@@ -591,6 +605,15 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 				/>
 				{profile.children.length > 0 && (
 					<Section id="contains" title="What it contains">
+						{profile.geography === "majorTownAndCity" && (
+							<p className="mb-4">
+								The wards whose centre falls inside{" "}
+								{profile.name}&apos;s boundary. The boundary
+								follows the built-up area rather than council or
+								ward lines, so a ward on its edge can lie partly
+								outside it.
+							</p>
+						)}
 						<AreaGroups groups={profile.children} />
 					</Section>
 				)}

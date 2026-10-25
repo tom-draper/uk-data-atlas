@@ -31,7 +31,9 @@ export function areaRequests(
 	release: string,
 ): PlaceRequest[] {
 	const base = `/v1/areas/${profile.geography}/${release}/${profile.code}`;
-	return [
+	// A town's wards are placed by the Atlas, not by a crosswalk the API holds.
+	const town = profile.geography === "majorTownAndCity";
+	const requests: PlaceRequest[] = [
 		{ operationId: "getArea", label: "The area", path: base },
 		{
 			operationId: "getAreaGeometry",
@@ -64,6 +66,13 @@ export function areaRequests(
 			path: `${base}?include=capabilities`,
 		},
 	];
+	return town
+		? requests.filter(
+				(request) =>
+					request.operationId !== "getAreaChildren" &&
+					request.operationId !== "getAreaNeighbours",
+			)
+		: requests;
 }
 
 export function namedRequests(profile: NamedProfile): PlaceRequest[] {

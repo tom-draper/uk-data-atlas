@@ -23,6 +23,8 @@ export const GEOGRAPHY_COLOURS: Record<string, string> = {
 	localAuthority: "#2563eb",
 	constituency: "#dc2626",
 	ward: "#16a34a",
+	parish: "#9333ea",
+	majorTownAndCity: "#ea580c",
 };
 
 /**
