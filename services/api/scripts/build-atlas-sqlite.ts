@@ -1,3 +1,5 @@
+import { publishAtlasCache } from "../src/atlasCache";
+import { writeSqliteIndex, writeSqliteTables } from "../src/sqliteIndex";
 import {
 	locationProjectionTables,
 	type LocationProjectionInventory,
@@ -12,7 +14,6 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { writeSqliteIndex } from "../src/sqliteIndex";
 
 export const buildAtlasSqlite = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "data/build");
@@ -97,7 +98,6 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 	function* payloads() {
 		yield ["terrain-catalogue", payload];
 		yield ["dataset-manifest", manifestPayload];
-		yield ["location-projection-inventory", projectionPayload];
 		for (const entry of manifest.datasets) {
 			const content = readFileSync(
 				join(directory, "datasets", `${entry.output}.json`),
@@ -120,7 +120,6 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 		{
 			...areaTables(join(repositoryRoot, "services/api/public")),
 			...crosswalkTables(join(repositoryRoot, "services/api/public")),
-			...locationProjectionTables({ artifacts, parentArtifacts }),
 			...namedLocationTables(join(repositoryRoot, "services/api/public")),
 			payloads: {
 				columns: ["id TEXT NOT NULL", "payload TEXT NOT NULL"],
@@ -154,6 +153,16 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 			},
 		},
 	);
+	publishAtlasCache(repositoryRoot, "projections", (database) => {
+		const tables = locationProjectionTables({ artifacts, parentArtifacts });
+		for (const name of Object.keys(tables))
+			database.exec(`DROP TABLE IF EXISTS ${name}`);
+		writeSqliteTables(database, tables);
+		database
+			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
+			.run("location-projection-inventory", projectionPayload);
+	});
+
 	rmSync(join(publicDirectory, "location-projections.sqlite"), {
 		force: true,
 	});

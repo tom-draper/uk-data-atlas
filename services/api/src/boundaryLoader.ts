@@ -1,3 +1,4 @@
+import { requireAtlasCache } from "./atlasCache";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
@@ -163,15 +164,16 @@ export const readPlaceIndex = (
 	areaInventory: AreaInventory,
 	namedLocations: NamedLocationInventory,
 ): PlaceIndex => {
+	const path = requireAtlasCache(apiRoot, "place-index");
 	try {
 		return openPlaceIndexDatabase(
-			resolve(apiRoot, "../../data/build/atlas.sqlite"),
+			path,
 			areaInventory.contentHash,
 			namedLocations,
 		);
 	} catch (error) {
 		throw new Error(
-			`${(error as Error).message} Run pnpm --dir ../.. data:build --only place-index.`,
+			`${(error as Error).message} Run pnpm --dir services/api build:cache from the repository root.`,
 			{ cause: error },
 		);
 	}
@@ -247,14 +249,12 @@ export const readAreaSearchIndex = (
 	apiRoot: string,
 	areaInventory: AreaInventory,
 ): AreaSearchIndex => {
+	const path = requireAtlasCache(apiRoot, "area-search");
 	try {
-		return openAreaSearchIndexDatabase(
-			resolve(apiRoot, "../../data/build/atlas.sqlite"),
-			areaInventory.contentHash,
-		);
+		return openAreaSearchIndexDatabase(path, areaInventory.contentHash);
 	} catch (error) {
 		throw new Error(
-			`${(error as Error).message} Run pnpm --dir ../.. data:build --only area-search-index.`,
+			`${(error as Error).message} Run pnpm --dir services/api build:cache from the repository root.`,
 			{ cause: error },
 		);
 	}

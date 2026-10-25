@@ -1,3 +1,4 @@
+import { publishAtlasCache } from "../src/atlasCache";
 import { copyFileSync, renameSync, rmSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { join } from "node:path";
@@ -54,7 +55,7 @@ export function storePostcodeCounts(
 	root: string,
 	artifact: PostcodeCountsArtifact,
 ) {
-	return store(root, "postcode-counts", (database) => {
+	const path = publishAtlasCache(root, "postcode-counts", (database) => {
 		database.exec(
 			"DROP TABLE IF EXISTS postcode_counts; CREATE TABLE postcode_counts (geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, code TEXT NOT NULL, live INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser INTEGER NOT NULL, PRIMARY KEY (geography, boundaryRelease, code)) WITHOUT ROWID",
 		);
@@ -79,4 +80,8 @@ export function storePostcodeCounts(
 			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
 			.run("postcode-counts", JSON.stringify(metadata));
 	});
+	const publicRoot = join(root, "services/api/public");
+	for (const suffix of [".json", ".json.gz"])
+		rmSync(join(publicRoot, `postcode-counts${suffix}`), { force: true });
+	return path;
 }

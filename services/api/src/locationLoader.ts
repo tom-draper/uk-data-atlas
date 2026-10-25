@@ -1,7 +1,5 @@
 import { readSqliteNamedLocationInventory } from "./atlasNamedLocations";
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
-import { readAtlasPayload } from "../../../shared/atlasSqlite";
+import { readCachePayload, requireAtlasCache } from "./atlasCache";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import {
 	LocationProjectionDatabase,
@@ -19,10 +17,11 @@ export const readLocationProjectionInventory = (
 	namedLocations: NamedLocationInventory,
 	crosswalkInventory: CrosswalkInventory,
 ): LocationProjectionInventory => {
-	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const path = requireAtlasCache(apiRoot, "projections");
 	const inventory = JSON.parse(
-		readAtlasPayload(
-			resolve(apiRoot, "../.."),
+		readCachePayload(
+			apiRoot,
+			"projections",
 			"location-projection-inventory",
 		),
 	) as LocationProjectionInventory;
@@ -38,16 +37,11 @@ export const readLocationProjectionInventory = (
 	return inventory;
 };
 
-/** Projections share the atlas database with their location and crosswalk inputs. */
 export const createLocationProjectionStore = (
 	apiRoot: string,
 	inventory: LocationProjectionInventory,
 ) => {
-	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
-	if (!existsSync(path))
-		throw new Error(
-			`Missing ${path}. Run pnpm --dir ../.. data:build --only atlas-sqlite.`,
-		);
+	const path = requireAtlasCache(apiRoot, "projections");
 	return new LocationProjectionDatabase(path, inventory);
 };
 

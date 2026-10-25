@@ -1,6 +1,5 @@
-import { copyFileSync, renameSync, rmSync } from "node:fs";
-import { DatabaseSync } from "node:sqlite";
-import { writeSqliteTables } from "../src/sqliteIndex";
+import { rmSync } from "node:fs";
+import { publishCacheTables } from "../src/atlasCache";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -20,25 +19,11 @@ export const buildPlaceIndex = (repositoryRoot: string) => {
 		areaInventory.contentHash,
 		readBoundaryRegistry(apiRoot),
 	);
-	const outputPath = join(repositoryRoot, "data/build/atlas.sqlite");
-	const temporary = `${outputPath}.place-index.tmp`;
-	try {
-		copyFileSync(outputPath, temporary);
-		const database = new DatabaseSync(temporary);
-		try {
-			database.exec("BEGIN");
-			const tables = placeIndexTables(index);
-			for (const name of Object.keys(tables))
-				database.exec(`DROP TABLE IF EXISTS ${name}`);
-			writeSqliteTables(database, tables);
-			database.exec("COMMIT");
-		} finally {
-			database.close();
-		}
-		renameSync(temporary, outputPath);
-	} finally {
-		rmSync(temporary, { force: true });
-	}
+	const outputPath = publishCacheTables(
+		repositoryRoot,
+		"place-index",
+		placeIndexTables(index),
+	);
 	for (const filename of [
 		"place-index.sqlite",
 		"place-index.json",

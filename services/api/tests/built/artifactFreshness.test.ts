@@ -1,3 +1,4 @@
+import { requireAtlasCache, readCachePayload } from "../../src/atlasCache";
 import { readMeasureObservations } from "../../src/observationLoader";
 import { readDataCatalog } from "../../src/catalogueManifestLoader";
 import { DatabaseSync } from "node:sqlite";
@@ -32,7 +33,10 @@ const read = (path: string) => {
 				? "place_index_meta"
 				: "area_search_meta";
 		const database = new DatabaseSync(
-			join(apiRoot, "../../data/build/atlas.sqlite"),
+			requireAtlasCache(
+				apiRoot,
+				path === "place-index.json" ? "place-index" : "area-search",
+			),
 			{ readOnly: true },
 		);
 		try {
@@ -51,6 +55,14 @@ const read = (path: string) => {
 			database.close();
 		}
 	}
+	if (path === "location-projection-inventory.json")
+		return JSON.parse(
+			readCachePayload(
+				apiRoot,
+				"projections",
+				"location-projection-inventory",
+			),
+		);
 	return JSON.parse(
 		geographyCatalogues.includes(path.replace(/\.json$/, ""))
 			? readAtlasPayload(
@@ -102,6 +114,7 @@ const compiled = [
 	...geographyCatalogues.map((id) => `${id}.json`),
 	"place-index.json",
 	"area-search-index.json",
+	"location-projection-inventory.json",
 ]
 	.flatMap((file) =>
 		file.endsWith(".json")
