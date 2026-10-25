@@ -19,8 +19,6 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { imdRange } from "@/lib/helpers/imdMeasures";
-import MeasureSelect from "./legend/MeasureSelect";
-import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -43,6 +41,7 @@ import {
 	IncomePeriodPanel,
 	ImdMeasurePanel,
 	PlanningMeasurePanel,
+	WorkplacePayMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	MobileCoverageMeasurePanel,
 	PercentageRangePanel,
@@ -177,10 +176,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "workplaceIncome" && (
-				<MeasureSelect
-					label="Workplace pay"
-					value={controls.displayOptions.workplaceIncome.measure}
-					options={WORKPLACE_PAY_MEASURES}
+				<WorkplacePayMeasurePanel
+					measure={controls.displayOptions.workplaceIncome.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("workplaceIncome", {
 							measure,
