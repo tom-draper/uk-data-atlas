@@ -40,7 +40,8 @@ Join the views' measure ids to `observation_measures` for labels, units,
 aggregation rules and weights, concepts and uncertainty. Metadata absent from the
 catalogue is NULL. Join `observation_series.datasetId` to
 `observation_datasets.datasetId` for publisher, source URL, coverage and licence.
-These tables remain STRICT.
+These tables remain STRICT. An index on `observations (areaId, seriesId, periodId)`
+supports queries across measures for one area.
 
 Compatibility checks, analysis-geography validation, the validation report,
 and JSON, CSV, and Parquet exports read those

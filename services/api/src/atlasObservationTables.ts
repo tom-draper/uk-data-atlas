@@ -368,6 +368,7 @@ export const observationTables = (
 			})(),
 		},
 		observations: {
+			indexes: [["areaId", "seriesId", "periodId"]],
 			columns: [
 				...keyColumns,
 				"value REAL",
