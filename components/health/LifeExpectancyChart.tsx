@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import {
 	ActiveViz,
 	AggregatedLifeExpectancyData,
@@ -130,7 +131,17 @@ export default function LifeExpectancyChart({
 }: LifeExpectancyChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const dataset = availableDatasets?.[datasetId];
+	const [rememberedKind, setRememberedKind] = useState(datasetId);
+	const selectedDatasetId =
+		activeDataset?.type === "lifeExpectancy"
+			? activeDataset.id
+			: rememberedKind;
+	useEffect(() => {
+		if (activeDataset?.type === "lifeExpectancy") {
+			setRememberedKind(activeDataset.id);
+		}
+	}, [activeDataset?.type, activeDataset?.id]);
+	const dataset = availableDatasets?.[selectedDatasetId];
 
 	const leStats = dataset
 		? computeLeStats(
@@ -138,7 +149,7 @@ export default function LifeExpectancyChart({
 				aggregatedData,
 				selectedArea,
 				codeMapper,
-				datasetId,
+				selectedDatasetId,
 				chartsLoading,
 			)
 		: null;
@@ -181,7 +192,7 @@ export default function LifeExpectancyChart({
 
 	return (
 		<ChartCard
-			heading={`${dataset.label} [${dataset.dataPeriod}]`}
+			heading={`Life Expectancy [${dataset.dataPeriod}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, leStats !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE

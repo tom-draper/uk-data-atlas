@@ -24,23 +24,10 @@ const le: ChartDefinition<LifeExpectancyDataset> = {
 	calculateStats,
 	year: 2024,
 };
-const hle: ChartDefinition<LifeExpectancyDataset> = {
-	group: "Health",
-	key: "health-healthyLifeExpectancy",
-	label: "Healthy Life Expectancy [2022-2024]",
-	defaultVisible: false,
-	componentPath: "@/components/health/LifeExpectancyChart",
-	datasetId: "hle",
-	view: "healthy-life-expectancy",
-	keyBy: "id",
-	calculateStats,
-	year: 2024,
-};
 export const lifeExpectancyDefinition: ChartDatasetDefinition<LifeExpectancyDataset> =
 	{
 		...lifeExpectancyDatasetDefinition,
 		chart: le,
-		charts: [le, hle],
 		map: {
 			valueFor: (dataset, code, mapOptions) => {
 				const area = dataset.data[code];

@@ -237,7 +237,6 @@ export const CHART_PRESENTATIONS = {
 	"economics-income": Chart14Presentation,
 	"economics-jobs": Chart0Presentation,
 	"health-lifeExpectancy": Chart15Presentation,
-	"health-healthyLifeExpectancy": Chart15Presentation,
 	"localElection-2025": Chart16Presentation,
 	"localElection-2024": Chart16Presentation,
 	"localElection-2023": Chart16Presentation,
