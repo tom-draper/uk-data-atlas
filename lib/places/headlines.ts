@@ -5,7 +5,6 @@ import {
 	formatColumnValue,
 	formatRankedValue,
 	LEVEL_NOUNS,
-	rankedValueLabel,
 	type MapRanking,
 	type RankedArea,
 } from "@/lib/atlas/rankings";
@@ -19,9 +18,12 @@ import type { PlaceGeography } from "@/lib/places/profile";
 
 type HeadlineSpec = {
 	map: string;
+	/** A short name for the measure. */
+	label: string;
+	/** What exactly the value counts, in a line. */
+	about: string;
 	/** Rank by this extra column rather than the map's own value. */
 	column?: number;
-	label?: string;
 	/** Where the map's own format reads oddly out of context. */
 	format?: (value: number) => string;
 	/** How the two ends of the ranking read, "highest" and "lowest" by default. */
@@ -31,39 +33,97 @@ type HeadlineSpec = {
 const oneDecimal = (unit: string) => (value: number) =>
 	`${value.toFixed(1)}${unit}`;
 
+const deprivation = (map: string, nation: string, areas: string) => ({
+	map,
+	label: "Deprivation",
+	about: `Share of its ${areas} in ${nation}'s most deprived 10%`,
+});
+
 const HEADLINES: Readonly<Record<PlaceGeography, readonly HeadlineSpec[]>> = {
 	localAuthority: [
-		{ map: "income" },
+		{
+			map: "income",
+			label: "Median pay",
+			about: "Annual pay of residents in full-time work",
+		},
 		{
 			map: "housing-affordability",
-			label: "House prices to earnings",
-			format: oneDecimal(" times"),
+			label: "Housing affordability",
+			about: "Median house price as a multiple of median earnings",
+			format: oneDecimal("×"),
 		},
 		{
 			map: "life-expectancy",
-			label: "Life expectancy at birth",
+			label: "Life expectancy",
+			about: "At birth, the average of men and women",
 			format: oneDecimal(" years"),
 		},
-		{ map: "imd" },
-		{ map: "wimd" },
-		{ map: "simd" },
-		{ map: "nimdm" },
-		{ map: "child-poverty" },
-		{ map: "claimant-count" },
-		{ map: "council-tax" },
-		{ map: "crime", column: 0, label: "Crimes per 1,000 residents" },
-		{ map: "broadband", format: (value) => `${Math.round(value)}%` },
-		{ map: "qualification" },
-		{ map: "ghg-emissions" },
-		{ map: "brexit", label: "Voted Leave in 2016" },
+		deprivation("imd", "England", "neighbourhoods"),
+		deprivation("wimd", "Wales", "neighbourhoods"),
+		deprivation("simd", "Scotland", "data zones"),
+		deprivation("nimdm", "Northern Ireland", "neighbourhoods"),
+		{
+			map: "child-poverty",
+			label: "Child poverty",
+			about: "Children under 16 in relative low-income families",
+		},
+		{
+			map: "claimant-count",
+			label: "Claimant rate",
+			about: "Residents aged 16 to 64 claiming out-of-work benefits",
+		},
+		{
+			map: "council-tax",
+			label: "Council tax",
+			about: "Average Band D bill for the year",
+		},
+		{
+			map: "crime",
+			column: 0,
+			label: "Crime",
+			about: "Police-recorded crimes per 1,000 residents",
+		},
+		{
+			map: "broadband",
+			label: "Full fibre",
+			about: "Premises that can get full-fibre broadband",
+			format: (value) => `${Math.round(value)}%`,
+		},
+		{
+			map: "qualification",
+			label: "Degree-educated",
+			about: "Residents with a degree-level qualification or above",
+		},
+		{
+			map: "ghg-emissions",
+			label: "Emissions",
+			about: "Greenhouse gases per resident, in CO2e",
+		},
+		{
+			map: "brexit",
+			label: "EU referendum",
+			about: "Share voting Leave",
+		},
 	],
-	ward: [{ map: "house-price" }],
+	ward: [
+		{
+			map: "house-price",
+			label: "House prices",
+			about: "Median price paid for homes sold",
+		},
+	],
 	constituency: [
 		{
 			map: "general-election",
+			label: "General election",
+			about: "The winning party",
 			ends: ["largest majority", "smallest majority"],
 		},
-		{ map: "brexit-constituency", label: "Estimated Leave vote in 2016" },
+		{
+			map: "brexit-constituency",
+			label: "EU referendum",
+			about: "Estimated share voting Leave",
+		},
 	],
 };
 
@@ -74,13 +134,12 @@ const DEFAULT_ENDS = ["highest", "lowest"] as const;
 export type PlaceHeadline = {
 	map: string;
 	label: string;
+	about: string;
 	/** How the ranking's two ends read, as `rankPhrase` takes them. */
 	ends: readonly [string, string];
 	year: number;
 	dataset: string;
 	value: string;
-	/** Supporting figures, such as an election's majority and turnout. */
-	detail?: string;
 	/** Among every area the map ranks. */
 	national: Rank & { noun: string; scope: string };
 	/** Among the wards of the council a ward sits in. */
@@ -182,7 +241,7 @@ function electionDetail(ranking: MapRanking, area: RankedArea) {
 		found ? area.extra?.[found.index] : undefined;
 	const parts = [
 		numeric(cell(majority))
-			? `Majority of ${formatColumnValue(majority!.column, cell(majority))} (${area.value.toFixed(1)}% of votes)`
+			? `Majority of ${formatColumnValue(majority!.column, cell(majority))} (${area.value.toFixed(1)}%)`
 			: undefined,
 		numeric(cell(turnout))
 			? `turnout ${formatColumnValue(turnout!.column, cell(turnout))}`
@@ -191,7 +250,7 @@ function electionDetail(ranking: MapRanking, area: RankedArea) {
 	return {
 		value:
 			typeof cell(winner) === "string" ? String(cell(winner)) : undefined,
-		detail: parts.length > 0 ? `${parts.join(", ")}.` : undefined,
+		detail: parts.length > 0 ? parts.join(", ") : undefined,
 	};
 }
 
@@ -228,11 +287,8 @@ async function headline(
 
 	const result: PlaceHeadline = {
 		map: map.slug,
-		label:
-			spec.label ??
-			(election
-				? `${map.periods[0]} general election`
-				: rankedValueLabel(map)),
+		label: spec.label,
+		about: election?.detail ?? spec.about,
 		ends: spec.ends ?? DEFAULT_ENDS,
 		year: map.periods[0]!,
 		dataset: map.dataset,
@@ -251,7 +307,6 @@ async function headline(
 			href: nationalHref(map, code, scope),
 		},
 	};
-	if (election?.detail) result.detail = election.detail;
 
 	if (ranking.level === "ward") {
 		const local = ranked(
