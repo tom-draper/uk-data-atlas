@@ -1,0 +1,506 @@
+{
+	"postcodeShardsCompared": 3044,
+	"areaShardsCompared": 3044,
+	"postcodeMismatches": 0,
+	"areaMismatches": 0,
+	"benchmark": {
+		"district": "SE1",
+		"postcodes": 3682,
+		"areaShard": {
+			"before": {
+				"medianMs": 2.4971600000135368,
+				"samplesMs": [
+					2.340339000002132, 2.4083149999933084, 2.4509200000029523,
+					2.471287000007578, 2.4971600000135368, 2.5333380000083707,
+					2.622371999997995, 2.757112999999663, 2.874692999990657
+				]
+			},
+			"after": {
+				"medianMs": 57.830646999995224,
+				"samplesMs": [
+					54.80228899999929, 55.87003900000127, 56.14358399999037,
+					56.55987699999241, 57.830646999995224, 57.99611600000935,
+					58.63331799999287, 61.31730999999854, 61.418928999992204
+				]
+			}
+		},
+		"postcodeLookup": {
+			"before": {
+				"medianMs": 0.349023999995552,
+				"samplesMs": [
+					0.3369840000086697, 0.33730800000193994,
+					0.33771799999522045, 0.34571900000446476, 0.349023999995552,
+					0.3747239999938756, 0.3790259999950649, 0.38293700000212993,
+					0.3946520000026794
+				]
+			},
+			"after": {
+				"medianMs": 0.5059130000008736,
+				"samplesMs": [
+					0.49881099999765866, 0.49968300000182353,
+					0.5033789999870351, 0.5042760000069393, 0.5059130000008736,
+					0.5064410000049975, 0.5067759999947157, 0.5097010000026785,
+					0.5115510000032373
+				]
+			}
+		}
+	},
+	"before": {
+		"fileBytes": 787324928,
+		"objects": [
+			{
+				"name": "area_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "area_releases",
+				"bytes": 24576
+			},
+			{
+				"name": "area_search_codes",
+				"bytes": 17575936
+			},
+			{
+				"name": "area_search_meta",
+				"bytes": 12288
+			},
+			{
+				"name": "area_search_terms",
+				"bytes": 13840384
+			},
+			{
+				"name": "area_search_title_terms",
+				"bytes": 4096
+			},
+			{
+				"name": "areas",
+				"bytes": 35786752
+			},
+			{
+				"name": "crosswalk_coverage",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_field_sets",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_label_exceptions",
+				"bytes": 208896
+			},
+			{
+				"name": "crosswalk_sources",
+				"bytes": 34045952
+			},
+			{
+				"name": "crosswalk_sources_0",
+				"bytes": 26189824
+			},
+			{
+				"name": "crosswalk_targets",
+				"bytes": 90783744
+			},
+			{
+				"name": "crosswalk_targets_0",
+				"bytes": 27541504
+			},
+			{
+				"name": "crosswalks",
+				"bytes": 1417216
+			},
+			{
+				"name": "crosswalks_0",
+				"bytes": 28672
+			},
+			{
+				"name": "datasets",
+				"bytes": 81920
+			},
+			{
+				"name": "location_projection_dictionaries",
+				"bytes": 2629632
+			},
+			{
+				"name": "location_projection_members",
+				"bytes": 29990912
+			},
+			{
+				"name": "location_projection_parents",
+				"bytes": 348160
+			},
+			{
+				"name": "meta",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_assertions",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_assertions_0",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_geometries",
+				"bytes": 26931200
+			},
+			{
+				"name": "named_location_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_members",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_members_0",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_partial_members",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_partial_members_0",
+				"bytes": 4096
+			},
+			{
+				"name": "named_locations",
+				"bytes": 114688
+			},
+			{
+				"name": "named_locations_0",
+				"bytes": 16384
+			},
+			{
+				"name": "named_locations_1",
+				"bytes": 16384
+			},
+			{
+				"name": "observation_artifacts",
+				"bytes": 78589952
+			},
+			{
+				"name": "observation_catalogue",
+				"bytes": 4096
+			},
+			{
+				"name": "payloads",
+				"bytes": 75292672
+			},
+			{
+				"name": "place_index_codes",
+				"bytes": 6926336
+			},
+			{
+				"name": "place_index_meta",
+				"bytes": 8192
+			},
+			{
+				"name": "place_index_names",
+				"bytes": 7671808
+			},
+			{
+				"name": "place_index_places",
+				"bytes": 11399168
+			},
+			{
+				"name": "postcode_area_shards",
+				"bytes": 118419456
+			},
+			{
+				"name": "postcode_counts",
+				"bytes": 7413760
+			},
+			{
+				"name": "postcodes",
+				"bytes": 103804928
+			},
+			{
+				"name": "sqlite_autoindex_area_releases_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_areas_1",
+				"bytes": 19509248
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_coverage_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_field_sets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_label_exceptions_1",
+				"bytes": 208896
+			},
+			{
+				"name": "sqlite_autoindex_crosswalks_1",
+				"bytes": 20480
+			},
+			{
+				"name": "sqlite_autoindex_datasets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_named_locations_1",
+				"bytes": 12288
+			},
+			{
+				"name": "sqlite_autoindex_observation_artifacts_1",
+				"bytes": 24576
+			},
+			{
+				"name": "sqlite_autoindex_postcodes_1",
+				"bytes": 50028544
+			},
+			{
+				"name": "sqlite_schema",
+				"bytes": 16384
+			}
+		]
+	},
+	"after": {
+		"fileBytes": 1145368576,
+		"objects": [
+			{
+				"name": "area_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "area_releases",
+				"bytes": 24576
+			},
+			{
+				"name": "area_search_codes",
+				"bytes": 17575936
+			},
+			{
+				"name": "area_search_meta",
+				"bytes": 12288
+			},
+			{
+				"name": "area_search_terms",
+				"bytes": 13840384
+			},
+			{
+				"name": "area_search_title_terms",
+				"bytes": 4096
+			},
+			{
+				"name": "areas",
+				"bytes": 36614144
+			},
+			{
+				"name": "crosswalk_coverage",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_field_sets",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "crosswalk_label_exceptions",
+				"bytes": 208896
+			},
+			{
+				"name": "crosswalk_sources",
+				"bytes": 34045952
+			},
+			{
+				"name": "crosswalk_sources_0",
+				"bytes": 26189824
+			},
+			{
+				"name": "crosswalk_targets",
+				"bytes": 90783744
+			},
+			{
+				"name": "crosswalk_targets_0",
+				"bytes": 27541504
+			},
+			{
+				"name": "crosswalks",
+				"bytes": 1417216
+			},
+			{
+				"name": "crosswalks_0",
+				"bytes": 28672
+			},
+			{
+				"name": "datasets",
+				"bytes": 81920
+			},
+			{
+				"name": "location_projection_dictionaries",
+				"bytes": 2629632
+			},
+			{
+				"name": "location_projection_members",
+				"bytes": 29990912
+			},
+			{
+				"name": "location_projection_parents",
+				"bytes": 348160
+			},
+			{
+				"name": "meta",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_assertions",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_assertions_0",
+				"bytes": 94208
+			},
+			{
+				"name": "named_location_geometries",
+				"bytes": 26931200
+			},
+			{
+				"name": "named_location_inventory",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_members",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_members_0",
+				"bytes": 73728
+			},
+			{
+				"name": "named_location_partial_members",
+				"bytes": 4096
+			},
+			{
+				"name": "named_location_partial_members_0",
+				"bytes": 4096
+			},
+			{
+				"name": "named_locations",
+				"bytes": 114688
+			},
+			{
+				"name": "named_locations_0",
+				"bytes": 16384
+			},
+			{
+				"name": "named_locations_1",
+				"bytes": 16384
+			},
+			{
+				"name": "observation_artifacts",
+				"bytes": 78589952
+			},
+			{
+				"name": "observation_catalogue",
+				"bytes": 4096
+			},
+			{
+				"name": "payloads",
+				"bytes": 75292672
+			},
+			{
+				"name": "place_index_codes",
+				"bytes": 6926336
+			},
+			{
+				"name": "place_index_meta",
+				"bytes": 8192
+			},
+			{
+				"name": "place_index_names",
+				"bytes": 7671808
+			},
+			{
+				"name": "place_index_places",
+				"bytes": 11399168
+			},
+			{
+				"name": "postcode_area_codes",
+				"bytes": 6975488
+			},
+			{
+				"name": "postcode_area_columns",
+				"bytes": 1196032
+			},
+			{
+				"name": "postcode_area_matches",
+				"bytes": 454656
+			},
+			{
+				"name": "postcode_area_releases",
+				"bytes": 4096
+			},
+			{
+				"name": "postcode_counts",
+				"bytes": 7413760
+			},
+			{
+				"name": "postcodes",
+				"bytes": 620154880
+			},
+			{
+				"name": "sqlite_autoindex_area_releases_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_areas_1",
+				"bytes": 20168704
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_coverage_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_field_sets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_crosswalk_label_exceptions_1",
+				"bytes": 208896
+			},
+			{
+				"name": "sqlite_autoindex_crosswalks_1",
+				"bytes": 20480
+			},
+			{
+				"name": "sqlite_autoindex_datasets_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_named_locations_1",
+				"bytes": 12288
+			},
+			{
+				"name": "sqlite_autoindex_observation_artifacts_1",
+				"bytes": 24576
+			},
+			{
+				"name": "sqlite_autoindex_postcode_area_releases_1",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_autoindex_postcode_area_releases_2",
+				"bytes": 4096
+			},
+			{
+				"name": "sqlite_schema",
+				"bytes": 28672
+			}
+		]
+	}
+}
