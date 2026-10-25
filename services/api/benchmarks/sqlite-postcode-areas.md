@@ -62,18 +62,16 @@ latencies. The API retains its existing bounded district caches.
 The old area reader inflates the stored blob. The new reader reconstructs the
 JSON from relational rows and verifies its SHA-256 before returning it.
 
-## Reproduce the conversion and comparison
+## Reproduce the comparison
 
-After preparing a parent-schema baseline and retaining a copy, run these from
-the repository root:
+After retaining a parent-schema baseline and rebuilding the database with the
+current atlas and postcode builders, run this from the repository root:
 
 ```sh
-NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/normalize-postcode-areas.ts
 NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/compare-postcode-sqlite.ts data/build/atlas-postcode-before.sqlite services/api services/api/benchmarks/sqlite-postcode-areas.json
 ```
 
-The conversion exits nonzero if a reconstructed area shard differs. The comparison
-requires nonempty inventories and exits nonzero on a byte mismatch, hash mismatch,
+The comparison requires nonempty inventories and exits nonzero on a byte mismatch, hash mismatch,
 changed manifest payload or foreign-key violation. The JSON result must report
 3,044 comparisons of each shard type and zero mismatches for this dataset.
 
