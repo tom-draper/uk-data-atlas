@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readAtlasPayload } from "../shared/atlasSqlite";
+import { readCachePayload } from "../services/api/src/atlasCache";
 import { createLocationProjectionStore } from "../services/api/src/locationLoader";
 import type {
 	LocationProjectionInventory,
@@ -17,7 +17,16 @@ const text = readFileSync(
 	join(projectionDirectory, "location-projection-inventory.json"),
 	"utf8",
 );
-assert.equal(readAtlasPayload(root, "location-projection-inventory"), text);
+assert.deepEqual(
+	JSON.parse(
+		readCachePayload(
+			apiRoot,
+			"projections",
+			"location-projection-inventory",
+		),
+	),
+	JSON.parse(text),
+);
 const inventory: LocationProjectionInventory = JSON.parse(text);
 const database = createLocationProjectionStore(apiRoot, inventory);
 let members = 0;
