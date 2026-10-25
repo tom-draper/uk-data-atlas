@@ -2,6 +2,7 @@
 
 import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
+import { IncomeCardBackground } from "@/components/economics/income/IncomeCardBackground";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
@@ -99,7 +100,12 @@ export default function ValueCard({
 					</ChartCardHeaderNote>
 				)
 			}
-			accent={resolved ? color : null}
+			accent={card.accent ?? (resolved ? color : null)}
+			background={
+				card.background === "income" ? (
+					<IncomeCardBackground income={value ?? null} />
+				) : undefined
+			}
 			isActive={isActive}
 			title={card.source}
 			onClick={() =>
@@ -110,21 +116,37 @@ export default function ValueCard({
 				})
 			}
 		>
-			<ChartCardValueBar
-				hasData={value !== undefined}
-				value={value !== undefined ? formatValue(card, value) : "—"}
-				unit={card.unit}
-				secondary={resolved?.stats.secondary}
-				barWidth={
-					value !== undefined
-						? Math.max(
-								0,
-								Math.min(100, (value / card.maximum) * 100),
-							)
-						: 0
-				}
-				barColor={color ?? undefined}
-			/>
+			{card.layout === "centered" ? (
+				<div className="relative flex justify-center items-center flex-1 z-10">
+					<div
+						className={
+							value !== undefined
+								? `text-xl font-bold bg-transparent px-2 rounded ${isDark ? "text-gray-100" : "text-gray-800"}`
+								: `text-xs pt-0.5 ${isDark ? "text-gray-400" : "text-gray-400/80"}`
+						}
+					>
+						{value !== undefined
+							? formatValue(card, value)
+							: "No data available"}
+					</div>
+				</div>
+			) : (
+				<ChartCardValueBar
+					hasData={value !== undefined}
+					value={value !== undefined ? formatValue(card, value) : "—"}
+					unit={card.unit}
+					secondary={resolved?.stats.secondary}
+					barWidth={
+						value !== undefined
+							? Math.max(
+									0,
+									Math.min(100, (value / card.maximum) * 100),
+								)
+							: 0
+					}
+					barColor={color ?? undefined}
+				/>
+			)}
 		</ChartCard>
 	);
 }
