@@ -7,6 +7,7 @@ import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
+import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
 import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
 
@@ -102,6 +103,29 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 				})}
 			</div>
 		</div>
+	);
+}
+
+const IMD_SEGMENTS = IMD_MEASURES.map(
+	({ value, label }) => [value, label] as const,
+);
+
+type ImdMeasure = (typeof IMD_MEASURES)[number]["value"];
+
+export function ImdMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: ImdMeasure;
+	onChange: (measure: ImdMeasure) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={IMD_SEGMENTS}
+			onChange={onChange}
+			vertical
+		/>
 	);
 }
 
