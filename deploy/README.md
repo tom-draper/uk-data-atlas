@@ -220,3 +220,12 @@ Deploy from the built checkout. When transferring a built tree, preserve hard li
 with `rsync -aH` or recreate them with
 `node --import tsx scripts/link-boundary-tiles.ts` on the destination before starting
 Next.js. Re-run that command after replacing archives independently of an app build. Source release publishing still packages only `data/source/`.
+
+### Local SQLite cache
+
+Deploy only `data/build/atlas.sqlite`. Run `pnpm --dir services/api build:cache`
+from the repository root before starting the API. Do not publish or ship
+`atlas-cache.sqlite`. The command rebuilds search, location projections and
+postcode counts from canonical SQLite without precompile. Compose mounts the
+canonical file read-only and uses a writable volume for the regenerated cache;
+the container runs the cache builder before starting its workers.

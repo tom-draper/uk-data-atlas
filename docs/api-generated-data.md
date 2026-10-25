@@ -4,6 +4,46 @@ This audit follows the postcode and API observation migrations to
 `data/build/atlas.sqlite`. It describes consumers in the source, rather than
 assuming that every file left by an older local build is still required.
 
+## Canonical SQLite and local API cache
+
+`data/build/atlas.sqlite` is the distributed database. It contains area identities,
+crosswalks, named locations and their geometry, observation rows and dictionaries,
+postcode records and area columns, source dataset payloads, and public catalogue
+metadata. Source dataset payloads retain fields absent from observation contracts;
+they are not interchangeable copies of those contracts.
+
+`data/build/atlas-cache.sqlite` contains `area_search_*`, `place_index_*`,
+`location_projection_*`, `postcode_counts`, and the projection and counts metadata
+in its own `payloads` table. These are API accelerators rebuilt from canonical
+SQLite data. The base SQLite build writes the projection cache, and the search
+and postcode-count stages publish their own cache components. Publishers replace
+the cache atomically and leave the canonical file unchanged.
+
+After downloading or replacing the canonical database, run from the repository
+root:
+
+```sh
+pnpm --dir services/api build:cache
+```
+
+This command reads only the canonical database and runs no precompile stages.
+Each component stores a SHA-256 generation over its canonical input inventory
+hashes or payload bytes, the cache compiler version, and name-normalisation rules.
+Search uses the area inventory; place search also uses named locations and the
+boundary registry; projections use areas, named locations and crosswalks; counts
+use the postcode and postcode-area inventories. Readers reject missing or stale
+components with the command above. Unrelated observation updates do not invalidate
+search. Compiler changes must increment `CACHE_VERSION` in `src/atlasCache.ts`.
+
+Publish and download only `atlas.sqlite`. Never archive, release, or copy
+`atlas-cache.sqlite` into an image or distribution. The source-data release script
+already archives only `data/source`, and `.dockerignore` excludes all `data`.
+Compose mounts the canonical file read-only inside a writable cache volume. The
+container rebuilds its cache once before starting API workers. Outside Docker,
+`data/build` must be writable by the account running the cache command.
+
+The website continues to use its own data readers and never calls the API.
+
 ## Runtime files
 
 | Files in `services/api/public`                  | Reader                                    | Why they remain                                                          |
