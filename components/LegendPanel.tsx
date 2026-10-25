@@ -19,8 +19,6 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { imdRange } from "@/lib/helpers/imdMeasures";
-import MeasureSelect from "./legend/MeasureSelect";
-import { PLANNING_MEASURES } from "@/lib/helpers/planningApplicationsMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -42,6 +40,7 @@ import {
 	IncomeMeasurePanel,
 	IncomePeriodPanel,
 	ImdMeasurePanel,
+	PlanningMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	MobileCoverageMeasurePanel,
 	PercentageRangePanel,
@@ -176,10 +175,10 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "planningApplications" && (
-				<MeasureSelect
-					label="Planning applications"
-					value={controls.displayOptions.planningApplications.measure}
-					options={PLANNING_MEASURES}
+				<PlanningMeasurePanel
+					measure={
+						controls.displayOptions.planningApplications.measure
+					}
 					onChange={(measure) =>
 						onMapOptionsChange("planningApplications", {
 							measure,

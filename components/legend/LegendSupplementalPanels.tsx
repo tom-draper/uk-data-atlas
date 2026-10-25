@@ -106,6 +106,30 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 	);
 }
 
+const PLANNING_SEGMENTS = [
+	["received", "Received"],
+	["decided", "Decided"],
+	["withdrawn", "Withdrawn"],
+] as const;
+
+type PlanningMeasure = (typeof PLANNING_SEGMENTS)[number][0];
+
+export function PlanningMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: PlanningMeasure;
+	onChange: (measure: PlanningMeasure) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={PLANNING_SEGMENTS}
+			onChange={onChange}
+		/>
+	);
+}
+
 const IMD_SEGMENTS = IMD_MEASURES.map(
 	({ value, label }) => [value, label] as const,
 );
