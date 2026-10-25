@@ -154,7 +154,7 @@ export default function IncomeChart({
 
 	return (
 		<ChartCard
-			heading={`${selectedArea ? "" : "Average authority "}${measure === "mean" ? "mean" : "median"} ${period} pay [${dataset.year}]`}
+			heading={`${measure === "mean" ? "Mean" : "Median"} Income [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, income !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
