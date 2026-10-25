@@ -37,6 +37,7 @@ import {
 	type Rank,
 } from "@/lib/places/headlines";
 import { loadAreaProfile, loadPlaceIndex } from "@/lib/places/load";
+import { areaPostcodeDistricts } from "@/lib/places/postcodes";
 import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
 import { areaSummary } from "@/lib/places/summary";
 
@@ -463,6 +464,43 @@ function AreaApi({
 	);
 }
 
+/** The postcode districts with live postcodes in the area. */
+function AreaPostcodes({
+	profile,
+	districts,
+}: {
+	profile: AreaProfile;
+	districts: [district: string, live: number][];
+}) {
+	const live = districts.reduce((total, [, count]) => total + count, 0);
+	return (
+		<Section id="postcodes" title="Postcodes">
+			<p>
+				{profile.name} has {live.toLocaleString("en-GB")} live{" "}
+				{live === 1 ? "postcode" : "postcodes"} in{" "}
+				{districts.length === 1
+					? "one postcode district"
+					: `${districts.length} postcode districts`}
+				, counting each postcode by its centre.
+			</p>
+			<p className="mt-3">
+				{districts.map(([district, count], at) => (
+					<span key={district}>
+						{at > 0 && ", "}
+						<Link
+							href={`/places/postcodes/${district}`}
+							className={linkClass}
+							title={`${count.toLocaleString("en-GB")} ${count === 1 ? "postcode" : "postcodes"} in ${profile.name}`}
+						>
+							{district}
+						</Link>
+					</span>
+				))}
+			</p>
+		</Section>
+	);
+}
+
 /** A ward's or council's local election results, where the data has them. */
 async function loadElections(profile: AreaProfile) {
 	if (profile.geography === "ward") {
@@ -491,11 +529,13 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 		facts,
 		headlines,
 		elections,
+		postcodeDistricts,
 	] = await Promise.all([
 		loadAreaContext(profile),
 		placeFacts(profile.code),
 		placeHeadlines(profile.code, profile.geography),
 		loadElections(profile),
+		profile.current ? areaPostcodeDistricts(profile.code) : [],
 	]);
 
 	return (
@@ -538,6 +578,12 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 					<AreaFigures profile={profile} headlines={headlines} />
 				)}
 				{elections}
+				{postcodeDistricts.length > 0 && (
+					<AreaPostcodes
+						profile={profile}
+						districts={postcodeDistricts}
+					/>
+				)}
 				<AreaWithin
 					profile={profile}
 					council={council}
