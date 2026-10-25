@@ -188,8 +188,8 @@ later stage keys are computed. `scripts/build-data-cache.mjs` stores the cache i
 
 The `atlas-sqlite` stage writes the terrain catalogue to `data/build/atlas.sqlite`,
 alongside catalogue datasets, relational areas, crosswalk source/target rows and
-named locations with membership tables and lazy geometry, and indexed location
-projections. The API reads these
+named locations with membership tables and lazy geometry. Indexed location
+projections live in the local `atlas-cache.sqlite`. The API reads these
 directly. Their JSON outputs remain build and release intermediates. Named
 locations compile from area JSON before the shared SQLite database is written.
 Other API loaders still read their JSON outputs.
@@ -232,3 +232,8 @@ build id for provenance and use download ETags or export lists for syncing.
 The derived-boundary and source-inventory JSON summaries had no readers beyond
 the old fingerprint builder. Their compilers no longer write them; derived
 geometries and the runtime geography catalogue remain.
+
+The API stores rebuildable search, location projection and postcode-count tables
+in the local `data/build/atlas-cache.sqlite`. This file is excluded from releases
+and images. Consumers run `pnpm --dir services/api build:cache` against the
+canonical database after downloading it. See [generated API data](docs/api-generated-data.md).

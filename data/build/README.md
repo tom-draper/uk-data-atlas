@@ -46,6 +46,14 @@ still has the recorded size and mtime (or belongs to the pinned data release),
 and the payload still matches `compiled`. Otherwise the dataset is compiled
 again. `pnpm data:build --only datasets` builds this stage and its prerequisites.
 
+## atlas-cache.sqlite
+
+This local API cache is never distributed. Search indexes, location projections
+and postcode counts live here. After replacing `atlas.sqlite`, regenerate it with
+`pnpm --dir services/api build:cache` from the repository root. This reads only
+the canonical database, without precompile. Missing or stale components fail with
+that command. See [generated API data](../../docs/api-generated-data.md).
+
 ## atlas.sqlite
 
 The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, `crosswalk-inventory`, `named-locations`, and `location-projections` and writes this database
@@ -259,23 +267,22 @@ Each row stores one JSON projection compressed with its shard's dictionary.
 `location_projection_dictionaries` has composite primary key `(kind, crosswalkId)`
 and non-null `dictionary BLOB`. All three tables use `WITHOUT ROWID`.
 
-The `location-projection-inventory` payload preserves the inventory's exact JSON
-bytes and provenance hashes. Runtime inventory and projection reads use only
-`atlas.sqlite`. Lookups still decompress one projection at a time and cache only
+The cache `location-projection-inventory` payload preserves the inventory fields
+and provenance hashes. Runtime inventory and projection reads use only
+`atlas-cache.sqlite`. Lookups still decompress one projection at a time and cache only
 shard dictionaries. The shared writer replaces the database atomically, then
 removes the obsolete `services/api/public/location-projections.sqlite`.
 
 The `location-projections` stage writes JSON shards and their inventory under
 `data/build/location-projections/` for the shared SQLite writer. They are omitted
-from the current-build manifest and removed from the API public directory. Rebuilding projections invalidates the
-shared database and its downstream consumers.
+from the current-build manifest and removed from the API public directory. Rebuilding canonical projection inputs invalidates the local projection cache.
 
 Run `node --import tsx scripts/verify-location-projections.mts` after building to
 compare every stored member and parent projection with its release shard.
 
 ## Planned
 
-Other ready-to-send payloads will follow in `atlas.sqlite`.
+Other API accelerators belong in `atlas-cache.sqlite`.
 `tiles/*.pmtiles` will hold boundaries.
 
 ## geography/
@@ -312,15 +319,15 @@ transferring a built tree without duplicating the archives. Publish API map asse
 ### Place search
 
 `place_index_meta`, `place_index_places`, `place_index_names` and
-`place_index_codes` store the place search index in `atlas.sqlite`. Places,
+`place_index_codes` store the place search index in `atlas-cache.sqlite`. Places,
 names and codes retain their sorted integer positions, so the resolver reads
 only the rows touched by its existing binary search. Labels and code references
 retain their packed representation. Metadata records normalization rules and
 upstream area and named-location hashes, which readers validate before use.
 
 The `place-index` stage runs after the base database and geography catalogues.
-It replaces only its own tables in a temporary copy of the shared database and
-publishes it atomically, preserving other datasets. Successful builds remove
+It replaces only its own tables in a temporary copy of the local cache and
+publishes it atomically, preserving other cache components. Successful builds remove
 `services/api/public/place-index.sqlite` and both old JSON variants. No source
 release changes are needed. Rebuild with `pnpm data:build --only place-index`.
 
@@ -331,15 +338,13 @@ search results.
 ### Area search
 
 `area_search_meta`, `area_search_codes`, `area_search_terms` and
-`area_search_title_terms` store area search in `atlas.sqlite`. Codes keep their
+`area_search_title_terms` store area search in `atlas-cache.sqlite`. Codes keep their
 release order and terms keep their packed postings. Search still reads only the
 rows needed for matching, filters and pagination.
 
 The `area-search-index` stage replaces its tables in a temporary copy of the
-shared database and publishes it atomically, retaining place search and other
-atlas tables. Successful builds remove the separate database and both old JSON
-variants from `services/api/public/`. The build manifest covers the index through
-`atlas.sqlite`.
+local cache and publishes it atomically, retaining other cache components. Successful builds remove the separate database and both old JSON
+variants from `services/api/public/`. The cache is excluded from the build manifest and distribution.
 
 Rebuild with `pnpm data:build --only area-search-index`. Run
 `node --import tsx scripts/verify-area-search-index.mts` to compare every stored
@@ -362,7 +367,8 @@ postcode-to-area positional joins. The postcode count builder also reads SQLite.
 The `postcode-index` stage runs after the base atlas database, replaces only its
 own table and payload in a temporary copy, then publishes atomically. It removes
 `services/api/public/postcode-index.json` and the old `postcodes/` district files
-after success. Postcode areas and postcode counts have their own build stages in the same database.
+after success. Postcode areas remain in `atlas.sqlite`. Postcode counts have a separate build stage
+and live in `atlas-cache.sqlite`.
 
 Rebuild with `pnpm data:build --only postcode-index`. Run
 `node --import tsx scripts/verify-postcode-index.mts` to verify every postcode,
