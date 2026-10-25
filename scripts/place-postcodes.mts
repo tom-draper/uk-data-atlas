@@ -4,9 +4,11 @@ import { readAtlasPayload } from "../shared/atlasSqlite";
 import {
 	compilePostcodes,
 	DEPRIVATION,
+	DEPRIVATION_INDICES,
 	POSTCODE_GEOGRAPHIES,
 	postcodeReleases,
 	type DeprivationIndex,
+	type PlaceNeighbourhoods,
 	type PostcodeDistricts,
 	type PostcodeSectors,
 	type SourceDistrict,
@@ -37,24 +39,49 @@ export const PLACE_POSTCODE_SECTORS_PATH = join(
 	"place-postcode-sectors.json",
 );
 
-/** Each index's deciles by neighbourhood code, from its latest edition. */
-function deprivationDeciles(root: string) {
-	return Object.entries(DEPRIVATION).map(([index, { decile }]) => {
-		const editions = decodeCompactPayload(
-			JSON.parse(readAtlasPayload(root, `dataset:${index}`)),
-		) as Record<string, { data: Record<string, Record<string, unknown>> }>;
-		const latest = Object.entries(editions).sort(
-			(a, b) => Number(b[0]) - Number(a[0]),
-		)[0]![1];
-		const deciles = new Map<string, number>();
-		for (const [code, row] of Object.entries(latest.data))
-			if (typeof row[decile] === "number")
-				deciles.set(code, row[decile] as number);
-		return [index as DeprivationIndex, deciles] as const;
-	});
+export const PLACE_NEIGHBOURHOODS_PATH = join(
+	process.cwd(),
+	"public",
+	"data",
+	"datasets",
+	"place-neighbourhoods.json",
+);
+
+/** Each index's neighbourhoods, from its latest edition. */
+function compileNeighbourhoods(root: string) {
+	return Object.fromEntries(
+		DEPRIVATION_INDICES.map((index) => {
+			const { name, rank, decile } = DEPRIVATION[index];
+			const editions = decodeCompactPayload(
+				JSON.parse(readAtlasPayload(root, `dataset:${index}`)),
+			) as Record<
+				string,
+				{ data: Record<string, Record<string, unknown>> }
+			>;
+			const [edition, latest] = Object.entries(editions).sort(
+				(a, b) => Number(b[0]) - Number(a[0]),
+			)[0]!;
+			const rows = Object.values(latest.data);
+			const areas: PlaceNeighbourhoods[DeprivationIndex]["areas"] = {};
+			for (const [code, row] of Object.entries(latest.data))
+				if (
+					typeof row[rank] === "number" &&
+					typeof row[decile] === "number"
+				)
+					areas[code] = [
+						String(row[name] ?? code),
+						row[rank] as number,
+						row[decile] as number,
+					];
+			return [index, { edition, total: rows.length, areas }];
+		}),
+	) as PlaceNeighbourhoods;
 }
 
-/** Each postcode district's and sector's postcodes and areas, as each file's text. */
+/**
+ * Each postcode district's and sector's postcodes and areas, and each
+ * deprivation index's neighbourhoods, as each file's text.
+ */
 export function serialisePlacePostcodes() {
 	const root = process.cwd();
 	const apiRoot = join(root, "services/api");
@@ -66,7 +93,18 @@ export function serialisePlacePostcodes() {
 	);
 	const { areas: releases, deprivation: deprivationReleases } =
 		postcodeReleases(areas.releases);
-	const deciles = deprivationDeciles(root);
+	const neighbourhoods = compileNeighbourhoods(root);
+	const deciles = DEPRIVATION_INDICES.map(
+		(index) =>
+			[
+				index,
+				new Map(
+					Object.entries(neighbourhoods[index].areas).map(
+						([code, [, , decile]]) => [code, decile],
+					),
+				),
+			] as const,
+	);
 	const areaShards = new Map(
 		areas.shards.map((shard) => [shard.district, shard.path]),
 	);
@@ -111,7 +149,8 @@ export function serialisePlacePostcodes() {
 				) as unknown as SourceDistrict["areas"],
 				deprivation: rows.map((_, at) => {
 					for (const [index, byCode] of deciles) {
-						const column = shard.releases[deprivationReleases[index]];
+						const column =
+							shard.releases[deprivationReleases[index]];
 						const position = column?.area[at];
 						const code =
 							position !== undefined && position >= 0
@@ -145,6 +184,7 @@ export function serialisePlacePostcodes() {
 		return {
 			districts: `${JSON.stringify({ source, districts } satisfies PostcodeDistricts)}\n`,
 			sectors: `${JSON.stringify({ source, sectors } satisfies PostcodeSectors)}\n`,
+			neighbourhoods: `${JSON.stringify(neighbourhoods)}\n`,
 		};
 	} finally {
 		database.close();
