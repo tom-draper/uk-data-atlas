@@ -38,13 +38,14 @@ const targetColumns = {
 const endpointValues = (
 	value: object,
 	columns: Record<string, string>,
+	fieldSets: Map<string, number>,
 ): SQLInputValue[] => {
 	const fields = value as Record<string, SQLInputValue | string[]>;
 	for (const key of Object.keys(fields))
 		if (!(key in columns))
 			throw new Error(`Unknown crosswalk endpoint field ${key}`);
 	return [
-		JSON.stringify(Object.keys(fields)),
+		fieldSets.get(JSON.stringify(Object.keys(fields))) ?? null,
 		...Object.keys(columns).map((key) =>
 			key === "labels"
 				? JSON.stringify(fields[key])
@@ -77,9 +78,16 @@ export const crosswalkTables = (
 			throw new Error(`Invalid crosswalk artifact ${entry.id}`);
 		return { artifact, bytes: Buffer.byteLength(text) };
 	};
+	const fieldSets = new Map<string, number>();
 	function* headers() {
 		for (const [position, entry] of inventory.crosswalks.entries()) {
 			const { artifact, bytes } = read(entry);
+			for (const record of artifact.records)
+				for (const value of [record.source, ...record.targets]) {
+					const fields = JSON.stringify(Object.keys(value));
+					if (!fieldSets.has(fields))
+						fieldSets.set(fields, fieldSets.size);
+				}
 			const header = Object.fromEntries(
 				Object.entries(artifact).map(([key, value]) => [
 					key,
@@ -106,26 +114,32 @@ export const crosswalkTables = (
 		}
 	}
 	function* sources() {
-		for (const entry of inventory.crosswalks) {
+		for (const [
+			crosswalkPosition,
+			entry,
+		] of inventory.crosswalks.entries()) {
 			const { artifact } = read(entry);
 			for (const [position, record] of artifact.records.entries())
 				yield [
-					entry.id,
+					crosswalkPosition,
 					position,
-					...endpointValues(record.source, sourceColumns),
+					...endpointValues(record.source, sourceColumns, fieldSets),
 				];
 		}
 	}
 	function* targets() {
-		for (const entry of inventory.crosswalks) {
+		for (const [
+			crosswalkPosition,
+			entry,
+		] of inventory.crosswalks.entries()) {
 			const { artifact } = read(entry);
 			for (const [sourcePosition, record] of artifact.records.entries())
 				for (const [position, target] of record.targets.entries())
 					yield [
-						entry.id,
+						crosswalkPosition,
 						sourcePosition,
 						position,
-						...endpointValues(target, targetColumns),
+						...endpointValues(target, targetColumns, fieldSets),
 					];
 		}
 	}
@@ -187,37 +201,61 @@ export const crosswalkTables = (
 				["fromGeography", "fromRelease", "toGeography", "toRelease"],
 			],
 		},
+		crosswalk_field_sets: {
+			columns: ["fields TEXT NOT NULL UNIQUE"],
+			rows: (function* () {
+				for (const fields of fieldSets.keys()) yield [fields];
+			})(),
+		},
 		crosswalk_sources: {
 			columns: [
-				"crosswalkId TEXT NOT NULL REFERENCES crosswalks(id)",
+				"crosswalkPosition INTEGER NOT NULL REFERENCES crosswalks(position)",
 				"position INTEGER NOT NULL",
-				"fields TEXT NOT NULL",
+				"fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position)",
 				...Object.entries(sourceColumns).map(
 					([key, type]) =>
 						`"${key}" ${type}${key === "code" || key === "labels" ? " NOT NULL" : ""}`,
 				),
 			],
-			key: ["crosswalkId", "position"],
+			key: ["crosswalkPosition", "position"],
 			rows: sources(),
-			indexes: [["crosswalkId", "code"]],
+			indexes: [["crosswalkPosition", "code"]],
+			views: {
+				crosswalk_sources_decoded: `SELECT c.id AS crosswalkId, s.position, f.fields, ${Object.keys(
+					sourceColumns,
+				)
+					.map((key) => `s."${key}"`)
+					.join(
+						", ",
+					)} FROM crosswalk_sources s JOIN crosswalks c ON c.position = s.crosswalkPosition JOIN crosswalk_field_sets f ON f.position = s.fieldSetId`,
+			},
 		},
 		crosswalk_targets: {
 			columns: [
-				"crosswalkId TEXT NOT NULL",
+				"crosswalkPosition INTEGER NOT NULL",
 				"sourcePosition INTEGER NOT NULL",
 				"position INTEGER NOT NULL",
-				"fields TEXT NOT NULL",
+				"fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position)",
 				...Object.entries(targetColumns).map(
 					([key, type]) =>
 						`"${key}" ${type}${key === "code" || key === "labels" ? " NOT NULL" : ""}`,
 				),
 			],
-			key: ["crosswalkId", "sourcePosition", "position"],
+			key: ["crosswalkPosition", "sourcePosition", "position"],
 			rows: targets(),
 			constraints: [
-				"FOREIGN KEY (crosswalkId, sourcePosition) REFERENCES crosswalk_sources(crosswalkId, position)",
+				"FOREIGN KEY (crosswalkPosition, sourcePosition) REFERENCES crosswalk_sources(crosswalkPosition, position)",
 			],
-			indexes: [["crosswalkId", "code"]],
+			indexes: [["crosswalkPosition", "code"]],
+			views: {
+				crosswalk_targets_decoded: `SELECT c.id AS crosswalkId, t.sourcePosition, t.position, f.fields, ${Object.keys(
+					targetColumns,
+				)
+					.map((key) => `t."${key}"`)
+					.join(
+						", ",
+					)} FROM crosswalk_targets t JOIN crosswalks c ON c.position = t.crosswalkPosition JOIN crosswalk_field_sets f ON f.position = t.fieldSetId`,
+			},
 		},
 	};
 };
@@ -291,7 +329,7 @@ export const readSqliteCrosswalk = (
 	try {
 		const row = database
 			.prepare(
-				"SELECT header, contentHash, bytes FROM crosswalks WHERE id = ?",
+				"SELECT position, header, contentHash, bytes FROM crosswalks WHERE id = ?",
 			)
 			.get(expected.id);
 		if (!row || row.contentHash !== expected.contentHash)
@@ -299,9 +337,9 @@ export const readSqliteCrosswalk = (
 		const targets = new Map<number, object[]>();
 		for (const target of database
 			.prepare(
-				"SELECT * FROM crosswalk_targets WHERE crosswalkId = ? ORDER BY sourcePosition, position",
+				"SELECT t.*, f.fields FROM crosswalk_targets t JOIN crosswalk_field_sets f ON f.position = t.fieldSetId WHERE t.crosswalkPosition = ? ORDER BY t.sourcePosition, t.position",
 			)
-			.iterate(expected.id)) {
+			.iterate(row.position)) {
 			const position = target.sourcePosition as number;
 			let list = targets.get(position);
 			if (!list) targets.set(position, (list = []));
@@ -309,9 +347,9 @@ export const readSqliteCrosswalk = (
 		}
 		const records = database
 			.prepare(
-				"SELECT * FROM crosswalk_sources WHERE crosswalkId = ? ORDER BY position",
+				"SELECT s.*, f.fields FROM crosswalk_sources s JOIN crosswalk_field_sets f ON f.position = s.fieldSetId WHERE s.crosswalkPosition = ? ORDER BY s.position",
 			)
-			.all(expected.id)
+			.all(row.position)
 			.map((source) => ({
 				source: endpoint(source),
 				targets: targets.get(source.position as number) ?? [],

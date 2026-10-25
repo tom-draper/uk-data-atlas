@@ -38,6 +38,18 @@ The `atlas-sqlite` stage stores them in `data/build/atlas.sqlite` for the API to
 After changing shared dataset compilers, run `pnpm --dir ../.. data:build --target api --from datasets`
 from `services/api` to rebuild every affected stage.
 
+Crosswalk endpoint tables use `crosswalkPosition` to reference `crosswalks.position`
+and `fieldSetId` to reference `crosswalk_field_sets.position`. Shared field lists
+preserve the original JSON property order. The `crosswalk_sources_decoded` and
+`crosswalk_targets_decoded` views expose the text `crosswalkId`, field lists, and
+endpoint values for direct SQL queries.
+
+Databases built with text crosswalk IDs in endpoint rows require a rebuild for
+this reader. From the repository root, run
+`pnpm data:build --from atlas-sqlite --no-cache` to rebuild SQLite and its downstream
+stages before starting the API. Deploy the rebuilt database with the matching
+API code.
+
 ## Capability checklist
 
 This is the practical product checklist. Status means the public API behaviour,
