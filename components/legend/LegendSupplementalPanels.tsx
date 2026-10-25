@@ -8,6 +8,7 @@ import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures"
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
+import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";
 import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";
 import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
 import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
@@ -158,6 +159,29 @@ export function HousingTenureMeasurePanel({
 		<GlassSegmentedMeasurePanel
 			measure={measure}
 			measures={HOUSING_TENURE_SEGMENTS}
+			onChange={onChange}
+			vertical
+		/>
+	);
+}
+
+const GENERAL_HEALTH_SEGMENTS = HEALTH_MEASURES.map(
+	({ value, label }) => [value, label] as const,
+);
+
+type GeneralHealthMeasure = (typeof HEALTH_MEASURES)[number]["value"];
+
+export function GeneralHealthMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: GeneralHealthMeasure;
+	onChange: (measure: GeneralHealthMeasure) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={GENERAL_HEALTH_SEGMENTS}
 			onChange={onChange}
 			vertical
 		/>
