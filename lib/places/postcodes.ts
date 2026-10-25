@@ -63,6 +63,19 @@ export const DEPRIVATION: Record<
 	},
 };
 
+/**
+ * Each index's neighbourhoods by code, from its latest edition: a name, a
+ * rank where 1 is the most deprived of `total`, and a decile.
+ */
+export type PlaceNeighbourhoods = Record<
+	DeprivationIndex,
+	{
+		edition: string;
+		total: number;
+		areas: Record<string, [name: string, rank: number, decile: number]>;
+	}
+>;
+
 type AreaRelease = {
 	geography: string;
 	boundaryRelease: string;
@@ -123,7 +136,9 @@ export type AreaColumn = {
 export function areaCodeAt(column: AreaColumn | undefined, at: number) {
 	if (!column) return undefined;
 	const position =
-		column.area[at]! >= 0 ? column.area[at] : column.several?.[at]?.[0]?.[0];
+		column.area[at]! >= 0
+			? column.area[at]
+			: column.several?.[at]?.[0]?.[0];
 	return position === undefined ? undefined : column.codes[position];
 }
 
@@ -432,4 +447,15 @@ export async function areaPostcodeDistricts(code: string) {
 		return index;
 	});
 	return (await byArea).get(code) ?? [];
+}
+
+let compiledNeighbourhoods: Promise<PlaceNeighbourhoods | null> | undefined;
+
+/** The compiled neighbourhoods, or null where the build has not written them. */
+export function loadNeighbourhoods() {
+	compiledNeighbourhoods ??=
+		import("@/public/data/datasets/place-neighbourhoods.json")
+			.then((module) => module.default as unknown as PlaceNeighbourhoods)
+			.catch(() => null);
+	return compiledNeighbourhoods;
 }

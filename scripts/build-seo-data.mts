@@ -13,6 +13,7 @@ import {
 import {
 	PLACE_POSTCODE_SECTORS_PATH,
 	PLACE_POSTCODES_PATH,
+	PLACE_NEIGHBOURHOODS_PATH,
 	serialisePlacePostcodes,
 } from "./place-postcodes.mts";
 import {
@@ -41,4 +42,5 @@ console.log(`Wrote ${PLACE_ELECTIONS_PATH}`);
 const postcodes = serialisePlacePostcodes();
 await writeFile(PLACE_POSTCODES_PATH, postcodes.districts);
 await writeFile(PLACE_POSTCODE_SECTORS_PATH, postcodes.sectors);
+await writeFile(PLACE_NEIGHBOURHOODS_PATH, postcodes.neighbourhoods);
 console.log(`Wrote ${PLACE_POSTCODES_PATH} and ${PLACE_POSTCODE_SECTORS_PATH}`);
