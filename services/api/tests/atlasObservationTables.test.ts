@@ -250,3 +250,48 @@ test("describes catalogue measures and datasets while allowing unknown measures"
 	);
 	database.close();
 });
+
+test("unifies census cells with ordinary observations, including zero and null cells", () => {
+	const database = store([
+		["own-observations", text(own)],
+		["shared", text(table)],
+	]);
+	assert.deepEqual(
+		database
+			.prepare(
+				"SELECT artifactId, measureId, period, areaCode, value, status, sourceAreaCode, category, confidenceLower, confidenceUpper FROM observations_all WHERE measureId = 'rented' ORDER BY areaCode",
+			)
+			.all()
+			.map((row) => ({ ...row })),
+		[5, null].map((value, index) => ({
+			artifactId: "shared",
+			measureId: "rented",
+			period: "2021",
+			areaCode: `E0500000${index + 1}`,
+			value,
+			status: null,
+			sourceAreaCode: null,
+			category: null,
+			confidenceLower: null,
+			confidenceUpper: null,
+		})),
+	);
+	assert.equal(
+		database
+			.prepare(
+				"SELECT value FROM observations_all WHERE measureId = 'owned' AND areaCode = 'E05000002'",
+			)
+			.get()?.value,
+		0,
+	);
+	assert.equal(
+		database.prepare("SELECT count(*) AS n FROM observations_all").get()?.n,
+		7,
+	);
+	replaceObservationTables(database, [["own-observations", text(own)]]);
+	assert.equal(
+		database.prepare("SELECT count(*) AS n FROM observations_all").get()?.n,
+		3,
+	);
+	database.close();
+});
