@@ -18,8 +18,6 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
-import { ABSENCE_MEASURES } from "@/lib/helpers/pupilAbsenceMeasures";
 import { imdRange } from "@/lib/helpers/imdMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
@@ -45,6 +43,7 @@ import {
 	IncomePeriodPanel,
 	ImdMeasurePanel,
 	PlanningMeasurePanel,
+	PupilAbsenceMeasurePanel,
 	WorkplacePayMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
@@ -172,10 +171,8 @@ export default function LegendPanel({
 			</div>
 
 			{activeDataset?.type === "pupilAbsence" && (
-				<MeasureSelect
-					label="Pupil absence"
-					value={controls.displayOptions.pupilAbsence.measure}
-					options={ABSENCE_MEASURES}
+				<PupilAbsenceMeasurePanel
+					measure={controls.displayOptions.pupilAbsence.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("pupilAbsence", {
 							measure,

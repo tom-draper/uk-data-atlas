@@ -8,6 +8,7 @@ import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures"
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
+import { ABSENCE_MEASURES } from "@/lib/helpers/pupilAbsenceMeasures";
 import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";
 import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";
 import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
@@ -159,6 +160,29 @@ export function HousingTenureMeasurePanel({
 		<GlassSegmentedMeasurePanel
 			measure={measure}
 			measures={HOUSING_TENURE_SEGMENTS}
+			onChange={onChange}
+			vertical
+		/>
+	);
+}
+
+const PUPIL_ABSENCE_SEGMENTS = ABSENCE_MEASURES.map(
+	({ value, label }) => [value, label] as const,
+);
+
+type PupilAbsenceMeasure = (typeof ABSENCE_MEASURES)[number]["value"];
+
+export function PupilAbsenceMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: PupilAbsenceMeasure;
+	onChange: (measure: PupilAbsenceMeasure) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={PUPIL_ABSENCE_SEGMENTS}
 			onChange={onChange}
 			vertical
 		/>
