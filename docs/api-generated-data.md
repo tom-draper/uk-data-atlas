@@ -23,17 +23,21 @@ assuming that every file left by an older local build is still required.
 | `atlas-lookups.json`, `atlas-lookups/*.json.gz` | `atlasLookups.ts`, website copy stage          | Published lookup downloads                                               |
 | `atlas-pages.json`, `atlas-pages/*.json.gz`     | `atlasPages.ts`, website copy stage            | Published place page data                                                |
 
-Observation contracts are stored in `observation_artifacts` in SQLite, keyed by
-artifact identity. `build-data-catalog.ts` compiles and publishes them atomically;
-`observation_catalogue` links them to the data catalogue hash. Each shared census
-table is stored once, while measure views retain the existing lazy loading and
-byte-budgeted cache. Payload byte hashes detect corruption on read. Cached views remember their
-observation generation and refuse to read a newer generation until the API
-restarts. JSON exports return the stored text and verify its byte count.
+Observation contracts are stored as rows in SQLite (`observations`,
+`observation_series` and their dictionary and sparse tables, with one wide table
+per shared census table), not as JSON text. `build-data-catalog.ts` compiles and
+publishes them atomically; `observation_catalogue` links them to the data
+catalogue hash. The API rebuilds each artifact's exact JSON from its rows and
+checks it against the stored payload hash, so corruption is detected on read.
+Measure views retain the existing lazy loading and byte-budgeted cache. Cached
+views remember their observation generation and refuse to read a newer
+generation until the API restarts. JSON exports return the rebuilt text and
+verify its byte count. The `observations_decoded` and `observation_<table>_decoded`
+views expose readable codes, labels and measure names for direct SQL queries.
 
 Compatibility checks, analysis-geography validation, the validation report,
 and JSON, CSV, and Parquet exports read those
-same SQLite payloads. JSON download contracts and their content hashes are
+same SQLite rows. JSON download contracts and their content hashes are
 unchanged. Public observation JSON files are removed after successful publication.
 
 Boundary geometry served to map clients is in PMTiles. Geometry source lookup
