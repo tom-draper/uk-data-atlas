@@ -37,7 +37,7 @@ const card = (measure: (typeof HEALTH_MEASURES)[number]["value"]) =>
 		IndicatorRecord
 	>({
 		heading: "General health",
-		coverage: "England and Wales",
+		coverage: "England & Wales",
 		source: "ONS. Census 2021, TS037. LSOA 2021 boundaries.",
 		unit: "% residents",
 		digits: 1,
