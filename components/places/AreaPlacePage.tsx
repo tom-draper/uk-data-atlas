@@ -26,6 +26,11 @@ import {
 } from "@/lib/places/labels";
 import { placeFacts, type PlaceFacts } from "@/lib/places/facts";
 import {
+	CouncilElectionsSection,
+	WardElectionsSection,
+} from "@/components/places/PlaceElections";
+import { councilElections, wardElections } from "@/lib/places/elections";
+import {
 	placeHeadlines,
 	rankPhrase,
 	type PlaceHeadline,
@@ -458,15 +463,40 @@ function AreaApi({
 	);
 }
 
+/** A ward's or council's local election results, where the data has them. */
+async function loadElections(profile: AreaProfile) {
+	if (profile.geography === "ward") {
+		const elections = await wardElections(profile.code);
+		return elections ? (
+			<WardElectionsSection name={profile.name} elections={elections} />
+		) : null;
+	}
+	if (profile.geography === "localAuthority") {
+		const elections = await councilElections(profile.code);
+		return elections?.length ? (
+			<CouncilElectionsSection
+				name={profile.name}
+				elections={elections}
+			/>
+		) : null;
+	}
+	return null;
+}
+
 export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 	const releases = (await loadPlaceIndex()).releases[profile.geography];
 	const lastRelease = releases[profile.releases.at(-1)!]!;
-	const [{ council, councilProfile, region, namedPlaces }, facts, headlines] =
-		await Promise.all([
-			loadAreaContext(profile),
-			placeFacts(profile.code),
-			placeHeadlines(profile.code, profile.geography),
-		]);
+	const [
+		{ council, councilProfile, region, namedPlaces },
+		facts,
+		headlines,
+		elections,
+	] = await Promise.all([
+		loadAreaContext(profile),
+		placeFacts(profile.code),
+		placeHeadlines(profile.code, profile.geography),
+		loadElections(profile),
+	]);
 
 	return (
 		<>
@@ -507,6 +537,7 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 				{headlines.length > 0 && (
 					<AreaFigures profile={profile} headlines={headlines} />
 				)}
+				{elections}
 				<AreaWithin
 					profile={profile}
 					council={council}
