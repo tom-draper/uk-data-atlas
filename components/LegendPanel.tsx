@@ -18,8 +18,6 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import MeasureSelect from "./legend/MeasureSelect";
-import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";
 import { imdRange } from "@/lib/helpers/imdMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
@@ -40,6 +38,7 @@ import {
 	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
 	HousingTenureMeasurePanel,
+	GeneralHealthMeasurePanel,
 	IncomeMeasurePanel,
 	IncomePeriodPanel,
 	ImdMeasurePanel,
@@ -274,10 +273,8 @@ export default function LegendPanel({
 				/>
 			)}
 			{activeDataset?.type === "generalHealth" && (
-				<MeasureSelect
-					label="General health"
-					value={controls.displayOptions.generalHealth.measure}
-					options={HEALTH_MEASURES}
+				<GeneralHealthMeasurePanel
+					measure={controls.displayOptions.generalHealth.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("generalHealth", {
 							measure,
