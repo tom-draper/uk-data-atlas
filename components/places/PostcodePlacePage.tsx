@@ -26,12 +26,12 @@ import {
 
 type Named = { code: string; name: string; href?: string };
 
-const count = (value: number) => value.toLocaleString("en-GB");
+export const count = (value: number) => value.toLocaleString("en-GB");
 
 const postcodes = (value: number) =>
 	`${count(value)} ${value === 1 ? "postcode" : "postcodes"}`;
 
-const share = (part: number, total: number) => {
+export const share = (part: number, total: number) => {
 	const percent = (part / total) * 100;
 	return percent >= 99.95
 		? "100%"
@@ -42,7 +42,8 @@ const share = (part: number, total: number) => {
 				: `${percent.toFixed(1)}%`;
 };
 
-const districtHref = (district: string) => `/places/postcodes/${district}`;
+export const districtHref = (district: string) =>
+	`/places/postcodes/${district}`;
 
 const GEOGRAPHY_TITLES: Record<PostcodeGeography, string> = {
 	localAuthority: "Councils",
@@ -103,7 +104,7 @@ function ShareList({
 	);
 }
 
-const DEPRIVATION_NAMES: Record<
+export const DEPRIVATION_NAMES: Record<
 	DeprivationIndex,
 	{ title: string; nation: string; areas: string; area: string; year: number }
 > = {
@@ -149,8 +150,17 @@ export function deprivationSummary(
 	return `The typical postcode in ${name}${several ? ` in ${about.nation}` : ""} is in a decile ${median} ${about.area}, where decile 1 is ${about.nation}'s most deprived 10% of ${about.areas}. ${share(sum(0, 3), total)} of its postcodes are in the most deprived 30%, and ${share(sum(7, 10), total)} in the least deprived 30%.`;
 }
 
-/** Live postcodes by decile, as columns from most to least deprived. */
-function DecileChart({ deciles }: { deciles: number[] }) {
+/**
+ * Live postcodes by decile, as columns from most to least deprived, with
+ * one decile picked out where given.
+ */
+export function DecileChart({
+	deciles,
+	highlight,
+}: {
+	deciles: number[];
+	highlight?: number;
+}) {
 	const total = deciles.reduce((sum, value) => sum + value, 0);
 	const most = Math.max(...deciles);
 	return (
@@ -176,7 +186,7 @@ function DecileChart({ deciles }: { deciles: number[] }) {
 								: ""}
 						</span>
 						<span
-							className="rounded-t-sm bg-slate-400"
+							className={`rounded-t-sm ${at + 1 === highlight ? "bg-slate-800" : "bg-slate-400"}`}
 							style={{
 								height: `${(value / most) * 78}%`,
 								minHeight: value > 0 ? 2 : 0,
@@ -287,7 +297,16 @@ function AsideList({
 	);
 }
 
-function NearbyLinks({ title, items }: { title: string; items: string[] }) {
+export function NearbyLinks({
+	title,
+	items,
+	href = (other) =>
+		other.includes(" ") ? sectorHref(other) : districtHref(other),
+}: {
+	title: string;
+	items: string[];
+	href?: (item: string) => string;
+}) {
 	return (
 		<>
 			<h2 className="text-[15px] font-semibold text-slate-900">
@@ -298,12 +317,8 @@ function NearbyLinks({ title, items }: { title: string; items: string[] }) {
 					<span key={other}>
 						{at > 0 && ", "}
 						<Link
-							href={
-								other.includes(" ")
-									? sectorHref(other)
-									: districtHref(other)
-							}
-							className={linkClass}
+							href={href(other)}
+							className={`${linkClass} whitespace-nowrap`}
 						>
 							{other}
 						</Link>

@@ -4,6 +4,7 @@ import Navigation from "@/components/Navigation";
 import { Sheet } from "@/components/docs/Page";
 import { PostcodePlacePage } from "@/components/places/PostcodePlacePage";
 import { loadPlaceIndex } from "@/lib/places/load";
+import { compactUnit, postcodeHref } from "@/lib/places/postcodeUnit";
 import {
 	loadPostcodeDistricts,
 	normaliseDistrict,
@@ -22,6 +23,9 @@ async function resolveDistrict(params: Params) {
 	const data = await loadPostcodeDistricts();
 	const canonical = normaliseDistrict(id);
 	const entry = data?.districts[canonical];
+	// A whole postcode typed into the address, "/places/postcodes/WA35DW".
+	const unit = entry ? undefined : compactUnit(canonical);
+	if (unit) permanentRedirect(postcodeHref(unit));
 	if (!data || !entry) notFound();
 	if (canonical !== id) permanentRedirect(`/places/postcodes/${canonical}`);
 	return { district: canonical, entry, source: data.source };
