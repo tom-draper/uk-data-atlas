@@ -14,6 +14,10 @@ import {
 	PLACE_REGIONS,
 	placeRegions,
 } from "@/lib/places/load";
+import {
+	compareDistricts,
+	loadPostcodeDistricts,
+} from "@/lib/places/postcodes";
 import type { PlaceIndexEntry } from "@/lib/places/profile";
 import { pageMetadata } from "@/lib/site";
 
@@ -99,6 +103,13 @@ export default async function PlacesPage() {
 		}),
 		{},
 	);
+	// Every postcode district, by the letters of its postcode area.
+	const postcodeAreas = Map.groupBy(
+		Object.keys((await loadPostcodeDistricts())?.districts ?? {}).sort(
+			compareDistricts,
+		),
+		(district) => /^[A-Z]+/.exec(district)![0],
+	);
 	const named = NAMED_KINDS.map((kind) => ({
 		kind,
 		entries: PLACE_INDEX.named.filter((entry) => entry[2] === kind),
@@ -142,6 +153,19 @@ export default async function PlacesPage() {
 						title: region.label,
 					})),
 				},
+				...(postcodeAreas.size > 0
+					? [
+							{
+								title: "Postcode districts",
+								links: [
+									{
+										id: "postcodes",
+										title: "By postcode area",
+									},
+								],
+							},
+						]
+					: []),
 			]}
 			eyebrow="Places"
 			title="Look up any place"
@@ -264,6 +288,40 @@ export default async function PlacesPage() {
 					))}
 				</section>
 			))}
+
+			{postcodeAreas.size > 0 && (
+				<>
+					<H2 id="postcodes">Postcode districts</H2>
+					<P>
+						Every postcode district with a live postcode in England,
+						Scotland and Wales, by postcode area. Each page shows
+						the wards, councils and constituencies its postcodes
+						fall in.
+					</P>
+					<dl className="space-y-1.5 text-[13.5px]">
+						{[...postcodeAreas].map(([area, districts]) => (
+							<div key={area} className="flex gap-3">
+								<dt className="w-8 shrink-0 font-semibold text-slate-800">
+									{area}
+								</dt>
+								<dd className="min-w-0">
+									{districts.map((district, at) => (
+										<span key={district}>
+											{at > 0 && ", "}
+											<Link
+												href={`/places/postcodes/${district}`}
+												className={linkClass}
+											>
+												{district}
+											</Link>
+										</span>
+									))}
+								</dd>
+							</div>
+						))}
+					</dl>
+				</>
+			)}
 		</ReferencePage>
 	);
 }

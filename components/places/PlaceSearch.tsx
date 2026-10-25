@@ -1,6 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fetchAtlasPage } from "@/lib/helpers/atlasData";
@@ -16,7 +17,11 @@ const normalise = (text: string) =>
 		.replace(/[^a-z0-9]+/g, " ")
 		.trim();
 
-const POSTCODE = /^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i;
+/** A full postcode or a district, as its district: "ls6 1aa" or "ls6" as "LS6". */
+const postcodeDistrict = (query: string) =>
+	/^([a-z]{1,2}\d[a-z\d]?)(?:\s*\d[a-z]{2})?$/i
+		.exec(query.trim())?.[1]
+		?.toUpperCase();
 
 type Result = { entry: PlaceIndexEntry; rank: number };
 
@@ -80,9 +85,14 @@ export default function PlaceSearch({
 		() => (index ? search(index, query) : []),
 		[index, query],
 	);
-	const isPostcode = POSTCODE.test(query.trim());
+	const district = postcodeDistrict(query);
+	const districtHref =
+		district && results.length === 0
+			? `/places/postcodes/${district}`
+			: undefined;
 	const open = (entry: PlaceIndexEntry | undefined) => {
 		if (entry) router.push(`/places/${entry[0]}`);
+		else if (districtHref) router.push(districtHref);
 	};
 
 	return (
@@ -128,11 +138,13 @@ export default function PlaceSearch({
 						<p className="px-4 py-3 text-[14px] text-slate-500">
 							Loading places…
 						</p>
-					) : isPostcode && results.length === 0 ? (
-						<p className="px-4 py-3 text-[14px] text-slate-500">
-							Postcode pages aren&apos;t here yet. Search for the
-							ward or council the postcode is in instead.
-						</p>
+					) : districtHref ? (
+						<Link
+							href={districtHref}
+							className="block px-4 py-3 text-[14px] text-slate-800 hover:bg-slate-50"
+						>
+							The {district} postcode district
+						</Link>
 					) : results.length === 0 ? (
 						<p className="px-4 py-3 text-[14px] text-slate-500">
 							No place matches that code or name.
