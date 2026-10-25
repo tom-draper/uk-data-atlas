@@ -16,6 +16,7 @@ export const PLACE_OPERATIONS = {
 	getNamedLocation: "/docs/v1/reference/geography/named-location",
 	getNamedLocationMembers:
 		"/docs/v1/reference/geography/named-location-members",
+	resolvePostcode: "/docs/v1/reference/start-here/resolve-postcode",
 } as const;
 
 export type PlaceRequest = {
