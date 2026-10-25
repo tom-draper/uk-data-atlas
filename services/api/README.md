@@ -5,6 +5,46 @@
 > golden paths and delivery plan were removed once DIRECTION.md replaced them,
 > and remain in the git history.
 
+## Canonical SQLite and local API cache
+
+`data/build/atlas.sqlite` is the distributed database. It contains area identities,
+crosswalks, named locations and their geometry, observation rows and dictionaries,
+postcode records and area columns, source dataset payloads, and public catalogue
+metadata. Source dataset payloads retain fields absent from observation contracts;
+they are not interchangeable copies of those contracts.
+
+`data/build/atlas-cache.sqlite` contains `area_search_*`, `place_index_*`,
+`location_projection_*`, `postcode_counts`, and the projection and counts metadata
+in its own `payloads` table. These are API accelerators rebuilt from canonical
+SQLite data. The base SQLite build writes the projection cache, and the search
+and postcode-count stages publish their own cache components. Publishers replace
+the cache atomically and leave the canonical file unchanged.
+
+After downloading or replacing the canonical database, run from the repository
+root:
+
+```sh
+pnpm --dir services/api build:cache
+```
+
+This command reads only the canonical database and runs no precompile stages.
+Each component stores a SHA-256 generation over its canonical input inventory
+hashes or payload bytes, the cache compiler version, and name-normalisation rules.
+Search uses the area inventory; place search also uses named locations and the
+boundary registry; projections use areas, named locations and crosswalks; counts
+use the postcode and postcode-area inventories. Readers reject missing or stale
+components with the command above. Unrelated observation updates do not invalidate
+search. Compiler changes must increment `CACHE_VERSION` in `src/atlasCache.ts`.
+
+Publish and download only `atlas.sqlite`. Never archive, release, or copy
+`atlas-cache.sqlite` into an image or distribution. The source-data release script
+already archives only `data/source`, and `.dockerignore` excludes all `data`.
+Compose mounts the canonical file read-only inside a writable cache volume. The
+container rebuilds its cache once before starting API workers. Outside Docker,
+`data/build` must be writable by the account running the cache command.
+
+The website continues to use its own data readers and never calls the API.
+
 ## Decision in brief
 
 Build a public, versioned **data-and-geography API**, not an API that merely
@@ -204,11 +244,9 @@ only **available** when its endpoint, contract and provenance are published.
       back once. Of some 89,000 places, "Manchester" is six geographies and a
       curated location, and "Newport" thirteen codes. The build compiles
       every place and name into sorted `place_index_*` tables in
-      `data/build/atlas.sqlite`,
+      `data/build/atlas-cache.sqlite`,
       which a search reads a few rows of by binary search, so a request does
-      no indexing and a worker never holds the whole index. The build manifest
-      covers the index through `atlas.sqlite`, with no separate search database
-      or JSON copy. The index records the area
+      no indexing and a worker never holds the whole index. The cache is regenerated locally and is excluded from the release manifest. The index records the area
       inventory and named locations it was built from and a fingerprint of the
       name-normalisation rules; the API refuses to start on one that differs
       from any of them.
@@ -2437,9 +2475,9 @@ line up.
     `AreaGeometryCache` without a store directory.
 
 - **Location projections:** read one at a time from
-  `data/build/atlas.sqlite`, written by
-  `pnpm data:build --only atlas-sqlite` after compiling location projections.
-  The inventory lives in the shared database too. JSON shards are build intermediates under
+  `data/build/atlas-cache.sqlite`, written by
+  `pnpm --dir services/api build:cache` from canonical SQLite.
+  The inventory lives in the cache file too. JSON shards are build intermediates under
   `data/build/location-projections/`. Each projection is deflated against a dictionary
   drawn from its shard, so a read decompresses a few kilobytes rather than
   parsing a shard of up to 13 MB. Nothing is cached but each shard's 32 KB
@@ -2489,7 +2527,10 @@ the repository root, since the server depends on the workspace packages:
 ```sh
 docker build -f services/api/Dockerfile -t uk-data-atlas-api .
 docker run --rm -p 3001:3001 \
-  -v "$PWD/services/api/public:/app/public:ro" uk-data-atlas-api
+  -v "$PWD/services/api/public:/app/services/api/public:ro" \
+  -v atlas-cache:/app/data/build \
+  -v "$PWD/data/build/atlas.sqlite:/app/data/build/atlas.sqlite:ro" \
+  uk-data-atlas-api
 ```
 
 The image holds the server's source and its production dependencies, about
