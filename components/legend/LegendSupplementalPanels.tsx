@@ -8,6 +8,7 @@ import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures"
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
+import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
 import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
 
@@ -103,6 +104,39 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 				})}
 			</div>
 		</div>
+	);
+}
+
+type WorkplacePayMeasure = (typeof WORKPLACE_PAY_MEASURES)[number]["value"];
+
+export function WorkplacePayMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: WorkplacePayMeasure;
+	onChange: (measure: WorkplacePayMeasure) => void;
+}) {
+	const period = measure.startsWith("hourly") ? "hourly" : "annual";
+	const statistic = measure.endsWith("Mean") ? "mean" : "median";
+	return (
+		<>
+			<IncomePeriodPanel
+				period={period}
+				onChange={(nextPeriod) =>
+					onChange(
+						`${nextPeriod}${statistic === "mean" ? "Mean" : "Median"}`,
+					)
+				}
+			/>
+			<IncomeMeasurePanel
+				measure={statistic}
+				onChange={(nextStatistic) =>
+					onChange(
+						`${period}${nextStatistic === "mean" ? "Mean" : "Median"}`,
+					)
+				}
+			/>
+		</>
 	);
 }
 
