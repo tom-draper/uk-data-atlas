@@ -26,6 +26,7 @@ export type SqliteTable = {
 	rows: Iterable<SQLInputValue[]>;
 	constraints?: string[];
 	indexes?: string[][];
+	views?: Record<string, string>;
 };
 
 /**
@@ -90,6 +91,9 @@ export const writeSqliteTables = (
 		let position = 0;
 		for (const row of table.rows) insert.run(position++, ...row);
 	}
+	for (const table of Object.values(tables))
+		for (const [name, select] of Object.entries(table.views ?? {}))
+			database.exec(`CREATE VIEW ${name} AS ${select}`);
 };
 
 /** An index opened for reading. */

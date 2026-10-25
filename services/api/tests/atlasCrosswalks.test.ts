@@ -55,11 +55,27 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 		{ source: { code: "A", labels: [] }, targets: [] },
 	];
 	const artifact = { ...crosswalkArtifact, records };
+	const artifacts = [
+		artifact,
+		{
+			...artifact,
+			id: "another-crosswalk",
+			records: [
+				{
+					source: { labels: ["different"], code: "B", coverage: 0 },
+					targets: [{ weight: 0, code: "Y", labels: [] }],
+				},
+				{ source: { code: "A2", labels: [] }, targets: [] },
+			],
+		},
+	];
 	const inventory = {
 		...crosswalkInventory,
-		crosswalks: crosswalkInventory.crosswalks.map((row) => ({
-			...row,
-			recordCount: records.length,
+		crosswalks: artifacts.map((value) => ({
+			...crosswalkInventory.crosswalks[0],
+			id: value.id,
+			recordCount: value.records.length,
+			artifact: `crosswalks/${value.id}.json`,
 		})),
 	};
 	writeFileSync(
@@ -67,28 +83,107 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 		JSON.stringify(inventory),
 	);
 	const input = join(directory, `${artifact.id}.json`);
-	writeFileSync(input, JSON.stringify(artifact));
+	for (const value of artifacts)
+		writeFileSync(
+			join(directory, `${value.id}.json`),
+			JSON.stringify(value),
+		);
 	const path = join(root, "data/build/atlas.sqlite");
 	writeSqliteIndex(path, {}, crosswalkTables(join(apiRoot, "public")));
 	assert.equal(
 		JSON.stringify(readCrosswalkInventory(apiRoot)),
 		JSON.stringify(inventory),
 	);
-	assert.equal(
-		JSON.stringify(
-			readCrosswalkLookup(apiRoot, inventory).get(artifact.id),
-		),
-		JSON.stringify(artifact),
-	);
+	for (const value of artifacts)
+		assert.equal(
+			JSON.stringify(
+				readCrosswalkLookup(apiRoot, inventory).get(value.id),
+			),
+			JSON.stringify(value),
+		);
 	const database = new DatabaseSync(path);
 	try {
 		assert.equal(
 			database
 				.prepare(
-					"SELECT weight FROM crosswalk_targets WHERE code = 'Y'",
+					"SELECT weight FROM crosswalk_targets WHERE code = 'Y' AND crosswalkPosition = 0",
 				)
 				.get()?.weight,
 			0,
+		);
+		const fieldSets = new Set(
+			artifacts.flatMap((value) =>
+				value.records.flatMap((record) =>
+					[record.source, ...record.targets].map((endpoint) =>
+						JSON.stringify(Object.keys(endpoint)),
+					),
+				),
+			),
+		);
+		assert.ok(
+			fieldSets.size <
+				artifacts.flatMap((value) =>
+					value.records.flatMap((record) => [
+						record.source,
+						...record.targets,
+					]),
+				).length,
+		);
+		assert.equal(
+			database
+				.prepare("SELECT count(*) AS n FROM crosswalk_field_sets")
+				.get()?.n,
+			fieldSets.size,
+		);
+		assert.equal(
+			database
+				.prepare(
+					"SELECT count(*) AS n FROM crosswalk_sources WHERE typeof(crosswalkPosition) != 'integer' OR typeof(fieldSetId) != 'integer'",
+				)
+				.get()?.n,
+			0,
+		);
+		for (const value of artifacts) {
+			assert.deepEqual(
+				database
+					.prepare(
+						"SELECT fields FROM crosswalk_sources_decoded WHERE crosswalkId = ? ORDER BY position",
+					)
+					.all(value.id)
+					.map((row) => row.fields),
+				value.records.map((record) =>
+					JSON.stringify(Object.keys(record.source)),
+				),
+			);
+			assert.deepEqual(
+				database
+					.prepare(
+						"SELECT fields FROM crosswalk_targets_decoded WHERE crosswalkId = ? ORDER BY sourcePosition, position",
+					)
+					.all(value.id)
+					.map((row) => row.fields),
+				value.records.flatMap((record) =>
+					record.targets.map((target) =>
+						JSON.stringify(Object.keys(target)),
+					),
+				),
+			);
+		}
+		assert.throws(
+			() =>
+				database
+					.prepare("UPDATE crosswalk_sources SET fieldSetId = -1")
+					.run(),
+			/FOREIGN KEY/,
+		);
+		assert.throws(
+			() =>
+				database
+					.prepare(
+						"UPDATE crosswalk_sources SET crosswalkPosition = -1 WHERE crosswalkPosition = 0",
+					)
+					.run(),
+			/FOREIGN KEY/,
 		);
 		assert.deepEqual(
 			database.prepare("PRAGMA foreign_key_check").all(),
