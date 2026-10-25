@@ -1,3 +1,5 @@
+import { areaTables } from "../src/atlasAreas";
+import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import { DatabaseSync } from "node:sqlite";
 import { crosswalkTables } from "../src/atlasCrosswalks";
 import { writeSqliteIndex } from "../src/sqliteIndex";
@@ -27,11 +29,12 @@ const store = (apiRoot: string, inventory: CrosswalkInventory) => {
 		join(directory, "crosswalk-inventory.json"),
 		JSON.stringify(inventory),
 	);
+	emptyCrosswalkAreas(directory, inventory);
 	mkdirSync(join(apiRoot, "../../data/build"), { recursive: true });
 	writeSqliteIndex(
 		join(apiRoot, "../../data/build/atlas.sqlite"),
 		{},
-		crosswalkTables(directory),
+		{ ...areaTables(directory), ...crosswalkTables(directory) },
 	);
 };
 

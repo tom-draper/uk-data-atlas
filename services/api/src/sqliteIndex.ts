@@ -24,7 +24,9 @@ export type SqliteTable = {
 	 */
 	key?: string[];
 	rowid?: boolean;
-	rows: Iterable<SQLInputValue[]>;
+	rows:
+		| Iterable<SQLInputValue[]>
+		| ((database: DatabaseSync) => Iterable<SQLInputValue[]>);
 	constraints?: string[];
 	/** Reject values that do not match their column's declared type. */
 	strict?: boolean;
@@ -82,7 +84,10 @@ export const writeSqliteTables = (
 			const insert = database.prepare(
 				`INSERT INTO ${name} VALUES (${placeholders.join(", ")})`,
 			);
-			for (const row of table.rows) insert.run(...row);
+			for (const row of typeof table.rows === "function"
+				? table.rows(database)
+				: table.rows)
+				insert.run(...row);
 			for (const [index, columns] of (table.indexes ?? []).entries())
 				database.exec(
 					`CREATE INDEX ${name}_${index} ON ${name} (${columns.join(", ")})`,
@@ -96,7 +101,10 @@ export const writeSqliteTables = (
 			`INSERT INTO ${name} VALUES (${["?", ...placeholders].join(", ")})`,
 		);
 		let position = 0;
-		for (const row of table.rows) insert.run(position++, ...row);
+		for (const row of typeof table.rows === "function"
+			? table.rows(database)
+			: table.rows)
+			insert.run(position++, ...row);
 	}
 	for (const table of Object.values(tables))
 		for (const [name, select] of Object.entries(table.views ?? {}))
