@@ -288,7 +288,9 @@ test("evicts least recently used artifacts and reloads through live lazy views",
 	const text = JSON.stringify(table);
 	for (const name of ["a", "b", "c"])
 		writeObservationFixture(join(directory, `${name}.json`), text);
-	const cache = new ObservationCache(Buffer.byteLength(text) * 2);
+	const cache = new ObservationCache(
+		(Buffer.byteLength(text) + text.length * 2) * 2,
+	);
 	const a = lazySourceObservations(
 		fixtureObservationDatabase(directory),
 		"a",
@@ -339,7 +341,9 @@ test("does not retain oversized observations or displace a cached small artifact
 			records: [...table.records, ...table.records],
 		}),
 	);
-	const cache = new ObservationCache(Buffer.byteLength(text));
+	const cache = new ObservationCache(
+		Buffer.byteLength(text) + text.length * 2,
+	);
 	const small = cache.read(
 		fixtureObservationDatabase(directory),
 		"small",
@@ -387,7 +391,9 @@ test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 	const text = `${JSON.stringify(own)}\n`;
 	for (const name of ["a", "b"])
 		writeObservationFixture(join(directory, `${name}.json`), text);
-	const cache = new ObservationCache(Buffer.byteLength(text));
+	const cache = new ObservationCache(
+		Buffer.byteLength(text) + text.length * 2,
+	);
 	const view = lazySourceObservations(
 		fixtureObservationDatabase(directory),
 		"a",
@@ -462,7 +468,7 @@ test("catalogue views share the configured observation budget", (t) => {
 	const [a, b, rented] = readMeasureObservations(
 		join(directory, "services/api"),
 		catalogue,
-		Buffer.byteLength(text),
+		Buffer.byteLength(text) + text.length * 2,
 	);
 	const first = observationTableOf(a!);
 	assert.equal(observationTableOf(rented!), first);
@@ -470,4 +476,72 @@ test("catalogue views share the configured observation budget", (t) => {
 	assert.equal(b!.periods.length, 1);
 	assert.notEqual(a!.periods, periods);
 	assert.deepEqual(a!.periods, periods);
+});
+
+test("bulk text shares the LRU budget and refreshes recency", (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-text-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	const text = JSON.stringify(table);
+	for (const name of ["a", "b", "c"])
+		writeObservationFixture(join(directory, `${name}.json`), text);
+	const path = fixtureObservationDatabase(directory);
+	const cache = new ObservationCache(
+		(Buffer.byteLength(text) + text.length * 2) * 2,
+	);
+	assert.equal(
+		cache.text(path, "a"),
+		`${JSON.stringify({ ...table, id: "a" })}\n`,
+	);
+	const parsed = cache.read(path, "a", "owned");
+	cache.text(path, "b");
+	assert.equal(
+		cache.text(path, "a"),
+		`${JSON.stringify({ ...table, id: "a" })}\n`,
+	);
+	cache.text(path, "c");
+	assert.equal(cache.read(path, "a", "owned"), parsed);
+	for (const name of ["a", "b", "c"])
+		removeObservationFixture(join(directory, `${name}.json`));
+	assert.equal(
+		cache.text(path, "a"),
+		`${JSON.stringify({ ...table, id: "a" })}\n`,
+	);
+	assert.equal(
+		cache.text(path, "c"),
+		`${JSON.stringify({ ...table, id: "c" })}\n`,
+	);
+	assert.throws(
+		() => cache.text(path, "b"),
+		/Missing SQLite measure observations/,
+	);
+});
+
+test("oversized bulk text is rebuilt without evicting a smaller cached entry", (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-text-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	const text = JSON.stringify(table);
+	writeObservationFixture(join(directory, "small.json"), text);
+	writeObservationFixture(
+		join(directory, "large.json"),
+		JSON.stringify({
+			...table,
+			records: [...table.records, ...table.records],
+		}),
+	);
+	const path = fixtureObservationDatabase(directory);
+	const cache = new ObservationCache(
+		Buffer.byteLength(text) + text.length * 2,
+	);
+	cache.text(path, "small");
+	cache.text(path, "large");
+	removeObservationFixture(join(directory, "large.json"));
+	removeObservationFixture(join(directory, "small.json"));
+	assert.equal(
+		cache.text(path, "small"),
+		`${JSON.stringify({ ...table, id: "small" })}\n`,
+	);
+	assert.throws(
+		() => cache.text(path, "large"),
+		/Missing SQLite measure observations/,
+	);
 });

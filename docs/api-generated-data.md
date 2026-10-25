@@ -29,7 +29,10 @@ per shared census table), not as JSON text. `build-data-catalog.ts` compiles and
 publishes them atomically; `observation_catalogue` links them to the data
 catalogue hash. The API rebuilds each artifact's exact JSON from its rows and
 checks it against the stored payload hash, so corruption is detected on read.
-Measure views retain the existing lazy loading and byte-budgeted cache. Cached
+Measure views and rebuilt bulk JSON text share a 64 MiB LRU by default. Each
+entry charges two bytes per text code unit plus the UTF-8 source byte allowance
+for parsed data. This is cache accounting, not an exact JavaScript heap limit.
+Oversized entries are served without retention; text-only reads do not parse JSON. Cached
 views remember their observation generation and refuse to read a newer
 generation until the API restarts. JSON exports return the rebuilt text and
 verify its byte count. `observations_decoded` exposes ordinary series; `observations_census` unpivots
