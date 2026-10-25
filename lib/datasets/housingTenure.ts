@@ -54,7 +54,7 @@ export const housingTenureDefinition: ChartDatasetDefinition<
 	chart: {
 		group: "Economics",
 		key: "economics-housingTenure",
-		label: "Housing tenure [2021]",
+		label: "Housing Tenure [2021]",
 		defaultVisible: false,
 		componentPath: "@/components/ValueCard",
 		card: card("owned"),
