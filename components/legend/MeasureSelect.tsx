@@ -17,12 +17,12 @@ export default function MeasureSelect<Value extends string>({
 	const isDark = useIsDark();
 	return (
 		<label
-			className={`pointer-events-auto ml-auto flex max-w-full flex-col gap-1 rounded-md p-2 text-xs ${isDark ? "text-gray-100" : "text-gray-800"}`}
+			className={`pointer-events-auto ml-auto flex max-w-full flex-col gap-1 rounded-md p-2 text-xs ${isDark ? "text-gray-100" : "text-gray-700"}`}
 			style={glassStyle(isDark)}
 		>
 			{label}
 			<select
-				className="max-w-full rounded bg-transparent p-1"
+				className="max-w-full rounded bg-transparent p-1 text-xs"
 				value={value}
 				onChange={(event) => {
 					const option = options.find(
@@ -33,7 +33,11 @@ export default function MeasureSelect<Value extends string>({
 			>
 				{options.map((option) => (
 					<option
-						className="text-gray-900"
+						className={
+							isDark
+								? "bg-gray-900 text-gray-100"
+								: "bg-white text-gray-700"
+						}
 						key={option.value}
 						value={option.value}
 					>
