@@ -175,6 +175,12 @@ export const observationTables = (
 		return { name, columns };
 	});
 
+	const censusSelects = tableSeries.flatMap(({ id, artifact }, index) =>
+		cellTables[index]!.columns.map(
+			(column, ordinal) =>
+				`SELECT s.artifactId, m.measureId, s.geographyType, s.boundaryYear, meta.period, a.code AS areaCode, NULL AS sourceAreaCode, t."${column}" AS value, NULL AS category, NULL AS status, NULL AS confidenceLower, NULL AS confidenceUpper FROM ${cellTables[index]!.name} t JOIN observation_areas a ON a.position = t.areaId JOIN observation_series s ON s.position = ${seriesPositions.get(id)!} JOIN observation_tables meta ON meta.seriesPosition = s.position JOIN observation_measures m ON m.position = ${measurePositions.get(artifact.measures[ordinal]!)!}`,
+		),
+	);
 	const keyColumns = [
 		"seriesId INTEGER NOT NULL REFERENCES observation_series(position)",
 		"periodId INTEGER NOT NULL REFERENCES observation_periods(position)",
@@ -386,6 +392,11 @@ export const observationTables = (
 						];
 			})(),
 			views: {
+				observations_census: censusSelects.length
+					? censusSelects.join(" UNION ALL ")
+					: "SELECT * FROM observations_decoded WHERE 0",
+				observations_all:
+					"SELECT * FROM observations_decoded UNION ALL SELECT * FROM observations_census",
 				observations_decoded: `SELECT s.artifactId, m.measureId, s.geographyType, s.boundaryYear, p.label AS period, a.code AS areaCode, sa.code AS sourceAreaCode, o.value, c.category, st.label AS status, i.lower AS confidenceLower, i.upper AS confidenceUpper FROM observations o JOIN observation_series s ON s.position = o.seriesId JOIN observation_measures m ON m.position = s.measurePosition JOIN observation_periods p ON p.position = o.periodId JOIN observation_areas a ON a.position = o.areaId JOIN observation_statuses st ON st.position = o.statusId LEFT JOIN observation_source_areas x ON x.seriesId = o.seriesId AND x.periodId = o.periodId AND x.areaId = o.areaId LEFT JOIN observation_areas sa ON sa.position = x.sourceAreaId LEFT JOIN observation_categories c ON c.seriesId = o.seriesId AND c.periodId = o.periodId AND c.areaId = o.areaId LEFT JOIN observation_intervals i ON i.seriesId = o.seriesId AND i.periodId = o.periodId AND i.areaId = o.areaId`,
 			},
 		},

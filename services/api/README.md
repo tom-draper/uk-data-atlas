@@ -55,8 +55,28 @@ fields live in sparse tables keyed the same way: `observation_source_areas`
 `observation_intervals` (`lower`, `upper`). Each shared census table has one
 wide `observation_<table>` table with a REAL column per measure, and
 `observation_tables` and `observation_table_columns` map the artifact to it.
-`observations_decoded` and the per-table `*_decoded` views expose area codes,
-period labels, statuses and measure names for direct SQL queries. Road
+`observations_decoded` exposes ordinary series as readable rows. The
+`observations_census` view unpivots wide census tables, one row per measure and
+area, including NULL cells. Its status, source area, category and confidence
+fields are NULL. `observations_all` combines both with the same columns. The
+per-table `*_decoded` views retain the wide format.
+
+`observation_measures` includes catalogue labels, units, value kinds, aggregation
+rules and weights, concepts and uncertainty metadata. Missing catalogue entries
+have NULL metadata. Join `observation_series.datasetId` to
+`observation_datasets.datasetId` for publisher, source URL, temporal coverage,
+licence and description. All observation tables remain STRICT.
+
+For example:
+
+```sql
+SELECT measureId, period, value, category, status
+FROM observations_all
+WHERE areaCode = 'E06000001'
+ORDER BY measureId, period;
+```
+
+Road
 collisions store the total beside its slight, serious and fatal measures, as
 the API serves all four.
 

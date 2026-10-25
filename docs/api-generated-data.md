@@ -6,22 +6,22 @@ assuming that every file left by an older local build is still required.
 
 ## Runtime files
 
-| Files in `services/api/public`                  | Reader                                         | Why they remain                                                          |
-| ----------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
-| `data-catalog.json`                             | `catalogueManifestLoader.ts`                   | Measure definitions and source references                                |
-| `*-observations.json`, `*-table.json`           | `observationLoader.ts`, `observationTables.ts` | Lazy observation loading, including tables shared by several measures    |
-| `measure-compatibility.json`                    | `catalogueManifestLoader.ts`                   | Supported measure and boundary combinations                              |
-| `export-manifest.json`                          | `catalogueManifestLoader.ts`, bulk routes      | Export metadata for observation artifacts                                |
-| `lookup-manifest.json`                          | `catalogueManifestLoader.ts`                   | Lookup catalogue metadata                                                |
-| `map-resources.json`                            | `mapResourceLoader.ts`                         | Boundary tile resource metadata                                          |
-| `geometry-sources.json`                         | `geometrySources.ts`                           | Source geometry lookup                                                   |
-| `relationship-candidates.json`                  | `governanceLoader.ts`                          | Candidate relationship governance                                        |
-| `validation-report.json`                        | `catalogueManifestLoader.ts`                   | Validation results                                                       |
-| `operations.json`                               | `catalogueManifestLoader.ts`                   | OpenAPI query parameter validation, checked against the current document |
-| `atlas-release.json`                            | `catalogueManifestLoader.ts`                   | Release identity and artifact hashes                                     |
-| `evidence-documents.json`, `documents/*.json`   | `catalogueLoader.ts`, document routes          | Evidence documents and their index                                       |
-| `atlas-lookups.json`, `atlas-lookups/*.json.gz` | `atlasLookups.ts`, website copy stage          | Published lookup downloads                                               |
-| `atlas-pages.json`, `atlas-pages/*.json.gz`     | `atlasPages.ts`, website copy stage            | Published place page data                                                |
+| Files in `services/api/public` | Reader                       | Why they remain                           |
+| ------------------------------ | ---------------------------- | ----------------------------------------- |
+| `data-catalog.json`            | `catalogueManifestLoader.ts` | Measure definitions and source references |
+
+| `measure-compatibility.json` | `catalogueManifestLoader.ts` | Supported measure and boundary combinations |
+| `export-manifest.json` | `catalogueManifestLoader.ts`, bulk routes | Export metadata for observation artifacts |
+| `lookup-manifest.json` | `catalogueManifestLoader.ts` | Lookup catalogue metadata |
+| `map-resources.json` | `mapResourceLoader.ts` | Boundary tile resource metadata |
+| `geometry-sources.json` | `geometrySources.ts` | Source geometry lookup |
+| `relationship-candidates.json` | `governanceLoader.ts` | Candidate relationship governance |
+| `validation-report.json` | `catalogueManifestLoader.ts` | Validation results |
+| `operations.json` | `catalogueManifestLoader.ts` | OpenAPI query parameter validation, checked against the current document |
+| `atlas-release.json` | `catalogueManifestLoader.ts` | Release identity and artifact hashes |
+| `evidence-documents.json`, `documents/*.json` | `catalogueLoader.ts`, document routes | Evidence documents and their index |
+| `atlas-lookups.json`, `atlas-lookups/*.json.gz` | `atlasLookups.ts`, website copy stage | Published lookup downloads |
+| `atlas-pages.json`, `atlas-pages/*.json.gz` | `atlasPages.ts`, website copy stage | Published place page data |
 
 Observation contracts are stored as rows in SQLite (`observations`,
 `observation_series` and their dictionary and sparse tables, with one wide table
@@ -32,8 +32,15 @@ checks it against the stored payload hash, so corruption is detected on read.
 Measure views retain the existing lazy loading and byte-budgeted cache. Cached
 views remember their observation generation and refuse to read a newer
 generation until the API restarts. JSON exports return the rebuilt text and
-verify its byte count. The `observations_decoded` and `observation_<table>_decoded`
-views expose readable codes, labels and measure names for direct SQL queries.
+verify its byte count. `observations_decoded` exposes ordinary series; `observations_census` unpivots
+wide census tables, retaining zero and NULL cells and using NULL for status,
+source area, category and confidence fields. `observations_all` combines the two
+with identical columns. Per-table `observation_<table>_decoded` views stay wide.
+Join the views' measure ids to `observation_measures` for labels, units,
+aggregation rules and weights, concepts and uncertainty. Metadata absent from the
+catalogue is NULL. Join `observation_series.datasetId` to
+`observation_datasets.datasetId` for publisher, source URL, coverage and licence.
+These tables remain STRICT.
 
 Compatibility checks, analysis-geography validation, the validation report,
 and JSON, CSV, and Parquet exports read those
@@ -86,11 +93,10 @@ entry for every artifact referenced by the catalogue. Shared census tables have
 one entry even when several measures reference them. Duplicate, missing, and
 unexpected entries fail before publication.
 
-Exact payloads preserve field order, optional publisher codes, categorical
-values, confidence intervals, and table nulls without a second serializer.
-Relational record storage was considered, but current queries mostly consume
-whole periods and exports require the complete artifact. Splitting the contracts
-into rows would add reconstruction logic while retaining those reads.
+The publisher rebuilds every artifact from its rows and compares the exact text
+before committing. This preserves field order, optional publisher codes,
+categorical values, confidence intervals and table nulls. Any byte difference
+aborts publication. No JSON payload copy is stored.
 
 Publication uses a unique temporary database, one transaction, and an atomic
 rename. Readers open short-lived read-only connections and compare the published
