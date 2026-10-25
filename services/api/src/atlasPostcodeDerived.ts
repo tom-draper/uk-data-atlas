@@ -1,3 +1,4 @@
+import { readCachePayload, requireAtlasCache } from "./atlasCache";
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { readPostcodeAreaShard } from "./atlasPostcodeAreas";
@@ -45,10 +46,10 @@ export function readSqlitePostcodeCounts(
 			Omit<PostcodeCountsArtifact["releases"][number], "areas">
 		>;
 	} = JSON.parse(
-		readAtlasPayload(resolve(apiRoot, "../.."), "postcode-counts"),
+		readCachePayload(apiRoot, "postcode-counts", "postcode-counts"),
 	);
 	const database = new DatabaseSync(
-		resolve(apiRoot, "../../data/build/atlas.sqlite"),
+		requireAtlasCache(apiRoot, "postcode-counts"),
 		{ readOnly: true },
 	);
 	try {

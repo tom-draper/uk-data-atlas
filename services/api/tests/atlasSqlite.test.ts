@@ -1,3 +1,4 @@
+import { atlasCachePath } from "../src/atlasCache";
 import { buildAreaSearchIndex } from "../scripts/build-area-search-index";
 import { AreaSearch } from "../src/areaSearch";
 import { readAreaSearchIndex, readAreaLookup } from "../src/boundaryLoader";
@@ -121,11 +122,7 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 				.prepare("SELECT id FROM payloads")
 				.all()
 				.map((row) => row.id),
-			[
-				"dataset-manifest",
-				"location-projection-inventory",
-				"terrain-catalogue",
-			],
+			["dataset-manifest", "terrain-catalogue"],
 		);
 		assert.equal(
 			database
@@ -261,7 +258,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
 });
 
-test("shared atlas serves projection routes without projection JSON or a second database", (context) => {
+test("split atlas serves projection routes from the local cache without projection JSON", (context) => {
 	const { root, apiRoot } = fixture(context);
 	const compiled = compileLocationProjections(
 		namedLocationInventory,
@@ -493,10 +490,12 @@ test("failed place table replacement preserves the database and legacy files", (
 				releases: [],
 			}),
 		);
-		database.exec("CREATE VIEW place_index_names AS SELECT 1 AS position");
 	} finally {
 		database.close();
 	}
+	const cache = new DatabaseSync(atlasCachePath(root));
+	cache.exec("CREATE VIEW place_index_names AS SELECT 1 AS position");
+	cache.close();
 	const before = readFileSync(path);
 	const legacy = join(apiRoot, "public/place-index.sqlite");
 	writeFileSync(legacy, "retained on failure");
@@ -586,7 +585,7 @@ test("area-search stage replaces its index while retaining place search and othe
 test("failed area-search replacement preserves the database and legacy files", (context) => {
 	const { root, apiRoot } = fixture(context);
 	const path = buildAtlasSqlite(root);
-	const database = new DatabaseSync(path);
+	const database = new DatabaseSync(atlasCachePath(root));
 	try {
 		database.exec("CREATE VIEW area_search_terms AS SELECT 1 AS position");
 	} finally {

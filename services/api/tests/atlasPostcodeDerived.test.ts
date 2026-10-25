@@ -1,3 +1,4 @@
+import { atlasCachePath } from "../src/atlasCache";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -262,7 +263,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 		() => readPostcodeCounts(apiRoot, postcodes, stale),
 		/current postcode area index/,
 	);
-	const db = new DatabaseSync(path);
+	const db = new DatabaseSync(atlasCachePath(root));
 	db.exec("UPDATE postcode_counts SET live = 99");
 	db.close();
 	assert.throws(

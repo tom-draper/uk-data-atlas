@@ -5,9 +5,8 @@ import {
 	areaSearchIndexTables,
 } from "../src/areaSearch";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
-import { copyFileSync, renameSync, rmSync } from "node:fs";
-import { DatabaseSync } from "node:sqlite";
-import { writeSqliteTables } from "../src/sqliteIndex";
+import { rmSync } from "node:fs";
+import { publishCacheTables } from "../src/atlasCache";
 
 export const buildAreaSearchIndex = (repositoryRoot: string) => {
 	const apiRoot = join(repositoryRoot, "services", "api");
@@ -16,25 +15,11 @@ export const buildAreaSearchIndex = (repositoryRoot: string) => {
 		readAreaLookup(apiRoot, areaInventory),
 		areaInventory.contentHash,
 	);
-	const outputPath = join(repositoryRoot, "data/build/atlas.sqlite");
-	const temporary = `${outputPath}.area-search.tmp`;
-	try {
-		copyFileSync(outputPath, temporary);
-		const database = new DatabaseSync(temporary);
-		try {
-			database.exec("BEGIN");
-			const tables = areaSearchIndexTables(index);
-			for (const name of Object.keys(tables))
-				database.exec(`DROP TABLE IF EXISTS ${name}`);
-			writeSqliteTables(database, tables);
-			database.exec("COMMIT");
-		} finally {
-			database.close();
-		}
-		renameSync(temporary, outputPath);
-	} finally {
-		rmSync(temporary, { force: true });
-	}
+	const outputPath = publishCacheTables(
+		repositoryRoot,
+		"area-search",
+		areaSearchIndexTables(index),
+	);
 	for (const filename of [
 		"area-search-index.sqlite",
 		"area-search-index.json",
