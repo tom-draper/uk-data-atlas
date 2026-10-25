@@ -21,7 +21,9 @@ export const storePostcodeIndex = (
 		copyFileSync(path, temporary);
 		const database = new DatabaseSync(temporary);
 		try {
-			database.exec("BEGIN; DROP TABLE IF EXISTS postcodes;");
+			database.exec(
+				"BEGIN; DROP VIEW IF EXISTS postcodes_decoded; DROP TABLE IF EXISTS postcodes;",
+			);
 			writeSqliteTables(database, postcodeTables(artifact, readShard));
 			database
 				.prepare(

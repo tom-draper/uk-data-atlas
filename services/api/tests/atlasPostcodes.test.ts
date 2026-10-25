@@ -29,6 +29,8 @@ import { testContext } from "./routeFixtures";
 
 const rows = [
 	postcodeRow("M1 1AE"),
+	postcodeRow("M10 1AA"),
+	postcodeRow("M1A 1AA"),
 	postcodeRow("M1 1AA", { doterm: "200102", usrtypind: "1" }),
 	postcodeRow("SW1A 1AA", { east1m: "", north1m: "", gridind: "9" }),
 	postcodeRow("CF1 1AA", { ctry: "W92000004", gridind: "8" }),
@@ -205,7 +207,7 @@ test("the source builder reads filtered gzip rows and writes only to the shared 
 		}),
 	);
 	const result = await buildPostcodeIndex(root);
-	assert.equal(result.artifact.counts.postcodes, 4);
+	assert.equal(result.artifact.counts.postcodes, 6);
 	assert.equal(
 		readPostcodeIndex(apiRoot).artifact.contentHash,
 		result.artifact.contentHash,

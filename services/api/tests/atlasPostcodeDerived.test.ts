@@ -11,6 +11,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
+import { sha256 } from "../src/contentHash";
+import type { PostcodeAreasShard } from "../src/postcodeAreas";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import { storePostcodeIndex } from "../scripts/store-postcode-index";
 import { storePostcodeAreas } from "../scripts/store-postcode-derived";
@@ -42,7 +44,12 @@ function fixture(t: TestContext) {
 	const path = join(root, "data/build/atlas.sqlite");
 	const db = new DatabaseSync(path);
 	db.exec(
-		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('existing', 'retained')",
+		`CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID;
+		INSERT INTO payloads VALUES ('existing', 'retained');
+		CREATE TABLE area_releases (position INTEGER PRIMARY KEY, geography TEXT, id TEXT);
+		INSERT INTO area_releases VALUES (0, 'ward', '2026');
+		CREATE TABLE areas (id INTEGER PRIMARY KEY, releasePosition INTEGER REFERENCES area_releases(position), code TEXT, inInventory INTEGER, name TEXT, aliases TEXT, UNIQUE(releasePosition, code));
+		INSERT INTO areas VALUES (1, 0, 'A', 1, 'Area A', NULL);`,
 	);
 	db.close();
 	const postcodes = postcodeIndexFor([
@@ -84,7 +91,7 @@ function fixture(t: TestContext) {
 }
 
 test("SQLite mappings retain exact bytes, boundary matches, distances and empty placements without JSON", (t) => {
-	const { root, apiRoot, compiled, texts } = fixture(t);
+	const { root, apiRoot, path, compiled, texts } = fixture(t);
 	writeFileSync(join(apiRoot, "public/postcode-areas.json"), "obsolete");
 	writeFileSync(
 		join(apiRoot, "public/postcode-areas/obsolete.json.gz"),
@@ -99,6 +106,46 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	);
 	assert.equal(existsSync(join(apiRoot, "public/postcode-areas")), false);
 	assert.deepEqual(readSqlitePostcodeAreas(apiRoot), compiled.artifact);
+	const db = new DatabaseSync(path);
+	assert.deepEqual(
+		{
+			...db
+				.prepare(
+					"SELECT p.postcode, a.code, a.name FROM postcodes p JOIN areas a ON a.id = p.wardAreaId",
+				)
+				.get(),
+		},
+		{ postcode: "M11AA", code: "A", name: "Area A" },
+	);
+	assert.equal(
+		db.prepare("SELECT inInventory FROM areas WHERE code = 'B'").get()!
+			.inInventory,
+		0,
+	);
+	assert.equal(
+		db
+			.prepare(
+				"SELECT wardCode FROM postcodes_decoded WHERE postcode = 'M11AA'",
+			)
+			.get()!.wardCode,
+		"A",
+	);
+	assert.equal(
+		db
+			.prepare("SELECT count(*) AS n FROM postcode_area_matches_decoded")
+			.get()!.n,
+		2,
+	);
+	assert.equal(
+		db
+			.prepare(
+				"SELECT count(*) AS n FROM sqlite_schema WHERE name = 'postcode_area_shards'",
+			)
+			.get()!.n,
+		0,
+	);
+	assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), []);
+	db.close();
 	for (const file of compiled.files)
 		assert.equal(
 			readSqlitePostcodeAreaShard(apiRoot, file.path),
@@ -240,4 +287,74 @@ test("failed mapping replacements preserve the published database and old files;
 	assert.equal(existsSync(join(apiRoot, "public/postcode-areas.json")), true);
 	rmSync(path);
 	assert.throws(() => readSqlitePostcodeAreas(apiRoot));
+});
+
+test("stored area corruption fails the shard hash check", (t) => {
+	const { root, apiRoot, path, compiled, texts } = fixture(t);
+	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
+	const db = new DatabaseSync(path);
+	db.exec(
+		"UPDATE postcodes SET wardDistanceCm = 99 WHERE postcode = 'M11AA'",
+	);
+	db.close();
+	assert.throws(
+		() =>
+			readSqlitePostcodeAreaShard(
+				apiRoot,
+				compiled.artifact.shards[0]!.path,
+			),
+		/Invalid SQLite postcode area shard/,
+	);
+});
+
+test("repeated geographies use exact releases and preserve shard release order", (t) => {
+	const { root, apiRoot, path, compiled } = fixture(t);
+	const db = new DatabaseSync(path);
+	db.exec(
+		"INSERT INTO area_releases VALUES (1, 'ward', '2025'); INSERT INTO areas VALUES (3, 1, 'A', 1, 'Old area A', NULL)",
+	);
+	db.close();
+	const files = new Map(
+		compiled.files.map((file) => {
+			const shard: PostcodeAreasShard = JSON.parse(file.text);
+			shard.releases["ward/2025"] = shard.releases["ward/2026"]!;
+			return [file.path, JSON.stringify(shard) + "\n"];
+		}),
+	);
+	const artifact = {
+		...compiled.artifact,
+		releases: [
+			{ ...compiled.artifact.releases[0]!, boundaryRelease: "2025" },
+			...compiled.artifact.releases,
+		],
+		shards: compiled.artifact.shards.map((entry) => ({
+			...entry,
+			contentHash: sha256(files.get(entry.path)!),
+		})),
+	};
+	storePostcodeAreas(root, artifact, (path) => files.get(path)!);
+	for (const entry of artifact.shards)
+		assert.equal(
+			readSqlitePostcodeAreaShard(apiRoot, entry.path),
+			files.get(entry.path),
+		);
+	const after = new DatabaseSync(path);
+	assert.equal(
+		after
+			.prepare(
+				'SELECT "ward_2025AreaId" AS old, "ward_2026AreaId" AS current FROM postcodes WHERE postcode = ?',
+			)
+			.get("M11AA")!.old,
+		3,
+	);
+	assert.equal(
+		after
+			.prepare(
+				'SELECT "ward_2025AreaId" AS old, "ward_2026AreaId" AS current FROM postcodes WHERE postcode = ?',
+			)
+			.get("M11AA")!.current,
+		1,
+	);
+	assert.deepEqual(after.prepare("PRAGMA foreign_key_check").all(), []);
+	after.close();
 });

@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { inflateSync } from "node:zlib";
+import { readPostcodeAreaShard } from "./atlasPostcodeAreas";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import type { PostcodeAreasArtifact } from "./postcodeAreas";
 import type { PostcodeCountsArtifact } from "./postcodeCounts";
@@ -22,12 +22,16 @@ export function readSqlitePostcodeAreaShard(
 		{ readOnly: true },
 	);
 	try {
-		const row = database
-			.prepare("SELECT payload FROM postcode_area_shards WHERE path = ?")
-			.get(path);
-		if (!(row?.payload instanceof Uint8Array))
-			throw new Error(`Missing postcode area shard ${path}`);
-		return inflateSync(row.payload).toString("utf8");
+		const artifact: PostcodeAreasArtifact = JSON.parse(
+			String(
+				database
+					.prepare(
+						"SELECT payload FROM payloads WHERE id = 'postcode-areas'",
+					)
+					.get()!.payload,
+			),
+		);
+		return readPostcodeAreaShard(database, artifact, path);
 	} finally {
 		database.close();
 	}
