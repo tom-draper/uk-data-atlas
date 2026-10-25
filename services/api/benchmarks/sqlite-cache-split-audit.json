@@ -1,0 +1,578 @@
+[
+	{
+		"table": "meta",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 0,
+		"writers": "sqliteIndex.writeSqliteIndex",
+		"readers": "SqliteIndex",
+		"reason": "Canonical database schema metadata"
+	},
+	{
+		"table": "area_inventory",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 0,
+		"writers": "atlasAreas.areaTables; atlasPostcodeAreas.writePostcodeAreas",
+		"readers": "atlasAreas.readSqliteAreaInventory/readSqliteAreas; crosswalk/postcode joins",
+		"reason": "Canonical release identities and area ids"
+	},
+	{
+		"table": "area_releases",
+		"class": "canonical",
+		"tableBytes": 24576,
+		"indexBytes": 4096,
+		"writers": "atlasAreas.areaTables; atlasPostcodeAreas.writePostcodeAreas",
+		"readers": "atlasAreas.readSqliteAreaInventory/readSqliteAreas; crosswalk/postcode joins",
+		"reason": "Canonical release identities and area ids"
+	},
+	{
+		"table": "areas",
+		"class": "canonical",
+		"tableBytes": 36614144,
+		"indexBytes": 20168704,
+		"writers": "atlasAreas.areaTables; atlasPostcodeAreas.writePostcodeAreas",
+		"readers": "atlasAreas.readSqliteAreaInventory/readSqliteAreas; crosswalk/postcode joins",
+		"reason": "Canonical release identities and area ids"
+	},
+	{
+		"table": "crosswalk_label_exceptions",
+		"class": "canonical",
+		"tableBytes": 208896,
+		"indexBytes": 208896,
+		"writers": "atlasCrosswalks.crosswalkTables",
+		"readers": "atlasCrosswalks.readSqliteCrosswalk",
+		"reason": "Canonical mappings, metadata, field layouts and sparse labels"
+	},
+	{
+		"table": "crosswalk_inventory",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 0,
+		"writers": "atlasCrosswalks.crosswalkTables",
+		"readers": "atlasCrosswalks.readSqliteCrosswalk",
+		"reason": "Canonical mappings, metadata, field layouts and sparse labels"
+	},
+	{
+		"table": "crosswalk_coverage",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 4096,
+		"writers": "atlasCrosswalks.crosswalkTables",
+		"readers": "atlasCrosswalks.readSqliteCrosswalk",
+		"reason": "Canonical mappings, metadata, field layouts and sparse labels"
+	},
+	{
+		"table": "crosswalks",
+		"class": "canonical",
+		"tableBytes": 1417216,
+		"indexBytes": 49152,
+		"writers": "atlasCrosswalks.crosswalkTables",
+		"readers": "atlasCrosswalks.readSqliteCrosswalk",
+		"reason": "Canonical mappings, metadata, field layouts and sparse labels"
+	},
+	{
+		"table": "crosswalk_field_sets",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 4096,
+		"writers": "atlasCrosswalks.crosswalkTables",
+		"readers": "atlasCrosswalks.readSqliteCrosswalk",
+		"reason": "Canonical mappings, metadata, field layouts and sparse labels"
+	},
+	{
+		"table": "crosswalk_sources",
+		"class": "canonical",
+		"tableBytes": 34045952,
+		"indexBytes": 26189824,
+		"writers": "atlasCrosswalks.crosswalkTables",
+		"readers": "atlasCrosswalks.readSqliteCrosswalk",
+		"reason": "Canonical mappings, metadata, field layouts and sparse labels"
+	},
+	{
+		"table": "crosswalk_targets",
+		"class": "canonical",
+		"tableBytes": 90783744,
+		"indexBytes": 27541504,
+		"writers": "atlasCrosswalks.crosswalkTables",
+		"readers": "atlasCrosswalks.readSqliteCrosswalk",
+		"reason": "Canonical mappings, metadata, field layouts and sparse labels"
+	},
+	{
+		"table": "location_projection_dictionaries",
+		"class": "cache",
+		"tableBytes": 2629632,
+		"indexBytes": 0,
+		"writers": "build-atlas-sqlite.ts, build-atlas-cache.ts / locationProjectionTables",
+		"readers": "locationLoader / LocationProjectionDatabase",
+		"reason": "Materialised membership through canonical crosswalks"
+	},
+	{
+		"table": "location_projection_members",
+		"class": "cache",
+		"tableBytes": 29990912,
+		"indexBytes": 0,
+		"writers": "build-atlas-sqlite.ts, build-atlas-cache.ts / locationProjectionTables",
+		"readers": "locationLoader / LocationProjectionDatabase",
+		"reason": "Materialised membership through canonical crosswalks"
+	},
+	{
+		"table": "location_projection_parents",
+		"class": "cache",
+		"tableBytes": 348160,
+		"indexBytes": 0,
+		"writers": "build-atlas-sqlite.ts, build-atlas-cache.ts / locationProjectionTables",
+		"readers": "locationLoader / LocationProjectionDatabase",
+		"reason": "Materialised membership through canonical crosswalks"
+	},
+	{
+		"table": "named_location_inventory",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 0,
+		"writers": "atlasNamedLocations.namedLocationTables",
+		"readers": "atlasNamedLocations.readSqliteNamedLocationInventory",
+		"reason": "Authored location definitions, membership and published geometry"
+	},
+	{
+		"table": "named_locations",
+		"class": "canonical",
+		"tableBytes": 114688,
+		"indexBytes": 45056,
+		"writers": "atlasNamedLocations.namedLocationTables",
+		"readers": "atlasNamedLocations.readSqliteNamedLocationInventory",
+		"reason": "Authored location definitions, membership and published geometry"
+	},
+	{
+		"table": "named_location_members",
+		"class": "canonical",
+		"tableBytes": 73728,
+		"indexBytes": 73728,
+		"writers": "atlasNamedLocations.namedLocationTables",
+		"readers": "atlasNamedLocations.readSqliteNamedLocationInventory",
+		"reason": "Authored location definitions, membership and published geometry"
+	},
+	{
+		"table": "named_location_assertions",
+		"class": "canonical",
+		"tableBytes": 94208,
+		"indexBytes": 94208,
+		"writers": "atlasNamedLocations.namedLocationTables",
+		"readers": "atlasNamedLocations.readSqliteNamedLocationInventory",
+		"reason": "Authored location definitions, membership and published geometry"
+	},
+	{
+		"table": "named_location_partial_members",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 4096,
+		"writers": "atlasNamedLocations.namedLocationTables",
+		"readers": "atlasNamedLocations.readSqliteNamedLocationInventory",
+		"reason": "Authored location definitions, membership and published geometry"
+	},
+	{
+		"table": "named_location_geometries",
+		"class": "canonical",
+		"tableBytes": 26931200,
+		"indexBytes": 0,
+		"writers": "atlasNamedLocations.namedLocationTables",
+		"readers": "atlasNamedLocations.readSqliteNamedLocationInventory",
+		"reason": "Authored location definitions, membership and published geometry"
+	},
+	{
+		"table": "payloads",
+		"class": "canonical and cache metadata",
+		"tableBytes": 75292672,
+		"indexBytes": 0,
+		"writers": "build-atlas-sqlite.ts; build-geography-catalogues.ts; postcode publishers",
+		"readers": "shared.readAtlasPayload; geographyCatalogue; postcode readers",
+		"reason": "Canonical source dataset and public catalogue payloads remain; location-projection-inventory (32472 payload bytes) and postcode-counts (2050 payload bytes) move to cache."
+	},
+	{
+		"table": "datasets",
+		"class": "canonical",
+		"tableBytes": 81920,
+		"indexBytes": 4096,
+		"writers": "build-atlas-sqlite.ts",
+		"readers": "shared/atlasSqlite; catalog/input",
+		"reason": "Source contracts, provenance and dataset payload hashes"
+	},
+	{
+		"table": "place_index_meta",
+		"class": "cache",
+		"tableBytes": 8192,
+		"indexBytes": 0,
+		"writers": "build-place-index.ts / placeIndexTables",
+		"readers": "boundaryLoader.readPlaceIndex / SqliteIndex",
+		"reason": "Search copy of areas, locations and boundary ordering"
+	},
+	{
+		"table": "place_index_places",
+		"class": "cache",
+		"tableBytes": 11399168,
+		"indexBytes": 0,
+		"writers": "build-place-index.ts / placeIndexTables",
+		"readers": "boundaryLoader.readPlaceIndex / SqliteIndex",
+		"reason": "Search copy of areas, locations and boundary ordering"
+	},
+	{
+		"table": "place_index_names",
+		"class": "cache",
+		"tableBytes": 7671808,
+		"indexBytes": 0,
+		"writers": "build-place-index.ts / placeIndexTables",
+		"readers": "boundaryLoader.readPlaceIndex / SqliteIndex",
+		"reason": "Search copy of areas, locations and boundary ordering"
+	},
+	{
+		"table": "place_index_codes",
+		"class": "cache",
+		"tableBytes": 6926336,
+		"indexBytes": 0,
+		"writers": "build-place-index.ts / placeIndexTables",
+		"readers": "boundaryLoader.readPlaceIndex / SqliteIndex",
+		"reason": "Search copy of areas, locations and boundary ordering"
+	},
+	{
+		"table": "area_search_meta",
+		"class": "cache",
+		"tableBytes": 12288,
+		"indexBytes": 0,
+		"writers": "build-area-search-index.ts / areaSearchIndexTables",
+		"readers": "boundaryLoader.readAreaSearchIndex / SqliteIndex",
+		"reason": "Sorted search copy of canonical areas"
+	},
+	{
+		"table": "area_search_codes",
+		"class": "cache",
+		"tableBytes": 17575936,
+		"indexBytes": 0,
+		"writers": "build-area-search-index.ts / areaSearchIndexTables",
+		"readers": "boundaryLoader.readAreaSearchIndex / SqliteIndex",
+		"reason": "Sorted search copy of canonical areas"
+	},
+	{
+		"table": "area_search_terms",
+		"class": "cache",
+		"tableBytes": 13840384,
+		"indexBytes": 0,
+		"writers": "build-area-search-index.ts / areaSearchIndexTables",
+		"readers": "boundaryLoader.readAreaSearchIndex / SqliteIndex",
+		"reason": "Sorted search copy of canonical areas"
+	},
+	{
+		"table": "area_search_title_terms",
+		"class": "cache",
+		"tableBytes": 4096,
+		"indexBytes": 0,
+		"writers": "build-area-search-index.ts / areaSearchIndexTables",
+		"readers": "boundaryLoader.readAreaSearchIndex / SqliteIndex",
+		"reason": "Sorted search copy of canonical areas"
+	},
+	{
+		"table": "postcode_counts",
+		"class": "cache",
+		"tableBytes": 7413760,
+		"indexBytes": 0,
+		"writers": "build-postcode-counts.ts / storePostcodeCounts",
+		"readers": "atlasPostcodeDerived.readSqlitePostcodeCounts",
+		"reason": "Counts recomputed from postcode records and placements"
+	},
+	{
+		"table": "observation_statuses",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 4096,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_periods",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 4096,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_areas",
+		"class": "canonical",
+		"tableBytes": 1171456,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_measures",
+		"class": "canonical",
+		"tableBytes": 36864,
+		"indexBytes": 12288,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_datasets",
+		"class": "canonical",
+		"tableBytes": 32768,
+		"indexBytes": 4096,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_series",
+		"class": "canonical",
+		"tableBytes": 81920,
+		"indexBytes": 24576,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_tables",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 4096,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_table_columns",
+		"class": "canonical",
+		"tableBytes": 12288,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observations",
+		"class": "canonical",
+		"tableBytes": 17571840,
+		"indexBytes": 13398016,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_intervals",
+		"class": "canonical",
+		"tableBytes": 962560,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_source_areas",
+		"class": "canonical",
+		"tableBytes": 12288,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_categories",
+		"class": "canonical",
+		"tableBytes": 483328,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts001_lsoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 634880,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts001_msoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 143360,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts003_lsoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 1511424,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts003_msoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 385024,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts007a_lsoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 1781760,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts007a_msoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 479232,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts021_lsoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 1630208,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts021_msoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 393216,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts037_lsoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 946176,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts037_msoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 208896,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts054_lsoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 1093632,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts054_msoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 253952,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts066_lsoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 1200128,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_census_2021_ts066_msoa_2021_table",
+		"class": "canonical",
+		"tableBytes": 286720,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "observation_catalogue",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / atlasObservationTables.observationTables",
+		"readers": "atlasObservations.readObservationInventory/rebuildObservationText",
+		"reason": "Normalised observations, dictionaries, sparse fields and contract metadata"
+	},
+	{
+		"table": "sqlite_stat1",
+		"class": "canonical",
+		"tableBytes": 12288,
+		"indexBytes": 0,
+		"writers": "store-observations.ts / ANALYZE",
+		"readers": "SQLite query planner",
+		"reason": "Internal statistics describing canonical B-tree indexes"
+	},
+	{
+		"table": "postcode_area_releases",
+		"class": "canonical",
+		"tableBytes": 4096,
+		"indexBytes": 8192,
+		"writers": "atlasPostcodeAreas.writePostcodeAreas",
+		"readers": "atlasPostcodeAreas.readPostcodeAreaShard; decoded views",
+		"reason": "Release/area dictionaries, ambiguous matches and exact shard layout"
+	},
+	{
+		"table": "postcode_area_columns",
+		"class": "canonical",
+		"tableBytes": 1196032,
+		"indexBytes": 0,
+		"writers": "atlasPostcodeAreas.writePostcodeAreas",
+		"readers": "atlasPostcodeAreas.readPostcodeAreaShard; decoded views",
+		"reason": "Release/area dictionaries, ambiguous matches and exact shard layout"
+	},
+	{
+		"table": "postcode_area_codes",
+		"class": "canonical",
+		"tableBytes": 6975488,
+		"indexBytes": 0,
+		"writers": "atlasPostcodeAreas.writePostcodeAreas",
+		"readers": "atlasPostcodeAreas.readPostcodeAreaShard; decoded views",
+		"reason": "Release/area dictionaries, ambiguous matches and exact shard layout"
+	},
+	{
+		"table": "postcode_area_matches",
+		"class": "canonical",
+		"tableBytes": 454656,
+		"indexBytes": 0,
+		"writers": "atlasPostcodeAreas.writePostcodeAreas",
+		"readers": "atlasPostcodeAreas.readPostcodeAreaShard; decoded views",
+		"reason": "Release/area dictionaries, ambiguous matches and exact shard layout"
+	},
+	{
+		"table": "postcodes",
+		"class": "canonical",
+		"tableBytes": 620154880,
+		"indexBytes": 0,
+		"writers": "store-postcode-index.ts / postcodeTables; writePostcodeAreas",
+		"readers": "atlasPostcodes.readSqlitePostcodeShard; atlasPostcodeAreas.readPostcodeAreaShard",
+		"reason": "Canonical postcode attributes and spatial area relationships"
+	}
+]

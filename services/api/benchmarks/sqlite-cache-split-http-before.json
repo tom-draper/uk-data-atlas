@@ -1,0 +1,102 @@
+{
+	"startupMs": 2035.6876809999999,
+	"rss": 417243136,
+	"results": [
+		{
+			"route": "/v1/areas?limit=5",
+			"status": 200,
+			"bytes": 1018,
+			"hash": "98ef520de886172a1ad56f2ef9a25326dadc70f58e8fabf65fdabd1770847142",
+			"etag": "\"sha256-mO9SDeiGFyoa1W8u-aJTJtrccPWOj6v2X9q9F3CEcUI\"",
+			"milliseconds": 96.26604700000007
+		},
+		{
+			"route": "/v1/areas?geography=ward&limit=5",
+			"status": 200,
+			"bytes": 841,
+			"hash": "b3c4e52c3e10e192891fc8f8851b28007d5f77e64f67d927c4d94cb98d54abf4",
+			"etag": "\"sha256-s8TlLD4Q4ZKJH8j4hRsoAH1fd-ZPZ9knxNlMuY1Uq_Q\"",
+			"milliseconds": 36.55361599999969
+		},
+		{
+			"route": "/v1/places?q=Manchester",
+			"status": 200,
+			"bytes": 2966,
+			"hash": "baf0d833c1d7e1262cfc128db367947bfb02db79cf00b6083f1846159d5176ac",
+			"etag": "\"sha256-uvDYM8HX4SYs_BKNs2eUe_sC23nPALYIPxhGFZ1Rdqw\"",
+			"milliseconds": 55.93495999999959
+		},
+		{
+			"route": "/v1/places?q=Ynys%20Mon",
+			"status": 200,
+			"bytes": 3085,
+			"hash": "1f86822b96101b1944942784208776bc24c726339146c754a2715b09b6dded31",
+			"etag": "\"sha256-H4aCK5YQGxlElCeEIId2vCTHJjORRsdUonFbCbbd7TE\"",
+			"milliseconds": 3.9822979999999006
+		},
+		{
+			"route": "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000003",
+			"status": 200,
+			"bytes": 383,
+			"hash": "e6fcec9d67660a611b92d998ab69c03b957bf473c635c1e97b9a0249f37f06bd",
+			"etag": "\"sha256-5vzsnWdmCmEbktmYq2nAO5V79HPGNcHpe5oCSfN_Br0\"",
+			"milliseconds": 8.073335999999927
+		},
+		{
+			"route": "/v1/locations/greater-manchester/members?release=2023-05-uk-bgc-v2",
+			"status": 200,
+			"bytes": 35465,
+			"hash": "544a23a561d5cc9d7933eaf716a5200beb3f681a1fb46d54b354f0ab5d101154",
+			"etag": "\"sha256-VEojpWHVzJ15M-r3FqUgC-s_aBoftG1Us1Twq10QEVQ\"",
+			"milliseconds": 8.244697999999971
+		},
+		{
+			"route": "/v1/postcodes/M11AA",
+			"status": 200,
+			"bytes": 5679,
+			"hash": "c9d28cbbc675b7fdf346ab493c2925fea674b0f9202ebb053cf5f840cf191c44",
+			"etag": "\"sha256-ydKMu8Z1t_3zRqtJPCkl_qZ0sPkgLrsFPPX4QM8ZHEQ\"",
+			"milliseconds": 114.93849399999999
+		},
+		{
+			"route": "/v1/postcodes/SW1A1AA?view=compact",
+			"status": 200,
+			"bytes": 1292,
+			"hash": "6b5db31128a6b6debbe52aa8af5a35cbc7ce7cd0f4f5d4512358332a827fc9df",
+			"etag": "\"sha256-a12zESimtt675Sqor1o1y8fOfND09dRRI1gzKoJ_yd8\"",
+			"milliseconds": 54.422461999999996
+		},
+		{
+			"route": "/v1/data/population?geography=localAuthority",
+			"status": 200,
+			"bytes": 9614,
+			"hash": "c1038732e7bc3840256692cc8190c98e4e5896b6a26a1ead6ec05cefc9c8a80a",
+			"etag": "\"sha256-wQOHMue8OEAlZpLMgZDJjk5Ylraiah6tbsBc78nIqAo\"",
+			"milliseconds": 33.25767399999995
+		},
+		{
+			"route": "/v1/data/population/value?place=Manchester",
+			"status": 200,
+			"bytes": 2675,
+			"hash": "171dd7b1a4caad5df286b0e9609bb543f85f95ae0230d99271ba255f9d4eb663",
+			"etag": "\"sha256-Fx3XsaTKrV3yhrDpYJu1Q_hfla4CMNmScbolX51OtmM\"",
+			"milliseconds": 25.996172000000115
+		},
+		{
+			"route": "/v1/crosswalks",
+			"status": 200,
+			"bytes": 97484,
+			"hash": "42b41401926273afaf5a7791b25fa9b296d45d1f811c57fc4cdeab4617242d59",
+			"etag": "\"sha256-QrQUAZJic6-vWneRsl-pspbUXR-BHFf8TN6rRhckLVk\"",
+			"milliseconds": 4.857320999999956
+		},
+		{
+			"route": "/v1/locations?limit=5",
+			"status": 200,
+			"bytes": 3011,
+			"hash": "6f2ae48d3c3d1298b5c4e4bca0f3353c98bae595732e70cd90ba967766a14a09",
+			"etag": "\"sha256-byrkjTw9Epi1xOS8oPM1PJi65ZVzLnDNkLqWd2ahSgk\"",
+			"milliseconds": 29.502626999999848
+		}
+	]
+}
