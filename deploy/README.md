@@ -112,6 +112,12 @@ Optional API settings, including `ATLAS_METRICS_TOKEN`, can be supplied through
 a local systemd override. Keep secrets out of Git; metrics are disabled until
 a token is configured. The units require no environment file.
 
+The API unit writes daily usage counts, with no personal data, to
+`/var/lib/uk-data-atlas/usage` (`StateDirectory=`), outside the repository and
+the build caches. Read them with `pnpm --dir services/api usage:report`, run
+with `ATLAS_USAGE_DIR=/var/lib/uk-data-atlas/usage`. See
+`services/api/DEPLOYMENT.md#usage-counts`.
+
 ## DNS, Nginx and HTTPS
 
 Point all three hostnames at the server (currently `128.140.0.185`); configure

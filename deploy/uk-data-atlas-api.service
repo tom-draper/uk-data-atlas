@@ -14,6 +14,7 @@ Environment=HOST=127.0.0.1
 Environment=PORT=3001
 Environment=ATLAS_WORKERS=2
 Environment=ATLAS_TRUSTED_PROXY_HOPS=1
+Environment=ATLAS_USAGE_DIR=/var/lib/uk-data-atlas/usage
 Environment=PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart=/opt/node24/bin/node services/api/dist/serve.mjs
 Restart=on-failure
@@ -22,6 +23,7 @@ TimeoutStopSec=20s
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
+StateDirectory=uk-data-atlas/usage
 
 [Install]
 WantedBy=multi-user.target
