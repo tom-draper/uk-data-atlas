@@ -257,14 +257,25 @@ const apiStages = [
 		"data-catalog",
 		"crosswalk-inventory",
 	]),
-	stage("geography-catalogues", [
-		"atlas-sqlite",
-		"boundary-registry",
-		"geography-inventory",
-		"relationship-paths",
-		"analysis-geographies",
-		"analysis-geography-validation",
-	]),
+	stage(
+		"geography-catalogues",
+		[
+			"atlas-sqlite",
+			"boundary-registry",
+			"geography-inventory",
+			"relationship-paths",
+			"analysis-geographies",
+			"analysis-geography-validation",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-geography-catalogues.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("location-projections", [
 		"named-locations",
 		"crosswalk-inventory",

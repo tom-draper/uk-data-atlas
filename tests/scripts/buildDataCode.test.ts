@@ -252,6 +252,14 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("geometry-source-registry")!.includes(path), path);
 	}
 	for (const path of [
+		"pipeline/src/build-geography-catalogues.ts",
+		"shared/geographyBuildPath.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("geography-catalogues")!.includes(path), path);
+	}
+	for (const path of [
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",

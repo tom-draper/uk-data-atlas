@@ -2,7 +2,10 @@ import { copyFileSync, readFileSync, renameSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
-import { buildArtifactPath, geographyCatalogues } from "./geography-build-path";
+import {
+	buildArtifactPath,
+	geographyCatalogues,
+} from "../../shared/geographyBuildPath";
 
 /** Finalise catalogue payloads after analysis has read the base database. */
 export const buildGeographyCatalogues = (repositoryRoot: string) => {
@@ -42,5 +45,5 @@ export const buildGeographyCatalogues = (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath)
 	console.log(
-		`Stored geography catalogues in ${buildGeographyCatalogues(resolve(dirname(scriptPath), "../../.."))}`,
+		`Stored geography catalogues in ${buildGeographyCatalogues(resolve(dirname(scriptPath), "../.."))}`,
 	);
