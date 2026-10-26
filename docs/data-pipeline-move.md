@@ -422,7 +422,16 @@ The build still writes `services/api/public/operations.json` from
 `services/api/openapi.yaml`, with identical bytes. Its cache inputs include the
 OpenAPI document, compiler imports, and pipeline configuration.
 
-This completes the terrain and operations catalogue groups in move-order step 2. The inventory
+The geometry source registry compiler and entry point now live in
+`pipeline/src/geometrySourceRegistry.ts` and
+`pipeline/src/build-geometry-source-registry.ts`. Its artifact type and hashing
+helpers live in `shared/`, with API re-exports for existing consumers. Area
+inventory artifact types also live in `shared/areaInventory.ts`. The build
+still writes byte-identical `services/api/public/geometry-sources.json` and
+keeps the input hash cache at its existing path.
+
+This completes the terrain and operations catalogue groups in move-order step 2
+and the geometry source registry compiler in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
 The remaining catalogue groups and steps 3 and 4 still need extraction.
 
