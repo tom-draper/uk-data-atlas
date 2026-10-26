@@ -81,7 +81,10 @@ missing place.
 The API builds from raw `data/` without `public/data/`. The shared `datasets`
 stage compiles every catalogue dataset once into `data/build/datasets/` (see
 [data/build/README.md](data/build/README.md)). The `atlas-sqlite` stage stores their
-metadata and exact payload bytes in `data/build/atlas.sqlite`. The API catalogue
+metadata and exact payload bytes in `data/build/atlas.sqlite`. Fuel poverty also
+has relational catalogue observation rows. The Next.js versioned reader
+reconstructs its original JSON from those rows; other datasets still read the
+stored payload. The API catalogue
 compiler and atlas pages read it directly through the server-only reader in
 `shared/atlasSqlite.ts`. The `api-datasets` stage only builds
 gazetteer core and boundary assets under `services/api/public/source-data/`.
