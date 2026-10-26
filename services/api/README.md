@@ -2682,10 +2682,12 @@ resolver rather than arrive with it.
 ### Built once, at build time
 
 The resolver answers from precompiled indexes, not by searching catalogues on
-each request. The build already produces most of what it needs —
-`area-inventory.json`, `boundary-releases.json`, `crosswalk-inventory.json`,
-`geography-inventory.json`, the relationship candidates and the per-measure
-compatibility inventory. What is missing is the index that ties them together:
+each request. The build already produces most of what it needs.
+`area-inventory.json`, `crosswalk-inventory.json`, the relationship candidates
+and the per-measure compatibility inventory remain JSON files.
+The `atlas.sqlite:boundary-releases` and `atlas.sqlite:geography-inventory` payloads live in the shared release.
+
+What is missing is the index that ties them together:
 for every measure, the partitions it has, the releases each partition can be
 drawn on, the crosswalks that leave it, and the periods available. That index
 is a build artifact with a content hash, gated by the validation report, and
@@ -3234,7 +3236,7 @@ second inventory to maintain:
 - `GET /v1/exports/{export-id}`, Download one immutable source observation artifact
 - `GET /v1/lookups`, List whole lookup tables for download
 - `GET /v1/lookups/{lookup-id}`, Download one whole lookup table as CSV or NDJSON
-- `GET /v1/atlas-release`, Get the current immutable atlas release manifest
+- `GET /v1/atlas-release`, Get the current build manifest
 
 **Geography**
 
