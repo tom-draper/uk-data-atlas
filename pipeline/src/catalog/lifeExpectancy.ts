@@ -1,6 +1,9 @@
 import { type DatasetInput, readDatasetInput } from "./input";
-import type { Measure } from "../dataCatalog";
-import { isPublishedAreaCode, countriesFor } from "./countries";
+import type { Measure } from "../../../shared/dataCatalog";
+import {
+	isPublishedAreaCode,
+	countriesFor,
+} from "../../../shared/catalogCountries";
 import { type PrecompiledFile, sha256, number, object } from "./values";
 
 /**

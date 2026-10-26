@@ -6,10 +6,10 @@ import type {
 	Measure,
 	MeasureSource,
 	SourceGeography,
-} from "../dataCatalog";
-import type { MeasureTableArtifact } from "../observationTables";
-import { csvFields } from "../csv";
-import { countriesFor } from "./countries";
+} from "../../../shared/dataCatalog";
+import type { MeasureTableArtifact } from "../../../shared/measureTable";
+import { csvFields } from "../../../shared/csv";
+import { countriesFor } from "../../../shared/catalogCountries";
 import { sha256 } from "./values";
 
 /**

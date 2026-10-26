@@ -1,14 +1,17 @@
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
-import { observationArtifactName } from "./dataCatalog";
-import { rebuildObservationText } from "./atlasObservations";
-import { sha256 } from "./contentHash";
+import { observationArtifactName } from "../../shared/dataCatalog";
+import { rebuildObservationText } from "../../shared/atlasObservations";
+import { sha256 } from "../../shared/contentHash";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
 	MeasureObservation,
-} from "./dataCatalog";
-import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
-import { writeSqliteTables, type SqliteTable } from "./sqliteIndex";
+} from "../../shared/dataCatalog";
+import {
+	isMeasureTable,
+	type MeasureTableArtifact,
+} from "../../shared/measureTable";
+import { writeSqliteTables, type SqliteTable } from "../../shared/sqliteTables";
 
 /**
  * Observation artifacts stored as rows. The artifact text is not kept: the

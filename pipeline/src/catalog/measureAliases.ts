@@ -1,5 +1,5 @@
-import type { Measure } from "../dataCatalog";
-import { measureSlug } from "../measureTerms";
+import type { Measure } from "../../../shared/dataCatalog";
+import { measureSlug } from "../../../shared/measureSlug";
 
 /**
  * Other names a measure answers to, accepted wherever its id is. Each names

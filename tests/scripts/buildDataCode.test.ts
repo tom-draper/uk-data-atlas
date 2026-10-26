@@ -303,6 +303,19 @@ test("production builders resolve without UI code and include declared workers a
 		}
 	}
 	for (const path of [
+		"pipeline/src/build-data-catalog.ts",
+		"pipeline/src/catalog/compileDataCatalog.ts",
+		"pipeline/src/store-observations.ts",
+		"pipeline/src/atlasObservationTables.ts",
+		"shared/dataCatalog.ts",
+		"shared/atlasObservations.ts",
+		"shared/sqliteTables.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("data-catalog")!.includes(path), path);
+	}
+	for (const path of [
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",

@@ -6,8 +6,8 @@ import test from "node:test";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
-} from "../../src/catalog/compileDataCatalog";
-import { onApril2023Authorities } from "../../src/catalog/authorityChanges";
+} from "../../../../pipeline/src/catalog/compileDataCatalog";
+import { onApril2023Authorities } from "../../../../pipeline/src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "../../src/dataCatalog";
 

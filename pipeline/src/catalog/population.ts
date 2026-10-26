@@ -4,9 +4,9 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "../dataCatalog";
+} from "../../../shared/dataCatalog";
 import { type PrecompiledFile, sha256, number, object } from "./values";
-import { countriesFor } from "./countries";
+import { countriesFor } from "../../../shared/catalogCountries";
 
 const recordsFromData = (
 	data: Record<string, unknown>,

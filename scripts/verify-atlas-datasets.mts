@@ -3,12 +3,12 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { readAtlasPayload } from "../shared/atlasSqlite";
-import { datasetCatalogInputs } from "../services/api/scripts/build-data-catalog";
+import { datasetCatalogInputs } from "../pipeline/src/build-data-catalog";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
-} from "../services/api/src/catalog/compileDataCatalog";
-import { AtlasDatasetInput } from "../services/api/src/catalog/input";
+} from "../pipeline/src/catalog/compileDataCatalog";
+import { AtlasDatasetInput } from "../pipeline/src/catalog/input";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
 

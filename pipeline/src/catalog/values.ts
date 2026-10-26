@@ -1,4 +1,4 @@
-export { sha256 } from "../contentHash";
+export { sha256 } from "../../../shared/contentHash";
 
 /** A parsed file from the API's compiled datasets, keyed by period or edition. */
 export type PrecompiledFile = Record<string, unknown>;

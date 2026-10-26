@@ -5,9 +5,9 @@ import type {
 	Measure,
 	PopulationObservation,
 	CategoricalObservation,
-} from "../dataCatalog";
+} from "../../../shared/dataCatalog";
 import { type PrecompiledFile, sha256, string, number, object } from "./values";
-import { countriesFor } from "./countries";
+import { countriesFor } from "../../../shared/catalogCountries";
 import type { CatalogManifest } from "./manifest";
 
 type ElectionMeasureField =

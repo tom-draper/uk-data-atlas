@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { withAliases } from "../src/catalog/measureAliases";
+import { withAliases } from "../../../pipeline/src/catalog/measureAliases";
 import type { DataCatalog } from "../src/dataCatalog";
 import {
 	canonicalMeasureId,

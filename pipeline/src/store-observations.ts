@@ -2,9 +2,12 @@ import { randomUUID } from "node:crypto";
 import { copyFileSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { replaceObservationTables } from "../src/atlasObservationTables";
-import { sha256 } from "../src/contentHash";
-import { observationArtifactName, type DataCatalog } from "../src/dataCatalog";
+import { replaceObservationTables } from "./atlasObservationTables";
+import { sha256 } from "../../shared/contentHash";
+import {
+	observationArtifactName,
+	type DataCatalog,
+} from "../../shared/dataCatalog";
 
 /** Publish one complete observation generation while preserving other atlas tables. */
 export function storeObservations(
