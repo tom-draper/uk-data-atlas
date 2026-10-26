@@ -89,10 +89,13 @@ export function runBuild({
 	let from;
 	let only;
 	let plan = false;
+	let adopt = false;
 	let useCache = true;
 	for (let index = 0; index < argv.length; index += 1) {
 		const argument = argv[index];
-		if (argument === "--plan" && !plan) {
+		if (argument === "--adopt" && !adopt) {
+			adopt = true;
+		} else if (argument === "--plan" && !plan) {
 			plan = true;
 		} else if (argument === "--no-cache" && useCache) {
 			useCache = false;
@@ -108,10 +111,14 @@ export function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--no-cache]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--no-cache | --adopt]`,
 			);
 		}
 	}
+	if (adopt && (!useCache || from !== undefined))
+		throw new Error(
+			"--adopt cannot be combined with --no-cache or --from.",
+		);
 	if (only !== undefined && from !== undefined)
 		throw new Error("--only and --from cannot be combined.");
 	if (only !== undefined && !stages.some((stage) => stage.name === only))
@@ -148,6 +155,12 @@ export function runBuild({
 			);
 	};
 	const cache = createCache();
+	if (adopt) {
+		if (!cache) throw new Error("--adopt requires a stage cache.");
+		cache.validateAdoption(
+			selected.filter((stage) => stage.cacheable !== false),
+		);
+	}
 	// --from and --no-cache rerun every stage they select, and record them.
 	const reuse = cache !== null && useCache && from === undefined;
 	// Each stage's output digest this build, or null once a stage has to run
@@ -167,6 +180,21 @@ export function runBuild({
 		const stageStartedAt = performance.now();
 		const description = `${stage.name}: pnpm ${stage.args.join(" ")} [depends on: ${stage.dependencies.join(", ") || "none"}]`;
 		const dependencies = dependencyDigests(stage);
+		if (adopt) {
+			if (stage.cacheable === false) {
+				log(`${stage.name}: not cacheable, skipped`);
+				continue;
+			}
+			if (plan) {
+				log(`${stage.name}: would adopt existing outputs`);
+				continue;
+			}
+			const adopted = cache.adopt(stage, dependencies);
+			digests.set(stage.name, adopted.digest);
+			log(`${stage.name}: adopted ${adopted.files.length} output files`);
+			for (const path of adopted.files) log(`  ${path}`);
+			continue;
+		}
 		const reused =
 			reuse && stage.cacheable !== false && !dependencies.includes(null)
 				? cache.lookup(stage, dependencies)

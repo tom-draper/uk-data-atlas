@@ -356,3 +356,114 @@ test("restoring a deleted shared API cache rebuilds every component", () => {
 	unlinkSync(path);
 	run();
 });
+
+test("adopt reuses current outputs after a cache version change without executing stages", () => {
+	const { runs, root, write, build, ran } = fixture();
+	runs();
+	const statePath = join(root, ".cache/stages.json");
+	const old = JSON.parse(readFileSync(statePath, "utf8"));
+	old.version = -1;
+	write(".cache/stages.json", JSON.stringify(old));
+	write("code.ts", "export const current = true;");
+	write("data/build/datasets/compiled.json", "trusted existing bytes");
+	ran.length = 0;
+	const { log } = build(["--adopt"]);
+	assert.deepEqual(ran, []);
+	assert.ok(log.includes("compile: adopted 1 output files"));
+	assert.ok(log.includes("  data/build/datasets/compiled.json"));
+	assert.deepEqual(runs(), ["download"]);
+	unlinkSync(join(root, "data/build/datasets/compiled.json"));
+	assert.deepEqual(runs(), ["download", "compile", "report"]);
+});
+
+test("adopt only selects prerequisites and plan does not change the cache", () => {
+	const { runs, root, write, build, ran } = fixture();
+	runs();
+	write("code.ts", "export const current = true;");
+	const statePath = join(root, ".cache/stages.json");
+	const before = readFileSync(statePath, "utf8");
+	ran.length = 0;
+	const planned = build(["--adopt", "--only", "report", "--plan"]);
+	assert.deepEqual(ran, []);
+	assert.ok(planned.log.includes("report: would adopt existing outputs"));
+	assert.equal(readFileSync(statePath, "utf8"), before);
+	assert.deepEqual(runs(["--adopt", "--only", "report"]), []);
+	assert.deepEqual(runs(), ["download", "summary"]);
+});
+
+test("adoption preflights missing inventory files before saving any selected stage", () => {
+	const { runs, root, build, outputs } = fixture();
+	runs();
+	const statePath = join(root, ".cache/stages.json");
+	const before = readFileSync(statePath, "utf8");
+	unlinkSync(join(root, outputs.report));
+	assert.throws(
+		() => build(["--adopt"]),
+		/Cannot adopt report: missing output/,
+	);
+	assert.equal(readFileSync(statePath, "utf8"), before);
+});
+
+test("adoption validates required outputs and declared folders without an old cache", () => {
+	const { root, write } = fixture();
+	const cache = createStageCache({
+		root,
+		codeFiles: () => ["code.ts"],
+		environment: {},
+	});
+	const current = {
+		name: "new",
+		args: [],
+		requiredOutputs: ["data/build/required.json"],
+		outputs: ["data/build/folder"],
+	};
+	assert.throws(
+		() => cache.adopt(current, []),
+		/missing output data\/build\/folder/,
+	);
+	write("data/build/folder/item.json", "{}");
+	const freshCache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	assert.throws(
+		() => freshCache().adopt(current, []),
+		/missing output data\/build\/required.json/,
+	);
+	write("data/build/required.json", "{}");
+	const complete = freshCache();
+	const adopted = complete.adopt(current, []);
+	assert.deepEqual(adopted.files, [
+		"data/build/folder/item.json",
+		"data/build/required.json",
+	]);
+	assert.equal(complete.lookup(current, []), adopted.digest);
+	assert.throws(
+		() => complete.adopt({ name: "unknown", args: [] }, []),
+		/no output inventory/,
+	);
+});
+
+test("adoption rejects conflicting execution flags", () => {
+	const { build } = fixture();
+	assert.throws(() => build(["--adopt", "--no-cache"]), /cannot be combined/);
+	assert.throws(
+		() => build(["--adopt", "--from", "compile"]),
+		/cannot be combined/,
+	);
+});
+
+test("partial adoption preserves obsolete inventories for a later adoption", () => {
+	const { runs, root, write } = fixture();
+	runs();
+	const old = JSON.parse(
+		readFileSync(join(root, ".cache/stages.json"), "utf8"),
+	);
+	old.version = -1;
+	write(".cache/stages.json", JSON.stringify(old));
+	assert.deepEqual(runs(["--adopt", "--only", "compile"]), []);
+	assert.deepEqual(runs(["--adopt", "--only", "summary"]), []);
+	assert.deepEqual(runs(), ["download", "report"]);
+});

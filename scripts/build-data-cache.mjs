@@ -118,13 +118,27 @@ export function createStageCache({
 	environment = process.env,
 } = {}) {
 	let state;
+	let previousStages = {};
 	try {
 		state = JSON.parse(readFileSync(stateFile, "utf8"));
+		previousStages = state?.stages ?? {};
 		if (state?.version !== VERSION) state = null;
 	} catch {
 		state = null;
 	}
-	state ??= { version: VERSION, stages: {} };
+	state ??= {
+		version: VERSION,
+		stages: Object.fromEntries(
+			Object.entries(previousStages).map(([name, record]) => [
+				name,
+				{
+					key: null,
+					digest: null,
+					outputs: record.outputs,
+				},
+			]),
+		),
+	};
 
 	let inputs = null;
 	let files = null;
@@ -192,7 +206,56 @@ export function createStageCache({
 		renameSync(temporary, stateFile);
 	};
 
+	const adoptionOutputs = (stage) => {
+		const after = currentSnapshot();
+		const previous = previousStages[stage.name]?.outputs;
+		const paths = new Set([
+			...Object.keys(previous ?? {}),
+			...(stage.requiredOutputs ?? []),
+		]);
+		for (const folder of stage.outputs ?? []) {
+			const found = [...after.keys()].filter(
+				(path) => path === folder || path.startsWith(`${folder}/`),
+			);
+			if (!found.length)
+				throw new Error(
+					`Cannot adopt ${stage.name}: missing output ${folder}`,
+				);
+			for (const path of found) paths.add(path);
+		}
+		if (!paths.size && !previous)
+			throw new Error(
+				`Cannot adopt ${stage.name}: no output inventory. Build this stage first.`,
+			);
+		for (const path of paths)
+			if (!after.has(path))
+				throw new Error(
+					`Cannot adopt ${stage.name}: missing output ${path}`,
+				);
+		return new Map(
+			[...paths].sort().map((path) => [path, after.get(path)]),
+		);
+	};
+
 	return {
+		/** Validate every selected stage before writing any adoption records. */
+		validateAdoption(stages) {
+			for (const stage of stages) adoptionOutputs(stage);
+		},
+
+		/** Trust the existing output bytes without running their producer. */
+		adopt(stage, dependencyDigests) {
+			const outputs = adoptionOutputs(stage);
+			const digest = hashStamps(outputs);
+			state.stages[stage.name] = {
+				key: keyFor(stage, dependencyDigests),
+				digest,
+				outputs: Object.fromEntries(outputs),
+			};
+			save();
+			return { digest, files: [...outputs.keys()] };
+		},
+
 		/** The recorded output digest of a stage, or null if never built. */
 		outputDigest(name) {
 			return state.stages[name]?.digest ?? null;
