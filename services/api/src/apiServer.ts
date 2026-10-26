@@ -10,6 +10,7 @@ import {
 	type ServerResponse,
 } from "node:http";
 import { ApiMetrics } from "./apiMetrics";
+import { classifyUsage, usageVocabulary } from "./usageLabels";
 import {
 	acceptsGzip,
 	bodyBytes,
@@ -260,6 +261,10 @@ export const createApiServer = (
 		() => catalogues.geographyResolver.locationProjectionCacheStats(),
 		() => responseCache?.stats(),
 	);
+	const vocabulary = usageVocabulary(
+		catalogues.dataCatalog,
+		catalogues.boundaryRegistry,
+	);
 	const limiter = options.rateLimit
 		? new RateLimiter(options.rateLimit)
 		: undefined;
@@ -332,6 +337,8 @@ export const createApiServer = (
 		let storeAs: string | undefined;
 
 		let result = await operations(request, pathname);
+		// Health checks and scrapes are the operator's, not callers asking questions.
+		const operational = result !== undefined;
 		if (!result && overloaded) {
 			matched = matchOperation(pathname);
 			result = httpResponse(request, () =>
@@ -587,6 +594,24 @@ export const createApiServer = (
 				durationSeconds,
 				bytes,
 			});
+			if (!operational && method !== "OPTIONS")
+				try {
+					metrics.observeUsage(
+						classifyUsage(vocabulary, {
+							route: matched.route,
+							template: matched.operation?.path,
+							pathname,
+							searchParams: new URLSearchParams(
+								target.slice(pathname.length + 1),
+							),
+							status,
+							problem:
+								answered && "type" in answered.body
+									? answered.body
+									: undefined,
+						}),
+					);
+				} catch {}
 			const entry = entryFor(status, bytes);
 			if (failure !== undefined) reportFailure(failure, entry);
 			else if (status >= 500)
