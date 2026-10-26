@@ -18,6 +18,13 @@ export interface ChangelogEntry {
 	 * entry locked. Leave it off an entry that didn't change the surface.
 	 */
 	surface?: string;
+	/**
+	 * The `atlas-release` id (`sha256:` and 64 hex digits) of the first build
+	 * that carried this change, as `GET /v1/atlas-release` and the
+	 * `atlas-release` response header give it. Copy it from the deployed
+	 * build, and leave it off an entry whose build is unknown.
+	 */
+	release?: string;
 }
 
 export const CHANGELOG: ChangelogEntry[] = [

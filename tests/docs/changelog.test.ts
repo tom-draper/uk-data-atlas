@@ -27,4 +27,13 @@ describe("API changelog", () => {
 			expect(Number.isNaN(Date.parse(date)), date).toBe(false);
 		expect(dates).toEqual([...dates].sort().reverse());
 	});
+
+	it("names releases the way the atlas-release header does", () => {
+		const releases = CHANGELOG.flatMap((entry) =>
+			entry.release ? [entry.release] : [],
+		);
+		for (const release of releases)
+			expect(release).toMatch(/^sha256:[0-9a-f]{64}$/);
+		expect(new Set(releases).size).toBe(releases.length);
+	});
 });
