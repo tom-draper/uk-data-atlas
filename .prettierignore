@@ -20,3 +20,7 @@
 /.claude/
 /.codeq/
 /.codex/
+
+# Local Python tool state under the generated clients.
+.pytest_cache/
+.ruff_cache/
