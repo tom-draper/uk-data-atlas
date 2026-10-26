@@ -453,6 +453,14 @@ point and includes the pipeline configuration in its cache inputs. It stores
 the same five catalogue payloads in `data/build/atlas.sqlite` and keeps the
 existing temporary-copy, replacement, and public-file cleanup behavior.
 
+The relationship candidate compiler and entry point now live in
+`pipeline/src/relationshipCandidates.ts` and
+`pipeline/src/build-relationship-candidates.ts`. Candidate artifact contracts,
+the crosswalk adapter reader, and geography identifier validation live in
+`shared/`, with API re-exports for existing consumers. The build graph traces
+the moved compiler and pipeline configuration. The builder keeps the same
+`services/api/public/relationship-candidates.json` bytes.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
