@@ -1,3 +1,4 @@
+import { rebuildFuelPoverty } from "./catalogueObservations";
 import { gunzipSync } from "node:zlib";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -52,10 +53,15 @@ export function readVersionedAtlasDataset(
 	try {
 		const row = database
 			.prepare(
-				"SELECT payload FROM datasets JOIN payloads ON payloads.id = datasets.payloadId WHERE output = ? AND sha256 = ?",
+				"SELECT payloadId FROM datasets WHERE output = ? AND sha256 = ?",
 			)
 			.get(output, sha256);
-		return row ? String(row.payload) : undefined;
+		if (!row) return undefined;
+		if (output === "fuel-poverty") return rebuildFuelPoverty(database);
+		const payload = database
+			.prepare("SELECT payload FROM payloads WHERE id = ?")
+			.get(row.payloadId);
+		return payload ? String(payload.payload) : undefined;
 	} finally {
 		database.close();
 	}
