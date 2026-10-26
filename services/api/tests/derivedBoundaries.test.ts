@@ -10,7 +10,7 @@ import {
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { buildDerivedBoundaries } from "../scripts/build-derived-boundaries";
+import { buildDerivedBoundaries } from "../../../pipeline/src/build-derived-boundaries";
 
 test("writes a derived GeoJSON artifact from the configured raw source selection", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));

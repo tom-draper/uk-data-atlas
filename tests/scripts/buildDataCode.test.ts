@@ -195,6 +195,15 @@ test("production builders resolve without UI code and include declared workers a
 	);
 	assert.ok(!inputs.get("boundaries")!.includes("services/api/openapi.yaml"));
 	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
+	for (const path of [
+		"pipeline/src/build-derived-boundaries.ts",
+		"shared/areaSourceAdapters.ts",
+		"shared/boundarySourcePaths.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("derived-boundaries")!.includes(path), path);
+	}
 	for (const [stage, compiler] of [
 		["boundary-registry", "build-boundary-registry"],
 		["area-inventory", "areaInventory"],
