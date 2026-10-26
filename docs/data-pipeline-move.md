@@ -430,8 +430,18 @@ inventory artifact types also live in `shared/areaInventory.ts`. The build
 still writes byte-identical `services/api/public/geometry-sources.json` and
 keeps the input hash cache at its existing path.
 
+The area inventory compiler and entry point now live in
+`pipeline/src/areaInventory.ts` and `pipeline/src/build-area-inventory.ts`.
+The boundary registry and geography inventory builders move with it because
+both inventory entry points call the boundary registry compiler directly.
+The source inventory compiler also moves to `pipeline/src/sourceInventory.ts`.
+The API keeps `createAreaLookup` and imports shared artifact contracts and
+readers through its existing modules. The three stages keep their output paths
+and bytes, including per-release area files and the geography build artifacts.
+Their cache inputs include the pipeline configuration and moved imports.
+
 This completes the terrain and operations catalogue groups in move-order step 2
-and the geometry source registry compiler in step 3. The inventory
+and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
 The remaining catalogue groups and steps 3 and 4 still need extraction.
 
