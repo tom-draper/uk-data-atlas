@@ -480,6 +480,14 @@ its observation and unit registry runtime functions. The build graph traces
 the moved compiler and pipeline configuration. The builder preserves
 `data/build/geography/analysis-geographies.json` bytes.
 
+The atlas release compiler and entry point now live in
+`pipeline/src/atlasRelease.ts` and `pipeline/src/build-atlas-release.ts`.
+Release and map-resource contracts live in `shared/`, with API re-exports.
+Both initial and final release stages run the moved entry point and include
+the pipeline configuration in their cache inputs. Artifact selection, file
+hashing, release identity, and the `services/api/public/atlas-release.json`
+output path are unchanged.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
