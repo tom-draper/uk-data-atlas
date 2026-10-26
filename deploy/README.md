@@ -124,7 +124,8 @@ including the active SSH port before enabling the firewall. Keep Node ports
 `atlas-tls.conf` belongs in `/etc/nginx/snippets/atlas-tls.conf`.
 `atlas-pmtiles.conf` belongs in `/etc/nginx/snippets/atlas-pmtiles.conf`.
 Install the PMTiles snippet before loading either HTTP or HTTPS server blocks.
-It serves only website boundary archives directly, keeping their existing URLs.
+It serves website boundary archives directly at content-hashed URLs and retains
+the stable aliases for one release.
 Other website requests and all API requests retain their proxy routes.
 
 ```sh
@@ -181,10 +182,35 @@ find /var/www/uk-data-atlas/boundaries -type d -exec chmod 0755 {} +
 find /var/www/uk-data-atlas/boundaries -type f -name '*.pmtiles' -exec chmod 0644 {} +
 ```
 
-PMTiles responses support byte ranges and ETag revalidation. The stable URLs use
-`Cache-Control: public, max-age=0, must-revalidate`, so updated archives require
-revalidation rather than being marked immutable. Whole-file gzip is disabled.
-The website continues using Next.js to serve tiles during local development.
+The link step streams each archive through SHA-256 and publishes
+`/data/boundaries/<family>/<release>/<sha256>.pmtiles`. The public `tiles.json`
+manifest selects these URLs. Publish archives and the manifest before restarting
+the website. The private build manifest and archive filenames remain unchanged,
+so existing outputs can be republished without recompiling geometry.
+
+Hashed PMTiles responses support byte ranges and use
+`Cache-Control: public, max-age=31536000, immutable`. Hashes identify the archive
+bytes independently of the app version, preventing mixed generations of ranges.
+Whole-file gzip is disabled. Next.js uses the same cache policy locally.
+The manifest revalidates so new clients discover the current archive hashes.
+
+Keep `/boundaries.pmtiles` aliases for the first content-hashed release. They use
+`Cache-Control: public, max-age=0, must-revalidate` for existing clients. The link
+step retains previously published hash files across updates. Preserve them when
+transferring deployments, and do not prune them while clients may still request
+their ranges. Hard links keep unchanged generations from duplicating storage.
+Older archived generations consume disk until an operator retires them.
+
+After deployment, inspect a hashed URL from `/data/boundaries/tiles.json`:
+
+```sh
+curl -I https://ukdataatlas.com/data/boundaries/<family>/<release>/<sha256>.pmtiles
+curl -H 'Range: bytes=0-126' https://ukdataatlas.com/data/boundaries/<family>/<release>/<sha256>.pmtiles
+```
+
+Expect the immutable header and a 206 response with Content-Range. In the browser,
+load a map, repeat the same range fetch, and confirm the second request adds no
+Nginx access-log entry. Leave browser cache enabled during this check.
 
 Build and restart the affected services as needed. The generated
 API files are read at runtime; for a full data rebuild, stop the API first or
