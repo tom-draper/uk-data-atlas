@@ -75,8 +75,14 @@ The API builds directly from raw `data/source/` without website output.
 The `atlas-sqlite` stage stores them in `data/build/atlas.sqlite` for the API to read.
 `pnpm --dir ../.. data:build --only api-datasets` builds gazetteer core and boundary assets under
 `services/api/public/source-data/`. These outputs are gitignored.
-After changing shared dataset compilers, run `pnpm --dir ../.. data:build --target api --from datasets`
+After changing shared dataset compilers, run `pnpm --dir ../.. data:build --from datasets`
 from `services/api` to rebuild every affected stage.
+
+Atlas pages and lookups live under `data/build/atlas-assets/`, with the shared
+SQLite release. The `pipeline/` workspace owns their SQLite assembly stage.
+Next.js only reads the assembled release; API routes serve its gzip files.
+Other API outputs remain in `services/api/public/` until their compiler groups
+move. See [the migration plan](../../docs/data-pipeline-move.md).
 
 Areas use an integer `areas.id` primary key. `areas.releasePosition` references
 `area_releases.position`, with a unique `(releasePosition, code)` lookup. IDs
@@ -2074,7 +2080,7 @@ stands even where it is no. It must name one area, and translating that area
 back must reach only the one asked about, so a successor that merged several
 areas, or took part of one, is not the same area.
 
-The website cannot hold the crosswalks, so the API build's `atlas-lookups`
+The website cannot hold the crosswalks, so the data build's `atlas-lookups`
 stage writes what `sameArea` answers between the ward, local authority and
 constituency releases the website serves to `area-lineage`, served at
 `/v1/atlas-lookups/area-lineage.json` (about 90 KB gzipped). It stores the

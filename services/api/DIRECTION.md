@@ -381,7 +381,9 @@ cost:
 - **The data build outside the API.** Move build code from
   `services/api/scripts` into the shared pipeline, so the API only serves a
   release, and the website stops importing pages and lookups from the API's
-  build output.
+  build output. Started with the `pipeline/` workspace and shared release asset
+  path. Compiler entry points and other API public outputs remain to move; see
+  [the inventory and move order](../../docs/data-pipeline-move.md).
 - **Heavy joins out of Node.** Consider DuckDB for large tabular and spatial
   joins in the build, which spills to disk instead of exhausting memory. Keep
   our own shared-arc tiler and boundary mappings.

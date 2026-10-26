@@ -8,7 +8,10 @@ lookups release path first. The observation row pilot stays unchanged.
 Classification uses codeq import edges for every script and src module on the
 starting branch. Build roots are the build, store, fetch, crosswalk worker,
 pack, extract and write scripts. Runtime roots include serve, smoke, API schema,
-audit, benchmark, profile and compare tooling. Both means reachable from both
+audit, benchmark, profile and compare tooling, runtime bundling, query rule
+generation, README indexing and local API cache generation. Build roots exclude
+these API tools. Helper scripts inherit their callers' classification. Both
+means reachable from both
 sets, including tooling. Unreached src modules remain runtime-only until a later
 compiler group proves otherwise. Imports are name-based evidence, not proof
 that every function in a module is needed by both callers.
@@ -25,8 +28,8 @@ that every function in a module is needed by both callers.
 | `scripts/build-analysis-geography-validation.ts` | build-only     |
 | `scripts/build-api-surface.ts`                   | runtime-only   |
 | `scripts/build-area-inventory.ts`                | build-only     |
-| `scripts/build-area-search-index.ts`             | build-only     |
-| `scripts/build-atlas-cache.ts`                   | build-only     |
+| `scripts/build-area-search-index.ts`             | both           |
+| `scripts/build-atlas-cache.ts`                   | runtime-only   |
 | `scripts/build-atlas-lookups.ts`                 | build-only     |
 | `scripts/build-atlas-pages.ts`                   | build-only     |
 | `scripts/build-atlas-release.ts`                 | build-only     |
@@ -48,15 +51,15 @@ that every function in a module is needed by both callers.
 | `scripts/build-measure-compatibility.ts`         | build-only     |
 | `scripts/build-named-locations.ts`               | build-only     |
 | `scripts/build-operations.ts`                    | build-only     |
-| `scripts/build-place-index.ts`                   | build-only     |
+| `scripts/build-place-index.ts`                   | both           |
 | `scripts/build-postcode-areas.ts`                | build-only     |
-| `scripts/build-postcode-counts.ts`               | build-only     |
+| `scripts/build-postcode-counts.ts`               | both           |
 | `scripts/build-postcode-index.ts`                | build-only     |
-| `scripts/build-query-rules.ts`                   | build-only     |
-| `scripts/build-readme-index.ts`                  | build-only     |
+| `scripts/build-query-rules.ts`                   | runtime-only   |
+| `scripts/build-readme-index.ts`                  | runtime-only   |
 | `scripts/build-relationship-candidates.ts`       | build-only     |
 | `scripts/build-relationship-paths.ts`            | build-only     |
-| `scripts/build-runtime.mjs`                      | build-only     |
+| `scripts/build-runtime.mjs`                      | runtime-only   |
 | `scripts/build-terrain-catalogue.ts`             | build-only     |
 | `scripts/build-validation-report.ts`             | build-only     |
 | `scripts/compare-atlas-cache.ts`                 | runtime-only   |
@@ -74,19 +77,19 @@ that every function in a module is needed by both callers.
 | `scripts/fetch-scottish-lookup.ts`               | build-only     |
 | `scripts/geography-build-path.ts`                | both           |
 | `scripts/memory-profile/workload.ts`             | runtime-only   |
-| `scripts/onsBoundarySources.ts`                  | both           |
+| `scripts/onsBoundarySources.ts`                  | build-only     |
 | `scripts/pack-named-locations.ts`                | build-only     |
 | `scripts/profile-atlas-cache-http.ts`            | runtime-only   |
 | `scripts/profile-crosswalks.ts`                  | runtime-only   |
 | `scripts/profile-memory.ts`                      | runtime-only   |
 | `scripts/profile-startup.ts`                     | runtime-only   |
-| `scripts/propose-extent-continuity.ts`           | runtime-only   |
-| `scripts/propose-geometric-containment.ts`       | runtime-only   |
+| `scripts/propose-extent-continuity.ts`           | build-only     |
+| `scripts/propose-geometric-containment.ts`       | build-only     |
 | `scripts/refresh-problem-examples.ts`            | runtime-only   |
 | `scripts/serve.ts`                               | runtime-only   |
 | `scripts/smoke.ts`                               | runtime-only   |
 | `scripts/store-observations.ts`                  | build-only     |
-| `scripts/store-postcode-derived.ts`              | build-only     |
+| `scripts/store-postcode-derived.ts`              | both           |
 | `scripts/store-postcode-index.ts`                | build-only     |
 | `scripts/write-atlas-pages.ts`                   | build-only     |
 | `src/aggregateObservations.ts`                   | runtime-only   |
@@ -403,13 +406,23 @@ declared codeInputs cover workers and other dynamically loaded code.
 
 ## First PR validation
 
-The first attempt ran out of disk headroom. Cache cleanup restored 18 GiB of
-free space and the source download has resumed. Output comparison is pending.
+Builds run serially with a 3 GiB Node heap cap, one crosswalk worker and one
+precompile job. Temporary command overrides apply those limits without changing
+production defaults.
 
-- `pnpm install` passed in this worktree.
-- `pnpm data:download` was stopped after the first two shards unpacked to
-  3.6 GiB, leaving only 3.7 GiB free on the filesystem. Four shards remained.
-  The incomplete staging directory was removed, restoring its space.
-- No baseline build or output comparison has run. Implementation, commits and
-  PR creation are pending enough disk space for source data and build outputs.
-- No application code or observation-row behavior has changed.
+- `pnpm install` and `pnpm data:download` passed in this worktree.
+- `pnpm data:build --only website-lookups` passed before and after the pure move.
+  SHA-256 comparisons cover both manifests and every referenced gzip artifact,
+  plus ordered `website_assets` ids, declared hashes and actual gzip bytes.
+  All 694 files and 692 SQLite rows are identical.
+- `pnpm --dir pipeline typecheck` passed.
+- The four focused unit files passed all 36 tests with one worker and a
+  30-second timeout. They cover asset routes, place readers, package boundaries
+  and stage code invalidation. An earlier run hit a five-second timeout in an
+  existing cache test under CPU contention; the serial rerun passed.
+
+The shared-release path build also passed `pnpm data:build --only website-lookups`
+after removing the former API-public page and lookup files. The same 694 files
+and 692 SQLite rows are byte-identical at `data/build/atlas-assets/`.
+The 49 focused website/build tests and 11 targeted API tests pass.
+Full check results are recorded in the PR.
