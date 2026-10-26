@@ -53,6 +53,28 @@ const nextConfig: NextConfig = {
 				source: "/data/:path((?!(?:catalogue|atlas-pages|atlas-lookups)(?:/|$)).*)",
 				headers: [{ key: "Cache-Control", value: cacheControl }],
 			},
+			{
+				source: "/data/boundaries/:family/:release/:hash([a-f0-9]{64}).pmtiles",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=31536000, immutable",
+					},
+				],
+			},
+			{
+				source: "/data/boundaries/:family/:release/boundaries.pmtiles",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=0, must-revalidate",
+					},
+				],
+			},
+			{
+				source: "/data/boundaries/tiles.json",
+				headers: [{ key: "Cache-Control", value: "no-cache" }],
+			},
 		];
 	},
 	webpack: (config) => {
