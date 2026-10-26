@@ -10,6 +10,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.boundary_release_coverage import BoundaryReleaseCoverage
+    from ..models.boundary_release_deprecation import BoundaryReleaseDeprecation
     from ..models.boundary_release_downloads_type_0 import BoundaryReleaseDownloadsType0
     from ..models.boundary_release_downloads_type_1 import BoundaryReleaseDownloadsType1
     from ..models.boundary_release_downloads_type_2 import BoundaryReleaseDownloadsType2
@@ -35,6 +36,9 @@ class BoundaryReleaseEnvelopeData:
             cannot be tiled or generalised with shared borders: it is `untiled`, with the reason, and downloadable whole as
             GeoParquet at `full` detail only. A release with no readable geometry is `unavailable`. Either stays available
             area by area.
+        deprecation (BoundaryReleaseDeprecation | Unset): Present on a release that has been superseded. The release
+            stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move
+            to `replacedBy` before `sunset`.
         description (str | Unset):
         temporal_coverage (str | Unset):
     """
@@ -50,6 +54,7 @@ class BoundaryReleaseEnvelopeData:
         | BoundaryReleaseDownloadsType1
         | BoundaryReleaseDownloadsType2
     )
+    deprecation: BoundaryReleaseDeprecation | Unset = UNSET
     description: str | Unset = UNSET
     temporal_coverage: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -82,6 +87,10 @@ class BoundaryReleaseEnvelopeData:
         else:
             downloads = self.downloads.to_dict()
 
+        deprecation: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.deprecation, Unset):
+            deprecation = self.deprecation.to_dict()
+
         description = self.description
 
         temporal_coverage = self.temporal_coverage
@@ -99,6 +108,8 @@ class BoundaryReleaseEnvelopeData:
                 "downloads": downloads,
             }
         )
+        if deprecation is not UNSET:
+            field_dict["deprecation"] = deprecation
         if description is not UNSET:
             field_dict["description"] = description
         if temporal_coverage is not UNSET:
@@ -109,6 +120,7 @@ class BoundaryReleaseEnvelopeData:
     @classmethod
     def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.boundary_release_coverage import BoundaryReleaseCoverage
+        from ..models.boundary_release_deprecation import BoundaryReleaseDeprecation
         from ..models.boundary_release_downloads_type_0 import (
             BoundaryReleaseDownloadsType0,
         )
@@ -170,6 +182,13 @@ class BoundaryReleaseEnvelopeData:
 
         downloads = _parse_downloads(d.pop("downloads"))
 
+        _deprecation = d.pop("deprecation", UNSET)
+        deprecation: BoundaryReleaseDeprecation | Unset
+        if isinstance(_deprecation, Unset):
+            deprecation = UNSET
+        else:
+            deprecation = BoundaryReleaseDeprecation.from_dict(_deprecation)
+
         description = d.pop("description", UNSET)
 
         temporal_coverage = d.pop("temporalCoverage", UNSET)
@@ -182,6 +201,7 @@ class BoundaryReleaseEnvelopeData:
             source=source,
             title=title,
             downloads=downloads,
+            deprecation=deprecation,
             description=description,
             temporal_coverage=temporal_coverage,
         )

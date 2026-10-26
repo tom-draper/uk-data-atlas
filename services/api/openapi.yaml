@@ -65,6 +65,14 @@ info:
     operation to be withdrawn is first marked `deprecated` with
     `x-deprecated-since` and `x-sunset` dates, and every response it serves
     carries RFC 9745 `Deprecation` and RFC 8594 `Sunset` headers until then.
+    A boundary release is retired the same way. One that has been superseded
+    carries a `deprecation` record (when it was deprecated, optionally when it
+    may be removed, the release that replaces it and why) in
+    `/v1/boundary-releases`, and every response about it carries `Deprecation`
+    and `Sunset` headers and a `Link` header with `rel="successor-version"`
+    naming the replacement. `/v1/boundary-releases:resolve` and `latest` never
+    choose it while its replacement covers the date. It stays published until
+    its sunset has passed.
     `contract/v1-surface.json` locks this document's surface, and a test
     refuses any change that breaks it. What the data says is pinned
     separately: every response carries an `Atlas-Release` header naming the
@@ -657,6 +665,13 @@ paths:
       responses:
         "200":
           description: The GeoParquet or GeoJSON file.
+          headers:
+            Deprecation:
+              $ref: "#/components/headers/ReleaseDeprecation"
+            Sunset:
+              $ref: "#/components/headers/ReleaseSunset"
+            Link:
+              $ref: "#/components/headers/ReleaseSuccessorLink"
           content:
             application/vnd.apache.parquet:
               schema:
@@ -874,6 +889,13 @@ paths:
       responses:
         "200":
           description: The PMTiles archive.
+          headers:
+            Deprecation:
+              $ref: "#/components/headers/ReleaseDeprecation"
+            Sunset:
+              $ref: "#/components/headers/ReleaseSunset"
+            Link:
+              $ref: "#/components/headers/ReleaseSuccessorLink"
           content:
             application/vnd.pmtiles:
               schema:
@@ -984,8 +1006,12 @@ paths:
         Releases of the same month are told apart only where one is plainly
         better: a subset derived from another is set aside for its source, and
         without `country` a release covering fewer countries is set aside. Each
-        is listed in `setAside` with its reason. Variants differing in any other
-        way, such as clipping, are a 409 listing each in `choices`.
+        is listed in `setAside` with its reason. A deprecated release is never
+        chosen while its replacement, which is not itself deprecated, is dated
+        on or before the date and covers the country; it is set aside for it.
+        Where no such replacement applies the deprecated release is chosen, and
+        the response carries its `Deprecation` headers. Variants differing in
+        any other way, such as clipping, are a 409 listing each in `choices`.
       parameters:
         - name: geography
           in: query
@@ -1009,6 +1035,13 @@ paths:
       responses:
         "200":
           description: The selected release, its neighbours and the basis of the choice.
+          headers:
+            Deprecation:
+              $ref: "#/components/headers/ReleaseDeprecation"
+            Sunset:
+              $ref: "#/components/headers/ReleaseSunset"
+            Link:
+              $ref: "#/components/headers/ReleaseSuccessorLink"
           content:
             application/json:
               schema:
@@ -1127,6 +1160,13 @@ paths:
       responses:
         "200":
           description: The matching boundary release.
+          headers:
+            Deprecation:
+              $ref: "#/components/headers/ReleaseDeprecation"
+            Sunset:
+              $ref: "#/components/headers/ReleaseSunset"
+            Link:
+              $ref: "#/components/headers/ReleaseSuccessorLink"
           content:
             application/json:
               schema:
@@ -4783,6 +4823,13 @@ paths:
       responses:
         "200":
           description: The matching compiled area.
+          headers:
+            Deprecation:
+              $ref: "#/components/headers/ReleaseDeprecation"
+            Sunset:
+              $ref: "#/components/headers/ReleaseSunset"
+            Link:
+              $ref: "#/components/headers/ReleaseSuccessorLink"
           content:
             application/json:
               schema:
@@ -7848,6 +7895,32 @@ components:
         default: 100
       description: How many records to return, 1 to 500.
 
+  headers:
+    ReleaseDeprecation:
+      description: >
+        Present when the boundary release this response is about is deprecated.
+        An RFC 9745 structured date, `@` and the Unix time it was deprecated.
+        The release's `deprecation` record has the reason.
+      schema:
+        type: string
+        example: "@1792972800"
+    ReleaseSunset:
+      description: >
+        Present when a deprecated boundary release has a sunset date: an RFC
+        8594 HTTP date after which it may be removed.
+      schema:
+        type: string
+        example: Thu, 01 Apr 2027 00:00:00 GMT
+    ReleaseSuccessorLink:
+      description: >
+        Present when the boundary release this response is about is deprecated.
+        An RFC 8288 link with `rel="successor-version"` to the release that
+        replaces it. A response that has its own `Link` relations carries both,
+        comma separated.
+      schema:
+        type: string
+        example: '</v1/boundary-releases/lsoa/2001-12-ew-bgc-v2>; rel="successor-version"'
+
   responses:
     PartialContent:
       description: >
@@ -9398,6 +9471,32 @@ components:
                   format: uri
         metadataHash:
           type: string
+        deprecation:
+          $ref: "#/components/schemas/BoundaryReleaseDeprecation"
+
+    BoundaryReleaseDeprecation:
+      type: object
+      description: >
+        Present on a release that has been superseded. The release stays
+        published and is not chosen by date or `latest` while its replacement
+        covers the date; clients should move to `replacedBy` before `sunset`.
+      required: [deprecated, replacedBy, reason]
+      properties:
+        deprecated:
+          type: string
+          format: date
+          description: The date the release was deprecated.
+        sunset:
+          type: string
+          format: date
+          description: >
+            The date after which the release may be removed. Absent until one
+            is set.
+        replacedBy:
+          type: string
+          description: The id of the release, of the same geography, to use instead.
+        reason:
+          type: string
 
     BoundaryReleaseListEnvelope:
       allOf:
@@ -10263,6 +10362,8 @@ components:
           type: array
           items: { type: string }
         href: { type: string }
+        deprecation:
+          $ref: "#/components/schemas/BoundaryReleaseDeprecation"
 
     PointLookupResult:
       type: object

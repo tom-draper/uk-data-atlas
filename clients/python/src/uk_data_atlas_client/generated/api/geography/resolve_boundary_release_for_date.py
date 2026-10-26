@@ -102,8 +102,11 @@ def sync_detailed(
     over because they miss the country.
     Releases of the same month are told apart only where one is plainly better: a subset derived from
     another is set aside for its source, and without `country` a release covering fewer countries is set
-    aside. Each is listed in `setAside` with its reason. Variants differing in any other way, such as
-    clipping, are a 409 listing each in `choices`.
+    aside. Each is listed in `setAside` with its reason. A deprecated release is never chosen while its
+    replacement, which is not itself deprecated, is dated on or before the date and covers the country;
+    it is set aside for it. Where no such replacement applies the deprecated release is chosen, and the
+    response carries its `Deprecation` headers. Variants differing in any other way, such as clipping,
+    are a 409 listing each in `choices`.
 
     Args:
         geography (str):
@@ -150,8 +153,11 @@ def sync(
     over because they miss the country.
     Releases of the same month are told apart only where one is plainly better: a subset derived from
     another is set aside for its source, and without `country` a release covering fewer countries is set
-    aside. Each is listed in `setAside` with its reason. Variants differing in any other way, such as
-    clipping, are a 409 listing each in `choices`.
+    aside. Each is listed in `setAside` with its reason. A deprecated release is never chosen while its
+    replacement, which is not itself deprecated, is dated on or before the date and covers the country;
+    it is set aside for it. Where no such replacement applies the deprecated release is chosen, and the
+    response carries its `Deprecation` headers. Variants differing in any other way, such as clipping,
+    are a 409 listing each in `choices`.
 
     Args:
         geography (str):
@@ -193,8 +199,11 @@ async def asyncio_detailed(
     over because they miss the country.
     Releases of the same month are told apart only where one is plainly better: a subset derived from
     another is set aside for its source, and without `country` a release covering fewer countries is set
-    aside. Each is listed in `setAside` with its reason. Variants differing in any other way, such as
-    clipping, are a 409 listing each in `choices`.
+    aside. Each is listed in `setAside` with its reason. A deprecated release is never chosen while its
+    replacement, which is not itself deprecated, is dated on or before the date and covers the country;
+    it is set aside for it. Where no such replacement applies the deprecated release is chosen, and the
+    response carries its `Deprecation` headers. Variants differing in any other way, such as clipping,
+    are a 409 listing each in `choices`.
 
     Args:
         geography (str):
@@ -239,8 +248,11 @@ async def asyncio(
     over because they miss the country.
     Releases of the same month are told apart only where one is plainly better: a subset derived from
     another is set aside for its source, and without `country` a release covering fewer countries is set
-    aside. Each is listed in `setAside` with its reason. Variants differing in any other way, such as
-    clipping, are a 409 listing each in `choices`.
+    aside. Each is listed in `setAside` with its reason. A deprecated release is never chosen while its
+    replacement, which is not itself deprecated, is dated on or before the date and covers the country;
+    it is set aside for it. Where no such replacement applies the deprecated release is chosen, and the
+    response carries its `Deprecation` headers. Variants differing in any other way, such as clipping,
+    are a 409 listing each in `choices`.
 
     Args:
         geography (str):

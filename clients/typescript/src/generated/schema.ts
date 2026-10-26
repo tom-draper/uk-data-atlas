@@ -275,7 +275,7 @@ export interface paths {
          * Select the boundary release to use for a date
          * @description Returns the latest release of a geography dated on or before `date` that covers `country` when one is given, as an exact release id rather than a moving `latest` alias. Releases are snapshots dated to a month, so a day narrows nothing, and the answer is the latest snapshot at that date rather than a statement of which boundaries were legally in force.
          *     `previous` and `next` are the neighbouring releases covering the same country; a change after the selected release shows first in `next`. `sameMonth` is true when the date falls in the release's own month, so a change that month may lie either side of it. `notCovering` lists later releases passed over because they miss the country.
-         *     Releases of the same month are told apart only where one is plainly better: a subset derived from another is set aside for its source, and without `country` a release covering fewer countries is set aside. Each is listed in `setAside` with its reason. Variants differing in any other way, such as clipping, are a 409 listing each in `choices`.
+         *     Releases of the same month are told apart only where one is plainly better: a subset derived from another is set aside for its source, and without `country` a release covering fewer countries is set aside. Each is listed in `setAside` with its reason. A deprecated release is never chosen while its replacement, which is not itself deprecated, is dated on or before the date and covers the country; it is set aside for it. Where no such replacement applies the deprecated release is chosen, and the response carries its `Deprecation` headers. Variants differing in any other way, such as clipping, are a 409 listing each in `choices`.
          */
         get: operations["resolveBoundaryReleaseForDate"];
         put?: never;
@@ -2557,6 +2557,23 @@ export interface components {
                 };
             };
             metadataHash: string;
+            deprecation?: components["schemas"]["BoundaryReleaseDeprecation"];
+        };
+        /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+        BoundaryReleaseDeprecation: {
+            /**
+             * Format: date
+             * @description The date the release was deprecated.
+             */
+            deprecated: string;
+            /**
+             * Format: date
+             * @description The date after which the release may be removed. Absent until one is set.
+             */
+            sunset?: string;
+            /** @description The id of the release, of the same geography, to use instead. */
+            replacedBy: string;
+            reason: string;
         };
         BoundaryReleaseListEnvelope: components["schemas"]["Envelope"] & {
             data?: components["schemas"]["BoundaryRelease"][];
@@ -2963,6 +2980,7 @@ export interface components {
             title: string;
             countries: string[];
             href: string;
+            deprecation?: components["schemas"]["BoundaryReleaseDeprecation"];
         };
         PointLookupResult: {
             geography: string;
@@ -4009,7 +4027,14 @@ export interface components {
         PageLimit: number;
     };
     requestBodies: never;
-    headers: never;
+    headers: {
+        /** @description Present when the boundary release this response is about is deprecated. An RFC 9745 structured date, `@` and the Unix time it was deprecated. The release's `deprecation` record has the reason. */
+        ReleaseDeprecation: string;
+        /** @description Present when a deprecated boundary release has a sunset date: an RFC 8594 HTTP date after which it may be removed. */
+        ReleaseSunset: string;
+        /** @description Present when the boundary release this response is about is deprecated. An RFC 8288 link with `rel="successor-version"` to the release that replaces it. A response that has its own `Link` relations carries both, comma separated. */
+        ReleaseSuccessorLink: string;
+    };
     pathItems: never;
 }
 export type $defs = Record<string, never>;
@@ -4245,6 +4270,9 @@ export interface operations {
             /** @description The GeoParquet or GeoJSON file. */
             200: {
                 headers: {
+                    Deprecation: components["headers"]["ReleaseDeprecation"];
+                    Sunset: components["headers"]["ReleaseSunset"];
+                    Link: components["headers"]["ReleaseSuccessorLink"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -4369,6 +4397,9 @@ export interface operations {
             /** @description The PMTiles archive. */
             200: {
                 headers: {
+                    Deprecation: components["headers"]["ReleaseDeprecation"];
+                    Sunset: components["headers"]["ReleaseSunset"];
+                    Link: components["headers"]["ReleaseSuccessorLink"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -4489,6 +4520,9 @@ export interface operations {
             /** @description The selected release, its neighbours and the basis of the choice. */
             200: {
                 headers: {
+                    Deprecation: components["headers"]["ReleaseDeprecation"];
+                    Sunset: components["headers"]["ReleaseSunset"];
+                    Link: components["headers"]["ReleaseSuccessorLink"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -4579,6 +4613,9 @@ export interface operations {
             /** @description The matching boundary release. */
             200: {
                 headers: {
+                    Deprecation: components["headers"]["ReleaseDeprecation"];
+                    Sunset: components["headers"]["ReleaseSunset"];
+                    Link: components["headers"]["ReleaseSuccessorLink"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -7499,6 +7536,9 @@ export interface operations {
             /** @description The matching compiled area. */
             200: {
                 headers: {
+                    Deprecation: components["headers"]["ReleaseDeprecation"];
+                    Sunset: components["headers"]["ReleaseSunset"];
+                    Link: components["headers"]["ReleaseSuccessorLink"];
                     [name: string]: unknown;
                 };
                 content: {
