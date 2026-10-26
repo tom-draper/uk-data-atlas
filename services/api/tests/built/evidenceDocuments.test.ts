@@ -17,8 +17,11 @@ import { readApiCatalogues } from "../../src/catalogueLoader";
 const apiRoot = resolve(import.meta.dirname, "../..");
 
 test("loads evidence build inputs when the previous document manifest is stale", (t) => {
-	const root = mkdtempSync(join(tmpdir(), "evidence-rebuild-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	const repository = mkdtempSync(join(tmpdir(), "evidence-rebuild-"));
+	t.after(() => rmSync(repository, { recursive: true, force: true }));
+	const root = join(repository, "services/api");
+	mkdirSync(root, { recursive: true });
+	symlinkSync(resolve(apiRoot, "../../data"), join(repository, "data"));
 	for (const entry of readdirSync(apiRoot)) {
 		if (entry !== "public")
 			symlinkSync(join(apiRoot, entry), join(root, entry));
