@@ -1,19 +1,24 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import {
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
 	rmSync,
 	unlinkSync,
+	utimesSync,
 	writeFileSync,
 	readFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { onTestFinished, test, vi } from "vitest";
 import { createStageCache } from "@/scripts/build-data-cache.mjs";
 import { runBuild } from "@/scripts/build-data.mjs";
 import { buildDataStages } from "@/scripts/build-data-graph.mjs";
+
+const sha256 = (path: string) =>
+	createHash("sha256").update(readFileSync(path)).digest("hex");
 
 type Stage = {
 	name: string;
@@ -55,6 +60,9 @@ function fixture() {
 		report: "public/data/report.json",
 	};
 	const ran: string[] = [];
+	const hashed: string[] = [];
+	// Stages listed here always write the same bytes.
+	const fixed: Record<string, string> = {};
 	const failing = new Set<string>();
 	const build = (argv: string[] = []) => {
 		const log: string[] = [];
@@ -68,12 +76,21 @@ function fixture() {
 					stateFile: join(root, ".cache/stages.json"),
 					codeFiles: () => ["code.ts"],
 					environment: {},
+					hashFile: (path: string) => {
+						hashed.push(relative(root, path));
+						return sha256(path);
+					},
 				}),
 			execute: (current: Stage) => {
 				ran.push(current.name);
 				if (failing.has(current.name)) return 1;
 				const output = outputs[current.name];
-				if (output) write(output, `${current.name} ${(writes += 1)}\n`);
+				if (output)
+					write(
+						output,
+						fixed[current.name] ??
+							`${current.name} ${(writes += 1)}\n`,
+					);
 				return 0;
 			},
 		});
@@ -85,7 +102,7 @@ function fixture() {
 		assert.equal(result.status, 0);
 		return [...ran];
 	};
-	return { root, write, runs, build, ran, failing, outputs };
+	return { root, write, runs, build, ran, hashed, fixed, failing, outputs };
 }
 
 test("a second build reruns only the stages that always run", () => {
@@ -466,4 +483,144 @@ test("partial adoption preserves obsolete inventories for a later adoption", () 
 	assert.deepEqual(runs(["--adopt", "--only", "compile"]), []);
 	assert.deepEqual(runs(["--adopt", "--only", "summary"]), []);
 	assert.deepEqual(runs(), ["download", "report"]);
+});
+
+// A rewrite with a new mtime but the same bytes, as a rebuild would leave.
+const touch = (root: string, path: string) => {
+	const later = new Date(Date.now() + 60_000);
+	utimesSync(join(root, path), later, later);
+};
+
+test("a stage that rewrites identical bytes does not rerun its dependants", () => {
+	const { runs, root, outputs, fixed } = fixture();
+	fixed.compile = "stable\n";
+	runs();
+	touch(root, outputs.compile);
+	assert.deepEqual(runs(), ["download", "compile"]);
+	assert.deepEqual(runs(), ["download"]);
+	unlinkSync(join(root, outputs.compile));
+	assert.deepEqual(runs(), ["download", "compile"]);
+	assert.deepEqual(runs(), ["download"]);
+});
+
+test("a stage that writes different bytes reruns its dependants", () => {
+	const { runs, root, outputs, fixed } = fixture();
+	fixed.compile = "stable\n";
+	runs();
+	fixed.compile = "changed\n";
+	touch(root, outputs.compile);
+	assert.deepEqual(runs(), ["download", "compile", "report"]);
+	assert.deepEqual(runs(), ["download"]);
+});
+
+test("files with unchanged size and mtime are not hashed again", () => {
+	const { runs, root, write, hashed, outputs } = fixture();
+	write("data/build/datasets/kept.json", "kept\n");
+	runs();
+	assert.deepEqual(
+		[...hashed].sort(),
+		[
+			"data/build/datasets/compiled.json",
+			"data/build/datasets/kept.json",
+			"public/data/report.json",
+			"services/api/public/summary.json",
+		].sort(),
+	);
+	hashed.length = 0;
+	assert.deepEqual(runs(), ["download"]);
+	assert.equal(hashed.length, 0);
+	// compile reruns, but kept.json still matches its record.
+	touch(root, outputs.compile);
+	runs();
+	assert.ok(hashed.includes(outputs.compile));
+	assert.ok(!hashed.includes("data/build/datasets/kept.json"));
+});
+
+test("an upstream stage rewriting identical bytes still restores a file a downstream stage changed", () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-shared-rewrite-"));
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data/build"), { recursive: true });
+	const path = join(root, "data/build/atlas.sqlite");
+	const chain = [
+		{
+			name: "base",
+			dependencies: [],
+			args: [],
+			requiredOutputs: ["data/build/atlas.sqlite"],
+		},
+		{ name: "middle", dependencies: ["base"], args: [] },
+		{ name: "final", dependencies: ["middle"], args: [] },
+	];
+	const executed: string[] = [];
+	const run = () => {
+		executed.length = 0;
+		runBuild({
+			stages: chain,
+			log: () => {},
+			createCache: () =>
+				createStageCache({
+					root,
+					stateFile: join(root, ".cache/stages.json"),
+					codeFiles: () => [],
+					environment: {},
+				}),
+			execute: (current: { name: string }) => {
+				executed.push(current.name);
+				// base and final write the database; middle only reads it.
+				if (current.name !== "middle")
+					writeFileSync(path, current.name);
+				return 0;
+			},
+		});
+		return [...executed];
+	};
+	assert.deepEqual(run(), ["base", "middle", "final"]);
+	assert.deepEqual(run(), []);
+	// Recreating base's bytes wipes final's changes, so final must run again.
+	unlinkSync(path);
+	assert.deepEqual(run(), ["base", "final"]);
+	assert.equal(readFileSync(path, "utf8"), "final");
+	assert.deepEqual(run(), []);
+});
+
+test("adopt records content digests and a normal build then skips", () => {
+	const { runs, root, write, build, ran, hashed, outputs } = fixture();
+	runs();
+	const statePath = join(root, ".cache/stages.json");
+	const current = JSON.parse(readFileSync(statePath, "utf8"));
+	// An old record: version 2 with size:mtimeMs strings and no hashes.
+	const legacy = JSON.parse(JSON.stringify(current));
+	legacy.version = 2;
+	for (const record of Object.values<{ outputs: Record<string, unknown> }>(
+		legacy.stages,
+	))
+		for (const [path, entry] of Object.entries(record.outputs)) {
+			const { size, mtimeMs } = entry as {
+				size: number;
+				mtimeMs: number;
+			};
+			record.outputs[path] = `${size}:${mtimeMs}`;
+		}
+	write(".cache/stages.json", JSON.stringify(legacy));
+	ran.length = 0;
+	hashed.length = 0;
+	build(["--adopt"]);
+	assert.deepEqual(ran, []);
+	assert.equal(hashed.length, 3);
+	const adopted = JSON.parse(readFileSync(statePath, "utf8"));
+	assert.equal(adopted.version, current.version);
+	for (const name of ["compile", "summary", "report"]) {
+		assert.equal(adopted.stages[name].digest, current.stages[name].digest);
+		for (const entry of Object.values<{ sha256: string }>(
+			adopted.stages[name].outputs,
+		))
+			assert.match(entry.sha256, /^[0-9a-f]{64}$/);
+	}
+	assert.equal(
+		adopted.stages.compile.outputs[outputs.compile].sha256,
+		sha256(join(root, outputs.compile)),
+	);
+	hashed.length = 0;
+	assert.deepEqual(runs(), ["download"]);
+	assert.equal(hashed.length, 0);
 });
