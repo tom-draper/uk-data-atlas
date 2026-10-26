@@ -25,6 +25,7 @@
 		"example:map-render": "tsx examples/correct-map-render.ts",
 		"example:trend": "tsx examples/defensible-trend.ts",
 		"example:sync": "tsx examples/reliable-sync.ts",
+		"generate:clients": "tsx ../../clients/scripts/generate.mts",
 		"start": "node dist/serve.mjs",
 		"profile:startup": "tsx --max-old-space-size=4096 scripts/profile-startup.ts",
 		"profile:memory": "node --expose-gc --max-old-space-size=1024 --import tsx scripts/profile-memory.ts",
