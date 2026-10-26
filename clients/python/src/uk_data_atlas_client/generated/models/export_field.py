@@ -1,0 +1,79 @@
+from __future__ import annotations
+
+from collections.abc import Mapping
+from typing import Any, Self, TypeVar
+
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
+
+from ..models.export_field_type import ExportFieldType
+
+T = TypeVar("T", bound="ExportField")
+
+
+@_attrs_define
+class ExportField:
+    """
+    Attributes:
+        name (str): A key of the manifest's `fields`.
+        required (bool): True when every record in the artifact carries the field.
+        type_ (ExportFieldType):
+    """
+
+    name: str
+    required: bool
+    type_: ExportFieldType
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        name = self.name
+
+        required = self.required
+
+        type_ = self.type_.value
+
+        field_dict: dict[str, Any] = {}
+        field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "name": name,
+                "required": required,
+                "type": type_,
+            }
+        )
+
+        return field_dict
+
+    @classmethod
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        d = dict(src_dict)
+        name = d.pop("name")
+
+        required = d.pop("required")
+
+        type_ = ExportFieldType(d.pop("type"))
+
+        export_field = cls(
+            name=name,
+            required=required,
+            type_=type_,
+        )
+
+        export_field.additional_properties = d
+        return export_field
+
+    @property
+    def additional_keys(self) -> list[str]:
+        return list(self.additional_properties.keys())
+
+    def __getitem__(self, key: str) -> Any:
+        return self.additional_properties[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.additional_properties[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self.additional_properties[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.additional_properties
