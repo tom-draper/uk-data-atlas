@@ -133,3 +133,40 @@ test("bounds observation retention and allows disabling it", () => {
 			/ATLAS_OBSERVATION_CACHE_MB/,
 		);
 });
+
+test("keeps daily usage counts only where a directory is given", () => {
+	assert.equal(readServeConfiguration({}).server.usage, undefined);
+	assert.deepEqual(
+		readServeConfiguration({ ATLAS_USAGE_DIR: "/var/lib/atlas-usage" })
+			.server.usage,
+		{
+			directory: "/var/lib/atlas-usage",
+			flushIntervalMs: 60_000,
+			retentionDays: 400,
+		},
+	);
+	assert.deepEqual(
+		readServeConfiguration({
+			ATLAS_USAGE_DIR: "/tmp/usage",
+			ATLAS_USAGE_FLUSH_SECONDS: "5",
+			ATLAS_USAGE_RETENTION_DAYS: "30",
+		}).server.usage,
+		{ directory: "/tmp/usage", flushIntervalMs: 5000, retentionDays: 30 },
+	);
+});
+
+test("stops rather than guess at a malformed usage setting", () => {
+	for (const [name, value] of [
+		["ATLAS_USAGE_FLUSH_SECONDS", "0"],
+		["ATLAS_USAGE_FLUSH_SECONDS", "soon"],
+		["ATLAS_USAGE_RETENTION_DAYS", "-3"],
+	] as const)
+		assert.throws(
+			() =>
+				readServeConfiguration({
+					ATLAS_USAGE_DIR: "/tmp/usage",
+					[name]: value,
+				}),
+			new RegExp(name),
+		);
+});
