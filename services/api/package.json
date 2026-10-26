@@ -38,7 +38,8 @@
 		"fetch:boundaries": "tsx --max-old-space-size=4096 scripts/fetch-ons-boundaries.ts",
 		"refresh:onspd": "tsx scripts/fetch-onspd.ts",
 		"start:dev": "tsx scripts/serve.ts",
-		"docs:examples": "tsx scripts/refresh-problem-examples.ts"
+		"docs:examples": "tsx scripts/refresh-problem-examples.ts",
+		"usage:report": "tsx scripts/usage-report.ts"
 	},
 	"dependencies": {
 		"@uk-data-atlas/catalogue": "workspace:*",
