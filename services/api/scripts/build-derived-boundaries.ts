@@ -11,7 +11,7 @@ import {
 	readAreaSourceAdapters,
 	type AreaSourceAdapterManifest,
 } from "../src/areaSourceAdapters";
-import { sourceGeoJsonPath } from "../src/areaInventory";
+import { sourceGeoJsonPath } from "../../../shared/boundarySourcePaths";
 
 type FeatureCollection = {
 	type?: unknown;

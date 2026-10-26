@@ -3,9 +3,9 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { tmpdir } from "node:os";
-import { createBoundaryRegistry } from "../../scripts/build-boundary-registry";
-import { createGeographyInventory } from "../../src/geographyInventory";
-import { createSourceInventory } from "../../src/sourceInventory";
+import { createBoundaryRegistry } from "../../../../pipeline/src/build-boundary-registry";
+import { createGeographyInventory } from "../../../../pipeline/src/geographyInventory";
+import { createSourceInventory } from "../../../../pipeline/src/sourceInventory";
 
 const repositoryRoot = new URL("../../../..", import.meta.url).pathname;
 

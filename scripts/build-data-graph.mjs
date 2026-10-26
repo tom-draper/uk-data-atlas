@@ -146,9 +146,31 @@ const apiStages = [
 			"scripts/build-api-datasets.mts",
 		],
 	),
-	stage("boundary-registry", ["sources"]),
+	stage(
+		"boundary-registry",
+		["sources"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-boundary-registry.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("derived-boundaries", ["sources"]),
-	stage("area-inventory", ["boundary-registry", "derived-boundaries"]),
+	stage(
+		"area-inventory",
+		["boundary-registry", "derived-boundaries"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-area-inventory.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"geometry-source-registry",
 		["area-inventory"],
@@ -238,12 +260,23 @@ const apiStages = [
 		"area-inventory",
 	]),
 	stage("relationship-candidates", ["area-inventory", "crosswalk-inventory"]),
-	stage("geography-inventory", [
-		"sources",
-		"boundary-registry",
-		"area-inventory",
-		"crosswalk-inventory",
-	]),
+	stage(
+		"geography-inventory",
+		[
+			"sources",
+			"boundary-registry",
+			"area-inventory",
+			"crosswalk-inventory",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-geography-inventory.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("lookup-manifest", [
 		"area-inventory",
 		"crosswalk-inventory",

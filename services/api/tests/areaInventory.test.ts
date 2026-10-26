@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { compileAreas } from "../src/areaInventory";
+import { compileAreas } from "../../../pipeline/src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 
 const registry: BoundaryRegistry = {

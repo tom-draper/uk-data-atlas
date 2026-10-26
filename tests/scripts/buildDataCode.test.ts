@@ -195,6 +195,29 @@ test("production builders resolve without UI code and include declared workers a
 	);
 	assert.ok(!inputs.get("boundaries")!.includes("services/api/openapi.yaml"));
 	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
+	for (const [stage, compiler] of [
+		["boundary-registry", "build-boundary-registry"],
+		["area-inventory", "areaInventory"],
+		["geography-inventory", "geographyInventory"],
+	]) {
+		for (const path of [
+			`pipeline/src/build-${stage}.ts`,
+			`pipeline/src/${compiler}.ts`,
+			"shared/contentHash.ts",
+			"pipeline/package.json",
+			"pipeline/tsconfig.json",
+		])
+			assert.ok(inputs.get(stage)!.includes(path), `${stage}: ${path}`);
+	}
+	for (const path of [
+		"shared/dbf.ts",
+		"shared/geoJsonProperties.ts",
+		"shared/boundarySourcePaths.ts",
+		"shared/areaAdapters.ts",
+		"shared/areaSourceAdapters.ts",
+	]) {
+		assert.ok(inputs.get("area-inventory")!.includes(path), path);
+	}
 	for (const path of [
 		"pipeline/src/build-operations.ts",
 		"pipeline/src/operationTemplates.ts",

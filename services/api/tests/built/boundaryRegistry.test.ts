@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createBoundaryRegistry } from "../../scripts/build-boundary-registry";
+import { createBoundaryRegistry } from "../../../../pipeline/src/build-boundary-registry";
 import { boundaryReleaseDeprecations } from "@uk-data-atlas/catalogue";
 
 const repositoryRoot = resolve(

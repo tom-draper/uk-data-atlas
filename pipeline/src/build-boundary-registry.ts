@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "./geography-build-path";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import {
 	existsSync,
 	mkdirSync,
@@ -11,8 +11,8 @@ import { fileURLToPath } from "node:url";
 import type {
 	BoundaryRegistry,
 	BoundaryRelease,
-} from "../src/boundaryRegistry";
-import { sha256 } from "../src/contentHash";
+} from "../../shared/boundaryRegistry";
+import { sha256 } from "../../shared/contentHash";
 import {
 	boundaryReleaseDeprecations,
 	sourceMetadataCorrections,
@@ -198,7 +198,7 @@ export const buildBoundaryRegistry = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const { outputPath, releaseCount } = buildBoundaryRegistry(repositoryRoot);
 	console.log(`Wrote ${releaseCount} releases to ${outputPath}`);
 }

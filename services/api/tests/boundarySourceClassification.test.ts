@@ -3,10 +3,10 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { createBoundaryRegistry } from "../scripts/build-boundary-registry";
+import { createBoundaryRegistry } from "../../../pipeline/src/build-boundary-registry";
 import { sha256 } from "../src/contentHash";
 import { selectReleaseForDate } from "../src/releaseForDate";
-import { createSourceInventory } from "../src/sourceInventory";
+import { createSourceInventory } from "../../../pipeline/src/sourceInventory";
 
 test("keeps the ONS names-and-codes table out of boundary release selection", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-source-classification-"));
