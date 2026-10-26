@@ -105,3 +105,105 @@ describe("shared packages", () => {
 		).toEqual(["react", "geojson", "./mappings", "node:fs"]);
 	});
 });
+
+const inside = (directory: string, file: string) => {
+	const path = relative(directory, file);
+	return path === "" || (!path.startsWith("..") && !path.startsWith("/"));
+};
+
+const ROOT = process.cwd();
+const PIPELINE = join(ROOT, "pipeline");
+const SHARED = join(ROOT, "shared");
+
+const pipelineImportAllowed = (
+	file: string,
+	specifier: string,
+	declared: Set<string>,
+) => {
+	if (specifier.startsWith(".")) {
+		const target = resolve(dirname(file), specifier);
+		return (
+			inside(PIPELINE, target) ||
+			inside(SHARED, target) ||
+			inside(PACKAGES, target)
+		);
+	}
+	return (
+		specifier.startsWith("node:") ||
+		builtins.has(specifier) ||
+		(declared.has(packageName(specifier)) &&
+			!["uk-data-atlas", "@uk-data-atlas/api"].includes(
+				packageName(specifier),
+			))
+	);
+};
+
+describe("pipeline boundaries", () => {
+	it("imports only shared code, packages, built-ins and declared dependencies", () => {
+		const manifest = JSON.parse(
+			readFileSync(join(PIPELINE, "package.json"), "utf8"),
+		);
+		const declared = new Set<string>(
+			Object.keys(manifest.dependencies ?? {}),
+		);
+		const files = sourceFiles(join(PIPELINE, "src"));
+		expect(files.length).toBeGreaterThan(0);
+		const invalid = files.flatMap((file) =>
+			specifiers(readFileSync(file, "utf8"))
+				.filter(
+					(specifier) =>
+						!pipelineImportAllowed(file, specifier, declared),
+				)
+				.map((specifier) => `${relative(ROOT, file)}: ${specifier}`),
+		);
+		expect(invalid).toEqual([]);
+	});
+
+	it("rejects product imports regardless of relative paths or aliases", () => {
+		const file = join(PIPELINE, "src/build.ts");
+		for (const specifier of [
+			"../../services/api/src/catalogueLoader",
+			"../../lib/atlas",
+			"@/lib/atlas",
+			"@uk-data-atlas/api",
+			"uk-data-atlas",
+		]) {
+			expect(
+				pipelineImportAllowed(
+					file,
+					specifier,
+					new Set(["@uk-data-atlas/api", "uk-data-atlas"]),
+				),
+			).toBe(false);
+		}
+	});
+
+	it("keeps the API, website runtime and shared code independent of the pipeline", () => {
+		const files = [
+			"app",
+			"components",
+			"lib",
+			"shared",
+			"services/api/src",
+			"services/api/scripts",
+		].flatMap((directory) => sourceFiles(join(ROOT, directory)));
+		for (const name of readdirSync(PACKAGES))
+			files.push(...sourceFiles(join(PACKAGES, name, "src")));
+		expect(files.length).toBeGreaterThan(0);
+		const invalid = files.flatMap((file) =>
+			specifiers(readFileSync(file, "utf8"))
+				.filter(
+					(specifier) =>
+						packageName(specifier) === "@uk-data-atlas/pipeline" ||
+						inside(
+							PIPELINE,
+							specifier.startsWith(".")
+								? resolve(dirname(file), specifier)
+								: resolve(ROOT, specifier.replace(/^@\//, "")),
+						),
+				)
+				.map((specifier) => `${relative(ROOT, file)}: ${specifier}`),
+		);
+		expect(invalid).toEqual([]);
+	});
+});

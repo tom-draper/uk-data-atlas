@@ -3,12 +3,15 @@ import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gunzipSync } from "node:zlib";
-import { ATLAS_LOOKUP_NAMES } from "../../shared/atlasAssets";
+import {
+	ATLAS_LOOKUP_NAMES,
+	atlasAssetsDirectory,
+} from "../../shared/atlasAssets";
 import type { AtlasAssetKind } from "../../shared/atlasSqlite";
 
-/** Import API build results before the release manifest hashes the database. */
+/** Assemble release assets before the release manifest hashes the database. */
 export function buildAtlasAssets(root: string) {
-	const publicDirectory = join(root, "services/api/public");
+	const publicDirectory = atlasAssetsDirectory(root);
 	const assets: {
 		kind: AtlasAssetKind;
 		id: string;

@@ -17,7 +17,7 @@ export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
 	);
 	database.close();
 	const write = (kind: AtlasAssetKind, values: Record<string, unknown>) => {
-		const directory = join(root, "services/api/public");
+		const directory = join(root, "data/build/atlas-assets");
 		mkdirSync(join(directory, `atlas-${kind}`), { recursive: true });
 		const entries = Object.entries(values).map(([id, value]) => {
 			const json = JSON.stringify(value);

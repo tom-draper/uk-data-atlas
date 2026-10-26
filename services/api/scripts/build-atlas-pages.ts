@@ -1029,5 +1029,5 @@ for (const [name, json] of outputs) {
 			wardAreas[code] = profile.areaKm2;
 }
 pages.set("ward-areas", JSON.stringify(wardAreas));
-writeAtlasPages(API_ROOT, pages);
+writeAtlasPages(ROOT, pages);
 console.log(`Wrote ${pages.size} atlas page artifacts`);

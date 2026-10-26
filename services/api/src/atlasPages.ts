@@ -1,5 +1,6 @@
 import {
 	ATLAS_PAGES_DIRECTORY,
+	atlasAssetsDirectory,
 	ATLAS_PAGES_MANIFEST,
 	type AtlasPageManifest,
 } from "../../../shared/atlasAssets";
@@ -15,7 +16,8 @@ import type { RouteRequest } from "./routing";
 
 /** The built pages by id, or none where they have not been built. */
 export const readAtlasPages = (apiRoot: string): Map<string, StoredFile> => {
-	const manifestPath = resolve(apiRoot, "public", ATLAS_PAGES_MANIFEST);
+	const directory = atlasAssetsDirectory(resolve(apiRoot, "../.."));
+	const manifestPath = resolve(directory, ATLAS_PAGES_MANIFEST);
 	if (!existsSync(manifestPath)) return new Map();
 	const manifest: AtlasPageManifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -30,7 +32,7 @@ export const readAtlasPages = (apiRoot: string): Map<string, StoredFile> => {
 					`${ATLAS_PAGES_DIRECTORY}/${entry.id}.json.gz`
 			)
 				throw new Error(`Invalid atlas page path ${entry.artifact}`);
-			const path = resolve(apiRoot, "public", entry.artifact);
+			const path = resolve(directory, entry.artifact);
 			if (statSync(path).size !== entry.gzipBytes)
 				throw new Error(`Atlas page size mismatch at ${path}`);
 			return [

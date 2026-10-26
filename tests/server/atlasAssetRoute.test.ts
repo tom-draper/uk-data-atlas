@@ -36,7 +36,9 @@ afterEach(() => {
 
 describe("SQLite website assets", () => {
 	it("serves exact page and lookup payloads without public copies or API files", async () => {
-		rmSync(join(fixture.root, "services"), { recursive: true });
+		rmSync(join(fixture.root, "data/build/atlas-assets"), {
+			recursive: true,
+		});
 		expect(existsSync(join(fixture.root, "public/data/atlas-pages"))).toBe(
 			false,
 		);
@@ -133,7 +135,7 @@ describe("SQLite website assets", () => {
 	it("validates every input before replacing data or removing old copies", () => {
 		const path = join(
 			fixture.root,
-			"services/api/public/atlas-pages/places-index.json.gz",
+			"data/build/atlas-assets/atlas-pages/places-index.json.gz",
 		);
 		writeFileSync(path, "corrupt gzip");
 		const legacy = join(fixture.root, "public/data/precompiled");

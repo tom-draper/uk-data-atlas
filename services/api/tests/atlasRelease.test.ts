@@ -142,3 +142,26 @@ test("refuses a build with a missing database or declared boundary archive", (co
 	rmSync(join(root, "data/build/atlas.sqlite"));
 	assert.throws(() => createAtlasRelease(root), /atlas-sqlite/);
 });
+
+test("hashes the shared lookup manifest and ignores the former API copy", (context) => {
+	const { root, directory } = fixture(context);
+	const assets = join(root, "data/build/atlas-assets");
+	mkdirSync(assets, { recursive: true });
+	const content = '{"schemaVersion":1,"lookups":[]}';
+	writeFileSync(join(assets, "atlas-lookups.json"), content);
+	writeFileSync(join(directory, "atlas-lookups.json"), "obsolete");
+	const release = createAtlasRelease(root);
+	assert.deepEqual(
+		release.artifacts.find((artifact) => artifact.id === "atlas-lookups"),
+		{
+			id: "atlas-lookups",
+			path: "data/build/atlas-assets/atlas-lookups.json",
+			contentHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
+		},
+	);
+	writeFileSync(
+		join(directory, "atlas-lookups.json"),
+		"changed obsolete copy",
+	);
+	assert.equal(createAtlasRelease(root).releaseId, release.releaseId);
+});

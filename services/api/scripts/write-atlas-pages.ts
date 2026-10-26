@@ -4,18 +4,23 @@ import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import {
 	ATLAS_PAGES_DIRECTORY,
+	atlasAssetsDirectory,
 	ATLAS_PAGES_MANIFEST,
 	type AtlasPageManifest,
 } from "../../../shared/atlasAssets";
 
-export function writeAtlasPages(apiRoot: string, pages: Map<string, string>) {
-	const directory = join(apiRoot, "public", ATLAS_PAGES_DIRECTORY);
+export function writeAtlasPages(
+	repositoryRoot: string,
+	pages: Map<string, string>,
+) {
+	const publicDirectory = atlasAssetsDirectory(repositoryRoot);
+	const directory = join(publicDirectory, ATLAS_PAGES_DIRECTORY);
 	mkdirSync(directory, { recursive: true });
 	const manifest: AtlasPageManifest = { schemaVersion: 1, pages: [] };
 	for (const [id, json] of pages) {
 		const gzip = gzipSync(json, { level: 9 });
 		const artifact = `${ATLAS_PAGES_DIRECTORY}/${id}.json.gz`;
-		writeFileSync(join(apiRoot, "public", artifact), gzip);
+		writeFileSync(join(publicDirectory, artifact), gzip);
 		manifest.pages.push({
 			id,
 			artifact,
@@ -25,7 +30,7 @@ export function writeAtlasPages(apiRoot: string, pages: Map<string, string>) {
 		});
 	}
 	writeFileSync(
-		join(apiRoot, "public", ATLAS_PAGES_MANIFEST),
+		join(publicDirectory, ATLAS_PAGES_MANIFEST),
 		JSON.stringify(manifest),
 	);
 }

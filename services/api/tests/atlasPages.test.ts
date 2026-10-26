@@ -50,21 +50,23 @@ test("refuses an atlas page that is not built", () => {
 });
 
 test("reads the page manifest and checks each stored file", () => {
-	const apiRoot = mkdtempSync(join(tmpdir(), "atlas-pages-"));
+	const root = mkdtempSync(join(tmpdir(), "atlas-pages-"));
+	const apiRoot = join(root, "services/api");
+	const directory = join(root, "data/build/atlas-assets");
 	try {
+		mkdirSync(join(apiRoot, "public"), { recursive: true });
+		writeFileSync(
+			join(apiRoot, "public", "atlas-pages.json"),
+			"obsolete invalid manifest",
+		);
 		assert.equal(readAtlasPages(apiRoot).size, 0);
 		const json = '{"a":1}';
 		const gzipped = gzipSync(json);
-		mkdirSync(join(apiRoot, "public", "atlas-pages"), {
+		mkdirSync(join(directory, "atlas-pages"), {
 			recursive: true,
 		});
 		writeFileSync(
-			join(
-				apiRoot,
-				"public",
-				"atlas-pages",
-				"places-area-E050001.json.gz",
-			),
+			join(directory, "atlas-pages", "places-area-E050001.json.gz"),
 			gzipped,
 		);
 		const entry = {
@@ -76,17 +78,12 @@ test("reads the page manifest and checks each stored file", () => {
 		};
 		const writeManifest = (pages: unknown[]) =>
 			writeFileSync(
-				join(apiRoot, "public", "atlas-pages.json"),
+				join(directory, "atlas-pages.json"),
 				JSON.stringify({ schemaVersion: 1, pages }),
 			);
 		writeManifest([entry]);
 		assert.deepEqual(readAtlasPages(apiRoot).get("places-area-E050001"), {
-			path: join(
-				apiRoot,
-				"public",
-				"atlas-pages",
-				"places-area-E050001.json.gz",
-			),
+			path: join(directory, "atlas-pages", "places-area-E050001.json.gz"),
 			bytes: json.length,
 			gzipBytes: gzipped.length,
 			contentHash: "sha256:00",
@@ -96,6 +93,6 @@ test("reads the page manifest and checks each stored file", () => {
 		writeManifest([{ ...entry, artifact: "../secrets.json.gz" }]);
 		assert.throws(() => readAtlasPages(apiRoot), /Invalid atlas page/);
 	} finally {
-		rmSync(apiRoot, { recursive: true, force: true });
+		rmSync(root, { recursive: true, force: true });
 	}
 });

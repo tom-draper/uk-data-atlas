@@ -43,8 +43,8 @@ const pipelineInputs = [
 	"packages/geography/src",
 	"packages/map-tiles/package.json",
 	"packages/map-tiles/src",
-	"services/api/public/atlas-lookups/boundary-mappings.json.gz",
-	"services/api/public/atlas-lookups/parish-lad-mappings.json.gz",
+	"data/build/atlas-assets/atlas-lookups/boundary-mappings.json.gz",
+	"data/build/atlas-assets/atlas-lookups/parish-lad-mappings.json.gz",
 ];
 
 const definitionsDirectory = "packages/datasets/src/data/catalog/definitions";
