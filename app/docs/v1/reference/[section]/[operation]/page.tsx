@@ -14,6 +14,7 @@ import {
 } from "@/components/docs/Page";
 import Prose, { Inline } from "@/components/docs/Prose";
 import { FieldList, ParameterList } from "@/components/docs/Reference";
+import { frontDoorExample } from "@/lib/docs/frontDoor";
 import {
 	endpointContent,
 	sectionContent,
@@ -65,6 +66,7 @@ export default async function OperationPage({ params }: { params: Params }) {
 
 	const content = endpointContent(op);
 	const example = operationExample(op);
+	const frontDoor = frontDoorExample(contract, op.id);
 	const pathParameters = op.parameters.filter((p) => p.location === "path");
 	const queryParameters = op.parameters.filter((p) => p.location !== "path");
 	const success = op.responses.find((r) => r.status.startsWith("2"));
@@ -119,6 +121,17 @@ export default async function OperationPage({ params }: { params: Params }) {
 								))}
 							</ul>
 						</Callout>
+					)}
+
+					{frontDoor && (
+						<section>
+							<SectionHeading id="try-it">Try it</SectionHeading>
+							<p className="mb-3 text-[15px] leading-[1.7] text-slate-600">
+								{frontDoor.route.question} Paste this into a
+								terminal:
+							</p>
+							<RequestSamples samples={frontDoor.samples} />
+						</section>
 					)}
 
 					{pathParameters.length > 0 && (
