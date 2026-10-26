@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { pmtilesURL } from "@/lib/map/tilesUrl";
+import { boundaryArchiveAsset } from "@/lib/data/boundaries/catalog";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import {
 	parseBoundaryTilesManifest,
@@ -15,6 +17,7 @@ const json = {
 };
 afterEach(() => {
 	vi.unstubAllGlobals();
+	vi.unstubAllEnvs();
 	vi.resetModules();
 });
 
@@ -217,3 +220,46 @@ describe("boundary map resources", () => {
 		expect(() => parseBoundaryTilesManifest(value)).toThrow(),
 	);
 });
+
+it("preserves a validated archive hash through CDN and PMTiles URL construction", () => {
+	vi.stubEnv("NODE_ENV", "production");
+	vi.stubEnv("NEXT_PUBLIC_DATA_VERSION", "unrelated-build");
+	vi.stubEnv("NEXT_PUBLIC_DATA_BASE_URL", "");
+	const hashed = `/data/boundaries/${release}/${"a".repeat(64)}.pmtiles`;
+	const manifest = parseBoundaryTilesManifest({
+		...json,
+		releases: {
+			[release]: { method: "shared-arcs", href: hashed, bytes: 1024 },
+		},
+	});
+	const selected = selectBoundaryTiles(
+		manifest,
+		"ward",
+		BOUNDARY_CATALOG.ward.vintages[2026]!,
+	);
+	expect(selected.href).toBe(hashed);
+	expect(pmtilesURL(selected.href, "https://example.com/maps")).toBe(
+		`pmtiles://https://example.com${hashed}`,
+	);
+	vi.stubEnv("NEXT_PUBLIC_DATA_BASE_URL", "https://cdn.example.com");
+	expect(boundaryArchiveAsset(hashed)).toBe(
+		`https://cdn.example.com${hashed}`,
+	);
+});
+it.each(["../bad", "a".repeat(63), "A".repeat(64), "a".repeat(64) + "/extra"])(
+	"rejects invalid content hashes %s",
+	(hash) => {
+		expect(() =>
+			parseBoundaryTilesManifest({
+				...json,
+				releases: {
+					[release]: {
+						method: "shared-arcs",
+						href: `/data/boundaries/${release}/${hash}.pmtiles`,
+						bytes: 1024,
+					},
+				},
+			}),
+		).toThrow();
+	},
+);

@@ -8,6 +8,7 @@ import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { BoundaryGeojson, PropertyKeys } from "@/lib/types/geometry";
 import {
 	BOUNDARY_CATALOG,
+	boundaryArchiveAsset,
 	propertiesAsset,
 	type BoundaryType,
 } from "./catalog";
@@ -58,7 +59,7 @@ export function selectBoundaryTiles(
 ) {
 	const { release, resource } = selectResource(manifest, type, path);
 	return {
-		href: withCDN(resource.href),
+		href: boundaryArchiveAsset(resource.href),
 		minZoom: manifest.minZoom,
 		maxZoom: manifest.maxZoom,
 		codeKey: release.codeKey,

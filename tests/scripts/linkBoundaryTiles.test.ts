@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import {
 	mkdtemp,
 	mkdir,
@@ -53,7 +54,7 @@ async function fixture() {
 }
 
 test("publishes a complete generation, preserves hard links and removes legacy geometry", async () => {
-	const { root, source, target, bytes, manifest } = await fixture();
+	const { root, source, target, bytes } = await fixture();
 	const directory = "boundaries/local-authority/2024-12-uk-bgc";
 	const archive = `${directory}/boundaries.pmtiles`;
 	await mkdir(join(target, directory, "chunks"), { recursive: true });
@@ -79,8 +80,15 @@ test("publishes a complete generation, preserves hard links and removes legacy g
 	expect(
 		await readFile(join(target, directory, "properties.json"), "utf8"),
 	).toBe('{"features":[]}');
-	expect(await readFile(join(target, "boundaries/tiles.json"), "utf8")).toBe(
-		manifest,
+	const published = JSON.parse(
+		await readFile(join(target, "boundaries/tiles.json"), "utf8"),
+	);
+	const hash = createHash("sha256").update(bytes).digest("hex");
+	expect(published.releases["localAuthority/2024-12-uk-bgc"].href).toBe(
+		`/data/${directory}/${hash}.pmtiles`,
+	);
+	expect((await stat(join(target, directory, `${hash}.pmtiles`))).ino).toBe(
+		(await stat(join(source, archive))).ino,
 	);
 	for (const file of [
 		"boundaries.topojson",
@@ -135,4 +143,30 @@ test("refuses incomplete or corrupt generations before deleting any legacy data"
 	await expect(
 		stat(join(target, "boundaries/tiles.json")),
 	).rejects.toMatchObject({ code: "ENOENT" });
+});
+
+test("changed archive bytes publish a new URL and retain old immutable bytes", async () => {
+	const { root, source, target, bytes } = await fixture();
+	const directory = "boundaries/ward/2026-05-uk-bgc";
+	const archive = `${directory}/boundaries.pmtiles`;
+	await linkBoundaryTiles(root);
+	const oldHash = createHash("sha256").update(bytes).digest("hex");
+	const updated = Buffer.from([80, 77, 1, 255]);
+	await writeFile(join(source, `${archive}.new`), updated);
+	await rename(join(source, `${archive}.new`), join(source, archive));
+	await linkBoundaryTiles(root);
+	const hash = createHash("sha256").update(updated).digest("hex");
+	const published = JSON.parse(
+		await readFile(join(target, "boundaries/tiles.json"), "utf8"),
+	);
+	expect(published.releases["ward/2026-05-uk-bgc"].href).toBe(
+		`/data/${directory}/${hash}.pmtiles`,
+	);
+	expect(
+		await readFile(join(target, directory, `${oldHash}.pmtiles`)),
+	).toEqual(bytes);
+	expect(await readFile(join(target, directory, `${hash}.pmtiles`))).toEqual(
+		updated,
+	);
+	expect(await readFile(join(target, archive))).toEqual(updated);
 });
