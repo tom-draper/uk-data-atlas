@@ -1,13 +1,11 @@
 import { gzipSync } from "node:zlib";
 import type { AreaGeometryCache } from "../areaGeometry";
-import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { buildGeoJson } from "./geoJson";
 import { buildGeoParquet } from "./geoParquet";
 import {
 	compileTileset,
 	LAYER_NAME,
 } from "@uk-data-atlas/map-tiles/compileTileset";
-import type { TileBox } from "@uk-data-atlas/map-tiles/tileGrid";
 import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles/tileset";
 import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
 import { releaseKey } from "../geographyKeys";
@@ -28,74 +26,8 @@ import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
 export { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 export { LAYER_NAME };
 
-export type MapResourceDescriptor = {
-	id: string;
-	geography: string;
-	boundaryRelease: string;
-	title: string;
-	/** Borders are compiled once and shared, not redrawn for each area. */
-	topology: "shared-arc";
-	areaCount: number;
-	arcCount: number;
-	bounds: TileBox;
-	tiles: {
-		artifact: string;
-		href: string;
-		format: "pmtiles-3";
-		tileFormat: "mvt-2.1";
-		layer: string;
-		minZoom: number;
-		maxZoom: number;
-		zooms: Array<{
-			minZoom: number;
-			maxZoom: number;
-			tier: GeometryTier;
-			toleranceM: number;
-		}>;
-		tileCount: number;
-		bytes: number;
-		contentHash: string;
-	};
-	tiers: Array<{
-		tier: GeometryTier;
-		toleranceM: number;
-		coordinates: number;
-		refinedArcs: number;
-	}>;
-	/**
-	 * The flat form: every area of one tier as a whole-release download, with
-	 * the ids the tiles and join tables use. Every tier is published as
-	 * GeoParquet, `full` included, because a warehouse chooses its own detail;
-	 * the coarser tiers a browser can hold are published as GeoJSON too.
-	 */
-	features: Array<{
-		tier: GeometryTier;
-		toleranceM: number;
-		format: "geoparquet-1.1" | "geojson";
-		/**
-		 * The stored file. Absent for the `full` tier, which is built from the
-		 * geometry store when it is asked for (see `fullDetail.ts`).
-		 */
-		artifact?: string;
-		href: string;
-		rowCount: number;
-		coordinates: number;
-		/** The size and hash of the download itself, once any encoding is undone. */
-		bytes: number;
-		contentHash: string;
-		/** Present when the file is stored gzipped: its size as stored. */
-		gzipBytes?: number;
-	}>;
-	generalisation: typeof TOPOLOGY_METHOD;
-	geometrySource: Record<string, unknown>;
-	attribution: {
-		text: string;
-		publisher: string;
-		sourceUrl: string;
-		licence: { name: string; url?: string };
-		href: string;
-	};
-};
+import type { MapResourceDescriptor } from "../../../../shared/mapResources";
+export type { MapResourceDescriptor } from "../../../../shared/mapResources";
 
 export type BoundaryReleaseSummary = {
 	id: string;

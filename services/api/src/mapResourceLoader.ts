@@ -5,22 +5,8 @@ import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { StoredFile } from "./routeResponse";
 
-export type MapResources = {
-	assetBaseUrl?: string;
-	tileBaseUrl?: string;
-	resources: MapResourceDescriptor[];
-	/**
-	 * Releases the build could not tile, such as one that is not a coverage.
-	 * One whose areas could still be read is downloadable whole at full
-	 * detail, listed in `features`.
-	 */
-	unavailable?: Array<{
-		geography: string;
-		boundaryRelease: string;
-		reason: string;
-		features?: MapResourceDescriptor["features"];
-	}>;
-};
+import type { MapResources } from "../../../shared/mapResources";
+export type { MapResources } from "../../../shared/mapResources";
 
 /** Every whole-release download the build wrote, tiled or not. */
 const allFeatures = (mapResources: MapResources) => [

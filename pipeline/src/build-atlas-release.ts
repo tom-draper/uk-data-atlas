@@ -1,7 +1,7 @@
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createAtlasRelease } from "../src/atlasRelease";
+import { createAtlasRelease } from "./atlasRelease";
 
 export const buildAtlasRelease = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
@@ -18,7 +18,7 @@ export const buildAtlasRelease = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildAtlasRelease(repositoryRoot);
 	console.log(
 		`Wrote atlas release ${result.releaseId} to ${result.releasePath}`,
