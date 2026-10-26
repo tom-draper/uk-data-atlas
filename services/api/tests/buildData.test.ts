@@ -222,7 +222,13 @@ test("documents rebuild pins the final manifest without rebuilding the initial m
 			"--max-old-space-size=3072",
 			"scripts/build-evidence-documents.ts",
 		],
-		["exec", "tsx", "scripts/build-atlas-release.ts"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-atlas-release.ts",
+		],
 	]);
 });
 

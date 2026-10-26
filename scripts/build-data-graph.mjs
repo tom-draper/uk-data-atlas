@@ -385,7 +385,14 @@ const apiStages = [
 			"validation-report",
 			"terrain-catalogue",
 		],
-		["exec", "tsx", "scripts/build-atlas-release.ts"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-atlas-release.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
 	stage("documents", [
 		"atlas-sqlite",
@@ -408,12 +415,23 @@ const apiStages = [
 			requiredOutputs: ["data/build/atlas-assets/atlas-lookups.json"],
 		},
 	),
-	stage("atlas-release", [
-		"atlas-release-initial",
-		"documents",
-		"atlas-lookups",
-		"website-lookups",
-	]),
+	stage(
+		"atlas-release",
+		[
+			"atlas-release-initial",
+			"documents",
+			"atlas-lookups",
+			"website-lookups",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-atlas-release.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	// Place pages read areas, crosswalks, geometry and named locations; the
 	// docs catalogue reads the API's catalogue and map resource manifests.
 	stage(
