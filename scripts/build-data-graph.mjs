@@ -62,9 +62,18 @@ const apiStages = [
 	stage("sources", [], ["--dir", "../..", "data:download"], {
 		cacheable: false,
 	}),
-	stage("operations", [], undefined, {
-		codeInputs: ["services/api/openapi.yaml"],
-	}),
+	stage(
+		"operations",
+		[],
+		["--dir", "../..", "exec", "tsx", "pipeline/src/build-operations.ts"],
+		{
+			codeInputs: [
+				"services/api/openapi.yaml",
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+			],
+		},
+	),
 	stage(
 		"catalogue-registry",
 		["sources"],

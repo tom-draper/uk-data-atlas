@@ -1,3 +1,4 @@
+import { compileOperationTemplates } from "../../../pipeline/src/operationTemplates";
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -7,9 +8,8 @@ import { parse } from "yaml";
 import {
 	buildOperations,
 	compileOperations,
-} from "../scripts/build-operations";
+} from "../../../pipeline/src/build-operations";
 import {
-	compileOperationTemplates,
 	createOperationMatcher,
 	deprecationHeaders,
 	openapiDocumentHash,

@@ -17,7 +17,7 @@ import { sha256 } from "../src/contentHash";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
 import { createOperationMatcher } from "../src/operationTemplates";
 import type { RouteContext } from "../src/routing";
-import { compileOperations } from "../scripts/build-operations";
+import { compileOperations } from "../../../pipeline/src/build-operations";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import type { StoredFile } from "../src/routeResponse";
 import {

@@ -1,3 +1,4 @@
+import { compileOperationTemplates } from "../../../pipeline/src/operationTemplates";
 import { reportRequest } from "./evidenceFixtures";
 import { createAreaLookup } from "../src/areaInventory";
 import type { AreaGeometryCache } from "../src/areaGeometry";
@@ -29,10 +30,7 @@ import type { MeasureCompatibilityInventory } from "../src/measureCompatibility"
 import { compileAreaSearchIndex } from "../src/areaSearch";
 import { compilePlaceIndex } from "../src/placeIndex";
 import { createRelationshipPathIndex } from "../src/relationshipPaths";
-import {
-	compileOperationTemplates,
-	createOperationMatcher,
-} from "../src/operationTemplates";
+import { createOperationMatcher } from "../src/operationTemplates";
 import { parse } from "yaml";
 
 /**
