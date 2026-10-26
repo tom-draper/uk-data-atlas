@@ -17,6 +17,15 @@ import {
 import { withCDN } from "@/lib/helpers/cdn";
 const mapAsset = (asset: string) =>
 	withCDN(asset.replace(/\.topojson$/, ".pmtiles"));
+// Catalogue paths identify releases. The manifest selects immutable archive bytes.
+export const boundaryArchiveAsset = (href: string) => {
+	if (!/\/[a-f0-9]{64}\.pmtiles$/.test(href)) return withCDN(href);
+	const base =
+		process.env.NODE_ENV === "production"
+			? (process.env.NEXT_PUBLIC_DATA_BASE_URL ?? "")
+			: "";
+	return `${base}${href}`;
+};
 export const BOUNDARY_CATALOG = { ...catalogue };
 for (const type of BOUNDARY_TYPES) {
 	const family = catalogue[type];

@@ -1,6 +1,6 @@
-import { randomUUID } from "node:crypto";
+import { createReadStream } from "node:fs";
+import { createHash, randomUUID } from "node:crypto";
 import {
-	copyFile,
 	link,
 	mkdir,
 	readFile,
@@ -9,6 +9,7 @@ import {
 	rm,
 	rmdir,
 	stat,
+	writeFile,
 } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import {
@@ -26,25 +27,36 @@ export async function linkBoundaryTiles(
 	const manifestText = await readFile(manifestPath, "utf8");
 	const manifest = parseBoundaryResources(JSON.parse(manifestText));
 	assertCompleteBoundaryResources(manifest);
-	const files = Object.entries(manifest.releases).flatMap(
-		([release, entry]) => {
-			const relative = entry.href.replace(/^\/data\//, "");
-			return [
-				{
-					source: join(build, relative),
-					relative,
-					bytes: entry.bytes,
-					release,
-				},
-				{
-					source: join(build, dirname(relative), "properties.json"),
-					relative: join(dirname(relative), "properties.json"),
-					bytes: undefined,
-					release,
-				},
-			];
-		},
-	);
+	const files: {
+		source: string;
+		relative: string;
+		bytes: number | undefined;
+		release: string;
+	}[] = [];
+	for (const [release, entry] of Object.entries(manifest.releases)) {
+		const relative = entry.href.replace(/^\/data\//, "");
+		const source = join(build, relative);
+		const hash = createHash("sha256");
+		for await (const chunk of createReadStream(source)) hash.update(chunk);
+		const hashed = join(dirname(relative), `${hash.digest("hex")}.pmtiles`);
+		files.push(
+			{ source, relative: hashed, bytes: entry.bytes, release },
+			// Retain the stable alias for one release, with revalidation.
+			{
+				source,
+				relative: join(dirname(relative), "boundaries.pmtiles"),
+				bytes: entry.bytes,
+				release,
+			},
+			{
+				source: join(build, dirname(relative), "properties.json"),
+				relative: join(dirname(relative), "properties.json"),
+				bytes: undefined,
+				release,
+			},
+		);
+		entry.href = `/data/${hashed.replaceAll("\\", "/")}`;
+	}
 	// Validate the whole generation before changing any public files.
 	for (const file of files) {
 		const built = await stat(file.source);
@@ -79,7 +91,9 @@ export async function linkBoundaryTiles(
 			normal.endsWith(".topojson") ||
 			normal.endsWith(".topojson.gz") ||
 			normal.endsWith("/boundaries.untiled.json") ||
-			(/\.(?:pmtiles|geojson)$/.test(normal) && !current.has(normal)) ||
+			(/\.(?:pmtiles|geojson)$/.test(normal) &&
+				!/[a-f0-9]{64}\.pmtiles$/.test(normal) &&
+				!current.has(normal)) ||
 			(normal.endsWith("/properties.json") && !current.has(normal)) ||
 			normal.includes("/chunks/")
 		)
@@ -99,7 +113,7 @@ export async function linkBoundaryTiles(
 	}
 	const temporary = join(boundaryDirectory, `tiles.${randomUUID()}.tmp`);
 	try {
-		await copyFile(manifestPath, temporary);
+		await writeFile(temporary, `${JSON.stringify(manifest, null, "\t")}\n`);
 		await rename(temporary, join(boundaryDirectory, "tiles.json"));
 	} finally {
 		await rm(temporary, { force: true });

@@ -1,3 +1,5 @@
+import { createReadStream } from "node:fs";
+import { createHash } from "node:crypto";
 import { open, readFile, readdir, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { expect, test } from "vitest";
@@ -23,7 +25,11 @@ test("every served release has a PMTiles archive and properties without public t
 			.sort(),
 	);
 	for (const [release, entry] of Object.entries(manifest.releases)) {
+		expect(entry.href, release).toMatch(/\/[a-f0-9]{64}\.pmtiles$/);
 		const path = join(root, "public", entry.href);
+		const hash = createHash("sha256");
+		for await (const chunk of createReadStream(path)) hash.update(chunk);
+		expect(entry.href, release).toContain(`/${hash.digest("hex")}.pmtiles`);
 		const file = await open(path, "r");
 		try {
 			const header = Buffer.alloc(127);
@@ -45,7 +51,9 @@ test("every served release has a PMTiles archive and properties without public t
 		const stored = join(
 			root,
 			"data/build",
-			entry.href.replace(/^\/data\//, ""),
+			entry.href
+				.replace(/^\/data\//, "")
+				.replace(/[a-f0-9]{64}\.pmtiles$/, "boundaries.pmtiles"),
 		);
 		expect((await stat(path)).ino, release).toBe((await stat(stored)).ino);
 	}

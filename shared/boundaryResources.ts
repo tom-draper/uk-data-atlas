@@ -26,6 +26,18 @@ export const websiteBoundaryReleases = () =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
 
+/** Legacy URLs are accepted during the first content-hashed release. */
+const validArchiveHref = (asset: string, href: unknown) => {
+	if (typeof href !== "string") return false;
+	const legacy = asset.replace(/\.topojson$/, ".pmtiles");
+	if (href === legacy) return true;
+	const directory = legacy.slice(0, legacy.lastIndexOf("/") + 1);
+	return (
+		href.startsWith(directory) &&
+		/^[a-f0-9]{64}\.pmtiles$/.test(href.slice(directory.length))
+	);
+};
+
 /** Parse map resources without allowing arbitrary URLs or unknown releases. */
 export function parseBoundaryResources(value: unknown): BoundaryResources {
 	if (
@@ -54,7 +66,7 @@ export function parseBoundaryResources(value: unknown): BoundaryResources {
 			!isRecord(entry) ||
 			(entry.method !== "shared-arcs" &&
 				entry.method !== "compiled-polygons") ||
-			entry.href !== asset.replace(/\.topojson$/, ".pmtiles") ||
+			!validArchiveHref(asset, entry.href) ||
 			typeof entry.bytes !== "number" ||
 			!Number.isSafeInteger(entry.bytes) ||
 			entry.bytes <= 0

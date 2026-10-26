@@ -1,3 +1,4 @@
+import { pmtilesURL } from "@/lib/map/tilesUrl";
 import { getFeatureProp } from "@/lib/types/geometry";
 import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
 import type { GeoJSONSource } from "maplibre-gl";
@@ -384,7 +385,7 @@ export class BoundaryLayerController {
 			this.sourceTiles = this.tiles;
 			this.map.addSource(SOURCE_ID, {
 				type: "vector",
-				url: `pmtiles://${new URL(this.tiles.href, window.location.href).href}`,
+				url: pmtilesURL(this.tiles.href, window.location.href),
 				minzoom: this.tiles.minZoom,
 				maxzoom: this.tiles.maxZoom,
 			});
