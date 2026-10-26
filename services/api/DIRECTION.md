@@ -398,7 +398,8 @@ cost:
 
 - Generated TypeScript and Python clients from `openapi.yaml`.
 - An MCP server over the front-door routes, so AI assistants can answer UK
-  place questions with the API's answers rather than guesses.
+  place questions with the API's answers rather than guesses. Built as
+  `services/mcp` (stdio, eight read-only tools); not yet published.
 - `llms.txt`, copyable `curl` examples per front-door route, and a public
   changelog tied to the release id.
 - Usage counts by route and question type, without personal data, to choose
