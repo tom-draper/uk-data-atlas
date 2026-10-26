@@ -30,6 +30,7 @@ shared/                 server-only readers of the compiled release
 packages/map-tiles/     the boundary tiler: shared-arc generalisation and
                         PMTiles archives, for the API and the website data build
 services/api/           the API: src/, scripts/, config/, openapi.yaml
+services/mcp/           the MCP server: a read-only HTTP client of the public API
 scripts/                build orchestration and file readers for both products
 data/
   source/               raw source files, restored from the data release
@@ -134,6 +135,9 @@ services/api ───────┘
   runtime imports the pipeline. `tests/packages/packageImports.test.ts` checks
   these boundaries. Existing root and API data builders will move in later PRs;
   see [the inventory and move order](docs/data-pipeline-move.md).
+- `services/mcp` is a client of the public API. It reaches the API over HTTP
+  only and imports no repository code, so it never joins the diagram above.
+  `tests/packages/packageImports.test.ts` checks this.
 - The website reads `services/api/openapi.yaml` for its API reference. Pages
   and lookups come from the shared release, without reading API build output.
 - Other generated API files remain under `services/api/public/` for now. This
