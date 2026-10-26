@@ -21,7 +21,7 @@ export default function ChangelogPage() {
 			href="/docs/v1/changelog"
 			eyebrow="Get started"
 			title="Changelog"
-			lede="Changes to the API that you might notice, newest first. During early access some will break existing requests, and those are marked."
+			lede="Changes to the API that you might notice, newest first. During early access some will break existing requests, and those are marked. An entry may name the `atlas-release` id of the build that first carried it, the id every response sends in its `atlas-release` header."
 			toc={CHANGELOG.map((entry) => ({
 				id: entry.date,
 				title: entry.title,
@@ -31,7 +31,7 @@ export default function ChangelogPage() {
 				<section key={entry.date}>
 					<H2 id={entry.date}>{entry.title}</H2>
 					<P>
-						{`${DATE_FORMAT.format(new Date(entry.date))}${entry.breaking ? ". **Breaking.**" : ""}`}
+						{`${DATE_FORMAT.format(new Date(entry.date))}${entry.breaking ? ". **Breaking.**" : ""}${entry.release ? `. Release \`${entry.release}\`` : ""}`}
 					</P>
 					<List items={entry.changes} />
 				</section>
