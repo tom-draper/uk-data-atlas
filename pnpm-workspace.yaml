@@ -1,4 +1,5 @@
 packages:
+  - pipeline
   - services/api
   - packages/*
 minimumReleaseAge: 10080

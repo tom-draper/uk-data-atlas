@@ -192,4 +192,41 @@ test("production builders resolve without UI code and include declared workers a
 			.get("website-datasets")!
 			.includes("scripts/compile-boundaries.mts"),
 	);
+	for (const path of [
+		"pipeline/src/build-atlas-assets.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+		"shared/atlasAssets.ts",
+	]) {
+		assert.ok(inputs.get("website-lookups")!.includes(path), path);
+	}
+});
+
+test("moved pipeline builders trace imports and invalidate their own manifests", () => {
+	const { write, run, stages } = fixture();
+	write(
+		"pipeline/src/build.ts",
+		'import { value } from "./compiler"; console.log(value);',
+	);
+	write("pipeline/src/compiler.ts", "export const value = 1;");
+	write("pipeline/package.json", "{}");
+	write("pipeline/tsconfig.json", "{}");
+	stages[0].args = ["--dir", "../..", "exec", "tsx", "pipeline/src/build.ts"];
+	stages[0].codeInputs = ["pipeline/package.json", "pipeline/tsconfig.json"];
+	assert.deepEqual(run(), ["alpha", "beta", "report"]);
+	assert.deepEqual(run(), []);
+	for (const path of [
+		"pipeline/src/compiler.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		write(
+			path,
+			path.endsWith(".ts")
+				? "export const value = 2;"
+				: '{"changed":true}',
+		);
+		assert.deepEqual(run(), ["alpha", "report"], path);
+		assert.deepEqual(run(), []);
+	}
 });

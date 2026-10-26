@@ -1,3 +1,8 @@
+import {
+	ATLAS_LOOKUPS_DIRECTORY,
+	ATLAS_LOOKUPS_MANIFEST,
+	type AtlasLookupManifest,
+} from "../../../shared/atlasAssets";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import {
@@ -7,29 +12,6 @@ import {
 	type StoredFile,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-
-/**
- * The atlas's containment and lineage lookups, compiled by
- * `pnpm --dir ../.. data:build --only atlas-lookups` for the boundary releases the atlas draws: where
- * each ward, LSOA and parish sits, which authorities each constituency
- * overlaps, and where each area goes between releases. The atlas cannot hold
- * the crosswalks, so it reads these instead.
- */
-export const ATLAS_LOOKUPS_DIRECTORY = "atlas-lookups";
-export const ATLAS_LOOKUPS_MANIFEST = "atlas-lookups.json";
-
-export type AtlasLookupManifest = {
-	schemaVersion: 1;
-	lookups: Array<{
-		id: string;
-		artifact: string;
-		/** The size of the JSON, once decompressed. */
-		bytes: number;
-		/** The size of the gzipped file stored. */
-		gzipBytes: number;
-		contentHash: string;
-	}>;
-};
 
 /** The built lookups by id, or none where they have not been built. */
 export const readAtlasLookups = (apiRoot: string): Map<string, StoredFile> => {

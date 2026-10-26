@@ -6,7 +6,7 @@ import {
 	ATLAS_PAGES_DIRECTORY,
 	ATLAS_PAGES_MANIFEST,
 	type AtlasPageManifest,
-} from "../src/atlasPages";
+} from "../../../shared/atlasAssets";
 
 export function writeAtlasPages(apiRoot: string, pages: Map<string, string>) {
 	const directory = join(apiRoot, "public", ATLAS_PAGES_DIRECTORY);

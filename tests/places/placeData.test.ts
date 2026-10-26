@@ -2,7 +2,7 @@ import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
-import { buildWebsiteAssets } from "@/scripts/build-website-assets";
+import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
 
 const index = {
 	version: 1,
@@ -57,7 +57,7 @@ describe("place data reads", () => {
 			"ward-areas": {},
 			restored: { value: 42 },
 		});
-		buildWebsiteAssets(fixture.root);
+		buildAtlasAssets(fixture.root);
 		expect(await readAtlasPage("restored")).toEqual({ value: 42 });
 	});
 	it("rejects an invalid asset id", async () => {

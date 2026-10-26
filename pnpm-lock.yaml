@@ -332,6 +332,25 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  pipeline:
+    dependencies:
+      '@uk-data-atlas/catalogue':
+        specifier: workspace:*
+        version: link:../packages/catalogue
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../packages/geography
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   services/api:
     dependencies:
       '@uk-data-atlas/catalogue':

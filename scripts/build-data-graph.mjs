@@ -343,8 +343,11 @@ const websiteStages = [
 	stage(
 		"website-lookups",
 		["atlas-lookups", "atlas-pages"],
-		["--dir", "../..", "exec", "tsx", "scripts/build-website-assets.ts"],
-		{ requiredOutputs: ["data/build/atlas.sqlite"] },
+		["--dir", "../..", "exec", "tsx", "pipeline/src/build-atlas-assets.ts"],
+		{
+			requiredOutputs: ["data/build/atlas.sqlite"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"website-datasets",
