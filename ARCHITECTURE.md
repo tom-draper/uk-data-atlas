@@ -177,6 +177,16 @@ the size and mtime of raw files in `data/source/`, and upstream output digests.
 The files it wrote under `data/build/`, `public/data/` and `services/api/public/`
 must also be unchanged.
 
+A stage's output digest hashes the contents of its output files, not their
+mtimes. Each recorded file stores `{size, mtimeMs, sha256}`. A file is hashed,
+in streamed chunks, only when no record holds that path with the same size and
+mtime, so unchanged multi-gigabyte outputs such as `atlas.sqlite` are not read
+again. The skip check compares size and mtime alone. A stage that rewrites
+identical bytes therefore keeps its digest, and its dependants are skipped (early
+cutoff). If it instead restores a shared file that a downstream stage had
+changed, such as `atlas.sqlite`, that downstream stage is invalidated and
+rebuilds.
+
 `scripts/build-data-code.mjs` uses esbuild's dependency metadata to trace local
 imports, including workspace package sources, without executing builders.
 API runtime configuration, TypeScript configuration, the pinned data release,
@@ -193,12 +203,14 @@ local imports fail the check rather than reuse a stale result.
 Download, catalogue registry generation, source documentation and website
 registry generation always run. Their generated code is inspected again before
 later stage keys are computed. `scripts/build-data-cache.mjs` stores the cache in
-`.cache/data-build/`. The scoped key format invalidates old entries once.
+`.cache/data-build/`. The scoped key format and the content-hash record format
+each invalidate old entries once.
 `--from` and `--no-cache` rerun the stages they select regardless.
 
 After a cache format bump, `pnpm data:build --adopt` records existing outputs
-against current keys without running any stage. Use `--only <stage>` to select a
-stage and its prerequisites, or add `--plan` to validate and preview adoption.
+against current keys without running any stage, hashing every adopted file once.
+Use `--only <stage>` to select a stage and its prerequisites, or add `--plan` to
+validate and preview adoption.
 This trusts the user: it checks file presence, not whether the bytes were built
 from current code or sources. Use it only when those outputs are known to be
 valid. Never-cacheable stages are skipped, including downloads and registry
