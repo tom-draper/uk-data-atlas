@@ -327,12 +327,89 @@ in date selection through registry metadata. The query consolidation and
 - **Dataset breadth** driven by the question bank: add what common questions
   reach for and we don't have, before adding more of what we do.
 
+### Next: answers that are hard to get elsewhere
+
+Added 2026-10-26. The API is most valuable where a general-purpose assistant
+or a quick script gives a confident wrong answer. Each item below rests on the
+archive, the lineage and the weighted conversion together, so it is hard to
+copy. In priority order:
+
+1. **Consistent time series on one boundary release.** "Unemployment for
+   2024 wards, 2011 to 2025", with every period rebuilt on the same
+   boundaries and each rebuilt value naming its conversion method. Boundary
+   changes break most UK trend analysis; this is the clearest answer to it.
+2. **Better weights for conversion.** Area- and population-weighted conversion
+   exists. Next:
+    - Choose the weight to suit the measure: residents for people,
+      households for household measures, dwellings or address counts for
+      housing, workplaces for jobs.
+    - Build splits from the smallest units held (output areas, postcodes,
+      address counts from OS Open UPRN), not from overlapping two large
+      polygons.
+    - Return a range or quality score with every converted value, so a user
+      can tell an exact regrouping from an estimated split.
+3. **Profiles of custom areas.** A polygon, radius, drive time or list of
+   postcodes in; every measure apportioned into it out. Medians, rates and
+   indices are rebuilt by their proper method (a rate from its numerator and
+   denominator, population-weighted deprivation scores) or refused with a
+   reason, never averaged. This replaces "custom polygon queries" in Later.
+4. **Official projections on any geography.** Serve the ONS, NRS, NISRA and
+   Welsh Government population and household projections, converted through
+   the crosswalks to any held release. Sourced and low risk. Our own
+   projections stay out until we can publish backtests (how the method would
+   have predicted the past) and ranges; a wrong forecast under our name costs
+   trust in everything else.
+5. **Is this change real?** Split an area's change between two periods into
+   a boundary effect, a source or method change, and the remaining change.
+6. **Notional election results.** Past elections re-estimated on new
+   constituency and ward boundaries, with the method stated. A known hard
+   problem, using data already held.
+7. **Small-area estimates.** Spread a figure published only for councils down
+   to LSOAs using held covariates, always labelled as modelled.
+
+Items 1, 3 and 5 need observations stored as rows (see Foundations).
+
+### Foundations
+
+Changes to how the API is built that the work above depends on, or that cut
+cost:
+
+- **Observations as rows.** Store each observation as a row in
+  `atlas.sqlite` (dataset, measure, area, release, period, value) instead of
+  one JSON payload per dataset, so most new datasets become configuration
+  rather than compiler code. Started with one pilot dataset.
+- **The data build outside the API.** Move build code from
+  `services/api/scripts` into the shared pipeline, so the API only serves a
+  release, and the website stops importing pages and lookups from the API's
+  build output.
+- **Heavy joins out of Node.** Consider DuckDB for large tabular and spatial
+  joins in the build, which spills to disk instead of exhausting memory. Keep
+  our own shared-arc tiler and boundary mappings.
+- **Fewer stored download variants.** Each release is stored as GeoJSON and
+  GeoParquet at four detail levels plus PMTiles (5.2 GB). Keep full detail and
+  tiles, and make simplified downloads on request with caching.
+- **Route schemas as the source of the contract.** Generate `openapi.yaml`
+  from typed route schemas rather than maintaining both by hand, and group
+  `src/` by domain.
+
+### Making it easy to reach
+
+- Generated TypeScript and Python clients from `openapi.yaml`.
+- An MCP server over the front-door routes, so AI assistants can answer UK
+  place questions with the API's answers rather than guesses.
+- `llms.txt`, copyable `curl` examples per front-door route, and a public
+  changelog tied to the release id.
+- Usage counts by route and question type, without personal data, to choose
+  which gaps to close first.
+
 ### Later
 
 - Private uploads and storage.
 - API keys, quotas and usage tiers. These only matter once usage grows past
   early access.
-- Custom polygon queries.
+- Similar areas: "which councils are most like Wigan?" across chosen measures.
+  Cheap once observations are rows.
+- Address and UPRN lookup.
 
 ### Parked
 
@@ -341,7 +418,8 @@ until a real user asks.
 
 - DuckDB/dbt sync references, change feeds and freshness contracts (the old
   "reliable sync" path).
-- Consultancy decision layers: area briefs, peer groups, signals and profiles.
+- Consultancy decision layers: area briefs, signals and profiles. Similar
+  areas moved to Later.
 - Terrain and elevation.
 - Further analysis-geography conversions beyond the one already built.
 - Commercial positioning and pricing.
