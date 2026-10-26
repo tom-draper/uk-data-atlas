@@ -471,6 +471,15 @@ The graph traces the compiler and pipeline configuration. The builder preserves
 `data/build/geography/relationship-paths.json` bytes and the existing discovery
 step limit.
 
+The analysis geography compiler and entry point now live in
+`pipeline/src/analysisGeographies.ts` and
+`pipeline/src/build-analysis-geographies.ts`. Analysis support contracts, data
+catalogue contracts, unit definition types, and measure geography identifiers
+live in `shared/`, with API re-exports. The API keeps `analysisConversion` and
+its observation and unit registry runtime functions. The build graph traces
+the moved compiler and pipeline configuration. The builder preserves
+`data/build/geography/analysis-geographies.json` bytes.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
