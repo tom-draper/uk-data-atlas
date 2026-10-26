@@ -5,6 +5,7 @@ import { join } from "node:path";
 import test, { type TestContext } from "node:test";
 import type { UsageEvent } from "../src/usageLabels";
 import { UsageRecorder } from "../src/usageRecorder";
+import { usageReport } from "../src/usageReport";
 import { UsageStore, type UsageRow } from "../src/usageStore";
 
 const directory = (t: TestContext) => {
@@ -184,4 +185,88 @@ test("forgets days before the retention window", (t) => {
 	]);
 	store.prune("2026-10-01");
 	assert.equal(requests(store, "2026-01-01")[0]!.requests, 1);
+});
+
+test("reports the top routes, measures, areas and not-found requests", (t) => {
+	const path = directory(t);
+	const store = UsageStore.open(path);
+	t.after(() => store.close());
+	const rows = (
+		overrides: Partial<UsageEvent>,
+		requests: number,
+		day = "2026-10-02",
+	): UsageRow => ({ ...event(overrides), day, requests });
+	store.add([
+		rows({ measure: "population" }, 40),
+		rows({ measure: "median-age" }, 10),
+		rows(
+			{
+				measure: "unknown",
+				outcome: "4xx",
+				problem: "not-found",
+				notFound: "unknown-measure",
+			},
+			7,
+		),
+		rows(
+			{
+				route: "/v1/areas/{geography}/{release}/{code}",
+				measure: "",
+				geography: "ward",
+				release: "2025-01-en-ward",
+			},
+			25,
+		),
+		rows(
+			{
+				route: "/v1/areas/{geography}/{release}/{code}",
+				measure: "",
+				geography: "ward",
+				release: "unknown",
+				outcome: "4xx",
+				problem: "unknown_release",
+				notFound: "unknown-release",
+			},
+			3,
+		),
+		rows({ measure: "population" }, 999, "2026-08-01"),
+	]);
+	const text = usageReport(store, {
+		days: 30,
+		limit: 5,
+		now: Date.UTC(2026, 9, 5),
+	});
+	assert.match(
+		text,
+		/from 2026-09-06 to 2026-10-05 \(UTC\), 85 requests, 10 failed/,
+	);
+	const section = (title: string) =>
+		text.split("\n\n").find((block) => block.startsWith(title))!;
+	// The old day is outside the window, and routes are ranked by count.
+	assert.match(
+		section("Top routes"),
+		/\n\s*57\s+7\s+\/v1\/data\/\{measure-id\}/,
+	);
+	assert.match(
+		section("Top measures"),
+		/\n\s*40\s+0\s+population\n\s*10\s+0\s+median-age\n\s*7\s+7\s+unknown/,
+	);
+	assert.match(
+		section("Top geographies"),
+		/25\s+0\s+ward\s+2025-01-en-ward\n\s*3\s+3\s+ward\s+unknown/,
+	);
+	assert.match(
+		section("Top not found"),
+		/7\s+7\s+unknown-measure\s+\/v1\/data\/\{measure-id\}\s+unknown/,
+	);
+	assert.match(section("Top not found"), /3\s+3\s+unknown-release/);
+	assert.doesNotMatch(section("Top measures"), /999/);
+});
+
+test("says so when nothing has been recorded", (t) => {
+	const store = UsageStore.open(directory(t));
+	t.after(() => store.close());
+	const text = usageReport(store, { days: 7, limit: 5, now: DAY_ONE });
+	assert.match(text, /0 requests, 0 failed/);
+	assert.equal(text.match(/\n {2}none/g)?.length, 4);
 });
