@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "uk-data-atlas-client"
+version = "0.1.0"
+description = "Typed client for the UK Data Atlas API, generated from its OpenAPI description"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "AGPL-3.0-only"
+dependencies = [
+    "httpx>=0.23,<0.29",
+    "attrs>=22.2",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uk_data_atlas_client"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["src/uk_data_atlas_client/generated"]
