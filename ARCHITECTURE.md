@@ -140,6 +140,8 @@ services/api ───────┘
   `tests/packages/packageImports.test.ts` checks this.
 - The website reads `services/api/openapi.yaml` for its API reference. Pages
   and lookups come from the shared release, without reading API build output.
+- `clients/` reads `services/api/openapi.yaml` to generate typed API clients.
+  Nothing depends on them, and they import no project code.
 - Other generated API files remain under `services/api/public/` for now. This
   keeps existing readers and deployments working while compiler groups move.
 - A package holds code only. It reads no files and is safe to
