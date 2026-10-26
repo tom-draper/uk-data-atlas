@@ -1,5 +1,5 @@
 import { type DatasetInput, readDatasetInput } from "./input";
-import { countryForCode } from "./countries";
+import { countryForCode } from "../../../shared/catalogCountries";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 import { sha256 } from "./values";

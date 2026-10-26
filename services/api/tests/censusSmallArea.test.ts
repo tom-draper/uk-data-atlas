@@ -7,7 +7,7 @@ import {
 	CENSUS_SMALL_AREA_TABLES,
 	censusTableArtifactName,
 	compileCensusSmallArea,
-} from "../src/catalog/censusSmallArea";
+} from "../../../pipeline/src/catalog/censusSmallArea";
 
 const tenure = CENSUS_SMALL_AREA_TABLES.find(
 	(table) => table.table === "ts054",

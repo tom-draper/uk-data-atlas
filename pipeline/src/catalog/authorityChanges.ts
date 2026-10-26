@@ -1,7 +1,7 @@
 import {
 	isNumericObservation,
 	type MeasureObservationArtifact,
-} from "../dataCatalog";
+} from "../../../shared/dataCatalog";
 
 /**
  * The four unitary authorities created in April 2023, with the districts each

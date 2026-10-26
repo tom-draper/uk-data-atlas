@@ -1,6 +1,9 @@
 import { type DatasetInput } from "./input";
-import type { Measure, MeasureObservationArtifact } from "../dataCatalog";
-import { countriesFor } from "./countries";
+import type {
+	Measure,
+	MeasureObservationArtifact,
+} from "../../../shared/dataCatalog";
+import { countriesFor } from "../../../shared/catalogCountries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 import { sha256 } from "./values";

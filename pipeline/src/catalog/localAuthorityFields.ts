@@ -3,9 +3,9 @@ import type {
 	SourceGeography,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "../dataCatalog";
+} from "../../../shared/dataCatalog";
 import { type PrecompiledFile, object } from "./values";
-import { isPublishedAreaCode } from "./countries";
+import { isPublishedAreaCode } from "../../../shared/catalogCountries";
 
 /**
  * Read compiled emissions as one observation per authority per year.

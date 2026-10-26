@@ -4,8 +4,8 @@ import type {
 	MeasureObservationArtifact,
 	MeasureSource,
 	SourceGeography,
-} from "../dataCatalog";
-import { countriesFor } from "./countries";
+} from "../../../shared/dataCatalog";
+import { countriesFor } from "../../../shared/catalogCountries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest } from "./manifest";
 import { sha256 } from "./values";

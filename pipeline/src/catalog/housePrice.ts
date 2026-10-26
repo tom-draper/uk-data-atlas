@@ -3,10 +3,10 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "../dataCatalog";
+} from "../../../shared/dataCatalog";
 import { type PrecompiledFile, sha256, number, object } from "./values";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
-import { countriesFor } from "./countries";
+import { countriesFor } from "../../../shared/catalogCountries";
 
 /**
  * The last period published for a full calendar year. The workbook is a

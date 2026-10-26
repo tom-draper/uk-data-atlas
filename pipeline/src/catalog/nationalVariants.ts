@@ -1,4 +1,4 @@
-import type { Measure } from "../dataCatalog";
+import type { Measure } from "../../../shared/dataCatalog";
 
 /**
  * Measures that answer the same question in a nation this one does not cover.

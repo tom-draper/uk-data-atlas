@@ -4,12 +4,12 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "../dataCatalog";
+} from "../../../shared/dataCatalog";
 import {
 	APRIL_2023_LAD_MERGERS,
 	APRIL_2020_2021_LAD_MERGERS,
 } from "./authorityChanges";
-import { countriesFor } from "./countries";
+import { countriesFor } from "../../../shared/catalogCountries";
 import type { CatalogManifest } from "./manifest";
 import { sha256 } from "./values";
 

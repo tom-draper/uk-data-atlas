@@ -3,7 +3,7 @@ import type {
 	DatasetCatalogueEntry,
 	Measure,
 	MeasureObservationArtifact,
-} from "../dataCatalog";
+} from "../../../shared/dataCatalog";
 import { string, number, object } from "./values";
 
 /** The compiled manifest each dataset is checked against. */

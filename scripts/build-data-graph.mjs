@@ -222,7 +222,12 @@ const apiStages = [
 		cacheable: false,
 	}),
 	stage("postcode-index", ["sources", "atlas-sqlite"]),
-	stage("data-catalog", ["atlas-sqlite"]),
+	stage(
+		"data-catalog",
+		["atlas-sqlite"],
+		["--dir", "../..", "exec", "tsx", "pipeline/src/build-data-catalog.ts"],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("measure-compatibility", [
 		"data-catalog",
 		"boundary-registry",

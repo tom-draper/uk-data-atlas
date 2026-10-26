@@ -1,13 +1,13 @@
-import { AtlasDatasetInput } from "../src/catalog/input";
+import { AtlasDatasetInput } from "./catalog/input";
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
-} from "../src/catalog/compileDataCatalog";
+} from "./catalog/compileDataCatalog";
 import { storeObservations } from "./store-observations";
-import { observationArtifactName } from "../src/dataCatalog";
+import { observationArtifactName } from "../../shared/dataCatalog";
 
 export const datasetCatalogInputs = (
 	repositoryRoot: string,
@@ -177,7 +177,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildDataCatalog(repositoryRoot);
 	console.log(
 		`Wrote data catalogue, ${result.populationRecordCount} population observations, ${result.emissionsRecordCount} emissions observations and ${result.measureRecordCount} other measure observations to ${result.catalogPath}`,

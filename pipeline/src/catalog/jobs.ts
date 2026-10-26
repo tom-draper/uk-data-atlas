@@ -1,6 +1,6 @@
 import { type DatasetInput } from "./input";
-import type { Country, Measure } from "../dataCatalog";
-import { countryForCode, countriesFor } from "./countries";
+import type { Country, Measure } from "../../../shared/dataCatalog";
+import { countryForCode, countriesFor } from "../../../shared/catalogCountries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 import { sha256 } from "./values";

@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { storeObservations } from "../scripts/store-observations";
+import { storeObservations } from "../../../pipeline/src/store-observations";
 import {
 	assertObservationCatalogue,
 	readObservationInventory,

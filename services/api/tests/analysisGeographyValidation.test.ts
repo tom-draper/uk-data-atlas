@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { buildAnalysisGeographyValidation } from "../scripts/build-analysis-geography-validation";
-import { storeObservations } from "../scripts/store-observations";
+import { storeObservations } from "../../../pipeline/src/store-observations";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateAnalysisGeographies } from "../src/analysisGeographyValidation";

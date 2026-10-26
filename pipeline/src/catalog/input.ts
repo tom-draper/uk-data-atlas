@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { readAtlasPayload } from "../../../../shared/atlasSqlite";
+import { readAtlasPayload } from "../../../shared/atlasSqlite";
 
 export class AtlasDatasetInput {
 	constructor(

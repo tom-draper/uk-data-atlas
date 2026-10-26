@@ -1,7 +1,7 @@
 import { type DatasetInput } from "./input";
-import type { Measure } from "../dataCatalog";
+import type { Measure } from "../../../shared/dataCatalog";
 import { onApril2023Authorities } from "./authorityChanges";
-import { countriesFor } from "./countries";
+import { countriesFor } from "../../../shared/catalogCountries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest } from "./manifest";
 import { sha256 } from "./values";
