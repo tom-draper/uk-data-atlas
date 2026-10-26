@@ -210,7 +210,7 @@ test("stores no trace of a postcode, place, coordinates or caller", async (t) =>
 	t.after(() => reader.close());
 	const routes = reader
 		.totals("2000-01-01", ["route"])
-		.map(({ route }) => route)
+		.map(({ route }) => route ?? "")
 		.sort();
 	assert.ok(routes.includes("/v1/postcodes/{postcode}"));
 	assert.ok(routes.includes("/v1/places"));
