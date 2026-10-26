@@ -2,11 +2,11 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
+import { compileOperationTemplates } from "./operationTemplates";
 import {
-	compileOperationTemplates,
 	openapiDocumentHash,
 	type OperationsArtifact,
-} from "../src/operationTemplates";
+} from "../../shared/operations";
 
 /**
  * Compiles the operations the server matches requests against from
@@ -35,7 +35,7 @@ export const buildOperations = (apiRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { outputPath, operationCount } = buildOperations(
-		resolve(dirname(scriptPath), ".."),
+		resolve(dirname(scriptPath), "../../services/api"),
 	);
 	console.log(`Wrote ${operationCount} operation paths to ${outputPath}`);
 }

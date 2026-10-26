@@ -196,6 +196,20 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(!inputs.get("boundaries")!.includes("services/api/openapi.yaml"));
 	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
 	for (const path of [
+		"pipeline/src/build-operations.ts",
+		"pipeline/src/operationTemplates.ts",
+		"shared/operations.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("operations")!.includes(path), path);
+	}
+	assert.ok(
+		!inputs
+			.get("operations")!
+			.includes("services/api/src/operationTemplates.ts"),
+	);
+	for (const path of [
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
