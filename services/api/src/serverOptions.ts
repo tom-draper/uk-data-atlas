@@ -53,6 +53,17 @@ export type ServerOptions = {
 	 */
 	metrics?: { token: string } | "open";
 	collectMetrics?: () => Promise<string | null>;
+	/**
+	 * Where to keep daily usage counts, and how often to write them. Absent,
+	 * counts live only in `/metrics`. Holds route, outcome and catalogue ids
+	 * only, never anything that identifies a caller or what they typed.
+	 */
+	usage?: {
+		directory: string;
+		flushIntervalMs: number;
+		/** Days of counts kept; older days are deleted when a worker starts. */
+		retentionDays: number;
+	};
 	/** Longest request target served; a longer one is refused with 414. */
 	maxUrlLength?: number;
 	/**
@@ -256,6 +267,28 @@ export const readServeConfiguration = (
 				: toggle(env, "ATLAS_METRICS_OPEN", false)
 					? { metrics: "open" as const }
 					: {}),
+			...(env.ATLAS_USAGE_DIR
+				? {
+						usage: {
+							directory: env.ATLAS_USAGE_DIR,
+							flushIntervalMs:
+								integer(
+									env,
+									"ATLAS_USAGE_FLUSH_SECONDS",
+									60,
+									1,
+									3600,
+								) * 1000,
+							retentionDays: integer(
+								env,
+								"ATLAS_USAGE_RETENTION_DAYS",
+								400,
+								1,
+								3650,
+							),
+						},
+					}
+				: {}),
 			maxUrlLength: integer(
 				env,
 				"ATLAS_MAX_URL_LENGTH",

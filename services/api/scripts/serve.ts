@@ -136,6 +136,7 @@ function startWorker() {
 			geometryCacheReleases: configuration.geometryCacheReleases,
 			crosswalkCacheBytes: configuration.crosswalkCacheBytes,
 			observationCacheBytes: configuration.observationCacheBytes,
+			usage: configuration.server.usage?.directory ?? "off",
 			metrics:
 				configuration.server.metrics === undefined
 					? "off"
@@ -157,6 +158,7 @@ function startWorker() {
 		});
 		setTimeout(() => {
 			server.closeAllConnections();
+			server.flushUsage();
 			log({ level: "warn", event: "server.forced-close" });
 			process.exit(0);
 		}, configuration.shutdownGraceSeconds * 1000).unref();

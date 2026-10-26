@@ -11,6 +11,8 @@ import {
 } from "node:http";
 import { ApiMetrics } from "./apiMetrics";
 import { classifyUsage, usageVocabulary } from "./usageLabels";
+import { UsageRecorder } from "./usageRecorder";
+import { UsageStore, utcDay } from "./usageStore";
 import {
 	acceptsGzip,
 	bodyBytes,
@@ -150,6 +152,8 @@ export type ApiServer = Server & {
 	 */
 	beginDrain(): void;
 	readonly metrics: ApiMetrics;
+	/** Write buffered usage counts now, for a shutdown that cannot wait. */
+	flushUsage(): void;
 };
 
 const json = (status: number, body: unknown): HttpResponse => {
@@ -265,6 +269,31 @@ export const createApiServer = (
 		catalogues.dataCatalog,
 		catalogues.boundaryRegistry,
 	);
+	// A store that cannot be opened must not stop the API answering: counts
+	// then live only in /metrics, and the failure is logged.
+	let usage: UsageRecorder | undefined;
+	if (options.usage)
+		try {
+			const store = UsageStore.open(options.usage.directory);
+			store.prune(
+				utcDay(Date.now() - options.usage.retentionDays * 86_400_000),
+			);
+			usage = new UsageRecorder(store, {
+				onError: (error) =>
+					options.log?.({
+						level: "error",
+						event: "usage.flush_failed",
+						error: errorFields(error),
+					}),
+			});
+			usage.start(options.usage.flushIntervalMs);
+		} catch (error) {
+			options.log?.({
+				level: "error",
+				event: "usage.store_unavailable",
+				error: errorFields(error),
+			});
+		}
 	const limiter = options.rateLimit
 		? new RateLimiter(options.rateLimit)
 		: undefined;
@@ -596,21 +625,21 @@ export const createApiServer = (
 			});
 			if (!operational && method !== "OPTIONS")
 				try {
-					metrics.observeUsage(
-						classifyUsage(vocabulary, {
-							route: matched.route,
-							template: matched.operation?.path,
-							pathname,
-							searchParams: new URLSearchParams(
-								target.slice(pathname.length + 1),
-							),
-							status,
-							problem:
-								answered && "type" in answered.body
-									? answered.body
-									: undefined,
-						}),
-					);
+					const event = classifyUsage(vocabulary, {
+						route: matched.route,
+						template: matched.operation?.path,
+						pathname,
+						searchParams: new URLSearchParams(
+							target.slice(pathname.length + 1),
+						),
+						status,
+						problem:
+							answered && "type" in answered.body
+								? answered.body
+								: undefined,
+					});
+					metrics.observeUsage(event);
+					usage?.record(event);
 				} catch {}
 			const entry = entryFor(status, bytes);
 			if (failure !== undefined) reportFailure(failure, entry);
@@ -708,12 +737,16 @@ export const createApiServer = (
 			else enqueue(request, response);
 		},
 	);
-	server.on("close", () => metrics.close());
+	server.on("close", () => {
+		metrics.close();
+		usage?.close();
+	});
 	return Object.assign(server, {
 		beginDrain: () => {
 			draining = true;
 			server.closeIdleConnections();
 		},
 		metrics,
+		flushUsage: () => usage?.flush(),
 	});
 };
