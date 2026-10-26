@@ -50,16 +50,23 @@ test("refuses an atlas lookup that is not built", () => {
 });
 
 test("reads the lookup manifest and checks each stored file", () => {
-	const apiRoot = mkdtempSync(join(tmpdir(), "atlas-lookups-"));
+	const root = mkdtempSync(join(tmpdir(), "atlas-lookups-"));
+	const apiRoot = join(root, "services/api");
+	const directory = join(root, "data/build/atlas-assets");
 	try {
+		mkdirSync(join(apiRoot, "public"), { recursive: true });
+		writeFileSync(
+			join(apiRoot, "public", "atlas-lookups.json"),
+			"obsolete invalid manifest",
+		);
 		assert.equal(readAtlasLookups(apiRoot).size, 0);
 		const json = '{"a":1}';
 		const gzipped = gzipSync(json);
-		mkdirSync(join(apiRoot, "public", "atlas-lookups"), {
+		mkdirSync(join(directory, "atlas-lookups"), {
 			recursive: true,
 		});
 		writeFileSync(
-			join(apiRoot, "public", "atlas-lookups", "area-lineage.json.gz"),
+			join(directory, "atlas-lookups", "area-lineage.json.gz"),
 			gzipped,
 		);
 		const entry = {
@@ -71,17 +78,12 @@ test("reads the lookup manifest and checks each stored file", () => {
 		};
 		const writeManifest = (lookups: unknown[]) =>
 			writeFileSync(
-				join(apiRoot, "public", "atlas-lookups.json"),
+				join(directory, "atlas-lookups.json"),
 				JSON.stringify({ schemaVersion: 1, lookups }),
 			);
 		writeManifest([entry]);
 		assert.deepEqual(readAtlasLookups(apiRoot).get("area-lineage"), {
-			path: join(
-				apiRoot,
-				"public",
-				"atlas-lookups",
-				"area-lineage.json.gz",
-			),
+			path: join(directory, "atlas-lookups", "area-lineage.json.gz"),
 			bytes: json.length,
 			gzipBytes: gzipped.length,
 			contentHash: "sha256:00",
@@ -91,6 +93,6 @@ test("reads the lookup manifest and checks each stored file", () => {
 		writeManifest([{ ...entry, artifact: "../secrets.json.gz" }]);
 		assert.throws(() => readAtlasLookups(apiRoot), /Invalid atlas lookup/);
 	} finally {
-		rmSync(apiRoot, { recursive: true, force: true });
+		rmSync(root, { recursive: true, force: true });
 	}
 });

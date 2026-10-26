@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import {
 	ATLAS_LOOKUP_FILES,
@@ -43,3 +44,6 @@ export type AtlasLookupManifest = {
 		contentHash: string;
 	}>;
 };
+
+export const atlasAssetsDirectory = (root: string) =>
+	join(root, "data/build/atlas-assets");

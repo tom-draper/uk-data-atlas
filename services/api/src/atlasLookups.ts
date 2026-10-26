@@ -1,5 +1,6 @@
 import {
 	ATLAS_LOOKUPS_DIRECTORY,
+	atlasAssetsDirectory,
 	ATLAS_LOOKUPS_MANIFEST,
 	type AtlasLookupManifest,
 } from "../../../shared/atlasAssets";
@@ -15,7 +16,8 @@ import type { RouteRequest } from "./routing";
 
 /** The built lookups by id, or none where they have not been built. */
 export const readAtlasLookups = (apiRoot: string): Map<string, StoredFile> => {
-	const manifestPath = resolve(apiRoot, "public", ATLAS_LOOKUPS_MANIFEST);
+	const directory = atlasAssetsDirectory(resolve(apiRoot, "../.."));
+	const manifestPath = resolve(directory, ATLAS_LOOKUPS_MANIFEST);
 	if (!existsSync(manifestPath)) return new Map();
 	const manifest: AtlasLookupManifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -30,7 +32,7 @@ export const readAtlasLookups = (apiRoot: string): Map<string, StoredFile> => {
 					`${ATLAS_LOOKUPS_DIRECTORY}/${entry.id}.json.gz`
 			)
 				throw new Error(`Invalid atlas lookup path ${entry.artifact}`);
-			const path = resolve(apiRoot, "public", entry.artifact);
+			const path = resolve(directory, entry.artifact);
 			if (statSync(path).size !== entry.gzipBytes)
 				throw new Error(`Atlas lookup size mismatch at ${path}`);
 			return [

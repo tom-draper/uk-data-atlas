@@ -275,13 +275,21 @@ const apiStages = [
 		"operations",
 		"geometry-store",
 	]),
-	stage("atlas-lookups", [
-		"geography-catalogues",
-		"atlas-sqlite",
-		"area-inventory",
-		"crosswalk-inventory",
-		"relationship-paths",
-	]),
+	stage(
+		"atlas-lookups",
+		[
+			"geography-catalogues",
+			"atlas-sqlite",
+			"area-inventory",
+			"crosswalk-inventory",
+			"relationship-paths",
+		],
+		undefined,
+		{
+			outputs: ["data/build/atlas-assets/atlas-lookups"],
+			requiredOutputs: ["data/build/atlas-assets/atlas-lookups.json"],
+		},
+	),
 	stage("atlas-release", [
 		"atlas-release-initial",
 		"documents",
@@ -290,24 +298,29 @@ const apiStages = [
 	]),
 	// Place pages read areas, crosswalks, geometry and named locations; the
 	// docs catalogue reads the API's catalogue and map resource manifests.
-	stage("atlas-pages", [
-		"geography-catalogues",
-		"api-datasets",
-		"boundary-registry",
-		"geometry-store",
-		"named-locations",
-		"location-projections",
-		"relationship-paths",
-		"data-catalog",
-		"export-manifest",
-		"geography-inventory",
-		"map-resource",
-	]),
+	stage(
+		"atlas-pages",
+		[
+			"geography-catalogues",
+			"api-datasets",
+			"boundary-registry",
+			"geometry-store",
+			"named-locations",
+			"location-projections",
+			"relationship-paths",
+			"data-catalog",
+			"export-manifest",
+			"geography-inventory",
+			"map-resource",
+		],
+		undefined,
+		{
+			outputs: ["data/build/atlas-assets/atlas-pages"],
+			requiredOutputs: ["data/build/atlas-assets/atlas-pages.json"],
+		},
+	),
 ];
 
-// The website's own data: it imports the API's lookups and pages into SQLite,
-// and the compiled datasets, then builds its boundaries and chunks against
-// them. The API reads none of it.
 const websiteStages = [
 	stage(
 		"boundaries",
@@ -365,8 +378,6 @@ const websiteStages = [
 			"--max-old-space-size=3072",
 			"scripts/compile-website-data.mts",
 		],
-		// It keeps unchanged files from its last run. The lookups and pages in
-		// public/data belong to website-lookups.
 		{
 			outputs: ["public/data/datasets"],
 			codeInputs: ["scripts"],

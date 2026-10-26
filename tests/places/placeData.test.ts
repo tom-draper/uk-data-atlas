@@ -31,7 +31,9 @@ afterEach(() => {
 
 describe("place data reads", () => {
 	it("reads index and profiles from SQLite without public copies or a running API", async () => {
-		rmSync(join(fixture.root, "services"), { recursive: true });
+		rmSync(join(fixture.root, "data/build/atlas-assets"), {
+			recursive: true,
+		});
 		vi.stubGlobal(
 			"fetch",
 			vi.fn(() => {

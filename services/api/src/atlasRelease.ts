@@ -1,3 +1,4 @@
+import { atlasAssetsDirectory } from "../../../shared/atlasAssets";
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "./contentHash";
@@ -67,7 +68,11 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 		);
 	}
 	for (const id of ["evidence-documents", "atlas-lookups"]) {
-		const path = join(publicDirectory, `${id}.json`);
+		const directory =
+			id === "atlas-lookups"
+				? atlasAssetsDirectory(repositoryRoot)
+				: publicDirectory;
+		const path = join(directory, `${id}.json`);
 		if (existsSync(path)) artifacts.push(artifactReference(id, path));
 	}
 	artifacts.sort((a, b) => a.id.localeCompare(b.id));

@@ -1,9 +1,3 @@
-/**
- * Compile the atlas's containment and lineage lookups from the geography
- * resolver, for the boundary releases the atlas draws, and list them in
- * public/atlas-lookups.json. The API serves them at
- * /v1/atlas-lookups/{lookup-id}.json; the atlas fetches them there.
- */
 import { createHash } from "node:crypto";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
@@ -13,12 +7,13 @@ import { compileAtlasLookups } from "@uk-data-atlas/geography";
 import { readTranslationResolver } from "../src/catalogueLoader";
 import {
 	ATLAS_LOOKUPS_DIRECTORY,
+	atlasAssetsDirectory,
 	ATLAS_LOOKUPS_MANIFEST,
 	type AtlasLookupManifest,
 } from "../../../shared/atlasAssets";
 
 const apiRoot = resolve(import.meta.dirname, "..");
-const publicDirectory = join(apiRoot, "public");
+const publicDirectory = atlasAssetsDirectory(resolve(apiRoot, "../.."));
 const directory = join(publicDirectory, ATLAS_LOOKUPS_DIRECTORY);
 
 rmSync(join(publicDirectory, ATLAS_LOOKUPS_MANIFEST), { force: true });

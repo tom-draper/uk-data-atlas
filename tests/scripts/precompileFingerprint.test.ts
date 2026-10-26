@@ -40,8 +40,8 @@ const createRepository = async () => {
 		"packages/geography/src/index.ts",
 		"packages/map-tiles/package.json",
 		"packages/map-tiles/src/compileTileset.ts",
-		"services/api/public/atlas-lookups/boundary-mappings.json.gz",
-		"services/api/public/atlas-lookups/parish-lad-mappings.json.gz",
+		"data/build/atlas-assets/atlas-lookups/boundary-mappings.json.gz",
+		"data/build/atlas-assets/atlas-lookups/parish-lad-mappings.json.gz",
 	])
 		await write(file, `// ${file}`);
 	await write(
@@ -109,13 +109,13 @@ describe("precompile fingerprints", () => {
 		await unlink(
 			join(
 				root,
-				"services/api/public/atlas-lookups/boundary-mappings.json.gz",
+				"data/build/atlas-assets/atlas-lookups/boundary-mappings.json.gz",
 			),
 		);
 		await unlink(
 			join(
 				root,
-				"services/api/public/atlas-lookups/parish-lad-mappings.json.gz",
+				"data/build/atlas-assets/atlas-lookups/parish-lad-mappings.json.gz",
 			),
 		);
 
