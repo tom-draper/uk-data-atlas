@@ -6,14 +6,8 @@ import type { DataCatalog, Measure } from "./dataCatalog";
  * term may match many, and is only ever a search.
  */
 
-/** A term as a slug: lower case, no accents, words joined by hyphens. */
-export const measureSlug = (term: string) =>
-	term
-		.normalize("NFKD")
-		.replace(/[̀-ͯ]/g, "")
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, "-")
-		.replace(/^-+|-+$/g, "");
+import { measureSlug } from "../../../shared/measureSlug";
+export { measureSlug } from "../../../shared/measureSlug";
 
 // A plural and its singular are one word here, so "house prices" meets
 // "house price". Short words such as "gas" are left alone.
