@@ -488,6 +488,16 @@ the pipeline configuration in their cache inputs. Artifact selection, file
 hashing, release identity, and the `services/api/public/atlas-release.json`
 output path are unchanged.
 
+The data catalogue entry point and dataset compilers now live in
+`pipeline/src/build-data-catalog.ts` and `pipeline/src/catalog/`. Observation
+table compilation and publication live in `pipeline/src/atlasObservationTables.ts`
+and `pipeline/src/store-observations.ts`. Common observation contracts and
+identity helpers, exact-byte SQLite observation readers, table writing, CSV
+parsing, country classification, and measure slugging live in `shared/`, with
+API re-exports for runtime consumers. The graph traces these imports and the
+pipeline configuration. Catalogue JSON and observation artifact bytes, SQLite
+publication, cleanup, and output paths are unchanged.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
