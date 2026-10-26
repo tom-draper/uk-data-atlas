@@ -6685,6 +6685,9 @@ paths:
                       path: data/build/atlas.sqlite
                       contentHash: sha256:6516841abb2149d864316bde871efceafbedeb0e6b681bbab588def86e06e0f2
 
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /atlas-lookups/{lookup-id}.json:
     get:
       operationId: getAtlasLookup

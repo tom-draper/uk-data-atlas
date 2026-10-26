@@ -4,6 +4,7 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
+import { readAtlasPayload } from "../../../../shared/atlasSqlite";
 import { httpResponse } from "../../src/httpResponse";
 import { CAPABILITY_STATUSES } from "../../src/capability";
 import { CONVERSION_METHODS } from "../../src/conversion";
@@ -873,6 +874,17 @@ test("names build artifacts the resolution contract can actually read", () => {
 		[],
 		"the resolution contract reads a build artifact that is not published",
 	);
+	const payloads = [
+		...resolutionContract.matchAll(
+			/`atlas\.sqlite:(boundary-releases|geography-inventory)`/g,
+		),
+	].map((match) => match[1]!);
+	assert.deepEqual(payloads.sort(), [
+		"boundary-releases",
+		"geography-inventory",
+	]);
+	for (const id of payloads)
+		assert.ok(readAtlasPayload(resolve(apiRoot, "../.."), id));
 });
 
 test("keeps the resolution contract's one exception the only one", () => {

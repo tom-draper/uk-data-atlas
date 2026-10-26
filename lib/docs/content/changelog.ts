@@ -22,6 +22,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-10-26",
+		title: "Identify release artifacts by their stored bytes",
+		surface: "2b61c1fc50d5",
+		breaking: true,
+		changes: [
+			"The `/v1/atlas-release` manifest uses `artifacts` to list release files and their hashes. The former `resources` field is removed. Read `artifacts` for the files in the current build, and use the export and map catalogues to discover downloads.",
+		],
+	},
+	{
 		date: "2026-10-22",
 		title: "Serve CSV exports gzipped",
 		surface: "679ec488e471",

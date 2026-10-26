@@ -11446,7 +11446,6 @@
 					"data.artifacts[].id",
 					"data.artifacts[].path",
 					"data.releaseId",
-					"data.resources",
 					"data.schemaVersion",
 					"meta",
 					"meta.nextCursor"
