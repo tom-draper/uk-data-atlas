@@ -461,6 +461,16 @@ the crosswalk adapter reader, and geography identifier validation live in
 the moved compiler and pipeline configuration. The builder keeps the same
 `services/api/public/relationship-candidates.json` bytes.
 
+The relationship path compiler, approved-path reader, and build entry point
+now live in `pipeline/src/relationshipPaths.ts`,
+`pipeline/src/relationshipPathAdapters.ts`, and
+`pipeline/src/build-relationship-paths.ts`. Path contracts and purpose lookup
+live in `shared/relationshipPaths.ts`; the API keeps its runtime path index.
+Compressed artifact access now uses `shared/storedText.ts`, with API re-exports.
+The graph traces the compiler and pipeline configuration. The builder preserves
+`data/build/geography/relationship-paths.json` bytes and the existing discovery
+step limit.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
