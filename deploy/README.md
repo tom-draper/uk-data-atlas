@@ -38,12 +38,11 @@ census tables, also live in this database. After updating the code, run
 and regenerate compatibility, validation, and exports.
 Keep `data/build/atlas.sqlite` under the repository root when deploying either
 server. Both read it in read-only mode.
-`pnpm data:build` builds missing or stale dependencies, copies
-the atlas lookups and pages from the API's build output, then writes browser
-data and SEO files to `public/data/`.
+`pnpm data:build` builds missing or stale dependencies, writes atlas lookups
+and pages into the shared release, then writes browser data and SEO files to
+`public/data/`.
 Neither output directory is tracked in Git.
-`pnpm build` copies the atlas lookups and pages again, verifies local
-generated data, generates map headlines and rankings,
+`pnpm build` verifies local generated data, generates map headlines and rankings,
 then runs Next.js. A nonzero
 exit from any command means that step failed; stop before the next step.
 The build writes an initial atlas manifest before evidence documents, then
@@ -87,8 +86,15 @@ once into `data/build/datasets/`, for both products (see `data/build/README.md`)
 `atlas-sqlite` stores catalogue payloads in `data/build/atlas.sqlite` for the
 API catalogue compiler, atlas pages and Next.js dataset route. `api-datasets` builds gazetteer core
 and boundary assets under `services/api/public/source-data/` for named
-locations and atlas pages. The API build does not need website output in
+locations and atlas pages. The data build does not need website output in
 `public/data/`.
+
+Pages and lookups are release assets under `data/build/atlas-assets/`. The
+`pipeline/` workspace assembles their bytes into SQLite in the `website-lookups`
+stage. Deploy `atlas-assets/` alongside SQLite for API page and lookup routes.
+Next.js builds only read SQLite, so website deployment needs neither API build
+output nor a running API. Other files under `services/api/public/` remain in
+place while the compiler groups move out of the API.
 
 ## systemd
 
@@ -199,10 +205,11 @@ certbot renew --dry-run
 ```
 
 Do not commit downloaded source data, generated API data, logs, credentials,
-certificates or swap files. The API build compiles the website docs catalogue and place artifacts.
+certificates or swap files. The data build compiles the website docs catalogue and place artifacts.
 
-The website serves its own copy of the atlas lookups and pages from
-`public/data/` and never fetches from the API. Restart
+The website serves atlas lookups and pages from `data/build/atlas.sqlite` and
+never fetches them from the API. Include `data/build/atlas-assets/` when deploying
+the API, which serves the gzip files directly. Restart
 the API and website in either order. On a memory-constrained local machine,
 stop the API before `pnpm data:build`.
 

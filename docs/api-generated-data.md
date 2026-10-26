@@ -46,21 +46,24 @@ The website continues to use its own data readers and never calls the API.
 
 ## Runtime files
 
-| Files in `services/api/public`                  | Reader                                    | Why they remain                                                          |
-| ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------ |
-| `data-catalog.json`                             | `catalogueManifestLoader.ts`              | Measure definitions and source references                                |
-| `measure-compatibility.json`                    | `catalogueManifestLoader.ts`              | Supported measure and boundary combinations                              |
-| `export-manifest.json`                          | `catalogueManifestLoader.ts`, bulk routes | Export metadata for observation artifacts                                |
-| `lookup-manifest.json`                          | `catalogueManifestLoader.ts`              | Lookup catalogue metadata                                                |
-| `map-resources.json`                            | `mapResourceLoader.ts`                    | Boundary tile resource metadata                                          |
-| `geometry-sources.json`                         | `geometrySources.ts`                      | Source geometry lookup                                                   |
-| `relationship-candidates.json`                  | `governanceLoader.ts`                     | Candidate relationship governance                                        |
-| `validation-report.json`                        | `catalogueManifestLoader.ts`              | Validation results                                                       |
-| `operations.json`                               | `catalogueManifestLoader.ts`              | OpenAPI query parameter validation, checked against the current document |
-| `atlas-release.json`                            | `catalogueManifestLoader.ts`              | Release identity and artifact hashes                                     |
-| `evidence-documents.json`, `documents/*.json`   | `catalogueLoader.ts`, document routes     | Evidence documents and their index                                       |
-| `atlas-lookups.json`, `atlas-lookups/*.json.gz` | `atlasLookups.ts`, website copy stage     | Published lookup downloads                                               |
-| `atlas-pages.json`, `atlas-pages/*.json.gz`     | `atlasPages.ts`, website copy stage       | Published place page data                                                |
+| Files in `services/api/public`                | Reader                                    | Why they remain                                                          |
+| --------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------ |
+| `data-catalog.json`                           | `catalogueManifestLoader.ts`              | Measure definitions and source references                                |
+| `measure-compatibility.json`                  | `catalogueManifestLoader.ts`              | Supported measure and boundary combinations                              |
+| `export-manifest.json`                        | `catalogueManifestLoader.ts`, bulk routes | Export metadata for observation artifacts                                |
+| `lookup-manifest.json`                        | `catalogueManifestLoader.ts`              | Lookup catalogue metadata                                                |
+| `map-resources.json`                          | `mapResourceLoader.ts`                    | Boundary tile resource metadata                                          |
+| `geometry-sources.json`                       | `geometrySources.ts`                      | Source geometry lookup                                                   |
+| `relationship-candidates.json`                | `governanceLoader.ts`                     | Candidate relationship governance                                        |
+| `validation-report.json`                      | `catalogueManifestLoader.ts`              | Validation results                                                       |
+| `operations.json`                             | `catalogueManifestLoader.ts`              | OpenAPI query parameter validation, checked against the current document |
+| `atlas-release.json`                          | `catalogueManifestLoader.ts`              | Release identity and artifact hashes                                     |
+| `evidence-documents.json`, `documents/*.json` | `catalogueLoader.ts`, document routes     | Evidence documents and their index                                       |
+
+Atlas page and lookup manifests and their gzipped artifacts live under
+`data/build/atlas-assets/`. The API readers `atlasPages.ts` and `atlasLookups.ts`
+serve those files. The pipeline assembles the same bytes into `website_assets`
+in `data/build/atlas.sqlite`, which the website reads directly.
 
 Observation contracts are stored as rows in SQLite (`observations`,
 `observation_series` and their dictionary and sparse tables, with one wide table

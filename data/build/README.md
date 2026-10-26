@@ -193,13 +193,19 @@ registry, crosswalk compilation, named-location compilation, compatibility, look
 geography inventory, location projections, relationship candidates, docs catalogue,
 map resources, proposals, benchmarks
 still read them. Atlas lookups use the migrated loader. Atlas pages read boundary
-properties for area sizes. `scripts/build-website-assets.ts` imports compiled
-atlas lookups and pages into the `website_assets` table before the final release
+properties for area sizes. Producers write the manifests and gzip files under
+`data/build/atlas-assets/`. The `pipeline/` workspace owns the `website-lookups`
+stage, which validates and stores those release files in the `website_assets`
+table before the final release
 manifest hashes the database. Its primary key is `(kind, id)`, where `kind` is
 `pages` or `lookups`. Each row stores a SHA-256 hash and the original gzipped
 JSON bytes. Website routes serve those bytes directly to gzip-capable clients;
 server rendering and precompilation decompress the selected row. Old public
-copies are removed only after a validated import succeeds.
+copies are removed only after a validated import succeeds. Next.js builds only
+read these rows. API page and lookup routes read the gzip files under
+`atlas-assets/`, so include that directory alongside SQLite in API deployments.
+Other API build outputs remain under `services/api/public/` during the compiler
+migration. See `docs/data-pipeline-move.md` for the remaining work.
 
 ### Crosswalks
 
@@ -244,8 +250,9 @@ close each connection after a read. JSON inventories and compressed crosswalk
 artifacts remain inputs to relationship paths, analysis geographies and their
 validation, location projections, relationship candidates, geography inventory,
 lookup manifests, validation reports, proposals.
-Atlas lookups and pages use the migrated loader. The website copy step still
-copies their generated outputs and never reads crosswalk JSON directly.
+Atlas lookups and pages use the migrated loader. Their compilers write to
+`data/build/atlas-assets/`, and the pipeline assembles those files into SQLite.
+The website never reads crosswalk JSON directly.
 
 ### Named locations
 
@@ -291,8 +298,8 @@ built, avoiding a dependency cycle. The API inventory loader and place-index
 compiler read named locations from SQLite. Full named-location JSON remains for
 location projections, lookup exports. Packed metadata and
 geometry JSON remain build outputs of the same compiler, although the API no
-longer reads them. Atlas pages use the resolver's migrated loader. The website
-copy step copies only generated atlas lookups and pages.
+longer reads them. Atlas pages use the resolver's migrated loader and write
+release artifacts that the pipeline stores in `website_assets`.
 
 ### Location projections
 

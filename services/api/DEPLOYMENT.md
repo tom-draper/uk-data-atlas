@@ -17,10 +17,12 @@ docker compose -f services/api/compose.yaml up -d
 curl --fail http://127.0.0.1:3001/readyz
 ```
 
-Keep the compiled `services/api/public` directory on a read-only persistent
-volume. Deploy code and data together, then replace the container. The data build
-is separate from the image build. The volume must include the geometry store,
-observation tables, indexes and manifests. Raw sources are not required for a
+Compose mounts `services/api/public/`, `data/build/atlas.sqlite`, and
+`data/build/atlas-assets/` read-only. Deploy these matching release outputs
+with the code, then replace the container. The separate `atlas-cache` volume
+remains writable. The data build is separate from the image build. API public
+files contain the geometry store and manifests; SQLite contains observation
+tables and indexes. Raw sources are not required for a
 current geometry store. Serving never falls back to raw source files. Startup
 validates compiled metadata for every release in the geometry source registry
 and refuses missing, stale or invalid stores. If a later release load finds an
@@ -165,16 +167,18 @@ analysis support, rebuild `analysis-geography-validation.json` too. Rebuild
 
 ## Website place and catalogue artifacts
 
-The final `atlas-pages` build stage writes gzipped website profiles, facts,
-ward areas and the docs catalogue under `public/atlas-pages/`, with metadata
-in `public/atlas-pages.json`. Include both in the deployed volume. Until the
-shared dataset compiler work lands, this stage reads the website's compiled
-datasets and boundary properties in the repository's `public/data/`.
+The `atlas-pages` and `atlas-lookups` stages write manifests and gzipped files
+under `data/build/atlas-assets/`. Include this directory alongside
+`data/build/atlas.sqlite` in the deployed API volume, preserving paths relative
+to the repository root. Page and lookup routes read these release files.
+Other API outputs stay under `services/api/public/` during the compiler migration.
 
-Deploy the API before the website. Confirm `/v1/atlas-pages/places-index.json`
-and `/v1/atlas-pages/docs-catalogue.json` return 200 before starting the website
-build. These artifact shapes follow the website; clients needing stable
-responses should use the area and catalogue routes.
+The `pipeline/` workspace's `website-lookups` stage stores the same gzip bytes in
+SQLite before the final release manifest. Next.js builds and servers read those
+rows directly. They need neither API public files nor a running API, so the
+website and API can deploy independently after the release is built. These
+artifact shapes follow the website; clients needing stable responses should use
+the area and catalogue routes.
 
 ## Crosswalk compilation
 

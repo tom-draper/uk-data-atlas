@@ -39,12 +39,12 @@ public/data/            the atlas's compiled data, served by the website
 
 ## Where the data lives
 
-| Where                  | What                                                                     | In git      | Made by                                                                                            |
-| ---------------------- | ------------------------------------------------------------------------ | ----------- | -------------------------------------------------------------------------------------------------- |
-| `data/source/`         | Raw files as publishers supplied them                                    | No          | `pnpm data:download`, from the release pinned in `data-release.json`                               |
-| `data/build/`          | Shared generated datasets and `atlas.sqlite`                             | README only | `pnpm data:build`                                                                                  |
-| `services/api/public/` | The API's build: the boundary archive, crosswalks, indexes and downloads | No          | `pnpm data:build`                                                                                  |
-| `public/data/`         | The atlas's compiled datasets, boundary properties and PMTiles           | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
+| Where                  | What                                                           | In git      | Made by                                                                                            |
+| ---------------------- | -------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| `data/source/`         | Raw files as publishers supplied them                          | No          | `pnpm data:download`, from the release pinned in `data-release.json`                               |
+| `data/build/`          | Shared generated datasets and `atlas.sqlite`                   | README only | `pnpm data:build`                                                                                  |
+| `services/api/public/` | Remaining generated API catalogues and downloads               | No          | `pnpm data:build`                                                                                  |
+| `public/data/`         | The atlas's compiled datasets, boundary properties and PMTiles | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
 
 Raw release archives keep their paths relative to the source root. The existing
 pinned release restores into `data/source/` without republishing. For an existing
@@ -55,10 +55,10 @@ checkout, move its raw folders and `.source-release.json` from `data/` into
 headlines and ranked areas, compiled by `pnpm data:build --only seo` from the datasets.
 Rankings read the precomputed `ward-areas` page from SQLite.
 
-The API builds website artifacts with `pnpm data:build --only atlas-pages`.
+The data build compiles website artifacts with `pnpm data:build --only atlas-pages`.
 That stage reads only the areas, crosswalks, geometry, named locations and
 catalogue manifests it uses, not the API's release manifest. It stores gzipped files and a manifest under
-`services/api/public/atlas-pages/` and `atlas-pages.json`, and serves them at
+`data/build/atlas-assets/atlas-pages/` and `atlas-pages.json`. The API serves them at
 `/v1/atlas-pages/{page-id}.json`. `pnpm data:build --only website-lookups` stores their
 precompressed bytes in `data/build/atlas.sqlite`. The website reads them directly
 for server rendering and serves browser requests at `/data/atlas-pages/{page-id}.json`:
@@ -100,19 +100,21 @@ gazetteer, road-safety, chunk and SEO assets and the website build manifest.
 
 The atlas's containment and lineage lookups (`area-lineage`,
 `boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
-`constituency-lad-overlaps`) are not in the repository. The API's build
+`constituency-lad-overlaps`) are not in the repository. The data build
 compiles them with `@uk-data-atlas/geography` for the boundary releases
-`@uk-data-atlas/catalogue` lists, and also serves them at
+`@uk-data-atlas/catalogue` lists. The API serves them at
 `/v1/atlas-lookups/{id}.json`. The website never reads them from the API.
-The website pipeline runs `pnpm data:build --only website-lookups` to import them
-from the API's build output into the shared database. The browser fetches them at
+The `pipeline/` workspace runs `pnpm data:build --only website-lookups` to import them
+from `data/build/atlas-assets/` into the shared database. Page and lookup compiler
+entry points still live in API scripts until their shared readers are extracted. The browser fetches them at
 `/data/atlas-lookups/{id}.json`, and the precompiler reads the same database rows
 when cutting regional chunks. The import also stores place profiles, facts, ward
 areas and the docs catalogue. It validates source hashes before replacing rows
 in one transaction, leaves unchanged imports untouched, and removes old public
 copies after success. The final API release manifest hashes the database after
-this import. Building needs the API's data build on disk. Running the website
-needs the shared database, without a running API.
+this import. Building needs the shared release on disk. Next.js builds and servers
+read the database without running the importer or needing a running API. The API
+serves page and lookup gzip files from `data/build/atlas-assets/`.
 
 Everything in `services/api/public` is build output, so its layout on disk is
 the API's own business. Clients reach every file through a route, and a route
@@ -121,19 +123,21 @@ parameters and what they return.
 
 ## Which way code may depend
 
-```
-atlas ──────────────┐
-                    ├──► packages/*
+```text
+pipeline/ ──────────┐
+website ────────────┼──► packages/* and shared/
 services/api ───────┘
 ```
 
-- The atlas and API share domain code through `packages/`. Their build
-  scripts also reuse Node file adapters in root `scripts/`. The API never
-  imports the atlas's `lib/`, and the website never imports API project code.
-  The website does read API files: `services/api/openapi.yaml` for its API
-  reference, and the atlas lookups and pages `pnpm data:build --only website-lookups` takes from
-  the API's build output; `.vercelignore` keeps everything else in `services/api` out of
-  the deployment.
+- The pipeline imports shared code and declared dependencies. It cannot import
+  API project code, root scripts or the website's `lib/`. Neither product's
+  runtime imports the pipeline. `tests/packages/packageImports.test.ts` checks
+  these boundaries. Existing root and API data builders will move in later PRs;
+  see [the inventory and move order](docs/data-pipeline-move.md).
+- The website reads `services/api/openapi.yaml` for its API reference. Pages
+  and lookups come from the shared release, without reading API build output.
+- Other generated API files remain under `services/api/public/` for now. This
+  keeps existing readers and deployments working while compiler groups move.
 - A package holds code only. It reads no files and is safe to
   bundle into a browser: each consumer loads its own data and passes it in.
   Its tsconfig excludes Node types and the atlas's `@/` aliases, and
@@ -164,7 +168,7 @@ pnpm data:build --from datasets
 
 Stage commands live in the graph rather than package scripts. The API package's
 `build` command bundles its server only. The root `build` command builds the
-Next.js application using existing data. `pnpm dev` verifies website data first and runs the
+Next.js application using existing data and does not assemble release assets. `pnpm dev` verifies website data first and runs the
 complete data build only when that verification fails or a rebuild is forced.
 
 The build skips a stage when its inputs and outputs are unchanged. Its key
