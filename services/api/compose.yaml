@@ -9,6 +9,7 @@ services:
       - "127.0.0.1:3001:3001"
     volumes:
       - atlas-cache:/app/data/build
+      - atlas-usage:/var/lib/atlas-usage
       - ../../data/build/atlas.sqlite:/app/data/build/atlas.sqlite:ro
       - ../../data/build/atlas-assets:/app/data/build/atlas-assets:ro
       - ../../data/build/artifacts:/app/data/build/artifacts:ro
@@ -18,7 +19,9 @@ services:
       ATLAS_MAP_ASSET_BASE_URL: ${ATLAS_MAP_ASSET_BASE_URL:-}
       ATLAS_MAP_TILE_BASE_URL: ${ATLAS_MAP_TILE_BASE_URL:-}
       ATLAS_METRICS_TOKEN: ${ATLAS_METRICS_TOKEN:-}
+      ATLAS_USAGE_DIR: /var/lib/atlas-usage
     stop_grace_period: 15s
 
 volumes:
   atlas-cache:
+  atlas-usage:
