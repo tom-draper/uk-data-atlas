@@ -1,0 +1,546 @@
+# Canonical SQLite schema design
+
+Status: proposal, 2026-10-26. Not implemented. Supersedes nothing yet; the
+current schema is documented in `data/build/README.md`.
+
+## Goal
+
+`atlas.sqlite` should be a database of UK geography and public statistics that
+stands on its own. Someone (or an AI agent) given only the file should be able
+to answer "unemployment in Manchester, 2015 to 2024, on 2024 boundaries" with
+plain SQL, see where each number came from, and know whether it was published
+or derived.
+
+Today the file is mostly a store of build outputs for the API and website.
+Boundaries, lineage and crosswalks are relational, but most statistics are JSON
+blobs, and many columns exist to rebuild those blobs byte for byte.
+
+## Problems with the current schema
+
+Measured on the 2026-10-25 build (1.6 GB, 28 tables).
+
+1. **Statistics are mostly opaque.** 64 rows in `payloads` and 322 rows in
+   `observation_artifacts` hold almost every value as JSON. Only fuel poverty
+   exists as rows (`catalogue_observations` pilot).
+2. **Three observation models.** Website JSON payloads, the API's
+   `observation_*` tables (with one generated table per census cube), and the
+   catalogue pilot. Each identifies areas differently: a code inside JSON,
+   `observation_areas(code)`, or `areas(id)`.
+3. **Dimensions are encoded in measure ids.** For example
+   `general-election-con-vote-share-constituency-2019`, `crime-burglary`,
+   `ethnicity-african`, `car-availability-two`. Party, crime type, geography
+   and year live in strings, so "every party" or "all crime types" needs string
+   matching.
+4. **Reconstruction columns.** `position`, `fields`, `header`, and JSON
+   `labels` / `aliases` exist to rebuild response JSON exactly. That is a
+   migration constraint, not a modelling one.
+5. **Crosswalks are large.** About 890 MB of tables and indexes for 1.9M
+   edges, roughly 200 bytes per edge. Edges repeat text codes and JSON labels,
+   and `crosswalk_targets` has 15 nullable columns because several crosswalk
+   kinds share one table. The integer layout experiment in
+   `.data-release/sqlite-analysis/` reached 424 MB and halved query time; the
+   column layout experiment reached 298 MB.
+6. **No lasting area identity.** `areas` is keyed by release and code. Nothing
+   states that a code in the 2015 and 2024 releases is the same area, which is
+   why `named_location_members.code` has no foreign key.
+7. **Derived data mixed with canonical data.** Search postings, compressed
+   location projections, postcode shards and payload JSON can all be rebuilt
+   from other rows. Some have moved to `atlas-cache.sqlite`; the rest should
+   follow.
+8. **Not self-describing.** SQLite has no column comments, and table meaning
+   lives in a 400-line README outside the file.
+
+## Principles
+
+- **Model the domain, not the API responses.** Response shapes are built from
+  rows, in code or in the cache.
+- **One fact, one place.** Nothing in `atlas.sqlite` duplicates data derivable
+  from its own rows.
+- **Integer surrogate keys, text natural keys with `UNIQUE`.** Keeps the large
+  tables narrow while every table stays readable by code.
+- **Every table is `STRICT`, with real foreign keys and `CHECK` constraints.**
+  `PRAGMA foreign_key_check` must pass at the end of every build.
+- **New datasets are configuration.** Adding a dataset means declaring its
+  measures, dimensions and members, not writing a table writer.
+- **Provenance is on every series.** Source, licence, method (published,
+  converted, modelled) and what it was derived from.
+- **Self-describing.** Documentation tables and readable views ship inside the
+  file.
+- **Order by meaning.** Drop `position` unless order carries meaning (ballot
+  order, publisher's category order).
+
+## Files
+
+| File                     | Contents                                            | Distributed |
+| ------------------------ | --------------------------------------------------- | ----------- |
+| `atlas.sqlite`           | Identity, relationships, statistics, documentation  | Yes         |
+| `atlas-geometry.gpkg`    | Simplified geometry per area version, R\*Tree index | Yes         |
+| `atlas-postcodes.sqlite` | Unit postcodes and their area links                 | Yes         |
+| `atlas-cache.sqlite`     | Payload JSON, search postings, projections, assets  | No          |
+| `tiles/*.pmtiles`        | Map tiles                                           | Yes         |
+
+The distributed files share integer ids, so they join with `ATTACH`:
+
+```sql
+ATTACH 'atlas-geometry.gpkg' AS geo;
+SELECT v.name, g.geom FROM area_version v JOIN geo.area_geometry g ON g.area_version_id = v.id;
+```
+
+`atlas-geometry.gpkg` is a valid GeoPackage (a SQLite profile), so QGIS, GDAL,
+geopandas and DuckDB open it directly. Full-detail geometry stays in
+GeoParquet and PMTiles. The core file stays small enough to upload to an AI
+sandbox; the size target is a few hundred MB, to be measured.
+
+## Schema
+
+DDL is indicative. All tables are `STRICT`. Large child tables are
+`WITHOUT ROWID` with the stated primary key.
+
+### 1. Identity
+
+What places exist, and when.
+
+```sql
+CREATE TABLE nation (
+  id    TEXT PRIMARY KEY,          -- E, W, S, N
+  label TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE geography (
+  id          INTEGER PRIMARY KEY,
+  slug        TEXT NOT NULL UNIQUE,  -- lad, ward, lsoa, constituency
+  label       TEXT NOT NULL,
+  kind        TEXT NOT NULL CHECK (kind IN ('administrative','statistical','electoral','health','postal','other')),
+  description TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE boundary_release (
+  id           INTEGER PRIMARY KEY,
+  slug         TEXT NOT NULL UNIQUE, -- 2025-12-en-bgc
+  geography_id INTEGER NOT NULL REFERENCES geography(id),
+  valid_from   TEXT NOT NULL,        -- ISO date, half-open interval
+  valid_to     TEXT,
+  resolution   TEXT,                 -- BFC, BGC, BUC
+  source_id    INTEGER NOT NULL REFERENCES source(id),
+  status       TEXT NOT NULL CHECK (status IN ('available','unavailable')),
+  reason       TEXT
+) STRICT;
+
+-- One row per code, for all time.
+CREATE TABLE area (
+  id           INTEGER PRIMARY KEY,
+  geography_id INTEGER NOT NULL REFERENCES geography(id),
+  code         TEXT NOT NULL,
+  nation_id    TEXT REFERENCES nation(id),
+  UNIQUE (geography_id, code)
+) STRICT;
+
+-- The area as it appears in one release.
+CREATE TABLE area_version (
+  id          INTEGER PRIMARY KEY,
+  area_id     INTEGER NOT NULL REFERENCES area(id),
+  release_id  INTEGER NOT NULL REFERENCES boundary_release(id),
+  name        TEXT NOT NULL,
+  area_m2     REAL,
+  centroid_x  REAL,                  -- British National Grid
+  centroid_y  REAL,
+  min_x REAL, min_y REAL, max_x REAL, max_y REAL,
+  UNIQUE (release_id, area_id)
+) STRICT;
+
+CREATE TABLE area_name (
+  area_id INTEGER NOT NULL REFERENCES area(id),
+  name    TEXT NOT NULL,
+  lang    TEXT NOT NULL DEFAULT 'en',  -- en, cy, gd
+  kind    TEXT NOT NULL CHECK (kind IN ('official','alias','historic','publisher')),
+  PRIMARY KEY (area_id, name, lang)
+) STRICT, WITHOUT ROWID;
+
+-- Lineage: reorganisations, recodes, renames.
+CREATE TABLE area_event (
+  id         INTEGER PRIMARY KEY,
+  date       TEXT NOT NULL,
+  kind       TEXT NOT NULL CHECK (kind IN ('create','abolish','merge','split','rename','recode','boundary_change')),
+  instrument TEXT,                     -- legislation reference
+  source_id  INTEGER REFERENCES source(id)
+) STRICT;
+
+CREATE TABLE area_event_link (
+  event_id INTEGER NOT NULL REFERENCES area_event(id),
+  area_id  INTEGER NOT NULL REFERENCES area(id),
+  role     TEXT NOT NULL CHECK (role IN ('from','to','affected')),
+  PRIMARY KEY (event_id, area_id, role)
+) STRICT, WITHOUT ROWID;
+```
+
+The `area` and `area_version` split follows the ONS Code History Database: a
+code is a lasting identity, and each release holds a dated version of it.
+Publisher-specific labels (such as fuel poverty's LSOA names) become
+`area_name` rows of kind `publisher`, not a column per observation.
+
+### 2. Places
+
+Named locations people talk about: ceremonial and historic counties, city
+regions, national parks.
+
+```sql
+CREATE TABLE place (
+  id                 INTEGER PRIMARY KEY,
+  slug               TEXT NOT NULL UNIQUE,
+  label              TEXT NOT NULL,
+  kind               TEXT NOT NULL,
+  member_geography_id INTEGER NOT NULL REFERENCES geography(id),
+  valid_from TEXT, valid_to TEXT,
+  definition_revision INTEGER NOT NULL,
+  source_id          INTEGER REFERENCES source(id)
+) STRICT;
+
+CREATE TABLE place_member (
+  place_id   INTEGER NOT NULL REFERENCES place(id),
+  area_id    INTEGER NOT NULL REFERENCES area(id),
+  valid_from TEXT NOT NULL DEFAULT '',
+  valid_to   TEXT,
+  share      REAL NOT NULL DEFAULT 1 CHECK (share > 0 AND share <= 1),
+  PRIMARY KEY (place_id, area_id, valid_from)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX place_member_area ON place_member (area_id);
+```
+
+This replaces `named_location_members`, `_assertions` and `_partial_members`.
+Historical codes are `area` rows, so the foreign key always holds. Place
+geometry moves to `atlas-geometry.gpkg`.
+
+### 3. Relationships
+
+```sql
+CREATE TABLE crosswalk (
+  id              INTEGER PRIMARY KEY,
+  slug            TEXT NOT NULL UNIQUE,
+  from_release_id INTEGER NOT NULL REFERENCES boundary_release(id),
+  to_release_id   INTEGER NOT NULL REFERENCES boundary_release(id),
+  method          TEXT NOT NULL,    -- published, best_fit, overlay, derived
+  quality         TEXT NOT NULL,
+  purpose         TEXT,             -- identity, membership, succession
+  source_id       INTEGER REFERENCES source(id),
+  provenance      TEXT              -- JSON: validation, inputs (small, per crosswalk)
+) STRICT;
+
+CREATE TABLE crosswalk_edge (
+  crosswalk_id    INTEGER NOT NULL REFERENCES crosswalk(id),
+  from_version_id INTEGER NOT NULL REFERENCES area_version(id),
+  to_version_id   INTEGER NOT NULL REFERENCES area_version(id),
+  relation        TEXT NOT NULL CHECK (relation IN ('equal','within','contains','overlaps')),
+  PRIMARY KEY (crosswalk_id, from_version_id, to_version_id)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX crosswalk_edge_to ON crosswalk_edge (crosswalk_id, to_version_id);
+
+CREATE TABLE weight_basis (
+  id    TEXT PRIMARY KEY,           -- area, residents, households, dwellings, uprns, workplaces
+  label TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE crosswalk_weight (
+  crosswalk_id    INTEGER NOT NULL,
+  from_version_id INTEGER NOT NULL,
+  to_version_id   INTEGER NOT NULL,
+  basis_id        TEXT NOT NULL REFERENCES weight_basis(id),
+  source_share    REAL NOT NULL,    -- share of the source area going to the target
+  target_share    REAL,             -- share of the target area from the source
+  PRIMARY KEY (crosswalk_id, from_version_id, to_version_id, basis_id),
+  FOREIGN KEY (crosswalk_id, from_version_id, to_version_id)
+    REFERENCES crosswalk_edge (crosswalk_id, from_version_id, to_version_id)
+) STRICT, WITHOUT ROWID;
+```
+
+Matching diagnostics (`outsideWidthM`, `widestDifferenceM`, `claimedDifferenceM`,
+`match`) move to a sparse `crosswalk_edge_check` table, present only for
+crosswalks that carry them. A new weighting basis is a new `weight_basis` row,
+so "choose the weight to suit the measure" (see `services/api/DIRECTION.md`)
+needs no schema change.
+
+### 4. Statistics
+
+A simplified data cube in the style of SDMX.
+
+```sql
+CREATE TABLE source (
+  id          INTEGER PRIMARY KEY,
+  publisher   TEXT NOT NULL,
+  url         TEXT,
+  licence     TEXT NOT NULL,
+  licence_url TEXT,
+  citation    TEXT
+) STRICT;
+
+CREATE TABLE dataset (
+  id          INTEGER PRIMARY KEY,
+  slug        TEXT NOT NULL UNIQUE,  -- fuel-poverty
+  title       TEXT NOT NULL,
+  description TEXT NOT NULL,
+  source_id   INTEGER NOT NULL REFERENCES source(id),
+  released    TEXT,
+  next_update TEXT,
+  fingerprint TEXT NOT NULL          -- compiler and input hash
+) STRICT;
+
+CREATE TABLE measure (
+  id             INTEGER PRIMARY KEY,
+  slug           TEXT NOT NULL UNIQUE, -- crime-count, vote-share
+  label          TEXT NOT NULL,
+  description    TEXT NOT NULL,
+  unit           TEXT NOT NULL,        -- people, households, percent, gbp, tonnes-co2e
+  value_kind     TEXT NOT NULL CHECK (value_kind IN ('count','rate','share','median','mean','index','rank','amount','category')),
+  aggregation    TEXT NOT NULL CHECK (aggregation IN ('sum','ratio','weighted_mean','none')),
+  numerator_id   INTEGER REFERENCES measure(id),
+  denominator_id INTEGER REFERENCES measure(id),
+  weight_basis_id TEXT REFERENCES weight_basis(id)
+) STRICT;
+
+CREATE TABLE measure_alias (
+  measure_id INTEGER NOT NULL REFERENCES measure(id),
+  alias      TEXT NOT NULL UNIQUE,
+  PRIMARY KEY (measure_id, alias)
+) STRICT, WITHOUT ROWID;
+
+CREATE TABLE dimension (
+  id    INTEGER PRIMARY KEY,
+  slug  TEXT NOT NULL UNIQUE,         -- party, crime-type, tenure, sex, age-band
+  label TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE dimension_member (
+  id           INTEGER PRIMARY KEY,
+  dimension_id INTEGER NOT NULL REFERENCES dimension(id),
+  code         TEXT NOT NULL,         -- burglary, con, owned-outright
+  label        TEXT NOT NULL,
+  parent_id    INTEGER REFERENCES dimension_member(id),  -- burglary within total
+  position     INTEGER NOT NULL,      -- publisher's order
+  UNIQUE (dimension_id, code)
+) STRICT;
+
+CREATE TABLE period (
+  id         INTEGER PRIMARY KEY,
+  label      TEXT NOT NULL UNIQUE,    -- 2024, 2024-25, 2024-Q3, 2021-census
+  kind       TEXT NOT NULL CHECK (kind IN ('year','financial_year','academic_year','quarter','month','date','range')),
+  start_date TEXT NOT NULL,
+  end_date   TEXT NOT NULL
+) STRICT;
+
+-- A series is one measure, one combination of dimension members, on one release.
+CREATE TABLE series (
+  id             INTEGER PRIMARY KEY,
+  dataset_id     INTEGER NOT NULL REFERENCES dataset(id),
+  measure_id     INTEGER NOT NULL REFERENCES measure(id),
+  release_id     INTEGER NOT NULL REFERENCES boundary_release(id),
+  method         TEXT NOT NULL CHECK (method IN ('published','converted','aggregated','modelled')),
+  derived_from_id INTEGER REFERENCES series(id),
+  crosswalk_id   INTEGER REFERENCES crosswalk(id),
+  weight_basis_id TEXT REFERENCES weight_basis(id),
+  key            TEXT NOT NULL UNIQUE, -- canonical "dataset/measure/release/dim=member;..." for lookup
+  CHECK ((method = 'published') = (derived_from_id IS NULL))
+) STRICT;
+
+CREATE TABLE series_member (
+  series_id    INTEGER NOT NULL REFERENCES series(id),
+  dimension_id INTEGER NOT NULL REFERENCES dimension(id),
+  member_id    INTEGER NOT NULL REFERENCES dimension_member(id),
+  PRIMARY KEY (series_id, dimension_id)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX series_member_member ON series_member (member_id, series_id);
+
+CREATE TABLE status (
+  id    INTEGER PRIMARY KEY,
+  slug  TEXT NOT NULL UNIQUE,         -- observed, estimated, provisional, suppressed, not_applicable
+  label TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE observation (
+  series_id       INTEGER NOT NULL REFERENCES series(id),
+  area_version_id INTEGER NOT NULL REFERENCES area_version(id),
+  period_id       INTEGER NOT NULL REFERENCES period(id),
+  value           REAL,               -- null only when status says why
+  status_id       INTEGER NOT NULL DEFAULT 1 REFERENCES status(id),
+  lower           REAL,
+  upper           REAL,
+  category_id     INTEGER REFERENCES dimension_member(id), -- value_kind = 'category' only
+  PRIMARY KEY (series_id, area_version_id, period_id)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX observation_area ON observation (area_version_id, series_id, period_id);
+```
+
+How current data maps onto it:
+
+| Current                                             | New                                                                               |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `crime-burglary`                                    | measure `crime-count`, `crime-type=burglary` (parent `total`)                     |
+| `general-election-con-vote-share-constituency-2019` | measure `vote-share`, `party=con`, release constituency 2019, period `2019-12-12` |
+| `ethnicity-african`                                 | measure `residents`, `ethnic-group=african`                                       |
+| census TS054 cube (9 generated columns)             | 9 series of measure `households`, `tenure=*`                                      |
+| fuel poverty rate                                   | measure `fuel-poverty-rate`, `ratio` of `fuel-poor-households` / `households`     |
+| constituency winner                                 | measure `winning-party`, `value_kind = category`, `category_id` = party member    |
+| IMD rank and decile                                 | measures `imd-rank` (`rank`, `none`) and `imd-decile` (`index`, `none`)           |
+
+`value_kind` and `aggregation` let custom-area profiles rebuild a rate from
+its numerator and denominator, or refuse with a reason, instead of averaging.
+`method` and `derived_from_id` make "consistent time series on one release"
+and "is this change real?" into ordinary rows with stated provenance.
+
+Each observation row is three integers and a value in the common case, so
+full census cubes at LSOA level stay affordable. Text never repeats per row.
+
+#### Elections
+
+Results with candidates need more than a cube:
+
+```sql
+CREATE TABLE election   (id INTEGER PRIMARY KEY, slug TEXT UNIQUE NOT NULL, kind TEXT NOT NULL, date TEXT NOT NULL, release_id INTEGER NOT NULL REFERENCES boundary_release(id), source_id INTEGER REFERENCES source(id)) STRICT;
+CREATE TABLE contest    (id INTEGER PRIMARY KEY, election_id INTEGER NOT NULL REFERENCES election(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), seats INTEGER NOT NULL DEFAULT 1, electorate INTEGER, turnout INTEGER, UNIQUE (election_id, area_version_id)) STRICT;
+CREATE TABLE candidacy  (contest_id INTEGER NOT NULL REFERENCES contest(id), position INTEGER NOT NULL, name TEXT, party_id INTEGER REFERENCES dimension_member(id), votes INTEGER, elected INTEGER NOT NULL CHECK (elected IN (0,1)), PRIMARY KEY (contest_id, position)) STRICT, WITHOUT ROWID;
+```
+
+Votes, vote share, turnout and winner are then built into `observation` from
+these tables, so the generic readers and views see elections like any other
+data. Notional results on new boundaries are `converted` or `modelled` series.
+
+### 5. Postcodes (`atlas-postcodes.sqlite`)
+
+```sql
+CREATE TABLE postcode (
+  id         INTEGER PRIMARY KEY,
+  code       TEXT NOT NULL UNIQUE,   -- normalised, single space
+  easting    INTEGER, northing INTEGER,
+  quality    TEXT NOT NULL,
+  nation_id  TEXT NOT NULL,
+  introduced TEXT NOT NULL,          -- YYYY-MM
+  terminated TEXT,                   -- null when live
+  large_user INTEGER NOT NULL CHECK (large_user IN (0,1))
+) STRICT;
+
+CREATE TABLE postcode_area (
+  postcode_id     INTEGER NOT NULL REFERENCES postcode(id),
+  area_version_id INTEGER NOT NULL,  -- atlas.area_version(id), checked at build
+  containment     TEXT NOT NULL CHECK (containment IN ('within','nearest','split')),
+  distance_cm     INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (postcode_id, area_version_id)
+) STRICT, WITHOUT ROWID;
+```
+
+SQLite cannot enforce foreign keys across attached files, so the build checks
+them explicitly. Postcode counts per area become observations of measure
+`postcodes` with a `postcode-status` dimension.
+
+### 6. Documentation
+
+```sql
+CREATE TABLE release_info (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT;
+  -- schema_version, release_id, built_at, source_hashes, licence_summary
+
+CREATE TABLE doc_table  (name TEXT PRIMARY KEY, layer TEXT NOT NULL, description TEXT NOT NULL) STRICT;
+CREATE TABLE doc_column (table_name TEXT NOT NULL REFERENCES doc_table(name), column_name TEXT NOT NULL,
+                         description TEXT NOT NULL, example TEXT, PRIMARY KEY (table_name, column_name)) STRICT;
+CREATE TABLE doc_example (id INTEGER PRIMARY KEY, question TEXT NOT NULL, sql TEXT NOT NULL) STRICT;
+
+CREATE VIRTUAL TABLE search USING fts5 (kind, slug, label, body, tokenize = 'porter unicode61');
+  -- rows for datasets, measures, dimension members, areas, places
+```
+
+`doc_example` holds tested question and SQL pairs, drawn from the question bank
+in `services/api/DIRECTION.md`. They double as a test suite: each runs at the
+end of the build and must return rows.
+
+A test asserts that every table and column has a `doc_column` row, so the
+documentation cannot drift.
+
+Readable views, for people and agents who should not need the joins:
+
+```sql
+CREATE VIEW v_area AS        -- area version with code, name, geography, release, validity, nation
+CREATE VIEW v_area_current AS -- latest available version per area
+CREATE VIEW v_area_history AS -- events per area with from/to codes and names
+CREATE VIEW v_series AS      -- series with dataset, measure, unit, method, and members as "party=con; ..."
+CREATE VIEW v_observation AS -- dataset, measure, unit, members, area code and name,
+                             -- geography, release, period, value, status, method, licence
+```
+
+Example the file should answer without outside documentation:
+
+```sql
+SELECT period, value
+FROM v_observation
+WHERE measure = 'claimant-rate' AND area_code = 'E08000003'
+  AND release = '2024-05-uk-bfc' ORDER BY period;
+```
+
+### 7. Cache (`atlas-cache.sqlite`)
+
+Unchanged in role: everything here is rebuilt from the distributed files and
+never read as truth. It gains the JSON payloads and website assets that now
+sit in the canonical file. Exact-byte compatibility for existing URLs is
+produced here, by a builder that reads rows and checks hashes against
+`dataset.fingerprint` and the published manifest.
+
+## Current tables and their new home
+
+| Current table                                                 | New home                                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `meta`                                                        | `release_info`                                                            |
+| `area_inventory`                                              | `release_info` (hashes)                                                   |
+| `area_releases`                                               | `boundary_release`                                                        |
+| `areas`                                                       | `area` + `area_version` + `area_name`                                     |
+| `crosswalk_inventory`, `crosswalk_coverage`                   | `release_info`; coverage becomes a view over `crosswalk_edge`             |
+| `crosswalks`                                                  | `crosswalk` (`header` reduced to `provenance`)                            |
+| `crosswalk_sources`                                           | dropped; source area values become observations or `area_version` columns |
+| `crosswalk_targets`                                           | `crosswalk_edge` + `crosswalk_weight` + sparse `crosswalk_edge_check`     |
+| `named_location_inventory`                                    | `release_info`                                                            |
+| `named_locations`                                             | `place`                                                                   |
+| `named_location_members`, `_assertions`, `_partial_members`   | `place_member`                                                            |
+| `named_location_geometries`                                   | `atlas-geometry.gpkg`                                                     |
+| `location_projection_*`                                       | cache (derived from `place_member` and crosswalks)                        |
+| `payloads` (datasets)                                         | rows in layer 4; JSON rebuilt into cache                                  |
+| `payloads` (terrain, geography catalogues)                    | cache, or relational where they hold facts (boundary releases)            |
+| `datasets`                                                    | `dataset` + `source`                                                      |
+| `observation_artifacts`, `observation_*`                      | layer 4                                                                   |
+| `catalogue_measures`, `_periods`, `_records`, `_observations` | layer 4                                                                   |
+| `observation_catalogue`                                       | `release_info`                                                            |
+| `place_index_*`, `area_search_*`                              | cache; `search` FTS5 covers simple lookups in the canonical file          |
+| `postcodes`                                                   | `atlas-postcodes.sqlite` `postcode`                                       |
+| `postcode_area_*`, `postcode_area_shards`                     | `postcode_area`                                                           |
+| `postcode_counts`                                             | observations                                                              |
+| `website_assets`                                              | cache                                                                     |
+
+## Migration
+
+Each step lands separately, keeps the current readers working, and proves
+itself by comparing rebuilt output with the existing JSON byte for byte, as the
+fuel poverty pilot does.
+
+1. **Agree the observation model** (layer 4) before more datasets join the
+   pilot. Port fuel poverty from `catalogue_*` onto it, keeping its URL and
+   hash. This stops the three observation models from drifting further.
+2. **Area identity.** Add `area` and `area_version` beside `areas`, then move
+   foreign keys onto `area_version.id`. Everything else references it.
+3. **Crosswalks as integer edges and weights.** Compare against the
+   experiments in `.data-release/sqlite-analysis/`.
+4. **Datasets to rows in batches**, starting with ones the API already holds
+   as `observation_*` rows (census cubes, crime, ethnicity), then elections.
+   Each batch moves its payload JSON into the cache.
+5. **Places, postcodes, geometry file.**
+6. **Documentation tables, views, FTS and `doc_example` tests.** Some of this
+   can start at step 1, since every new table needs `doc_column` rows.
+7. **Remove the old tables** once no reader uses them.
+
+## Open questions
+
+- **Observation key: `area_version_id` or `area_id` plus `release_id` on the
+  series?** The series already fixes the release, so `area_id` would work and
+  would make cross-release joins simpler. `area_version_id` makes the foreign
+  key prove the area exists in that release. Leaning towards `area_version_id`.
+- **Geometry size.** Measure a simplified layer for all 104 releases before
+  committing to shipping `atlas-geometry.gpkg`.
+- **Postcode licensing.** Confirm the ONSPD and Code-Point Open terms allow
+  redistribution as a separate file in this form.
+- **Period granularity.** Whether elections use the polling date or the year
+  as their period.
+- **Should the core file be built with DuckDB** (see Foundations in
+  `services/api/DIRECTION.md`) and exported to SQLite? The schema is the same
+  either way.
