@@ -1,13 +1,16 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
-import { compileRelationshipCandidates } from "../src/relationshipCandidates";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../shared/areaInventory";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import { compileRelationshipCandidates } from "./relationshipCandidates";
 import {
 	readCrosswalkAdapters,
 	type PropertyCrosswalkAdapter,
-} from "../src/crosswalkAdapters";
+} from "../../shared/crosswalkAdapters";
 
 const readAreaArtifacts = (outputDirectory: string) => {
 	const inventory = JSON.parse(
@@ -63,7 +66,7 @@ export const buildRelationshipCandidates = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildRelationshipCandidates(repositoryRoot);
 	console.log(
 		`Wrote ${result.candidateCount} relationship candidates to ${result.inventoryPath}`,
