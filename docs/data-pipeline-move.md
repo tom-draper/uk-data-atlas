@@ -447,6 +447,12 @@ and includes the pipeline configuration in its cache inputs. Derived GeoJSON
 stays under `services/api/public/boundaries/` with identical bytes. The builder
 still removes the obsolete `derived-boundaries.json` manifest.
 
+The geography catalogue finaliser now lives in
+`pipeline/src/build-geography-catalogues.ts`. The build graph runs this entry
+point and includes the pipeline configuration in its cache inputs. It stores
+the same five catalogue payloads in `data/build/atlas.sqlite` and keeps the
+existing temporary-copy, replacement, and public-file cleanup behavior.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.

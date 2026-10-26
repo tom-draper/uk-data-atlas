@@ -12,7 +12,7 @@ import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
-import { buildGeographyCatalogues } from "../scripts/build-geography-catalogues";
+import { buildGeographyCatalogues } from "../../../pipeline/src/build-geography-catalogues";
 import {
 	buildArtifactPath,
 	geographyCatalogues,
