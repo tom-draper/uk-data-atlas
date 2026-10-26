@@ -190,6 +190,9 @@ The current contract has 71 paths after aggregation and evidence routes were fol
 | Table of values                                 | `GET /data/{measure}`                                                                                |
 | Over time                                       | `GET /data/{measure}/series`                                                                         |
 
+Typed [TypeScript and Python clients](../../clients/README.md) wrap these
+routes, generated from `openapi.yaml`.
+
 ### Merge
 
 - Done: `/relationship-paths`, `/relationship-capabilities`,

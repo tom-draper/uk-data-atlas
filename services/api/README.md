@@ -3294,6 +3294,12 @@ second inventory to maintain:
 
 <!-- route-index:end -->
 
+Typed TypeScript and Python clients generated from `openapi.yaml` live in
+[`clients/`](../../clients/README.md). Regenerate them with
+`pnpm --dir services/api generate:clients`; a test fails when they are stale.
+The walkthroughs below keep their own small `examples/client.ts`: they read
+response headers and request arbitrary paths, which a typed client hides.
+
 Three worked walkthroughs live in `examples/`: a correct map, a defensible
 trend and a reliable sync. Each
 uses only the published contract, prints what a reader should notice, and
