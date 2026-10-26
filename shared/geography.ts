@@ -36,3 +36,6 @@ export const GEOGRAPHY_KINDS = [
 ] as const;
 
 export type GeographyKind = (typeof GEOGRAPHY_KINDS)[number];
+
+export const isGeographyKind = (value: unknown): value is GeographyKind =>
+	typeof value === "string" && GEOGRAPHY_KINDS.some((kind) => kind === value);

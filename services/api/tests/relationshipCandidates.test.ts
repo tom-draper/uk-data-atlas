@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { compileRelationshipCandidates } from "../src/relationshipCandidates";
+import { compileRelationshipCandidates } from "../../../pipeline/src/relationshipCandidates";
 import type { AreaReleaseArtifact } from "../src/areaInventory";
 import type { PropertyCrosswalkAdapter } from "../src/crosswalkAdapters";
 

@@ -1,8 +1,7 @@
 import { GEOGRAPHY_KINDS, type GeographyKind } from "../../../shared/geography";
 export { GEOGRAPHY_KINDS, type GeographyKind } from "../../../shared/geography";
 
-export const isGeographyKind = (value: unknown): value is GeographyKind =>
-	typeof value === "string" && GEOGRAPHY_KINDS.some((kind) => kind === value);
+export { isGeographyKind } from "../../../shared/geography";
 
 /**
  * Familiar ONS/GSS abbreviations accepted at the API boundary. Responses and

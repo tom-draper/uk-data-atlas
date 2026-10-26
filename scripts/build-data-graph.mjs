@@ -281,7 +281,18 @@ const apiStages = [
 		"crosswalk-inventory",
 		"area-inventory",
 	]),
-	stage("relationship-candidates", ["area-inventory", "crosswalk-inventory"]),
+	stage(
+		"relationship-candidates",
+		["area-inventory", "crosswalk-inventory"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-relationship-candidates.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"geography-inventory",
 		[
