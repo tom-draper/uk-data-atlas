@@ -15,7 +15,7 @@ ENV NODE_ENV=production HOST=0.0.0.0 PORT=3001 ATLAS_WORKERS=2
 WORKDIR /app/services/api
 COPY --from=build --chown=node:node /app/services/api/dist/ dist/
 COPY --chown=node:node services/api/openapi.yaml ./
-RUN mkdir -p /app/data/build && chown node:node /app/data/build
+RUN mkdir -p /app/data/build /var/lib/atlas-usage && chown node:node /app/data/build /var/lib/atlas-usage
 USER node
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s CMD node -e "fetch('http://127.0.0.1:3001/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
