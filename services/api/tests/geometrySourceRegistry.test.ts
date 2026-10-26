@@ -10,7 +10,7 @@ import {
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { createGeometrySourceRegistry } from "../src/geometrySourceRegistry";
+import { createGeometrySourceRegistry } from "../../../pipeline/src/geometrySourceRegistry";
 import type { AreaReleaseArtifact } from "../src/areaInventory";
 
 const writeBoundarySource = (

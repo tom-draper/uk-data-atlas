@@ -1,9 +1,12 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
-import { createFileHashCache } from "../src/fileHashCache";
-import { createGeometrySourceRegistry } from "../src/geometrySourceRegistry";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../shared/areaInventory";
+import { createFileHashCache } from "../../shared/fileHashCache";
+import { createGeometrySourceRegistry } from "./geometrySourceRegistry";
 export const buildGeometrySourceRegistry = (root: string) => {
 	const out = join(root, "services", "api", "public");
 	if (!existsSync(out))
@@ -41,9 +44,7 @@ export const buildGeometrySourceRegistry = (root: string) => {
 };
 const path = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === path) {
-	const result = buildGeometrySourceRegistry(
-		resolve(dirname(path), "../../.."),
-	);
+	const result = buildGeometrySourceRegistry(resolve(dirname(path), "../.."));
 	console.log(
 		"Wrote " + result.count + " geometry sources to " + result.path,
 	);
