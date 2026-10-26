@@ -193,6 +193,18 @@ later stage keys are computed. `scripts/build-data-cache.mjs` stores the cache i
 `.cache/data-build/`. The scoped key format invalidates old entries once.
 `--from` and `--no-cache` rerun the stages they select regardless.
 
+After a cache format bump, `pnpm data:build --adopt` records existing outputs
+against current keys without running any stage. Use `--only <stage>` to select a
+stage and its prerequisites, or add `--plan` to validate and preview adoption.
+This trusts the user: it checks file presence, not whether the bytes were built
+from current code or sources. Use it only when those outputs are known to be
+valid. Never-cacheable stages are skipped, including downloads and registry
+updates. Adoption refuses missing required files, empty declared output folders,
+and missing files in the previous cache inventory. Keep the old stages.json
+when upgrading: its output paths remain usable even if its version is obsolete.
+Without an inventory or declared outputs, build the stage first. Adoption cannot
+be combined with `--from` or `--no-cache`.
+
 The `atlas-sqlite` stage writes the terrain catalogue to `data/build/atlas.sqlite`,
 alongside catalogue datasets, relational areas, crosswalk source/target rows and
 named locations with membership tables and lazy geometry. Indexed location
