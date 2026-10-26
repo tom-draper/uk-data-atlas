@@ -1217,6 +1217,18 @@ fetch the postcode directory from ONS.
       that removes or narrows any of them, or a deprecation without dates.
       Growth must be locked with `pnpm contract:surface`, so each addition is
       reviewed as a promise.
+- [x] Retire a superseded boundary release without removing it. A release is
+      deprecated in `boundaryReleaseDeprecations` in `packages/catalogue`,
+      with the date, an optional sunset date, the `replacedBy` release of the
+      same geography and a reason; the boundary registry build copies that
+      record onto the release as `deprecation`, so the next data build
+      publishes it (`boundary-registry` is the first stage to change). Every response about a deprecated release, whether its
+      resource, its areas or its downloads, sends `Deprecation` and `Sunset`
+      headers and a `Link` with `rel="successor-version"` to the replacement.
+      `/boundary-releases:resolve` and `latest` never choose it while its
+      replacement covers the date. A release is removed only after its sunset
+      date, which a maintainer sets; until then clients can move at their own
+      pace.
 - [x] Operate the server: `/healthz`, `/readyz` and Prometheus `/metrics`,
       one JSON log line per request labelled by operation template with a
       request id, a logged `500` with a `requestId` rather than a crashed
