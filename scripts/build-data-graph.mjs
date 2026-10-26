@@ -62,7 +62,9 @@ const apiStages = [
 	stage("sources", [], ["--dir", "../..", "data:download"], {
 		cacheable: false,
 	}),
-	stage("operations"),
+	stage("operations", [], undefined, {
+		codeInputs: ["services/api/openapi.yaml"],
+	}),
 	stage(
 		"catalogue-registry",
 		["sources"],
@@ -90,7 +92,7 @@ const apiStages = [
 		],
 		{
 			outputs: ["data/build/datasets"],
-			codeInputs: ["scripts/precompile"],
+			codeInputs: ["scripts/precompile", "package.json"],
 		},
 	),
 	stage("terrain-catalogue"),
@@ -131,6 +133,7 @@ const apiStages = [
 	stage("geometry-store", ["geometry-source-registry"], undefined, {
 		codeInputs: [
 			"services/api/src",
+			"services/api/package.json",
 			"services/api/scripts/compileGeometryValidity.ts",
 		],
 	}),
@@ -380,7 +383,16 @@ const websiteStages = [
 		],
 		{
 			outputs: ["public/data/datasets"],
-			codeInputs: ["scripts"],
+			codeInputs: [
+				"package.json",
+				"packages/geography",
+				"packages/map-tiles",
+				"scripts/precompile",
+				"scripts/compile-boundaries.mts",
+				"scripts/compile-boundary-tiles.mts",
+				"scripts/generate-dataset-registry.ts",
+				"scripts/generate-sources-readme.mts",
+			],
 		},
 	),
 	stage(

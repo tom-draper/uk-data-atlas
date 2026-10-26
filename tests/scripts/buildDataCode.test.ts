@@ -25,6 +25,7 @@ function fixture() {
 		writeFileSync(join(root, path), text);
 	};
 	write("package.json", "{}");
+	mkdirSync(join(root, "packages"));
 	write(
 		"tsconfig.json",
 		JSON.stringify({ compilerOptions: { paths: { "@/*": ["./*"] } } }),
@@ -106,15 +107,10 @@ test("UI edits reuse data outputs; transitive and dynamic imports rebuild only a
 	assert.deepEqual(run(), ["alpha", "report"]);
 }, 30_000);
 
-test("shared packages, configuration and lockfile changes invalidate data stages", () => {
+test("runtime configuration and lockfile changes invalidate data stages", () => {
 	const { write, run } = fixture();
 	run();
-	for (const path of [
-		"packages/example/src/index.ts",
-		"shared/rules.ts",
-		"services/api/config/rules.json",
-		"pnpm-lock.yaml",
-	]) {
+	for (const path of ["services/api/config/rules.json", "pnpm-lock.yaml"]) {
 		write(path, "changed");
 		assert.deepEqual(run(), ["alpha", "beta", "report"], path);
 	}
@@ -192,6 +188,13 @@ test("production builders resolve without UI code and include declared workers a
 			.get("website-datasets")!
 			.includes("scripts/compile-boundaries.mts"),
 	);
+	assert.ok(
+		!inputs
+			.get("website-datasets")!
+			.includes("scripts/profile-atlas-memory.mjs"),
+	);
+	assert.ok(!inputs.get("boundaries")!.includes("services/api/openapi.yaml"));
+	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
 	for (const path of [
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
@@ -229,4 +232,43 @@ test("moved pipeline builders trace imports and invalidate their own manifests",
 		assert.deepEqual(run(), ["alpha", "report"], path);
 		assert.deepEqual(run(), []);
 	}
+});
+
+test("untraced API docs, website shared files and unrelated scripts preserve stage keys", () => {
+	const { write, run } = fixture();
+	run();
+	for (const path of [
+		"services/api/openapi.yaml",
+		"shared/website.ts",
+		"scripts/unrelated.ts",
+		"package.json",
+	]) {
+		write(
+			path,
+			path.endsWith(".json")
+				? '{"scripts":{"new":"command"}}'
+				: "changed",
+		);
+		assert.deepEqual(run(), [], path);
+	}
+});
+test("workspace imports trace their source without including unrelated package files", () => {
+	const { write, run } = fixture();
+	write(
+		"packages/example/package.json",
+		JSON.stringify({
+			name: "@uk-data-atlas/example",
+			exports: "./src/index.ts",
+		}),
+	);
+	write("packages/example/src/index.ts", "export const value = 1;");
+	write(
+		"scripts/alpha.ts",
+		'import { value } from "@uk-data-atlas/example"; console.log(value);',
+	);
+	run();
+	write("packages/example/src/unused.ts", "export const unused = 2;");
+	assert.deepEqual(run(), []);
+	write("packages/example/src/index.ts", "export const value = 222;");
+	assert.deepEqual(run(), ["alpha", "report"]);
 });

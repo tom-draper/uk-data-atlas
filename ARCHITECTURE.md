@@ -178,9 +178,12 @@ The files it wrote under `data/build/`, `public/data/` and `services/api/public/
 must also be unchanged.
 
 `scripts/build-data-code.mjs` uses esbuild's dependency metadata to trace local
-imports without executing builders. Shared workspace packages, `shared/`, API
-configuration, dependency manifests and lockfiles remain conservative inputs to
-all stages. Ordinary UI files are excluded unless a builder imports them.
+imports, including workspace package sources, without executing builders.
+API runtime configuration, TypeScript configuration, the pinned data release,
+build scripts and the lockfile remain common inputs. The lockfile conservatively
+covers transitive dependencies, peer variants and dynamically loaded workers.
+Package manifests, API documentation and unimported shared code are excluded.
+Ordinary UI files are excluded unless a builder imports them.
 Builders that read code or templates directly from disk declare those paths in
 `codeInputs` in the build graph. Include worker entry points there too. Added and
 removed files under declared directories change the cache key. Generated files
