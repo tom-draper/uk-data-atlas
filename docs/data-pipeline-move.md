@@ -404,6 +404,20 @@ commits. Each group compares stage outputs before and after with only one heavy
 process and no Node heap above 3072 MiB. Cache tracing must follow moved imports;
 declared codeInputs cover workers and other dynamically loaded code.
 
+## Extraction progress
+
+The terrain catalogue compiler and entry point now live in
+`pipeline/src/terrainCatalogue.ts` and `pipeline/src/build-terrain-catalogue.ts`.
+The API imports the shared types in `shared/terrainCatalogue.ts` through its
+existing type module. Terrain catalogue output stays at
+`services/api/public/terrain-catalogue.json`; its bytes and content hash are
+unchanged. The build graph runs the pipeline entry point and traces its imports
+alongside the pipeline package and TypeScript configuration.
+
+This completes the terrain catalogue group in move-order step 2. The inventory
+above records the starting branch, not the current location of extracted files.
+The remaining catalogue groups and steps 3 and 4 still need extraction.
+
 ## First PR validation
 
 Builds run serially with a 3 GiB Node heap cap, one crosswalk worker and one
