@@ -8,6 +8,7 @@ import type {
 import {
 	parseSelectionDate,
 	releaseMonth,
+	supersededAt,
 	type ReleaseReference,
 } from "./releaseForDate";
 import {
@@ -830,13 +831,18 @@ export const countryRelease = (
 	resolver: GeographyResolver,
 	month: string | undefined,
 ): string | undefined => {
-	const dated = resolver
-		.boundaryReleasesFor("country")
+	const countries = resolver.boundaryReleasesFor("country");
+	const dated = countries
 		.filter(
 			(release) =>
 				release.geography === "country" &&
 				releaseMonth(release.id) !== undefined &&
-				resolver.hasAreaRelease("country", release.id),
+				resolver.hasAreaRelease("country", release.id) &&
+				!supersededAt(
+					countries,
+					release,
+					[month ?? "9999-12", releaseMonth(release.id)!].sort()[1]!,
+				),
 		)
 		.sort((left, right) => left.id.localeCompare(right.id));
 	if (dated.length === 0) return undefined;
