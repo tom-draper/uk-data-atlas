@@ -72,3 +72,9 @@ CLAUDE.md
 # Only its README is tracked.
 /data/build/*
 !/data/build/README.md
+
+# Python tooling for the generated API clients
+/clients/python/.venv/
+__pycache__/
+*.egg-info/
+/clients/typescript/dist/

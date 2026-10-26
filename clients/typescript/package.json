@@ -1,0 +1,33 @@
+{
+	"name": "@uk-data-atlas/client",
+	"version": "0.1.0",
+	"description": "Typed client for the UK Data Atlas API, generated from its OpenAPI description",
+	"private": true,
+	"license": "AGPL-3.0-only",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit -p tsconfig.json"
+	},
+	"dependencies": {
+		"openapi-fetch": "0.17.0"
+	},
+	"devDependencies": {
+		"openapi-typescript": "7.13.0",
+		"typescript": "5.9.3"
+	}
+}
