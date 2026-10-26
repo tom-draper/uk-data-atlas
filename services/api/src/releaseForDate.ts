@@ -90,6 +90,8 @@ export type ReleaseReference = {
 	title: string;
 	countries: string[];
 	href: string;
+	/** Present when the release is deprecated: what replaces it. */
+	deprecation?: NonNullable<BoundaryRelease["deprecation"]>;
 };
 
 /** One exact geography/release identity carried in a query parameter. */
@@ -152,7 +154,41 @@ const reference = (
 	title: release.title,
 	countries: release.coverage.countries,
 	href: `/v1/boundary-releases/${release.geography}/${release.id}`,
+	...(release.deprecation ? { deprecation: release.deprecation } : {}),
 });
+
+/**
+ * Whether a deprecated release has a replacement at the month: one that is not
+ * itself deprecated, dated on or before it and covering the country. Such a
+ * release is never chosen for that date; a deprecated release whose
+ * replacement does not yet apply still is, so the date keeps an answer.
+ */
+export const supersededAt = (
+	releases: BoundaryRelease[],
+	release: BoundaryRelease,
+	month: string,
+	country?: string,
+): boolean => {
+	const replacement = release.deprecation
+		? releases.find(
+				(candidate) =>
+					candidate.geography === release.geography &&
+					candidate.id === release.deprecation!.replacedBy,
+			)
+		: undefined;
+	const replacementMonth = replacement && boundaryReleaseMonth(replacement);
+	return (
+		replacement !== undefined &&
+		replacementMonth !== undefined &&
+		replacement.deprecation === undefined &&
+		replacementMonth <= month &&
+		(country
+			? replacement.coverage.countries.includes(country)
+			: release.coverage.countries.every((covered) =>
+					replacement.coverage.countries.includes(covered),
+				))
+	);
+};
 
 const byMonth = (left: ReleaseReference, right: ReleaseReference) =>
 	left.month.localeCompare(right.month) || left.id.localeCompare(right.id);
@@ -194,10 +230,26 @@ export const selectReleaseForDate = (
 			undated,
 		};
 	}
+	const superseded: ReleaseReference[] = [];
 	const dated = releases
 		.flatMap((release) => {
-			const month = boundaryReleaseMonth(release);
-			return month ? [reference(release, month)] : [];
+			const releaseMonth = boundaryReleaseMonth(release);
+			if (!releaseMonth) return [];
+			const found = reference(release, releaseMonth);
+			// A release is judged at the later of the date and its own month, so
+			// one that is only ever the next release is not offered either.
+			if (
+				supersededAt(
+					registry.releases,
+					release,
+					releaseMonth > month ? releaseMonth : month,
+					country,
+				)
+			) {
+				superseded.push(found);
+				return [];
+			}
+			return [found];
 		})
 		.sort(byMonth);
 	if (dated.length === 0) {
@@ -233,7 +285,12 @@ export const selectReleaseForDate = (
 	let candidates = onOrBefore.filter(
 		(release) => release.month === chosenMonth,
 	);
-	const setAside: Array<ReleaseReference & { reason: string }> = [];
+	const setAside: Array<ReleaseReference & { reason: string }> = superseded
+		.filter((release) => release.month === chosenMonth)
+		.map((release) => ({
+			...release,
+			reason: `Deprecated; ${release.deprecation!.replacedBy} replaces it.`,
+		}));
 	const setAsideWhere = (
 		test: (release: ReleaseReference) => boolean,
 		reason: (release: ReleaseReference) => string,
