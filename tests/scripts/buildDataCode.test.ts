@@ -270,6 +270,17 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("relationship-candidates")!.includes(path), path);
 	}
 	for (const path of [
+		"pipeline/src/build-relationship-paths.ts",
+		"pipeline/src/relationshipPaths.ts",
+		"pipeline/src/relationshipPathAdapters.ts",
+		"shared/relationshipPaths.ts",
+		"shared/storedText.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("relationship-paths")!.includes(path), path);
+	}
+	for (const path of [
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",

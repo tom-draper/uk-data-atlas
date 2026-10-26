@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { readApprovedRelationshipPaths } from "../src/relationshipPathAdapters";
+import { readApprovedRelationshipPaths } from "../../../pipeline/src/relationshipPathAdapters";
 
 const read = (paths: unknown[]) => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));

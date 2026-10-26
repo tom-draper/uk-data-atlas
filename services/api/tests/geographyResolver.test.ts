@@ -11,10 +11,8 @@ import {
 	compileLocationProjections,
 	LocationProjectionStore,
 } from "../src/locationProjections";
-import {
-	compileRelationshipPaths,
-	createRelationshipPathIndex,
-} from "../src/relationshipPaths";
+import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import {
 	areaLookup,
 	containmentCrosswalk,

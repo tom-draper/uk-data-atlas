@@ -1,10 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createGeographyResolver } from "../src/geographyResolver";
-import {
-	compileRelationshipPaths,
-	createRelationshipPathIndex,
-} from "../src/relationshipPaths";
+import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/routing";
 import {

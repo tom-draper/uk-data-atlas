@@ -6,11 +6,9 @@ import type {
 	CrosswalkInventory,
 } from "../src/crosswalkInventory";
 import { createGeographyResolver } from "../src/geographyResolver";
-import {
-	compileRelationshipPaths,
-	createRelationshipPathIndex,
-	crosswalkShape,
-} from "../src/relationshipPaths";
+import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import { crosswalkShape } from "../../../pipeline/src/relationshipPaths";
+import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 
 // Wards W1 to W3 nest in authority A of release 1. Authority A keeps its code
 // into release 2, as does B, which no ward reaches. Only W1 and W2 keep their
