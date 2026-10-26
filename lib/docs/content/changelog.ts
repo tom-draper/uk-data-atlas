@@ -30,6 +30,13 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-10-26",
+		title: "Publish llms.txt and curl examples",
+		changes: [
+			"`/llms.txt` on this site lists the front-door routes with a `curl` request for each, and `/llms-full.txt` adds their parameters. Each of those routes' [reference pages](/docs/v1/reference) now has a **Try it** example. The API is unchanged.",
+		],
+	},
+	{
+		date: "2026-10-26",
 		title: "Identify release artifacts by their stored bytes",
 		surface: "2b61c1fc50d5",
 		breaking: true,
