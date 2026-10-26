@@ -158,7 +158,18 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("derived-boundaries", ["sources"]),
+	stage(
+		"derived-boundaries",
+		["sources"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-derived-boundaries.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"area-inventory",
 		["boundary-registry", "derived-boundaries"],

@@ -10,8 +10,8 @@ import { fileURLToPath } from "node:url";
 import {
 	readAreaSourceAdapters,
 	type AreaSourceAdapterManifest,
-} from "../src/areaSourceAdapters";
-import { sourceGeoJsonPath } from "../../../shared/boundarySourcePaths";
+} from "../../shared/areaSourceAdapters";
+import { sourceGeoJsonPath } from "../../shared/boundarySourcePaths";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -91,7 +91,7 @@ export const buildDerivedBoundaries = (
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildDerivedBoundaries(
 		repositoryRoot,
 		readAreaSourceAdapters(
