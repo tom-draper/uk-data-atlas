@@ -35,7 +35,8 @@
 		"test:unbuilt": "tsx --test --test-concurrency=2 tests/*.test.ts",
 		"typecheck": "pnpm generate:query-rules && tsc --noEmit -p tsconfig.json",
 		"start:dev": "tsx scripts/serve.ts",
-		"docs:examples": "tsx scripts/refresh-problem-examples.ts"
+		"docs:examples": "tsx scripts/refresh-problem-examples.ts",
+		"usage:report": "tsx scripts/usage-report.ts"
 	},
 	"dependencies": {
 		"@uk-data-atlas/catalogue": "workspace:*",
