@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route as routeRequest, routeAsync } from "../src/routes";
-import { createTerrainCatalogue } from "../src/terrainCatalogue";
+import { createTerrainCatalogue } from "../../../pipeline/src/terrainCatalogue";
 import { testContext } from "./routeFixtures";
 import {
 	createRemoteTerrainProvider,

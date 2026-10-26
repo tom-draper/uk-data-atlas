@@ -38,7 +38,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { buildAtlasSqlite } from "../scripts/build-atlas-sqlite";
-import { buildTerrainCatalogue } from "../scripts/build-terrain-catalogue";
+import { buildTerrainCatalogue } from "../../../pipeline/src/build-terrain-catalogue";
 import { readTerrainCatalogue } from "../src/boundaryLoader";
 import { readPublicManifest } from "../src/publicManifest";
 import { route } from "../src/routes";
