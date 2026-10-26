@@ -414,7 +414,15 @@ existing type module. Terrain catalogue output stays at
 unchanged. The build graph runs the pipeline entry point and traces its imports
 alongside the pipeline package and TypeScript configuration.
 
-This completes the terrain catalogue group in move-order step 2. The inventory
+The operations compiler and entry point now live in
+`pipeline/src/operationTemplates.ts` and `pipeline/src/build-operations.ts`.
+The artifact types and OpenAPI document hash live in `shared/operations.ts`.
+Request matching, query validation, and deprecation headers stay in the API.
+The build still writes `services/api/public/operations.json` from
+`services/api/openapi.yaml`, with identical bytes. Its cache inputs include the
+OpenAPI document, compiler imports, and pipeline configuration.
+
+This completes the terrain and operations catalogue groups in move-order step 2. The inventory
 above records the starting branch, not the current location of extracted files.
 The remaining catalogue groups and steps 3 and 4 still need extraction.
 
