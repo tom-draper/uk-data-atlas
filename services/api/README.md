@@ -2374,6 +2374,25 @@ These deadlines apply once a responsive worker accepts the scrape. A worker
 blocked in a synchronous handler cannot serve HTTP until its event loop resumes.
 The scraper's own timeout bounds that request.
 
+### Usage counts
+
+Set `ATLAS_USAGE_DIR` and the server keeps daily request counts in
+`usage.sqlite` there, to show which datasets and archives to fill first. A row
+is a UTC day, a route template, an outcome class (`2xx`, `4xx`, `5xx`), a
+problem code, and a measure, geography and release id, with a count. Ids are
+checked against the catalogue and anything else is `unknown`; "not found"
+outcomes (unknown measure, release or geography, unresolved place or
+postcode, unknown area) are kept as a separate kind. Nothing identifying is
+stored: no IP address, user agent, URL, query string, postcode, place name,
+coordinates or area code. Workers buffer counts and write them periodically,
+adding to the same rows, so they combine across workers and survive restarts.
+`pnpm --dir services/api usage:report --days 30` prints the top routes,
+measures, geographies and not-found requests; there is no HTTP route for
+them. [Deployment](DEPLOYMENT.md#usage-counts) covers the settings and the
+privacy rules. `/metrics` carries the same dimensions as
+`atlas_api_usage_outcomes_total`, `atlas_api_usage_measures_total`,
+`atlas_api_usage_areas_total` and `atlas_api_usage_not_found_total`.
+
 ### Logs and errors
 
 `pnpm start` writes one JSON object per line to standard output. Each request
@@ -2530,6 +2549,9 @@ rather than falling back to the default.
 | `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                   |
 | `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                       |
 | `ATLAS_ACCESS_LOG`                   | `on`        | Log every request, not only failures.                                                         |
+| `ATLAS_USAGE_DIR`                    | unset       | Directory for daily usage counts (`usage.sqlite`). Unset, counts are not persisted.           |
+| `ATLAS_USAGE_FLUSH_SECONDS`          | `60`        | How often each worker writes its buffered counts, integer 1 to 3600.                          |
+| `ATLAS_USAGE_RETENTION_DAYS`         | `400`       | Days of counts kept; older days are deleted at worker start, integer 1 to 3650.               |
 | `ATLAS_MAX_URL_LENGTH`               | `4096`      | Longest request target served.                                                                |
 | `ATLAS_SHUTDOWN_GRACE_SECONDS`       | `10`        | Time to finish open requests after `SIGTERM`.                                                 |
 | `ATLAS_TERRAIN_REMOTE_ENDPOINT`      | unset       | ArcGIS ImageServer `getSamples` endpoint for the non-persistent EA terrain preview provider.  |

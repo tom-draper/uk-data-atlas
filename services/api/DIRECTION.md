@@ -406,7 +406,8 @@ cost:
 - `llms.txt`, copyable `curl` examples per front-door route, and a public
   changelog tied to the release id.
 - Usage counts by route and question type, without personal data, to choose
-  which gaps to close first.
+  which gaps to close first. Built: set `ATLAS_USAGE_DIR`, then
+  run `usage:report`.
 
 ### Later
 
