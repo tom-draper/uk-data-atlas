@@ -1,3 +1,4 @@
+import { catalogueObservationTables } from "../src/catalogueObservationTables";
 import { publishAtlasCache } from "../src/atlasCache";
 import { writeSqliteIndex, writeSqliteTables } from "../src/sqliteIndex";
 import {
@@ -116,7 +117,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 	}
 	writeSqliteIndex(
 		path,
-		{ schemaVersion: "1" },
+		{ schemaVersion: "2" },
 		{
 			...areaTables(join(repositoryRoot, "services/api/public")),
 			...crosswalkTables(join(repositoryRoot, "services/api/public")),
@@ -151,6 +152,14 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 					`dataset:${entry.output}`,
 				]),
 			},
+			...catalogueObservationTables(
+				manifest.datasets.some((entry) => entry.type === "fuelPoverty")
+					? readFileSync(
+							join(directory, "datasets/fuel-poverty.json"),
+							"utf8",
+						)
+					: undefined,
+			),
 		},
 	);
 	publishAtlasCache(repositoryRoot, "projections", (database) => {

@@ -70,7 +70,7 @@ The database contains these tables:
 | Table      | Column        | Type                   | Key and meaning                                                                  |
 | ---------- | ------------- | ---------------------- | -------------------------------------------------------------------------------- |
 | `meta`     | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                     |
-| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"1"`.                                        |
+| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"2"`.                                        |
 | `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>`.     |
 | `payloads` | `payload`     | `TEXT NOT NULL`        | Exact UTF-8 JSON text from its compiled input, preserving bytes and array order. |
 | `datasets` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                             |
@@ -115,7 +115,9 @@ The Next.js atlas pages pass a map of output names to hash-versioned URLs into
 the client. `GET /data/catalogue/<sha256>/<output>.json` joins `datasets.payloadId`
 to `payloads.id`, matching both output and hash before returning the exact JSON
 with `Content-Type: application/json; charset=utf-8` and
-`Cache-Control: public, max-age=31536000, immutable`. The route supplies gzip
+`Cache-Control: public, max-age=31536000, immutable`. Fuel poverty instead
+reconstructs these same bytes from catalogue observation rows after matching the
+output and hash in `datasets`. The route supplies gzip
 compression when the client accepts it, with `Vary: Accept-Encoding`. Missing outputs and stale or invalid
 hashes return 404 with `Cache-Control: no-store`, never a different payload at
 an old URL. A database deployment can therefore invalidate uncached old URLs;
@@ -129,6 +131,39 @@ before running the website compilation stage. `pnpm data:build --from datasets`
 rebuilds shared datasets, SQLite and their downstream consumers. `pnpm data:verify --target website` checks the website manifest and assets,
 including catalogue payload hashes in SQLite. It does not validate the relational
 API tables or the complete compiled release.
+
+### Catalogue observation pilot
+
+The fuel-poverty catalogue payload is also stored as numeric rows during
+`atlas-sqlite`. This is separate from the API's existing `observation_*` tables,
+which store downstream API artifacts and are populated by `data-catalog`.
+Only fuel poverty is migrated in this pilot. Its JSON payload remains in
+`payloads` and its manifest hash and public URL stay unchanged.
+
+The base database schema version becomes 2. `catalogue_measures` identifies each
+measure by `(dataset, id)`, with a label, unit and original record field.
+`catalogue_observations` has primary key `(dataset, measure, areaId, period)`
+and a numeric `value`. `areaId` references the existing `areas(id)`, including
+its geography and boundary release. An index on `(areaId, dataset, period)`
+supports place queries. Fuel poverty uses the catalogue's 2021 LSOA release,
+not a new release identifier. Unknown area codes fail the build.
+
+`catalogue_periods` retains each period's dataset header without its data.
+`catalogue_records` retains area order and the publisher's LSOA label, which
+can differ from the boundary inventory name. Neither stores numeric values.
+These small metadata tables let the shared versioned dataset reader reconstruct
+the same output from rows. Reconstruction must match the retained JSON byte for
+byte before the atomic database replacement. Rebuild older databases with
+`pnpm data:build --only atlas-sqlite` before deploying the new reader. Tests cover zero and decimal rates. Missing values are not converted to zero;
+the pilot compiler only emits finite numeric observations.
+
+Run `pnpm exec vitest run --project built tests/built/catalogueObservations.test.ts`
+to compile the real fuel poverty payload and LSOA inventory, build an isolated
+pilot database through `buildAtlasSqlite`, and compare every byte. A nonzero exit
+or zero tests run means verification failed. Other inventories are empty test
+fixtures. `data/build/catalogue-observation-pilot.json` records database bytes
+with and without the pilot tables after vacuuming, while retaining the JSON
+payload in both. This measures pilot overhead, not the size of a full release.
 
 ### Areas
 
