@@ -207,3 +207,38 @@ describe("pipeline boundaries", () => {
 		expect(invalid).toEqual([]);
 	});
 });
+
+describe("MCP server boundaries", () => {
+	const MCP = join(ROOT, "services/mcp");
+
+	it("talks to the API over HTTP and imports none of the repository's code", () => {
+		const manifest = JSON.parse(
+			readFileSync(join(MCP, "package.json"), "utf8"),
+		);
+		const declared = new Set<string>(
+			Object.keys(manifest.dependencies ?? {}),
+		);
+		const files = sourceFiles(join(MCP, "src"));
+		expect(files.length).toBeGreaterThan(0);
+		const invalid = files.flatMap((file) =>
+			specifiers(readFileSync(file, "utf8"))
+				.filter((specifier) =>
+					specifier.startsWith(".")
+						? !inside(
+								join(MCP, "src"),
+								resolve(dirname(file), specifier),
+							)
+						: !(
+								specifier.startsWith("node:") ||
+								builtins.has(specifier) ||
+								declared.has(packageName(specifier))
+							) ||
+							packageName(specifier).startsWith(
+								"@uk-data-atlas/",
+							),
+				)
+				.map((specifier) => `${relative(ROOT, file)}: ${specifier}`),
+		);
+		expect(invalid).toEqual([]);
+	});
+});
