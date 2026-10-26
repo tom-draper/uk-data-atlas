@@ -2,9 +2,12 @@ import { stageCodeFiles } from "./build-data-code.mjs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+	closeSync,
 	mkdirSync,
+	openSync,
 	readdirSync,
 	readFileSync,
+	readSync,
 	renameSync,
 	statSync,
 	writeFileSync,
@@ -12,7 +15,7 @@ import {
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const VERSION = 2;
+const VERSION = 3;
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 // Where the stages write. A stage's outputs are the files here it changes.
@@ -39,7 +42,7 @@ function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
 		if (!stats) continue;
 		if (stats.isDirectory()) stampFiles(root, path, stamps, excluded);
 		else if (stats.isFile())
-			stamps.set(path, `${stats.size}:${stats.mtimeMs}`);
+			stamps.set(path, { size: stats.size, mtimeMs: stats.mtimeMs });
 	}
 	return stamps;
 }
@@ -79,11 +82,53 @@ function hashCode(root, files) {
 	return hash.digest("hex");
 }
 
+/** Hashes raw-data stamps, which are fingerprinted by size and mtime alone. */
 function hashStamps(stamps) {
 	const hash = createHash("sha256");
-	for (const path of [...stamps.keys()].sort())
-		hash.update(`${path}\0${stamps.get(path)}\0`);
+	for (const path of [...stamps.keys()].sort()) {
+		const { size, mtimeMs } = stamps.get(path);
+		hash.update(`${path}\0${size}:${mtimeMs}\0`);
+	}
 	return hash.digest("hex");
+}
+
+/** A stage's output digest: its paths and their contents, never their mtimes. */
+function hashOutputs(outputs) {
+	const hash = createHash("sha256");
+	for (const path of [...outputs.keys()].sort())
+		hash.update(`${path}\0${outputs.get(path).sha256}\0`);
+	return hash.digest("hex");
+}
+
+const sameStamp = (a, b) =>
+	Boolean(a && b) && a.size === b.size && a.mtimeMs === b.mtimeMs;
+
+/** SHA-256 of a file, read in chunks so large outputs never sit in memory. */
+function hashFileContent(path) {
+	const hash = createHash("sha256");
+	const buffer = Buffer.allocUnsafe(1024 * 1024);
+	const descriptor = openSync(path, "r");
+	try {
+		for (;;) {
+			const read = readSync(descriptor, buffer, 0, buffer.length, null);
+			if (read === 0) break;
+			hash.update(buffer.subarray(0, read));
+		}
+	} finally {
+		closeSync(descriptor);
+	}
+	return hash.digest("hex");
+}
+
+/** Reads recorded outputs, upgrading `size:mtimeMs` strings from old records. */
+function readOutputs(outputs) {
+	return Object.fromEntries(
+		Object.entries(outputs ?? {}).map(([path, value]) => {
+			if (typeof value !== "string") return [path, value];
+			const [size, mtimeMs] = value.split(":").map(Number);
+			return [path, { size, mtimeMs, sha256: null }];
+		}),
+	);
 }
 
 /**
@@ -93,8 +138,11 @@ function hashStamps(stamps) {
  * A stage's key hashes its command, local imports and shared config, raw-file
  * sizes and mtimes in data/source/, the relevant environment, and dependencies'
  * outputs. Its outputs are the files under OUTPUT_ROOTS it created or
- * changed, plus any in the folders it declares as `outputs`, recorded by size
- * and mtime. A file belongs to the last stage that wrote it.
+ * changed, plus any in the folders it declares as `outputs`. Each is recorded
+ * with its size, mtime and SHA-256, and the stage's output digest hashes the
+ * contents, so a stage that rewrites identical bytes changes nothing downstream.
+ * Size and mtime only decide whether a file must be hashed again. A file belongs
+ * to the last stage that wrote it.
  *
  * @param {{
  *   root?: string,
@@ -103,6 +151,7 @@ function hashStamps(stamps) {
  *   dataDirectory?: string,
  *   codeFiles?: (stage: { name: string, args: string[], codeInputs?: string[] }) => string[],
  *   environment?: Record<string, string | undefined>,
+ *   hashFile?: (path: string) => string,
  * }} [options]
  */
 export function createStageCache({
@@ -116,6 +165,7 @@ export function createStageCache({
 	dataDirectory = "data/source",
 	codeFiles,
 	environment = process.env,
+	hashFile = hashFileContent,
 } = {}) {
 	let state;
 	let previousStages = {};
@@ -123,6 +173,9 @@ export function createStageCache({
 		state = JSON.parse(readFileSync(stateFile, "utf8"));
 		previousStages = state?.stages ?? {};
 		if (state?.version !== VERSION) state = null;
+		else
+			for (const record of Object.values(state.stages ?? {}))
+				record.outputs = readOutputs(record.outputs);
 	} catch {
 		state = null;
 	}
@@ -134,7 +187,7 @@ export function createStageCache({
 				{
 					key: null,
 					digest: null,
-					outputs: record.outputs,
+					outputs: readOutputs(record.outputs),
 				},
 			]),
 		),
@@ -206,6 +259,46 @@ export function createStageCache({
 		renameSync(temporary, stateFile);
 	};
 
+	/** Recorded output entries that carry a hash, by path. */
+	const knownHashes = () => {
+		const known = new Map();
+		for (const record of Object.values(state.stages))
+			for (const [path, entry] of Object.entries(record.outputs))
+				if (entry.sha256) known.set(path, entry);
+		return known;
+	};
+
+	/** Output records for these files, hashing only those not known unchanged. */
+	const withHashes = (stamps, known = knownHashes()) =>
+		new Map(
+			[...stamps]
+				.sort(([a], [b]) => a.localeCompare(b))
+				.map(([path, stamp]) => {
+					const entry = known.get(path);
+					const sha256 = sameStamp(entry, stamp)
+						? entry.sha256
+						: hashFile(join(root, path));
+					return [
+						path,
+						{ size: stamp.size, mtimeMs: stamp.mtimeMs, sha256 },
+					];
+				}),
+		);
+
+	/** Every stage the named one depends on, directly or not, from the records. */
+	const upstreamOf = (name) => {
+		const seen = new Set();
+		const visit = (current) => {
+			for (const dependency of state.stages[current]?.dependencies ?? [])
+				if (!seen.has(dependency)) {
+					seen.add(dependency);
+					visit(dependency);
+				}
+		};
+		visit(name);
+		return seen;
+	};
+
 	const adoptionOutputs = (stage) => {
 		const after = currentSnapshot();
 		const previous = previousStages[stage.name]?.outputs;
@@ -245,10 +338,11 @@ export function createStageCache({
 
 		/** Trust the existing output bytes without running their producer. */
 		adopt(stage, dependencyDigests) {
-			const outputs = adoptionOutputs(stage);
-			const digest = hashStamps(outputs);
+			const outputs = withHashes(adoptionOutputs(stage));
+			const digest = hashOutputs(outputs);
 			state.stages[stage.name] = {
 				key: keyFor(stage, dependencyDigests),
+				dependencies: stage.dependencies ?? [],
 				digest,
 				outputs: Object.fromEntries(outputs),
 			};
@@ -264,7 +358,7 @@ export function createStageCache({
 		/**
 		 * The stage's output digest if it can be skipped, else null. It can be
 		 * skipped when its key is unchanged and every file it wrote still has
-		 * the size and mtime it had then.
+		 * the size and mtime it had then. Nothing is hashed here.
 		 */
 		lookup(stage, dependencyDigests) {
 			const record = state.stages[stage.name];
@@ -275,8 +369,8 @@ export function createStageCache({
 			// original builder must still recreate it when the file is missing.
 			if (stage.requiredOutputs?.some((path) => !files.has(path)))
 				return null;
-			for (const [path, stamp] of Object.entries(record.outputs))
-				if (files.get(path) !== stamp) return null;
+			for (const [path, entry] of Object.entries(record.outputs))
+				if (!sameStamp(files.get(path), entry)) return null;
 			return record.digest;
 		},
 
@@ -308,14 +402,32 @@ export function createStageCache({
 				return null;
 			}
 			const outputs = new Map();
+			// Hashes of unchanged files come from records the next loop prunes.
+			const known = knownHashes();
 			for (const [path, stamp] of after)
-				if (before.get(path) !== stamp) outputs.set(path, stamp);
-			for (const record of Object.values(state.stages))
-				for (const path of outputs.keys()) delete record.outputs[path];
+				if (!sameStamp(before.get(path), stamp))
+					outputs.set(path, stamp);
+			for (const [name, record] of Object.entries(state.stages)) {
+				let taken = false;
+				for (const path of outputs.keys())
+					if (path in record.outputs) {
+						delete record.outputs[path];
+						taken = true;
+					}
+				// Rewriting a downstream stage's file can leave this stage's digest
+				// unchanged, so that stage must rebuild to restore its own bytes.
+				if (
+					taken &&
+					name !== stage.name &&
+					upstreamOf(name).has(stage.name)
+				)
+					record.key = null;
+			}
 			const previous = state.stages[stage.name]?.outputs ?? {};
 			// Files from an earlier run that this run left untouched.
-			for (const [path, stamp] of Object.entries(previous))
-				if (after.get(path) === stamp) outputs.set(path, stamp);
+			for (const [path, entry] of Object.entries(previous))
+				if (sameStamp(after.get(path), entry))
+					outputs.set(path, after.get(path));
 			// A stage that reuses its own earlier files declares the folders it
 			// owns, and claims every file in them no other stage wrote.
 			if (stage.outputs?.length) {
@@ -333,13 +445,13 @@ export function createStageCache({
 					)
 						outputs.set(path, stamp);
 			}
-			const digest = hashStamps(outputs);
+			const hashed = withHashes(outputs, known);
+			const digest = hashOutputs(hashed);
 			state.stages[stage.name] = {
 				key: keyFor(stage, dependencyDigests),
+				dependencies: stage.dependencies ?? [],
 				digest,
-				outputs: Object.fromEntries(
-					[...outputs].sort(([a], [b]) => a.localeCompare(b)),
-				),
+				outputs: Object.fromEntries(hashed),
 			};
 			save();
 			return digest;
