@@ -117,6 +117,64 @@ Run `pnpm --dir services/api profile:startup` to collect stage timings and a hea
 snapshot. Set `ATLAS_HEAP_SNAPSHOT_PATH` to a disk with room, or set
 `ATLAS_HEAP_SNAPSHOT=off` for a startup-only measurement without the snapshot.
 
+## Usage counts
+
+The API can keep daily counts of what it is asked, to show which datasets and
+archives to fill first. Set `ATLAS_USAGE_DIR` to a writable directory and each
+worker adds its counts to `usage.sqlite` there. Unset, nothing is written and
+`/metrics` is the only record. Compose and the systemd unit set it to a path
+outside the release and the caches (the `atlas-usage` volume, and
+`/var/lib/uk-data-atlas/usage`), so a deploy neither replaces nor invalidates
+it.
+
+A row is a count for one UTC day and one combination of route template,
+outcome (`2xx`, `4xx`, `5xx`), problem code, measure id, geography, release
+and kind of absence (unknown measure, unknown release, unresolved place and so
+on). Workers keep counts in memory and write them every
+`ATLAS_USAGE_FLUSH_SECONDS` (default 60) and on shutdown, so a request never
+waits on the disk. The write adds to the existing row, so workers and restarts
+combine without coordinating. A process that is killed rather than stopped
+loses at most one interval. Days older than `ATLAS_USAGE_RETENTION_DAYS`
+(default 400) are deleted when a worker starts. If the directory cannot be
+opened the API logs `usage.store_unavailable` and carries on without it.
+
+Read the counts on the host that holds the directory. There is no HTTP route
+for them:
+
+```sh
+pnpm --dir services/api usage:report --days 30            # from a checkout
+docker compose -f services/api/compose.yaml exec api node dist/usage-report.mjs --days 30
+```
+
+It prints the top routes, measures, geographies with releases, and not-found
+requests. `--limit` sets the rows per table (default 10). A value shown as
+`unknown` is an id the catalogue does not hold, such as a measure that does
+not exist; how often it is asked for is the signal, not what was typed.
+
+The same dimensions are exported as `atlas_api_usage_outcomes_total`,
+`atlas_api_usage_measures_total`, `atlas_api_usage_areas_total` and
+`atlas_api_usage_not_found_total` on `/metrics`. Those reset on restart and
+are per worker like the other counters.
+
+### Privacy
+
+Usage counts hold no personal data, by construction:
+
+- Never stored: IP addresses, user agents, headers, full URLs, query strings,
+  postcodes, place names, coordinates, area codes or request ids.
+- Stored: the OpenAPI route template (`/v1/postcodes/{postcode}`, never the
+  concrete path), the outcome class, a problem code, and measure, geography
+  and release ids that exist in our own catalogue, plus a count and a day.
+- An id that is not in the catalogue is stored as `unknown`, so a typed
+  name or guessed id cannot reach a label and the number of distinct values is
+  bounded by the catalogue.
+- The store rejects any label that is not shaped like a template or id and
+  writes `other` instead.
+
+The JSON access log (`ATLAS_ACCESS_LOG`) is separate from usage counts. It
+records each request's path, so a postcode lookup appears there; turn it off
+or keep it short-lived if that matters for your deployment.
+
 ## Measure request memory
 
 Build the API data first, then run the local workload from the repository root:
