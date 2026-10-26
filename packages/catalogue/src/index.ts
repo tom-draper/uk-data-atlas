@@ -1,3 +1,4 @@
 export * from "./corrections";
 export * from "./sourceMetadataCorrections";
 export * from "./atlasBoundaryVintages";
+export * from "./boundaryReleaseDeprecations";
