@@ -15,7 +15,7 @@ import { execFileSync } from "node:child_process";
 
 import { buildAreaInventory } from "../../services/api/scripts/build-area-inventory";
 import { buildAtlasSqlite } from "../../services/api/scripts/build-atlas-sqlite";
-import { buildTerrainCatalogue } from "../../services/api/scripts/build-terrain-catalogue";
+import { buildTerrainCatalogue } from "../../pipeline/src/build-terrain-catalogue";
 import { rebuildFuelPoverty } from "../../shared/catalogueObservations";
 import { readVersionedAtlasDataset } from "../../shared/atlasSqlite";
 

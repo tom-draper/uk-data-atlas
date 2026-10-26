@@ -95,7 +95,18 @@ const apiStages = [
 			codeInputs: ["scripts/precompile", "package.json"],
 		},
 	),
-	stage("terrain-catalogue"),
+	stage(
+		"terrain-catalogue",
+		[],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-terrain-catalogue.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"atlas-sqlite",
 		[
