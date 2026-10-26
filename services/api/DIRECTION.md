@@ -266,8 +266,8 @@ distinct vertices. `lsoa/2001-12-ew-bgc-v2` is the publisher's unthinned
 geometry, imported as a new snapshot. It passes the topology check and is
 tiled. It carries the old release's continuity to 2011 LSOAs and best fit to
 2026 local authorities. Clients still on `lsoa/2001-12-ew-bgc` should move to
-it; retiring the thinned release needs a deprecation path the archive does
-not have yet.
+it. The thinned release is deprecated, with `lsoa/2001-12-ew-bgc-v2` named as
+its replacement; it has no sunset date yet, so it is not scheduled for removal.
 
 The other three delivery failures involve source defects. The 2017 wards
 contain small polygon parts inside neighbouring wards. Northern Irish 2021
