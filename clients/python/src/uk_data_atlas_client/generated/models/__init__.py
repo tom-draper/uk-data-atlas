@@ -158,6 +158,7 @@ from .atlas_release_envelope import AtlasReleaseEnvelope
 from .atlas_release_schema_version import AtlasReleaseSchemaVersion
 from .boundary_release import BoundaryRelease
 from .boundary_release_coverage import BoundaryReleaseCoverage
+from .boundary_release_deprecation import BoundaryReleaseDeprecation
 from .boundary_release_downloads_type_0 import BoundaryReleaseDownloadsType0
 from .boundary_release_downloads_type_0_status import (
     BoundaryReleaseDownloadsType0Status,
@@ -802,6 +803,7 @@ __all__ = (
     "AtlasReleaseSchemaVersion",
     "BoundaryRelease",
     "BoundaryReleaseCoverage",
+    "BoundaryReleaseDeprecation",
     "BoundaryReleaseDownloadsType0",
     "BoundaryReleaseDownloadsType0Status",
     "BoundaryReleaseDownloadsType1",

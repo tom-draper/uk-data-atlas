@@ -30,6 +30,15 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-10-26",
+		title: "Deprecate superseded boundary releases",
+		surface: "f3c7fb60d63f",
+		changes: [
+			'A boundary release can now be deprecated. `/v1/boundary-releases` and each release\'s resource carry a `deprecation` record with `deprecated`, an optional `sunset`, `replacedBy` and `reason`. Every response about a deprecated release, including its areas and downloads, sends `Deprecation` and `Sunset` headers and a `Link` with `rel="successor-version"` to the replacement. `/v1/boundary-releases:resolve` and `latest` never choose a deprecated release while its replacement covers the date. No request that worked before fails.',
+			"`lsoa/2001-12-ew-bgc`, the thinned 2001 LSOA boundaries, is deprecated in favour of `lsoa/2001-12-ew-bgc-v2`, the publisher's unthinned geometry. It stays published and has no sunset date yet.",
+		],
+	},
+	{
+		date: "2026-10-26",
 		title: "Publish llms.txt and curl examples",
 		changes: [
 			"`/llms.txt` on this site lists the front-door routes with a `curl` request for each, and `/llms-full.txt` adds their parameters. Each of those routes' [reference pages](/docs/v1/reference) now has a **Try it** example. The API is unchanged.",
