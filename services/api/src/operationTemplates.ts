@@ -280,22 +280,32 @@ export const unexpectedQueryParameter = (
 };
 
 /**
- * RFC 9745 `Deprecation` and RFC 8594 `Sunset` for a deprecated operation, so
- * a client learns of it from the responses it already receives.
+ * RFC 9745 `Deprecation` and RFC 8594 `Sunset` fields for something retired
+ * on a given date, so a client learns of it from the responses it already
+ * receives. A date that does not parse is announced as a bare `true`.
  */
+export const deprecationFields = (
+	since: string | undefined,
+	sunset: string | undefined,
+): Record<string, string> => {
+	const sinceTime = since ? Date.parse(since) : NaN;
+	const sunsetTime = sunset ? Date.parse(sunset) : NaN;
+	return {
+		deprecation: Number.isNaN(sinceTime)
+			? "true"
+			: `@${Math.floor(sinceTime / 1000)}`,
+		...(Number.isNaN(sunsetTime)
+			? {}
+			: { sunset: new Date(sunsetTime).toUTCString() }),
+	};
+};
+
+/** The fields for a deprecated operation. */
 export const deprecationHeaders = (
 	operation: OperationTemplate | undefined,
 ): Record<string, string> => {
 	const deprecation = operation?.deprecation;
-	if (!deprecation) return {};
-	const since = deprecation.since ? Date.parse(deprecation.since) : NaN;
-	const sunset = deprecation.sunset ? Date.parse(deprecation.sunset) : NaN;
-	return {
-		deprecation: Number.isNaN(since)
-			? "true"
-			: `@${Math.floor(since / 1000)}`,
-		...(Number.isNaN(sunset)
-			? {}
-			: { sunset: new Date(sunset).toUTCString() }),
-	};
+	return deprecation
+		? deprecationFields(deprecation.since, deprecation.sunset)
+		: {};
 };
