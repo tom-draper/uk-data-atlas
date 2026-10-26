@@ -65,6 +65,13 @@ export interface BoundaryRelease {
 	temporalCoverage?: string;
 	coverage: { countries: string[] };
 	source: { publisher: string; url?: string; licence?: Licence };
+	/** Present on a release that has been superseded. */
+	deprecation?: {
+		deprecated: string;
+		sunset?: string;
+		replacedBy: string;
+		reason: string;
+	};
 }
 
 export interface Catalogue {

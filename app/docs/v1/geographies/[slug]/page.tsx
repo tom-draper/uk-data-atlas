@@ -121,7 +121,9 @@ export default async function GeographyPage({ params }: { params: Params }) {
 					);
 					return [
 						`\`${release.id}\``,
-						release.title,
+						release.deprecation
+							? `${release.title}. Deprecated${release.deprecation.sunset ? `, may be removed after ${release.deprecation.sunset}` : ""}: use \`${release.deprecation.replacedBy}\` instead.`
+							: release.title,
 						count !== undefined
 							? count.toLocaleString("en-GB")
 							: "–",
