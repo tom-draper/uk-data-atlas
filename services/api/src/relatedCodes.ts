@@ -40,13 +40,8 @@ export const addRelatedCodes = (
 	}
 };
 
-/** How many of a compiled release's areas a crosswalk relates to another. */
-export type ReleaseCoverage = {
-	geography: string;
-	boundaryRelease: string;
-	areaCount: number;
-	relatedAreaCount: number;
-};
+import type { ReleaseCoverage } from "../../../shared/crosswalkInventory";
+export type { ReleaseCoverage } from "../../../shared/crosswalkInventory";
 
 /**
  * Each compiled release's related areas counted, in release order. A code a

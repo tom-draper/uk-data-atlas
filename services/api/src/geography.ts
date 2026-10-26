@@ -1,41 +1,5 @@
-/** Geography identifiers used by published UK Data Atlas boundary releases. */
-export const GEOGRAPHY_KINDS = [
-	"combinedAuthority",
-	"communitySafetyPartnership",
-	"constituency",
-	"country",
-	"countyAndUnitaryAuthority",
-	"countyElectoralDivision",
-	"dataZone",
-	"fireAndRescueAuthority",
-	"integratedCareBoard",
-	"intermediateZone",
-	"itl1",
-	"itl2",
-	"itl3",
-	"localAuthority",
-	"localHealthBoard",
-	"localPlanningAuthority",
-	"lsoa",
-	"majorTownAndCity",
-	"msoa",
-	"nationalPark",
-	"nhsEnglandRegion",
-	"outputArea",
-	"parish",
-	"policeForceArea",
-	"region",
-	"scottishParliamentaryConstituency",
-	"scottishParliamentaryRegion",
-	"seneddConstituency",
-	"seneddElectoralRegion",
-	"subIntegratedCareBoardLocation",
-	"superOutputArea",
-	"travelToWorkArea",
-	"ward",
-] as const;
-
-export type GeographyKind = (typeof GEOGRAPHY_KINDS)[number];
+import { GEOGRAPHY_KINDS, type GeographyKind } from "../../../shared/geography";
+export { GEOGRAPHY_KINDS, type GeographyKind } from "../../../shared/geography";
 
 export const isGeographyKind = (value: unknown): value is GeographyKind =>
 	typeof value === "string" && GEOGRAPHY_KINDS.some((kind) => kind === value);

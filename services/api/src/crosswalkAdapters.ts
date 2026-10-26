@@ -9,42 +9,22 @@ export type CrosswalkSideAdapter = {
 	aliasProperty?: string;
 };
 
-export type CrosswalkMethod =
-	| "official-lookup"
-	| "clean-containment"
-	| "area-overlap"
-	| "population-overlap"
-	| "geometric-containment"
-	| "best-fit"
-	| "extent-continuity";
-export type CrosswalkQuality = "publisher-supplied" | "derived";
-export type PropertyRelationshipPurpose = "identity" | "membership";
-export type AreaOverlapWeighting = {
-	status: "provided";
-	basis: "area";
-	normalisation: "per-source";
-};
-/**
- * Weights from resident population rather than land: each source's people,
- * counted from fine building blocks split by area, divided among its targets.
- * The denominator and its date travel with every weighted answer.
- */
-export type PopulationOverlapWeighting = {
-	status: "provided";
-	basis: "population";
-	normalisation: "per-source";
-	/** What was counted, such as Census 2021 usual residents. */
-	population: string;
-	/** The reference date of the count. */
-	date: string;
-	/** The building blocks the count was published for. */
-	blocks: { geography: GeographyKind; boundaryRelease: string };
-};
-export type CrosswalkWeighting =
-	| { status: "not-provided" }
-	| { status: "not-applicable" }
-	| AreaOverlapWeighting
-	| PopulationOverlapWeighting;
+import type {
+	CrosswalkMethod,
+	CrosswalkQuality,
+	PropertyRelationshipPurpose,
+	AreaOverlapWeighting,
+	PopulationOverlapWeighting,
+	CrosswalkWeighting,
+} from "../../../shared/crosswalkInventory";
+export type {
+	CrosswalkMethod,
+	CrosswalkQuality,
+	PropertyRelationshipPurpose,
+	AreaOverlapWeighting,
+	PopulationOverlapWeighting,
+	CrosswalkWeighting,
+} from "../../../shared/crosswalkInventory";
 
 // Property adapters read an explicit source/target code pair from each
 // feature of one published file.

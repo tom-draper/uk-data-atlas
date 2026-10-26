@@ -447,33 +447,8 @@ export type CrosswalkArtifact =
 	| BestFitCrosswalkArtifact
 	| ExtentContinuityCrosswalkArtifact;
 
-export type CrosswalkInventory = {
-	schemaVersion: 1;
-	/** Of the schema version and the crosswalks, not of `releaseCoverage`. */
-	contentHash: string;
-	crosswalks: Array<{
-		id: string;
-		from: { geography: string; boundaryRelease: string };
-		to: { geography: string; boundaryRelease: string };
-		method: CrosswalkMethod;
-		quality: CrosswalkQuality;
-		relationshipPurpose?: "identity" | "membership";
-		weighting: CrosswalkWeighting;
-		recordCount: number;
-		artifact: string;
-		contentHash: string;
-	}>;
-	/**
-	 * How many areas of each compiled release the crosswalks relate, counted
-	 * at build time so that reporting it for every release does not read every
-	 * crosswalk. Counted against the area inventory it names, so it is used
-	 * only while that is the inventory in hand.
-	 */
-	releaseCoverage?: {
-		areaInventoryHash: string;
-		releases: ReleaseCoverage[];
-	};
-};
+import type { CrosswalkInventory } from "../../../shared/crosswalkInventory";
+export type { CrosswalkInventory } from "../../../shared/crosswalkInventory";
 
 const stringValue = (value: unknown, description: string): string => {
 	if (typeof value !== "string" || value.trim().length === 0) {
