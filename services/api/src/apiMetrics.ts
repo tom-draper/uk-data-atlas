@@ -2,6 +2,7 @@ import { monitorEventLoopDelay } from "node:perf_hooks";
 import type { AreaGeometryCacheStats } from "./areaGeometry";
 import type { LocationProjectionCacheStats } from "./locationProjections";
 import type { ResponseCacheStats } from "./responseCache";
+import type { UsageEvent } from "./usageLabels";
 
 /**
  * Operational metrics in the Prometheus text exposition format.
@@ -143,6 +144,24 @@ export class ApiMetrics {
 		"atlas_api_unhandled_errors_total",
 		"Requests that failed unexpectedly, by operation template.",
 	);
+	// The question-type counters below carry only catalogue ids (see
+	// usageLabels), so their series are bounded by the catalogue.
+	readonly usageOutcomes = new Counter(
+		"atlas_api_usage_outcomes_total",
+		"Requests by operation template, outcome class and problem name (none on success).",
+	);
+	readonly usageMeasures = new Counter(
+		"atlas_api_usage_measures_total",
+		"Requests naming a catalogue measure, by measure id (unknown for an id not in the catalogue).",
+	);
+	readonly usageAreas = new Counter(
+		"atlas_api_usage_areas_total",
+		"Requests naming a boundary geography or release, by catalogue id (unknown for an id not in the catalogue).",
+	);
+	readonly usageNotFound = new Counter(
+		"atlas_api_usage_not_found_total",
+		"Requests that found nothing, by operation template and kind of absence.",
+	);
 	private readonly eventLoopDelay = monitorEventLoopDelay({ resolution: 10 });
 	private readonly started = performance.now();
 
@@ -168,6 +187,25 @@ export class ApiMetrics {
 		this.requests.inc({ route, method, status: String(status) });
 		this.duration.observe({ route }, durationSeconds);
 		this.responseBytes.inc({ route }, bytes);
+	}
+
+	observeUsage({
+		route,
+		outcome,
+		problem,
+		measure,
+		geography,
+		release,
+		notFound,
+	}: UsageEvent) {
+		this.usageOutcomes.inc({ route, outcome, problem: problem || "none" });
+		if (measure) this.usageMeasures.inc({ measure });
+		if (geography || release)
+			this.usageAreas.inc({
+				geography: geography || "none",
+				release: release || "none",
+			});
+		if (notFound) this.usageNotFound.inc({ route, kind: notFound });
 	}
 
 	close() {
@@ -198,6 +236,10 @@ export class ApiMetrics {
 			...this.responseBytes.render(),
 			...this.rateLimited.render(),
 			...this.failures.render(),
+			...this.usageOutcomes.render(),
+			...this.usageMeasures.render(),
+			...this.usageAreas.render(),
+			...this.usageNotFound.render(),
 			...sampled(
 				"gauge",
 				"atlas_api_event_loop_delay_seconds",
