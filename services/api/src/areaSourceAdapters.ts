@@ -1,15 +1,7 @@
 import { readFileSync } from "node:fs";
 
-export type AreaSourceAdapter = {
-	source: {
-		geography: string;
-		boundaryRelease: string;
-	};
-	filter: {
-		property: string;
-		startsWith: string;
-	};
-};
+import type { AreaSourceAdapter } from "../../../shared/areaInventory";
+export type { AreaSourceAdapter } from "../../../shared/areaInventory";
 
 export type AreaSourceAdapterManifest = Record<string, AreaSourceAdapter>;
 

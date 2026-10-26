@@ -210,6 +210,16 @@ test("production builders resolve without UI code and include declared workers a
 			.includes("services/api/src/operationTemplates.ts"),
 	);
 	for (const path of [
+		"pipeline/src/build-geometry-source-registry.ts",
+		"pipeline/src/geometrySourceRegistry.ts",
+		"shared/fileHashCache.ts",
+		"shared/contentHash.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("geometry-source-registry")!.includes(path), path);
+	}
+	for (const path of [
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",

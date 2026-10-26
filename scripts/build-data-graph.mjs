@@ -149,7 +149,18 @@ const apiStages = [
 	stage("boundary-registry", ["sources"]),
 	stage("derived-boundaries", ["sources"]),
 	stage("area-inventory", ["boundary-registry", "derived-boundaries"]),
-	stage("geometry-source-registry", ["area-inventory"]),
+	stage(
+		"geometry-source-registry",
+		["area-inventory"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-geometry-source-registry.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("geometry-store", ["geometry-source-registry"], undefined, {
 		codeInputs: [
 			"services/api/src",
