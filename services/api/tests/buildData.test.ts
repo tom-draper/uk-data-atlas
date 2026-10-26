@@ -272,7 +272,7 @@ test("the first failing stage returns its exit code and stops the build", (conte
 	const build = fixture(context);
 	const result = build.run(
 		["--from", "crosswalk-inventory"],
-		"scripts/build-relationship-paths.ts",
+		"pipeline/src/build-relationship-paths.ts",
 	);
 	assert.equal(result.status, 23);
 	assert.match(
@@ -281,9 +281,11 @@ test("the first failing stage returns its exit code and stops the build", (conte
 	);
 	assert.equal(build.commands().length, 5);
 	assert.deepEqual(build.commands().at(-1), [
+		"--dir",
+		"../..",
 		"exec",
 		"tsx",
-		"scripts/build-relationship-paths.ts",
+		"pipeline/src/build-relationship-paths.ts",
 	]);
 });
 

@@ -13,11 +13,9 @@ import {
 } from "../src/crosswalkAdapters";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { createGeographyResolver } from "../src/geographyResolver";
-import {
-	compileRelationshipPaths,
-	createRelationshipPathIndex,
-	crosswalkShape,
-} from "../src/relationshipPaths";
+import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import { crosswalkShape } from "../../../pipeline/src/relationshipPaths";
+import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import {
 	compileExtentContinuityCrosswalk,
 	MINIMUM_NOISE_SAMPLE,

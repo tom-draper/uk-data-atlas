@@ -246,7 +246,18 @@ const apiStages = [
 		undefined,
 		{ codeInputs: ["services/api/scripts/crosswalk-worker.ts"] },
 	),
-	stage("relationship-paths", ["crosswalk-inventory"]),
+	stage(
+		"relationship-paths",
+		["crosswalk-inventory"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-relationship-paths.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("analysis-geographies", [
 		"data-catalog",
 		"crosswalk-inventory",

@@ -1,18 +1,12 @@
 import { mkdirSync } from "node:fs";
-import { buildArtifactPath } from "./geography-build-path";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type {
-	CrosswalkArtifact,
-	CrosswalkInventory,
-} from "../src/crosswalkInventory";
-import {
-	compileRelationshipPaths,
-	crosswalkShape,
-} from "../src/relationshipPaths";
-import { readApprovedRelationshipPaths } from "../src/relationshipPathAdapters";
-import { readStoredText } from "../src/storedText";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import { compileRelationshipPaths, crosswalkShape } from "./relationshipPaths";
+import { readApprovedRelationshipPaths } from "./relationshipPathAdapters";
+import { readStoredText } from "../../shared/storedText";
 
 // Long enough to rebase a local authority across a decade of releases, which
 // takes one identity step per release in between.
@@ -29,9 +23,7 @@ export const buildRelationshipPaths = (repositoryRoot: string) => {
 		crosswalks.crosswalks.map((summary) => [
 			summary.id,
 			crosswalkShape(
-				JSON.parse(
-					readStoredText(join(directory, summary.artifact)),
-				) as CrosswalkArtifact,
+				JSON.parse(readStoredText(join(directory, summary.artifact))),
 			),
 		]),
 	);
@@ -60,7 +52,7 @@ export const buildRelationshipPaths = (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = buildRelationshipPaths(
-		resolve(dirname(scriptPath), "../../.."),
+		resolve(dirname(scriptPath), "../.."),
 	);
 	console.log(
 		`Wrote ${result.count} relationship paths to ${result.outputPath}`,

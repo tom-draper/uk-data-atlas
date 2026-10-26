@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import {
-	compileRelationshipPaths,
 	createRelationshipPathIndex,
 	type CrosswalkShape,
 } from "../src/relationshipPaths";
+import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import { crosswalkInventory } from "./geographyFixtures";
 
 test("publishes only explicit, directional paths with their valid purpose", () => {

@@ -6,10 +6,8 @@ import type {
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
 import { createGeographyResolver } from "../src/geographyResolver";
-import {
-	compileRelationshipPaths,
-	createRelationshipPathIndex,
-} from "../src/relationshipPaths";
+import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import {
 	report as route,
 	registry,
