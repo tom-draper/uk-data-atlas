@@ -1,13 +1,13 @@
+import {
+	compileAnalysisGeographies,
+	readAnalysisGeographySupport,
+} from "../../../pipeline/src/analysisGeographies";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import {
-	analysisConversion,
-	compileAnalysisGeographies,
-	readAnalysisGeographySupport,
-} from "../src/analysisGeographies";
+import { analysisConversion } from "../src/analysisGeographies";
 import type { AnalysisGeographySupportConfig } from "../src/analysisGeographies";
 import type { GeographyKind } from "../src/geography";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";

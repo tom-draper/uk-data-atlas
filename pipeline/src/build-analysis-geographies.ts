@@ -1,14 +1,14 @@
-import { buildArtifactPath } from "./geography-build-path";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
 	compileAnalysisGeographies,
 	readAnalysisGeographySupport,
-} from "../src/analysisGeographies";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
-import type { DataCatalog } from "../src/dataCatalog";
-import type { RelationshipPathInventory } from "../src/relationshipPaths";
+} from "./analysisGeographies";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import type { DataCatalog } from "../../shared/dataCatalog";
+import type { RelationshipPathInventory } from "../../shared/relationshipPaths";
 
 export const buildAnalysisGeographies = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "services", "api", "public");
@@ -55,7 +55,7 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = buildAnalysisGeographies(
-		resolve(dirname(scriptPath), "../../.."),
+		resolve(dirname(scriptPath), "../.."),
 	);
 	console.log(
 		`Wrote ${result.count} analysis geography support entries to ${result.outputPath}`,

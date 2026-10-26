@@ -43,17 +43,4 @@ export const canonicalGeography = (value: string): GeographyKind | undefined =>
 		(kind) => kind.toLowerCase() === value.toLowerCase(),
 	) ?? GEOGRAPHY_ALIASES[value.toLowerCase()];
 
-/** Geographies currently supported for source-exact measure partitions. */
-export type MeasureGeographyKind =
-	| "communitySafetyPartnership"
-	| "constituency"
-	| "dataZone"
-	| "itl1"
-	| "itl2"
-	| "itl3"
-	| "localAuthority"
-	| "localPlanningAuthority"
-	| "lsoa"
-	| "msoa"
-	| "superOutputArea"
-	| "ward";
+export type { MeasureGeographyKind } from "../../../shared/geography";

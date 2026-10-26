@@ -258,11 +258,18 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("analysis-geographies", [
-		"data-catalog",
-		"crosswalk-inventory",
-		"relationship-paths",
-	]),
+	stage(
+		"analysis-geographies",
+		["data-catalog", "crosswalk-inventory", "relationship-paths"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-analysis-geographies.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("analysis-geography-validation", [
 		"analysis-geographies",
 		"data-catalog",
