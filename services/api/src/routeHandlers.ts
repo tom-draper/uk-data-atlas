@@ -50,6 +50,7 @@ import {
 import { handleBulkRoutes } from "./bulkRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
+import { releaseInPath, withReleaseHeaders } from "./releaseDeprecation";
 import {
 	handleReleaseJoinRoutes,
 	handleReleaseJoinRoutesAsync,
@@ -355,6 +356,23 @@ const routeFamilies: RouteFamily[] = [
 export const routeFamiliesOwning = (segments: string[]) =>
 	routeFamilies.filter(({ owns }) => owns(segments)).map(({ name }) => name);
 
+/** The response with the headers of the deprecated release its path names. */
+const withPathReleaseHeaders = (
+	request: RouteRequest,
+	response: ApiResponse,
+): ApiResponse => {
+	const named = releaseInPath(request.segments);
+	return named
+		? withReleaseHeaders(
+				response,
+				request.context.geographyResolver.boundaryRelease(
+					named.geography,
+					named.release,
+				),
+			)
+		: response;
+};
+
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 	const geography = canonicalGeographyRequest(request);
 	const release = canonicalReleaseRequest(geography ?? request);
@@ -369,8 +387,10 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 			"Method Not Allowed",
 			"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can.",
 		);
-	const response = family?.handle(routed);
-	if (!canonical || !response) return response;
+	const handled = family?.handle(routed);
+	if (!handled) return handled;
+	const response = withPathReleaseHeaders(routed, handled);
+	if (!canonical) return response;
 	const { pathname, search } = canonical.parsedUrl;
 	return {
 		...response,
@@ -385,7 +405,9 @@ export const handleRouteAsync = async (
 		const geography = canonicalGeographyRequest(request);
 		const release = canonicalReleaseRequest(geography ?? request);
 		if (release && "status" in release) return release;
-		return handleReleaseJoinRoutesAsync(release ?? geography ?? request);
+		const routed = release ?? geography ?? request;
+		const joined = await handleReleaseJoinRoutesAsync(routed);
+		return joined && withPathReleaseHeaders(routed, joined);
 	}
 	if (
 		request.segments[0] === "v1" &&

@@ -1,5 +1,6 @@
 import { areaNotFound } from "./areaResources";
 import { releaseDownloads } from "./mapResourceLoader";
+import { withReleaseHeaders } from "./releaseDeprecation";
 import { parseSelectionDate } from "./releaseForDate";
 import {
 	envelope,
@@ -40,7 +41,10 @@ export const handleBoundaryRoutes = ({
 		const geographies = [...releasesByGeography.entries()]
 			.map(([id, releases]) => ({
 				id,
-				latestRelease: releases[0]!.id,
+				latestRelease: (
+					releases.find((release) => !release.deprecation) ??
+					releases[0]!
+				).id,
 				releaseCount: releases.length,
 			}))
 			.sort((left, right) => left.id.localeCompare(right.id));
@@ -108,19 +112,22 @@ export const handleBoundaryRoutes = ({
 			);
 		}
 		const { status: _status, undated, ...selected } = selection;
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				geography,
-				date,
-				month: requestedMonth,
-				...(country ? { country } : {}),
-				...selected,
-				...(undated.length > 0 ? { undated } : {}),
-				basis: "latest-release-dated-on-or-before",
-				note: "Releases are snapshots dated to a month, so this is the latest snapshot at the date asked for, not a statement of which boundaries were legally in force on it. A change after the selected release shows first in next. When sameMonth is true the date falls in the release's own month, and a change that month may lie either side of it.",
-			}),
-		};
+		return withReleaseHeaders(
+			{
+				status: 200,
+				body: envelope(releaseId, {
+					geography,
+					date,
+					month: requestedMonth,
+					...(country ? { country } : {}),
+					...selected,
+					...(undated.length > 0 ? { undated } : {}),
+					basis: "latest-release-dated-on-or-before",
+					note: "Releases are snapshots dated to a month, so this is the latest snapshot at the date asked for, not a statement of which boundaries were legally in force on it. A change after the selected release shows first in next. When sameMonth is true the date falls in the release's own month, and a change that month may lie either side of it.",
+				}),
+			},
+			geographyResolver.boundaryRelease(geography, selection.selected.id),
+		);
 	}
 
 	if (
