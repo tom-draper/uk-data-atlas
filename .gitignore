@@ -78,3 +78,5 @@ CLAUDE.md
 __pycache__/
 *.egg-info/
 /clients/typescript/dist/
+.pytest_cache/
+.ruff_cache/
