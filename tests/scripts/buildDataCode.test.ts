@@ -281,6 +281,16 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("relationship-paths")!.includes(path), path);
 	}
 	for (const path of [
+		"pipeline/src/build-analysis-geographies.ts",
+		"pipeline/src/analysisGeographies.ts",
+		"shared/geography.ts",
+		"shared/geographyBuildPath.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("analysis-geographies")!.includes(path), path);
+	}
+	for (const path of [
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
