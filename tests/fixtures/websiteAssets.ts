@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { ATLAS_LOOKUP_NAMES } from "@/scripts/atlas-lookups";
-import { buildWebsiteAssets } from "@/scripts/build-website-assets";
+import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
 import type { AtlasAssetKind } from "@/shared/atlasSqlite";
 
 export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
@@ -53,6 +53,6 @@ export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
 		"ward-areas": {},
 		...pages,
 	});
-	buildWebsiteAssets(root);
+	buildAtlasAssets(root);
 	return { root, write };
 }

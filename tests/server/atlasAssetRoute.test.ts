@@ -12,7 +12,7 @@ import { gunzipSync } from "node:zlib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as page } from "@/app/data/atlas-pages/[file]/route";
 import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
-import { buildWebsiteAssets } from "@/scripts/build-website-assets";
+import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
 import { readAtlasAssetText } from "@/shared/atlasSqlite";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 
@@ -97,7 +97,7 @@ describe("SQLite website assets", () => {
 	it("keeps the database unchanged on an identical import", () => {
 		const path = join(fixture.root, "data/build/atlas.sqlite");
 		const before = statSync(path);
-		buildWebsiteAssets(fixture.root);
+		buildAtlasAssets(fixture.root);
 		expect(statSync(path).mtimeMs).toBe(before.mtimeMs);
 	});
 	it("replaces removed assets and preserves other database tables", () => {
@@ -107,7 +107,7 @@ describe("SQLite website assets", () => {
 			"places-index": { value: 43 },
 			"ward-areas": {},
 		});
-		buildWebsiteAssets(fixture.root);
+		buildAtlasAssets(fixture.root);
 		expect(readAtlasAssetText(fixture.root, "pages", "places-index")).toBe(
 			'{"value":43}',
 		);
@@ -139,7 +139,7 @@ describe("SQLite website assets", () => {
 		const legacy = join(fixture.root, "public/data/precompiled");
 		mkdirSync(legacy, { recursive: true });
 		writeFileSync(join(legacy, "old.json"), "{}");
-		expect(() => buildWebsiteAssets(fixture.root)).toThrow();
+		expect(() => buildAtlasAssets(fixture.root)).toThrow();
 		expect(readAtlasAssetText(fixture.root, "pages", "places-index")).toBe(
 			'{"value":42}',
 		);
@@ -150,7 +150,7 @@ describe("SQLite website assets", () => {
 			mkdirSync(join(fixture.root, "public/data", directory), {
 				recursive: true,
 			});
-		buildWebsiteAssets(fixture.root);
+		buildAtlasAssets(fixture.root);
 		for (const directory of ["atlas-pages", "atlas-lookups", "precompiled"])
 			expect(
 				existsSync(join(fixture.root, "public/data", directory)),

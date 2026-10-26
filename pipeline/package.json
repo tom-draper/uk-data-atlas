@@ -1,0 +1,23 @@
+{
+	"name": "@uk-data-atlas/pipeline",
+	"private": true,
+	"license": "AGPL-3.0-only",
+	"version": "0.0.0",
+	"type": "module",
+	"engines": {
+		"node": ">=24 <27"
+	},
+	"scripts": {
+		"build:assets": "tsx src/build-atlas-assets.ts",
+		"typecheck": "tsc --noEmit -p tsconfig.json"
+	},
+	"dependencies": {
+		"@uk-data-atlas/catalogue": "workspace:*",
+		"@uk-data-atlas/geography": "workspace:*",
+		"tsx": "^4.23.15"
+	},
+	"devDependencies": {
+		"@types/node": "^26.6.2",
+		"typescript": "^7.0.2"
+	}
+}

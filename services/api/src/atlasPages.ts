@@ -1,3 +1,8 @@
+import {
+	ATLAS_PAGES_DIRECTORY,
+	ATLAS_PAGES_MANIFEST,
+	type AtlasPageManifest,
+} from "../../../shared/atlasAssets";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import {
@@ -7,23 +12,6 @@ import {
 	type StoredFile,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-
-/** Website place profiles and docs catalogue, compiled by the API build. */
-export const ATLAS_PAGES_DIRECTORY = "atlas-pages";
-export const ATLAS_PAGES_MANIFEST = "atlas-pages.json";
-
-export type AtlasPageManifest = {
-	schemaVersion: 1;
-	pages: Array<{
-		id: string;
-		artifact: string;
-		/** The size of the JSON, once decompressed. */
-		bytes: number;
-		/** The size of the gzipped file stored. */
-		gzipBytes: number;
-		contentHash: string;
-	}>;
-};
 
 /** The built pages by id, or none where they have not been built. */
 export const readAtlasPages = (apiRoot: string): Map<string, StoredFile> => {

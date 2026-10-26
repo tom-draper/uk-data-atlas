@@ -15,7 +15,7 @@ import {
 	ATLAS_LOOKUPS_DIRECTORY,
 	ATLAS_LOOKUPS_MANIFEST,
 	type AtlasLookupManifest,
-} from "../src/atlasLookups";
+} from "../../../shared/atlasAssets";
 
 const apiRoot = resolve(import.meta.dirname, "..");
 const publicDirectory = join(apiRoot, "public");

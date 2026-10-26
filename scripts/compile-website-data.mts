@@ -1,4 +1,4 @@
-import { buildWebsiteAssets } from "./build-website-assets";
+import { buildAtlasAssets } from "../pipeline/src/build-atlas-assets";
 import { buildAtlasSqlite } from "../services/api/scripts/build-atlas-sqlite";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
@@ -90,7 +90,7 @@ async function compileSelected(names: readonly string[]) {
 
 	await compileCatalogueDatasets(names);
 	buildAtlasSqlite(ROOT);
-	buildWebsiteAssets(ROOT);
+	buildAtlasAssets(ROOT);
 	const { datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const compiledDatasets: CompiledDatasets = new Map();
