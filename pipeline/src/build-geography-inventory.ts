@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "./geography-build-path";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import {
 	mkdirSync,
 	existsSync,
@@ -9,10 +9,10 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry";
-import { createGeographyInventory } from "../src/geographyInventory";
-import { createSourceInventory } from "../src/sourceInventory";
-import type { AreaInventory } from "../src/areaInventory";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import { createGeographyInventory } from "./geographyInventory";
+import { createSourceInventory } from "./sourceInventory";
+import type { AreaInventory } from "../../shared/areaInventory";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "services", "api", "public");
@@ -60,7 +60,7 @@ export const buildGeographyInventory = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildGeographyInventory(repositoryRoot);
 	console.log(
 		`Wrote ${result.sourceCount} sources and ${result.releaseCount} geography releases`,

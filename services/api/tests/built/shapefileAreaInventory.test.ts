@@ -3,8 +3,8 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { readAreaAdapters } from "../../src/areaAdapters";
-import { compileAreas } from "../../src/areaInventory";
-import { createBoundaryRegistry } from "../../scripts/build-boundary-registry";
+import { compileAreas } from "../../../../pipeline/src/areaInventory";
+import { createBoundaryRegistry } from "../../../../pipeline/src/build-boundary-registry";
 
 const repositoryRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),

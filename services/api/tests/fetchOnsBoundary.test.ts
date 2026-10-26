@@ -14,8 +14,8 @@ import { join } from "node:path";
 import test from "node:test";
 import { fetchOnsBoundary } from "../scripts/fetch-ons-boundaries";
 import type { OnsBoundarySource } from "../scripts/onsBoundarySources";
-import { createBoundaryRegistry } from "../scripts/build-boundary-registry";
-import { compileAreas } from "../src/areaInventory";
+import { createBoundaryRegistry } from "../../../pipeline/src/build-boundary-registry";
+import { compileAreas } from "../../../pipeline/src/areaInventory";
 
 const source: OnsBoundarySource = {
 	geography: "seneddConstituency",

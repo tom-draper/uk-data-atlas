@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
-import { sha256 } from "./contentHash";
+import { sha256 } from "../../shared/contentHash";
 import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 export type SourceFile = {
@@ -25,7 +25,6 @@ export type SourceInventory = {
 	contentHash: string;
 	sources: SourceInventoryRecord[];
 };
-
 type Metadata = {
 	id?: unknown;
 	kind?: unknown;
