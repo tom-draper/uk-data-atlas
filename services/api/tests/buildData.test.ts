@@ -72,7 +72,7 @@ function stages(result: ReturnType<ReturnType<typeof fixture>["run"]>) {
 	return result.stdout
 		.trim()
 		.split("\n")
-		.filter(Boolean)
+		.filter((line) => /^[a-z][a-z-]*: /.test(line))
 		.map((line) => line.split(":")[0]);
 }
 

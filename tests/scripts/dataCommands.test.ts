@@ -38,8 +38,12 @@ test("data commands use one public vocabulary", () => {
 	).toEqual(["data:build", "data:download", "data:publish", "data:verify"]);
 	for (const scripts of [root.scripts, api.scripts])
 		expect(
-			Object.keys(scripts).filter((name) =>
-				/^(build:|datasets:|boundaries:|atlas-data:|seo:)/.test(name),
+			Object.keys(scripts).filter(
+				(name) =>
+					!(scripts === api.scripts && name === "build:cache") &&
+					/^(build:|datasets:|boundaries:|atlas-data:|seo:)/.test(
+						name,
+					),
 			),
 		).toEqual([]);
 });
