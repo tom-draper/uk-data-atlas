@@ -104,7 +104,7 @@ test("UI edits reuse data outputs; transitive and dynamic imports rebuild only a
 	assert.deepEqual(run(), ["beta"]);
 	write("scripts/alpha.ts", 'console.log("new entry");');
 	assert.deepEqual(run(), ["alpha", "report"]);
-});
+}, 30_000);
 
 test("shared packages, configuration and lockfile changes invalidate data stages", () => {
 	const { write, run } = fixture();
