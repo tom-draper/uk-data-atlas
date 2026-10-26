@@ -1,6 +1,7 @@
 packages:
   - pipeline
   - services/api
+  - services/mcp
   - packages/*
 minimumReleaseAge: 10080
 trustPolicy: no-downgrade
