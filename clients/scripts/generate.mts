@@ -29,7 +29,7 @@ import {
 	computeLock,
 	hashTree,
 	readLock,
-} from "./lock.mts";
+} from "./lock.mjs";
 
 const run = (command: string, args: string[], cwd: string) => {
 	const result = spawnSync(command, args, { cwd, encoding: "utf8" });
