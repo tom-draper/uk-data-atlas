@@ -1,3 +1,5 @@
+import type { BoundaryReleaseDeprecation } from "@uk-data-atlas/catalogue";
+
 export type BoundarySource = {
 	publisher: string;
 	url: string;
@@ -19,6 +21,8 @@ export type BoundaryRelease = {
 	};
 	source: BoundarySource;
 	metadataHash: string;
+	/** Present when the release is superseded and due to be retired. */
+	deprecation?: BoundaryReleaseDeprecation;
 };
 
 export type BoundaryRegistry = {

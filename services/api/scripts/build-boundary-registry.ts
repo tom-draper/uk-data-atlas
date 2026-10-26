@@ -13,7 +13,10 @@ import type {
 	BoundaryRelease,
 } from "../src/boundaryRegistry";
 import { sha256 } from "../src/contentHash";
-import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
+import {
+	boundaryReleaseDeprecations,
+	sourceMetadataCorrections,
+} from "@uk-data-atlas/catalogue";
 
 type BoundaryMetadata = {
 	id?: unknown;
@@ -158,6 +161,13 @@ export const createBoundaryRegistry = (
 					);
 					return existsSync(metaPath) ? [readRelease(metaPath)] : [];
 				});
+		})
+		.map((release) => {
+			const deprecation =
+				boundaryReleaseDeprecations[
+					`${release.geography}/${release.id}`
+				];
+			return deprecation ? { ...release, deprecation } : release;
 		})
 		.sort(
 			(left, right) =>
