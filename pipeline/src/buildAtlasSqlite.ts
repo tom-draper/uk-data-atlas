@@ -1,5 +1,13 @@
-import { statisticsTables } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	statisticsTables,
+	type StatisticsInput,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { declaredStatistics } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { fuelPovertyStatistics } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	STATISTICS_DATASETS,
+	UNSTORED_DATASETS,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishAtlasCache } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	writeSqliteIndex,
@@ -19,6 +27,36 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+
+const declared = new Map(
+	STATISTICS_DATASETS.map((config) => [config.type, config]),
+);
+
+/** Every compiled dataset as statistics rows, read lazily one at a time. */
+const statisticsInputs = (
+	directory: string,
+	entries: readonly {
+		type: string;
+		output: string;
+		source: unknown;
+		fingerprint: string;
+	}[],
+): StatisticsInput[] =>
+	entries.flatMap((entry): StatisticsInput[] => {
+		const read = () =>
+			readFileSync(
+				join(directory, `datasets/${entry.output}.json`),
+				"utf8",
+			);
+		if (entry.type === "fuelPoverty")
+			return [fuelPovertyStatistics(read(), entry)];
+		const config = declared.get(entry.type);
+		if (config) return [declaredStatistics(config, read, entry)];
+		if (entry.type in UNSTORED_DATASETS) return [];
+		throw new Error(
+			`Dataset ${entry.type} has no statistics configuration; add one or list it in UNSTORED_DATASETS.`,
+		);
+	});
 
 export const buildAtlasSqlite = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "data/build");
@@ -156,22 +194,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 					`dataset:${entry.output}`,
 				]),
 			},
-			...statisticsTables(
-				manifest.datasets
-					.filter((entry) => entry.type === "fuelPoverty")
-					.map((entry) =>
-						fuelPovertyStatistics(
-							readFileSync(
-								join(
-									directory,
-									`datasets/${entry.output}.json`,
-								),
-								"utf8",
-							),
-							entry,
-						),
-					),
-			),
+			...statisticsTables(statisticsInputs(directory, manifest.datasets)),
 		},
 	);
 	publishAtlasCache(repositoryRoot, "projections", (database) => {
