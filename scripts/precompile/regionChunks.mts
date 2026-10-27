@@ -3,7 +3,7 @@ import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "../../lib/data/gazetteer/types";
 import { writeDatasetRegionChunks } from "../dataset-region-chunks.mts";
-import { elapsedSince, logArtifact } from "../timing.mts";
+import { elapsedSince, logArtifact } from "../../shared/buildTiming";
 import {
 	fileSnapshots,
 	fileSnapshotsOrEmpty,
@@ -11,16 +11,16 @@ import {
 	sameCompiledOutputs,
 	sameFileSnapshots,
 	snapshotFileContents,
-} from "./cache.mts";
-import { chunksSize } from "./output.mts";
+} from "../../pipeline/src/precompile/cache.mts";
+import { chunksSize } from "../../pipeline/src/precompile/output.mts";
 import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlas-lookups";
-import { OUT_DIR, ROOT } from "./paths.mts";
+import { OUT_DIR, ROOT } from "../../pipeline/src/precompile/paths.mts";
 import type {
 	CompiledDatasets,
 	CompiledOutput,
 	FileSnapshot,
 	ReuseContext,
-} from "./types.mts";
+} from "../../pipeline/src/precompile/types.mts";
 
 type RegionChunkInputs = {
 	/** Compiled output of each regional dataset, by output file. */

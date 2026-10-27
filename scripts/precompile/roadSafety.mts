@@ -2,17 +2,20 @@ import { join } from "path";
 import { Gazetteer } from "../../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "../../lib/data/gazetteer/types";
 import { loadRoadSafety } from "../../lib/data/road-safety/loader";
-import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
+import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
 import {
 	fileStamp,
 	isReleasedSource,
 	outputMatches,
 	sameFileStamp,
-} from "./cache.mts";
-import { out } from "./output.mts";
-import { SOURCE_DATA } from "./paths.mts";
-import { readSource } from "./sources/read.mts";
-import type { CompiledOutput, ReuseContext } from "./types.mts";
+} from "../../pipeline/src/precompile/cache.mts";
+import { out } from "../../pipeline/src/precompile/output.mts";
+import { SOURCE_DATA } from "../../pipeline/src/precompile/paths.mts";
+import { readSource } from "../../pipeline/src/precompile/sources/read.mts";
+import type {
+	CompiledOutput,
+	ReuseContext,
+} from "../../pipeline/src/precompile/types.mts";
 
 const logRoadSafety = (
 	status: "cached" | "compiled",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { precompileFingerprints } from "@/scripts/precompile-fingerprint.mjs";
+import { precompileFingerprints } from "@/pipeline/src/precompile/fingerprint.mjs";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
 
 describe("the catalogue's fingerprints", () => {

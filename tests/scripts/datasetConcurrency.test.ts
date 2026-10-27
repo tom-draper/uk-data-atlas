@@ -1,6 +1,6 @@
 import { availableParallelism } from "node:os";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { datasetConcurrency } from "@/scripts/precompile/datasetConcurrency.mjs";
+import { datasetConcurrency } from "@/pipeline/src/precompile/datasetConcurrency.mjs";
 
 vi.mock("node:os", () => ({
 	availableParallelism: vi.fn(() => 8),

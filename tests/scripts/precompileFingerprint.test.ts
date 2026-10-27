@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
 	datasetFingerprints,
 	precompileFingerprints,
-} from "@/scripts/precompile-fingerprint.mjs";
+} from "@/pipeline/src/precompile/fingerprint.mjs";
 
 let root: string;
 
@@ -35,10 +35,8 @@ const createRepository = async () => {
 		"scripts/dataset-discovery.ts",
 		"scripts/dataset-region-chunks.mts",
 		"scripts/generate-dataset-registry.ts",
-		"scripts/generate-sources-readme.mts",
 		"scripts/compile-website-data.mts",
-		"scripts/precompile-fingerprint.mjs",
-		"scripts/precompile-selection.ts",
+		"pipeline/src/precompile/fingerprint.mjs",
 		"packages/datasets/src/compileDataset.ts",
 		"packages/geography/src/index.ts",
 		"packages/map-tiles/package.json",
@@ -48,10 +46,11 @@ const createRepository = async () => {
 	])
 		await write(file, `// ${file}`);
 	await write(
-		"scripts/precompile/compileDataset.mts",
-		'import { helper } from "../../lib/helpers/shared";\nimport { validate } from "../../packages/datasets/src/data/catalog";\n',
+		"pipeline/src/precompile/compileDataset.mts",
+		'import { helper } from "../../../lib/helpers/shared";\nimport { validate } from "../../../packages/datasets/src/data/catalog";\n',
 	);
-	await write("scripts/precompile/cache.mts", "// cache");
+	await write("pipeline/src/precompile/cache.mts", "// cache");
+	await write("scripts/precompile/roadSafety.mts", "// road safety");
 	await write(
 		"packages/geography/package.json",
 		JSON.stringify({ exports: { ".": "./src/index.ts" } }),
@@ -266,7 +265,7 @@ describe("precompile fingerprints", () => {
 
 	it("changes the pipeline, not the datasets, when pipeline code changes", async () => {
 		const before = await precompileFingerprints(root);
-		await write("scripts/precompile/cache.mts", "// edited");
+		await write("pipeline/src/precompile/cache.mts", "// edited");
 		const after = await precompileFingerprints(root);
 
 		expect(after.pipeline).not.toEqual(before.pipeline);

@@ -12,8 +12,8 @@ import { buildAtlasSqlite } from "../shared/buildAtlasSqlite";
  * datasets against existing boundaries and gazetteer outputs. Public stage
  * selection belongs to data:build; use --from datasets to refresh consumers.
  *
- * This file only sequences the run. Reading raw sources is in precompile/sources,
- * the cache that lets a run skip unchanged work is precompile/cache.mts, and each
+ * This file only sequences the run. Reading raw sources is in pipeline/src/precompile/sources,
+ * the cache that lets a run skip unchanged work is pipeline/src/precompile/cache.mts, and each
  * stage of the pipeline has its own module in precompile/.
  */
 import { readFile, mkdir, stat, utimes } from "fs/promises";
@@ -23,25 +23,32 @@ import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
-import { compileCatalogueDatasets } from "./compile-datasets.mts";
+import { compileCatalogueDatasets } from "../pipeline/src/compile-datasets.mts";
 import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
-} from "./precompile-selection";
+} from "../pipeline/src/precompile/selection";
 import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
-import { fileSnapshots, loadReuseContext } from "./precompile/cache.mts";
+import {
+	fileSnapshots,
+	loadReuseContext,
+} from "../pipeline/src/precompile/cache.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
-import { chunksSize, out } from "./precompile/output.mts";
+import { chunksSize, out } from "../pipeline/src/precompile/output.mts";
 import { readAtlasLookup } from "./atlas-lookups";
-import { OUT_DIR, ROOT, SOURCE_DATA } from "./precompile/paths.mts";
+import {
+	OUT_DIR,
+	ROOT,
+	SOURCE_DATA,
+} from "../pipeline/src/precompile/paths.mts";
 import {
 	compileRegionChunks,
 	regionChunkLookupFingerprints,
 } from "./precompile/regionChunks.mts";
-import { precompileFingerprints } from "./precompile-fingerprint.mjs";
+import { precompileFingerprints } from "../pipeline/src/precompile/fingerprint.mjs";
 import { compileRoadSafety } from "./precompile/roadSafety.mts";
-import type { CompiledDatasets } from "./precompile/types.mts";
+import type { CompiledDatasets } from "../pipeline/src/precompile/types.mts";
 import { elapsedSince, logArtifact } from "./timing.mts";
 
 /** Checks that every file a meta.json promises is actually present. */

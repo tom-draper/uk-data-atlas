@@ -1,7 +1,9 @@
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
-export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+export const ROOT = dirname(
+	dirname(dirname(dirname(fileURLToPath(import.meta.url)))),
+);
 export const PUBLIC_DATA = join(ROOT, "public", "data");
 export const SOURCE_DATA = join(ROOT, "data/source");
 // Browser-ready output is built where Next serves it from. Raw

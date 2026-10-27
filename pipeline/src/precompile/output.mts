@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import { rename, stat, writeFile } from "fs/promises";
 import { join } from "path";
-import { formatKb } from "../timing.mts";
+import { formatKb } from "../../../shared/buildTiming";
 import { OUT_DIR } from "./paths.mts";
 import type { CompiledOutput, FileSnapshot } from "./types.mts";
 
