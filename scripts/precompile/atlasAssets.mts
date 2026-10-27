@@ -9,17 +9,12 @@ import { loadMatchIndex } from "../../lib/data/gazetteer/matchIndex";
 import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
 import {
 	fileSnapshots,
-	outputMatches,
 	sameFileSnapshots,
 	snapshotFileContents,
 } from "../../pipeline/src/precompile/cache.mts";
-import { out } from "../../pipeline/src/precompile/output.mts";
+import { OUT_DIR, out, outputMatches } from "./websiteOutput.mts";
 import { readAtlasLookup } from "../atlas-lookups";
-import {
-	OUT_DIR,
-	BOUNDARY_DATA,
-	ROOT,
-} from "../../pipeline/src/precompile/paths.mts";
+import { BOUNDARY_DATA, ROOT } from "../../pipeline/src/precompile/paths.mts";
 import { readBoundaryAsset } from "../../pipeline/src/precompile/sources/read.mts";
 import type { ReuseContext } from "../../pipeline/src/precompile/types.mts";
 

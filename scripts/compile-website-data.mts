@@ -30,18 +30,12 @@ import {
 	selectDefinitions,
 } from "../pipeline/src/precompile/selection";
 import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
-import {
-	fileSnapshots,
-	loadReuseContext,
-} from "../pipeline/src/precompile/cache.mts";
+import { fileSnapshots } from "../pipeline/src/precompile/cache.mts";
+import { OUT_DIR, loadReuseContext, out } from "./precompile/websiteOutput.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
-import { chunksSize, out } from "../pipeline/src/precompile/output.mts";
+import { chunksSize } from "../pipeline/src/precompile/output.mts";
 import { readAtlasLookup } from "./atlas-lookups";
-import {
-	OUT_DIR,
-	ROOT,
-	SOURCE_DATA,
-} from "../pipeline/src/precompile/paths.mts";
+import { ROOT, SOURCE_DATA } from "../pipeline/src/precompile/paths.mts";
 import {
 	compileRegionChunks,
 	regionChunkLookupFingerprints,

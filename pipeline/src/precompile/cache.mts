@@ -4,7 +4,7 @@ import { readFile, readdir, stat } from "fs/promises";
 import { join, relative } from "path";
 import type { SourceArtifact } from "@uk-data-atlas/datasets";
 import { datasetFingerprints, precompileFingerprints } from "./fingerprint.mjs";
-import { COMPILED_DATASETS, OUT_DIR, ROOT, SOURCE_DATA } from "./paths.mts";
+import { COMPILED_DATASETS, ROOT, SOURCE_DATA } from "./paths.mts";
 import type {
 	CatalogueDefinition,
 	CompiledOutput,
@@ -189,7 +189,7 @@ export const snapshotFileContents = async (
 const cachedDatasetOutput = async (
 	name: string,
 	expected: CompiledOutput,
-	directory = OUT_DIR,
+	directory: string,
 ): Promise<CompiledOutput | undefined> => {
 	try {
 		const path = join(directory, `${name}.json`);
@@ -209,8 +209,11 @@ const cachedDatasetOutput = async (
 	}
 };
 
-export const outputMatches = async (name: string, expected: CompiledOutput) =>
-	(await cachedDatasetOutput(name, expected)) !== undefined;
+export const outputMatches = async (
+	name: string,
+	expected: CompiledOutput,
+	directory: string,
+) => (await cachedDatasetOutput(name, expected, directory)) !== undefined;
 
 const isSourceArtifact = (value: unknown): value is SourceArtifact =>
 	typeof value === "object" &&
@@ -319,10 +322,10 @@ export const loadDatasetReuseContext = async (): Promise<ReuseContext> => {
  * Reads the manifest an earlier website run wrote, and decides whether its
  * output can be reused. Its artifacts share the pipeline's fingerprint.
  */
-export const loadReuseContext = async (): Promise<
-	ReuseContext & { compilerFingerprint: string }
-> => {
-	const existingManifest = await readExistingManifest(OUT_DIR);
+export const loadReuseContext = async (
+	directory: string,
+): Promise<ReuseContext & { compilerFingerprint: string }> => {
+	const existingManifest = await readExistingManifest(directory);
 	const { pipeline: compilerFingerprint, datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const sourceRelease = await readSourceRelease();
