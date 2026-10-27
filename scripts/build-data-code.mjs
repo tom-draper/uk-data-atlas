@@ -90,7 +90,7 @@ export function stageCodeFiles(root, stage, files) {
 	const inputs = Object.keys(metafile.inputs).map((path) =>
 		relative(root, resolve(root, path)).replaceAll("\\", "/"),
 	);
-	const runtimeInputs = inputs.includes("services/api/src/catalogueLoader.ts")
+	const runtimeInputs = inputs.includes("shared/catalogueLoader.ts")
 		? ["services/api/openapi.yaml"]
 		: [];
 	return [

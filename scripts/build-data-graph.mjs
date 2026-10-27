@@ -1,16 +1,7 @@
-const apiCommands = {
-	documents: [
-		"exec",
-		"tsx",
-		"--max-old-space-size=3072",
-		"scripts/build-evidence-documents.ts",
-	],
-};
-
 const stage = (
 	name,
 	dependencies = [],
-	args = apiCommands[name] ?? ["exec", "tsx", `scripts/build-${name}.ts`],
+	args = ["exec", "tsx", `scripts/build-${name}.ts`],
 	{
 		cacheable = true,
 		outputs = [],
@@ -501,12 +492,24 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("documents", [
-		"atlas-sqlite",
-		"atlas-release-initial",
-		"operations",
-		"geometry-store",
-	]),
+	stage(
+		"documents",
+		[
+			"atlas-sqlite",
+			"atlas-release-initial",
+			"operations",
+			"geometry-store",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/build-evidence-documents.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"atlas-lookups",
 		[

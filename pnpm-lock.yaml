@@ -365,6 +365,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../packages/map-tiles
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
       jsts:
         specifier: 2.12.1
         version: 2.12.1
