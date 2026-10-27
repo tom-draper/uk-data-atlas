@@ -27,17 +27,16 @@ import {
 	websiteBoundaryReleases,
 	type BoundaryResource,
 	type BoundaryResources,
-} from "../shared/boundaryResources";
+} from "../../shared/boundaryResources";
 import { correctedSource, releaseSources } from "./compile-boundaries.mts";
-import { linkBoundaryTiles } from "./link-boundary-tiles";
-import { elapsedSince, formatKb, logArtifact } from "./timing.mts";
+import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
 
 const COMPILED_POLYGON_RELEASES: Readonly<Record<string, number>> = {
 	"ward/2017-12-gb-bgc": 3,
 	"lsoa/2001-12-ew-bgc": 91,
 };
 
-const ROOT = join(import.meta.dirname, "..");
+const ROOT = join(import.meta.dirname, "../..");
 const INTERMEDIATES = join(ROOT, "data/build/website-boundaries");
 export const TILES_FILENAME = "boundaries.pmtiles";
 export const TILES_MANIFEST = "boundaries/tiles.json";
@@ -108,9 +107,7 @@ const areasByCode = (
 	return areas;
 };
 
-export async function compileBoundaryTiles(
-	outputDirectory = join(ROOT, "public/data"),
-): Promise<BoundaryResources> {
+export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 	const startedAt = performance.now();
 	const only = process.argv
 		.find((arg) => arg.startsWith("--only="))
@@ -340,7 +337,6 @@ export async function compileBoundaryTiles(
 		manifestPath,
 		JSON.stringify(manifest, null, "\t") + "\n",
 	);
-	await linkBoundaryTiles(ROOT, outputDirectory);
 	console.log(
 		`Boundary map resources complete (${elapsedSince(startedAt)}).`,
 	);

@@ -169,7 +169,7 @@ a stage and its downstream consumers using existing upstream outputs.
 These two options cannot be combined. For example:
 
 ```sh
-pnpm data:build --only boundary-tiles
+pnpm data:build --only website-tiles
 pnpm data:build --only atlas-sqlite --plan
 pnpm data:build --from datasets
 ```

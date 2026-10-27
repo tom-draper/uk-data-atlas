@@ -591,8 +591,17 @@ const websiteStages = [
 	stage(
 		"boundaries",
 		["sources"],
-		["--dir", "../..", "exec", "tsx", "scripts/compile-boundaries.mts"],
-		{ outputs: ["data/build/website-boundaries"] },
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/compile-boundaries.mts",
+		],
+		{
+			outputs: ["data/build/website-boundaries"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"boundary-tiles",
@@ -603,9 +612,22 @@ const websiteStages = [
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
-			"scripts/compile-boundary-tiles.mts",
+			"pipeline/src/compile-boundary-tiles.mts",
 		],
-		{ outputs: ["data/build/boundaries", "public/data/boundaries"] },
+		{
+			outputs: ["data/build/boundaries"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
+	// Publishes the map resources and properties for the website to serve.
+	stage(
+		"website-tiles",
+		["boundary-tiles"],
+		["--dir", "../..", "exec", "tsx", "scripts/link-boundary-tiles.ts"],
+		{
+			outputs: ["public/data/boundaries"],
+			codeInputs: ["shared/boundaryResources.ts"],
+		},
 	),
 	stage(
 		"website-lookups",
@@ -618,7 +640,7 @@ const websiteStages = [
 	),
 	stage(
 		"website-datasets",
-		["atlas-sqlite", "website-lookups", "boundary-tiles"],
+		["atlas-sqlite", "website-lookups", "website-tiles"],
 		[
 			"--dir",
 			"../..",
@@ -634,11 +656,10 @@ const websiteStages = [
 				"packages/geography",
 				"packages/map-tiles",
 				"scripts/precompile",
-				"scripts/compile-boundaries.mts",
 				"pipeline/src/compile-boundaries.mts",
 				"shared/reverseGridOffset.ts",
 				"shared/buildTiming.ts",
-				"scripts/compile-boundary-tiles.mts",
+				"pipeline/src/compile-boundary-tiles.mts",
 				"scripts/generate-dataset-registry.ts",
 			],
 		},

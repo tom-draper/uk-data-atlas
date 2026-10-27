@@ -636,3 +636,10 @@ directory and ward history now live in `pipeline/src/sources/`. They write only
 under `data/`, so their behaviour is unchanged. `fetch:onspd` and
 `fetch:boundaries` are pipeline package scripts, and the API no longer has
 `fetch:*` or `refresh:onspd` scripts.
+
+The boundary tile compiler now lives in `pipeline/src/compile-boundary-tiles.mts`
+and writes only `data/build/boundaries/`. Publishing those resources into
+`public/data/boundaries` is a separate `website-tiles` stage that runs the
+website's `scripts/link-boundary-tiles.ts`, which `website-datasets` now follows.
+The `scripts/compile-boundaries.mts` re-export is gone; the graph runs the
+pipeline entry points directly.
