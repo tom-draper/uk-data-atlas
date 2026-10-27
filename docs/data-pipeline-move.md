@@ -643,3 +643,11 @@ and writes only `data/build/boundaries/`. Publishing those resources into
 website's `scripts/link-boundary-tiles.ts`, which `website-datasets` now follows.
 The `scripts/compile-boundaries.mts` re-export is gone; the graph runs the
 pipeline entry points directly.
+
+The catalogue registry generator now lives in
+`pipeline/src/build-catalogue-registry.ts` and writes the committed index,
+registry and type map under `packages/datasets`. The website's
+`scripts/generate-dataset-registry.ts` keeps only the chart registry in
+`lib/datasets`, reading the catalogue definitions through the pipeline module,
+and no longer rewrites the catalogue files. Dataset discovery stays with the
+website stages, which are its only users.

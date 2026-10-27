@@ -374,6 +374,9 @@ importers:
       papaparse:
         specifier: ^5.7.0
         version: 5.7.0
+      prettier:
+        specifier: 3.9.7
+        version: 3.9.7
       proj4:
         specifier: ^2.22.0
         version: 2.22.0

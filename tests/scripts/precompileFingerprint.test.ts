@@ -34,6 +34,7 @@ const createRepository = async () => {
 		"scripts/dataset-discovery.ts",
 		"scripts/dataset-region-chunks.mts",
 		"scripts/generate-dataset-registry.ts",
+		"pipeline/src/build-catalogue-registry.ts",
 		"scripts/compile-website-data.mts",
 		"pipeline/src/precompile/fingerprint.mjs",
 		"packages/datasets/src/compileDataset.ts",
