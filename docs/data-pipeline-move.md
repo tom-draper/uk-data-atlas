@@ -529,6 +529,13 @@ API re-exports for the routes. The stage traces its own imports with esbuild
 from the repository root. Document bytes, cache keys, and the
 `services/api/public/evidence-documents.json` output path are unchanged.
 
+Pipeline and shared code no longer spell out `services/api`. They ask
+`shared/dataLayout.ts` for the API project, its generated artifact directory,
+its config directory and the release database, and
+`tests/packages/packageImports.test.ts` rejects a hard-coded path. Moving the
+artifact tree out of `services/api/public` is now a change to that file plus the
+API's own readers and deployment.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
