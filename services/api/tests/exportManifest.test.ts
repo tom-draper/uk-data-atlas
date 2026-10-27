@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import test from "node:test";
 import type { DataCatalog } from "../src/dataCatalog";
-import { compileExportManifest } from "../src/exportManifest";
+import { compileExportManifest } from "../../../pipeline/src/exportManifest";
 import { sha256 } from "../src/contentHash";
 import { readParquet } from "./parquetFixtures";
 

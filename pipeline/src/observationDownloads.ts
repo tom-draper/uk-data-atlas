@@ -1,25 +1,15 @@
+import type { ObservationDownload } from "../../shared/observationDownloads";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
-import type { MeasureObservation } from "./dataCatalog";
-import type { BulkExport } from "./exportManifest";
-import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
-import { writeParquet, type ParquetColumn } from "./parquet";
-import { sha256 } from "./contentHash";
-
-export type ObservationDownload = {
-	format: "csv" | "parquet";
-	artifact: string;
-	href: string;
-	/** The size of the file once any stored encoding is undone. */
-	bytes: number;
-	contentHash: string;
-	/**
-	 * Present when the file is stored gzipped, as CSV is: its size as sent
-	 * with `Content-Encoding: gzip`.
-	 */
-	gzipBytes?: number;
-};
+import type { MeasureObservation } from "../../shared/dataCatalog";
+import type { BulkExport } from "../../shared/exportManifest";
+import {
+	isMeasureTable,
+	type MeasureTableArtifact,
+} from "../../shared/measureTable";
+import { writeParquet, type ParquetColumn } from "../../shared/parquet";
+import { sha256 } from "../../shared/contentHash";
 
 type DownloadArtifact =
 	| { periods: Array<{ period: string; records: MeasureObservation[] }> }

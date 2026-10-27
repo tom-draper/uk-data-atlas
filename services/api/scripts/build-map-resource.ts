@@ -48,6 +48,7 @@ const COMPILER_SOURCES = [
 	// The tiler, shared with the website's precompile.
 	...sourceFiles("../../packages/map-tiles/src"),
 	"src/parquet.ts",
+	"../../shared/parquet.ts",
 	"src/flatDownloads.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.

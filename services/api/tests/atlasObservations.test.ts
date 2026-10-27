@@ -24,7 +24,7 @@ import {
 	observationTableOf,
 	type MeasureTableArtifact,
 } from "../src/observationTables";
-import { compileExportManifest } from "../src/exportManifest";
+import { compileExportManifest } from "../../../pipeline/src/exportManifest";
 import { compileMeasureCompatibility } from "../src/measureCompatibility";
 import { route } from "../src/routes";
 import { dataCatalog, measureObservations, testContext } from "./routeFixtures";

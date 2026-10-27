@@ -1,12 +1,12 @@
 import {
 	observationDatabasePath,
 	assertObservationCatalogue,
-} from "../src/atlasObservations";
+} from "../../shared/atlasObservations";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { DataCatalog } from "../src/dataCatalog";
-import { compileExportManifest } from "../src/exportManifest";
+import type { DataCatalog } from "../../shared/dataCatalog";
+import { compileExportManifest } from "./exportManifest";
 
 export const buildExportManifest = (repositoryRoot: string) => {
 	const publicDirectory = join(repositoryRoot, "services", "api", "public");
@@ -30,7 +30,7 @@ export const buildExportManifest = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildExportManifest(repositoryRoot);
 	console.log(
 		`Wrote ${result.exportCount} bulk exports to ${result.outputPath}`,
