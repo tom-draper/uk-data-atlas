@@ -536,6 +536,12 @@ its config directory and the release database, and
 artifact tree out of `services/api/public` is now a change to that file plus the
 API's own readers and deployment.
 
+The root `verify-*` and `place-postcodes` scripts import shared and pipeline
+modules directly. Four verifiers (`verify-atlas-areas`, `-crosswalks`,
+`-datasets` and `-locations`) still import `services/api/src/routes` and the API
+route fixtures, because they check that the API's responses agree with the
+release. A test allows only those two modules.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
