@@ -215,8 +215,11 @@ const apiStages = [
 			"area-inventory",
 			"named-locations",
 		],
-		undefined,
-		{ cacheable: false },
+		["--dir", "../..", "exec", "tsx", "pipeline/src/build-place-index.ts"],
+		{
+			cacheable: false,
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"area-search-index",
