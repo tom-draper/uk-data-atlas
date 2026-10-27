@@ -5,9 +5,13 @@ import { join } from "path";
 import {
 	decodeCompactPayload,
 	encodeCompactPayload,
-} from "../../lib/data/compactPayload";
+} from "@uk-data-atlas/catalogue/compactPayload";
 import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
-import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
+import {
+	elapsedSince,
+	formatKb,
+	logArtifact,
+} from "../../../shared/buildTiming";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";

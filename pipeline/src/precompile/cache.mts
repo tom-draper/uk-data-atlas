@@ -3,10 +3,7 @@ import { createReadStream } from "fs";
 import { readFile, readdir, stat } from "fs/promises";
 import { join, relative } from "path";
 import type { SourceArtifact } from "@uk-data-atlas/datasets";
-import {
-	datasetFingerprints,
-	precompileFingerprints,
-} from "../precompile-fingerprint.mjs";
+import { datasetFingerprints, precompileFingerprints } from "./fingerprint.mjs";
 import { COMPILED_DATASETS, OUT_DIR, ROOT, SOURCE_DATA } from "./paths.mts";
 import type {
 	CatalogueDefinition,

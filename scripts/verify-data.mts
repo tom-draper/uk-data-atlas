@@ -8,7 +8,7 @@ import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { precompileFingerprints } from "./precompile-fingerprint.mjs";
+import { precompileFingerprints } from "../pipeline/src/precompile/fingerprint.mjs";
 
 const args = process.argv.slice(2);
 if (args.length !== 0) {

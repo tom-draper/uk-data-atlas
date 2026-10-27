@@ -18,12 +18,12 @@ const baseInputs = [
 	"package.json",
 	"pnpm-lock.yaml",
 	"tsconfig.json",
-	"scripts/precompile-fingerprint.mjs",
+	"pipeline/src/precompile/fingerprint.mjs",
 ];
 
 /** What compiles a dataset, whichever dataset it is. */
 const datasetCompilerInputs = [
-	"scripts/precompile/compileDataset.mts",
+	"pipeline/src/precompile/compileDataset.mts",
 	"packages/datasets/src/compileDataset.ts",
 ];
 
@@ -38,10 +38,9 @@ const pipelineInputs = [
 	"scripts/dataset-discovery.ts",
 	"scripts/dataset-region-chunks.mts",
 	"scripts/generate-dataset-registry.ts",
-	"scripts/generate-sources-readme.mts",
 	"scripts/precompile",
+	"pipeline/src/precompile",
 	"scripts/compile-website-data.mts",
-	"scripts/precompile-selection.ts",
 	"packages/geography/package.json",
 	"packages/geography/src",
 	"packages/map-tiles/package.json",

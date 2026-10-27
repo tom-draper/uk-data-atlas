@@ -16,14 +16,14 @@ import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
-} from "./precompile-selection";
+} from "./precompile/selection";
 import { loadDatasetReuseContext, NO_REUSE } from "./precompile/cache.mts";
 import { compileDataset } from "./precompile/compileDataset.mts";
 import { compileDatasets } from "./precompile/datasetPool.mts";
 import { out } from "./precompile/output.mts";
 import { COMPILED_DATASETS } from "./precompile/paths.mts";
 import type { CompiledDatasets } from "./precompile/types.mts";
-import { elapsedSince } from "./timing.mts";
+import { elapsedSince } from "../../shared/buildTiming";
 
 export const COMPILED_MANIFEST = join(
 	COMPILED_DATASETS,

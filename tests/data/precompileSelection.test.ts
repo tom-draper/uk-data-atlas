@@ -3,7 +3,7 @@ import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
-} from "../../scripts/precompile-selection";
+} from "../../pipeline/src/precompile/selection";
 
 const definitions = [
 	{ type: "claimantCount", precompiledFile: "claimant-count" },

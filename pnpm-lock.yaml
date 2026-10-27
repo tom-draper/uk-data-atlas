@@ -371,6 +371,9 @@ importers:
       jsts:
         specifier: 2.12.1
         version: 2.12.1
+      papaparse:
+        specifier: ^5.7.0
+        version: 5.7.0
       proj4:
         specifier: ^2.22.0
         version: 2.22.0
@@ -393,6 +396,9 @@ importers:
       '@types/node':
         specifier: ^26.6.2
         version: 26.6.2
+      '@types/papaparse':
+        specifier: ^5.5.2
+        version: 5.5.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

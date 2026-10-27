@@ -58,11 +58,15 @@ const apiStages = [
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
-			"scripts/compile-datasets.mts",
+			"pipeline/src/compile-datasets.mts",
 		],
 		{
 			outputs: ["data/build/datasets"],
-			codeInputs: ["scripts/precompile", "package.json"],
+			codeInputs: [
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+				"pipeline/src/precompile",
+			],
 		},
 	),
 	stage(
@@ -636,7 +640,6 @@ const websiteStages = [
 				"shared/buildTiming.ts",
 				"scripts/compile-boundary-tiles.mts",
 				"scripts/generate-dataset-registry.ts",
-				"scripts/generate-sources-readme.mts",
 			],
 		},
 	),

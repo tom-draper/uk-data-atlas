@@ -1,12 +1,12 @@
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { readCompiledFromDisk } from "./compileDataset.mts";
-import { COMPILED_DATASETS } from "./paths.mts";
+import { readCompiledFromDisk } from "../../pipeline/src/precompile/compileDataset.mts";
+import { COMPILED_DATASETS } from "../../pipeline/src/precompile/paths.mts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
 	ExistingManifestDataset,
-} from "./types.mts";
+} from "../../pipeline/src/precompile/types.mts";
 
 const RUN_COMPILE = "Run pnpm data:build --only datasets first.";
 
