@@ -233,7 +233,18 @@ const apiStages = [
 		"boundary-registry",
 		"area-inventory",
 	]),
-	stage("export-manifest", ["data-catalog"]),
+	stage(
+		"export-manifest",
+		["data-catalog"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-export-manifest.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage("postcode-areas", [
 		"geography-catalogues",
 		"atlas-sqlite",

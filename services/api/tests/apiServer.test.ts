@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { connect, type AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
-import { compileExportManifest } from "../src/exportManifest";
+import { compileExportManifest } from "../../../pipeline/src/exportManifest";
 import { observationArtifactName } from "../src/dataCatalog";
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "../src/contentHash";
