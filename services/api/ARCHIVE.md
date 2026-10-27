@@ -1,6 +1,6 @@
 # Import reviewed ONS boundary releases
 
-Use the pinned source catalogue in `scripts/onsBoundarySources.ts` to acquire
+Use the pinned source catalogue in `pipeline/src/sources/onsBoundarySources.ts` to acquire
 additional boundary releases before building API data. The catalogue currently
 covers May 2026 Senedd constituencies, the unthinned 2001 LSOA boundaries, and
 the 2001 and 2011 MSOA and output-area boundaries for England and Wales.
@@ -8,10 +8,10 @@ the 2001 and 2011 MSOA and output-area boundaries for England and Wales.
 Choose release identities explicitly:
 
 ```sh
-pnpm --dir services/api fetch:boundaries seneddConstituency/2026-05-w-bgc
-pnpm --dir services/api fetch:boundaries msoa/2001-12-ew-bgc-v2 msoa/2011-12-ew-bgc-v3
-pnpm --dir services/api fetch:boundaries outputArea/2001-12-ew-bgc outputArea/2011-12-ew-bgc-v2
-pnpm --dir services/api fetch:boundaries lsoa/2001-12-ew-bgc-v2
+pnpm --dir pipeline fetch:boundaries seneddConstituency/2026-05-w-bgc
+pnpm --dir pipeline fetch:boundaries msoa/2001-12-ew-bgc-v2 msoa/2011-12-ew-bgc-v3
+pnpm --dir pipeline fetch:boundaries outputArea/2001-12-ew-bgc outputArea/2011-12-ew-bgc-v2
+pnpm --dir pipeline fetch:boundaries lsoa/2001-12-ew-bgc-v2
 ```
 
 The importer pages the official polygon service in object-ID order and requests

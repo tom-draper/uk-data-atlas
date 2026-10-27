@@ -181,7 +181,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const [sourcesPath] = process.argv.slice(2);
 	if (!sourcesPath)
 		throw new Error(
-			"Usage: tsx scripts/fetch-ons-lookup.ts <sources.json>",
+			"Usage: tsx pipeline/src/sources/fetch-ons-lookup.ts <sources.json>",
 		);
 	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
 	const { readFileSync } = await import("node:fs");

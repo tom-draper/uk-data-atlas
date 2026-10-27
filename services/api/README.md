@@ -270,7 +270,7 @@ only **available** when its endpoint, contract and provenance are published.
       and its namesake wards; a name the measure answers for no candidate is a
       422 saying why for each.
 - [x] Expand parent/child coverage from official ONS lookups, downloaded
-      reproducibly by `scripts/fetch-ons-lookup.ts` from the sources listed in
+      reproducibly by `pipeline/src/sources/fetch-ons-lookup.ts` from the sources listed in
       `config/ons-lookups.json`: LSOA 2021 and MSOA 2021 → LAD (May 2023),
       LAD → county and unitary authority and LAD → combined authority
       (December 2025 releases), and ITL3 → ITL2 → ITL1 (2021). Every code on
@@ -1085,7 +1085,7 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Postcodes, homes and addresses — data required, later
 
-Refresh the stored postcode source with `pnpm --dir services/api refresh:onspd`. The
+Refresh the stored postcode source with `pnpm --dir pipeline fetch:onspd`. The
 command downloads the current ONS Postcode Directory, removes Northern Ireland
 rows before writing the compact permitted source under `data/source/postcodes/onspd/`,
 and records its edition, source hash and required attribution. To carry that
