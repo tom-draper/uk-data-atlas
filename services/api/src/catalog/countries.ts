@@ -1,1 +1,1 @@
-export * from "../../../../shared/catalogCountries";
+export * from "../../../../shared/catalog/countries";
