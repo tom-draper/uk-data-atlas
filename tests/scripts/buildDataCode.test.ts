@@ -326,6 +326,14 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("measure-compatibility")!.includes(path), path);
 	}
 	for (const path of [
+		"pipeline/src/build-lookup-manifest.ts",
+		"shared/lookupExports.ts",
+		"pipeline/package.json",
+		"pipeline/tsconfig.json",
+	]) {
+		assert.ok(inputs.get("lookup-manifest")!.includes(path), path);
+	}
+	for (const path of [
 		"pipeline/src/build-export-manifest.ts",
 		"pipeline/src/exportManifest.ts",
 		"pipeline/src/observationDownloads.ts",
