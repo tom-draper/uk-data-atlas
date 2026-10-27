@@ -26,3 +26,6 @@ export * from "./validationReport";
 export * from "@uk-data-atlas/measures";
 export * from "./atlasStatistics";
 export * from "./fuelPovertyStatistics";
+export * from "./declaredStatistics";
+export * from "./statisticsDatasets";
+export * from "./statisticsDatasets/measures";
