@@ -217,10 +217,12 @@ test("documents rebuild pins the final manifest without rebuilding the initial m
 	]);
 	assert.deepEqual(build.commands(), [
 		[
+			"--dir",
+			"../..",
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
-			"scripts/build-evidence-documents.ts",
+			"pipeline/src/build-evidence-documents.ts",
 		],
 		[
 			"--dir",

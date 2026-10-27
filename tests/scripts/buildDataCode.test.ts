@@ -165,6 +165,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const stage of [
 		"api-datasets",
+		"documents",
 		"postcode-areas",
 		"atlas-pages",
 		"atlas-lookups",

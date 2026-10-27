@@ -1,22 +1,22 @@
 import { build } from "esbuild";
-import { measureCapability } from "../src/measureCapability";
+import { measureCapability } from "../../shared/measureCapability";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readApiCatalogues } from "../src/catalogueLoader";
-import { evidenceInputsHash } from "../../../shared/evidenceInputsHash";
-import { buildEvidenceMeasure } from "../../../shared/buildEvidenceMeasure";
-import { evidenceReport } from "../src/evidenceReports";
+import { readApiCatalogues } from "../../shared/catalogueLoader";
+import { evidenceInputsHash } from "../../shared/evidenceInputsHash";
+import { buildEvidenceMeasure } from "../../shared/buildEvidenceMeasure";
+import { evidenceReport } from "../../shared/evidenceReports";
 import {
 	writeEvidenceDocument,
 	cachedEvidenceMeasure,
-} from "../../../shared/evidenceDocumentStore";
-import { availableReconciliations } from "../src/measureReconciliation";
-import { publicJson } from "../src/publicJson";
-import type { RouteContext } from "../src/routing";
+} from "../../shared/evidenceDocumentStore";
+import { availableReconciliations } from "../../shared/measureReconciliation";
+import { publicJson } from "../../shared/publicJson";
+import type { RouteContext } from "../../shared/routing";
 
-const apiRoot = resolve(import.meta.dirname, "..");
+const apiRoot = resolve(import.meta.dirname, "../../services/api");
 const directory = join(apiRoot, "public");
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
