@@ -159,7 +159,9 @@ All tables are `STRICT` with integer keys. Writer: `shared/atlasStatistics.ts`.
 
 `observation.area_version_id` references `areas(id)`, one row per release and
 code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
-place queries. The build fails if an observation's area is not in its series'
+place queries (`observation_area`); `series` by `(dataset_id, measure_id)`
+(`series_dataset`) and `series_member` by `(member_id, series_id)`
+(`series_member_member`). The build fails if an observation's area is not in its series'
 release, if an observed value is null, or if a dataset's `verify` hook fails.
 `v_observation` joins everything into readable rows (dataset, measure, unit,
 members, area code and name, geography, release, period, value, status,
@@ -180,8 +182,8 @@ Run `pnpm exec vitest run --project built tests/built/atlasStatistics.test.ts`
 to compile the real fuel poverty payload and LSOA inventory, build an isolated
 database through `buildAtlasSqlite`, and compare every byte. Other inventories
 are empty fixtures. `data/build/statistics-pilot.json` records database bytes
-with and without the statistics tables after vacuuming, and the size of the
-area index. This measures the statistics tables, not a full release.
+with and without the statistics tables after vacuuming, the size of the area
+index, and bytes per table and index where SQLite has `dbstat`. This measures the statistics tables, not a full release.
 
 ### Areas
 
