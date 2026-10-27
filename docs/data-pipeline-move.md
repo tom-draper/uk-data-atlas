@@ -499,7 +499,8 @@ pipeline configuration. Catalogue JSON and observation artifact bytes, SQLite
 publication, cleanup, and output paths are unchanged.
 
 The postcode counts compiler, cache publisher, postcode and area artifact types,
-code-unit ordering helper, and SQLite postcode shard reader live in `shared/`.
+code-unit ordering helper, and SQLite postcode and area shard readers live in
+`shared/`.
 The API builder still reads the SQLite inputs and invokes the cache publisher.
 
 This completes the terrain and operations catalogue groups in move-order step 2
