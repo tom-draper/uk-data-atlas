@@ -18,6 +18,7 @@ import { buildAtlasSqlite } from "../../services/api/scripts/build-atlas-sqlite"
 import { buildTerrainCatalogue } from "../../pipeline/src/build-terrain-catalogue";
 import { rebuildFuelPoverty } from "../../shared/catalogueObservations";
 import { readVersionedAtlasDataset } from "../../shared/atlasSqlite";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 it("builds and serves every real fuel poverty value byte for byte and measures pilot storage", () => {
 	const repositoryRoot = process.cwd();
@@ -42,13 +43,13 @@ it("builds and serves every real fuel poverty value byte for byte and measures p
 		compiled.split("MANIFEST_ENTRY=")[1],
 	);
 	const text = readFileSync("data/build/datasets/fuel-poverty.json", "utf8");
-	mkdirSync("services/api/public", { recursive: true });
+	mkdirSync(artifactDirectory(repositoryRoot), { recursive: true });
 	buildAreaInventory(repositoryRoot);
 	// Unrelated inventories are empty fixtures; dataset and LSOA inputs use the real compilers.
 	const root = mkdtempSync(
 		join(repositoryRoot, "data/build/observation-pilot-"),
 	);
-	const publicRoot = join(root, "services/api/public");
+	const publicRoot = artifactDirectory(root);
 	const output = join(root, "data/build");
 	const write = (path: string, value: unknown) =>
 		writeFileSync(path, JSON.stringify(value));
@@ -57,11 +58,15 @@ it("builds and serves every real fuel poverty value byte for byte and measures p
 		mkdirSync(join(output, "datasets"), { recursive: true });
 		mkdirSync(join(output, "location-projections"), { recursive: true });
 		buildTerrainCatalogue(root);
-		cpSync("services/api/public/areas", join(publicRoot, "areas"), {
-			recursive: true,
-		});
 		cpSync(
-			"services/api/public/area-inventory.json",
+			join(artifactDirectory(repositoryRoot), "areas"),
+			join(publicRoot, "areas"),
+			{
+				recursive: true,
+			},
+		);
+		cpSync(
+			join(artifactDirectory(repositoryRoot), "area-inventory.json"),
 			join(publicRoot, "area-inventory.json"),
 		);
 		write(join(publicRoot, "crosswalk-inventory.json"), {

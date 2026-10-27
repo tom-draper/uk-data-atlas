@@ -31,6 +31,7 @@ import { route } from "../src/routes";
 import fixtures from "./fixtures/geometry-validity.json";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";
 import { registry, testContext } from "./routeFixtures";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 const spec: SchemaDocument = parse(
 	readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
@@ -211,8 +212,9 @@ test("compiles deterministic reports and serves them with metrics and provenance
 	const root = mkdtempSync(join(tmpdir(), "atlas-validity-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services", "api");
-	const publicRoot = join(apiRoot, "public");
+	const publicRoot = artifactRoot(apiRoot);
 	mkdirSync(publicRoot, { recursive: true });
+	mkdirSync(apiRoot, { recursive: true });
 	mkdirSync(join(root, "data/source", "boundaries"), { recursive: true });
 	for (const directory of ["src", "scripts"])
 		symlinkSync(

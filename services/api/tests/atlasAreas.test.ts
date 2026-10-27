@@ -8,12 +8,13 @@ import { areaTables } from "../src/atlasAreas";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
 import type { AreaInventory } from "../src/areaInventory";
 import { writeSqliteIndex } from "../src/sqliteIndex";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 test("relational areas preserve inventory order, aliases and record order without JSON", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-areas-"));
 	context.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	const directory = join(apiRoot, "public");
+	const directory = artifactRoot(apiRoot);
 	mkdirSync(directory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const inventory: AreaInventory = {

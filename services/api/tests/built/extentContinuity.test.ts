@@ -1,3 +1,4 @@
+import { artifactRoot } from "../../../../shared/dataLayout";
 import assert from "node:assert/strict";
 import { readStoredText } from "../../src/storedText";
 import { join } from "node:path";
@@ -7,7 +8,9 @@ import type {
 	CrosswalkInventory,
 } from "../../src/crosswalkInventory";
 
-const publicDirectory = new URL("../../public", import.meta.url).pathname;
+const publicDirectory = artifactRoot(
+	new URL("../..", import.meta.url).pathname,
+);
 
 const read = <T>(path: string) =>
 	JSON.parse(readStoredText(join(publicDirectory, path))) as T;

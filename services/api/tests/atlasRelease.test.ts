@@ -5,11 +5,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
 import { createAtlasRelease } from "../../../pipeline/src/atlasRelease";
+import { artifactDirectory } from "../../../shared/dataLayout";
 
 const fixture = (context: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-current-build-"));
 	context.after(() => rmSync(root, { recursive: true, force: true }));
-	const directory = join(root, "services/api/public");
+	const directory = artifactDirectory(root);
 	mkdirSync(directory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	writeFileSync(

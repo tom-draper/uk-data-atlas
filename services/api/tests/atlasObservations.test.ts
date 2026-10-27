@@ -32,6 +32,7 @@ import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 } from "../src/dataCatalog";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 const originalMeasure = dataCatalog.measures.find(
 	(measure) => measure.id === "small-area-fixture",
@@ -79,7 +80,7 @@ function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-observations-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	const publicDirectory = join(apiRoot, "public");
+	const publicDirectory = artifactRoot(apiRoot);
 	mkdirSync(publicDirectory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const path = join(root, "data/build/atlas.sqlite");
@@ -208,6 +209,7 @@ test("failed publication retains the database and legacy JSON, and cleans tempor
 			"retained until publication",
 		);
 		assert.deepEqual(readdirSync(join(root, "data/build")), [
+			"artifacts",
 			"atlas.sqlite",
 		]);
 	}

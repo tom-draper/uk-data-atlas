@@ -10,6 +10,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { readCrosswalkLookup } from "../src/crosswalkLoader";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 const entry = (id: string, geography: string) => ({
 	id,
@@ -24,7 +25,7 @@ const entry = (id: string, geography: string) => ({
 });
 
 const store = (apiRoot: string, inventory: CrosswalkInventory) => {
-	const directory = join(apiRoot, "public");
+	const directory = artifactRoot(apiRoot);
 	writeFileSync(
 		join(directory, "crosswalk-inventory.json"),
 		JSON.stringify(inventory),
@@ -45,7 +46,9 @@ const withArtifacts = (
 	const root = mkdtempSync(join(tmpdir(), "crosswalk-loader-"));
 	const directory = join(root, "services/api");
 	try {
-		mkdirSync(join(directory, "public", "crosswalks"), { recursive: true });
+		mkdirSync(join(artifactRoot(directory), "crosswalks"), {
+			recursive: true,
+		});
 		const inventory = {
 			schemaVersion: 1,
 			contentHash: "sha256:inventory",
@@ -63,7 +66,7 @@ const artifact = (
 	contentHash = `sha256:${id}`,
 ) =>
 	writeFileSync(
-		join(directory, "public", "crosswalks", `${id}.json`),
+		join(artifactRoot(directory), "crosswalks", `${id}.json`),
 		JSON.stringify({ schemaVersion: 1, id, contentHash, records: [] }),
 	);
 
@@ -80,7 +83,11 @@ test("reads a crosswalk artifact only when it is asked for", () => {
 			const lookup = readCrosswalkLookup(directory, inventory);
 
 			rmSync(
-				join(directory, "public", "crosswalks", "parish-to-lad.json"),
+				join(
+					artifactRoot(directory),
+					"crosswalks",
+					"parish-to-lad.json",
+				),
 			);
 
 			assert.equal(lookup.get("ward-to-lad")?.id, "ward-to-lad");

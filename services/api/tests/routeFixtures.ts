@@ -832,7 +832,7 @@ export const atlasRelease: AtlasRelease = {
 	artifacts: [
 		{
 			id: "boundary-registry",
-			path: "services/api/public/boundary-releases.json",
+			path: "data/build/artifacts/boundary-releases.json",
 			contentHash: "sha256:registry",
 		},
 	],

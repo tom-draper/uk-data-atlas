@@ -22,6 +22,7 @@ import {
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
+import { artifactRoot } from "../../../../shared/dataLayout";
 
 /**
  * The published artifact, held to the descriptor that describes it.
@@ -33,7 +34,7 @@ import { decodeTile } from "../vectorTileFixtures";
  */
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const publicRoot = join(apiRoot, "public");
+const publicRoot = artifactRoot(apiRoot);
 
 const manifest = JSON.parse(
 	readFileSync(join(publicRoot, "map-resources.json"), "utf8"),

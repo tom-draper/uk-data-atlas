@@ -4,15 +4,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
 import { readPublicManifest } from "../src/publicManifest";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 type Fixture = { schemaVersion: 1; entries: string[] };
 
 const apiRootWith = (t: TestContext, manifest: unknown) => {
-	const apiRoot = mkdtempSync(join(tmpdir(), "public-manifest-"));
-	t.after(() => rmSync(apiRoot, { recursive: true, force: true }));
-	mkdirSync(join(apiRoot, "public"));
+	const root = mkdtempSync(join(tmpdir(), "public-manifest-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	const apiRoot = join(root, "services/api");
+	mkdirSync(artifactRoot(apiRoot), { recursive: true });
 	writeFileSync(
-		join(apiRoot, "public", "fixture.json"),
+		join(artifactRoot(apiRoot), "fixture.json"),
 		JSON.stringify(manifest),
 	);
 	return apiRoot;
@@ -47,7 +49,7 @@ for (const [name, manifest] of [
 					"fixture manifest",
 				),
 			{
-				message: `Invalid fixture manifest at ${join(apiRoot, "public", "fixture.json")}`,
+				message: `Invalid fixture manifest at ${join(artifactRoot(apiRoot), "fixture.json")}`,
 			},
 		);
 	});

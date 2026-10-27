@@ -11,6 +11,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import { buildDerivedBoundaries } from "../../../pipeline/src/build-derived-boundaries";
+import { artifactDirectory } from "../../../shared/dataLayout";
 
 test("writes a derived GeoJSON artifact from the configured raw source selection", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
@@ -22,7 +23,7 @@ test("writes a derived GeoJSON artifact from the configured raw source selection
 		"2011-12-ew-bgc-v3",
 	);
 	mkdirSync(sourceDirectory, { recursive: true });
-	mkdirSync(join(root, "services", "api", "public"), { recursive: true });
+	mkdirSync(artifactDirectory(root), { recursive: true });
 	writeFileSync(
 		join(sourceDirectory, "meta.json"),
 		JSON.stringify({ files: [{ path: "areas.geojson", role: "source" }] }),
@@ -50,10 +51,7 @@ test("writes a derived GeoJSON artifact from the configured raw source selection
 		const artifact = JSON.parse(
 			readFileSync(
 				join(
-					root,
-					"services",
-					"api",
-					"public",
+					artifactDirectory(root),
 					"boundaries",
 					"lsoa",
 					"2011-12-w-bgc.geojson",
@@ -66,7 +64,7 @@ test("writes a derived GeoJSON artifact from the configured raw source selection
 		]);
 		assert.equal(
 			existsSync(
-				join(root, "services/api/public/derived-boundaries.json"),
+				join(artifactDirectory(root), "derived-boundaries.json"),
 			),
 			false,
 		);

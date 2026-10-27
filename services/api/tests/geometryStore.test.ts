@@ -13,6 +13,7 @@ import {
 import { encodeGeometryStore, readGeometryStore } from "../src/geometryStore";
 import { createAreaGeometryCache } from "../src/geometryLoader";
 import { packGeometry, unpackGeometry } from "../src/packedGeometry";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 const square = (west: number, south: number, size: number) => [
 	[
@@ -375,11 +376,11 @@ test("rechecks missing and stale stores after eviction without a source fallback
 test("the API factory validates the store and serves without raw boundary files", (t) => {
 	const { root, sources } = gridRelease(t);
 	const apiRoot = join(root, "services", "api");
-	const store = join(apiRoot, "public", "geometry-store");
+	const store = join(artifactRoot(apiRoot), "geometry-store");
 	mkdirSync(store, { recursive: true });
 	const source = sources.get("ward/2025-05-uk-bgc")!;
 	writeFileSync(
-		join(apiRoot, "public", "geometry-sources.json"),
+		join(artifactRoot(apiRoot), "geometry-sources.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			releases: [

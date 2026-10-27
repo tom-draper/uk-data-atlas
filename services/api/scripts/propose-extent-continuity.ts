@@ -1,3 +1,4 @@
+import { artifactDirectory } from "../../../shared/dataLayout";
 import { buildArtifactPath } from "./geography-build-path";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -30,7 +31,7 @@ const toKebabCase = (value: string) =>
  * shared codes become identity; this only chooses which releases to compare.
  */
 export const proposeExtentContinuity = (repositoryRoot: string) => {
-	const directory = join(repositoryRoot, "services", "api", "public");
+	const directory = artifactDirectory(repositoryRoot);
 	const read = <T>(path: string) =>
 		JSON.parse(
 			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),

@@ -19,12 +19,13 @@ import {
 } from "../src/crosswalkLoader";
 import { writeSqliteIndex } from "../src/sqliteIndex";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 test("relational crosswalk rows preserve endpoint order, zero weights and empty targets", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-crosswalks-"));
 	context.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	const directory = join(apiRoot, "public/crosswalks");
+	const directory = join(artifactRoot(apiRoot), "crosswalks");
 	mkdirSync(directory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const records = [
@@ -82,7 +83,7 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 		})),
 	};
 	writeFileSync(
-		join(apiRoot, "public/crosswalk-inventory.json"),
+		join(artifactRoot(apiRoot), "crosswalk-inventory.json"),
 		JSON.stringify(inventory),
 	);
 	const input = join(directory, `${artifact.id}.json`);
@@ -91,8 +92,11 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 			join(directory, `${value.id}.json`),
 			JSON.stringify(value),
 		);
-	emptyCrosswalkAreas(join(apiRoot, "public"), inventory);
-	const areaInventoryPath = join(apiRoot, "public/area-inventory.json");
+	emptyCrosswalkAreas(artifactRoot(apiRoot), inventory);
+	const areaInventoryPath = join(
+		artifactRoot(apiRoot),
+		"area-inventory.json",
+	);
 	const areaInventory = JSON.parse(readFileSync(areaInventoryPath, "utf8"));
 	areaInventory.releases[0] = {
 		...areaInventory.releases[0],
@@ -105,7 +109,7 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 	};
 	writeFileSync(areaInventoryPath, JSON.stringify(areaInventory));
 	writeFileSync(
-		join(apiRoot, "public/source-areas.json"),
+		join(artifactRoot(apiRoot), "source-areas.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "source-areas",
@@ -117,8 +121,8 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 		path,
 		{},
 		{
-			...areaTables(join(apiRoot, "public")),
-			...crosswalkTables(join(apiRoot, "public")),
+			...areaTables(artifactRoot(apiRoot)),
+			...crosswalkTables(artifactRoot(apiRoot)),
 		},
 	);
 	assert.equal(
@@ -275,8 +279,8 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 			path,
 			{},
 			{
-				...areaTables(join(apiRoot, "public")),
-				...crosswalkTables(join(apiRoot, "public")),
+				...areaTables(artifactRoot(apiRoot)),
+				...crosswalkTables(artifactRoot(apiRoot)),
 			},
 		);
 	for (const [source, message] of [
@@ -318,14 +322,14 @@ test("relational crosswalk rows preserve endpoint order, zero weights and empty 
 				path,
 				{},
 				{
-					...areaTables(join(apiRoot, "public")),
-					...crosswalkTables(join(apiRoot, "public")),
+					...areaTables(artifactRoot(apiRoot)),
+					...crosswalkTables(artifactRoot(apiRoot)),
 				},
 			),
 		/Invalid crosswalk artifact/,
 	);
 	assert.deepEqual(readFileSync(path), before);
-	rmSync(join(apiRoot, "public"), { recursive: true });
+	rmSync(artifactRoot(apiRoot), { recursive: true });
 	assert.equal(
 		JSON.stringify(
 			readCrosswalkLookup(apiRoot, inventory).get(artifact.id),

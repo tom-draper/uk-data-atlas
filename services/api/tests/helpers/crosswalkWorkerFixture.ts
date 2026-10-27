@@ -7,10 +7,11 @@ import type {
 } from "../../src/crosswalkAdapters";
 import { readCompiledAreaLookup } from "../../scripts/crosswalk-build-inputs";
 import { readGeometrySourceLookup } from "../../src/geometrySources";
+import { artifactDirectory } from "../../../../shared/dataLayout";
 
 export const crosswalkWorkerFixture = () => {
 	const root = mkdtempSync(join(tmpdir(), "crosswalk-workers-"));
-	const outputDirectory = join(root, "services/api/public");
+	const outputDirectory = artifactDirectory(root);
 	mkdirSync(outputDirectory, { recursive: true });
 	mkdirSync(join(root, "data/source"), { recursive: true });
 	const endpoints = [

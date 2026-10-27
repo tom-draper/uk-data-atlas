@@ -9,10 +9,15 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { createApiServer } from "../../src/apiServer";
 import { readApiCatalogues } from "../../src/catalogueLoader";
+import {
+	artifactRoot,
+	buildDirectory,
+	repositoryRootOf,
+} from "../../../../shared/dataLayout";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
 
@@ -21,19 +26,32 @@ test("loads evidence build inputs when the previous document manifest is stale",
 	t.after(() => rmSync(repository, { recursive: true, force: true }));
 	const root = join(repository, "services/api");
 	mkdirSync(root, { recursive: true });
-	symlinkSync(resolve(apiRoot, "../../data"), join(repository, "data"));
-	for (const entry of readdirSync(apiRoot)) {
-		if (entry !== "public")
-			symlinkSync(join(apiRoot, entry), join(root, entry));
-	}
-	const directory = join(root, "public");
+	// Link every project and data entry except the artifacts, which hold the
+	// one document manifest this test replaces.
+	const link = (from: string, to: string, except?: string) => {
+		mkdirSync(to, { recursive: true });
+		for (const entry of readdirSync(from))
+			if (entry !== except)
+				symlinkSync(join(from, entry), join(to, entry));
+	};
+	link(apiRoot, root);
+	const realBuild = buildDirectory(repositoryRootOf(apiRoot));
+	link(dirname(realBuild), join(repository, "data"), "build");
+	link(realBuild, join(repository, "data", "build"), "artifacts");
+	const directory = artifactRoot(root);
 	mkdirSync(directory);
-	for (const entry of readdirSync(join(apiRoot, "public"))) {
+	for (const entry of readdirSync(artifactRoot(apiRoot))) {
 		if (entry !== "evidence-documents.json")
-			symlinkSync(join(apiRoot, "public", entry), join(directory, entry));
+			symlinkSync(
+				join(artifactRoot(apiRoot), entry),
+				join(directory, entry),
+			);
 	}
 	const manifest = JSON.parse(
-		readFileSync(join(apiRoot, "public/evidence-documents.json"), "utf8"),
+		readFileSync(
+			join(artifactRoot(apiRoot), "evidence-documents.json"),
+			"utf8",
+		),
 	);
 	writeFileSync(
 		join(directory, "evidence-documents.json"),

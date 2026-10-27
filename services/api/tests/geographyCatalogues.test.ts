@@ -28,12 +28,13 @@ import {
 } from "../src/catalogueManifestLoader";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
+import { artifactDirectory, artifactRoot } from "../../../shared/dataLayout";
 
 const fixture = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "geography-catalogues-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
-	mkdirSync(join(root, "services/api/public"), { recursive: true });
+	mkdirSync(artifactDirectory(root), { recursive: true });
 	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
 	database.exec(
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
@@ -61,10 +62,7 @@ const fixture = (t: TestContext) => {
 				"\t",
 			) + "\n",
 		);
-		writeFileSync(
-			join(root, "services/api/public", `${id}.json`),
-			"obsolete",
-		);
+		writeFileSync(join(artifactDirectory(root), `${id}.json`), "obsolete");
 	}
 	return { root, apiRoot: join(root, "services/api") };
 };
@@ -81,7 +79,10 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 	buildGeographyCatalogues(root);
 	for (const [id, payload] of expected) {
 		assert.equal(readAtlasPayload(root, id), payload);
-		assert.equal(existsSync(join(apiRoot, "public", `${id}.json`)), false);
+		assert.equal(
+			existsSync(join(artifactRoot(apiRoot), `${id}.json`)),
+			false,
+		);
 	}
 	assert.equal(readAtlasPayload(root, "dataset:existing"), "retained");
 	rmSync(join(root, "data/build/geography"), { recursive: true });
@@ -165,7 +166,7 @@ test("missing compiler inputs leave the database and old public files intact", (
 		before,
 	);
 	assert.equal(
-		existsSync(join(apiRoot, "public/boundary-releases.json")),
+		existsSync(join(artifactRoot(apiRoot), "boundary-releases.json")),
 		true,
 	);
 	assert.equal(
@@ -187,7 +188,7 @@ test("a failed SQLite update keeps the previous database and removes its tempora
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(existsSync(`${path}.geography.tmp`), false);
 	assert.equal(
-		existsSync(join(apiRoot, "public/boundary-releases.json")),
+		existsSync(join(artifactRoot(apiRoot), "boundary-releases.json")),
 		true,
 	);
 });

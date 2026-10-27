@@ -1,6 +1,12 @@
 import { compileOperationTemplates } from "../../../pipeline/src/operationTemplates";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -172,9 +178,11 @@ test("leaves a parameter an operation refuses with its reason to the operation",
 	);
 });
 
-test("writes the operations into an API root with no public directory yet", (t) => {
-	const apiRoot = mkdtempSync(join(tmpdir(), "atlas-operations-"));
-	t.after(() => rmSync(apiRoot, { recursive: true, force: true }));
+test("writes the operations into an API root with no artifacts directory yet", (t) => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-operations-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	const apiRoot = join(root, "services/api");
+	mkdirSync(apiRoot, { recursive: true });
 	writeFileSync(join(apiRoot, "openapi.yaml"), "openapi: 3.1.0\npaths: {}\n");
 
 	const { outputPath } = buildOperations(apiRoot);

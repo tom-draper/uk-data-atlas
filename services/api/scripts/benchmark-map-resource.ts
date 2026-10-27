@@ -1,3 +1,4 @@
+import { artifactDirectory } from "../../../shared/dataLayout";
 import { buildArtifactPath } from "./geography-build-path";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -14,7 +15,7 @@ import {
 // consulting the map-resource build cache or overwriting published artifacts.
 const root = resolve(process.argv[2] ?? ".");
 const id = process.argv[3] ?? "country/2025-12-uk-bgc";
-const out = join(root, "services/api/public");
+const out = artifactDirectory(root);
 const registry: { releases: BoundaryReleaseSummary[] } = JSON.parse(
 	readFileSync(buildArtifactPath(root, "boundary-releases.json"), "utf8"),
 );

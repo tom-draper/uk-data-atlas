@@ -7,6 +7,7 @@ import { gzipSync } from "node:zlib";
 import { readAtlasLookups } from "../src/atlasLookups";
 import { route as routeRequest } from "../src/routes";
 import { testContext } from "./routeFixtures";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 const lookup = {
 	path: "/nowhere",
@@ -54,9 +55,9 @@ test("reads the lookup manifest and checks each stored file", () => {
 	const apiRoot = join(root, "services/api");
 	const directory = join(root, "data/build/atlas-assets");
 	try {
-		mkdirSync(join(apiRoot, "public"), { recursive: true });
+		mkdirSync(artifactRoot(apiRoot), { recursive: true });
 		writeFileSync(
-			join(apiRoot, "public", "atlas-lookups.json"),
+			join(artifactRoot(apiRoot), "atlas-lookups.json"),
 			"obsolete invalid manifest",
 		);
 		assert.equal(readAtlasLookups(apiRoot).size, 0);
