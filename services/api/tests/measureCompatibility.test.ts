@@ -6,7 +6,7 @@ import type {
 	DataCatalog,
 	MeasureObservationArtifact,
 } from "../src/dataCatalog";
-import { compileMeasureCompatibility } from "../src/measureCompatibility";
+import { compileMeasureCompatibility } from "../../../pipeline/src/measureCompatibility";
 
 const dataCatalog: DataCatalog = {
 	schemaVersion: 1,

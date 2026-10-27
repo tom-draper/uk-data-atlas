@@ -1,19 +1,25 @@
 import {
 	observationDatabasePath,
 	assertObservationCatalogue,
-} from "../src/atlasObservations";
-import { buildArtifactPath } from "./geography-build-path";
+} from "../../shared/atlasObservations";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import {
 	readSourceObservations,
 	type MeasureTableArtifact,
-} from "../src/observationTables";
+} from "../../shared/observationTables";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import { type DataCatalog, observationArtifactName } from "../src/dataCatalog";
-import { compileMeasureCompatibility } from "../src/measureCompatibility";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../shared/areaInventory";
+import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import {
+	type DataCatalog,
+	observationArtifactName,
+} from "../../shared/dataCatalog";
+import { compileMeasureCompatibility } from "./measureCompatibility";
 
 const read = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;
@@ -72,7 +78,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildMeasureCompatibility(repositoryRoot);
 	console.log(
 		`Wrote compatibility for ${result.measureCount} measures to ${result.outputPath}`,
