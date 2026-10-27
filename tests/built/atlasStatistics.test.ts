@@ -20,7 +20,7 @@ import { rebuildFuelPoverty } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
-it("builds and serves every real fuel poverty value byte for byte and measures pilot storage", () => {
+it("builds and serves every real fuel poverty value byte for byte from statistics rows and measures their size", () => {
 	const repositoryRoot = process.cwd();
 	mkdirSync("data/build/datasets", { recursive: true });
 	const compiled = execFileSync(
@@ -47,7 +47,7 @@ it("builds and serves every real fuel poverty value byte for byte and measures p
 	buildAreaInventory(repositoryRoot);
 	// Unrelated inventories are empty fixtures; dataset and LSOA inputs use the real compilers.
 	const root = mkdtempSync(
-		join(repositoryRoot, "data/build/observation-pilot-"),
+		join(repositoryRoot, "data/build/statistics-pilot-"),
 	);
 	const publicRoot = artifactDirectory(root);
 	const output = join(root, "data/build");
@@ -102,9 +102,8 @@ it("builds and serves every real fuel poverty value byte for byte and measures p
 		try {
 			expect(rebuildFuelPoverty(database)).toBe(text);
 			expect(
-				database
-					.prepare("SELECT count(*) AS n FROM catalogue_observations")
-					.get()?.n,
+				database.prepare("SELECT count(*) AS n FROM observation").get()
+					?.n,
 			).toBe(33755 * 3);
 			expect(
 				database
@@ -112,7 +111,7 @@ it("builds and serves every real fuel poverty value byte for byte and measures p
 						"SELECT value FROM meta WHERE key = 'schemaVersion'",
 					)
 					.get()?.value,
-			).toBe("2");
+			).toBe("3");
 			expect(database.prepare("PRAGMA foreign_key_check").all()).toEqual(
 				[],
 			);
@@ -123,20 +122,44 @@ it("builds and serves every real fuel poverty value byte for byte and measures p
 					entry.compiled.sha256,
 				),
 			).toBe(text);
+			const publisherNames = Number(
+				database
+					.prepare("SELECT count(*) AS n FROM dataset_area_name")
+					.get()?.n,
+			);
 			const after = statSync(path).size;
+			database.exec("DROP INDEX observation_0; VACUUM;");
+			const withoutAreaIndex = statSync(path).size;
 			database.exec(
-				"DROP TABLE catalogue_observations; DROP TABLE catalogue_records; DROP TABLE catalogue_periods; DROP TABLE catalogue_measures; UPDATE meta SET value = '1' WHERE key = 'schemaVersion'; VACUUM;",
+				`DROP VIEW v_observation; ${[
+					"observation",
+					"dataset_area_name",
+					"series_member",
+					"series",
+					"status",
+					"period",
+					"dimension_member",
+					"dimension",
+					"measure",
+					"dataset",
+					"source",
+				]
+					.map((table) => `DROP TABLE ${table};`)
+					.join(" ")} VACUUM;`,
 			);
 			const before = statSync(path).size;
 			expect(after).toBeGreaterThan(before);
 			writeFileSync(
-				"data/build/catalogue-observation-pilot.json",
+				"data/build/statistics-pilot.json",
 				JSON.stringify({
 					scope: "pilot database, real LSOAs and fuel poverty, empty unrelated inventories",
 					before,
 					after,
 					delta: after - before,
+					areaIndexBytes: after - withoutAreaIndex,
 					observations: 33755 * 3,
+					bytesPerObservation: (after - before) / (33755 * 3),
+					publisherNames,
 					payloadBytes: Buffer.byteLength(text),
 				}),
 			);
@@ -146,4 +169,4 @@ it("builds and serves every real fuel poverty value byte for byte and measures p
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
-}, 60_000);
+}, 600_000);

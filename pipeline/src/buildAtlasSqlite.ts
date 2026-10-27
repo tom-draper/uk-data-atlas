@@ -1,4 +1,5 @@
-import { catalogueObservationTables } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { statisticsTables } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { fuelPovertyStatistics } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishAtlasCache } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	writeSqliteIndex,
@@ -120,7 +121,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 	}
 	writeSqliteIndex(
 		path,
-		{ schemaVersion: "2" },
+		{ schemaVersion: "3" },
 		{
 			...areaTables(artifactDirectory(repositoryRoot)),
 			...crosswalkTables(artifactDirectory(repositoryRoot)),
@@ -155,13 +156,23 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 					`dataset:${entry.output}`,
 				]),
 			},
-			...catalogueObservationTables(
-				manifest.datasets.some((entry) => entry.type === "fuelPoverty")
-					? readFileSync(
-							join(directory, "datasets/fuel-poverty.json"),
-							"utf8",
-						)
-					: undefined,
+			...statisticsTables(
+				manifest.datasets
+					.filter((entry) => entry.type === "fuelPoverty")
+					.map((entry) =>
+						fuelPovertyStatistics(
+							readFileSync(
+								join(
+									directory,
+									`datasets/${entry.output}.json`,
+								),
+								"utf8",
+							),
+							entry as Parameters<
+								typeof fuelPovertyStatistics
+							>[1],
+						),
+					),
 			),
 		},
 	);

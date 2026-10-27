@@ -1,4 +1,4 @@
-import { rebuildFuelPoverty } from "../catalogue/catalogueObservations";
+import { rebuildFuelPoverty } from "../catalogue/fuelPovertyStatistics";
 import { gunzipSync } from "node:zlib";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
