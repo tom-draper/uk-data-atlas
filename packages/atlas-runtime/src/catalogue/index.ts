@@ -26,3 +26,4 @@ export * from "./observationTables";
 export * from "./relationshipRepairs";
 export * from "./validationReport";
 export * from "@uk-data-atlas/measures";
+export * from "./atlasStatistics";
