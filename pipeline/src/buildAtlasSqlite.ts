@@ -168,9 +168,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 								),
 								"utf8",
 							),
-							entry as Parameters<
-								typeof fuelPovertyStatistics
-							>[1],
+							entry,
 						),
 					),
 			),

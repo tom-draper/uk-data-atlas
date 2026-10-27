@@ -23,11 +23,14 @@ const SLUG = "fuel-poverty";
 const TYPE = "fuelPoverty";
 
 /** Record fields in output order, with the measure each holds. */
-const FIELDS = [
+const FIELDS: readonly (readonly [
+	"householdCount" | "fuelPoorHouseholdCount" | "fuelPovertyRate",
+	string,
+])[] = [
 	["householdCount", "households"],
 	["fuelPoorHouseholdCount", "fuel-poor-households"],
 	["fuelPovertyRate", "fuel-poverty-rate"],
-] as const satisfies readonly (readonly [keyof FuelPovertyLSOAData, string])[];
+];
 
 const MEASURES: StatisticsMeasure[] = [
 	{
@@ -61,16 +64,17 @@ const MEASURES: StatisticsMeasure[] = [
 
 const vintages = (ATLAS_BOUNDARY_VINTAGES as AtlasBoundaryVintages).lsoa;
 
-export type FuelPovertyManifestEntry = {
-	fingerprint: string;
-	source: {
-		name: string;
-		source: string;
-		sourceUrl?: string;
-		licence: string;
-		licenceUrl?: string;
-		description: string;
-	};
+/** The dataset manifest entry; its source metadata is checked, not trusted. */
+export type FuelPovertyManifestEntry = { fingerprint: string; source: unknown };
+
+const sourceText = (source: unknown, key: string, required = true) => {
+	const value =
+		typeof source === "object" && source !== null
+			? (source as Record<string, unknown>)[key]
+			: undefined;
+	if (typeof value === "string") return value;
+	if (value === undefined && !required) return undefined;
+	throw new Error(`Fuel poverty manifest source has no ${key}`);
 };
 
 export function fuelPovertyStatistics(
@@ -115,13 +119,13 @@ export function fuelPovertyStatistics(
 		releaseIds.indexOf(vintages[boundaryYear]) * FIELDS.length + field;
 	return {
 		slug: SLUG,
-		title: entry.source.name,
-		description: entry.source.description,
+		title: sourceText(entry.source, "name")!,
+		description: sourceText(entry.source, "description")!,
 		source: {
-			publisher: entry.source.source,
-			url: entry.source.sourceUrl,
-			licence: entry.source.licence,
-			licenceUrl: entry.source.licenceUrl,
+			publisher: sourceText(entry.source, "source")!,
+			url: sourceText(entry.source, "sourceUrl", false),
+			licence: sourceText(entry.source, "licence")!,
+			licenceUrl: sourceText(entry.source, "licenceUrl", false),
 		},
 		fingerprint: entry.fingerprint,
 		measures: MEASURES,
