@@ -51,3 +51,5 @@ export type AreaInventory = {
 	boundaryRegistryHash: string;
 	releases: Array<AvailableAreaRelease | UnavailableAreaRelease>;
 };
+
+export type AreaLookup = Map<string, Map<string, AreaRecord>>;

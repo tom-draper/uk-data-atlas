@@ -502,6 +502,10 @@ API re-exports for runtime consumers. The graph traces these imports and the
 pipeline configuration. Catalogue JSON and observation artifact bytes, SQLite
 publication, cleanup, and output paths are unchanged.
 
+The SQLite area inventory and release readers, and the lazy area lookup, live
+in `shared/`. The API re-exports them for existing callers. These readers can
+now be used by pipeline stages without importing the API boundary loader.
+
 The postcode counts compiler, cache publisher, postcode and area artifact types,
 code-unit ordering helper, and SQLite postcode and area shard readers live in
 `shared/`.
