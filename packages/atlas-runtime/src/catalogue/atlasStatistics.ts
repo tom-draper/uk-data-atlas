@@ -1,3 +1,7 @@
+import {
+	ATLAS_BOUNDARY_VINTAGES,
+	type AtlasBoundaryVintages,
+} from "@uk-data-atlas/catalogue";
 import type { DatabaseSync, SQLInputValue } from "node:sqlite";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 
@@ -129,6 +133,27 @@ export type StatisticsDataset = {
 	verify?: (database: DatabaseSync) => void;
 };
 
+/**
+ * The areas a dataset can be placed on, read from the tables written before
+ * the statistics tables. A dataset that routes codes between releases is
+ * built from this, as `(areas) => StatisticsDataset`.
+ */
+export type AreaIndex = {
+	/**
+	 * The release the atlas draws for a geography and boundary year: the
+	 * atlas vintage where one is declared, otherwise the one available release
+	 * whose id starts with the year.
+	 */
+	release(geography: string, year: number): AreaRelease;
+	has(release: AreaRelease, code: string): boolean;
+};
+
+export type StatisticsInput =
+	StatisticsDataset | ((areas: AreaIndex) => StatisticsDataset);
+
+const vintages = ATLAS_BOUNDARY_VINTAGES as AtlasBoundaryVintages &
+	Partial<Record<string, Readonly<Record<number, string>>>>;
+
 const same = (a: unknown, b: unknown) =>
 	JSON.stringify(a) === JSON.stringify(b);
 
@@ -166,9 +191,11 @@ export const seriesKey = (dataset: string, series: StatisticsSeries): string =>
 			.map(([dimension, member]) => `${dimension}=${member}`),
 	].join("/");
 
-export function statisticsTables(
-	datasets: readonly StatisticsDataset[],
-): Record<string, SqliteTable> {
+const sourceKey = (source: StatisticsSource) =>
+	JSON.stringify([source.publisher, source.url, source.licence]);
+
+/** Assign ids to everything the datasets declare, refusing conflicts. */
+function register(datasets: readonly StatisticsDataset[]) {
 	const sources = new Registry<StatisticsSource>("source");
 	const measures = new Registry<StatisticsMeasure>("measure");
 	const dimensions = new Registry<Omit<StatisticsDimension, "members">>(
@@ -196,14 +223,7 @@ export function statisticsTables(
 			throw new Error(`Duplicate dataset ${dataset.slug}`);
 		slugs.add(dataset.slug);
 		const context = `dataset ${dataset.slug}`;
-		sources.add(
-			JSON.stringify([
-				dataset.source.publisher,
-				dataset.source.url,
-				dataset.source.licence,
-			]),
-			dataset.source,
-		);
+		sources.add(sourceKey(dataset.source), dataset.source);
 		for (const measure of dataset.measures) {
 			for (const reference of [measure.numerator, measure.denominator])
 				if (reference !== undefined) measures.id(reference, context);
@@ -260,7 +280,33 @@ export function statisticsTables(
 			}),
 		);
 	}
+	const category = (dataset: StatisticsDataset, code: string | undefined) => {
+		if (code === undefined) return null;
+		if (dataset.categoryDimension === undefined)
+			throw new Error(
+				`Dataset ${dataset.slug} has categories but no categoryDimension`,
+			);
+		return members.id(
+			`${dataset.categoryDimension}\0${code}`,
+			dataset.slug,
+		);
+	};
+	return {
+		datasets,
+		sources,
+		measures,
+		dimensions,
+		members,
+		periods,
+		seriesIds,
+		seriesRows,
+		category,
+	};
+}
 
+export function statisticsTables(
+	inputs: readonly StatisticsInput[],
+): Record<string, SqliteTable> {
 	/** Release positions and area ids, read from the tables written before these. */
 	const releases = new Map<string, number>();
 	const releaseAreas = new Map<
@@ -317,20 +363,64 @@ export function statisticsTables(
 			);
 		return found;
 	};
-	const category = (dataset: StatisticsDataset, code: string | undefined) => {
-		if (code === undefined) return null;
-		if (dataset.categoryDimension === undefined)
-			throw new Error(
-				`Dataset ${dataset.slug} has categories but no categoryDimension`,
+	const areaIndex = (database: DatabaseSync): AreaIndex => {
+		const available = database
+			.prepare(
+				"SELECT geography, id FROM area_releases WHERE status = 'available'",
+			)
+			.all()
+			.map((row) => ({
+				geography: String(row.geography),
+				id: String(row.id),
+			}));
+		return {
+			release(geography, year) {
+				const declared = vintages[geography]?.[year];
+				if (declared) return { geography, id: declared };
+				const matches = available.filter(
+					(release) =>
+						release.geography === geography &&
+						release.id.startsWith(`${year}-`),
+				);
+				if (matches.length !== 1)
+					throw new Error(
+						`No single ${geography} release for ${year} (${matches.length} found)`,
+					);
+				return matches[0];
+			},
+			has: (release, code) =>
+				areaLookup(database, releasePosition(database, release)).has(
+					code,
+				),
+		};
+	};
+
+	let prepared: ReturnType<typeof register> | undefined;
+	/** Datasets and their registries, built once the area tables exist. */
+	const prepare = (database: DatabaseSync) => {
+		if (!prepared) {
+			const index = areaIndex(database);
+			prepared = register(
+				inputs.map((input) =>
+					typeof input === "function" ? input(index) : input,
+				),
 			);
-		return members.id(
-			`${dataset.categoryDimension}\0${code}`,
-			dataset.slug,
-		);
+		}
+		return prepared;
 	};
 	const statusIds = new Map<string, number>(
 		STATUSES.map(([slug], index) => [slug, index + 1]),
 	);
+	/** Rows of one table, from the prepared registries. */
+	const rows = (
+		build: (
+			state: ReturnType<typeof register>,
+			database: DatabaseSync,
+		) => Iterable<SQLInputValue[]>,
+	) =>
+		function* (database: DatabaseSync): Generator<SQLInputValue[]> {
+			yield* build(prepare(database), database);
+		};
 
 	return {
 		source: {
@@ -345,14 +435,16 @@ export function statisticsTables(
 				"citation TEXT",
 			],
 			key: ["id"],
-			rows: sources.items.map((source, index) => [
-				index + 1,
-				source.publisher,
-				source.url ?? null,
-				source.licence,
-				source.licenceUrl ?? null,
-				source.citation ?? null,
-			]),
+			rows: rows(({ sources }) =>
+				sources.items.map((source, index) => [
+					index + 1,
+					source.publisher,
+					source.url ?? null,
+					source.licence,
+					source.licenceUrl ?? null,
+					source.citation ?? null,
+				]),
+			),
 		},
 		dataset: {
 			strict: true,
@@ -367,22 +459,17 @@ export function statisticsTables(
 				"fingerprint TEXT NOT NULL",
 			],
 			key: ["id"],
-			rows: datasets.map((dataset, index) => [
-				index + 1,
-				dataset.slug,
-				dataset.title,
-				dataset.description,
-				sources.id(
-					JSON.stringify([
-						dataset.source.publisher,
-						dataset.source.url,
-						dataset.source.licence,
-					]),
+			rows: rows(({ datasets, sources }) =>
+				datasets.map((dataset, index) => [
+					index + 1,
 					dataset.slug,
-				),
-				dataset.released ?? null,
-				dataset.fingerprint,
-			]),
+					dataset.title,
+					dataset.description,
+					sources.id(sourceKey(dataset.source), dataset.slug),
+					dataset.released ?? null,
+					dataset.fingerprint,
+				]),
+			),
 		},
 		measure: {
 			strict: true,
@@ -402,21 +489,23 @@ export function statisticsTables(
 			constraints: [
 				"CHECK ((aggregation = 'ratio') = (numerator_id IS NOT NULL AND denominator_id IS NOT NULL))",
 			],
-			rows: measures.items.map((measure, index) => [
-				index + 1,
-				measure.slug,
-				measure.label,
-				measure.description,
-				measure.unit,
-				measure.valueKind,
-				measure.aggregation,
-				measure.numerator === undefined
-					? null
-					: measures.id(measure.numerator, measure.slug),
-				measure.denominator === undefined
-					? null
-					: measures.id(measure.denominator, measure.slug),
-			]),
+			rows: rows(({ measures }) =>
+				measures.items.map((measure, index) => [
+					index + 1,
+					measure.slug,
+					measure.label,
+					measure.description,
+					measure.unit,
+					measure.valueKind,
+					measure.aggregation,
+					measure.numerator === undefined
+						? null
+						: measures.id(measure.numerator, measure.slug),
+					measure.denominator === undefined
+						? null
+						: measures.id(measure.denominator, measure.slug),
+				]),
+			),
 		},
 		dimension: {
 			strict: true,
@@ -427,11 +516,13 @@ export function statisticsTables(
 				"label TEXT NOT NULL",
 			],
 			key: ["id"],
-			rows: dimensions.items.map((dimension, index) => [
-				index + 1,
-				dimension.slug,
-				dimension.label,
-			]),
+			rows: rows(({ dimensions }) =>
+				dimensions.items.map((dimension, index) => [
+					index + 1,
+					dimension.slug,
+					dimension.label,
+				]),
+			),
 		},
 		dimension_member: {
 			strict: true,
@@ -446,14 +537,16 @@ export function statisticsTables(
 			],
 			key: ["id"],
 			constraints: ["UNIQUE (dimension_id, code)"],
-			rows: members.items.map((member, index) => [
-				index + 1,
-				member.dimension,
-				member.code,
-				member.label,
-				member.parent,
-				member.position,
-			]),
+			rows: rows(({ members }) =>
+				members.items.map((member, index) => [
+					index + 1,
+					member.dimension,
+					member.code,
+					member.label,
+					member.parent,
+					member.position,
+				]),
+			),
 		},
 		period: {
 			strict: true,
@@ -467,13 +560,15 @@ export function statisticsTables(
 			],
 			key: ["id"],
 			constraints: ["CHECK (start_date <= end_date)"],
-			rows: periods.items.map((period, index) => [
-				index + 1,
-				period.label,
-				period.kind,
-				period.start,
-				period.end,
-			]),
+			rows: rows(({ periods }) =>
+				periods.items.map((period, index) => [
+					index + 1,
+					period.label,
+					period.kind,
+					period.start,
+					period.end,
+				]),
+			),
 		},
 		status: {
 			strict: true,
@@ -512,7 +607,10 @@ export function statisticsTables(
 					columns: ["dataset_id", "measure_id"],
 				},
 			],
-			rows: function* (database) {
+			rows: rows(function* (
+				{ seriesRows, seriesIds, measures },
+				database,
+			) {
 				for (const [index, row] of seriesRows.entries()) {
 					const ids = seriesIds[row.dataset - 1];
 					yield [
@@ -527,7 +625,7 @@ export function statisticsTables(
 						row.key,
 					];
 				}
-			},
+			}),
 		},
 		series_member: {
 			strict: true,
@@ -543,13 +641,15 @@ export function statisticsTables(
 					columns: ["member_id", "series_id"],
 				},
 			],
-			rows: seriesRows.flatMap((row, index) =>
-				Object.entries(row.series.members ?? {}).map(
-					([dimension, member]) => [
-						index + 1,
-						dimensions.id(dimension, row.key),
-						members.id(`${dimension}\0${member}`, row.key),
-					],
+			rows: rows(({ seriesRows, dimensions, members }) =>
+				seriesRows.flatMap((row, index) =>
+					Object.entries(row.series.members ?? {}).map(
+						([dimension, member]) => [
+							index + 1,
+							dimensions.id(dimension, row.key),
+							members.id(`${dimension}\0${member}`, row.key),
+						],
+					),
 				),
 			),
 		},
@@ -561,7 +661,7 @@ export function statisticsTables(
 				"name TEXT NOT NULL",
 			],
 			key: ["dataset_id", "area_version_id"],
-			rows: function* (database): Generator<SQLInputValue[]> {
+			rows: rows(function* ({ datasets }, database) {
 				for (const [index, dataset] of datasets.entries()) {
 					const seen = new Set<number>();
 					for (const {
@@ -584,7 +684,7 @@ export function statisticsTables(
 							yield [index + 1, found.id, name];
 					}
 				}
-			},
+			}),
 		},
 		observation: {
 			strict: true,
@@ -608,7 +708,10 @@ export function statisticsTables(
 					columns: ["area_version_id", "series_id", "period_id"],
 				},
 			],
-			rows: function* (database): Generator<SQLInputValue[]> {
+			rows: rows(function* (
+				{ datasets, seriesIds, periods, category },
+				database,
+			) {
 				for (const [index, dataset] of datasets.entries()) {
 					const ids = seriesIds[index];
 					for (const observation of dataset.observations()) {
@@ -658,7 +761,7 @@ export function statisticsTables(
 						"Observations outside their series' release",
 					);
 				for (const dataset of datasets) dataset.verify?.(database);
-			},
+			}),
 			views: {
 				v_observation: `
 SELECT d.slug AS dataset, m.slug AS measure, m.unit,

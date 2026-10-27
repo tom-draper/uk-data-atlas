@@ -488,14 +488,16 @@ describe("statistics model is generic", () => {
 
 	it("refuses a measure declared differently by two datasets", () => {
 		expect(() =>
-			statisticsTables([
-				tenure,
-				{
-					...crime,
-					measures: [{ ...households, unit: "dwellings" }],
-					series: [],
-				},
-			]),
+			memory(
+				statisticsTables([
+					tenure,
+					{
+						...crime,
+						measures: [{ ...households, unit: "dwellings" }],
+						series: [],
+					},
+				]),
+			),
 		).toThrow(/Conflicting measure households/);
 	});
 
