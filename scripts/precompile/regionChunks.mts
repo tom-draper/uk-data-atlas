@@ -14,7 +14,8 @@ import {
 } from "../../pipeline/src/precompile/cache.mts";
 import { chunksSize } from "../../pipeline/src/precompile/output.mts";
 import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlas-lookups";
-import { OUT_DIR, ROOT } from "../../pipeline/src/precompile/paths.mts";
+import { ROOT } from "../../pipeline/src/precompile/paths.mts";
+import { OUT_DIR } from "./websiteOutput.mts";
 import type {
 	CompiledDatasets,
 	CompiledOutput,

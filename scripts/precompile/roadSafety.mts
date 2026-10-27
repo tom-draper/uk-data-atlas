@@ -6,10 +6,9 @@ import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
 import {
 	fileStamp,
 	isReleasedSource,
-	outputMatches,
 	sameFileStamp,
 } from "../../pipeline/src/precompile/cache.mts";
-import { out } from "../../pipeline/src/precompile/output.mts";
+import { out, outputMatches } from "./websiteOutput.mts";
 import { SOURCE_DATA } from "../../pipeline/src/precompile/paths.mts";
 import { readSource } from "../../pipeline/src/precompile/sources/read.mts";
 import type {

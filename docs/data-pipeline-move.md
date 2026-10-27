@@ -560,9 +560,11 @@ with its cache, worker pool, raw-source readers and the fingerprint module in
 `pipeline/src/precompile/`. The website stages still in `scripts/` import them
 from there. Paths are part of every fingerprint, so this move recompiled each
 dataset once; the compiled bytes were compared before and after. The fingerprint
-no longer lists the README generator. The shared output defaults in
-`precompile/paths.mts` and `cache.mts` still name `public/data/datasets`, a
-website path, and should move out when the website stages do.
+no longer lists the README generator. The pipeline helpers
+take their output directory explicitly. The website's `public/data/datasets`
+path, and the `out`, `outputMatches` and `loadReuseContext` bindings to it, live
+in `scripts/precompile/websiteOutput.mts`. The edited helpers are in every
+dataset's import closure, so this changed the fingerprints once more.
 
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory

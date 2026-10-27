@@ -2,7 +2,6 @@ import { createHash } from "crypto";
 import { rename, stat, writeFile } from "fs/promises";
 import { join } from "path";
 import { formatKb } from "../../../shared/buildTiming";
-import { OUT_DIR } from "./paths.mts";
 import type { CompiledOutput, FileSnapshot } from "./types.mts";
 
 const writeAtomically = async (path: string, contents: string) => {
@@ -12,13 +11,12 @@ const writeAtomically = async (path: string, contents: string) => {
 };
 
 /**
- * Writes `name`.json into `directory`, the browser data folder unless given,
- * and describes the result.
+ * Writes `name`.json into `directory` and describes the result.
  */
 export const out = async (
 	name: string,
 	data: unknown,
-	directory = OUT_DIR,
+	directory: string,
 ): Promise<Required<CompiledOutput>> => {
 	const json = JSON.stringify(data);
 	const path = join(directory, `${name}.json`);
