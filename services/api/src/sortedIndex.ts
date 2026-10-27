@@ -21,8 +21,8 @@ export const atEach = <T>(sorted: Indexed<T>, indexes: readonly number[]) =>
 		? sorted.atEach(indexes)
 		: indexes.map((index) => sorted.at(index));
 
-export const compareCodeUnits = (left: string, right: string) =>
-	left < right ? -1 : left > right ? 1 : 0;
+import { compareCodeUnits } from "../../../shared/compareCodeUnits";
+export { compareCodeUnits } from "../../../shared/compareCodeUnits";
 
 /** The first position whose key is at or after `value`. */
 export const lowerBound = <T>(

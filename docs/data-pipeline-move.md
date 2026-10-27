@@ -498,6 +498,10 @@ API re-exports for runtime consumers. The graph traces these imports and the
 pipeline configuration. Catalogue JSON and observation artifact bytes, SQLite
 publication, cleanup, and output paths are unchanged.
 
+The postcode counts compiler, its postcode and area artifact types, and the
+code-unit ordering helper live in `shared/`.
+The API builder still reads the SQLite inputs and publishes the cache tables.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
