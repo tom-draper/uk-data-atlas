@@ -53,7 +53,8 @@ checkout, move its raw folders and `.source-release.json` from `data/` into
 `data/source/`, leaving `data/build/` in place.
 
 `map-figures.json`, `ranking-pages.json` and `rankings/*.json` hold map
-headlines and ranked areas, compiled by `pnpm data:build --only seo` from the datasets.
+headlines and ranked areas, compiled by `scripts/build-seo-data.mts` from the datasets. The website owns that
+step: `pnpm dev` and `pnpm build` run it, and `data:build` does not.
 Rankings read the precomputed `ward-areas` page from SQLite.
 
 The data build compiles website artifacts with `pnpm data:build --only atlas-pages`.
@@ -159,7 +160,7 @@ there is no build step.
 
 `scripts/build-data-graph.mjs` lists every data build stage for both
 products, with its dependencies. `pnpm data:build` builds all API and website
-data in dependency order, including SQLite, PMTiles and SEO. Product targets
+data in dependency order, including SQLite and PMTiles. Product targets
 are no longer supported.
 
 `--plan` lists the stages without running them. `--only <stage>` builds one
