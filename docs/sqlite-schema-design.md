@@ -523,8 +523,53 @@ area_releases.position`, which `series.release_id` already references), then
   differ. Step 2 can fold these into `area_name` rows of kind `publisher`.
 - Dataset-specific response fields (fuel poverty's `id`, `year`,
   `boundaryYear`) are derived in the dataset's mapper from rows, not stored.
+- Columns that need tables from later steps are left out for now:
+  `series.crosswalk_id` and the `weight_basis_id` columns (step 3), and
+  `dataset.next_update`. The whole database is rebuilt every run, so adding
+  them later is a writer change, not a migration of existing rows.
+- `observation` keeps `lower`, `upper` and `category_id` inline as above.
+  Unused, each costs one header byte per row.
 - The fuel poverty JSON payload stays in `payloads` until step 4 moves payloads
   to the cache, so other readers of `dataset:fuel-poverty` are unchanged.
+
+## How to port a dataset
+
+A dataset joins the statistics tables by writing a mapper, a function that
+returns a `StatisticsDataset` (`shared/atlasStatistics.ts`). The schema does
+not change. `shared/fuelPovertyStatistics.ts` is the worked example.
+
+1. **Declare measures.** One per quantity, not per breakdown: `crime-count`,
+   not `crime-burglary`. Reuse an existing slug when the meaning is the same
+   (`households`, `residents`); the build refuses two different declarations
+   of one slug. Set `valueKind` and `aggregation` honestly, and give `ratio`
+   measures their numerator and denominator.
+2. **Declare dimensions** for whatever the old measure ids encoded: party,
+   crime type, tenure, ethnic group. Members are listed in the publisher's
+   order, with `parent` for totals and subtotals.
+3. **Declare periods** with their kind and dates (`2024`, `2024-25`,
+   `2021-census`).
+4. **Declare series**: each combination of measure, members and boundary
+   release (`{ geography, id }` from `area_releases`). A census cube with nine
+   tenure columns is nine series of `households`. Derived series set `method`
+   and `derivedFrom`.
+5. **Yield observations** as `{ series, code, period, value }`. Use `status`
+   instead of inventing values (`suppressed` with `value: null`), `lower` and
+   `upper` for intervals, and `category` for categorical measures (with
+   `categoryDimension` set). Unknown codes fail the build.
+6. **Yield publisher area names** only if the old output used them.
+7. **Rebuild the old output** from rows in a reader beside the mapper, and
+   call it from `verify` so the build refuses to publish different bytes. Add
+   the dataset to the list passed to `statisticsTables` in
+   `shared/buildAtlasSqlite.ts`, and point its reader at the rebuild.
+8. **Test** with a small fixture in `tests/server/` and the real data in
+   `tests/built/`, as `atlasStatistics.test.ts` does.
+
+Order is not stored. If the old output's order is not derivable from codes or
+member positions, sort it in the compiler first (in a separate change that
+updates its hash), rather than adding a position column.
+
+Shapes that do not fit a cube (candidates and ballots) use the election tables
+and then feed `observation` like any other series.
 
 ## Current tables and their new home
 
