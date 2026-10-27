@@ -14,14 +14,15 @@ import {
 	type SourceDistrict,
 } from "../lib/places/postcodes";
 import { decodeCompactPayload } from "../lib/data/compactPayload";
-import { readSqlitePostcodeAreaShard } from "../services/api/src/atlasPostcodeDerived";
-import { postcodeDistrictWhere } from "../services/api/src/atlasPostcodes";
+import { readSqlitePostcodeAreaShard } from "../shared/atlasPostcodeDerived";
+import { postcodeDistrictWhere } from "../shared/atlasPostcodesReader";
 import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,
-} from "../services/api/src/postcodeAreas";
-import type { PostcodeIndexArtifact } from "../services/api/src/postcodes";
-import { toWgs84Point } from "../services/api/src/reprojection";
+} from "../shared/postcodeAreas";
+import type { PostcodeIndexArtifact } from "../shared/postcodeIndexTypes";
+import { toWgs84Point } from "../shared/reprojection";
+import { apiRootOf } from "../shared/dataLayout";
 
 export const PLACE_POSTCODES_PATH = join(
 	process.cwd(),
@@ -84,7 +85,7 @@ function compileNeighbourhoods(root: string) {
  */
 export function serialisePlacePostcodes() {
 	const root = process.cwd();
-	const apiRoot = join(root, "services/api");
+	const apiRoot = apiRootOf(root);
 	const index: PostcodeIndexArtifact = JSON.parse(
 		readAtlasPayload(root, "postcode-index"),
 	);

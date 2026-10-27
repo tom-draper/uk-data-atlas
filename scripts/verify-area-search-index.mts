@@ -4,15 +4,13 @@ import {
 	readAreaInventory,
 	readAreaLookup,
 	readAreaSearchIndex,
-} from "../services/api/src/boundaryLoader";
-import {
-	AreaSearch,
-	compileAreaSearchIndex,
-} from "../services/api/src/areaSearch";
-import { atEach, type Indexed } from "../services/api/src/sortedIndex";
+} from "../shared/boundaryLoader";
+import { AreaSearch, compileAreaSearchIndex } from "../shared/areaSearch";
+import { atEach, type Indexed } from "../shared/sortedIndex";
+import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = join(root, "services/api");
+const apiRoot = apiRootOf(root);
 const inventory = readAreaInventory(apiRoot);
 const lookup = readAreaLookup(apiRoot, inventory);
 const expected = compileAreaSearchIndex(lookup, inventory.contentHash);

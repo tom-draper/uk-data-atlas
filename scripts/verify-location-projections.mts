@@ -1,17 +1,18 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readCachePayload } from "../services/api/src/atlasCache";
-import { createLocationProjectionStore } from "../services/api/src/locationLoader";
+import { readCachePayload } from "../shared/atlasCache";
+import { createLocationProjectionStore } from "../shared/locationLoader";
 import type {
 	LocationProjectionInventory,
 	LocationProjectionArtifact,
 	LocationParentProjectionArtifact,
-} from "../services/api/src/locationProjections";
-import { readStoredText } from "../services/api/src/storedText";
+} from "../shared/locationProjections";
+import { readStoredText } from "../shared/storedText";
+import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = join(root, "services/api");
+const apiRoot = apiRootOf(root);
 const projectionDirectory = join(root, "data/build/location-projections");
 const text = readFileSync(
 	join(projectionDirectory, "location-projection-inventory.json"),

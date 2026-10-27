@@ -5,7 +5,7 @@ import { readAtlasPayload } from "../shared/atlasSqlite";
 import {
 	buildArtifactPath,
 	geographyCatalogues,
-} from "../services/api/scripts/geography-build-path";
+} from "../shared/geographyBuildPath";
 
 const root = resolve(import.meta.dirname, "..");
 for (const id of geographyCatalogues)

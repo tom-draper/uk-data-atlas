@@ -1,11 +1,8 @@
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
-import {
-	readAreaInventory,
-	readAreaLookup,
-} from "../services/api/src/boundaryLoader";
-import { createRelationshipPathIndex } from "../services/api/src/relationshipPaths";
-import type { CrosswalkLookup } from "../services/api/src/resolver/translation";
+import { readAreaInventory, readAreaLookup } from "../shared/boundaryLoader";
+import { createRelationshipPathIndex } from "../shared/relationshipPaths";
+import type { CrosswalkLookup } from "../shared/translation";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -13,24 +10,25 @@ import { join, resolve } from "node:path";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "../services/api/src/crosswalkInventory";
+} from "../shared/crosswalkInventory";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "../services/api/src/crosswalkLoader";
-import { readStoredText } from "../services/api/src/storedText";
+} from "../shared/crosswalkLoader";
+import { readStoredText } from "../shared/storedText";
 import {
 	compileRelationshipPaths,
 	crosswalkShape,
 	type CrosswalkShape,
-} from "../services/api/src/relationshipPaths";
-import { readApprovedRelationshipPaths } from "../services/api/src/relationshipPathAdapters";
-import { createGeographyResolver } from "../services/api/src/geographyResolver";
+} from "../shared/relationshipPaths";
+import { readApprovedRelationshipPaths } from "../pipeline/src/relationshipPathAdapters";
+import { createGeographyResolver } from "../shared/geographyResolver";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
+import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = join(root, "services/api");
+const apiRoot = apiRootOf(root);
 const before: CrosswalkInventory = JSON.parse(
 	readFileSync(join(apiRoot, "public/crosswalk-inventory.json"), "utf8"),
 );
