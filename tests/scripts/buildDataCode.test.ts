@@ -290,6 +290,13 @@ test("production builders resolve without UI code and include declared workers a
 	]) {
 		assert.ok(inputs.get("analysis-geographies")!.includes(path), path);
 	}
+	for (const path of [
+		"shared/atlasCache.ts",
+		"shared/nameNormalisation.ts",
+		"shared/sqliteTables.ts",
+	]) {
+		assert.ok(inputs.get("atlas-sqlite")!.includes(path), path);
+	}
 	for (const stage of ["atlas-release-initial", "atlas-release"]) {
 		for (const path of [
 			"pipeline/src/build-atlas-release.ts",
