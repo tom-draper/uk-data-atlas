@@ -12,7 +12,7 @@ import type {
 } from "../src/crosswalkInventory";
 import type { Measure, MeasureObservationArtifact } from "../src/dataCatalog";
 import type { RelationshipCandidate } from "../src/relationshipCandidates";
-import { compileValidationReport } from "../src/validation/compileValidationReport";
+import { compileValidationReport } from "../../../pipeline/src/validation/compileValidationReport";
 import {
 	type MeasureTotal,
 	type ObservationArtifact,
@@ -20,7 +20,7 @@ import {
 	readValidationWaivers,
 	type ValidationInputs,
 	type ValidationWaiver,
-} from "../src/validation/inputs";
+} from "../../../pipeline/src/validation/inputs";
 
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;

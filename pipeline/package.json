@@ -13,7 +13,14 @@
 	},
 	"dependencies": {
 		"@uk-data-atlas/catalogue": "workspace:*",
+		"@uk-data-atlas/datasets": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/map-tiles": "workspace:*",
+		"jsts": "2.12.1",
+		"proj4": "^2.22.0",
+		"topojson-client": "^3.1.0",
+		"topojson-server": "^3.0.1",
+		"topojson-simplify": "^3.0.3",
 		"tsx": "^4.23.15",
 		"yaml": "^2.9.1"
 	},

@@ -10,7 +10,6 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import type { AreaInventory } from "./areaInventory";
-import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { GeographyInventory } from "./geographyInventory";
 import type { NamedLocationInventory } from "./namedLocations";
 import { openPlaceIndexDatabase, type PlaceIndex } from "./placeIndex";
@@ -26,13 +25,7 @@ import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 import { publicPath } from "./publicManifest";
 
-export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry =>
-	readGeographyCatalogue<BoundaryRegistry>(
-		apiRoot,
-		"boundary-releases",
-		"releases",
-		"boundary registry",
-	);
+export { readBoundaryRegistry } from "../../../shared/boundaryCatalogue";
 
 export const readGeographyInventory = (apiRoot: string): GeographyInventory =>
 	readGeographyCatalogue<GeographyInventory>(

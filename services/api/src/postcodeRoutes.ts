@@ -24,12 +24,8 @@ import type { RouteRequest } from "./routing";
 import { choices, readChoice } from "./queryParameters";
 import { QUERY_RULES } from "./queryRules";
 
-/** The areas a postcode is placed in when a caller names none. */
-export const DEFAULT_POSTCODE_GEOGRAPHIES = [
-	"localAuthority",
-	"ward",
-	"constituency",
-];
+export { DEFAULT_POSTCODE_GEOGRAPHIES } from "../../../shared/postcodeDefaults";
+import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../../../shared/postcodeDefaults";
 
 export const POSTCODE_NOTE =
 	"A postcode is placed by the single centroid the ONS Postcode Directory gives it. Its addresses can fall on both sides of a boundary, so an area containing the centroid need not contain every address in the postcode.";

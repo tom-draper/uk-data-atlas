@@ -1,34 +1,4 @@
 const apiCommands = {
-	"atlas-pages": [
-		"exec",
-		"tsx",
-		"--max-old-space-size=3072",
-		"scripts/build-atlas-pages.ts",
-	],
-	"atlas-lookups": [
-		"exec",
-		"tsx",
-		"--max-old-space-size=3072",
-		"scripts/build-atlas-lookups.ts",
-	],
-	"crosswalk-inventory": [
-		"exec",
-		"tsx",
-		"--max-old-space-size=4096",
-		"scripts/build-crosswalk-inventory.ts",
-	],
-	"geometry-store": [
-		"exec",
-		"tsx",
-		"--max-old-space-size=3072",
-		"scripts/build-geometry-store.ts",
-	],
-	"map-resource": [
-		"exec",
-		"tsx",
-		"--max-old-space-size=3072",
-		"scripts/build-map-resource.ts",
-	],
 	documents: [
 		"exec",
 		"tsx",
@@ -126,8 +96,9 @@ const apiStages = [
 			"named-locations",
 			"location-projections",
 		],
-		undefined,
+		["--dir", "../..", "exec", "tsx", "pipeline/src/build-atlas-sqlite.ts"],
 		{
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			requiredOutputs: [
 				"data/build/atlas.sqlite",
 				"data/build/atlas-cache.sqlite",
@@ -143,8 +114,9 @@ const apiStages = [
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
-			"scripts/build-api-datasets.mts",
+			"pipeline/src/build-api-datasets.mts",
 		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
 	stage(
 		"boundary-registry",
@@ -194,18 +166,31 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("geometry-store", ["geometry-source-registry"], undefined, {
-		codeInputs: [
-			"services/api/src",
-			"services/api/package.json",
-			"services/api/scripts/compileGeometryValidity.ts",
-		],
-	}),
-	stage("named-locations", [
-		"area-inventory",
+	stage(
 		"geometry-store",
-		"api-datasets",
-	]),
+		["geometry-source-registry"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/build-geometry-store.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
+	stage(
+		"named-locations",
+		["area-inventory", "geometry-store", "api-datasets"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-named-locations.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"place-index",
 		[
@@ -278,14 +263,26 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("postcode-areas", [
-		"geography-catalogues",
-		"atlas-sqlite",
-		"postcode-index",
-		"area-inventory",
-		"geometry-store",
-		"measure-compatibility",
-	]),
+	stage(
+		"postcode-areas",
+		[
+			"geography-catalogues",
+			"atlas-sqlite",
+			"postcode-index",
+			"area-inventory",
+			"geometry-store",
+			"measure-compatibility",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/build-postcode-areas.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"postcode-counts",
 		["postcode-index", "postcode-areas"],
@@ -301,8 +298,21 @@ const apiStages = [
 	stage(
 		"crosswalk-inventory",
 		["area-inventory", "geometry-source-registry"],
-		undefined,
-		{ codeInputs: ["services/api/scripts/crosswalk-worker.ts"] },
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/build-crosswalk-inventory.ts",
+		],
+		{
+			codeInputs: [
+				"shared/crosswalk-worker.ts",
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+			],
+		},
 	),
 	stage(
 		"relationship-paths",
@@ -328,11 +338,18 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("analysis-geography-validation", [
-		"analysis-geographies",
-		"data-catalog",
-		"crosswalk-inventory",
-	]),
+	stage(
+		"analysis-geography-validation",
+		["analysis-geographies", "data-catalog", "crosswalk-inventory"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-analysis-geography-validation.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"geography-catalogues",
 		[
@@ -352,11 +369,18 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("location-projections", [
-		"named-locations",
-		"crosswalk-inventory",
-		"area-inventory",
-	]),
+	stage(
+		"location-projections",
+		["named-locations", "crosswalk-inventory", "area-inventory"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-location-projections.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"relationship-candidates",
 		["area-inventory", "crosswalk-inventory"],
@@ -401,25 +425,43 @@ const apiStages = [
 	stage(
 		"map-resource",
 		["boundary-registry", "area-inventory", "geometry-source-registry"],
-		undefined,
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/build-map-resource.ts",
+		],
 		{
 			outputs: ["data/build/map-resources"],
 			codeInputs: [
-				"services/api/src/mapResource",
-				"services/api/scripts/compileGeometryValidity.ts",
+				"shared/mapResource",
+				"shared/compileGeometryValidity.ts",
 			],
 		},
 	),
-	stage("validation-report", [
-		"boundary-registry",
-		"area-inventory",
-		"geometry-source-registry",
-		"crosswalk-inventory",
-		"relationship-candidates",
-		"geography-inventory",
-		"data-catalog",
-		"export-manifest",
-	]),
+	stage(
+		"validation-report",
+		[
+			"boundary-registry",
+			"area-inventory",
+			"geometry-source-registry",
+			"crosswalk-inventory",
+			"relationship-candidates",
+			"geography-inventory",
+			"data-catalog",
+			"export-manifest",
+		],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-validation-report.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"atlas-release-initial",
 		[
@@ -474,8 +516,16 @@ const apiStages = [
 			"crosswalk-inventory",
 			"relationship-paths",
 		],
-		undefined,
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/build-atlas-lookups.ts",
+		],
 		{
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/atlas-assets/atlas-lookups"],
 			requiredOutputs: ["data/build/atlas-assets/atlas-lookups.json"],
 		},
@@ -514,8 +564,16 @@ const apiStages = [
 			"geography-inventory",
 			"map-resource",
 		],
-		undefined,
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/build-atlas-pages.ts",
+		],
 		{
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/atlas-assets/atlas-pages"],
 			requiredOutputs: ["data/build/atlas-assets/atlas-pages.json"],
 		},
@@ -587,6 +645,9 @@ const websiteStages = [
 				"packages/map-tiles",
 				"scripts/precompile",
 				"scripts/compile-boundaries.mts",
+				"pipeline/src/compile-boundaries.mts",
+				"shared/reverseGridOffset.ts",
+				"shared/buildTiming.ts",
 				"scripts/compile-boundary-tiles.mts",
 				"scripts/generate-dataset-registry.ts",
 				"scripts/generate-sources-readme.mts",

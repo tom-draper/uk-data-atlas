@@ -23,13 +23,6 @@ import type { RouteContext } from "./routing";
  * through the series route, so every rule and refusal it applies holds here.
  */
 
-const STATUS_RANK: Record<CompatibilityCandidate["status"], number> = {
-	"exact-code-set": 0,
-	"code-set-compatible": 1,
-	"partial-code-overlap": 2,
-	"no-code-overlap": 3,
-};
-
 /** The newest source of each geography the measure is published on for the period. */
 export const postcodeSources = (
 	measure: Measure,
@@ -77,16 +70,8 @@ export const sourceReleases = (
 	return rankReleases(compiled?.candidates ?? []);
 };
 
-/** Candidate releases best first, without those sharing no code. */
-export const rankReleases = (candidates: CompatibilityCandidate[]) =>
-	[...candidates]
-		.filter((candidate) => candidate.status !== "no-code-overlap")
-		.sort(
-			(left, right) =>
-				STATUS_RANK[left.status] - STATUS_RANK[right.status] ||
-				right.matchedSourceShare - left.matchedSourceShare ||
-				left.boundaryRelease.localeCompare(right.boundaryRelease),
-		);
+export { rankReleases } from "../../../shared/rankCompatibilityReleases";
+import { rankReleases } from "../../../shared/rankCompatibilityReleases";
 
 export type PostcodePlacement =
 	| {

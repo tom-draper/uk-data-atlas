@@ -163,6 +163,17 @@ test("production builders resolve without UI code and include declared workers a
 		);
 		inputs.set(stage.name, code);
 	}
+	for (const stage of [
+		"api-datasets",
+		"postcode-areas",
+		"atlas-pages",
+		"atlas-lookups",
+	]) {
+		const serviceCode = inputs
+			.get(stage)!
+			.filter((path) => /^services\/api\/(src|scripts)\//.test(path));
+		assert.deepEqual(serviceCode, [], stage);
+	}
 	assert.ok(
 		inputs
 			.get("datasets")!
@@ -171,17 +182,15 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("map-resource")!
-			.includes("services/api/scripts/compileGeometryValidity.ts"),
+			.includes("shared/compileGeometryValidity.ts"),
 	);
 	assert.ok(
 		inputs
 			.get("crosswalk-inventory")!
-			.includes("services/api/scripts/crosswalk-worker.ts"),
+			.includes("shared/crosswalk-worker.ts"),
 	);
 	assert.ok(
-		inputs
-			.get("geometry-store")!
-			.includes("services/api/src/geometryValidity.ts"),
+		inputs.get("geometry-store")!.includes("shared/geometryValidity.ts"),
 	);
 	assert.ok(
 		inputs

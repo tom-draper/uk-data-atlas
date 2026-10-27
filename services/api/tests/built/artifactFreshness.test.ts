@@ -15,7 +15,7 @@ import { readStoredText, storedTextExists } from "../../src/storedText";
 import {
 	readMeasureTotals,
 	readValidationWaivers,
-} from "../../src/validation/inputs";
+} from "../../../../pipeline/src/validation/inputs";
 
 /**
  * A compiled artifact records the content hash of each artifact it was built

@@ -1,0 +1,134 @@
+import { readFileSync } from "node:fs";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../../shared/areaInventory";
+import type { BoundaryRegistry } from "../../../shared/boundaryRegistry";
+import type { CrosswalkArtifact } from "../../../shared/crosswalkTypes";
+import type { CrosswalkInventory } from "../../../shared/crosswalkInventory";
+import type {
+	CategoricalObservation,
+	DataCatalog,
+	MeasureSource,
+	PopulationObservation,
+} from "../../../shared/dataCatalog";
+import type { ExportManifest } from "../../../shared/exportManifest";
+import type { GeographyInventory } from "../../../shared/geographyInventory";
+import type { GeometrySourceRegistry } from "../../../shared/geometrySourceRegistry";
+import type { RelationshipCandidateInventory } from "../../../shared/relationshipCandidates";
+import {
+	VALIDATION_CHECKS,
+	type ValidationCheckId,
+} from "../../../shared/validationReport";
+import { sha256 } from "./findings";
+
+export type ValidationWaiver = {
+	check: ValidationCheckId;
+	reason: string;
+	resources: string[];
+};
+
+/**
+ * A measure whose value in every area is the sum of other measures in the same
+ * source partitions, such as households counted by how many cars they have.
+ */
+export type MeasureTotal = {
+	measureId: string;
+	components: string[];
+};
+
+/**
+ * An observation artifact as published. The ward population artifact predates
+ * the per-period shape and carries one period at the top level.
+ */
+export type ObservationArtifact = {
+	schemaVersion: 1;
+	contentHash: string;
+	measureId: string;
+	sourceGeography: MeasureSource["sourceGeography"];
+} & (
+	| {
+			periods: Array<{
+				period: string;
+				records: Array<PopulationObservation | CategoricalObservation>;
+			}>;
+	  }
+	| { period: string; records: PopulationObservation[] }
+);
+
+export type ValidationInputs = {
+	boundaryRegistry: BoundaryRegistry;
+	areaInventory: AreaInventory;
+	areaArtifacts: AreaReleaseArtifact[];
+	geometrySources: GeometrySourceRegistry;
+	crosswalkInventory: CrosswalkInventory;
+	crosswalkArtifacts: CrosswalkArtifact[];
+	relationshipCandidates: RelationshipCandidateInventory;
+	geographyInventory: GeographyInventory;
+	dataCatalog: DataCatalog;
+	exportManifest: ExportManifest;
+	/** Observation artifacts keyed by the id of the export that serves them. */
+	observationArtifacts: Record<string, ObservationArtifact>;
+	measureTotals: MeasureTotal[];
+	measureTotalsHash: string;
+	waivers: ValidationWaiver[];
+	waiversHash: string;
+};
+
+export const readValidationWaivers = (path: string) => {
+	const content = readFileSync(path, "utf8");
+	const file = JSON.parse(content) as {
+		schemaVersion?: unknown;
+		waivers?: unknown;
+	};
+	if (file.schemaVersion !== 1 || !Array.isArray(file.waivers)) {
+		throw new Error(`Invalid validation waivers at ${path}`);
+	}
+	const waivers = file.waivers.map((waiver: unknown) => {
+		const { check, reason, resources } = (waiver ?? {}) as Record<
+			string,
+			unknown
+		>;
+		if (
+			!VALIDATION_CHECKS.includes(check as ValidationCheckId) ||
+			typeof reason !== "string" ||
+			reason.trim().length === 0 ||
+			!Array.isArray(resources) ||
+			resources.length === 0 ||
+			!resources.every((resource) => typeof resource === "string")
+		) {
+			throw new Error(`Invalid validation waiver at ${path}`);
+		}
+		return { check, reason, resources } as ValidationWaiver;
+	});
+	return { waivers, waiversHash: sha256(content) };
+};
+
+export const readMeasureTotals = (path: string) => {
+	const content = readFileSync(path, "utf8");
+	const file = JSON.parse(content) as {
+		schemaVersion?: unknown;
+		totals?: unknown;
+	};
+	if (file.schemaVersion !== 1 || !Array.isArray(file.totals)) {
+		throw new Error(`Invalid measure totals at ${path}`);
+	}
+	const isId = (value: unknown) =>
+		typeof value === "string" && value.trim().length > 0;
+	const measureTotals = file.totals.map((total: unknown) => {
+		const { measureId, components } = (total ?? {}) as Record<
+			string,
+			unknown
+		>;
+		if (
+			!isId(measureId) ||
+			!Array.isArray(components) ||
+			components.length < 2 ||
+			!components.every(isId)
+		) {
+			throw new Error(`Invalid measure total at ${path}`);
+		}
+		return { measureId, components } as MeasureTotal;
+	});
+	return { measureTotals, measureTotalsHash: sha256(content) };
+};

@@ -573,3 +573,16 @@ and `shared/nameNormalisation.ts`. API imports re-export both modules.
 The place index build runs in `pipeline/src/build-place-index.ts`. Its builder,
 index implementation, SQLite helpers and boundary release ordering are shared
 with the API. The API cache rebuild uses the same builder.
+
+The graph now runs geometry storage, map resources, crosswalks, named locations,
+location projections, analysis geography validation, validation reports, and
+SQLite assembly through pipeline entry points. Their shared builders and SQLite
+writers remain available to the API where runtime cache construction needs them.
+
+The postcode area, atlas page, atlas lookup, and API dataset builders also run
+from `pipeline/src/`. Their resolver and coordinate helpers are shared with the
+API. The boundary compiler lives in `pipeline/src/compile-boundaries.mts`; the
+website fingerprint includes that compiler and its shared helpers.
+
+Evidence document compilation still runs through the API catalogue and report
+handlers. The website dataset compilation scripts also remain in `scripts/`.
