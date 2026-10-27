@@ -35,15 +35,4 @@ export const evidenceReport = (request: RouteRequest) => {
 	return undefined;
 };
 
-export type EvidenceDocument = {
-	id: string;
-	artifact: string;
-	bytes: number;
-	contentHash: string;
-};
-export type EvidenceManifest = {
-	schemaVersion: 1;
-	contentHash: string;
-	dataCatalogHash: string;
-	documents: EvidenceDocument[];
-};
+export type { EvidenceDocument, EvidenceManifest } from "../../../shared/evidenceDocuments";
