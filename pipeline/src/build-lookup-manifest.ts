@@ -1,19 +1,22 @@
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
 import type {
-	CrosswalkArtifact,
-	CrosswalkInventory,
-} from "../src/crosswalkInventory";
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../shared/areaInventory";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import {
 	areaIdentityTable,
 	compileLookupManifest,
 	crosswalkTable,
 	namedLocationMembersTable,
-} from "../src/lookupExports";
-import type { NamedLocationInventory } from "../src/namedLocations";
-import { readStoredText, storedTextExists } from "../src/storedText";
+} from "../../shared/lookupExports";
+import type {
+	LookupCrosswalk,
+	LookupNamedLocations,
+} from "../../shared/lookupExports";
+import { readStoredText, storedTextExists } from "../../shared/storedText";
 
 export const buildLookupManifest = (repositoryRoot: string) => {
 	const publicDirectory = join(repositoryRoot, "services", "api", "public");
@@ -44,12 +47,12 @@ export const buildLookupManifest = (repositoryRoot: string) => {
 		}),
 		...crosswalkInventory.crosswalks.map((crosswalk) =>
 			crosswalkTable(
-				read<CrosswalkArtifact>(crosswalk.artifact),
+				read<LookupCrosswalk>(crosswalk.artifact),
 				crosswalk.artifact,
 			),
 		),
 		namedLocationMembersTable(
-			read<NamedLocationInventory>("named-locations.json"),
+			read<LookupNamedLocations>("named-locations.json"),
 			"named-locations.json",
 		),
 	]);
@@ -60,9 +63,7 @@ export const buildLookupManifest = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const result = buildLookupManifest(
-		resolve(dirname(scriptPath), "../../.."),
-	);
+	const result = buildLookupManifest(resolve(dirname(scriptPath), "../.."));
 	console.log(
 		`Wrote ${result.lookupCount} bulk lookups to ${result.outputPath}`,
 	);

@@ -351,11 +351,18 @@ const apiStages = [
 		],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("lookup-manifest", [
-		"area-inventory",
-		"crosswalk-inventory",
-		"named-locations",
-	]),
+	stage(
+		"lookup-manifest",
+		["area-inventory", "crosswalk-inventory", "named-locations"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-lookup-manifest.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"map-resource",
 		["boundary-registry", "area-inventory", "geometry-source-registry"],
