@@ -196,7 +196,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("website-datasets")!
-			.includes("scripts/compile-boundaries.mts"),
+			.includes("pipeline/src/compile-boundaries.mts"),
 	);
 	assert.ok(
 		!inputs

@@ -123,10 +123,11 @@ test("default build executes both products in dependency order", (context) => {
 		...apiOrder,
 		"boundaries",
 		"boundary-tiles",
+		"website-tiles",
 		"website-datasets",
 		"website-registry",
 	]);
-	assert.equal(build.commands().length, apiOrder.length + 4);
+	assert.equal(build.commands().length, apiOrder.length + 5);
 });
 
 test("rebuilding atlas pages imports SQLite assets before sealing the release and refreshing website data", (context) => {
@@ -260,14 +261,20 @@ test("--only builds a stage and its prerequisites without unrelated or downstrea
 	]);
 	assert.deepEqual(build.commands(), [
 		["--dir", "../..", "data:download"],
-		["--dir", "../..", "exec", "tsx", "scripts/compile-boundaries.mts"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/compile-boundaries.mts",
+		],
 		[
 			"--dir",
 			"../..",
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
-			"scripts/compile-boundary-tiles.mts",
+			"pipeline/src/compile-boundary-tiles.mts",
 		],
 	]);
 });
