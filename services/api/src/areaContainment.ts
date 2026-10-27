@@ -1,12 +1,8 @@
 import type { GeoJsonGeometry } from "./areaGeometry";
 
 export type Coordinate = [longitude: number, latitude: number];
-export type GeometryBounds = [
-	minLongitude: number,
-	minLatitude: number,
-	maxLongitude: number,
-	maxLatitude: number,
-];
+import type { GeometryBounds } from "../../../shared/geometryTypes";
+export type { GeometryBounds } from "../../../shared/geometryTypes";
 export type PointContainment = "interior" | "boundary" | "outside";
 
 const EPSILON = 1e-12;

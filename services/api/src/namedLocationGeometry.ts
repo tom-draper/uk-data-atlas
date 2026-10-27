@@ -1,12 +1,9 @@
 import polygonClipping, { type MultiPolygon } from "polygon-clipping";
 import type { AreaGeometryCache, GeoJsonGeometry } from "./areaGeometry";
-import { geometryBounds, type GeometryBounds } from "./areaContainment";
+import { geometryBounds } from "./areaContainment";
 
-export type NamedLocationGeometry = {
-	boundaryRelease: string;
-	bbox: GeometryBounds;
-	geometry: GeoJsonGeometry;
-};
+import type { NamedLocationGeometry } from "../../../shared/geometryTypes";
+export type { NamedLocationGeometry } from "../../../shared/geometryTypes";
 
 const multiPolygon = (geometry: GeoJsonGeometry): MultiPolygon[] =>
 	geometry.type === "Polygon"

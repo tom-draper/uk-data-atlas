@@ -48,11 +48,8 @@ import {
 	type PointContainment,
 } from "./areaContainment";
 
-export type GeoJsonGeometry = {
-	type: string;
-	coordinates?: unknown;
-	geometries?: GeoJsonGeometry[];
-};
+import type { GeoJsonGeometry } from "../../../shared/geometryTypes";
+export type { GeoJsonGeometry } from "../../../shared/geometryTypes";
 export type GeometrySource = {
 	input: string;
 	/** SHA-256 of the whole source file, when the registry records it. */
