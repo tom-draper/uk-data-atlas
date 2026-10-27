@@ -628,3 +628,9 @@ website fingerprint includes that compiler and its shared helpers.
 
 Evidence document compilation still runs through the API catalogue and report
 handlers. The website dataset compilation scripts also remain in `scripts/`.
+
+The source acquisition tools for ONS boundary releases, lookups, the postcode
+directory and ward history now live in `pipeline/src/sources/`. They write only
+under `data/`, so their behaviour is unchanged. `fetch:onspd` and
+`fetch:boundaries` are pipeline package scripts, and the API no longer has
+`fetch:*` or `refresh:onspd` scripts.

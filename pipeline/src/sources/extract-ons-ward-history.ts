@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { csvRecords } from "../src/csv";
+import { csvRecords } from "../../../shared/csv";
 
 const SOURCE_URL =
 	"https://www.arcgis.com/sharing/rest/content/items/e0bc41722b1a4b76a6ecfff14f91cbb4/data";
@@ -117,7 +117,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const [archive] = process.argv.slice(2);
 	if (!archive)
 		throw new Error(
-			"Usage: tsx scripts/extract-ons-ward-history.ts <code-history-database.zip>",
+			"Usage: tsx pipeline/src/sources/extract-ons-ward-history.ts <code-history-database.zip>",
 		);
 	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
 	const result = extractOnsWardHistory(repositoryRoot, archive);

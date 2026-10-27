@@ -33,7 +33,7 @@ const latestDirectory = (repositoryRoot: string) => {
 		: [];
 	if (editions.length === 0)
 		throw new Error(
-			`No permitted ONS Postcode Directory under ${root}. Run pnpm refresh:onspd from services/api/.`,
+			`No permitted ONS Postcode Directory under ${root}. Run pnpm --dir pipeline fetch:onspd.`,
 		);
 	return join(root, editions.at(-1)!);
 };

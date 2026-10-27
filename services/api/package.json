@@ -34,9 +34,6 @@
 		"test": "tsx --max-old-space-size=4096 --test --test-concurrency=2 tests/*.test.ts tests/built/*.test.ts",
 		"test:unbuilt": "tsx --test --test-concurrency=2 tests/*.test.ts",
 		"typecheck": "pnpm generate:query-rules && tsc --noEmit -p tsconfig.json",
-		"fetch:onspd": "tsx scripts/fetch-onspd.ts",
-		"fetch:boundaries": "tsx --max-old-space-size=4096 scripts/fetch-ons-boundaries.ts",
-		"refresh:onspd": "tsx scripts/fetch-onspd.ts",
 		"start:dev": "tsx scripts/serve.ts",
 		"docs:examples": "tsx scripts/refresh-problem-examples.ts"
 	},

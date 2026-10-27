@@ -1,4 +1,4 @@
-import type { GeographyKind } from "../src/geography";
+import type { GeographyKind } from "../../../shared/geography";
 
 export type OnsBoundarySource = {
 	geography: GeographyKind;
