@@ -506,7 +506,12 @@ export function statisticsTables(
 			constraints: [
 				"CHECK ((method = 'published') = (derived_from_id IS NULL))",
 			],
-			indexes: [["dataset_id", "measure_id"]],
+			indexes: [
+				{
+					name: "series_dataset",
+					columns: ["dataset_id", "measure_id"],
+				},
+			],
 			rows: function* (database) {
 				for (const [index, row] of seriesRows.entries()) {
 					const ids = seriesIds[row.dataset - 1];
@@ -532,7 +537,12 @@ export function statisticsTables(
 				"member_id INTEGER NOT NULL REFERENCES dimension_member(id)",
 			],
 			key: ["series_id", "dimension_id"],
-			indexes: [["member_id", "series_id"]],
+			indexes: [
+				{
+					name: "series_member_member",
+					columns: ["member_id", "series_id"],
+				},
+			],
 			rows: seriesRows.flatMap((row, index) =>
 				Object.entries(row.series.members ?? {}).map(
 					([dimension, member]) => [
@@ -592,7 +602,12 @@ export function statisticsTables(
 			constraints: [
 				"CHECK (value IS NOT NULL OR category_id IS NOT NULL OR status_id <> 1)",
 			],
-			indexes: [["area_version_id", "series_id", "period_id"]],
+			indexes: [
+				{
+					name: "observation_area",
+					columns: ["area_version_id", "series_id", "period_id"],
+				},
+			],
 			rows: function* (database): Generator<SQLInputValue[]> {
 				for (const [index, dataset] of datasets.entries()) {
 					const ids = seriesIds[index];

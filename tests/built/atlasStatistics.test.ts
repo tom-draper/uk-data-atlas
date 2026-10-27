@@ -128,7 +128,7 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 					.get()?.n,
 			);
 			const after = statSync(path).size;
-			database.exec("DROP INDEX observation_0; VACUUM;");
+			database.exec("DROP INDEX observation_area; VACUUM;");
 			const withoutAreaIndex = statSync(path).size;
 			database.exec(
 				`DROP VIEW v_observation; ${[
