@@ -549,6 +549,12 @@ modules directly. Four verifiers (`verify-atlas-areas`, `-crosswalks`,
 route fixtures, because they check that the API's responses agree with the
 release. A test allows only those two modules.
 
+Two website-only steps left the data build graph. `seo` already ran in
+`pnpm dev` and `pnpm build`, so `data:build` no longer repeats it. The README
+source tables are documentation, not data, so `pnpm docs:sources` rewrites them
+and `tests/docs/sourcesReadme.test.ts` fails when they drift. Both scripts
+import the website's `lib/` and stay in `scripts/`; the pipeline never runs them.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
