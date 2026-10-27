@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import {
 	DatabaseSync,
 	type SQLInputValue,
@@ -9,6 +9,7 @@ import type { CrosswalkArtifact } from "./crosswalkTypes";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { SqliteTable } from "./sqliteIndex";
 import { readStoredText } from "./storedText";
+import { atlasDatabasePath } from "./dataLayout";
 
 const sourceColumns = {
 	code: "TEXT",
@@ -405,10 +406,9 @@ export const crosswalkTables = (
 export const readSqliteCrosswalkInventory = (
 	apiRoot: string,
 ): CrosswalkInventory => {
-	const database = new DatabaseSync(
-		resolve(apiRoot, "../../data/build/atlas.sqlite"),
-		{ readOnly: true },
-	);
+	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+		readOnly: true,
+	});
 	try {
 		const header = database
 			.prepare("SELECT * FROM crosswalk_inventory")
@@ -464,10 +464,9 @@ export const readSqliteCrosswalk = (
 	apiRoot: string,
 	expected: CrosswalkInventory["crosswalks"][number],
 ) => {
-	const database = new DatabaseSync(
-		resolve(apiRoot, "../../data/build/atlas.sqlite"),
-		{ readOnly: true },
-	);
+	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+		readOnly: true,
+	});
 	try {
 		const row = database
 			.prepare(

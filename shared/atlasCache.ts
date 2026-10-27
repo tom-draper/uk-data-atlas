@@ -1,9 +1,10 @@
 import { createHash, randomUUID } from "node:crypto";
 import { copyFileSync, existsSync, renameSync, rmSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { NAME_NORMALISATION } from "./nameNormalisation";
 import { writeSqliteTables, type SqliteTable } from "./sqliteTables";
+import { repositoryRootOf } from "./dataLayout";
 
 export type CacheComponent =
 	"area-search" | "place-index" | "projections" | "postcode-counts";
@@ -116,7 +117,7 @@ export function requireAtlasCache(
 	apiRoot: string,
 	component: CacheComponent,
 ): string {
-	const root = resolve(apiRoot, "../..");
+	const root = repositoryRootOf(apiRoot);
 	const path = atlasCachePath(root);
 	try {
 		const database = new DatabaseSync(path, { readOnly: true });

@@ -3,11 +3,11 @@ import {
 	readSqliteCrosswalk,
 } from "./atlasCrosswalks";
 import { readAtlasPayload } from "./atlasSqlite";
-import { resolve } from "node:path";
 import type { CrosswalkArtifact } from "./crosswalkTypes";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { RelationshipPathInventory } from "./relationshipPaths";
 import type { CrosswalkHeader, CrosswalkLookup } from "./translation";
+import { atlasDatabasePath, repositoryRootOf } from "./dataLayout";
 
 export const readCrosswalkInventory = readSqliteCrosswalkInventory;
 
@@ -78,9 +78,9 @@ export const readRelationshipPathInventory = (
 	apiRoot: string,
 	crosswalks: CrosswalkInventory,
 ): RelationshipPathInventory => {
-	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const path = atlasDatabasePath(apiRoot);
 	const inventory = JSON.parse(
-		readAtlasPayload(resolve(apiRoot, "../.."), "relationship-paths"),
+		readAtlasPayload(repositoryRootOf(apiRoot), "relationship-paths"),
 	) as RelationshipPathInventory;
 	if (
 		inventory.schemaVersion !== 1 ||

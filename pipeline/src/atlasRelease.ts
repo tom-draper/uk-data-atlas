@@ -9,6 +9,7 @@ import type {
 	AtlasRelease,
 	AtlasReleaseArtifactRef,
 } from "../../shared/atlasRelease";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 // Catalogues that still have runtime JSON readers. Migrated data is covered by atlas.sqlite.
 const JSON_ARTIFACTS = [
@@ -23,7 +24,7 @@ const JSON_ARTIFACTS = [
 ];
 
 export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
-	const publicDirectory = join(repositoryRoot, "services/api/public");
+	const publicDirectory = artifactDirectory(repositoryRoot);
 	const artifactReference = (
 		id: string,
 		path: string,

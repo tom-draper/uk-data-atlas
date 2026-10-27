@@ -2,6 +2,7 @@ import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { publishAtlasCache } from "./atlasCache";
 import type { PostcodeCountsArtifact } from "./postcodeCountTypes";
+import { artifactDirectory } from "./dataLayout";
 
 export function storePostcodeCounts(
 	root: string,
@@ -32,7 +33,7 @@ export function storePostcodeCounts(
 			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
 			.run("postcode-counts", JSON.stringify(metadata));
 	});
-	const publicRoot = join(root, "services/api/public");
+	const publicRoot = artifactDirectory(root);
 	for (const suffix of [".json", ".json.gz"])
 		rmSync(join(publicRoot, `postcode-counts${suffix}`), { force: true });
 	return path;

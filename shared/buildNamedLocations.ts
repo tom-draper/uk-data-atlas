@@ -1,6 +1,6 @@
 import { packNamedLocations } from "./namedLocationStorage";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join } from "node:path";
 import { geometryBounds } from "./areaContainment";
 import {
 	countyMemberships,
@@ -19,6 +19,7 @@ import { createAreaLookup } from "./createAreaLookup";
 import { readPublicManifest } from "./publicManifest";
 import { compileNamedLocationGeometry } from "./namedLocationGeometry";
 import { sha256 } from "./contentHash";
+import { apiRootOf, artifactDirectory, artifactRoot } from "./dataLayout";
 
 /**
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
@@ -71,10 +72,7 @@ const readHistoricCounties = (repositoryRoot: string) =>
 
 export const buildNamedLocations = (repositoryRoot: string) => {
 	const source = join(
-		repositoryRoot,
-		"services",
-		"api",
-		"public",
+		artifactDirectory(repositoryRoot),
 		"source-data",
 		"gazetteer.core.json",
 	);
@@ -84,14 +82,11 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 		);
 	}
 	const outputPath = join(
-		repositoryRoot,
-		"services",
-		"api",
-		"public",
+		artifactDirectory(repositoryRoot),
 		"named-locations.json",
 	);
 	const parsed = compileNamedLocations(source);
-	const apiRoot = join(repositoryRoot, "services", "api");
+	const apiRoot = apiRootOf(repositoryRoot);
 	const areaInventory = readPublicManifest<AreaInventory>(
 		apiRoot,
 		"area-inventory.json",
@@ -109,7 +104,7 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 				? [
 						JSON.parse(
 							readFileSync(
-								join(apiRoot, "public", release.artifact),
+								join(artifactRoot(apiRoot), release.artifact),
 								"utf8",
 							),
 						) as AreaReleaseArtifact,
@@ -117,10 +112,7 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 				: [],
 		),
 	);
-	const cache = createAreaGeometryCache(
-		join(repositoryRoot, "services", "api"),
-		1,
-	);
+	const cache = createAreaGeometryCache(apiRootOf(repositoryRoot), 1);
 	const counties = readCeremonialCounties(repositoryRoot);
 	const authorityReleases = areaInventory.releases
 		.filter(

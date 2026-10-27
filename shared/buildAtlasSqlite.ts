@@ -13,14 +13,15 @@ import { crosswalkTables } from "./atlasCrosswalks";
 import { areaTables } from "./atlasAreas";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
+import { artifactDirectory } from "./dataLayout";
 
 export const buildAtlasSqlite = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
 	const path = join(directory, "atlas.sqlite");
 	const payload = readFileSync(
-		join(repositoryRoot, "services/api/public/terrain-catalogue.json"),
+		join(artifactDirectory(repositoryRoot), "terrain-catalogue.json"),
 		"utf8",
 	);
 	const manifestPayload = readFileSync(
@@ -38,7 +39,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 			compiled: { sha256: string; bytes: number };
 		}[];
 	};
-	const publicDirectory = join(repositoryRoot, "services/api/public");
+	const publicDirectory = artifactDirectory(repositoryRoot);
 	const projectionDirectory = join(directory, "location-projections");
 	const projectionPayload = readFileSync(
 		join(projectionDirectory, "location-projection-inventory.json"),
@@ -118,9 +119,9 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 		path,
 		{ schemaVersion: "2" },
 		{
-			...areaTables(join(repositoryRoot, "services/api/public")),
-			...crosswalkTables(join(repositoryRoot, "services/api/public")),
-			...namedLocationTables(join(repositoryRoot, "services/api/public")),
+			...areaTables(artifactDirectory(repositoryRoot)),
+			...crosswalkTables(artifactDirectory(repositoryRoot)),
+			...namedLocationTables(artifactDirectory(repositoryRoot)),
 			payloads: {
 				columns: ["id TEXT NOT NULL", "payload TEXT NOT NULL"],
 				key: ["id"],

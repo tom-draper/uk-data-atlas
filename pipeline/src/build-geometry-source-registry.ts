@@ -7,8 +7,9 @@ import type {
 } from "../../shared/areaInventory";
 import { createFileHashCache } from "../../shared/fileHashCache";
 import { createGeometrySourceRegistry } from "./geometrySourceRegistry";
+import { artifactDirectory } from "../../shared/dataLayout";
 export const buildGeometrySourceRegistry = (root: string) => {
-	const out = join(root, "services", "api", "public");
+	const out = artifactDirectory(root);
 	if (!existsSync(out))
 		throw new Error(
 			"Create the API public directory before building geometry sources.",

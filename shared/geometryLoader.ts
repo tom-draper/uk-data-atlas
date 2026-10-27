@@ -1,6 +1,7 @@
-import { resolve } from "node:path";
+import { join } from "node:path";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
+import { artifactRoot, repositoryRootOf } from "./dataLayout";
 
 export const readGeometrySources = (apiRoot: string): GeometrySourceLookup =>
 	readGeometrySourceLookup(apiRoot);
@@ -16,9 +17,9 @@ export const createAreaGeometryCache = (
 	onStaleCompiled?: (release: string, path: string) => void,
 ) =>
 	new AreaGeometryCache(
-		resolve(apiRoot, "../.."),
+		repositoryRootOf(apiRoot),
 		readGeometrySources(apiRoot),
 		maxReleases,
-		resolve(apiRoot, "public", "geometry-store"),
+		join(artifactRoot(apiRoot), "geometry-store"),
 		onStaleCompiled,
 	);

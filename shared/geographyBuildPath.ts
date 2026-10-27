@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { artifactDirectory } from "./dataLayout";
 
 export const geographyCatalogues = [
 	"boundary-releases",
@@ -12,4 +13,4 @@ export const geographyCatalogues = [
 export const buildArtifactPath = (repositoryRoot: string, filename: string) =>
 	geographyCatalogues.includes(filename.replace(/\.json$/, ""))
 		? join(repositoryRoot, "data/build/geography", filename)
-		: join(repositoryRoot, "services/api/public", filename);
+		: join(artifactDirectory(repositoryRoot), filename);

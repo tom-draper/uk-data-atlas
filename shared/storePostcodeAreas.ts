@@ -5,6 +5,7 @@ import { DatabaseSync } from "node:sqlite";
 import { writePostcodeAreas } from "./atlasPostcodeAreas";
 import { sha256 } from "./contentHash";
 import type { PostcodeAreasArtifact } from "./postcodeAreaTypes";
+import { artifactDirectory } from "./dataLayout";
 
 /** Publish complete tables atomically, preserving the other atlas data. */
 function store(
@@ -29,7 +30,7 @@ function store(
 	} finally {
 		rmSync(temporary, { force: true });
 	}
-	const publicRoot = join(root, "services/api/public");
+	const publicRoot = artifactDirectory(root);
 	rmSync(join(publicRoot, id), { recursive: true, force: true });
 	for (const suffix of [".json", ".json.gz"])
 		rmSync(join(publicRoot, `${id}${suffix}`), { force: true });

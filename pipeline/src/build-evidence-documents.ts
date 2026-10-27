@@ -15,9 +15,10 @@ import {
 import { availableReconciliations } from "../../shared/measureReconciliation";
 import { publicJson } from "../../shared/publicJson";
 import type { RouteContext } from "../../shared/routing";
+import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
 
-const apiRoot = resolve(import.meta.dirname, "../../services/api");
-const directory = join(apiRoot, "public");
+const apiRoot = apiRootOf(resolve(import.meta.dirname, "../.."));
+const directory = artifactRoot(apiRoot);
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 

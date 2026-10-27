@@ -1,9 +1,9 @@
 import { buildArtifactPath } from "./geographyBuildPath";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 
-const apiPublic = resolve(import.meta.dirname, "../services/api/public");
+const repositoryRoot = resolve(import.meta.dirname, "..");
 
 type ApiArtifact<T> = { path: string; sha256: string; data: T };
 
@@ -12,7 +12,7 @@ const sha256 = (contents: string) =>
 
 function readArtifact<T>(path: string): ApiArtifact<T> {
 	const contents = readFileSync(
-		buildArtifactPath(resolve(apiPublic, "../../.."), path),
+		buildArtifactPath(repositoryRoot, path),
 		"utf8",
 	);
 	return { path, sha256: sha256(contents), data: JSON.parse(contents) as T };

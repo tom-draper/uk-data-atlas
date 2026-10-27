@@ -9,6 +9,7 @@ import { sha256 } from "./contentHash";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
 import { writeCrosswalkArtifact } from "./crosswalk-artifact";
 import type { CrosswalkWork, CrosswalkWorkerResult } from "./crosswalk-workers";
+import { apiRootOf, artifactDirectory } from "./dataLayout";
 
 const [root, outputDirectory] = process.argv.slice(2);
 if (!root || !outputDirectory || !process.send)
@@ -17,13 +18,11 @@ if (!root || !outputDirectory || !process.send)
 	);
 process.on("disconnect", () => process.exit(1));
 const send = (message: CrosswalkWorkerResult) => process.send!(message);
-const { areaLookup } = readCompiledAreaLookup(
-	join(root, "services/api/public"),
-);
+const { areaLookup } = readCompiledAreaLookup(artifactDirectory(root));
 const compile = createCrosswalkCompiler(
 	root,
 	areaLookup,
-	readGeometrySourceLookup(join(root, "services/api")),
+	readGeometrySourceLookup(apiRootOf(root)),
 );
 process.on("message", (work: CrosswalkWork) => {
 	const started = performance.now();

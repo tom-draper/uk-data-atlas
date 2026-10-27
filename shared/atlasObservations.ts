@@ -1,14 +1,14 @@
 import { observationArtifactName, type DataCatalog } from "./dataCatalog";
-import { resolve } from "node:path";
 import {
 	DatabaseSync,
 	type SQLInputValue,
 	type SQLOutputValue,
 } from "node:sqlite";
 import { sha256 } from "./contentHash";
+import { atlasDatabasePath } from "./dataLayout";
 
 export const observationDatabasePath = (apiRoot: string) =>
-	resolve(apiRoot, "../../data/build/atlas.sqlite");
+	atlasDatabasePath(apiRoot);
 
 /** Read the small inventory without loading observation rows. */
 export function readObservationInventory(path: string) {

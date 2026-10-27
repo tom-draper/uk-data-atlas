@@ -13,10 +13,11 @@ import {
 	type StoredFile,
 } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { repositoryRootOf } from "./dataLayout";
 
 /** The built lookups by id, or none where they have not been built. */
 export const readAtlasLookups = (apiRoot: string): Map<string, StoredFile> => {
-	const directory = atlasAssetsDirectory(resolve(apiRoot, "../.."));
+	const directory = atlasAssetsDirectory(repositoryRootOf(apiRoot));
 	const manifestPath = resolve(directory, ATLAS_LOOKUPS_MANIFEST);
 	if (!existsSync(manifestPath)) return new Map();
 	const manifest: AtlasLookupManifest = JSON.parse(

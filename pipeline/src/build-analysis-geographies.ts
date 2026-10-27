@@ -9,9 +9,10 @@ import {
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import type { DataCatalog } from "../../shared/dataCatalog";
 import type { RelationshipPathInventory } from "../../shared/relationshipPaths";
+import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
 
 export const buildAnalysisGeographies = (repositoryRoot: string) => {
-	const directory = join(repositoryRoot, "services", "api", "public");
+	const directory = artifactDirectory(repositoryRoot);
 	const catalogPath = join(directory, "data-catalog.json");
 	const crosswalkPath = join(directory, "crosswalk-inventory.json");
 	if (!existsSync(catalogPath) || !existsSync(crosswalkPath))
@@ -31,13 +32,7 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 		: undefined;
 	const inventory = compileAnalysisGeographies(
 		readAnalysisGeographySupport(
-			join(
-				repositoryRoot,
-				"services",
-				"api",
-				"config",
-				"analysis-geographies.json",
-			),
+			join(configDirectory(repositoryRoot), "analysis-geographies.json"),
 		),
 		JSON.parse(readFileSync(catalogPath, "utf8")) as DataCatalog,
 		JSON.parse(readFileSync(crosswalkPath, "utf8")) as CrosswalkInventory,

@@ -8,7 +8,7 @@ import {
 	rmSync,
 	writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
 import { AreaGeometryCache, compiledGeometryFile } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
 import { readGeometrySourceLookup } from "./geometrySources";
@@ -18,6 +18,7 @@ import {
 	compileGeometryValidity,
 	roundKeepingValidity,
 } from "./compileGeometryValidity";
+import { apiRootOf, artifactRoot } from "./dataLayout";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -62,9 +63,9 @@ export const buildGeometryStore = (
 	root: string,
 	log: (line: string) => void = () => {},
 ) => {
-	const apiRoot = join(root, "services", "api");
+	const apiRoot = apiRootOf(root);
 	const sources = readGeometrySourceLookup(apiRoot);
-	const directory = join(apiRoot, "public", "geometry-store");
+	const directory = join(artifactRoot(apiRoot), "geometry-store");
 	mkdirSync(directory, { recursive: true });
 	const compiler = sha256(
 		COMPILER_SOURCES.map((path) =>

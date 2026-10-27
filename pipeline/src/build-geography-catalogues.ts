@@ -6,6 +6,7 @@ import {
 	buildArtifactPath,
 	geographyCatalogues,
 } from "../../shared/geographyBuildPath";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 /** Finalise catalogue payloads after analysis has read the base database. */
 export const buildGeographyCatalogues = (repositoryRoot: string) => {
@@ -36,7 +37,7 @@ export const buildGeographyCatalogues = (repositoryRoot: string) => {
 		rmSync(temporary, { force: true });
 	}
 	for (const id of geographyCatalogues)
-		rmSync(join(repositoryRoot, "services/api/public", `${id}.json`), {
+		rmSync(join(artifactDirectory(repositoryRoot), `${id}.json`), {
 			force: true,
 		});
 	return path;

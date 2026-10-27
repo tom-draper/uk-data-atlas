@@ -6,7 +6,7 @@ import { lazyValue } from "./lazyValue";
 import { readAtlasPages } from "./atlasPages";
 import { readAtlasLookups } from "./atlasLookups";
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
 import { createGeographyResolver } from "./geographyResolver";
 import { createRelationshipPathIndex } from "./relationshipPaths";
@@ -51,6 +51,7 @@ import { createTerrainAsyncProvider } from "./terrainLoader";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 import { createOperationMatcher } from "./operationTemplates";
 import type { StoredFile } from "./routeResponse";
+import { artifactRoot, repositoryRootOf } from "./dataLayout";
 
 const EVIDENCE_DOCUMENTS = [
 	"analysis-geography-validation",
@@ -76,7 +77,7 @@ const readEvidenceDocuments = (
 				id === "geography-inventory" ||
 				id === "analysis-geography-validation"
 			) {
-				const body = readAtlasPayload(resolve(apiRoot, "../.."), id);
+				const body = readAtlasPayload(repositoryRootOf(apiRoot), id);
 				return [[id, { body, contentHash: sha256(body) }]];
 			}
 			const path = `${id}.json`;
@@ -84,7 +85,7 @@ const readEvidenceDocuments = (
 				(candidate) => candidate.id === id,
 			);
 			if (!artifact) return [];
-			const file = resolve(apiRoot, "public", path);
+			const file = join(artifactRoot(apiRoot), path);
 			return [
 				[
 					id,
@@ -97,7 +98,7 @@ const readEvidenceDocuments = (
 			];
 		}),
 	);
-	const indexPath = resolve(apiRoot, "public", "evidence-documents.json");
+	const indexPath = join(artifactRoot(apiRoot), "evidence-documents.json");
 	if (existsSync(indexPath)) {
 		const manifest: EvidenceManifest = JSON.parse(
 			readFileSync(indexPath, "utf8"),
@@ -116,7 +117,7 @@ const readEvidenceDocuments = (
 				entry.artifact !== `documents/${entry.id}.json`
 			)
 				throw new Error("Invalid evidence document path");
-			const path = resolve(apiRoot, "public", entry.artifact);
+			const path = join(artifactRoot(apiRoot), entry.artifact);
 			if (statSync(path).size !== entry.bytes)
 				throw new Error(`Evidence document size mismatch at ${path}`);
 			documents.set(entry.id, {
@@ -396,9 +397,8 @@ export const readApiCatalogues = (
 						[
 							format.artifact,
 							{
-								path: resolve(
-									apiRoot,
-									"public",
+								path: join(
+									artifactRoot(apiRoot),
 									format.artifact,
 								),
 								bytes: format.bytes,

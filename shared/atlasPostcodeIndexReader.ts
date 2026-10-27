@@ -1,13 +1,13 @@
-import { resolve } from "node:path";
 import { readAtlasPayload } from "./atlasSqlite";
 import { postcodeIndexMismatch } from "./postcodeIndexMismatch";
 import type { PostcodeIndexArtifact } from "./postcodeIndexTypes";
+import { repositoryRootOf } from "./dataLayout";
 
 export const readSqlitePostcodeIndexArtifact = (
 	apiRoot: string,
 ): PostcodeIndexArtifact => {
 	const artifact: PostcodeIndexArtifact = JSON.parse(
-		readAtlasPayload(resolve(apiRoot, "../.."), "postcode-index"),
+		readAtlasPayload(repositoryRootOf(apiRoot), "postcode-index"),
 	);
 	const mismatch = postcodeIndexMismatch(artifact);
 	if (mismatch)

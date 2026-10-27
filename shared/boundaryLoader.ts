@@ -7,7 +7,6 @@ import {
 import { readGeographyCatalogue } from "./geographyCatalogue";
 import { readSqliteAreaInventory } from "./atlasAreaReader";
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import type { AreaInventory } from "./areaInventory";
 import type { GeographyInventory } from "./geographyInventory";
@@ -24,6 +23,7 @@ import { PostcodeCountsIndex, postcodeCountsMismatch } from "./postcodeCounts";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 import { publicPath } from "./publicManifest";
+import { atlasDatabasePath } from "./dataLayout";
 
 export { readBoundaryRegistry } from "./boundaryCatalogue";
 
@@ -36,7 +36,7 @@ export const readGeographyInventory = (apiRoot: string): GeographyInventory =>
 	);
 
 export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
-	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const path = atlasDatabasePath(apiRoot);
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		const row = database
@@ -97,7 +97,7 @@ export const readPostcodeAreaIndex = (
 	areaInventory: AreaInventory,
 	geometrySources: GeometrySourceLookup,
 ): PostcodeAreaIndex => {
-	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const path = atlasDatabasePath(apiRoot);
 	const artifact = readSqlitePostcodeAreas(apiRoot);
 	const mismatch = postcodeAreasMismatch(artifact, postcodeIndex.artifact, {
 		areaRelease: (geography, boundaryRelease) => {
@@ -129,7 +129,7 @@ export const readPostcodeCounts = (
 	postcodeIndex: PostcodeIndex,
 	postcodeAreas: PostcodeAreaIndex,
 ): PostcodeCountsIndex => {
-	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const path = atlasDatabasePath(apiRoot);
 	const artifact = readSqlitePostcodeCounts(apiRoot);
 	const mismatch = postcodeCountsMismatch(
 		artifact,

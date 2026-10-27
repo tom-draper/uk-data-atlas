@@ -4,7 +4,7 @@ import { readSqlitePostcodeAreaShard } from "../../shared/atlasPostcodeAreaReade
 import { storePostcodeAreas } from "../../shared/storePostcodeAreas";
 
 import { availableParallelism } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
 	isMainThread,
@@ -42,6 +42,7 @@ import {
 	type ReleasePlacements,
 } from "../../shared/postcodeAreaCompiler";
 import type { PostcodeShard } from "../../shared/postcodeIndexTypes";
+import { apiRootOf } from "../../shared/dataLayout";
 
 /**
  * Compile postcode placements into atlas.sqlite: the areas each postcode's centroid lies in,
@@ -187,7 +188,7 @@ export const buildPostcodeAreas = async (
 	repositoryRoot: string,
 	options: { workers?: number; verifyEvery?: number; rebuild?: boolean } = {},
 ) => {
-	const apiRoot = join(repositoryRoot, "services", "api");
+	const apiRoot = apiRootOf(repositoryRoot);
 	const postcodeIndex = readPostcodeIndex(apiRoot);
 	const areaInventory = readAreaInventory(apiRoot);
 	const geometrySources = readGeometrySources(apiRoot);

@@ -22,9 +22,14 @@ import { readSourceObservations } from "../../shared/observationTables";
 import { compileValidationReport } from "./validation/compileValidationReport";
 import { readMeasureTotals, readValidationWaivers } from "./validation/inputs";
 import { readStoredText, storedTextExists } from "../../shared/storedText";
+import {
+	apiRootOf,
+	artifactDirectory,
+	configDirectory,
+} from "../../shared/dataLayout";
 
 export const buildValidationReport = (repositoryRoot: string) => {
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	const read = <T>(path: string): T => {
 		const fullPath = buildArtifactPath(repositoryRoot, path);
 		if (!storedTextExists(fullPath)) {
@@ -38,9 +43,7 @@ export const buildValidationReport = (repositoryRoot: string) => {
 	);
 	const exportManifest = read<ExportManifest>("export-manifest.json");
 	const dataCatalog = read<DataCatalog>("data-catalog.json");
-	const databasePath = observationDatabasePath(
-		resolve(repositoryRoot, "services/api"),
-	);
+	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
 	assertObservationCatalogue(databasePath, dataCatalog);
 	const report = compileValidationReport({
 		boundaryRegistry: read<BoundaryRegistry>("boundary-releases.json"),
@@ -74,22 +77,10 @@ export const buildValidationReport = (repositoryRoot: string) => {
 			]),
 		),
 		...readMeasureTotals(
-			join(
-				repositoryRoot,
-				"services",
-				"api",
-				"config",
-				"measure-totals.json",
-			),
+			join(configDirectory(repositoryRoot), "measure-totals.json"),
 		),
 		...readValidationWaivers(
-			join(
-				repositoryRoot,
-				"services",
-				"api",
-				"config",
-				"validation-waivers.json",
-			),
+			join(configDirectory(repositoryRoot), "validation-waivers.json"),
 		),
 	});
 	const reportPath = join(outputDirectory, "validation-report.json");

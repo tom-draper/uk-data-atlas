@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { artifactRoot } from "./dataLayout";
 
 export const publicPath = (apiRoot: string, filename: string) =>
-	join(apiRoot, "public", filename);
+	join(artifactRoot(apiRoot), filename);
 
 /**
  * A compiled schema-1 manifest from `public/`, refused unless `listKey` holds

@@ -20,6 +20,7 @@ import {
 	type BoundaryReleaseSummary,
 	type MapResourceDescriptor,
 } from "./mapResource/compileMapResource";
+import { apiRootOf, artifactDirectory } from "./dataLayout";
 
 /**
  * Compile every boundary release into a map resource: its tiles, and each
@@ -35,8 +36,7 @@ import {
 const sourceFiles = (directory: string) =>
 	readdirSync(
 		resolve(
-			dirname(fileURLToPath(import.meta.url)),
-			"../services/api",
+			apiRootOf(resolve(dirname(fileURLToPath(import.meta.url)), "..")),
 			directory,
 		),
 	)
@@ -84,7 +84,7 @@ export const buildMapResources = (
 	root: string,
 	log: (line: string) => void = () => {},
 ) => {
-	const out = join(root, "services", "api", "public");
+	const out = artifactDirectory(root);
 	if (!existsSync(out))
 		throw new Error(
 			"Create the API public directory before building map resources.",
@@ -102,9 +102,7 @@ export const buildMapResources = (
 			artifact: string;
 		}>;
 	};
-	const geometrySources = readGeometrySourceLookup(
-		join(root, "services", "api"),
-	);
+	const geometrySources = readGeometrySourceLookup(apiRootOf(root));
 	const cache = new AreaGeometryCache(
 		root,
 		geometrySources,
@@ -119,7 +117,7 @@ export const buildMapResources = (
 
 	const compiler = sha256(
 		COMPILER_SOURCES.map((path) =>
-			readFileSync(join(root, "services", "api", path), "utf8"),
+			readFileSync(join(apiRootOf(root), path), "utf8"),
 		).join("\0"),
 	);
 	// Each compiled release's key and descriptor, saved as soon as it is

@@ -2,9 +2,10 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createTerrainCatalogue } from "./terrainCatalogue";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 export const buildTerrainCatalogue = (repositoryRoot: string) => {
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	if (!existsSync(outputDirectory)) {
 		throw new Error(
 			`Create the API public directory before building: ${outputDirectory}`,

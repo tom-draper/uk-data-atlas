@@ -17,9 +17,10 @@ import type {
 	LookupNamedLocations,
 } from "../../shared/lookupExports";
 import { readStoredText, storedTextExists } from "../../shared/storedText";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 export const buildLookupManifest = (repositoryRoot: string) => {
-	const publicDirectory = join(repositoryRoot, "services", "api", "public");
+	const publicDirectory = artifactDirectory(repositoryRoot);
 	const read = <T>(path: string): T => {
 		const fullPath = join(publicDirectory, path);
 		if (!storedTextExists(fullPath)) {

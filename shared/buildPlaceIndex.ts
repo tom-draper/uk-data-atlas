@@ -7,6 +7,7 @@ import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "
 import { readGeographyCatalogue } from "./geographyCatalogue";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import { compilePlaceIndex, placeIndexTables } from "./placeIndex";
+import { apiRootOf, artifactRoot } from "./dataLayout";
 
 const readBoundaryRegistry = (apiRoot: string) =>
 	readGeographyCatalogue<BoundaryRegistry>(
@@ -17,7 +18,7 @@ const readBoundaryRegistry = (apiRoot: string) =>
 	);
 
 export const buildPlaceIndex = (repositoryRoot: string) => {
-	const apiRoot = join(repositoryRoot, "services", "api");
+	const apiRoot = apiRootOf(repositoryRoot);
 	const areaInventory = readAreaInventory(apiRoot);
 	const index = compilePlaceIndex(
 		readAreaLookup(apiRoot, areaInventory),
@@ -35,7 +36,7 @@ export const buildPlaceIndex = (repositoryRoot: string) => {
 		"place-index.json",
 		"place-index.json.gz",
 	])
-		rmSync(join(apiRoot, "public", filename), { force: true });
+		rmSync(join(artifactRoot(apiRoot), filename), { force: true });
 
 	return {
 		outputPath,

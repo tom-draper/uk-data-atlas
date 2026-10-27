@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
@@ -8,9 +7,10 @@ import { readSqlitePostcodeShard } from "./atlasPostcodeShard";
 import { compilePostcodeCounts } from "./compilePostcodeCounts";
 import { storePostcodeCounts } from "./storePostcodeCounts";
 import type { PostcodeShard } from "./postcodeIndexTypes";
+import { apiRootOf } from "./dataLayout";
 
 export const buildPostcodeCounts = (repositoryRoot: string) => {
-	const apiRoot = join(repositoryRoot, "services/api");
+	const apiRoot = apiRootOf(repositoryRoot);
 	const postcodeIndex = readSqlitePostcodeIndexArtifact(apiRoot);
 	const entries = new Map(
 		postcodeIndex.shards.map((entry) => [entry.path, entry]),

@@ -1,5 +1,5 @@
-import { resolve } from "node:path";
 import { readAtlasPayload } from "./atlasSqlite";
+import { repositoryRootOf } from "./dataLayout";
 
 export const readGeographyCatalogue = <T extends { schemaVersion: number }>(
 	apiRoot: string,
@@ -8,7 +8,7 @@ export const readGeographyCatalogue = <T extends { schemaVersion: number }>(
 	label: string,
 ): T => {
 	const catalogue: T = JSON.parse(
-		readAtlasPayload(resolve(apiRoot, "../.."), id),
+		readAtlasPayload(repositoryRootOf(apiRoot), id),
 	);
 	if (catalogue.schemaVersion !== 1 || !Array.isArray(catalogue[listKey]))
 		throw new Error(`Invalid ${label} in atlas.sqlite:${id}`);

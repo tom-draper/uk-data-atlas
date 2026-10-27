@@ -6,7 +6,7 @@ import {
 import { observationArtifactName } from "./dataCatalog";
 import { buildArtifactPath } from "./geographyBuildPath";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join } from "node:path";
 import { validateAnalysisGeographies } from "./analysisGeographyValidation";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { CrosswalkArtifact } from "./crosswalkTypes";
@@ -14,9 +14,10 @@ import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { AnyMeasureObservationArtifact, DataCatalog } from "./dataCatalog";
 import type { MeasureTableArtifact } from "./observationTables";
 import { readStoredText } from "./storedText";
+import { apiRootOf, artifactDirectory } from "./dataLayout";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
-	const directory = join(repositoryRoot, "services", "api", "public");
+	const directory = artifactDirectory(repositoryRoot);
 	const required = [
 		"analysis-geographies.json",
 		"data-catalog.json",
@@ -50,9 +51,7 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 			return [entry.id, artifact] as const;
 		}),
 	);
-	const databasePath = observationDatabasePath(
-		resolve(repositoryRoot, "services/api"),
-	);
+	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
 	assertObservationCatalogue(databasePath, dataCatalog);
 	const names = new Set(
 		dataCatalog.measures.flatMap((measure) =>

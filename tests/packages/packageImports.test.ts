@@ -178,6 +178,20 @@ describe("pipeline boundaries", () => {
 		}
 	});
 
+	it("finds the API project and its output through shared/dataLayout.ts", () => {
+		const files = [
+			...sourceFiles(join(PIPELINE, "src")),
+			...sourceFiles(join(ROOT, "shared")),
+		].filter((file) => relative(ROOT, file) !== "shared/dataLayout.ts");
+		expect(files.length).toBeGreaterThan(0);
+		const hardCoded = files.filter((file) =>
+			/["'`][^"'`\n]*services\/api\/(?:public|config)|"services",\s*"api"/.test(
+				readFileSync(file, "utf8"),
+			),
+		);
+		expect(hardCoded.map((file) => relative(ROOT, file))).toEqual([]);
+	});
+
 	it("keeps the API, website runtime and shared code independent of the pipeline", () => {
 		const files = [
 			"app",

@@ -11,6 +11,7 @@ import {
 	readCrosswalkAdapters,
 	type PropertyCrosswalkAdapter,
 } from "../../shared/crosswalkAdapters";
+import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
 
 const readAreaArtifacts = (outputDirectory: string) => {
 	const inventory = JSON.parse(
@@ -38,7 +39,7 @@ const readAreaArtifacts = (outputDirectory: string) => {
 };
 
 export const buildRelationshipCandidates = (repositoryRoot: string) => {
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	if (!existsSync(outputDirectory)) {
 		throw new Error(
 			`Create the API public directory before building: ${outputDirectory}`,
@@ -52,7 +53,7 @@ export const buildRelationshipCandidates = (repositoryRoot: string) => {
 		readAreaArtifacts(outputDirectory),
 		crosswalks.crosswalks,
 		readCrosswalkAdapters(
-			join(repositoryRoot, "services/api/config/crosswalk-adapters.json"),
+			join(configDirectory(repositoryRoot), "crosswalk-adapters.json"),
 		).filter(
 			(adapter): adapter is PropertyCrosswalkAdapter =>
 				adapter.method === "official-lookup" ||

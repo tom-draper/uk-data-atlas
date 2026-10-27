@@ -13,9 +13,10 @@ import { createGeographyInventory } from "./geographyInventory";
 import { createSourceInventory } from "./sourceInventory";
 import type { AreaInventory } from "../../shared/areaInventory";
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	if (!existsSync(outputDirectory)) {
 		throw new Error(
 			`Create the API public directory before building: ${outputDirectory}`,

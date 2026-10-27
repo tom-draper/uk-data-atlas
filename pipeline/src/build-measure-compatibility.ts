@@ -20,12 +20,13 @@ import {
 	observationArtifactName,
 } from "../../shared/dataCatalog";
 import { compileMeasureCompatibility } from "./measureCompatibility";
+import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
 
 const read = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;
 
 export const buildMeasureCompatibility = (repositoryRoot: string) => {
-	const publicDirectory = join(repositoryRoot, "services", "api", "public");
+	const publicDirectory = artifactDirectory(repositoryRoot);
 	const required = [
 		"data-catalog.json",
 		"boundary-releases.json",
@@ -48,9 +49,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 	const dataCatalog = read<DataCatalog>(
 		join(publicDirectory, "data-catalog.json"),
 	);
-	const databasePath = observationDatabasePath(
-		resolve(repositoryRoot, "services/api"),
-	);
+	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
 	assertObservationCatalogue(databasePath, dataCatalog);
 	// A table serves several measures, so it is read once.
 	const tables = new Map<string, MeasureTableArtifact>();

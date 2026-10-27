@@ -11,6 +11,7 @@ import {
 	storedTextExists,
 	writeStoredText,
 } from "./storedText";
+import { artifactDirectory } from "./dataLayout";
 
 const read = <T>(directory: string, path: string): T => {
 	const fullPath = join(directory, path);
@@ -35,7 +36,7 @@ const readAreaLookup = (directory: string) => {
 };
 
 export const buildLocationProjections = (repositoryRoot: string) => {
-	const publicDirectory = join(repositoryRoot, "services/api/public");
+	const publicDirectory = artifactDirectory(repositoryRoot);
 	const outputDirectory = join(
 		repositoryRoot,
 		"data/build/location-projections",

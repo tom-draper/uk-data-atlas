@@ -17,6 +17,7 @@ import {
 	boundaryReleaseDeprecations,
 	sourceMetadataCorrections,
 } from "@uk-data-atlas/catalogue";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 type BoundaryMetadata = {
 	id?: unknown;
@@ -185,7 +186,7 @@ export const createBoundaryRegistry = (
 
 export const buildBoundaryRegistry = (repositoryRoot: string) => {
 	const registry = createBoundaryRegistry(repositoryRoot);
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	const outputPath = buildArtifactPath(
 		repositoryRoot,
 		"boundary-releases.json",
