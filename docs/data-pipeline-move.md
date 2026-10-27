@@ -506,6 +506,10 @@ The SQLite area inventory and release readers, and the lazy area lookup, live
 in `shared/`. The API re-exports them for existing callers. These readers can
 now be used by pipeline stages without importing the API boundary loader.
 
+The named location SQLite inventory reader and its data contracts live in
+`shared/`, with API re-exports. The reader still loads geometries lazily and
+checks the inventory hash when it reads them.
+
 The area search index compiler and cache builder live in `shared/`, where the
 API cache rebuild can also use them. The pipeline stage runs
 `pipeline/src/build-area-search-index.ts`. Its SQLite tables, cache publication,
