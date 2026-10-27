@@ -23,6 +23,17 @@ import {
 	UNEMPLOYMENT,
 	WORKPLACE_INCOME,
 } from "./economy";
+import {
+	AIR_QUALITY,
+	BROADBAND,
+	ELECTRIC_VEHICLE_CHARGERS,
+	ELECTRICITY_CONSUMPTION,
+	GAS_CONSUMPTION,
+	GHG_EMISSIONS,
+	LAND_AREA,
+	MOBILE_COVERAGE,
+	WASTE,
+} from "./environment";
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */
 export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
@@ -46,6 +57,15 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	LOCAL_GOVERNMENT_FINANCE,
 	HOUSING_AFFORDABILITY,
 	HOUSE_PRICE,
+	AIR_QUALITY,
+	GHG_EMISSIONS,
+	ELECTRICITY_CONSUMPTION,
+	GAS_CONSUMPTION,
+	ELECTRIC_VEHICLE_CHARGERS,
+	WASTE,
+	LAND_AREA,
+	BROADBAND,
+	MOBILE_COVERAGE,
 ];
 
 /**
