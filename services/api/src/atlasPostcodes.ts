@@ -4,12 +4,10 @@ export {
 	postcodeDistrictWhere,
 	readSqlitePostcodeShard,
 } from "../../../shared/atlasPostcodeShard";
-import { resolve } from "node:path";
-import { readAtlasPayload } from "../../../shared/atlasSqlite";
+import { readSqlitePostcodeIndexArtifact } from "../../../shared/atlasPostcodeIndexReader";
 import { sha256 } from "./contentHash";
 import {
 	PostcodeIndex,
-	postcodeIndexMismatch,
 	type PostcodeIndexArtifact,
 	type PostcodeShard,
 } from "./postcodes";
@@ -71,14 +69,7 @@ export const postcodeTables = (
 };
 
 export const readSqlitePostcodeIndex = (apiRoot: string): PostcodeIndex => {
-	const artifact: PostcodeIndexArtifact = JSON.parse(
-		readAtlasPayload(resolve(apiRoot, "../.."), "postcode-index"),
-	);
-	const mismatch = postcodeIndexMismatch(artifact);
-	if (mismatch)
-		throw new Error(
-			`The SQLite postcode index ${mismatch}. Run pnpm data:build --only postcode-index.`,
-		);
+	const artifact = readSqlitePostcodeIndexArtifact(apiRoot);
 	const entries = new Map(
 		artifact.shards.map((entry) => [entry.path, entry]),
 	);

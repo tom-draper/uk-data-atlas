@@ -1,0 +1,18 @@
+import { resolve } from "node:path";
+import { readAtlasPayload } from "./atlasSqlite";
+import { postcodeIndexMismatch } from "./postcodeIndexMismatch";
+import type { PostcodeIndexArtifact } from "./postcodeIndexTypes";
+
+export const readSqlitePostcodeIndexArtifact = (
+	apiRoot: string,
+): PostcodeIndexArtifact => {
+	const artifact: PostcodeIndexArtifact = JSON.parse(
+		readAtlasPayload(resolve(apiRoot, "../.."), "postcode-index"),
+	);
+	const mismatch = postcodeIndexMismatch(artifact);
+	if (mismatch)
+		throw new Error(
+			`The SQLite postcode index ${mismatch}. Run pnpm data:build --only postcode-index.`,
+		);
+	return artifact;
+};
