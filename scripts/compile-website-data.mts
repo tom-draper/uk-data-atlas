@@ -1,5 +1,5 @@
 import { buildAtlasAssets } from "../pipeline/src/build-atlas-assets";
-import { buildAtlasSqlite } from "../services/api/scripts/build-atlas-sqlite";
+import { buildAtlasSqlite } from "../shared/buildAtlasSqlite";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
  * chunks, using the catalogue intermediates in data/build/datasets.

@@ -4,6 +4,7 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "../src/crosswalkInventory";
+import { createLookupResolver } from "../../../pipeline/src/lookupResolver";
 import { createGeographyResolver } from "../src/geographyResolver";
 import { createRelationshipPathIndex } from "../src/relationshipPaths";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
@@ -30,6 +31,7 @@ const artifact = (
 			method === "official-lookup" ? "publisher-supplied" : "derived",
 		relationshipPurpose: "identity",
 		weighting: { status: "not-applicable" },
+		validation: { continuity: { realigned: [] } },
 		from: { geography: "ward", boundaryRelease: "1" },
 		to: { geography: "ward", boundaryRelease: "2" },
 		records: pairs.map(([source, targets]) => ({
@@ -78,6 +80,52 @@ const resolver = createGeographyResolver({
 	relationshipPathIndex: createRelationshipPathIndex(
 		compileRelationshipPaths(inventory),
 	),
+});
+
+test("pipeline lookup resolver agrees with the API on translation and release lookups", () => {
+	const areaLookup = new Map([
+		["ward/1", new Map()],
+		["ward/2", new Map()],
+	]);
+	const crosswalkLookup = new Map(
+		artifacts.map((crosswalk) => [crosswalk.id, crosswalk]),
+	);
+	const relationshipPathIndex = createRelationshipPathIndex(
+		compileRelationshipPaths(inventory),
+	);
+	const inputs = {
+		areaLookup,
+		crosswalkInventory: inventory,
+		crosswalkLookup,
+		relationshipPathIndex,
+	};
+	const api = createGeographyResolver(inputs);
+	const pipeline = createLookupResolver(inputs);
+	for (const release of ["1", "2", "missing"]) {
+		assert.equal(
+			pipeline.hasAreaRelease("ward", release),
+			api.hasAreaRelease("ward", release),
+		);
+		assert.deepEqual(
+			pipeline.areaCodes("ward", release),
+			api.areaCodes("ward", release),
+		);
+	}
+	assert.deepEqual(pipeline.crosswalkSummaries(), api.crosswalkSummaries());
+	for (const id of ["history", "continuity", "missing"])
+		assert.deepEqual(pipeline.crosswalk(id), api.crosswalk(id));
+	for (const code of ["X", "U", "A", "S", "missing"]) {
+		const source = { geography: "ward", boundaryRelease: "1", code };
+		const target = { geography: "ward", boundaryRelease: "2" };
+		assert.deepEqual(
+			pipeline.sameArea(source, target),
+			api.sameArea(source, target),
+		);
+		assert.deepEqual(
+			pipeline.successorArea(source, target),
+			api.successorArea(source, target),
+		);
+	}
 });
 
 const same = (code: string, from: string, to: string) =>

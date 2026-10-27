@@ -201,6 +201,9 @@ importers:
       pmtiles:
         specifier: ^4.5.0
         version: 4.5.0
+      polygon-clipping:
+        specifier: 0.15.7
+        version: 0.15.7
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -250,6 +253,9 @@ importers:
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
+      jsts:
+        specifier: 2.12.1
+        version: 2.12.1
       prettier:
         specifier: 3.9.7
         version: 3.9.7
@@ -350,9 +356,30 @@ importers:
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../packages/catalogue
+      '@uk-data-atlas/datasets':
+        specifier: workspace:*
+        version: link:../packages/datasets
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../packages/geography
+      '@uk-data-atlas/map-tiles':
+        specifier: workspace:*
+        version: link:../packages/map-tiles
+      jsts:
+        specifier: 2.12.1
+        version: 2.12.1
+      proj4:
+        specifier: ^2.22.0
+        version: 2.22.0
+      topojson-client:
+        specifier: ^3.1.0
+        version: 3.1.0
+      topojson-server:
+        specifier: ^3.0.1
+        version: 3.0.1
+      topojson-simplify:
+        specifier: ^3.0.3
+        version: 3.0.3
       tsx:
         specifier: ^4.23.15
         version: 4.23.15

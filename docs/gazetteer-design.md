@@ -16,7 +16,7 @@ served by `GeographyResolver` in `services/api/src/geographyResolver.ts`), which
 complete, release-aware areas, relationships, crosswalks, place definitions,
 spatial indexes, change events and coverage reports from the raw releases.
 
-The two meet in one place today: `services/api/scripts/build-named-locations.ts` reads
+The two meet in one place today: `pipeline/src/build-named-locations.ts` reads
 the curated named locations from this project's `gazetteer.core.json`. Section
 9.5 argues that dependency should eventually point the other way.
 
@@ -316,7 +316,7 @@ straddling ward under every constituency it touches, which would double-count.
 ### 9.4 Density from precompiled area (not worth doing)
 
 The premise was wrong. Charts already read `areaSqKm` from each release's
-properties sidecar, which `scripts/compile-boundaries.mts` computes from the
+properties sidecar, which `pipeline/src/compile-boundaries.mts` computes from the
 finished topology, and composite density already sums populations and areas
 separately (`helpers/populationDensity.ts`). Only the map's density layer
 measures rings in the browser, for the one release it draws: 30-100 ms once,

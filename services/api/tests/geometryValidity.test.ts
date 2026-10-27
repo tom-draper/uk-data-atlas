@@ -221,6 +221,11 @@ test("compiles deterministic reports and serves them with metrics and provenance
 			"dir",
 		);
 	symlinkSync(
+		new URL("../../../shared", import.meta.url),
+		join(root, "shared"),
+		"dir",
+	);
+	symlinkSync(
 		new URL("../../../packages", import.meta.url),
 		join(root, "packages"),
 		"dir",
