@@ -1,8 +1,9 @@
 # Canonical SQLite schema design
 
 Status: proposal, 2026-10-26. Step 1 (the observation model, with fuel
-poverty ported onto it) is implemented; see [Decisions](#decisions) and
-[How to port a dataset](#how-to-port-a-dataset). The current schema is
+poverty ported onto it) is implemented, and every catalogue dataset except
+elections and NHS waiting times is stored as rows from configuration; see
+[Decisions](#decisions) and [How to port a dataset](#how-to-port-a-dataset). The current schema is
 documented in `data/build/README.md`.
 
 ## Goal
@@ -532,11 +533,83 @@ area_releases.position`, which `series.release_id` already references), then
 - The fuel poverty JSON payload stays in `payloads` until step 4 moves payloads
   to the cache, so other readers of `dataset:fuel-poverty` are unchanged.
 
+### Catalogue datasets as configuration (2026-10-27)
+
+Every catalogue dataset whose records are numbers keyed by area code is stored
+from a `DeclaredDataset` in `shared/statisticsDatasets/`, read by
+`shared/declaredStatistics.ts`. There is no per-dataset code.
+
+- **Value equivalence, not byte equivalence.** The compiled JSON stays the
+  bytes the website and API serve (and is hashed), so these rows are checked
+  by value: every number in every record must be claimed by a field, as a
+  value or an interval bound, or listed under `derived` with a reason, and the
+  build checks the stored row count. A new compiler field fails the build
+  instead of going missing. Byte rebuilds, as for fuel poverty, wait for step
+  4, when payloads move to the cache.
+- **Derived values are not stored.** Per-100k figures, percentages a
+  compiler computes from stored counts, and copies (the latest school year
+  repeated at the top of each record) are listed as `derived`. Published
+  rates are stored.
+- **Codes go where they exist.** Compilers label a dataset with one boundary
+  year, but many mix releases: census 2021 district tables include the 2023
+  unitaries, pay tables include England, regions and counties, and older
+  series keep abolished districts. Each code is placed on the header's
+  release, then each `alsoIn` release in turn, so every row's foreign key is
+  true. A code in no listed release fails the build unless an `exclude`
+  pattern gives a reason (metropolitan counties, Inner and Outer London,
+  Gibraltar, joint district codes).
+- **Period labels have one meaning.** `periods` in `declaredStatistics.ts`
+  builds them: `2024` (calendar year), `2024-25` (April to March), `2024/25`
+  (school year), `2026-Q1`, `2025-07`, `2026-07-01`, `2022-2024` (whole
+  years), `year-ending-2026-03`, `2021-census`.
+- **Datasets are read twice, one at a time.** The first pass plans series and
+  checks coverage; the second streams observations. No parsed JSON is held
+  between them, so the build's memory stays near one dataset.
+- **Every manifest type is accounted for.** The build refuses a dataset that
+  is neither configured nor in `UNSTORED_DATASETS` with a reason.
+
+Not stored yet:
+
+| Dataset                       | Why                                                                                     |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| `general-election`            | Candidates, parties and winners need the election tables.                               |
+| `local-election`              | The election tables, and several years use county division codes outside ward releases. |
+| `historical-general-election` | Results before 2010 are on constituency boundaries with no atlas release.               |
+| `nhs-waiting`                 | Integrated care boards are keyed by NHS organisation codes, not GSS codes.              |
+
+Shapes that did fit, with a dimension: single-year age arrays (`age`, 0 to
+90-plus, with `sex`), nested census categories (`ethnic-group` with parents),
+year-keyed series inside records (`{period}` bindings), arrays indexed by year
+(house prices), and published confidence intervals (`lower` and `upper`).
+Intervals published as a half-width (modelled unemployment) are their own
+measure, because turning them into bounds would compute new values.
+
 ## How to port a dataset
 
-A dataset joins the statistics tables by writing a mapper, a function that
-returns a `StatisticsDataset` (`shared/atlasStatistics.ts`). The schema does
-not change. `shared/fuelPovertyStatistics.ts` is the worked example.
+Most datasets are configuration: add a `DeclaredDataset` to
+`shared/statisticsDatasets/` and list it in `STATISTICS_DATASETS`. The schema
+and the writer do not change.
+
+1. **Fields.** Each field is a path into a record (`breakdown.{tenure}`,
+   `series.{period}.avgAtt8`, `{sex}.value`) with the measure it holds. A
+   `{dimension}` segment binds a key to a member; `{period}` binds it to a
+   period. Fixed `members` label the rest.
+2. **Measures and dimensions** follow the rules below. Shared measures live
+   in `statisticsDatasets/measures.ts`.
+3. **Periods.** `period` maps the top-level key, and a field's `period` maps
+   its `{period}` key, to one of the `periods` constructors.
+4. **Releases.** The header's `boundaryType` and `boundaryYear` by default;
+   `release` overrides it and `alsoIn` lists fallbacks. `exclude` drops codes
+   with a reason.
+5. **Derived numbers** go in `derived` with why.
+6. **Check** with the real data: the build fails on any unclaimed number or
+   unplaced code. Add a fixture test in `tests/server/declaredStatistics.test.ts`
+   for any new kind of shape.
+
+A dataset that needs code (a byte-exact rebuild, or a shape configuration
+cannot describe) writes a mapper instead, a function that returns a
+`StatisticsDataset` (`shared/atlasStatistics.ts`).
+`shared/fuelPovertyStatistics.ts` is the worked example.
 
 1. **Declare measures.** One per quantity, not per breakdown: `crime-count`,
    not `crime-burglary`. Reuse an existing slug when the meaning is the same
