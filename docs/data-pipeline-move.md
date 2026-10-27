@@ -533,3 +533,8 @@ Manifest and download contracts and the Parquet writer live in `shared/`.
 The API re-exports the manifest contracts and Parquet writer for runtime consumers.
 The output paths, download formats, ordering, hashes, and publication behavior
 remain unchanged.
+
+Measure compatibility compilation runs in `pipeline/src/build-measure-compatibility.ts`
+and `pipeline/src/measureCompatibility.ts`. The API and compiler share the
+compatibility types and partition helpers in `shared/measureCompatibility.ts`.
+The API and builder read observations through `shared/observationTables.ts`.
