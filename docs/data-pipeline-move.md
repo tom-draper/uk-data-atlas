@@ -3,6 +3,10 @@
 This is the first PR in an incremental migration. It moves the atlas pages and
 lookups release path first. The observation row pilot stays unchanged.
 
+The postcode index builder and compiler now live in
+`pipeline/src/build-postcode-index.ts` and `pipeline/src/postcodeIndex.ts`.
+The API and compiler share postcode rules in `shared/postcodeRules.ts`.
+
 ## Inventory
 
 Classification uses codeq import edges for every script and src module on the

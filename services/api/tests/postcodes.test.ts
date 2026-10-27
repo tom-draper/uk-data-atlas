@@ -1,7 +1,7 @@
+import { compilePostcodeIndex } from "../../../pipeline/src/postcodeIndex";
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-	compilePostcodeIndex,
 	NORTHERN_IRELAND_EXCLUSION,
 	parsePostcode,
 	PostcodeIndex,

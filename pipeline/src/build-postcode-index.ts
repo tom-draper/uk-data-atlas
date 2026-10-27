@@ -1,14 +1,11 @@
+import type { PostcodeSource } from "../../shared/postcodeIndexTypes";
 import { spawn } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
-import {
-	compilePostcodeIndex,
-	type PostcodeSource,
-	type PostcodeSourceRow,
-} from "../src/postcodes";
-import { storePostcodeIndex } from "./store-postcode-index";
+import { compilePostcodeIndex, type PostcodeSourceRow } from "./postcodeIndex";
+import { storePostcodeIndex } from "../../shared/storePostcodeIndex";
 
 /**
  * Compile the newest filtered ONS Postcode Directory under
@@ -126,7 +123,7 @@ export const buildPostcodeIndex = async (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { outputPath, artifact } = await buildPostcodeIndex(
-		resolve(dirname(scriptPath), "../../.."),
+		resolve(dirname(scriptPath), "../.."),
 	);
 	console.log(
 		`Wrote ${artifact.counts.postcodes} postcodes (${artifact.counts.live} live) in ${artifact.shards.length} districts to ${outputPath}${artifact.excluded.length ? `, leaving out ${artifact.excluded.map((entry) => `${entry.area} (${entry.postcodes})`).join(", ")}` : ""}`,
