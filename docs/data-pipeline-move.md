@@ -538,3 +538,7 @@ Measure compatibility compilation runs in `pipeline/src/build-measure-compatibil
 and `pipeline/src/measureCompatibility.ts`. The API and compiler share the
 compatibility types and partition helpers in `shared/measureCompatibility.ts`.
 The API and builder read observations through `shared/observationTables.ts`.
+
+The lookup manifest build runs in `pipeline/src/build-lookup-manifest.ts`.
+The API and builder share lookup table rendering and manifest types in
+`shared/lookupExports.ts`.
