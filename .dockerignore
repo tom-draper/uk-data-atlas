@@ -6,6 +6,5 @@
 .data-release
 data
 public
-services/api/public
 services/api/dist
 *.heapsnapshot

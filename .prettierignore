@@ -1,6 +1,5 @@
 # Generated browser and API payloads are built locally and ignored by Git.
 /public/data/
-/services/api/public/
 /services/api/contract/
 /pnpm-lock.yaml
 

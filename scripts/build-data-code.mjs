@@ -79,12 +79,9 @@ export function stageCodeFiles(root, stage, files) {
 		platform: "node",
 		format: "esm",
 		packages: "external",
-		external: [
-			"public/data",
-			"services/api/public",
-			"data/build",
-			"data/source",
-		].map((path) => join(root, path, "*")),
+		external: ["public/data", "data/build", "data/source"].map((path) =>
+			join(root, path, "*"),
+		),
 		logLevel: "silent",
 	});
 	const inputs = Object.keys(metafile.inputs).map((path) =>
