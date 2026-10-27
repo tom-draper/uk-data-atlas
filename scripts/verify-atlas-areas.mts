@@ -6,20 +6,21 @@ import {
 	createAreaLookup,
 	type AreaInventory,
 	type AreaReleaseArtifact,
-} from "../services/api/src/areaInventory";
+} from "../shared/areaInventory";
 import {
 	readAreaInventory,
 	readAreaLookup,
 	readBoundaryRegistry,
-} from "../services/api/src/boundaryLoader";
-import { compileAreaSearchIndex } from "../services/api/src/areaSearch";
-import { compilePlaceIndex } from "../services/api/src/placeIndex";
-import { createGeographyResolver } from "../services/api/src/geographyResolver";
+} from "../shared/boundaryLoader";
+import { compileAreaSearchIndex } from "../shared/areaSearch";
+import { compilePlaceIndex } from "../shared/placeIndex";
+import { createGeographyResolver } from "../shared/geographyResolver";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
+import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = join(root, "services/api");
+const apiRoot = apiRootOf(root);
 const before: AreaInventory = JSON.parse(
 	readFileSync(join(apiRoot, "public/area-inventory.json"), "utf8"),
 );

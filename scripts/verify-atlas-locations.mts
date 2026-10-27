@@ -1,27 +1,25 @@
-import { createGeographyResolver } from "../services/api/src/geographyResolver";
+import { createGeographyResolver } from "../shared/geographyResolver";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "../services/api/src/crosswalkLoader";
-import { compileLocationProjections } from "../services/api/src/locationProjections";
+} from "../shared/crosswalkLoader";
+import { compileLocationProjections } from "../shared/locationProjections";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { NamedLocationInventory } from "../services/api/src/namedLocations";
-import { createNamedLocationLookup } from "../services/api/src/namedLocations";
-import { readNamedLocationInventory } from "../services/api/src/locationLoader";
-import {
-	readAreaInventory,
-	readAreaLookup,
-} from "../services/api/src/boundaryLoader";
-import { compilePlaceIndex } from "../services/api/src/placeIndex";
-import { namedLocationMembersTable } from "../services/api/src/lookupExports";
+import type { NamedLocationInventory } from "../shared/namedLocations";
+import { createNamedLocationLookup } from "../shared/namedLocations";
+import { readNamedLocationInventory } from "../shared/locationLoader";
+import { readAreaInventory, readAreaLookup } from "../shared/boundaryLoader";
+import { compilePlaceIndex } from "../shared/placeIndex";
+import { namedLocationMembersTable } from "../shared/lookupExports";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
+import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = join(root, "services/api");
+const apiRoot = apiRootOf(root);
 const digest = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const before: NamedLocationInventory = JSON.parse(

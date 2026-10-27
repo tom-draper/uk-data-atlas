@@ -5,14 +5,15 @@ import {
 	readAreaLookup,
 	readBoundaryRegistry,
 	readPlaceIndex,
-} from "../services/api/src/boundaryLoader";
-import { readNamedLocationInventory } from "../services/api/src/locationLoader";
-import { compilePlaceIndex } from "../services/api/src/placeIndex";
-import { resolvePlaces } from "../services/api/src/placeResolver";
-import { atEach, type Indexed } from "../services/api/src/sortedIndex";
+} from "../shared/boundaryLoader";
+import { readNamedLocationInventory } from "../shared/locationLoader";
+import { compilePlaceIndex } from "../shared/placeIndex";
+import { resolvePlaces } from "../shared/placeResolver";
+import { atEach, type Indexed } from "../shared/sortedIndex";
+import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = join(root, "services/api");
+const apiRoot = apiRootOf(root);
 const areas = readAreaInventory(apiRoot);
 const locations = readNamedLocationInventory(apiRoot);
 const expected = compilePlaceIndex(

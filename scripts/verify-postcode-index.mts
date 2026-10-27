@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { readPostcodeIndex } from "../services/api/src/boundaryLoader";
-import { readSqlitePostcodeShard } from "../services/api/src/atlasPostcodes";
-import type { PostcodeShard } from "../services/api/src/postcodes";
+import { readPostcodeIndex } from "../shared/boundaryLoader";
+import { readSqlitePostcodeShard } from "../shared/atlasPostcodesReader";
+import type { PostcodeShard } from "../shared/postcodeIndexTypes";
+import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = join(root, "services/api");
+const apiRoot = apiRootOf(root);
 const index = readPostcodeIndex(apiRoot);
 let postcodes = 0;
 for (const entry of index.artifact.shards) {
