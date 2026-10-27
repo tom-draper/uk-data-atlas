@@ -17,7 +17,7 @@ docker compose -f services/api/compose.yaml up -d
 curl --fail http://127.0.0.1:3001/readyz
 ```
 
-Compose mounts `services/api/public/`, `data/build/atlas.sqlite`, and
+Compose mounts `data/build/artifacts/`, `data/build/atlas.sqlite`, and
 `data/build/atlas-assets/` read-only. Deploy these matching release outputs
 with the code, then replace the container. The separate `atlas-cache` volume
 remains writable. The data build is separate from the image build. API public
@@ -171,7 +171,7 @@ The `atlas-pages` and `atlas-lookups` stages write manifests and gzipped files
 under `data/build/atlas-assets/`. Include this directory alongside
 `data/build/atlas.sqlite` in the deployed API volume, preserving paths relative
 to the repository root. Page and lookup routes read these release files.
-Other API outputs stay under `services/api/public/` during the compiler migration.
+Other API outputs stay under `data/build/artifacts/` during the compiler migration.
 
 The `pipeline/` workspace's `website-lookups` stage stores the same gzip bytes in
 SQLite before the final release manifest. Next.js builds and servers read those

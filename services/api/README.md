@@ -74,14 +74,14 @@ The API builds directly from raw `data/source/` without website output.
 `pnpm data:build --only datasets` at the repository root compiles catalogue datasets.
 The `atlas-sqlite` stage stores them in `data/build/atlas.sqlite` for the API to read.
 `pnpm --dir ../.. data:build --only api-datasets` builds gazetteer core and boundary assets under
-`services/api/public/source-data/`. These outputs are gitignored.
+`data/build/artifacts/source-data/`. These outputs are gitignored.
 After changing shared dataset compilers, run `pnpm --dir ../.. data:build --from datasets`
 from `services/api` to rebuild every affected stage.
 
 Atlas pages and lookups live under `data/build/atlas-assets/`, with the shared
 SQLite release. The `pipeline/` workspace owns their SQLite assembly stage.
 Next.js only reads the assembled release; API routes serve its gzip files.
-Other API outputs remain in `services/api/public/` until their compiler groups
+Other API outputs remain in `data/build/artifacts/` until their compiler groups
 move. See [the migration plan](../../docs/data-pipeline-move.md).
 
 Areas use an integer `areas.id` primary key. `areas.releasePosition` references
@@ -2545,14 +2545,14 @@ the repository root, since the server depends on the workspace packages:
 ```sh
 docker build -f services/api/Dockerfile -t uk-data-atlas-api .
 docker run --rm -p 3001:3001 \
-  -v "$PWD/services/api/public:/app/services/api/public:ro" \
+  -v "$PWD/data/build/artifacts:/app/data/build/artifacts:ro" \
   -v atlas-cache:/app/data/build \
   -v "$PWD/data/build/atlas.sqlite:/app/data/build/atlas.sqlite:ro" \
   uk-data-atlas-api
 ```
 
 The image holds the server's source and its production dependencies, about
-20 MB over its Node base. The Atlas release, `services/api/public`, is some
+20 MB over its Node base. The Atlas release, `data/build/artifacts`, is some
 gigabytes and changes on its own schedule, so it is mounted rather than built
 in. It must be built from the same commit as the image: the server refuses to
 start with an `operations.json` compiled from another `openapi.yaml`.

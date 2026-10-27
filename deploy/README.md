@@ -31,7 +31,7 @@ The data build downloads raw inputs and builds all API and website data.
 Then build the API runtime and Next.js app from the same checkout.
 Run these steps serially. Neither server needs to be running during the build.
 The API data build checks the source release pinned by `data-release.json` and
-writes generated catalogues to `services/api/public/` and the terrain catalogue
+writes generated catalogues to `data/build/artifacts/` and the terrain catalogue
 payload to `data/build/atlas.sqlite`. API observation payloads, including shared
 census tables, also live in this database. After updating the code, run
 `pnpm data:build` before restarting the API to populate the observation tables
@@ -85,7 +85,7 @@ The `datasets` stage runs after `download` and compiles every catalogue dataset
 once into `data/build/datasets/`, for both products (see `data/build/README.md`).
 `atlas-sqlite` stores catalogue payloads in `data/build/atlas.sqlite` for the
 API catalogue compiler, atlas pages and Next.js dataset route. `api-datasets` builds gazetteer core
-and boundary assets under `services/api/public/source-data/` for named
+and boundary assets under `data/build/artifacts/source-data/` for named
 locations and atlas pages. The data build does not need website output in
 `public/data/`.
 
@@ -93,7 +93,7 @@ Pages and lookups are release assets under `data/build/atlas-assets/`. The
 `pipeline/` workspace assembles their bytes into SQLite in the `website-lookups`
 stage. Deploy `atlas-assets/` alongside SQLite for API page and lookup routes.
 Next.js builds only read SQLite, so website deployment needs neither API build
-output nor a running API. Other files under `services/api/public/` remain in
+output nor a running API. Other files under `data/build/artifacts/` remain in
 place while the compiler groups move out of the API.
 
 ## systemd

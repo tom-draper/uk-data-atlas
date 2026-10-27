@@ -536,6 +536,13 @@ its config directory and the release database, and
 artifact tree out of `services/api/public` is now a change to that file plus the
 API's own readers and deployment.
 
+That move is done. The generated artifacts, formerly `services/api/public`, now
+live in `data/build/artifacts/` beside `atlas.sqlite`, so pipeline stages write
+only under `data/build/` and `public/data/`. File names and bytes are
+unchanged. Compose mounts the directory read-only, and the stage cache bumped
+its version so old entries do not point at the removed path. Entries below that
+name `services/api/public` describe the earlier layout.
+
 The root `verify-*` and `place-postcodes` scripts import shared and pipeline
 modules directly. Four verifiers (`verify-atlas-areas`, `-crosswalks`,
 `-datasets` and `-locations`) still import `services/api/src/routes` and the API
