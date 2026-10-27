@@ -1,16 +1,16 @@
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { rmSync } from "node:fs";
 import {
 	compileAreaSearchIndex,
 	areaSearchIndexTables,
-} from "../src/areaSearch";
-import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
-import { rmSync } from "node:fs";
-import { publishCacheTables } from "../src/atlasCache";
+} from "./areaSearchCompiler";
+import { readSqliteAreaInventory } from "./atlasAreaReader";
+import { readAreaLookup } from "./areaLookup";
+import { publishCacheTables } from "./atlasCache";
 
 export const buildAreaSearchIndex = (repositoryRoot: string) => {
 	const apiRoot = join(repositoryRoot, "services", "api");
-	const areaInventory = readAreaInventory(apiRoot);
+	const areaInventory = readSqliteAreaInventory(apiRoot);
 	const index = compileAreaSearchIndex(
 		readAreaLookup(apiRoot, areaInventory),
 		areaInventory.contentHash,
@@ -36,13 +36,3 @@ export const buildAreaSearchIndex = (repositoryRoot: string) => {
 		terms: index.terms.length,
 	};
 };
-
-const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const result = buildAreaSearchIndex(
-		resolve(dirname(scriptPath), "../../.."),
-	);
-	console.log(
-		`Wrote ${result.areas} area identities under ${result.terms} terms to ${result.outputPath}`,
-	);
-}

@@ -201,15 +201,7 @@ export const json =
 	(value: SQLInputValue) =>
 		JSON.parse(value as string) as T;
 
-/** Ascending positions, packed as little-endian u32s. */
-export const packPositions = (positions: readonly number[]) => {
-	const bytes = new Uint8Array(positions.length * 4);
-	const view = new DataView(bytes.buffer);
-	positions.forEach((position, index) =>
-		view.setUint32(index * 4, position, true),
-	);
-	return bytes;
-};
+export { packPositions } from "../../../shared/packedPositions";
 
 export const unpackPositions = (value: SQLInputValue): number[] => {
 	const bytes = value as Uint8Array;

@@ -1,5 +1,5 @@
 import { atlasCachePath } from "../src/atlasCache";
-import { buildAreaSearchIndex } from "../scripts/build-area-search-index";
+import { buildAreaSearchIndex } from "../../../shared/buildAreaSearchIndex";
 import { AreaSearch } from "../src/areaSearch";
 import { readAreaSearchIndex, readAreaLookup } from "../src/boundaryLoader";
 import { buildPlaceIndex } from "../scripts/build-place-index";
