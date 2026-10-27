@@ -15,10 +15,11 @@ export const repositoryRootOf = (apiRoot: string) => resolve(apiRoot, "../..");
 
 /** The directory the build writes its generated artifacts to. */
 export const artifactDirectory = (repositoryRoot: string) =>
-	join(apiRootOf(repositoryRoot), "public");
+	join(buildDirectory(repositoryRoot), "artifacts");
 
 /** The generated artifact directory, given the API project directory. */
-export const artifactRoot = (apiRoot: string) => join(apiRoot, "public");
+export const artifactRoot = (apiRoot: string) =>
+	artifactDirectory(repositoryRootOf(apiRoot));
 
 /** The shared release the pipeline builds under `data/build`. */
 export const buildDirectory = (repositoryRoot: string) =>

@@ -10,6 +10,7 @@ import {
 import { onApril2023Authorities } from "../../../../pipeline/src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "../../src/dataCatalog";
+import { artifactRoot } from "../../../../shared/dataLayout";
 
 const dataset = (
 	output: string,
@@ -2068,9 +2069,11 @@ test("names what covers the nations a measure does not", () => {
 	// themselves says they cannot be.
 	const catalog = JSON.parse(
 		readFileSync(
-			resolve(
-				dirname(fileURLToPath(import.meta.url)),
-				"../../public/data-catalog.json",
+			join(
+				artifactRoot(
+					resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
+				),
+				"data-catalog.json",
 			),
 			"utf8",
 		),

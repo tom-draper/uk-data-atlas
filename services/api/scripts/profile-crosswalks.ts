@@ -1,4 +1,5 @@
 /** Force selected compiles into a temporary directory and check existing hashes. */
+import { artifactRoot } from "../../../shared/dataLayout";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -47,7 +48,11 @@ const outputDirectory = mkdtempSync(join(tmpdir(), "atlas-crosswalk-profile-"));
 let completed = 0;
 const started = performance.now();
 const report = (artifact: CrosswalkArtifact, seconds: number) => {
-	const stored = join(apiRoot, "public/crosswalks", `${artifact.id}.json`);
+	const stored = join(
+		artifactRoot(apiRoot),
+		"crosswalks",
+		`${artifact.id}.json`,
+	);
 	let matchesStored: boolean | null = null;
 	if (storedTextExists(stored)) {
 		const { contentHash, ...content } = JSON.parse(
@@ -75,7 +80,7 @@ const report = (artifact: CrosswalkArtifact, seconds: number) => {
 };
 try {
 	if (workers === 1) {
-		const { areaLookup } = readCompiledAreaLookup(join(apiRoot, "public"));
+		const { areaLookup } = readCompiledAreaLookup(artifactRoot(apiRoot));
 		let taskStarted = performance.now();
 		for (const artifact of compileCrosswalks(
 			root,

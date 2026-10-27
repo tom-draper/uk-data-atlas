@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
 import { buildAtlasSqlite } from "@/services/api/scripts/build-atlas-sqlite";
 import { readAtlasDatasetUrls } from "@/shared/atlasSqlite";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 let root: string;
 const payload = '{"2024":{"value":42}}\n';
@@ -19,9 +20,9 @@ const request = (hash = sha256, output = "sample.json") =>
 beforeEach(() => {
 	root = mkdtempSync(join(tmpdir(), "dataset-route-"));
 	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
-	mkdirSync(join(root, "services/api/public"), { recursive: true });
+	mkdirSync(artifactDirectory(root), { recursive: true });
 	writeFileSync(
-		join(root, "services/api/public/terrain-catalogue.json"),
+		join(artifactDirectory(root), "terrain-catalogue.json"),
 		"{}",
 	);
 	writeFileSync(join(root, "data/build/datasets/sample.json"), payload);
@@ -43,7 +44,7 @@ beforeEach(() => {
 		}),
 	);
 	writeFileSync(
-		join(root, "services/api/public/area-inventory.json"),
+		join(artifactDirectory(root), "area-inventory.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "areas",
@@ -53,7 +54,7 @@ beforeEach(() => {
 	);
 
 	writeFileSync(
-		join(root, "services/api/public/crosswalk-inventory.json"),
+		join(artifactDirectory(root), "crosswalk-inventory.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "crosswalks",
@@ -61,7 +62,7 @@ beforeEach(() => {
 		}),
 	);
 	writeFileSync(
-		join(root, "services/api/public/named-locations.json"),
+		join(artifactDirectory(root), "named-locations.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "locations",
@@ -92,7 +93,7 @@ beforeEach(() => {
 	buildAtlasSqlite(root);
 	// The request must work without either product's JSON copies.
 	rmSync(join(root, "data/build/datasets"), { recursive: true });
-	rmSync(join(root, "services"), { recursive: true });
+	rmSync(artifactDirectory(root), { recursive: true });
 	vi.spyOn(process, "cwd").mockReturnValue(root);
 });
 afterEach(() => {

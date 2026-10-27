@@ -16,14 +16,14 @@ import { compilePlaceIndex } from "../shared/placeIndex";
 import { namedLocationMembersTable } from "../shared/lookupExports";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf } from "../shared/dataLayout";
+import { apiRootOf, artifactRoot } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);
 const digest = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const before: NamedLocationInventory = JSON.parse(
-	readFileSync(join(apiRoot, "public/named-locations.json"), "utf8"),
+	readFileSync(join(artifactRoot(apiRoot), "named-locations.json"), "utf8"),
 );
 const after = readNamedLocationInventory(apiRoot);
 assert.ok(before.locations.length > 0);
@@ -34,7 +34,10 @@ const packed: Omit<NamedLocationInventory, "locations"> & {
 		}
 	>;
 } = JSON.parse(
-	readFileSync(join(apiRoot, "public/named-locations-metadata.json"), "utf8"),
+	readFileSync(
+		join(artifactRoot(apiRoot), "named-locations-metadata.json"),
+		"utf8",
+	),
 );
 assert.equal(packed.contentHash, before.contentHash);
 assert.equal(packed.locations.length, before.locations.length);

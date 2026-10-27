@@ -44,15 +44,16 @@ import { readPublicManifest } from "../src/publicManifest";
 import { route } from "../src/routes";
 import type { TerrainCatalogue } from "../src/terrainCatalogue";
 import { testContext } from "./routeFixtures";
+import { artifactDirectory, artifactRoot } from "../../../shared/dataLayout";
 
 const fixture = (context: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-sqlite-"));
 	context.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	mkdirSync(join(apiRoot, "public"), { recursive: true });
+	mkdirSync(artifactRoot(apiRoot), { recursive: true });
 	buildTerrainCatalogue(root);
 	writeFileSync(
-		join(root, "services/api/public/named-locations.json"),
+		join(artifactDirectory(root), "named-locations.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "locations",
@@ -64,7 +65,7 @@ const fixture = (context: TestContext) => {
 		}),
 	);
 	writeFileSync(
-		join(root, "services/api/public/crosswalk-inventory.json"),
+		join(artifactDirectory(root), "crosswalk-inventory.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "crosswalks",
@@ -72,7 +73,7 @@ const fixture = (context: TestContext) => {
 		}),
 	);
 	writeFileSync(
-		join(apiRoot, "public/area-inventory.json"),
+		join(artifactRoot(apiRoot), "area-inventory.json"),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "areas",
@@ -131,14 +132,14 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 				)
 				.get()?.payload,
 			readFileSync(
-				join(apiRoot, "public/terrain-catalogue.json"),
+				join(artifactRoot(apiRoot), "terrain-catalogue.json"),
 				"utf8",
 			),
 		);
 	} finally {
 		database.close();
 	}
-	rmSync(join(apiRoot, "public/terrain-catalogue.json"));
+	rmSync(join(artifactRoot(apiRoot), "terrain-catalogue.json"));
 	const after = readTerrainCatalogue(apiRoot);
 	assert.equal(JSON.stringify(after), JSON.stringify(before));
 	for (const url of [
@@ -200,7 +201,7 @@ test("rebuilding SQLite replaces the payload and a missing input preserves the l
 	buildAtlasSqlite(root);
 	assert.equal(readTerrainCatalogue(apiRoot).products.length, 6);
 	const before = readFileSync(path);
-	rmSync(join(apiRoot, "public/terrain-catalogue.json"));
+	rmSync(join(artifactRoot(apiRoot), "terrain-catalogue.json"));
 	assert.throws(() => buildAtlasSqlite(root), /ENOENT/);
 	assert.deepEqual(readFileSync(path), before);
 });
@@ -292,7 +293,7 @@ test("split atlas serves projection routes from the local cache without projecti
 			JSON.stringify(artifact),
 		);
 	}
-	const obsolete = join(apiRoot, "public/location-projections.sqlite");
+	const obsolete = join(artifactRoot(apiRoot), "location-projections.sqlite");
 	writeFileSync(obsolete, "obsolete database");
 	buildAtlasSqlite(root);
 	assert.equal(existsSync(obsolete), false);
@@ -369,7 +370,7 @@ test("split atlas serves projection routes from the local cache without projecti
 
 test("projection compilation writes build intermediates and removes old public copies", (context) => {
 	const { root, apiRoot } = fixture(context);
-	const publicDirectory = join(apiRoot, "public");
+	const publicDirectory = artifactRoot(apiRoot);
 	for (const name of [
 		"location-projections",
 		"location-parent-projections",
@@ -438,7 +439,7 @@ test("place-index stage preserves atlas data, replaces its tables and removes ol
 		"place-index.json",
 		"place-index.json.gz",
 	])
-		writeFileSync(join(apiRoot, "public", filename), "obsolete");
+		writeFileSync(join(artifactRoot(apiRoot), filename), "obsolete");
 	buildPlaceIndex(root);
 	buildPlaceIndex(root);
 	assert.equal(readAtlasPayload(root, "terrain-catalogue"), terrain);
@@ -448,7 +449,7 @@ test("place-index stage preserves atlas data, replaces its tables and removes ol
 		"place-index.json",
 		"place-index.json.gz",
 	])
-		assert.equal(existsSync(join(apiRoot, "public", filename)), false);
+		assert.equal(existsSync(join(artifactRoot(apiRoot), filename)), false);
 	const search = () =>
 		readPlaceIndex(
 			apiRoot,
@@ -497,7 +498,7 @@ test("failed place table replacement preserves the database and legacy files", (
 	cache.exec("CREATE VIEW place_index_names AS SELECT 1 AS position");
 	cache.close();
 	const before = readFileSync(path);
-	const legacy = join(apiRoot, "public/place-index.sqlite");
+	const legacy = join(artifactRoot(apiRoot), "place-index.sqlite");
 	writeFileSync(legacy, "retained on failure");
 	assert.throws(() => buildPlaceIndex(root), /view/);
 	assert.deepEqual(readFileSync(path), before);
@@ -533,7 +534,7 @@ test("area-search stage replaces its index while retaining place search and othe
 		"area-search-index.json",
 		"area-search-index.json.gz",
 	])
-		writeFileSync(join(apiRoot, "public", filename), "obsolete");
+		writeFileSync(join(artifactRoot(apiRoot), filename), "obsolete");
 	buildAreaSearchIndex(root);
 	buildAreaSearchIndex(root);
 	assert.equal(readAtlasPayload(root, "terrain-catalogue"), terrain);
@@ -542,7 +543,7 @@ test("area-search stage replaces its index while retaining place search and othe
 		"area-search-index.json",
 		"area-search-index.json.gz",
 	])
-		assert.equal(existsSync(join(apiRoot, "public", filename)), false);
+		assert.equal(existsSync(join(artifactRoot(apiRoot), filename)), false);
 	assert.deepEqual(
 		resolvePlaces(
 			readPlaceIndex(
@@ -592,7 +593,7 @@ test("failed area-search replacement preserves the database and legacy files", (
 		database.close();
 	}
 	const before = readFileSync(path);
-	const legacy = join(apiRoot, "public/area-search-index.sqlite");
+	const legacy = join(artifactRoot(apiRoot), "area-search-index.sqlite");
 	writeFileSync(legacy, "retained on failure");
 	assert.throws(() => buildAreaSearchIndex(root), /view/);
 	assert.deepEqual(readFileSync(path), before);

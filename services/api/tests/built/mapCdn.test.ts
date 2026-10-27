@@ -9,18 +9,20 @@ import test from "node:test";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import { readMapAssets, readMapResources } from "../../src/mapResourceLoader";
 import { route } from "../../src/routes";
+import { artifactRoot } from "../../../../shared/dataLayout";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
 const assetBase = "https://maps.example.com/releases/test";
 const tileBase = "https://tiles.example.com/test";
 
 test("CDN mode needs only the map manifest, with no local archives", () => {
-	const root = mkdtempSync(join(tmpdir(), "map-cdn-"));
+	const repository = mkdtempSync(join(tmpdir(), "map-cdn-"));
+	const root = join(repository, "services/api");
 	try {
-		mkdirSync(join(root, "public"));
+		mkdirSync(artifactRoot(root), { recursive: true });
 		copyFileSync(
-			join(apiRoot, "public/map-resources.json"),
-			join(root, "public/map-resources.json"),
+			join(artifactRoot(apiRoot), "map-resources.json"),
+			join(artifactRoot(root), "map-resources.json"),
 		);
 		const resources = readMapResources(root, assetBase, tileBase);
 		assert.ok(resources.resources.length > 0);
@@ -31,7 +33,7 @@ test("CDN mode needs only the map manifest, with no local archives", () => {
 				`${assetBase}/${resource.tiles.artifact}`,
 			);
 	} finally {
-		rmSync(root, { recursive: true, force: true });
+		rmSync(repository, { recursive: true, force: true });
 	}
 });
 

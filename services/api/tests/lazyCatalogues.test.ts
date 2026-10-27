@@ -12,6 +12,7 @@ import { readNamedLocationInventory } from "../src/locationLoader";
 import { namedLocationTables } from "../src/atlasNamedLocations";
 import type { AreaInventory } from "../src/areaInventory";
 import type { NamedLocationInventory } from "../src/namedLocations";
+import { artifactDirectory } from "../../../shared/dataLayout";
 
 const storeAreas = (
 	apiRoot: string,
@@ -29,7 +30,7 @@ const storeAreas = (
 
 const fixture = (run: (root: string, directory: string) => void) => {
 	const root = mkdtempSync(join(tmpdir(), "lazy-catalogues-"));
-	const directory = join(root, "services/api/public");
+	const directory = artifactDirectory(root);
 	mkdirSync(directory, { recursive: true });
 	try {
 		run(join(root, "services/api"), directory);

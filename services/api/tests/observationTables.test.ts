@@ -22,6 +22,7 @@ import {
 	tableMeasureObservations,
 	type MeasureTableArtifact,
 } from "../src/observationTables";
+import { artifactDirectory } from "../../../shared/dataLayout";
 
 const table: MeasureTableArtifact = {
 	schemaVersion: 1,
@@ -416,7 +417,7 @@ test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 test("catalogue views share the configured observation budget", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-catalogue-"));
 	t.after(() => rmSync(directory, { recursive: true, force: true }));
-	mkdirSync(join(directory, "services/api/public"), { recursive: true });
+	mkdirSync(artifactDirectory(directory), { recursive: true });
 	const text = JSON.stringify(table);
 	for (const name of ["a", "b"])
 		writeObservationFixture(join(directory, `${name}.json`), text);

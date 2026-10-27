@@ -7,6 +7,7 @@ import { gzipSync } from "node:zlib";
 import { readAtlasPages } from "../src/atlasPages";
 import { route as routeRequest } from "../src/routes";
 import { testContext } from "./routeFixtures";
+import { artifactRoot } from "../../../shared/dataLayout";
 
 const page = {
 	path: "/nowhere",
@@ -54,9 +55,9 @@ test("reads the page manifest and checks each stored file", () => {
 	const apiRoot = join(root, "services/api");
 	const directory = join(root, "data/build/atlas-assets");
 	try {
-		mkdirSync(join(apiRoot, "public"), { recursive: true });
+		mkdirSync(artifactRoot(apiRoot), { recursive: true });
 		writeFileSync(
-			join(apiRoot, "public", "atlas-pages.json"),
+			join(artifactRoot(apiRoot), "atlas-pages.json"),
 			"obsolete invalid manifest",
 		);
 		assert.equal(readAtlasPages(apiRoot).size, 0);

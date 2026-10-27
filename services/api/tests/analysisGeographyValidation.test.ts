@@ -20,6 +20,7 @@ import type {
 	DataCatalog,
 } from "../src/dataCatalog";
 import type { MeasureTableArtifact } from "../src/observationTables";
+import { artifactDirectory } from "../../../shared/dataLayout";
 
 const analysisGeographies: AnalysisGeographyInventory = {
 	schemaVersion: 1,
@@ -319,7 +320,7 @@ test("gates a reviewed measure read from a shared census table", () => {
 test("analysis validation builds from SQLite after observation JSON removal", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "analysis-observations-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
-	const publicRoot = join(root, "services/api/public");
+	const publicRoot = artifactDirectory(root);
 	mkdirSync(join(publicRoot, "crosswalks"), { recursive: true });
 	mkdirSync(join(root, "data/build/geography"), { recursive: true });
 	new DatabaseSync(join(root, "data/build/atlas.sqlite")).close();

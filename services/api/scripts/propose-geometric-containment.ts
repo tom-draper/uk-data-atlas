@@ -1,3 +1,4 @@
+import { artifactDirectory } from "../../../shared/dataLayout";
 import { buildArtifactPath } from "./geography-build-path";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -65,7 +66,7 @@ export const proposeGeometricContainment = (
 		report?: (line: string) => void;
 	} = {},
 ) => {
-	const directory = join(repositoryRoot, "services", "api", "public");
+	const directory = artifactDirectory(repositoryRoot);
 	const read = <T>(path: string) =>
 		JSON.parse(
 			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),

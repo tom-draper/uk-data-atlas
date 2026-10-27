@@ -16,6 +16,7 @@ import {
 	readMeasureTotals,
 	readValidationWaivers,
 } from "../../../../pipeline/src/validation/inputs";
+import { artifactRoot } from "../../../../shared/dataLayout";
 
 /**
  * A compiled artifact records the content hash of each artifact it was built
@@ -25,7 +26,7 @@ import {
  * whatever files are present, so it cannot see this; these tests can.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const publicRoot = join(apiRoot, "public");
+const publicRoot = artifactRoot(apiRoot);
 const read = (path: string) => {
 	if (path === "place-index.json" || path === "area-search-index.json") {
 		const table =

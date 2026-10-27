@@ -11,6 +11,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
+import { artifactRoot } from "../../../shared/dataLayout";
 import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import { storePostcodeIndex } from "../scripts/store-postcode-index";
@@ -42,16 +43,21 @@ function fixture(t: TestContext) {
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
 	mkdirSync(join(root, "data/build"), { recursive: true });
-	mkdirSync(join(apiRoot, "public/postcodes/obsolete"), { recursive: true });
+	mkdirSync(join(artifactRoot(apiRoot), "postcodes/obsolete"), {
+		recursive: true,
+	});
 	const path = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(path);
 	database.exec(
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
 	);
 	database.close();
-	writeFileSync(join(apiRoot, "public/postcode-index.json"), "obsolete");
 	writeFileSync(
-		join(apiRoot, "public/postcodes/obsolete/old.json.gz"),
+		join(artifactRoot(apiRoot), "postcode-index.json"),
+		"obsolete",
+	);
+	writeFileSync(
+		join(artifactRoot(apiRoot), "postcodes/obsolete/old.json.gz"),
 		"obsolete",
 	);
 	return { root, apiRoot, path };
@@ -67,9 +73,9 @@ test("SQLite retains every postcode field, exact shard bytes, positions and rout
 		before.texts.get(path)!,
 	);
 	assert.equal(readAtlasPayload(root, "dataset:existing"), "retained");
-	assert.equal(existsSync(join(apiRoot, "public/postcodes")), false);
+	assert.equal(existsSync(join(artifactRoot(apiRoot), "postcodes")), false);
 	assert.equal(
-		existsSync(join(apiRoot, "public/postcode-index.json")),
+		existsSync(join(artifactRoot(apiRoot), "postcode-index.json")),
 		false,
 	);
 	const after = readPostcodeIndex(apiRoot);
@@ -138,7 +144,7 @@ test("replacement removes old rows and corrupt shards preserve published data an
 	});
 	const before = readFileSync(path);
 	writeFileSync(
-		join(apiRoot, "public/postcode-index.json"),
+		join(artifactRoot(apiRoot), "postcode-index.json"),
 		"retained on failure",
 	);
 	assert.throws(
@@ -147,7 +153,10 @@ test("replacement removes old rows and corrupt shards preserve published data an
 	);
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(
-		readFileSync(join(apiRoot, "public/postcode-index.json"), "utf8"),
+		readFileSync(
+			join(artifactRoot(apiRoot), "postcode-index.json"),
+			"utf8",
+		),
 		"retained on failure",
 	);
 	assert.equal(existsSync(`${path}.postcodes.tmp`), false);
@@ -167,7 +176,7 @@ test("corrupt stored records are refused and missing SQLite never falls back to 
 		/Invalid SQLite postcode district/,
 	);
 	writeFileSync(
-		join(apiRoot, "public/postcode-index.json"),
+		join(artifactRoot(apiRoot), "postcode-index.json"),
 		JSON.stringify(before.artifact),
 	);
 	rmSync(path);
@@ -213,5 +222,5 @@ test("the source builder reads filtered gzip rows and writes only to the shared 
 		readPostcodeIndex(apiRoot).artifact.contentHash,
 		result.artifact.contentHash,
 	);
-	assert.equal(existsSync(join(apiRoot, "public/postcodes")), false);
+	assert.equal(existsSync(join(artifactRoot(apiRoot), "postcodes")), false);
 });
