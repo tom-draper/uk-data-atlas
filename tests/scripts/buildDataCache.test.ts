@@ -56,7 +56,7 @@ function fixture() {
 	write("code.ts", "export {};\n");
 	const outputs: Record<string, string> = {
 		compile: "data/build/datasets/compiled.json",
-		summary: "services/api/public/summary.json",
+		summary: "data/build/artifacts/summary.json",
 		report: "public/data/report.json",
 	};
 	const ran: string[] = [];
@@ -523,7 +523,7 @@ test("files with unchanged size and mtime are not hashed again", () => {
 			"data/build/datasets/compiled.json",
 			"data/build/datasets/kept.json",
 			"public/data/report.json",
-			"services/api/public/summary.json",
+			"data/build/artifacts/summary.json",
 		].sort(),
 	);
 	hashed.length = 0;

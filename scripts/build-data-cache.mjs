@@ -15,11 +15,11 @@ import {
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const VERSION = 3;
+const VERSION = 4;
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 // Where the stages write. A stage's outputs are the files here it changes.
-const OUTPUT_ROOTS = ["data/build", "public/data", "services/api/public"];
+const OUTPUT_ROOTS = ["data/build", "public/data"];
 // Environment variables a stage's output depends on.
 const ENVIRONMENT = ["MAXIMUM_DISCOVERED_STEPS"];
 

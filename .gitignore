@@ -62,10 +62,6 @@ next-env.d.ts
 AGENTS.md
 CLAUDE.md
 
-# API build output is built where it is served and is not committed.
-# The website fetches place profiles and the docs catalogue over HTTP.
-/services/api/public/*
-
 /services/api/dist/
 
 # Compiled output the website and the API share, rebuilt by pnpm data:build.
