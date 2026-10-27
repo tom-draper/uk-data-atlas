@@ -2,7 +2,7 @@ import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
 } from "../src/atlasPostcodeDerived";
-import { storePostcodeCounts } from "./store-postcode-derived";
+import { storePostcodeCounts } from "../../../shared/storePostcodeCounts";
 import { readPostcodeIndex } from "../src/boundaryLoader";
 import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
 import { dirname, join, resolve } from "node:path";
