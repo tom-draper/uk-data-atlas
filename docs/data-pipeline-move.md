@@ -501,7 +501,8 @@ publication, cleanup, and output paths are unchanged.
 The postcode counts compiler, cache publisher, postcode and area artifact types,
 code-unit ordering helper, and SQLite postcode and area shard readers live in
 `shared/`.
-The API builder still reads the SQLite inputs and invokes the cache publisher.
+The shared builder reads the SQLite inputs and invokes the cache publisher. The
+pipeline stage and API cache rebuild both call it.
 
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory

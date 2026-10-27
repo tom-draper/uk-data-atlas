@@ -260,9 +260,18 @@ const apiStages = [
 		"geometry-store",
 		"measure-compatibility",
 	]),
-	stage("postcode-counts", ["postcode-index", "postcode-areas"], undefined, {
-		cacheable: false,
-	}),
+	stage(
+		"postcode-counts",
+		["postcode-index", "postcode-areas"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-postcode-counts.ts",
+		],
+		{ cacheable: false },
+	),
 	stage(
 		"crosswalk-inventory",
 		["area-inventory", "geometry-source-registry"],
