@@ -1,12 +1,11 @@
-import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import type { AreaInventory, AreaRecord } from "./areaInventory";
+import { atlasDatabasePath } from "./dataLayout";
 
 export const readSqliteAreaInventory = (apiRoot: string): AreaInventory => {
-	const database = new DatabaseSync(
-		resolve(apiRoot, "../../data/build/atlas.sqlite"),
-		{ readOnly: true },
-	);
+	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+		readOnly: true,
+	});
 	try {
 		const header = database
 			.prepare(
@@ -64,10 +63,9 @@ export const readSqliteAreas = (
 		{ status: "available" }
 	>,
 ): AreaRecord[] => {
-	const database = new DatabaseSync(
-		resolve(apiRoot, "../../data/build/atlas.sqlite"),
-		{ readOnly: true },
-	);
+	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+		readOnly: true,
+	});
 	try {
 		const header = database
 			.prepare(

@@ -12,10 +12,11 @@ import {
 } from "./locationProjections";
 import { publishAtlasCache } from "./atlasCache";
 import { writeSqliteTables } from "./sqliteIndex";
+import { apiRootOf } from "./dataLayout";
 
 /** Rebuild API accelerators using only the distributed canonical database. */
 export function buildAtlasCache(root: string) {
-	const apiRoot = resolve(root, "services/api");
+	const apiRoot = apiRootOf(root);
 	const started = performance.now();
 	buildAreaSearchIndex(root);
 	buildPlaceIndex(root);

@@ -5,7 +5,7 @@ import {
 } from "./crosswalk-workers";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
 import {
 	readCrosswalkAdapters,
 	type AreaOverlapCrosswalkAdapter,
@@ -40,6 +40,7 @@ import { readGeometrySourceLookup } from "./geometrySources";
 import { sha256 } from "./contentHash";
 import { BOUNDED_CLIPPING_VERSION } from "./boundedClipping";
 import { readStoredText, storedTextExists } from "./storedText";
+import { apiRootOf, artifactDirectory, configDirectory } from "./dataLayout";
 
 type GeometryCrosswalkAdapter =
 	| AreaOverlapCrosswalkAdapter
@@ -307,24 +308,16 @@ const reusableCleanContainment = (
 
 export const buildCrosswalkInventory = async (repositoryRoot: string) => {
 	const workers = crosswalkWorkerCount();
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	if (!existsSync(outputDirectory)) {
 		throw new Error(
 			`Create the API public directory before building: ${outputDirectory}`,
 		);
 	}
 	const adapters = readCrosswalkAdapters(
-		join(
-			repositoryRoot,
-			"services",
-			"api",
-			"config",
-			"crosswalk-adapters.json",
-		),
+		join(configDirectory(repositoryRoot), "crosswalk-adapters.json"),
 	);
-	const geometrySources = readGeometrySourceLookup(
-		join(repositoryRoot, "services", "api"),
-	);
+	const geometrySources = readGeometrySourceLookup(apiRootOf(repositoryRoot));
 	// Only a population overlap's pairs are needed whole after they are
 	// checked: it reweights them. Every other artifact is reduced to its
 	// inventory entry, so the build never holds all of them at once.

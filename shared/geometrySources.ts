@@ -1,12 +1,16 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { GeometrySource, GeometrySourceLookup } from "./areaGeometry";
+import { artifactRoot } from "./dataLayout";
 type Registry = { schemaVersion?: unknown; releases?: unknown };
 export const readGeometrySourceLookup = (
 	apiRoot: string,
 ): GeometrySourceLookup => {
 	const registry = JSON.parse(
-		readFileSync(join(apiRoot, "public", "geometry-sources.json"), "utf8"),
+		readFileSync(
+			join(artifactRoot(apiRoot), "geometry-sources.json"),
+			"utf8",
+		),
 	) as Registry;
 	if (registry.schemaVersion !== 1 || !Array.isArray(registry.releases))
 		throw new Error("Invalid geometry source registry.");

@@ -11,9 +11,10 @@ import {
 	ATLAS_LOOKUPS_MANIFEST,
 	type AtlasLookupManifest,
 } from "../../shared/atlasAssets";
+import { apiRootOf, repositoryRootOf } from "../../shared/dataLayout";
 
-const apiRoot = resolve(import.meta.dirname, "../../services/api");
-const publicDirectory = atlasAssetsDirectory(resolve(apiRoot, "../.."));
+const apiRoot = apiRootOf(resolve(import.meta.dirname, "../.."));
+const publicDirectory = atlasAssetsDirectory(repositoryRootOf(apiRoot));
 const directory = join(publicDirectory, ATLAS_LOOKUPS_DIRECTORY);
 
 rmSync(join(publicDirectory, ATLAS_LOOKUPS_MANIFEST), { force: true });

@@ -1,10 +1,10 @@
-import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { sha256 } from "./contentHash";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
 } from "./postcodeIndexTypes";
+import { atlasDatabasePath } from "./dataLayout";
 
 export const postcodeFields = [
 	"postcode",
@@ -24,10 +24,9 @@ export const readSqlitePostcodeShard = (
 	apiRoot: string,
 	entry: PostcodeIndexArtifact["shards"][number],
 ): string => {
-	const database = new DatabaseSync(
-		resolve(apiRoot, "../../data/build/atlas.sqlite"),
-		{ readOnly: true },
-	);
+	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+		readOnly: true,
+	});
 	try {
 		const rows = database
 			.prepare(

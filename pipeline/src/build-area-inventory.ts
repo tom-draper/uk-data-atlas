@@ -5,9 +5,10 @@ import { readAreaAdapters } from "../../shared/areaAdapters";
 import { readAreaSourceAdapters } from "../../shared/areaSourceAdapters";
 import { compileAreas } from "./areaInventory";
 import { createBoundaryRegistry } from "./build-boundary-registry";
+import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
 
 export const buildAreaInventory = (repositoryRoot: string) => {
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	if (!existsSync(outputDirectory)) {
 		throw new Error(
 			`Create the API public directory before building: ${outputDirectory}`,
@@ -18,21 +19,12 @@ export const buildAreaInventory = (repositoryRoot: string) => {
 		createBoundaryRegistry(repositoryRoot),
 		readAreaAdapters(
 			join(
-				repositoryRoot,
-				"services",
-				"api",
-				"config",
+				configDirectory(repositoryRoot),
 				"area-property-adapters.json",
 			),
 		),
 		readAreaSourceAdapters(
-			join(
-				repositoryRoot,
-				"services",
-				"api",
-				"config",
-				"area-source-adapters.json",
-			),
+			join(configDirectory(repositoryRoot), "area-source-adapters.json"),
 		),
 	);
 	for (const artifact of artifacts) {

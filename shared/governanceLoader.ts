@@ -1,11 +1,12 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import { artifactRoot } from "./dataLayout";
 
 export const readRelationshipCandidateInventory = (
 	apiRoot: string,
 ): RelationshipCandidateInventory => {
-	const path = join(apiRoot, "public", "relationship-candidates.json");
+	const path = join(artifactRoot(apiRoot), "relationship-candidates.json");
 	const inventory = JSON.parse(
 		readFileSync(path, "utf8"),
 	) as RelationshipCandidateInventory;

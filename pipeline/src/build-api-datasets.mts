@@ -3,16 +3,11 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 /** Build boundary assets and gazetteer core from raw data. */
 export async function buildDatasets(repositoryRoot: string) {
-	const directory = join(
-		repositoryRoot,
-		"services",
-		"api",
-		"public",
-		"source-data",
-	);
+	const directory = join(artifactDirectory(repositoryRoot), "source-data");
 	await mkdir(directory, { recursive: true });
 	await compileBoundaryAssets(directory);
 	const core = await loadGazetteerCore((path) =>

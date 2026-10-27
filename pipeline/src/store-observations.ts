@@ -8,6 +8,7 @@ import {
 	observationArtifactName,
 	type DataCatalog,
 } from "../../shared/dataCatalog";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 /** Publish one complete observation generation while preserving other atlas tables. */
 export function storeObservations(
@@ -72,7 +73,7 @@ CREATE TABLE observation_catalogue (dataCatalogHash TEXT NOT NULL, generationHas
 	} finally {
 		rmSync(temporary, { force: true });
 	}
-	const directory = join(root, "services/api/public");
+	const directory = artifactDirectory(root);
 	for (const name of readdirSync(directory)) {
 		if (/(?:-observations|-table)\.json(?:\.gz)?$/.test(name))
 			rmSync(join(directory, name), { force: true });

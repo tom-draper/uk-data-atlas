@@ -7,16 +7,15 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "../../shared/dataCatalog";
 import { compileExportManifest } from "./exportManifest";
+import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
 
 export const buildExportManifest = (repositoryRoot: string) => {
-	const publicDirectory = join(repositoryRoot, "services", "api", "public");
+	const publicDirectory = artifactDirectory(repositoryRoot);
 	const dataCatalogPath = join(publicDirectory, "data-catalog.json");
 	const dataCatalog = JSON.parse(
 		readFileSync(dataCatalogPath, "utf8"),
 	) as DataCatalog;
-	const databasePath = observationDatabasePath(
-		resolve(repositoryRoot, "services/api"),
-	);
+	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
 	assertObservationCatalogue(databasePath, dataCatalog);
 	const manifest = compileExportManifest(
 		publicDirectory,

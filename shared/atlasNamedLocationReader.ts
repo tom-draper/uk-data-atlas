@@ -1,4 +1,3 @@
-import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { lazyValue } from "./lazyValue";
 import type {
@@ -6,11 +5,12 @@ import type {
 	NamedLocationInventory,
 } from "./namedLocationTypes";
 import type { NamedLocationGeometry } from "./geometryTypes";
+import { atlasDatabasePath } from "./dataLayout";
 
 export const readSqliteNamedLocationInventory = (
 	apiRoot: string,
 ): NamedLocationInventory => {
-	const path = resolve(apiRoot, "../../data/build/atlas.sqlite");
+	const path = atlasDatabasePath(apiRoot);
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		const header = database

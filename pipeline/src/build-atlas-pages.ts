@@ -33,15 +33,16 @@ import {
 	type PlaceIndex,
 	type TimelineEvent,
 } from "@uk-data-atlas/catalogue/place-profile";
+import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
 
-const API_ROOT = resolve(import.meta.dirname, "../../services/api");
-const ROOT = resolve(API_ROOT, "../..");
+const ROOT = resolve(import.meta.dirname, "../..");
+const API_ROOT = apiRootOf(ROOT);
 const readDataset = (output: string) =>
 	readAtlasPayload(
 		ROOT,
 		output === "dataset-manifest" ? output : `dataset:${output}`,
 	);
-const BOUNDARIES = join(API_ROOT, "public", "source-data", "boundaries");
+const BOUNDARIES = join(artifactRoot(API_ROOT), "source-data", "boundaries");
 
 /**
  * Children listed by name rather than counted, up to this many. Parishes are

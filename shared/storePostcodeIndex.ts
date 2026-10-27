@@ -5,6 +5,7 @@ import { postcodeTables } from "./atlasPostcodeTables";
 import { postcodeIndexMismatch } from "./postcodeIndexMismatch";
 import type { PostcodeIndexArtifact } from "./postcodeIndexTypes";
 import { writeSqliteTables } from "./sqliteTables";
+import { artifactDirectory } from "./dataLayout";
 
 export const storePostcodeIndex = (
 	root: string,
@@ -39,7 +40,7 @@ export const storePostcodeIndex = (
 	} finally {
 		rmSync(temporary, { force: true });
 	}
-	const publicRoot = join(root, "services/api/public");
+	const publicRoot = artifactDirectory(root);
 	rmSync(join(publicRoot, "postcodes"), { recursive: true, force: true });
 	for (const filename of ["postcode-index.json", "postcode-index.json.gz"])
 		rmSync(join(publicRoot, filename), { force: true });

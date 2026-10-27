@@ -7,6 +7,7 @@ import {
 	openapiDocumentHash,
 	type OperationsArtifact,
 } from "../../shared/operations";
+import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
 
 /**
  * Compiles the operations the server matches requests against from
@@ -25,7 +26,7 @@ export const buildOperations = (apiRoot: string) => {
 	const artifact = compileOperations(
 		readFileSync(join(apiRoot, "openapi.yaml"), "utf8"),
 	);
-	const outputPath = join(apiRoot, "public", "operations.json");
+	const outputPath = join(artifactRoot(apiRoot), "operations.json");
 	// This is the first build step, and a fresh checkout has no `public`.
 	mkdirSync(dirname(outputPath), { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
@@ -35,7 +36,7 @@ export const buildOperations = (apiRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { outputPath, operationCount } = buildOperations(
-		resolve(dirname(scriptPath), "../../services/api"),
+		apiRootOf(resolve(dirname(scriptPath), "../..")),
 	);
 	console.log(`Wrote ${operationCount} operation paths to ${outputPath}`);
 }

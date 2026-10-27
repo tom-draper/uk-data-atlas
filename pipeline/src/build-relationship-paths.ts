@@ -7,6 +7,7 @@ import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import { compileRelationshipPaths, crosswalkShape } from "./relationshipPaths";
 import { readApprovedRelationshipPaths } from "./relationshipPathAdapters";
 import { readStoredText } from "../../shared/storedText";
+import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
 
 // Long enough to rebase a local authority across a decade of releases, which
 // takes one identity step per release in between.
@@ -15,7 +16,7 @@ export const MAXIMUM_DISCOVERED_STEPS = Number(
 );
 
 export const buildRelationshipPaths = (repositoryRoot: string) => {
-	const directory = join(repositoryRoot, "services", "api", "public");
+	const directory = artifactDirectory(repositoryRoot);
 	const crosswalks = JSON.parse(
 		readFileSync(join(directory, "crosswalk-inventory.json"), "utf8"),
 	) as CrosswalkInventory;
@@ -30,13 +31,7 @@ export const buildRelationshipPaths = (repositoryRoot: string) => {
 	const paths = compileRelationshipPaths(
 		crosswalks,
 		readApprovedRelationshipPaths(
-			join(
-				repositoryRoot,
-				"services",
-				"api",
-				"config",
-				"relationship-paths.json",
-			),
+			join(configDirectory(repositoryRoot), "relationship-paths.json"),
 		),
 		{ shapes, maximumSteps: MAXIMUM_DISCOVERED_STEPS },
 	);

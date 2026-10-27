@@ -6,6 +6,7 @@ import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { StoredFile } from "./routeResponse";
 
 import type { MapResources } from "./mapResources";
+import { artifactRoot, buildDirectory, repositoryRootOf } from "./dataLayout";
 export type { MapResources } from "./mapResources";
 
 /** Every whole-release download the build wrote, tiled or not. */
@@ -89,7 +90,7 @@ export const readMapResources = (
 	assetBaseUrl?: string,
 	tileBaseUrl?: string,
 ): MapResources => {
-	const path = join(apiRoot, "public", "map-resources.json");
+	const path = join(artifactRoot(apiRoot), "map-resources.json");
 	if (!existsSync(path)) return { resources: [] };
 	const resources: MapResources = JSON.parse(readFileSync(path, "utf8"));
 	if (!assetBaseUrl) return resources;
@@ -138,7 +139,10 @@ export const readMapAssets = (
 			(resource) => [
 				resource.id,
 				openArchive(
-					join(apiRoot, "../../data/build", resource.tiles.artifact),
+					join(
+						buildDirectory(repositoryRootOf(apiRoot)),
+						resource.tiles.artifact,
+					),
 				),
 			],
 		),
@@ -151,7 +155,10 @@ export const readMapAssets = (
 			.map((entry) => [
 				entry.artifact,
 				{
-					path: join(apiRoot, "../../data/build", entry.artifact),
+					path: join(
+						buildDirectory(repositoryRootOf(apiRoot)),
+						entry.artifact,
+					),
 					bytes: entry.bytes,
 					contentHash: entry.contentHash,
 					...(entry.gzipBytes === undefined

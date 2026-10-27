@@ -8,6 +8,7 @@ import {
 } from "./catalog/compileDataCatalog";
 import { storeObservations } from "./store-observations";
 import { observationArtifactName } from "../../shared/dataCatalog";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 export const datasetCatalogInputs = (
 	repositoryRoot: string,
@@ -65,7 +66,7 @@ export const datasetCatalogInputs = (
 
 export const buildDataCatalog = (repositoryRoot: string) => {
 	const inputs = datasetCatalogInputs(repositoryRoot);
-	const outputDirectory = join(repositoryRoot, "services", "api", "public");
+	const outputDirectory = artifactDirectory(repositoryRoot);
 	const {
 		catalog,
 		populationObservations,

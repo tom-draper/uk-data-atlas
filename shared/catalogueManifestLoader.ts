@@ -1,5 +1,4 @@
 import { readAtlasPayload } from "./atlasSqlite";
-import { resolve } from "node:path";
 import { readFileSync } from "node:fs";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
@@ -13,6 +12,7 @@ import { openapiDocumentHash, type OperationsArtifact } from "./operations";
 import type { ValidationReport } from "./validationReport";
 import { withUnitDefinitions } from "./catalogueUnits";
 import { publicPath, readPublicManifest } from "./publicManifest";
+import { repositoryRootOf } from "./dataLayout";
 
 export const readAtlasRelease = (apiRoot: string): AtlasRelease =>
 	readPublicManifest<AtlasRelease>(
@@ -101,7 +101,7 @@ export const readAnalysisGeographyInventory = (
 ): AnalysisGeographyInventory => {
 	const path = "data/build/atlas.sqlite:analysis-geographies";
 	const inventory = JSON.parse(
-		readAtlasPayload(resolve(apiRoot, "../.."), "analysis-geographies"),
+		readAtlasPayload(repositoryRootOf(apiRoot), "analysis-geographies"),
 	) as AnalysisGeographyInventory;
 	if (
 		inventory.schemaVersion !== 1 ||
@@ -123,7 +123,7 @@ export const readAnalysisGeographyValidationInventory = (
 	const path = "data/build/atlas.sqlite:analysis-geography-validation";
 	const inventory = JSON.parse(
 		readAtlasPayload(
-			resolve(apiRoot, "../.."),
+			repositoryRootOf(apiRoot),
 			"analysis-geography-validation",
 		),
 	) as AnalysisGeographyValidationInventory;

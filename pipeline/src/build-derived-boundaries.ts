@@ -12,6 +12,7 @@ import {
 	type AreaSourceAdapterManifest,
 } from "../../shared/areaSourceAdapters";
 import { sourceGeoJsonPath } from "../../shared/boundarySourcePaths";
+import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -26,13 +27,10 @@ export const buildDerivedBoundaries = (
 	adapters: AreaSourceAdapterManifest,
 ) => {
 	const outputDirectory = join(
-		repositoryRoot,
-		"services",
-		"api",
-		"public",
+		artifactDirectory(repositoryRoot),
 		"boundaries",
 	);
-	if (!existsSync(join(repositoryRoot, "services", "api", "public"))) {
+	if (!existsSync(artifactDirectory(repositoryRoot))) {
 		throw new Error(
 			"Create the API public directory before building derived boundaries.",
 		);
@@ -82,10 +80,9 @@ export const buildDerivedBoundaries = (
 		const outputPath = join(directory, `${boundaryRelease}.geojson`);
 		writeFileSync(outputPath, content);
 	}
-	rmSync(
-		join(repositoryRoot, "services/api/public/derived-boundaries.json"),
-		{ force: true },
-	);
+	rmSync(join(artifactDirectory(repositoryRoot), "derived-boundaries.json"), {
+		force: true,
+	});
 	return { releaseCount: Object.keys(adapters).length };
 };
 
@@ -95,13 +92,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = buildDerivedBoundaries(
 		repositoryRoot,
 		readAreaSourceAdapters(
-			join(
-				repositoryRoot,
-				"services",
-				"api",
-				"config",
-				"area-source-adapters.json",
-			),
+			join(configDirectory(repositoryRoot), "area-source-adapters.json"),
 		),
 	);
 	console.log(`Wrote ${result.releaseCount} derived boundary releases`);

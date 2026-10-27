@@ -7,9 +7,10 @@ import {
 import { readSqliteAreaInventory } from "./atlasAreaReader";
 import { readAreaLookup } from "./areaLookup";
 import { publishCacheTables } from "./atlasCache";
+import { apiRootOf, artifactRoot } from "./dataLayout";
 
 export const buildAreaSearchIndex = (repositoryRoot: string) => {
-	const apiRoot = join(repositoryRoot, "services", "api");
+	const apiRoot = apiRootOf(repositoryRoot);
 	const areaInventory = readSqliteAreaInventory(apiRoot);
 	const index = compileAreaSearchIndex(
 		readAreaLookup(apiRoot, areaInventory),
@@ -25,7 +26,7 @@ export const buildAreaSearchIndex = (repositoryRoot: string) => {
 		"area-search-index.json",
 		"area-search-index.json.gz",
 	])
-		rmSync(join(apiRoot, "public", filename), { force: true });
+		rmSync(join(artifactRoot(apiRoot), filename), { force: true });
 
 	return {
 		outputPath,
