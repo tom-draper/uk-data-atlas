@@ -1,0 +1,139 @@
+/**
+ * Every stable `code` a problem response can carry. A client branches on
+ * `code` rather than on prose, so each one is declared here with the statuses
+ * it comes with, the extension members it always carries, the alternatives it
+ * may offer, and a request that produces it against the compiled catalogues.
+ * The OpenAPI document gives each a schema, and a contract test sends each
+ * example and checks the response against this entry.
+ */
+export type ProblemCodeDefinition = {
+	statuses: readonly number[];
+	/** Extension members present on every problem with this code. */
+	members: readonly string[];
+	/** Extension members that point the caller to what it can ask instead. */
+	alternatives: readonly string[];
+	meaning: string;
+	example: string;
+};
+
+export const PROBLEM_CODES = {
+	place_not_served: {
+		statuses: [422],
+		members: ["candidates"],
+		alternatives: ["candidates"],
+		meaning:
+			"The place matched, but no published source can answer the requested measure for it.",
+		example: "/v1/data/house-price-median/value?place=North%20West",
+	},
+	unsupported_geography: {
+		statuses: [404],
+		members: ["absence"],
+		alternatives: ["links", "availableReleases"],
+		meaning:
+			"The geography is not published, or the release's area identities are not compiled.",
+		example: "/v1/areas/nowhere/2024-12-uk-bgc/E05000932",
+	},
+	unknown_release: {
+		statuses: [404],
+		members: ["absence", "availableReleases"],
+		alternatives: ["availableReleases"],
+		meaning:
+			"The geography is published but no release of it has that id; `availableReleases` lists those that do exist.",
+		example: "/v1/areas/ward/1999-12-uk-bgc/E05000932",
+	},
+	area_not_in_release: {
+		statuses: [404],
+		members: ["absence", "presentIn"],
+		alternatives: ["presentIn"],
+		meaning:
+			"The release is published and compiled but does not hold the code; `presentIn` lists releases that do.",
+		example: "/v1/areas/ward/2016-12-gb-bgc/E05013830",
+	},
+	aggregation_not_supported: {
+		statuses: [422],
+		members: [],
+		alternatives: [],
+		meaning:
+			"The measure's values do not add over areas, or its weights cannot be used.",
+		example:
+			"/v1/data/house-price-median/value?period=2022&geography=ward&codeYear=2020&place=E92000001",
+	},
+	conversion_not_available: {
+		statuses: [422],
+		members: [],
+		alternatives: [],
+		meaning:
+			"The named crosswalk or source release cannot carry the partition without dropping, splitting or assuming values.",
+		example:
+			"/v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=constituency-2010-to-2024-official-lookup-v2",
+	},
+	partial_coverage: {
+		statuses: [422],
+		members: [],
+		alternatives: [],
+		meaning:
+			"A named location or a weight partition leaves out areas the sum would need, so no partial sum is served.",
+		example:
+			"/v1/data/total-jobs/value?period=2024&geography=localAuthority&codeYear=2023&place=location/belfast",
+	},
+	ambiguous_place: {
+		statuses: [409],
+		members: ["choices"],
+		alternatives: ["choices"],
+		meaning:
+			"The place name means more than one place, and the measure answers them differently; `choices` carries each answer and the request that asks about it alone.",
+		example: "/v1/data/population/series?place=Newport",
+	},
+	incompatible_geometry: {
+		statuses: [422],
+		members: [],
+		alternatives: [],
+		meaning:
+			"The requested boundary release does not hold every source area code of the partition, so no geometry join is offered.",
+		example:
+			"/v1/data/population?period=2022&geography=ward&codeYear=2023&release=2016-12-gb-bgc",
+	},
+	invalid_format: {
+		statuses: [400],
+		members: [],
+		alternatives: [],
+		meaning: "The `format` asked for is not one this route serves.",
+		example:
+			"/v1/data/population?period=2022&geography=ward&codeYear=2023&format=xml",
+	},
+	invalid_cursor: {
+		statuses: [400],
+		members: [],
+		alternatives: [],
+		meaning:
+			"The cursor is not one this API issued, or does not belong to the query it was sent with.",
+		example: "/v1/areas?cursor=not-a-cursor",
+	},
+	unknown_query_parameter: {
+		statuses: [400],
+		members: ["parameter"],
+		alternatives: ["suggestion"],
+		meaning:
+			"The request names a query parameter that this operation does not declare. The optional suggestion is the closest declared parameter.",
+		example: "/v1/areas?geogaphy=ward",
+	},
+	no_release_for_date: {
+		statuses: [404],
+		members: ["absence"],
+		alternatives: ["earliest", "undated"],
+		meaning:
+			"No release of the geography was in force on the date; `earliest` names the first there is.",
+		example: "/v1/boundary-releases:resolve?geography=ward&date=1990-01-01",
+	},
+	ambiguous_release: {
+		statuses: [409],
+		members: ["choices"],
+		alternatives: ["choices"],
+		meaning:
+			"More than one release of the geography is dated that month and they differ in more than coverage; `choices` lists them.",
+		example:
+			"/v1/boundary-releases:resolve?geography=ward&date=2019-12-15&country=GB-ENG",
+	},
+} as const satisfies Record<string, ProblemCodeDefinition>;
+
+export type ProblemCode = keyof typeof PROBLEM_CODES;
