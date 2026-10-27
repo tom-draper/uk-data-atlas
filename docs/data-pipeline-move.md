@@ -569,3 +569,7 @@ The API and builder share lookup table rendering and manifest types in
 
 The cache publisher and name normalisation rules live in `shared/atlasCache.ts`
 and `shared/nameNormalisation.ts`. API imports re-export both modules.
+
+The place index build runs in `pipeline/src/build-place-index.ts`. Its builder,
+index implementation, SQLite helpers and boundary release ordering are shared
+with the API. The API cache rebuild uses the same builder.
