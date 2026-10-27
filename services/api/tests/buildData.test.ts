@@ -123,15 +123,13 @@ test("default build executes both products in dependency order", (context) => {
 		...apiOrder,
 		"boundaries",
 		"boundary-tiles",
-		"website-sources",
 		"website-datasets",
 		"website-registry",
-		"seo",
 	]);
-	assert.equal(build.commands().length, apiOrder.length + 6);
+	assert.equal(build.commands().length, apiOrder.length + 4);
 });
 
-test("rebuilding atlas pages imports SQLite assets before sealing the release and refreshing SEO", (context) => {
+test("rebuilding atlas pages imports SQLite assets before sealing the release and refreshing website data", (context) => {
 	const build = fixture(context);
 	assert.deepEqual(stages(build.run(["--from", "atlas-pages"])), [
 		"atlas-pages",
@@ -139,14 +137,13 @@ test("rebuilding atlas pages imports SQLite assets before sealing the release an
 		"atlas-release",
 		"website-datasets",
 		"website-registry",
-		"seo",
 	]);
 	assert.deepEqual(build.commands().at(-1), [
 		"--dir",
 		"../..",
 		"exec",
 		"tsx",
-		"scripts/build-seo-data.mts",
+		"scripts/generate-dataset-registry.ts",
 	]);
 });
 
@@ -163,7 +160,7 @@ test("dataset rebuild refreshes consumers using existing upstream artifacts", (c
 		assert.ok(!selected.includes(name), name);
 	for (const name of ["data-catalog", "atlas-pages"])
 		assert.ok(selected.includes(name), name);
-	assert.equal(selected.at(-1), "seo");
+	assert.equal(selected.at(-1), "website-registry");
 });
 
 test("datasets build once for both products", (context) => {
@@ -172,7 +169,7 @@ test("datasets build once for both products", (context) => {
 	assert.equal(selected[0], "datasets");
 	assert.equal(selected.filter((name) => name === "datasets").length, 1);
 	assert.ok(selected.includes("atlas-sqlite"));
-	assert.equal(selected.at(-1), "seo");
+	assert.equal(selected.at(-1), "website-registry");
 });
 
 test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) => {
@@ -205,7 +202,6 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"atlas-release",
 		"website-datasets",
 		"website-registry",
-		"seo",
 	]);
 });
 

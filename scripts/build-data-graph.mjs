@@ -604,18 +604,6 @@ const websiteStages = [
 		{ outputs: ["data/build/boundaries", "public/data/boundaries"] },
 	),
 	stage(
-		"website-sources",
-		["catalogue-registry"],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"scripts/generate-sources-readme.mts",
-		],
-		{ cacheable: false },
-	),
-	stage(
 		"website-lookups",
 		["atlas-lookups", "atlas-pages"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-atlas-assets.ts"],
@@ -626,12 +614,7 @@ const websiteStages = [
 	),
 	stage(
 		"website-datasets",
-		[
-			"atlas-sqlite",
-			"website-lookups",
-			"website-sources",
-			"boundary-tiles",
-		],
+		["atlas-sqlite", "website-lookups", "boundary-tiles"],
 		[
 			"--dir",
 			"../..",
@@ -668,11 +651,6 @@ const websiteStages = [
 			"scripts/generate-dataset-registry.ts",
 		],
 		{ cacheable: false },
-	),
-	stage(
-		"seo",
-		["website-registry"],
-		["--dir", "../..", "exec", "tsx", "scripts/build-seo-data.mts"],
 	),
 ];
 
