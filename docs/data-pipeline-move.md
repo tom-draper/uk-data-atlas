@@ -525,3 +525,11 @@ after removing the former API-public page and lookup files. The same 694 files
 and 692 SQLite rows are byte-identical at `data/build/atlas-assets/`.
 The 49 focused website/build tests and 11 targeted API tests pass.
 Full check results are recorded in the PR.
+
+Bulk export compilation now lives in `pipeline/src/exportManifest.ts`, with
+CSV and Parquet download generation in `pipeline/src/observationDownloads.ts`.
+The graph runs `pipeline/src/build-export-manifest.ts` after `data-catalog`.
+Manifest and download contracts and the Parquet writer live in `shared/`.
+The API re-exports the manifest contracts and Parquet writer for runtime consumers.
+The output paths, download formats, ordering, hashes, and publication behavior
+remain unchanged.
