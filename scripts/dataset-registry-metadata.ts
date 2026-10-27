@@ -1,9 +1,3 @@
-export type CatalogueDefinitionMetadata = {
-	name: string;
-	type: string;
-	chartPending: boolean;
-};
-
 export type ChartDefinitionMetadata = {
 	name: string;
 	type: string;
@@ -39,33 +33,6 @@ export const chartDefinitionFiles = (files: readonly string[]): string[] =>
 				file.endsWith(".ts") && !chartDefinitionExclusions.has(file),
 		)
 		.sort();
-
-export function catalogueMetadata(
-	file: string,
-	module: ModuleExports,
-): CatalogueDefinitionMetadata {
-	const matches: Array<[string, Record<string, unknown>]> = [];
-	for (const [name, value] of Object.entries(module)) {
-		if (
-			name.endsWith("DatasetDefinition") &&
-			isRecord(value) &&
-			typeof value.precompile === "function"
-		) {
-			matches.push([name, value]);
-		}
-	}
-	if (matches.length !== 1)
-		return fail(file, "must export exactly one *DatasetDefinition value.");
-	const [name, definition] = matches[0];
-	if (typeof definition.type !== "string") {
-		return fail(file, "must declare a string literal dataset type.");
-	}
-	return {
-		name,
-		type: definition.type,
-		chartPending: definition.chartPending === true,
-	};
-}
 
 export function chartMetadata(
 	file: string,

@@ -37,6 +37,7 @@ const pipelineInputs = [
 	"scripts/dataset-discovery.ts",
 	"scripts/dataset-region-chunks.mts",
 	"scripts/generate-dataset-registry.ts",
+	"pipeline/src/build-catalogue-registry.ts",
 	"scripts/precompile",
 	"pipeline/src/precompile",
 	"scripts/compile-website-data.mts",

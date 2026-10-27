@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { catalogueMetadata } from "../../pipeline/src/build-catalogue-registry";
 import {
-	catalogueMetadata,
 	chartDefinitionFiles,
 	chartMetadata,
 } from "@/scripts/dataset-registry-metadata";
