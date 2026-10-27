@@ -7,9 +7,10 @@ export type {
 	AreaRecord,
 	AreaReleaseArtifact,
 	AreaInventory,
+	AreaLookup,
 } from "../../../shared/areaInventory";
 
-export type AreaLookup = Map<string, Map<string, AreaRecord>>;
+import type { AreaLookup } from "../../../shared/areaInventory";
 
 export const createAreaLookup = (
 	artifacts: AreaReleaseArtifact[],
