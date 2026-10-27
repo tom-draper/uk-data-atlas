@@ -70,7 +70,7 @@ The database contains these tables:
 | Table      | Column        | Type                   | Key and meaning                                                                  |
 | ---------- | ------------- | ---------------------- | -------------------------------------------------------------------------------- |
 | `meta`     | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                     |
-| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"2"`.                                        |
+| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"3"`.                                        |
 | `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>`.     |
 | `payloads` | `payload`     | `TEXT NOT NULL`        | Exact UTF-8 JSON text from its compiled input, preserving bytes and array order. |
 | `datasets` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                             |
@@ -116,7 +116,7 @@ the client. `GET /data/catalogue/<sha256>/<output>.json` joins `datasets.payload
 to `payloads.id`, matching both output and hash before returning the exact JSON
 with `Content-Type: application/json; charset=utf-8` and
 `Cache-Control: public, max-age=31536000, immutable`. Fuel poverty instead
-reconstructs these same bytes from catalogue observation rows after matching the
+reconstructs these same bytes from statistics rows after matching the
 output and hash in `datasets`. The route supplies gzip
 compression when the client accepts it, with `Vary: Accept-Encoding`. Missing outputs and stale or invalid
 hashes return 404 with `Cache-Control: no-store`, never a different payload at
@@ -132,38 +132,56 @@ rebuilds shared datasets, SQLite and their downstream consumers. `pnpm data:veri
 including catalogue payload hashes in SQLite. It does not validate the relational
 API tables or the complete compiled release.
 
-### Catalogue observation pilot
+### Statistics tables
 
-The fuel-poverty catalogue payload is also stored as numeric rows during
-`atlas-sqlite`. This is separate from the API's existing `observation_*` tables,
-which store downstream API artifacts and are populated by `data-catalog`.
-Only fuel poverty is migrated in this pilot. Its JSON payload remains in
-`payloads` and its manifest hash and public URL stay unchanged.
+`atlas-sqlite` writes the canonical statistics tables from
+`docs/sqlite-schema-design.md` (layer 4, migration step 1). Only fuel poverty
+uses them so far. They are separate from the API's `observations` and
+`observation_*` tables, which `data-catalog` populates and step 4 retires.
+The base database schema version is 3; the `catalogue_*` pilot tables from PR #398
+are gone.
 
-The base database schema version becomes 2. `catalogue_measures` identifies each
-measure by `(dataset, id)`, with a label, unit and original record field.
-`catalogue_observations` has primary key `(dataset, measure, areaId, period)`
-and a numeric `value`. `areaId` references the existing `areas(id)`, including
-its geography and boundary release. An index on `(areaId, dataset, period)`
-supports place queries. Fuel poverty uses the catalogue's 2021 LSOA release,
-not a new release identifier. Unknown area codes fail the build.
+All tables are `STRICT` with integer keys. Writer: `shared/atlasStatistics.ts`.
 
-`catalogue_periods` retains each period's dataset header without its data.
-`catalogue_records` retains area order and the publisher's LSOA label, which
-can differ from the boundary inventory name. Neither stores numeric values.
-These small metadata tables let the shared versioned dataset reader reconstruct
-the same output from rows. Reconstruction must match the retained JSON byte for
-byte before the atomic database replacement. Rebuild older databases with
-`pnpm data:build --only atlas-sqlite` before deploying the new reader. Tests cover zero and decimal rates. Missing values are not converted to zero;
-the pilot compiler only emits finite numeric observations.
+| Table               | Key                                       | Meaning                                                                                        |
+| ------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `source`            | `id`                                      | Publisher, URL and licence.                                                                    |
+| `dataset`           | `id`, `slug` unique                       | Title, description, `source_id`, compiler `fingerprint`. `slug` is the compiled output name.   |
+| `measure`           | `id`, `slug` unique                       | Shared across datasets. Unit, `value_kind`, `aggregation`, and numerator/denominator measures. |
+| `dimension`         | `id`, `slug` unique                       | A breakdown such as `tenure` or `crime-type`.                                                  |
+| `dimension_member`  | `id`, unique `(dimension_id, code)`       | Member label, optional parent, publisher `position`.                                           |
+| `period`            | `id`, `label` unique                      | `kind`, `start_date`, `end_date`.                                                              |
+| `status`            | `id`, `slug` unique                       | `observed` (1), `estimated`, `provisional`, `suppressed`, `not_applicable`.                    |
+| `series`            | `id`, `key` unique                        | One dataset, measure, release (`area_releases.position`) and set of members, plus `method`.    |
+| `series_member`     | `(series_id, dimension_id)`               | The members fixing a series. Indexed by `(member_id, series_id)`.                              |
+| `observation`       | `(series_id, area_version_id, period_id)` | `value`, `status_id`, optional `lower`, `upper`, `category_id`. `WITHOUT ROWID`.               |
+| `dataset_area_name` | `(dataset_id, area_version_id)`           | A publisher's area name, stored only where it differs from `areas.name`.                       |
 
-Run `pnpm exec vitest run --project built tests/built/catalogueObservations.test.ts`
+`observation.area_version_id` references `areas(id)`, one row per release and
+code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
+place queries. The build fails if an observation's area is not in its series'
+release, if an observed value is null, or if a dataset's `verify` hook fails.
+`v_observation` joins everything into readable rows (dataset, measure, unit,
+members, area code and name, geography, release, period, value, status,
+method, licence).
+
+Fuel poverty (`shared/fuelPovertyStatistics.ts`) maps each record field to a
+measure (`households`, `fuel-poor-households`, `fuel-poverty-rate`) on the 2021
+LSOA release. Record order is area code order and is not stored; the mapper
+refuses unordered input. The period header (`id`, `year`, `boundaryType`,
+`boundaryYear`) is derived from the period and release. Its JSON payload stays
+in `payloads` until step 4. `GET /data/catalogue/<sha256>/fuel-poverty.json`
+rebuilds the bytes from rows after matching the hash in `datasets`, and the
+build refuses to publish if the rebuilt bytes differ from the payload. Rebuild
+older databases with `pnpm data:build --only atlas-sqlite` before deploying the
+new reader.
+
+Run `pnpm exec vitest run --project built tests/built/atlasStatistics.test.ts`
 to compile the real fuel poverty payload and LSOA inventory, build an isolated
-pilot database through `buildAtlasSqlite`, and compare every byte. A nonzero exit
-or zero tests run means verification failed. Other inventories are empty test
-fixtures. `data/build/catalogue-observation-pilot.json` records database bytes
-with and without the pilot tables after vacuuming, while retaining the JSON
-payload in both. This measures pilot overhead, not the size of a full release.
+database through `buildAtlasSqlite`, and compare every byte. Other inventories
+are empty fixtures. `data/build/statistics-pilot.json` records database bytes
+with and without the statistics tables after vacuuming, and the size of the
+area index. This measures the statistics tables, not a full release.
 
 ### Areas
 
