@@ -14,7 +14,8 @@ export type SqliteTable = {
 	constraints?: string[];
 	/** Reject values that do not match their column's declared type. */
 	strict?: boolean;
-	indexes?: string[][];
+	/** Columns per index, named `<table>_<n>` unless given a name. */
+	indexes?: (string[] | { name: string; columns: string[] })[];
 	views?: Record<string, string>;
 };
 
@@ -40,10 +41,14 @@ export const writeSqliteTables = (
 				? table.rows(database)
 				: table.rows)
 				insert.run(...row);
-			for (const [index, columns] of (table.indexes ?? []).entries())
+			for (const [index, entry] of (table.indexes ?? []).entries()) {
+				const { name: indexName, columns } = Array.isArray(entry)
+					? { name: `${name}_${index}`, columns: entry }
+					: entry;
 				database.exec(
-					`CREATE INDEX ${name}_${index} ON ${name} (${columns.join(", ")})`,
+					`CREATE INDEX ${indexName} ON ${name} (${columns.join(", ")})`,
 				);
+			}
 			continue;
 		}
 		database.exec(
