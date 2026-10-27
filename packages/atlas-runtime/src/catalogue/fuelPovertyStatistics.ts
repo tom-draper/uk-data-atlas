@@ -13,6 +13,7 @@ import type {
 	StatisticsMeasure,
 	StatisticsObservation,
 } from "./atlasStatistics";
+import { HOUSEHOLDS } from "./statisticsDatasets/measures";
 
 /**
  * Fuel poverty as statistics rows, and the reader that rebuilds its compiled
@@ -33,14 +34,7 @@ const FIELDS: readonly (readonly [
 ];
 
 const MEASURES: StatisticsMeasure[] = [
-	{
-		slug: "households",
-		label: "Households",
-		description: "Number of households.",
-		unit: "households",
-		valueKind: "count",
-		aggregation: "sum",
-	},
+	HOUSEHOLDS,
 	{
 		slug: "fuel-poor-households",
 		label: "Fuel poor households",
