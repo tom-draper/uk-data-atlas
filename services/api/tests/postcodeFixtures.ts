@@ -1,3 +1,5 @@
+import { compilePostcodeIndex } from "../../../pipeline/src/postcodeIndex";
+import type { PostcodeSourceRow } from "../../../pipeline/src/postcodeIndex";
 import type { AreaGeometryCache } from "../src/areaGeometry";
 import {
 	compilePostcodeAreas,
@@ -6,13 +8,11 @@ import {
 	releaseCounts,
 } from "../src/postcodeAreas";
 import {
-	compilePostcodeIndex,
 	parsePostcode,
 	PostcodeIndex,
 	postcodeLookupPoint,
 	type PostcodeShard,
 	type PostcodeSource,
-	type PostcodeSourceRow,
 } from "../src/postcodes";
 
 export const postcodeSource: PostcodeSource = {

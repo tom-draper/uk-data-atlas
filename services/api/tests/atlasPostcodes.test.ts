@@ -14,12 +14,13 @@ import test, { type TestContext } from "node:test";
 import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import { storePostcodeIndex } from "../scripts/store-postcode-index";
-import { buildPostcodeIndex } from "../scripts/build-postcode-index";
+import { buildPostcodeIndex } from "../../../pipeline/src/build-postcode-index";
 import { readPostcodeIndex } from "../src/boundaryLoader";
 import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
 import { createGeographyResolver } from "../src/geographyResolver";
 import { route } from "../src/routes";
-import { parsePostcode, type PostcodeSourceRow } from "../src/postcodes";
+import { parsePostcode } from "../src/postcodes";
+import type { PostcodeSourceRow } from "../../../pipeline/src/postcodeIndex";
 import {
 	postcodeIndexFor,
 	postcodeRow,
