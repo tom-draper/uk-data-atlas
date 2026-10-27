@@ -522,6 +522,13 @@ The shared builder reads the SQLite inputs and invokes the cache publisher. The
 pipeline stage and API cache rebuild both call it. The postcode index SQLite
 table conversion and publisher also live in `shared/`.
 
+The evidence documents stage now runs `pipeline/src/build-evidence-documents.ts`.
+The evidence report compilers, catalogue and observation loaders, route
+contracts, geography resolver, and their support modules live in `shared/`, with
+API re-exports for the routes. The stage traces its own imports with esbuild
+from the repository root. Document bytes, cache keys, and the
+`services/api/public/evidence-documents.json` output path are unchanged.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
