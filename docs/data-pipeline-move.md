@@ -542,3 +542,6 @@ The API and builder read observations through `shared/observationTables.ts`.
 The lookup manifest build runs in `pipeline/src/build-lookup-manifest.ts`.
 The API and builder share lookup table rendering and manifest types in
 `shared/lookupExports.ts`.
+
+The cache publisher and name normalisation rules live in `shared/atlasCache.ts`
+and `shared/nameNormalisation.ts`. API imports re-export both modules.
