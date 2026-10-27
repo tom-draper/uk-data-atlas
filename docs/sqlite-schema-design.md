@@ -1,7 +1,9 @@
 # Canonical SQLite schema design
 
-Status: proposal, 2026-10-26. Not implemented. Supersedes nothing yet; the
-current schema is documented in `data/build/README.md`.
+Status: proposal, 2026-10-26. Step 1 (the observation model, with fuel
+poverty ported onto it) is implemented; see [Decisions](#decisions) and
+[How to port a dataset](#how-to-port-a-dataset). The current schema is
+documented in `data/build/README.md`.
 
 ## Goal
 
@@ -479,6 +481,51 @@ sit in the canonical file. Exact-byte compatibility for existing URLs is
 produced here, by a builder that reads rows and checks hashes against
 `dataset.fingerprint` and the published manifest.
 
+## Decisions
+
+### Observation key: area version (step 1, 2026-10-27)
+
+`observation` is keyed by `(series_id, area_version_id, period_id)`, not by
+`area_id` with the release left to the series.
+
+- **The foreign key proves the area existed in the release.** With `area_id`,
+  an observation for a code that was abolished before the series' release
+  would still satisfy its foreign key. With `area_version_id` it cannot be
+  written.
+- **Step 2 adopts it without rewriting rows.** Today's `areas` table already
+  has one row per (release, code), so `areas.id` is an area version id in all
+  but name. Step 1 points `observation.area_version_id` at `areas(id)`. Step 2
+  creates `area_version` with `id = areas.id` (and `boundary_release.id =
+area_releases.position`, which `series.release_id` already references), then
+  repoints the foreign keys. Observation rows, their primary key and their
+  index are unchanged.
+- **Cross-release joins stay one join away.** "The same area in two releases"
+  is `area_version.area_id`, so comparing series on different releases joins
+  through `area_version` rather than needing a second key on every row. Width
+  is the same either way: one integer.
+- **The series still states its release.** `series.release_id` is kept,
+  because a series is defined on one release and readers ask for "this measure
+  on 2021 LSOAs" without touching observations. The build checks that every
+  observation's area version belongs to its series' release, since SQLite
+  cannot express that as a foreign key without widening the row.
+
+### Step 1 scope
+
+- New tables use the singular names in this document (`dataset`, `measure`,
+  `series`, `observation`, ...). They sit beside the API's existing
+  `observations` and `observation_*` tables, which step 4 retires.
+- Until step 2, `area_version` means `areas` and `boundary_release` means
+  `area_releases`. Foreign keys point there.
+- Record order is not stored. Fuel poverty's records are in area code order,
+  and the build refuses input that is not, so readers order by code.
+- Publisher area names that differ from the boundary name go in
+  `dataset_area_name (dataset_id, area_version_id, name)`, only where they
+  differ. Step 2 can fold these into `area_name` rows of kind `publisher`.
+- Dataset-specific response fields (fuel poverty's `id`, `year`,
+  `boundaryYear`) are derived in the dataset's mapper from rows, not stored.
+- The fuel poverty JSON payload stays in `payloads` until step 4 moves payloads
+  to the cache, so other readers of `dataset:fuel-poverty` are unchanged.
+
 ## Current tables and their new home
 
 | Current table                                                 | New home                                                                  |
@@ -531,10 +578,7 @@ fuel poverty pilot does.
 
 ## Open questions
 
-- **Observation key: `area_version_id` or `area_id` plus `release_id` on the
-  series?** The series already fixes the release, so `area_id` would work and
-  would make cross-release joins simpler. `area_version_id` makes the foreign
-  key prove the area exists in that release. Leaning towards `area_version_id`.
+- **Observation key.** Resolved: area version. See [Decisions](#decisions).
 - **Geometry size.** Measure a simplified layer for all 104 releases before
   committing to shipping `atlas-geometry.gpkg`.
 - **Postcode licensing.** Confirm the ONSPD and Code-Point Open terms allow
