@@ -192,6 +192,26 @@ describe("pipeline boundaries", () => {
 		expect(hardCoded.map((file) => relative(ROOT, file))).toEqual([]);
 	});
 
+	it("lets root data scripts reach API code only to exercise its routes", () => {
+		const files = readdirSync(join(ROOT, "scripts")).filter((name) =>
+			/^(verify|place|compile|build)-.*\.(ts|mts)$/.test(name),
+		);
+		expect(files.length).toBeGreaterThan(0);
+		const apiImports = files.flatMap((name) =>
+			specifiers(readFileSync(join(ROOT, "scripts", name), "utf8"))
+				.filter((specifier) => specifier.includes("services/api"))
+				.map((specifier) => `${name}: ${specifier}`),
+		);
+		expect(
+			apiImports.filter(
+				(entry) =>
+					!/\.\.\/services\/api\/(src\/routes|tests\/routeFixtures)$/.test(
+						entry,
+					),
+			),
+		).toEqual([]);
+	});
+
 	it("keeps the API, website runtime and shared code independent of the pipeline", () => {
 		const files = [
 			"app",
