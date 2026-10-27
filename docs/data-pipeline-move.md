@@ -555,6 +555,15 @@ source tables are documentation, not data, so `pnpm docs:sources` rewrites them
 and `tests/docs/sourcesReadme.test.ts` fails when they drift. Both scripts
 import the website's `lib/` and stay in `scripts/`; the pipeline never runs them.
 
+The catalogue dataset compiler runs from `pipeline/src/compile-datasets.mts`,
+with its cache, worker pool, raw-source readers and the fingerprint module in
+`pipeline/src/precompile/`. The website stages still in `scripts/` import them
+from there. Paths are part of every fingerprint, so this move recompiled each
+dataset once; the compiled bytes were compared before and after. The fingerprint
+no longer lists the README generator. The shared output defaults in
+`precompile/paths.mts` and `cache.mts` still name `public/data/datasets`, a
+website path, and should move out when the website stages do.
+
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
