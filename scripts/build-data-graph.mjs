@@ -218,9 +218,21 @@ const apiStages = [
 		undefined,
 		{ cacheable: false },
 	),
-	stage("area-search-index", ["atlas-sqlite"], undefined, {
-		cacheable: false,
-	}),
+	stage(
+		"area-search-index",
+		["atlas-sqlite"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-area-search-index.ts",
+		],
+		{
+			cacheable: false,
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"postcode-index",
 		["sources", "atlas-sqlite"],

@@ -1,6 +1,6 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildAreaSearchIndex } from "./build-area-search-index";
+import { buildAreaSearchIndex } from "../../../shared/buildAreaSearchIndex";
 import { buildPlaceIndex } from "./build-place-index";
 import { buildPostcodeCounts } from "./build-postcode-counts";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";

@@ -506,6 +506,11 @@ The SQLite area inventory and release readers, and the lazy area lookup, live
 in `shared/`. The API re-exports them for existing callers. These readers can
 now be used by pipeline stages without importing the API boundary loader.
 
+The area search index compiler and cache builder live in `shared/`, where the
+API cache rebuild can also use them. The pipeline stage runs
+`pipeline/src/build-area-search-index.ts`. Its SQLite tables, cache publication,
+and legacy output cleanup are unchanged.
+
 The postcode counts compiler, cache publisher, postcode and area artifact types,
 code-unit ordering helper, and SQLite postcode and area shard readers live in
 `shared/`.
