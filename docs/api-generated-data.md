@@ -46,7 +46,7 @@ The website continues to use its own data readers and never calls the API.
 
 ## Runtime files
 
-| Files in `services/api/public`                | Reader                                    | Why they remain                                                          |
+| Files in `data/build/artifacts`               | Reader                                    | Why they remain                                                          |
 | --------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------ |
 | `data-catalog.json`                           | `catalogueManifestLoader.ts`              | Measure definitions and source references                                |
 | `measure-compatibility.json`                  | `catalogueManifestLoader.ts`              | Supported measure and boundary combinations                              |

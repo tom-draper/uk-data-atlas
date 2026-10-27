@@ -40,12 +40,12 @@ public/data/            the atlas's compiled data, served by the website
 
 ## Where the data lives
 
-| Where                  | What                                                           | In git      | Made by                                                                                            |
-| ---------------------- | -------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
-| `data/source/`         | Raw files as publishers supplied them                          | No          | `pnpm data:download`, from the release pinned in `data-release.json`                               |
-| `data/build/`          | Shared generated datasets and `atlas.sqlite`                   | README only | `pnpm data:build`                                                                                  |
-| `services/api/public/` | Remaining generated API catalogues and downloads               | No          | `pnpm data:build`                                                                                  |
-| `public/data/`         | The atlas's compiled datasets, boundary properties and PMTiles | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
+| Where                   | What                                                           | In git      | Made by                                                                                            |
+| ----------------------- | -------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| `data/source/`          | Raw files as publishers supplied them                          | No          | `pnpm data:download`, from the release pinned in `data-release.json`                               |
+| `data/build/`           | Shared generated datasets and `atlas.sqlite`                   | README only | `pnpm data:build`                                                                                  |
+| `data/build/artifacts/` | Remaining generated API catalogues and downloads               | No          | `pnpm data:build`                                                                                  |
+| `public/data/`          | The atlas's compiled datasets, boundary properties and PMTiles | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
 
 Raw release archives keep their paths relative to the source root. The existing
 pinned release restores into `data/source/` without republishing. For an existing
@@ -88,7 +88,7 @@ reconstructs its original JSON from those rows; other datasets still read the
 stored payload. The API catalogue
 compiler and atlas pages read it directly through the server-only reader in
 `shared/atlasSqlite.ts`. The `api-datasets` stage only builds
-gazetteer core and boundary assets under `services/api/public/source-data/`.
+gazetteer core and boundary assets under `data/build/artifacts/source-data/`.
 Named locations consume that gazetteer. The Next.js server also reads SQLite
 and passes dataset URLs containing their payload SHA-256 to the browser. Its
 `/data/catalogue/<sha256>/<output>.json` route serves exact JSON with one-year
@@ -117,7 +117,7 @@ this import. Building needs the shared release on disk. Next.js builds and serve
 read the database without running the importer or needing a running API. The API
 serves page and lookup gzip files from `data/build/atlas-assets/`.
 
-Everything in `services/api/public` is build output, so its layout on disk is
+Everything in `data/build/artifacts` is build output, so its layout on disk is
 the API's own business. Clients reach every file through a route, and a route
 can find its file anywhere. What freezes when v1 leaves early access is the routes, their
 parameters and what they return.
@@ -142,8 +142,9 @@ services/api ───────┘
   and lookups come from the shared release, without reading API build output.
 - `clients/` reads `services/api/openapi.yaml` to generate typed API clients.
   Nothing depends on them, and they import no project code.
-- Other generated API files remain under `services/api/public/` for now. This
-  keeps existing readers and deployments working while compiler groups move.
+- Other generated API files remain under `data/build/artifacts/` for now. They
+  sit beside `atlas.sqlite` so the pipeline writes only under `data/build/`, and
+  `shared/dataLayout.ts` is the one place that knows the location.
 - A package holds code only. It reads no files and is safe to
   bundle into a browser: each consumer loads its own data and passes it in.
   Its tsconfig excludes Node types and the atlas's `@/` aliases, and
@@ -180,8 +181,8 @@ complete data build only when that verification fails or a rebuild is forced.
 The build skips a stage when its inputs and outputs are unchanged. Its key
 includes its command, local imports, declared `codeInputs`, shared configuration,
 the size and mtime of raw files in `data/source/`, and upstream output digests.
-The files it wrote under `data/build/`, `public/data/` and `services/api/public/`
-must also be unchanged.
+The files it wrote under `data/build/` and `public/data/` must also be
+unchanged.
 
 A stage's output digest hashes the contents of its output files, not their
 mtimes. Each recorded file stores `{size, mtimeMs, sha256}`. A file is hashed,
@@ -255,7 +256,7 @@ tests. The check does not build or deploy either product.
 
 ## Current-build provenance
 
-`services/api/public/atlas-release.json` identifies the current build. It records
+`data/build/artifacts/atlas-release.json` identifies the current build. It records
 repository-relative paths and SHA-256 hashes of the stored `atlas.sqlite`, API
 PMTiles, and JSON catalogues that still have runtime readers. The export and
 map catalogues record the hashes of observation and flat boundary downloads. Gzipped files are identified by their stored bytes. The file has no
