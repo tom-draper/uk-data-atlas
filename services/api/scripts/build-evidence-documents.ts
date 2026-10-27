@@ -1,11 +1,17 @@
 import { build } from "esbuild";
 import { measureCapability } from "../src/measureCapability";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readApiCatalogues } from "../src/catalogueLoader";
-import { evidenceReport, type EvidenceDocument } from "../src/evidenceReports";
+import { evidenceInputsHash } from "../../../shared/evidenceInputsHash";
+import { buildEvidenceMeasure } from "../../../shared/buildEvidenceMeasure";
+import { evidenceReport } from "../src/evidenceReports";
+import {
+	writeEvidenceDocument,
+	cachedEvidenceMeasure,
+} from "../../../shared/evidenceDocumentStore";
 import { availableReconciliations } from "../src/measureReconciliation";
 import { publicJson } from "../src/publicJson";
 import type { RouteContext } from "../src/routing";
@@ -35,18 +41,8 @@ const report = (context: RouteContext, url: string) => {
 	};
 };
 
-const write = (id: string, data: unknown): EvidenceDocument => {
-	const artifact = `documents/${id}.json`;
-	const body = `${publicJson({ schemaVersion: 1, data })}\n`;
-	mkdirSync(join(directory, "documents"), { recursive: true });
-	writeFileSync(join(directory, artifact), body);
-	return {
-		id,
-		artifact,
-		bytes: Buffer.byteLength(body),
-		contentHash: sha256(body),
-	};
-};
+const write = (id: string, data: unknown) =>
+	writeEvidenceDocument(directory, id, data);
 
 const graph = await build({
 	absWorkingDir: apiRoot,
@@ -66,110 +62,7 @@ const compilerHash = sha256(
 );
 
 const inputsHash = (context: ReturnType<typeof readApiCatalogues>) =>
-	sha256(
-		JSON.stringify([
-			context.boundaryRegistry.contentHash,
-			context.areaInventory.contentHash,
-			context.namedLocationInventory.contentHash,
-			context.crosswalkInventory.contentHash,
-			context.relationshipPathInventory.contentHash,
-			context.relationshipCandidateInventory.contentHash,
-			context.geographyInventory.contentHash,
-			context.dataCatalog.contentHash,
-			context.exportManifest.contentHash,
-			context.measureCompatibilityInventory.contentHash,
-			context.analysisGeographyInventory.contentHash,
-			context.analysisGeographyValidationInventory.contentHash,
-			sha256(
-				readFileSync(join(directory, "geometry-sources.json"), "utf8"),
-			),
-		]),
-	);
-
-const cachedMeasure = (
-	id: string,
-	sourceHash: string,
-): EvidenceDocument | undefined => {
-	const artifact = `documents/measure-${id}.json`;
-	const path = join(directory, artifact);
-	if (!existsSync(path)) return undefined;
-	const body = readFileSync(path, "utf8");
-	const existing: { data: { compilerHash?: string; inputsHash?: string } } =
-		JSON.parse(body);
-	if (
-		existing.data.compilerHash !== compilerHash ||
-		existing.data.inputsHash !== sourceHash
-	)
-		return undefined;
-	return {
-		id: `measure-${id}`,
-		artifact,
-		bytes: Buffer.byteLength(body),
-		contentHash: sha256(body),
-	};
-};
-
-const buildMeasure = (
-	context: ReturnType<typeof readApiCatalogues>,
-	id: string,
-) => {
-	const measure = context.dataCatalog.measures.find(
-		(measure) => measure.id === id,
-	);
-	if (!measure) throw new Error(`Unknown measure ${id}`);
-	const base = `/v1/measures/${id}`;
-	const quality = report(context, `${base}/quality`);
-	const coverage = report(context, `${base}/coverage`);
-	const compatibility = report(context, `${base}/compatibility`);
-	const conversionSupport = report(context, `${base}/conversion-support`);
-	const coveragePlans = context.areaInventory.releases.flatMap((release) =>
-		release.status === "available"
-			? [
-					{
-						geography: release.geography,
-						release: release.id,
-						capability: measureCapability(context, measure, {
-							geography: release.geography,
-							boundaryRelease: release.id,
-						}),
-						...report(
-							context,
-							`${base}/coverage-plan?geography=${release.geography}&release=${release.id}`,
-						),
-					},
-				]
-			: [],
-	);
-	const available = availableReconciliations(context, measure);
-	const reconciliations = available.flatMap((candidate) =>
-		candidate.periods.map((period) => {
-			const selector =
-				"crosswalk" in candidate
-					? `crosswalk=${encodeURIComponent(candidate.crosswalk.id)}`
-					: `path=${encodeURIComponent(candidate.path.id)}`;
-			return {
-				selector,
-				period,
-				...report(
-					context,
-					`${base}/reconciliation?${selector}&period=${encodeURIComponent(period)}`,
-				),
-			};
-		}),
-	);
-	return write(`measure-${id}`, {
-		measure: id,
-		dataCatalogHash: context.dataCatalog.contentHash,
-		compilerHash,
-		inputsHash: inputsHash(context),
-		quality,
-		coverage,
-		compatibility,
-		conversionSupport,
-		coveragePlans,
-		reconciliations,
-	});
-};
+	evidenceInputsHash(directory, context);
 
 const main = () => {
 	const context = readApiCatalogues(apiRoot, {
@@ -190,8 +83,20 @@ const main = () => {
 	// took several times the CPU for the same documents.
 	for (const measure of context.dataCatalog.measures) {
 		documents.push(
-			cachedMeasure(measure.id, sourceHash) ??
-				buildMeasure(context, measure.id),
+			cachedEvidenceMeasure(
+				directory,
+				measure.id,
+				sourceHash,
+				compilerHash,
+			) ??
+				buildEvidenceMeasure(context, measure.id, {
+					report,
+					measureCapability,
+					availableReconciliations,
+					write,
+					compilerHash,
+					inputsHash,
+				}),
 		);
 		process.stderr.write(`Built evidence for ${measure.id}\n`);
 	}
