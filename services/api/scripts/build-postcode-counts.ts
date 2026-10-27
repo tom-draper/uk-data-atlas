@@ -7,7 +7,7 @@ import { readPostcodeIndex } from "../src/boundaryLoader";
 import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { compilePostcodeCounts } from "../src/postcodeCounts";
+import { compilePostcodeCounts } from "../../../shared/compilePostcodeCounts";
 import type { PostcodeShard } from "../src/postcodes";
 
 export const buildPostcodeCounts = (repositoryRoot: string) => {
