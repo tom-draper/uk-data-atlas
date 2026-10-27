@@ -228,11 +228,18 @@ const apiStages = [
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-data-catalog.ts"],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
-	stage("measure-compatibility", [
-		"data-catalog",
-		"boundary-registry",
-		"area-inventory",
-	]),
+	stage(
+		"measure-compatibility",
+		["data-catalog", "boundary-registry", "area-inventory"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-measure-compatibility.ts",
+		],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"export-manifest",
 		["data-catalog"],
