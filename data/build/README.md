@@ -135,8 +135,9 @@ API tables or the complete compiled release.
 ### Statistics tables
 
 `atlas-sqlite` writes the canonical statistics tables from
-`docs/sqlite-schema-design.md` (layer 4, migration step 1). Only fuel poverty
-uses them so far. They are separate from the API's `observations` and
+`docs/sqlite-schema-design.md` (layer 4). Every catalogue dataset is stored
+in them except those in `UNSTORED_DATASETS` (`shared/statisticsDatasets/`):
+the three election datasets and NHS waiting times. They are separate from the API's `observations` and
 `observation_*` tables, which `data-catalog` populates and step 4 retires.
 The base database schema version is 3; the `catalogue_*` pilot tables from PR #398
 are gone.
@@ -177,6 +178,21 @@ rebuilds the bytes from rows after matching the hash in `datasets`, and the
 build refuses to publish if the rebuilt bytes differ from the payload. Rebuild
 older databases with `pnpm data:build --only atlas-sqlite` before deploying the
 new reader.
+
+The other datasets are configuration in `shared/statisticsDatasets/`, read by
+`shared/declaredStatistics.ts`. Each config names the record fields that hold
+values, the measure and dimension members each one is, and the period. Every
+number in a record must be claimed by a field or listed as `derived` with a
+reason (per-100k figures, percentages the compiler computes, copies), and the
+build checks the stored row count. Codes are placed on the header's release,
+then on each `alsoIn` release in turn; a code in none of them fails the build
+unless an `exclude` pattern gives a reason. Their JSON payloads stay the bytes
+the website and API serve.
+
+Run `pnpm exec vitest run --project built tests/built/statisticsDatasets.test.ts`
+after a full build to check every configured dataset has rows and write
+`data/build/statistics-datasets.json` (rows per dataset, bytes per table and
+index).
 
 Run `pnpm exec vitest run --project built tests/built/atlasStatistics.test.ts`
 to compile the real fuel poverty payload and LSOA inventory, build an isolated
