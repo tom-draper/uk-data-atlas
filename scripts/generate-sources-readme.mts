@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { format, resolveConfig } from "prettier";
 import {
@@ -14,8 +14,8 @@ const END = "<!-- sources:end -->";
 const BOUNDARIES_START = "<!-- boundaries:start -->";
 const BOUNDARIES_END = "<!-- boundaries:end -->";
 
-async function main() {
-	const readme = await readFile(README, "utf8");
+/** The README with its generated source and boundary tables refreshed. */
+export async function renderSourcesReadme(readme: string): Promise<string> {
 	const start = readme.indexOf(START);
 	const end = readme.indexOf(END);
 	if (start === -1 || end === -1 || end < start) {
@@ -43,8 +43,17 @@ async function main() {
 	// Prettier pads the generated tables, so format before comparing or the
 	// committed README drifts from format:check on every regeneration.
 	const config = await resolveConfig(README);
-	const formatted = await format(updated, { ...config, filepath: README });
-	if (formatted !== readme) await writeFile(README, formatted);
+	return format(updated, { ...config, filepath: README });
 }
 
-void main();
+/** Checked in by tests/docs/sourcesReadme.test.ts, rewritten by `pnpm docs:sources`. */
+export const readmePath = README;
+
+if (
+	process.argv[1] &&
+	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+	const readme = await readFile(README, "utf8");
+	const formatted = await renderSourcesReadme(readme);
+	if (formatted !== readme) await writeFile(README, formatted);
+}
