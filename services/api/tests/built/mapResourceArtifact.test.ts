@@ -5,14 +5,14 @@ import { gunzipSync } from "node:zlib";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import type { MapResourceDescriptor } from "../../src/mapResource/compileMapResource";
+import type { MapResourceDescriptor } from "../../../../shared/mapResources";
 import { tileId, TILE_TYPE_MVT } from "@uk-data-atlas/map-tiles/pmtiles";
 import {
 	MAX_ZOOM,
 	MIN_ZOOM,
 	ZOOM_TIERS,
 } from "@uk-data-atlas/map-tiles/tileset";
-import { featureIds } from "../../src/mapResource/compileMapResource";
+import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { createAreaGeometryCache } from "../../src/geometryLoader";
 import {

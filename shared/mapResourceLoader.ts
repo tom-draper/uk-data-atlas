@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MapArchive } from "./mapResource/archiveReader";
 import { openArchive } from "./mapResource/archiveReader";
-import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
+import type { MapResourceDescriptor } from "./mapResources";
 import type { StoredFile } from "./routeResponse";
 
 import type { MapResources } from "./mapResources";
