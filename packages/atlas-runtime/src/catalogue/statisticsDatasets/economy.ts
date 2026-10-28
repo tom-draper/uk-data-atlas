@@ -363,6 +363,7 @@ const single = (
 	...declared: Parameters<typeof measure>
 ): DeclaredDataset => ({
 	type,
+	rebuild: {},
 	name: "name",
 	period,
 	measures: [measure(...declared)],
