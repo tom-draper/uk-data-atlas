@@ -1,9 +1,9 @@
-import { releaseKey } from "./postcodeAreaTypes";
-import type { PostcodeCountsArtifact } from "./postcodeCountTypes";
-import { sha256 } from "./contentHash";
+import { releaseKey } from "../../../shared/postcodeAreaTypes";
+import type { PostcodeCountsArtifact } from "../../../shared/postcodeCountTypes";
+import { sha256 } from "../../../shared/contentHash";
 import { aggregateCounts } from "./duckdbPostcodeCounts";
-import type { readSqlitePostcodeIndexArtifact } from "./atlasPostcodeIndexReader";
-import type { readSqlitePostcodeAreas } from "./atlasPostcodeAreaReader";
+import type { readSqlitePostcodeIndexArtifact } from "../../../shared/atlasPostcodeIndexReader";
+import type { readSqlitePostcodeAreas } from "../../../shared/atlasPostcodeAreaReader";
 
 export function compileDuckDBCounts(
 	index: ReturnType<typeof readSqlitePostcodeIndexArtifact>,

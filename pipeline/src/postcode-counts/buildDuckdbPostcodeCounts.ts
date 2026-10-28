@@ -3,7 +3,7 @@ import { aggregateCounts } from "./duckdbPostcodeCounts";
 import { compileDuckDBCounts } from "./compileDuckdbPostcodeCounts";
 import { fingerprint, verifyFingerprint } from "./duckdbDatabaseIntegrity";
 import { validateShards } from "./validatePostcodeCountInputs";
-import { storePostcodeCounts } from "./storePostcodeCounts";
+import { storePostcodeCounts } from "../../../shared/storePostcodeCounts";
 
 export async function buildDuckdbPostcodeCounts(root: string) {
 	const database = join(root, "data/build/atlas.sqlite");

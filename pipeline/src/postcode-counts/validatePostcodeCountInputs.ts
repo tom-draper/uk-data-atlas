@@ -1,12 +1,15 @@
 import { join } from "node:path";
-import { readSqlitePostcodeIndexArtifact } from "./atlasPostcodeIndexReader";
-import { readSqlitePostcodeShard } from "./atlasPostcodeShard";
+import { readSqlitePostcodeIndexArtifact } from "../../../shared/atlasPostcodeIndexReader";
+import { readSqlitePostcodeShard } from "../../../shared/atlasPostcodeShard";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
-} from "./atlasPostcodeAreaReader";
-import { releaseKey, type PostcodeAreasShard } from "./postcodeAreaTypes";
-import type { PostcodeShard } from "./postcodeIndexTypes";
+} from "../../../shared/atlasPostcodeAreaReader";
+import {
+	releaseKey,
+	type PostcodeAreasShard,
+} from "../../../shared/postcodeAreaTypes";
+import type { PostcodeShard } from "../../../shared/postcodeIndexTypes";
 
 export function validateShards(root: string) {
 	const api = join(root, "services/api");
