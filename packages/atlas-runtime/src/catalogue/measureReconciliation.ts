@@ -14,7 +14,7 @@ import { observationsFor } from "./observationArtifacts";
 import type { RelationshipPath } from "../relationships/relationshipPaths";
 import { buildTranslationSteps } from "../relationships/translation";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { RouteContext } from "../areas/routing";
+import type { MeasureContext } from "./measureContext";
 
 type Measure = DataCatalog["measures"][number];
 
@@ -121,7 +121,7 @@ type ReconciliationRoute = {
 };
 
 const resolveRoute = (
-	context: RouteContext,
+	context: MeasureContext,
 	request: ReconciliationRouteRequest,
 ): ReconciliationRoute | { refusal: string } => {
 	const resolver = context.geographyResolver;
@@ -195,7 +195,7 @@ const numericRecords = (
  * dataset/vintage/release. A join means every source code is present on the
  * release, which is what adding one geography up into another rests on.
  */
-const joinablePartitions = (context: RouteContext, measure: Measure) => {
+const joinablePartitions = (context: MeasureContext, measure: Measure) => {
 	const coverage =
 		context.dataCatalog && context.measureCompatibilityInventory
 			? measureCoverage(
@@ -217,7 +217,7 @@ const joinablePartitions = (context: RouteContext, measure: Measure) => {
 };
 
 /** The releases each geography's partitions of a measure are verified to join. */
-const joinableReleases = (context: RouteContext, measure: Measure) => {
+const joinableReleases = (context: MeasureContext, measure: Measure) => {
 	const releases = new Map<string, Set<string>>();
 	const coverage =
 		context.dataCatalog && context.measureCompatibilityInventory
@@ -264,7 +264,7 @@ const summable = (path: RelationshipPath) =>
  * their difference, and a caller decides which to believe.
  */
 export const reconcileMeasure = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 	request: ReconciliationRouteRequest,
 	period: string,
@@ -454,7 +454,7 @@ export const reconcileMeasure = (
 
 /** The reconciliations a measure's published partitions and crosswalks allow. */
 export const availableReconciliations = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 ) => {
 	const geographies = new Map<string, MeasureSource[]>();

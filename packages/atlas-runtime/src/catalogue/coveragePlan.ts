@@ -6,7 +6,7 @@ import {
 } from "./measureCapability";
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
-import type { RouteContext } from "../areas/routing";
+import type { MeasureContext } from "./measureContext";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 type Measure = DataCatalog["measures"][number];
@@ -84,7 +84,7 @@ const countriesOf = (codes: Iterable<string>) => {
  * is the answer a caller needs in order to go and find the data.
  */
 export const coveragePlan = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 	target: { geography: string; boundaryRelease: string },
 ): CoveragePlan | undefined => {
