@@ -174,6 +174,11 @@ pnpm data:build --only atlas-sqlite --plan
 pnpm data:build --from datasets
 ```
 
+The `postcode-index` stage uses DuckDB through its Node package to read and
+order the compressed source. It compiles and validates one district at a time,
+storing temporary shards under `data/build/` until the SQLite database is
+published.
+
 The `postcode-counts` stage uses DuckDB through its Node package to aggregate
 counts from the canonical SQLite database. It validates the source shards first
 and checks that the database remains unchanged during the build. DuckDB must be
