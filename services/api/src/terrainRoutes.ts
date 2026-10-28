@@ -13,7 +13,7 @@ import { QUERY_RULES } from "./queryRules";
 import {
 	TerrainRemoteError,
 	type TerrainInterpolation,
-} from "@uk-data-atlas/atlas-runtime/maps";
+} from "@uk-data-atlas/terrain";
 
 const POINT = QUERY_RULES["GET /terrain/elevation/point"];
 

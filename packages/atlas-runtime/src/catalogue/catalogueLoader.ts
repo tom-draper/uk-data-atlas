@@ -49,7 +49,7 @@ import {
 	createAreaGeometryCache,
 	readGeometrySources,
 } from "../geometry/geometryLoader";
-import { createTerrainAsyncProvider } from "../maps/terrainLoader";
+import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactRoot, repositoryRootOf } from "../storage/dataLayout";

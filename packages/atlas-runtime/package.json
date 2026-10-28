@@ -27,7 +27,8 @@
 		"@uk-data-atlas/map-tiles": "workspace:*",
 		"@uk-data-atlas/search-index": "workspace:*",
 		"@uk-data-atlas/shapefile": "workspace:*",
-		"polygon-clipping": "0.15.7"
+		"polygon-clipping": "0.15.7",
+		"@uk-data-atlas/terrain": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

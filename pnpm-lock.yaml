@@ -344,6 +344,9 @@ importers:
       '@uk-data-atlas/shapefile':
         specifier: workspace:*
         version: link:../shapefile
+      '@uk-data-atlas/terrain':
+        specifier: workspace:*
+        version: link:../terrain
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
@@ -438,6 +441,19 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  packages/terrain:
+    dependencies:
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   pipeline:
     dependencies:
       '@duckdb/node-api':
@@ -467,6 +483,9 @@ importers:
       '@uk-data-atlas/shapefile':
         specifier: workspace:*
         version: link:../packages/shapefile
+      '@uk-data-atlas/terrain':
+        specifier: workspace:*
+        version: link:../packages/terrain
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
@@ -537,6 +556,9 @@ importers:
       '@uk-data-atlas/shapefile':
         specifier: workspace:*
         version: link:../../packages/shapefile
+      '@uk-data-atlas/terrain':
+        specifier: workspace:*
+        version: link:../../packages/terrain
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7

@@ -7,7 +7,7 @@ import {
 	createRemoteTerrainProvider,
 	createSyntheticTerrainProvider,
 	validateTerrainRaster,
-} from "@uk-data-atlas/atlas-runtime/maps";
+} from "@uk-data-atlas/terrain";
 
 test("terrain catalogue is explicit about planned rather than served products", () => {
 	const response = routeRequest(
