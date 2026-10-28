@@ -174,6 +174,12 @@ pnpm data:build --only atlas-sqlite --plan
 pnpm data:build --from datasets
 ```
 
+The `postcode-counts` stage uses DuckDB through its Node package to aggregate
+counts from the canonical SQLite database. It validates the source shards first
+and checks that the database remains unchanged during the build. DuckDB must be
+able to load its SQLite extension, which it downloads on first use if needed.
+The standalone API cache rebuild still uses the Node implementation.
+
 Stage commands live in the graph rather than package scripts. The API package's
 `build` command bundles its server only. The root `build` command builds the
 Next.js application using existing data and does not assemble release assets. `pnpm dev` verifies website data first and runs the

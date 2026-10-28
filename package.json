@@ -44,6 +44,7 @@
 		"yaml": "^2.9.1"
 	},
 	"devDependencies": {
+		"@duckdb/node-api": "1.4.5-r.1",
 		"@playwright/test": "^1.63.0",
 		"@tailwindcss/postcss": "^4.3.3",
 		"@types/geojson": "^7946.0.16",
