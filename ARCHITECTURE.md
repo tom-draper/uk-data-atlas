@@ -174,6 +174,10 @@ pnpm data:build --only atlas-sqlite --plan
 pnpm data:build --from datasets
 ```
 
+The `area-search-index` stage uses DuckDB to deduplicate and order search
+postings after applying the shared name normalisation rules. The standalone API
+cache rebuild retains the Node implementation.
+
 The `postcode-index` stage uses DuckDB through its Node package to read and
 order the compressed source. It compiles and validates one district at a time,
 storing temporary shards under `data/build/` until the SQLite database is

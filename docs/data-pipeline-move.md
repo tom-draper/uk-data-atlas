@@ -510,17 +510,16 @@ The named location SQLite inventory reader and its data contracts live in
 `shared/`, with API re-exports. The reader still loads geometries lazily and
 checks the inventory hash when it reads them.
 
-The area search index compiler and cache builder live in `shared/`, where the
-API cache rebuild can also use them. The pipeline stage runs
-`pipeline/src/build-area-search-index.ts`. Its SQLite tables, cache publication,
-and legacy output cleanup are unchanged.
+The area search pipeline stage runs `pipeline/src/build-area-search-index.ts`
+and uses DuckDB to build postings. The API cache rebuild uses the Node compiler
+in `shared/`. Both publish the same SQLite tables and clean up legacy outputs.
 
 The postcode counts compiler, cache publisher, postcode and area artifact types,
 code-unit ordering helper, and SQLite postcode and area shard readers live in
 `shared/`.
-The shared builder reads the SQLite inputs and invokes the cache publisher. The
-pipeline stage and API cache rebuild both call it. The postcode index SQLite
-table conversion and publisher also live in `shared/`.
+The pipeline stage builds postcode counts with DuckDB; the API cache rebuild
+uses the shared Node builder. Both use the shared cache publisher. The postcode
+index SQLite table conversion and publisher also live in `shared/`.
 
 The evidence documents stage now runs `pipeline/src/build-evidence-documents.ts`.
 The evidence report compilers, catalogue and observation loaders, route
