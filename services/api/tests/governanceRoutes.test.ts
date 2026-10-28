@@ -10,7 +10,7 @@ import {
 	atlasRelease,
 	relationshipCandidateInventory,
 } from "./routeFixtures";
-import { correctionRecords } from "../src/correctionRegister";
+import { correctionRecords } from "@uk-data-atlas/catalogue";
 
 test("lists API-owned corrections without claiming source artifacts changed", () => {
 	const response = route("GET", "/v1/corrections", registry);
