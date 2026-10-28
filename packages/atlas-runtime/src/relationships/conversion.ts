@@ -1,10 +1,10 @@
-import type { CrosswalkArtifact } from "./crosswalkTypes";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { PopulationObservation } from "../catalogue/dataCatalog";
 import {
 	buildTranslationSteps,
 	type IndexedPathStep,
 	type TranslationStep,
-} from "./translation";
+} from "@uk-data-atlas/relationships";
 
 /**
  * How a converted value was arrived at.

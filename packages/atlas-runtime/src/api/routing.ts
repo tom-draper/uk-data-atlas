@@ -1,8 +1,8 @@
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { AtlasRelease } from "../storage/atlasRelease";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { CrosswalkArtifact } from "../relationships/crosswalkTypes";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
@@ -21,7 +21,7 @@ import type { MapArchive } from "../maps/mapResource/archiveReader";
 import type { MeasureCompatibilityInventory } from "../catalogue/measureCompatibility";
 import type { NamedLocationInventory } from "../places/namedLocations";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
-import type { RelationshipPathInventory } from "../relationships/relationshipPaths";
+import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 import type { ApiResponse } from "./routeResponse";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ValidationReport } from "../catalogue/validationReport";

@@ -1,5 +1,5 @@
 import type { AreaRecord } from "@uk-data-atlas/areas";
-import type { CrosswalkLookup } from "../../relationships/translation";
+import type { CrosswalkLookup } from "@uk-data-atlas/relationships";
 import {
 	LazyAreaRelationshipIndex,
 	isLineageRelation,

@@ -3,11 +3,11 @@ import type { CapabilityStatus } from "../../areas/capability";
 import type {
 	RelationshipPath,
 	RelationshipPurpose,
-} from "../../relationships/relationshipPaths";
+} from "@uk-data-atlas/relationships";
 import type {
 	CrosswalkTranslator,
 	GeographyEndpoint,
-} from "../../relationships/translation";
+} from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export type RelationshipPathStepCoverage = {

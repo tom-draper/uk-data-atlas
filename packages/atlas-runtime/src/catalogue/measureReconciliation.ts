@@ -11,8 +11,8 @@ import {
 } from "./dataCatalog";
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
-import type { RelationshipPath } from "../relationships/relationshipPaths";
-import { buildTranslationSteps } from "../relationships/translation";
+import type { RelationshipPath } from "@uk-data-atlas/relationships";
+import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { MeasureContext } from "./measureContext";
 

@@ -1,6 +1,6 @@
 import { readSqliteNamedLocationInventory } from "../storage/atlasNamedLocationReader";
 import { readCachePayload, requireAtlasCache } from "../storage/atlasCache";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
 	LocationProjectionDatabase,
 	type LocationProjectionInventory,

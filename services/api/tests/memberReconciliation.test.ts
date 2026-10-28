@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAreaLookup } from "../src/areaInventory";
-import { reconcileMembers } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createAreaLookup } from "@uk-data-atlas/areas";
+import { reconcileMembers } from "@uk-data-atlas/relationships";
 
 const release = (
 	boundaryRelease: string,

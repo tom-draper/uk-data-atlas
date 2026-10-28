@@ -1,7 +1,7 @@
 import { analysisConversion } from "../relationships/analysisConversion";
 import { unsupported } from "../areas/capability";
 import { coveragePlan } from "../catalogue/coveragePlan";
-import { relationshipPurposeFor } from "../relationships/relationshipPaths";
+import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
 import { parseExactReleaseReference } from "../areas/releaseForDate";
 import {
 	envelope,

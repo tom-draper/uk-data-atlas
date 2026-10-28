@@ -1,8 +1,8 @@
 import type {
 	AreaOverlapTarget,
 	CrosswalkArtifact,
-} from "../relationships/crosswalkTypes";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+} from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 
 /**
  * What it means for an area to be in a named location.

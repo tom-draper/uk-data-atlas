@@ -9,7 +9,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
 import { createGeographyResolver } from "../areas/geographyResolver";
-import { createRelationshipPathIndex } from "../relationships/relationshipPaths";
+import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import type { AtlasRelease } from "../storage/atlasRelease";
 import {
 	readAreaInventory,

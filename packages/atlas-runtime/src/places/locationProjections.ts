@@ -1,6 +1,6 @@
 import type { AreaLookup } from "@uk-data-atlas/areas";
-import type { CrosswalkArtifact } from "../relationships/crosswalkTypes";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
 	isParentCrosswalk,
 	memberReach,
@@ -15,7 +15,7 @@ import {
 import {
 	reconcileMembers,
 	type MemberCoverage,
-} from "../relationships/memberReconciliation";
+} from "@uk-data-atlas/relationships";
 import type { NamedLocationInventory } from "./namedLocationTypes";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { SQLInputValue } from "node:sqlite";
