@@ -5,7 +5,7 @@ import polygonClipping, {
 	type Polygon,
 	type Ring,
 } from "polygon-clipping";
-import type { Bounds } from "./areaGeometryPieces";
+import type { Bounds } from "@uk-data-atlas/geography/area-geometry-pieces";
 
 export const CLIPPING_VERSION = clippingPackage.version;
 

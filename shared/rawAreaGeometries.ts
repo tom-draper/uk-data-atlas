@@ -6,7 +6,7 @@ import {
 	indexPieces,
 	toPolygons,
 	type AreaGeometry,
-} from "./areaGeometryPieces";
+} from "@uk-data-atlas/geography/area-geometry-pieces";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeographyKind } from "@uk-data-atlas/geography";

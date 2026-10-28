@@ -5,7 +5,7 @@ import {
 	compareSpatialCells,
 	spatialCells,
 	type SpatialCell,
-} from "./geometrySpatialIndex";
+} from "@uk-data-atlas/geography/geometry-spatial-index";
 import {
 	DEGREE_SCALE,
 	packedBounds,

@@ -1,5 +1,9 @@
 import polygonClipping from "polygon-clipping";
-import { boundsIntersect, boundsOf, toPolygons } from "./areaGeometryPieces";
+import {
+	boundsIntersect,
+	boundsOf,
+	toPolygons,
+} from "@uk-data-atlas/geography/area-geometry-pieces";
 import {
 	multiPolygonAreaM2,
 	polygonWidthM,

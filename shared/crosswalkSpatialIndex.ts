@@ -1,5 +1,11 @@
-import { boundsIntersect, type Bounds } from "./areaGeometryPieces";
-import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
+import {
+	boundsIntersect,
+	type Bounds,
+} from "@uk-data-atlas/geography/area-geometry-pieces";
+import {
+	spatialCellKey,
+	spatialCells,
+} from "@uk-data-atlas/geography/geometry-spatial-index";
 
 /** Bounding-box candidates in the input order, including touching edges. */
 export class CrosswalkSpatialIndex<T> {

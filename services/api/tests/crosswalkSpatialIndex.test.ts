@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { CrosswalkSpatialIndex } from "../src/crosswalkSpatialIndex";
-import { boundsIntersect, type Bounds } from "../src/areaGeometryPieces";
+import {
+	boundsIntersect,
+	type Bounds,
+} from "@uk-data-atlas/geography/area-geometry-pieces";
 
 test("finds touching and multi-cell candidates once, in input order", () => {
 	const index = new CrosswalkSpatialIndex([

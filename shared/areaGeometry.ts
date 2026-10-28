@@ -30,7 +30,10 @@ import {
 } from "./geometrySubstitution";
 import { readGeometryStore } from "./geometryStore";
 import type { GeometryValidityReport } from "@uk-data-atlas/geography";
-import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
+import {
+	spatialCellKey,
+	spatialCells,
+} from "@uk-data-atlas/geography/geometry-spatial-index";
 import {
 	borderIndex,
 	sharedBorderWith,

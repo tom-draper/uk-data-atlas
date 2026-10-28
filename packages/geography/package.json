@@ -13,7 +13,9 @@
 		"./area-distance": "./src/areaDistance.ts",
 		"./packed-geometry": "./src/packedGeometry.ts",
 		"./reprojection": "./src/reprojection.ts",
-		"./reverse-grid-offset": "./src/reverseGridOffset.ts"
+		"./reverse-grid-offset": "./src/reverseGridOffset.ts",
+		"./geometry-spatial-index": "./src/geometrySpatialIndex.ts",
+		"./area-geometry-pieces": "./src/areaGeometryPieces.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
@@ -23,6 +25,7 @@
 		"typescript": "^7.0.2"
 	},
 	"dependencies": {
-		"proj4": "^2.22.0"
+		"proj4": "^2.22.0",
+		"polygon-clipping": "0.15.7"
 	}
 }

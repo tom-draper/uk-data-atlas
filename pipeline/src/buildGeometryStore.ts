@@ -43,7 +43,7 @@ const COMPILER_SOURCES = [
 	"../../shared/geoJsonProperties.ts",
 	"../../shared/geometryStore.ts",
 	"../../packages/geography/src/geometryValidity.ts",
-	"../../shared/geometrySpatialIndex.ts",
+	"../../packages/geography/src/geometrySpatialIndex.ts",
 	"../../shared/geometrySubstitution.ts",
 	"../../shared/gridOffset.ts",
 	"../../packages/geography/src/packedGeometry.ts",
