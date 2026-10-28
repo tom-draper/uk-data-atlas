@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { postcodeTables } from "../../shared/atlasPostcodeTables";
 import { postcodeIndexMismatch } from "../../shared/postcodeIndexMismatch";
-import type { PostcodeIndexArtifact } from "../../shared/postcodeIndexTypes";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { writeSqliteTables } from "../../shared/sqliteTables";
 import { artifactDirectory } from "../../shared/dataLayout";
 

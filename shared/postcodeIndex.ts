@@ -10,7 +10,7 @@ import {
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
-} from "./postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-index-types";
 
 const preGridlinkAccuracyM = (country: string) =>
 	Math.round(

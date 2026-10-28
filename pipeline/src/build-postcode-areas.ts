@@ -42,8 +42,8 @@ import {
 	type PostcodeAreaRelease,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "../../shared/postcodeAreaTypes";
-import type { PostcodeShard } from "../../shared/postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-area-types";
+import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
 import { apiRootOf } from "../../shared/dataLayout";
 
 /**

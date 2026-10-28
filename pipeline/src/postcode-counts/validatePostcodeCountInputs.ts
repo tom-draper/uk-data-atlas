@@ -8,8 +8,8 @@ import {
 import {
 	releaseKey,
 	type PostcodeAreasShard,
-} from "../../../shared/postcodeAreaTypes";
-import type { PostcodeShard } from "../../../shared/postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-area-types";
+import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
 
 export function validateShards(root: string) {
 	const api = apiRootOf(root);

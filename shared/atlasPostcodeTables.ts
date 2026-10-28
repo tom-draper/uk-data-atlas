@@ -2,7 +2,7 @@ import { sha256 } from "./contentHash";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
-} from "./postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-index-types";
 import type { SqliteTable } from "./sqliteTables";
 
 export const postcodeTables = (

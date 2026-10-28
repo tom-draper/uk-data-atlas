@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { writePostcodeAreas } from "../../shared/atlasPostcodeAreas";
 import { sha256 } from "../../shared/contentHash";
-import type { PostcodeAreasArtifact } from "../../shared/postcodeAreaTypes";
+import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import { artifactDirectory } from "../../shared/dataLayout";
 
 /** Publish complete tables atomically, preserving the other atlas data. */

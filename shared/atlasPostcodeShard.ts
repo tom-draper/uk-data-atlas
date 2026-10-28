@@ -3,7 +3,7 @@ import { sha256 } from "./contentHash";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
-} from "./postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-index-types";
 import { atlasDatabasePath } from "./dataLayout";
 
 export const postcodeFields = [

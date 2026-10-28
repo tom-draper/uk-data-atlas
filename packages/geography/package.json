@@ -17,7 +17,11 @@
 		"./geometry-spatial-index": "./src/geometrySpatialIndex.ts",
 		"./area-geometry-pieces": "./src/areaGeometryPieces.ts",
 		"./crosswalk-spatial-index": "./src/crosswalkSpatialIndex.ts",
-		"./piece-intersection": "./src/pieceIntersection.ts"
+		"./piece-intersection": "./src/pieceIntersection.ts",
+		"./postcode-area-types": "./src/postcodeAreaTypes.ts",
+		"./postcode-index-types": "./src/postcodeIndexTypes.ts",
+		"./postcode-count-types": "./src/postcodeCountTypes.ts",
+		"./postcode-defaults": "./src/postcodeDefaults.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

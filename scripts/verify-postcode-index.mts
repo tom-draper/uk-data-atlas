@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { readPostcodeIndex } from "../shared/boundaryLoader";
 import { readSqlitePostcodeShard } from "../shared/atlasPostcodesReader";
-import type { PostcodeShard } from "../shared/postcodeIndexTypes";
+import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
 import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");

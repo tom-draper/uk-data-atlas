@@ -6,7 +6,7 @@ import { readSqlitePostcodeIndexArtifact } from "../../../../shared/atlasPostcod
 import { readSqlitePostcodeShard } from "../../../../shared/atlasPostcodeShard";
 import { compilePostcodeCounts } from "./compilePostcodeCounts";
 import { storePostcodeCounts } from "../../../../shared/storePostcodeCounts";
-import type { PostcodeShard } from "../../../../shared/postcodeIndexTypes";
+import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
 import { apiRootOf } from "../../../../shared/dataLayout";
 
 export const buildPostcodeCounts = (repositoryRoot: string) => {

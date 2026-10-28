@@ -20,7 +20,7 @@ import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,
 } from "../shared/postcodeAreas";
-import type { PostcodeIndexArtifact } from "../shared/postcodeIndexTypes";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { toWgs84Point } from "@uk-data-atlas/geography/reprojection";
 import { apiRootOf } from "../shared/dataLayout";
 

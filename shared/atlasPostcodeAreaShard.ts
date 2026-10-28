@@ -8,8 +8,8 @@ import {
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
 	type PostcodeAreaColumn,
-} from "./postcodeAreaTypes";
-import type { PostcodeIndexArtifact } from "./postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-area-types";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 
 export const postcodeAreaColumns = (artifact: PostcodeAreasArtifact) =>
 	artifact.releases.map((release) => {
