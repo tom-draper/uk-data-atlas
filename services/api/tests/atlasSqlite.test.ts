@@ -219,7 +219,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	const { root } = fixture(context);
 	const content = '{"2024":{"value":42}}\n';
 	const entry = {
-		type: "sample",
+		type: "nhsWaiting",
 		output: "sample",
 		source: { name: "Sample" },
 		contract: { version: 1 },
