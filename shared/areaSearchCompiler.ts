@@ -1,9 +1,6 @@
 import type { AreaLookup } from "./areaInventory";
-import {
-	NAME_NORMALISATION,
-	normalisePlaceName,
-	withoutTitle,
-} from "./nameNormalisation";
+import { NAME_NORMALISATION } from "./nameNormalisation";
+import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "./compareCodeUnits";
 import { sha256 } from "./contentHash";
 import { packPositions } from "./packedPositions";

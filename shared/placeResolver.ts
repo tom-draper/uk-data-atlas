@@ -1,4 +1,4 @@
-import { normalisePlaceName, type NameMatch } from "./nameNormalisation";
+import { normalisePlaceName, type NameMatch } from "@uk-data-atlas/geography";
 import { memberCodesAt } from "./namedLocations";
 import { atEach, findSorted, lowerBound } from "./sortedIndex";
 import {

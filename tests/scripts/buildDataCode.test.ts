@@ -310,6 +310,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"shared/atlasCache.ts",
 		"shared/nameNormalisation.ts",
+		"packages/geography/src/nameNormalisation.ts",
 		"shared/sqliteTables.ts",
 	]) {
 		assert.ok(inputs.get("atlas-sqlite")!.includes(path), path);

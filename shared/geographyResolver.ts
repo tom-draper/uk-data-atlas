@@ -23,7 +23,7 @@ import {
 	type AreaIdentity,
 	type GeographyEndpoint,
 } from "./resolver/areas";
-import { normalisePlaceName } from "./nameNormalisation";
+import { normalisePlaceName } from "@uk-data-atlas/geography";
 import { CatalogueResolver } from "./resolver/catalogue";
 import { CapabilityResolver } from "./resolver/capability";
 import { LineageResolver } from "./resolver/lineage";

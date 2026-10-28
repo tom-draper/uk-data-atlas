@@ -5,7 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import { normalisePlaceName } from "../src/nameNormalisation";
+import { normalisePlaceName } from "@uk-data-atlas/geography";
+import { NAME_NORMALISATION } from "../../../shared/nameNormalisation";
 import {
 	compilePlaceIndex,
 	openPlaceIndexDatabase,
@@ -87,6 +88,10 @@ const places = (query: string, limit?: number) =>
 	resolvePlaces(index, query, limit).map((candidate) => candidate.place);
 
 test("sets aside case, accents, punctuation and the ampersand", () => {
+	assert.equal(
+		NAME_NORMALISATION,
+		"sha256:b70381c386db63937d4e61bfe8d417d283306aa3e5ba2c3c6ab10f43e51eeaf2",
+	);
 	assert.equal(normalisePlaceName("Brighton & Hove"), "brighton and hove");
 	assert.equal(normalisePlaceName("Ynys Môn"), "ynys mon");
 	assert.equal(normalisePlaceName("  King's   Lynn "), "kings lynn");
