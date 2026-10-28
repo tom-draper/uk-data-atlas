@@ -2,7 +2,6 @@ import { handleSyncRoutes } from "../api/syncRoutes";
 import { handleMeasureReconciliationRoutes } from "../api/measureReconciliationRoutes";
 import { handleCoveragePlanRoutes } from "../api/coveragePlanRoutes";
 import { handleGeographyHealthRoutes } from "../api/geographyHealthRoutes";
-import { handleRelationshipRepairRoutes } from "../api/relationshipRepairRoutes";
 import { handleGovernanceRoutes } from "../api/governanceRoutes";
 import { handleAnalysisGeographyRoutes } from "../api/analysisGeographyRoutes";
 import type { RouteRequest } from "../areas/routing";
@@ -21,8 +20,6 @@ export const evidenceReport = (request: RouteRequest) => {
 	if (path[1] === "validation") return handleSyncRoutes(request);
 	if (path[1] === "geography-health")
 		return handleGeographyHealthRoutes(request);
-	if (path[1] === "relationship-repairs")
-		return handleRelationshipRepairRoutes(request);
 	if (["corrections", "relationship-candidates"].includes(path[1] ?? ""))
 		return handleGovernanceRoutes(request);
 	return undefined;
