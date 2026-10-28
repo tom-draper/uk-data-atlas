@@ -150,6 +150,8 @@ export type StatisticsLayoutLeaf = { path: string[] } & (
 			period: string;
 	  }
 	| { kind: "code" | "name" }
+	/** The code or name of the record's parent area, by index into its `parents`. */
+	| { kind: "parent_code" | "parent_name"; parent: number }
 	/** A number computed from the record's other values, by a named rule. */
 	| { kind: "derived"; rule: string }
 	/** The same JSON in every record. */
@@ -164,8 +166,13 @@ export type StatisticsLayout = {
 	records: {
 		from: string;
 		leaves: StatisticsLayoutLeaf[];
-		/** The records' areas, in the file's order. */
-		areas: { release: AreaRelease; code: string }[];
+		/** The records' areas, in the file's order, with their parent areas. */
+		areas: {
+			release: AreaRelease;
+			code: string;
+			/** Parent areas, in the dataset's order of parent fields. */
+			parents?: { release: AreaRelease; code: string }[];
+		}[];
 	}[];
 };
 
@@ -848,11 +855,12 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"records TEXT NOT NULL",
 				"position INTEGER NOT NULL",
 				"path TEXT NOT NULL",
-				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','derived','literal'))",
+				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','parent_code','parent_name','derived','literal'))",
 				"series_id INTEGER REFERENCES series(id)",
 				"period_id INTEGER REFERENCES period(id)",
 				"rule TEXT",
 				"literal TEXT",
+				"parent INTEGER",
 			],
 			key: ["dataset_id", "part", "records", "position"],
 			constraints: [
@@ -860,6 +868,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"CHECK ((kind IN ('value','lower','upper')) = (series_id IS NOT NULL AND period_id IS NOT NULL))",
 				"CHECK ((kind = 'derived') = (rule IS NOT NULL))",
 				"CHECK ((kind = 'literal') = (literal IS NOT NULL))",
+				"CHECK ((kind IN ('parent_code','parent_name')) = (parent IS NOT NULL))",
 			],
 			rows: rows(function* ({ datasets, seriesIds, periods }, database) {
 				for (const [index, dataset] of datasets.entries()) {
@@ -890,6 +899,10 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 										: null,
 									leaf.kind === "derived" ? leaf.rule : null,
 									leaf.kind === "literal" ? leaf.value : null,
+									leaf.kind === "parent_code" ||
+									leaf.kind === "parent_name"
+										? leaf.parent
+										: null,
 								];
 							}
 				}
@@ -926,6 +939,48 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 									area(database, dataset.slug, release, code)
 										.id,
 								];
+			}),
+		},
+		dataset_record_parent: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL",
+				"part INTEGER NOT NULL",
+				"records TEXT NOT NULL",
+				"position INTEGER NOT NULL",
+				"parent INTEGER NOT NULL",
+				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
+			],
+			key: ["dataset_id", "part", "records", "position", "parent"],
+			constraints: [
+				"FOREIGN KEY (dataset_id, part, records, position) REFERENCES dataset_record(dataset_id, part, records, position)",
+			],
+			rows: rows(function* ({ datasets }, database) {
+				for (const [index, dataset] of datasets.entries())
+					for (const [part, layout] of [
+						...(dataset.layouts?.() ?? []),
+					].entries())
+						for (const { from, areas } of layout.records)
+							for (const [
+								position,
+								{ parents },
+							] of areas.entries())
+								for (const [parent, { release, code }] of (
+									parents ?? []
+								).entries())
+									yield [
+										index + 1,
+										part,
+										from,
+										position,
+										parent,
+										area(
+											database,
+											dataset.slug,
+											release,
+											code,
+										).id,
+									];
 				// Last statistics table: every row, layouts included, is written.
 				for (const dataset of datasets) dataset.verify?.(database);
 			}),

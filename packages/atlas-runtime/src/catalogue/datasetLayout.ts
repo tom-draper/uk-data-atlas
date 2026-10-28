@@ -8,6 +8,7 @@ type Leaf = {
 	period: number | null;
 	rule: string | null;
 	literal: string | null;
+	parent: number | null;
 };
 
 type Row = {
@@ -92,10 +93,33 @@ function records(
 			);
 		found.set(key, row);
 	}
-	const result: Record<string, Json> = {};
-	for (const { area, code, name } of database
+	const parents = new Map<
+		number,
+		Map<number, { code: string; name: string }>
+	>();
+	for (const row of database
 		.prepare(
-			`SELECT r.area_version_id AS area, a.code, coalesce(n.name, v.name) AS name
+			`SELECT p.position, p.parent, a.code, coalesce(n.name, v.name) AS name
+			FROM dataset_record_parent p
+			JOIN area_version v ON v.id = p.area_version_id
+			JOIN area a ON a.id = v.area_id
+			LEFT JOIN dataset_area_name n ON n.dataset_id = p.dataset_id AND n.area_version_id = v.id
+			WHERE p.dataset_id = ? AND p.part = ? AND p.records = ?`,
+		)
+		.all(dataset, part, from) as {
+		position: number;
+		parent: number;
+		code: string;
+		name: string;
+	}[]) {
+		let found = parents.get(row.position);
+		if (!found) parents.set(row.position, (found = new Map()));
+		found.set(row.parent, row);
+	}
+	const result: Record<string, Json> = {};
+	for (const { position, area, code, name } of database
+		.prepare(
+			`SELECT r.position, r.area_version_id AS area, a.code, coalesce(n.name, v.name) AS name
 			FROM dataset_record r
 			JOIN area_version v ON v.id = r.area_version_id
 			JOIN area a ON a.id = v.area_id
@@ -104,6 +128,7 @@ function records(
 			ORDER BY r.position`,
 		)
 		.all(dataset, part, from) as {
+		position: number;
 		area: number;
 		code: string;
 		name: string;
@@ -122,7 +147,18 @@ function records(
 				value = found;
 			} else if (leaf.kind === "code") value = code;
 			else if (leaf.kind === "name") value = name;
-			else if (leaf.kind === "literal") value = JSON.parse(leaf.literal!);
+			else if (
+				leaf.kind === "parent_code" ||
+				leaf.kind === "parent_name"
+			) {
+				const parent = parents.get(position)?.get(leaf.parent!);
+				if (!parent)
+					throw new Error(
+						`${slug}: ${code} has no parent for ${leaf.path.join(".")}`,
+					);
+				value = leaf.kind === "parent_code" ? parent.code : parent.name;
+			} else if (leaf.kind === "literal")
+				value = JSON.parse(leaf.literal!);
 			else value = null;
 			place(record, leaf.path, value);
 		}
@@ -168,7 +204,7 @@ export function rebuildFromLayout(
 			.map((row) => [Number(row.id), String(row.shape)]),
 	);
 	const leafQuery = database.prepare(
-		"SELECT records, path, kind, series_id AS series, period_id AS period, rule, literal FROM dataset_leaf WHERE dataset_id = ? AND part = ? ORDER BY records, position",
+		"SELECT records, path, kind, series_id AS series, period_id AS period, rule, literal, parent FROM dataset_leaf WHERE dataset_id = ? AND part = ? ORDER BY records, position",
 	);
 	const result: Record<string, Json> = {};
 	for (const part of parts) {
@@ -185,6 +221,7 @@ export function rebuildFromLayout(
 				period: row.period as number | null,
 				rule: row.rule as string | null,
 				literal: row.literal as string | null,
+				parent: row.parent as number | null,
 			});
 		}
 		for (const [from, leaves] of sets) {

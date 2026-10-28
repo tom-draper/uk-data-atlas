@@ -541,6 +541,62 @@ describe("declared statistics", () => {
 			);
 		});
 
+		it("stores each record's parent area and rebuilds its code and name", () => {
+			const parented: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				alsoIn: [{ geography: "localAuthority", year: 2022 }],
+				measures: [CRIMES],
+				fields: [{ path: "total", measure: "crimes" }],
+				parents: [
+					{
+						code: "regionCode",
+						name: "regionName",
+						release: { geography: "region", year: 2025 },
+					},
+				],
+				rebuild: {},
+			};
+			const text = file({
+				E06000002: {
+					name: "Middlesbrough",
+					regionCode: "E12000001",
+					regionName: "North East England",
+					total: 4,
+				},
+				E06000001: {
+					name: "Hartlepool",
+					regionCode: "E12000001",
+					regionName: "North East England",
+					total: 3,
+				},
+			});
+			const database = write(parented, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare(
+						"SELECT position, parent, area_version_id FROM dataset_record_parent ORDER BY position",
+					)
+					.all()
+					.map((row) => Object.values(row)),
+			).toEqual([
+				[0, 0, 4],
+				[1, 0, 4],
+			]);
+			expect(
+				database
+					.prepare(
+						"SELECT area_version_id, name FROM dataset_area_name WHERE area_version_id = 4",
+					)
+					.all()
+					.map((row) => Object.values(row)),
+			).toEqual([[4, "North East England"]]);
+			expect(() =>
+				write(parented, text.replace(/E12000001/g, "E12000009")),
+			).toThrow("regionCode E12000009 is in no listed release");
+		});
+
 		it("refuses a derived number without a rebuild rule", () => {
 			expect(() =>
 				write(
