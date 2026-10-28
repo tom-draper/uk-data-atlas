@@ -183,6 +183,8 @@ For the school performance datasets, DuckDB filters the source CSVs before
 the shared loaders process the selected rows.
 The English deprivation dataset uses the same reader to select source columns
 before its loader computes the local-authority summaries.
+For the 2016 to 2019 local election CSVs, DuckDB selects English and Welsh
+rows before the shared loader calculates party votes and winners.
 
 The `area-search-index` stage uses DuckDB to deduplicate and order search
 postings after applying the shared name normalisation rules. The standalone API
