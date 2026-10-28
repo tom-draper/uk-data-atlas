@@ -69,7 +69,14 @@ test("assembles measure evidence for available releases and reconciliation perio
 		measureQuality: (_context, id) => `quality:${id}`,
 		measureCoverage: (_context, id) => `coverage:${id}`,
 		measureCompatibility: (_context, id) => `compatibility:${id}`,
-		report: (_context, url) => ({ status: 200, data: url }),
+		reconciliation: (_context, _measure, selection, period) => ({
+			status: 200,
+			data: { selection, period },
+		}),
+		coveragePlan: (_context, _measure, target) => ({
+			status: 200,
+			data: target,
+		}),
 		measureCapability: () => "supported",
 		availableReconciliations: () => [
 			{ crosswalk: { id: "ward/lad" }, periods: ["2021"] },
@@ -94,8 +101,13 @@ test("assembles measure evidence for available releases and reconciliation perio
 			data: "compatibility:population",
 		},
 		conversionSupport: {
-			status: 200,
-			data: "/v1/measures/population/conversion-support",
+			status: 400,
+			data: {
+				type: "https://api.ukdataatlas.com/problems/invalid-query",
+				title: "Invalid Query",
+				status: 400,
+				detail: "measure and to=geography/release are required.",
+			},
 		},
 		coveragePlans: [
 			{
@@ -103,7 +115,7 @@ test("assembles measure evidence for available releases and reconciliation perio
 				release: "2021",
 				capability: "supported",
 				status: 200,
-				data: "/v1/measures/population/coverage-plan?geography=ward&release=2021",
+				data: { geography: "ward", boundaryRelease: "2021" },
 			},
 		],
 		reconciliations: [
@@ -111,7 +123,7 @@ test("assembles measure evidence for available releases and reconciliation perio
 				selector: "crosswalk=ward%2Flad",
 				period: "2021",
 				status: 200,
-				data: "/v1/measures/population/reconciliation?crosswalk=ward%2Flad&period=2021",
+				data: { selection: { crosswalk: "ward/lad" }, period: "2021" },
 			},
 		],
 	});
@@ -130,7 +142,8 @@ test("records an absent compatibility assessment as not found", () => {
 		measureQuality: () => ({}),
 		measureCoverage: () => ({}),
 		measureCompatibility: () => undefined,
-		report: () => ({ status: 200, data: {} }),
+		reconciliation: () => ({ status: 200, data: {} }),
+		coveragePlan: () => ({ status: 200, data: {} }),
 		measureCapability: () => ({}),
 		availableReconciliations: () => [],
 		write: (id, data) => {

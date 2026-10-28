@@ -1,7 +1,7 @@
 import { readAtlasPayload } from "../storage/atlasSqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { FullDetailDownloads } from "../areas/fullDetailDownloads";
-import type { EvidenceManifest } from "./evidenceReports";
+import type { EvidenceManifest } from "./evidenceDocuments";
 import { lazyValue } from "../storage/lazyValue";
 import { readAtlasPages } from "../storage/atlasPages";
 import { readAtlasLookups } from "../storage/atlasLookups";

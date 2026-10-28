@@ -1,8 +1,14 @@
-import { evidenceReport } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	handleAnalysisGeographyRoutes,
+	handleGovernanceRoutes,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { route } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type {
+	RouteContext,
+	RouteRequest,
+} from "@uk-data-atlas/atlas-runtime/areas";
 
-/** Drive the build-time report adapter using the same input fixtures as its former HTTP operation. */
+/** Exercise report adapters using the route fixtures. */
 export const reportRequest = (
 	method: string | undefined,
 	url: string | undefined,
@@ -10,15 +16,18 @@ export const reportRequest = (
 ) => {
 	if (method !== "GET") return route(method, url, context);
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
-	return (
-		evidenceReport({
-			context,
-			releaseId:
-				context.atlasRelease?.releaseId ??
-				context.boundaryRegistry.contentHash,
-			parsedUrl,
-			segments: parsedUrl.pathname.split("/").filter(Boolean),
-			dispatch: (next) => route("GET", next, context),
-		}) ?? route(method, url, context)
-	);
+	const request: RouteRequest = {
+		context,
+		releaseId:
+			context.atlasRelease?.releaseId ??
+			context.boundaryRegistry.contentHash,
+		parsedUrl,
+		segments: parsedUrl.pathname.split("/").filter(Boolean),
+		dispatch: (next) => route("GET", next, context),
+	};
+	const handler =
+		request.segments[1] === "measures"
+			? handleAnalysisGeographyRoutes
+			: handleGovernanceRoutes;
+	return handler(request) ?? route(method, url, context);
 };

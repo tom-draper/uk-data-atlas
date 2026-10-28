@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { reconciliationEvidence } from "../../../pipeline/src/evidence/measureReports";
 import test from "node:test";
 import type {
 	CrosswalkInventory,
@@ -23,7 +24,6 @@ import {
 	containmentCrosswalk,
 	dataCatalog,
 	registry,
-	reportWithData as routeWithData,
 	testContext,
 } from "./routeFixtures";
 
@@ -228,7 +228,7 @@ test("refuses a measure whose values do not add over areas", () => {
 	);
 });
 
-test("lists the comparisons a measure allows, and needs a period to run one", () => {
+test("lists the comparisons a measure allows", () => {
 	const available = availableReconciliations(
 		contextWith([agreeing, differing]),
 		measure,
@@ -242,16 +242,6 @@ test("lists the comparisons a measure allows, and needs a period to run one", ()
 			["wards-agree", ["2022"]],
 			["wards-differ", ["2022"]],
 		],
-	);
-	const listed = routeWithData("/v1/measures/population/reconciliation");
-	assert.equal(listed.status, 200);
-	const withoutPeriod = routeWithData(
-		"/v1/measures/population/reconciliation?crosswalk=ward-to-local-authority-2025",
-	);
-	assert.equal(withoutPeriod.status, 400);
-	assert.match(
-		(withoutPeriod.body as { detail: string }).detail,
-		/period is required/,
 	);
 });
 
@@ -496,4 +486,24 @@ test("links each listed comparison to the latest period both partitions publish"
 
 	assert.deepEqual(entry?.periods, ["2021", "2022"]);
 	assert.equal(entry?.latestPeriod, "2022");
+});
+
+test("builds reconciliation evidence including refusals", () => {
+	const context = contextWith([agreeing]);
+	const selection = { crosswalk: agreeing.id };
+	assert.deepEqual(
+		reconciliationEvidence(context, measure, selection, "2022"),
+		{
+			status: 200,
+			data: reconcileMeasure(context, measure, selection, "2022"),
+		},
+	);
+	const result = reconciliationEvidence(
+		context,
+		measure,
+		{ crosswalk: "missing" },
+		"2022",
+	);
+	assert.equal(result.status, 422);
+	assert.equal(result.data.code, "conversion_not_available");
 });

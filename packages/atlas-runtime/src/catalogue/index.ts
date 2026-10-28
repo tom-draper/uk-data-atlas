@@ -10,7 +10,6 @@ export * from "./coveragePlan";
 export * from "./correctionsReport";
 export * from "./dataCatalog";
 export * from "./evidenceDocuments";
-export * from "./evidenceReports";
 export * from "./geographyCatalogue";
 export * from "./geographyHealthReport";
 export * from "./governanceLoader";

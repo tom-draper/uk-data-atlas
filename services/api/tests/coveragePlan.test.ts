@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
+import { coveragePlanEvidence } from "../../../pipeline/src/evidence/measureReports";
 import { coveragePlan } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	CrosswalkInventory,
@@ -14,7 +15,6 @@ import {
 	populationLocalAuthorityObservations,
 	populationObservations,
 	registry,
-	reportWithData as routeWithData,
 	testContext,
 } from "./routeFixtures";
 
@@ -179,43 +179,16 @@ test("has no plan for a release it holds no areas for", () => {
 	);
 });
 
-test("the route answers one exact release, and says so when asked for less", () => {
-	const missing = routeWithData(
-		"/v1/measures/population/coverage-plan?geography=ward",
-	);
-	assert.equal(missing.status, 400);
-	assert.match(
-		(missing.body as { detail: string }).detail,
-		/geography and release are required/,
-	);
-	assert.equal(
-		routeWithData(
-			"/v1/measures/not-a-measure/coverage-plan?geography=ward&release=2025-01-en-ward",
-		).status,
-		404,
-	);
-	const response = routeWithData(
-		"/v1/measures/population/coverage-plan?geography=ward&release=2025-01-en-ward",
-	);
-	assert.equal(response.status, 200);
-	const { data } = response.body as {
-		data: {
-			countries: Array<{
-				country: string;
-				status: string;
-				areaCount: number;
-				coveredAreaCount: number;
-			}>;
-		};
-	};
-	// The fixture release holds two English wards and the source covers one.
-	assert.deepEqual(data.countries, [
-		{
-			country: "GB-ENG",
-			areaCount: 2,
-			coveredAreaCount: 0,
-			status: "missing",
-			reason: "This measure covers GB-ENG on ward 2023 and localAuthority 2023, but no published crosswalk converts that onto ward/2025-01-en-ward.",
-		},
-	]);
+test("builds coverage evidence and retains missing-release details", () => {
+	const target = { geography: "ward", boundaryRelease: "2023-05-uk-bgc" };
+	assert.deepEqual(coveragePlanEvidence(context, population, target), {
+		status: 200,
+		data: coveragePlan(context, population, target),
+	});
+	const missing = coveragePlanEvidence(context, population, {
+		geography: "ward",
+		boundaryRelease: "missing",
+	});
+	assert.equal(missing.status, 404);
+	assert.equal(missing.data.title, "Not Found");
 });

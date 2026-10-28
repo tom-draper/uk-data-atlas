@@ -9,9 +9,17 @@ type EvidenceMeasureDependencies<Context> = {
 	measureQuality: (context: Context, measureId: string) => unknown;
 	measureCoverage: (context: Context, measureId: string) => unknown;
 	measureCompatibility: (context: Context, measureId: string) => unknown;
-	report: (
+
+	reconciliation: (
 		context: Context,
-		url: string,
+		measure: Measure,
+		selection: { crosswalk: string } | { path: string },
+		period: string,
+	) => { status: number; data: unknown };
+	coveragePlan: (
+		context: Context,
+		measure: Measure,
+		target: { geography: string; boundaryRelease: string },
 	) => { status: number; data: unknown };
 	measureCapability: (
 		context: Context,
@@ -37,10 +45,11 @@ export const buildEvidenceMeasure = <
 	context: Context,
 	id: string,
 	{
-		report,
 		measureQuality,
 		measureCoverage,
 		measureCompatibility,
+		reconciliation,
+		coveragePlan,
 		measureCapability,
 		availableReconciliations,
 		write,
@@ -52,7 +61,6 @@ export const buildEvidenceMeasure = <
 		(measure) => measure.id === id,
 	);
 	if (!measure) throw new Error(`Unknown measure ${id}`);
-	const base = `/v1/measures/${id}`;
 	const quality = { status: 200, data: measureQuality(context, id) };
 	const coverage = { status: 200, data: measureCoverage(context, id) };
 	const compatibilityData = measureCompatibility(context, id);
@@ -68,7 +76,16 @@ export const buildEvidenceMeasure = <
 					},
 				}
 			: { status: 200, data: compatibilityData };
-	const conversionSupport = report(context, `${base}/conversion-support`);
+	// The legacy report requested conversion support without a target release.
+	const conversionSupport = {
+		status: 400,
+		data: {
+			type: "https://api.ukdataatlas.com/problems/invalid-query",
+			title: "Invalid Query",
+			status: 400,
+			detail: "measure and to=geography/release are required.",
+		},
+	};
 	const coveragePlans = context.areaInventory.releases.flatMap((release) =>
 		release.status === "available"
 			? [
@@ -79,10 +96,10 @@ export const buildEvidenceMeasure = <
 							geography: release.geography,
 							boundaryRelease: release.id,
 						}),
-						...report(
-							context,
-							`${base}/coverage-plan?geography=${release.geography}&release=${release.id}`,
-						),
+						...coveragePlan(context, measure, {
+							geography: release.geography,
+							boundaryRelease: release.id,
+						}),
 					},
 				]
 			: [],
@@ -97,9 +114,13 @@ export const buildEvidenceMeasure = <
 			return {
 				selector,
 				period,
-				...report(
+				...reconciliation(
 					context,
-					`${base}/reconciliation?${selector}&period=${encodeURIComponent(period)}`,
+					measure,
+					"crosswalk" in candidate
+						? { crosswalk: candidate.crosswalk.id }
+						: { path: candidate.path.id },
+					period,
 				),
 			};
 		}),
