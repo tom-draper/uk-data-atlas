@@ -6,7 +6,7 @@ import {
 } from "./atlasAssets";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
-import type { StoredFile } from "../api/routeResponse";
+import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { repositoryRootOf } from "./dataLayout";
 
 /** The built pages by id, or none where they have not been built. */

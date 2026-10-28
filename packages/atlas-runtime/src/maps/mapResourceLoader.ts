@@ -3,7 +3,7 @@ import { join } from "node:path";
 import type { MapArchive } from "./mapResource/archiveReader";
 import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import type { StoredFile } from "../api/routeResponse";
+import type { StoredFile } from "@uk-data-atlas/artifacts";
 
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import {

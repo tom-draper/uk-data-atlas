@@ -22,7 +22,8 @@ import type { MeasureCompatibilityInventory } from "../catalogue/measureCompatib
 import type { NamedLocationInventory } from "../places/namedLocations";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
 import type { RelationshipPathInventory } from "../relationships/relationshipPaths";
-import type { ApiResponse, StoredFile } from "../api/routeResponse";
+import type { ApiResponse } from "../api/routeResponse";
+import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ValidationReport } from "../catalogue/validationReport";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
