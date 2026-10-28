@@ -53,6 +53,9 @@ next-env.d.ts
 # Generated browser datasets and boundaries.
 /public/data/
 
+# Legacy API build output from before data/build/artifacts.
+/services/api/public/
+
 # Raw sources live in immutable GitHub Release assets. Browser-ready payloads
 # and compiled map assets live under public/data instead.
 /data/*
