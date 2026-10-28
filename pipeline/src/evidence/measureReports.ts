@@ -2,13 +2,13 @@ import {
 	coveragePlan,
 	reconcileMeasure,
 	type Measure,
+	type MeasureContext,
 	type ReconciliationRouteRequest,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const reconciliationEvidence = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 	selection: ReconciliationRouteRequest,
 	period: string,
@@ -34,7 +34,7 @@ export const reconciliationEvidence = (
 };
 
 export const coveragePlanEvidence = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 	target: { geography: string; boundaryRelease: string },
 ) => {

@@ -16,6 +16,7 @@ export * from "./governanceLoader";
 export * from "./measureCapability";
 export * from "./measureCompatibility";
 export * from "./measureCoverage";
+export * from "./measureContext";
 export * from "./measureReconciliation";
 export * from "./measureTable";
 export * from "./observationArtifacts";

@@ -5,7 +5,7 @@ import { convertObservations } from "../relationships/conversion";
 import { isNumericObservation, type DataCatalog } from "./dataCatalog";
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
-import type { RouteContext } from "../areas/routing";
+import type { MeasureContext } from "./measureContext";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 type Measure = DataCatalog["measures"][number];
@@ -49,7 +49,7 @@ type ReleaseSource = {
 // release a context serves never changes, so neither does the outcome. Only
 // the path and the target codes it reaches are kept, not the values.
 type DryRun = { path: MeasureConversionPath; targets: Set<string> } | null;
-const dryRuns = new WeakMap<RouteContext, Map<string, DryRun>>();
+const dryRuns = new WeakMap<MeasureContext, Map<string, DryRun>>();
 
 /**
  * The conversions the convert route would accept onto a target: an extensive
@@ -58,7 +58,7 @@ const dryRuns = new WeakMap<RouteContext, Map<string, DryRun>>();
  * does not refuse. A path is only offered once it is known to work.
  */
 export const conversionCoverageOnto = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 	target: Target,
 ): Array<{ path: MeasureConversionPath; targets: Set<string> }> => {
@@ -151,7 +151,7 @@ export const conversionCoverageOnto = (
 
 /** The conversions alone, for callers that do not need what each reaches. */
 const conversionsOnto = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 	target: Target,
 ): MeasureConversionPath[] =>
@@ -168,7 +168,7 @@ const conversionsOnto = (
  * over areas is never converted.
  */
 export const measureCapability = (
-	context: RouteContext,
+	context: MeasureContext,
 	measure: Measure,
 	target: Target,
 ): MeasureCapability => {
