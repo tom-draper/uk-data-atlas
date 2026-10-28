@@ -2,19 +2,22 @@ import {
 	assertObservationCatalogue,
 	observationDatabasePath,
 	readObservationText,
-} from "./atlasObservations";
-import { observationArtifactName } from "./dataCatalog";
-import { buildArtifactPath } from "./geographyBuildPath";
+} from "../../shared/atlasObservations";
+import { observationArtifactName } from "../../shared/dataCatalog";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { validateAnalysisGeographies } from "./analysisGeographyValidation";
-import type { AnalysisGeographyInventory } from "./analysisGeographies";
-import type { CrosswalkArtifact } from "./crosswalkTypes";
-import type { CrosswalkInventory } from "./crosswalkInventory";
-import type { AnyMeasureObservationArtifact, DataCatalog } from "./dataCatalog";
-import type { MeasureTableArtifact } from "./observationTables";
-import { readStoredText } from "./storedText";
-import { apiRootOf, artifactDirectory } from "./dataLayout";
+import { validateAnalysisGeographies } from "../../shared/analysisGeographyValidation";
+import type { AnalysisGeographyInventory } from "../../shared/analysisGeographies";
+import type { CrosswalkArtifact } from "../../shared/crosswalkTypes";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import type {
+	AnyMeasureObservationArtifact,
+	DataCatalog,
+} from "../../shared/dataCatalog";
+import type { MeasureTableArtifact } from "../../shared/observationTables";
+import { readStoredText } from "../../shared/storedText";
+import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);

@@ -8,7 +8,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { buildAnalysisGeographyValidation } from "../scripts/build-analysis-geography-validation";
+import { buildAnalysisGeographyValidation } from "../../../pipeline/src/buildAnalysisGeographyValidation";
 import { storeObservations } from "../../../pipeline/src/store-observations";
 import assert from "node:assert/strict";
 import test from "node:test";
