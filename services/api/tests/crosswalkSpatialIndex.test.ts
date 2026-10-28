@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CrosswalkSpatialIndex } from "../src/crosswalkSpatialIndex";
+import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
 import {
 	boundsIntersect,
 	type Bounds,

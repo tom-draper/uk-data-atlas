@@ -1,4 +1,4 @@
-import { CrosswalkSpatialIndex } from "../../shared/crosswalkSpatialIndex";
+import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
 import { createHash } from "node:crypto";
 import polygonClipping from "polygon-clipping";
 import type { GeometrySourceLookup } from "../../shared/areaGeometry";
@@ -22,7 +22,7 @@ import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	CLIPPING_VERSION,
 	intersectWithin,
-} from "../../shared/pieceIntersection";
+} from "@uk-data-atlas/geography/piece-intersection";
 import { readGeometries } from "../../shared/rawAreaGeometries";
 
 export const round = (value: number, places: number) =>

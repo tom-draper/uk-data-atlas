@@ -15,7 +15,9 @@
 		"./reprojection": "./src/reprojection.ts",
 		"./reverse-grid-offset": "./src/reverseGridOffset.ts",
 		"./geometry-spatial-index": "./src/geometrySpatialIndex.ts",
-		"./area-geometry-pieces": "./src/areaGeometryPieces.ts"
+		"./area-geometry-pieces": "./src/areaGeometryPieces.ts",
+		"./crosswalk-spatial-index": "./src/crosswalkSpatialIndex.ts",
+		"./piece-intersection": "./src/pieceIntersection.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
