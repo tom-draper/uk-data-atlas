@@ -174,6 +174,9 @@ pnpm data:build --only atlas-sqlite --plan
 pnpm data:build --from datasets
 ```
 
+The `atlas-pages` stage uses DuckDB to deduplicate dataset coverage by area
+code, dataset, and year before compiling page data.
+
 The `area-search-index` stage uses DuckDB to deduplicate and order search
 postings after applying the shared name normalisation rules. The standalone API
 cache rebuild retains the Node implementation.
