@@ -9,7 +9,7 @@ import test from "node:test";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import { readMapAssets, readMapResources } from "../../src/mapResourceLoader";
 import { route } from "../../src/routes";
-import { artifactRoot } from "../../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
 const assetBase = "https://maps.example.com/releases/test";

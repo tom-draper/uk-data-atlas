@@ -1,1 +1,1 @@
-export * from "../../../shared/parquet";
+export * from "@uk-data-atlas/artifacts";

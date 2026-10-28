@@ -1,1 +1,1 @@
-export * from "../../../shared/geometryLoader";
+export * from "@uk-data-atlas/atlas-runtime/geometry";

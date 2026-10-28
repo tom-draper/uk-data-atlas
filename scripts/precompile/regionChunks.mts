@@ -3,7 +3,10 @@ import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "../../lib/data/gazetteer/types";
 import { writeDatasetRegionChunks } from "../dataset-region-chunks.mts";
-import { elapsedSince, logArtifact } from "../../shared/buildTiming";
+import {
+	elapsedSince,
+	logArtifact,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileSnapshots,
 	fileSnapshotsOrEmpty,

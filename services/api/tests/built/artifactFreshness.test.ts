@@ -2,7 +2,7 @@ import { requireAtlasCache, readCachePayload } from "../../src/atlasCache";
 import { readMeasureObservations } from "../../src/observationLoader";
 import { readDataCatalog } from "../../src/catalogueManifestLoader";
 import { DatabaseSync } from "node:sqlite";
-import { readAtlasPayload } from "../../../../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { geographyCatalogues } from "../../scripts/geography-build-path";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
@@ -16,7 +16,7 @@ import {
 	readMeasureTotals,
 	readValidationWaivers,
 } from "../../../../pipeline/src/validation/inputs";
-import { artifactRoot } from "../../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * A compiled artifact records the content hash of each artifact it was built

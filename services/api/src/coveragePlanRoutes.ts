@@ -1,1 +1,1 @@
-export * from "../../../shared/coveragePlanRoutes";
+export * from "@uk-data-atlas/atlas-runtime/api";

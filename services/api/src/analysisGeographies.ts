@@ -1,2 +1,2 @@
-export type * from "../../../shared/analysisGeographies";
-export { analysisConversion } from "../../../shared/analysisConversion";
+export type * from "@uk-data-atlas/atlas-runtime/areas";
+export { analysisConversion } from "@uk-data-atlas/atlas-runtime/relationships";

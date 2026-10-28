@@ -3,7 +3,7 @@ import type {
 	DataCatalog,
 	MeasureObservationArtifact,
 	AnyMeasureObservationArtifact,
-} from "../../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { sha256 } from "./values";
 import {
 	type CatalogManifest,
@@ -29,8 +29,8 @@ import { compileAirQuality } from "./airQuality";
 import { compileCensus } from "./census";
 import { compileCensusSmallArea } from "./censusSmallArea";
 import { withAliases } from "./measureAliases";
-import type { MeasureTableArtifact } from "../../../shared/measureTable";
-import type { MeasureSource } from "../../../shared/dataCatalog";
+import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileMobileCoverage } from "./mobileCoverage";
 import { compileJobs } from "./jobs";
 import { compileEmissions } from "./emissions";

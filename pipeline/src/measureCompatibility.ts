@@ -1,4 +1,4 @@
-import type { AreaReleaseArtifact } from "../../shared/areaInventory";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
@@ -6,14 +6,14 @@ import {
 	findMeasureObservations,
 	type AnyMeasureObservationArtifact,
 	type MeasureSource,
-} from "../../shared/dataCatalog";
-import { sha256 } from "../../shared/contentHash";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationPartitionKey,
 	type CompatibilityCandidate,
 	type CompatibilityStatus,
 	type MeasureCompatibilityInventory,
-} from "../../shared/measureCompatibility";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const sample = (codes: Set<string>) => [...codes].sort().slice(0, 20);
 

@@ -34,7 +34,7 @@ import { route } from "../src/routes";
 import fixtures from "./fixtures/geometry-validity.json";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";
 import { registry, testContext } from "./routeFixtures";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const spec: SchemaDocument = parse(
 	readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
@@ -225,11 +225,6 @@ test("compiles deterministic reports and serves them with metrics and provenance
 			join(apiRoot, directory),
 			"dir",
 		);
-	symlinkSync(
-		new URL("../../../shared", import.meta.url),
-		join(root, "shared"),
-		"dir",
-	);
 	symlinkSync(
 		new URL("../../../pipeline", import.meta.url),
 		join(root, "pipeline"),

@@ -1,8 +1,11 @@
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
-import { readAreaInventory, readAreaLookup } from "../shared/boundaryLoader";
-import { createRelationshipPathIndex } from "../shared/relationshipPaths";
-import type { CrosswalkLookup } from "../shared/translation";
+import {
+	readAreaInventory,
+	readAreaLookup,
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -10,22 +13,22 @@ import { join, resolve } from "node:path";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "../shared/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "../shared/crosswalkLoader";
-import { readStoredText } from "../shared/storedText";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { readStoredText } from "@uk-data-atlas/artifacts";
 import {
 	compileRelationshipPaths,
 	crosswalkShape,
 	type CrosswalkShape,
-} from "../shared/relationshipPaths";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { readApprovedRelationshipPaths } from "../pipeline/src/relationshipPathAdapters";
-import { createGeographyResolver } from "../shared/geographyResolver";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf } from "../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

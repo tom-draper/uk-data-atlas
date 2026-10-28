@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import { packNamedLocations } from "../src/namedLocationStorage";
 import type { NamedLocationInventory } from "../src/namedLocations";
 

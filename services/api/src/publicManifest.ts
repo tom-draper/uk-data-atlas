@@ -1,1 +1,1 @@
-export * from "../../../shared/publicManifest";
+export * from "@uk-data-atlas/atlas-runtime/storage";

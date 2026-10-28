@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -6,10 +6,13 @@ import {
 	compileAnalysisGeographies,
 	readAnalysisGeographySupport,
 } from "./analysisGeographies";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
-import type { DataCatalog } from "../../shared/dataCatalog";
-import type { RelationshipPathInventory } from "../../shared/relationshipPaths";
-import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import {
+	artifactDirectory,
+	configDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildAnalysisGeographies = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);

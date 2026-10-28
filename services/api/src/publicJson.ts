@@ -1,1 +1,1 @@
-export * from "../../../shared/publicJson";
+export * from "@uk-data-atlas/atlas-runtime/storage";

@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import { buildDerivedBoundaries } from "../../../pipeline/src/build-derived-boundaries";
-import { artifactDirectory } from "../../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("writes a derived GeoJSON artifact from the configured raw source selection", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));

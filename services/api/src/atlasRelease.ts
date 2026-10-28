@@ -1,1 +1,1 @@
-export type * from "../../../shared/atlasRelease";
+export type * from "@uk-data-atlas/atlas-runtime/storage";

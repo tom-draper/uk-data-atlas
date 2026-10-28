@@ -1,4 +1,4 @@
 export type {
 	TerrainCatalogue,
 	TerrainProduct,
-} from "../../../shared/terrainCatalogue";
+} from "@uk-data-atlas/atlas-runtime/maps";

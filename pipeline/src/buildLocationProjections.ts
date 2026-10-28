@@ -3,18 +3,18 @@ import { dirname, join } from "node:path";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
-import { createAreaLookup } from "../../shared/createAreaLookup";
-import type { CrosswalkArtifact } from "../../shared/crosswalkTypes";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
-import { compileLocationProjections } from "../../shared/locationProjections";
-import type { NamedLocationInventory } from "../../shared/namedLocationTypes";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import { compileLocationProjections } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import {
 	readStoredText,
 	storedTextExists,
 	writeStoredText,
-} from "../../shared/storedText";
-import { artifactDirectory } from "../../shared/dataLayout";
+} from "@uk-data-atlas/artifacts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const read = <T>(directory: string, path: string): T => {
 	const fullPath = join(directory, path);

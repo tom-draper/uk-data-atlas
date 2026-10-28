@@ -4,20 +4,20 @@ import { fileURLToPath } from "node:url";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	areaIdentityTable,
 	compileLookupManifest,
 	crosswalkTable,
 	namedLocationMembersTable,
-} from "../../shared/lookupExports";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type {
 	LookupCrosswalk,
 	LookupNamedLocations,
-} from "../../shared/lookupExports";
-import { readStoredText, storedTextExists } from "../../shared/storedText";
-import { artifactDirectory } from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildLookupManifest = (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);

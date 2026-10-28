@@ -1,1 +1,1 @@
-export { lazyValue } from "../../../shared/lazyValue";
+export { lazyValue } from "@uk-data-atlas/atlas-runtime/storage";

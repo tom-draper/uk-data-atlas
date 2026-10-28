@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { readAtlasPayload } from "../../../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildGeographyCatalogues } from "../../../pipeline/src/build-geography-catalogues";
 import {
 	buildArtifactPath,
@@ -28,7 +28,10 @@ import {
 } from "../src/catalogueManifestLoader";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import { artifactDirectory, artifactRoot } from "../../../shared/dataLayout";
+import {
+	artifactDirectory,
+	artifactRoot,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "geography-catalogues-"));

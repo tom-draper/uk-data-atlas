@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 export type SourceFile = {

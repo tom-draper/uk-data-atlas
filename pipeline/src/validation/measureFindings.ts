@@ -1,4 +1,4 @@
-import type { Measure } from "../../../shared/dataCatalog";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
 import { sameGeography, describeGeography, exportFor } from "./sourceGeography";

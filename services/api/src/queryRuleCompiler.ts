@@ -1,1 +1,1 @@
-export * from "../../../shared/queryRuleCompiler";
+export * from "@uk-data-atlas/atlas-runtime/api";

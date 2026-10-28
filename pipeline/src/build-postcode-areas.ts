@@ -1,6 +1,6 @@
-import { readAtlasPayload } from "../../shared/atlasSqlite";
-import { readSqlitePostcodeShard } from "../../shared/atlasPostcodesReader";
-import { readSqlitePostcodeAreaShard } from "../../shared/atlasPostcodeAreaReader";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeAreaShard } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeAreas } from "./storePostcodeAreas";
 
 import { availableParallelism } from "node:os";
@@ -13,20 +13,20 @@ import {
 	workerData,
 } from "node:worker_threads";
 import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
-import { readSqliteAreaInventory as readAreaInventory } from "../../shared/atlasAreaReader";
-import { readAreaLookup } from "../../shared/areaLookup";
-import { readBoundaryRegistry } from "../../shared/boundaryCatalogue";
-import { readSqlitePostcodeIndex as readPostcodeIndex } from "../../shared/atlasPostcodesReader";
-import { readPublicManifest } from "../../shared/publicManifest";
-import type { MeasureCompatibilityInventory } from "../../shared/measureCompatibility";
-import { AreasResolver } from "../../shared/resolver/areas";
-import { postcodeAreaReleases } from "../../shared/postcodeAreaReleases";
+import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readBoundaryRegistry } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readSqlitePostcodeIndex as readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/storage";
+import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { AreasResolver } from "@uk-data-atlas/atlas-runtime/api";
+import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/postcodes";
 import { parsePostcode } from "@uk-data-atlas/geography";
-import { postcodeLookupPoint } from "../../shared/postcodeLookupPoint";
+import { postcodeLookupPoint } from "@uk-data-atlas/atlas-runtime/postcodes";
 import {
 	createAreaGeometryCache,
 	readGeometrySources,
-} from "../../shared/geometryLoader";
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	compilePostcodeAreas,
 	placementsFromShards,
@@ -44,7 +44,7 @@ import {
 	type PostcodeAreasShard,
 } from "@uk-data-atlas/geography/postcode-area-types";
 import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
-import { apiRootOf } from "../../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compile postcode placements into atlas.sqlite: the areas each postcode's centroid lies in,

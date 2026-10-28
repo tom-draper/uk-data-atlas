@@ -1,7 +1,7 @@
 import {
 	isNumericObservation,
 	type MeasureObservationArtifact,
-} from "../../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /**
  * The four unitary authorities created in April 2023, with the districts each

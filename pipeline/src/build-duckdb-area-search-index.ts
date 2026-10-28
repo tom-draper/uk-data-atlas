@@ -1,10 +1,10 @@
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { areaSearchIndexTables } from "../../shared/areaSearchCompiler";
-import { readAreaLookup } from "../../shared/areaLookup";
-import { readSqliteAreaInventory } from "../../shared/atlasAreaReader";
-import { publishCacheTables } from "../../shared/atlasCache";
-import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
+import { areaSearchIndexTables } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { publishCacheTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import { compileDuckdbAreaSearchIndex } from "./duckdbAreaSearch";
 
 export async function buildDuckdbAreaSearchIndex(root: string) {

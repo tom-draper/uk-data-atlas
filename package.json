@@ -43,7 +43,9 @@
 		"topojson-client": "^3.1.0",
 		"yaml": "^2.9.1",
 		"@uk-data-atlas/search-index": "workspace:*",
-		"@uk-data-atlas/shapefile": "workspace:*"
+		"@uk-data-atlas/shapefile": "workspace:*",
+		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/atlas-runtime": "workspace:*"
 	},
 	"devDependencies": {
 		"@duckdb/node-api": "1.4.5-r.1",

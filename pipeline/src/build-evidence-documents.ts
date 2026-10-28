@@ -1,21 +1,21 @@
 import { build } from "esbuild";
-import { measureCapability } from "../../shared/measureCapability";
+import { measureCapability } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readApiCatalogues } from "../../shared/catalogueLoader";
+import { readApiCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { evidenceInputsHash } from "./evidence/evidenceInputsHash";
 import { buildEvidenceMeasure } from "./evidence/buildEvidenceMeasure";
-import { evidenceReport } from "../../shared/evidenceReports";
+import { evidenceReport } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	writeEvidenceDocument,
 	cachedEvidenceMeasure,
 } from "./evidence/evidenceDocumentStore";
-import { availableReconciliations } from "../../shared/measureReconciliation";
-import { publicJson } from "../../shared/publicJson";
-import type { RouteContext } from "../../shared/routing";
-import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
+import { availableReconciliations } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const apiRoot = apiRootOf(resolve(import.meta.dirname, "../.."));
 const directory = artifactRoot(apiRoot);

@@ -430,7 +430,7 @@ const apiStages = [
 		{
 			outputs: ["data/build/map-resources"],
 			codeInputs: [
-				"shared/mapResource",
+				"packages/atlas-runtime/src/maps/mapResource",
 				"pipeline/src/compileGeometryValidity.ts",
 			],
 		},
@@ -625,7 +625,9 @@ const websiteStages = [
 		["--dir", "../..", "exec", "tsx", "scripts/link-boundary-tiles.ts"],
 		{
 			outputs: ["public/data/boundaries"],
-			codeInputs: ["shared/boundaryResources.ts"],
+			codeInputs: [
+				"packages/atlas-runtime/src/areas/boundaryResources.ts",
+			],
 		},
 	),
 	stage(
@@ -657,7 +659,7 @@ const websiteStages = [
 				"scripts/precompile",
 				"pipeline/src/compile-boundaries.mts",
 				"packages/geography/src/reverseGridOffset.ts",
-				"shared/buildTiming.ts",
+				"packages/atlas-runtime/src/storage/buildTiming.ts",
 				"pipeline/src/compile-boundary-tiles.mts",
 				"scripts/generate-dataset-registry.ts",
 			],

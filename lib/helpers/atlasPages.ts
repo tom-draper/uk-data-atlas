@@ -1,4 +1,4 @@
-import { readAtlasAssetText } from "@/shared/atlasSqlite";
+import { readAtlasAssetText } from "@uk-data-atlas/atlas-runtime/storage";
 
 const reads = new Map<string, Promise<unknown>>();
 

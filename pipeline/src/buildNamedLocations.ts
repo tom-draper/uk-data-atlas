@@ -1,4 +1,4 @@
-import { packNamedLocations } from "../../shared/namedLocationStorage";
+import { packNamedLocations } from "@uk-data-atlas/atlas-runtime/places";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
@@ -8,25 +8,28 @@ import {
 	withCeremonialCounties,
 	withHistoricCounties,
 	type CountyShape,
-} from "../../shared/ceremonialCounties";
-import { compileNamedLocations, membersAt } from "../../shared/namedLocations";
+} from "@uk-data-atlas/atlas-runtime/places";
+import {
+	compileNamedLocations,
+	membersAt,
+} from "@uk-data-atlas/atlas-runtime/places";
 import { releaseMonth } from "@uk-data-atlas/catalogue";
 import { toWgs84Geometry } from "@uk-data-atlas/geography/coordinates";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
-import { createAreaGeometryCache } from "../../shared/geometryLoader";
+import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
-import { createAreaLookup } from "../../shared/createAreaLookup";
-import { readPublicManifest } from "../../shared/publicManifest";
-import { compileNamedLocationGeometry } from "../../shared/namedLocationGeometry";
-import { sha256 } from "../../shared/contentHash";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
+import { compileNamedLocationGeometry } from "@uk-data-atlas/atlas-runtime/places";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	apiRootOf,
 	artifactDirectory,
 	artifactRoot,
-} from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The

@@ -6,10 +6,10 @@ import type {
 	Measure,
 	MeasureSource,
 	SourceGeography,
-} from "../../../shared/dataCatalog";
-import type { MeasureTableArtifact } from "../../../shared/measureTable";
-import { csvFields } from "../../../shared/csv";
-import { countriesFor } from "../../../shared/catalogCountries";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { csvFields } from "@uk-data-atlas/atlas-runtime/storage";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { sha256 } from "./values";
 
 /**

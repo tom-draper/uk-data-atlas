@@ -22,7 +22,7 @@ import {
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
-import { artifactRoot } from "../../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * The published artifact, held to the descriptor that describes it.

@@ -1,11 +1,14 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readAreaAdapters } from "../../shared/areaAdapters";
-import { readAreaSourceAdapters } from "../../shared/areaSourceAdapters";
+import { readAreaAdapters } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaSourceAdapters } from "@uk-data-atlas/atlas-runtime/areas";
 import { compileAreas } from "./areaInventory";
 import { createBoundaryRegistry } from "./build-boundary-registry";
-import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
+import {
+	artifactDirectory,
+	configDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildAreaInventory = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

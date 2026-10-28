@@ -2,7 +2,11 @@ import { join } from "path";
 import { Gazetteer } from "../../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "../../lib/data/gazetteer/types";
 import { loadRoadSafety } from "../../lib/data/road-safety/loader";
-import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
+import {
+	elapsedSince,
+	formatKb,
+	logArtifact,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileStamp,
 	isReleasedSource,

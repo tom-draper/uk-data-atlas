@@ -1,1 +1,1 @@
-export * from "../../../../shared/mapResource/archiveReader";
+export * from "@uk-data-atlas/atlas-runtime/maps";

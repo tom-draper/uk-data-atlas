@@ -2,24 +2,24 @@ import { readFileSync } from "node:fs";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { CrosswalkArtifact } from "../../../shared/crosswalkTypes";
-import type { CrosswalkInventory } from "../../../shared/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	CategoricalObservation,
 	DataCatalog,
 	MeasureSource,
 	PopulationObservation,
-} from "../../../shared/dataCatalog";
-import type { ExportManifest } from "../../../shared/exportManifest";
-import type { GeographyInventory } from "../../../shared/geographyInventory";
-import type { GeometrySourceRegistry } from "../../../shared/geometrySourceRegistry";
-import type { RelationshipCandidateInventory } from "../../../shared/relationshipCandidates";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ExportManifest } from "@uk-data-atlas/atlas-runtime/storage";
+import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	VALIDATION_CHECKS,
 	type ValidationCheckId,
-} from "../../../shared/validationReport";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { sha256 } from "./findings";
 
 export type ValidationWaiver = {

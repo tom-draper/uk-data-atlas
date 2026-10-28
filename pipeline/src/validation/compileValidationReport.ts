@@ -2,7 +2,7 @@ import { canServeAsWgs84 } from "@uk-data-atlas/geography/coordinates";
 import type {
 	ValidationResource,
 	ValidationReport,
-} from "../../../shared/validationReport";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { type Finding, sha256 } from "./findings";
 import type { ValidationWaiver, ValidationInputs } from "./inputs";
 import { atlasFindings } from "./atlasFindings";

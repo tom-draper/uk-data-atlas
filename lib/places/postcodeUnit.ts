@@ -8,7 +8,7 @@
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import proj4 from "proj4";
-import { readAtlasPayload } from "@/shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	DEPRIVATION_INDICES,
 	POSTCODE_GEOGRAPHIES,

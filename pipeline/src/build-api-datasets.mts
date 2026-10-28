@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
-import { artifactDirectory } from "../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Build boundary assets and gazetteer core from raw data. */
 export async function buildDatasets(repositoryRoot: string) {

@@ -17,7 +17,7 @@ import {
 	artifactRoot,
 	buildDirectory,
 	repositoryRootOf,
-} from "../../../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
 
@@ -143,7 +143,8 @@ test("links measures to immutable reports and retires evidence query endpoints",
 });
 
 test("serves geography evidence from SQLite with exact bytes and conditional ETags", async (t) => {
-	const { readAtlasPayload } = await import("../../../../shared/atlasSqlite");
+	const { readAtlasPayload } =
+		await import("@uk-data-atlas/atlas-runtime/storage");
 	const server = createApiServer(readApiCatalogues(apiRoot));
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
 	t.after(() => {

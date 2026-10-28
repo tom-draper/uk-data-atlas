@@ -29,7 +29,7 @@ const createRepository = async () => {
 	for (const file of [
 		"pipeline/src/compile-boundaries.mts",
 		"packages/geography/src/reverseGridOffset.ts",
-		"shared/buildTiming.ts",
+		"packages/atlas-runtime/src/storage/buildTiming.ts",
 		"pipeline/src/compile-boundary-tiles.mts",
 		"scripts/dataset-discovery.ts",
 		"scripts/dataset-region-chunks.mts",

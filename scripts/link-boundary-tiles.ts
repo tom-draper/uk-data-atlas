@@ -15,7 +15,7 @@ import { dirname, join, resolve } from "node:path";
 import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,
-} from "../shared/boundaryResources";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 /** Publish only map resources and properties. Topologies stay private. */
 export async function linkBoundaryTiles(

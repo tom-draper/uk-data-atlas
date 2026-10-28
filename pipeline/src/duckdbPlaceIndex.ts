@@ -1,12 +1,12 @@
 import { DuckDBInstance } from "@duckdb/node-api";
-import type { AreaLookup } from "../../shared/areaInventory";
+import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { NamedLocationInventory } from "../../shared/namedLocationTypes";
+import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import {
 	finishPlaceIndex,
 	preparePlaceIndex,
 	type CompiledPlaceLabel,
-} from "../../shared/placeIndex";
+} from "@uk-data-atlas/atlas-runtime/places";
 
 export async function compileDuckdbPlaceIndex(
 	areaLookup: AreaLookup,

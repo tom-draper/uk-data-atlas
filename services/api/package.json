@@ -48,7 +48,9 @@
 		"yaml": "^2.9.1",
 		"@uk-data-atlas/datasets": "workspace:*",
 		"@uk-data-atlas/search-index": "workspace:*",
-		"@uk-data-atlas/shapefile": "workspace:*"
+		"@uk-data-atlas/shapefile": "workspace:*",
+		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/atlas-runtime": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

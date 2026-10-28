@@ -32,7 +32,7 @@ import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 } from "../src/dataCatalog";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const originalMeasure = dataCatalog.measures.find(
 	(measure) => measure.id === "small-area-fixture",

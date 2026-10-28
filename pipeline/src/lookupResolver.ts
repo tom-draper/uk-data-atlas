@@ -1,12 +1,12 @@
-import { readSqliteAreaInventory } from "../../shared/atlasAreaReader";
-import { readAreaLookup } from "../../shared/areaLookup";
+import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
 	readRelationshipPathInventory,
-} from "../../shared/crosswalkLoader";
-import { createRelationshipPathIndex } from "../../shared/relationshipPaths";
-import { createGeographyResolver } from "../../shared/geographyResolver";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 
 export const readLookupResolver = (apiRoot: string) => {
 	const inventory = readSqliteAreaInventory(apiRoot);

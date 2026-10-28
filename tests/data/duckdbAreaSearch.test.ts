@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert";
 import { it } from "vitest";
-import { createAreaLookup } from "../../shared/createAreaLookup";
-import { compileAreaSearchIndex } from "../../shared/areaSearchCompiler";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import { compileDuckdbAreaSearchIndex } from "../../pipeline/src/duckdbAreaSearch";
 
 it("matches Node postings for duplicates, aliases, accents and release order", async () => {

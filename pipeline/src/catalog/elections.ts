@@ -5,9 +5,9 @@ import type {
 	Measure,
 	PopulationObservation,
 	CategoricalObservation,
-} from "../../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { type PrecompiledFile, sha256, string, number, object } from "./values";
-import { countriesFor } from "../../../shared/catalogCountries";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { CatalogManifest } from "./manifest";
 
 type ElectionMeasureField =

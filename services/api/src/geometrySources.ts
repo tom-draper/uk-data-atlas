@@ -1,1 +1,1 @@
-export * from "../../../shared/geometrySources";
+export * from "@uk-data-atlas/atlas-runtime/geometry";

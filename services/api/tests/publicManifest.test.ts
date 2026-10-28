@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
 import { readPublicManifest } from "../src/publicManifest";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 type Fixture = { schemaVersion: 1; entries: string[] };
 

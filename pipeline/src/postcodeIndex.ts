@@ -1,5 +1,5 @@
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	COUNTRY_CODES,
 	NORTHERN_IRELAND_EXCLUSION,

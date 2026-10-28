@@ -1,22 +1,25 @@
-import { createGeographyResolver } from "../shared/geographyResolver";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "../shared/crosswalkLoader";
-import { compileLocationProjections } from "../shared/locationProjections";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { compileLocationProjections } from "@uk-data-atlas/atlas-runtime/places";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { NamedLocationInventory } from "../shared/namedLocations";
-import { createNamedLocationLookup } from "../shared/namedLocations";
-import { readNamedLocationInventory } from "../shared/locationLoader";
-import { readAreaInventory, readAreaLookup } from "../shared/boundaryLoader";
-import { compilePlaceIndex } from "../shared/placeIndex";
-import { namedLocationMembersTable } from "../shared/lookupExports";
+import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import { createNamedLocationLookup } from "@uk-data-atlas/atlas-runtime/places";
+import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import {
+	readAreaInventory,
+	readAreaLookup,
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { namedLocationMembersTable } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf, artifactRoot } from "../shared/dataLayout";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

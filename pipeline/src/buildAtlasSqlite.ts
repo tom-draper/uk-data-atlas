@@ -1,20 +1,23 @@
-import { catalogueObservationTables } from "../../shared/catalogueObservationTables";
-import { publishAtlasCache } from "../../shared/atlasCache";
-import { writeSqliteIndex, writeSqliteTables } from "../../shared/sqliteIndex";
+import { catalogueObservationTables } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { publishAtlasCache } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	writeSqliteIndex,
+	writeSqliteTables,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	locationProjectionTables,
 	type LocationProjectionInventory,
 	type LocationProjectionArtifact,
 	type LocationParentProjectionArtifact,
-} from "../../shared/locationProjections";
-import { readStoredText } from "../../shared/storedText";
-import { namedLocationTables } from "../../shared/atlasNamedLocations";
-import { crosswalkTables } from "../../shared/atlasCrosswalks";
-import { areaTables } from "../../shared/atlasAreas";
+} from "@uk-data-atlas/atlas-runtime/places";
+import { readStoredText } from "@uk-data-atlas/artifacts";
+import { namedLocationTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { crosswalkTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { artifactDirectory } from "../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildAtlasSqlite = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "data/build");

@@ -19,7 +19,7 @@ import {
 } from "../src/crosswalkLoader";
 import { writeSqliteIndex } from "../src/sqliteIndex";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("relational crosswalk rows preserve endpoint order, zero weights and empty targets", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-crosswalks-"));

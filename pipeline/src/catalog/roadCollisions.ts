@@ -1,5 +1,5 @@
 import { type DatasetInput, readDatasetInput } from "./input";
-import { countryForCode } from "../../../shared/catalogCountries";
+import { countryForCode } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { type Indicator, publishIndicators } from "./indicators";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 import { sha256 } from "./values";

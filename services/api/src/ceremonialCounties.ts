@@ -1,1 +1,1 @@
-export * from "../../../shared/ceremonialCounties";
+export * from "@uk-data-atlas/atlas-runtime/places";

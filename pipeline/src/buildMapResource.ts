@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	existsSync,
 	mkdirSync,
@@ -10,17 +10,20 @@ import {
 import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { AreaGeometryCache } from "../../shared/areaGeometry";
+import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { compileFlatDownloads } from "./flatDownloads";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "../../shared/geometrySources";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { roundKeepingValidity } from "./compileGeometryValidity";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
 } from "./compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compile every boundary release into a map resource: its tiles, and each
@@ -50,20 +53,20 @@ const sourceFiles = (directory: string) =>
  * to any of it rebuilds every release.
  */
 const COMPILER_SOURCES = [
-	...sourceFiles("../../shared/mapResource"),
+	...sourceFiles("../../packages/atlas-runtime/src/maps/mapResource"),
 	// The tiler, shared with the website's precompile.
 	...sourceFiles("../../packages/map-tiles/src"),
-	"../../shared/parquet.ts",
+	"../../packages/artifacts/src/parquet.ts",
 	"../../pipeline/src/flatDownloads.ts",
 	"../../pipeline/src/compileMapResource.ts",
 	"../../pipeline/src/buildMapResource.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
 	"../../pipeline/src/compileGeometryValidity.ts",
-	"../../shared/areaGeometry.ts",
-	"../../shared/geoJsonProperties.ts",
-	"../../shared/geometrySubstitution.ts",
-	"../../shared/gridOffset.ts",
+	"../../packages/atlas-runtime/src/geometry/areaGeometry.ts",
+	"../../packages/atlas-runtime/src/areas/geoJsonProperties.ts",
+	"../../packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
+	"../../packages/atlas-runtime/src/geometry/gridOffset.ts",
 	"../../packages/geography/src/packedGeometry.ts",
 	"../../packages/geography/src/coordinates/reprojection.ts",
 	"../../packages/geography/src/geometryPointContainment.ts",

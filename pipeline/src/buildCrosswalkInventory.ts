@@ -14,7 +14,7 @@ import {
 	type PopulationOverlapCrosswalkAdapter,
 	type PropertyCrosswalkAdapter,
 	type ExtentContinuityCrosswalkAdapter,
-} from "../../shared/crosswalkAdapters";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	compileCrosswalks,
 	crosswalkInventoryEntry,
@@ -29,22 +29,22 @@ import {
 import {
 	CONTAINMENT_TOLERANCE_M,
 	geometryContainmentInputs,
-} from "../../shared/crosswalkGeometryValidation";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { DIFFERENCE_RULE, REALIGNED_SHARE } from "./extentContinuity";
 import {
 	addRelatedCodes,
 	releaseCoverageOf,
 	type RelatedCodesByRelease,
-} from "../../shared/relatedCodes";
-import { readGeometrySourceLookup } from "../../shared/geometrySources";
-import { sha256 } from "../../shared/contentHash";
-import { BOUNDED_CLIPPING_VERSION } from "../../shared/boundedClipping";
-import { readStoredText, storedTextExists } from "../../shared/storedText";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { sha256 } from "@uk-data-atlas/artifacts";
+import { BOUNDED_CLIPPING_VERSION } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
 	apiRootOf,
 	artifactDirectory,
 	configDirectory,
-} from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 type GeometryCrosswalkAdapter =
 	| AreaOverlapCrosswalkAdapter

@@ -1,19 +1,19 @@
 import { existsSync, readFileSync } from "node:fs";
-import { readGeoJsonProperties } from "../../shared/geoJsonProperties";
+import { readGeoJsonProperties } from "@uk-data-atlas/atlas-runtime/areas";
 import { sourceGeoJsonPath } from "./boundarySourcePaths";
 import { join } from "node:path";
 import type {
 	AreaAdapterManifest,
 	AreaPropertyAdapter,
-} from "../../shared/areaAdapters";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type {
 	AreaSourceAdapter,
 	AreaSourceAdapterManifest,
-} from "../../shared/areaSourceAdapters";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -29,12 +29,12 @@ import type {
 	AreaRecord,
 	AreaReleaseArtifact,
 	AreaInventory,
-} from "../../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 export type {
 	AreaRecord,
 	AreaReleaseArtifact,
 	AreaInventory,
-} from "../../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 export type CompiledAreas = {
 	inventory: AreaInventory;

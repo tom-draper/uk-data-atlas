@@ -103,7 +103,9 @@ export function stageCodeFiles(root, stage, files) {
 	const inputs = Object.keys(metafile.inputs).map((path) =>
 		relative(root, resolve(root, path)).replaceAll("\\", "/"),
 	);
-	const runtimeInputs = inputs.includes("shared/catalogueLoader.ts")
+	const runtimeInputs = inputs.includes(
+		"packages/atlas-runtime/src/catalogue/catalogueLoader.ts",
+	)
 		? ["services/api/openapi.yaml"]
 		: [];
 	for (const input of inputs)

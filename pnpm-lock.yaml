@@ -171,6 +171,12 @@ importers:
 
   .:
     dependencies:
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:packages/artifacts
+      '@uk-data-atlas/atlas-runtime':
+        specifier: workspace:*
+        version: link:packages/atlas-runtime
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:packages/catalogue
@@ -306,6 +312,49 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  packages/artifacts:
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  packages/atlas-runtime:
+    dependencies:
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+      '@uk-data-atlas/catalogue':
+        specifier: workspace:*
+        version: link:../catalogue
+      '@uk-data-atlas/datasets':
+        specifier: workspace:*
+        version: link:../datasets
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../geography
+      '@uk-data-atlas/map-tiles':
+        specifier: workspace:*
+        version: link:../map-tiles
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:../search-index
+      '@uk-data-atlas/shapefile':
+        specifier: workspace:*
+        version: link:../shapefile
+      polygon-clipping:
+        specifier: 0.15.7
+        version: 0.15.7
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   packages/catalogue:
     dependencies:
       '@noble/hashes':
@@ -394,6 +443,12 @@ importers:
       '@duckdb/node-api':
         specifier: 1.4.5-r.1
         version: 1.4.5-r.1
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../packages/artifacts
+      '@uk-data-atlas/atlas-runtime':
+        specifier: workspace:*
+        version: link:../packages/atlas-runtime
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../packages/catalogue
@@ -458,6 +513,12 @@ importers:
 
   services/api:
     dependencies:
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../../packages/artifacts
+      '@uk-data-atlas/atlas-runtime':
+        specifier: workspace:*
+        version: link:../../packages/atlas-runtime
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../../packages/catalogue

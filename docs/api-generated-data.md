@@ -33,7 +33,7 @@ Search uses the area inventory; place search also uses named locations and the
 boundary registry; projections use areas, named locations and crosswalks; counts
 use the postcode and postcode-area inventories. Readers reject missing or stale
 components with the command above. Unrelated observation updates do not invalidate
-search. Compiler changes must increment `CACHE_VERSION` in `shared/atlasCache.ts`.
+search. Compiler changes must increment `CACHE_VERSION` in `packages/atlas-runtime/src/storage/atlasCache.ts`.
 
 Publish and download only `atlas.sqlite`. Never archive, release, or copy
 `atlas-cache.sqlite` into an image or distribution. The source-data release script

@@ -1,8 +1,11 @@
 import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,
-} from "../shared/boundaryResources";
-import { readAtlasAssetText, readAtlasPayload } from "../shared/atlasSqlite";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	readAtlasAssetText,
+	readAtlasPayload,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { ATLAS_LOOKUP_NAMES } from "./atlas-lookups";
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";

@@ -1,1 +1,1 @@
-export * from "../../../shared/crosswalkLoader";
+export * from "@uk-data-atlas/atlas-runtime/relationships";

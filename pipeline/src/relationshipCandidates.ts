@@ -6,11 +6,11 @@ import {
 	readSync,
 } from "node:fs";
 import { join } from "node:path";
-import { readGeoJsonProperties } from "../../shared/geoJsonProperties";
+import { readGeoJsonProperties } from "@uk-data-atlas/atlas-runtime/areas";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
-import type { AreaReleaseArtifact } from "../../shared/areaInventory";
-import { sha256 } from "../../shared/contentHash";
-import type { PropertyCrosswalkAdapter } from "../../shared/crosswalkAdapters";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
+import { sha256 } from "@uk-data-atlas/artifacts";
+import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -27,7 +27,7 @@ import type {
 	RelationshipCandidate,
 	RelationshipCandidateInventory,
 	PublishedRelationship,
-} from "../../shared/relationshipCandidates";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

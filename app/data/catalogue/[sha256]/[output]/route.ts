@@ -1,6 +1,6 @@
 import { promisify } from "node:util";
 import { gzip as gzipCallback } from "node:zlib";
-import { readVersionedAtlasDataset } from "@/shared/atlasSqlite";
+import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const runtime = "nodejs";
 

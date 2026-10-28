@@ -1,1 +1,1 @@
-export * from "../../../shared/batchValidation";
+export * from "@uk-data-atlas/atlas-runtime/api";

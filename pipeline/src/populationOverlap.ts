@@ -2,8 +2,8 @@ import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatia
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MultiPolygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "../../shared/areaGeometry";
-import type { AreaLookup } from "../../shared/areaInventory";
+import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	type AreaGeometry,
 	areaMultiPolygon,
@@ -12,21 +12,21 @@ import {
 } from "@uk-data-atlas/geography/area-geometry-pieces";
 import { labelsFor, round } from "./areaOverlap";
 import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
-import { readGeometries } from "../../shared/rawAreaGeometries";
+import { readGeometries } from "@uk-data-atlas/atlas-runtime/areas";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import {
 	BoundedClipper,
 	BOUNDED_CLIPPING_VERSION,
 	type ClipOperand,
-} from "../../shared/boundedClipping";
-import { csvFields } from "../../shared/csv";
-import type { PopulationOverlapCrosswalkAdapter } from "../../shared/crosswalkAdapters";
+} from "@uk-data-atlas/atlas-runtime/geometry";
+import { csvFields } from "@uk-data-atlas/atlas-runtime/storage";
+import type { PopulationOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	CrosswalkArtifact,
 	PopulationOverlapCrosswalkArtifact,
-} from "../../shared/crosswalkTypes";
-import { validateEndpoint } from "../../shared/crosswalkValidation";
-import { sha256 } from "../../shared/contentHash";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { validateEndpoint } from "@uk-data-atlas/atlas-runtime/relationships";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 // About a millimetre, for a retry when polygon-clipping's sweep line fails.
 const RETRY_PRECISION = 1e8;

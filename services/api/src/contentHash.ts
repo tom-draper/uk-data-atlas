@@ -1,1 +1,1 @@
-export { sha256 } from "../../../shared/contentHash";
+export { sha256 } from "@uk-data-atlas/artifacts";

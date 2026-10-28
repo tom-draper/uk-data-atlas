@@ -1,14 +1,14 @@
-import type { AreaInventory } from "../../shared/areaInventory";
+import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { SourceInventory } from "./sourceInventory";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 import type {
 	GeographyRelationship,
 	GeographyInventory,
-} from "../../shared/geographyInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

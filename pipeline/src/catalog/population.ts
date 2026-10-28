@@ -4,9 +4,9 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "../../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { type PrecompiledFile, sha256, number, object } from "./values";
-import { countriesFor } from "../../../shared/catalogCountries";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const recordsFromData = (
 	data: Record<string, unknown>,

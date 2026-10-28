@@ -1,9 +1,9 @@
 import { type DatasetInput, readDatasetInput } from "./input";
-import type { Measure } from "../../../shared/dataCatalog";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	isPublishedAreaCode,
 	countriesFor,
-} from "../../../shared/catalogCountries";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { type PrecompiledFile, sha256, number, object } from "./values";
 
 /**

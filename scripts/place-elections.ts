@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { join } from "node:path";
 import { decodeCompactPayload } from "../lib/data/compactPayload";
 import {

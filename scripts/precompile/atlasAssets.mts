@@ -6,7 +6,11 @@ import {
 } from "@uk-data-atlas/geography";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { loadMatchIndex } from "../../lib/data/gazetteer/matchIndex";
-import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
+import {
+	elapsedSince,
+	formatKb,
+	logArtifact,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileSnapshots,
 	sameFileSnapshots,

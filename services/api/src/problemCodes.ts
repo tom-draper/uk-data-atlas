@@ -1,1 +1,1 @@
-export * from "../../../shared/problemCodes";
+export * from "@uk-data-atlas/atlas-runtime/api";

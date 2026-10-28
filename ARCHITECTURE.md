@@ -26,7 +26,8 @@ packages/geography/     shared geography code: lineage, containment file
                         formats, geometry substitutions, grid offsets
 packages/catalogue/     shared catalogue code: the register of corrections
 packages/datasets/      browser-safe dataset definitions and compilers
-shared/                 server-only readers of the compiled release
+packages/atlas-runtime/ server-only atlas data and API modules
+packages/artifacts/     artifact storage, hashing and file formats
 packages/map-tiles/     the boundary tiler: shared-arc generalisation and
                         PMTiles archives, for the API and the website data build
 services/api/           the API: src/, scripts/, config/, openapi.yaml
@@ -88,7 +89,7 @@ has relational catalogue observation rows. The Next.js versioned reader
 reconstructs its original JSON from those rows; other datasets still read the
 stored payload. The API catalogue
 compiler and atlas pages read it directly through the server-only reader in
-`shared/atlasSqlite.ts`. The `api-datasets` stage only builds
+`packages/atlas-runtime/src/storage/atlasSqlite.ts`. The `api-datasets` stage only builds
 gazetteer core and boundary assets under `data/build/artifacts/source-data/`.
 Named locations consume that gazetteer. The Next.js server also reads SQLite
 and passes dataset URLs containing their payload SHA-256 to the browser. Its
@@ -127,7 +128,7 @@ parameters and what they return.
 
 ```text
 pipeline/ ──────────┐
-website ────────────┼──► packages/* and shared/
+website ────────────┼──► packages/*
 services/api ───────┘
 ```
 
@@ -145,12 +146,11 @@ services/api ───────┘
   Nothing depends on them, and they import no project code.
 - Other generated API files remain under `data/build/artifacts/` for now. They
   sit beside `atlas.sqlite` so the pipeline writes only under `data/build/`, and
-  `shared/dataLayout.ts` is the one place that knows the location.
-- A package holds code only. It reads no files and is safe to
-  bundle into a browser: each consumer loads its own data and passes it in.
-  Its tsconfig excludes Node types and the atlas's `@/` aliases, and
-  `tests/packages/packageImports.test.ts` rejects any import its
-  `package.json` does not declare.
+  `packages/atlas-runtime/src/storage/dataLayout.ts` is the one place that knows the location.
+- Browser-safe packages keep Node imports out of their browser entry points.
+  `packages/atlas-runtime`, `packages/artifacts` and `packages/shapefile` are
+  Node packages and may read files. Package boundary tests check that imports
+  stay within each package or its declared dependencies.
 
 Import a package by name (`@uk-data-atlas/geography`), never by a relative
 path. Packages ship TypeScript source: Turbopack and `tsx` both compile it, so

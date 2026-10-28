@@ -2,4 +2,4 @@ export {
 	readAreaAdapters,
 	type AreaPropertyAdapter,
 	type AreaAdapterManifest,
-} from "../../../shared/areaAdapters";
+} from "@uk-data-atlas/atlas-runtime/areas";

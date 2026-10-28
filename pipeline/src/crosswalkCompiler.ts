@@ -1,8 +1,8 @@
-import { RawGeometryCache } from "../../shared/rawAreaGeometries";
+import { RawGeometryCache } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
-import type { ReleaseCoverage } from "../../shared/relatedCodes";
+import type { ReleaseCoverage } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	compileBestFitCrosswalk,
 	compileGeometricContainmentCrosswalk,
@@ -12,11 +12,11 @@ import { compileExtentContinuityCrosswalk } from "./extentContinuity";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "../../shared/areaGeometry";
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	validateGeometryContainment,
 	type GeometryContainmentValidation,
-} from "../../shared/crosswalkGeometryValidation";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AreaOverlapWeighting,
 	BestFitCrosswalkAdapter,
@@ -31,22 +31,22 @@ import type {
 	PopulationOverlapWeighting,
 	PropertyCrosswalkAdapter,
 	ExtentContinuityCrosswalkAdapter,
-} from "../../shared/crosswalkAdapters";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	validateEndpoint,
 	type CrosswalkEndpointValidation,
-} from "../../shared/crosswalkValidation";
-import type { AreaLookup } from "../../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 export type {
 	CrosswalkMethod,
 	CrosswalkQuality,
 	CrosswalkWeighting,
-} from "../../shared/crosswalkAdapters";
-export type { CrosswalkEndpointValidation } from "../../shared/crosswalkValidation";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+export type { CrosswalkEndpointValidation } from "@uk-data-atlas/atlas-runtime/relationships";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -71,7 +71,7 @@ import type {
 	BestFitValidation,
 	BestFitCrosswalkArtifact,
 	CrosswalkArtifact,
-} from "../../shared/crosswalkTypes";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 export type {
 	CrosswalkArea,
 	AreaOverlapSource,
@@ -90,7 +90,7 @@ export type {
 	BestFitValidation,
 	BestFitCrosswalkArtifact,
 	CrosswalkArtifact,
-} from "../../shared/crosswalkTypes";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 
 const CHANGE_INDICATORS: Record<string, CrosswalkChange> = {
 	U: "unchanged",
@@ -99,8 +99,8 @@ const CHANGE_INDICATORS: Record<string, CrosswalkChange> = {
 	X: "complex",
 };
 
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
-export type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+export type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 
 const stringValue = (value: unknown, description: string): string => {
 	if (typeof value !== "string" || value.trim().length === 0) {

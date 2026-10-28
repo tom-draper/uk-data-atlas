@@ -10,9 +10,12 @@ import { fileURLToPath } from "node:url";
 import {
 	readAreaSourceAdapters,
 	type AreaSourceAdapterManifest,
-} from "../../shared/areaSourceAdapters";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { sourceGeoJsonPath } from "./boundarySourcePaths";
-import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
+import {
+	artifactDirectory,
+	configDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 type FeatureCollection = {
 	type?: unknown;

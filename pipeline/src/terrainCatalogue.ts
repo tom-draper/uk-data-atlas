@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type {
 	TerrainCatalogue,
 	TerrainProduct,
-} from "../../shared/terrainCatalogue";
+} from "@uk-data-atlas/atlas-runtime/maps";
 
 /**
  * The metadata that makes a terrain value reproducible instead of merely

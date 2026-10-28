@@ -20,7 +20,7 @@ import type {
 	DataCatalog,
 } from "../src/dataCatalog";
 import type { MeasureTableArtifact } from "../src/observationTables";
-import { artifactDirectory } from "../../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const analysisGeographies: AnalysisGeographyInventory = {
 	schemaVersion: 1,

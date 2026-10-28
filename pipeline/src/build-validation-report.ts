@@ -1,32 +1,32 @@
 import {
 	observationDatabasePath,
 	assertObservationCatalogue,
-} from "../../shared/atlasObservations";
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { CrosswalkArtifact } from "../../shared/crosswalkTypes";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
-import type { DataCatalog } from "../../shared/dataCatalog";
-import type { ExportManifest } from "../../shared/exportManifest";
-import type { GeographyInventory } from "../../shared/geographyInventory";
-import type { GeometrySourceRegistry } from "../../shared/geometrySourceRegistry";
-import type { RelationshipCandidateInventory } from "../../shared/relationshipCandidates";
-import { readSourceObservations } from "../../shared/observationTables";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ExportManifest } from "@uk-data-atlas/atlas-runtime/storage";
+import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import { readSourceObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileValidationReport } from "./validation/compileValidationReport";
 import { readMeasureTotals, readValidationWaivers } from "./validation/inputs";
-import { readStoredText, storedTextExists } from "../../shared/storedText";
+import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
 	apiRootOf,
 	artifactDirectory,
 	configDirectory,
-} from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

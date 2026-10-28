@@ -1,13 +1,16 @@
 import {
 	observationDatabasePath,
 	assertObservationCatalogue,
-} from "../../shared/atlasObservations";
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { DataCatalog } from "../../shared/dataCatalog";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileExportManifest } from "./exportManifest";
-import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildExportManifest = (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);

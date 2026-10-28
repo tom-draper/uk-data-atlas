@@ -1,0 +1,336 @@
+import type { AreaRecord } from "../../areas/areaInventory";
+import type {
+	AreaGeometryCache,
+	AreaGeometryCacheStats,
+	GeoJsonGeometry,
+	IntersectingArea,
+} from "../../geometry/areaGeometry";
+import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
+import type { Neighbour } from "../../areas/areaNeighbours";
+import type {
+	GeometryBounds,
+	PointContainment,
+} from "@uk-data-atlas/geography/geometry-point-containment";
+import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
+import { areaId, type AreaIdentity } from "./areas";
+
+export type ResolvedContainingArea = AreaRecord & {
+	id: string;
+	containment: PointContainment;
+	distanceToBoundaryM: number;
+	geometrySource: GeometryProvenance;
+};
+export type ResolvedNearbyArea = AreaRecord & {
+	id: string;
+	distanceM: number;
+	geometrySource: GeometryProvenance;
+};
+export type ResolvedNearbyAreas = {
+	matched: number;
+	nearest: ResolvedNearbyArea[];
+};
+export type ResolvedAreaGeometry = AreaRecord & {
+	id: string;
+	geometry: GeoJsonGeometry;
+	geometrySource: GeometryProvenance;
+};
+export type ResolvedGeometry = {
+	geometry: GeoJsonGeometry;
+	geometrySource: GeometryProvenance;
+};
+export type ResolvedIntersectingArea = AreaRecord & {
+	id: string;
+	relation: IntersectingArea["relation"];
+	boundingBox: GeometryBounds;
+	geometry?: GeoJsonGeometry;
+	geometrySource: GeometryProvenance;
+};
+export type ResolvedIntersectingAreas = {
+	matched: number;
+	/** Whether matches remain after this page. */
+	more: boolean;
+	matches: ResolvedIntersectingArea[];
+};
+export type ResolvedAreaNeighbour = Neighbour & {
+	id: string;
+	area?: AreaRecord;
+};
+export type ResolvedAreaNeighbours = {
+	geometry: GeoJsonGeometry;
+	neighbours: ResolvedAreaNeighbour[];
+};
+
+/** Geometry queries and provenance over a compiled geometry cache. */
+export class SpatialResolver {
+	constructor(
+		private readonly cache: AreaGeometryCache | undefined,
+		private readonly area: (
+			identity: AreaIdentity,
+		) => AreaRecord | undefined,
+	) {}
+
+	hasAreaGeometryCache(): boolean {
+		return this.cache !== undefined;
+	}
+	geometryCacheStats(): AreaGeometryCacheStats | undefined {
+		return this.cache?.stats();
+	}
+	warmGeometryReleases(releases: Iterable<readonly [string, string]>): void {
+		this.cache?.warm(releases);
+	}
+
+	geometryFor(identity: AreaIdentity): ResolvedGeometry | undefined {
+		const geometry = this.cache?.get(
+			identity.geography,
+			identity.boundaryRelease,
+			identity.code,
+		);
+		return geometry && this.cache
+			? {
+					geometry,
+					geometrySource: this.cache.provenance(
+						identity.geography,
+						identity.boundaryRelease,
+						identity.code,
+					),
+				}
+			: undefined;
+	}
+
+	areaGeometry(identity: AreaIdentity): ResolvedAreaGeometry | undefined {
+		const area = this.area(identity);
+		const resolved = this.geometryFor(identity);
+		return area && resolved
+			? { id: areaId(identity), ...area, ...resolved }
+			: undefined;
+	}
+
+	areaNeighbours(identity: AreaIdentity): ResolvedAreaNeighbours | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		const neighbours = cache.findNeighbours(
+			identity.geography,
+			identity.boundaryRelease,
+			identity.code,
+		);
+		const geometry = cache.get(
+			identity.geography,
+			identity.boundaryRelease,
+			identity.code,
+		);
+		if (!neighbours || !geometry) return undefined;
+		return {
+			geometry,
+			neighbours: neighbours.map((neighbour) => ({
+				...neighbour,
+				id: areaId({
+					geography: identity.geography,
+					boundaryRelease: identity.boundaryRelease,
+					code: neighbour.code,
+				}),
+				area: this.area({
+					geography: identity.geography,
+					boundaryRelease: identity.boundaryRelease,
+					code: neighbour.code,
+				}),
+			})),
+		};
+	}
+
+	/**
+	 * The codes of the areas containing a point, for a caller that needs no
+	 * more than which areas those are. `containingAreas` also measures the
+	 * point's distance to each boundary, which for a country's coastline is
+	 * tens of milliseconds a lookup.
+	 */
+	containingCodes(
+		geography: string,
+		boundaryRelease: string,
+		point: [number, number],
+	): string[] | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		return cache
+			.findContaining(geography, boundaryRelease, point)
+			.filter(
+				({ code }) =>
+					this.area({ geography, boundaryRelease, code }) &&
+					cache.get(geography, boundaryRelease, code),
+			)
+			.map(({ code }) => code);
+	}
+
+	containingAreas(
+		geography: string,
+		boundaryRelease: string,
+		point: [number, number],
+	): ResolvedContainingArea[] | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		return cache
+			.findContaining(geography, boundaryRelease, point)
+			.flatMap(({ code, containment }) => {
+				const area = this.area({ geography, boundaryRelease, code });
+				const geometry = cache.get(geography, boundaryRelease, code);
+				return area && geometry
+					? [
+							{
+								id: areaId({
+									geography,
+									boundaryRelease,
+									code,
+								}),
+								...area,
+								containment,
+								distanceToBoundaryM: distanceToBoundaryM(
+									point,
+									geometry,
+								),
+								geometrySource: cache.provenance(
+									geography,
+									boundaryRelease,
+									code,
+								),
+							},
+						]
+					: [];
+			});
+	}
+
+	/**
+	 * Areas already found to contain a point, as `containingAreas` describes
+	 * them. Undefined without a geometry cache, whose provenance they carry.
+	 */
+	resolvePlacedAreas(
+		geography: string,
+		boundaryRelease: string,
+		placed: Array<{
+			code: string;
+			containment: PointContainment;
+			distanceToBoundaryM: number;
+		}>,
+	): ResolvedContainingArea[] | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		return placed.flatMap(({ code, containment, distanceToBoundaryM }) => {
+			const area = this.area({ geography, boundaryRelease, code });
+			return area
+				? [
+						{
+							id: areaId({ geography, boundaryRelease, code }),
+							...area,
+							containment,
+							distanceToBoundaryM,
+							geometrySource: cache.provenance(
+								geography,
+								boundaryRelease,
+								code,
+							),
+						},
+					]
+				: [];
+		});
+	}
+
+	nearestAreas(
+		geography: string,
+		boundaryRelease: string,
+		point: [number, number],
+		{ withinM, limit }: { withinM: number; limit: number },
+	): ResolvedNearbyAreas | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		const found = cache
+			.findNearest(geography, boundaryRelease, point, withinM)
+			.flatMap(({ code, distanceM }) => {
+				const area = this.area({ geography, boundaryRelease, code });
+				return area ? [{ code, area, distanceM }] : [];
+			});
+		return {
+			matched: found.length,
+			nearest: found.slice(0, limit).map(({ code, area, distanceM }) => ({
+				id: areaId({ geography, boundaryRelease, code }),
+				...area,
+				distanceM,
+				geometrySource: cache.provenance(
+					geography,
+					boundaryRelease,
+					code,
+				),
+			})),
+		};
+	}
+
+	releaseGeometrySource(
+		geography: string,
+		boundaryRelease: string,
+	): GeometryProvenance | undefined {
+		return this.cache?.provenance(geography, boundaryRelease);
+	}
+
+	intersectingAreas(
+		geography: string,
+		boundaryRelease: string,
+		box: GeometryBounds,
+		limit = Infinity,
+		includeGeometry = true,
+		/** Resume after this code: matches come in code order. */
+		after?: string,
+	): ResolvedIntersectingAreas | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		const found = cache.findIntersecting(geography, boundaryRelease, box);
+		const start =
+			after === undefined
+				? 0
+				: found.findIndex(({ code }) => code.localeCompare(after) > 0);
+		// Only the page is described: a wide box can meet tens of thousands of
+		// areas, and each description reads the area's identity and source.
+		const page = start === -1 ? [] : found.slice(start, start + limit + 1);
+		const matches = page
+			.flatMap(({ code, relation, bounds }) => {
+				const area = this.area({ geography, boundaryRelease, code });
+				return area
+					? [
+							{
+								id: areaId({
+									geography,
+									boundaryRelease,
+									code,
+								}),
+								...area,
+								relation,
+								boundingBox: bounds,
+								geometrySource: cache.provenance(
+									geography,
+									boundaryRelease,
+									code,
+								),
+							},
+						]
+					: [];
+			})
+			.slice(0, limit);
+		return {
+			matched: found.length,
+			more: page.length > limit,
+			matches: includeGeometry
+				? matches.flatMap((match) => {
+						const geometry = cache.get(
+							geography,
+							boundaryRelease,
+							match.code,
+						);
+						return geometry
+							? [
+									{
+										...match,
+										geometry,
+									},
+								]
+							: [];
+					})
+				: matches,
+		};
+	}
+}

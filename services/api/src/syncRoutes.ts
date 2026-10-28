@@ -1,1 +1,1 @@
-export * from "../../../shared/syncRoutes";
+export * from "@uk-data-atlas/atlas-runtime/api";

@@ -4,12 +4,12 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "../../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	APRIL_2023_LAD_MERGERS,
 	APRIL_2020_2021_LAD_MERGERS,
 } from "./authorityChanges";
-import { countriesFor } from "../../../shared/catalogCountries";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { CatalogManifest } from "./manifest";
 import { sha256 } from "./values";
 

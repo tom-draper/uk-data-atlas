@@ -2,19 +2,19 @@ import {
 	apiRootOf,
 	artifactDirectory,
 	configDirectory,
-} from "../../shared/dataLayout";
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory } from "../../shared/areaInventory";
+import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { GeometricContainmentCrosswalkAdapter } from "../../shared/crosswalkAdapters";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import type { GeometricContainmentCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { isGeographyKind } from "@uk-data-atlas/geography";
-import type { readGeometries as readGeometriesForCache } from "../../shared/rawAreaGeometries";
+import type { readGeometries as readGeometriesForCache } from "@uk-data-atlas/atlas-runtime/areas";
 import { measureContainment } from "./geometricContainment";
-import { readGeometrySourceLookup } from "../../shared/geometrySources";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 
 // The sliver width the area-overlap crosswalks use, so every method here
 // agrees on what counts as two borders generalised apart.

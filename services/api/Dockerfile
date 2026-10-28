@@ -5,7 +5,6 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/ packages/
 COPY services/api/package.json services/api/package.json
 RUN pnpm install --filter @uk-data-atlas/api... --frozen-lockfile
-COPY shared/ shared/
 COPY services/api/src/ services/api/src/
 COPY services/api/scripts/ services/api/scripts/
 RUN pnpm --dir services/api build

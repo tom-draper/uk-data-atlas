@@ -2,4 +2,4 @@ export type {
 	RelationshipCandidate,
 	RelationshipCandidateInventory,
 	PublishedRelationship,
-} from "../../../shared/relationshipCandidates";
+} from "@uk-data-atlas/atlas-runtime/relationships";

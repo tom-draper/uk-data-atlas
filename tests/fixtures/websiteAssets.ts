@@ -6,7 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { ATLAS_LOOKUP_NAMES } from "@/scripts/atlas-lookups";
 import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
-import type { AtlasAssetKind } from "@/shared/atlasSqlite";
+import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
 
 export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
 	const root = mkdtempSync(join(tmpdir(), "website-assets-"));

@@ -1,4 +1,4 @@
-import type { Measure } from "../../../shared/dataCatalog";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { measureSlug } from "@uk-data-atlas/catalogue";
 
 /**

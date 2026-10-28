@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "../../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import {
 	compilePlaceFacts,
@@ -33,7 +33,7 @@ import {
 	type PlaceIndex,
 	type TimelineEvent,
 } from "@uk-data-atlas/catalogue/place-profile";
-import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const API_ROOT = apiRootOf(ROOT);

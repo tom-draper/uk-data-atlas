@@ -3,11 +3,11 @@ import { rmSync } from "node:fs";
 import {
 	compileAreaSearchIndex,
 	areaSearchIndexTables,
-} from "../../../../shared/areaSearchCompiler";
-import { readSqliteAreaInventory } from "../../../../shared/atlasAreaReader";
-import { readAreaLookup } from "../../../../shared/areaLookup";
-import { publishCacheTables } from "../../../../shared/atlasCache";
-import { apiRootOf, artifactRoot } from "../../../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { publishCacheTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildAreaSearchIndex = (repositoryRoot: string) => {
 	const apiRoot = apiRootOf(repositoryRoot);

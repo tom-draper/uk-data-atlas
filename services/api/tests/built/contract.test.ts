@@ -4,7 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { readAtlasPayload } from "../../../../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { httpResponse } from "../../src/httpResponse";
 import { CAPABILITY_STATUSES } from "../../src/capability";
 import { CONVERSION_METHODS } from "../../src/conversion";
@@ -24,7 +24,7 @@ import {
 	type Schema,
 	type SchemaDocument,
 } from "../openapiSchema";
-import { artifactRoot } from "../../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * The API index, the OpenAPI paths and the README's endpoint list are three

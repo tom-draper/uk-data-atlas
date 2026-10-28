@@ -268,7 +268,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
 	for (const path of [
 		"pipeline/src/build-derived-boundaries.ts",
-		"shared/areaSourceAdapters.ts",
+		"packages/atlas-runtime/src/areas/areaSourceAdapters.ts",
 		"pipeline/src/boundarySourcePaths.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
@@ -283,7 +283,7 @@ test("production builders resolve without UI code and include declared workers a
 		for (const path of [
 			`pipeline/src/build-${stage}.ts`,
 			`pipeline/src/${compiler}.ts`,
-			"shared/contentHash.ts",
+			"packages/artifacts/src/contentHash.ts",
 			"pipeline/package.json",
 			"pipeline/tsconfig.json",
 		])
@@ -291,17 +291,17 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"packages/shapefile/src/dbf.ts",
-		"shared/geoJsonProperties.ts",
+		"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
 		"pipeline/src/boundarySourcePaths.ts",
-		"shared/areaAdapters.ts",
-		"shared/areaSourceAdapters.ts",
+		"packages/atlas-runtime/src/areas/areaAdapters.ts",
+		"packages/atlas-runtime/src/areas/areaSourceAdapters.ts",
 	]) {
 		assert.ok(inputs.get("area-inventory")!.includes(path), path);
 	}
 	for (const path of [
 		"pipeline/src/build-operations.ts",
 		"pipeline/src/operationTemplates.ts",
-		"shared/operations.ts",
+		"packages/atlas-runtime/src/api/operations.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -316,7 +316,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-geometry-source-registry.ts",
 		"pipeline/src/geometrySourceRegistry.ts",
 		"pipeline/src/fileHashCache.ts",
-		"shared/contentHash.ts",
+		"packages/artifacts/src/contentHash.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -324,7 +324,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-geography-catalogues.ts",
-		"shared/geographyBuildPath.ts",
+		"packages/atlas-runtime/src/areas/geographyBuildPath.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -333,7 +333,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-relationship-candidates.ts",
 		"pipeline/src/relationshipCandidates.ts",
-		"shared/crosswalkAdapters.ts",
+		"packages/atlas-runtime/src/relationships/crosswalkAdapters.ts",
 		"packages/geography/src/geographyKinds.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
@@ -344,8 +344,8 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-relationship-paths.ts",
 		"pipeline/src/relationshipPaths.ts",
 		"pipeline/src/relationshipPathAdapters.ts",
-		"shared/relationshipPaths.ts",
-		"shared/storedText.ts",
+		"packages/atlas-runtime/src/relationships/relationshipPaths.ts",
+		"packages/artifacts/src/storedText.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -355,17 +355,17 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-analysis-geographies.ts",
 		"pipeline/src/analysisGeographies.ts",
 		"packages/geography/src/geographyKinds.ts",
-		"shared/geographyBuildPath.ts",
+		"packages/atlas-runtime/src/areas/geographyBuildPath.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
 		assert.ok(inputs.get("analysis-geographies")!.includes(path), path);
 	}
 	for (const path of [
-		"shared/atlasCache.ts",
+		"packages/atlas-runtime/src/storage/atlasCache.ts",
 		"packages/search-index/src/node/nameFingerprint.ts",
 		"packages/geography/src/nameNormalisation.ts",
-		"shared/sqliteTables.ts",
+		"packages/artifacts/src/sqliteTables.ts",
 	]) {
 		assert.ok(inputs.get("atlas-sqlite")!.includes(path), path);
 	}
@@ -373,7 +373,7 @@ test("production builders resolve without UI code and include declared workers a
 		for (const path of [
 			"pipeline/src/build-atlas-release.ts",
 			"pipeline/src/atlasRelease.ts",
-			"shared/atlasAssets.ts",
+			"packages/atlas-runtime/src/storage/atlasAssets.ts",
 			"pipeline/src/fileHashCache.ts",
 			"pipeline/package.json",
 			"pipeline/tsconfig.json",
@@ -386,9 +386,9 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/catalog/compileDataCatalog.ts",
 		"pipeline/src/store-observations.ts",
 		"pipeline/src/atlasObservationTables.ts",
-		"shared/dataCatalog.ts",
-		"shared/atlasObservations.ts",
-		"shared/sqliteTables.ts",
+		"packages/atlas-runtime/src/catalogue/dataCatalog.ts",
+		"packages/atlas-runtime/src/storage/atlasObservations.ts",
+		"packages/artifacts/src/sqliteTables.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -397,8 +397,8 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-measure-compatibility.ts",
 		"pipeline/src/measureCompatibility.ts",
-		"shared/measureCompatibility.ts",
-		"shared/observationTables.ts",
+		"packages/atlas-runtime/src/catalogue/measureCompatibility.ts",
+		"packages/atlas-runtime/src/catalogue/observationTables.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -406,7 +406,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-lookup-manifest.ts",
-		"shared/lookupExports.ts",
+		"packages/atlas-runtime/src/areas/lookupExports.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -416,7 +416,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-export-manifest.ts",
 		"pipeline/src/exportManifest.ts",
 		"pipeline/src/observationDownloads.ts",
-		"shared/parquet.ts",
+		"packages/artifacts/src/parquet.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -426,7 +426,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
-		"shared/atlasAssets.ts",
+		"packages/atlas-runtime/src/storage/atlasAssets.ts",
 	]) {
 		assert.ok(inputs.get("website-lookups")!.includes(path), path);
 	}
@@ -461,12 +461,12 @@ test("moved pipeline builders trace imports and invalidate their own manifests",
 	}
 });
 
-test("untraced API docs, website shared files and unrelated scripts preserve stage keys", () => {
+test("untraced API docs, website files and unrelated scripts preserve stage keys", () => {
 	const { write, run } = fixture();
 	run();
 	for (const path of [
 		"services/api/openapi.yaml",
-		"shared/website.ts",
+		"lib/unrelated-website.ts",
 		"scripts/unrelated.ts",
 		"package.json",
 	]) {
