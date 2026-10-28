@@ -80,7 +80,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 			() =>
 				database
 					.prepare(
-						"INSERT INTO areas VALUES (NULL, 0, 'A', 1, 'duplicate', NULL, NULL, NULL)",
+						"INSERT INTO area_version VALUES (NULL, 1, 0, 'duplicate', NULL, NULL, NULL, 1)",
 					)
 					.run(),
 			/UNIQUE/,
@@ -93,7 +93,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 			() =>
 				database
 					.prepare(
-						"INSERT INTO areas VALUES (NULL, -1, 'A', 1, 'name', NULL, NULL, NULL)",
+						"INSERT INTO area_version VALUES (NULL, 1, -1, 'name', NULL, NULL, NULL, 1)",
 					)
 					.run(),
 			/FOREIGN KEY/,

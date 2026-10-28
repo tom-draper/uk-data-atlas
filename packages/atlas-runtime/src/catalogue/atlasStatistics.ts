@@ -11,9 +11,9 @@ import type { SqliteTable } from "@uk-data-atlas/artifacts";
  * rows. A dataset joins by describing itself as a `StatisticsDataset`; the
  * schema does not change per dataset.
  *
- * Until area identity lands (step 2), an area version is a row of `areas`
- * and a boundary release is a row of `area_releases`. Observation rows key
- * on `areas.id` so step 2 can keep the same ids as `area_version.id`.
+ * Observations key on `area_version`, a code as it appears in one release.
+ * Until boundary releases get their own table, a release is a row of
+ * `area_releases`.
  */
 
 export type ValueKind =
@@ -335,7 +335,7 @@ export function statisticsTables(
 			areas = new Map(
 				database
 					.prepare(
-						"SELECT id, code, name FROM areas WHERE releasePosition = ?",
+						"SELECT v.id, a.code, v.name FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.release_id = ?",
 					)
 					.all(position)
 					.map((row) => [
@@ -657,7 +657,7 @@ export function statisticsTables(
 			strict: true,
 			columns: [
 				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
-				"area_version_id INTEGER NOT NULL REFERENCES areas(id)",
+				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
 				"name TEXT NOT NULL",
 			],
 			key: ["dataset_id", "area_version_id"],
@@ -690,7 +690,7 @@ export function statisticsTables(
 			strict: true,
 			columns: [
 				"series_id INTEGER NOT NULL REFERENCES series(id)",
-				"area_version_id INTEGER NOT NULL REFERENCES areas(id)",
+				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
 				"period_id INTEGER NOT NULL REFERENCES period(id)",
 				"value REAL",
 				"status_id INTEGER NOT NULL DEFAULT 1 REFERENCES status(id)",
@@ -753,7 +753,7 @@ export function statisticsTables(
 				}
 				const mismatched = database
 					.prepare(
-						"SELECT count(*) AS n FROM observation o JOIN series s ON s.id = o.series_id JOIN areas a ON a.id = o.area_version_id WHERE a.releasePosition <> s.release_id",
+						"SELECT count(*) AS n FROM observation o JOIN series s ON s.id = o.series_id JOIN area_version v ON v.id = o.area_version_id WHERE v.release_id <> s.release_id",
 					)
 					.get();
 				if (Number(mismatched?.n) !== 0)
@@ -769,7 +769,7 @@ SELECT d.slug AS dataset, m.slug AS measure, m.unit,
    FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
    JOIN dimension_member dm ON dm.id = sm.member_id
    WHERE sm.series_id = s.id) AS members,
-  a.code AS area_code, coalesce(n.name, a.name) AS area_name,
+  a.code AS area_code, coalesce(n.name, v.name) AS area_name,
   r.geography, r.id AS release, p.label AS period,
   o.value, o.lower, o.upper, c.code AS category, st.slug AS status,
   s.method, src.licence
@@ -778,12 +778,13 @@ JOIN series s ON s.id = o.series_id
 JOIN dataset d ON d.id = s.dataset_id
 JOIN source src ON src.id = d.source_id
 JOIN measure m ON m.id = s.measure_id
-JOIN areas a ON a.id = o.area_version_id
+JOIN area_version v ON v.id = o.area_version_id
+JOIN area a ON a.id = v.area_id
 JOIN area_releases r ON r.position = s.release_id
 JOIN period p ON p.id = o.period_id
 JOIN status st ON st.id = o.status_id
 LEFT JOIN dimension_member c ON c.id = o.category_id
-LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = a.id`,
+LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.id`,
 			},
 		},
 	};

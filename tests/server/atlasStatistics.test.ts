@@ -45,20 +45,44 @@ const areaFixture = (): Record<string, SqliteTable> => ({
 			[1, "localAuthority", "2024-05-uk-bgc", "available"],
 		],
 	},
-	areas: {
+	geography: {
+		rowid: true,
+		columns: ["id INTEGER", "slug TEXT"],
+		key: ["id"],
+		rows: [
+			[1, "lsoa"],
+			[2, "localAuthority"],
+		],
+	},
+	area: {
 		rowid: true,
 		columns: [
 			"id INTEGER",
-			"releasePosition INTEGER REFERENCES area_releases(position)",
+			"geography_id INTEGER REFERENCES geography(id)",
 			"code TEXT",
+		],
+		key: ["id"],
+		rows: [
+			[1, 1, "E01000001"],
+			[2, 1, "E01000002"],
+			[3, 2, "E09000001"],
+			[4, 2, "E09000002"],
+		],
+	},
+	area_version: {
+		rowid: true,
+		columns: [
+			"id INTEGER",
+			"area_id INTEGER REFERENCES area(id)",
+			"release_id INTEGER REFERENCES area_releases(position)",
 			"name TEXT",
 		],
 		key: ["id"],
 		rows: [
-			[1, 0, "E01000001", "City of London 001A"],
-			[2, 0, "E01000002", "City of London 001B"],
-			[3, 1, "E09000001", "City of London"],
-			[4, 1, "E09000002", "Barking and Dagenham"],
+			[1, 1, 0, "City of London 001A"],
+			[2, 2, 0, "City of London 001B"],
+			[3, 3, 1, "City of London"],
+			[4, 4, 1, "Barking and Dagenham"],
 		],
 	},
 });

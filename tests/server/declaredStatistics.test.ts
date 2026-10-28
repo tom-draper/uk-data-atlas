@@ -27,20 +27,44 @@ const areas = (): Record<string, SqliteTable> => ({
 			[2, "region", "2025-12-en-bgc", "available"],
 		],
 	},
-	areas: {
+	geography: {
+		rowid: true,
+		columns: ["id INTEGER", "slug TEXT"],
+		key: ["id"],
+		rows: [
+			[1, "localAuthority"],
+			[2, "region"],
+		],
+	},
+	area: {
 		rowid: true,
 		columns: [
 			"id INTEGER",
-			"releasePosition INTEGER REFERENCES area_releases(position)",
+			"geography_id INTEGER REFERENCES geography(id)",
 			"code TEXT",
+		],
+		key: ["id"],
+		rows: [
+			[1, 1, "E06000001"],
+			[2, 1, "E06000002"],
+			[3, 1, "E07000026"],
+			[4, 2, "E12000001"],
+		],
+	},
+	area_version: {
+		rowid: true,
+		columns: [
+			"id INTEGER",
+			"area_id INTEGER REFERENCES area(id)",
+			"release_id INTEGER REFERENCES area_releases(position)",
 			"name TEXT",
 		],
 		key: ["id"],
 		rows: [
-			[1, 0, "E06000001", "Hartlepool"],
-			[2, 0, "E06000002", "Middlesbrough"],
-			[3, 1, "E07000026", "Allerdale"],
-			[4, 2, "E12000001", "North East"],
+			[1, 1, 0, "Hartlepool"],
+			[2, 2, 0, "Middlesbrough"],
+			[3, 3, 1, "Allerdale"],
+			[4, 4, 2, "North East"],
 		],
 	},
 });

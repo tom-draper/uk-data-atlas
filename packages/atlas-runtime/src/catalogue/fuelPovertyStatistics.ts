@@ -186,14 +186,15 @@ export function rebuildFuelPoverty(database: DatabaseSync): string {
 		.all(SLUG);
 	if (periods.length === 0) throw new Error("Missing fuel poverty periods");
 	const values = database.prepare(`
-		SELECT a.code, coalesce(n.name, a.name) AS name, m.slug AS measure, o.value
+		SELECT a.code, coalesce(n.name, v.name) AS name, m.slug AS measure, o.value
 		FROM dataset d
 		JOIN series s ON s.dataset_id = d.id
 		JOIN measure m ON m.id = s.measure_id
 		JOIN observation o ON o.series_id = s.id
 		JOIN period p ON p.id = o.period_id
-		JOIN areas a ON a.id = o.area_version_id
-		LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = a.id
+		JOIN area_version v ON v.id = o.area_version_id
+		JOIN area a ON a.id = v.area_id
+		LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.id
 		WHERE d.slug = ? AND p.label = ?
 		ORDER BY a.code
 	`);
