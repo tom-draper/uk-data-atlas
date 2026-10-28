@@ -94,12 +94,27 @@ export type DeclaredDataset = {
 	/** Record field holding the publisher's area name. */
 	name?: string;
 	/**
+	 * Record fields naming an area each record lies in, by code and name, with
+	 * the release the codes are on. Stored for datasets served from rows.
+	 */
+	parents?: DeclaredParent[];
+	/**
 	 * Serve the compiled JSON from rows instead of a stored payload. The build
 	 * refuses a dataset whose rows do not rebuild it byte for byte. Each
 	 * `derived` pattern needs a rule here, computed from the rebuilt record
 	 * in the order listed, exactly as its compiler computes it.
 	 */
 	rebuild?: { derived?: Record<string, DerivedRule> };
+};
+
+type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
+
+export type DeclaredParent = {
+	code: string;
+	name: string;
+	release: DeclaredRelease;
+	/** Releases tried, in order, for codes not in the first. */
+	alsoIn?: DeclaredRelease[];
 };
 
 /** A derived number, from the record with every stored value filled in. */
@@ -382,7 +397,7 @@ export function declaredStatistics(
 					}
 				>;
 				/** Each record set's areas, in the file's order. */
-				areas: Map<string, { release: AreaRelease; code: string }[]>;
+				areas: Map<string, LaidOutArea[]>;
 			}) => void,
 		): Generator<Raw> {
 			const file: Record<string, DeclaredHeader> = JSON.parse(read());
@@ -415,10 +430,7 @@ export function declaredStatistics(
 						raws: Raw[];
 					}
 				>();
-				const areaLists = new Map<
-					string,
-					{ release: AreaRelease; code: string }[]
-				>();
+				const areaLists = new Map<string, LaidOutArea[]>();
 				for (const set of recordSets) {
 					const records = header[set.from];
 					if (
@@ -438,7 +450,7 @@ export function declaredStatistics(
 					const candidates = [primary, ...(set.alsoIn ?? [])].map(
 						releaseOf,
 					);
-					const order: { release: AreaRelease; code: string }[] = [];
+					const order: LaidOutArea[] = [];
 					if (onPart) areaLists.set(set.from, order);
 					for (const [code, record] of Object.entries(records)) {
 						const release = candidates.find((candidate) =>
@@ -471,7 +483,32 @@ export function declaredStatistics(
 								);
 							onName(release, code, name);
 						}
-						if (onPart) order.push({ release, code });
+						const parents = (config.parents ?? []).map((parent) => {
+							const parentCode = record[parent.code];
+							const parentName = record[parent.name];
+							if (
+								typeof parentCode !== "string" ||
+								typeof parentName !== "string"
+							)
+								throw new Error(
+									`${context}: record ${code} has no ${parent.code} and ${parent.name}`,
+								);
+							const parentRelease = [
+								parent.release,
+								...(parent.alsoIn ?? []),
+							]
+								.map(releaseOf)
+								.find((candidate) =>
+									areas.has(candidate, parentCode),
+								);
+							if (!parentRelease)
+								throw new Error(
+									`${context}: ${parent.code} ${parentCode} is in no listed release`,
+								);
+							onName?.(parentRelease, parentCode, parentName);
+							return { release: parentRelease, code: parentCode };
+						});
+						if (onPart) order.push({ release, code, parents });
 						const claimed = new Set<string>();
 						const raws: Raw[] | undefined =
 							onPart && !first.has(set.from) ? [] : undefined;
@@ -584,6 +621,16 @@ export function declaredStatistics(
 			}
 		}
 
+		const parentFields = new Map<
+			string,
+			{ kind: "parent_code" | "parent_name"; parent: number }
+		>(
+			(config.parents ?? []).flatMap(({ code, name }, parent) => [
+				[code, { kind: "parent_code", parent }],
+				[name, { kind: "parent_name", parent }],
+			]),
+		);
+
 		const seriesKey = (raw: Raw) =>
 			JSON.stringify([
 				raw.measure,
@@ -647,6 +694,14 @@ export function declaredStatistics(
 						typeof node === "string"
 					) {
 						leaves.push({ path, kind: "name" });
+						return;
+					}
+					const parent =
+						path.length === 1
+							? parentFields.get(path[0])
+							: undefined;
+					if (parent && typeof node === "string") {
+						leaves.push({ path, ...parent });
 						return;
 					}
 					if (node === found.code) {
