@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { apiRootOf } from "../../../shared/dataLayout";
 import { readSqlitePostcodeIndexArtifact } from "../../../shared/atlasPostcodeIndexReader";
 import { readSqlitePostcodeShard } from "../../../shared/atlasPostcodeShard";
 import {
@@ -12,7 +12,7 @@ import {
 import type { PostcodeShard } from "../../../shared/postcodeIndexTypes";
 
 export function validateShards(root: string) {
-	const api = join(root, "services/api");
+	const api = apiRootOf(root);
 	const index = readSqlitePostcodeIndexArtifact(api);
 	const areas = readSqlitePostcodeAreas(api);
 	if (

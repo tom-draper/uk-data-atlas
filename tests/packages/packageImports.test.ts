@@ -185,7 +185,7 @@ describe("pipeline boundaries", () => {
 		].filter((file) => relative(ROOT, file) !== "shared/dataLayout.ts");
 		expect(files.length).toBeGreaterThan(0);
 		const hardCoded = files.filter((file) =>
-			/["'`][^"'`\n]*services\/api\/(?:public|config)|"services",\s*"api"/.test(
+			/["'`][^"'`\n]*services\/api(?:[\/"'`])|"services",\s*"api"/.test(
 				readFileSync(file, "utf8"),
 			),
 		);

@@ -19,6 +19,7 @@ import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import { storePostcodeIndex } from "../scripts/store-postcode-index";
 import { storePostcodeAreas } from "../scripts/store-postcode-derived";
 import { buildPostcodeCounts } from "../src/cache-build/buildPostcodeCounts";
+import { validateShards } from "../../../pipeline/src/postcode-counts/validatePostcodeCountInputs";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
@@ -231,6 +232,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 test("counts build entirely from SQLite, preserve zero and uncovered results, and reject corruption and stale inputs", (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
 	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
+	assert.deepEqual(validateShards(root).areas, compiled.artifact);
 	writeFileSync(
 		join(artifactRoot(apiRoot), "postcode-counts.json"),
 		"obsolete",
