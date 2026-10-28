@@ -162,6 +162,7 @@ All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/c
 | `dataset_leaf`          | `(dataset_id, part, records, position)`         | One leaf of every record in a part's record set, in key order: a series value or bound, the code, the name, a derived rule or a literal. |
 | `dataset_record`        | `(dataset_id, part, records, position)`         | The area version of each record in a part's record set, in the file's order.                                                             |
 | `dataset_record_parent` | `(dataset_id, part, records, position, parent)` | The parent area a record names (by index into the config's `parents`), as an area version.                                               |
+| `dataset_record_absent` | `(dataset_id, part, records, position, leaf)`   | A leaf a record leaves out of its JSON.                                                                                                  |
 
 `observation.area_version_id` references `area_version(id)`, one row per
 release and code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
@@ -197,7 +198,10 @@ bytes equal the compiled file, reporting where they first differ. Records are
 laid out in the file's order (`dataset_record`). Record fields naming a parent
 area (a config's `parents`, such as an LSOA's district) are stored as that
 area's version (`dataset_record_parent`), with any differing publisher name in
-`dataset_area_name`. A leaf names the first record's series; records
+`dataset_area_name`. The layout is inferred from every record of a part: leaves in a key
+order all records agree with, each value leaf on the series of the first record
+with a value there. A value with no observation is written as null, and leaves
+a record leaves out are listed in `dataset_record_absent`. A leaf names the first record's series; records
 on an `alsoIn` release read the series with the same measure and members.
 Derived numbers are recomputed by the config's `rebuild.derived` rules. The
 compiled JSON is then not stored in `payloads`; `atlas-sqlite` and
