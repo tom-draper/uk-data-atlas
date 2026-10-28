@@ -7,8 +7,8 @@ import {
 	placePoints,
 	releaseCounts,
 } from "../src/postcodeAreas";
+import { parsePostcode } from "@uk-data-atlas/geography";
 import {
-	parsePostcode,
 	PostcodeIndex,
 	postcodeLookupPoint,
 	type PostcodeShard,

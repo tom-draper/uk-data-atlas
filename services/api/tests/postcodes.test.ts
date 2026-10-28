@@ -4,10 +4,12 @@ import test from "node:test";
 import {
 	NORTHERN_IRELAND_EXCLUSION,
 	parsePostcode,
+	type ParsedPostcode,
+} from "@uk-data-atlas/geography";
+import {
 	PostcodeIndex,
 	postcodeIndexMismatch,
 	postcodeLookupPoint,
-	type ParsedPostcode,
 } from "../src/postcodes";
 import {
 	postcodeIndexFor,

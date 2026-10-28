@@ -6,7 +6,7 @@ import {
 	QUALITY,
 	type ParsedPostcode,
 	type QualityIndicator,
-} from "./postcodeRules";
+} from "@uk-data-atlas/geography";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,

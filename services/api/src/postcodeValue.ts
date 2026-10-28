@@ -10,7 +10,7 @@ import {
 	type PointMatch,
 	type PointResult,
 } from "./pointLookup";
-import { compactPostcode } from "./postcodes";
+import { compactPostcode } from "@uk-data-atlas/geography";
 import type { RouteContext } from "./routing";
 
 /**

@@ -5,7 +5,7 @@ import {
 	NORTHERN_IRELAND_EXCLUSION,
 	parsePostcode,
 	QUALITY,
-} from "../../shared/postcodeRules";
+} from "@uk-data-atlas/geography";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeSource,

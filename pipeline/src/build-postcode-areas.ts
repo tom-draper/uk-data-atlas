@@ -21,7 +21,7 @@ import { readPublicManifest } from "../../shared/publicManifest";
 import type { MeasureCompatibilityInventory } from "../../shared/measureCompatibility";
 import { AreasResolver } from "../../shared/resolver/areas";
 import { postcodeAreaReleases } from "../../shared/postcodeAreaReleases";
-import { parsePostcode } from "../../shared/postcodeRules";
+import { parsePostcode } from "@uk-data-atlas/geography";
 import { postcodeLookupPoint } from "../../shared/postcodeLookupPoint";
 import {
 	createAreaGeometryCache,
