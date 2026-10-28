@@ -5,7 +5,10 @@ import {
 	containPoint,
 	ringsOf,
 } from "@uk-data-atlas/geography/geometry-point-containment";
-import { boundaryDistanceWithinM, distanceToBoundaryM } from "./areaDistance";
+import {
+	boundaryDistanceWithinM,
+	distanceToBoundaryM,
+} from "@uk-data-atlas/geography/area-distance";
 import type { CrosswalkArea } from "./crosswalkTypes";
 import {
 	geometrySubstitution,

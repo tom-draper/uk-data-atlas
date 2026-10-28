@@ -51,7 +51,7 @@ const COMPILER_SOURCES = [
 	"../../packages/geography/src/geometryPointContainment.ts",
 	"../../packages/geography/src/geometryPositions.ts",
 	"../../packages/geography/src/geometryTypes.ts",
-	"../../shared/areaDistance.ts",
+	"../../packages/geography/src/areaDistance.ts",
 	"../../shared/areaNeighbours.ts",
 	"../../shared/dbf.ts",
 	"../../packages/geography/src/geometryProvenance.ts",

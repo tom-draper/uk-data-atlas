@@ -36,7 +36,10 @@ import {
 	sharedBorderWith,
 	type Neighbour,
 } from "./areaNeighbours";
-import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
+import {
+	distanceToBoundsM,
+	distanceToGeometryM,
+} from "@uk-data-atlas/geography/area-distance";
 import {
 	boundsIntersect,
 	boundsWithin,

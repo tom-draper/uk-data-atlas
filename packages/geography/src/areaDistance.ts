@@ -1,10 +1,10 @@
-import type { GeoJsonGeometry } from "./areaGeometry";
+import type { GeoJsonGeometry } from "./geometryTypes";
 import {
 	containPoint,
 	ringsOf,
 	type Coordinate,
 	type GeometryBounds,
-} from "@uk-data-atlas/geography/geometry-point-containment";
+} from "./geometryPointContainment";
 
 // WGS 84 ellipsoid.
 const A = 6378137;

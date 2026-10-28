@@ -6,7 +6,7 @@ import {
 	type Coordinate,
 	type PointContainment,
 } from "@uk-data-atlas/geography/geometry-point-containment";
-import { boundaryDistanceFinder } from "../../shared/areaDistance";
+import { boundaryDistanceFinder } from "@uk-data-atlas/geography/area-distance";
 import type { PostcodeIndexArtifact } from "../../shared/postcodeIndexTypes";
 import { compareCodeUnits } from "../../shared/sortedIndex";
 import { sha256 } from "../../shared/contentHash";

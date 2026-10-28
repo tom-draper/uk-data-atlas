@@ -1,4 +1,4 @@
-import { metresPerDegree } from "./areaDistance";
+import { metresPerDegree } from "@uk-data-atlas/geography/area-distance";
 import { toWgs84Point, type GeometryTransformation } from "./reprojection";
 
 export type LookupPoint = {
