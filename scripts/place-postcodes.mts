@@ -21,7 +21,7 @@ import type {
 	PostcodeAreasShard,
 } from "../shared/postcodeAreas";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
-import { toWgs84Point } from "@uk-data-atlas/geography/reprojection";
+import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 import { apiRootOf } from "../shared/dataLayout";
 
 export const PLACE_POSTCODES_PATH = join(

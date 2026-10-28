@@ -1,19 +1,19 @@
 import proj4 from "proj4";
-import type { GeometryValidityReport } from "./index";
+import type { GeometryValidityReport } from "../index";
 import {
 	packGeometry,
 	roundDegrees,
 	unpackGeometry,
 	type PackedGeometry,
-} from "./packedGeometry";
+} from "../packedGeometry";
 import {
 	mapGeometryPositions,
 	type Geometry,
 	type Position,
-} from "./geometryPositions";
+} from "../geometryPositions";
 
-import type { GeometryProvenance, GeometryTransformation } from "./index";
-export type { GeometryProvenance, GeometryTransformation } from "./index";
+import type { GeometryProvenance, GeometryTransformation } from "../index";
+export type { GeometryProvenance, GeometryTransformation } from "../index";
 
 type Reprojection = {
 	transformation: GeometryTransformation;

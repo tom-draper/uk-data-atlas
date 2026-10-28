@@ -6,7 +6,7 @@ import {
 	geometryProvenance,
 	toWgs84Geometry,
 	toWgs84Packed,
-} from "@uk-data-atlas/geography/reprojection";
+} from "@uk-data-atlas/geography/coordinates";
 import { packGeometry } from "@uk-data-atlas/geography/packed-geometry";
 
 // Reference values from PROJ's cct running EPSG:1314 (OSGB36 to WGS 84 (6))

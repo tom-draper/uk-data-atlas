@@ -12,7 +12,6 @@
 		"./geometry-types": "./src/geometryTypes.ts",
 		"./area-distance": "./src/areaDistance.ts",
 		"./packed-geometry": "./src/packedGeometry.ts",
-		"./reprojection": "./src/reprojection.ts",
 		"./reverse-grid-offset": "./src/reverseGridOffset.ts",
 		"./geometry-spatial-index": "./src/geometrySpatialIndex.ts",
 		"./area-geometry-pieces": "./src/areaGeometryPieces.ts",
@@ -22,7 +21,7 @@
 		"./postcode-index-types": "./src/postcodeIndexTypes.ts",
 		"./postcode-count-types": "./src/postcodeCountTypes.ts",
 		"./postcode-defaults": "./src/postcodeDefaults.ts",
-		"./lookup-coordinates": "./src/lookupCoordinates.ts"
+		"./coordinates": "./src/coordinates/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

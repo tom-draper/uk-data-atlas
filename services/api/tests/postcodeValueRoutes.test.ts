@@ -12,7 +12,7 @@ import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
 } from "../src/measureCompatibility";
-import { toWgs84Point } from "@uk-data-atlas/geography/reprojection";
+import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 import { postcodeAreaReleases } from "../src/postcodeAreas";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/routing";
