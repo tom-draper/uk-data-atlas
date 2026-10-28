@@ -49,6 +49,7 @@ export const POPULATION_UK: DeclaredDataset = {
 export const POPULATION_CONSTITUENCY: DeclaredDataset = {
 	type: "populationConstituency",
 	name: "constituencyName",
+	rebuild: {},
 	measures: [POPULATION],
 	fields: [{ path: "total", measure: "population" }],
 };
@@ -63,6 +64,7 @@ const yearRange = (text: unknown) => {
 export const LIFE_EXPECTANCY_SERIES: DeclaredDataset = {
 	type: "lifeExpectancySeries",
 	name: "ladName",
+	rebuild: {},
 	period: (_key, header: DeclaredHeader) => yearRange(header.period),
 	measures: [LIFE_EXPECTANCY],
 	dimensions: [SEX],
@@ -88,6 +90,7 @@ const HEALTHY_LIFE_EXPECTANCY = measure(
 export const LIFE_EXPECTANCY_LATEST: DeclaredDataset = {
 	type: "lifeExpectancy",
 	name: "ladName",
+	rebuild: {},
 	period: (_key, header) => yearRange(header.dataPeriod),
 	alsoIn: [
 		{ geography: "countyAndUnitaryAuthority", year: 2025 },

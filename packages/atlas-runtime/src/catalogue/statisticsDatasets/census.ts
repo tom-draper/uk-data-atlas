@@ -271,6 +271,18 @@ export const GENERAL_HEALTH: DeclaredDataset = {
 		"metrics.goodHealth": "Very good plus good health.",
 		value: "Good health as a percentage of all usual residents.",
 	},
+	rebuild: {
+		derived: {
+			"metrics.goodHealth": (record) => {
+				const metrics = record.metrics as Record<string, number>;
+				return metrics.veryGood + metrics.good;
+			},
+			value: (record) => {
+				const metrics = record.metrics as Record<string, number>;
+				return (metrics.goodHealth / metrics.total) * 100;
+			},
+		},
+	},
 };
 
 export const HOUSING_TENURE: DeclaredDataset = {
@@ -331,4 +343,12 @@ export const HOUSING_TENURE: DeclaredDataset = {
 	],
 	fields: [{ path: "metrics.{tenure}", measure: "households" }],
 	derived: { value: "Owned households as a percentage of all households." },
+	rebuild: {
+		derived: {
+			value: (record) => {
+				const metrics = record.metrics as Record<string, number>;
+				return (metrics.owned / metrics.total) * 100;
+			},
+		},
+	},
 };
