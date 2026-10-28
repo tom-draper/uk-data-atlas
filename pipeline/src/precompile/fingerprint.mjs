@@ -24,6 +24,9 @@ const baseInputs = [
 /** What compiles a dataset, whichever dataset it is. */
 const datasetCompilerInputs = [
 	"pipeline/src/precompile/compileDataset.mts",
+	"pipeline/src/precompile/duckdbPublicHealth.mts",
+	"pipeline/src/precompile/duckdbRoadCollisions.mts",
+	"pipeline/src/precompile/duckdbDatasetCsv.mts",
 	"packages/datasets/src/compileDataset.ts",
 ];
 

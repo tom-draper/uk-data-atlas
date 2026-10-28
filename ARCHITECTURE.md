@@ -174,6 +174,16 @@ pnpm data:build --only atlas-sqlite --plan
 pnpm data:build --from datasets
 ```
 
+The dataset compiler uses DuckDB to read and filter public health source CSVs.
+It hashes the source files for cache tracking and passes the selected rows to
+the shared Node loader.
+It also uses DuckDB to aggregate road collisions directly from the source CSVs,
+validating the inputs and tracking their hashes for the dataset cache.
+For the school performance datasets, DuckDB filters the source CSVs before
+the shared loaders process the selected rows.
+The English deprivation dataset uses the same reader to select source columns
+before its loader computes the local-authority summaries.
+
 The `area-search-index` stage uses DuckDB to deduplicate and order search
 postings after applying the shared name normalisation rules. The standalone API
 cache rebuild retains the Node implementation.
