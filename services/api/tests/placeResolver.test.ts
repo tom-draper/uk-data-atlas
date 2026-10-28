@@ -6,7 +6,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import { normalisePlaceName } from "@uk-data-atlas/geography";
-import { NAME_NORMALISATION } from "../../../shared/nameNormalisation";
+import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import {
 	compilePlaceIndex,
 	openPlaceIndexDatabase,

@@ -1,5 +1,5 @@
 import type { AreaLookup } from "./areaInventory";
-import { NAME_NORMALISATION } from "./nameNormalisation";
+import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "./contentHash";

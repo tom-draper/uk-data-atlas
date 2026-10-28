@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { copyFileSync, existsSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { NAME_NORMALISATION } from "./nameNormalisation";
+import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { writeSqliteTables, type SqliteTable } from "./sqliteTables";
 import { repositoryRootOf } from "./dataLayout";
 
