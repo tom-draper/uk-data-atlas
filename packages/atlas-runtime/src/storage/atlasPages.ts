@@ -6,13 +6,7 @@ import {
 } from "./atlasAssets";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
-import {
-	envelope,
-	problem,
-	type ApiResponse,
-	type StoredFile,
-} from "../api/routeResponse";
-import type { RouteRequest } from "../areas/routing";
+import type { StoredFile } from "../api/routeResponse";
 import { repositoryRootOf } from "./dataLayout";
 
 /** The built pages by id, or none where they have not been built. */
@@ -47,37 +41,4 @@ export const readAtlasPages = (apiRoot: string): Map<string, StoredFile> => {
 			];
 		}),
 	);
-};
-
-export const handleAtlasPageRoutes = ({
-	context,
-	releaseId,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 3 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "atlas-pages" ||
-		!segments[2]?.endsWith(".json")
-	)
-		return undefined;
-	const id = segments[2].slice(0, -".json".length);
-	const page = context.atlasPages?.get(id);
-	if (page)
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				id,
-				href: `/v1/atlas-pages/${id}.json`,
-				contentHash: page.contentHash,
-			}),
-			representation: { contentType: "application/json", body: page },
-		};
-	return context.atlasPages?.size
-		? problem(404, "Not Found", "No atlas page matches that id.")
-		: problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the atlas pages before downloading them.",
-			);
 };
