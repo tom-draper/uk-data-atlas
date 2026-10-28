@@ -1,25 +1,32 @@
-import { packNamedLocations } from "./namedLocationStorage";
+import { packNamedLocations } from "../../shared/namedLocationStorage";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { geometryBounds } from "./areaContainment";
+import { geometryBounds } from "../../shared/areaContainment";
 import {
 	countyMemberships,
 	SCOTTISH_LIEUTENANCY_AREAS,
 	withCeremonialCounties,
 	withHistoricCounties,
 	type CountyShape,
-} from "./ceremonialCounties";
-import { compileNamedLocations, membersAt } from "./namedLocations";
-import { releaseMonth } from "./boundaryReleaseOrder";
-import { toWgs84Geometry } from "./reprojection";
-import { readShapefileFeatures } from "./shapefile";
-import { createAreaGeometryCache } from "./geometryLoader";
-import type { AreaInventory, AreaReleaseArtifact } from "./areaInventory";
-import { createAreaLookup } from "./createAreaLookup";
-import { readPublicManifest } from "./publicManifest";
-import { compileNamedLocationGeometry } from "./namedLocationGeometry";
-import { sha256 } from "./contentHash";
-import { apiRootOf, artifactDirectory, artifactRoot } from "./dataLayout";
+} from "../../shared/ceremonialCounties";
+import { compileNamedLocations, membersAt } from "../../shared/namedLocations";
+import { releaseMonth } from "../../shared/boundaryReleaseOrder";
+import { toWgs84Geometry } from "../../shared/reprojection";
+import { readShapefileFeatures } from "../../shared/shapefile";
+import { createAreaGeometryCache } from "../../shared/geometryLoader";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../shared/areaInventory";
+import { createAreaLookup } from "../../shared/createAreaLookup";
+import { readPublicManifest } from "../../shared/publicManifest";
+import { compileNamedLocationGeometry } from "../../shared/namedLocationGeometry";
+import { sha256 } from "../../shared/contentHash";
+import {
+	apiRootOf,
+	artifactDirectory,
+	artifactRoot,
+} from "../../shared/dataLayout";
 
 /**
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
