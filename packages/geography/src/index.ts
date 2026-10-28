@@ -9,3 +9,4 @@ export * from "./postcodeRules";
 export * from "./areaIdentity";
 export * from "./geographyKinds";
 export * from "./geographyAliases";
+export * from "./nameNormalisation";

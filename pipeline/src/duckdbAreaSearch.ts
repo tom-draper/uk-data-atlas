@@ -3,11 +3,8 @@ import { compareCodeUnits } from "../../shared/compareCodeUnits";
 import { sha256 } from "../../shared/contentHash";
 import type { AreaLookup } from "../../shared/areaInventory";
 import type { AreaSearchIndexArtifact } from "../../shared/areaSearchCompiler";
-import {
-	NAME_NORMALISATION,
-	normalisePlaceName,
-	withoutTitle,
-} from "../../shared/nameNormalisation";
+import { NAME_NORMALISATION } from "../../shared/nameNormalisation";
+import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 
 export async function compileDuckdbAreaSearchIndex(
 	areaLookup: AreaLookup,

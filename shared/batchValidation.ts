@@ -3,7 +3,7 @@ import {
 	explainCodeInRelease,
 	type MemberCodeStatus,
 } from "./memberReconciliation";
-import { normalisePlaceName, withoutTitle } from "./nameNormalisation";
+import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 
 /**

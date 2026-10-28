@@ -2,11 +2,8 @@ import type { AreaLookup } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { NamedLocationInventory } from "./namedLocationTypes";
 import { compareBoundaryReleases } from "./boundaryReleaseOrder";
-import {
-	NAME_NORMALISATION,
-	normalisePlaceName,
-	withoutTitle,
-} from "./nameNormalisation";
+import { NAME_NORMALISATION } from "./nameNormalisation";
+import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { compareCodeUnits, type Indexed } from "./sortedIndex";
 import { sha256 } from "./contentHash";
 import type { SQLInputValue } from "node:sqlite";

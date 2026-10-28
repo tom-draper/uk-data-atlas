@@ -22,7 +22,7 @@ import {
 	selectReleaseForDate,
 	type ReleaseSelection,
 } from "../releaseForDate";
-import { exactNameMatch, type NameMatch } from "../nameNormalisation";
+import { exactNameMatch, type NameMatch } from "@uk-data-atlas/geography";
 
 import type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";
 export type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";
