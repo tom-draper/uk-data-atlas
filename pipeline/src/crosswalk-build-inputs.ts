@@ -1,7 +1,10 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { AreaInventory, AreaReleaseArtifact } from "./areaInventory";
-import { createAreaLookup } from "./createAreaLookup";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../shared/areaInventory";
+import { createAreaLookup } from "../../shared/createAreaLookup";
 
 export const readCompiledAreaLookup = (outputDirectory: string) => {
 	const inventory = JSON.parse(

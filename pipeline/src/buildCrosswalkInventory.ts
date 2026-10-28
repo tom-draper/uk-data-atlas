@@ -1,4 +1,4 @@
-import { writeCrosswalkArtifact } from "./crosswalk-artifact";
+import { writeCrosswalkArtifact } from "../../shared/crosswalk-artifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
@@ -14,7 +14,7 @@ import {
 	type PopulationOverlapCrosswalkAdapter,
 	type PropertyCrosswalkAdapter,
 	type ExtentContinuityCrosswalkAdapter,
-} from "./crosswalkAdapters";
+} from "../../shared/crosswalkAdapters";
 import {
 	compileCrosswalks,
 	crosswalkInventoryEntry,
@@ -25,22 +25,29 @@ import {
 	type GeometricContainmentCrosswalkArtifact,
 	type PropertyCrosswalkArtifact,
 	type ExtentContinuityCrosswalkArtifact,
-} from "./crosswalkCompiler";
+} from "../../shared/crosswalkCompiler";
 import {
 	CONTAINMENT_TOLERANCE_M,
 	geometryContainmentInputs,
-} from "./crosswalkGeometryValidation";
-import { DIFFERENCE_RULE, REALIGNED_SHARE } from "./extentContinuity";
+} from "../../shared/crosswalkGeometryValidation";
+import {
+	DIFFERENCE_RULE,
+	REALIGNED_SHARE,
+} from "../../shared/extentContinuity";
 import {
 	addRelatedCodes,
 	releaseCoverageOf,
 	type RelatedCodesByRelease,
-} from "./relatedCodes";
-import { readGeometrySourceLookup } from "./geometrySources";
-import { sha256 } from "./contentHash";
-import { BOUNDED_CLIPPING_VERSION } from "./boundedClipping";
-import { readStoredText, storedTextExists } from "./storedText";
-import { apiRootOf, artifactDirectory, configDirectory } from "./dataLayout";
+} from "../../shared/relatedCodes";
+import { readGeometrySourceLookup } from "../../shared/geometrySources";
+import { sha256 } from "../../shared/contentHash";
+import { BOUNDED_CLIPPING_VERSION } from "../../shared/boundedClipping";
+import { readStoredText, storedTextExists } from "../../shared/storedText";
+import {
+	apiRootOf,
+	artifactDirectory,
+	configDirectory,
+} from "../../shared/dataLayout";
 
 type GeometryCrosswalkAdapter =
 	| AreaOverlapCrosswalkAdapter

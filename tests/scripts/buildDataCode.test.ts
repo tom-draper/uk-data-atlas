@@ -188,7 +188,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("crosswalk-inventory")!
-			.includes("shared/crosswalk-worker.ts"),
+			.includes("pipeline/src/crosswalk-worker.ts"),
 	);
 	assert.ok(
 		inputs.get("geometry-store")!.includes("shared/geometryValidity.ts"),

@@ -2,9 +2,9 @@ import { fork, type ChildProcess } from "node:child_process";
 import { availableParallelism } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { CrosswalkAdapter } from "./crosswalkAdapters";
-import type { CrosswalkArtifact } from "./crosswalkCompiler";
-import { readStoredText } from "./storedText";
+import type { CrosswalkAdapter } from "../../shared/crosswalkAdapters";
+import type { CrosswalkArtifact } from "../../shared/crosswalkCompiler";
+import { readStoredText } from "../../shared/storedText";
 
 export type CrosswalkDependency = { path: string; contentHash: string };
 export type CrosswalkWork = {

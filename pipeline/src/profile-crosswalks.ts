@@ -1,25 +1,25 @@
 /** Force selected compiles into a temporary directory and check existing hashes. */
-import { artifactRoot } from "../../../shared/dataLayout";
+import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { readCrosswalkAdapters } from "../src/crosswalkAdapters";
+import { readCrosswalkAdapters } from "../../shared/crosswalkAdapters";
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
-} from "../src/crosswalkInventory";
-import { readGeometrySourceLookup } from "../src/geometrySources";
-import { readStoredText, storedTextExists } from "../src/storedText";
-import { sha256 } from "../src/contentHash";
+} from "../../shared/crosswalkCompiler";
+import { readGeometrySourceLookup } from "../../shared/geometrySources";
+import { readStoredText, storedTextExists } from "../../shared/storedText";
+import { sha256 } from "../../shared/contentHash";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
-import { writeCrosswalkArtifact } from "./crosswalk-artifact";
+import { writeCrosswalkArtifact } from "../../shared/crosswalk-artifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
 } from "./crosswalk-workers";
 
-const root = resolve(import.meta.dirname, "../../..");
-const apiRoot = join(root, "services/api");
+const root = resolve(import.meta.dirname, "../..");
+const apiRoot = apiRootOf(root);
 const args = process.argv.slice(2);
 const workerFlag = args.find((arg) => arg.startsWith("--workers="));
 const workers = crosswalkWorkerCount(
@@ -28,7 +28,7 @@ const workers = crosswalkWorkerCount(
 const ids = args.filter((arg) => arg !== workerFlag);
 if (!ids.length)
 	throw new Error(
-		"Usage: pnpm --dir services/api exec tsx scripts/profile-crosswalks.ts [--workers=1] <crosswalk-id> [...]",
+		"Usage: pnpm exec tsx pipeline/src/profile-crosswalks.ts [--workers=1] <crosswalk-id> [...]",
 	);
 const adapters = readCrosswalkAdapters(
 	join(apiRoot, "config/crosswalk-adapters.json"),
