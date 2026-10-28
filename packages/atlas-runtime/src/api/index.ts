@@ -3,7 +3,6 @@ export * from "./batchValidation";
 export * from "./coveragePlanRoutes";
 export * from "./geographyHealthRoutes";
 export * from "./governanceRoutes";
-export * from "./measureCompatibilityRoutes";
 export * from "./measureCoverageRoutes";
 export * from "./measureReconciliationRoutes";
 export * from "./operationTemplates";

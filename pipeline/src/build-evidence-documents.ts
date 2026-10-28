@@ -1,6 +1,7 @@
 import { build } from "esbuild";
 import {
 	measureCapability,
+	measureCompatibilityReport,
 	measureQuality,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createHash } from "node:crypto";
@@ -111,6 +112,16 @@ const main = () => {
 								`No published measure quality record matches ${id}`,
 							);
 						return quality;
+					},
+					measureCompatibility: (context, id) => {
+						if (!context.measureCompatibilityInventory)
+							throw new Error(
+								"Measure compatibility is required to build evidence",
+							);
+						return measureCompatibilityReport(
+							context.measureCompatibilityInventory,
+							id,
+						);
 					},
 					measureCapability,
 					availableReconciliations,

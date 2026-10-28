@@ -1,31 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { reportRequest as routeRequest } from "./evidenceFixtures";
-import {
-	registry,
-	measureCompatibilityInventory,
-	testContext,
-} from "./routeFixtures";
+import { measureCompatibilityReport } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { measureCompatibilityInventory } from "./routeFixtures";
 
-test("publishes measure boundary candidates as code compatibility only", () => {
-	const response = routeRequest(
-		"GET",
-		"/v1/measures/population/compatibility",
-		testContext({
-			boundaryRegistry: registry,
-			measureCompatibilityInventory,
-		}),
+test("reports measure boundary candidates as code compatibility only", () => {
+	const data = measureCompatibilityReport(
+		measureCompatibilityInventory,
+		"population",
 	);
-	assert.equal(response.status, 200);
-	const data = "data" in response.body ? response.body.data : undefined;
-	assert.ok(data && typeof data === "object");
+	assert.ok(data);
+	assert.equal(data.sources[0]?.candidates[0]?.status, "code-set-compatible");
+	assert.match(data.note, /do not select a geometry release/);
 	assert.equal(
-		(data as { sources: Array<{ candidates: Array<{ status: string }> }> })
-			.sources[0]?.candidates[0]?.status,
-		"code-set-compatible",
-	);
-	assert.match(
-		(data as { note: string }).note,
-		/do not select a geometry release/,
+		measureCompatibilityReport(measureCompatibilityInventory, "unknown"),
+		undefined,
 	);
 });
