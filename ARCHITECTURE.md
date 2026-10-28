@@ -234,8 +234,9 @@ rebuilds.
 
 `scripts/build-data-code.mjs` uses esbuild's dependency metadata to trace local
 imports, including workspace package sources, without executing builders.
-API runtime configuration, TypeScript configuration, the pinned data release,
-build scripts and the lockfile remain common inputs. The lockfile conservatively
+TypeScript configuration, the pinned data release, build scripts and the
+lockfile remain common inputs. API runtime configuration is assigned to the
+builders that read each file in `scripts/build-data-code.mjs`. The lockfile conservatively
 covers transitive dependencies, peer variants and dynamically loaded workers.
 Package manifests, API documentation and unimported shared code are excluded.
 Ordinary UI files are excluded unless a builder imports them.
