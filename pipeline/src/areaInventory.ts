@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { readGeoJsonProperties } from "../../shared/geoJsonProperties";
-import { sourceGeoJsonPath } from "../../shared/boundarySourcePaths";
+import { sourceGeoJsonPath } from "./boundarySourcePaths";
 import { join } from "node:path";
 import type {
 	AreaAdapterManifest,
