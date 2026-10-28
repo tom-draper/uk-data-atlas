@@ -67,6 +67,25 @@ export async function withDuckdbImd<T>(
 	);
 }
 
+export async function withDuckdbLocalElection<T>(
+	reader: DatasetReader,
+	artifacts: ReturnType<
+		typeof import("./trackedReader.mts").createTrackedReader
+	>["artifacts"],
+	compile: (reader: DatasetReader) => Promise<T>,
+	sourceRoot = SOURCE_DATA,
+): Promise<T> {
+	return withDuckdbFilteredCsv(
+		reader,
+		artifacts,
+		"* EXCLUDE (ordinal)",
+		"starts_with(column3, 'E') OR starts_with(column3, 'W')",
+		compile,
+		sourceRoot,
+		{ header: false, matches: (path) => /\/leap-[^/]+\.csv$/.test(path) },
+	);
+}
+
 export async function withDuckdbFilteredCsv<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
@@ -76,6 +95,10 @@ export async function withDuckdbFilteredCsv<T>(
 	where: string,
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
+	options: { header: boolean; matches: (path: string) => boolean } = {
+		header: true,
+		matches: () => true,
+	},
 ): Promise<T> {
 	const instance = await DuckDBInstance.create(":memory:");
 	const connection = await instance.connect();
@@ -84,15 +107,16 @@ export async function withDuckdbFilteredCsv<T>(
 		return await compile({
 			...reader,
 			text: async (path) => {
+				if (!options.matches(path)) return reader.text(path);
 				const source = join(sourceRoot, path);
 				const finishSource = await trackDuckdbSource(source);
 				const output = join(temp, "selected.csv");
 				await connection.run(`COPY (
     SELECT ${fields} FROM (
-     SELECT *, row_number() OVER () AS ordinal FROM read_csv(${quote(source)}, header=true, all_varchar=true, nullstr='')
+     SELECT *, row_number() OVER () AS ordinal FROM read_csv(${quote(source)}, header=${options.header}, all_varchar=true, nullstr='')
      WHERE ${where}
     ) ORDER BY ordinal
-   ) TO ${quote(output)} (HEADER, FORMAT CSV)`);
+   ) TO ${quote(output)} (HEADER ${options.header}, FORMAT CSV)`);
 				const trackedSource = await finishSource();
 				const selected = await readFile(output, "utf8");
 				artifacts.set(`text:${path}`, {
