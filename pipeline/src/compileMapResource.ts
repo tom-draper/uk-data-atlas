@@ -1,7 +1,7 @@
 import { gzipSync } from "node:zlib";
-import type { AreaGeometryCache } from "../areaGeometry";
-import { buildGeoJson } from "./geoJson";
-import { buildGeoParquet } from "./geoParquet";
+import type { AreaGeometryCache } from "../../shared/areaGeometry";
+import { buildGeoJson } from "../../shared/mapResource/geoJson";
+import { buildGeoParquet } from "../../shared/mapResource/geoParquet";
 import {
 	compileTileset,
 	LAYER_NAME,
@@ -9,8 +9,11 @@ import {
 import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles/tileset";
 import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { sha256 } from "../contentHash";
-import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
+import { sha256 } from "../../shared/contentHash";
+import {
+	buildFullDetailParquet,
+	GEOJSON_TIERS,
+} from "../../shared/mapResource/fullDetail";
 
 /**
  * One boundary release compiled into everything a map needs: the archive of

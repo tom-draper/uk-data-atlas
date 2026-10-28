@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { AreaGeometryCache } from "../src/areaGeometry";
 import { sha256 } from "../src/contentHash";
-import { compileFlatDownloads } from "../src/flatDownloads";
+import { compileFlatDownloads } from "../../../pipeline/src/flatDownloads";
 import { FullDetailDownloads } from "../src/fullDetailDownloads";
 import { readParquet } from "./parquetFixtures";
 
