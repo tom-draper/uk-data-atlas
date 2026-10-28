@@ -30,10 +30,7 @@ import {
 	CONTAINMENT_TOLERANCE_M,
 	geometryContainmentInputs,
 } from "../../shared/crosswalkGeometryValidation";
-import {
-	DIFFERENCE_RULE,
-	REALIGNED_SHARE,
-} from "../../shared/extentContinuity";
+import { DIFFERENCE_RULE, REALIGNED_SHARE } from "./extentContinuity";
 import {
 	addRelatedCodes,
 	releaseCoverageOf,

@@ -3689,7 +3689,7 @@ to place each ward in a local authority where the ward release names none,
 and in a constituency of each code set, and each LSOA in the newest local
 authorities.
 
-`pnpm tsx scripts/propose-geometric-containment.ts` searches for these
+`pnpm --dir ../.. exec tsx pipeline/src/propose-geometric-containment.ts` searches for these
 hierarchies. It asks only pairs that could nest, where one release has more
 areas than the other, its countries are inside theirs, their vintages are
 within three years, nothing already relates them, and one of the two is a

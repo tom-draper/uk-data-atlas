@@ -1,32 +1,35 @@
-import { CrosswalkSpatialIndex } from "./crosswalkSpatialIndex";
-import { sha256 } from "./contentHash";
+import { CrosswalkSpatialIndex } from "../../shared/crosswalkSpatialIndex";
+import { sha256 } from "../../shared/contentHash";
 import type { MultiPolygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "./areaGeometry";
+import type { GeometrySourceLookup } from "../../shared/areaGeometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { AreaLookup } from "./areaInventory";
+import type { AreaLookup } from "../../shared/areaInventory";
 import {
 	type AreaGeometry,
 	areaMultiPolygon,
 	boundsIntersect,
-} from "./areaGeometryPieces";
+} from "../../shared/areaGeometryPieces";
 import { labelsFor, round } from "./areaOverlap";
-import { CLIPPING_VERSION } from "./pieceIntersection";
-import { readGeometries } from "./rawAreaGeometries";
+import { CLIPPING_VERSION } from "../../shared/pieceIntersection";
+import { readGeometries } from "../../shared/rawAreaGeometries";
 import {
 	multiPolygonAreaM2,
 	polygonWidthM,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import { BoundedClipper, BOUNDED_CLIPPING_VERSION } from "./boundedClipping";
+import {
+	BoundedClipper,
+	BOUNDED_CLIPPING_VERSION,
+} from "../../shared/boundedClipping";
 import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
-} from "./crosswalkAdapters";
+} from "../../shared/crosswalkAdapters";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 import type {
 	BestFitCrosswalkArtifact,
 	GeometricContainmentCrosswalkArtifact,
-} from "./crosswalkTypes";
-import { validateEndpoint } from "./crosswalkValidation";
+} from "../../shared/crosswalkTypes";
+import { validateEndpoint } from "../../shared/crosswalkValidation";
 
 // About a millimetre, then about ten centimetres, for retries when
 // polygon-clipping's sweep line fails; both far below any sliver width.

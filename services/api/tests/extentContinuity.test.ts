@@ -19,7 +19,7 @@ import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPath
 import {
 	compileExtentContinuityCrosswalk,
 	MINIMUM_NOISE_SAMPLE,
-} from "../src/extentContinuity";
+} from "../../../pipeline/src/extentContinuity";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;

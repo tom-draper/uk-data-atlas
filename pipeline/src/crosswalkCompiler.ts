@@ -1,14 +1,14 @@
 import { RawGeometryCache } from "../../shared/rawAreaGeometries";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { compileAreaOverlapCrosswalk } from "../../shared/areaOverlap";
+import { compileAreaOverlapCrosswalk } from "./areaOverlap";
 import type { ReleaseCoverage } from "../../shared/relatedCodes";
 import {
 	compileBestFitCrosswalk,
 	compileGeometricContainmentCrosswalk,
-} from "../../shared/geometricContainment";
-import { compilePopulationOverlapCrosswalk } from "../../shared/populationOverlap";
-import { compileExtentContinuityCrosswalk } from "../../shared/extentContinuity";
+} from "./geometricContainment";
+import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
+import { compileExtentContinuityCrosswalk } from "./extentContinuity";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,

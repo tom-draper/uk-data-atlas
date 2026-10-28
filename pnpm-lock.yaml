@@ -380,6 +380,9 @@ importers:
       papaparse:
         specifier: ^5.7.0
         version: 5.7.0
+      polygon-clipping:
+        specifier: 0.15.7
+        version: 0.15.7
       prettier:
         specifier: 3.9.7
         version: 3.9.7
