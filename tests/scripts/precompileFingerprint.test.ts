@@ -28,7 +28,7 @@ const createRepository = async () => {
 	);
 	for (const file of [
 		"pipeline/src/compile-boundaries.mts",
-		"shared/reverseGridOffset.ts",
+		"packages/geography/src/reverseGridOffset.ts",
 		"shared/buildTiming.ts",
 		"pipeline/src/compile-boundary-tiles.mts",
 		"scripts/dataset-discovery.ts",

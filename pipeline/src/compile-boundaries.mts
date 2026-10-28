@@ -39,7 +39,7 @@ import {
 	type GeometrySubstitution,
 	type GridOffset,
 } from "@uk-data-atlas/geography";
-import { applyReversedGridOffset } from "../../shared/reverseGridOffset";
+import { applyReversedGridOffset } from "@uk-data-atlas/geography/reverse-grid-offset";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
 import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
 import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
