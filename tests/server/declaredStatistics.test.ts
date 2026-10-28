@@ -597,6 +597,97 @@ describe("declared statistics", () => {
 			).toThrow("regionCode E12000009 is in no listed release");
 		});
 
+		it("rebuilds null values and keys some records lack", () => {
+			const gappy: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				alsoIn: [{ geography: "localAuthority", year: 2022 }],
+				measures: [CRIMES, RATE],
+				fields: [
+					{ path: "total", measure: "crimes" },
+					{ path: "rate", measure: "rate" },
+				],
+				parents: [
+					{
+						code: "regionCode",
+						name: "regionName",
+						release: { geography: "region", year: 2025 },
+					},
+				],
+				rebuild: {},
+			};
+			const text = file({
+				E06000001: {
+					name: "Hartlepool",
+					regionCode: "E12000001",
+					regionName: "North East",
+					total: null,
+					rate: 1.5,
+				},
+				E06000002: {
+					name: "Middlesbrough",
+					total: 4,
+					note: "merged",
+					rate: 2,
+				},
+				E07000026: {
+					name: "Allerdale",
+					regionCode: "E12000001",
+					regionName: "North East",
+					total: 5,
+				},
+			});
+			const database = write(gappy, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare("SELECT path FROM dataset_leaf ORDER BY position")
+					.all()
+					.map((row) => row.path),
+			).toEqual([
+				'["name"]',
+				'["regionCode"]',
+				'["regionName"]',
+				'["total"]',
+				'["note"]',
+				'["rate"]',
+			]);
+			expect(
+				database
+					.prepare(
+						"SELECT position, leaf FROM dataset_record_absent ORDER BY position, leaf",
+					)
+					.all()
+					.map((row) => Object.values(row)),
+			).toEqual([
+				[0, 4],
+				[1, 1],
+				[1, 2],
+				[2, 4],
+				[2, 5],
+			]);
+		});
+
+		it("refuses records that order their keys differently", () => {
+			expect(() =>
+				write(
+					{
+						...config,
+						rebuild: {},
+						derived: undefined,
+						fields: [
+							{ path: "a", measure: "crimes" },
+							{ path: "b", measure: "rate" },
+						],
+					},
+					file({
+						E06000001: { name: "Hartlepool", a: 1, b: 2 },
+						E06000002: { name: "Middlesbrough", b: 3, a: 4 },
+					}),
+				),
+			).toThrow("E06000002 orders a differently from earlier records");
+		});
+
 		it("refuses a derived number without a rebuild rule", () => {
 			expect(() =>
 				write(

@@ -306,6 +306,81 @@ type Raw = {
 	status?: StatusSlug;
 };
 
+/**
+ * Every record of one record set, reduced to what its layout needs: the leaf
+ * paths in a key order all records agree with, a sample of each leaf (the
+ * first non-null), the first value claimed at each path, and each record's
+ * set of leaves, so leaves a record lacks are known.
+ */
+class RecordSample {
+	readonly order: string[] = [];
+	readonly paths = new Map<string, string[]>();
+	readonly nodes = new Map<string, { node: Json; code: string }>();
+	readonly claims = new Map<
+		string,
+		{ kind: "value" | "lower" | "upper"; raw: Raw }
+	>();
+	readonly shapes = new Map<string, Set<string>>();
+	/** Each record's shape, in the file's order. */
+	readonly recordShapes: string[] = [];
+
+	constructor(private readonly context: string) {}
+
+	add(code: string, record: { [key: string]: Json }) {
+		const present: string[] = [];
+		const visit = (node: Json, path: string[]) => {
+			if (
+				node !== null &&
+				typeof node === "object" &&
+				!Array.isArray(node) &&
+				Object.keys(node).length > 0
+			) {
+				for (const [child, value] of Object.entries(node))
+					visit(value, [...path, child]);
+				return;
+			}
+			const key = path.join("\0");
+			present.push(key);
+			if (!this.paths.has(key)) this.paths.set(key, path);
+			const known = this.nodes.get(key);
+			if (!known || (known.node === null && node !== null))
+				this.nodes.set(key, { node, code });
+		};
+		visit(record, []);
+		const shape = present.join("\u0001");
+		this.recordShapes.push(shape);
+		if (this.shapes.has(shape)) return;
+		this.shapes.set(shape, new Set(present));
+		let last = -1;
+		for (const key of present) {
+			let index = this.order.indexOf(key);
+			if (index === -1) this.order.splice((index = last + 1), 0, key);
+			else if (index <= last)
+				throw new Error(
+					`${this.context}: ${code} orders ${key.replaceAll("\0", ".")} differently from earlier records`,
+				);
+			last = index;
+		}
+	}
+
+	claim(raw: Raw) {
+		for (const kind of ["value", "lower", "upper"] as const) {
+			const path = raw.paths[kind];
+			if (!path) continue;
+			const key = path.join("\0");
+			if (!this.claims.has(key)) this.claims.set(key, { kind, raw });
+		}
+	}
+
+	/** Leaf positions a shape lacks. */
+	absent(shape: string) {
+		const present = this.shapes.get(shape)!;
+		return this.order.flatMap((key, index) =>
+			present.has(key) ? [] : [index],
+		);
+	}
+}
+
 const sourceText = (
 	source: unknown,
 	key: string,
@@ -387,15 +462,8 @@ export function declaredStatistics(
 			onPart?: (part: {
 				key: string;
 				header: DeclaredHeader;
-				/** The first record of each record set, with its values. */
-				first: Map<
-					string,
-					{
-						code: string;
-						record: { [key: string]: Json };
-						raws: Raw[];
-					}
-				>;
+				/** Each record set's records, reduced for laying out. */
+				samples: Map<string, RecordSample>;
 				/** Each record set's areas, in the file's order. */
 				areas: Map<string, LaidOutArea[]>;
 			}) => void,
@@ -422,14 +490,7 @@ export function declaredStatistics(
 							? undefined
 							: parsePath(field.upper),
 				}));
-				const first = new Map<
-					string,
-					{
-						code: string;
-						record: { [key: string]: Json };
-						raws: Raw[];
-					}
-				>();
+				const samples = new Map<string, RecordSample>();
 				const areaLists = new Map<string, LaidOutArea[]>();
 				for (const set of recordSets) {
 					const records = header[set.from];
@@ -487,6 +548,11 @@ export function declaredStatistics(
 							const parentCode = record[parent.code];
 							const parentName = record[parent.name];
 							if (
+								parentCode === undefined &&
+								parentName === undefined
+							)
+								return undefined;
+							if (
 								typeof parentCode !== "string" ||
 								typeof parentName !== "string"
 							)
@@ -509,10 +575,17 @@ export function declaredStatistics(
 							return { release: parentRelease, code: parentCode };
 						});
 						if (onPart) order.push({ release, code, parents });
+						let sample: RecordSample | undefined;
+						if (onPart) {
+							sample = samples.get(set.from);
+							if (!sample)
+								samples.set(
+									set.from,
+									(sample = new RecordSample(context)),
+								);
+							sample.add(code, record);
+						}
 						const claimed = new Set<string>();
-						const raws: Raw[] | undefined =
-							onPart && !first.has(set.from) ? [] : undefined;
-						if (raws) first.set(set.from, { code, record, raws });
 						for (const field of fields) {
 							for (const { node, path, bound } of expand(
 								record,
@@ -599,7 +672,7 @@ export function declaredStatistics(
 									),
 									status: field.status?.(record),
 								};
-								raws?.push(raw);
+								sample?.claim(raw);
 								yield raw;
 							}
 						}
@@ -617,7 +690,7 @@ export function declaredStatistics(
 						}
 					}
 				}
-				onPart?.({ key, header, first, areas: areaLists });
+				onPart?.({ key, header, samples, areas: areaLists });
 			}
 		}
 
@@ -656,88 +729,69 @@ export function declaredStatistics(
 		const layOut: Parameters<typeof walk>[2] = ({
 			key,
 			header,
-			first,
+			samples,
 			areas: orders,
 		}) => {
 			const context = `${type} ${key}`;
 			const sets = new Set(recordSets.map((set) => set.from));
 			const records = recordSets.map(({ from }) => {
-				const found = first.get(from);
-				if (!found)
+				const sample = samples.get(from);
+				if (!sample)
 					throw new Error(
 						`${context}: no ${from} records to lay out`,
 					);
-				const claims = new Map<
-					string,
-					{ kind: "value" | "lower" | "upper"; raw: Raw }
-				>();
-				for (const raw of found.raws)
-					for (const kind of ["value", "lower", "upper"] as const) {
-						const path = raw.paths[kind];
-						if (path) claims.set(path.join("\0"), { kind, raw });
-					}
-				const leaves: StatisticsLayoutLeaf[] = [];
-				const visit = (node: Json, path: string[]) => {
-					const claim = claims.get(path.join("\0"));
-					if (claim) {
-						leaves.push({
-							path,
-							kind: claim.kind,
-							series: seriesIndex.get(seriesKey(claim.raw))!,
-							period: claim.raw.period.label,
-						});
-						return;
-					}
-					if (
-						path.length === 1 &&
-						path[0] === config.name &&
-						typeof node === "string"
-					) {
-						leaves.push({ path, kind: "name" });
-						return;
-					}
-					const parent =
-						path.length === 1
-							? parentFields.get(path[0])
-							: undefined;
-					if (parent && typeof node === "string") {
-						leaves.push({ path, ...parent });
-						return;
-					}
-					if (node === found.code) {
-						leaves.push({ path, kind: "code" });
-						return;
-					}
-					if (typeof node === "number") {
-						const index = derived.findIndex((pattern) =>
-							sameShape(pattern, path),
-						);
-						const rule = derivedPatterns[index];
-						if (!config.rebuild?.derived?.[rule])
-							throw new Error(
-								`${type}: derived ${rule} has no rebuild rule`,
+				const leaves = sample.order.map(
+					(leafKey): StatisticsLayoutLeaf => {
+						const path = sample.paths.get(leafKey)!;
+						const claim = sample.claims.get(leafKey);
+						if (claim)
+							return {
+								path,
+								kind: claim.kind,
+								series: seriesIndex.get(seriesKey(claim.raw))!,
+								period: claim.raw.period.label,
+							};
+						const { node, code } = sample.nodes.get(leafKey)!;
+						if (
+							path.length === 1 &&
+							path[0] === config.name &&
+							typeof node === "string"
+						)
+							return { path, kind: "name" };
+						const parent =
+							path.length === 1
+								? parentFields.get(path[0])
+								: undefined;
+						if (parent && typeof node === "string")
+							return { path, ...parent };
+						if (node === code) return { path, kind: "code" };
+						if (typeof node === "number") {
+							const index = derived.findIndex((pattern) =>
+								sameShape(pattern, path),
 							);
-						leaves.push({ path, kind: "derived", rule });
-						return;
-					}
-					if (
-						node !== null &&
-						typeof node === "object" &&
-						!Array.isArray(node) &&
-						Object.keys(node).length > 0
-					) {
-						for (const [child, value] of Object.entries(node))
-							visit(value, [...path, child]);
-						return;
-					}
-					leaves.push({
-						path,
-						kind: "literal",
-						value: JSON.stringify(node),
-					});
-				};
-				visit(found.record, []);
-				return { from, leaves, areas: orders.get(from)! };
+							const rule = derivedPatterns[index];
+							if (!config.rebuild?.derived?.[rule])
+								throw new Error(
+									`${type}: derived ${rule} has no rebuild rule`,
+								);
+							return { path, kind: "derived", rule };
+						}
+						return {
+							path,
+							kind: "literal",
+							value: JSON.stringify(node),
+						};
+					},
+				);
+				const absent = new Map<string, number[]>();
+				const areas = orders.get(from)!.map((area, index) => {
+					const shape = sample.recordShapes[index];
+					let lacking = absent.get(shape);
+					if (!lacking)
+						absent.set(shape, (lacking = sample.absent(shape)));
+					return lacking.length ? { ...area, absent: lacking } : area;
+				});
+				return { from, leaves, areas };
 			});
 			layouts.push({
 				key,

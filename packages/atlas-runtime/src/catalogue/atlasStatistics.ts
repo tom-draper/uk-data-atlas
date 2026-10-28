@@ -170,8 +170,10 @@ export type StatisticsLayout = {
 		areas: {
 			release: AreaRelease;
 			code: string;
-			/** Parent areas, in the dataset's order of parent fields. */
-			parents?: { release: AreaRelease; code: string }[];
+			/** Parent areas, in the dataset's order of parent fields; a record may lack one. */
+			parents?: ({ release: AreaRelease; code: string } | undefined)[];
+			/** Leaf positions this record lacks. */
+			absent?: number[];
 		}[];
 	}[];
 };
@@ -965,21 +967,56 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 								position,
 								{ parents },
 							] of areas.entries())
-								for (const [parent, { release, code }] of (
+								for (const [parent, found] of (
 									parents ?? []
 								).entries())
+									if (found)
+										yield [
+											index + 1,
+											part,
+											from,
+											position,
+											parent,
+											area(
+												database,
+												dataset.slug,
+												found.release,
+												found.code,
+											).id,
+										];
+			}),
+		},
+		dataset_record_absent: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL",
+				"part INTEGER NOT NULL",
+				"records TEXT NOT NULL",
+				"position INTEGER NOT NULL",
+				"leaf INTEGER NOT NULL",
+			],
+			key: ["dataset_id", "part", "records", "position", "leaf"],
+			constraints: [
+				"FOREIGN KEY (dataset_id, part, records, position) REFERENCES dataset_record(dataset_id, part, records, position)",
+				"FOREIGN KEY (dataset_id, part, records, leaf) REFERENCES dataset_leaf(dataset_id, part, records, position)",
+			],
+			rows: rows(function* ({ datasets }, database) {
+				for (const [index, dataset] of datasets.entries())
+					for (const [part, layout] of [
+						...(dataset.layouts?.() ?? []),
+					].entries())
+						for (const { from, areas } of layout.records)
+							for (const [
+								position,
+								{ absent },
+							] of areas.entries())
+								for (const leaf of absent ?? [])
 									yield [
 										index + 1,
 										part,
 										from,
 										position,
-										parent,
-										area(
-											database,
-											dataset.slug,
-											release,
-											code,
-										).id,
+										leaf,
 									];
 				// Last statistics table: every row, layouts included, is written.
 				for (const dataset of datasets) dataset.verify?.(database);

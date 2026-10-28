@@ -116,6 +116,16 @@ function records(
 		if (!found) parents.set(row.position, (found = new Map()));
 		found.set(row.parent, row);
 	}
+	const absent = new Map<number, Set<number>>();
+	for (const row of database
+		.prepare(
+			"SELECT position, leaf FROM dataset_record_absent WHERE dataset_id = ? AND part = ? AND records = ?",
+		)
+		.all(dataset, part, from) as { position: number; leaf: number }[]) {
+		let found = absent.get(row.position);
+		if (!found) absent.set(row.position, (found = new Set()));
+		found.add(row.leaf);
+	}
 	const result: Record<string, Json> = {};
 	for (const { position, area, code, name } of database
 		.prepare(
@@ -135,16 +145,14 @@ function records(
 	}[]) {
 		const values = cells.get(area);
 		const record: Record<string, Json> = {};
-		for (const leaf of leaves) {
+		const lacking = absent.get(position);
+		for (const [index, leaf] of leaves.entries()) {
+			if (lacking?.has(index)) continue;
 			let value: Json;
 			if (leaf.series !== null) {
 				const row = values?.get(`${shape(leaf.series)}:${leaf.period}`);
-				const found = row?.[leaf.kind as "value" | "lower" | "upper"];
-				if (found === undefined || found === null)
-					throw new Error(
-						`${slug}: ${code} has no ${leaf.kind} for ${leaf.path.join(".")}`,
-					);
-				value = found;
+				// A value with no observation is null in the file.
+				value = row?.[leaf.kind as "value" | "lower" | "upper"] ?? null;
 			} else if (leaf.kind === "code") value = code;
 			else if (leaf.kind === "name") value = name;
 			else if (
@@ -164,7 +172,7 @@ function records(
 		}
 		for (const [rule, compute] of Object.entries(rules))
 			for (const leaf of derived)
-				if (leaf.rule === rule)
+				if (leaf.rule === rule && !lacking?.has(leaves.indexOf(leaf)))
 					place(record, leaf.path, compute(record));
 		result[code] = record;
 	}
