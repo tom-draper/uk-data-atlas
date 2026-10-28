@@ -14,7 +14,8 @@ metadata. Source dataset payloads retain fields absent from observation contract
 they are not interchangeable copies of those contracts.
 
 `data/build/atlas-cache.sqlite` contains `area_search_*`, `place_index_*`,
-`location_projection_*`, `postcode_counts`, and the projection and counts metadata
+`location_projection_*`, `postcode_counts`, `dataset_payloads` (the JSON of
+catalogue datasets served from rows), and the projection and counts metadata
 in its own `payloads` table. These are API accelerators rebuilt from canonical
 SQLite data. The base SQLite build writes the projection cache, and the search
 and postcode-count stages publish their own cache components. Publishers replace

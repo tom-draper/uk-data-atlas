@@ -48,8 +48,9 @@ again. `pnpm data:build --only datasets` builds this stage and its prerequisites
 
 ## atlas-cache.sqlite
 
-This local API cache is never distributed. Search indexes, location projections
-and postcode counts live here. After replacing `atlas.sqlite`, regenerate it with
+This local API cache is never distributed. Search indexes, location projections,
+postcode counts and the JSON of datasets served from rows (`dataset_payloads`,
+keyed by output and manifest hash) live here. After replacing `atlas.sqlite`, regenerate it with
 `pnpm --dir services/api build:cache` from the repository root. This reads only
 the canonical database, without precompile. Missing or stale components fail with
 that command. See [generated API data](../../docs/api-generated-data.md).
@@ -67,21 +68,21 @@ failure. Run the complete API or website target to include both stages.
 
 The database contains these tables:
 
-| Table      | Column        | Type                   | Key and meaning                                                                  |
-| ---------- | ------------- | ---------------------- | -------------------------------------------------------------------------------- |
-| `meta`     | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                     |
-| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"3"`.                                        |
-| `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>`.     |
-| `payloads` | `payload`     | `TEXT NOT NULL`        | Exact UTF-8 JSON text from its compiled input, preserving bytes and array order. |
-| `datasets` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                             |
-| `datasets` | `output`      | `TEXT NOT NULL UNIQUE` | Compiled output name, without `.json`.                                           |
-| `datasets` | `source`      | `TEXT NOT NULL`        | JSON source metadata from the manifest.                                          |
-| `datasets` | `contract`    | `TEXT NOT NULL`        | JSON dataset contract.                                                           |
-| `datasets` | `summary`     | `TEXT NOT NULL`        | JSON compilation summary.                                                        |
-| `datasets` | `fingerprint` | `TEXT NOT NULL`        | Dataset compiler and input fingerprint.                                          |
-| `datasets` | `sha256`      | `TEXT NOT NULL`        | SHA-256 of the exact uncompressed payload bytes.                                 |
-| `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                               |
-| `datasets` | `payloadId`   | `TEXT NOT NULL`        | Foreign key to `payloads.id`, `dataset:<output>`.                                |
+| Table      | Column        | Type                   | Key and meaning                                                                                                |
+| ---------- | ------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `meta`     | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                                                   |
+| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"3"`.                                                                      |
+| `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>` for datasets not served from rows. |
+| `payloads` | `payload`     | `TEXT NOT NULL`        | Exact UTF-8 JSON text from its compiled input, preserving bytes and array order.                               |
+| `datasets` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                                                           |
+| `datasets` | `output`      | `TEXT NOT NULL UNIQUE` | Compiled output name, without `.json`.                                                                         |
+| `datasets` | `source`      | `TEXT NOT NULL`        | JSON source metadata from the manifest.                                                                        |
+| `datasets` | `contract`    | `TEXT NOT NULL`        | JSON dataset contract.                                                                                         |
+| `datasets` | `summary`     | `TEXT NOT NULL`        | JSON compilation summary.                                                                                      |
+| `datasets` | `fingerprint` | `TEXT NOT NULL`        | Dataset compiler and input fingerprint.                                                                        |
+| `datasets` | `sha256`      | `TEXT NOT NULL`        | SHA-256 of the exact uncompressed payload bytes.                                                               |
+| `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                                                             |
+| `datasets` | `payloadId`   | `TEXT`                 | Foreign key to `payloads.id`, `dataset:<output>`. Null for datasets served from rows.                          |
 
 `meta`, `payloads`, `datasets`, `area_releases`, `crosswalk_coverage`, `named_locations`, `named_location_members`,
 `named_location_assertions`, `named_location_partial_members`, and `named_location_geometries` use `WITHOUT ROWID`. Each dataset has one payload. The complete
@@ -111,12 +112,13 @@ Gazetteer core and boundary assets remain API build intermediates under
 responses remain unchanged for byte compatibility.
 
 The Next.js atlas pages pass a map of output names to hash-versioned URLs into
-the client. `GET /data/catalogue/<sha256>/<output>.json` joins `datasets.payloadId`
-to `payloads.id`, matching both output and hash before returning the exact JSON
-with `Content-Type: application/json; charset=utf-8` and
-`Cache-Control: public, max-age=31536000, immutable`. Fuel poverty instead
-reconstructs these same bytes from statistics rows after matching the
-output and hash in `datasets`. The route supplies gzip
+the client. `GET /data/catalogue/<sha256>/<output>.json` matches both output and
+hash in `datasets`, then returns the exact JSON with
+`Content-Type: application/json; charset=utf-8` and
+`Cache-Control: public, max-age=31536000, immutable`: the stored payload, or for
+a dataset served from rows the cached rebuild (rebuilt from rows and checked
+against the hash when the cache lacks it). `readAtlasPayload("dataset:<output>")`
+reads the same way. The route supplies gzip
 compression when the client accepts it, with `Vary: Accept-Encoding`. Missing outputs and stale or invalid
 hashes return 404 with `Cache-Control: no-store`, never a different payload at
 an old URL. A database deployment can therefore invalidate uncached old URLs;
@@ -143,19 +145,21 @@ are gone.
 
 All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/catalogue/atlasStatistics.ts`.
 
-| Table               | Key                                       | Meaning                                                                                        |
-| ------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `source`            | `id`                                      | Publisher, URL and licence.                                                                    |
-| `dataset`           | `id`, `slug` unique                       | Title, description, `source_id`, compiler `fingerprint`. `slug` is the compiled output name.   |
-| `measure`           | `id`, `slug` unique                       | Shared across datasets. Unit, `value_kind`, `aggregation`, and numerator/denominator measures. |
-| `dimension`         | `id`, `slug` unique                       | A breakdown such as `tenure` or `crime-type`.                                                  |
-| `dimension_member`  | `id`, unique `(dimension_id, code)`       | Member label, optional parent, publisher `position`.                                           |
-| `period`            | `id`, `label` unique                      | `kind`, `start_date`, `end_date`.                                                              |
-| `status`            | `id`, `slug` unique                       | `observed` (1), `estimated`, `provisional`, `suppressed`, `not_applicable`.                    |
-| `series`            | `id`, `key` unique                        | One dataset, measure, release (`area_releases.position`) and set of members, plus `method`.    |
-| `series_member`     | `(series_id, dimension_id)`               | The members fixing a series. Indexed by `(member_id, series_id)`.                              |
-| `observation`       | `(series_id, area_version_id, period_id)` | `value`, `status_id`, optional `lower`, `upper`, `category_id`. `WITHOUT ROWID`.               |
-| `dataset_area_name` | `(dataset_id, area_version_id)`           | A publisher's area name, stored only where it differs from `area_version.name`.                |
+| Table               | Key                                       | Meaning                                                                                                                                  |
+| ------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`            | `id`                                      | Publisher, URL and licence.                                                                                                              |
+| `dataset`           | `id`, `slug` unique                       | Title, description, `source_id`, compiler `fingerprint`. `slug` is the compiled output name.                                             |
+| `measure`           | `id`, `slug` unique                       | Shared across datasets. Unit, `value_kind`, `aggregation`, and numerator/denominator measures.                                           |
+| `dimension`         | `id`, `slug` unique                       | A breakdown such as `tenure` or `crime-type`.                                                                                            |
+| `dimension_member`  | `id`, unique `(dimension_id, code)`       | Member label, optional parent, publisher `position`.                                                                                     |
+| `period`            | `id`, `label` unique                      | `kind`, `start_date`, `end_date`.                                                                                                        |
+| `status`            | `id`, `slug` unique                       | `observed` (1), `estimated`, `provisional`, `suppressed`, `not_applicable`.                                                              |
+| `series`            | `id`, `key` unique                        | One dataset, measure, release (`area_releases.position`) and set of members, plus `method`.                                              |
+| `series_member`     | `(series_id, dimension_id)`               | The members fixing a series. Indexed by `(member_id, series_id)`.                                                                        |
+| `observation`       | `(series_id, area_version_id, period_id)` | `value`, `status_id`, optional `lower`, `upper`, `category_id`. `WITHOUT ROWID`.                                                         |
+| `dataset_area_name` | `(dataset_id, area_version_id)`           | A publisher's area name, stored only where it differs from `area_version.name`.                                                          |
+| `dataset_part`      | `(dataset_id, position)`                  | A top-level key of a dataset served from rows, and its header JSON with record sets as null.                                             |
+| `dataset_leaf`      | `(dataset_id, part, records, position)`   | One leaf of every record in a part's record set, in key order: a series value or bound, the code, the name, a derived rule or a literal. |
 
 `observation.area_version_id` references `area_version(id)`, one row per
 release and code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
@@ -171,12 +175,9 @@ Fuel poverty (`packages/atlas-runtime/src/catalogue/fuelPovertyStatistics.ts`) m
 measure (`households`, `fuel-poor-households`, `fuel-poverty-rate`) on the 2021
 LSOA release. Record order is area code order and is not stored; the mapper
 refuses unordered input. The period header (`id`, `year`, `boundaryType`,
-`boundaryYear`) is derived from the period and release. Its JSON payload stays
-in `payloads` until step 4. `GET /data/catalogue/<sha256>/fuel-poverty.json`
-rebuilds the bytes from rows after matching the hash in `datasets`, and the
-build refuses to publish if the rebuilt bytes differ from the payload. Rebuild
-older databases with `pnpm data:build --only atlas-sqlite` before deploying the
-new reader.
+`boundaryYear`) is derived from the period and release. It is served from rows:
+the build refuses to publish if the rebuilt bytes differ from the compiled JSON,
+and stores no payload.
 
 The other datasets are configuration in `packages/atlas-runtime/src/catalogue/statisticsDatasets/`, read by
 `packages/atlas-runtime/src/catalogue/declaredStatistics.ts`. Each config names the record fields that hold
@@ -185,8 +186,22 @@ number in a record must be claimed by a field or listed as `derived` with a
 reason (per-100k figures, percentages the compiler computes, copies), and the
 build checks the stored row count. Codes are placed on the header's release,
 then on each `alsoIn` release in turn; a code in none of them fails the build
-unless an `exclude` pattern gives a reason. Their JSON payloads stay the bytes
-the website and API serve.
+unless an `exclude` pattern gives a reason.
+
+A config with `rebuild` is served from rows. The build infers its layout from
+the first record of each part (`dataset_part`, `dataset_leaf`), rebuilds the
+JSON from rows (`packages/atlas-runtime/src/catalogue/datasetLayout.ts`), and refuses to publish unless the
+bytes equal the compiled file, reporting where they first differ. Records are
+laid out in area code order. A leaf names the first record's series; records
+on an `alsoIn` release read the series with the same measure and members.
+Derived numbers are recomputed by the config's `rebuild.derived` rules. The
+compiled JSON is then not stored in `payloads`; `atlas-sqlite` and
+`build:cache` rebuild it into `atlas-cache.sqlite`, checking the manifest hash.
+Other configured datasets keep their payloads until a later batch.
+
+Run `pnpm exec vitest run --project built tests/built/datasetPayloads.test.ts`
+to check every dataset served from rows rebuilds to its manifest hash, has no
+payload and is in the cache.
 
 Run `pnpm exec vitest run --project built tests/built/statisticsDatasets.test.ts`
 after a full build to check every configured dataset has rows and write

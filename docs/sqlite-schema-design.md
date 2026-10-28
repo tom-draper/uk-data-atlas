@@ -601,6 +601,57 @@ area_releases.position`, which `series.release_id` already references), then
   `crosswalk_inventory` and `crosswalk_coverage` move to `release_info` later.
 - `source_id` is left out until boundary releases and sources are linked.
 
+### Step 4, batch 1: datasets served from rows (2026-10-28)
+
+- A dataset is served from rows when its config sets `rebuild` (fuel poverty
+  through its mapper). Its JSON is not stored in `payloads`; `datasets.payloadId`
+  is null. `atlas-sqlite` and `build:cache` rebuild it into
+  `atlas-cache.sqlite` (`dataset_payloads`, keyed by output and manifest hash),
+  checking the hash. Readers take the stored payload, else the cached rebuild,
+  else rebuild from rows and check the hash, so a missing cache is slower, not
+  wrong.
+- The website and API run from one checkout, and the server rebuilds the cache
+  from `atlas.sqlite` alone, so the rows must hold everything in the JSON.
+  What the observation tables do not hold is in two small layout tables:
+  `dataset_part` (each top-level key and its header JSON) and `dataset_leaf`
+  (each leaf of a record, in key order: a series value or bound, the code, the
+  name, a derived rule or a literal). They are inferred from the first record
+  of each part, so no config describes the JSON shape. They are response
+  layout, kept until readers build responses from rows (step 7).
+- Records are laid out in area code order; order is not stored. A leaf names
+  the first record's series; records on an `alsoIn` release read the series
+  with the same measure and members.
+- Derived numbers stay unstored. A config's `rebuild.derived` gives one rule
+  per `derived` pattern, the compiler's own expression, applied in order to the
+  rebuilt record (good health is `veryGood + good`, then a percentage of it).
+- The build refuses a served dataset whose rows do not rebuild the compiled
+  JSON byte for byte, and reports where the bytes first differ.
+- Batch 1 is the datasets that already rebuild: fuel poverty, general health
+  and housing tenure (census cubes), land area, air quality, constituency
+  population, regional GDP at ITL1 to ITL3, and both life expectancy datasets.
+  On the 2026-10-28 build stored payload JSON went from 79 MB to 58 MB and
+  `atlas.sqlite` from 453 MB to 432 MB; the layout tables hold 537 leaves.
+  Observation rows are unchanged.
+
+What keeps the other datasets on payloads, found by forcing `rebuild` on each
+(the first blocker the build hit; a dataset can have more):
+
+| Blocker                                                         | Datasets                                                                                                                                                                                                                                                                         |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Records not in area code order                                  | car availability, qualification, travel to work, ethnicity, council tax, local government finance, housing affordability, broadband, mobile coverage, crime, road collisions, homelessness, both adult social care, net additional dwellings, planning applications, both Brexit |
+| Values in arrays                                                | population, population-uk, house prices                                                                                                                                                                                                                                          |
+| Some records lack a value others have                           | income, workplace income, unemployment, public health                                                                                                                                                                                                                            |
+| Parent area code and name in each record                        | IMD, WIMD, SIMD, NIMDM                                                                                                                                                                                                                                                           |
+| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity                                                                                                                                                                                       |
+| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables                                                                                                                                                                                                |
+| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                                                                                                                                                                                                            |
+
+Order is fixed in the compiler (sort by code, a separate change that updates
+the hash and so the dataset's URL). Arrays and absent values need new leaf
+kinds. Parent areas are relationships the area tables can supply. Values a
+derived number needs but the rows lack (population) must be stored or joined
+first.
+
 ### Catalogue datasets as configuration (2026-10-27)
 
 Every catalogue dataset whose records are numbers keyed by area code is stored
@@ -612,8 +663,8 @@ from a `DeclaredDataset` in `packages/atlas-runtime/src/catalogue/statisticsData
   by value: every number in every record must be claimed by a field, as a
   value or an interval bound, or listed under `derived` with a reason, and the
   build checks the stored row count. A new compiler field fails the build
-  instead of going missing. Byte rebuilds, as for fuel poverty, wait for step
-  4, when payloads move to the cache.
+  instead of going missing. Datasets with `rebuild` are also checked byte for
+  byte and served from rows (step 4, above).
 - **Derived values are not stored.** Per-100k figures, percentages a
   compiler computes from stored counts, and copies (the latest school year
   repeated at the top of each record) are listed as `derived`. Published
@@ -670,7 +721,10 @@ and the writer do not change.
    `release` overrides it and `alsoIn` lists fallbacks. `exclude` drops codes
    with a reason.
 5. **Derived numbers** go in `derived` with why.
-6. **Check** with the real data: the build fails on any unclaimed number or
+6. **Serve from rows** by setting `rebuild`, with a rule for each derived
+   pattern that repeats the compiler's expression. The build fails, showing
+   the first differing bytes, until the rows rebuild the JSON exactly.
+7. **Check** with the real data: the build fails on any unclaimed number or
    unplaced code. Add a fixture test in `tests/server/declaredStatistics.test.ts`
    for any new kind of shape.
 
