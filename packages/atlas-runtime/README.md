@@ -21,3 +21,5 @@ Postcode indexes, area placements and counts live in `@uk-data-atlas/postcodes`.
 Area inventory types and data-source-independent lookups live in `@uk-data-atlas/areas`. The runtime supplies the SQLite reader.
 
 Crosswalk models, translation and member reconciliation live in `@uk-data-atlas/relationships`. The runtime provides the atlas storage readers and higher-level composition.
+
+Spatial queries and shared-border calculations live in `@uk-data-atlas/geometry`. The runtime supplies the source and compiled-file readers and caches.

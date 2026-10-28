@@ -6,7 +6,7 @@ import type {
 	IntersectingArea,
 } from "../../geometry/areaGeometry";
 import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
-import type { Neighbour } from "../../areas/areaNeighbours";
+import type { Neighbour } from "@uk-data-atlas/geometry";
 import type {
 	GeometryBounds,
 	PointContainment,
