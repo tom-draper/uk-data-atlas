@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { CrosswalkArtifact } from "../src/crosswalkInventory";
-import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
-import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
+import type { RelationshipPath } from "@uk-data-atlas/relationships";
+import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import {
 	buildStepTargets,
 	buildTranslationSteps,
@@ -11,7 +11,7 @@ import {
 	executeTranslationPath,
 	rankTranslationPaths,
 	type TranslationTarget,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 type Endpoint = { geography: string; boundaryRelease: string };
 

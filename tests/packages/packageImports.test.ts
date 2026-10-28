@@ -147,6 +147,31 @@ const importsAtlasApi = (file: string, specifier: string) =>
 	(specifier.startsWith(".") &&
 		inside(ATLAS_API, resolve(dirname(file), specifier)));
 
+describe("extracted domain packages", () => {
+	it.each(["areas", "relationships"])(
+		"%s has no runtime or storage dependency",
+		(name) => {
+			const manifest = JSON.parse(
+				readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+			);
+			const dependencies = Object.keys(manifest.dependencies ?? {});
+			expect(dependencies).not.toContain("@uk-data-atlas/atlas-runtime");
+			const files = sourceFiles(join(PACKAGES, name, "src"));
+			expect(files.length).toBeGreaterThan(0);
+			const imports = files.flatMap((file) =>
+				specifiers(readFileSync(file, "utf8")),
+			);
+			expect(
+				imports.filter(
+					(specifier) =>
+						specifier.startsWith("node:sqlite") ||
+						specifier.startsWith("@uk-data-atlas/atlas-runtime"),
+				),
+			).toEqual([]);
+		},
+	);
+});
+
 describe("atlas domain boundaries", () => {
 	it("keeps domain modules and evidence loading independent of the API", () => {
 		const atlas = join(PACKAGES, "atlas-runtime/src");
