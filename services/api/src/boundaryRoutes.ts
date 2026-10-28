@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseDownloads } from "@uk-data-atlas/atlas-runtime/maps";
 import { withReleaseHeaders } from "./releaseDeprecation";
 import { parseSelectionDate } from "@uk-data-atlas/atlas-runtime/areas";

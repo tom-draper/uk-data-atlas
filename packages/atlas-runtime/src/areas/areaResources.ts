@@ -2,8 +2,6 @@ import type { AreaLookup } from "./areaInventory";
 import type { DataCatalog } from "../catalogue/dataCatalog";
 import type { measureCoverage } from "../catalogue/measureCoverage";
 import { observationsFor } from "../catalogue/observationArtifacts";
-import { problem, type ApiResponse } from "../api/routeResponse";
-import type { RouteContext } from "./routing";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export const findArea = (
@@ -12,28 +10,6 @@ export const findArea = (
 	boundaryRelease: string,
 	code: string,
 ) => areaLookup?.get(releaseKey(geography, boundaryRelease))?.get(code);
-
-/**
- * A 404 for an area identity that says why it resolves to nothing: an
- * unpublished geography or release, identities not compiled, or a code the
- * release does not hold, with the releases that do.
- */
-export const areaNotFound = (
-	context: RouteContext,
-	geography?: string,
-	boundaryRelease?: string,
-	code?: string,
-): ApiResponse => {
-	const resolved = context.geographyResolver.explainAreaAbsence(
-		geography ?? "",
-		boundaryRelease ?? "",
-		code ?? "",
-	);
-	const { detail, ...absence } = resolved ?? {
-		detail: "No compiled boundary registry is available to explain this area identity.",
-	};
-	return problem(404, "Not Found", detail, absence);
-};
 
 /**
  * The source partitions of a measure assessed against one boundary release,

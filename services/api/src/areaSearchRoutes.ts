@@ -6,7 +6,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 
 /**

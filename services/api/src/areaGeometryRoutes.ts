@@ -3,7 +3,7 @@ import {
 	GENERALISATION_METHOD,
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	envelope,
