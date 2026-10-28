@@ -1,5 +1,3 @@
-import { createHash } from "node:crypto";
-import { createReadStream } from "node:fs";
 import { join } from "node:path";
 import { DuckDBInstance } from "@duckdb/node-api";
 import {
@@ -11,7 +9,7 @@ import type {
 	RoadCollisionsLADData,
 	RoadCollisionsLSOAData,
 } from "../../../packages/datasets/src/types/roadCollisions";
-import { fileStamp, sameFileStamp } from "./cache.mts";
+import { trackDuckdbSource } from "./duckdbSource.mts";
 import { SOURCE_DATA } from "./paths.mts";
 
 export async function compileDuckdbRoadCollisions(
@@ -26,13 +24,7 @@ export async function compileDuckdbRoadCollisions(
 		const datasets: Record<string, RoadCollisionsDataset> = {};
 		for (const source of ROAD_COLLISION_SOURCES) {
 			const file = join(root, source);
-			const before = await fileStamp(file);
-			const hash = createHash("sha256");
-			let bytes = 0;
-			for await (const chunk of createReadStream(file)) {
-				hash.update(chunk as Buffer);
-				bytes += (chunk as Buffer).length;
-			}
+			const finishSource = await trackDuckdbSource(file);
 			const path = file.replaceAll("'", "''");
 			await connection.run(
 				`CREATE OR REPLACE TEMP TABLE input AS SELECT row_number() OVER () AS ordinal, trim(coalesce(local_authority_ons_district, '')) AS code, trim(coalesce(lsoa_of_accident_location, '')) AS lsoa, trim(coalesce(collision_severity, '')) AS severity, trim(coalesce(date, '')) AS date FROM read_csv('${path}', header=true, all_varchar=true, nullstr='')`,
@@ -104,15 +96,11 @@ export async function compileDuckdbRoadCollisions(
 				throw new Error(
 					`Road collision sources contain duplicate years: ${year}.`,
 				);
-			const after = await fileStamp(file);
-			if (!sameFileStamp(before, after) || bytes !== after.bytes)
-				throw new Error(`Source changed while reading: ${file}`);
+			const trackedSource = await finishSource();
 			artifacts.set(`text:${source}`, {
 				kind: "text",
 				path: source,
-				bytes,
-				sha256: hash.digest("hex"),
-				input: after,
+				...trackedSource,
 			});
 			datasets[String(year)] = {
 				id: `roadCollisions${year}`,

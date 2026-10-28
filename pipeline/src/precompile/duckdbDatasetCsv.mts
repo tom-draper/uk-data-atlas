@@ -1,11 +1,9 @@
-import { createHash } from "node:crypto";
-import { createReadStream } from "node:fs";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DuckDBInstance } from "@duckdb/node-api";
 import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types";
-import { fileStamp, sameFileStamp } from "./cache.mts";
+import { trackDuckdbSource } from "./duckdbSource.mts";
 import { SOURCE_DATA } from "./paths.mts";
 
 const quote = (value: string) => `'${value.replaceAll("'", "''")}'`;
@@ -87,13 +85,7 @@ export async function withDuckdbFilteredCsv<T>(
 			...reader,
 			text: async (path) => {
 				const source = join(sourceRoot, path);
-				const before = await fileStamp(source);
-				const hash = createHash("sha256");
-				let bytes = 0;
-				for await (const chunk of createReadStream(source)) {
-					hash.update(chunk as Buffer);
-					bytes += (chunk as Buffer).length;
-				}
+				const finishSource = await trackDuckdbSource(source);
 				const output = join(temp, "selected.csv");
 				await connection.run(`COPY (
     SELECT ${fields} FROM (
@@ -101,16 +93,12 @@ export async function withDuckdbFilteredCsv<T>(
      WHERE ${where}
     ) ORDER BY ordinal
    ) TO ${quote(output)} (HEADER, FORMAT CSV)`);
-				const after = await fileStamp(source);
-				if (!sameFileStamp(before, after) || bytes !== after.bytes)
-					throw new Error(`Source changed while reading: ${source}`);
+				const trackedSource = await finishSource();
 				const selected = await readFile(output, "utf8");
 				artifacts.set(`text:${path}`, {
 					kind: "text",
 					path,
-					bytes,
-					sha256: hash.digest("hex"),
-					input: after,
+					...trackedSource,
 				});
 				return selected;
 			},
