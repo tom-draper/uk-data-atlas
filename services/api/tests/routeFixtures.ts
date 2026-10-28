@@ -822,9 +822,6 @@ const fixtureDataRoute =
 		);
 
 export const routeWithCatalog = fixtureDataRoute(routeRequest);
-export const reportWithCatalog = fixtureDataRoute(reportRequest);
-export const reportWithData = (url: string) =>
-	reportWithCatalog(url, dataCatalog, measureObservations);
 
 export const atlasRelease: AtlasRelease = {
 	schemaVersion: 1,

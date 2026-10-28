@@ -5,35 +5,36 @@ import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
+import { geographyHealthReport } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import {
-	report as route,
-	registry,
-	geographyInventory,
 	areaLookup,
 	containmentCrosswalk,
 	crosswalkInventory,
 	crosswalkLookup,
 } from "./routeFixtures";
 
-test("summarises relationship gaps across compiled releases", () => {
-	const response = route(
-		"GET",
-		"/v1/geography-health",
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
+const health = (filters: {
+	geography: string | null;
+	country: string | null;
+	reach: string | null;
+}) =>
+	geographyHealthReport(
+		createGeographyResolver({
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+		}),
+		filters,
 	);
-	assert.equal(response.status, 200);
-	const data = (response.body as { data: any }).data;
+
+test("summarises relationship gaps across compiled releases", () => {
+	const data = health({ geography: null, country: null, reach: null });
 	assert.deepEqual(data.summary, { partial: 1, available: 1 });
 	assert.equal(
-		data.releases.find((release: any) => release.geography === "ward")
-			.gapCount,
+		data.releases.find((release) => release.geography === "ward")?.gapCount,
 		1,
 	);
 });
@@ -61,16 +62,7 @@ test("keeps identity coverage visible when relationship artifacts are not built"
 });
 
 test("filters the repair dashboard to one geography", () => {
-	const response = route(
-		"GET",
-		"/v1/geography-health?geography=ward",
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-	);
-	const data = (response.body as { data: any }).data;
+	const data = health({ geography: "ward", country: null, reach: null });
 	assert.equal(data.releases.length, 1);
 	assert.equal(data.filters.geography, "ward");
 	assert.equal(data.priorities[0].geography, "ward");
@@ -81,16 +73,7 @@ test("filters the repair dashboard to one geography", () => {
 });
 
 test("filters release health by boundary country coverage", () => {
-	const response = route(
-		"GET",
-		"/v1/geography-health?country=GB-SCT",
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-	);
-	const data = (response.body as { data: any }).data;
+	const data = health({ geography: null, country: "GB-SCT", reach: null });
 	assert.deepEqual(data.releases, []);
 	assert.equal(data.filters.country, "GB-SCT");
 });
@@ -197,17 +180,7 @@ test("separates having relationships from being able to carry data", () => {
 test("ranks and filters by what a release can convert onto", () => {
 	// No path inventory is built here, so nothing converts anywhere and the
 	// whole dashboard is isolated.
-	const response = route(
-		"GET",
-		"/v1/geography-health?reach=isolated",
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-	);
-	assert.equal(response.status, 200);
-	const data = (response.body as { data: any }).data;
+	const data = health({ geography: null, country: null, reach: "isolated" });
 	assert.equal(data.releases.length, 2);
 	assert.ok(
 		data.releases.every(
@@ -216,16 +189,4 @@ test("ranks and filters by what a release can convert onto", () => {
 	);
 	assert.equal(data.reachSummary.isolated, 2);
 	assert.equal(data.filters.reach, "isolated");
-	assert.equal(
-		route(
-			"GET",
-			"/v1/geography-health?reach=nowhere",
-			registry,
-			geographyInventory,
-			areaLookup,
-			crosswalkInventory,
-			crosswalkLookup,
-		).status,
-		400,
-	);
 });
