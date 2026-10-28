@@ -1,7 +1,7 @@
 import type { AreaLookup } from "./areaInventory";
 import type { CrosswalkArtifact } from "./crosswalkTypes";
 import type { CrosswalkInventory } from "./crosswalkInventory";
-import type { AreaIdentity, GeographyEndpoint } from "./areaIdentity";
+import type { AreaIdentity, GeographyEndpoint } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	relationshipPurposeFor,
@@ -37,7 +37,7 @@ export const selectCrosswalks = (
 	lookup?.where
 		? lookup.where(predicate)
 		: [...(lookup?.values() ?? [])].filter(predicate);
-export type { AreaIdentity, GeographyEndpoint } from "./areaIdentity";
+export type { AreaIdentity, GeographyEndpoint } from "@uk-data-atlas/geography";
 export type StepDirection = "forward" | "reverse";
 
 type CrosswalkSource = CrosswalkArtifact["records"][number]["source"];
