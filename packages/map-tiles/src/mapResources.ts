@@ -1,6 +1,6 @@
-import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import type { TileBox } from "@uk-data-atlas/map-tiles/tileGrid";
-import type { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
+import type { GeometryTier } from "./simplifyGeometry";
+import type { TileBox } from "./tileGrid";
+import type { TOPOLOGY_METHOD } from "./topologyTiers";
 
 export type MapResourceDescriptor = {
 	id: string;

@@ -19,7 +19,7 @@ import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
 } from "./mapResource/compileMapResource";
-import type { MapResourceDescriptor } from "./mapResources";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { apiRootOf, artifactDirectory } from "./dataLayout";
 
 /**

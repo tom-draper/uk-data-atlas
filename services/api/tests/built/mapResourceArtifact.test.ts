@@ -5,7 +5,7 @@ import { gunzipSync } from "node:zlib";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import type { MapResourceDescriptor } from "../../../../shared/mapResources";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { tileId, TILE_TYPE_MVT } from "@uk-data-atlas/map-tiles/pmtiles";
 import {
 	MAX_ZOOM,

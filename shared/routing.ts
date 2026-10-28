@@ -13,7 +13,7 @@ import type {
 	LocationProjectionInventory,
 	LocationProjections,
 } from "./locationProjections";
-import type { MapResources } from "./mapResourceLoader";
+import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import type { MapArchive } from "./mapResource/archiveReader";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { NamedLocationInventory } from "./namedLocations";
