@@ -1,8 +1,11 @@
 import type { DatabaseSync } from "node:sqlite";
+import { rebuildFromLayout } from "./datasetLayout";
 import type {
 	AreaIndex,
 	AreaRelease,
 	StatisticsDataset,
+	StatisticsLayout,
+	StatisticsLayoutLeaf,
 	StatisticsDimension,
 	StatisticsMeasure,
 	StatisticsObservation,
@@ -22,7 +25,8 @@ import type {
  * the same values, checked by count once written.
  */
 
-type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
+export type Json =
+	null | boolean | number | string | Json[] | { [key: string]: Json };
 export type DeclaredHeader = { [key: string]: Json };
 
 export type DeclaredField = {
@@ -89,7 +93,17 @@ export type DeclaredDataset = {
 	exclude?: { codes: RegExp; reason: string }[];
 	/** Record field holding the publisher's area name. */
 	name?: string;
+	/**
+	 * Serve the compiled JSON from rows instead of a stored payload. The build
+	 * refuses a dataset whose rows do not rebuild it byte for byte. Each
+	 * `derived` pattern needs a rule here, computed from the rebuilt record
+	 * in the order listed, exactly as its compiler computes it.
+	 */
+	rebuild?: { derived?: Record<string, DerivedRule> };
 };
+
+/** A derived number, from the record with every stored value filled in. */
+export type DerivedRule = (record: { [key: string]: Json }) => number;
 
 export type DeclaredManifestEntry = {
 	output: string;
@@ -264,6 +278,8 @@ function* numbers(
 }
 
 type Raw = {
+	/** Where the value and its bounds sit in the record. */
+	paths: { value: string[]; lower?: string[]; upper?: string[] };
 	measure: string;
 	members: Record<string, string>;
 	release: AreaRelease;
@@ -304,7 +320,8 @@ export function declaredStatistics(
 	const recordSets: DeclaredRecords[] = config.records ?? [
 		{ from: "data", release: config.release, alsoIn: config.alsoIn },
 	];
-	const derived = Object.keys(config.derived ?? {}).map(parsePath);
+	const derivedPatterns = Object.keys(config.derived ?? {});
+	const derived = derivedPatterns.map(parsePath);
 	const dimensionSlugs = new Set(
 		(config.dimensions ?? []).map((dimension) => dimension.slug),
 	);
@@ -352,6 +369,19 @@ export function declaredStatistics(
 				parent?: string,
 			) => void,
 			onName?: (release: AreaRelease, code: string, name: string) => void,
+			onPart?: (part: {
+				key: string;
+				header: DeclaredHeader;
+				/** The first record of each record set, with its values. */
+				first: Map<
+					string,
+					{
+						code: string;
+						record: { [key: string]: Json };
+						raws: Raw[];
+					}
+				>;
+			}) => void,
 		): Generator<Raw> {
 			const file: Record<string, DeclaredHeader> = JSON.parse(read());
 			for (const [key, header] of Object.entries(file)) {
@@ -375,6 +405,14 @@ export function declaredStatistics(
 							? undefined
 							: parsePath(field.upper),
 				}));
+				const first = new Map<
+					string,
+					{
+						code: string;
+						record: { [key: string]: Json };
+						raws: Raw[];
+					}
+				>();
 				for (const set of recordSets) {
 					const records = header[set.from];
 					if (
@@ -385,13 +423,13 @@ export function declaredStatistics(
 						throw new Error(
 							`${context} has no ${set.from} records`,
 						);
-					const first = set.release
+					const primary = set.release
 						? set.release(header)
 						: {
 								geography: String(header.boundaryType),
 								year: Number(header.boundaryYear),
 							};
-					const candidates = [first, ...(set.alsoIn ?? [])].map(
+					const candidates = [primary, ...(set.alsoIn ?? [])].map(
 						releaseOf,
 					);
 					for (const [code, record] of Object.entries(records)) {
@@ -426,6 +464,9 @@ export function declaredStatistics(
 							onName(release, code, name);
 						}
 						const claimed = new Set<string>();
+						const raws: Raw[] | undefined =
+							onPart && !first.has(set.from) ? [] : undefined;
+						if (raws) first.set(set.from, { code, record, raws });
 						for (const field of fields) {
 							for (const { node, path, bound } of expand(
 								record,
@@ -476,8 +517,10 @@ export function declaredStatistics(
 										declared?.get(memberKey) ??
 										memberCode(memberKey);
 								}
+								const paths: Raw["paths"] = { value: path };
 								const boundValue = (
 									segments: readonly Segment[] | undefined,
+									which: "lower" | "upper",
 								) => {
 									if (!segments) return undefined;
 									const target = fill(segments, bound);
@@ -489,19 +532,29 @@ export function declaredStatistics(
 										throw new Error(
 											`${context}: ${target.join(".")} in ${code} is not a number`,
 										);
+									paths[which] = target;
 									return value;
 								};
-								yield {
+								const raw: Raw = {
+									paths,
 									measure: field.measure,
 									members,
 									release,
 									code,
 									period,
 									value: node,
-									lower: boundValue(field.lowerSegments),
-									upper: boundValue(field.upperSegments),
+									lower: boundValue(
+										field.lowerSegments,
+										"lower",
+									),
+									upper: boundValue(
+										field.upperSegments,
+										"upper",
+									),
 									status: field.status?.(record),
 								};
+								raws?.push(raw);
+								yield raw;
 							}
 						}
 						for (const [path] of numbers(record)) {
@@ -518,6 +571,7 @@ export function declaredStatistics(
 						}
 					}
 				}
+				onPart?.({ key, header, first });
 			}
 		}
 
@@ -542,6 +596,93 @@ export function declaredStatistics(
 		>();
 		const seen = new Set<string>();
 		let count = 0;
+		const layouts: StatisticsLayout[] = [];
+		const layOut: Parameters<typeof walk>[2] = ({ key, header, first }) => {
+			const context = `${type} ${key}`;
+			const sets = new Set(recordSets.map((set) => set.from));
+			const records = recordSets.map(({ from }) => {
+				const found = first.get(from);
+				if (!found)
+					throw new Error(
+						`${context}: no ${from} records to lay out`,
+					);
+				const claims = new Map<
+					string,
+					{ kind: "value" | "lower" | "upper"; raw: Raw }
+				>();
+				for (const raw of found.raws)
+					for (const kind of ["value", "lower", "upper"] as const) {
+						const path = raw.paths[kind];
+						if (path) claims.set(path.join("\0"), { kind, raw });
+					}
+				const leaves: StatisticsLayoutLeaf[] = [];
+				const visit = (node: Json, path: string[]) => {
+					const claim = claims.get(path.join("\0"));
+					if (claim) {
+						leaves.push({
+							path,
+							kind: claim.kind,
+							series: seriesIndex.get(seriesKey(claim.raw))!,
+							period: claim.raw.period.label,
+						});
+						return;
+					}
+					if (
+						path.length === 1 &&
+						path[0] === config.name &&
+						typeof node === "string"
+					) {
+						leaves.push({ path, kind: "name" });
+						return;
+					}
+					if (node === found.code) {
+						leaves.push({ path, kind: "code" });
+						return;
+					}
+					if (typeof node === "number") {
+						const index = derived.findIndex((pattern) =>
+							sameShape(pattern, path),
+						);
+						const rule = derivedPatterns[index];
+						if (!config.rebuild?.derived?.[rule])
+							throw new Error(
+								`${type}: derived ${rule} has no rebuild rule`,
+							);
+						leaves.push({ path, kind: "derived", rule });
+						return;
+					}
+					if (
+						node !== null &&
+						typeof node === "object" &&
+						!Array.isArray(node) &&
+						Object.keys(node).length > 0
+					) {
+						for (const [child, value] of Object.entries(node))
+							visit(value, [...path, child]);
+						return;
+					}
+					leaves.push({
+						path,
+						kind: "literal",
+						value: JSON.stringify(node),
+					});
+				};
+				visit(found.record, []);
+				return { from, leaves };
+			});
+			layouts.push({
+				key,
+				header: JSON.stringify(
+					Object.fromEntries(
+						Object.entries(header).map(([field, value]) => [
+							field,
+							sets.has(field) ? null : value,
+						]),
+					),
+				),
+				records,
+			});
+		};
 		for (const raw of walk(
 			(dimension, key, parent) => {
 				let members = discovered.get(dimension);
@@ -564,6 +705,7 @@ export function declaredStatistics(
 						`${type}: ${code} is named ${known.name} and ${name}`,
 					);
 			},
+			config.rebuild ? layOut : undefined,
 		)) {
 			const key = seriesKey(raw);
 			let index = seriesIndex.get(key);
@@ -662,6 +804,7 @@ export function declaredStatistics(
 					};
 			},
 			areaNames: () => names.values(),
+			layouts: () => layouts,
 			verify(database: DatabaseSync) {
 				const row = database
 					.prepare(
@@ -672,6 +815,25 @@ export function declaredStatistics(
 					throw new Error(
 						`${type}: ${Number(row?.n)} observation rows for ${count} values`,
 					);
+				if (config.rebuild) {
+					const rebuilt = rebuildFromLayout(
+						database,
+						entry.output,
+						config.rebuild.derived,
+					);
+					const text = read();
+					if (rebuilt !== text) {
+						let at = 0;
+						while (rebuilt[at] === text[at]) at++;
+						const near = (value: string) =>
+							JSON.stringify(
+								value.slice(Math.max(0, at - 60), at + 60),
+							);
+						throw new Error(
+							`${type}: rows do not rebuild the compiled JSON byte for byte. At ${at}, compiled ${near(text)}, rebuilt ${near(rebuilt)}`,
+						);
+					}
+				}
 			},
 		};
 	};

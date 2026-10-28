@@ -6,6 +6,7 @@ import {
 	periods,
 	type DeclaredDataset,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { rebuildFromLayout } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	writeSqliteTables,
@@ -392,6 +393,157 @@ describe("declared statistics", () => {
 		expect(periods.census(2021)).toMatchObject({
 			label: "2021-census",
 			start: "2021-03-21",
+		});
+	});
+
+	describe("served from rows", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			alsoIn: [{ geography: "localAuthority", year: 2022 }],
+			measures: [CRIMES, RATE],
+			dimensions: [
+				{
+					slug: "offence",
+					label: "Offence",
+					members: [
+						{ key: "total", code: "all" },
+						{ key: "theft", parent: "total" },
+					],
+				},
+			],
+			fields: [
+				{ path: "counts.{offence}", measure: "crimes" },
+				{
+					path: "rate.value",
+					lower: "rate.lower",
+					upper: "rate.upper",
+					measure: "rate",
+				},
+			],
+			derived: {
+				share: "Theft as a percentage of all offences.",
+				"counts.other": "All offences less theft.",
+			},
+			rebuild: {
+				derived: {
+					"counts.other": (record) => {
+						const counts = record.counts as Record<string, number>;
+						return counts.total - counts.theft;
+					},
+					share: (record) => {
+						const counts = record.counts as Record<string, number>;
+						return (counts.theft / counts.total) * 100;
+					},
+				},
+			},
+		};
+		const record = (code: string, name: string, total: number) => ({
+			code,
+			name,
+			kind: "district",
+			share: (3 / total) * 100,
+			counts: { total, theft: 3, other: total - 3 },
+			rate: { value: 1.5, lower: 1.25, upper: 2 },
+		});
+		const text = JSON.stringify({
+			2023: {
+				id: "example2023",
+				year: 2023,
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				data: {
+					E06000001: record("E06000001", "Hartlepool", 7),
+					E07000026: record("E07000026", "Allerdale (old)", 9),
+				},
+				notes: { source: "Example" },
+			},
+			2024: {
+				id: "example2024",
+				year: 2024,
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				data: {
+					E06000002: record("E06000002", "Middlesbrough", 11),
+				},
+				notes: { source: "Example" },
+			},
+		});
+
+		it("rebuilds the compiled JSON byte for byte from rows and layout", () => {
+			const database = write(config, text);
+			expect(
+				rebuildFromLayout(database, "example", config.rebuild!.derived),
+			).toBe(text);
+			expect(
+				database
+					.prepare(
+						"SELECT position, key, header FROM dataset_part ORDER BY position",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{
+					position: 0,
+					key: "2023",
+					header: '{"id":"example2023","year":2023,"boundaryType":"localAuthority","boundaryYear":2024,"data":null,"notes":{"source":"Example"}}',
+				},
+				{
+					position: 1,
+					key: "2024",
+					header: '{"id":"example2024","year":2024,"boundaryType":"localAuthority","boundaryYear":2024,"data":null,"notes":{"source":"Example"}}',
+				},
+			]);
+			expect(
+				database
+					.prepare(
+						"SELECT path, kind, rule, literal FROM dataset_leaf WHERE part = 0 ORDER BY position",
+					)
+					.all()
+					.map((row) => Object.values(row)),
+			).toEqual([
+				['["code"]', "code", null, null],
+				['["name"]', "name", null, null],
+				['["kind"]', "literal", null, '"district"'],
+				['["share"]', "derived", "share", null],
+				['["counts","total"]', "value", null, null],
+				['["counts","theft"]', "value", null, null],
+				['["counts","other"]', "derived", "counts.other", null],
+				['["rate","value"]', "value", null, null],
+				['["rate","lower"]', "lower", null, null],
+				['["rate","upper"]', "upper", null, null],
+			]);
+			expect(database.prepare("PRAGMA foreign_key_check").all()).toEqual(
+				[],
+			);
+		});
+
+		it("refuses rows that do not rebuild the compiled JSON", () => {
+			const unsorted = text.replace(
+				/"E06000001":(\{.*?\}\}),"E07000026":(\{.*?\}\})/,
+				'"E07000026":$2,"E06000001":$1',
+			);
+			expect(unsorted).not.toBe(text);
+			expect(() => write(config, unsorted)).toThrow(
+				/example: rows do not rebuild the compiled JSON byte for byte\. At \d+, compiled .*E07000026.*, rebuilt .*E06000001/,
+			);
+			expect(() =>
+				write(config, text.replace('"district"', '"unitary"')),
+			).toThrow("rows do not rebuild the compiled JSON byte for byte");
+		});
+
+		it("refuses a derived number without a rebuild rule", () => {
+			expect(() =>
+				write(
+					{
+						...config,
+						rebuild: {
+							derived: { share: config.rebuild!.derived!.share },
+						},
+					},
+					text,
+				),
+			).toThrow("example: derived counts.other has no rebuild rule");
 		});
 	});
 });

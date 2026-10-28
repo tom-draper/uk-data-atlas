@@ -129,8 +129,39 @@ export type StatisticsDataset = {
 		code: string;
 		name: string;
 	}>;
+	/**
+	 * How to lay the rows back out as the compiled JSON, for datasets served
+	 * from rows. One layout per top-level key of the file.
+	 */
+	layouts?: () => Iterable<StatisticsLayout>;
 	/** Runs once every row is written, before the database is published. */
 	verify?: (database: DatabaseSync) => void;
+};
+
+/**
+ * One leaf of a record, in the record's key order. Every record of a part has
+ * the same leaves; only the area and its values change.
+ */
+export type StatisticsLayoutLeaf = { path: string[] } & (
+	| {
+			kind: "value" | "lower" | "upper";
+			/** Index into the dataset's `series`. */
+			series: number;
+			period: string;
+	  }
+	| { kind: "code" | "name" }
+	/** A number computed from the record's other values, by a named rule. */
+	| { kind: "derived"; rule: string }
+	/** The same JSON in every record. */
+	| { kind: "literal"; value: string }
+);
+
+/** A top-level key of a compiled dataset: its header and record layouts. */
+export type StatisticsLayout = {
+	key: string;
+	/** The header as JSON, with each record set's field set to null. */
+	header: string;
+	records: { from: string; leaves: StatisticsLayoutLeaf[] }[];
 };
 
 /**
@@ -760,7 +791,6 @@ export function statisticsTables(
 					throw new Error(
 						"Observations outside their series' release",
 					);
-				for (const dataset of datasets) dataset.verify?.(database);
 			}),
 			views: {
 				v_observation: `
@@ -786,6 +816,81 @@ JOIN status st ON st.id = o.status_id
 LEFT JOIN dimension_member c ON c.id = o.category_id
 LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.id`,
 			},
+		},
+		dataset_part: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
+				"position INTEGER NOT NULL",
+				"key TEXT NOT NULL",
+				"header TEXT NOT NULL",
+			],
+			key: ["dataset_id", "position"],
+			constraints: ["UNIQUE (dataset_id, key)"],
+			rows: rows(function* ({ datasets }) {
+				for (const [index, dataset] of datasets.entries())
+					for (const [position, layout] of [
+						...(dataset.layouts?.() ?? []),
+					].entries())
+						yield [index + 1, position, layout.key, layout.header];
+			}),
+		},
+		dataset_leaf: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL",
+				"part INTEGER NOT NULL",
+				"records TEXT NOT NULL",
+				"position INTEGER NOT NULL",
+				"path TEXT NOT NULL",
+				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','derived','literal'))",
+				"series_id INTEGER REFERENCES series(id)",
+				"period_id INTEGER REFERENCES period(id)",
+				"rule TEXT",
+				"literal TEXT",
+			],
+			key: ["dataset_id", "part", "records", "position"],
+			constraints: [
+				"FOREIGN KEY (dataset_id, part) REFERENCES dataset_part(dataset_id, position)",
+				"CHECK ((kind IN ('value','lower','upper')) = (series_id IS NOT NULL AND period_id IS NOT NULL))",
+				"CHECK ((kind = 'derived') = (rule IS NOT NULL))",
+				"CHECK ((kind = 'literal') = (literal IS NOT NULL))",
+			],
+			rows: rows(function* ({ datasets, seriesIds, periods }, database) {
+				for (const [index, dataset] of datasets.entries()) {
+					const ids = seriesIds[index];
+					for (const [part, layout] of [
+						...(dataset.layouts?.() ?? []),
+					].entries())
+						for (const { from, leaves } of layout.records)
+							for (const [position, leaf] of leaves.entries()) {
+								const value =
+									leaf.kind === "value" ||
+									leaf.kind === "lower" ||
+									leaf.kind === "upper";
+								if (value && ids[leaf.series] === undefined)
+									throw new Error(
+										`Unknown series ${leaf.series} in ${dataset.slug} layout`,
+									);
+								yield [
+									index + 1,
+									part,
+									from,
+									position,
+									JSON.stringify(leaf.path),
+									leaf.kind,
+									value ? ids[leaf.series] : null,
+									value
+										? periods.id(leaf.period, dataset.slug)
+										: null,
+									leaf.kind === "derived" ? leaf.rule : null,
+									leaf.kind === "literal" ? leaf.value : null,
+								];
+							}
+				}
+				// Last statistics table: every row, layouts included, is written.
+				for (const dataset of datasets) dataset.verify?.(database);
+			}),
 		},
 	};
 }
