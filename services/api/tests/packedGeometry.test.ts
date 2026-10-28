@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { GeoJsonGeometry } from "../src/areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import {
 	packedBounds,

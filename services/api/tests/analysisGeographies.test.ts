@@ -11,8 +11,8 @@ import { analysisConversion } from "../src/analysisGeographies";
 import type { AnalysisGeographySupportConfig } from "../src/analysisGeographies";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
-import type { DataCatalog } from "../src/dataCatalog";
-import type { RelationshipPathInventory } from "../src/relationshipPaths";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 
 const catalogue = {
 	contentHash: "sha256:catalogue",

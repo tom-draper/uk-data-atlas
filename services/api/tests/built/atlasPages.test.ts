@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import test from "node:test";
 import { gunzipSync } from "node:zlib";
-import { readAtlasPages } from "../../src/atlasPages";
+import { readAtlasPages } from "@uk-data-atlas/atlas-runtime/storage";
 
 const pages = readAtlasPages(resolve(import.meta.dirname, "../.."));
 test("the built website artifacts match their download metadata", () => {

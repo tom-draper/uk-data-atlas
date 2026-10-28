@@ -2,8 +2,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseDocument } from "yaml";
 import { readApiCatalogues } from "../src/catalogueLoader";
-import { publicJson } from "../src/publicJson";
-import { PROBLEM_CODES } from "../src/problemCodes";
+import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
+import { PROBLEM_CODES } from "@uk-data-atlas/atlas-runtime/api";
 import { route } from "../src/routes";
 
 const root = resolve(import.meta.dirname, "..");

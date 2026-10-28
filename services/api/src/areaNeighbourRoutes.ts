@@ -1,14 +1,14 @@
 import { areaMetrics } from "./areaMetrics";
-import { areaNotFound } from "./areaResources";
-import type { RouteRequest } from "./routing";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
-import { readChoice } from "./queryParameters";
+import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const NEIGHBOURS =

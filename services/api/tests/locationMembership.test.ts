@@ -7,7 +7,7 @@ import {
 	membersThroughCrosswalk,
 	membershipKindFor,
 	parentsThroughCrosswalk,
-} from "../src/locationMembership";
+} from "@uk-data-atlas/atlas-runtime/places";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,

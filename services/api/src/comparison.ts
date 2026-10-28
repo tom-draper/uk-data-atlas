@@ -1,4 +1,7 @@
-import type { Measure, PopulationObservation } from "./dataCatalog";
+import type {
+	Measure,
+	PopulationObservation,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /**
  * Compare two observations in the same measure partition. The caller names

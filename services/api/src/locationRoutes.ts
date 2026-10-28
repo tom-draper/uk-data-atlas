@@ -4,12 +4,12 @@ import {
 	problem,
 	requirementDetail,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { COVERS_MINIMUM_SHARE } from "./locationMembership";
-import { notBuilt, unsupported } from "./capability";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { COVERS_MINIMUM_SHARE } from "@uk-data-atlas/atlas-runtime/places";
+import { notBuilt, unsupported } from "@uk-data-atlas/atlas-runtime/areas";
 import { areaKey } from "@uk-data-atlas/geography";
-import type { NamedLocation } from "./namedLocations";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
 import { paginate } from "./pagination";
 
 export const selectedAsOf = (

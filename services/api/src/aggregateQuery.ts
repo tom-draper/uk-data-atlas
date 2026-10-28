@@ -1,13 +1,17 @@
 import { isCountryCode } from "./aggregation";
 import { defaultSource } from "./dataDefaults";
-import type { Measure } from "./dataCatalog";
-import type { GeographyResolver } from "./geographyResolver";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { parsePlaceParameter, type PlaceParameter } from "./placeParameter";
 import {
 	parseExactReleaseReference,
 	type ExactReleaseReference,
-} from "./releaseForDate";
-import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 
 export type AggregateQuery = {
 	period: string | null;

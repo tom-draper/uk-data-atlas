@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
-import { GEOJSON_TIERS } from "./mapResource/fullDetail";
-import { areaNotFound } from "./areaResources";
-import type { ValidatedValue } from "./batchValidation";
+import { GEOJSON_TIERS } from "@uk-data-atlas/atlas-runtime/maps";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { readPostedRows, type RowValue } from "./requestRows";
@@ -11,9 +11,9 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { choices, readChoice } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 /**

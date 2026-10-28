@@ -1,18 +1,18 @@
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type { GeographyResolver } from "./geographyResolver";
-import type { MeasureSource } from "./dataCatalog";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	aggregateTargetMembers,
 	requireAggregateMembers,
 } from "./aggregateTargetMembers";
 import { validateLocationAggregation } from "./locationAggregation";
 import type { LocationCoverage } from "./locationAggregation";
-import type { CompatibilityCandidate } from "./measureCompatibility";
-import type { NamedLocation } from "./namedLocations";
-import type { PopulationObservation } from "./dataCatalog";
-import { type ApiResponse } from "./routeResponse";
+import type { CompatibilityCandidate } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export type PreparedAggregate = {
 	aggregate: AggregateMembers;

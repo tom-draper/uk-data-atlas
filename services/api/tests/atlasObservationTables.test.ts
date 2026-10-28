@@ -3,7 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 import { dataCatalog } from "./routeFixtures";
 import { replaceObservationTables } from "../../../pipeline/src/atlasObservationTables";
-import { rebuildObservationText } from "../src/atlasObservations";
+import { rebuildObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 
 const geography = { type: "ward", boundaryYear: 2024 };
 const own = {

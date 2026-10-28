@@ -4,10 +4,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
-import { areaTables } from "../src/atlasAreas";
-import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
+import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readAreaInventory,
+	readAreaLookup,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type { AreaInventory } from "../src/areaInventory";
-import { writeSqliteIndex } from "../src/sqliteIndex";
+import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("relational areas preserve inventory order, aliases and record order without JSON", (context) => {

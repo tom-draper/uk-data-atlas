@@ -6,13 +6,13 @@ import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
-} from "../src/namedLocations";
+} from "@uk-data-atlas/atlas-runtime/places";
 import type {
 	MeasureObservationArtifact,
 	MeasureSource,
 	DataCatalog,
-} from "../src/dataCatalog";
-import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	areaLookup,
 	crosswalkArtifact,

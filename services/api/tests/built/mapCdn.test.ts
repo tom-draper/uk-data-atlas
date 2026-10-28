@@ -7,7 +7,10 @@ import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 import test from "node:test";
 import { readApiCatalogues } from "../../src/catalogueLoader";
-import { readMapAssets, readMapResources } from "../../src/mapResourceLoader";
+import {
+	readMapAssets,
+	readMapResources,
+} from "@uk-data-atlas/atlas-runtime/maps";
 import { route } from "../../src/routes";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 

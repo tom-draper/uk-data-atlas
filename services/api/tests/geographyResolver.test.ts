@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileAreaSearchIndex } from "../src/areaSearch";
+import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "../src/crosswalkInventory";
-import { createGeographyResolver } from "../src/geographyResolver";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	compileLocationProjections,
 	LocationProjectionStore,
-} from "../src/locationProjections";
-import { createRelationshipPathIndex } from "../src/relationshipPaths";
+} from "@uk-data-atlas/atlas-runtime/places";
+import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import {
 	areaLookup,

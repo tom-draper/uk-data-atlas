@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
-import type { LocationProjectionStore } from "../src/locationProjections";
+import type { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import type {
 	NamedLocation,
 	NamedLocationInventory,
-} from "../src/namedLocations";
-import { CatalogueResolver } from "../src/resolver/catalogue";
-import { LocationsResolver } from "../src/resolver/locations";
+} from "@uk-data-atlas/atlas-runtime/places";
+import { CatalogueResolver } from "@uk-data-atlas/atlas-runtime/api";
+import { LocationsResolver } from "@uk-data-atlas/atlas-runtime/api";
 
 const location = (
 	id: string,

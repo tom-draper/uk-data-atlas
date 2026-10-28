@@ -2,7 +2,7 @@ import { mkdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { replaceObservationTables } from "../../../pipeline/src/atlasObservationTables";
-import { rebuildObservationText } from "../src/atlasObservations";
+import { rebuildObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const fixtureObservationDatabase = (directory: string) =>
 	join(directory, "atlas.sqlite");

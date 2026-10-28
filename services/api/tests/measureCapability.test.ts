@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CAPABILITY_STATUSES } from "../src/capability";
+import { CAPABILITY_STATUSES } from "@uk-data-atlas/atlas-runtime/areas";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
-import { measureCapability } from "../src/measureCapability";
+import { measureCapability } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	containmentCrosswalk,
 	dataCatalog,

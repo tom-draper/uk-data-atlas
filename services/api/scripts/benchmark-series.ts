@@ -6,11 +6,11 @@ import type {
 	DataCatalog,
 	MeasureObservationArtifact,
 	SourceGeography,
-} from "../src/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	tableMeasureObservations,
 	type MeasureTableArtifact,
-} from "../src/observationTables";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { dataCatalog, testContext } from "../tests/routeFixtures";
 
 // Synthetic national-scale tables. From services/api, run:

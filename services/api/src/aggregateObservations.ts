@@ -1,10 +1,10 @@
-import type { MeasureSource } from "./dataCatalog";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
 } from "./numericObservations";
-import type { ObservationArtifacts } from "./observationArtifacts";
-import { problem, type ApiResponse } from "./routeResponse";
+import type { ObservationArtifacts } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 /** Read the numeric, source-exact records required by an aggregate. */
 export const readAggregateObservations = ({

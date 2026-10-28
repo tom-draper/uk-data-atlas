@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createGeographyResolver } from "../src/geographyResolver";
-import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import { route } from "../src/routes";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	areaLookup,
 	containmentCrosswalk,

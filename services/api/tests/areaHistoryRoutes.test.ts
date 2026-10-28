@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import { createGeographyResolver } from "../src/geographyResolver";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import type { PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
 import {
 	crosswalkArtifact,

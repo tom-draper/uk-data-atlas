@@ -1,11 +1,14 @@
-import { problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
-import { handleAtlasPageRoutes } from "./atlasPages";
-import { handleAtlasLookupRoutes } from "./atlasLookups";
-import type { FullDetailResult, FullDetailSource } from "./fullDetailDownloads";
+import { handleAtlasPageRoutes } from "@uk-data-atlas/atlas-runtime/storage";
+import { handleAtlasLookupRoutes } from "@uk-data-atlas/atlas-runtime/storage";
+import type {
+	FullDetailResult,
+	FullDetailSource,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
@@ -23,7 +26,7 @@ import {
 } from "./postcodeRoutes";
 import { handleDataTransformRoutes } from "./dataTransformRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
-import { handleAnalysisGeographyRoutes } from "./analysisGeographyRoutes";
+import { handleAnalysisGeographyRoutes } from "@uk-data-atlas/atlas-runtime/api";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
 import {
 	handleAreaContainsBatchRoutes,
@@ -48,8 +51,8 @@ import {
 	handleCrosswalkConversionRoutes,
 } from "./crosswalkConversionRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
-import { handleGovernanceRoutes } from "./governanceRoutes";
-import { handleSyncRoutes } from "./syncRoutes";
+import { handleGovernanceRoutes } from "@uk-data-atlas/atlas-runtime/api";
+import { handleSyncRoutes } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseInPath, withReleaseHeaders } from "./releaseDeprecation";
 import {
 	handleReleaseJoinRoutes,

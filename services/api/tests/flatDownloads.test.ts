@@ -3,10 +3,10 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { AreaGeometryCache } from "../src/areaGeometry";
-import { sha256 } from "../src/contentHash";
+import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { compileFlatDownloads } from "../../../pipeline/src/flatDownloads";
-import { FullDetailDownloads } from "../src/fullDetailDownloads";
+import { FullDetailDownloads } from "@uk-data-atlas/atlas-runtime/areas";
 import { readParquet } from "./parquetFixtures";
 
 const square = (west: number, south: number) => [

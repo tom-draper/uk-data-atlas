@@ -1,5 +1,5 @@
-import type { PopulationObservation } from "./dataCatalog";
-import type { NamedLocation } from "./namedLocations";
+import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
 
 export type AggregateMembers = {
 	members: PopulationObservation[];

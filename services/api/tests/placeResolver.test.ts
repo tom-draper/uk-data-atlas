@@ -1,4 +1,4 @@
-import { writeSqliteIndex } from "../src/sqliteIndex";
+import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -12,10 +12,13 @@ import {
 	openPlaceIndexDatabase,
 	placeIndexMismatch,
 	placeIndexTables,
-} from "../src/placeIndex";
-import { parsePlaceReference, resolvePlaces } from "../src/placeResolver";
+} from "@uk-data-atlas/atlas-runtime/places";
+import {
+	parsePlaceReference,
+	resolvePlaces,
+} from "@uk-data-atlas/atlas-runtime/places";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { NamedLocationInventory } from "../src/namedLocations";
+import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 
 const release = (
 	geography: string,

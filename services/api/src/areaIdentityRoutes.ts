@@ -1,6 +1,10 @@
-import { areaNotFound } from "./areaResources";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	envelope,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import { areaKey } from "@uk-data-atlas/geography";
 import { areaDossier } from "./areaDossierRoutes";
 import { areaCapabilities } from "./areaCapabilityRoutes";

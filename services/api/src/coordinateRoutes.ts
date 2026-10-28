@@ -13,9 +13,9 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { readWholeNumber } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const CONVERT = QUERY_RULES["GET /coordinates:convert"];

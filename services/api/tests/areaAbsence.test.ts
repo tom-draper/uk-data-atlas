@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { explainAreaAbsence } from "../src/areaAbsence";
+import { explainAreaAbsence } from "@uk-data-atlas/atlas-runtime/areas";
 import { createAreaLookup, type AreaInventory } from "../src/areaInventory";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 

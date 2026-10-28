@@ -7,7 +7,7 @@ import {
 	readStoredText,
 	storedTextExists,
 	writeStoredText,
-} from "../src/storedText";
+} from "@uk-data-atlas/artifacts";
 
 test("stores text gzipped under its own name and reads it back", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-stored-"));

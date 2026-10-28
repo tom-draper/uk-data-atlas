@@ -3,7 +3,7 @@ import test from "node:test";
 import {
 	readBoundedWholeNumber,
 	readFiniteNumber,
-} from "../src/queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
 
 test("reads finite decimal query values and rejects blanks or non-finite values", () => {
 	assert.equal(readFiniteNumber("530000.5"), 530000.5);

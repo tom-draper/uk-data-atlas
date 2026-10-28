@@ -17,13 +17,13 @@ import {
 	assertObservationCatalogue,
 	readObservationInventory,
 	readObservationText,
-} from "../src/atlasObservations";
-import { readMeasureObservations } from "../src/observationLoader";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	readSourceObservations,
 	observationTableOf,
 	type MeasureTableArtifact,
-} from "../src/observationTables";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileExportManifest } from "../../../pipeline/src/exportManifest";
 import { compileMeasureCompatibility } from "../../../pipeline/src/measureCompatibility";
 import { route } from "../src/routes";
@@ -31,7 +31,7 @@ import { dataCatalog, measureObservations, testContext } from "./routeFixtures";
 import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
-} from "../src/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const originalMeasure = dataCatalog.measures.find(

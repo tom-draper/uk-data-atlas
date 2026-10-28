@@ -1,4 +1,7 @@
-import type { Measure, PopulationObservation } from "./dataCatalog";
+import type {
+	Measure,
+	PopulationObservation,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /**
  * How change between two periods is measured and ranked. `absolute` is the end

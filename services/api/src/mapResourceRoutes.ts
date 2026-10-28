@@ -1,10 +1,10 @@
-import { isNumericObservation } from "./dataCatalog";
+import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { untiledFeatures } from "./mapResourceLoader";
+import { untiledFeatures } from "@uk-data-atlas/atlas-runtime/maps";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { observationsFor } from "./observationArtifacts";
-import { writeParquet } from "./parquet";
+import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { writeParquet } from "@uk-data-atlas/artifacts";
 import {
 	refused,
 	resolveObservations,
@@ -14,9 +14,9 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { choices, readChoice } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 /**

@@ -11,9 +11,9 @@ import {
 	polygonWidthM,
 	projectEqualArea,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import type { GeometrySourceLookup } from "../src/areaGeometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "../src/areaInventory";
-import type { AreaOverlapCrosswalkAdapter } from "../src/crosswalkAdapters";
+import type { AreaOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 
 // Squares near the equator, in degrees. D is about 1.1 km; SLIVER is about

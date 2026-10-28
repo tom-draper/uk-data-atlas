@@ -1,10 +1,10 @@
-import { isNumericObservation } from "./dataCatalog";
-import { observationsFor } from "./observationArtifacts";
+import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	canonicalValueRepresentation,
 	measureUnit,
 	normaliseObservation,
-} from "./unitRegistry";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	refused,
 	resolveObservations,
@@ -17,9 +17,9 @@ import {
 import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
-} from "./sourceExactProvenance";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { nextPageHref, paginate } from "./pagination";
-import type { RouteRequest } from "./routing";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	areaNamedBy,
@@ -33,8 +33,8 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import { choices, readChoice } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
+import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const DATA = QUERY_RULES["GET /data/{measure-id}"];

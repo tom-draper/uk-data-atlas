@@ -1,6 +1,10 @@
 import { docsPage } from "./docsPage";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import {
+	envelope,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 
 export const isOpenapiRoute = (segments: string[]) =>
 	segments.length === 2 &&

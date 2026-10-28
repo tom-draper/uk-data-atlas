@@ -1,11 +1,14 @@
-import type { DataCatalog, MeasureSource } from "./dataCatalog";
+import type {
+	DataCatalog,
+	MeasureSource,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
 } from "./numericObservations";
 import { resolveObservations } from "./observationResolution/observationPlan";
-import type { RouteContext } from "./routing";
-import { problem, type ApiResponse } from "./routeResponse";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export type WeightedSource = {
 	measure: DataCatalog["measures"][number];

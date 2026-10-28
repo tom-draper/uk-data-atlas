@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { Measure, MeasureSource } from "../src/dataCatalog";
+import type {
+	Measure,
+	MeasureSource,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureGeographyKind } from "@uk-data-atlas/geography";
 import {
 	areaNamedBy,
@@ -8,8 +11,8 @@ import {
 	defaultSource,
 	namedAreaRefusal,
 } from "../src/dataDefaults";
-import type { GeographyResolver } from "../src/geographyResolver";
-import type { PlaceCandidate } from "../src/placeResolver";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { PlaceCandidate } from "@uk-data-atlas/atlas-runtime/places";
 
 const source = (
 	type: MeasureGeographyKind,

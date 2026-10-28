@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { CrosswalkLookup } from "../src/routing";
+import type { CrosswalkLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import {
 	route,

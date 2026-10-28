@@ -1,6 +1,6 @@
-import { problem, type ApiResponse } from "./routeResponse";
-import { boundaryReleaseMonth } from "./releaseForDate";
-import type { RouteRequest } from "./routing";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { boundaryReleaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import { canonicalMeasureId } from "./measureTerms";
 import { canonicalGeography } from "@uk-data-atlas/geography";
 

@@ -1,14 +1,14 @@
-import { areaTables } from "../src/atlasAreas";
+import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import { DatabaseSync } from "node:sqlite";
-import { crosswalkTables } from "../src/atlasCrosswalks";
-import { writeSqliteIndex } from "../src/sqliteIndex";
+import { crosswalkTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { readCrosswalkLookup } from "../src/crosswalkLoader";
+import { readCrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 

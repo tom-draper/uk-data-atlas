@@ -1,5 +1,8 @@
-import type { Measure } from "./dataCatalog";
-import { comparePlaceCandidates, type PlaceCandidate } from "./placeResolver";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	comparePlaceCandidates,
+	type PlaceCandidate,
+} from "@uk-data-atlas/atlas-runtime/places";
 
 /**
  * Answering "what is this measure for this place?" from a name.

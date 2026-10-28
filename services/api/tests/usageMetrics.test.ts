@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
 import { createApiServer } from "../src/apiServer";
-import { createOperationMatcher } from "../src/operationTemplates";
+import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import { compileOperations } from "../../../pipeline/src/build-operations";
 import type { ServerOptions } from "../src/serverOptions";
 import { UsageStore } from "../src/usageStore";

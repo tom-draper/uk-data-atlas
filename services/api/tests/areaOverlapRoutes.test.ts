@@ -3,9 +3,9 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { AreaGeometryCache } from "../src/areaGeometry";
+import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	registry,
 	areaLookup,

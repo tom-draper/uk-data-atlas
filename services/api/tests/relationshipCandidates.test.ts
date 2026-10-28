@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import { compileRelationshipCandidates } from "../../../pipeline/src/relationshipCandidates";
 import type { AreaReleaseArtifact } from "../src/areaInventory";
-import type { PropertyCrosswalkAdapter } from "../src/crosswalkAdapters";
+import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 
 test("recognizes only the configured release for an authoritative parent field", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));

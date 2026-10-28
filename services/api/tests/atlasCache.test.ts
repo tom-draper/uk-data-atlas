@@ -15,7 +15,7 @@ import {
 	atlasCachePath,
 	publishCacheTables,
 	requireAtlasCache,
-} from "../src/atlasCache";
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 function fixture(t: { after: (fn: () => void) => void }) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-"));

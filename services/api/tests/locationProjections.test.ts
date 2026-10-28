@@ -1,4 +1,4 @@
-import { writeSqliteIndex } from "../src/sqliteIndex";
+import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -9,7 +9,7 @@ import {
 	LocationProjectionDatabase,
 	LocationProjectionStore,
 	locationProjectionTables,
-} from "../src/locationProjections";
+} from "@uk-data-atlas/atlas-runtime/places";
 import {
 	areaLookup,
 	containmentCrosswalk,

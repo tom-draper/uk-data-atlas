@@ -1,8 +1,11 @@
-import type { Measure, MeasureSource } from "./dataCatalog";
-import type { GeographyResolver } from "./geographyResolver";
-import type { PlaceCandidate } from "./placeResolver";
+import type {
+	Measure,
+	MeasureSource,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { PlaceCandidate } from "@uk-data-atlas/atlas-runtime/places";
 import { describeCandidate } from "./placeResponses";
-import { problem, type ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { periodsOverlap } from "./change";
 
 type SourceQuery = {

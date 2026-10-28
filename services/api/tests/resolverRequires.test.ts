@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { AreaGeometryCache } from "../src/areaGeometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	createGeographyResolver,
 	type GeographyRequirement,
-} from "../src/geographyResolver";
-import type { LocationProjectionStore } from "../src/locationProjections";
-import { compileAreaSearchIndex } from "../src/areaSearch";
-import { compilePlaceIndex } from "../src/placeIndex";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import type { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
+import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
+import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 import { areaLookup, namedLocationInventory } from "./geographyFixtures";
 

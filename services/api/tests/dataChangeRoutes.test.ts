@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	registry,
 	dataCatalog,

@@ -1,12 +1,12 @@
-import type { GeographyResolver } from "./geographyResolver";
-import type { MeasureSource } from "./dataCatalog";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	assessCoverage,
 	countryCodeFor,
 	summariseCoverage,
 	type AggregateCoverage,
 } from "./aggregation";
-import type { CompatibilityCandidate } from "./measureCompatibility";
+import type { CompatibilityCandidate } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { AggregationTarget } from "./aggregationTarget";
 
 type AggregatedMembers = {

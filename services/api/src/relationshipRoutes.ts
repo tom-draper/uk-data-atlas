@@ -1,7 +1,10 @@
-import { invalidQuery, type ApiResponse } from "./routeResponse";
+import {
+	invalidQuery,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
 import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
-import type { RouteRequest } from "./routing";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 
 /**
  * The public seam for discovering the relationships held by the geography

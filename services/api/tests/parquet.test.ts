@@ -5,7 +5,7 @@ import {
 	writeParquet,
 	writeParquetAsync,
 	type ParquetTable,
-} from "../src/parquet";
+} from "@uk-data-atlas/artifacts";
 import { chunkBounds, readParquet } from "./parquetFixtures";
 
 /**

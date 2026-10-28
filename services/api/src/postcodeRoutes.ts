@@ -17,10 +17,10 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/api";
 import { readBatchInput } from "./batchInput";
-import type { RouteRequest } from "./routing";
-import { choices, readChoice } from "./queryParameters";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 export { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";

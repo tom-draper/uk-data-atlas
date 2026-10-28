@@ -8,8 +8,11 @@ import { fileURLToPath } from "node:url";
 import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
-} from "../src/atlasCrosswalks";
-import { readSqliteAreas, readSqliteAreaInventory } from "../src/atlasAreas";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readSqliteAreas,
+	readSqliteAreaInventory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const hash = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");

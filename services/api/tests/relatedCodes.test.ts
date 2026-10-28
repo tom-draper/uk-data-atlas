@@ -11,7 +11,7 @@ import {
 	releaseCoverageOf,
 	relatedCodesOf,
 	type RelatedCodesByRelease,
-} from "../src/relatedCodes";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 const endpoints = {
 	from: { status: "verified", availableAreaCount: 1, referencedCodeCount: 1 },

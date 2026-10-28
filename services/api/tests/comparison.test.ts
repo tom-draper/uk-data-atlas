@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { compareObservations } from "../src/comparison";
-import type { Measure } from "../src/dataCatalog";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const ratioMeasure: Measure = {
 	id: "coverage",

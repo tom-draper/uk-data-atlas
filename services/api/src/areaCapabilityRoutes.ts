@@ -3,12 +3,12 @@ import {
 	notBuilt,
 	unsupported,
 	type CapabilityStatus,
-} from "./capability";
-import { measureCapability } from "./measureCapability";
-import type { AreaIdentity } from "./resolver/areas";
-import type { RouteRequest } from "./routing";
-import { releaseMonth } from "./releaseForDate";
-import { requirementDetail } from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { measureCapability } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { releaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
+import { requirementDetail } from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * What the API can answer for one area, as `include=capabilities` expands it:

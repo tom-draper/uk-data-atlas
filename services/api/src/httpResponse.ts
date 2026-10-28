@@ -1,4 +1,4 @@
-import { publicJson } from "./publicJson";
+import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
 import { createHash } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
 import type { CachedAnswer } from "./responseCache";
@@ -6,7 +6,7 @@ import {
 	isStoredFile,
 	type ApiResponse,
 	type StoredFile,
-} from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/api";
 
 export type HttpResponse = {
 	status: number;

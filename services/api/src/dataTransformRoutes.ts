@@ -1,6 +1,6 @@
 import { compareObservations } from "./comparison";
-import { isNumericObservation } from "./dataCatalog";
-import { observationsFor } from "./observationArtifacts";
+import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	refused,
 	resolveObservations,
@@ -10,9 +10,9 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { sourceExactProvenance } from "./sourceExactProvenance";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	areaNamedBy,
 	defaultSource,

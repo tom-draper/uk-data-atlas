@@ -4,7 +4,7 @@ import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
-import { LineageResolver } from "../src/resolver/lineage";
+import { LineageResolver } from "@uk-data-atlas/atlas-runtime/api";
 
 const relation = (
 	id: string,

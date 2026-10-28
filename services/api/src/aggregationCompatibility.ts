@@ -1,8 +1,8 @@
-import type { MeasureSource } from "./dataCatalog";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
-} from "./measureCompatibility";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /** Return boundary releases whose codes are safe for aggregate coverage checks. */
 export const compatibleReleasesForAggregation = ({

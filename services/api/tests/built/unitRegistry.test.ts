@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { readDataCatalog } from "../../src/server";
+import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	normaliseObservation,
 	unitDefinitionFor,
 	withUnitDefinitions,
-} from "../../src/unitRegistry";
-import type { DataCatalog } from "../../src/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 

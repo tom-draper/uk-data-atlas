@@ -1,8 +1,12 @@
-import { areaNotFound } from "./areaResources";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
-import { notBuilt, unsupported } from "./capability";
-import { problem, requirementDetail, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { notBuilt, unsupported } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	problem,
+	requirementDetail,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 
 type AreaIdentity = {
 	geography: string;

@@ -3,7 +3,10 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { AreaGeometryCache, type GeoJsonGeometry } from "../src/areaGeometry";
+import {
+	AreaGeometryCache,
+	type GeoJsonGeometry,
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
 import { compileMapResource } from "../../../pipeline/src/compileMapResource";
 

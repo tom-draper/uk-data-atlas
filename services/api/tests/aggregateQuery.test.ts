@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { parseAggregateQuery } from "../src/aggregateQuery";
-import { createGeographyResolver } from "../src/geographyResolver";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { dataCatalog } from "./routeFixtures";
 
 const geographyResolver = createGeographyResolver({});

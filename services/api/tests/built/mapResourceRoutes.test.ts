@@ -6,7 +6,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { httpResponse } from "../../src/httpResponse";
-import { isStoredFile } from "../../src/routeResponse";
+import { isStoredFile } from "@uk-data-atlas/atlas-runtime/api";
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
 import { readParquet } from "../parquetFixtures";

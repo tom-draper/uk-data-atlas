@@ -1,4 +1,7 @@
-import { invalidQuery, type ApiResponse } from "./routeResponse";
+import {
+	invalidQuery,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * The one parameter every data route takes for where: `place`.

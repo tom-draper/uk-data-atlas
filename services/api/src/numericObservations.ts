@@ -2,12 +2,12 @@ import {
 	isNumericObservation,
 	type MeasureSource,
 	type PopulationObservation,
-} from "./dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	observationsFor,
 	type ObservationArtifacts,
-} from "./observationArtifacts";
-import type { ObservationArtifactReference } from "./sourceExactProvenance";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ObservationArtifactReference } from "@uk-data-atlas/atlas-runtime/areas";
 
 export type NumericObservationResult =
 	| {

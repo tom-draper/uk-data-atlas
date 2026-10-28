@@ -1,6 +1,6 @@
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
-import { readStoredText } from "../../src/storedText";
+import { readStoredText } from "@uk-data-atlas/artifacts";
 import { join } from "node:path";
 import test from "node:test";
 import type {

@@ -1,15 +1,19 @@
-import type { RelationshipPurpose } from "./relationshipPaths";
-import type { RelationshipOperation } from "./geographyResolver";
-import type { DataCatalog } from "./dataCatalog";
+import type { RelationshipPurpose } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { RelationshipOperation } from "@uk-data-atlas/atlas-runtime/areas";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	publishedSourcePartitionOf,
 	publishedSourcePartitionsFor,
 	type MeasureCompatibilityInventory,
-} from "./measureCompatibility";
-import { parseExactReleaseReference } from "./releaseForDate";
-import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { readChoice } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { parseExactReleaseReference } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	envelope,
+	invalidQuery,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const RELATIONSHIPS = QUERY_RULES["GET /relationships"];

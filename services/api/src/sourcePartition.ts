@@ -1,11 +1,11 @@
-import type { Measure } from "./dataCatalog";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { defaultSource, type DefaultedSource } from "./dataDefaults";
 import {
 	resolveObservations,
 	type ObservationPlan,
 	type Resolution,
 } from "./observationResolution/observationPlan";
-import type { RouteContext } from "./routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 
 type SourceQuery = {
 	period?: string | null;

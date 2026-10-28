@@ -6,7 +6,7 @@ import type {
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
-} from "../src/namedLocations";
+} from "@uk-data-atlas/atlas-runtime/places";
 
 export const areaLookup = createAreaLookup([
 	{

@@ -3,9 +3,13 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { choices, readChoice, readWholeNumber } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	choices,
+	readChoice,
+	readWholeNumber,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const { limit: LIMIT, relation: RELATION } = QUERY_RULES["GET /relationships"];
