@@ -356,6 +356,9 @@ importers:
 
   pipeline:
     dependencies:
+      '@duckdb/node-api':
+        specifier: 1.4.5-r.1
+        version: 1.4.5-r.1
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../packages/catalogue

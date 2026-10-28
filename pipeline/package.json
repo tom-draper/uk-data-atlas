@@ -14,6 +14,7 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {
+		"@duckdb/node-api": "1.4.5-r.1",
 		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/datasets": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
