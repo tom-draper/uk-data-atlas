@@ -21,7 +21,8 @@
 		"./postcode-area-types": "./src/postcodeAreaTypes.ts",
 		"./postcode-index-types": "./src/postcodeIndexTypes.ts",
 		"./postcode-count-types": "./src/postcodeCountTypes.ts",
-		"./postcode-defaults": "./src/postcodeDefaults.ts"
+		"./postcode-defaults": "./src/postcodeDefaults.ts",
+		"./lookup-coordinates": "./src/lookupCoordinates.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

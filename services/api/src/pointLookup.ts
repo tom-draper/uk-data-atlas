@@ -23,8 +23,8 @@ import {
 	MAX_STATED_ACCURACY_M,
 	type LookupPoint,
 	type LookupInputCrs,
-} from "../../../shared/lookupCoordinates";
-export * from "../../../shared/lookupCoordinates";
+} from "@uk-data-atlas/geography/lookup-coordinates";
+export * from "@uk-data-atlas/geography/lookup-coordinates";
 
 // Every point endpoint states the same `crs`, which a test holds them to.
 const CRS = QUERY_RULES["GET /areas:contains"].crs;
