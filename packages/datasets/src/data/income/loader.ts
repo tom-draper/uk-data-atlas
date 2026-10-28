@@ -21,6 +21,8 @@ async function parsePayData(text: string): Promise<{
 		const description = row["Description"]?.trim();
 		if (!code || !description || code === "Code" || !code.startsWith("E"))
 			continue;
+		// Metropolitan counties and Inner and Outer London are not atlas areas.
+		if (code.startsWith("E11") || code.startsWith("E13")) continue;
 
 		const median = parseNumber(row["Median"]);
 		const mean = parseNumber(row["Mean"]);

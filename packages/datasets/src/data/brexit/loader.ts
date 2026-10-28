@@ -17,7 +17,8 @@ export async function loadBrexit(
 
 	for (const row of data as Record<string, string>[]) {
 		const areaCode = row["Area_Code"]?.trim() || "";
-		if (!areaCode) continue;
+		// Gibraltar voted with the South West but is not a UK area.
+		if (!areaCode || areaCode === "GI") continue;
 
 		const pctLeave = parseNum(row["Pct_Leave"]);
 		const pctRemain = parseNum(row["Pct_Remain"]);
