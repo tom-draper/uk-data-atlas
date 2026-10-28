@@ -1,20 +1,20 @@
-import { catalogueObservationTables } from "./catalogueObservationTables";
-import { publishAtlasCache } from "./atlasCache";
-import { writeSqliteIndex, writeSqliteTables } from "./sqliteIndex";
+import { catalogueObservationTables } from "../../shared/catalogueObservationTables";
+import { publishAtlasCache } from "../../shared/atlasCache";
+import { writeSqliteIndex, writeSqliteTables } from "../../shared/sqliteIndex";
 import {
 	locationProjectionTables,
 	type LocationProjectionInventory,
 	type LocationProjectionArtifact,
 	type LocationParentProjectionArtifact,
-} from "./locationProjections";
-import { readStoredText } from "./storedText";
-import { namedLocationTables } from "./atlasNamedLocations";
-import { crosswalkTables } from "./atlasCrosswalks";
-import { areaTables } from "./atlasAreas";
+} from "../../shared/locationProjections";
+import { readStoredText } from "../../shared/storedText";
+import { namedLocationTables } from "../../shared/atlasNamedLocations";
+import { crosswalkTables } from "../../shared/atlasCrosswalks";
+import { areaTables } from "../../shared/atlasAreas";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { artifactDirectory } from "./dataLayout";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 export const buildAtlasSqlite = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "data/build");

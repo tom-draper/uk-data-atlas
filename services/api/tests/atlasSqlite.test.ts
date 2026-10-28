@@ -37,7 +37,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { buildAtlasSqlite } from "../scripts/build-atlas-sqlite";
+import { buildAtlasSqlite } from "../../../pipeline/src/buildAtlasSqlite";
 import { buildTerrainCatalogue } from "../../../pipeline/src/build-terrain-catalogue";
 import { readTerrainCatalogue } from "../src/boundaryLoader";
 import { readPublicManifest } from "../src/publicManifest";
