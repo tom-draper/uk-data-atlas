@@ -11,8 +11,7 @@ type Leaf = {
 };
 
 type Row = {
-	code: string;
-	name: string;
+	area: number;
 	series_id: number;
 	period_id: number;
 	value: number | null;
@@ -37,13 +36,15 @@ const place = (record: Record<string, Json>, path: string[], value: Json) => {
 };
 
 /**
- * Records keyed by area code, in code order, laid out from one record set's
- * leaves. A leaf names the first record's series; records on another release
- * read the series with the same measure and members, through `shapes`.
+ * One record set's records keyed by area code, in their stored order. A leaf
+ * names the first record's series; records on another release read the series
+ * with the same measure and members, through `shapes`.
  */
 function records(
 	database: DatabaseSync,
 	dataset: number,
+	part: number,
+	from: string,
 	slug: string,
 	leaves: Leaf[],
 	rules: Readonly<Record<string, DerivedRule>>,
@@ -70,25 +71,49 @@ function records(
 	const wanted = new Set(
 		valued.map((leaf) => `${shape(leaf.series!)}:${leaf.period}`),
 	);
-	const rows = database
+	const cells = new Map<number, Map<string, Row>>();
+	for (const row of database
 		.prepare(
-			`SELECT a.code, coalesce(n.name, v.name) AS name, o.series_id, o.period_id, o.value, o.lower, o.upper
-			FROM observation o
-			JOIN area_version v ON v.id = o.area_version_id
-			JOIN area a ON a.id = v.area_id
-			LEFT JOIN dataset_area_name n ON n.dataset_id = ? AND n.area_version_id = v.id
-			WHERE o.series_id IN (${series.map(() => "?").join(",")})
-			AND o.period_id IN (${periods.map(() => "?").join(",")})
-			ORDER BY a.code`,
+			`SELECT o.area_version_id AS area, o.series_id, o.period_id, o.value, o.lower, o.upper
+			FROM dataset_record r
+			JOIN observation o ON o.area_version_id = r.area_version_id
+			WHERE r.dataset_id = ? AND r.part = ? AND r.records = ?
+			AND o.series_id IN (${series.map(() => "?").join(",")})
+			AND o.period_id IN (${periods.map(() => "?").join(",")})`,
 		)
-		.all(dataset, ...series, ...periods) as unknown as Row[];
+		.all(dataset, part, from, ...series, ...periods) as unknown as Row[]) {
+		const key = `${shape(row.series_id)}:${row.period_id}`;
+		if (!wanted.has(key)) continue;
+		let found = cells.get(row.area);
+		if (!found) cells.set(row.area, (found = new Map()));
+		if (found.has(key))
+			throw new Error(
+				`${slug}: area ${row.area} has two values for one leaf`,
+			);
+		found.set(key, row);
+	}
 	const result: Record<string, Json> = {};
-	const build = (code: string, name: string, cells: Map<string, Row>) => {
+	for (const { area, code, name } of database
+		.prepare(
+			`SELECT r.area_version_id AS area, a.code, coalesce(n.name, v.name) AS name
+			FROM dataset_record r
+			JOIN area_version v ON v.id = r.area_version_id
+			JOIN area a ON a.id = v.area_id
+			LEFT JOIN dataset_area_name n ON n.dataset_id = r.dataset_id AND n.area_version_id = v.id
+			WHERE r.dataset_id = ? AND r.part = ? AND r.records = ?
+			ORDER BY r.position`,
+		)
+		.all(dataset, part, from) as {
+		area: number;
+		code: string;
+		name: string;
+	}[]) {
+		const values = cells.get(area);
 		const record: Record<string, Json> = {};
 		for (const leaf of leaves) {
 			let value: Json;
 			if (leaf.series !== null) {
-				const row = cells.get(`${shape(leaf.series)}:${leaf.period}`);
+				const row = values?.get(`${shape(leaf.series)}:${leaf.period}`);
 				const found = row?.[leaf.kind as "value" | "lower" | "upper"];
 				if (found === undefined || found === null)
 					throw new Error(
@@ -106,27 +131,13 @@ function records(
 				if (leaf.rule === rule)
 					place(record, leaf.path, compute(record));
 		result[code] = record;
-	};
-	let current:
-		{ code: string; name: string; cells: Map<string, Row> } | undefined;
-	for (const row of rows) {
-		const key = `${shape(row.series_id)}:${row.period_id}`;
-		if (!wanted.has(key)) continue;
-		if (current?.code !== row.code) {
-			if (current) build(current.code, current.name, current.cells);
-			current = { code: row.code, name: row.name, cells: new Map() };
-		}
-		if (current.cells.has(key))
-			throw new Error(`${slug}: ${row.code} has two values for one leaf`);
-		current.cells.set(key, row);
 	}
-	if (current) build(current.code, current.name, current.cells);
 	return result;
 }
 
 /**
  * The compiled JSON of a dataset, rebuilt from its rows: parts in order, each
- * header with its record sets laid out in area code order.
+ * header with its record sets laid out in their stored order.
  */
 export function rebuildFromLayout(
 	database: DatabaseSync,
@@ -182,6 +193,8 @@ export function rebuildFromLayout(
 			header[from] = records(
 				database,
 				dataset,
+				Number(part.position),
+				from,
 				slug,
 				leaves,
 				rules,
