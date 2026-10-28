@@ -2,6 +2,7 @@ import {
 	type DeclaredDataset,
 	type DeclaredDimension,
 	type DeclaredField,
+	type DeclaredParent,
 	type DeclaredHeader,
 	periods,
 } from "../declaredStatistics";
@@ -230,9 +231,15 @@ const imd = deprivation(
 	"LSOAs in England",
 	{ score: true, decile: true, population: true },
 );
+const districtParent = (code: string, name: string): DeclaredParent[] => [
+	{ code, name, release: { geography: "localAuthority", year: 2024 } },
+];
+
 export const IMD: DeclaredDataset = {
 	...imd,
 	name: "lsoaName",
+	parents: districtParent("ladCode", "ladName"),
+	rebuild: {},
 	measures: [
 		...imd.measures,
 		measure(
@@ -260,6 +267,8 @@ export const WIMD: DeclaredDataset = {
 		{ score: true, decile: true, population: true },
 	),
 	name: "lsoaName",
+	parents: districtParent("ladCode", "ladName"),
+	rebuild: {},
 };
 
 export const SIMD: DeclaredDataset = {
@@ -282,6 +291,8 @@ export const NIMDM: DeclaredDataset = {
 		{},
 	),
 	name: "soaName",
+	parents: districtParent("lgdCode", "lgdName"),
+	rebuild: {},
 };
 
 const REFERENDUM = [
