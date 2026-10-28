@@ -436,7 +436,9 @@ test("place-index stage preserves atlas data, replaces its tables and removes ol
 		database.exec(`
    INSERT INTO area_releases (geography, id, position, status, recordCount, artifact, contentHash, codeProperty, nameProperty)
    VALUES ('localAuthority', '2023-05-uk-bgc', 0, 'available', 1, 'areas/test.json', 'test-area', 'CODE', 'NAME');
-   INSERT INTO areas VALUES (NULL, 0, 'E08000003', 1, 'Manchester', NULL, NULL, NULL);
+   INSERT OR IGNORE INTO geography (slug) VALUES ('localAuthority');
+   INSERT INTO area (geography_id, code) SELECT id, 'E08000003' FROM geography WHERE slug = 'localAuthority';
+   INSERT INTO area_version VALUES (NULL, (SELECT id FROM area WHERE code = 'E08000003'), 0, 'Manchester', NULL, NULL, NULL, 1);
   `);
 	} finally {
 		database.close();
@@ -474,7 +476,7 @@ test("place-index stage preserves atlas data, replaces its tables and removes ol
 	);
 	const changed = new DatabaseSync(path);
 	try {
-		changed.exec("UPDATE areas SET name = 'Renamed city'");
+		changed.exec("UPDATE area_version SET name = 'Renamed city'");
 	} finally {
 		changed.close();
 	}
@@ -531,7 +533,9 @@ test("area-search stage replaces its index while retaining place search and othe
 		database.exec(`
    INSERT INTO area_releases (geography, id, position, status, recordCount, artifact, contentHash, codeProperty, nameProperty)
    VALUES ('localAuthority', '2023-05-uk-bgc', 0, 'available', 1, 'areas/test.json', 'test-area', 'CODE', 'NAME');
-   INSERT INTO areas VALUES (NULL, 0, 'E08000003', 1, 'Manchester', NULL, NULL, NULL);
+   INSERT OR IGNORE INTO geography (slug) VALUES ('localAuthority');
+   INSERT INTO area (geography_id, code) SELECT id, 'E08000003' FROM geography WHERE slug = 'localAuthority';
+   INSERT INTO area_version VALUES (NULL, (SELECT id FROM area WHERE code = 'E08000003'), 0, 'Manchester', NULL, NULL, NULL, 1);
   `);
 	} finally {
 		database.close();
@@ -579,7 +583,7 @@ test("area-search stage replaces its index while retaining place search and othe
 	);
 	const changed = new DatabaseSync(path);
 	try {
-		changed.exec("UPDATE areas SET name = 'Renamed city'");
+		changed.exec("UPDATE area_version SET name = 'Renamed city'");
 	} finally {
 		changed.close();
 	}

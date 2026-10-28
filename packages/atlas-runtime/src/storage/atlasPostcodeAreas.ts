@@ -4,6 +4,7 @@ import {
 } from "./atlasPostcodeAreaShard";
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
+import { addAreaVersion } from "./atlasAreas";
 import { postcodeDistrictWhere, postcodeFields } from "./atlasPostcodeShard";
 import {
 	NONE,
@@ -48,9 +49,9 @@ export function writePostcodeAreas(
 		DROP TABLE IF EXISTS postcode_area_releases;
 		CREATE TABLE postcode_area_releases (position INTEGER PRIMARY KEY, geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, areaColumn TEXT NOT NULL UNIQUE, distanceColumn TEXT NOT NULL UNIQUE);
 		CREATE TABLE postcode_area_columns (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), position INTEGER NOT NULL, hasSeveral INTEGER NOT NULL, PRIMARY KEY(district, releasePosition)) WITHOUT ROWID;
-		CREATE TABLE postcode_area_codes (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES areas(id), PRIMARY KEY(district, releasePosition, position)) WITHOUT ROWID;
-		CREATE TABLE postcode_area_matches (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), postcodePosition INTEGER NOT NULL, position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES areas(id), containment TEXT NOT NULL, distanceCm INTEGER NOT NULL, PRIMARY KEY(district, releasePosition, postcodePosition, position)) WITHOUT ROWID;
-		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL${columns.map((c) => `, ${quote(c.area)} INTEGER REFERENCES areas(id), ${quote(c.distance)} INTEGER NOT NULL`).join("")}) WITHOUT ROWID;`);
+		CREATE TABLE postcode_area_codes (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES area_version(id), PRIMARY KEY(district, releasePosition, position)) WITHOUT ROWID;
+		CREATE TABLE postcode_area_matches (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), postcodePosition INTEGER NOT NULL, position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES area_version(id), containment TEXT NOT NULL, distanceCm INTEGER NOT NULL, PRIMARY KEY(district, releasePosition, postcodePosition, position)) WITHOUT ROWID;
+		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL${columns.map((c) => `, ${quote(c.area)} INTEGER REFERENCES area_version(id), ${quote(c.distance)} INTEGER NOT NULL`).join("")}) WITHOUT ROWID;`);
 	const addRelease = database.prepare(
 		"INSERT INTO postcode_area_releases VALUES (?, ?, ?, ?, ?)",
 	);
@@ -58,11 +59,9 @@ export function writePostcodeAreas(
 		"SELECT position FROM area_releases WHERE geography = ? AND id = ?",
 	);
 	const findArea = database.prepare(
-		"SELECT id FROM areas WHERE releasePosition = ? AND code = ?",
+		"SELECT v.id FROM area a JOIN area_version v ON v.area_id = a.id WHERE v.release_id = ? AND a.code = ?",
 	);
-	const addArea = database.prepare(
-		"INSERT INTO areas (releasePosition, code, inInventory, name, aliases) VALUES (?, ?, 0, '', NULL)",
-	);
+	const addArea = addAreaVersion(database);
 	const ids = columns.map((column, position) => {
 		addRelease.run(
 			position,
@@ -141,7 +140,7 @@ export function writePostcodeAreas(
 				if (id === undefined) {
 					let area = findArea.get(cache.release, code);
 					if (!area) {
-						addArea.run(cache.release, code);
+						addArea(cache.release, code, "", null);
 						area = findArea.get(cache.release, code)!;
 					}
 					id = Number(area.id);

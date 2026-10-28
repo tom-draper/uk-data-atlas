@@ -14,6 +14,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { AREAS_VIEW } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
@@ -31,11 +32,7 @@ import {
 	readPostcodeAreaIndex,
 	readPostcodeIndex,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import {
-	PostcodeAreaIndex,
-	NONE,
-	SEVERAL,
-} from "@uk-data-atlas/postcodes";
+import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 
 function fixture(t: TestContext) {
@@ -53,8 +50,13 @@ function fixture(t: TestContext) {
 		INSERT INTO payloads VALUES ('existing', 'retained');
 		CREATE TABLE area_releases (position INTEGER PRIMARY KEY, geography TEXT, id TEXT);
 		INSERT INTO area_releases VALUES (0, 'ward', '2026');
-		CREATE TABLE areas (id INTEGER PRIMARY KEY, releasePosition INTEGER REFERENCES area_releases(position), code TEXT, inInventory INTEGER, name TEXT, aliases TEXT, UNIQUE(releasePosition, code));
-		INSERT INTO areas VALUES (1, 0, 'A', 1, 'Area A', NULL);`,
+		CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
+		INSERT INTO geography VALUES (1, 'ward');
+		CREATE TABLE area (id INTEGER PRIMARY KEY, geography_id INTEGER NOT NULL REFERENCES geography(id), code TEXT NOT NULL, UNIQUE(code, geography_id));
+		INSERT INTO area VALUES (1, 1, 'A');
+		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL REFERENCES area(id), release_id INTEGER NOT NULL REFERENCES area_releases(position), name TEXT NOT NULL, area_m2 REAL, population REAL, aliases TEXT, in_inventory INTEGER NOT NULL, UNIQUE(release_id, area_id));
+		INSERT INTO area_version VALUES (1, 1, 0, 'Area A', NULL, NULL, NULL, 1);
+		CREATE VIEW areas AS ${AREAS_VIEW};`,
 	);
 	db.close();
 	const postcodes = postcodeIndexFor([
@@ -329,7 +331,7 @@ test("repeated geographies use exact releases and preserve shard release order",
 	const { root, apiRoot, path, compiled } = fixture(t);
 	const db = new DatabaseSync(path);
 	db.exec(
-		"INSERT INTO area_releases VALUES (1, 'ward', '2025'); INSERT INTO areas VALUES (3, 1, 'A', 1, 'Old area A', NULL)",
+		"INSERT INTO area_releases VALUES (1, 'ward', '2025'); INSERT INTO area_version VALUES (3, 1, 1, 'Old area A', NULL, NULL, NULL, 1)",
 	);
 	db.close();
 	const files = new Map(

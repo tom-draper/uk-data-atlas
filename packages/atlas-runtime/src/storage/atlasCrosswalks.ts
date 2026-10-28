@@ -10,6 +10,7 @@ import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "./sqliteIndex";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { atlasDatabasePath } from "./dataLayout";
+import { addAreaVersion } from "./atlasAreas";
 
 const sourceColumns = {
 	code: "TEXT",
@@ -67,16 +68,14 @@ const areaEndpointValues = (
 	fieldSets: Map<string, number>,
 ) => {
 	const find = database.prepare(
-		"SELECT a.id, a.name, a.aliases, a.areaM2, a.population FROM areas a JOIN area_releases r ON r.position = a.releasePosition WHERE r.geography = ? AND r.id = ? AND a.code = ?",
+		"SELECT v.id, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area_releases r JOIN geography g ON g.slug = r.geography JOIN area a ON a.geography_id = g.id AND a.code = ? JOIN area_version v ON v.area_id = a.id AND v.release_id = r.position WHERE r.geography = ? AND r.id = ?",
 	);
 	const releasePosition = database.prepare(
 		"SELECT position FROM area_releases WHERE geography = ? AND id = ?",
 	);
-	const add = database.prepare(
-		"INSERT INTO areas (releasePosition, code, inInventory, name, aliases) VALUES ((SELECT position FROM area_releases WHERE geography = ? AND id = ?), ?, 0, ?, ?)",
-	);
+	const add = addAreaVersion(database);
 	const updateFacts = database.prepare(
-		"UPDATE areas SET areaM2 = coalesce(areaM2, ?), population = coalesce(population, ?) WHERE id = ?",
+		"UPDATE area_version SET area_m2 = coalesce(area_m2, ?), population = coalesce(population, ?) WHERE id = ?",
 	);
 	const findLabels = database.prepare(
 		"SELECT position FROM crosswalk_label_exceptions WHERE labels = ?",
@@ -103,20 +102,20 @@ const areaEndpointValues = (
 			throw new Error(
 				`Invalid crosswalk area ${geography}/${release}/${value.code}`,
 			);
-		let area = find.get(geography, release, value.code);
+		let area = find.get(value.code, geography, release);
 		if (!area) {
-			if (!releasePosition.get(geography, release))
+			const found = releasePosition.get(geography, release);
+			if (!found)
 				throw new Error(
 					`Missing crosswalk area release ${geography}/${release}`,
 				);
-			add.run(
-				geography,
-				release,
+			add(
+				Number(found.position),
 				value.code,
 				value.labels[0] ?? "",
 				JSON.stringify(value.labels.slice(1)),
 			);
-			area = find.get(geography, release, value.code)!;
+			area = find.get(value.code, geography, release)!;
 		}
 		if (columns === sourceColumns) {
 			for (const key of ["areaM2", "population"] as const) {
@@ -347,7 +346,7 @@ export const crosswalkTables = (
 				"crosswalkPosition INTEGER NOT NULL REFERENCES crosswalks(position)",
 				"position INTEGER NOT NULL",
 				"fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position)",
-				"areaId INTEGER NOT NULL REFERENCES areas(id)",
+				"areaId INTEGER NOT NULL REFERENCES area_version(id)",
 				"labelsId INTEGER REFERENCES crosswalk_label_exceptions(position)",
 				...Object.entries(sourceColumns)
 					.filter(
@@ -378,7 +377,7 @@ export const crosswalkTables = (
 				"sourcePosition INTEGER NOT NULL",
 				"position INTEGER NOT NULL",
 				"fieldSetId INTEGER NOT NULL REFERENCES crosswalk_field_sets(position)",
-				"areaId INTEGER NOT NULL REFERENCES areas(id)",
+				"areaId INTEGER NOT NULL REFERENCES area_version(id)",
 				"labelsId INTEGER REFERENCES crosswalk_label_exceptions(position)",
 				...Object.entries(targetColumns)
 					.filter(([key]) => key !== "code" && key !== "labels")
