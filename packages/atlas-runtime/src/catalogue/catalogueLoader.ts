@@ -53,7 +53,7 @@ import {
 import { createTerrainAsyncProvider } from "../maps/terrainLoader";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 import { createOperationMatcher } from "../api/operationTemplates";
-import type { StoredFile } from "../api/routeResponse";
+import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactRoot, repositoryRootOf } from "../storage/dataLayout";
 
 const EVIDENCE_DOCUMENTS = [

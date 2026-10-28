@@ -19,7 +19,7 @@ import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import { compileOperations } from "../../../pipeline/src/build-operations";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
-import type { StoredFile } from "@uk-data-atlas/atlas-runtime/api";
+import type { StoredFile } from "@uk-data-atlas/artifacts";
 import {
 	atlasRelease,
 	dataCatalog,
