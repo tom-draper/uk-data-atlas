@@ -1,6 +1,6 @@
 import type { CrosswalkMethod, CrosswalkQuality } from "./crosswalkInventory";
 import type { RelationshipPath } from "./relationshipPaths";
-import type { GeographyKind } from "./geography";
+import type { GeographyKind } from "@uk-data-atlas/geography";
 
 export type AnalysisGeographySupport = {
 	measureId: string;

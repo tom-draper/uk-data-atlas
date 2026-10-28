@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { Measure, MeasureSource } from "../src/dataCatalog";
-import type { MeasureGeographyKind } from "../src/geography";
+import type { MeasureGeographyKind } from "@uk-data-atlas/geography";
 import {
 	areaNamedBy,
 	defaultChangePeriods,

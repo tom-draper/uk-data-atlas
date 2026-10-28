@@ -1,4 +1,4 @@
-import type { MeasureGeographyKind } from "./geography";
+import type { MeasureGeographyKind } from "@uk-data-atlas/geography";
 
 export type DatasetCatalogueEntry = {
 	id: string;

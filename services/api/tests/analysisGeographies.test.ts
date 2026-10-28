@@ -9,7 +9,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { analysisConversion } from "../src/analysisGeographies";
 import type { AnalysisGeographySupportConfig } from "../src/analysisGeographies";
-import type { GeographyKind } from "../src/geography";
+import type { GeographyKind } from "@uk-data-atlas/geography";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import type { DataCatalog } from "../src/dataCatalog";
 import type { RelationshipPathInventory } from "../src/relationshipPaths";
