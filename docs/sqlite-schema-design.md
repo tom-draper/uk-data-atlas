@@ -618,7 +618,8 @@ area_releases.position`, which `series.release_id` already references), then
   name, a derived rule or a literal). They are inferred from the first record
   of each part, so no config describes the JSON shape. They are response
   layout, kept until readers build responses from rows (step 7).
-- Records are laid out in area code order; order is not stored. A leaf names
+- Records are laid out in area code order; order is not stored (batch 2
+  stores it, below). A leaf names
   the first record's series; records on an `alsoIn` release read the series
   with the same measure and members.
 - Derived numbers stay unstored. A config's `rebuild.derived` gives one rule
@@ -633,24 +634,39 @@ area_releases.position`, which `series.release_id` already references), then
   `atlas.sqlite` from 453 MB to 432 MB; the layout tables hold 537 leaves.
   Observation rows are unchanged.
 
+### Step 4, batch 2: record order (2026-10-28)
+
+- Most datasets keep their records in the publisher's file order, which no sort
+  reproduces. Sorting in the compilers would change every hash and URL, so the
+  order is stored instead: `dataset_record` holds each record's area version
+  by position, for every record set of a served dataset. It also makes the
+  record list explicit rather than whatever observations exist.
+- No unique index on the area: a duplicate would already fail the byte check,
+  and the index doubled the table.
+- Batch 2 adds the 15 datasets whose only blocker was order: car availability,
+  qualification, travel to work, ethnicity, council tax, local government
+  finance, housing affordability, broadband, mobile coverage, road collisions,
+  homelessness, both adult social care, net additional dwellings and planning
+  applications. 26 datasets are now served from rows. On the 2026-10-28 build
+  stored payload JSON went from 58 MB to 52 MB; `dataset_record` holds 147k
+  rows in 2.9 MB.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker                                                         | Datasets                                                                                                                                                                                                                                                                         |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Records not in area code order                                  | car availability, qualification, travel to work, ethnicity, council tax, local government finance, housing affordability, broadband, mobile coverage, crime, road collisions, homelessness, both adult social care, net additional dwellings, planning applications, both Brexit |
-| Values in arrays                                                | population, population-uk, house prices                                                                                                                                                                                                                                          |
-| Some records lack a value others have                           | income, workplace income, unemployment, public health                                                                                                                                                                                                                            |
-| Parent area code and name in each record                        | IMD, WIMD, SIMD, NIMDM                                                                                                                                                                                                                                                           |
-| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity                                                                                                                                                                                       |
-| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables                                                                                                                                                                                                |
-| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                                                                                                                                                                                                            |
+| Blocker                                                         | Datasets                                                                                   |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Values in arrays                                                | population, population-uk, house prices                                                    |
+| Some records lack a value others have                           | income, workplace income, unemployment, public health                                      |
+| Parent area code and name in each record                        | IMD, WIMD, SIMD, NIMDM, crime (community safety partnership), Brexit (region)              |
+| A flag that varies by record                                    | Brexit by constituency (`isKnownResult`)                                                   |
+| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity |
+| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables          |
+| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                      |
 
-Order is fixed in the compiler (sort by code, a separate change that updates
-the hash and so the dataset's URL). Arrays and absent values need new leaf
-kinds. Parent areas are relationships the area tables can supply. Values a
-derived number needs but the rows lack (population) must be stored or joined
-first.
+Arrays and absent values need new leaf kinds. Parent areas are relationships
+the area tables can supply. Values a derived number needs but the rows lack
+(population) must be stored or joined first.
 
 ### Catalogue datasets as configuration (2026-10-27)
 
