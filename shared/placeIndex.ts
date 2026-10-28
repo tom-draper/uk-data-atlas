@@ -122,37 +122,18 @@ type Grouped = Omit<CompiledPlace, "name" | "boundaryReleases"> & {
 	boundaryReleases: Set<string>;
 };
 
-type Label = { place: string; label: string; viaTitle: boolean };
+export type Label = { place: string; label: string; viaTitle: boolean };
 
-export const compilePlaceIndex = (
+export const preparePlaceIndex = (
 	areaLookup: AreaLookup,
 	namedLocations: NamedLocationInventory | undefined,
-	areaInventoryHash: string,
-	boundaryRegistry?: BoundaryRegistry,
-): PlaceIndexArtifact => {
+	boundaryRegistry: BoundaryRegistry | undefined,
+	add: (name: string, entry: Label) => void,
+) => {
 	const registryReleases = new Map(
 		boundaryRegistry?.releases.map((release) => [release.id, release]),
 	);
 	const grouped = new Map<string, Grouped>();
-	const byName = new Map<string, Label[]>();
-	const add = (name: string, entry: Label) => {
-		const list = byName.get(name);
-		if (!list) {
-			byName.set(name, [entry]);
-			return;
-		}
-		// The same code carries the same name in release after release; one
-		// entry per place and label is enough.
-		if (
-			!list.some(
-				(existing) =>
-					existing.place === entry.place &&
-					existing.label === entry.label,
-			)
-		) {
-			list.push(entry);
-		}
-	};
 	const indexLabel = (label: string, place: string) => {
 		const normalised = normalisePlaceName(label);
 		if (!normalised) return;
@@ -250,20 +231,17 @@ export const compilePlaceIndex = (
 				...(place.validity ? { validity: place.validity } : {}),
 			};
 		});
-	const position = new Map(
-		places.map((place, index) => [place.place, index]),
-	);
+	return { releases, places };
+};
 
-	const names = [...byName.keys()].sort(compareCodeUnits);
-	const labels = names.map((name) =>
-		byName.get(name)!.map((entry): CompiledPlaceLabel => {
-			const index = position.get(entry.place)!;
-			const viaTitle = entry.viaTitle ? 1 : 0;
-			return entry.label === places[index]!.name
-				? [index, viaTitle]
-				: [index, viaTitle, entry.label];
-		}),
-	);
+export const finishPlaceIndex = (
+	prepared: ReturnType<typeof preparePlaceIndex>,
+	names: string[],
+	labels: CompiledPlaceLabel[][],
+	areaInventoryHash: string,
+	namedLocations: NamedLocationInventory | undefined,
+): PlaceIndexArtifact => {
+	const { releases, places } = prepared;
 
 	const byCode = new Map<string, number[]>();
 	places.forEach((place, index) => {
@@ -287,6 +265,52 @@ export const compilePlaceIndex = (
 		codePlaces: codes.map((code) => byCode.get(code)!),
 	};
 	return { ...body, contentHash: sha256(JSON.stringify(body)) };
+};
+
+export const compilePlaceIndex = (
+	areaLookup: AreaLookup,
+	namedLocations: NamedLocationInventory | undefined,
+	areaInventoryHash: string,
+	boundaryRegistry?: BoundaryRegistry,
+): PlaceIndexArtifact => {
+	const byName = new Map<string, Label[]>();
+	const prepared = preparePlaceIndex(
+		areaLookup,
+		namedLocations,
+		boundaryRegistry,
+		(name, entry) => {
+			const list = byName.get(name);
+			if (!list) byName.set(name, [entry]);
+			else if (
+				!list.some(
+					(existing) =>
+						existing.place === entry.place &&
+						existing.label === entry.label,
+				)
+			)
+				list.push(entry);
+		},
+	);
+	const position = new Map(
+		prepared.places.map((place, index) => [place.place, index]),
+	);
+	const names = [...byName.keys()].sort(compareCodeUnits);
+	const labels = names.map((name) =>
+		byName.get(name)!.map((entry): CompiledPlaceLabel => {
+			const index = position.get(entry.place)!;
+			const viaTitle = entry.viaTitle ? 1 : 0;
+			return entry.label === prepared.places[index]!.name
+				? [index, viaTitle]
+				: [index, viaTitle, entry.label];
+		}),
+	);
+	return finishPlaceIndex(
+		prepared,
+		names,
+		labels,
+		areaInventoryHash,
+		namedLocations,
+	);
 };
 
 /**
