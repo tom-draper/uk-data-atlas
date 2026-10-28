@@ -83,7 +83,7 @@ The database contains these tables:
 | `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                               |
 | `datasets` | `payloadId`   | `TEXT NOT NULL`        | Foreign key to `payloads.id`, `dataset:<output>`.                                |
 
-`meta`, `payloads`, `datasets`, `area_releases`, `areas`, `crosswalks`, `crosswalk_sources`,
+`meta`, `payloads`, `datasets`, `area_releases`, `crosswalks`, `crosswalk_sources`,
 `crosswalk_targets`, `crosswalk_coverage`, `named_locations`, `named_location_members`,
 `named_location_assertions`, `named_location_partial_members`, and `named_location_geometries` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
@@ -156,10 +156,10 @@ All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/c
 | `series`            | `id`, `key` unique                        | One dataset, measure, release (`area_releases.position`) and set of members, plus `method`.    |
 | `series_member`     | `(series_id, dimension_id)`               | The members fixing a series. Indexed by `(member_id, series_id)`.                              |
 | `observation`       | `(series_id, area_version_id, period_id)` | `value`, `status_id`, optional `lower`, `upper`, `category_id`. `WITHOUT ROWID`.               |
-| `dataset_area_name` | `(dataset_id, area_version_id)`           | A publisher's area name, stored only where it differs from `areas.name`.                       |
+| `dataset_area_name` | `(dataset_id, area_version_id)`           | A publisher's area name, stored only where it differs from `area_version.name`.                |
 
-`observation.area_version_id` references `areas(id)`, one row per release and
-code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
+`observation.area_version_id` references `area_version(id)`, one row per
+release and code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
 place queries (`observation_area`); `series` by `(dataset_id, measure_id)`
 (`series_dataset`) and `series_member` by `(member_id, series_id)`
 (`series_member_member`). The build fails if an observation's area is not in its series'
@@ -212,12 +212,22 @@ are `geography`, `id`, and `status`. Available releases have `recordCount INTEGE
 `derivedFrom TEXT` holds optional JSON source-adapter metadata. Unavailable
 releases have `reason TEXT` instead. Inapplicable columns are null.
 
-`areas` has primary key `(geography, boundaryRelease, code)`, non-null text
-`name`, and non-null integer `position` for record order. Nullable `aliases TEXT`
-holds an ordered JSON string array, preserving absent versus empty aliases.
-Its `(geography, boundaryRelease)` foreign key references `area_releases`.
-An index on `(geography, boundaryRelease, position)` supports ordered release
-reads. The primary key supports area-code lookups within a release.
+Area identity is three `STRICT` tables:
+
+| Table          | Key                                  | Holds                                                                                                                             |
+| -------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `geography`    | `id`, `slug` unique                  | One row per geography named by `area_releases`.                                                                                   |
+| `area`         | `id`, `(code, geography_id)` unique  | One row per code in a geography, for all releases.                                                                                |
+| `area_version` | `id`, `(release_id, area_id)` unique | The area in one release (`area_releases.position`): `name`, `area_m2`, `population`, JSON `aliases`, and `in_inventory` (0 or 1). |
+
+`area_version.id` follows release order, then area artifact order, so release
+reads order by `id`. Every other table references `area_version(id)`. Nullable
+`aliases` keeps absent versus empty aliases. The same area in two releases
+shares `area_id`. The `(code, geography_id)` index serves lookups by code.
+
+`areas` is a read-only view over `area_version` and `area` with the earlier
+columns (`id`, `releasePosition`, `code`, `inInventory`, `name`, `aliases`,
+`areaM2`, `population`), kept for existing readers. Write to the tables.
 
 The API inventory and bounded lazy area lookup read these tables in read-only
 connections that close after each read. They refuse stale hashes and incomplete
@@ -251,7 +261,7 @@ records whether release coverage is present. `crosswalk_coverage` has primary
 key `(geography, boundaryRelease)`, both non-null text, unique non-null integer
 `position`, and non-null integers `areaCount` and `relatedAreaCount`.
 Its rows retain coverage order and refer to the inventory hash, without requiring
-all historical crosswalk endpoints to exist in `areas`.
+all historical crosswalk endpoints to exist in `area_version`.
 
 `crosswalks` has text primary key `id`, unique integer `position`, text
 `fromGeography`, `fromRelease`, `toGeography`, `toRelease`, `method`, `quality`,
@@ -318,7 +328,7 @@ Membership data lives in relational child tables. Each has non-null
 
 Members and partial members index `(code, locationId)` for reverse membership
 lookups. Codes refer to the parent's `memberGeography`. They have no foreign key
-to `areas`, because assertions can describe historical codes across releases.
+to `area`, because assertions can describe historical codes across releases.
 `memberOf` is a foreign key to the named location holding that partial member.
 
 `named_location_geometries` has text primary key `locationId`, a foreign key to
@@ -458,12 +468,12 @@ even when the postcode content hash is unchanged. No new source release is neede
 ### Postcode areas
 
 The `postcode-areas` stage stores integer area references on `postcodes`. Each compiled release has an
-`AreaId` column referencing `areas(id)` and a `DistanceCm` column. A geography
+`AreaId` column referencing `area_version(id)` and a `DistanceCm` column. A geography
 with one release uses names such as `countryAreaId`. Multiple releases use
 release-qualified names such as `"localAuthority_2026-05-uk-bgcAreaId"`.
 `postcode_area_releases` lists each geography, boundary release and column name.
 All IDs refer to that exact boundary release. Missing inventory areas are added
-to `areas` with `inInventory=0` and an empty name, since shard inputs contain codes
+as `area_version` rows with `in_inventory = 0` and an empty name, since shard inputs contain codes
 but no labels.
 
 ```sql
@@ -483,7 +493,7 @@ multiple or boundary matches, with their containment, distance and original orde
 Its decoded view, `postcode_area_matches_decoded`, adds geography, boundary
 release, code and name. `postcode_area_columns` preserves release order and the
 presence of the optional several-match field per district. `postcode_area_codes`
-preserves each district's code dictionary as ordered references to `areas`.
+preserves each district's code dictionary as ordered references to `area_version`.
 These small tables retain the details needed to reconstruct the original bytes.
 
 The reader selects a compact-postcode prefix range, filters to the district's

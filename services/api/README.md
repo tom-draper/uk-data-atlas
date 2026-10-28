@@ -84,18 +84,19 @@ Next.js only reads the assembled release; API routes serve its gzip files.
 Other API outputs remain in `data/build/artifacts/` until their compiler groups
 move. See [the migration plan](../../docs/data-pipeline-move.md).
 
-Areas use an integer `areas.id` primary key. `areas.releasePosition` references
-`area_releases.position`, with a unique `(releasePosition, code)` lookup. IDs
-follow area artifact order, so release reads order by `id` without a separate
-ordering index. `inInventory = 1` selects the published area inventory. Missing
-crosswalk endpoints become supplemental rows with `inInventory = 0` and do not
-change area API responses.
+Areas are `area` (one row per geography and code) and `area_version` (that area
+in one release). `area_version.release_id` references `area_releases.position`,
+with a unique `(release_id, area_id)` lookup. IDs follow area artifact order, so
+release reads order by `id` without a separate ordering index. `in_inventory = 1`
+selects the published area inventory. Missing crosswalk endpoints become
+supplemental versions with `in_inventory = 0` and do not change area API
+responses. The `areas` view keeps the earlier column names for readers.
 
 Crosswalk endpoint tables reference `crosswalks.position` through
-`crosswalkPosition`, `areas.id` through `areaId`, and
+`crosswalkPosition`, `area_version.id` through `areaId`, and
 `crosswalk_field_sets.position` through `fieldSetId`. Shared field lists preserve
 JSON property order and optional-field presence. Source `areaM2` and `population`
-are stored on `areas`. The build rejects conflicting facts for the same area.
+are stored on `area_version`. The build rejects conflicting facts for the same area.
 Target population values remain on target rows because they describe an overlap.
 
 Endpoint labels normally equal `[name, ...aliases]`. Differences in spelling,

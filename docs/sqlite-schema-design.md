@@ -533,6 +533,35 @@ area_releases.position`, which `series.release_id` already references), then
 - The fuel poverty JSON payload stays in `payloads` until step 4 moves payloads
   to the cache, so other readers of `dataset:fuel-poverty` are unchanged.
 
+### Step 2 scope (2026-10-28)
+
+- `area_version` keeps the old `areas.id` values, so no observation,
+  crosswalk or postcode row changes. Ids follow release order, then area
+  artifact order, as before.
+- `area` ids follow first appearance in release order. The unique key is
+  `(code, geography_id)`, code first, so a lookup by code alone uses it.
+- `areas` becomes a read-only view over `area_version` and `area` with the old
+  column names, so current readers keep working. Writers (crosswalk endpoints
+  and postcode areas that are missing from the inventory) insert through
+  `addAreaVersion`, which also adds the `area` if it is new.
+- Every foreign key that pointed at `areas(id)` now points at
+  `area_version(id)`: observations, `dataset_area_name`, crosswalk endpoints
+  and postcode area references.
+- The build checks that each area version's release is for the same geography
+  as its area.
+- `geography` holds only `id` and `slug` for now. `label`, `kind` and
+  `description` need a source of truth, which the documentation step adds.
+- `boundary_release` is not split out yet. `area_version.release_id` and
+  `series.release_id` still reference `area_releases(position)`, which is the
+  id `boundary_release` will keep.
+- Transitional columns stay on `area_version` until their new homes exist:
+  `aliases` (JSON, to become `area_name` rows), `population` (to become an
+  observation) and `in_inventory` (whether the release's inventory lists the
+  code, rather than a crosswalk or postcode lookup naming it). `area.nation_id`,
+  centroids and bounding boxes are left for step 5.
+- `dataset_area_name` stays keyed by area version, since a publisher's name
+  can differ by release.
+
 ### Catalogue datasets as configuration (2026-10-27)
 
 Every catalogue dataset whose records are numbers keyed by area code is stored
