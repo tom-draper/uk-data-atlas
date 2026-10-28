@@ -6,6 +6,7 @@ import {
 	readFileSync,
 	rmSync,
 	symlinkSync,
+	unlinkSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -13,6 +14,7 @@ import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { createApiServer } from "../../src/apiServer";
 import { readApiCatalogues } from "../../src/catalogueLoader";
+import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactRoot,
 	buildDirectory,
@@ -61,7 +63,12 @@ test("loads evidence build inputs when the previous document manifest is stale",
 		() => readApiCatalogues(root),
 		/Evidence documents were not built from this data catalogue/,
 	);
-	const inputs = readApiCatalogues(root, { loadEvidenceDocuments: false });
+	unlinkSync(join(root, "openapi.yaml"));
+	const inputs = readAtlasCatalogues(root, { loadEvidenceDocuments: false });
+	assert.throws(
+		() => readApiCatalogues(root, { loadEvidenceDocuments: false }),
+		/openapi.yaml/,
+	);
 	assert.equal(inputs.documents.size, 0);
 	assert.equal(
 		inputs.dataCatalog.measures.some(({ id }) => id === "population"),

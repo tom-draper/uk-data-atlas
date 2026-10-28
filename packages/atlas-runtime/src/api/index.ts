@@ -1,3 +1,4 @@
+export * from "./catalogueLoader";
 export * from "./areaNotFound";
 export * from "./analysisGeographyRoutes";
 export * from "./governanceRoutes";

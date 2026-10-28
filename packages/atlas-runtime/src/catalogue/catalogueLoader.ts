@@ -10,7 +10,7 @@ import { join, resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
 import { createGeographyResolver } from "../areas/geographyResolver";
 import { createRelationshipPathIndex } from "../relationships/relationshipPaths";
-import type { RouteContext } from "../areas/routing";
+import type { AtlasRelease } from "../storage/atlasRelease";
 import {
 	readAreaInventory,
 	readAreaLookup,
@@ -42,7 +42,6 @@ import {
 	readExportManifest,
 	readLookupManifest,
 	readMeasureCompatibility,
-	readOperations,
 	readValidationReport,
 } from "./catalogueManifestLoader";
 import { readMapAssets, readMapResources } from "../maps/mapResourceLoader";
@@ -52,7 +51,6 @@ import {
 } from "../geometry/geometryLoader";
 import { createTerrainAsyncProvider } from "../maps/terrainLoader";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
-import { createOperationMatcher } from "../api/operationTemplates";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactRoot, repositoryRootOf } from "../storage/dataLayout";
 
@@ -66,7 +64,7 @@ const EVIDENCE_DOCUMENTS = [
 
 const readEvidenceDocuments = (
 	apiRoot: string,
-	atlasRelease: RouteContext["atlasRelease"],
+	atlasRelease: AtlasRelease | undefined,
 	dataCatalogHash: string,
 ) => {
 	const documents = new Map<
@@ -133,14 +131,6 @@ const readEvidenceDocuments = (
 	return documents;
 };
 
-export type ApiCatalogues = Omit<
-	Required<RouteContext>,
-	"terrainProvider" | "terrainAsyncProvider"
-> & {
-	terrainProvider?: RouteContext["terrainProvider"];
-	terrainAsyncProvider?: RouteContext["terrainAsyncProvider"];
-};
-
 export type CatalogueOptions = {
 	mapAssetBaseUrl?: string;
 	mapTileBaseUrl?: string;
@@ -166,10 +156,10 @@ export type CatalogueOptions = {
 	onStage?: (stage: string, milliseconds: number) => void;
 };
 
-export const readApiCatalogues = (
+export const readAtlasCatalogues = (
 	apiRoot: string,
 	options: CatalogueOptions = {},
-): ApiCatalogues => {
+) => {
 	const stage = <T>(name: string, read: () => T): T => {
 		if (!options.onStage) return read();
 		const started = performance.now();
@@ -343,14 +333,6 @@ export const readApiCatalogues = (
 			relationshipCandidateInventory,
 		}),
 	);
-	const openapiDocument = stage("openapi-document", () =>
-		readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
-	);
-	const operationMatcher = stage("openapi-operation-matcher", () =>
-		createOperationMatcher(
-			readOperations(apiRoot, openapiDocument).operations,
-		),
-	);
 	const validationReport = stage("validation-report", () =>
 		readValidationReport(apiRoot),
 	);
@@ -371,8 +353,6 @@ export const readApiCatalogues = (
 		readMeasureCompatibility(apiRoot),
 	);
 	return {
-		openapiDocument,
-		operationMatcher,
 		boundaryRegistry,
 		geographyInventory,
 		areaInventory,
