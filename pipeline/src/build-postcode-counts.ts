@@ -1,6 +1,6 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildDuckdbPostcodeCounts } from "../../shared/buildDuckdbPostcodeCounts";
+import { buildDuckdbPostcodeCounts } from "./postcode-counts/buildDuckdbPostcodeCounts";
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
