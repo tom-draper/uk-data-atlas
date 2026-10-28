@@ -9,7 +9,7 @@ import {
 import { readNamedLocationInventory } from "../shared/locationLoader";
 import { compilePlaceIndex } from "../shared/placeIndex";
 import { resolvePlaces } from "../shared/placeResolver";
-import { atEach, type Indexed } from "../shared/sortedIndex";
+import { atEach, type Indexed } from "@uk-data-atlas/search-index";
 import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");

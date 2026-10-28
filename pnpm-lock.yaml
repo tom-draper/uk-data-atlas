@@ -183,6 +183,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:packages/map-tiles
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:packages/search-index
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.3.6(@playwright/test@1.63.0)(@types/node@26.6.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -361,6 +364,12 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  packages/search-index:
+    devDependencies:
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   pipeline:
     dependencies:
       '@duckdb/node-api':
@@ -378,6 +387,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../packages/map-tiles
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:../packages/search-index
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
@@ -436,6 +448,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../../packages/map-tiles
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:../../packages/search-index
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7

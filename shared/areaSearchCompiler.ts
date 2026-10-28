@@ -1,9 +1,9 @@
 import type { AreaLookup } from "./areaInventory";
 import { NAME_NORMALISATION } from "./nameNormalisation";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
-import { compareCodeUnits } from "./compareCodeUnits";
+import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "./contentHash";
-import { packPositions } from "./packedPositions";
+import { packPositions } from "@uk-data-atlas/search-index";
 import type { SqliteTable } from "./sqliteTables";
 
 /**

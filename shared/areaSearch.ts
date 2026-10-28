@@ -14,7 +14,7 @@ import {
 	findSorted,
 	lowerBound,
 	type Indexed,
-} from "./sortedIndex";
+} from "@uk-data-atlas/search-index";
 import { SqliteIndex, text, unpackPositions } from "./sqliteIndex";
 
 /**

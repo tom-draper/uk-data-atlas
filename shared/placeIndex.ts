@@ -4,7 +4,7 @@ import type { NamedLocationInventory } from "./namedLocationTypes";
 import { compareBoundaryReleases } from "@uk-data-atlas/catalogue";
 import { NAME_NORMALISATION } from "./nameNormalisation";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
-import { compareCodeUnits, type Indexed } from "./sortedIndex";
+import { compareCodeUnits, type Indexed } from "@uk-data-atlas/search-index";
 import { sha256 } from "./contentHash";
 import type { SQLInputValue } from "node:sqlite";
 import {
