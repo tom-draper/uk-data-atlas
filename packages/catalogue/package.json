@@ -12,7 +12,8 @@
 		"./ageArrays": "./src/ageArrays.ts",
 		"./yearArrays": "./src/yearArrays.ts",
 		"./place-profile": "./src/placeProfile.ts",
-		"./surface-fingerprint": "./src/surfaceFingerprint.ts"
+		"./surface-fingerprint": "./src/surfaceFingerprint.ts",
+		"./unit-registry": "./src/unitRegistry.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
