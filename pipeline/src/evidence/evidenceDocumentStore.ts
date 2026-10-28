@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { sha256 } from "./contentHash";
-import { publicJson } from "./publicJson";
-import type { EvidenceDocument } from "./evidenceDocuments";
+import { sha256 } from "../../../shared/contentHash";
+import { publicJson } from "../../../shared/publicJson";
+import type { EvidenceDocument } from "../../../shared/evidenceDocuments";
 
 export const writeEvidenceDocument = (
 	directory: string,

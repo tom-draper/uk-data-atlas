@@ -5,13 +5,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readApiCatalogues } from "../../shared/catalogueLoader";
-import { evidenceInputsHash } from "../../shared/evidenceInputsHash";
-import { buildEvidenceMeasure } from "../../shared/buildEvidenceMeasure";
+import { evidenceInputsHash } from "./evidence/evidenceInputsHash";
+import { buildEvidenceMeasure } from "./evidence/buildEvidenceMeasure";
 import { evidenceReport } from "../../shared/evidenceReports";
 import {
 	writeEvidenceDocument,
 	cachedEvidenceMeasure,
-} from "../../shared/evidenceDocumentStore";
+} from "./evidence/evidenceDocumentStore";
 import { availableReconciliations } from "../../shared/measureReconciliation";
 import { publicJson } from "../../shared/publicJson";
 import type { RouteContext } from "../../shared/routing";
