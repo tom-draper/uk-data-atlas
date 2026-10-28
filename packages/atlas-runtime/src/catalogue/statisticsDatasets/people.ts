@@ -359,9 +359,17 @@ const referendumDay = () => periods.date("2016-06-23");
 export const BREXIT: DeclaredDataset = {
 	type: "brexit",
 	name: "ladName",
+	parents: [
+		{
+			code: "regionCode",
+			name: "regionName",
+			release: { geography: "region", year: 2025 },
+			alsoIn: [{ geography: "country", year: 2025 }],
+		},
+	],
+	rebuild: {},
 	period: referendumDay,
 	alsoIn: [{ geography: "country", year: 2020 }],
-	exclude: [{ codes: /^GI$/, reason: "Gibraltar is not a UK area." }],
 	measures: REFERENDUM,
 	dimensions: [ANSWER],
 	fields: [
