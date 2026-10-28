@@ -7,6 +7,7 @@ export * from "./catalogueObservationTables";
 export * from "./catalogueObservations";
 export * from "./catalogueUnits";
 export * from "./coveragePlan";
+export * from "./correctionsReport";
 export * from "./dataCatalog";
 export * from "./evidenceDocuments";
 export * from "./evidenceReports";
