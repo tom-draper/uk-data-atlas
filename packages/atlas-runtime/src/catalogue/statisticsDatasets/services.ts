@@ -19,6 +19,19 @@ const offence = (
 export const CRIME: DeclaredDataset = {
 	type: "crime",
 	name: "ladName",
+	parents: [
+		{
+			code: "policeForceAreaCode",
+			name: "policeForceAreaName",
+			release: { geography: "policeForceArea", year: 2023 },
+		},
+		{
+			code: "communitySafetyPartnershipCode",
+			name: "communitySafetyPartnershipName",
+			release: { geography: "communitySafetyPartnership", year: 2023 },
+		},
+	],
+	rebuild: {},
 	period: () => periods.yearEnding(2026, 3),
 	alsoIn: [{ geography: "localAuthority", year: 2022 }],
 	measures: [
@@ -368,6 +381,7 @@ const countiesAndUnitaries = {
 
 export const PUBLIC_HEALTH: DeclaredDataset = {
 	type: "publicHealth",
+	rebuild: {},
 	name: "name",
 	...countiesAndUnitaries,
 	period: () => periods.financialYear(2024),
