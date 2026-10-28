@@ -1,4 +1,4 @@
-import { compareCodeUnits } from "../../shared/compareCodeUnits";
+import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "../../shared/contentHash";
 import {
 	COUNTRY_CODES,

@@ -13,7 +13,7 @@ import type {
 	PostcodeCounts,
 	PostcodeCountsArtifact,
 } from "@uk-data-atlas/geography/postcode-count-types";
-import { compareCodeUnits } from "../../../../shared/compareCodeUnits";
+import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "../../../../shared/contentHash";
 
 const add = (

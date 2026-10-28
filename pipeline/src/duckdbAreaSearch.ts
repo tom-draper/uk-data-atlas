@@ -1,5 +1,5 @@
 import { DuckDBInstance } from "@duckdb/node-api";
-import { compareCodeUnits } from "../../shared/compareCodeUnits";
+import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "../../shared/contentHash";
 import type { AreaLookup } from "../../shared/areaInventory";
 import type { AreaSearchIndexArtifact } from "../../shared/areaSearchCompiler";

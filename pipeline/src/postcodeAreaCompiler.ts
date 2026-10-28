@@ -8,7 +8,7 @@ import {
 } from "@uk-data-atlas/geography/geometry-point-containment";
 import { boundaryDistanceFinder } from "@uk-data-atlas/geography/area-distance";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
-import { compareCodeUnits } from "../../shared/sortedIndex";
+import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "../../shared/contentHash";
 import {
 	NONE,

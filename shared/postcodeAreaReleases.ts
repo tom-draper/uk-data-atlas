@@ -7,7 +7,7 @@ import {
 	releaseKey,
 	type PostcodeAreaPurpose,
 } from "@uk-data-atlas/geography/postcode-area-types";
-import { compareCodeUnits } from "./sortedIndex";
+import { compareCodeUnits } from "@uk-data-atlas/search-index";
 
 /**
  * The releases worth compiling: those a postcode answer reads unless told

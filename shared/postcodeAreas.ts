@@ -1,7 +1,7 @@
 import type { PostcodeIndex } from "./postcodeIndex";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import type { PointContainment } from "@uk-data-atlas/geography/geometry-point-containment";
-import { findSorted } from "./sortedIndex";
+import { findSorted } from "@uk-data-atlas/search-index";
 import { sha256 } from "./contentHash";
 
 import {

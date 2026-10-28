@@ -6,7 +6,7 @@ import {
 	readAreaSearchIndex,
 } from "../shared/boundaryLoader";
 import { AreaSearch, compileAreaSearchIndex } from "../shared/areaSearch";
-import { atEach, type Indexed } from "../shared/sortedIndex";
+import { atEach, type Indexed } from "@uk-data-atlas/search-index";
 import { apiRootOf } from "../shared/dataLayout";
 
 const root = resolve(import.meta.dirname, "..");

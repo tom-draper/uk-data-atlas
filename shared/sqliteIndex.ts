@@ -5,7 +5,7 @@ import {
 	type SQLInputValue,
 	type StatementSync,
 } from "node:sqlite";
-import type { Indexed } from "./sortedIndex";
+import type { Indexed } from "@uk-data-atlas/search-index";
 
 /**
  * Compiled search indexes stored as SQLite tables, read a row at a time.
@@ -195,7 +195,7 @@ export const json =
 	(value: SQLInputValue) =>
 		JSON.parse(value as string) as T;
 
-export { packPositions } from "./packedPositions";
+export { packPositions } from "@uk-data-atlas/search-index";
 
 export const unpackPositions = (value: SQLInputValue): number[] => {
 	const bytes = value as Uint8Array;

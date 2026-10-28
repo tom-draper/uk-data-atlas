@@ -1,4 +1,4 @@
-import { compareCodeUnits, findSorted } from "./sortedIndex";
+import { compareCodeUnits, findSorted } from "@uk-data-atlas/search-index";
 import { sha256 } from "./contentHash";
 import {
 	COUNTRY_CODES,
