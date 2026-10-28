@@ -381,6 +381,8 @@ export function declaredStatistics(
 						raws: Raw[];
 					}
 				>;
+				/** Each record set's areas, in the file's order. */
+				areas: Map<string, { release: AreaRelease; code: string }[]>;
 			}) => void,
 		): Generator<Raw> {
 			const file: Record<string, DeclaredHeader> = JSON.parse(read());
@@ -413,6 +415,10 @@ export function declaredStatistics(
 						raws: Raw[];
 					}
 				>();
+				const areaLists = new Map<
+					string,
+					{ release: AreaRelease; code: string }[]
+				>();
 				for (const set of recordSets) {
 					const records = header[set.from];
 					if (
@@ -432,6 +438,8 @@ export function declaredStatistics(
 					const candidates = [primary, ...(set.alsoIn ?? [])].map(
 						releaseOf,
 					);
+					const order: { release: AreaRelease; code: string }[] = [];
+					if (onPart) areaLists.set(set.from, order);
 					for (const [code, record] of Object.entries(records)) {
 						const release = candidates.find((candidate) =>
 							areas.has(candidate, code),
@@ -463,6 +471,7 @@ export function declaredStatistics(
 								);
 							onName(release, code, name);
 						}
+						if (onPart) order.push({ release, code });
 						const claimed = new Set<string>();
 						const raws: Raw[] | undefined =
 							onPart && !first.has(set.from) ? [] : undefined;
@@ -571,7 +580,7 @@ export function declaredStatistics(
 						}
 					}
 				}
-				onPart?.({ key, header, first });
+				onPart?.({ key, header, first, areas: areaLists });
 			}
 		}
 
@@ -597,7 +606,12 @@ export function declaredStatistics(
 		const seen = new Set<string>();
 		let count = 0;
 		const layouts: StatisticsLayout[] = [];
-		const layOut: Parameters<typeof walk>[2] = ({ key, header, first }) => {
+		const layOut: Parameters<typeof walk>[2] = ({
+			key,
+			header,
+			first,
+			areas: orders,
+		}) => {
 			const context = `${type} ${key}`;
 			const sets = new Set(recordSets.map((set) => set.from));
 			const records = recordSets.map(({ from }) => {
@@ -668,7 +682,7 @@ export function declaredStatistics(
 					});
 				};
 				visit(found.record, []);
-				return { from, leaves };
+				return { from, leaves, areas: orders.get(from)! };
 			});
 			layouts.push({
 				key,

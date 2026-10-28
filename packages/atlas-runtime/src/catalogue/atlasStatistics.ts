@@ -161,7 +161,12 @@ export type StatisticsLayout = {
 	key: string;
 	/** The header as JSON, with each record set's field set to null. */
 	header: string;
-	records: { from: string; leaves: StatisticsLayoutLeaf[] }[];
+	records: {
+		from: string;
+		leaves: StatisticsLayoutLeaf[];
+		/** The records' areas, in the file's order. */
+		areas: { release: AreaRelease; code: string }[];
+	}[];
 };
 
 /**
@@ -888,6 +893,39 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 								];
 							}
 				}
+			}),
+		},
+		dataset_record: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL",
+				"part INTEGER NOT NULL",
+				"records TEXT NOT NULL",
+				"position INTEGER NOT NULL",
+				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
+			],
+			key: ["dataset_id", "part", "records", "position"],
+			constraints: [
+				"FOREIGN KEY (dataset_id, part) REFERENCES dataset_part(dataset_id, position)",
+			],
+			rows: rows(function* ({ datasets }, database) {
+				for (const [index, dataset] of datasets.entries())
+					for (const [part, layout] of [
+						...(dataset.layouts?.() ?? []),
+					].entries())
+						for (const { from, areas } of layout.records)
+							for (const [
+								position,
+								{ release, code },
+							] of areas.entries())
+								yield [
+									index + 1,
+									part,
+									from,
+									position,
+									area(database, dataset.slug, release, code)
+										.id,
+								];
 				// Last statistics table: every row, layouts included, is written.
 				for (const dataset of datasets) dataset.verify?.(database);
 			}),

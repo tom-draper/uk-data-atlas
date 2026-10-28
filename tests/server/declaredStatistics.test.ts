@@ -518,18 +518,27 @@ describe("declared statistics", () => {
 			);
 		});
 
-		it("refuses rows that do not rebuild the compiled JSON", () => {
+		it("keeps the file's record order", () => {
 			const unsorted = text.replace(
 				/"E06000001":(\{.*?\}\}),"E07000026":(\{.*?\}\})/,
 				'"E07000026":$2,"E06000001":$1',
 			);
 			expect(unsorted).not.toBe(text);
-			expect(() => write(config, unsorted)).toThrow(
-				/example: rows do not rebuild the compiled JSON byte for byte\. At \d+, compiled .*E07000026.*, rebuilt .*E06000001/,
+			const database = write(config, unsorted);
+			expect(
+				rebuildFromLayout(database, "example", config.rebuild!.derived),
+			).toBe(unsorted);
+		});
+
+		it("refuses rows that do not rebuild the compiled JSON", () => {
+			const second = text.indexOf(
+				'"district"',
+				text.indexOf('"E07000026"'),
 			);
-			expect(() =>
-				write(config, text.replace('"district"', '"unitary"')),
-			).toThrow("rows do not rebuild the compiled JSON byte for byte");
+			const changed = `${text.slice(0, second)}"unitary"${text.slice(second + '"district"'.length)}`;
+			expect(() => write(config, changed)).toThrow(
+				/example: rows do not rebuild the compiled JSON byte for byte\. At \d+, compiled .*unitary.*, rebuilt .*district/,
+			);
 		});
 
 		it("refuses a derived number without a rebuild rule", () => {
