@@ -70,7 +70,8 @@ const COMPILER_SOURCES = [
 	"../../packages/geography/src/geometryPositions.ts",
 	"../../packages/geography/src/geometryTypes.ts",
 	"../../packages/geography/src/geometryProvenance.ts",
-	"../../shared/shapefile.ts",
+	"../../packages/shapefile/src/shapefile.ts",
+	"../../packages/shapefile/src/dbf.ts",
 ];
 
 const sha256 = (content: string | Buffer) =>

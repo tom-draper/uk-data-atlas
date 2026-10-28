@@ -7,7 +7,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { readGeoJsonProperties } from "../../shared/geoJsonProperties";
-import { readDbfRecords } from "../../shared/dbf";
+import { readDbfRecords } from "@uk-data-atlas/shapefile";
 import type { AreaReleaseArtifact } from "../../shared/areaInventory";
 import { sha256 } from "../../shared/contentHash";
 import type { PropertyCrosswalkAdapter } from "../../shared/crosswalkAdapters";

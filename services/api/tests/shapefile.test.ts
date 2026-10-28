@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { readShapefileFeatures } from "../src/shapefile";
+import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 
 type Ring = Array<[number, number]>;
 

@@ -23,7 +23,7 @@ import {
 	geometryProvenance,
 	toWgs84Geometry,
 } from "@uk-data-atlas/geography/coordinates";
-import { readShapefileFeatures } from "./shapefile";
+import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import {
 	parseGeoJsonFeatures,
 	parseGeoJsonProperties,

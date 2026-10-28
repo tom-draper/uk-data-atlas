@@ -14,7 +14,7 @@ import {
 	readGridOffset,
 	type GridOffset,
 } from "./gridOffset";
-import { readShapefileFeatures } from "./shapefile";
+import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import {
 	packedBounds,
 	packGeometry,

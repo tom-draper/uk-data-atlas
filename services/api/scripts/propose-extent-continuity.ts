@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
-import { readShapefileFeatures } from "../src/shapefile";
+import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { ExtentContinuityCrosswalkAdapter } from "../src/crosswalkAdapters";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
