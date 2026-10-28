@@ -13,7 +13,7 @@ import {
 	inBox,
 	pointInGeom,
 } from "@uk-data-atlas/datasets/data/gazetteer/geometry";
-import { buildDocsCatalogue } from "../../shared/buildDocsCatalogue";
+import { buildDocsCatalogue } from "./buildDocsCatalogue";
 import { writeAtlasPages } from "../../shared/writeAtlasPages";
 import {
 	PLACE_GEOGRAPHIES,
