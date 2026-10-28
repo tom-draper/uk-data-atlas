@@ -6,6 +6,7 @@ import { PER_100K, PREMISES, measure } from "./measures";
 export const AIR_QUALITY: DeclaredDataset = {
 	type: "airQuality",
 	name: "ladName",
+	rebuild: {},
 	measures: [
 		measure(
 			"background-concentration",
@@ -272,6 +273,11 @@ export const LAND_AREA: DeclaredDataset = {
 	],
 	fields: [{ path: "{surface}", measure: "area" }],
 	derived: { landSquareKm: "Land hectares in square kilometres." },
+	rebuild: {
+		derived: {
+			landSquareKm: (record) => (record.landHectares as number) / 100,
+		},
+	},
 };
 
 export const BROADBAND: DeclaredDataset = {

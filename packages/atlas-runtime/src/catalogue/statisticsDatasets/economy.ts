@@ -329,6 +329,7 @@ export const CHILD_POVERTY: DeclaredDataset = {
 const regionalGdp = (type: string): DeclaredDataset => ({
 	type,
 	name: "itlName",
+	rebuild: {},
 	measures: [
 		measure(
 			"gva",
