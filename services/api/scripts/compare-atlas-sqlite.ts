@@ -80,9 +80,10 @@ export const compareAtlasSqlite = (
 			.prepare("SELECT id, recordCount FROM crosswalks ORDER BY position")
 			.all();
 		assert.ok(headers.length > 0, "No crosswalks compared");
+		// Each rebuilt artifact below includes its header.
 		assert.deepEqual(
-			after.prepare("SELECT * FROM crosswalks ORDER BY position").all(),
-			before.prepare("SELECT * FROM crosswalks ORDER BY position").all(),
+			inventory.crosswalks.map((entry) => entry.id),
+			headers.map((header) => header.id),
 		);
 		let crosswalkMismatches = 0;
 		for (const header of headers) {
