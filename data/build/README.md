@@ -160,6 +160,7 @@ All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/c
 | `dataset_area_name` | `(dataset_id, area_version_id)`           | A publisher's area name, stored only where it differs from `area_version.name`.                                                          |
 | `dataset_part`      | `(dataset_id, position)`                  | A top-level key of a dataset served from rows, and its header JSON with record sets as null.                                             |
 | `dataset_leaf`      | `(dataset_id, part, records, position)`   | One leaf of every record in a part's record set, in key order: a series value or bound, the code, the name, a derived rule or a literal. |
+| `dataset_record`    | `(dataset_id, part, records, position)`   | The area version of each record in a part's record set, in the file's order.                                                             |
 
 `observation.area_version_id` references `area_version(id)`, one row per
 release and code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
@@ -192,7 +193,7 @@ A config with `rebuild` is served from rows. The build infers its layout from
 the first record of each part (`dataset_part`, `dataset_leaf`), rebuilds the
 JSON from rows (`packages/atlas-runtime/src/catalogue/datasetLayout.ts`), and refuses to publish unless the
 bytes equal the compiled file, reporting where they first differ. Records are
-laid out in area code order. A leaf names the first record's series; records
+laid out in the file's order (`dataset_record`). A leaf names the first record's series; records
 on an `alsoIn` release read the series with the same measure and members.
 Derived numbers are recomputed by the config's `rebuild.derived` rules. The
 compiled JSON is then not stored in `payloads`; `atlas-sqlite` and
