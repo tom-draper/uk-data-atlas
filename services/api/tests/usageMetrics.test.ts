@@ -13,7 +13,7 @@ import { join } from "node:path";
 import test, { type TestContext } from "node:test";
 import { createApiServer } from "../src/apiServer";
 import { createOperationMatcher } from "../src/operationTemplates";
-import { compileOperations } from "../scripts/build-operations";
+import { compileOperations } from "../../../pipeline/src/build-operations";
 import type { ServerOptions } from "../src/serverOptions";
 import { UsageStore } from "../src/usageStore";
 import {
