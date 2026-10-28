@@ -10,7 +10,7 @@ import {
 	roundPacked,
 	unpackGeometry,
 	type PackedGeometry,
-} from "../../shared/packedGeometry";
+} from "@uk-data-atlas/geography/packed-geometry";
 
 const reader = new GeoJSONReader(new GeometryFactory());
 

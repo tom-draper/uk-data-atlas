@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 import { packedWkb, toWkb } from "../src/mapResource/geoParquet";
-import { packGeometry } from "../src/packedGeometry";
+import { packGeometry } from "@uk-data-atlas/geography/packed-geometry";
 
 const ring = (west: number, south: number, size: number) => [
 	[west, south],

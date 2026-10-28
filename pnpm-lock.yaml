@@ -336,6 +336,10 @@ importers:
         version: 7.0.2
 
   packages/geography:
+    dependencies:
+      proj4:
+        specifier: ^2.22.0
+        version: 2.22.0
     devDependencies:
       '@types/geojson':
         specifier: ^7946.0.16

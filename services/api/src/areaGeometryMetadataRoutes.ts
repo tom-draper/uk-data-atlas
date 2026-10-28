@@ -1,7 +1,7 @@
 import { areaMetrics } from "./areaMetrics";
 import { sha256 } from "./contentHash";
 import type { AreaIdentity } from "./resolver/areas";
-import type { GeometryProvenance } from "./reprojection";
+import type { GeometryProvenance } from "@uk-data-atlas/geography/reprojection";
 import type { RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 

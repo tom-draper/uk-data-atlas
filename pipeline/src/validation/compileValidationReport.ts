@@ -1,4 +1,4 @@
-import { canServeAsWgs84 } from "../../../shared/reprojection";
+import { canServeAsWgs84 } from "@uk-data-atlas/geography/reprojection";
 import type {
 	ValidationResource,
 	ValidationReport,

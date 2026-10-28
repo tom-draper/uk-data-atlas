@@ -10,7 +10,9 @@
 		"./geometry-positions": "./src/geometryPositions.ts",
 		"./geometry-point-containment": "./src/geometryPointContainment.ts",
 		"./geometry-types": "./src/geometryTypes.ts",
-		"./area-distance": "./src/areaDistance.ts"
+		"./area-distance": "./src/areaDistance.ts",
+		"./packed-geometry": "./src/packedGeometry.ts",
+		"./reprojection": "./src/reprojection.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
@@ -18,5 +20,8 @@
 	"devDependencies": {
 		"@types/geojson": "^7946.0.16",
 		"typescript": "^7.0.2"
+	},
+	"dependencies": {
+		"proj4": "^2.22.0"
 	}
 }

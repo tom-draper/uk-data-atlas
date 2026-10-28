@@ -5,7 +5,7 @@ import type {
 	ResolvedContainingArea,
 } from "./geographyResolver";
 import { parseSelectionDate, type ReleaseReference } from "./releaseForDate";
-import { type GeometryProvenance } from "./reprojection";
+import { type GeometryProvenance } from "@uk-data-atlas/geography/reprojection";
 import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 import type { RouteContext } from "./routing";
 import { readChoice } from "./queryParameters";

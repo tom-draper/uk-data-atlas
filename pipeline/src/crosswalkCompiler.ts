@@ -37,7 +37,7 @@ import {
 	type CrosswalkEndpointValidation,
 } from "../../shared/crosswalkValidation";
 import type { AreaLookup } from "../../shared/areaInventory";
-import type { GeometryProvenance } from "../../shared/reprojection";
+import type { GeometryProvenance } from "@uk-data-atlas/geography/reprojection";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "../../shared/contentHash";
 

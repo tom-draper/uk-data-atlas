@@ -22,7 +22,7 @@ import {
 	canServeAsWgs84,
 	geometryProvenance,
 	toWgs84Geometry,
-} from "./reprojection";
+} from "@uk-data-atlas/geography/reprojection";
 import { readShapefileFeatures } from "./shapefile";
 import {
 	parseGeoJsonFeatures,

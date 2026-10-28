@@ -3,7 +3,10 @@ import { sha256 } from "../contentHash";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import { packedBounds, type PackedGeometry } from "../packedGeometry";
+import {
+	packedBounds,
+	type PackedGeometry,
+} from "@uk-data-atlas/geography/packed-geometry";
 import { writeParquet, writeParquetAsync, type ParquetTable } from "../parquet";
 import { geoParquetTable, packedWkb, type GeoParquetRow } from "./geoParquet";
 

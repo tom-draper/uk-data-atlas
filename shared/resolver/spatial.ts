@@ -11,7 +11,7 @@ import type {
 	GeometryBounds,
 	PointContainment,
 } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeometryProvenance } from "../reprojection";
+import type { GeometryProvenance } from "@uk-data-atlas/geography/reprojection";
 import { areaId, type AreaIdentity } from "./areas";
 
 export type ResolvedContainingArea = AreaRecord & {
