@@ -1,6 +1,6 @@
 import type { AreaRelation } from "../relationships/areaRelationships";
 import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
-import { summariseBatch, type ValidatedValue } from "../api/batchValidation";
+import { summariseBatch, type ValidatedValue } from "./batchValidation";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeographyInventory } from "./geographyInventory";
 import type { AreaGeometryCache } from "../geometry/areaGeometry";
@@ -25,20 +25,20 @@ import {
 	AreasResolver,
 	type AreaIdentity,
 	type GeographyEndpoint,
-} from "../api/resolver/areas";
+} from "./resolver/areas";
 import { normalisePlaceName } from "@uk-data-atlas/geography";
-import { CatalogueResolver } from "../api/resolver/catalogue";
-import { CapabilityResolver } from "../api/resolver/capability";
-import { LineageResolver } from "../api/resolver/lineage";
+import { CatalogueResolver } from "./resolver/catalogue";
+import { CapabilityResolver } from "./resolver/capability";
+import { LineageResolver } from "./resolver/lineage";
 import {
 	compareBoundaryReleases,
 	type BoundaryReleaseComparison,
-} from "../api/resolver/releaseComparison";
-import { LocationsResolver } from "../api/resolver/locations";
+} from "./resolver/releaseComparison";
+import { LocationsResolver } from "./resolver/locations";
 import {
 	SpatialResolver,
 	type ResolvedContainingArea,
-} from "../api/resolver/spatial";
+} from "./resolver/spatial";
 import {
 	CrosswalkTranslator,
 	type CrosswalkLookup,
@@ -66,17 +66,17 @@ export {
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "../api/resolver/capability";
+} from "./resolver/capability";
 export type {
 	BoundaryExtentChange,
 	BoundaryReleaseComparison,
 	PublishedRelationshipMapping,
-} from "../api/resolver/releaseComparison";
+} from "./resolver/releaseComparison";
 export type {
 	AreaIdentity,
 	GeographyEndpoint,
 	ResolvedSameCodeArea,
-} from "../api/resolver/areas";
+} from "./resolver/areas";
 export type {
 	CrosswalkLookup,
 	ResolvedAreaTranslation,
@@ -91,17 +91,17 @@ export type {
 	ResolvedIntersectingAreas,
 	ResolvedAreaNeighbour,
 	ResolvedAreaNeighbours,
-} from "../api/resolver/spatial";
+} from "./resolver/spatial";
 export type {
 	TraversedRelationship,
 	ResolvedAreaHistory,
 	ResolvedAreaRelationshipSummary,
-} from "../api/resolver/lineage";
+} from "./resolver/lineage";
 export type {
 	ResolvedRelationshipCoverage,
 	GeographyHealth,
 	RelationshipRepair,
-} from "../api/resolver/capability";
+} from "./resolver/capability";
 
 export type GeographyResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;

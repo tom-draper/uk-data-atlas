@@ -4,7 +4,7 @@ import { createAreaLookup } from "../src/areaInventory";
 import {
 	summariseBatch,
 	validateBatch,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 const release = (
 	geography: string,

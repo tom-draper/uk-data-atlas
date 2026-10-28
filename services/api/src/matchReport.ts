@@ -1,5 +1,5 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/api";
+import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/areas";
 import { envelope, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 type MatchResult = {
