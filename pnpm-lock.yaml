@@ -357,6 +357,9 @@ importers:
       '@uk-data-atlas/postcodes':
         specifier: workspace:*
         version: link:../postcodes
+      '@uk-data-atlas/relationships':
+        specifier: workspace:*
+        version: link:../relationships
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../search-index
@@ -449,6 +452,22 @@ importers:
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../search-index
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  packages/relationships:
+    dependencies:
+      '@uk-data-atlas/areas':
+        specifier: workspace:*
+        version: link:../areas
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../geography
     devDependencies:
       '@types/node':
         specifier: ^26.6.2
@@ -597,6 +616,9 @@ importers:
       '@uk-data-atlas/postcodes':
         specifier: workspace:*
         version: link:../../packages/postcodes
+      '@uk-data-atlas/relationships':
+        specifier: workspace:*
+        version: link:../../packages/relationships
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../../packages/search-index

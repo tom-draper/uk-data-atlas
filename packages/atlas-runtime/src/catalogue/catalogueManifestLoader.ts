@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import type { AnalysisGeographyInventory } from "../areas/analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation";
 import type { AtlasRelease } from "../storage/atlasRelease";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "./dataCatalog";
 import type { ExportManifest } from "../storage/exportManifest";
 import type { LookupManifest } from "../areas/lookupExports";

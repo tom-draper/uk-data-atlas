@@ -3,14 +3,14 @@ import type {
 	AreaLookup,
 	AreaRecord,
 } from "@uk-data-atlas/areas";
-import type { CrosswalkInventory } from "../../relationships/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { RelationshipCandidateInventory } from "../../relationships/relationshipCandidates";
 import type {
 	AreaRelation,
 	AreaRelationship,
 } from "../../relationships/areaRelationships";
-import type { RelationshipPurpose } from "../../relationships/relationshipPaths";
+import type { RelationshipPurpose } from "@uk-data-atlas/relationships";
 import type { AreaIdentity, GeographyEndpoint } from "./areas";
 import {
 	ConversionCapabilities,
@@ -19,7 +19,7 @@ import {
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
 } from "./conversionCapability";
-import type { CrosswalkTranslator } from "../../relationships/translation";
+import type { CrosswalkTranslator } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { areaId } from "./areas";
 

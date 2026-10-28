@@ -2,7 +2,7 @@ import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
 import {
 	explainCodeInRelease,
 	type MemberCodeStatus,
-} from "../relationships/memberReconciliation";
+} from "@uk-data-atlas/relationships";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 

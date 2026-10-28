@@ -4,8 +4,8 @@ import { summariseBatch, type ValidatedValue } from "./batchValidation";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeographyInventory } from "./geographyInventory";
 import type { AreaGeometryCache } from "../geometry/areaGeometry";
-import type { CrosswalkArtifact } from "../relationships/crosswalkTypes";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { LocationProjections } from "../places/locationProjections";
 import type {
 	NamedLocationInventory,
@@ -19,7 +19,7 @@ import type {
 	PostcodeCountsIndex,
 } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
-import type { RelationshipPath } from "../relationships/relationshipPaths";
+import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
 import {
 	AreasResolver,
@@ -43,7 +43,7 @@ import {
 	CrosswalkTranslator,
 	type CrosswalkLookup,
 	type ResolvedAreaTranslation,
-} from "../relationships/translation";
+} from "@uk-data-atlas/relationships";
 
 export type GeographyRequirement =
 	| "areas"
@@ -79,7 +79,7 @@ export type {
 export type {
 	CrosswalkLookup,
 	ResolvedAreaTranslation,
-} from "../relationships/translation";
+} from "@uk-data-atlas/relationships";
 export type {
 	ResolvedContainingArea,
 	ResolvedNearbyArea,

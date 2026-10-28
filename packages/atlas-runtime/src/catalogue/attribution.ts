@@ -1,5 +1,5 @@
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "./dataCatalog";
 import { releaseKey } from "@uk-data-atlas/geography";
 

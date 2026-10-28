@@ -5,8 +5,8 @@ import {
 	type SQLInputValue,
 	type SQLOutputValue,
 } from "node:sqlite";
-import type { CrosswalkArtifact } from "../relationships/crosswalkTypes";
-import type { CrosswalkInventory } from "../relationships/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "./sqliteIndex";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { atlasDatabasePath } from "./dataLayout";

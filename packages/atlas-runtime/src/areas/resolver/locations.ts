@@ -2,7 +2,7 @@ import type { AreaLookup } from "@uk-data-atlas/areas";
 import {
 	reconcileMembers,
 	reconcileMembersForYear,
-} from "../../relationships/memberReconciliation";
+} from "@uk-data-atlas/relationships";
 import type {
 	LocationProjection,
 	LocationProjections,

@@ -9,13 +9,13 @@ import {
 	convertThroughSteps,
 	type ConversionResult,
 } from "../relationships/conversion";
-import { buildTranslationSteps } from "../relationships/translation";
+import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import {
 	isMeasureTable,
 	tableMeasureObservations,
 	type MeasureTableArtifact,
 } from "../catalogue/observationTables";
-import type { CrosswalkArtifact } from "../relationships/crosswalkTypes";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type {
 	AnalysisGeographyInventory,
 	AnalysisGeographySupport,

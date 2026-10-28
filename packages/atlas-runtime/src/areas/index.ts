@@ -25,7 +25,7 @@ export * from "./rankCompatibilityReleases";
 export * from "./rawAreaGeometries";
 export * from "./relatedCodes";
 export * from "./releaseForDate";
-export type { CrosswalkLookup } from "../relationships/translation";
+export type { CrosswalkLookup } from "@uk-data-atlas/relationships";
 export * from "./sourceExactProvenance";
 export * from "./resolver/areas";
 export * from "./resolver/capability";

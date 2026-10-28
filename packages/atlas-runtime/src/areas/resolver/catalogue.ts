@@ -1,5 +1,5 @@
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { CrosswalkInventory } from "../../relationships/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { NamedLocationInventory } from "../../places/namedLocations";
 
 export type CatalogueResolverInputs = {

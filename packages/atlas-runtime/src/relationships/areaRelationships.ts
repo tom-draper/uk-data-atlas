@@ -1,12 +1,12 @@
-import type { CrosswalkArtifact } from "./crosswalkTypes";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type {
 	CrosswalkMethod,
 	CrosswalkQuality,
 	CrosswalkWeighting,
-} from "./crosswalkInventory";
+} from "@uk-data-atlas/relationships";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { relatedCodesOf } from "../areas/relatedCodes";
-import { selectCrosswalks, type CrosswalkLookup } from "./translation";
+import { selectCrosswalks, type CrosswalkLookup } from "@uk-data-atlas/relationships";
 
 export type AreaRelation =
 	| "within"

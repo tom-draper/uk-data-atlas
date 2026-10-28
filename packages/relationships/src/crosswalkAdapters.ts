@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { isGeographyKind, type GeographyKind } from "@uk-data-atlas/geography";
 
 export type CrosswalkSideAdapter = {
@@ -367,8 +366,11 @@ const validExtentContinuityAdapter = (
 	typeof adapter.sliverWidthM === "number" &&
 	adapter.sliverWidthM > 0;
 
-export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
-	const file: unknown = JSON.parse(readFileSync(path, "utf8"));
+export const parseCrosswalkAdapters = (
+	contents: string,
+	path: string,
+): CrosswalkAdapter[] => {
+	const file: unknown = JSON.parse(contents);
 	if (
 		!isRecord(file) ||
 		file.schemaVersion !== 1 ||

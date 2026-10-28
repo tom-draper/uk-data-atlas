@@ -4,7 +4,7 @@ import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	explainCodeInRelease,
 	type MemberCodeStatus,
-} from "../relationships/memberReconciliation";
+} from "@uk-data-atlas/relationships";
 
 /**
  * Why an area identity resolves to nothing, as explicitly as the compiled
