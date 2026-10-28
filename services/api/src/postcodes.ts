@@ -2,7 +2,7 @@ export type {
 	PostcodeSource,
 	PostcodeIndexArtifact,
 	PostcodeShard,
-} from "../../../shared/postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-index-types";
 
 export * from "../../../shared/postcodeIndex";
 

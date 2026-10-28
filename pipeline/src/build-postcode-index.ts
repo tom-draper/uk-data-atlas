@@ -1,4 +1,4 @@
-import type { PostcodeSource } from "../../shared/postcodeIndexTypes";
+import type { PostcodeSource } from "@uk-data-atlas/geography/postcode-index-types";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

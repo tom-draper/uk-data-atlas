@@ -5,7 +5,7 @@ import { sha256 } from "../../shared/contentHash";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeSource,
-} from "../../shared/postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-index-types";
 import { compilePostcodeIndex, type PostcodeSourceRow } from "./postcodeIndex";
 import { storePostcodeIndex } from "./storePostcodeIndex";
 

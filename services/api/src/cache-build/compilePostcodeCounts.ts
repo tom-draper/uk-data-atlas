@@ -4,15 +4,15 @@ import {
 	type PostcodeAreaColumn,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "../../../../shared/postcodeAreaTypes";
+} from "@uk-data-atlas/geography/postcode-area-types";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
-} from "../../../../shared/postcodeIndexTypes";
+} from "@uk-data-atlas/geography/postcode-index-types";
 import type {
 	PostcodeCounts,
 	PostcodeCountsArtifact,
-} from "../../../../shared/postcodeCountTypes";
+} from "@uk-data-atlas/geography/postcode-count-types";
 import { compareCodeUnits } from "../../../../shared/compareCodeUnits";
 import { sha256 } from "../../../../shared/contentHash";
 

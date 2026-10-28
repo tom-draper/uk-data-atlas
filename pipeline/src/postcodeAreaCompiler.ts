@@ -7,7 +7,7 @@ import {
 	type PointContainment,
 } from "@uk-data-atlas/geography/geometry-point-containment";
 import { boundaryDistanceFinder } from "@uk-data-atlas/geography/area-distance";
-import type { PostcodeIndexArtifact } from "../../shared/postcodeIndexTypes";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { compareCodeUnits } from "../../shared/sortedIndex";
 import { sha256 } from "../../shared/contentHash";
 import {
@@ -18,7 +18,7 @@ import {
 	type PostcodeAreaRelease,
 	type PostcodeAreaColumn,
 	type PostcodeAreasShard,
-} from "../../shared/postcodeAreaTypes";
+} from "@uk-data-atlas/geography/postcode-area-types";
 /**
  * Every point's placements in one release, as a flat column over all points:
  * each point's areas by the release's code order, with distances in
