@@ -254,7 +254,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-geometry-source-registry.ts",
 		"pipeline/src/geometrySourceRegistry.ts",
-		"shared/fileHashCache.ts",
+		"pipeline/src/fileHashCache.ts",
 		"shared/contentHash.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
@@ -312,7 +312,7 @@ test("production builders resolve without UI code and include declared workers a
 			"pipeline/src/build-atlas-release.ts",
 			"pipeline/src/atlasRelease.ts",
 			"shared/atlasAssets.ts",
-			"shared/fileHashCache.ts",
+			"pipeline/src/fileHashCache.ts",
 			"pipeline/package.json",
 			"pipeline/tsconfig.json",
 		]) {

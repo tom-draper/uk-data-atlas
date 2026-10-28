@@ -12,7 +12,7 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { hashFile } from "../../../shared/fileHashCache";
+import { hashFile } from "../fileHashCache";
 import {
 	ONS_BOUNDARY_SOURCES,
 	type OnsBoundarySource,

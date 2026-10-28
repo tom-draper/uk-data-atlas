@@ -5,7 +5,7 @@ import type {
 	AreaInventory,
 	AreaReleaseArtifact,
 } from "../../shared/areaInventory";
-import { createFileHashCache } from "../../shared/fileHashCache";
+import { createFileHashCache } from "./fileHashCache";
 import { createGeometrySourceRegistry } from "./geometrySourceRegistry";
 import { artifactDirectory } from "../../shared/dataLayout";
 export const buildGeometrySourceRegistry = (root: string) => {

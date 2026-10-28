@@ -2,7 +2,7 @@ import { atlasAssetsDirectory } from "../../shared/atlasAssets";
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "../../shared/contentHash";
-import { hashFile } from "../../shared/fileHashCache";
+import { hashFile } from "./fileHashCache";
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 
 import type {
