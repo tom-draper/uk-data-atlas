@@ -125,21 +125,12 @@ const payAreas = {
 		{ geography: "region", year: 2025 },
 		{ geography: "countyAndUnitaryAuthority", year: 2025 },
 	],
-	exclude: [
-		{
-			codes: /^E11/,
-			reason: "Metropolitan counties are not an atlas geography.",
-		},
-		{
-			codes: /^E13/,
-			reason: "Inner and Outer London are not an atlas geography.",
-		},
-	],
 };
 
 export const INCOME: DeclaredDataset = {
 	type: "income",
 	name: "ladName",
+	rebuild: {},
 	...payAreas,
 	measures: PAY_MEASURES,
 	dimensions: [PAY_STATISTICS, PAY_PERIOD, EARNINGS_PLACE],
@@ -149,6 +140,7 @@ export const INCOME: DeclaredDataset = {
 export const WORKPLACE_INCOME: DeclaredDataset = {
 	type: "workplaceIncome",
 	name: "ladName",
+	rebuild: {},
 	...payAreas,
 	measures: PAY_MEASURES,
 	dimensions: [PAY_STATISTICS, PAY_PERIOD, EARNINGS_PLACE],
