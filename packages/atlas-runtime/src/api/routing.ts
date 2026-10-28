@@ -27,11 +27,11 @@ import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ValidationReport } from "../catalogue/validationReport";
 import type { AnalysisGeographyInventory } from "../areas/analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation";
-import type { TerrainCatalogue } from "../maps/terrainCatalogue";
+import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import type {
 	AsyncTerrainProvider,
 	TerrainProvider,
-} from "../maps/terrainProvider";
+} from "@uk-data-atlas/terrain";
 import type { OperationMatcher } from "./operationTemplates";
 
 /** The independently-built resources available to API route handlers. */

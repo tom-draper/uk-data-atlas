@@ -27,7 +27,7 @@ import {
 	postcodeCountsMismatch,
 } from "../postcodes/postcodeCounts";
 import type { GeometrySourceLookup } from "../geometry/areaGeometry";
-import type { TerrainCatalogue } from "../maps/terrainCatalogue";
+import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { publicPath } from "../storage/publicManifest";
 import { atlasDatabasePath } from "../storage/dataLayout";
 
