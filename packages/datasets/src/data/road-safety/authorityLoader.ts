@@ -6,7 +6,7 @@ import type {
 } from "../../types/roadCollisions";
 import { parseCsv } from "../../helpers/parseCsv";
 
-const SOURCES = [
+export const ROAD_COLLISION_SOURCES = [
 	"transport/road-safety/dft-road-casualty-statistics-collision-2024.csv",
 	"transport/road-safety/dft-road-casualty-statistics-collision-2025.csv",
 ] as const;
@@ -26,7 +26,7 @@ const count = (
 	record.collisions += 1;
 	record[severity] += 1;
 };
-const MONTHS = [
+export const ROAD_COLLISION_MONTHS = [
 	"January",
 	"February",
 	"March",
@@ -120,7 +120,7 @@ const compileRoadCollisions = async (
 		id: `roadCollisions${year}`,
 		type: "roadCollisions",
 		year,
-		period: `${MONTHS[first - 1]} to ${MONTHS[last - 1]} ${year}`,
+		period: `${ROAD_COLLISION_MONTHS[first - 1]} to ${ROAD_COLLISION_MONTHS[last - 1]} ${year}`,
 		boundaryType: "localAuthority",
 		boundaryYear: year,
 		data: records,
@@ -142,7 +142,9 @@ export async function loadRoadCollisionsByAuthority(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, RoadCollisionsDataset>> {
 	const datasets = await Promise.all(
-		SOURCES.map((source) => compileRoadCollisions(read, source)),
+		ROAD_COLLISION_SOURCES.map((source) =>
+			compileRoadCollisions(read, source),
+		),
 	);
 	const duplicateYears = datasets.filter(
 		(dataset, index) =>

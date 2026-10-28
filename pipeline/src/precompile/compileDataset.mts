@@ -16,6 +16,12 @@ import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";
 import { createTrackedReader } from "./trackedReader.mts";
+import { withDuckdbPublicHealth } from "./duckdbPublicHealth.mts";
+import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.mts";
+import {
+	withDuckdbImd,
+	withDuckdbSchoolPerformance,
+} from "./duckdbDatasetCsv.mts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
@@ -112,7 +118,44 @@ export async function compileStaleDataset(
 	let compiled: Awaited<ReturnType<typeof definition.precompile>>;
 	let preserved: ExistingManifestDataset | undefined;
 	try {
-		compiled = await compileDatasetContents(definition, reader);
+		compiled =
+			definition.type === "publicHealth"
+				? await withDuckdbPublicHealth(reader, artifacts, (input) =>
+						compileDatasetContents(definition, input),
+					)
+				: definition.type === "roadCollisions"
+					? await compileDatasetContents(
+							{
+								...definition,
+								precompile: () =>
+									compileDuckdbRoadCollisions(artifacts),
+							},
+							reader,
+						)
+					: definition.type === "imd"
+						? await withDuckdbImd(reader, artifacts, (input) =>
+								compileDatasetContents(definition, input),
+							)
+						: definition.type === "schoolPerformance" ||
+							  definition.type === "schoolPerformanceGap" ||
+							  definition.type ===
+									"schoolPerformanceConstituency"
+							? await withDuckdbSchoolPerformance(
+									reader,
+									artifacts,
+									definition.type === "schoolPerformance"
+										? "Total"
+										: definition.type ===
+											  "schoolPerformanceGap"
+											? "Disadvantage status"
+											: "Constituency",
+									(input) =>
+										compileDatasetContents(
+											definition,
+											input,
+										),
+								)
+							: await compileDatasetContents(definition, reader);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&
