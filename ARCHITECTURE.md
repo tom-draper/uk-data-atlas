@@ -177,6 +177,10 @@ pnpm data:build --from datasets
 The dataset compiler uses DuckDB to read and filter public health source CSVs.
 It hashes the source files for cache tracking and passes the selected rows to
 the shared Node loader.
+For general health and housing tenure, DuckDB selects LSOA rows from census
+CSVs before the shared loaders validate counts and calculate percentages.
+For planning applications, DuckDB selects the published quarter before the
+shared loader validates authority codes and application counts.
 It also uses DuckDB to aggregate road collisions directly from the source CSVs,
 validating the inputs and tracking their hashes for the dataset cache.
 For the school performance datasets, DuckDB filters the source CSVs before
