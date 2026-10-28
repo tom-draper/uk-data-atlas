@@ -7,7 +7,7 @@ import {
 	type NumericObservationSuccess,
 } from "./numericObservations";
 import { resolveObservations } from "./observationResolution/observationPlan";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export type WeightedSource = {

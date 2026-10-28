@@ -4,7 +4,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
-import type { RouteRequest } from "../areas/routing";
+import type { RouteRequest } from "./routing";
 import { choices, readChoice } from "./queryParameters";
 const VALIDATION = {
 	status: { values: ["passed", "waived"] },

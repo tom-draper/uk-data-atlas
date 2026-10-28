@@ -14,7 +14,7 @@ import {
 	type PointResult,
 } from "./pointLookup";
 import { compactPostcode } from "@uk-data-atlas/geography";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * Answering "what is this measure where this postcode is?".

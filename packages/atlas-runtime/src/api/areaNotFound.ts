@@ -1,5 +1,5 @@
 import { problem, type ApiResponse } from "./routeResponse";
-import type { RouteContext } from "../areas/routing";
+import type { RouteContext } from "./routing";
 
 /**
  * A 404 for an area identity that says why it resolves to nothing: an

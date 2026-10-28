@@ -15,7 +15,7 @@ import {
 	type RelationshipPath,
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,

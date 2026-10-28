@@ -6,7 +6,7 @@ import { route } from "../src/routes";
 import type {
 	RouteContext,
 	RouteRequest,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/api";
 
 /** Exercise report adapters using the route fixtures. */
 export const reportRequest = (

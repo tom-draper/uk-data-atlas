@@ -4,7 +4,7 @@ import type {
 	RequestBody,
 	RouteContext,
 	RouteRequest,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";

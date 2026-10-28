@@ -4,7 +4,7 @@ import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import { route } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	areaLookup,
 	containmentCrosswalk,

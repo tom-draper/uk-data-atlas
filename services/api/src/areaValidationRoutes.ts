@@ -7,7 +7,7 @@ import {
 	invalidQuery,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 

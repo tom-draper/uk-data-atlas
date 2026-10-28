@@ -139,6 +139,52 @@ const pipelineImportAllowed = (
 	);
 };
 
+const ATLAS_API = join(PACKAGES, "atlas-runtime/src/api");
+
+const importsAtlasApi = (file: string, specifier: string) =>
+	specifier === "@uk-data-atlas/atlas-runtime/api" ||
+	specifier.startsWith("@uk-data-atlas/atlas-runtime/api/") ||
+	(specifier.startsWith(".") &&
+		inside(ATLAS_API, resolve(dirname(file), specifier)));
+
+describe("atlas domain boundaries", () => {
+	it("keeps domain modules and evidence loading independent of the API", () => {
+		const atlas = join(PACKAGES, "atlas-runtime/src");
+		const files = [
+			...[
+				"areas",
+				"catalogue",
+				"relationships",
+				"geometry",
+				"places",
+				"postcodes",
+				"storage",
+				"maps",
+			].flatMap((directory) => sourceFiles(join(atlas, directory))),
+			...sourceFiles(join(PIPELINE, "src/evidence")),
+			join(PIPELINE, "src/build-evidence-documents.ts"),
+		];
+		expect(files.length).toBeGreaterThan(1);
+		const invalid = files.flatMap((file) =>
+			specifiers(readFileSync(file, "utf8"))
+				.filter((specifier) => importsAtlasApi(file, specifier))
+				.map((specifier) => `${relative(ROOT, file)}: ${specifier}`),
+		);
+		expect(invalid).toEqual([]);
+	});
+
+	it("recognises API imports through relative paths and package exports", () => {
+		const file = join(PACKAGES, "atlas-runtime/src/areas/example.ts");
+		expect(importsAtlasApi(file, "../api/routing")).toBe(true);
+		expect(importsAtlasApi(file, "@uk-data-atlas/atlas-runtime/api")).toBe(
+			true,
+		);
+		expect(importsAtlasApi(file, "../catalogue/measureContext")).toBe(
+			false,
+		);
+	});
+});
+
 describe("pipeline boundaries", () => {
 	it("does not retain the former shared directory", () => {
 		expect(existsSync(join(ROOT, "shared"))).toBe(false);

@@ -14,7 +14,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 

@@ -10,7 +10,7 @@ import { route } from "../src/routes";
 import type {
 	RequestBody,
 	RouteContext,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/api";
 import { areaLookup, registry, testContext } from "./routeFixtures";
 
 const json = (value: unknown): RequestBody => ({

@@ -37,7 +37,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { routeAsync } from "./routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	DEFAULT_MAX_URL_LENGTH,
 	DEFAULT_MAX_CONCURRENT_REQUESTS,

@@ -16,7 +16,7 @@ import {
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 
 const wards = {
 	schemaVersion: 1 as const,

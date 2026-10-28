@@ -3,7 +3,7 @@ import { areaMetrics } from "./areaMetrics";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 /**

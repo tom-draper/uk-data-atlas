@@ -7,7 +7,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
-import type { RouteRequest } from "../areas/routing";
+import type { RouteRequest } from "./routing";
 
 /** Governance and evidence endpoints, separate from the data they describe. */
 export const handleGovernanceRoutes = ({
