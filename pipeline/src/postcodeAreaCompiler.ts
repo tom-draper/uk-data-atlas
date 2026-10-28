@@ -1,15 +1,15 @@
-import type { GeoJsonGeometry } from "./areaGeometry";
+import type { GeoJsonGeometry } from "../../shared/areaGeometry";
 import {
 	containPoint,
 	geometryBounds,
 	pointInBounds,
 	type Coordinate,
 	type PointContainment,
-} from "./areaContainment";
-import { boundaryDistanceFinder } from "./areaDistance";
-import type { PostcodeIndexArtifact } from "./postcodeIndexTypes";
-import { compareCodeUnits } from "./sortedIndex";
-import { sha256 } from "./contentHash";
+} from "../../shared/areaContainment";
+import { boundaryDistanceFinder } from "../../shared/areaDistance";
+import type { PostcodeIndexArtifact } from "../../shared/postcodeIndexTypes";
+import { compareCodeUnits } from "../../shared/sortedIndex";
+import { sha256 } from "../../shared/contentHash";
 import {
 	NONE,
 	SEVERAL,
@@ -18,22 +18,7 @@ import {
 	type PostcodeAreaRelease,
 	type PostcodeAreaColumn,
 	type PostcodeAreasShard,
-} from "./postcodeAreaTypes";
-export { NONE, SEVERAL, releaseKey } from "./postcodeAreaTypes";
-export type {
-	PostcodeAreasArtifact,
-	PostcodeAreaRelease,
-	PostcodeAreaColumn,
-	PostcodeAreasShard,
-	PostcodeAreaPurpose,
-} from "./postcodeAreaTypes";
-
-export type PostcodeAreaMatch = {
-	code: string;
-	containment: Exclude<PointContainment, "outside">;
-	distanceToBoundaryM: number;
-};
-
+} from "../../shared/postcodeAreaTypes";
 /**
  * Every point's placements in one release, as a flat column over all points:
  * each point's areas by the release's code order, with distances in
@@ -331,49 +316,4 @@ export const compilePostcodeAreas = (
 		artifact: { ...body, contentHash: sha256(JSON.stringify(body)) },
 		files,
 	};
-};
-
-/**
- * Whether a manifest can be served with this postcode index and these inputs.
- * Undefined when it can.
- */
-export const postcodeAreasMismatch = (
-	artifact: PostcodeAreasArtifact,
-	postcodeIndex: PostcodeIndexArtifact,
-	inputs: {
-		areaRelease: (
-			geography: string,
-			boundaryRelease: string,
-		) => string | undefined;
-		geometryInput: (
-			geography: string,
-			boundaryRelease: string,
-		) => string | undefined;
-	},
-): string | undefined => {
-	if (
-		artifact.schemaVersion !== 1 ||
-		!Array.isArray(artifact.releases) ||
-		!Array.isArray(artifact.shards)
-	)
-		return "is malformed";
-	const { contentHash, ...body } = artifact;
-	if (sha256(JSON.stringify(body)) !== contentHash)
-		return "does not match its own content hash";
-	if (artifact.postcodeIndex !== postcodeIndex.contentHash)
-		return "was not compiled from the current postcode index";
-	for (const release of artifact.releases) {
-		const key = releaseKey(release.geography, release.boundaryRelease);
-		if (
-			inputs.areaRelease(release.geography, release.boundaryRelease) !==
-			release.areaRelease
-		)
-			return `was not compiled from the current areas of ${key}`;
-		if (
-			inputs.geometryInput(release.geography, release.boundaryRelease) !==
-			release.geometryInput
-		)
-			return `was not compiled from the current geometry of ${key}`;
-	}
-	return undefined;
 };

@@ -1,12 +1,12 @@
+import {
+	compilePostcodeAreas,
+	placePoints,
+	releaseCounts,
+} from "../../../pipeline/src/postcodeAreaCompiler";
 import { compilePostcodeIndex } from "../../../pipeline/src/postcodeIndex";
 import type { PostcodeSourceRow } from "../../../pipeline/src/postcodeIndex";
 import type { AreaGeometryCache } from "../src/areaGeometry";
-import {
-	compilePostcodeAreas,
-	PostcodeAreaIndex,
-	placePoints,
-	releaseCounts,
-} from "../src/postcodeAreas";
+import { PostcodeAreaIndex } from "../src/postcodeAreas";
 import { parsePostcode } from "@uk-data-atlas/geography";
 import {
 	PostcodeIndex,

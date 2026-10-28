@@ -1,3 +1,4 @@
+import { compilePostcodeAreas } from "../../../pipeline/src/postcodeAreaCompiler";
 import { atlasCachePath } from "../src/atlasCache";
 import assert from "node:assert/strict";
 import {
@@ -30,12 +31,7 @@ import {
 	readPostcodeAreaIndex,
 	readPostcodeIndex,
 } from "../src/boundaryLoader";
-import {
-	compilePostcodeAreas,
-	PostcodeAreaIndex,
-	NONE,
-	SEVERAL,
-} from "../src/postcodeAreas";
+import { PostcodeAreaIndex, NONE, SEVERAL } from "../src/postcodeAreas";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 
 function fixture(t: TestContext) {

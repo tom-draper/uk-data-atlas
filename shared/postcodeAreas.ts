@@ -1,4 +1,6 @@
 import type { PostcodeIndex } from "./postcodeIndex";
+import type { PostcodeIndexArtifact } from "./postcodeIndexTypes";
+import type { PointContainment } from "./areaContainment";
 import { findSorted } from "./sortedIndex";
 import { sha256 } from "./contentHash";
 
@@ -6,11 +8,23 @@ import {
 	NONE,
 	SEVERAL,
 	releaseKey,
-	type PostcodeAreaMatch,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "./postcodeAreaCompiler";
-export * from "./postcodeAreaCompiler";
+} from "./postcodeAreaTypes";
+export { NONE, SEVERAL, releaseKey } from "./postcodeAreaTypes";
+export type {
+	PostcodeAreasArtifact,
+	PostcodeAreaRelease,
+	PostcodeAreaColumn,
+	PostcodeAreasShard,
+	PostcodeAreaPurpose,
+} from "./postcodeAreaTypes";
+
+export type PostcodeAreaMatch = {
+	code: string;
+	containment: Exclude<PointContainment, "outside">;
+	distanceToBoundaryM: number;
+};
 
 /** Precompiled placements of unit postcodes, a few districts at a time. */
 export class PostcodeAreaIndex {
@@ -104,3 +118,48 @@ export class PostcodeAreaIndex {
 }
 
 export { postcodeAreaReleases } from "./postcodeAreaReleases";
+
+/**
+ * Whether a manifest can be served with this postcode index and these inputs.
+ * Undefined when it can.
+ */
+export const postcodeAreasMismatch = (
+	artifact: PostcodeAreasArtifact,
+	postcodeIndex: PostcodeIndexArtifact,
+	inputs: {
+		areaRelease: (
+			geography: string,
+			boundaryRelease: string,
+		) => string | undefined;
+		geometryInput: (
+			geography: string,
+			boundaryRelease: string,
+		) => string | undefined;
+	},
+): string | undefined => {
+	if (
+		artifact.schemaVersion !== 1 ||
+		!Array.isArray(artifact.releases) ||
+		!Array.isArray(artifact.shards)
+	)
+		return "is malformed";
+	const { contentHash, ...body } = artifact;
+	if (sha256(JSON.stringify(body)) !== contentHash)
+		return "does not match its own content hash";
+	if (artifact.postcodeIndex !== postcodeIndex.contentHash)
+		return "was not compiled from the current postcode index";
+	for (const release of artifact.releases) {
+		const key = releaseKey(release.geography, release.boundaryRelease);
+		if (
+			inputs.areaRelease(release.geography, release.boundaryRelease) !==
+			release.areaRelease
+		)
+			return `was not compiled from the current areas of ${key}`;
+		if (
+			inputs.geometryInput(release.geography, release.boundaryRelease) !==
+			release.geometryInput
+		)
+			return `was not compiled from the current geometry of ${key}`;
+	}
+	return undefined;
+};

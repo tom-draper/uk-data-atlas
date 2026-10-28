@@ -29,18 +29,20 @@ import {
 } from "../../shared/geometryLoader";
 import {
 	compilePostcodeAreas,
-	NONE,
 	placementsFromShards,
 	placePoints,
 	releaseCounts,
-	releaseKey,
-	SEVERAL,
 	toCentimetres,
+	type ReleasePlacements,
+} from "./postcodeAreaCompiler";
+import {
+	NONE,
+	SEVERAL,
+	releaseKey,
 	type PostcodeAreaRelease,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-	type ReleasePlacements,
-} from "../../shared/postcodeAreaCompiler";
+} from "../../shared/postcodeAreaTypes";
 import type { PostcodeShard } from "../../shared/postcodeIndexTypes";
 import { apiRootOf } from "../../shared/dataLayout";
 

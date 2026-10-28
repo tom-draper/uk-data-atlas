@@ -3,10 +3,5 @@ export {
 	NONE,
 	SEVERAL,
 	releaseKey,
-	compilePostcodeAreas,
-	placePoints,
-	placementsFromShards,
 	postcodeAreasMismatch,
-	releaseCounts,
-	toCentimetres,
-} from "../../../shared/postcodeAreaCompiler";
+} from "../../../shared/postcodeAreas";

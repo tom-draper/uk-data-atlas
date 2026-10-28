@@ -1,3 +1,8 @@
+import {
+	compilePostcodeAreas,
+	placementsFromShards,
+	placePoints,
+} from "../../../pipeline/src/postcodeAreaCompiler";
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
@@ -7,11 +12,8 @@ import {
 import { containPoint } from "../src/areaContainment";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 import {
-	compilePostcodeAreas,
 	NONE,
 	PostcodeAreaIndex,
-	placementsFromShards,
-	placePoints,
 	postcodeAreasMismatch,
 	SEVERAL,
 	type PostcodeAreasShard,
