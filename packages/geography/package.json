@@ -12,7 +12,8 @@
 		"./geometry-types": "./src/geometryTypes.ts",
 		"./area-distance": "./src/areaDistance.ts",
 		"./packed-geometry": "./src/packedGeometry.ts",
-		"./reprojection": "./src/reprojection.ts"
+		"./reprojection": "./src/reprojection.ts",
+		"./reverse-grid-offset": "./src/reverseGridOffset.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

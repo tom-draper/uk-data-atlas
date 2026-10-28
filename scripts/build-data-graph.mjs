@@ -656,7 +656,7 @@ const websiteStages = [
 				"packages/map-tiles",
 				"scripts/precompile",
 				"pipeline/src/compile-boundaries.mts",
-				"shared/reverseGridOffset.ts",
+				"packages/geography/src/reverseGridOffset.ts",
 				"shared/buildTiming.ts",
 				"pipeline/src/compile-boundary-tiles.mts",
 				"scripts/generate-dataset-registry.ts",

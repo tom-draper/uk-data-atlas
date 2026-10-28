@@ -34,7 +34,7 @@ const datasetCompilerInputs = [
 const pipelineInputs = [
 	...baseInputs,
 	"pipeline/src/compile-boundaries.mts",
-	"shared/reverseGridOffset.ts",
+	"packages/geography/src/reverseGridOffset.ts",
 	"shared/buildTiming.ts",
 	"pipeline/src/compile-boundary-tiles.mts",
 	"scripts/dataset-discovery.ts",
