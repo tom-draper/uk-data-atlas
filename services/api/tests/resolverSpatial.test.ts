@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
-import { SpatialResolver } from "@uk-data-atlas/atlas-runtime/api";
+import { SpatialResolver } from "@uk-data-atlas/atlas-runtime/areas";
 
 const identity = {
 	geography: "ward",

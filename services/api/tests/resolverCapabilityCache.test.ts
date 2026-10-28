@@ -4,7 +4,7 @@ import { createAreaLookup } from "../src/areaInventory";
 import {
 	CapabilityResolver,
 	type CapabilityResolverInputs,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { CrosswalkTranslator } from "@uk-data-atlas/atlas-runtime/relationships";
 
 test("caches relationship coverage across limits and health requests", () => {
