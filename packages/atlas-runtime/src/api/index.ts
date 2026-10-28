@@ -5,7 +5,6 @@ export * from "./geographyHealthRoutes";
 export * from "./governanceRoutes";
 export * from "./measureCompatibilityRoutes";
 export * from "./measureCoverageRoutes";
-export * from "./measureQualityRoutes";
 export * from "./measureReconciliationRoutes";
 export * from "./operationTemplates";
 export * from "./operations";

@@ -66,6 +66,7 @@ test("assembles measure evidence for available releases and reconciliation perio
 	} as unknown as Parameters<typeof buildEvidenceMeasure>[0];
 	let output: unknown;
 	const result = buildEvidenceMeasure(context, "population", {
+		measureQuality: (_context, id) => `quality:${id}`,
 		report: (_context, url) => ({ status: 200, data: url }),
 		measureCapability: () => "supported",
 		availableReconciliations: () => [
@@ -84,7 +85,7 @@ test("assembles measure evidence for available releases and reconciliation perio
 		dataCatalogHash: "catalogue",
 		compilerHash: "compiler",
 		inputsHash: "inputs",
-		quality: { status: 200, data: "/v1/measures/population/quality" },
+		quality: { status: 200, data: "quality:population" },
 		coverage: { status: 200, data: "/v1/measures/population/coverage" },
 		compatibility: {
 			status: 200,
