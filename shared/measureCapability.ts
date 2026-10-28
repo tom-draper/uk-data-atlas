@@ -6,7 +6,7 @@ import { isNumericObservation, type DataCatalog } from "./dataCatalog";
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RouteContext } from "./routing";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 type Measure = DataCatalog["measures"][number];
 type Target = { geography: string; boundaryRelease: string; code?: string };

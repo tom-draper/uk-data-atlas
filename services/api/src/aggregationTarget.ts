@@ -11,7 +11,7 @@ import {
 } from "./aggregationMembership";
 import type { GeographyResolver } from "./geographyResolver";
 import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
-import { areaKey } from "./geographyKeys";
+import { areaKey } from "@uk-data-atlas/geography";
 
 export type AggregationTarget = {
 	/** The caller-selected crosswalk, when membership comes from one. */

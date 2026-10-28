@@ -18,7 +18,7 @@ import {
 	multiPolygonAreaM2,
 	polygonWidthM,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { CLIPPING_VERSION, intersectWithin } from "./pieceIntersection";
 import { readGeometries } from "./rawAreaGeometries";
 

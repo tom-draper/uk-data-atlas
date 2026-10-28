@@ -3,7 +3,7 @@ import { gunzipSync } from "node:zlib";
 import { GEOJSON_TIERS } from "./mapResource/fullDetail";
 import { areaNotFound } from "./areaResources";
 import type { ValidatedValue } from "./batchValidation";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { readPostedRows, type RowValue } from "./requestRows";
 import {

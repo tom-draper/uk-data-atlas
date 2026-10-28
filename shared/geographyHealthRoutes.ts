@@ -1,6 +1,6 @@
 import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { choices, readChoice } from "./queryParameters";
 const HEALTH = {
 	reach: { values: ["connected", "vintage-only", "isolated"] },

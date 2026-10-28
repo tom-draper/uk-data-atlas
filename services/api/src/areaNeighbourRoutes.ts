@@ -7,7 +7,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
-import { areaKey } from "./geographyKeys";
+import { areaKey } from "@uk-data-atlas/geography";
 import { readChoice } from "./queryParameters";
 import { QUERY_RULES } from "./queryRules";
 

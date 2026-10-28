@@ -10,7 +10,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { AreaGeometryCache, compiledGeometryFile } from "./areaGeometry";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "./geometrySources";
 import { geometrySubstitution } from "./geometrySubstitution";
 import { encodeGeometryStore } from "./geometryStore";

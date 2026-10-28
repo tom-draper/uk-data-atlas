@@ -12,7 +12,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "./areaGeometry";
 import { compileFlatDownloads } from "./flatDownloads";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "./geometrySources";
 import { roundKeepingValidity } from "./compileGeometryValidity";
 import {

@@ -2,7 +2,7 @@ import { CrosswalkSpatialIndex } from "./crosswalkSpatialIndex";
 import { sha256 } from "./contentHash";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import type { AreaLookup } from "./areaInventory";
 import {
 	type AreaGeometry,

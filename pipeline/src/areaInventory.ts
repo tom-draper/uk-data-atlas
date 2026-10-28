@@ -11,7 +11,7 @@ import type {
 	AreaSourceAdapterManifest,
 } from "../../shared/areaSourceAdapters";
 import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
-import { releaseKey } from "../../shared/geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { readDbfRecords } from "../../shared/dbf";
 import { sha256 } from "../../shared/contentHash";
 

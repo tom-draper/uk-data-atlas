@@ -19,7 +19,7 @@ import {
 import type { ExtentContinuityCrosswalkAdapter } from "./crosswalkAdapters";
 import type { ExtentContinuityCrosswalkArtifact } from "./crosswalkTypes";
 import { validateEndpoint } from "./crosswalkValidation";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 // About a millimetre. Rounding only feeds a retry, when polygon-clipping's
 // sweep line fails on near-coincident edges.

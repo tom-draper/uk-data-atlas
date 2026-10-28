@@ -7,7 +7,7 @@ import {
 	type ReversedGridOffset,
 } from "@uk-data-atlas/geography";
 import type { GeoJsonGeometry, GeometrySourceLookup } from "./areaGeometry";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	appliesTo,
 	offsetGeometry,
