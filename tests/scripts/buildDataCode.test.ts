@@ -202,6 +202,19 @@ test("production builders resolve without UI code and include declared workers a
 			.get("crosswalk-inventory")!
 			.includes("pipeline/src/crosswalkCompiler.ts"),
 	);
+	for (const name of [
+		"areaOverlap",
+		"populationOverlap",
+		"geometricContainment",
+		"extentContinuity",
+	]) {
+		assert.ok(
+			inputs
+				.get("crosswalk-inventory")!
+				.includes(`pipeline/src/${name}.ts`),
+			name,
+		);
+	}
 	assert.ok(
 		inputs.get("geometry-store")!.includes("shared/geometryValidity.ts"),
 	);

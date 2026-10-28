@@ -1,16 +1,20 @@
-import { artifactDirectory } from "../../../shared/dataLayout";
-import { buildArtifactPath } from "./geography-build-path";
+import {
+	apiRootOf,
+	artifactDirectory,
+	configDirectory,
+} from "../../shared/dataLayout";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory } from "../src/areaInventory";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import type { GeometricContainmentCrosswalkAdapter } from "../src/crosswalkAdapters";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import type { AreaInventory } from "../../shared/areaInventory";
+import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { GeometricContainmentCrosswalkAdapter } from "../../shared/crosswalkAdapters";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import { isGeographyKind } from "@uk-data-atlas/geography";
-import type { readGeometries as readGeometriesForCache } from "../src/rawAreaGeometries";
-import { measureContainment } from "../src/geometricContainment";
-import { readGeometrySourceLookup } from "../src/geometrySources";
+import type { readGeometries as readGeometriesForCache } from "../../shared/rawAreaGeometries";
+import { measureContainment } from "./geometricContainment";
+import { readGeometrySourceLookup } from "../../shared/geometrySources";
 
 // The sliver width the area-overlap crosswalks use, so every method here
 // agrees on what counts as two borders generalised apart.
@@ -71,9 +75,7 @@ export const proposeGeometricContainment = (
 		JSON.parse(
 			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),
 		) as T;
-	const geometrySources = readGeometrySourceLookup(
-		join(repositoryRoot, "services", "api"),
-	);
+	const geometrySources = readGeometrySourceLookup(apiRootOf(repositoryRoot));
 	const areaCounts = new Map(
 		read<AreaInventory>("area-inventory.json")
 			.releases.filter((release) => release.status === "available")
@@ -250,7 +252,7 @@ export const proposeGeometricContainment = (
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const geographies = process.argv
 		.filter((argument) => argument.startsWith("--from="))
 		.flatMap((argument) => argument.slice("--from=".length).split(","));
@@ -276,10 +278,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	);
 	if (process.argv.includes("--write")) {
 		const path = join(
-			repositoryRoot,
-			"services",
-			"api",
-			"config",
+			configDirectory(repositoryRoot),
 			"crosswalk-adapters.json",
 		);
 		const file = JSON.parse(readFileSync(path, "utf8")) as {

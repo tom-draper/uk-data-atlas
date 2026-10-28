@@ -22,6 +22,7 @@
 		"esbuild": "^0.28.2",
 		"jsts": "2.12.1",
 		"papaparse": "^5.7.0",
+		"polygon-clipping": "0.15.7",
 		"prettier": "3.9.7",
 		"proj4": "^2.22.0",
 		"topojson-client": "^3.1.0",

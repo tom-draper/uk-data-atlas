@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import type { Polygon } from "polygon-clipping";
-import { compileAreaOverlapCrosswalk } from "../src/areaOverlap";
+import { compileAreaOverlapCrosswalk } from "../../../pipeline/src/areaOverlap";
 import { measurePairOverlap } from "../src/pairOverlap";
 import {
 	polygonAreaM2,

@@ -12,7 +12,7 @@ import type {
 	GeometricContainmentCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
-import { measureContainment } from "../src/geometricContainment";
+import { measureContainment } from "../../../pipeline/src/geometricContainment";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;

@@ -1,24 +1,27 @@
-import { sha256 } from "./contentHash";
+import { sha256 } from "../../shared/contentHash";
 import type { MultiPolygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "./areaGeometry";
-import type { AreaLookup } from "./areaInventory";
-import { BoundedClipper, BOUNDED_CLIPPING_VERSION } from "./boundedClipping";
+import type { GeometrySourceLookup } from "../../shared/areaGeometry";
+import type { AreaLookup } from "../../shared/areaInventory";
+import {
+	BoundedClipper,
+	BOUNDED_CLIPPING_VERSION,
+} from "../../shared/boundedClipping";
 import {
 	type AreaGeometry,
 	areaMultiPolygon,
 	boundsIntersect,
 	roundedMultiPolygon,
-} from "./areaGeometryPieces";
+} from "../../shared/areaGeometryPieces";
 import { labelsFor, round } from "./areaOverlap";
-import { CLIPPING_VERSION } from "./pieceIntersection";
-import { readGeometries } from "./rawAreaGeometries";
+import { CLIPPING_VERSION } from "../../shared/pieceIntersection";
+import { readGeometries } from "../../shared/rawAreaGeometries";
 import {
 	multiPolygonAreaM2,
 	polygonWidthM,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import type { ExtentContinuityCrosswalkAdapter } from "./crosswalkAdapters";
-import type { ExtentContinuityCrosswalkArtifact } from "./crosswalkTypes";
-import { validateEndpoint } from "./crosswalkValidation";
+import type { ExtentContinuityCrosswalkAdapter } from "../../shared/crosswalkAdapters";
+import type { ExtentContinuityCrosswalkArtifact } from "../../shared/crosswalkTypes";
+import { validateEndpoint } from "../../shared/crosswalkValidation";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 // About a millimetre. Rounding only feeds a retry, when polygon-clipping's
