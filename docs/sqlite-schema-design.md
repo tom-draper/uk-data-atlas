@@ -668,22 +668,40 @@ area_releases.position`, which `series.release_id` already references), then
   stored payload JSON went from 52 MB to 40 MB and `atlas.sqlite` from 429 MB
   to 418 MB; `dataset_record_parent` holds 37k rows in 0.7 MB.
 
+### Step 4, batch 4: null values and absent keys (2026-10-28)
+
+- The layout is inferred from every record of a part, not the first. Leaf paths
+  are merged into one key order every record agrees with (the build refuses
+  records that order keys differently); a value leaf takes its series from the
+  first record with a number there.
+- A value leaf with no observation is written as null, so nulls need no rows.
+  A leaf a record leaves out entirely is a `dataset_record_absent` row
+  (dataset, part, record set, record position, leaf position). Absence is
+  sparse; 21 rows on the 2026-10-28 build.
+- A record may leave out a parent (crime's five districts with no community
+  safety partnership).
+- Batch 4 adds crime (police force area and community safety partnership as
+  parents) and public health. 31 datasets are served from rows; stored
+  payload JSON is 40 MB.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker                                                         | Datasets                                                                                          |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Values in arrays                                                | population, population-uk, house prices                                                           |
-| Some records lack a value or field others have                  | income, workplace income, unemployment, public health, crime (five districts have no partnership) |
-| A record whose area is in no release                            | Brexit (Gibraltar)                                                                                |
-| A parent code the compiler leaves empty                         | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash)          |
-| A record field holding the observation status                   | Brexit by constituency (`isKnownResult` is true unless the share is estimated)                    |
-| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity        |
-| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables                 |
-| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                             |
+| Blocker                                                         | Datasets                                                                                        |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Values in arrays                                                | population, population-uk, house prices                                                         |
+| Records for areas the atlas lacks                               | income and workplace income (metropolitan counties, Inner and Outer London), Brexit (Gibraltar) |
+| A per-record list of predecessor codes                          | unemployment (`derivedFromPredecessors` on four new unitaries)                                  |
+| A parent code the compiler leaves empty                         | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash)        |
+| A record field holding the observation status                   | Brexit by constituency (`isKnownResult` is true unless the share is estimated)                  |
+| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity      |
+| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables               |
+| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                           |
 
-Arrays, absent values and status flags need new leaf kinds. Values a derived
-number needs but the rows lack (population) must be stored or joined first.
+Arrays and status flags need new leaf kinds. Areas the atlas lacks need area
+rows (or a decision to drop them from the compiled files). Predecessor lists
+are succession, which crosswalks can supply. Values a derived number needs but
+the rows lack (population) must be stored or joined first.
 
 ### Catalogue datasets as configuration (2026-10-27)
 
