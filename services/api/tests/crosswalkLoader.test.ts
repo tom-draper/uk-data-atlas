@@ -135,7 +135,7 @@ test("refuses a missing database and stale SQLite artifact", () => {
 		const database = new DatabaseSync(
 			join(directory, "../../data/build/atlas.sqlite"),
 		);
-		database.prepare("UPDATE crosswalks SET contentHash = 'stale'").run();
+		database.prepare("UPDATE crosswalk SET content_hash = 'stale'").run();
 		database.close();
 		assert.throws(
 			() => readCrosswalkLookup(directory, inventory).get("ward-to-lad"),
