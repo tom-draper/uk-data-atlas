@@ -1,17 +1,20 @@
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
-import type { AreaInventory, AreaReleaseArtifact } from "./areaInventory";
-import { createAreaLookup } from "./createAreaLookup";
-import type { CrosswalkArtifact } from "./crosswalkTypes";
-import type { CrosswalkInventory } from "./crosswalkInventory";
-import { compileLocationProjections } from "./locationProjections";
-import type { NamedLocationInventory } from "./namedLocationTypes";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "../../shared/areaInventory";
+import { createAreaLookup } from "../../shared/createAreaLookup";
+import type { CrosswalkArtifact } from "../../shared/crosswalkTypes";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import { compileLocationProjections } from "../../shared/locationProjections";
+import type { NamedLocationInventory } from "../../shared/namedLocationTypes";
 import {
 	readStoredText,
 	storedTextExists,
 	writeStoredText,
-} from "./storedText";
-import { artifactDirectory } from "./dataLayout";
+} from "../../shared/storedText";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 const read = <T>(directory: string, path: string): T => {
 	const fullPath = join(directory, path);

@@ -6,7 +6,7 @@ import { buildPlaceIndex } from "../src/cache-build/buildPlaceIndex";
 import { readAreaInventory, readPlaceIndex } from "../src/boundaryLoader";
 import { readNamedLocationInventory } from "../src/locationLoader";
 import { resolvePlaces } from "../src/placeResolver";
-import { buildLocationProjections } from "../scripts/build-location-projections";
+import { buildLocationProjections } from "../../../pipeline/src/buildLocationProjections";
 import { createNamedLocationLookup } from "../src/namedLocations";
 import {
 	compileLocationProjections,
