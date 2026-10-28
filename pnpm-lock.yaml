@@ -537,6 +537,9 @@ importers:
       '@uk-data-atlas/postcodes':
         specifier: workspace:*
         version: link:../packages/postcodes
+      '@uk-data-atlas/relationships':
+        specifier: workspace:*
+        version: link:../packages/relationships
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../packages/search-index
