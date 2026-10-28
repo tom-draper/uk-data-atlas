@@ -22,7 +22,11 @@ import {
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { namedLocationTables } from "@uk-data-atlas/atlas-runtime/storage";
 import { crosswalkTables } from "@uk-data-atlas/atlas-runtime/storage";
-import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	AREA_GEOGRAPHY_MISMATCH,
+	areaTables,
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
@@ -197,6 +201,13 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 			...statisticsTables(statisticsInputs(directory, manifest.datasets)),
 		},
 	);
+	const written = new DatabaseSync(path, { readOnly: true });
+	try {
+		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)
+			throw new Error("Area versions on another geography's release");
+	} finally {
+		written.close();
+	}
 	publishAtlasCache(repositoryRoot, "projections", (database) => {
 		const tables = locationProjectionTables({ artifacts, parentArtifacts });
 		for (const name of Object.keys(tables))
