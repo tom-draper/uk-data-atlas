@@ -1,5 +1,5 @@
 import type { ProblemCode } from "./problemCodes";
-import type { GeometryProvenance } from "@uk-data-atlas/geography/reprojection";
+import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
 
 export type Envelope<T> = {
 	apiVersion: "v1";

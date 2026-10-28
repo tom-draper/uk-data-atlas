@@ -5,7 +5,7 @@ import type {
 	ResolvedContainingArea,
 } from "./geographyResolver";
 import { parseSelectionDate, type ReleaseReference } from "./releaseForDate";
-import { type GeometryProvenance } from "@uk-data-atlas/geography/reprojection";
+import { type GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
 import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 import type { RouteContext } from "./routing";
 import { readChoice } from "./queryParameters";
@@ -23,8 +23,8 @@ import {
 	MAX_STATED_ACCURACY_M,
 	type LookupPoint,
 	type LookupInputCrs,
-} from "@uk-data-atlas/geography/lookup-coordinates";
-export * from "@uk-data-atlas/geography/lookup-coordinates";
+} from "@uk-data-atlas/geography/coordinates";
+export * from "@uk-data-atlas/geography/coordinates";
 
 // Every point endpoint states the same `crs`, which a test holds them to.
 const CRS = QUERY_RULES["GET /areas:contains"].crs;

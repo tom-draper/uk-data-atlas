@@ -18,7 +18,7 @@ import {
 import {
 	fromWgs84Geometry,
 	toWgs84Geometry,
-} from "@uk-data-atlas/geography/reprojection";
+} from "@uk-data-atlas/geography/coordinates";
 import { sha256 } from "./contentHash";
 
 export type { GeometrySubstitution };
