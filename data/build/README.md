@@ -83,8 +83,7 @@ The database contains these tables:
 | `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                               |
 | `datasets` | `payloadId`   | `TEXT NOT NULL`        | Foreign key to `payloads.id`, `dataset:<output>`.                                |
 
-`meta`, `payloads`, `datasets`, `area_releases`, `crosswalks`, `crosswalk_sources`,
-`crosswalk_targets`, `crosswalk_coverage`, `named_locations`, `named_location_members`,
+`meta`, `payloads`, `datasets`, `area_releases`, `crosswalk_coverage`, `named_locations`, `named_location_members`,
 `named_location_assertions`, `named_location_partial_members`, and `named_location_geometries` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
@@ -263,33 +262,27 @@ key `(geography, boundaryRelease)`, both non-null text, unique non-null integer
 Its rows retain coverage order and refer to the inventory hash, without requiring
 all historical crosswalk endpoints to exist in `area_version`.
 
-`crosswalks` has text primary key `id`, unique integer `position`, text
-`fromGeography`, `fromRelease`, `toGeography`, `toRelease`, `method`, `quality`,
-`weighting`, `artifact`, `contentHash`, and `header`, plus integer `recordCount`
-and `bytes`. These columns are non-null. Nullable `relationshipPurpose TEXT`
-distinguishes identity and membership where declared. `weighting` is JSON.
-`header` is the artifact metadata with a null `records` placeholder, preserving nested provenance,
-validation and property order. `bytes` retains the original JSON byte count for
-the existing cache budget. An index on `(fromGeography, fromRelease, toGeography,
-toRelease)` supports endpoint selection.
+Crosswalks are integer edges between area versions. Every table is `STRICT`.
 
-`crosswalk_sources` has primary key `(crosswalkId, position)`, with a foreign key
-to `crosswalks.id`. `crosswalk_targets` has primary key `(crosswalkId,
-sourcePosition, position)` and a foreign key `(crosswalkId, sourcePosition)` to
-`crosswalk_sources`. Identity columns are non-null text for `crosswalkId` and
-non-null integers for positions. Each table has non-null text `code`, `labels`,
-and `fields`. `labels` is an ordered JSON string array. `fields` is an ordered
-JSON list of present property names, preserving property order and absent versus
-null values when reconstructing responses. Endpoint values live in columns,
-not in record payload blobs.
+| Table                  | Key                                                        | Holds                                                                                                                                                                                                                                                             |
+| ---------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `crosswalk`            | `id` (inventory order), `slug` unique                      | `from_release_id` and `to_release_id` (`area_releases.position`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, `header`, `bytes`, and the JSON field order of sources and targets.                   |
+| `crosswalk_edge`       | `(crosswalk_id, from_version_id, to_version_id)`           | One source and target pair. `relation` (best fit: `within`, `straddles`, `indeterminate`) and `change` (official lookups: `unchanged`, `split`, `merged`, `complex`) are null where the crosswalk does not give them. Indexed by `(crosswalk_id, to_version_id)`. |
+| `weight_basis`         | `id`                                                       | `area` or `population`, with a label. A new basis is a row.                                                                                                                                                                                                       |
+| `crosswalk_weight`     | `(crosswalk_id, from_version_id, to_version_id, basis_id)` | Present for weighted crosswalks: `weight` (share of the covered source, summing to 1 per source), `overlap` (square metres or residents), `source_share` and `target_share`.                                                                                      |
+| `crosswalk_edge_check` | as `crosswalk_edge`                                        | Sparse matching diagnostics: `contained_share`, `outside_width_m`, `match`, `widest_difference_m`, `claimed_difference_m`, unweighted `check_source_share` and `check_target_share`, and `overlap_area_m2` on population-weighted crosswalks.                     |
+| `crosswalk_source`     | `(crosswalk_id, from_version_id)`                          | Only sources with `coverage`, or with no targets.                                                                                                                                                                                                                 |
+| `crosswalk_label`      | `(crosswalk_id, area_version_id)`                          | Publisher labels, only where they differ from `[name, ...aliases]`.                                                                                                                                                                                               |
 
-Nullable source `REAL` columns are `areaM2`, `coverage`, and `population`.
-Nullable target `REAL` columns are `weight`, `overlapAreaM2`, `sourceShare`,
-`targetShare`, `population`, `containedShare`, `outsideWidthM`,
-`widestDifferenceM`, and `claimedDifferenceM`. Nullable target text columns are
-`change`, `match`, and `relation`. Missing weights stay null, distinct from zero.
-Both endpoint tables index `(crosswalkId, code)` for forward and reverse code
-lookups. Their primary keys support the API's ordered artifact reads.
+Order is not stored. Records are in source code order and targets in target code
+order; the build refuses input that is not. Source `areaM2` and `population` are
+facts on `area_version`, so every source in one crosswalk must give the same
+fields, and the build rejects conflicting facts for the same area. A target
+field is stored only when present; a null value is refused because it could not
+be told apart from a missing one. Missing weights stay null, distinct from zero.
+`header` is the artifact metadata with a null `records` placeholder, and `bytes`
+keeps the original JSON byte count for the API cache budget. `v_crosswalk_edge`
+shows each edge with codes, names and its weight.
 
 The API crosswalk inventory and bounded lazy artifact loader read SQLite and
 close each connection after a read. JSON inventories and compressed crosswalk

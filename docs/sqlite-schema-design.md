@@ -562,6 +562,45 @@ area_releases.position`, which `series.release_id` already references), then
 - `dataset_area_name` stays keyed by area version, since a publisher's name
   can differ by release.
 
+### Step 3 scope (2026-10-28)
+
+- `crosswalk_sources`, `crosswalk_targets`, `crosswalk_field_sets`,
+  `crosswalk_label_exceptions` and `crosswalks` are replaced by `crosswalk`,
+  `crosswalk_edge`, `weight_basis`, `crosswalk_weight`, `crosswalk_edge_check`,
+  `crosswalk_source` and `crosswalk_label`. All 181 crosswalk artifacts rebuild
+  from rows byte for byte. On the 2026-10-28 build the crosswalk tables went
+  from 172 MB to 113 MB (problem 5's 890 MB predates earlier compaction).
+- Order is not stored. Every built crosswalk already lists records in source
+  code order and targets in target code order, so the build now refuses
+  anything else, as fuel poverty does.
+- Field order is stored once per crosswalk side (`source_fields`,
+  `target_fields`), not per endpoint. A target lists its fields in that order,
+  leaving out the ones it does not have. Every source in a crosswalk must give
+  the same fields, because source `areaM2` and `population` are facts on the
+  shared `area_version`.
+- `relation` keeps the compiler's values (`within`, `straddles`,
+  `indeterminate`) and is null where a method does not give one, rather than
+  being mapped onto `equal`/`within`/`contains`/`overlaps`, which would lose
+  `indeterminate`. Official lookups' `change` is an edge column too.
+- `weight_basis` uses the compiler's vocabulary, `area` and `population`.
+  `crosswalk_weight.weight` is the normalised per-source weight, `overlap` the
+  amount in the basis unit, and `source_share`/`target_share` the overlap as a
+  share of the whole source and target. Population-weighted crosswalks also
+  record the overlap area, which goes to `crosswalk_edge_check.overlap_area_m2`.
+- Extent-continuity shares are geometric checks, not weights, so they go to
+  `crosswalk_edge_check` (`check_source_share`, `check_target_share`).
+- `crosswalk_source` holds only sources with `coverage` or no targets (5,000
+  of 1.9 million). Other sources are the distinct `from_version_id` of edges.
+- Publisher labels are keyed by crosswalk and area version, stored only where
+  they differ from `[name, ...aliases]`. No crosswalk relates a release to
+  itself, so a version has one set of labels per crosswalk; the build refuses
+  two.
+- Kept for byte-for-byte rebuilds until readers build responses from rows:
+  `header` (artifact metadata, not yet reduced to `provenance`), `bytes`,
+  `artifact`, `content_hash`, the JSON `weighting`, and the field orders.
+  `crosswalk_inventory` and `crosswalk_coverage` move to `release_info` later.
+- `source_id` is left out until boundary releases and sources are linked.
+
 ### Catalogue datasets as configuration (2026-10-27)
 
 Every catalogue dataset whose records are numbers keyed by area code is stored
