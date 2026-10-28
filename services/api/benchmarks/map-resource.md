@@ -11,7 +11,7 @@ Run from the repository root after building the API's source registries and area
 inventory:
 
 ```sh
-pnpm exec tsx --max-old-space-size=4096 services/api/scripts/benchmark-map-resource.ts . country/2025-12-uk-bgc
+pnpm exec tsx --max-old-space-size=4096 pipeline/src/benchmark-map-resource.ts . country/2025-12-uk-bgc
 ```
 
 The first argument is the data repository root, and the second is the release ID.
@@ -26,7 +26,7 @@ bundling. Build a standalone snapshot in each checkout, using separate output
 paths for before and after:
 
 ```sh
-pnpm --dir services/api exec esbuild scripts/benchmark-map-resource.ts --bundle --platform=node --format=esm --banner:js='import { createRequire } from "node:module"; const require = createRequire(import.meta.url);' --outfile=/tmp/map-benchmark.mjs
+pnpm exec esbuild pipeline/src/benchmark-map-resource.ts --bundle --platform=node --format=esm --banner:js='import { createRequire } from "node:module"; const require = createRequire(import.meta.url);' --outfile=/tmp/map-benchmark.mjs
 node --max-old-space-size=4096 /tmp/map-benchmark.mjs /absolute/path/to/data-repository country/2025-12-uk-bgc
 ```
 

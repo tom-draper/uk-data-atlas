@@ -185,6 +185,13 @@ test("production builders resolve without UI code and include declared workers a
 			.get("map-resource")!
 			.includes("pipeline/src/compileGeometryValidity.ts"),
 	);
+	for (const path of [
+		"pipeline/src/buildMapResource.ts",
+		"pipeline/src/compileMapResource.ts",
+		"pipeline/src/flatDownloads.ts",
+	]) {
+		assert.ok(inputs.get("map-resource")!.includes(path), path);
+	}
 	assert.ok(
 		inputs
 			.get("crosswalk-inventory")!

@@ -11,14 +11,14 @@ import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "../../shared/areaGeometry";
-import { compileFlatDownloads } from "../../shared/flatDownloads";
+import { compileFlatDownloads } from "./flatDownloads";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "../../shared/geometrySources";
 import { roundKeepingValidity } from "./compileGeometryValidity";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-} from "../../shared/mapResource/compileMapResource";
+} from "./compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
 
@@ -53,9 +53,10 @@ const COMPILER_SOURCES = [
 	...sourceFiles("../../shared/mapResource"),
 	// The tiler, shared with the website's precompile.
 	...sourceFiles("../../packages/map-tiles/src"),
-	"src/parquet.ts",
 	"../../shared/parquet.ts",
-	"../../shared/flatDownloads.ts",
+	"../../pipeline/src/flatDownloads.ts",
+	"../../pipeline/src/compileMapResource.ts",
+	"../../pipeline/src/buildMapResource.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
 	"../../pipeline/src/compileGeometryValidity.ts",

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { AreaGeometryCache, type GeoJsonGeometry } from "../src/areaGeometry";
 import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
-import { compileMapResource } from "../src/mapResource/compileMapResource";
+import { compileMapResource } from "../../../pipeline/src/compileMapResource";
 
 const left: GeoJsonGeometry = {
 	type: "Polygon",

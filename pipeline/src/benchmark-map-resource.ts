@@ -1,15 +1,15 @@
-import { artifactDirectory } from "../../../shared/dataLayout";
-import { buildArtifactPath } from "./geography-build-path";
+import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { AreaGeometryCache } from "../src/areaGeometry";
-import { readGeometrySourceLookup } from "../src/geometrySources";
+import { AreaGeometryCache } from "../../shared/areaGeometry";
+import { readGeometrySourceLookup } from "../../shared/geometrySources";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-} from "../src/mapResource/compileMapResource";
+} from "./compileMapResource";
 
 // Run from the repository root. Each process compiles one real release without
 // consulting the map-resource build cache or overwriting published artifacts.
@@ -36,7 +36,7 @@ const areas: { areas: Array<{ code: string; name: string }> } = JSON.parse(
 const names = new Map(areas.areas.map((area) => [area.code, area.name]));
 const cache = new AreaGeometryCache(
 	root,
-	readGeometrySourceLookup(join(root, "services/api")),
+	readGeometrySourceLookup(apiRootOf(root)),
 );
 const cpuStarted = process.cpuUsage();
 const started = performance.now();
