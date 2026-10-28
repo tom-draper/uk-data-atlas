@@ -8,7 +8,7 @@ test("DuckDB energy consumption fixtures", () => {
 			"--import",
 			"tsx",
 			"--test",
-			"experiments/duckdb-energy-consumption/fixtures.test.mts",
+			"tests/duckdb-fixtures/energy-consumption.test.mts",
 		],
 		{ encoding: "utf8" },
 	);
