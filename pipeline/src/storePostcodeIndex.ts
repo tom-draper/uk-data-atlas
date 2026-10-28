@@ -1,11 +1,11 @@
 import { copyFileSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { postcodeTables } from "./atlasPostcodeTables";
-import { postcodeIndexMismatch } from "./postcodeIndexMismatch";
-import type { PostcodeIndexArtifact } from "./postcodeIndexTypes";
-import { writeSqliteTables } from "./sqliteTables";
-import { artifactDirectory } from "./dataLayout";
+import { postcodeTables } from "../../shared/atlasPostcodeTables";
+import { postcodeIndexMismatch } from "../../shared/postcodeIndexMismatch";
+import type { PostcodeIndexArtifact } from "../../shared/postcodeIndexTypes";
+import { writeSqliteTables } from "../../shared/sqliteTables";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 export const storePostcodeIndex = (
 	root: string,

@@ -7,7 +7,7 @@ import type {
 	PostcodeSource,
 } from "../../shared/postcodeIndexTypes";
 import { compilePostcodeIndex, type PostcodeSourceRow } from "./postcodeIndex";
-import { storePostcodeIndex } from "../../shared/storePostcodeIndex";
+import { storePostcodeIndex } from "./storePostcodeIndex";
 
 const columns = [
 	"pcds",

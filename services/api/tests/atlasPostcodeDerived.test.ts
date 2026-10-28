@@ -16,8 +16,8 @@ import { artifactRoot } from "../../../shared/dataLayout";
 import { sha256 } from "../src/contentHash";
 import type { PostcodeAreasShard } from "../src/postcodeAreas";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
-import { storePostcodeIndex } from "../scripts/store-postcode-index";
-import { storePostcodeAreas } from "../scripts/store-postcode-derived";
+import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
+import { storePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
 import { buildPostcodeCounts } from "../src/cache-build/buildPostcodeCounts";
 import { validateShards } from "../../../pipeline/src/postcode-counts/validatePostcodeCountInputs";
 import {
