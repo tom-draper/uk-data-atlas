@@ -1,5 +1,5 @@
 import { readAtlasPayload } from "./atlasSqlite";
-import { postcodeIndexMismatch } from "../postcodes/postcodeIndexMismatch";
+import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { repositoryRootOf } from "./dataLayout";
 

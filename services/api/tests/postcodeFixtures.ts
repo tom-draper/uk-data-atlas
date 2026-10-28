@@ -6,7 +6,7 @@ import {
 import { compilePostcodeIndex } from "../../../pipeline/src/postcodeIndex";
 import type { PostcodeSourceRow } from "../../../pipeline/src/postcodeIndex";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
-import { PostcodeAreaIndex } from "@uk-data-atlas/atlas-runtime/postcodes";
+import { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import { parsePostcode } from "@uk-data-atlas/geography";
 import {
 	PostcodeIndex,

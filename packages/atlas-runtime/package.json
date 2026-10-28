@@ -28,7 +28,8 @@
 		"@uk-data-atlas/search-index": "workspace:*",
 		"@uk-data-atlas/shapefile": "workspace:*",
 		"polygon-clipping": "0.15.7",
-		"@uk-data-atlas/terrain": "workspace:*"
+		"@uk-data-atlas/terrain": "workspace:*",
+		"@uk-data-atlas/postcodes": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

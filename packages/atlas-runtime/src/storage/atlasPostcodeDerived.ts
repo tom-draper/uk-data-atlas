@@ -4,7 +4,7 @@ export {
 } from "./atlasPostcodeAreaReader";
 import { readCachePayload, requireAtlasCache } from "./atlasCache";
 import { DatabaseSync } from "node:sqlite";
-import type { PostcodeCountsArtifact } from "../postcodes/postcodeCounts";
+import type { PostcodeCountsArtifact } from "@uk-data-atlas/postcodes";
 
 export function readSqlitePostcodeCounts(
 	apiRoot: string,

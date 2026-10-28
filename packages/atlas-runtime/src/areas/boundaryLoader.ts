@@ -16,16 +16,16 @@ import {
 	openAreaSearchIndexDatabase,
 	type AreaSearchIndex,
 } from "./areaSearch";
-import type { PostcodeIndex } from "../postcodes/postcodeIndex";
+import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
 import { readSqlitePostcodeIndex } from "../storage/atlasPostcodesReader";
 import {
 	PostcodeAreaIndex,
 	postcodeAreasMismatch,
-} from "../postcodes/postcodeAreas";
+} from "@uk-data-atlas/postcodes";
 import {
 	PostcodeCountsIndex,
 	postcodeCountsMismatch,
-} from "../postcodes/postcodeCounts";
+} from "@uk-data-atlas/postcodes";
 import type { GeometrySourceLookup } from "../geometry/areaGeometry";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { publicPath } from "../storage/publicManifest";

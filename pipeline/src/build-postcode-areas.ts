@@ -22,7 +22,7 @@ import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime
 import { AreasResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/postcodes";
 import { parsePostcode } from "@uk-data-atlas/geography";
-import { postcodeLookupPoint } from "@uk-data-atlas/atlas-runtime/postcodes";
+import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import {
 	createAreaGeometryCache,
 	readGeometrySources,

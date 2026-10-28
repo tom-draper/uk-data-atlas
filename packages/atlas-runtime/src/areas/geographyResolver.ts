@@ -13,12 +13,12 @@ import type {
 } from "../places/namedLocations";
 import type { AreaSearchIndex } from "./areaSearch";
 import type { PlaceIndex } from "../places/placeIndex";
-import type { PostcodeAreaIndex } from "../postcodes/postcodeAreas";
+import type { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import type {
 	PostcodeCounts,
 	PostcodeCountsIndex,
-} from "../postcodes/postcodeCounts";
-import type { PostcodeIndex } from "../postcodes/postcodeIndex";
+} from "@uk-data-atlas/postcodes";
+import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
 import type { RelationshipPath } from "../relationships/relationshipPaths";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
 import {

@@ -121,8 +121,6 @@ export class PostcodeAreaIndex {
 	}
 }
 
-export { postcodeAreaReleases } from "./postcodeAreaReleases";
-
 /**
  * Whether a manifest can be served with this postcode index and these inputs.
  * Undefined when it can.

@@ -2,7 +2,7 @@ import { copyFileSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { postcodeTables } from "@uk-data-atlas/atlas-runtime/storage";
-import { postcodeIndexMismatch } from "@uk-data-atlas/atlas-runtime/postcodes";
+import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";

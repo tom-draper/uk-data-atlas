@@ -15,7 +15,7 @@ import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { PostcodeAreasShard } from "@uk-data-atlas/atlas-runtime/postcodes";
+import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
 import { storePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
@@ -35,7 +35,7 @@ import {
 	PostcodeAreaIndex,
 	NONE,
 	SEVERAL,
-} from "@uk-data-atlas/atlas-runtime/postcodes";
+} from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 
 function fixture(t: TestContext) {
