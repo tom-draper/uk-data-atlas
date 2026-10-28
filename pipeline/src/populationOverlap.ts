@@ -19,7 +19,7 @@ import {
 	BOUNDED_CLIPPING_VERSION,
 	type ClipOperand,
 } from "@uk-data-atlas/atlas-runtime/geometry";
-import { csvFields } from "@uk-data-atlas/atlas-runtime/storage";
+import { csvFields } from "@uk-data-atlas/artifacts";
 import type { PopulationOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	CrosswalkArtifact,

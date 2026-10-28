@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { csvRecords } from "@uk-data-atlas/atlas-runtime/storage";
+import { csvRecords } from "@uk-data-atlas/artifacts";
 
 /**
  * Download a Scottish statistical geography's parents from the Scottish
