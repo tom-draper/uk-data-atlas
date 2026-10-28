@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
@@ -50,7 +51,7 @@ export const handleAreaNeighbourRoutes = ({
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const unavailable = geographyResolver.requires("geometry");
+	const unavailable = requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	const touches = readChoice(
 		parsedUrl.searchParams.get("touches"),

@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
@@ -42,7 +43,7 @@ test("requires returns the standard 503 for each unavailable capability", () => 
 	};
 
 	for (const requirement of requirements) {
-		const response = resolver.requires(requirement);
+		const response = requireGeography(resolver, requirement);
 		assert.ok(response);
 		assert.equal(response.status, 503);
 		assert.ok("detail" in response.body);
@@ -71,5 +72,9 @@ test("requires accepts each capability when its owning input is present", () => 
 	});
 
 	for (const requirement of requirements)
-		assert.equal(resolver.requires(requirement), undefined, requirement);
+		assert.equal(
+			requireGeography(resolver, requirement),
+			undefined,
+			requirement,
+		);
 });

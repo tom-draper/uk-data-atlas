@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
@@ -12,7 +13,7 @@ export const resolveAggregationLocation = ({
 	geographyResolver: GeographyResolver;
 }): NamedLocation | ApiResponse | undefined => {
 	if (!locationId) return undefined;
-	const unavailable = geographyResolver.requires("named-locations");
+	const unavailable = requireGeography(geographyResolver, "named-locations");
 	if (unavailable) return unavailable;
 	const location = geographyResolver.namedLocation(locationId);
 	return (

@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
@@ -185,14 +186,18 @@ test("does not claim optional geography capabilities when their artifacts are ab
 	};
 
 	assert.equal(resolver.hasAreaRelease("ward", "2025-01-en-ward"), true);
-	assert.equal(resolver.requires("areas"), undefined);
+	assert.equal(requireGeography(resolver, "areas"), undefined);
 	for (const requirement of [
 		"relationships",
 		"geometry",
 		"location-projections",
 		"named-locations",
 	] as const)
-		assert.equal(resolver.requires(requirement)?.status, 503, requirement);
+		assert.equal(
+			requireGeography(resolver, requirement)?.status,
+			503,
+			requirement,
+		);
 	assert.equal(resolver.selectReleaseForDate("ward", "2025-01"), undefined);
 	assert.equal(resolver.geometryFor(ward), undefined);
 	assert.deepEqual(resolver.relationships(ward), []);
@@ -402,8 +407,8 @@ test("checks only the requirement asked for", () => {
 		},
 	);
 	const resolver = createGeographyResolver(inputs);
-	assert.equal(resolver.requires("areas"), undefined);
+	assert.equal(requireGeography(resolver, "areas"), undefined);
 	assert.deepEqual(read, []);
-	assert.equal(resolver.requires("places")?.status, 503);
+	assert.equal(requireGeography(resolver, "places")?.status, 503);
 	assert.deepEqual(read, ["placeIndex"]);
 });

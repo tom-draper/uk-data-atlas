@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { parseSelectionDate } from "@uk-data-atlas/atlas-runtime/areas";
 import {
@@ -93,7 +94,7 @@ export const resolveAreaQuery = ({
 		!geographyResolver.hasAreaRelease(geography!, boundaryRelease!)
 	)
 		return areaNotFound(context, geography!, boundaryRelease!);
-	const unavailable = geographyResolver.requires("area-search");
+	const unavailable = requireGeography(geographyResolver, "area-search");
 	if (unavailable) return unavailable;
 	const candidates = geographyResolver.resolveAreaCandidates({
 		geography,

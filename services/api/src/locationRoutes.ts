@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,
@@ -39,8 +40,10 @@ export const handleLocationRoutes = ({
 	) {
 		const asOf = selectedAsOf(parsedUrl);
 		if (typeof asOf !== "string" && asOf !== undefined) return asOf;
-		const unavailable =
-			context.geographyResolver.requires("named-locations");
+		const unavailable = requireGeography(
+			context.geographyResolver,
+			"named-locations",
+		);
 		if (unavailable) return unavailable;
 		const namedLocations = context.geographyResolver.namedLocations(asOf);
 		const query = parsedUrl.searchParams
@@ -83,8 +86,10 @@ export const handleLocationRoutes = ({
 			return invalidQuery(
 				"q is required to find named-location alternatives.",
 			);
-		const unavailable =
-			context.geographyResolver.requires("named-locations");
+		const unavailable = requireGeography(
+			context.geographyResolver,
+			"named-locations",
+		);
 		if (unavailable) return unavailable;
 		const alternatives = context.geographyResolver
 			.namedLocations()
@@ -339,7 +344,7 @@ export const handleLocationRoutes = ({
 				"Not Found",
 				`No published crosswalk ${requested} maps ${geography}/${boundaryRelease} to a ${memberGeography} release.`,
 			);
-		const unavailable = resolver.requires("location-projections");
+		const unavailable = requireGeography(resolver, "location-projections");
 		if (unavailable) return unavailable;
 		const projection = resolver.locationProjection(
 			location.id,
@@ -421,7 +426,7 @@ const locationCapabilities = (
 	location: NamedLocation,
 ) => {
 	const geographyResolver = context.geographyResolver;
-	const areaAvailability = geographyResolver.requires("areas");
+	const areaAvailability = requireGeography(geographyResolver, "areas");
 	const direct = areaAvailability
 		? notBuilt(requirementDetail(areaAvailability))
 		: (() => {
@@ -454,7 +459,8 @@ const locationCapabilities = (
 							`No compiled ${location.memberGeography} release is available for this location.`,
 						);
 			})();
-	const memberAvailability = geographyResolver.requires(
+	const memberAvailability = requireGeography(
+		geographyResolver,
 		"location-projections",
 	);
 	const members = memberAvailability
@@ -478,7 +484,8 @@ const locationCapabilities = (
 							`No published crosswalk projection reaches this location's ${location.memberGeography} members.`,
 						);
 			})();
-	const parentAvailability = geographyResolver.requires(
+	const parentAvailability = requireGeography(
+		geographyResolver,
 		"location-projections",
 	);
 	const parents = parentAvailability

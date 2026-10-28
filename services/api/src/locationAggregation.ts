@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import type { reconcileMembersForYear } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
@@ -24,7 +25,7 @@ export const validateLocationAggregation = ({
 	sourceGeography: { type: string; boundaryYear: number };
 }): LocationCoverage | ApiResponse | undefined => {
 	if (!location || !byLocation) return undefined;
-	const unavailable = geographyResolver.requires("areas");
+	const unavailable = requireGeography(geographyResolver, "areas");
 	const locationCoverage = !unavailable
 		? geographyResolver.reconcileMembersForYear(
 				sourceGeography.type,

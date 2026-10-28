@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { isCountryCode } from "./aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -93,8 +94,8 @@ export const handleDataValueRoutes = ({
 		);
 	}
 	const unavailable =
-		context.geographyResolver.requires("areas") ??
-		context.geographyResolver.requires("places");
+		requireGeography(context.geographyResolver, "areas") ??
+		requireGeography(context.geographyResolver, "places");
 	if (unavailable) return unavailable;
 	const period = parsedUrl.searchParams.get("period")?.trim() || undefined;
 	const candidates = context.geographyResolver.places(place, 12);

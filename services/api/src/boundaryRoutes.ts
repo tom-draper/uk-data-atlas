@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { releaseDownloads } from "@uk-data-atlas/atlas-runtime/maps";
 import { withReleaseHeaders } from "./releaseDeprecation";
@@ -158,7 +159,7 @@ export const handleBoundaryRoutes = ({
 			return invalidQuery(
 				"from and to must name different boundary releases.",
 			);
-		const unavailable = geographyResolver.requires("areas");
+		const unavailable = requireGeography(geographyResolver, "areas");
 		if (unavailable) return unavailable;
 		if (!geographyResolver.hasAreaRelease(geography, from))
 			return areaNotFound(context, geography, from);

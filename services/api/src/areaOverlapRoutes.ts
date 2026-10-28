@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./pairOverlap";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
@@ -65,7 +66,7 @@ export const handleAreaOverlapRoutes = ({
 	const otherArea = geographyResolver.area(otherIdentity);
 	if (!otherArea)
 		return areaNotFound(context, otherGeography, otherRelease, otherCode);
-	const unavailable = geographyResolver.requires("geometry");
+	const unavailable = requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	try {
 		const resolved = geographyResolver.areaGeometry(identity);

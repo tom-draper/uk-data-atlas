@@ -116,3 +116,13 @@ export const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body
 		? response.body.detail
 		: "Catalogue data is unavailable.";
+
+export const requireGeography = (
+	resolver: import("../areas/geographyResolver").GeographyResolver,
+	requirement: import("../areas/geographyResolver").GeographyRequirement,
+) => {
+	const detail = resolver.missingRequirement(requirement);
+	return detail === undefined
+		? undefined
+		: problem(503, "Catalogue Unavailable", detail);
+};

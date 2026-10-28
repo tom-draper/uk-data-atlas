@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	CONTAINMENT_NOTE,
 	describeLookupRelease,
@@ -98,8 +99,8 @@ export const findPostcode = (
 ): { record: PostcodeRecord; source: PostcodeSourceSummary } | ApiResponse => {
 	const { geographyResolver } = context;
 	const unavailable =
-		geographyResolver.requires("postcodes") ??
-		geographyResolver.requires("geometry");
+		requireGeography(geographyResolver, "postcodes") ??
+		requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	const outcome = postcodeOutcome(context, text);
 	if (outcome.status !== "found")
@@ -407,8 +408,8 @@ export const handlePostcodeBatchRoutes = ({
 		);
 	const { geographyResolver } = context;
 	const unavailable =
-		geographyResolver.requires("postcodes") ??
-		geographyResolver.requires("geometry");
+		requireGeography(geographyResolver, "postcodes") ??
+		requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	const source = postcodeSourceSummary(context);
 	const lookup = postcodeLookupRequest(
