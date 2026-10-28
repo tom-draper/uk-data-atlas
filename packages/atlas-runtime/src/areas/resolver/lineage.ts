@@ -1,4 +1,4 @@
-import type { AreaRecord } from "../../areas/areaInventory";
+import type { AreaRecord } from "@uk-data-atlas/areas";
 import type { CrosswalkLookup } from "../../relationships/translation";
 import {
 	LazyAreaRelationshipIndex,

@@ -52,7 +52,8 @@
 		"@uk-data-atlas/artifacts": "workspace:*",
 		"@uk-data-atlas/atlas-runtime": "workspace:*",
 		"@uk-data-atlas/terrain": "workspace:*",
-		"@uk-data-atlas/postcodes": "workspace:*"
+		"@uk-data-atlas/postcodes": "workspace:*",
+		"@uk-data-atlas/areas": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

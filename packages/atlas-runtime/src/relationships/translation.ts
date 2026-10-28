@@ -1,4 +1,4 @@
-import type { AreaLookup } from "../areas/areaInventory";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { CrosswalkArtifact } from "./crosswalkTypes";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { AreaIdentity, GeographyEndpoint } from "@uk-data-atlas/geography";

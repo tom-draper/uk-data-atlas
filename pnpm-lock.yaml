@@ -312,6 +312,19 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  packages/areas:
+    dependencies:
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../geography
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   packages/artifacts:
     devDependencies:
       '@types/node':
@@ -323,6 +336,9 @@ importers:
 
   packages/atlas-runtime:
     dependencies:
+      '@uk-data-atlas/areas':
+        specifier: workspace:*
+        version: link:../areas
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../artifacts
@@ -557,6 +573,9 @@ importers:
 
   services/api:
     dependencies:
+      '@uk-data-atlas/areas':
+        specifier: workspace:*
+        version: link:../../packages/areas
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../../packages/artifacts

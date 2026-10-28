@@ -1,4 +1,4 @@
-import type { AreaLookup } from "../areas/areaInventory";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { NamedLocationInventory } from "./namedLocationTypes";
 import { compareBoundaryReleases } from "@uk-data-atlas/catalogue";

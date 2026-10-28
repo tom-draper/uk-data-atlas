@@ -1,4 +1,4 @@
-import type { AreaInventory } from "../../areas/areaInventory";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "../../relationships/crosswalkInventory";
 import type { NamedLocationInventory } from "../../places/namedLocations";
 

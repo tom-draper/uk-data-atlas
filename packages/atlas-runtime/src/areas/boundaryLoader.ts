@@ -8,7 +8,7 @@ import { readGeographyCatalogue } from "../catalogue/geographyCatalogue";
 import { readSqliteAreaInventory } from "../storage/atlasAreaReader";
 import { existsSync, readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
-import type { AreaInventory } from "./areaInventory";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { GeographyInventory } from "./geographyInventory";
 import type { NamedLocationInventory } from "../places/namedLocations";
 import { openPlaceIndexDatabase, type PlaceIndex } from "../places/placeIndex";

@@ -1,4 +1,4 @@
-import type { AreaInventory, AreaLookup } from "../../areas/areaInventory";
+import type { AreaInventory, AreaLookup } from "@uk-data-atlas/areas";
 import type { CapabilityStatus } from "../../areas/capability";
 import type {
 	RelationshipPath,

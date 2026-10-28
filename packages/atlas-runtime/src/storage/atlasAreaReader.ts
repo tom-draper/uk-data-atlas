@@ -1,5 +1,5 @@
 import { DatabaseSync } from "node:sqlite";
-import type { AreaInventory, AreaRecord } from "../areas/areaInventory";
+import type { AreaInventory, AreaRecord } from "@uk-data-atlas/areas";
 import { atlasDatabasePath } from "./dataLayout";
 
 export const readSqliteAreaInventory = (apiRoot: string): AreaInventory => {

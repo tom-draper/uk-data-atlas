@@ -1,4 +1,4 @@
-import type { AreaLookup, AreaRecord } from "../areas/areaInventory";
+import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
 import {
 	explainCodeInRelease,
 	type MemberCodeStatus,

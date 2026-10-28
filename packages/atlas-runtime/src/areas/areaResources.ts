@@ -1,4 +1,4 @@
-import type { AreaLookup } from "./areaInventory";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { DataCatalog } from "../catalogue/dataCatalog";
 import type { measureCoverage } from "../catalogue/measureCoverage";
 import { observationsFor } from "../catalogue/observationArtifacts";
