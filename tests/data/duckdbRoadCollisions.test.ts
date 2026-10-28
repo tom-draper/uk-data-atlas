@@ -8,7 +8,7 @@ test("DuckDB production fixtures", () => {
 			"--import",
 			"tsx",
 			"--test",
-			"experiments/duckdb-road-collisions/production-fixtures.test.mts",
+			"tests/duckdb-fixtures/road-collisions.test.mts",
 		],
 		{ encoding: "utf8" },
 	);
