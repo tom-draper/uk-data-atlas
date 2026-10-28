@@ -4,7 +4,7 @@ import {
 	type MemberCodeStatus,
 } from "./memberReconciliation";
 import { normalisePlaceName, withoutTitle } from "./nameNormalisation";
-import { areaKey, releaseKey } from "./geographyKeys";
+import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 
 /**
  * Checking a column of codes or names against one exact boundary release,

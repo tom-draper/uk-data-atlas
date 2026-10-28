@@ -2,7 +2,7 @@ import type { AreaInventory } from "../../shared/areaInventory";
 import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import type { SourceInventory } from "./sourceInventory";
-import { releaseKey } from "../../shared/geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "../../shared/contentHash";
 
 import type {

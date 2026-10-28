@@ -1,6 +1,6 @@
 import type { AreaGeometryCache } from "../areaGeometry";
 import { sha256 } from "../contentHash";
-import { releaseKey } from "../geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { packedBounds, type PackedGeometry } from "../packedGeometry";

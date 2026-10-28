@@ -8,7 +8,7 @@ import {
 	geometrySubstitution,
 	reversedGridOffset,
 } from "./geometrySubstitution";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "./contentHash";
 
 import type {

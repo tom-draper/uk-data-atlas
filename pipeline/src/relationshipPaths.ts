@@ -1,5 +1,5 @@
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
-import { releaseKey } from "../../shared/geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "../../shared/contentHash";
 import {
 	relationshipPurposeFor,

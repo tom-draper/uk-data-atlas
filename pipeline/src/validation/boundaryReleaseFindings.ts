@@ -5,7 +5,7 @@ import {
 } from "../../../shared/reprojection";
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
-import { releaseKey } from "../../../shared/geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { knownDisplacementsFor } from "@uk-data-atlas/geography";
 
 export const boundaryReleaseFindings = (

@@ -1,6 +1,6 @@
 import type { AreaLookup } from "./areaInventory";
 import type { CrosswalkArtifact } from "./crosswalkTypes";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 /**
  * The codes a crosswalk relates, on each side of it. A record with no targets

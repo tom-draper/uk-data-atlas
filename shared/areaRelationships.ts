@@ -4,7 +4,7 @@ import type {
 	CrosswalkQuality,
 	CrosswalkWeighting,
 } from "./crosswalkInventory";
-import { areaKey, releaseKey } from "./geographyKeys";
+import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { relatedCodesOf } from "./relatedCodes";
 import { selectCrosswalks, type CrosswalkLookup } from "./translation";
 

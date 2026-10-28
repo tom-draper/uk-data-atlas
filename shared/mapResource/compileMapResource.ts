@@ -8,7 +8,7 @@ import {
 } from "@uk-data-atlas/map-tiles/compileTileset";
 import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles/tileset";
 import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
-import { releaseKey } from "../geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "../contentHash";
 import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
 

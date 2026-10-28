@@ -1,5 +1,5 @@
 import type { AreaLookup } from "./areaInventory";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 import type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation";
 export type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation";

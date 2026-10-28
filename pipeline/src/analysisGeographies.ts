@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import type { DataCatalog } from "../../shared/dataCatalog";
 import { isGeographyKind } from "../../shared/geography";
-import { releaseKey } from "../../shared/geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import type { RelationshipPathInventory } from "../../shared/relationshipPaths";
 import { sha256 } from "../../shared/contentHash";
 

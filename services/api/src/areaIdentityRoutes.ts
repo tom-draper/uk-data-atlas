@@ -1,7 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { areaKey } from "./geographyKeys";
+import { areaKey } from "@uk-data-atlas/geography";
 import { areaDossier } from "./areaDossierRoutes";
 import { areaCapabilities } from "./areaCapabilityRoutes";
 import { areaCitation } from "./areaCitationRoutes";

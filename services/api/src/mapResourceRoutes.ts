@@ -2,7 +2,7 @@ import { isNumericObservation } from "./dataCatalog";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { untiledFeatures } from "./mapResourceLoader";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { observationsFor } from "./observationArtifacts";
 import { writeParquet } from "./parquet";
 import {

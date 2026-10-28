@@ -13,7 +13,7 @@ import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RelationshipPath } from "./relationshipPaths";
 import { buildTranslationSteps } from "./translation";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import type { RouteContext } from "./routing";
 
 type Measure = DataCatalog["measures"][number];

@@ -5,7 +5,7 @@ import { areaMeasureSources } from "./areaResources";
 import type { AreaIdentity } from "./resolver/areas";
 import type { RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 /**
  * A citation for one area, as `include=citation` expands it: the artifacts

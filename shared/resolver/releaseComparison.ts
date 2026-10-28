@@ -8,7 +8,7 @@ import {
 	type CrosswalkLookup,
 	type GeographyEndpoint,
 } from "../translation";
-import { areaKey, releaseKey } from "../geographyKeys";
+import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 
 const areaId = ({
 	geography,

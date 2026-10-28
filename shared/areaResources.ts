@@ -4,7 +4,7 @@ import type { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import { problem, type ApiResponse } from "./routeResponse";
 import type { RouteContext } from "./routing";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 export const findArea = (
 	areaLookup: AreaLookup | undefined,

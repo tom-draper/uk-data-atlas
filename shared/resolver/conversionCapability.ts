@@ -5,7 +5,7 @@ import type {
 	RelationshipPurpose,
 } from "../relationshipPaths";
 import type { CrosswalkTranslator, GeographyEndpoint } from "../translation";
-import { releaseKey } from "../geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 export type RelationshipPathStepCoverage = {
 	crosswalkId: string;

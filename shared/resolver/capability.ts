@@ -13,7 +13,7 @@ import {
 	type ResolvedRelationshipCapability,
 } from "./conversionCapability";
 import type { CrosswalkTranslator } from "../translation";
-import { releaseKey } from "../geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { areaId } from "./areas";
 
 export {

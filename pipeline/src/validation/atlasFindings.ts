@@ -1,6 +1,6 @@
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
-import { releaseKey } from "../../../shared/geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 export const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 	const registryHash = inputs.boundaryRegistry.contentHash;

@@ -7,7 +7,7 @@ import {
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RouteContext } from "./routing";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 type Measure = DataCatalog["measures"][number];
 

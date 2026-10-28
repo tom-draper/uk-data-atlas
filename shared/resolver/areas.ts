@@ -1,6 +1,6 @@
 import { lazyValue } from "../lazyValue";
 import type { AreaInventory, AreaLookup, AreaRecord } from "../areaInventory";
-import { areaKey, releaseKey } from "../geographyKeys";
+import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { explainAreaAbsence, type AreaAbsence } from "../areaAbsence";
 import {
 	summariseBatch,

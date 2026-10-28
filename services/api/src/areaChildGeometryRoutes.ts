@@ -11,7 +11,7 @@ import {
 import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { areaKey, releaseKey } from "./geographyKeys";
+import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { selectAreaChildren } from "./areaChildren";
 import { readChoice } from "./queryParameters";
 import { QUERY_RULES } from "./queryRules";

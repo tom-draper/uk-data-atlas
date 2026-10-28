@@ -8,7 +8,7 @@ import {
 import type { RouteRequest } from "./routing";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
-import { areaKey } from "./geographyKeys";
+import { areaKey } from "@uk-data-atlas/geography";
 import type { NamedLocation } from "./namedLocations";
 import { paginate } from "./pagination";
 

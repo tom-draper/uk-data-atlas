@@ -1,5 +1,5 @@
 import type { AreaLookup, AreaReleaseArtifact } from "./areaInventory";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 
 export const createAreaLookup = (
 	artifacts: AreaReleaseArtifact[],

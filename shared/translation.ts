@@ -2,7 +2,7 @@ import type { AreaLookup } from "./areaInventory";
 import type { CrosswalkArtifact } from "./crosswalkTypes";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { AreaIdentity, GeographyEndpoint } from "./areaIdentity";
-import { releaseKey } from "./geographyKeys";
+import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	relationshipPurposeFor,
 	type RelationshipPath,
