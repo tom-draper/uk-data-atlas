@@ -2,7 +2,7 @@ import { join } from "node:path";
 import {
 	createCrosswalkCompiler,
 	type CrosswalkArtifact,
-} from "../../shared/crosswalkCompiler";
+} from "./crosswalkCompiler";
 import { readGeometrySourceLookup } from "../../shared/geometrySources";
 import { readStoredText } from "../../shared/storedText";
 import { sha256 } from "../../shared/contentHash";

@@ -1,7 +1,7 @@
 import {
 	compileCrosswalks as streamCrosswalks,
 	createCrosswalkInventory,
-} from "../../src/crosswalkInventory";
+} from "../../../../pipeline/src/crosswalkCompiler";
 
 export const compileCrosswalks = (
 	...args: Parameters<typeof streamCrosswalks>

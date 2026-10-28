@@ -1,19 +1,22 @@
-import { RawGeometryCache } from "./rawAreaGeometries";
+import { RawGeometryCache } from "../../shared/rawAreaGeometries";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { compileAreaOverlapCrosswalk } from "./areaOverlap";
-import type { ReleaseCoverage } from "./relatedCodes";
+import { compileAreaOverlapCrosswalk } from "../../shared/areaOverlap";
+import type { ReleaseCoverage } from "../../shared/relatedCodes";
 import {
 	compileBestFitCrosswalk,
 	compileGeometricContainmentCrosswalk,
-} from "./geometricContainment";
-import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
-import { compileExtentContinuityCrosswalk } from "./extentContinuity";
-import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
+} from "../../shared/geometricContainment";
+import { compilePopulationOverlapCrosswalk } from "../../shared/populationOverlap";
+import { compileExtentContinuityCrosswalk } from "../../shared/extentContinuity";
+import {
+	AreaGeometryCache,
+	type GeometrySourceLookup,
+} from "../../shared/areaGeometry";
 import {
 	validateGeometryContainment,
 	type GeometryContainmentValidation,
-} from "./crosswalkGeometryValidation";
+} from "../../shared/crosswalkGeometryValidation";
 import type {
 	AreaOverlapWeighting,
 	BestFitCrosswalkAdapter,
@@ -28,22 +31,22 @@ import type {
 	PopulationOverlapWeighting,
 	PropertyCrosswalkAdapter,
 	ExtentContinuityCrosswalkAdapter,
-} from "./crosswalkAdapters";
+} from "../../shared/crosswalkAdapters";
 import {
 	validateEndpoint,
 	type CrosswalkEndpointValidation,
-} from "./crosswalkValidation";
-import type { AreaLookup } from "./areaInventory";
-import type { GeometryProvenance } from "./reprojection";
+} from "../../shared/crosswalkValidation";
+import type { AreaLookup } from "../../shared/areaInventory";
+import type { GeometryProvenance } from "../../shared/reprojection";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { sha256 } from "./contentHash";
+import { sha256 } from "../../shared/contentHash";
 
 export type {
 	CrosswalkMethod,
 	CrosswalkQuality,
 	CrosswalkWeighting,
-} from "./crosswalkAdapters";
-export type { CrosswalkEndpointValidation } from "./crosswalkValidation";
+} from "../../shared/crosswalkAdapters";
+export type { CrosswalkEndpointValidation } from "../../shared/crosswalkValidation";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -68,7 +71,7 @@ import type {
 	BestFitValidation,
 	BestFitCrosswalkArtifact,
 	CrosswalkArtifact,
-} from "./crosswalkTypes";
+} from "../../shared/crosswalkTypes";
 export type {
 	CrosswalkArea,
 	AreaOverlapSource,
@@ -87,7 +90,7 @@ export type {
 	BestFitValidation,
 	BestFitCrosswalkArtifact,
 	CrosswalkArtifact,
-} from "./crosswalkTypes";
+} from "../../shared/crosswalkTypes";
 
 const CHANGE_INDICATORS: Record<string, CrosswalkChange> = {
 	U: "unchanged",
@@ -96,8 +99,8 @@ const CHANGE_INDICATORS: Record<string, CrosswalkChange> = {
 	X: "complex",
 };
 
-import type { CrosswalkInventory } from "./crosswalkInventory";
-export type { CrosswalkInventory } from "./crosswalkInventory";
+import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+export type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 
 const stringValue = (value: unknown, description: string): string => {
 	if (typeof value !== "string" || value.trim().length === 0) {
