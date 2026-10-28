@@ -183,6 +183,8 @@ For the school performance datasets, DuckDB filters the source CSVs before
 the shared loaders process the selected rows.
 The English deprivation dataset uses the same reader to select source columns
 before its loader computes the local-authority summaries.
+For electricity and gas consumption, DuckDB filters rows without an authority
+code or a consumption value before the shared loaders join population figures.
 For the 2016 to 2019 local election CSVs, DuckDB selects English and Welsh
 rows before the shared loader calculates party votes and winners.
 
