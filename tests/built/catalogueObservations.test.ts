@@ -14,7 +14,7 @@ import { expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
 
 import { buildAreaInventory } from "../../pipeline/src/build-area-inventory";
-import { buildAtlasSqlite } from "../../services/api/scripts/build-atlas-sqlite";
+import { buildAtlasSqlite } from "../../pipeline/src/buildAtlasSqlite";
 import { buildTerrainCatalogue } from "../../pipeline/src/build-terrain-catalogue";
 import { rebuildFuelPoverty } from "../../shared/catalogueObservations";
 import { readVersionedAtlasDataset } from "../../shared/atlasSqlite";

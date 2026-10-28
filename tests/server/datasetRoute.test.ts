@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
-import { buildAtlasSqlite } from "@/services/api/scripts/build-atlas-sqlite";
+import { buildAtlasSqlite } from "@/pipeline/src/buildAtlasSqlite";
 import { readAtlasDatasetUrls } from "@/shared/atlasSqlite";
 import { artifactDirectory } from "../../shared/dataLayout";
 
