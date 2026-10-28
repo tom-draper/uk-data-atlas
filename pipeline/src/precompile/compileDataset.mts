@@ -16,7 +16,11 @@ import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";
 import { createTrackedReader } from "./trackedReader.mts";
-import { withDuckdbPublicHealth } from "./duckdbPublicHealth.mts";
+import {
+	withDuckdbCensusLsoa,
+	withDuckdbPlanningApplications,
+	withDuckdbPublicHealth,
+} from "./duckdbPublicHealth.mts";
 import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.mts";
 import {
 	withDuckdbEnergyConsumption,
@@ -125,35 +129,32 @@ export async function compileStaleDataset(
 				? await withDuckdbPublicHealth(reader, artifacts, (input) =>
 						compileDatasetContents(definition, input),
 					)
-				: definition.type === "roadCollisions"
-					? await compileDatasetContents(
-							{
-								...definition,
-								precompile: () =>
-									compileDuckdbRoadCollisions(artifacts),
-							},
-							reader,
+				: definition.type === "generalHealth" ||
+					  definition.type === "housingTenure"
+					? await withDuckdbCensusLsoa(reader, artifacts, (input) =>
+							compileDatasetContents(definition, input),
 						)
-					: definition.type === "electricityConsumption" ||
-						  definition.type === "gasConsumption"
-						? await withDuckdbEnergyConsumption(
+					: definition.type === "planningApplications"
+						? await withDuckdbPlanningApplications(
 								reader,
 								artifacts,
 								(input) =>
 									compileDatasetContents(definition, input),
 							)
-						: definition.type === "localElection"
-							? await withDuckdbLocalElection(
+						: definition.type === "roadCollisions"
+							? await compileDatasetContents(
+									{
+										...definition,
+										precompile: () =>
+											compileDuckdbRoadCollisions(
+												artifacts,
+											),
+									},
 									reader,
-									artifacts,
-									(input) =>
-										compileDatasetContents(
-											definition,
-											input,
-										),
 								)
-							: definition.type === "imd"
-								? await withDuckdbImd(
+							: definition.type === "electricityConsumption" ||
+								  definition.type === "gasConsumption"
+								? await withDuckdbEnergyConsumption(
 										reader,
 										artifacts,
 										(input) =>
@@ -162,31 +163,52 @@ export async function compileStaleDataset(
 												input,
 											),
 									)
-								: definition.type === "schoolPerformance" ||
-									  definition.type ===
-											"schoolPerformanceGap" ||
-									  definition.type ===
-											"schoolPerformanceConstituency"
-									? await withDuckdbSchoolPerformance(
+								: definition.type === "localElection"
+									? await withDuckdbLocalElection(
 											reader,
 											artifacts,
-											definition.type ===
-												"schoolPerformance"
-												? "Total"
-												: definition.type ===
-													  "schoolPerformanceGap"
-													? "Disadvantage status"
-													: "Constituency",
 											(input) =>
 												compileDatasetContents(
 													definition,
 													input,
 												),
 										)
-									: await compileDatasetContents(
-											definition,
-											reader,
-										);
+									: definition.type === "imd"
+										? await withDuckdbImd(
+												reader,
+												artifacts,
+												(input) =>
+													compileDatasetContents(
+														definition,
+														input,
+													),
+											)
+										: definition.type ===
+													"schoolPerformance" ||
+											  definition.type ===
+													"schoolPerformanceGap" ||
+											  definition.type ===
+													"schoolPerformanceConstituency"
+											? await withDuckdbSchoolPerformance(
+													reader,
+													artifacts,
+													definition.type ===
+														"schoolPerformance"
+														? "Total"
+														: definition.type ===
+															  "schoolPerformanceGap"
+															? "Disadvantage status"
+															: "Constituency",
+													(input) =>
+														compileDatasetContents(
+															definition,
+															input,
+														),
+												)
+											: await compileDatasetContents(
+													definition,
+													reader,
+												);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&
