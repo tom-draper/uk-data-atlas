@@ -18,7 +18,23 @@ const commonFiles = new Set([
 	"scripts/build-data-cache.mjs",
 	"scripts/build-data-code.mjs",
 ]);
-const commonDirectories = ["services/api/config"];
+const runtimeConfig = {
+	"pipeline/src/build-derived-boundaries.ts": ["area-source-adapters.json"],
+	"pipeline/src/build-area-inventory.ts": [
+		"area-source-adapters.json",
+		"area-property-adapters.json",
+	],
+	"pipeline/src/buildCrosswalkInventory.ts": ["crosswalk-adapters.json"],
+	"pipeline/src/build-relationship-candidates.ts": [
+		"crosswalk-adapters.json",
+	],
+	"pipeline/src/build-relationship-paths.ts": ["relationship-paths.json"],
+	"pipeline/src/build-analysis-geographies.ts": ["analysis-geographies.json"],
+	"pipeline/src/build-validation-report.ts": [
+		"measure-totals.json",
+		"validation-waivers.json",
+	],
+};
 const under = (path, directory) =>
 	path === directory || path.startsWith(`${directory}/`);
 
@@ -90,6 +106,9 @@ export function stageCodeFiles(root, stage, files) {
 	const runtimeInputs = inputs.includes("shared/catalogueLoader.ts")
 		? ["services/api/openapi.yaml"]
 		: [];
+	for (const input of inputs)
+		for (const config of runtimeConfig[input] ?? [])
+			runtimeInputs.push(`services/api/config/${config}`);
 	return [
 		...new Set([
 			...runtimeInputs,
@@ -97,8 +116,8 @@ export function stageCodeFiles(root, stage, files) {
 			...files.filter(
 				(path) =>
 					commonFiles.has(path) ||
-					[...commonDirectories, ...(stage.codeInputs ?? [])].some(
-						(directory) => under(path, directory),
+					(stage.codeInputs ?? []).some((directory) =>
+						under(path, directory),
 					),
 			),
 		]),

@@ -107,13 +107,21 @@ test("UI edits reuse data outputs; transitive and dynamic imports rebuild only a
 	assert.deepEqual(run(), ["alpha", "report"]);
 }, 30_000);
 
-test("runtime configuration and lockfile changes invalidate data stages", () => {
+test("declared runtime configuration invalidates only its stage and dependants", () => {
+	const { write, run, stages } = fixture();
+	stages[0]!.codeInputs!.push("services/api/config/rules.json");
+	run();
+	write("services/api/config/unrelated.json", "changed");
+	assert.deepEqual(run(), []);
+	write("services/api/config/rules.json", "changed");
+	assert.deepEqual(run(), ["alpha", "report"]);
+});
+
+test("lockfile changes invalidate data stages", () => {
 	const { write, run } = fixture();
 	run();
-	for (const path of ["services/api/config/rules.json", "pnpm-lock.yaml"]) {
-		write(path, "changed");
-		assert.deepEqual(run(), ["alpha", "beta", "report"], path);
-	}
+	write("pnpm-lock.yaml", "changed");
+	assert.deepEqual(run(), ["alpha", "beta", "report"]);
 });
 
 test("explicit file inputs include additions and deletions without rebuilding unrelated stages", () => {
@@ -231,6 +239,32 @@ test("production builders resolve without UI code and include declared workers a
 			.includes("scripts/profile-atlas-memory.mjs"),
 	);
 	assert.ok(!inputs.get("boundaries")!.includes("services/api/openapi.yaml"));
+	for (const [stage, configs] of [
+		["derived-boundaries", ["area-source-adapters.json"]],
+		[
+			"area-inventory",
+			["area-source-adapters.json", "area-property-adapters.json"],
+		],
+		["crosswalk-inventory", ["crosswalk-adapters.json"]],
+		["relationship-candidates", ["crosswalk-adapters.json"]],
+		["relationship-paths", ["relationship-paths.json"]],
+		["analysis-geographies", ["analysis-geographies.json"]],
+		[
+			"validation-report",
+			["measure-totals.json", "validation-waivers.json"],
+		],
+	] as const) {
+		for (const config of configs)
+			assert.ok(
+				inputs.get(stage)!.includes(`services/api/config/${config}`),
+				`${stage}: ${config}`,
+			);
+	}
+	assert.ok(
+		!inputs
+			.get("crosswalk-inventory")!
+			.includes("services/api/config/validation-waivers.json"),
+	);
 	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
 	for (const path of [
 		"pipeline/src/build-derived-boundaries.ts",
