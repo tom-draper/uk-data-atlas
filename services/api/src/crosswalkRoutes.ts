@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { paginate } from "./pagination";
 import {
 	envelope,
@@ -19,7 +20,7 @@ export const handleCrosswalkRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "crosswalks"
 	) {
-		const unavailable = resolver.requires("crosswalks");
+		const unavailable = requireGeography(resolver, "crosswalks");
 		if (unavailable) return unavailable;
 		return {
 			status: 200,

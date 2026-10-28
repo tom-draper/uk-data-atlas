@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	attributionFor,
@@ -40,7 +41,7 @@ export const areaCitation = (
 			),
 		);
 	}
-	const unavailable = geographyResolver.requires("crosswalks");
+	const unavailable = requireGeography(geographyResolver, "crosswalks");
 	if (unavailable) return refuse(unavailable);
 	const measureIds = [...new Set(searchParams.getAll("measure"))];
 	const crosswalkIds = [...new Set(searchParams.getAll("crosswalk"))];
@@ -219,7 +220,7 @@ export const areaCitation = (
 					note: "No hash of the geometry source is recorded for this release. The boundary release's metadataHash pins its metadata, which names the source file but does not hash its contents.",
 				};
 	const geometry = (() => {
-		if (geographyResolver.requires("geometry"))
+		if (requireGeography(geographyResolver, "geometry"))
 			return {
 				status: "not-published" as const,
 				href: geometryHref,

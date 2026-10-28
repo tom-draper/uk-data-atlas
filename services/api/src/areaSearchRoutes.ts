@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { paginate } from "./pagination";
 import {
 	envelope,
@@ -32,7 +33,7 @@ export const handleAreaSearchRoutes = ({
 			`/v1/areas lists areas and does not search them. Find an area by name, code or postcode with /v1/places?${new URLSearchParams({ q: query })}.`,
 		);
 	const geographyResolver = context.geographyResolver;
-	const unavailable = geographyResolver.requires("area-search");
+	const unavailable = requireGeography(geographyResolver, "area-search");
 	if (unavailable) return unavailable;
 	const geography = parsedUrl.searchParams.get("geography");
 	const requestedRelease = parsedUrl.searchParams.get("release");

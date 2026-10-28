@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaMetrics } from "./areaMetrics";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
@@ -30,7 +31,7 @@ export const areaGeometryMetrics = (
 	identity: AreaIdentity,
 ): { metrics: Record<string, unknown> } | { response: ApiResponse } => {
 	const geographyResolver = context.geographyResolver;
-	const unavailable = geographyResolver.requires("geometry");
+	const unavailable = requireGeography(geographyResolver, "geometry");
 	if (unavailable) return { response: unavailable };
 	let geometrySource: GeometryProvenance | undefined;
 	try {

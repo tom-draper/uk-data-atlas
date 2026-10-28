@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	GENERALISATION_METHOD,
 	simplifyGeometry,
@@ -38,7 +39,7 @@ export const handleAreaGeometryRoutes = ({
 	};
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const unavailable = geographyResolver.requires("geometry");
+	const unavailable = requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	try {
 		const resolved = geographyResolver.areaGeometry(identity);

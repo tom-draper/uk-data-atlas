@@ -1,3 +1,4 @@
+import { requireGeography } from "./routeResponse";
 import { attributionFor, attributionText } from "../catalogue/attribution";
 import { correctionsReport } from "../catalogue/correctionsReport";
 import {
@@ -45,7 +46,10 @@ export const handleGovernanceRoutes = ({
 				"Build the data catalogue and crosswalk inventory before generating attribution.",
 			);
 		}
-		const unavailable = context.geographyResolver.requires("crosswalks");
+		const unavailable = requireGeography(
+			context.geographyResolver,
+			"crosswalks",
+		);
 		if (unavailable) return unavailable;
 		const request = {
 			datasets: parsedUrl.searchParams.getAll("dataset"),

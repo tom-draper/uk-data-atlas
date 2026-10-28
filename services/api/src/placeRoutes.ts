@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { describeCandidate } from "./placeResponses";
 import { resolveAreaQuery } from "./areaResolveRoutes";
 import { selectedAsOf } from "./locationRoutes";
@@ -48,7 +49,7 @@ export const handlePlaceRoutes = ({
 		);
 	const asOf = selectedAsOf(parsedUrl);
 	if (typeof asOf !== "string" && asOf !== undefined) return asOf;
-	const unavailable = context.geographyResolver.requires("places");
+	const unavailable = requireGeography(context.geographyResolver, "places");
 	if (unavailable) return unavailable;
 	// A postcode is exactly one place, so it leads, and names fill the rest.
 	const postcode = postcodePlace(context, query);

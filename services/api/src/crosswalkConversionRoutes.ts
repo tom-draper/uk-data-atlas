@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { directRelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 import { relationshipPurposeFor } from "@uk-data-atlas/atlas-runtime/relationships";
@@ -55,7 +56,7 @@ export const handleCrosswalkConversionRoutes = ({
 			"weighting must be area or population, or omitted for an exact regrouping.",
 		);
 	const resolver = context.geographyResolver;
-	const unavailable = resolver.requires("crosswalks");
+	const unavailable = requireGeography(resolver, "crosswalks");
 	if (unavailable) return unavailable;
 	const artifact = resolver.crosswalk(id);
 	if (!artifact)

@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { DISTANCE_METHOD } from "@uk-data-atlas/geography/area-distance";
 import {
 	MAX_STATED_ACCURACY_M,
@@ -77,7 +78,7 @@ export const handleAreaNearRoutes = ({
 			`within must be a whole number of metres from ${NEAR.within.minimum} to ${NEAR.within.maximum}.`,
 		);
 	const geographyResolver = context.geographyResolver;
-	const unavailable = geographyResolver.requires("geometry");
+	const unavailable = requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	const request = parseLookupRequest(context, searchParams);
 	if ("status" in request) return request;

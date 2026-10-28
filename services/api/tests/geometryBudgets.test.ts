@@ -40,7 +40,7 @@ const context = () =>
 
 test("refuses too many children before reading any geometry", (t) => {
 	const ctx = context();
-	t.mock.method(ctx.geographyResolver, "requires", () => undefined);
+	t.mock.method(ctx.geographyResolver, "missingRequirement", () => undefined);
 	const children = ctx.geographyResolver.relationships(parent, "contains");
 	assert.equal(children.length, 1);
 	t.mock.method(ctx.geographyResolver, "relationships", () =>
@@ -63,7 +63,7 @@ test("refuses too many children before reading any geometry", (t) => {
 
 test("refuses a child whose source vertex count exceeds the budget before simplification", (t) => {
 	const ctx = context();
-	t.mock.method(ctx.geographyResolver, "requires", () => undefined);
+	t.mock.method(ctx.geographyResolver, "missingRequirement", () => undefined);
 	t.mock.method(ctx.geographyResolver, "geometryFor", () => ({
 		geometry: geometry(250001),
 		geometrySource: { sourceCrs: "EPSG:4326" },
@@ -112,7 +112,7 @@ test("loads box geometries incrementally and stops when their cumulative vertice
 
 test("accepts a collection at the source vertex budget", (t) => {
 	const ctx = context();
-	t.mock.method(ctx.geographyResolver, "requires", () => undefined);
+	t.mock.method(ctx.geographyResolver, "missingRequirement", () => undefined);
 	t.mock.method(ctx.geographyResolver, "geometryFor", () => ({
 		geometry: geometry(250000),
 		geometrySource: { sourceCrs: "EPSG:4326" },

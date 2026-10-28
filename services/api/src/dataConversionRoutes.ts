@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import type { CrosswalkArtifact } from "./crosswalkInventory";
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
@@ -49,7 +50,7 @@ export const handleDataConversionRoutes = ({
 	)
 		return undefined;
 	const { geographyResolver, dataCatalog, measureObservations } = context;
-	const unavailable = geographyResolver.requires("crosswalks");
+	const unavailable = requireGeography(geographyResolver, "crosswalks");
 	if (!dataCatalog) {
 		return problem(
 			503,

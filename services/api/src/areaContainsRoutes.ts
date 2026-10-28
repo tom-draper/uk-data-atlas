@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	CONTAINMENT_NOTE,
 	describeLookupRelease,
@@ -70,7 +71,7 @@ export const handleAreaContainsRoutes = ({
 	if ("status" in located) return located;
 	const { point, postcode } = located;
 	const geographyResolver = context.geographyResolver;
-	const unavailable = geographyResolver.requires("geometry");
+	const unavailable = requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	const request = parseLookupRequest(
 		context,
@@ -264,7 +265,7 @@ export const handleAreaContainsBatchRoutes = ({
 	const points = parseBatchPoints(posted, crs, accuracy);
 	if (!Array.isArray(points)) return points;
 	const geographyResolver = context.geographyResolver;
-	const unavailable = geographyResolver.requires("geometry");
+	const unavailable = requireGeography(geographyResolver, "geometry");
 	if (unavailable) return unavailable;
 	const request = parseLookupRequest(context, parsedUrl.searchParams);
 	if ("status" in request) return request;

@@ -63,7 +63,7 @@ export const conversionCoverageOnto = (
 	target: Target,
 ): Array<{ path: MeasureConversionPath; targets: Set<string> }> => {
 	const crosswalks = context.geographyResolver.crosswalkSummaries();
-	if (context.geographyResolver.requires("crosswalks")) return [];
+	if (context.geographyResolver.missingRequirement("crosswalks")) return [];
 	let cache = dryRuns.get(context);
 	if (!cache) {
 		cache = new Map();

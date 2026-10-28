@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	CAPABILITY_STATUSES,
 	notBuilt,
@@ -23,7 +24,7 @@ export const areaCapabilities = (
 	const { geography, boundaryRelease, code } = identity;
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometry = (() => {
-		const unavailable = geographyResolver.requires("geometry");
+		const unavailable = requireGeography(geographyResolver, "geometry");
 		if (unavailable)
 			return {
 				...notBuilt(requirementDetail(unavailable)),
@@ -117,10 +118,10 @@ export const areaCapabilities = (
 	})();
 	return {
 		geometry,
-		relationships: geographyResolver.requires("relationships")
+		relationships: requireGeography(geographyResolver, "relationships")
 			? notBuilt(
 					requirementDetail(
-						geographyResolver.requires("relationships"),
+						requireGeography(geographyResolver, "relationships"),
 					),
 				)
 			: {
@@ -142,10 +143,10 @@ export const areaCapabilities = (
 					},
 					crosswalks,
 				},
-		namedLocations: geographyResolver.requires("named-locations")
+		namedLocations: requireGeography(geographyResolver, "named-locations")
 			? notBuilt(
 					requirementDetail(
-						geographyResolver.requires("named-locations"),
+						requireGeography(geographyResolver, "named-locations"),
 					),
 				)
 			: {

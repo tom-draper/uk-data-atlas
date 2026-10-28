@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import { notBuilt, unsupported } from "@uk-data-atlas/atlas-runtime/areas";
@@ -47,7 +48,7 @@ export const areaDossier = (
 	const relationshipSummary =
 		geographyResolver.areaRelationshipSummary(identity);
 	const geometry = (() => {
-		const unavailable = geographyResolver.requires("geometry");
+		const unavailable = requireGeography(geographyResolver, "geometry");
 		if (unavailable) return notBuilt(requirementDetail(unavailable));
 		try {
 			const resolved = geographyResolver.areaGeometry(identity);
@@ -81,7 +82,10 @@ export const areaDossier = (
 						"The release's geometry has no coordinates from which to state an extent.",
 					)
 			: { ...geometry, href: `${baseHref}?include=metrics` };
-	const relationshipUnavailable = geographyResolver.requires("relationships");
+	const relationshipUnavailable = requireGeography(
+		geographyResolver,
+		"relationships",
+	);
 	const relationships = relationshipUnavailable
 		? notBuilt(requirementDetail(relationshipUnavailable))
 		: relationshipSummary.relationships.length > 0

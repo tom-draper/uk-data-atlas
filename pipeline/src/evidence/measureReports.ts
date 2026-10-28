@@ -5,7 +5,6 @@ import {
 	type MeasureContext,
 	type ReconciliationRouteRequest,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const reconciliationEvidence = (
 	context: MeasureContext,
@@ -13,11 +12,9 @@ export const reconciliationEvidence = (
 	selection: ReconciliationRouteRequest,
 	period: string,
 ) => {
-	const unavailable = context.geographyResolver.requires("crosswalks");
-	if (unavailable)
-		throw new Error(
-			`Crosswalks unavailable: ${publicJson(unavailable.body)}`,
-		);
+	const unavailable =
+		context.geographyResolver.missingRequirement("crosswalks");
+	if (unavailable) throw new Error(`Crosswalks unavailable: ${unavailable}`);
 	const result = reconcileMeasure(context, measure, selection, period);
 	return "refusal" in result
 		? {
@@ -38,11 +35,9 @@ export const coveragePlanEvidence = (
 	measure: Measure,
 	target: { geography: string; boundaryRelease: string },
 ) => {
-	const unavailable = context.geographyResolver.requires("areas");
+	const unavailable = context.geographyResolver.missingRequirement("areas");
 	if (unavailable)
-		throw new Error(
-			`Area identities unavailable: ${publicJson(unavailable.body)}`,
-		);
+		throw new Error(`Area identities unavailable: ${unavailable}`);
 	if (
 		!context.geographyResolver.hasAreaRelease(
 			target.geography,

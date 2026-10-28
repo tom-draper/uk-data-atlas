@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
@@ -187,7 +188,10 @@ export const handleDataRoutes = ({
 		);
 	}
 	if (include === "area") {
-		const unavailable = context.geographyResolver.requires("areas");
+		const unavailable = requireGeography(
+			context.geographyResolver,
+			"areas",
+		);
 		if (unavailable) return unavailable;
 	}
 	const observations = observationsFor(measureId, source, period as string, {

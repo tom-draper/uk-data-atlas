@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	GeometryBudget,
 	MAX_GEOMETRY_FEATURES,
@@ -51,10 +52,12 @@ export const handleAreaChildGeometryRoutes = ({
 		code,
 	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const relationshipsUnavailable =
-		geographyResolver.requires("relationships");
+	const relationshipsUnavailable = requireGeography(
+		geographyResolver,
+		"relationships",
+	);
 	if (relationshipsUnavailable) return relationshipsUnavailable;
-	const geometryUnavailable = geographyResolver.requires("geometry");
+	const geometryUnavailable = requireGeography(geographyResolver, "geometry");
 	if (geometryUnavailable) return geometryUnavailable;
 	const requestedTier = readChoice(parsedUrl.searchParams.get("tier"), TIER);
 	if (!requestedTier)

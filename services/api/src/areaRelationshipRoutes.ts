@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	envelope,
@@ -40,7 +41,7 @@ export const handleAreaRelationshipRoutes = ({
 		code,
 	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const unavailable = geographyResolver.requires("relationships");
+	const unavailable = requireGeography(geographyResolver, "relationships");
 	if (unavailable) return unavailable;
 	let relationships = geographyResolver.relationships(
 		{ geography, boundaryRelease, code },

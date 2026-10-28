@@ -1,3 +1,4 @@
+import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { MAX_BATCH_VALUES } from "@uk-data-atlas/atlas-runtime/areas";
 import { matchManifest, matchReportResponse } from "./matchReport";
@@ -69,7 +70,7 @@ export const handleAreaValidationRoutes = ({
 			"parent, when supplied, must occur once for every value in the same input order.",
 		);
 	if (!geography || !boundaryRelease) {
-		const unavailable = geographyResolver.requires("areas");
+		const unavailable = requireGeography(geographyResolver, "areas");
 		if (unavailable) return unavailable;
 		const matched = geographyResolver.matchAreaValues(
 			values,

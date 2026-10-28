@@ -44,7 +44,6 @@ import {
 	type CrosswalkLookup,
 	type ResolvedAreaTranslation,
 } from "../relationships/translation";
-import { problem, type ApiResponse } from "../api/routeResponse";
 
 export type GeographyRequirement =
 	| "areas"
@@ -164,8 +163,8 @@ export class GeographyResolver {
 		);
 	}
 
-	/** Return the shared 503 response when a route's required geography input is absent. */
-	requires(requirement: GeographyRequirement): ApiResponse | undefined {
+	/** Describe a required geography input when it is absent. */
+	missingRequirement(requirement: GeographyRequirement): string | undefined {
 		// Only the requested check runs: some, such as the place index, load
 		// a large artifact the first time they are asked.
 		const available: Record<GeographyRequirement, () => boolean> = {
@@ -198,7 +197,7 @@ export class GeographyResolver {
 			crosswalks:
 				"Build the crosswalk artifacts before serving crosswalk data.",
 		};
-		return problem(503, "Catalogue Unavailable", descriptions[requirement]);
+		return descriptions[requirement];
 	}
 
 	geographyInventory() {
