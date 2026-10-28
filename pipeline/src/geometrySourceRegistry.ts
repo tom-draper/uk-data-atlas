@@ -7,7 +7,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import type { AreaReleaseArtifact } from "../../shared/areaInventory";
-import { hashFile } from "../../shared/fileHashCache";
+import { hashFile } from "./fileHashCache";
 import { reversedOffsetsFor, substitutionsFor } from "@uk-data-atlas/geography";
 import { sha256 } from "../../shared/contentHash";
 
