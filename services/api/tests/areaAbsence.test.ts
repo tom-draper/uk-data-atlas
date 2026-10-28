@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { explainAreaAbsence } from "../src/areaAbsence";
 import { createAreaLookup, type AreaInventory } from "../src/areaInventory";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 
 const release = (geography: string, id: string) => ({
 	id,

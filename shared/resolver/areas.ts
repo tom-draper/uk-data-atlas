@@ -7,7 +7,7 @@ import {
 	validateBatch,
 	type ValidatedValue,
 } from "../batchValidation";
-import type { BoundaryRegistry } from "../boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { resolvePlaces } from "../placeResolver";
 import type { PlaceIndex } from "../placeIndex";
 import {

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { attributionFor, attributionText } from "../src/attribution";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import type { DataCatalog } from "../src/dataCatalog";
 

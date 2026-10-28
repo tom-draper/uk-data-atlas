@@ -10,7 +10,7 @@ import type {
 	AreaInventory,
 	AreaReleaseArtifact,
 } from "../../shared/areaInventory";
-import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkArtifact } from "../../shared/crosswalkTypes";
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import type { DataCatalog } from "../../shared/dataCatalog";

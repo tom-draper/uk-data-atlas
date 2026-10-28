@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AreaReleaseArtifact } from "../src/areaInventory";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,

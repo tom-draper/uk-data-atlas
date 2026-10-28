@@ -5,7 +5,7 @@ import { readSqliteAreaInventory as readAreaInventory } from "../../../../shared
 import { readAreaLookup } from "../../../../shared/areaLookup";
 import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "../../../../shared/atlasNamedLocationReader";
 import { readGeographyCatalogue } from "../../../../shared/geographyCatalogue";
-import type { BoundaryRegistry } from "../../../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	compilePlaceIndex,
 	placeIndexTables,

@@ -1,7 +1,7 @@
 import type { AreaRelation } from "./areaRelationships";
 import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
 import { summariseBatch, type ValidatedValue } from "./batchValidation";
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeographyInventory } from "./geographyInventory";
 import type { AreaGeometryCache } from "./areaGeometry";
 import type { CrosswalkArtifact } from "./crosswalkTypes";

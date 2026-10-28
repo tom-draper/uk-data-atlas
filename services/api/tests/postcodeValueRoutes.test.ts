@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test, { after } from "node:test";
 import { AreaGeometryCache } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "../src/geographyResolver";
 import { compilePlaceIndex } from "../src/placeIndex";
 import type {

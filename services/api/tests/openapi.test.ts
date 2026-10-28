@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { parse } from "yaml";
 import { route } from "../src/routes";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { testContext } from "./routeFixtures";
 
 type OpenApiOperation = {

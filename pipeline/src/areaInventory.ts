@@ -10,7 +10,7 @@ import type {
 	AreaSourceAdapter,
 	AreaSourceAdapterManifest,
 } from "../../shared/areaSourceAdapters";
-import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readDbfRecords } from "../../shared/dbf";
 import { sha256 } from "../../shared/contentHash";

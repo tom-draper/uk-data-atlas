@@ -14,7 +14,7 @@ import {
 	placeIndexTables,
 } from "../src/placeIndex";
 import { parsePlaceReference, resolvePlaces } from "../src/placeResolver";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { NamedLocationInventory } from "../src/namedLocations";
 
 const release = (

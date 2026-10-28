@@ -1,5 +1,5 @@
 import type { AreaReleaseArtifact } from "../../shared/areaInventory";
-import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	type DataCatalog,
