@@ -1,5 +1,4 @@
 import { handleSyncRoutes } from "../api/syncRoutes";
-import { handleMeasureCoverageRoutes } from "../api/measureCoverageRoutes";
 import { handleMeasureReconciliationRoutes } from "../api/measureReconciliationRoutes";
 import { handleCoveragePlanRoutes } from "../api/coveragePlanRoutes";
 import { handleGeographyHealthRoutes } from "../api/geographyHealthRoutes";
@@ -12,7 +11,6 @@ import type { RouteRequest } from "../areas/routing";
 export const evidenceReport = (request: RouteRequest) => {
 	const path = request.segments;
 	if (path[1] === "measures") {
-		if (path[3] === "coverage") return handleMeasureCoverageRoutes(request);
 		if (path[3] === "reconciliation")
 			return handleMeasureReconciliationRoutes(request);
 		if (path[3] === "coverage-plan")

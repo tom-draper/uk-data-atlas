@@ -2,6 +2,7 @@ import { build } from "esbuild";
 import {
 	measureCapability,
 	measureCompatibilityReport,
+	measureCoverage,
 	measureQuality,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createHash } from "node:crypto";
@@ -112,6 +113,22 @@ const main = () => {
 								`No published measure quality record matches ${id}`,
 							);
 						return quality;
+					},
+					measureCoverage: (context, id) => {
+						if (!context.measureCompatibilityInventory)
+							throw new Error(
+								"Measure compatibility is required to build evidence",
+							);
+						const coverage = measureCoverage(
+							context.dataCatalog,
+							context.measureCompatibilityInventory,
+							id,
+						);
+						if (!coverage)
+							throw new Error(
+								`No published measure coverage record matches ${id}`,
+							);
+						return coverage;
 					},
 					measureCompatibility: (context, id) => {
 						if (!context.measureCompatibilityInventory)

@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { dataCatalog, reportWithData as routeWithData } from "./routeFixtures";
+import { measureCoverage } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { dataCatalog, measureCompatibilityInventory } from "./routeFixtures";
 
 test("publishes source and boundary code coverage without claiming equal geometry", () => {
-	const response = routeWithData("/v1/measures/population/coverage");
-	assert.equal(response.status, 200);
-	assert.deepEqual("data" in response.body && response.body.data, {
+	const data = measureCoverage(
+		dataCatalog,
+		measureCompatibilityInventory,
+		"population",
+	);
+	assert.deepEqual(data, {
 		measure: {
 			id: "population",
 			valueKind: "count",
@@ -61,6 +65,8 @@ test("publishes source and boundary code coverage without claiming equal geometr
 		],
 	});
 
-	const missing = routeWithData("/v1/measures/unknown/coverage");
-	assert.equal(missing.status, 404);
+	assert.equal(
+		measureCoverage(dataCatalog, measureCompatibilityInventory, "unknown"),
+		undefined,
+	);
 });
