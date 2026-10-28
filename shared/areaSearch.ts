@@ -6,7 +6,7 @@ export {
 } from "./areaSearchCompiler";
 import type { AreaLookup, AreaRecord } from "./areaInventory";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { NAME_NORMALISATION } from "./nameNormalisation";
+import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import {
 	atEach,

@@ -610,8 +610,9 @@ The lookup manifest build runs in `pipeline/src/build-lookup-manifest.ts`.
 The API and builder share lookup table rendering and manifest types in
 `shared/lookupExports.ts`.
 
-The cache publisher and name normalisation rules live in `shared/atlasCache.ts`
-and `shared/nameNormalisation.ts`. API imports re-export both modules.
+The cache publisher lives in `shared/atlasCache.ts`. Place-name normalisation lives
+in `@uk-data-atlas/geography`, and its index compatibility fingerprint is exported
+by `@uk-data-atlas/search-index/node`.
 
 The place index build runs in `pipeline/src/build-place-index.ts`. Its DuckDB
 compiler deduplicates name postings, while place grouping, SQLite helpers and

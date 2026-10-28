@@ -363,7 +363,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"shared/atlasCache.ts",
-		"shared/nameNormalisation.ts",
+		"packages/search-index/src/node/nameFingerprint.ts",
 		"packages/geography/src/nameNormalisation.ts",
 		"shared/sqliteTables.ts",
 	]) {

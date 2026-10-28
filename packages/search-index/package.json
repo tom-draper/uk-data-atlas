@@ -6,12 +6,17 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./node": "./src/node/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"devDependencies": {
-		"typescript": "^7.0.2"
+		"typescript": "^7.0.2",
+		"@types/node": "^26.6.2"
+	},
+	"dependencies": {
+		"@uk-data-atlas/geography": "workspace:*"
 	}
 }
