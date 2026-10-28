@@ -1,12 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { withAliases } from "../../../pipeline/src/catalog/measureAliases";
+import { measureSlug } from "@uk-data-atlas/catalogue";
 import type { DataCatalog } from "../src/dataCatalog";
-import {
-	canonicalMeasureId,
-	measureSlug,
-	searchMeasures,
-} from "../src/measureTerms";
+import { canonicalMeasureId, searchMeasures } from "../src/measureTerms";
 import {
 	dataCatalog,
 	measureObservations,

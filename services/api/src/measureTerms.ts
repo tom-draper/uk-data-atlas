@@ -6,8 +6,7 @@ import type { DataCatalog, Measure } from "./dataCatalog";
  * term may match many, and is only ever a search.
  */
 
-import { measureSlug } from "../../../shared/measureSlug";
-export { measureSlug } from "../../../shared/measureSlug";
+import { measureSlug } from "@uk-data-atlas/catalogue";
 
 // A plural and its singular are one word here, so "house prices" meets
 // "house price". Short words such as "gas" are left alone.
