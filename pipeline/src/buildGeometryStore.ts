@@ -9,16 +9,19 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
-import { AreaGeometryCache, compiledGeometryFile } from "./areaGeometry";
+import {
+	AreaGeometryCache,
+	compiledGeometryFile,
+} from "../../shared/areaGeometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "./geometrySources";
-import { geometrySubstitution } from "./geometrySubstitution";
-import { encodeGeometryStore } from "./geometryStore";
+import { readGeometrySourceLookup } from "../../shared/geometrySources";
+import { geometrySubstitution } from "../../shared/geometrySubstitution";
+import { encodeGeometryStore } from "../../shared/geometryStore";
 import {
 	compileGeometryValidity,
 	roundKeepingValidity,
 } from "./compileGeometryValidity";
-import { apiRootOf, artifactRoot } from "./dataLayout";
+import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -34,8 +37,8 @@ import { apiRootOf, artifactRoot } from "./dataLayout";
 /** The code a compiled release depends on: a change to any rebuilds them all. */
 const COMPILER_SOURCES = [
 	"package.json",
-	"../../shared/buildGeometryStore.ts",
-	"../../shared/compileGeometryValidity.ts",
+	"../../pipeline/src/buildGeometryStore.ts",
+	"../../pipeline/src/compileGeometryValidity.ts",
 	"../../shared/areaGeometry.ts",
 	"../../shared/geoJsonProperties.ts",
 	"../../shared/geometryStore.ts",

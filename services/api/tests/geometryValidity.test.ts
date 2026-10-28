@@ -12,11 +12,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { parse } from "yaml";
-import { buildGeometryStore } from "../scripts/build-geometry-store";
+import { buildGeometryStore } from "../../../pipeline/src/buildGeometryStore";
 import {
 	compileGeometryValidity,
 	roundKeepingValidity,
-} from "../scripts/compileGeometryValidity";
+} from "../../../pipeline/src/compileGeometryValidity";
 import { compiledGeometryFile, type GeometrySource } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
 import { sha256 } from "../src/contentHash";
@@ -225,6 +225,11 @@ test("compiles deterministic reports and serves them with metrics and provenance
 	symlinkSync(
 		new URL("../../../shared", import.meta.url),
 		join(root, "shared"),
+		"dir",
+	);
+	symlinkSync(
+		new URL("../../../pipeline", import.meta.url),
+		join(root, "pipeline"),
 		"dir",
 	);
 	symlinkSync(
