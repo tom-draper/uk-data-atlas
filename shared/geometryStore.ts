@@ -1,5 +1,5 @@
 import { closeSync, fstatSync, openSync, readSync } from "node:fs";
-import type { GeometryBounds } from "./areaContainment";
+import type { GeometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeoJsonGeometry, GeometrySource } from "./areaGeometry";
 import {
 	compareSpatialCells,

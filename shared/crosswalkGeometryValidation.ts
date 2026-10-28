@@ -1,7 +1,10 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
-import { containPoint, ringsOf } from "./areaContainment";
+import {
+	containPoint,
+	ringsOf,
+} from "@uk-data-atlas/geography/geometry-point-containment";
 import { boundaryDistanceWithinM, distanceToBoundaryM } from "./areaDistance";
 import type { CrosswalkArea } from "./crosswalkTypes";
 import {

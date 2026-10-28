@@ -1,9 +1,9 @@
 import polygonClipping, { type MultiPolygon } from "polygon-clipping";
 import type { AreaGeometryCache, GeoJsonGeometry } from "./areaGeometry";
-import { geometryBounds } from "./areaContainment";
+import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 
-import type { NamedLocationGeometry } from "./geometryTypes";
-export type { NamedLocationGeometry } from "./geometryTypes";
+import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
+export type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
 
 const multiPolygon = (geometry: GeoJsonGeometry): MultiPolygon[] =>
 	geometry.type === "Polygon"

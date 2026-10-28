@@ -7,7 +7,10 @@ import type {
 } from "../areaGeometry";
 import { distanceToBoundaryM } from "../areaDistance";
 import type { Neighbour } from "../areaNeighbours";
-import type { GeometryBounds, PointContainment } from "../areaContainment";
+import type {
+	GeometryBounds,
+	PointContainment,
+} from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeometryProvenance } from "../reprojection";
 import { areaId, type AreaIdentity } from "./areas";
 

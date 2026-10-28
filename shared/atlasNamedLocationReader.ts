@@ -4,7 +4,7 @@ import type {
 	NamedLocation,
 	NamedLocationInventory,
 } from "./namedLocationTypes";
-import type { NamedLocationGeometry } from "./geometryTypes";
+import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
 import { atlasDatabasePath } from "./dataLayout";
 
 export const readSqliteNamedLocationInventory = (

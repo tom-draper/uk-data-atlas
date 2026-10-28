@@ -6,7 +6,7 @@ import {
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import { areaMetrics } from "../src/areaMetrics";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
-import { containPoint } from "../src/areaContainment";
+import { containPoint } from "@uk-data-atlas/geography/geometry-point-containment";
 
 const A = 6378137;
 const F = 1 / 298.257223563;
