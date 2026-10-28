@@ -2,10 +2,10 @@ import { copyFileSync, renameSync, rmSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { writePostcodeAreas } from "./atlasPostcodeAreas";
-import { sha256 } from "./contentHash";
-import type { PostcodeAreasArtifact } from "./postcodeAreaTypes";
-import { artifactDirectory } from "./dataLayout";
+import { writePostcodeAreas } from "../../shared/atlasPostcodeAreas";
+import { sha256 } from "../../shared/contentHash";
+import type { PostcodeAreasArtifact } from "../../shared/postcodeAreaTypes";
+import { artifactDirectory } from "../../shared/dataLayout";
 
 /** Publish complete tables atomically, preserving the other atlas data. */
 function store(

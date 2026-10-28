@@ -1,7 +1,7 @@
 import { readAtlasPayload } from "../../shared/atlasSqlite";
 import { readSqlitePostcodeShard } from "../../shared/atlasPostcodesReader";
 import { readSqlitePostcodeAreaShard } from "../../shared/atlasPostcodeAreaReader";
-import { storePostcodeAreas } from "../../shared/storePostcodeAreas";
+import { storePostcodeAreas } from "./storePostcodeAreas";
 
 import { availableParallelism } from "node:os";
 import { dirname, resolve } from "node:path";

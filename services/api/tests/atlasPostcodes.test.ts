@@ -14,7 +14,7 @@ import test, { type TestContext } from "node:test";
 import { artifactRoot } from "../../../shared/dataLayout";
 import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
-import { storePostcodeIndex } from "../scripts/store-postcode-index";
+import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
 import { buildPostcodeIndex } from "../../../pipeline/src/build-postcode-index";
 import { readPostcodeIndex } from "../src/boundaryLoader";
 import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
