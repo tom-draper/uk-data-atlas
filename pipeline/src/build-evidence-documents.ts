@@ -1,6 +1,7 @@
 import { build } from "esbuild";
 import {
 	correctionsReport,
+	geographyHealthReport,
 	measureCapability,
 	measureCompatibilityReport,
 	measureCoverage,
@@ -78,7 +79,14 @@ const main = () => {
 	});
 	const documents = [
 		write("corrections", { status: 200, data: correctionsReport(null) }),
-		write("geography-health", report(context, "/v1/geography-health")),
+		write("geography-health", {
+			status: 200,
+			data: geographyHealthReport(context.geographyResolver, {
+				geography: null,
+				country: null,
+				reach: null,
+			}),
+		}),
 		write("relationship-repairs", {
 			status: 200,
 			data: relationshipRepairsReport(context.geographyResolver),

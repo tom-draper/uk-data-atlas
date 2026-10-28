@@ -12,6 +12,7 @@ export * from "./dataCatalog";
 export * from "./evidenceDocuments";
 export * from "./evidenceReports";
 export * from "./geographyCatalogue";
+export * from "./geographyHealthReport";
 export * from "./governanceLoader";
 export * from "./measureCapability";
 export * from "./measureCompatibility";
