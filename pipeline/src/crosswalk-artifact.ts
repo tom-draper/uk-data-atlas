@@ -1,6 +1,6 @@
 import { mkdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import type { CrosswalkArtifact } from "../../shared/crosswalkCompiler";
+import type { CrosswalkArtifact } from "./crosswalkCompiler";
 import { writeStoredText } from "../../shared/storedText";
 
 /** Publish a complete checkpoint, preserving the previous file on failure. */

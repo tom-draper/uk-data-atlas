@@ -25,7 +25,7 @@ import {
 	type GeometricContainmentCrosswalkArtifact,
 	type PropertyCrosswalkArtifact,
 	type ExtentContinuityCrosswalkArtifact,
-} from "../../shared/crosswalkCompiler";
+} from "./crosswalkCompiler";
 import {
 	CONTAINMENT_TOLERANCE_M,
 	geometryContainmentInputs,

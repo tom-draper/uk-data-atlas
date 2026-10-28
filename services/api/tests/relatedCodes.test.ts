@@ -4,8 +4,8 @@ import { createAreaLookup } from "../src/areaInventory";
 import {
 	createCrosswalkInventory,
 	crosswalkInventoryFromEntries,
-	type PropertyCrosswalkArtifact,
-} from "../src/crosswalkInventory";
+} from "../../../pipeline/src/crosswalkCompiler";
+import type { PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
 import {
 	addRelatedCodes,
 	releaseCoverageOf,

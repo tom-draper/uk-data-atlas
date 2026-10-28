@@ -4,10 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { readCrosswalkAdapters } from "../../shared/crosswalkAdapters";
-import {
-	compileCrosswalks,
-	type CrosswalkArtifact,
-} from "../../shared/crosswalkCompiler";
+import { compileCrosswalks, type CrosswalkArtifact } from "./crosswalkCompiler";
 import { readGeometrySourceLookup } from "../../shared/geometrySources";
 import { readStoredText, storedTextExists } from "../../shared/storedText";
 import { sha256 } from "../../shared/contentHash";

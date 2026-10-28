@@ -9,7 +9,7 @@ import {
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
-} from "../src/crosswalkInventory";
+} from "../../../pipeline/src/crosswalkCompiler";
 import { readStoredText } from "../src/storedText";
 import { writeCrosswalkArtifact } from "../../../pipeline/src/crosswalk-artifact";
 import { crosswalkWorkerFixture } from "./helpers/crosswalkWorkerFixture";

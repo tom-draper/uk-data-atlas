@@ -3,7 +3,7 @@ import { availableParallelism } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CrosswalkAdapter } from "../../shared/crosswalkAdapters";
-import type { CrosswalkArtifact } from "../../shared/crosswalkCompiler";
+import type { CrosswalkArtifact } from "./crosswalkCompiler";
 import { readStoredText } from "../../shared/storedText";
 
 export type CrosswalkDependency = { path: string; contentHash: string };
