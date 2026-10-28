@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { MultiPolygon } from "polygon-clipping";
-import { BoundedClipper } from "../src/boundedClipping";
+import { BoundedClipper } from "@uk-data-atlas/atlas-runtime/geometry";
 
 const square = (west: number, east: number): MultiPolygon => [
 	[

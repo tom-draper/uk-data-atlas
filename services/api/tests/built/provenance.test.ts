@@ -1,7 +1,7 @@
 import {
 	observationDatabasePath,
 	readObservationText,
-} from "../../src/atlasObservations";
+} from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";

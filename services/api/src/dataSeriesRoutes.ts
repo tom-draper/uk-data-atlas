@@ -1,9 +1,12 @@
-import { isNumericObservation } from "./dataCatalog";
+import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { analysisConversion } from "./analysisGeographies";
-import { convertThroughSteps, type ConversionStep } from "./conversion";
-import { buildTranslationSteps } from "./resolver/translation";
-import { observationsFor } from "./observationArtifacts";
-import { parseExactReleaseReference } from "./releaseForDate";
+import {
+	convertThroughSteps,
+	type ConversionStep,
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { buildTranslationSteps } from "@uk-data-atlas/atlas-runtime/relationships";
+import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { parseExactReleaseReference } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	areaNamedBy,
 	namedAreaRefusal,
@@ -11,15 +14,15 @@ import {
 	statedDefaults,
 } from "./dataDefaults";
 import { selectSourcePartition } from "./sourcePartition";
-import { sourceSeriesProvenance } from "./sourceExactProvenance";
-import type { RouteRequest } from "./routing";
+import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/api";
 
 /** One area's source-exact, or explicitly reviewed derived, values over time. */
 export const handleDataSeriesRoutes = ({

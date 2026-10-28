@@ -9,9 +9,12 @@ import {
 	type GeoJsonGeometry,
 	type GeometrySource,
 	type GeometrySourceLookup,
-} from "../src/areaGeometry";
-import { encodeGeometryStore, readGeometryStore } from "../src/geometryStore";
-import { createAreaGeometryCache } from "../src/geometryLoader";
+} from "@uk-data-atlas/atlas-runtime/geometry";
+import {
+	encodeGeometryStore,
+	readGeometryStore,
+} from "@uk-data-atlas/atlas-runtime/geometry";
+import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	packGeometry,
 	unpackGeometry,

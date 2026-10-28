@@ -5,7 +5,7 @@ import type {
 	CategoricalObservation,
 	MeasureObservationArtifact,
 	DataCatalog,
-} from "../src/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	compatibleWardAreaLookup,
 	dataCatalog,

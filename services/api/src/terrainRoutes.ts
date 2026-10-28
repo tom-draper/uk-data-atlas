@@ -1,11 +1,19 @@
-import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { choices, readChoice, readFiniteNumber } from "./queryParameters";
+import {
+	envelope,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	choices,
+	readChoice,
+	readFiniteNumber,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 import {
 	TerrainRemoteError,
 	type TerrainInterpolation,
-} from "./terrainProvider";
+} from "@uk-data-atlas/atlas-runtime/maps";
 
 const POINT = QUERY_RULES["GET /terrain/elevation/point"];
 

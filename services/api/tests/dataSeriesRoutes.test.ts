@@ -5,11 +5,11 @@ import type { PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
 import type {
 	MeasureObservationArtifact,
 	SourceGeography,
-} from "../src/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	tableMeasureObservations,
 	type MeasureTableArtifact,
-} from "../src/observationTables";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	crosswalkArtifact,
 	dataCatalog,

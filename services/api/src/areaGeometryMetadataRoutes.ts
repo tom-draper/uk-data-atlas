@@ -1,9 +1,9 @@
 import { areaMetrics } from "./areaMetrics";
-import { sha256 } from "./contentHash";
-import type { AreaIdentity } from "./resolver/areas";
+import { sha256 } from "@uk-data-atlas/artifacts";
+import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/api";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
-import type { RouteRequest } from "./routing";
-import { problem, type ApiResponse } from "./routeResponse";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * Travels with every measurement, so a figure taken from one response can be

@@ -4,16 +4,16 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import type { Polygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "../src/areaGeometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "../src/areaInventory";
-import { createAreaRelationshipIndex } from "../src/areaRelationships";
+import { createAreaRelationshipIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	readCrosswalkAdapters,
 	type ExtentContinuityCrosswalkAdapter,
-} from "../src/crosswalkAdapters";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
-import { createGeographyResolver } from "../src/geographyResolver";
-import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import { crosswalkShape } from "../../../pipeline/src/relationshipPaths";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import {

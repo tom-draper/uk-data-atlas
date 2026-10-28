@@ -12,14 +12,14 @@ import { buildAnalysisGeographyValidation } from "../../../pipeline/src/buildAna
 import { storeObservations } from "../../../pipeline/src/store-observations";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { validateAnalysisGeographies } from "../src/analysisGeographyValidation";
+import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
-} from "../src/dataCatalog";
-import type { MeasureTableArtifact } from "../src/observationTables";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const analysisGeographies: AnalysisGeographyInventory = {

@@ -1,6 +1,6 @@
-import { evidenceReport } from "../src/evidenceReports";
+import { evidenceReport } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { route } from "../src/routes";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 
 /** Drive the build-time report adapter using the same input fixtures as its former HTTP operation. */
 export const reportRequest = (

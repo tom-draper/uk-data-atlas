@@ -14,11 +14,11 @@ import {
 } from "@uk-data-atlas/map-tiles/tileset";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { createAreaGeometryCache } from "../../src/geometryLoader";
+import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	buildFullDetailParquet,
 	GEOJSON_TIERS,
-} from "../../src/mapResource/fullDetail";
+} from "@uk-data-atlas/atlas-runtime/maps";
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";

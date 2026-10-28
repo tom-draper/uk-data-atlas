@@ -9,7 +9,7 @@ import {
 	matchesEntityTag,
 	preflightResponse,
 } from "../../src/httpResponse";
-import type { ApiResponse } from "../../src/routeResponse";
+import type { ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
 

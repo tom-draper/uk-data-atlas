@@ -4,11 +4,11 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
 import { expect, it } from "vitest";
-import { catalogueObservationTables } from "../../services/api/src/catalogueObservationTables";
+import { catalogueObservationTables } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	writeSqliteIndex,
 	writeSqliteTables,
-} from "../../services/api/src/sqliteIndex";
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { rebuildFuelPoverty } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
 

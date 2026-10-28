@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { GeoJsonGeometry } from "../src/areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
 import { compileTiers } from "@uk-data-atlas/map-tiles/topologyTiers";
 

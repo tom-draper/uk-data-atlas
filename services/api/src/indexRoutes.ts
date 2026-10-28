@@ -1,5 +1,5 @@
-import { envelope, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { envelope, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 
 /** The API's entry point, linking every resource it serves. */
 export const handleIndexRoutes = ({

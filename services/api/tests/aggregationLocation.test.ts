@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createGeographyResolver } from "../src/geographyResolver";
-import type { MeasureSource } from "../src/dataCatalog";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	resolveAggregationLocation,
 	validateAggregationLocationSource,

@@ -8,12 +8,16 @@ import {
 	GEOMETRY_TIERS,
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { areaNotFound } from "./areaResources";
-import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	envelope,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { selectAreaChildren } from "./areaChildren";
-import { readChoice } from "./queryParameters";
+import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const TIER =

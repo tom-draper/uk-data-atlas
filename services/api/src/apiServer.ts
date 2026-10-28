@@ -27,13 +27,17 @@ import {
 	deprecationHeaders,
 	type MatchedOperation,
 	unexpectedQueryParameter,
-} from "./operationTemplates";
+} from "@uk-data-atlas/atlas-runtime/api";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./postcodeRoutes";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
 import { ResponseCache } from "./responseCache";
-import { isStoredFile, problem, type ApiResponse } from "./routeResponse";
+import {
+	isStoredFile,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { routeAsync } from "./routes";
-import type { RouteContext } from "./routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	DEFAULT_MAX_URL_LENGTH,
 	DEFAULT_MAX_CONCURRENT_REQUESTS,

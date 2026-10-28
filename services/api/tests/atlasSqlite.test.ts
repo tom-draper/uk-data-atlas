@@ -1,21 +1,27 @@
-import { atlasCachePath } from "../src/atlasCache";
+import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildAreaSearchIndex } from "../src/cache-build/buildAreaSearchIndex";
-import { AreaSearch } from "../src/areaSearch";
-import { readAreaSearchIndex, readAreaLookup } from "../src/boundaryLoader";
+import { AreaSearch } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	readAreaSearchIndex,
+	readAreaLookup,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { buildPlaceIndex } from "../src/cache-build/buildPlaceIndex";
-import { readAreaInventory, readPlaceIndex } from "../src/boundaryLoader";
-import { readNamedLocationInventory } from "../src/locationLoader";
-import { resolvePlaces } from "../src/placeResolver";
+import {
+	readAreaInventory,
+	readPlaceIndex,
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import { resolvePlaces } from "@uk-data-atlas/atlas-runtime/places";
 import { buildLocationProjections } from "../../../pipeline/src/buildLocationProjections";
-import { createNamedLocationLookup } from "../src/namedLocations";
+import { createNamedLocationLookup } from "@uk-data-atlas/atlas-runtime/places";
 import {
 	compileLocationProjections,
 	LocationProjectionStore,
-} from "../src/locationProjections";
+} from "@uk-data-atlas/atlas-runtime/places";
 import {
 	createLocationProjectionStore,
 	readLocationProjectionInventory,
-} from "../src/locationLoader";
+} from "@uk-data-atlas/atlas-runtime/places";
 import {
 	areaLookup,
 	containmentCrosswalk,
@@ -39,8 +45,8 @@ import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { buildAtlasSqlite } from "../../../pipeline/src/buildAtlasSqlite";
 import { buildTerrainCatalogue } from "../../../pipeline/src/build-terrain-catalogue";
-import { readTerrainCatalogue } from "../src/boundaryLoader";
-import { readPublicManifest } from "../src/publicManifest";
+import { readTerrainCatalogue } from "@uk-data-atlas/atlas-runtime/areas";
+import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import { route } from "../src/routes";
 import type { TerrainCatalogue } from "../src/terrainCatalogue";
 import { testContext } from "./routeFixtures";

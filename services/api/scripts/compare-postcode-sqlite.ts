@@ -6,9 +6,9 @@ import { inflateSync } from "node:zlib";
 import {
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeAreas,
-} from "../src/atlasPostcodeDerived";
-import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
-import { sha256 } from "../src/contentHash";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeIndexArtifact, PostcodeShard } from "../src/postcodes";
 
 const [beforePath, apiRoot, output] = process.argv.slice(2);

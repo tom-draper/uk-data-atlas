@@ -1,9 +1,13 @@
-import { unexpectedQueryParameter } from "./operationTemplates";
+import { unexpectedQueryParameter } from "@uk-data-atlas/atlas-runtime/api";
 import { handleRoute, handleRouteAsync } from "./routeHandlers";
-import type { RequestBody, RouteContext, RouteRequest } from "./routing";
-import { problem, type ApiResponse } from "./routeResponse";
+import type {
+	RequestBody,
+	RouteContext,
+	RouteRequest,
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
-export { type ApiResponse } from "./routeResponse";
+export { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 const decodePathSegment = (segment: string) => {
 	try {

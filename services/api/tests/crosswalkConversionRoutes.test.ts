@@ -10,7 +10,7 @@ import type {
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
 import { route } from "../src/routes";
-import type { ApiResponse } from "../src/routeResponse";
+import type { ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { areaLookup, containmentCrosswalk, testContext } from "./routeFixtures";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";
 

@@ -5,17 +5,20 @@ import {
 	lookupBodyHash,
 	namedLocationMembersTable,
 	renderLookup,
-} from "./lookupExports";
-import { findMeasureObservations } from "./dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { findMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { observationTableOf, observationTextOf } from "./observationTables";
-import { choices, readChoice } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	observationTableOf,
+	observationTextOf,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const EXPORT = QUERY_RULES["GET /exports/{export-id}"];

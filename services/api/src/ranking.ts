@@ -1,4 +1,4 @@
-import type { PopulationObservation } from "./dataCatalog";
+import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 export type RankingOrder = "asc" | "desc";
 

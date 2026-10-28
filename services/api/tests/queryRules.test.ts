@@ -2,8 +2,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { parse } from "yaml";
-import { choices, readChoice, readWholeNumber } from "../src/queryParameters";
-import { compileQueryRules } from "../src/queryRuleCompiler";
+import {
+	choices,
+	readChoice,
+	readWholeNumber,
+} from "@uk-data-atlas/atlas-runtime/api";
+import { compileQueryRules } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "../src/queryRules";
 
 const openapiDocument = readFileSync(

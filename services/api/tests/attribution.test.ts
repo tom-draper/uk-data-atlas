@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { attributionFor, attributionText } from "../src/attribution";
+import {
+	attributionFor,
+	attributionText,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
-import type { DataCatalog } from "../src/dataCatalog";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const dataCatalog = {
 	datasets: [

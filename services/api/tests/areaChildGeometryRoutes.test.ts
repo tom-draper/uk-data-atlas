@@ -7,7 +7,7 @@ import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "../src/areaGeometry";
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	route,
 	registry,

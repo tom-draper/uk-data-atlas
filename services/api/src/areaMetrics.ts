@@ -5,7 +5,7 @@ import {
 	projectEqualArea,
 	unprojectEqualArea,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import type { GeoJsonGeometry } from "./areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	containPoint,
 	geometryBounds,

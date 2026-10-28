@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { RouteContext, RouteRequest } from "../src/routing";
+import type {
+	RouteContext,
+	RouteRequest,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { handleRoute } from "../src/routeHandlers";
-import { handleSyncRoutes } from "../src/syncRoutes";
+import { handleSyncRoutes } from "@uk-data-atlas/atlas-runtime/api";
 import { reportRequest as routeRequest } from "./evidenceFixtures";
 import { testContext } from "./routeFixtures";
 

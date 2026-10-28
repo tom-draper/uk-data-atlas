@@ -1,9 +1,13 @@
-import type { NamedLocation } from "./namedLocations";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
 import type { AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type { PopulationObservation } from "./dataCatalog";
+import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { aggregateRecordsForTarget } from "./aggregateTargetMembers";
-import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
+import {
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { calculateWeightedMean } from "./weightedMean";
 
 type WeightedAggregateResult =

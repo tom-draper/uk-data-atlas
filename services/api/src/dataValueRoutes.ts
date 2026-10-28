@@ -1,6 +1,6 @@
 import { isCountryCode } from "./aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
-import type { Measure } from "./dataCatalog";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { CONTAINMENT_NOTE, countryOfCode } from "./pointLookup";
 import {
 	findPostcode,
@@ -17,13 +17,13 @@ import {
 } from "./postcodeValue";
 import { valueForPlace } from "./placeValue";
 import { describeAttempt, describeCandidate } from "./placeResponses";
-import type { RouteRequest } from "./routing";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/api";
 
 /** A measure's value for one named place, reporting each candidate meaning that was tried. */
 export const handleDataValueRoutes = ({

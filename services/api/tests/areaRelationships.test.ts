@@ -5,11 +5,11 @@ import {
 	LazyAreaRelationshipIndex,
 	relationsOf,
 	type AreaRelation,
-} from "../src/areaRelationships";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	selectCrosswalks,
 	type CrosswalkLookup,
-} from "../src/resolver/translation";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AreaOverlapCrosswalkArtifact,
 	PropertyCrosswalkArtifact,

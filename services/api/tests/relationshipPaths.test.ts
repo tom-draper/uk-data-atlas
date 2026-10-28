@@ -4,7 +4,7 @@ import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import {
 	createRelationshipPathIndex,
 	type CrosswalkShape,
-} from "../src/relationshipPaths";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
 import { crosswalkInventory } from "./geographyFixtures";
 

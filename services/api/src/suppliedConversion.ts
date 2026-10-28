@@ -1,10 +1,10 @@
-import type { ValidatedValue } from "./batchValidation";
+import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	componentsThroughSteps,
 	convertThroughSteps,
 	type ConversionStep,
-} from "./conversion";
-import type { PopulationObservation } from "./dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { PostedRows } from "./requestRows";
 
 type Count = Pick<PopulationObservation, "areaCode" | "value">;

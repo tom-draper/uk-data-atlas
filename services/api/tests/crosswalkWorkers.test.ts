@@ -10,7 +10,7 @@ import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
 } from "../../../pipeline/src/crosswalkCompiler";
-import { readStoredText } from "../src/storedText";
+import { readStoredText } from "@uk-data-atlas/artifacts";
 import { writeCrosswalkArtifact } from "../../../pipeline/src/crosswalk-artifact";
 import { crosswalkWorkerFixture } from "./helpers/crosswalkWorkerFixture";
 

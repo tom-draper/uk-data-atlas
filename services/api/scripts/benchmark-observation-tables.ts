@@ -5,7 +5,7 @@ import { createApiServer } from "../src/apiServer";
 import {
 	tableMeasureObservations,
 	type MeasureTableArtifact,
-} from "../src/observationTables";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { dataCatalog, testContext } from "../tests/routeFixtures";
 
 // From services/api: node --expose-gc --import tsx scripts/benchmark-observation-tables.ts

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import test from "node:test";
-import { readCrosswalkAdapters } from "../src/crosswalkAdapters";
+import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
-import { readAreaLookup } from "../src/boundaryLoader";
-import { readGeometrySourceLookup } from "../src/geometrySources";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 
 const adapters = readCrosswalkAdapters(
 	new URL("../config/crosswalk-adapters.json", import.meta.url).pathname,

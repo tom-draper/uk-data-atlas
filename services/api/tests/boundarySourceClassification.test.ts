@@ -4,8 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { createBoundaryRegistry } from "../../../pipeline/src/build-boundary-registry";
-import { sha256 } from "../src/contentHash";
-import { selectReleaseForDate } from "../src/releaseForDate";
+import { sha256 } from "@uk-data-atlas/artifacts";
+import { selectReleaseForDate } from "@uk-data-atlas/atlas-runtime/areas";
 import { createSourceInventory } from "../../../pipeline/src/sourceInventory";
 
 test("keeps the ONS names-and-codes table out of boundary release selection", (t) => {

@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { ExtentContinuityCrosswalkAdapter } from "../src/crosswalkAdapters";
+import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import { isGeographyKind } from "@uk-data-atlas/geography";
 

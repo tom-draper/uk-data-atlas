@@ -1,17 +1,17 @@
 import { DatabaseSync } from "node:sqlite";
-import { areaTables } from "../src/atlasAreas";
-import { writeSqliteIndex } from "../src/sqliteIndex";
+import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { validateBatch } from "../src/batchValidation";
-import { readAreaLookup } from "../src/boundaryLoader";
-import { readNamedLocationInventory } from "../src/locationLoader";
-import { namedLocationTables } from "../src/atlasNamedLocations";
+import { validateBatch } from "@uk-data-atlas/atlas-runtime/api";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import { namedLocationTables } from "@uk-data-atlas/atlas-runtime/storage";
 import type { AreaInventory } from "../src/areaInventory";
-import type { NamedLocationInventory } from "../src/namedLocations";
+import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const storeAreas = (

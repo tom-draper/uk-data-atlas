@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import type { ParquetTable } from "../src/parquet";
+import type { ParquetTable } from "@uk-data-atlas/artifacts";
 
 const rows = Number(process.argv[2] ?? 250000);
 assert.ok(
@@ -10,11 +10,11 @@ assert.ok(
 	"rows must be 1..250000",
 );
 assert.ok(global.gc, "Run with --expose-gc");
-const modulePath = resolve(
-	process.argv[3] ?? resolve(import.meta.dirname, "../src/parquet.ts"),
-);
-const writer: typeof import("../src/parquet") = await import(
-	pathToFileURL(modulePath).href
+const modulePath = process.argv[3]
+	? resolve(process.argv[3])
+	: "@uk-data-atlas/artifacts";
+const writer: typeof import("@uk-data-atlas/artifacts") = await import(
+	process.argv[3] ? pathToFileURL(modulePath).href : modulePath
 );
 const table: ParquetTable = {
 	columns: [

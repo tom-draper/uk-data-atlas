@@ -1,13 +1,13 @@
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./pairOverlap";
-import { areaNotFound } from "./areaResources";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
-import type { RouteRequest } from "./routing";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
+} from "@uk-data-atlas/atlas-runtime/api";
 
 /** Travels with an overlap, so the relation reported can be read against the rule that decided it. */
 const PAIR_OVERLAP_METHOD = {

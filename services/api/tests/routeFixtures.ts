@@ -1,13 +1,13 @@
 import { compileOperationTemplates } from "../../../pipeline/src/operationTemplates";
 import { reportRequest } from "./evidenceFixtures";
 import { createAreaLookup } from "../src/areaInventory";
-import type { AreaGeometryCache } from "../src/areaGeometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	createGeographyResolver,
 	type GeographyResolverInputs,
-} from "../src/geographyResolver";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
@@ -20,17 +20,17 @@ import type { RelationshipCandidateInventory } from "../src/relationshipCandidat
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
-} from "../src/namedLocations";
-import type { ValidationReport } from "../src/validationReport";
+} from "@uk-data-atlas/atlas-runtime/places";
+import type { ValidationReport } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	MeasureObservationArtifact,
 	DataCatalog,
-} from "../src/dataCatalog";
-import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
-import { compileAreaSearchIndex } from "../src/areaSearch";
-import { compilePlaceIndex } from "../src/placeIndex";
-import { createRelationshipPathIndex } from "../src/relationshipPaths";
-import { createOperationMatcher } from "../src/operationTemplates";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
+import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import { parse } from "yaml";
 
 /**

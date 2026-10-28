@@ -6,7 +6,7 @@ import {
 	geometryMeetsBounds,
 	type GeometryBounds,
 } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "../src/areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 
 const ring = (west: number, south: number, east: number, north: number) => [
 	[west, south],

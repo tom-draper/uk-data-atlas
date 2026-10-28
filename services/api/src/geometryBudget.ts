@@ -1,6 +1,6 @@
-import type { GeoJsonGeometry } from "./areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import { countVertices } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { problem } from "./routeResponse";
+import { problem } from "@uk-data-atlas/atlas-runtime/api";
 
 export const MAX_GEOMETRY_FEATURES = 1000;
 export const MAX_GEOMETRY_SOURCE_VERTICES = 250_000;

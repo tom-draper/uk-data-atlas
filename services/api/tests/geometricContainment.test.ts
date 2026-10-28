@@ -4,13 +4,13 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import type { Polygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "../src/areaGeometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "../src/areaInventory";
-import { createAreaRelationshipIndex } from "../src/areaRelationships";
+import { createAreaRelationshipIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
-} from "../src/crosswalkAdapters";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { measureContainment } from "../../../pipeline/src/geometricContainment";
 

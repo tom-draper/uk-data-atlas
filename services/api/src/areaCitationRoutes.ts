@@ -1,10 +1,13 @@
-import type { DataCatalog } from "./dataCatalog";
-import { attributionFor, attributionText } from "./attribution";
-import { measureCoverage } from "./measureCoverage";
-import { areaMeasureSources } from "./areaResources";
-import type { AreaIdentity } from "./resolver/areas";
-import type { RouteRequest } from "./routing";
-import { problem, type ApiResponse } from "./routeResponse";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	attributionFor,
+	attributionText,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { measureCoverage } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { areaMeasureSources } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 /**

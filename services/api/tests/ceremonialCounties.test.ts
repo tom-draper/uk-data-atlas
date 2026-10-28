@@ -5,8 +5,8 @@ import {
 	countyMemberships,
 	withCeremonialCounties,
 	type CountyShape,
-} from "../src/ceremonialCounties";
-import type { NamedLocation } from "../src/namedLocations";
+} from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
 
 const box = (west: number, south: number, east: number, north: number) => ({
 	type: "Polygon",

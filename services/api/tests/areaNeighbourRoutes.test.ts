@@ -6,7 +6,7 @@ import test from "node:test";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "../src/areaGeometry";
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	route,
 	registry,

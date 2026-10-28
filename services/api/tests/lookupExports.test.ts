@@ -12,11 +12,11 @@ import {
 	crosswalkTable,
 	namedLocationMembersTable,
 	renderLookup,
-} from "../src/lookupExports";
-import type { NamedLocationInventory } from "../src/namedLocations";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 
 const wards = {
 	schemaVersion: 1 as const,

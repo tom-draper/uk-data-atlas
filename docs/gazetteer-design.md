@@ -387,7 +387,7 @@ Dagenham and Rainham, where Havering's share falls from 66% to 39%.
 - **Nations and a county tier as gazetteer regions**, unless a feature needs
   them. Nations are already named locations and are filtered by code prefix.
 - **Postcodes in the browser.** The API serves postcode lookup
-  (`services/api/src/postcodeAreas.ts`).
+  (`packages/atlas-runtime/src/postcodes/postcodeAreas.ts`).
 
 ### 9.8 Extensive and intensive values (already owned by the API)
 

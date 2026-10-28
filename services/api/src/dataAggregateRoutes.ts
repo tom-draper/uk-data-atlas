@@ -1,5 +1,9 @@
-import type { RouteRequest } from "./routing";
-import { problem, type ApiResponse, type Envelope } from "./routeResponse";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	problem,
+	type ApiResponse,
+	type Envelope,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { readWeightedSource } from "./weightedSource";
 import { calculateWeightedAggregate } from "./weightedAggregation";
 import {

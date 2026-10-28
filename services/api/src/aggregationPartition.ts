@@ -4,11 +4,11 @@ import {
 } from "./observationResolution/observationPlan";
 import type { AggregationTarget } from "./aggregationTarget";
 import { resolveAggregationTarget } from "./aggregationTarget";
-import type { CompatibilityCandidate } from "./measureCompatibility";
+import type { CompatibilityCandidate } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
-import type { MeasureSource } from "./dataCatalog";
-import type { RouteContext } from "./routing";
-import { type ApiResponse } from "./routeResponse";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export type AggregationPartition = {
 	source: MeasureSource;

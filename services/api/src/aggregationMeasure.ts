@@ -1,6 +1,10 @@
-import type { DataCatalog, Measure, MeasureAggregation } from "./dataCatalog";
+import type {
+	DataCatalog,
+	Measure,
+	MeasureAggregation,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { statisticPhrase } from "./aggregation";
-import { problem, type ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export type AvailableWeightedAggregation = Extract<
 	MeasureAggregation,

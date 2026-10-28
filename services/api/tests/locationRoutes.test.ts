@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route as routeRequest } from "../src/routes";
-import { createGeographyResolver } from "../src/geographyResolver";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	compileLocationProjections,
 	LocationProjectionStore,
-} from "../src/locationProjections";
+} from "@uk-data-atlas/atlas-runtime/places";
 import { cursorFor } from "../src/pagination";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import {
 	registry,

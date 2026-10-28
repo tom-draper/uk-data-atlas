@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import { coveragePlan } from "../src/coveragePlan";
+import { coveragePlan } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,

@@ -1,8 +1,11 @@
-import type { Measure, MeasureSource } from "./dataCatalog";
+import type {
+	Measure,
+	MeasureSource,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
-} from "./measureCompatibility";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { Dispatch } from "./placeValue";
 import {
 	locatePoints,
@@ -11,7 +14,7 @@ import {
 	type PointResult,
 } from "./pointLookup";
 import { compactPostcode } from "@uk-data-atlas/geography";
-import type { RouteContext } from "./routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 
 /**
  * Answering "what is this measure where this postcode is?".

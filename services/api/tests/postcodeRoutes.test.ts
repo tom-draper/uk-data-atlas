@@ -3,14 +3,14 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { after } from "node:test";
-import { AreaGeometryCache } from "../src/areaGeometry";
+import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "../src/areaInventory";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { createGeographyResolver } from "../src/geographyResolver";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { NORTHERN_IRELAND_EXCLUSION } from "@uk-data-atlas/geography";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 import { route } from "../src/routes";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	postcodeAreaIndexFor,
 	postcodeIndexFor,

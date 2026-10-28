@@ -3,8 +3,8 @@ import test from "node:test";
 import {
 	executeTranslationPath,
 	type IndexedPathStep,
-} from "../src/resolver/translation";
-import type { RelationshipPath } from "../src/relationshipPaths";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 
 const path: RelationshipPath = {
 	id: "source-to-target",

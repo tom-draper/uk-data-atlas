@@ -8,7 +8,10 @@ import {
 	periodsOverlap,
 	relativeChangeRefusal,
 } from "../src/change";
-import type { Measure, PopulationObservation } from "../src/dataCatalog";
+import type {
+	Measure,
+	PopulationObservation,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const measure = (valueKind: Measure["valueKind"]): Measure =>
 	({ id: "test", valueKind, unit: "people" }) as unknown as Measure;

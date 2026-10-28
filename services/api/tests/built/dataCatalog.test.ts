@@ -9,7 +9,7 @@ import {
 } from "../../../../pipeline/src/catalog/compileDataCatalog";
 import { onApril2023Authorities } from "../../../../pipeline/src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
-import type { DataCatalog } from "../../src/dataCatalog";
+import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const dataset = (

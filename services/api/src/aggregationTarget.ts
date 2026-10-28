@@ -1,16 +1,20 @@
 import type { CrosswalkArtifact } from "./crosswalkInventory";
-import type { MeasureSource } from "./dataCatalog";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
-} from "./measureCompatibility";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	membershipClaimFor,
 	membershipThroughSteps,
 	pathMembershipClaims,
 } from "./aggregationMembership";
-import type { GeographyResolver } from "./geographyResolver";
-import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
 
 export type AggregationTarget = {

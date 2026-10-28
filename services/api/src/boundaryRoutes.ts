@@ -1,15 +1,19 @@
-import { areaNotFound } from "./areaResources";
-import { releaseDownloads } from "./mapResourceLoader";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { releaseDownloads } from "@uk-data-atlas/atlas-runtime/maps";
 import { withReleaseHeaders } from "./releaseDeprecation";
-import { parseSelectionDate } from "./releaseForDate";
+import { parseSelectionDate } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { choices, readChoice, readWholeNumber } from "./queryParameters";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	choices,
+	readChoice,
+	readWholeNumber,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
 const RESOLVE = QUERY_RULES["GET /boundary-releases:resolve"];

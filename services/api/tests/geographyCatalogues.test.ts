@@ -20,12 +20,12 @@ import {
 import {
 	readBoundaryRegistry,
 	readGeographyInventory,
-} from "../src/boundaryLoader";
-import { readRelationshipPathInventory } from "../src/crosswalkLoader";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { readRelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
-} from "../src/catalogueManifestLoader";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
 import {

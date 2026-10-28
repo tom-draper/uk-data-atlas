@@ -20,7 +20,7 @@ import {
 	deprecationHeaders,
 	openapiDocumentHash,
 	unexpectedQueryParameter,
-} from "../src/operationTemplates";
+} from "@uk-data-atlas/atlas-runtime/api";
 
 const openapiDocument = readFileSync(
 	new URL("../openapi.yaml", import.meta.url),

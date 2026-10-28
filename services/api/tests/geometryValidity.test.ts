@@ -17,11 +17,17 @@ import {
 	compileGeometryValidity,
 	roundKeepingValidity,
 } from "../../../pipeline/src/compileGeometryValidity";
-import { compiledGeometryFile, type GeometrySource } from "../src/areaGeometry";
+import {
+	compiledGeometryFile,
+	type GeometrySource,
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "../src/areaInventory";
-import { sha256 } from "../src/contentHash";
-import { createAreaGeometryCache } from "../src/geometryLoader";
-import { encodeGeometryStore, readGeometryStore } from "../src/geometryStore";
+import { sha256 } from "@uk-data-atlas/artifacts";
+import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import {
+	encodeGeometryStore,
+	readGeometryStore,
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,

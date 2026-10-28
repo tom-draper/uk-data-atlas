@@ -4,13 +4,13 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import type { Polygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "../src/areaGeometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "../src/areaInventory";
-import { convertObservations } from "../src/conversion";
+import { convertObservations } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
-} from "../src/crosswalkAdapters";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 
 // Squares near the equator, in degrees; D is about 1.1 km.

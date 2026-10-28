@@ -1,7 +1,11 @@
 import { paginate } from "./pagination";
-import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
-import { areaNotFound } from "./areaResources";
+import {
+	envelope,
+	invalidQuery,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 
 /**

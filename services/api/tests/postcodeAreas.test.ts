@@ -10,14 +10,14 @@ import {
 	distanceToBoundaryM,
 } from "@uk-data-atlas/geography/area-distance";
 import { containPoint } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "../src/areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	NONE,
 	PostcodeAreaIndex,
 	postcodeAreasMismatch,
 	SEVERAL,
 	type PostcodeAreasShard,
-} from "../src/postcodeAreas";
+} from "@uk-data-atlas/atlas-runtime/postcodes";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 
 const square = (

@@ -1,6 +1,9 @@
-import { requireAtlasCache, readCachePayload } from "../../src/atlasCache";
-import { readMeasureObservations } from "../../src/observationLoader";
-import { readDataCatalog } from "../../src/catalogueManifestLoader";
+import {
+	requireAtlasCache,
+	readCachePayload,
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { DatabaseSync } from "node:sqlite";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { geographyCatalogues } from "../../scripts/geography-build-path";
@@ -9,9 +12,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { observationPartitionKey } from "../../src/measureCompatibility";
-import { openapiDocumentHash } from "../../src/operationTemplates";
-import { readStoredText, storedTextExists } from "../../src/storedText";
+import { observationPartitionKey } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { openapiDocumentHash } from "@uk-data-atlas/atlas-runtime/api";
+import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
 	readMeasureTotals,
 	readValidationWaivers,

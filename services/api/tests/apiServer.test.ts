@@ -11,15 +11,15 @@ import { gzipSync } from "node:zlib";
 import { connect, type AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
 import { compileExportManifest } from "../../../pipeline/src/exportManifest";
-import { observationArtifactName } from "../src/dataCatalog";
+import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readParquet } from "./parquetFixtures";
-import { sha256 } from "../src/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
-import { createOperationMatcher } from "../src/operationTemplates";
-import type { RouteContext } from "../src/routing";
+import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import { compileOperations } from "../../../pipeline/src/build-operations";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
-import type { StoredFile } from "../src/routeResponse";
+import type { StoredFile } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	atlasRelease,
 	dataCatalog,

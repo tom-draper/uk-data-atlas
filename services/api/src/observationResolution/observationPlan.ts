@@ -1,11 +1,15 @@
-import type { DataCatalog, Measure, MeasureSource } from "../dataCatalog";
+import type {
+	DataCatalog,
+	Measure,
+	MeasureSource,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	CompatibilityCandidate,
 	CompatibilityStatus,
 	MeasureCompatibilityInventory,
-} from "../measureCompatibility";
-import type { ProblemCode } from "../problemCodes";
-import { problem, type ApiResponse } from "../routeResponse";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ProblemCode } from "@uk-data-atlas/atlas-runtime/api";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * The first slice of the resolution layer described under

@@ -10,7 +10,10 @@ import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
-import type { Measure, MeasureObservationArtifact } from "../src/dataCatalog";
+import type {
+	Measure,
+	MeasureObservationArtifact,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { RelationshipCandidate } from "../src/relationshipCandidates";
 import { compileValidationReport } from "../../../pipeline/src/validation/compileValidationReport";
 import {

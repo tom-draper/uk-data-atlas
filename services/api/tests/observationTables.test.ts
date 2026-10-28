@@ -8,11 +8,11 @@ import { mkdtempSync, mkdirSync, rmSync, renameSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { readMeasureObservations } from "../src/observationLoader";
+import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
-} from "../src/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	lazySourceObservations,
 	ObservationCache,
@@ -21,7 +21,7 @@ import {
 	readSourceObservations,
 	tableMeasureObservations,
 	type MeasureTableArtifact,
-} from "../src/observationTables";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const table: MeasureTableArtifact = {

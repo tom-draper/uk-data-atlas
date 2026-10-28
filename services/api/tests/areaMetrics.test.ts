@@ -5,7 +5,7 @@ import {
 	unprojectEqualArea,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import { areaMetrics } from "../src/areaMetrics";
-import type { GeoJsonGeometry } from "../src/areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import { containPoint } from "@uk-data-atlas/geography/geometry-point-containment";
 
 const A = 6378137;

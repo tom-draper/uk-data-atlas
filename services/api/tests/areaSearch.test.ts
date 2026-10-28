@@ -1,4 +1,4 @@
-import { writeSqliteIndex } from "../src/sqliteIndex";
+import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -11,7 +11,7 @@ import {
 	compileAreaSearchIndex,
 	openAreaSearchIndexDatabase,
 	areaSearchIndexTables,
-} from "../src/areaSearch";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 const release = (
 	geography: string,

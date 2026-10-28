@@ -1,5 +1,5 @@
-import { DEFAULT_OBSERVATION_CACHE_BYTES } from "./observationTables";
-import { DEFAULT_CROSSWALK_CACHE_BYTES } from "./crosswalkLoader";
+import { DEFAULT_OBSERVATION_CACHE_BYTES } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { DEFAULT_CROSSWALK_CACHE_BYTES } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { RateLimitPolicy } from "./rateLimit";
 
 /** One structured log line. Written as JSON, one object per line. */

@@ -1,12 +1,12 @@
-import { areaNotFound } from "./areaResources";
-import { parseSelectionDate } from "./releaseForDate";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { parseSelectionDate } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
+} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 
 type AreaQueryRequest = Pick<
 	RouteRequest,

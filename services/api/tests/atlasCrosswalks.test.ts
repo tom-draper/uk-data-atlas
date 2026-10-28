@@ -1,4 +1,7 @@
-import { areaTables, readSqliteAreas } from "../src/atlasAreas";
+import {
+	areaTables,
+	readSqliteAreas,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import assert from "node:assert/strict";
 import {
@@ -12,12 +15,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
-import { crosswalkTables } from "../src/atlasCrosswalks";
+import { crosswalkTables } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "../src/crosswalkLoader";
-import { writeSqliteIndex } from "../src/sqliteIndex";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 

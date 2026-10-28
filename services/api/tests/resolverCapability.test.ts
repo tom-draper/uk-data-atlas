@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { AreaLookup, AreaRecord } from "../src/areaInventory";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
-import type { RelationshipPath } from "../src/relationshipPaths";
+import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	assessPathTrust,
 	buildConversionReach,
@@ -12,8 +12,8 @@ import {
 	type RelationshipPrerequisite,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "../src/resolver/conversionCapability";
-import { compareBoundaryReleases } from "../src/resolver/releaseComparison";
+} from "@uk-data-atlas/atlas-runtime/api";
+import { compareBoundaryReleases } from "@uk-data-atlas/atlas-runtime/api";
 
 type Candidate = Omit<ResolvedRelationshipPath, "rank">;
 type Coverage = Candidate["coverage"]["status"];

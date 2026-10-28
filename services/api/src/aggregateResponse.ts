@@ -1,12 +1,15 @@
-import type { GeographyResolver } from "./geographyResolver";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type { Measure, MeasureSource } from "./dataCatalog";
+import type {
+	Measure,
+	MeasureSource,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { LocationCoverage } from "./locationAggregation";
-import type { NamedLocation } from "./namedLocations";
-import type { ObservationArtifactReference } from "./sourceExactProvenance";
-import { envelope, type ApiResponse } from "./routeResponse";
-import { sourceExactProvenance } from "./sourceExactProvenance";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import type { ObservationArtifactReference } from "@uk-data-atlas/atlas-runtime/areas";
+import { envelope, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
 
 export type AggregateWeighting = {
 	measure: Measure;

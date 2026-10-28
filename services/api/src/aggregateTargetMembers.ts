@@ -4,9 +4,13 @@ import {
 	type AggregateMembers,
 } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type { PopulationObservation } from "./dataCatalog";
-import type { NamedLocation } from "./namedLocations";
-import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
+import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import {
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "@uk-data-atlas/atlas-runtime/api";
 
 export type AggregateTargetMembers = {
 	byLocation?: ReturnType<typeof aggregateLocationMembers>;

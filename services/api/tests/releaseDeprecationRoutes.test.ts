@@ -5,7 +5,7 @@ import { createAreaLookup } from "../src/areaInventory";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseInPath, withReleaseHeaders } from "../src/releaseDeprecation";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "../src/routing";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
 import { testContext } from "./routeFixtures";
 
 const base = {

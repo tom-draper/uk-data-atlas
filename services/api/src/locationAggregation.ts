@@ -1,7 +1,7 @@
-import type { GeographyResolver } from "./geographyResolver";
-import type { reconcileMembersForYear } from "./memberReconciliation";
-import type { NamedLocation } from "./namedLocations";
-import { problem, type ApiResponse } from "./routeResponse";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { reconcileMembersForYear } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 type LocationAggregate = {
 	members: Array<{ areaCode: string }>;
