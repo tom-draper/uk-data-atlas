@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "./geographyBuildPath";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import {
 	existsSync,
 	mkdirSync,
@@ -10,17 +10,17 @@ import {
 import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { AreaGeometryCache } from "./areaGeometry";
-import { compileFlatDownloads } from "./flatDownloads";
+import { AreaGeometryCache } from "../../shared/areaGeometry";
+import { compileFlatDownloads } from "../../shared/flatDownloads";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "./geometrySources";
+import { readGeometrySourceLookup } from "../../shared/geometrySources";
 import { roundKeepingValidity } from "./compileGeometryValidity";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-} from "./mapResource/compileMapResource";
+} from "../../shared/mapResource/compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { apiRootOf, artifactDirectory } from "./dataLayout";
+import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
 
 /**
  * Compile every boundary release into a map resource: its tiles, and each
@@ -36,7 +36,9 @@ import { apiRootOf, artifactDirectory } from "./dataLayout";
 const sourceFiles = (directory: string) =>
 	readdirSync(
 		resolve(
-			apiRootOf(resolve(dirname(fileURLToPath(import.meta.url)), "..")),
+			apiRootOf(
+				resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
+			),
 			directory,
 		),
 	)
@@ -56,7 +58,7 @@ const COMPILER_SOURCES = [
 	"../../shared/flatDownloads.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
-	"../../shared/compileGeometryValidity.ts",
+	"../../pipeline/src/compileGeometryValidity.ts",
 	"../../shared/areaGeometry.ts",
 	"../../shared/geoJsonProperties.ts",
 	"../../shared/geometrySubstitution.ts",

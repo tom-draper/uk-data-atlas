@@ -183,7 +183,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("map-resource")!
-			.includes("shared/compileGeometryValidity.ts"),
+			.includes("pipeline/src/compileGeometryValidity.ts"),
 	);
 	assert.ok(
 		inputs

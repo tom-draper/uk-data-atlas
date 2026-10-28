@@ -1,6 +1,6 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildMapResources } from "../../shared/buildMapResource";
+import { buildMapResources } from "./buildMapResource";
 
 const path = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === path) {

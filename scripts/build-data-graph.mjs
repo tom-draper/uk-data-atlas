@@ -431,7 +431,7 @@ const apiStages = [
 			outputs: ["data/build/map-resources"],
 			codeInputs: [
 				"shared/mapResource",
-				"shared/compileGeometryValidity.ts",
+				"pipeline/src/compileGeometryValidity.ts",
 			],
 		},
 	),

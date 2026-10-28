@@ -5,12 +5,12 @@ import {
 	GEOMETRY_VALIDITY_METHOD,
 	type GeometryValidityIssue,
 	type GeometryValidityReport,
-} from "./geometryValidity";
+} from "../../shared/geometryValidity";
 import {
 	roundPacked,
 	unpackGeometry,
 	type PackedGeometry,
-} from "./packedGeometry";
+} from "../../shared/packedGeometry";
 
 const reader = new GeoJSONReader(new GeometryFactory());
 
