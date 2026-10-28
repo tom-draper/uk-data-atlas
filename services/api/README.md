@@ -92,19 +92,13 @@ selects the published area inventory. Missing crosswalk endpoints become
 supplemental versions with `in_inventory = 0` and do not change area API
 responses. The `areas` view keeps the earlier column names for readers.
 
-Crosswalk endpoint tables reference `crosswalks.position` through
-`crosswalkPosition`, `area_version.id` through `areaId`, and
-`crosswalk_field_sets.position` through `fieldSetId`. Shared field lists preserve
-JSON property order and optional-field presence. Source `areaM2` and `population`
-are stored on `area_version`. The build rejects conflicting facts for the same area.
-Target population values remain on target rows because they describe an overlap.
-
-Endpoint labels normally equal `[name, ...aliases]`. Differences in spelling,
-language order, duplicates, and empty labels are preserved in
-`crosswalk_label_exceptions`, referenced by nullable `labelsId`. The
-`crosswalk_sources_decoded` and `crosswalk_targets_decoded` views join these tables
-to expose the original codes, labels, field lists, and facts. Both endpoint tables
-have a `(crosswalkPosition, areaId)` lookup index for direct SQL queries.
+Crosswalks are `crosswalk_edge` rows between area versions, with weights in
+`crosswalk_weight` by basis, sparse diagnostics in `crosswalk_edge_check`, and
+publisher labels in `crosswalk_label` only where they differ from
+`[name, ...aliases]`. Source `areaM2` and `population` are stored on
+`area_version`, and the build rejects conflicting facts for the same area. The
+API rebuilds each artifact from these rows in code order, using each
+crosswalk's stored field order. See `data/build/README.md`.
 
 Observations are stored as rows, not as JSON text. `observation_series` has one
 row per artifact (`artifactId`, `contentHash`, source geography and the hash of
