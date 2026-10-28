@@ -1,6 +1,6 @@
-import type { DataCatalog, Measure } from "./dataCatalog";
-import type { AreaInventory } from "./areaInventory";
-import type { EvidenceDocument } from "./evidenceDocuments";
+import type { DataCatalog, Measure } from "../../../shared/dataCatalog";
+import type { AreaInventory } from "../../../shared/areaInventory";
+import type { EvidenceDocument } from "../../../shared/evidenceDocuments";
 
 type EvidenceMeasureDependencies<Context> = {
 	report: (

@@ -6,8 +6,8 @@ import test from "node:test";
 import {
 	cachedEvidenceMeasure,
 	writeEvidenceDocument,
-} from "../../../shared/evidenceDocumentStore";
-import { buildEvidenceMeasure } from "../../../shared/buildEvidenceMeasure";
+} from "../../../pipeline/src/evidence/evidenceDocumentStore";
+import { buildEvidenceMeasure } from "../../../pipeline/src/evidence/buildEvidenceMeasure";
 import { sha256 } from "../../../shared/contentHash";
 
 test("writes published evidence and reuses only matching cached inputs", () => {

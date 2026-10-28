@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { sha256 } from "./contentHash";
+import { sha256 } from "../../../shared/contentHash";
 
 type HashInput = { contentHash: string };
 type EvidenceInputs = {
