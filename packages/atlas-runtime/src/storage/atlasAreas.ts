@@ -4,7 +4,7 @@ import type {
 	AreaInventory,
 	AreaRecord,
 	AreaReleaseArtifact,
-} from "../areas/areaInventory";
+} from "@uk-data-atlas/areas";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 
 export const areaTables = (directory: string): Record<string, SqliteTable> => {

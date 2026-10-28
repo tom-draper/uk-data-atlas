@@ -4,7 +4,7 @@ export {
 	areaSearchIndexTables,
 	type AreaSearchIndexArtifact,
 } from "./areaSearchCompiler";
-import type { AreaLookup, AreaRecord } from "./areaInventory";
+import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";

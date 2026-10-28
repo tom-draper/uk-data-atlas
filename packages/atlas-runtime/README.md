@@ -17,3 +17,5 @@ These modules use Node APIs and are not intended for browser bundles. Browser-sa
 Terrain catalogue types and providers live in `@uk-data-atlas/terrain`.
 
 Postcode indexes, area placements and counts live in `@uk-data-atlas/postcodes`.
+
+Area inventory types and data-source-independent lookups live in `@uk-data-atlas/areas`. The runtime supplies the SQLite reader.

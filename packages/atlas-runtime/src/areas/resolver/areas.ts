@@ -3,7 +3,7 @@ import type {
 	AreaInventory,
 	AreaLookup,
 	AreaRecord,
-} from "../../areas/areaInventory";
+} from "@uk-data-atlas/areas";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { explainAreaAbsence, type AreaAbsence } from "../../areas/areaAbsence";
 import {

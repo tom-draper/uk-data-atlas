@@ -1,4 +1,4 @@
-import type { AreaInventory } from "../areas/areaInventory";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { AtlasRelease } from "../storage/atlasRelease";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkArtifact } from "../relationships/crosswalkTypes";

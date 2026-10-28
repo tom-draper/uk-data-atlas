@@ -1,5 +1,5 @@
 import type { AreaRelation } from "../relationships/areaRelationships";
-import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
+import type { AreaInventory, AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
 import { summariseBatch, type ValidatedValue } from "./batchValidation";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeographyInventory } from "./geographyInventory";

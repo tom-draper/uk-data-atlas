@@ -2,7 +2,7 @@ import type {
 	AreaInventory,
 	AreaLookup,
 	AreaRecord,
-} from "../../areas/areaInventory";
+} from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "../../relationships/crosswalkInventory";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { RelationshipCandidateInventory } from "../../relationships/relationshipCandidates";

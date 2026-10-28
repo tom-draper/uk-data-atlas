@@ -1,4 +1,4 @@
-import type { AreaLookup } from "./areaInventory";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
