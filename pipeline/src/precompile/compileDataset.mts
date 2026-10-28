@@ -19,6 +19,7 @@ import { createTrackedReader } from "./trackedReader.mts";
 import { withDuckdbPublicHealth } from "./duckdbPublicHealth.mts";
 import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.mts";
 import {
+	withDuckdbEnergyConsumption,
 	withDuckdbImd,
 	withDuckdbLocalElection,
 	withDuckdbSchoolPerformance,
@@ -133,40 +134,59 @@ export async function compileStaleDataset(
 							},
 							reader,
 						)
-					: definition.type === "localElection"
-						? await withDuckdbLocalElection(
+					: definition.type === "electricityConsumption" ||
+						  definition.type === "gasConsumption"
+						? await withDuckdbEnergyConsumption(
 								reader,
 								artifacts,
 								(input) =>
 									compileDatasetContents(definition, input),
 							)
-						: definition.type === "imd"
-							? await withDuckdbImd(reader, artifacts, (input) =>
-									compileDatasetContents(definition, input),
+						: definition.type === "localElection"
+							? await withDuckdbLocalElection(
+									reader,
+									artifacts,
+									(input) =>
+										compileDatasetContents(
+											definition,
+											input,
+										),
 								)
-							: definition.type === "schoolPerformance" ||
-								  definition.type === "schoolPerformanceGap" ||
-								  definition.type ===
-										"schoolPerformanceConstituency"
-								? await withDuckdbSchoolPerformance(
+							: definition.type === "imd"
+								? await withDuckdbImd(
 										reader,
 										artifacts,
-										definition.type === "schoolPerformance"
-											? "Total"
-											: definition.type ===
-												  "schoolPerformanceGap"
-												? "Disadvantage status"
-												: "Constituency",
 										(input) =>
 											compileDatasetContents(
 												definition,
 												input,
 											),
 									)
-								: await compileDatasetContents(
-										definition,
-										reader,
-									);
+								: definition.type === "schoolPerformance" ||
+									  definition.type ===
+											"schoolPerformanceGap" ||
+									  definition.type ===
+											"schoolPerformanceConstituency"
+									? await withDuckdbSchoolPerformance(
+											reader,
+											artifacts,
+											definition.type ===
+												"schoolPerformance"
+												? "Total"
+												: definition.type ===
+													  "schoolPerformanceGap"
+													? "Disadvantage status"
+													: "Constituency",
+											(input) =>
+												compileDatasetContents(
+													definition,
+													input,
+												),
+										)
+									: await compileDatasetContents(
+											definition,
+											reader,
+										);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&

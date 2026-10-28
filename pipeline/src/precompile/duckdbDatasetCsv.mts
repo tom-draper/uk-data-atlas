@@ -67,6 +67,32 @@ export async function withDuckdbImd<T>(
 	);
 }
 
+export async function withDuckdbEnergyConsumption<T>(
+	reader: DatasetReader,
+	artifacts: ReturnType<
+		typeof import("./trackedReader.mts").createTrackedReader
+	>["artifacts"],
+	compile: (reader: DatasetReader) => Promise<T>,
+	sourceRoot = SOURCE_DATA,
+): Promise<T> {
+	return withDuckdbFilteredCsv(
+		reader,
+		artifacts,
+		"* EXCLUDE (ordinal)",
+		[
+			"ladCode",
+			"domesticGwh",
+			"nonDomesticGwh",
+			"allMetersGwh",
+			"metersThousands",
+		]
+			.map((column) => `trim(coalesce("${column}", '')) <> ''`)
+			.join(" AND "),
+		compile,
+		sourceRoot,
+	);
+}
+
 export async function withDuckdbLocalElection<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
