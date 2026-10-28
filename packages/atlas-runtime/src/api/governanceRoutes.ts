@@ -1,5 +1,5 @@
 import { attributionFor, attributionText } from "../catalogue/attribution";
-import { correctionsForMeasure } from "@uk-data-atlas/catalogue";
+import { correctionsReport } from "../catalogue/correctionsReport";
 import {
 	envelope,
 	invalidQuery,
@@ -29,11 +29,7 @@ export const handleGovernanceRoutes = ({
 		const measureId = measureIds[0] ?? null;
 		return {
 			status: 200,
-			body: envelope(releaseId, {
-				records: correctionsForMeasure(measureId),
-				filters: { measure: measureId },
-				note: "These records describe API-owned changes to served values or semantics. They do not rewrite the publisher artifacts, which remain the source evidence.",
-			}),
+			body: envelope(releaseId, correctionsReport(measureId)),
 		};
 	}
 

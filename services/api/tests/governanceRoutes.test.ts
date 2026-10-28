@@ -11,10 +11,15 @@ import {
 	relationshipCandidateInventory,
 } from "./routeFixtures";
 import { correctionRecords } from "@uk-data-atlas/catalogue";
+import { correctionsReport } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 test("lists API-owned corrections without claiming source artifacts changed", () => {
 	const response = route("GET", "/v1/corrections", registry);
 	assert.equal(response.status, 200);
+	assert.deepEqual(
+		"data" in response.body && response.body.data,
+		correctionsReport(null),
+	);
 	assert.deepEqual("data" in response.body && response.body.data, {
 		records: correctionRecords,
 		filters: { measure: null },
