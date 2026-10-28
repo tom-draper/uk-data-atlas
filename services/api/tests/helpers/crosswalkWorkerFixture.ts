@@ -5,7 +5,7 @@ import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
 } from "../../src/crosswalkAdapters";
-import { readCompiledAreaLookup } from "../../scripts/crosswalk-build-inputs";
+import { readCompiledAreaLookup } from "../../../../pipeline/src/crosswalk-build-inputs";
 import { readGeometrySourceLookup } from "../../src/geometrySources";
 import { artifactDirectory } from "../../../../shared/dataLayout";
 

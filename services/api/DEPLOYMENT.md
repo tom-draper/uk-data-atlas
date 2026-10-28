@@ -263,7 +263,7 @@ inventory follows adapter order regardless of completion order.
 To force selected crosswalks to compile without replacing build outputs, run:
 
 ```sh
-pnpm --dir services/api exec tsx --max-old-space-size=4096 scripts/profile-crosswalks.ts --workers=1 <crosswalk-id>
+pnpm exec tsx --max-old-space-size=4096 pipeline/src/profile-crosswalks.ts --workers=1 <crosswalk-id>
 ```
 
 The profiler includes population dependencies, writes to a temporary directory,

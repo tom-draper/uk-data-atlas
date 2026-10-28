@@ -2,14 +2,14 @@ import { join } from "node:path";
 import {
 	createCrosswalkCompiler,
 	type CrosswalkArtifact,
-} from "./crosswalkCompiler";
-import { readGeometrySourceLookup } from "./geometrySources";
-import { readStoredText } from "./storedText";
-import { sha256 } from "./contentHash";
+} from "../../shared/crosswalkCompiler";
+import { readGeometrySourceLookup } from "../../shared/geometrySources";
+import { readStoredText } from "../../shared/storedText";
+import { sha256 } from "../../shared/contentHash";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
-import { writeCrosswalkArtifact } from "./crosswalk-artifact";
+import { writeCrosswalkArtifact } from "../../shared/crosswalk-artifact";
 import type { CrosswalkWork, CrosswalkWorkerResult } from "./crosswalk-workers";
-import { apiRootOf, artifactDirectory } from "./dataLayout";
+import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
 
 const [root, outputDirectory] = process.argv.slice(2);
 if (!root || !outputDirectory || !process.send)

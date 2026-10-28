@@ -5,7 +5,7 @@ import test from "node:test";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "../scripts/crosswalk-workers";
+} from "../../../pipeline/src/crosswalk-workers";
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,

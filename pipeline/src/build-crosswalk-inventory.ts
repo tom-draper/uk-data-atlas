@@ -1,6 +1,6 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildCrosswalkInventory } from "../../shared/buildCrosswalkInventory";
+import { buildCrosswalkInventory } from "./buildCrosswalkInventory";
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {

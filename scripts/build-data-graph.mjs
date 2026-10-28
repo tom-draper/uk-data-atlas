@@ -302,7 +302,7 @@ const apiStages = [
 		],
 		{
 			codeInputs: [
-				"shared/crosswalk-worker.ts",
+				"pipeline/src/crosswalk-worker.ts",
 				"pipeline/package.json",
 				"pipeline/tsconfig.json",
 			],
