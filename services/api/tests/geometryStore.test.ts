@@ -12,7 +12,10 @@ import {
 } from "../src/areaGeometry";
 import { encodeGeometryStore, readGeometryStore } from "../src/geometryStore";
 import { createAreaGeometryCache } from "../src/geometryLoader";
-import { packGeometry, unpackGeometry } from "../src/packedGeometry";
+import {
+	packGeometry,
+	unpackGeometry,
+} from "@uk-data-atlas/geography/packed-geometry";
 import { artifactRoot } from "../../../shared/dataLayout";
 
 const square = (west: number, south: number, size: number) => [

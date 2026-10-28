@@ -11,7 +11,7 @@ import {
 } from "../../shared/ceremonialCounties";
 import { compileNamedLocations, membersAt } from "../../shared/namedLocations";
 import { releaseMonth } from "@uk-data-atlas/catalogue";
-import { toWgs84Geometry } from "../../shared/reprojection";
+import { toWgs84Geometry } from "@uk-data-atlas/geography/reprojection";
 import { readShapefileFeatures } from "../../shared/shapefile";
 import { createAreaGeometryCache } from "../../shared/geometryLoader";
 import type {

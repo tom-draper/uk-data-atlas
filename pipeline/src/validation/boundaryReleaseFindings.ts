@@ -2,7 +2,7 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
-} from "../../../shared/reprojection";
+} from "@uk-data-atlas/geography/reprojection";
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
 import { releaseKey } from "@uk-data-atlas/geography";

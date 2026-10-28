@@ -1,8 +1,8 @@
-import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
+import type { GeoJsonGeometry } from "./geometryTypes";
 import {
 	geometryBounds,
 	type GeometryBounds,
-} from "@uk-data-atlas/geography/geometry-point-containment";
+} from "./geometryPointContainment";
 
 /**
  * A GeoJSON geometry held as flat typed arrays. Parsed GeoJSON stores every

@@ -7,7 +7,7 @@ import {
 	toWgs84Geometry,
 	toWgs84Packed,
 	type GeometryProvenance,
-} from "./reprojection";
+} from "@uk-data-atlas/geography/reprojection";
 import {
 	appliesTo,
 	offsetGeometry,
@@ -21,7 +21,7 @@ import {
 	roundPacked,
 	unpackGeometry,
 	type PackedGeometry,
-} from "./packedGeometry";
+} from "@uk-data-atlas/geography/packed-geometry";
 import {
 	applyReversedOffsets,
 	loadSubstitutions,

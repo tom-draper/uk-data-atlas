@@ -1,5 +1,5 @@
 import proj4 from "proj4";
-import type { GeometryValidityReport } from "@uk-data-atlas/geography";
+import type { GeometryValidityReport } from "./index";
 import {
 	packGeometry,
 	roundDegrees,
@@ -10,16 +10,10 @@ import {
 	mapGeometryPositions,
 	type Geometry,
 	type Position,
-} from "@uk-data-atlas/geography/geometry-positions";
+} from "./geometryPositions";
 
-import type {
-	GeometryProvenance,
-	GeometryTransformation,
-} from "@uk-data-atlas/geography";
-export type {
-	GeometryProvenance,
-	GeometryTransformation,
-} from "@uk-data-atlas/geography";
+import type { GeometryProvenance, GeometryTransformation } from "./index";
+export type { GeometryProvenance, GeometryTransformation } from "./index";
 
 type Reprojection = {
 	transformation: GeometryTransformation;

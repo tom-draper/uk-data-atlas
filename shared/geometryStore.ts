@@ -11,7 +11,7 @@ import {
 	packedBounds,
 	roundDegrees,
 	type PackedGeometry,
-} from "./packedGeometry";
+} from "@uk-data-atlas/geography/packed-geometry";
 import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,

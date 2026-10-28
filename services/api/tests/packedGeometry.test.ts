@@ -7,7 +7,7 @@ import {
 	packGeometry,
 	roundPacked,
 	unpackGeometry,
-} from "../src/packedGeometry";
+} from "@uk-data-atlas/geography/packed-geometry";
 
 const geometries: GeoJsonGeometry[] = [
 	{ type: "Point", coordinates: [-0.1283539, 51.5039908] },

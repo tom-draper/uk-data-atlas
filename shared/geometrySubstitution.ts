@@ -15,7 +15,10 @@ import {
 	reverseOffsetGeometry,
 	type GridOffset,
 } from "./gridOffset";
-import { fromWgs84Geometry, toWgs84Geometry } from "./reprojection";
+import {
+	fromWgs84Geometry,
+	toWgs84Geometry,
+} from "@uk-data-atlas/geography/reprojection";
 import { sha256 } from "./contentHash";
 
 export type { GeometrySubstitution };
