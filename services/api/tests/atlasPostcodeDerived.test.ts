@@ -18,7 +18,7 @@ import type { PostcodeAreasShard } from "../src/postcodeAreas";
 import { readAtlasPayload } from "../../../shared/atlasSqlite";
 import { storePostcodeIndex } from "../scripts/store-postcode-index";
 import { storePostcodeAreas } from "../scripts/store-postcode-derived";
-import { buildPostcodeCounts } from "../scripts/build-postcode-counts";
+import { buildPostcodeCounts } from "../src/cache-build/buildPostcodeCounts";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,

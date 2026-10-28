@@ -1,13 +1,16 @@
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { publishCacheTables } from "./atlasCache";
-import { readSqliteAreaInventory as readAreaInventory } from "./atlasAreaReader";
-import { readAreaLookup } from "./areaLookup";
-import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "./atlasNamedLocationReader";
-import { readGeographyCatalogue } from "./geographyCatalogue";
-import type { BoundaryRegistry } from "./boundaryRegistry";
-import { compilePlaceIndex, placeIndexTables } from "./placeIndex";
-import { apiRootOf, artifactRoot } from "./dataLayout";
+import { publishCacheTables } from "../../../../shared/atlasCache";
+import { readSqliteAreaInventory as readAreaInventory } from "../../../../shared/atlasAreaReader";
+import { readAreaLookup } from "../../../../shared/areaLookup";
+import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "../../../../shared/atlasNamedLocationReader";
+import { readGeographyCatalogue } from "../../../../shared/geographyCatalogue";
+import type { BoundaryRegistry } from "../../../../shared/boundaryRegistry";
+import {
+	compilePlaceIndex,
+	placeIndexTables,
+} from "../../../../shared/placeIndex";
+import { apiRootOf, artifactRoot } from "../../../../shared/dataLayout";
 
 const readBoundaryRegistry = (apiRoot: string) =>
 	readGeographyCatalogue<BoundaryRegistry>(
