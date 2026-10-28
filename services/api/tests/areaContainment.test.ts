@@ -4,7 +4,7 @@ import {
 	containPoint,
 	geometryBounds,
 	pointInBounds,
-} from "../src/areaContainment";
+} from "@uk-data-atlas/geography/geometry-point-containment";
 
 const polygonWithHole = {
 	type: "Polygon",

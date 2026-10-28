@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { Coordinate } from "../src/areaContainment";
+import type { Coordinate } from "@uk-data-atlas/geography/geometry-point-containment";
 import { tileBounds } from "@uk-data-atlas/map-tiles/tileGrid";
 import {
 	boundsOf,

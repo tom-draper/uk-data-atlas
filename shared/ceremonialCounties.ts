@@ -5,7 +5,7 @@ import {
 	pointInBounds,
 	type Coordinate,
 	type GeometryBounds,
-} from "./areaContainment";
+} from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeoJsonGeometry } from "./areaGeometry";
 import { idFor, type NamedLocation } from "./namedLocations";
 

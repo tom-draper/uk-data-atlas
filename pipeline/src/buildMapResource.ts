@@ -66,9 +66,9 @@ const COMPILER_SOURCES = [
 	"../../shared/gridOffset.ts",
 	"../../shared/packedGeometry.ts",
 	"../../shared/reprojection.ts",
-	"../../shared/areaContainment.ts",
+	"../../packages/geography/src/geometryPointContainment.ts",
 	"../../packages/geography/src/geometryPositions.ts",
-	"../../shared/geometryTypes.ts",
+	"../../packages/geography/src/geometryTypes.ts",
 	"../../packages/geography/src/geometryProvenance.ts",
 	"../../shared/shapefile.ts",
 ];

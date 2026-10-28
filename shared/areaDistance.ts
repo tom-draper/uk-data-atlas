@@ -4,7 +4,7 @@ import {
 	ringsOf,
 	type Coordinate,
 	type GeometryBounds,
-} from "./areaContainment";
+} from "@uk-data-atlas/geography/geometry-point-containment";
 
 // WGS 84 ellipsoid.
 const A = 6378137;

@@ -46,10 +46,10 @@ import {
 	type Coordinate,
 	type GeometryBounds,
 	type PointContainment,
-} from "./areaContainment";
+} from "@uk-data-atlas/geography/geometry-point-containment";
 
-import type { GeoJsonGeometry } from "./geometryTypes";
-export type { GeoJsonGeometry } from "./geometryTypes";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
+export type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
 export type GeometrySource = {
 	input: string;
 	/** SHA-256 of the whole source file, when the registry records it. */

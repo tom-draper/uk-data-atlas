@@ -1,7 +1,7 @@
 import { packNamedLocations } from "../../shared/namedLocationStorage";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { geometryBounds } from "../../shared/areaContainment";
+import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import {
 	countyMemberships,
 	SCOTTISH_LIEUTENANCY_AREAS,

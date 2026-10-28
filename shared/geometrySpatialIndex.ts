@@ -1,4 +1,4 @@
-import type { GeometryBounds } from "./areaContainment";
+import type { GeometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 
 /** The fixed grid used to narrow spatial geometry queries. */
 export const SPATIAL_CELL_DEGREES = 0.25;

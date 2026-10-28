@@ -1,4 +1,4 @@
-import type { Coordinate } from "../areaContainment";
+import type { Coordinate } from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeoJsonGeometry } from "../areaGeometry";
 import type { PackedGeometry } from "../packedGeometry";
 import { writeParquet, type ParquetTable } from "../parquet";

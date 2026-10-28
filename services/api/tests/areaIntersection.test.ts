@@ -5,7 +5,7 @@ import {
 	boundsWithin,
 	geometryMeetsBounds,
 	type GeometryBounds,
-} from "../src/areaContainment";
+} from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 
 const ring = (west: number, south: number, east: number, north: number) => [

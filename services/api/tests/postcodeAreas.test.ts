@@ -9,7 +9,7 @@ import {
 	boundaryDistanceFinder,
 	distanceToBoundaryM,
 } from "../src/areaDistance";
-import { containPoint } from "../src/areaContainment";
+import { containPoint } from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 import {
 	NONE,

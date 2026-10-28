@@ -7,7 +7,9 @@
 	"sideEffects": false,
 	"exports": {
 		".": "./src/index.ts",
-		"./geometry-positions": "./src/geometryPositions.ts"
+		"./geometry-positions": "./src/geometryPositions.ts",
+		"./geometry-point-containment": "./src/geometryPointContainment.ts",
+		"./geometry-types": "./src/geometryTypes.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

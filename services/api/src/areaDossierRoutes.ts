@@ -1,5 +1,5 @@
 import { areaNotFound } from "./areaResources";
-import { geometryBounds } from "./areaContainment";
+import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import { notBuilt, unsupported } from "./capability";
 import { problem, requirementDetail, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
