@@ -167,6 +167,7 @@ export const CRIME: DeclaredDataset = {
 
 export const ROAD_COLLISIONS: DeclaredDataset = {
 	type: "roadCollisions",
+	rebuild: {},
 	measures: [
 		measure(
 			"road-collisions",
@@ -204,6 +205,7 @@ export const ROAD_COLLISIONS: DeclaredDataset = {
 
 export const HOMELESSNESS: DeclaredDataset = {
 	type: "homelessness",
+	rebuild: {},
 	name: "ladName",
 	period: () => periods.quarter(2026, 1),
 	measures: [
@@ -274,6 +276,7 @@ const single = (
 	declared: StatisticsMeasure,
 ): DeclaredDataset => ({
 	type,
+	rebuild: {},
 	name: "name",
 	period: () => period,
 	measures: [declared],
@@ -321,6 +324,7 @@ export const NET_ADDITIONAL_DWELLINGS = single(
 
 export const PLANNING_APPLICATIONS: DeclaredDataset = {
 	type: "planningApplications",
+	rebuild: {},
 	name: "name",
 	period: () => periods.quarter(2026, 1),
 	measures: [

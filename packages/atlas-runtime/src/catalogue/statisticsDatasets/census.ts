@@ -17,6 +17,7 @@ const districts2021 = {
 
 export const CAR_AVAILABILITY: DeclaredDataset = {
 	type: "carAvailability",
+	rebuild: {},
 	...districts2021,
 	period: census2021,
 	measures: [HOUSEHOLDS],
@@ -58,6 +59,7 @@ export const CAR_AVAILABILITY: DeclaredDataset = {
 
 export const QUALIFICATION: DeclaredDataset = {
 	type: "qualification",
+	rebuild: {},
 	...districts2021,
 	period: census2021,
 	measures: [
@@ -135,6 +137,7 @@ export const QUALIFICATION: DeclaredDataset = {
 
 export const TRAVEL_TO_WORK: DeclaredDataset = {
 	type: "travelToWork",
+	rebuild: {},
 	...districts2021,
 	period: census2021,
 	measures: [
@@ -210,6 +213,7 @@ export const TRAVEL_TO_WORK: DeclaredDataset = {
 
 export const ETHNICITY: DeclaredDataset = {
 	type: "ethnicity",
+	rebuild: {},
 	...districts2021,
 	period: census2021,
 	measures: [USUAL_RESIDENTS],

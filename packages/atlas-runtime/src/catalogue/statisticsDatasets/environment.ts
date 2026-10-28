@@ -282,6 +282,7 @@ export const LAND_AREA: DeclaredDataset = {
 
 export const BROADBAND: DeclaredDataset = {
 	type: "broadband",
+	rebuild: {},
 	name: "ladName",
 	period: () => periods.month(2025, 7),
 	measures: [
@@ -331,6 +332,7 @@ export const BROADBAND: DeclaredDataset = {
 
 export const MOBILE_COVERAGE: DeclaredDataset = {
 	type: "mobileCoverage",
+	rebuild: {},
 	name: "ladName",
 	measures: [
 		measure(
