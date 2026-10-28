@@ -1,9 +1,7 @@
-import { createHash } from "node:crypto";
-import { createReadStream } from "node:fs";
 import { join } from "node:path";
 import { DuckDBInstance } from "@duckdb/node-api";
 import { PUBLIC_HEALTH_MEASURES } from "../../../packages/datasets/src/data/public-health/loader";
-import { fileStamp, sameFileStamp } from "./cache.mts";
+import { trackDuckdbSource } from "./duckdbSource.mts";
 import { SOURCE_DATA } from "./paths.mts";
 import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types";
 
@@ -28,13 +26,7 @@ export async function withDuckdbPublicHealth<T>(
 						"Public health CSV must have a header on the first line",
 					);
 				const file = join(sourceRoot, path);
-				const before = await fileStamp(file);
-				const hash = createHash("sha256");
-				let bytes = 0;
-				for await (const chunk of createReadStream(file)) {
-					hash.update(chunk as Buffer);
-					bytes += (chunk as Buffer).length;
-				}
+				const finishSource = await trackDuckdbSource(file);
 				const measures = PUBLIC_HEALTH_MEASURES.map(
 					({ id, age }) => `(${quote(id)}, ${quote(age)})`,
 				).join(", ");
@@ -50,9 +42,7 @@ export async function withDuckdbPublicHealth<T>(
     ) ORDER BY ordinal
    `)
 				).getRowObjects();
-				const after = await fileStamp(file);
-				if (!sameFileStamp(before, after) || bytes !== after.bytes)
-					throw new Error(`Source changed while reading: ${file}`);
+				const trackedSource = await finishSource();
 				for (const values of rows) {
 					const row = Object.fromEntries(
 						Object.entries(values).map(([key, value]) => [
@@ -65,9 +55,7 @@ export async function withDuckdbPublicHealth<T>(
 				artifacts.set(`csvRows:${path}`, {
 					kind: "csvRows",
 					path,
-					bytes,
-					sha256: hash.digest("hex"),
-					input: after,
+					...trackedSource,
 				});
 			},
 		});
