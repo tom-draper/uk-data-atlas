@@ -4,7 +4,7 @@ import {
 } from "../../../../shared/atlasPostcodeAreaReader";
 import { readSqlitePostcodeIndexArtifact } from "../../../../shared/atlasPostcodeIndexReader";
 import { readSqlitePostcodeShard } from "../../../../shared/atlasPostcodeShard";
-import { compilePostcodeCounts } from "../../../../shared/compilePostcodeCounts";
+import { compilePostcodeCounts } from "./compilePostcodeCounts";
 import { storePostcodeCounts } from "../../../../shared/storePostcodeCounts";
 import type { PostcodeShard } from "../../../../shared/postcodeIndexTypes";
 import { apiRootOf } from "../../../../shared/dataLayout";

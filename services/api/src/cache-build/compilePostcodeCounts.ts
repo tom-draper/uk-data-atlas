@@ -4,17 +4,17 @@ import {
 	type PostcodeAreaColumn,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "./postcodeAreaTypes";
+} from "../../../../shared/postcodeAreaTypes";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
-} from "./postcodeIndexTypes";
+} from "../../../../shared/postcodeIndexTypes";
 import type {
 	PostcodeCounts,
 	PostcodeCountsArtifact,
-} from "./postcodeCountTypes";
-import { compareCodeUnits } from "./compareCodeUnits";
-import { sha256 } from "./contentHash";
+} from "../../../../shared/postcodeCountTypes";
+import { compareCodeUnits } from "../../../../shared/compareCodeUnits";
+import { sha256 } from "../../../../shared/contentHash";
 
 const add = (
 	areas: Map<string, Omit<PostcodeCounts, "edition">>,
