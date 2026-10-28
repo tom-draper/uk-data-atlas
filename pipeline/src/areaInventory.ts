@@ -12,7 +12,7 @@ import type {
 } from "../../shared/areaSourceAdapters";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readDbfRecords } from "../../shared/dbf";
+import { readDbfRecords } from "@uk-data-atlas/shapefile";
 import { sha256 } from "../../shared/contentHash";
 
 type FeatureCollection = {

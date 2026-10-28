@@ -53,9 +53,9 @@ const COMPILER_SOURCES = [
 	"../../packages/geography/src/geometryTypes.ts",
 	"../../packages/geography/src/areaDistance.ts",
 	"../../shared/areaNeighbours.ts",
-	"../../shared/dbf.ts",
+	"../../packages/shapefile/src/dbf.ts",
 	"../../packages/geography/src/geometryProvenance.ts",
-	"../../shared/shapefile.ts",
+	"../../packages/shapefile/src/shapefile.ts",
 	"../../packages/geography/src/geometrySubstitutions.ts",
 ];
 

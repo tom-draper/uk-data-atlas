@@ -47,7 +47,8 @@
 		"tsx": "^4.23.15",
 		"yaml": "^2.9.1",
 		"@uk-data-atlas/datasets": "workspace:*",
-		"@uk-data-atlas/search-index": "workspace:*"
+		"@uk-data-atlas/search-index": "workspace:*",
+		"@uk-data-atlas/shapefile": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",
