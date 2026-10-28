@@ -69,7 +69,7 @@ const COMPILER_SOURCES = [
 	"../../shared/areaContainment.ts",
 	"../../packages/geography/src/geometryPositions.ts",
 	"../../shared/geometryTypes.ts",
-	"../../shared/geometryProvenance.ts",
+	"../../packages/geography/src/geometryProvenance.ts",
 	"../../shared/shapefile.ts",
 ];
 

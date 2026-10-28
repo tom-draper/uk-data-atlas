@@ -25,7 +25,7 @@ import { encodeGeometryStore, readGeometryStore } from "../src/geometryStore";
 import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,
-} from "../src/geometryValidity";
+} from "@uk-data-atlas/geography";
 import { packGeometry, unpackGeometry } from "../src/packedGeometry";
 import { route } from "../src/routes";
 import fixtures from "./fixtures/geometry-validity.json";
