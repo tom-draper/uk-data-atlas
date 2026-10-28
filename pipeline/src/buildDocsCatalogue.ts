@@ -1,9 +1,9 @@
-import { buildArtifactPath } from "./geographyBuildPath";
+import { buildArtifactPath } from "../../shared/geographyBuildPath";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const repositoryRoot = resolve(import.meta.dirname, "..");
+const repositoryRoot = resolve(import.meta.dirname, "../..");
 
 type ApiArtifact<T> = { path: string; sha256: string; data: T };
 
