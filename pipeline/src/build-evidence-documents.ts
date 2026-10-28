@@ -12,7 +12,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readApiCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { evidenceInputsHash } from "./evidence/evidenceInputsHash";
 import { buildEvidenceMeasure } from "./evidence/buildEvidenceMeasure";
 import {
@@ -51,11 +51,11 @@ const compilerHash = sha256(
 		.join("\n"),
 );
 
-const inputsHash = (context: ReturnType<typeof readApiCatalogues>) =>
+const inputsHash = (context: ReturnType<typeof readAtlasCatalogues>) =>
 	evidenceInputsHash(directory, context);
 
 const main = () => {
-	const context = readApiCatalogues(apiRoot, {
+	const context = readAtlasCatalogues(apiRoot, {
 		loadEvidenceDocuments: false,
 	});
 	const documents = [
