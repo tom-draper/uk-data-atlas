@@ -2,17 +2,20 @@ import { dirname, resolve } from "node:path";
 import { buildAreaSearchIndex } from "./buildAreaSearchIndex";
 import { buildPlaceIndex } from "./buildPlaceIndex";
 import { buildPostcodeCounts } from "./buildPostcodeCounts";
-import { readSqliteAreaInventory as readAreaInventory } from "./atlasAreaReader";
-import { readAreaLookup } from "./areaLookup";
-import { readCrosswalkInventory, readCrosswalkLookup } from "./crosswalkLoader";
-import { readNamedLocationInventory } from "./locationLoader";
+import { readSqliteAreaInventory as readAreaInventory } from "../../../../shared/atlasAreaReader";
+import { readAreaLookup } from "../../../../shared/areaLookup";
+import {
+	readCrosswalkInventory,
+	readCrosswalkLookup,
+} from "../../../../shared/crosswalkLoader";
+import { readNamedLocationInventory } from "../../../../shared/locationLoader";
 import {
 	compileLocationProjections,
 	locationProjectionTables,
-} from "./locationProjections";
-import { publishAtlasCache } from "./atlasCache";
-import { writeSqliteTables } from "./sqliteIndex";
-import { apiRootOf } from "./dataLayout";
+} from "../../../../shared/locationProjections";
+import { publishAtlasCache } from "../../../../shared/atlasCache";
+import { writeSqliteTables } from "../../../../shared/sqliteIndex";
+import { apiRootOf } from "../../../../shared/dataLayout";
 
 /** Rebuild API accelerators using only the distributed canonical database. */
 export function buildAtlasCache(root: string) {

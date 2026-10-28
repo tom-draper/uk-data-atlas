@@ -3,11 +3,11 @@ import { rmSync } from "node:fs";
 import {
 	compileAreaSearchIndex,
 	areaSearchIndexTables,
-} from "./areaSearchCompiler";
-import { readSqliteAreaInventory } from "./atlasAreaReader";
-import { readAreaLookup } from "./areaLookup";
-import { publishCacheTables } from "./atlasCache";
-import { apiRootOf, artifactRoot } from "./dataLayout";
+} from "../../../../shared/areaSearchCompiler";
+import { readSqliteAreaInventory } from "../../../../shared/atlasAreaReader";
+import { readAreaLookup } from "../../../../shared/areaLookup";
+import { publishCacheTables } from "../../../../shared/atlasCache";
+import { apiRootOf, artifactRoot } from "../../../../shared/dataLayout";
 
 export const buildAreaSearchIndex = (repositoryRoot: string) => {
 	const apiRoot = apiRootOf(repositoryRoot);

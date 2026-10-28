@@ -1,7 +1,6 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildPostcodeCounts } from "../../../shared/buildPostcodeCounts";
-export { buildPostcodeCounts } from "../../../shared/buildPostcodeCounts";
+import { buildPostcodeCounts } from "../src/cache-build/buildPostcodeCounts";
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {

@@ -1,8 +1,8 @@
 import { atlasCachePath } from "../src/atlasCache";
-import { buildAreaSearchIndex } from "../../../shared/buildAreaSearchIndex";
+import { buildAreaSearchIndex } from "../src/cache-build/buildAreaSearchIndex";
 import { AreaSearch } from "../src/areaSearch";
 import { readAreaSearchIndex, readAreaLookup } from "../src/boundaryLoader";
-import { buildPlaceIndex } from "../scripts/build-place-index";
+import { buildPlaceIndex } from "../src/cache-build/buildPlaceIndex";
 import { readAreaInventory, readPlaceIndex } from "../src/boundaryLoader";
 import { readNamedLocationInventory } from "../src/locationLoader";
 import { resolvePlaces } from "../src/placeResolver";
