@@ -9,7 +9,7 @@ import type { RelationshipCandidateInventory } from "../../relationships/relatio
 import type {
 	AreaRelation,
 	AreaRelationship,
-} from "../../relationships/areaRelationships";
+} from "@uk-data-atlas/relationships";
 import type { RelationshipPurpose } from "@uk-data-atlas/relationships";
 import type { AreaIdentity, GeographyEndpoint } from "./areas";
 import {
