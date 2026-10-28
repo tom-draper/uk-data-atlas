@@ -148,7 +148,7 @@ const importsAtlasApi = (file: string, specifier: string) =>
 		inside(ATLAS_API, resolve(dirname(file), specifier)));
 
 describe("extracted domain packages", () => {
-	it.each(["areas", "relationships"])(
+	it.each(["areas", "relationships", "geometry"])(
 		"%s has no runtime or storage dependency",
 		(name) => {
 			const manifest = JSON.parse(

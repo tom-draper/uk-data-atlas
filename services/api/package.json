@@ -54,7 +54,8 @@
 		"@uk-data-atlas/terrain": "workspace:*",
 		"@uk-data-atlas/postcodes": "workspace:*",
 		"@uk-data-atlas/areas": "workspace:*",
-		"@uk-data-atlas/relationships": "workspace:*"
+		"@uk-data-atlas/relationships": "workspace:*",
+		"@uk-data-atlas/geometry": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

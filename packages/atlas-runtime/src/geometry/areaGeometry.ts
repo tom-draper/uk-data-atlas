@@ -38,23 +38,20 @@ import {
 	spatialCells,
 } from "@uk-data-atlas/geography/geometry-spatial-index";
 import {
-	borderIndex,
-	sharedBorderWith,
+	SpatialQueries,
 	type Neighbour,
-} from "../areas/areaNeighbours";
+	type ContainingArea,
+	type NearbyArea,
+	type IntersectingArea,
+} from "@uk-data-atlas/geometry";
+export type {
+	ContainingArea,
+	NearbyArea,
+	IntersectingArea,
+} from "@uk-data-atlas/geometry";
 import {
-	distanceToBoundsM,
-	distanceToGeometryM,
-} from "@uk-data-atlas/geography/area-distance";
-import {
-	boundsIntersect,
-	boundsWithin,
-	containPoint,
-	geometryMeetsBounds,
-	pointInBounds,
 	type Coordinate,
 	type GeometryBounds,
-	type PointContainment,
 } from "@uk-data-atlas/geography/geometry-point-containment";
 
 import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
@@ -116,23 +113,6 @@ type SpatialIndex = {
  */
 const MATERIALISED_AREAS = 256;
 
-export type ContainingArea = {
-	code: string;
-	containment: Exclude<PointContainment, "outside">;
-};
-
-export type NearbyArea = {
-	code: string;
-	/** Metres to the area, zero when the point is on or inside it. */
-	distanceM: number;
-};
-
-export type IntersectingArea = {
-	code: string;
-	/** `within` when the area lies entirely inside the box. */
-	relation: "within" | "overlaps";
-	bounds: GeometryBounds;
-};
 /**
  * Geometry cache activity. Compiled releases retain metadata and indexes,
  * while individual area reads populate the materialised geometry cache.
@@ -719,148 +699,61 @@ export class AreaGeometryCache {
 		);
 		return release ? [...release.geometries.keys()] : [];
 	}
-	/**
-	 * Find areas containing a WGS84 point within one boundary release. A compact
-	 * grid index first finds candidate bounds; exact polygon tests preserve the
-	 * published boundary semantics, including shared edges and holes.
-	 */
+	private queries(
+		geography: string,
+		boundaryRelease: string,
+		target?: { code: string; geometry: GeoJsonGeometry },
+	) {
+		const indexed = this.spatialIndexFor(geography, boundaryRelease);
+		if (!indexed) return undefined;
+		const { release, index } = indexed;
+		return new SpatialQueries({
+			candidates: (bounds) => this.spatialCandidates(index, bounds),
+			bounds: (code) =>
+				this.boundsFor(release, geography, boundaryRelease, code),
+			geometry: (code) =>
+				target?.code === code
+					? target.geometry
+					: this.get(geography, boundaryRelease, code),
+		});
+	}
+
 	findContaining(
 		geography: string,
 		boundaryRelease: string,
 		point: Coordinate,
 	): ContainingArea[] {
-		const indexed = this.spatialIndexFor(geography, boundaryRelease);
-		if (!indexed) return [];
-		const { release, index } = indexed;
-		const matches: ContainingArea[] = [];
-		for (const code of this.spatialCandidates(index, [
-			point[0],
-			point[1],
-			point[0],
-			point[1],
-		])) {
-			// The envelope settles most candidates without building any rings.
-			const bounds = this.boundsFor(
-				release,
-				geography,
-				boundaryRelease,
-				code,
-			);
-			if (!bounds || !pointInBounds(point, bounds)) continue;
-			const geometry = this.get(geography, boundaryRelease, code);
-			if (!geometry) continue;
-			const containment = containPoint(point, geometry);
-			if (containment !== "outside") matches.push({ code, containment });
-		}
-		return matches.sort((left, right) =>
-			left.code.localeCompare(right.code),
+		return (
+			this.queries(geography, boundaryRelease)?.findContaining(point) ??
+			[]
 		);
 	}
 
-	/**
-	 * The areas of one release nearest a WGS84 point, no further than
-	 * `withinM`, nearest first. The same compact grid narrows the work to areas
-	 * whose envelopes can reach the requested radius.
-	 */
 	findNearest(
 		geography: string,
 		boundaryRelease: string,
 		point: Coordinate,
 		withinM: number,
 	): NearbyArea[] {
-		const indexed = this.spatialIndexFor(geography, boundaryRelease);
-		if (!indexed) return [];
-		const { release, index } = indexed;
-		const latitudeDelta = withinM / 110000;
-		const furthestLatitude = Math.min(
-			89.999,
-			Math.abs(point[1]) + latitudeDelta,
-		);
-		const longitudeMetresPerDegree = Math.max(
-			0.001,
-			110000 * Math.cos((furthestLatitude * Math.PI) / 180),
-		);
-		const longitudeDelta = withinM / longitudeMetresPerDegree;
-		const searchBounds: GeometryBounds = [
-			Math.max(-180, point[0] - longitudeDelta),
-			Math.max(-90, point[1] - latitudeDelta),
-			Math.min(180, point[0] + longitudeDelta),
-			Math.min(90, point[1] + latitudeDelta),
-		];
-		const nearby: NearbyArea[] = [];
-		for (const code of this.spatialCandidates(index, searchBounds)) {
-			const bounds = this.boundsFor(
-				release,
-				geography,
-				boundaryRelease,
-				code,
-			);
-			if (!bounds || distanceToBoundsM(point, bounds) > withinM) continue;
-			const geometry = this.get(geography, boundaryRelease, code);
-			if (!geometry) continue;
-			const distanceM = distanceToGeometryM(point, geometry);
-			if (distanceM <= withinM) nearby.push({ code, distanceM });
-		}
-		return nearby.sort(
-			(left, right) =>
-				left.distanceM - right.distanceM ||
-				left.code.localeCompare(right.code),
+		return (
+			this.queries(geography, boundaryRelease)?.findNearest(
+				point,
+				withinM,
+			) ?? []
 		);
 	}
 
-	/**
-	 * Find areas meeting a WGS84 box within one boundary release.
-	 *
-	 * Most areas are settled by their cached bounds alone. Bounds that fall
-	 * entirely inside the box put the area inside it too, exactly, since an
-	 * area never reaches past its own bounds; bounds that miss the box settle
-	 * it the other way. Only an area straddling an edge of the box needs its
-	 * rings walked, which is a thin band around the box however large the box
-	 * is.
-	 */
 	findIntersecting(
 		geography: string,
 		boundaryRelease: string,
 		box: GeometryBounds,
 	): IntersectingArea[] {
-		const indexed = this.spatialIndexFor(geography, boundaryRelease);
-		if (!indexed) return [];
-		const { release, index } = indexed;
-		const matches: IntersectingArea[] = [];
-		for (const code of this.spatialCandidates(index, box)) {
-			const bounds = this.boundsFor(
-				release,
-				geography,
-				boundaryRelease,
-				code,
-			);
-			if (!bounds || !boundsIntersect(bounds, box)) continue;
-			if (boundsWithin(bounds, box)) {
-				matches.push({ code, relation: "within", bounds });
-				continue;
-			}
-			const geometry = this.get(geography, boundaryRelease, code);
-			if (!geometry) continue;
-			if (geometryMeetsBounds(geometry, box))
-				matches.push({ code, relation: "overlaps", bounds });
-		}
-		return matches.sort((left, right) =>
-			left.code.localeCompare(right.code),
+		return (
+			this.queries(geography, boundaryRelease)?.findIntersecting(box) ??
+			[]
 		);
 	}
 
-	/**
-	 * Find the areas whose boundary meets this one's, within one release.
-	 *
-	 * Only areas whose bounds touch the target's can share anything with it, so
-	 * the boundary comparison runs against a handful of candidates rather than
-	 * the whole release, and the grid index finds those candidates without
-	 * visiting every area's envelope. Nothing here is indexed across every
-	 * area's edges, which for a ward release would be millions held to answer
-	 * one question.
-	 *
-	 * Returns undefined when the area itself has no geometry to compare.
-	 */
 	findNeighbours(
 		geography: string,
 		boundaryRelease: string,
@@ -868,31 +761,9 @@ export class AreaGeometryCache {
 	): Neighbour[] | undefined {
 		const geometry = this.get(geography, boundaryRelease, code);
 		if (!geometry) return undefined;
-		const indexed = this.spatialIndexFor(geography, boundaryRelease);
-		if (!indexed) return undefined;
-		const { release, index } = indexed;
-		const boundsFor = (forCode: string) =>
-			this.boundsFor(release, geography, boundaryRelease, forCode);
-		const targetBounds = boundsFor(code);
-		if (!targetBounds) return [];
-		const target = borderIndex(geometry);
-		const neighbours: Neighbour[] = [];
-		for (const otherCode of this.spatialCandidates(index, targetBounds)) {
-			if (otherCode === code) continue;
-			const otherBounds = boundsFor(otherCode);
-			// Bounds that only touch still qualify: two areas meeting along a
-			// border have bounds that meet there too.
-			if (!otherBounds || !boundsIntersect(targetBounds, otherBounds))
-				continue;
-			const other = this.get(geography, boundaryRelease, otherCode);
-			if (!other) continue;
-			const shared = sharedBorderWith(target, other);
-			if (shared) neighbours.push({ code: otherCode, ...shared });
-		}
-		return neighbours.sort(
-			(left, right) =>
-				right.sharedBorderM - left.sharedBorderM ||
-				left.code.localeCompare(right.code),
-		);
+		return this.queries(geography, boundaryRelease, {
+			code,
+			geometry,
+		})?.findNeighbours(code);
 	}
 }

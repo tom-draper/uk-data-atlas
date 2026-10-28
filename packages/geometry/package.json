@@ -1,0 +1,22 @@
+{
+	"name": "@uk-data-atlas/geometry",
+	"private": true,
+	"license": "AGPL-3.0-only",
+	"version": "0.0.0",
+	"type": "module",
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p tsconfig.json"
+	},
+	"dependencies": {
+		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/map-tiles": "workspace:*",
+		"polygon-clipping": "0.15.7"
+	},
+	"devDependencies": {
+		"typescript": "^7.0.2"
+	}
+}

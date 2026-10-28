@@ -3,7 +3,14 @@ export * from "./analysisGeographyValidation";
 export * from "./areaAbsence";
 export * from "./areaAdapters";
 export * from "./areaLookup";
-export * from "./areaNeighbours";
+export {
+	borderIndex,
+	sharedBorder,
+	sharedBorderWith,
+	type BorderIndex,
+	type Neighbour,
+	type Touch,
+} from "@uk-data-atlas/geometry";
 export * from "./areaResources";
 export * from "./areaSearch";
 export * from "./areaSearchCompiler";

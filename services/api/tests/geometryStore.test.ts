@@ -234,6 +234,12 @@ test("serves a compiled release exactly as it serves the release's source", (t) 
 				longitude! + 0.001,
 				latitude! + 0.001,
 			]),
+			nearest: cache.findNearest(
+				"ward",
+				"2025-05-uk-bgc",
+				[longitude! + 0.001, latitude! + 0.001],
+				1000,
+			),
 			neighbours: cache.findNeighbours(
 				"ward",
 				"2025-05-uk-bgc",
