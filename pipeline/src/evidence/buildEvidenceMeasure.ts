@@ -6,6 +6,7 @@ import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { EvidenceDocument } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 type EvidenceMeasureDependencies<Context> = {
+	measureQuality: (context: Context, measureId: string) => unknown;
 	report: (
 		context: Context,
 		url: string,
@@ -35,6 +36,7 @@ export const buildEvidenceMeasure = <
 	id: string,
 	{
 		report,
+		measureQuality,
 		measureCapability,
 		availableReconciliations,
 		write,
@@ -47,7 +49,7 @@ export const buildEvidenceMeasure = <
 	);
 	if (!measure) throw new Error(`Unknown measure ${id}`);
 	const base = `/v1/measures/${id}`;
-	const quality = report(context, `${base}/quality`);
+	const quality = { status: 200, data: measureQuality(context, id) };
 	const coverage = report(context, `${base}/coverage`);
 	const compatibility = report(context, `${base}/compatibility`);
 	const conversionSupport = report(context, `${base}/conversion-support`);

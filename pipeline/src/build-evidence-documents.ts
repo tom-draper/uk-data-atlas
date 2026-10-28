@@ -1,5 +1,8 @@
 import { build } from "esbuild";
-import { measureCapability } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	measureCapability,
+	measureQuality,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
@@ -92,6 +95,23 @@ const main = () => {
 			) ??
 				buildEvidenceMeasure(context, measure.id, {
 					report,
+					measureQuality: (context, id) => {
+						if (!context.measureCompatibilityInventory)
+							throw new Error(
+								"Measure compatibility is required to build evidence",
+							);
+						const quality = measureQuality(
+							context.dataCatalog,
+							context.measureCompatibilityInventory,
+							id,
+							context,
+						);
+						if (!quality)
+							throw new Error(
+								`No published measure quality record matches ${id}`,
+							);
+						return quality;
+					},
 					measureCapability,
 					availableReconciliations,
 					write,

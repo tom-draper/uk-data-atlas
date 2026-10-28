@@ -1,5 +1,4 @@
 import { handleSyncRoutes } from "../api/syncRoutes";
-import { handleMeasureQualityRoutes } from "../api/measureQualityRoutes";
 import { handleMeasureCoverageRoutes } from "../api/measureCoverageRoutes";
 import { handleMeasureCompatibilityRoutes } from "../api/measureCompatibilityRoutes";
 import { handleMeasureReconciliationRoutes } from "../api/measureReconciliationRoutes";
@@ -14,7 +13,6 @@ import type { RouteRequest } from "../areas/routing";
 export const evidenceReport = (request: RouteRequest) => {
 	const path = request.segments;
 	if (path[1] === "measures") {
-		if (path[3] === "quality") return handleMeasureQualityRoutes(request);
 		if (path[3] === "coverage") return handleMeasureCoverageRoutes(request);
 		if (path[3] === "compatibility")
 			return handleMeasureCompatibilityRoutes(request);
