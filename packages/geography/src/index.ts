@@ -10,3 +10,6 @@ export * from "./areaIdentity";
 export * from "./geographyKinds";
 export * from "./geographyAliases";
 export * from "./nameNormalisation";
+export * from "./geometryValidity";
+export * from "./geometryProvenance";
+export * from "./geometryContainmentValidation";

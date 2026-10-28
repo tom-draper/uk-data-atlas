@@ -14,11 +14,11 @@ import { sha256 } from "./contentHash";
 import type {
 	GeometryContainmentValidation,
 	GeometryContainmentInputs,
-} from "./geometryContainmentValidation";
+} from "@uk-data-atlas/geography";
 export type {
 	GeometryContainmentValidation,
 	GeometryContainmentInputs,
-} from "./geometryContainmentValidation";
+} from "@uk-data-atlas/geography";
 export const geometryContainmentInputs = (
 	repositoryRoot: string,
 	geometrySources: GeometrySourceLookup,

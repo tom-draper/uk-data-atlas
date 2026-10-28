@@ -29,7 +29,7 @@ import {
 	substitutionProvenance,
 } from "./geometrySubstitution";
 import { readGeometryStore } from "./geometryStore";
-import type { GeometryValidityReport } from "./geometryValidity";
+import type { GeometryValidityReport } from "@uk-data-atlas/geography";
 import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
 import {
 	borderIndex,

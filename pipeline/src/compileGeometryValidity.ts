@@ -5,7 +5,7 @@ import {
 	GEOMETRY_VALIDITY_METHOD,
 	type GeometryValidityIssue,
 	type GeometryValidityReport,
-} from "../../shared/geometryValidity";
+} from "@uk-data-atlas/geography";
 import {
 	roundPacked,
 	unpackGeometry,

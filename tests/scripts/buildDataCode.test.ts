@@ -216,7 +216,9 @@ test("production builders resolve without UI code and include declared workers a
 		);
 	}
 	assert.ok(
-		inputs.get("geometry-store")!.includes("shared/geometryValidity.ts"),
+		inputs
+			.get("geometry-store")!
+			.includes("packages/geography/src/geometryValidity.ts"),
 	);
 	assert.ok(
 		inputs

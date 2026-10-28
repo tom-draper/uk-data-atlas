@@ -16,7 +16,7 @@ import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,
 	type GeometryValidityReport,
-} from "./geometryValidity";
+} from "@uk-data-atlas/geography";
 
 /**
  * A compiled release keeps only metadata in memory: area codes, envelopes,

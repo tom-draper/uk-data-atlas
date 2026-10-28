@@ -9,8 +9,8 @@ import type {
 	ExtentContinuityCrosswalkAdapter,
 } from "./crosswalkAdapters";
 import type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation";
-import type { GeometryContainmentValidation } from "./geometryContainmentValidation";
-import type { GeometryProvenance } from "./geometryProvenance";
+import type { GeometryContainmentValidation } from "@uk-data-atlas/geography";
+import type { GeometryProvenance } from "@uk-data-atlas/geography";
 
 export type CrosswalkArea = {
 	code: string;

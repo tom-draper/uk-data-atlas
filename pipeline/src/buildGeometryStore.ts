@@ -42,7 +42,7 @@ const COMPILER_SOURCES = [
 	"../../shared/areaGeometry.ts",
 	"../../shared/geoJsonProperties.ts",
 	"../../shared/geometryStore.ts",
-	"../../shared/geometryValidity.ts",
+	"../../packages/geography/src/geometryValidity.ts",
 	"../../shared/geometrySpatialIndex.ts",
 	"../../shared/geometrySubstitution.ts",
 	"../../shared/gridOffset.ts",
@@ -54,7 +54,7 @@ const COMPILER_SOURCES = [
 	"../../shared/areaDistance.ts",
 	"../../shared/areaNeighbours.ts",
 	"../../shared/dbf.ts",
-	"../../shared/geometryProvenance.ts",
+	"../../packages/geography/src/geometryProvenance.ts",
 	"../../shared/shapefile.ts",
 	"../../packages/geography/src/geometrySubstitutions.ts",
 ];
