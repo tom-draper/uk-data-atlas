@@ -67,6 +67,7 @@ test("assembles measure evidence for available releases and reconciliation perio
 	let output: unknown;
 	const result = buildEvidenceMeasure(context, "population", {
 		measureQuality: (_context, id) => `quality:${id}`,
+		measureCompatibility: (_context, id) => `compatibility:${id}`,
 		report: (_context, url) => ({ status: 200, data: url }),
 		measureCapability: () => "supported",
 		availableReconciliations: () => [
@@ -89,7 +90,7 @@ test("assembles measure evidence for available releases and reconciliation perio
 		coverage: { status: 200, data: "/v1/measures/population/coverage" },
 		compatibility: {
 			status: 200,
-			data: "/v1/measures/population/compatibility",
+			data: "compatibility:population",
 		},
 		conversionSupport: {
 			status: 200,
@@ -112,5 +113,38 @@ test("assembles measure evidence for available releases and reconciliation perio
 				data: "/v1/measures/population/reconciliation?crosswalk=ward%2Flad&period=2021",
 			},
 		],
+	});
+});
+
+test("records an absent compatibility assessment as not found", () => {
+	const context = {
+		dataCatalog: {
+			contentHash: "catalogue",
+			measures: [{ id: "population" }],
+		},
+		areaInventory: { releases: [] },
+	} as unknown as Parameters<typeof buildEvidenceMeasure>[0];
+	let output: unknown;
+	buildEvidenceMeasure(context, "population", {
+		measureQuality: () => ({}),
+		measureCompatibility: () => undefined,
+		report: () => ({ status: 200, data: {} }),
+		measureCapability: () => ({}),
+		availableReconciliations: () => [],
+		write: (id, data) => {
+			output = data;
+			return { id, artifact: "path", bytes: 1, contentHash: "hash" };
+		},
+		compilerHash: "compiler",
+		inputsHash: () => "inputs",
+	});
+	assert.deepEqual((output as { compatibility: unknown }).compatibility, {
+		status: 404,
+		data: {
+			type: "https://api.ukdataatlas.com/problems/not-found",
+			title: "Not Found",
+			status: 404,
+			detail: "No published measure compatibility record matches that id.",
+		},
 	});
 });

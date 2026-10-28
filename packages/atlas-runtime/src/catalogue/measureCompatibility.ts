@@ -55,6 +55,22 @@ export type MeasureCompatibilityInventory = {
 	}>;
 };
 
+/** Published boundary code-set compatibility candidates for one measure. */
+export const measureCompatibilityReport = (
+	inventory: MeasureCompatibilityInventory,
+	measureId: string,
+) => {
+	const measure = inventory.measures.find(
+		(candidate) => candidate.measureId === measureId,
+	);
+	return (
+		measure && {
+			...measure,
+			note: "Candidates report code-set compatibility only. They do not select a geometry release or assert equal geometry.",
+		}
+	);
+};
+
 type Measure = DataCatalog["measures"][number];
 
 /** What a measure publishes for one source partition, as routes report it. */

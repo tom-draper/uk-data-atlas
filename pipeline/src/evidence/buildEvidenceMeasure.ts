@@ -7,6 +7,7 @@ import type { EvidenceDocument } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 type EvidenceMeasureDependencies<Context> = {
 	measureQuality: (context: Context, measureId: string) => unknown;
+	measureCompatibility: (context: Context, measureId: string) => unknown;
 	report: (
 		context: Context,
 		url: string,
@@ -37,6 +38,7 @@ export const buildEvidenceMeasure = <
 	{
 		report,
 		measureQuality,
+		measureCompatibility,
 		measureCapability,
 		availableReconciliations,
 		write,
@@ -51,7 +53,19 @@ export const buildEvidenceMeasure = <
 	const base = `/v1/measures/${id}`;
 	const quality = { status: 200, data: measureQuality(context, id) };
 	const coverage = report(context, `${base}/coverage`);
-	const compatibility = report(context, `${base}/compatibility`);
+	const compatibilityData = measureCompatibility(context, id);
+	const compatibility =
+		compatibilityData === undefined
+			? {
+					status: 404,
+					data: {
+						type: "https://api.ukdataatlas.com/problems/not-found",
+						title: "Not Found",
+						status: 404,
+						detail: "No published measure compatibility record matches that id.",
+					},
+				}
+			: { status: 200, data: compatibilityData };
 	const conversionSupport = report(context, `${base}/conversion-support`);
 	const coveragePlans = context.areaInventory.releases.flatMap((release) =>
 		release.status === "available"
