@@ -6,13 +6,7 @@ import {
 } from "./atlasAssets";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
-import {
-	envelope,
-	problem,
-	type ApiResponse,
-	type StoredFile,
-} from "../api/routeResponse";
-import type { RouteRequest } from "../areas/routing";
+import type { StoredFile } from "../api/routeResponse";
 import { repositoryRootOf } from "./dataLayout";
 
 /** The built lookups by id, or none where they have not been built. */
@@ -47,37 +41,4 @@ export const readAtlasLookups = (apiRoot: string): Map<string, StoredFile> => {
 			];
 		}),
 	);
-};
-
-export const handleAtlasLookupRoutes = ({
-	context,
-	releaseId,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 3 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "atlas-lookups" ||
-		!segments[2]?.endsWith(".json")
-	)
-		return undefined;
-	const id = segments[2].slice(0, -".json".length);
-	const lookup = context.atlasLookups?.get(id);
-	if (lookup)
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				id,
-				href: `/v1/atlas-lookups/${id}.json`,
-				contentHash: lookup.contentHash,
-			}),
-			representation: { contentType: "application/json", body: lookup },
-		};
-	return context.atlasLookups?.size
-		? problem(404, "Not Found", "No atlas lookup matches that id.")
-		: problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the atlas lookups before downloading them.",
-			);
 };

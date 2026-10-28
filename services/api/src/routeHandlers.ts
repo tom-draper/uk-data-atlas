@@ -3,8 +3,10 @@ import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
-import { handleAtlasPageRoutes } from "@uk-data-atlas/atlas-runtime/storage";
-import { handleAtlasLookupRoutes } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	handleAtlasPageRoutes,
+	handleAtlasLookupRoutes,
+} from "./atlasAssetRoutes";
 import type {
 	FullDetailResult,
 	FullDetailSource,
