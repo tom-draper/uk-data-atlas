@@ -18,6 +18,8 @@ import {
 	type SqliteTable,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { publishDatasetPayloads } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const entry = {
 	fingerprint: "sha256:fixture",
@@ -120,7 +122,7 @@ const memory = (tables: Record<string, SqliteTable>) => {
 };
 
 describe("fuel poverty on the statistics model", () => {
-	it("rebuilds the payload byte for byte and serves it without the retained blob", () => {
+	it("rebuilds the payload byte for byte and serves it from rows through the cache", () => {
 		const root = mkdtempSync(join(tmpdir(), "statistics-rows-"));
 		const path = join(root, "data/build/atlas.sqlite");
 		mkdirSync(join(root, "data/build"), { recursive: true });
@@ -142,13 +144,14 @@ describe("fuel poverty on the statistics model", () => {
 					payloads: {
 						columns: ["id TEXT", "payload TEXT"],
 						key: ["id"],
-						rows: [["dataset:fuel-poverty", text]],
+						rows: [],
 					},
 					datasets: {
 						columns: [
 							"type TEXT",
 							"output TEXT",
 							"sha256 TEXT",
+							"bytes INTEGER",
 							"payloadId TEXT",
 						],
 						key: ["type"],
@@ -157,7 +160,8 @@ describe("fuel poverty on the statistics model", () => {
 								"fuelPoverty",
 								"fuel-poverty",
 								hash,
-								"dataset:fuel-poverty",
+								Buffer.byteLength(text),
+								null,
 							],
 						],
 					},
@@ -234,12 +238,27 @@ describe("fuel poverty on the statistics model", () => {
 				expect(
 					database.prepare("PRAGMA foreign_key_check").all(),
 				).toEqual([]);
-				database.exec("UPDATE payloads SET payload = 'unused'");
 			} finally {
 				database.close();
 			}
+			// No cache yet: rebuilt from rows.
 			expect(readVersionedAtlasDataset(root, "fuel-poverty", hash)).toBe(
 				text,
+			);
+			publishDatasetPayloads(root);
+			const cache = new DatabaseSync(atlasCachePath(root));
+			try {
+				expect(
+					cache.prepare("SELECT * FROM dataset_payloads").all(),
+				).toEqual([
+					{ output: "fuel-poverty", sha256: hash, payload: text },
+				]);
+				cache.exec("UPDATE dataset_payloads SET payload = 'cached'");
+			} finally {
+				cache.close();
+			}
+			expect(readVersionedAtlasDataset(root, "fuel-poverty", hash)).toBe(
+				"cached",
 			);
 			expect(
 				readVersionedAtlasDataset(root, "fuel-poverty", "stale"),
