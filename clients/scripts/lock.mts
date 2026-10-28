@@ -70,7 +70,10 @@ export const hashSpec = () => sha256(readFileSync(SPEC));
 export const hashTooling = (typescriptGenerator: string) =>
 	sha256(
 		typescriptGenerator,
-		...TOOLING.flatMap((path) => [path, readFileSync(path)]),
+		...TOOLING.flatMap((path) => [
+			relative(ROOT, path),
+			readFileSync(path),
+		]),
 	);
 
 /** The pinned `openapi-typescript` version, which the TypeScript output tracks. */
