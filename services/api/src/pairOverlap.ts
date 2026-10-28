@@ -8,7 +8,7 @@ import {
 	multiPolygonAreaM2,
 	polygonWidthM,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import { CLIPPING_VERSION } from "./pieceIntersection";
+import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
 
 /**
  * The thresholds the published area-overlap crosswalks are compiled with, and

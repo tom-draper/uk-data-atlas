@@ -13,7 +13,7 @@ import {
 	roundedMultiPolygon,
 } from "@uk-data-atlas/geography/area-geometry-pieces";
 import { labelsFor, round } from "./areaOverlap";
-import { CLIPPING_VERSION } from "../../shared/pieceIntersection";
+import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
 import { readGeometries } from "../../shared/rawAreaGeometries";
 import {
 	multiPolygonAreaM2,
