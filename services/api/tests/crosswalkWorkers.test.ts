@@ -11,7 +11,7 @@ import {
 	type CrosswalkArtifact,
 } from "../src/crosswalkInventory";
 import { readStoredText } from "../src/storedText";
-import { writeCrosswalkArtifact } from "../scripts/crosswalk-artifact";
+import { writeCrosswalkArtifact } from "../../../pipeline/src/crosswalk-artifact";
 import { crosswalkWorkerFixture } from "./helpers/crosswalkWorkerFixture";
 
 const GIB = 1024 ** 3;

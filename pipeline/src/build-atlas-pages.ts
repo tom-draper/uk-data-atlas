@@ -14,7 +14,7 @@ import {
 	pointInGeom,
 } from "@uk-data-atlas/datasets/data/gazetteer/geometry";
 import { buildDocsCatalogue } from "./buildDocsCatalogue";
-import { writeAtlasPages } from "../../shared/writeAtlasPages";
+import { writeAtlasPages } from "./writeAtlasPages";
 import {
 	PLACE_GEOGRAPHIES,
 	encodeOutline,

@@ -7,7 +7,7 @@ import {
 	atlasAssetsDirectory,
 	ATLAS_PAGES_MANIFEST,
 	type AtlasPageManifest,
-} from "./atlasAssets";
+} from "../../shared/atlasAssets";
 
 export function writeAtlasPages(
 	repositoryRoot: string,
