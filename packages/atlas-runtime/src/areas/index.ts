@@ -23,7 +23,13 @@ export * from "./geographyResolver";
 export * from "./lookupExports";
 export * from "./rankCompatibilityReleases";
 export * from "./rawAreaGeometries";
-export * from "./relatedCodes";
+export {
+	relatedCodesOf,
+	addRelatedCodes,
+	releaseCoverageOf,
+	type RelatedCodesByRelease,
+	type ReleaseCoverage,
+} from "@uk-data-atlas/relationships";
 export * from "./releaseForDate";
 export type { CrosswalkLookup } from "@uk-data-atlas/relationships";
 export * from "./sourceExactProvenance";

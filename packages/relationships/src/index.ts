@@ -5,3 +5,6 @@ export * from "./crosswalkTypes";
 export * from "./memberReconciliation";
 export * from "./relationshipPaths";
 export * from "./translation";
+export * from "./areaRelationships";
+export * from "./crosswalkValidation";
+export * from "./relatedCodes";

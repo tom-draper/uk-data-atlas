@@ -5,7 +5,7 @@ import {
 	isLineageRelation,
 	type AreaRelation,
 	type AreaRelationship,
-} from "../../relationships/areaRelationships";
+} from "@uk-data-atlas/relationships";
 import { areaId, type AreaIdentity, type ResolvedSameCodeArea } from "./areas";
 
 /** A published graph edge, reported once at its shortest distance from origin. */

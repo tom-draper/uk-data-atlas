@@ -1,5 +1,5 @@
 import type { AreaLookup } from "@uk-data-atlas/areas";
-import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
+import type { CrosswalkArtifact } from "./crosswalkTypes";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 /**
@@ -40,8 +40,8 @@ export const addRelatedCodes = (
 	}
 };
 
-import type { ReleaseCoverage } from "@uk-data-atlas/relationships";
-export type { ReleaseCoverage } from "@uk-data-atlas/relationships";
+import type { ReleaseCoverage } from "./crosswalkInventory";
+export type { ReleaseCoverage } from "./crosswalkInventory";
 
 /**
  * Each compiled release's related areas counted, in release order. A code a
