@@ -5,7 +5,7 @@ import type {
 	GeoJsonGeometry,
 	IntersectingArea,
 } from "../areaGeometry";
-import { distanceToBoundaryM } from "../areaDistance";
+import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import type { Neighbour } from "../areaNeighbours";
 import type {
 	GeometryBounds,

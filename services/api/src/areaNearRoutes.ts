@@ -1,4 +1,4 @@
-import { DISTANCE_METHOD } from "./areaDistance";
+import { DISTANCE_METHOD } from "@uk-data-atlas/geography/area-distance";
 import {
 	MAX_STATED_ACCURACY_M,
 	describeLookupRelease,

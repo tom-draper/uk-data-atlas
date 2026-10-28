@@ -12,7 +12,7 @@ import {
 	Worker,
 	workerData,
 } from "node:worker_threads";
-import { distanceToBoundaryM } from "../../shared/areaDistance";
+import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import { readSqliteAreaInventory as readAreaInventory } from "../../shared/atlasAreaReader";
 import { readAreaLookup } from "../../shared/areaLookup";
 import { readBoundaryRegistry } from "../../shared/boundaryCatalogue";
