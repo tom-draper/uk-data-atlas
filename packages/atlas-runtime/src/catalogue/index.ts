@@ -21,5 +21,6 @@ export * from "./observationArtifacts";
 export * from "./observationDownloads";
 export * from "./observationLoader";
 export * from "./observationTables";
+export * from "./relationshipRepairs";
 export * from "./validationReport";
 export * from "./measureQuality";

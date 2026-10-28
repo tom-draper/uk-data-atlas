@@ -9,7 +9,6 @@ export * from "./operations";
 export * from "./problemCodes";
 export * from "./queryParameters";
 export * from "./queryRuleCompiler";
-export * from "./relationshipRepairRoutes";
 export * from "./resolver/areas";
 export * from "./resolver/capability";
 export * from "./resolver/catalogue";

@@ -4,6 +4,7 @@ import {
 	measureCompatibilityReport,
 	measureCoverage,
 	measureQuality,
+	relationshipRepairsReport,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -77,10 +78,10 @@ const main = () => {
 	const documents = [
 		write("corrections", report(context, "/v1/corrections")),
 		write("geography-health", report(context, "/v1/geography-health")),
-		write(
-			"relationship-repairs",
-			report(context, "/v1/relationship-repairs"),
-		),
+		write("relationship-repairs", {
+			status: 200,
+			data: relationshipRepairsReport(context.geographyResolver),
+		}),
 	];
 	const sourceHash = inputsHash(context);
 	// One process builds every measure. The boundary and crosswalk loaders
