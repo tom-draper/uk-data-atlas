@@ -14,6 +14,7 @@ import {
 	locationProjectionTables,
 } from "@uk-data-atlas/atlas-runtime/places";
 import { publishAtlasCache } from "@uk-data-atlas/atlas-runtime/storage";
+import { publishDatasetPayloads } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { writeSqliteTables } from "@uk-data-atlas/atlas-runtime/storage";
 import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
@@ -56,5 +57,6 @@ export function buildAtlasCache(root: string) {
 			);
 	});
 	buildPostcodeCounts(root);
+	publishDatasetPayloads(root);
 	return { milliseconds: performance.now() - started };
 }

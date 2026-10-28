@@ -1,4 +1,4 @@
-import { rebuildFuelPoverty } from "../catalogue/fuelPovertyStatistics";
+import { readDatasetPayload } from "../catalogue/datasetPayloads";
 import { gunzipSync } from "node:zlib";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -7,16 +7,21 @@ import { DatabaseSync } from "node:sqlite";
 export function readAtlasPayload(repositoryRoot: string, id: string): string {
 	const path = join(repositoryRoot, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(path, { readOnly: true });
+	let stored: unknown;
 	try {
-		const row = database
+		stored = database
 			.prepare("SELECT payload FROM payloads WHERE id = ?")
-			.get(id);
-		if (!row || typeof row.payload !== "string")
-			throw new Error(`Missing payload ${id} at ${path}`);
-		return row.payload;
+			.get(id)?.payload;
 	} finally {
 		database.close();
 	}
+	if (typeof stored === "string") return stored;
+	// Datasets served from rows have no stored payload.
+	if (id.startsWith("dataset:")) {
+		const payload = readDatasetPayload(repositoryRoot, id.slice(8));
+		if (payload !== undefined) return payload;
+	}
+	throw new Error(`Missing payload ${id} at ${path}`);
 }
 
 export function readAtlasDatasetUrls(
@@ -46,25 +51,7 @@ export function readVersionedAtlasDataset(
 	output: string,
 	sha256: string,
 ): string | undefined {
-	const database = new DatabaseSync(
-		join(repositoryRoot, "data/build/atlas.sqlite"),
-		{ readOnly: true },
-	);
-	try {
-		const row = database
-			.prepare(
-				"SELECT payloadId FROM datasets WHERE output = ? AND sha256 = ?",
-			)
-			.get(output, sha256);
-		if (!row) return undefined;
-		if (output === "fuel-poverty") return rebuildFuelPoverty(database);
-		const payload = database
-			.prepare("SELECT payload FROM payloads WHERE id = ?")
-			.get(row.payloadId);
-		return payload ? String(payload.payload) : undefined;
-	} finally {
-		database.close();
-	}
+	return readDatasetPayload(repositoryRoot, output, sha256);
 }
 
 export type AtlasAssetKind = "pages" | "lookups";

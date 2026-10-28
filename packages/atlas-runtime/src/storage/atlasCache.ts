@@ -7,7 +7,11 @@ import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
 import { repositoryRootOf } from "./dataLayout";
 
 export type CacheComponent =
-	"area-search" | "place-index" | "projections" | "postcode-counts";
+	| "area-search"
+	| "place-index"
+	| "projections"
+	| "postcode-counts"
+	| "datasets";
 
 const CACHE_VERSION = 1;
 const dependencies: Record<CacheComponent, string[]> = {
@@ -23,6 +27,7 @@ const dependencies: Record<CacheComponent, string[]> = {
 		"crosswalk_inventory",
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
+	datasets: ["query:SELECT output, sha256 FROM datasets ORDER BY output"],
 };
 
 export const atlasCachePath = (root: string) =>
@@ -38,6 +43,11 @@ export function cacheGeneration(
 	});
 	try {
 		const inputs = dependencies[component].map((dependency) => {
+			if (dependency.startsWith("query:"))
+				return database
+					.prepare(dependency.slice(6))
+					.all()
+					.map((row) => Object.values(row));
 			if (dependency.startsWith("payload:"))
 				return (
 					database

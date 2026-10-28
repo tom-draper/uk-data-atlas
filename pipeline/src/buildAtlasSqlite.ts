@@ -10,6 +10,10 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishAtlasCache } from "@uk-data-atlas/atlas-runtime/storage";
 import {
+	publishDatasetPayloads,
+	servedFromRows,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
 	writeSqliteIndex,
 	writeSqliteTables,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -158,7 +162,9 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 				throw new Error(
 					`Compiled dataset ${entry.output} does not match its manifest`,
 				);
-			yield [`dataset:${entry.output}`, content];
+			// Datasets served from rows are rebuilt into the cache instead.
+			if (!servedFromRows(entry.type))
+				yield [`dataset:${entry.output}`, content];
 		}
 	}
 	writeSqliteIndex(
@@ -183,7 +189,7 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 					"fingerprint TEXT NOT NULL",
 					"sha256 TEXT NOT NULL",
 					"bytes INTEGER NOT NULL",
-					"payloadId TEXT NOT NULL REFERENCES payloads(id)",
+					"payloadId TEXT REFERENCES payloads(id)",
 				],
 				key: ["type"],
 				rows: manifest.datasets.map((entry) => [
@@ -195,7 +201,9 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 					entry.fingerprint,
 					entry.compiled.sha256,
 					entry.compiled.bytes,
-					`dataset:${entry.output}`,
+					servedFromRows(entry.type)
+						? null
+						: `dataset:${entry.output}`,
 				]),
 			},
 			...statisticsTables(statisticsInputs(directory, manifest.datasets)),
@@ -217,6 +225,8 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
 			.run("location-projection-inventory", projectionPayload);
 	});
+
+	publishDatasetPayloads(repositoryRoot);
 
 	rmSync(join(publicDirectory, "location-projections.sqlite"), {
 		force: true,
