@@ -11,7 +11,7 @@ import {
 	areaMultiPolygon,
 	boundsIntersect,
 	roundedMultiPolygon,
-} from "../../shared/areaGeometryPieces";
+} from "@uk-data-atlas/geography/area-geometry-pieces";
 import { labelsFor, round } from "./areaOverlap";
 import { CLIPPING_VERSION } from "../../shared/pieceIntersection";
 import { readGeometries } from "../../shared/rawAreaGeometries";

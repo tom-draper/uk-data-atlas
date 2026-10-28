@@ -6,7 +6,7 @@ import {
 	boundsIntersect,
 	candidatePieces,
 	type AreaGeometry,
-} from "../../shared/areaGeometryPieces";
+} from "@uk-data-atlas/geography/area-geometry-pieces";
 import type { AreaLookup } from "../../shared/areaInventory";
 import type { AreaOverlapCrosswalkAdapter } from "../../shared/crosswalkAdapters";
 import type {
