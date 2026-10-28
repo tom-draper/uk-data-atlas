@@ -235,7 +235,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-derived-boundaries.ts",
 		"shared/areaSourceAdapters.ts",
-		"shared/boundarySourcePaths.ts",
+		"pipeline/src/boundarySourcePaths.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -258,7 +258,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"shared/dbf.ts",
 		"shared/geoJsonProperties.ts",
-		"shared/boundarySourcePaths.ts",
+		"pipeline/src/boundarySourcePaths.ts",
 		"shared/areaAdapters.ts",
 		"shared/areaSourceAdapters.ts",
 	]) {
