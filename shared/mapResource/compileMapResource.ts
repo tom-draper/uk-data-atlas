@@ -23,11 +23,9 @@ import { buildFullDetailParquet, GEOJSON_TIERS } from "./fullDetail";
  * its source without trusting this API.
  */
 
-export { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 export { LAYER_NAME };
 
 import type { MapResourceDescriptor } from "../mapResources";
-export type { MapResourceDescriptor } from "../mapResources";
 
 export type BoundaryReleaseSummary = {
 	id: string;

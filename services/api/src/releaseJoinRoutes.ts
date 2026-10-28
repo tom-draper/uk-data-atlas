@@ -4,7 +4,7 @@ import { GEOJSON_TIERS } from "./mapResource/fullDetail";
 import { areaNotFound } from "./areaResources";
 import type { ValidatedValue } from "./batchValidation";
 import { releaseKey } from "./geographyKeys";
-import { featureIds } from "./mapResource/compileMapResource";
+import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { readPostedRows, type RowValue } from "./requestRows";
 import {
 	envelope,

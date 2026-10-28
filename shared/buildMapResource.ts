@@ -18,8 +18,8 @@ import { roundKeepingValidity } from "./compileGeometryValidity";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-	type MapResourceDescriptor,
 } from "./mapResource/compileMapResource";
+import type { MapResourceDescriptor } from "./mapResources";
 import { apiRootOf, artifactDirectory } from "./dataLayout";
 
 /**

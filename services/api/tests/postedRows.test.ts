@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { gzipSync } from "node:zlib";
-import type { MapResourceDescriptor } from "../src/mapResource/compileMapResource";
+import type { MapResourceDescriptor } from "../../../shared/mapResources";
 import { readPostedRows } from "../src/requestRows";
 import { route } from "../src/routes";
 import type { RequestBody, RouteContext } from "../src/routing";

@@ -1,9 +1,7 @@
 import type { AreaGeometryCache } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
-import type {
-	BoundaryReleaseSummary,
-	MapResourceDescriptor,
-} from "./mapResource/compileMapResource";
+import type { BoundaryReleaseSummary } from "./mapResource/compileMapResource";
+import type { MapResourceDescriptor } from "./mapResources";
 import { buildFullDetailParquet } from "./mapResource/fullDetail";
 
 /** A release's flat downloads when no tiles can be drawn from it. */
