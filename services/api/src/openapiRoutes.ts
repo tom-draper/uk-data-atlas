@@ -4,7 +4,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 
 export const isOpenapiRoute = (segments: string[]) =>
 	segments.length === 2 &&

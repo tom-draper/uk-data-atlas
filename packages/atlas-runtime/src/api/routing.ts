@@ -1,4 +1,4 @@
-import type { AreaInventory } from "./areaInventory";
+import type { AreaInventory } from "../areas/areaInventory";
 import type { AtlasRelease } from "../storage/atlasRelease";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkArtifact } from "../relationships/crosswalkTypes";
@@ -8,10 +8,10 @@ import type {
 	DataCatalog,
 } from "../catalogue/dataCatalog";
 import type { ExportManifest } from "../storage/exportManifest";
-import type { GeographyInventory } from "./geographyInventory";
-import type { LookupManifest } from "./lookupExports";
-import type { FullDetailSource } from "./fullDetailDownloads";
-import type { GeographyResolver } from "./geographyResolver";
+import type { GeographyInventory } from "../areas/geographyInventory";
+import type { LookupManifest } from "../areas/lookupExports";
+import type { FullDetailSource } from "../areas/fullDetailDownloads";
+import type { GeographyResolver } from "../areas/geographyResolver";
 import type {
 	LocationProjectionInventory,
 	LocationProjections,
@@ -22,19 +22,17 @@ import type { MeasureCompatibilityInventory } from "../catalogue/measureCompatib
 import type { NamedLocationInventory } from "../places/namedLocations";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
 import type { RelationshipPathInventory } from "../relationships/relationshipPaths";
-import type { ApiResponse } from "../api/routeResponse";
+import type { ApiResponse } from "./routeResponse";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ValidationReport } from "../catalogue/validationReport";
-import type { AnalysisGeographyInventory } from "./analysisGeographies";
-import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
+import type { AnalysisGeographyInventory } from "../areas/analysisGeographies";
+import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation";
 import type { TerrainCatalogue } from "../maps/terrainCatalogue";
 import type {
 	AsyncTerrainProvider,
 	TerrainProvider,
 } from "../maps/terrainProvider";
-import type { OperationMatcher } from "../api/operationTemplates";
-
-export type { CrosswalkLookup } from "../relationships/translation";
+import type { OperationMatcher } from "./operationTemplates";
 
 /** The independently-built resources available to API route handlers. */
 export type RouteContext = {

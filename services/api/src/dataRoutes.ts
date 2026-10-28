@@ -20,7 +20,7 @@ import {
 	type CallerSelectedGeometry,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { nextPageHref, paginate } from "./pagination";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	areaNamedBy,

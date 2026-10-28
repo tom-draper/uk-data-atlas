@@ -27,7 +27,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readBatchInput } from "./batchInput";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 
 /** Points a batch lookup accepts; more belongs in a bulk export. */
 export const MAX_BATCH_POINTS = 100;

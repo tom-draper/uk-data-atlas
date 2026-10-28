@@ -3,7 +3,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { searchMeasures } from "./measureTerms";
 
 /** Dataset and measure metadata discovery, separate from analytical operations. */

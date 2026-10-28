@@ -1,9 +1,6 @@
 import { csvRecords } from "@uk-data-atlas/artifacts";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
-import {
-	mediaType,
-	type RequestBody,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { mediaType, type RequestBody } from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * Rows a caller sends in a POST body: a column of area codes or names, and

@@ -7,7 +7,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { measureCapability } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
 import { requirementDetail } from "@uk-data-atlas/atlas-runtime/api";
 

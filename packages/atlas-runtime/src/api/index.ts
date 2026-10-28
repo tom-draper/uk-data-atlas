@@ -9,3 +9,4 @@ export * from "./queryParameters";
 export * from "./queryRuleCompiler";
 export * from "./routeResponse";
 export * from "./syncRoutes";
+export * from "./routing";

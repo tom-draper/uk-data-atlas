@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	registry,
 	areaLookup,

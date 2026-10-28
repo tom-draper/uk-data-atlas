@@ -16,7 +16,7 @@ import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import { compileOperations } from "../../../pipeline/src/build-operations";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import type { StoredFile } from "@uk-data-atlas/artifacts";

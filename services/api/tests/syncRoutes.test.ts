@@ -3,7 +3,7 @@ import test from "node:test";
 import type {
 	RouteContext,
 	RouteRequest,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/api";
 import { handleRoute } from "../src/routeHandlers";
 import { handleSyncRoutes } from "@uk-data-atlas/atlas-runtime/api";
 import { reportRequest as routeRequest } from "./evidenceFixtures";

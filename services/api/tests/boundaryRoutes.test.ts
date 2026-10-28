@@ -4,7 +4,7 @@ import { createAreaLookup } from "../src/areaInventory";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { route as routeRequest, routeAsync } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	route,
 	registry,

@@ -6,7 +6,7 @@ import {
 	requirementDetail,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { COVERS_MINIMUM_SHARE } from "@uk-data-atlas/atlas-runtime/places";
 import { notBuilt, unsupported } from "@uk-data-atlas/atlas-runtime/areas";
 import { areaKey } from "@uk-data-atlas/geography";

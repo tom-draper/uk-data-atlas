@@ -18,7 +18,7 @@ import {
 } from "./postcodeValue";
 import { valueForPlace } from "./placeValue";
 import { describeAttempt, describeCandidate } from "./placeResponses";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,

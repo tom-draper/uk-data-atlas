@@ -7,7 +7,7 @@ import {
 import { measureCoverage } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { areaMeasureSources } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseKey } from "@uk-data-atlas/geography";
 
