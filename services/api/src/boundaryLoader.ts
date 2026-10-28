@@ -1,1 +1,1 @@
-export * from "../../../shared/boundaryLoader";
+export * from "@uk-data-atlas/atlas-runtime/areas";

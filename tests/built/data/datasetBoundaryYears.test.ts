@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "@/shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { describe, expect, it } from "vitest";
 import {
 	BOUNDARY_CATALOG,

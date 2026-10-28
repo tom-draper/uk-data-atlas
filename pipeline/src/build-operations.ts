@@ -6,8 +6,8 @@ import { compileOperationTemplates } from "./operationTemplates";
 import {
 	openapiDocumentHash,
 	type OperationsArtifact,
-} from "../../shared/operations";
-import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/api";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compiles the operations the server matches requests against from

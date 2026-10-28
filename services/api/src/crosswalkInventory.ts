@@ -1,4 +1,4 @@
-export type * from "../../../shared/crosswalkTypes";
-export type * from "../../../shared/crosswalkInventory";
-export type { CrosswalkWeighting } from "../../../shared/crosswalkAdapters";
-export type { CrosswalkEndpointValidation } from "../../../shared/crosswalkEndpointValidation";
+export type * from "@uk-data-atlas/atlas-runtime/relationships";
+export type * from "@uk-data-atlas/atlas-runtime/relationships";
+export type { CrosswalkWeighting } from "@uk-data-atlas/atlas-runtime/relationships";
+export type { CrosswalkEndpointValidation } from "@uk-data-atlas/atlas-runtime/relationships";

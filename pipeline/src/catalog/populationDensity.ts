@@ -2,8 +2,8 @@ import { type DatasetInput } from "./input";
 import type {
 	Measure,
 	MeasureObservationArtifact,
-} from "../../../shared/dataCatalog";
-import { countriesFor } from "../../../shared/catalogCountries";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 import { sha256 } from "./values";

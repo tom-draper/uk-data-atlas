@@ -14,7 +14,7 @@ import type {
 	PostcodeCountsArtifact,
 } from "@uk-data-atlas/geography/postcode-count-types";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
-import { sha256 } from "../../../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 const add = (
 	areas: Map<string, Omit<PostcodeCounts, "edition">>,

@@ -3,7 +3,7 @@ import { getFeatureProp } from "@/lib/types/geometry";
 import {
 	parseBoundaryResources,
 	type BoundaryResources,
-} from "@/shared/boundaryResources";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { BoundaryGeojson, PropertyKeys } from "@/lib/types/geometry";
 import {

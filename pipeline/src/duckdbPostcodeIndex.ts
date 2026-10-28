@@ -1,7 +1,7 @@
 import { DuckDBInstance } from "@duckdb/node-api";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeSource,

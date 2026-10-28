@@ -1,1 +1,1 @@
-export * from "../../../shared/queryParameters";
+export * from "@uk-data-atlas/atlas-runtime/api";

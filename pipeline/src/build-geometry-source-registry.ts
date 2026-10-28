@@ -4,10 +4,10 @@ import { fileURLToPath } from "node:url";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { createFileHashCache } from "./fileHashCache";
 import { createGeometrySourceRegistry } from "./geometrySourceRegistry";
-import { artifactDirectory } from "../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 export const buildGeometrySourceRegistry = (root: string) => {
 	const out = artifactDirectory(root);
 	if (!existsSync(out))

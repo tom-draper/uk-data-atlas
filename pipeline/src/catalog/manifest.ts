@@ -3,7 +3,7 @@ import type {
 	DatasetCatalogueEntry,
 	Measure,
 	MeasureObservationArtifact,
-} from "../../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { string, number, object } from "./values";
 
 /** The compiled manifest each dataset is checked against. */

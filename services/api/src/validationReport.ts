@@ -1,1 +1,1 @@
-export * from "../../../shared/validationReport";
+export * from "@uk-data-atlas/atlas-runtime/catalogue";

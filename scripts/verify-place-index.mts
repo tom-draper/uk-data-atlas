@@ -5,12 +5,12 @@ import {
 	readAreaLookup,
 	readBoundaryRegistry,
 	readPlaceIndex,
-} from "../shared/boundaryLoader";
-import { readNamedLocationInventory } from "../shared/locationLoader";
-import { compilePlaceIndex } from "../shared/placeIndex";
-import { resolvePlaces } from "../shared/placeResolver";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { resolvePlaces } from "@uk-data-atlas/atlas-runtime/places";
 import { atEach, type Indexed } from "@uk-data-atlas/search-index";
-import { apiRootOf } from "../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

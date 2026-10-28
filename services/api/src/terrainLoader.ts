@@ -1,1 +1,1 @@
-export * from "../../../shared/terrainLoader";
+export * from "@uk-data-atlas/atlas-runtime/maps";

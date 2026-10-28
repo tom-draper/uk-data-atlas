@@ -1,1 +1,1 @@
-export * from "../../../shared/boundedClipping";
+export * from "@uk-data-atlas/atlas-runtime/geometry";

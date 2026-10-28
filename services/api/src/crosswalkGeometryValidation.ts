@@ -1,1 +1,1 @@
-export * from "../../../shared/crosswalkGeometryValidation";
+export * from "@uk-data-atlas/atlas-runtime/relationships";

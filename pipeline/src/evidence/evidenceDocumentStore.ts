@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { sha256 } from "../../../shared/contentHash";
-import { publicJson } from "../../../shared/publicJson";
-import type { EvidenceDocument } from "../../../shared/evidenceDocuments";
+import { sha256 } from "@uk-data-atlas/artifacts";
+import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
+import type { EvidenceDocument } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 export const writeEvidenceDocument = (
 	directory: string,

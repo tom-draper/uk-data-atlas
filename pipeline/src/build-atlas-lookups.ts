@@ -10,8 +10,11 @@ import {
 	atlasAssetsDirectory,
 	ATLAS_LOOKUPS_MANIFEST,
 	type AtlasLookupManifest,
-} from "../../shared/atlasAssets";
-import { apiRootOf, repositoryRootOf } from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	repositoryRootOf,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const apiRoot = apiRootOf(resolve(import.meta.dirname, "../.."));
 const publicDirectory = atlasAssetsDirectory(repositoryRootOf(apiRoot));

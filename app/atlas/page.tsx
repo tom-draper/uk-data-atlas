@@ -1,4 +1,4 @@
-import { readAtlasDatasetUrls } from "@/shared/atlasSqlite";
+import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/storage";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";

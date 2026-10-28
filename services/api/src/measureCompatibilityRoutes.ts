@@ -1,1 +1,1 @@
-export * from "../../../shared/measureCompatibilityRoutes";
+export * from "@uk-data-atlas/atlas-runtime/api";

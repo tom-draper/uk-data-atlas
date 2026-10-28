@@ -7,7 +7,7 @@ import { gzipSync } from "node:zlib";
 import { readAtlasPages } from "../src/atlasPages";
 import { route as routeRequest } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const page = {
 	path: "/nowhere",

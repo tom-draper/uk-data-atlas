@@ -8,7 +8,7 @@ import { areaTables } from "../src/atlasAreas";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
 import type { AreaInventory } from "../src/areaInventory";
 import { writeSqliteIndex } from "../src/sqliteIndex";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("relational areas preserve inventory order, aliases and record order without JSON", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-areas-"));

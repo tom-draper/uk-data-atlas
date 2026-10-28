@@ -1,1 +1,1 @@
-export * from "../../../shared/placeIndex";
+export * from "@uk-data-atlas/atlas-runtime/places";

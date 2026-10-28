@@ -194,7 +194,7 @@
 		"tableBytes": 81920,
 		"indexBytes": 4096,
 		"writers": "build-atlas-sqlite.ts",
-		"readers": "shared/atlasSqlite; catalog/input",
+		"readers": "packages/atlas-runtime/src/storage/atlasSqlite; catalog/input",
 		"reason": "Source contracts, provenance and dataset payload hashes"
 	},
 	{

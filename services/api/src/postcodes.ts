@@ -4,6 +4,6 @@ export type {
 	PostcodeShard,
 } from "@uk-data-atlas/geography/postcode-index-types";
 
-export * from "../../../shared/postcodeIndex";
+export * from "@uk-data-atlas/atlas-runtime/postcodes";
 
-export { postcodeLookupPoint } from "../../../shared/postcodeLookupPoint";
+export { postcodeLookupPoint } from "@uk-data-atlas/atlas-runtime/postcodes";

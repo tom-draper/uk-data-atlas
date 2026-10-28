@@ -1,4 +1,4 @@
-import type { OperationTemplate } from "../../shared/operations";
+import type { OperationTemplate } from "@uk-data-atlas/atlas-runtime/api";
 
 type OpenApiParameter = { $ref?: string; name?: string; in?: string };
 type OpenApiOperation = {

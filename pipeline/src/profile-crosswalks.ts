@@ -1,13 +1,13 @@
 /** Force selected compiles into a temporary directory and check existing hashes. */
-import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { readCrosswalkAdapters } from "../../shared/crosswalkAdapters";
+import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks, type CrosswalkArtifact } from "./crosswalkCompiler";
-import { readGeometrySourceLookup } from "../../shared/geometrySources";
-import { readStoredText, storedTextExists } from "../../shared/storedText";
-import { sha256 } from "../../shared/contentHash";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
 import { writeCrosswalkArtifact } from "./crosswalk-artifact";
 import {

@@ -1,4 +1,4 @@
-import { artifactDirectory } from "../../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildArtifactPath } from "./geography-build-path";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";

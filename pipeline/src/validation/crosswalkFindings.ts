@@ -1,4 +1,4 @@
-import type { CrosswalkInventory } from "../../../shared/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { type Finding, sha256, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
 

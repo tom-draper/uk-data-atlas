@@ -4,14 +4,17 @@ import { fileURLToPath } from "node:url";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipCandidates } from "./relationshipCandidates";
 import {
 	readCrosswalkAdapters,
 	type PropertyCrosswalkAdapter,
-} from "../../shared/crosswalkAdapters";
-import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import {
+	artifactDirectory,
+	configDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const readAreaArtifacts = (outputDirectory: string) => {
 	const inventory = JSON.parse(

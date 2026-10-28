@@ -3,8 +3,8 @@ import { join } from "node:path";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
-import { createAreaLookup } from "../../shared/createAreaLookup";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 
 export const readCompiledAreaLookup = (outputDirectory: string) => {
 	const inventory = JSON.parse(

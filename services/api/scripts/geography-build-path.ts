@@ -1,4 +1,4 @@
 export {
 	geographyCatalogues,
 	buildArtifactPath,
-} from "../../../shared/geographyBuildPath";
+} from "@uk-data-atlas/atlas-runtime/areas";

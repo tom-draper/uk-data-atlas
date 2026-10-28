@@ -1,10 +1,10 @@
-import type { AreaReleaseArtifact } from "../../../shared/areaInventory";
-import type { MeasureSource } from "../../../shared/dataCatalog";
-import { countryForCode } from "../../../shared/catalogCountries";
-import type { BulkExport } from "../../../shared/exportManifest";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
+import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countryForCode } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { BulkExport } from "@uk-data-atlas/atlas-runtime/storage";
 import { type Finding, sha256, listed, check } from "./findings";
 import type { MeasureTotal, ValidationInputs } from "./inputs";
-import { observationTableOf } from "../../../shared/observationTables";
+import { observationTableOf } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	sameGeography,
 	describeGeography,

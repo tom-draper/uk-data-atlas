@@ -1,1 +1,1 @@
-export * from "../../../../shared/mapResource/geoJson";
+export * from "@uk-data-atlas/atlas-runtime/maps";

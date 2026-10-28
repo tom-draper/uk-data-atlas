@@ -5,4 +5,4 @@ export {
 	readGeoJsonFeatures,
 	type GeoJsonProperties,
 	type GeoJsonFeatures,
-} from "../../../shared/geoJsonProperties";
+} from "@uk-data-atlas/atlas-runtime/areas";

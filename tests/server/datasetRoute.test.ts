@@ -6,8 +6,8 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
 import { buildAtlasSqlite } from "@/pipeline/src/buildAtlasSqlite";
-import { readAtlasDatasetUrls } from "@/shared/atlasSqlite";
-import { artifactDirectory } from "../../shared/dataLayout";
+import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 let root: string;
 const payload = '{"2024":{"value":42}}\n';

@@ -1,15 +1,12 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { builtinModules } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 /**
- * The shared packages are bundled into the browser and imported by the API,
- * so their source may only import its own files and the dependencies its
- * package.json declares. Inside the repository Node resolves anything the
- * root has installed, so nothing else stops a package reaching for React or
- * the atlas's code; a package's tsconfig already rejects Node types
- * and the atlas's path aliases.
+ * Check dependencies explicitly because workspace resolution can otherwise
+ * allow imports from packages that are only installed at the repository root.
+ * Browser-safe packages must also avoid Node built-ins.
  */
 const PACKAGES = join(process.cwd(), "packages");
 
@@ -59,7 +56,16 @@ const problems = (packageRoot: string) => {
 				continue;
 			}
 			if (specifier.startsWith("node:") || builtins.has(specifier)) {
-				found.push(`${where} imports a Node built-in: ${specifier}`);
+				const nodeOnly =
+					["artifacts", "atlas-runtime", "shapefile"].includes(
+						manifest.name.replace("@uk-data-atlas/", ""),
+					) ||
+					(manifest.name === "@uk-data-atlas/search-index" &&
+						inside(join(packageRoot, "src/node"), file));
+				if (!nodeOnly)
+					found.push(
+						`${where} imports a Node built-in: ${specifier}`,
+					);
 				continue;
 			}
 			const name = packageName(specifier);
@@ -113,7 +119,6 @@ const inside = (directory: string, file: string) => {
 
 const ROOT = process.cwd();
 const PIPELINE = join(ROOT, "pipeline");
-const SHARED = join(ROOT, "shared");
 
 const pipelineImportAllowed = (
 	file: string,
@@ -122,11 +127,7 @@ const pipelineImportAllowed = (
 ) => {
 	if (specifier.startsWith(".")) {
 		const target = resolve(dirname(file), specifier);
-		return (
-			inside(PIPELINE, target) ||
-			inside(SHARED, target) ||
-			inside(PACKAGES, target)
-		);
+		return inside(PIPELINE, target) || inside(PACKAGES, target);
 	}
 	return (
 		specifier.startsWith("node:") ||
@@ -139,7 +140,11 @@ const pipelineImportAllowed = (
 };
 
 describe("pipeline boundaries", () => {
-	it("imports only shared code, packages, built-ins and declared dependencies", () => {
+	it("does not retain the former shared directory", () => {
+		expect(existsSync(join(ROOT, "shared"))).toBe(false);
+	});
+
+	it("imports only its own code, packages, built-ins and declared dependencies", () => {
 		const manifest = JSON.parse(
 			readFileSync(join(PIPELINE, "package.json"), "utf8"),
 		);
@@ -178,11 +183,15 @@ describe("pipeline boundaries", () => {
 		}
 	});
 
-	it("finds the API project and its output through shared/dataLayout.ts", () => {
+	it("finds the API project and its output through packages/atlas-runtime/src/storage/dataLayout.ts", () => {
 		const files = [
 			...sourceFiles(join(PIPELINE, "src")),
-			...sourceFiles(join(ROOT, "shared")),
-		].filter((file) => relative(ROOT, file) !== "shared/dataLayout.ts");
+			...sourceFiles(join(PACKAGES, "atlas-runtime/src")),
+		].filter(
+			(file) =>
+				relative(ROOT, file) !==
+				"packages/atlas-runtime/src/storage/dataLayout.ts",
+		);
 		expect(files.length).toBeGreaterThan(0);
 		const hardCoded = files.filter((file) =>
 			/["'`][^"'`\n]*services\/api(?:[\/"'`])|"services",\s*"api"/.test(
@@ -212,12 +221,11 @@ describe("pipeline boundaries", () => {
 		).toEqual([]);
 	});
 
-	it("keeps the API, website runtime and shared code independent of the pipeline", () => {
+	it("keeps the API, website runtime and packages independent of the pipeline", () => {
 		const files = [
 			"app",
 			"components",
 			"lib",
-			"shared",
 			"services/api/src",
 			"services/api/scripts",
 		].flatMap((directory) => sourceFiles(join(ROOT, directory)));

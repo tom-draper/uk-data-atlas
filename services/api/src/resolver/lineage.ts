@@ -1,1 +1,1 @@
-export * from "../../../../shared/resolver/lineage";
+export * from "@uk-data-atlas/atlas-runtime/api";

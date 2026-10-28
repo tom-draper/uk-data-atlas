@@ -6,13 +6,13 @@ import {
 	closeSync,
 } from "node:fs";
 import { join } from "node:path";
-import type { AreaReleaseArtifact } from "../../shared/areaInventory";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 import { hashFile } from "./fileHashCache";
 import { reversedOffsetsFor, substitutionsFor } from "@uk-data-atlas/geography";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 type BoundaryMetadata = { files?: unknown };
-import type { GeometrySourceRegistry } from "../../shared/geometrySourceRegistry";
+import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
 const kebab = (s: string) =>
 	s.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 const sourcePath = (directory: string) => {

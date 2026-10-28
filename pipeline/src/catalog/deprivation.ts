@@ -1,6 +1,9 @@
 import { type DatasetInput } from "./input";
-import type { SourceGeography, Measure } from "../../../shared/dataCatalog";
-import { countriesFor } from "../../../shared/catalogCountries";
+import type {
+	SourceGeography,
+	Measure,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest } from "./manifest";
 import { sha256 } from "./values";

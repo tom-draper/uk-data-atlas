@@ -6,18 +6,18 @@ import {
 	createAreaLookup,
 	type AreaInventory,
 	type AreaReleaseArtifact,
-} from "../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readAreaInventory,
 	readAreaLookup,
 	readBoundaryRegistry,
-} from "../shared/boundaryLoader";
-import { compileAreaSearchIndex } from "../shared/areaSearch";
-import { compilePlaceIndex } from "../shared/placeIndex";
-import { createGeographyResolver } from "../shared/geographyResolver";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
+import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf } from "../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

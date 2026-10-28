@@ -1,1 +1,1 @@
-export * from "../../../shared/atlasPostcodeDerived";
+export * from "@uk-data-atlas/atlas-runtime/storage";

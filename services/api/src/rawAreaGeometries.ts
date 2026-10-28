@@ -1,1 +1,1 @@
-export * from "../../../shared/rawAreaGeometries";
+export * from "@uk-data-atlas/atlas-runtime/areas";

@@ -1,15 +1,15 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readCachePayload } from "../shared/atlasCache";
-import { createLocationProjectionStore } from "../shared/locationLoader";
+import { readCachePayload } from "@uk-data-atlas/atlas-runtime/storage";
+import { createLocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import type {
 	LocationProjectionInventory,
 	LocationProjectionArtifact,
 	LocationParentProjectionArtifact,
-} from "../shared/locationProjections";
-import { readStoredText } from "../shared/storedText";
-import { apiRootOf } from "../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/places";
+import { readStoredText } from "@uk-data-atlas/artifacts";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

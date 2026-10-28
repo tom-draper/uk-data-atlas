@@ -1,1 +1,1 @@
-export * from "../../../../shared/resolver/catalogue";
+export * from "@uk-data-atlas/atlas-runtime/api";

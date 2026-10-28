@@ -1,5 +1,5 @@
-export * from "../../../shared/atlasAreas";
+export * from "@uk-data-atlas/atlas-runtime/storage";
 export {
 	readSqliteAreaInventory,
 	readSqliteAreas,
-} from "../../../shared/atlasAreaReader";
+} from "@uk-data-atlas/atlas-runtime/storage";

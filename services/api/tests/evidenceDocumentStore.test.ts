@@ -8,7 +8,7 @@ import {
 	writeEvidenceDocument,
 } from "../../../pipeline/src/evidence/evidenceDocumentStore";
 import { buildEvidenceMeasure } from "../../../pipeline/src/evidence/buildEvidenceMeasure";
-import { sha256 } from "../../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 test("writes published evidence and reuses only matching cached inputs", () => {
 	const directory = mkdtempSync(join(tmpdir(), "evidence-store-"));

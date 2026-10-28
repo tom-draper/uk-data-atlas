@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import {
 	buildArtifactPath,
 	geographyCatalogues,
-} from "../../shared/geographyBuildPath";
-import { artifactDirectory } from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Finalise catalogue payloads after analysis has read the base database. */
 export const buildGeographyCatalogues = (repositoryRoot: string) => {

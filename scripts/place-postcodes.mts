@@ -1,6 +1,6 @@
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { readAtlasPayload } from "../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	compilePostcodes,
 	DEPRIVATION,
@@ -14,15 +14,15 @@ import {
 	type SourceDistrict,
 } from "../lib/places/postcodes";
 import { decodeCompactPayload } from "../lib/data/compactPayload";
-import { readSqlitePostcodeAreaShard } from "../shared/atlasPostcodeDerived";
-import { postcodeDistrictWhere } from "../shared/atlasPostcodesReader";
+import { readSqlitePostcodeAreaShard } from "@uk-data-atlas/atlas-runtime/storage";
+import { postcodeDistrictWhere } from "@uk-data-atlas/atlas-runtime/storage";
 import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,
-} from "../shared/postcodeAreas";
+} from "@uk-data-atlas/atlas-runtime/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
-import { apiRootOf } from "../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const PLACE_POSTCODES_PATH = join(
 	process.cwd(),

@@ -3,12 +3,12 @@ import { copyFileSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { replaceObservationTables } from "./atlasObservationTables";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationArtifactName,
 	type DataCatalog,
-} from "../../shared/dataCatalog";
-import { artifactDirectory } from "../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Publish one complete observation generation while preserving other atlas tables. */
 export function storeObservations(

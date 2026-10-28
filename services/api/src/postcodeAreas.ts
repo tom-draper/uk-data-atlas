@@ -1,7 +1,7 @@
-export * from "../../../shared/postcodeAreas";
+export * from "@uk-data-atlas/atlas-runtime/postcodes";
 export {
 	NONE,
 	SEVERAL,
 	releaseKey,
 	postcodeAreasMismatch,
-} from "../../../shared/postcodeAreas";
+} from "@uk-data-atlas/atlas-runtime/postcodes";

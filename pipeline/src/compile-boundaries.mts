@@ -42,7 +42,11 @@ import {
 import { applyReversedGridOffset } from "@uk-data-atlas/geography/reverse-grid-offset";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
 import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
-import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
+import {
+	elapsedSince,
+	formatKb,
+	logArtifact,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 

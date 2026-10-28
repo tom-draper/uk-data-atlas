@@ -1,1 +1,1 @@
-export type { GeometrySourceRegistry } from "../../../shared/geometrySourceRegistry";
+export type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";

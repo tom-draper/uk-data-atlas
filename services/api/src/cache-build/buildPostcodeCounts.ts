@@ -1,13 +1,13 @@
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
-} from "../../../../shared/atlasPostcodeAreaReader";
-import { readSqlitePostcodeIndexArtifact } from "../../../../shared/atlasPostcodeIndexReader";
-import { readSqlitePostcodeShard } from "../../../../shared/atlasPostcodeShard";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeIndexArtifact } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import { compilePostcodeCounts } from "./compilePostcodeCounts";
-import { storePostcodeCounts } from "../../../../shared/storePostcodeCounts";
+import { storePostcodeCounts } from "@uk-data-atlas/atlas-runtime/postcodes";
 import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
-import { apiRootOf } from "../../../../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildPostcodeCounts = (repositoryRoot: string) => {
 	const apiRoot = apiRootOf(repositoryRoot);

@@ -1,19 +1,19 @@
 import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
 import { createHash } from "node:crypto";
 import polygonClipping from "polygon-clipping";
-import type { GeometrySourceLookup } from "../../shared/areaGeometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	boundsIntersect,
 	candidatePieces,
 	type AreaGeometry,
 } from "@uk-data-atlas/geography/area-geometry-pieces";
-import type { AreaLookup } from "../../shared/areaInventory";
-import type { AreaOverlapCrosswalkAdapter } from "../../shared/crosswalkAdapters";
+import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AreaOverlapCrosswalkArtifact,
 	AreaOverlapTarget,
-} from "../../shared/crosswalkTypes";
-import { validateEndpoint } from "../../shared/crosswalkValidation";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { validateEndpoint } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	multiPolygonAreaM2,
 	polygonWidthM,
@@ -23,7 +23,7 @@ import {
 	CLIPPING_VERSION,
 	intersectWithin,
 } from "@uk-data-atlas/geography/piece-intersection";
-import { readGeometries } from "../../shared/rawAreaGeometries";
+import { readGeometries } from "@uk-data-atlas/atlas-runtime/areas";
 
 export const round = (value: number, places: number) =>
 	Math.round(value * 10 ** places) / 10 ** places;

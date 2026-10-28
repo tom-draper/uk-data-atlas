@@ -1,7 +1,7 @@
 import { mkdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import type { CrosswalkArtifact } from "./crosswalkCompiler";
-import { writeStoredText } from "../../shared/storedText";
+import { writeStoredText } from "@uk-data-atlas/artifacts";
 
 /** Publish a complete checkpoint, preserving the previous file on failure. */
 export const writeCrosswalkArtifact = (

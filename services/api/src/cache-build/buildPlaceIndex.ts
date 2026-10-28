@@ -1,16 +1,16 @@
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { publishCacheTables } from "../../../../shared/atlasCache";
-import { readSqliteAreaInventory as readAreaInventory } from "../../../../shared/atlasAreaReader";
-import { readAreaLookup } from "../../../../shared/areaLookup";
-import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "../../../../shared/atlasNamedLocationReader";
-import { readGeographyCatalogue } from "../../../../shared/geographyCatalogue";
+import { publishCacheTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readGeographyCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	compilePlaceIndex,
 	placeIndexTables,
-} from "../../../../shared/placeIndex";
-import { apiRootOf, artifactRoot } from "../../../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/places";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const readBoundaryRegistry = (apiRoot: string) =>
 	readGeographyCatalogue<BoundaryRegistry>(

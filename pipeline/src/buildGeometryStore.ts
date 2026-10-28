@@ -12,16 +12,16 @@ import { join } from "node:path";
 import {
 	AreaGeometryCache,
 	compiledGeometryFile,
-} from "../../shared/areaGeometry";
+} from "@uk-data-atlas/atlas-runtime/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "../../shared/geometrySources";
-import { geometrySubstitution } from "../../shared/geometrySubstitution";
-import { encodeGeometryStore } from "../../shared/geometryStore";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { geometrySubstitution } from "@uk-data-atlas/atlas-runtime/geometry";
+import { encodeGeometryStore } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	compileGeometryValidity,
 	roundKeepingValidity,
 } from "./compileGeometryValidity";
-import { apiRootOf, artifactRoot } from "../../shared/dataLayout";
+import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -39,20 +39,20 @@ const COMPILER_SOURCES = [
 	"package.json",
 	"../../pipeline/src/buildGeometryStore.ts",
 	"../../pipeline/src/compileGeometryValidity.ts",
-	"../../shared/areaGeometry.ts",
-	"../../shared/geoJsonProperties.ts",
-	"../../shared/geometryStore.ts",
+	"../../packages/atlas-runtime/src/geometry/areaGeometry.ts",
+	"../../packages/atlas-runtime/src/areas/geoJsonProperties.ts",
+	"../../packages/atlas-runtime/src/geometry/geometryStore.ts",
 	"../../packages/geography/src/geometryValidity.ts",
 	"../../packages/geography/src/geometrySpatialIndex.ts",
-	"../../shared/geometrySubstitution.ts",
-	"../../shared/gridOffset.ts",
+	"../../packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
+	"../../packages/atlas-runtime/src/geometry/gridOffset.ts",
 	"../../packages/geography/src/packedGeometry.ts",
 	"../../packages/geography/src/coordinates/reprojection.ts",
 	"../../packages/geography/src/geometryPointContainment.ts",
 	"../../packages/geography/src/geometryPositions.ts",
 	"../../packages/geography/src/geometryTypes.ts",
 	"../../packages/geography/src/areaDistance.ts",
-	"../../shared/areaNeighbours.ts",
+	"../../packages/atlas-runtime/src/areas/areaNeighbours.ts",
 	"../../packages/shapefile/src/dbf.ts",
 	"../../packages/geography/src/geometryProvenance.ts",
 	"../../packages/shapefile/src/shapefile.ts",

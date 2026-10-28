@@ -1,1 +1,1 @@
-export type * from "../../../shared/exportManifest";
+export type * from "@uk-data-atlas/atlas-runtime/storage";

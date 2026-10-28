@@ -1,6 +1,9 @@
-import type { DataCatalog, Measure } from "../../../shared/dataCatalog";
-import type { AreaInventory } from "../../../shared/areaInventory";
-import type { EvidenceDocument } from "../../../shared/evidenceDocuments";
+import type {
+	DataCatalog,
+	Measure,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { EvidenceDocument } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 type EvidenceMeasureDependencies<Context> = {
 	report: (

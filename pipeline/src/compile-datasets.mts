@@ -23,7 +23,7 @@ import { compileDatasets } from "./precompile/datasetPool.mts";
 import { out } from "./precompile/output.mts";
 import { COMPILED_DATASETS } from "./precompile/paths.mts";
 import type { CompiledDatasets } from "./precompile/types.mts";
-import { elapsedSince } from "../../shared/buildTiming";
+import { elapsedSince } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const COMPILED_MANIFEST = join(
 	COMPILED_DATASETS,

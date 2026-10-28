@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as page } from "@/app/data/atlas-pages/[file]/route";
 import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
 import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
-import { readAtlasAssetText } from "@/shared/atlasSqlite";
+import { readAtlasAssetText } from "@uk-data-atlas/atlas-runtime/storage";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 
 let fixture: ReturnType<typeof websiteAssetsFixture>;

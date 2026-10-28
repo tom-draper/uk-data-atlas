@@ -1,15 +1,15 @@
-import { readObservationText } from "../../shared/atlasObservations";
+import { readObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	type DataCatalog,
 	type MeasureSource,
 	type MeasureObservation,
 	observationArtifactName,
-} from "../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	isMeasureTable,
 	type MeasureTableArtifact,
-} from "../../shared/measureTable";
-import { sha256 } from "../../shared/contentHash";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { compileObservationDownloads } from "./observationDownloads";
 
 import type {
@@ -17,7 +17,7 @@ import type {
 	ExportDataset,
 	BulkExport,
 	ExportManifest,
-} from "../../shared/exportManifest";
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const FIELD_DESCRIPTIONS: Record<string, string> = {
 	areaCode: "The official code of the area in the served source partition.",

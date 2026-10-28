@@ -1,4 +1,4 @@
-export { sha256 } from "../../../shared/contentHash";
+export { sha256 } from "@uk-data-atlas/artifacts";
 
 /** A parsed file from the API's compiled datasets, keyed by period or edition. */
 export type PrecompiledFile = Record<string, unknown>;

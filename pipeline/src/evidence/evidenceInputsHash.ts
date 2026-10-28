@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { sha256 } from "../../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 type HashInput = { contentHash: string };
 type EvidenceInputs = {

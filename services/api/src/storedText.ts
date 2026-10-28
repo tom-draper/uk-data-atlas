@@ -1,1 +1,1 @@
-export * from "../../../shared/storedText";
+export * from "@uk-data-atlas/artifacts";

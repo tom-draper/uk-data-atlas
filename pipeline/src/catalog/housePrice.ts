@@ -3,10 +3,10 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "../../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { type PrecompiledFile, sha256, number, object } from "./values";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
-import { countriesFor } from "../../../shared/catalogCountries";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /**
  * The last period published for a full calendar year. The workbook is a

@@ -1,5 +1,5 @@
-import type { ValidationCheckId } from "../../../shared/validationReport";
-export { sha256 } from "../../../shared/contentHash";
+import type { ValidationCheckId } from "@uk-data-atlas/atlas-runtime/catalogue";
+export { sha256 } from "@uk-data-atlas/artifacts";
 
 export type Finding = {
 	id: ValidationCheckId;

@@ -1,1 +1,1 @@
-export * from "../../../shared/relationshipPaths";
+export * from "@uk-data-atlas/atlas-runtime/relationships";

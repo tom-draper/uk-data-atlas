@@ -1,4 +1,4 @@
-import type { GeoJsonGeometry } from "../../shared/areaGeometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	containPoint,
 	geometryBounds,
@@ -9,7 +9,7 @@ import {
 import { boundaryDistanceFinder } from "@uk-data-atlas/geography/area-distance";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	NONE,
 	SEVERAL,

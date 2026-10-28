@@ -2,4 +2,4 @@ export type {
 	GeographyRelationship,
 	GeographyReleaseInventory,
 	GeographyInventory,
-} from "../../../shared/geographyInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";

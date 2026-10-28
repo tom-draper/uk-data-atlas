@@ -1,5 +1,8 @@
 import { gunzipSync } from "node:zlib";
-import { readAtlasAsset, type AtlasAssetKind } from "@/shared/atlasSqlite";
+import {
+	readAtlasAsset,
+	type AtlasAssetKind,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Preserve the browser's existing URLs while serving precompressed SQLite rows. */
 export async function atlasAssetResponse(

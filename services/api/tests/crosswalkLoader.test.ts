@@ -10,7 +10,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { readCrosswalkLookup } from "../src/crosswalkLoader";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const entry = (id: string, geography: string) => ({
 	id,

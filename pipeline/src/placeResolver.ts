@@ -1,20 +1,20 @@
-import { readSqliteAreaInventory } from "../../shared/atlasAreaReader";
-import { readAreaLookup } from "../../shared/areaLookup";
-import { readBoundaryRegistry } from "../../shared/boundaryCatalogue";
+import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readBoundaryRegistry } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
 	readRelationshipPathInventory,
-} from "../../shared/crosswalkLoader";
-import { createAreaGeometryCache } from "../../shared/geometryLoader";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	createLocationProjectionStore,
 	createNamedLocations,
 	readLocationProjectionInventory,
 	readNamedLocationInventory,
-} from "../../shared/locationLoader";
-import { createGeographyResolver } from "../../shared/geographyResolver";
-import { createRelationshipPathIndex } from "../../shared/relationshipPaths";
+} from "@uk-data-atlas/atlas-runtime/places";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 
 export const readPlaceResolver = (apiRoot: string) => {
 	const areaInventory = readSqliteAreaInventory(apiRoot);

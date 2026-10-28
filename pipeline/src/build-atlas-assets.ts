@@ -6,8 +6,8 @@ import { gunzipSync } from "node:zlib";
 import {
 	ATLAS_LOOKUP_NAMES,
 	atlasAssetsDirectory,
-} from "../../shared/atlasAssets";
-import type { AtlasAssetKind } from "../../shared/atlasSqlite";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Assemble release assets before the release manifest hashes the database. */
 export function buildAtlasAssets(root: string) {

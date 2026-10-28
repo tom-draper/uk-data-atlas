@@ -70,8 +70,8 @@ export const sourceReleases = (
 	return rankReleases(compiled?.candidates ?? []);
 };
 
-export { rankReleases } from "../../../shared/rankCompatibilityReleases";
-import { rankReleases } from "../../../shared/rankCompatibilityReleases";
+export { rankReleases } from "@uk-data-atlas/atlas-runtime/areas";
+import { rankReleases } from "@uk-data-atlas/atlas-runtime/areas";
 
 export type PostcodePlacement =
 	| {

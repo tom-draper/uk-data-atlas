@@ -12,7 +12,7 @@ import { readNamedLocationInventory } from "../src/locationLoader";
 import { namedLocationTables } from "../src/atlasNamedLocations";
 import type { AreaInventory } from "../src/areaInventory";
 import type { NamedLocationInventory } from "../src/namedLocations";
-import { artifactDirectory } from "../../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const storeAreas = (
 	apiRoot: string,

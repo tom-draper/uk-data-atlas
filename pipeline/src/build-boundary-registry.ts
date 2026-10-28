@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	existsSync,
 	mkdirSync,
@@ -12,12 +12,12 @@ import type {
 	BoundaryRegistry,
 	BoundaryRelease,
 } from "@uk-data-atlas/catalogue";
-import { sha256 } from "../../shared/contentHash";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	boundaryReleaseDeprecations,
 	sourceMetadataCorrections,
 } from "@uk-data-atlas/catalogue";
-import { artifactDirectory } from "../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 type BoundaryMetadata = {
 	id?: unknown;

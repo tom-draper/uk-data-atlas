@@ -1,13 +1,16 @@
 import { mkdirSync } from "node:fs";
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipPaths, crosswalkShape } from "./relationshipPaths";
 import { readApprovedRelationshipPaths } from "./relationshipPathAdapters";
-import { readStoredText } from "../../shared/storedText";
-import { artifactDirectory, configDirectory } from "../../shared/dataLayout";
+import { readStoredText } from "@uk-data-atlas/artifacts";
+import {
+	artifactDirectory,
+	configDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 // Long enough to rebase a local authority across a decade of releases, which
 // takes one identity step per release in between.

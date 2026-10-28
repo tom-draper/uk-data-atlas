@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	mkdirSync,
 	existsSync,
@@ -11,9 +11,9 @@ import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry";
 import { createGeographyInventory } from "./geographyInventory";
 import { createSourceInventory } from "./sourceInventory";
-import type { AreaInventory } from "../../shared/areaInventory";
-import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
-import { artifactDirectory } from "../../shared/dataLayout";
+import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

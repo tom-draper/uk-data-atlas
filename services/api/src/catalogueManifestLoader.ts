@@ -1,1 +1,1 @@
-export * from "../../../shared/catalogueManifestLoader";
+export * from "@uk-data-atlas/atlas-runtime/catalogue";

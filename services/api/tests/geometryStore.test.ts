@@ -16,7 +16,7 @@ import {
 	packGeometry,
 	unpackGeometry,
 } from "@uk-data-atlas/geography/packed-geometry";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const square = (west: number, south: number, size: number) => [
 	[

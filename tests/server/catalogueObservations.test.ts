@@ -9,8 +9,8 @@ import {
 	writeSqliteIndex,
 	writeSqliteTables,
 } from "../../services/api/src/sqliteIndex";
-import { rebuildFuelPoverty } from "../../shared/catalogueObservations";
-import { readVersionedAtlasDataset } from "../../shared/atlasSqlite";
+import { rebuildFuelPoverty } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
 
 it("reconstructs numeric catalogue rows exactly and serves them without the retained blob", () => {
 	const root = mkdtempSync(join(tmpdir(), "catalogue-rows-"));

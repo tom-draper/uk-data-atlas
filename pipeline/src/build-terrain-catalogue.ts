@@ -2,7 +2,7 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createTerrainCatalogue } from "./terrainCatalogue";
-import { artifactDirectory } from "../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildTerrainCatalogue = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

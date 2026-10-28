@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve, join } from "node:path";
-import { readAtlasPayload } from "../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { datasetCatalogInputs } from "../pipeline/src/build-data-catalog";
 import {
 	compileDataCatalog,

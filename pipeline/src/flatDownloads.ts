@@ -1,8 +1,8 @@
-import type { AreaGeometryCache } from "../../shared/areaGeometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { BoundaryReleaseSummary } from "./compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { buildFullDetailParquet } from "../../shared/mapResource/fullDetail";
+import { buildFullDetailParquet } from "@uk-data-atlas/atlas-runtime/maps";
 
 /** A release's flat downloads when no tiles can be drawn from it. */
 export type FlatDownloads = {

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { readPostcodeIndex } from "../shared/boundaryLoader";
-import { readSqlitePostcodeShard } from "../shared/atlasPostcodesReader";
+import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
+import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
-import { apiRootOf } from "../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

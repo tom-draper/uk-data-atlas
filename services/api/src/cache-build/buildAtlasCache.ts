@@ -2,20 +2,20 @@ import { dirname, resolve } from "node:path";
 import { buildAreaSearchIndex } from "./buildAreaSearchIndex";
 import { buildPlaceIndex } from "./buildPlaceIndex";
 import { buildPostcodeCounts } from "./buildPostcodeCounts";
-import { readSqliteAreaInventory as readAreaInventory } from "../../../../shared/atlasAreaReader";
-import { readAreaLookup } from "../../../../shared/areaLookup";
+import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "../../../../shared/crosswalkLoader";
-import { readNamedLocationInventory } from "../../../../shared/locationLoader";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import {
 	compileLocationProjections,
 	locationProjectionTables,
-} from "../../../../shared/locationProjections";
-import { publishAtlasCache } from "../../../../shared/atlasCache";
-import { writeSqliteTables } from "../../../../shared/sqliteIndex";
-import { apiRootOf } from "../../../../shared/dataLayout";
+} from "@uk-data-atlas/atlas-runtime/places";
+import { publishAtlasCache } from "@uk-data-atlas/atlas-runtime/storage";
+import { writeSqliteTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Rebuild API accelerators using only the distributed canonical database. */
 export function buildAtlasCache(root: string) {

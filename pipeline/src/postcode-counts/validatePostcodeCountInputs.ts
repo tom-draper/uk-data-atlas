@@ -1,10 +1,10 @@
-import { apiRootOf } from "../../../shared/dataLayout";
-import { readSqlitePostcodeIndexArtifact } from "../../../shared/atlasPostcodeIndexReader";
-import { readSqlitePostcodeShard } from "../../../shared/atlasPostcodeShard";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeIndexArtifact } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
-} from "../../../shared/atlasPostcodeAreaReader";
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	releaseKey,
 	type PostcodeAreasShard,

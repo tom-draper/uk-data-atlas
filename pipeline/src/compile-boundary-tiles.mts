@@ -27,9 +27,13 @@ import {
 	websiteBoundaryReleases,
 	type BoundaryResource,
 	type BoundaryResources,
-} from "../../shared/boundaryResources";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { correctedSource, releaseSources } from "./compile-boundaries.mts";
-import { elapsedSince, formatKb, logArtifact } from "../../shared/buildTiming";
+import {
+	elapsedSince,
+	formatKb,
+	logArtifact,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const COMPILED_POLYGON_RELEASES: Readonly<Record<string, number>> = {
 	"ward/2017-12-gb-bgc": 3,
@@ -42,7 +46,7 @@ export const TILES_FILENAME = "boundaries.pmtiles";
 export const TILES_MANIFEST = "boundaries/tiles.json";
 const TILER_SOURCES = [
 	import.meta.filename,
-	join(ROOT, "shared/boundaryResources.ts"),
+	join(ROOT, "packages/atlas-runtime/src/areas/boundaryResources.ts"),
 	...readdirSync(join(ROOT, "packages/map-tiles/src")).map((name) =>
 		join(ROOT, "packages/map-tiles/src", name),
 	),

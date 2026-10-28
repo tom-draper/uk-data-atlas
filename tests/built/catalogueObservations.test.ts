@@ -16,9 +16,9 @@ import { execFileSync } from "node:child_process";
 import { buildAreaInventory } from "../../pipeline/src/build-area-inventory";
 import { buildAtlasSqlite } from "../../pipeline/src/buildAtlasSqlite";
 import { buildTerrainCatalogue } from "../../pipeline/src/build-terrain-catalogue";
-import { rebuildFuelPoverty } from "../../shared/catalogueObservations";
-import { readVersionedAtlasDataset } from "../../shared/atlasSqlite";
-import { artifactDirectory } from "../../shared/dataLayout";
+import { rebuildFuelPoverty } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 it("builds and serves every real fuel poverty value byte for byte and measures pilot storage", () => {
 	const repositoryRoot = process.cwd();

@@ -1,26 +1,29 @@
 import {
 	observationDatabasePath,
 	assertObservationCatalogue,
-} from "../../shared/atlasObservations";
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readSourceObservations,
 	type MeasureTableArtifact,
-} from "../../shared/observationTables";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,
-} from "../../shared/areaInventory";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	type DataCatalog,
 	observationArtifactName,
-} from "../../shared/dataCatalog";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileMeasureCompatibility } from "./measureCompatibility";
-import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const read = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;

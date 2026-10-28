@@ -7,7 +7,7 @@ import type {
 } from "../../src/crosswalkAdapters";
 import { readCompiledAreaLookup } from "../../../../pipeline/src/crosswalk-build-inputs";
 import { readGeometrySourceLookup } from "../../src/geometrySources";
-import { artifactDirectory } from "../../../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const crosswalkWorkerFixture = () => {
 	const root = mkdtempSync(join(tmpdir(), "crosswalk-workers-"));

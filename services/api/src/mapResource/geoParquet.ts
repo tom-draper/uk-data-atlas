@@ -1,1 +1,1 @@
-export * from "../../../../shared/mapResource/geoParquet";
+export * from "@uk-data-atlas/atlas-runtime/maps";

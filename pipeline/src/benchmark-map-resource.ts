@@ -1,11 +1,14 @@
-import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
-import { buildArtifactPath } from "../../shared/geographyBuildPath";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { AreaGeometryCache } from "../../shared/areaGeometry";
-import { readGeometrySourceLookup } from "../../shared/geometrySources";
+import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,

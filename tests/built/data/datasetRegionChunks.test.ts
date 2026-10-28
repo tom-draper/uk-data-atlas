@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "@/shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { isDeepStrictEqual } from "util";

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import type {
 	ApprovedRelationshipPath,
 	RelationshipPurpose,
-} from "../../shared/relationshipPaths";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 
 const purposes = ["identity", "membership", "apportion"] as const;
 const directions = ["forward", "reverse"] as const;

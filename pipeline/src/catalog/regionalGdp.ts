@@ -4,8 +4,8 @@ import type {
 	MeasureObservationArtifact,
 	MeasureSource,
 	SourceGeography,
-} from "../../../shared/dataCatalog";
-import { countriesFor } from "../../../shared/catalogCountries";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest } from "./manifest";
 import { sha256 } from "./values";

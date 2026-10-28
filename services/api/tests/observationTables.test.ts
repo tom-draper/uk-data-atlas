@@ -22,7 +22,7 @@ import {
 	tableMeasureObservations,
 	type MeasureTableArtifact,
 } from "../src/observationTables";
-import { artifactDirectory } from "../../../shared/dataLayout";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const table: MeasureTableArtifact = {
 	schemaVersion: 1,

@@ -7,7 +7,7 @@ import { gzipSync } from "node:zlib";
 import { readAtlasLookups } from "../src/atlasLookups";
 import { route as routeRequest } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import { artifactRoot } from "../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const lookup = {
 	path: "/nowhere",

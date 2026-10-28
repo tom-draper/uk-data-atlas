@@ -1,4 +1,4 @@
-import { artifactRoot } from "../../../../shared/dataLayout";
+import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { readStoredText } from "../../src/storedText";
 import { join } from "node:path";

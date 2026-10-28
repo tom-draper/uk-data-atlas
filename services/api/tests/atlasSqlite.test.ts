@@ -23,7 +23,7 @@ import {
 	namedLocationInventory,
 } from "./geographyFixtures";
 import { createHash } from "node:crypto";
-import { readAtlasPayload } from "../../../shared/atlasSqlite";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -44,7 +44,10 @@ import { readPublicManifest } from "../src/publicManifest";
 import { route } from "../src/routes";
 import type { TerrainCatalogue } from "../src/terrainCatalogue";
 import { testContext } from "./routeFixtures";
-import { artifactDirectory, artifactRoot } from "../../../shared/dataLayout";
+import {
+	artifactDirectory,
+	artifactRoot,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (context: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-sqlite-"));

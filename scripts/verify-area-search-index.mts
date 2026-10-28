@@ -4,10 +4,13 @@ import {
 	readAreaInventory,
 	readAreaLookup,
 	readAreaSearchIndex,
-} from "../shared/boundaryLoader";
-import { AreaSearch, compileAreaSearchIndex } from "../shared/areaSearch";
+} from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	AreaSearch,
+	compileAreaSearchIndex,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { atEach, type Indexed } from "@uk-data-atlas/search-index";
-import { apiRootOf } from "../shared/dataLayout";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

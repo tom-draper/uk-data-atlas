@@ -1,1 +1,1 @@
-export * from "../../../shared/postcodeCounts";
+export * from "@uk-data-atlas/atlas-runtime/postcodes";

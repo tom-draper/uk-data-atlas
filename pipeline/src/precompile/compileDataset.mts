@@ -11,7 +11,7 @@ import {
 	elapsedSince,
 	formatKb,
 	logArtifact,
-} from "../../../shared/buildTiming";
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";
