@@ -7,3 +7,5 @@ export * from "./mappings";
 export * from "./geographyKeys";
 export * from "./postcodeRules";
 export * from "./areaIdentity";
+export * from "./geographyKinds";
+export * from "./geographyAliases";

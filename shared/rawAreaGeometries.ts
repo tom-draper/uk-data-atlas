@@ -9,7 +9,7 @@ import {
 } from "./areaGeometryPieces";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import type { GeographyKind } from "./geography";
+import type { GeographyKind } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { appliesTo, offsetGeometry, readGridOffset } from "./gridOffset";
 import {

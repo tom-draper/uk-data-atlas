@@ -280,7 +280,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-relationship-candidates.ts",
 		"pipeline/src/relationshipCandidates.ts",
 		"shared/crosswalkAdapters.ts",
-		"shared/geography.ts",
+		"packages/geography/src/geographyKinds.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -300,7 +300,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-analysis-geographies.ts",
 		"pipeline/src/analysisGeographies.ts",
-		"shared/geography.ts",
+		"packages/geography/src/geographyKinds.ts",
 		"shared/geographyBuildPath.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",

@@ -7,7 +7,7 @@ import type { AreaInventory } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type { GeometricContainmentCrosswalkAdapter } from "../src/crosswalkAdapters";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
-import { isGeographyKind } from "../src/geography";
+import { isGeographyKind } from "@uk-data-atlas/geography";
 import type { readGeometries as readGeometriesForCache } from "../src/rawAreaGeometries";
 import { measureContainment } from "../src/geometricContainment";
 import { readGeometrySourceLookup } from "../src/geometrySources";

@@ -21,7 +21,7 @@ import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
 } from "./crosswalkAdapters";
-import type { GeographyKind } from "./geography";
+import type { GeographyKind } from "@uk-data-atlas/geography";
 import type {
 	BestFitCrosswalkArtifact,
 	GeometricContainmentCrosswalkArtifact,

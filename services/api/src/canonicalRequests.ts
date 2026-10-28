@@ -2,7 +2,7 @@ import { problem, type ApiResponse } from "./routeResponse";
 import { boundaryReleaseMonth } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
 import { canonicalMeasureId } from "./measureTerms";
-import { canonicalGeography } from "./geography";
+import { canonicalGeography } from "@uk-data-atlas/geography";
 
 // Where a path carries a measure id: /v1/data/{id}, /v1/measures/{id} and a
 // map resource's /join/{id}.

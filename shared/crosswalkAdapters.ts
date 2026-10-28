@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { isGeographyKind, type GeographyKind } from "./geography";
+import { isGeographyKind, type GeographyKind } from "@uk-data-atlas/geography";
 
 export type CrosswalkSideAdapter = {
 	geography: GeographyKind;

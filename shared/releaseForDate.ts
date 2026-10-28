@@ -1,7 +1,7 @@
 import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { canonicalGeography } from "./geographyAliases";
+import { canonicalGeography } from "@uk-data-atlas/geography";
 
 type BoundaryRelease = BoundaryRegistry["releases"][number];
 

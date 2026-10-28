@@ -1,4 +1,4 @@
-import type { GeographyKind } from "../../../shared/geography";
+import type { GeographyKind } from "@uk-data-atlas/geography";
 
 export type OnsBoundarySource = {
 	geography: GeographyKind;
