@@ -7,7 +7,7 @@ import { readGeometrySourceLookup } from "../../shared/geometrySources";
 import { readStoredText } from "../../shared/storedText";
 import { sha256 } from "../../shared/contentHash";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
-import { writeCrosswalkArtifact } from "../../shared/crosswalk-artifact";
+import { writeCrosswalkArtifact } from "./crosswalk-artifact";
 import type { CrosswalkWork, CrosswalkWorkerResult } from "./crosswalk-workers";
 import { apiRootOf, artifactDirectory } from "../../shared/dataLayout";
 

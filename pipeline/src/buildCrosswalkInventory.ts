@@ -1,4 +1,4 @@
-import { writeCrosswalkArtifact } from "../../shared/crosswalk-artifact";
+import { writeCrosswalkArtifact } from "./crosswalk-artifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,

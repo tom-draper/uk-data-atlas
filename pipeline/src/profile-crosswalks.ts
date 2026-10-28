@@ -12,7 +12,7 @@ import { readGeometrySourceLookup } from "../../shared/geometrySources";
 import { readStoredText, storedTextExists } from "../../shared/storedText";
 import { sha256 } from "../../shared/contentHash";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
-import { writeCrosswalkArtifact } from "../../shared/crosswalk-artifact";
+import { writeCrosswalkArtifact } from "./crosswalk-artifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
