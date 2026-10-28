@@ -6,9 +6,8 @@ import {
 	type LookupPoint,
 	type PointResult,
 } from "./pointLookup";
+import { compactPostcode, parsePostcode } from "@uk-data-atlas/geography";
 import {
-	compactPostcode,
-	parsePostcode,
 	postcodeLookupPoint,
 	type PostcodeRecord,
 	type PostcodeSource,

@@ -20,7 +20,7 @@ import { readPostcodeIndex } from "../src/boundaryLoader";
 import { readSqlitePostcodeShard } from "../src/atlasPostcodes";
 import { createGeographyResolver } from "../src/geographyResolver";
 import { route } from "../src/routes";
-import { parsePostcode } from "../src/postcodes";
+import { parsePostcode } from "@uk-data-atlas/geography";
 import type { PostcodeSourceRow } from "../../../pipeline/src/postcodeIndex";
 import {
 	postcodeIndexFor,

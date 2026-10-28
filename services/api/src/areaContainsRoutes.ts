@@ -17,7 +17,8 @@ import {
 	POSTCODE_NOTE,
 	UNDECLARED_POSTCODE_ACCURACY,
 } from "./postcodeRoutes";
-import { compactPostcode, postcodeLookupPoint } from "./postcodes";
+import { compactPostcode } from "@uk-data-atlas/geography";
+import { postcodeLookupPoint } from "./postcodes";
 import {
 	envelope,
 	invalidQuery,

@@ -7,7 +7,7 @@ import { AreaGeometryCache } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import { createGeographyResolver } from "../src/geographyResolver";
-import { NORTHERN_IRELAND_EXCLUSION } from "../src/postcodes";
+import { NORTHERN_IRELAND_EXCLUSION } from "@uk-data-atlas/geography";
 import { toWgs84Point } from "../src/reprojection";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/routing";

@@ -5,3 +5,4 @@ export * from "./geometrySubstitutions";
 export * from "./gridOffset";
 export * from "./mappings";
 export * from "./geographyKeys";
+export * from "./postcodeRules";
