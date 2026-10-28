@@ -5,7 +5,7 @@ export {
 	readSqlitePostcodeShard,
 } from "./atlasPostcodeShard";
 import { readSqlitePostcodeIndexArtifact } from "./atlasPostcodeIndexReader";
-import { PostcodeIndex } from "../postcodes/postcodeIndex";
+import { PostcodeIndex } from "@uk-data-atlas/postcodes";
 
 export const readSqlitePostcodeIndex = (apiRoot: string): PostcodeIndex => {
 	const artifact = readSqlitePostcodeIndexArtifact(apiRoot);
