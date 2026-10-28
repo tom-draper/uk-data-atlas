@@ -2,12 +2,11 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MapArchive } from "./mapResource/archiveReader";
 import { openArchive } from "./mapResource/archiveReader";
-import type { MapResourceDescriptor } from "./mapResources";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import type { StoredFile } from "./routeResponse";
 
-import type { MapResources } from "./mapResources";
+import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import { artifactRoot, buildDirectory, repositoryRootOf } from "./dataLayout";
-export type { MapResources } from "./mapResources";
 
 /** Every whole-release download the build wrote, tiled or not. */
 const allFeatures = (mapResources: MapResources) => [

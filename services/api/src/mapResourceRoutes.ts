@@ -1,6 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import type { MapResourceDescriptor } from "../../../shared/mapResources";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { untiledFeatures } from "./mapResourceLoader";
 import { releaseKey } from "./geographyKeys";
 import { observationsFor } from "./observationArtifacts";

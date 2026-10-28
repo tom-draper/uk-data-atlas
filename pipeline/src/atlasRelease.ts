@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "../../shared/contentHash";
 import { hashFile } from "../../shared/fileHashCache";
-import type { MapResources } from "../../shared/mapResources";
+import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 
 import type {
 	AtlasRelease,
