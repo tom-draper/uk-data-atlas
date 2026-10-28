@@ -32,7 +32,7 @@ beforeEach(() => {
 			version: 1,
 			datasets: [
 				{
-					type: "sample",
+					type: "nhsWaiting",
 					output: "sample",
 					source: {},
 					contract: {},
