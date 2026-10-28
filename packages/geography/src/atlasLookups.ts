@@ -19,12 +19,10 @@ import {
 } from "./areaLineage";
 import { encodeBoundaryMappings, encodeParishLadMappings } from "./mappings";
 
-type AreaIdentity = {
-	geography: string;
-	boundaryRelease: string;
-	code: string;
-};
-type Endpoint = { geography: string; boundaryRelease: string };
+import type {
+	AreaIdentity,
+	GeographyEndpoint as Endpoint,
+} from "./areaIdentity";
 
 /** The parts of the API's geography resolver the lookups are compiled from. */
 export type LookupResolver = {

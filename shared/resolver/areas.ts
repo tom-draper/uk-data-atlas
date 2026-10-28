@@ -24,8 +24,8 @@ import {
 } from "../releaseForDate";
 import { exactNameMatch, type NameMatch } from "../nameNormalisation";
 
-import type { GeographyEndpoint, AreaIdentity } from "../areaIdentity";
-export type { GeographyEndpoint, AreaIdentity } from "../areaIdentity";
+import type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";
+export type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";
 
 export const areaId = ({ geography, boundaryRelease, code }: AreaIdentity) =>
 	areaKey(geography, boundaryRelease, code);
