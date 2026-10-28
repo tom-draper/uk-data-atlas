@@ -8,7 +8,7 @@ import {
 	mapGeometryPositions,
 	type Geometry,
 	type Position,
-} from "./geometryPositions";
+} from "@uk-data-atlas/geography/geometry-positions";
 
 /**
  * A correction to a publisher's grid coordinates, applied before they are

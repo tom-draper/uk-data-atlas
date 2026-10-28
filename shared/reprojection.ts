@@ -10,7 +10,7 @@ import {
 	mapGeometryPositions,
 	type Geometry,
 	type Position,
-} from "./geometryPositions";
+} from "@uk-data-atlas/geography/geometry-positions";
 
 import type {
 	GeometryProvenance,
