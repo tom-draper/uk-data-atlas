@@ -1,4 +1,3 @@
-import { readDatasetCoverage } from "./datasetCoverage";
 import { readAtlasPayload } from "../../shared/atlasSqlite";
 import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import {
@@ -26,6 +25,7 @@ import {
 	type AreaProfile,
 	type AreaRef,
 	type BoundingBox,
+	type DatasetCoverage,
 	type NamedProfile,
 	type NamedRef,
 	type Outline,
@@ -247,7 +247,51 @@ function readAreas(geography: PlaceGeography) {
 	return areas;
 }
 
-const datasetsFor = await readDatasetCoverage(readDataset);
+// The atlas datasets that publish a figure for each code, and for which
+// years. A dataset's years each hold maps from code to figures.
+function readDatasetCoverage() {
+	const manifest = JSON.parse(readDataset("dataset-manifest")) as {
+		datasets: { output: string; source: { name: string } }[];
+	};
+	const coverage = new Map<string, Map<string, Set<number>>>();
+	const titles = new Map<string, string>();
+	const looksLikeCode = (key: string) => /^[EWSN]\d{8}$/.test(key);
+	for (const { output, source } of manifest.datasets) {
+		if (titles.has(output)) continue;
+		titles.set(output, source.name);
+		const file = decodeCompactPayload(
+			JSON.parse(readDataset(output)),
+		) as Record<string, unknown>;
+		for (const [key, entry] of Object.entries(file)) {
+			if (!entry || typeof entry !== "object") continue;
+			const year = Number((entry as { year?: unknown }).year ?? key);
+			if (!Number.isFinite(year)) continue;
+			for (const value of Object.values(entry)) {
+				if (!value || typeof value !== "object" || Array.isArray(value))
+					continue;
+				const codes = Object.keys(value).filter(looksLikeCode);
+				if (codes.length < 5) continue;
+				for (const code of codes) {
+					const byDataset = coverage.get(code) ?? new Map();
+					coverage.set(code, byDataset);
+					const years = byDataset.get(output) ?? new Set<number>();
+					byDataset.set(output, years);
+					years.add(year);
+				}
+			}
+		}
+	}
+	return (code: string): DatasetCoverage[] =>
+		[...(coverage.get(code) ?? [])]
+			.map(([slug, years]) => ({
+				slug,
+				title: titles.get(slug) ?? slug,
+				years: [...years].sort((a, b) => b - a),
+			}))
+			.sort((a, b) => a.title.localeCompare(b.title));
+}
+
+const datasetsFor = readDatasetCoverage();
 
 /** The datasets that count each geography's residents, one per geography. */
 const POPULATION_DATASETS = [
