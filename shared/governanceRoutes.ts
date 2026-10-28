@@ -1,5 +1,5 @@
 import { attributionFor, attributionText } from "./attribution";
-import { correctionsForMeasure } from "./correctionRegister";
+import { correctionsForMeasure } from "@uk-data-atlas/catalogue";
 import {
 	envelope,
 	invalidQuery,
