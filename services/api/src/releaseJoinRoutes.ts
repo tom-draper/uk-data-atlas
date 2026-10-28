@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { GEOJSON_TIERS } from "@uk-data-atlas/atlas-runtime/maps";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/areas";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";

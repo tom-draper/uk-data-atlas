@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import { notBuilt, unsupported } from "@uk-data-atlas/atlas-runtime/areas";
 import {

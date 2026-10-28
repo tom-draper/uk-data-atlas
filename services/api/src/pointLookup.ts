@@ -1,4 +1,4 @@
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import type { BoundaryRelease } from "@uk-data-atlas/catalogue";
 import type {
 	GeographyResolver,
