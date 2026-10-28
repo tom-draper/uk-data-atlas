@@ -1,5 +1,5 @@
 import type { AreaInventory } from "../../shared/areaInventory";
-import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import type { SourceInventory } from "./sourceInventory";
 import { releaseKey } from "@uk-data-atlas/geography";

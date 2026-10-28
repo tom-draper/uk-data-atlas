@@ -1,6 +1,6 @@
 import { DuckDBInstance } from "@duckdb/node-api";
 import type { AreaLookup } from "../../shared/areaInventory";
-import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { NamedLocationInventory } from "../../shared/namedLocationTypes";
 import {
 	finishPlaceIndex,

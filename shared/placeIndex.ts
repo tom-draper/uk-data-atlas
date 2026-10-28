@@ -1,7 +1,7 @@
 import type { AreaLookup } from "./areaInventory";
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { NamedLocationInventory } from "./namedLocationTypes";
-import { compareBoundaryReleases } from "./boundaryReleaseOrder";
+import { compareBoundaryReleases } from "@uk-data-atlas/catalogue";
 import { NAME_NORMALISATION } from "./nameNormalisation";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { compareCodeUnits, type Indexed } from "./sortedIndex";

@@ -10,7 +10,7 @@ import {
 	type CountyShape,
 } from "../../shared/ceremonialCounties";
 import { compileNamedLocations, membersAt } from "../../shared/namedLocations";
-import { releaseMonth } from "../../shared/boundaryReleaseOrder";
+import { releaseMonth } from "@uk-data-atlas/catalogue";
 import { toWgs84Geometry } from "../../shared/reprojection";
 import { readShapefileFeatures } from "../../shared/shapefile";
 import { createAreaGeometryCache } from "../../shared/geometryLoader";

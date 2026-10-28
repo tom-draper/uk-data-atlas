@@ -1,5 +1,5 @@
 import type { AreaInventory, AreaLookup } from "./areaInventory";
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	explainCodeInRelease,

@@ -1,4 +1,4 @@
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { readGeographyCatalogue } from "./geographyCatalogue";
 
 export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry =>

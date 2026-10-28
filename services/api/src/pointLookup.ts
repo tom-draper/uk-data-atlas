@@ -1,5 +1,5 @@
 import { areaNotFound } from "./areaResources";
-import type { BoundaryRelease } from "./boundaryRegistry";
+import type { BoundaryRelease } from "@uk-data-atlas/catalogue";
 import type {
 	GeographyResolver,
 	ResolvedContainingArea,

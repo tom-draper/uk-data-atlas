@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route } from "../src/routes";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { testContext } from "./routeFixtures";
 
 const boundaryRegistry: BoundaryRegistry = {

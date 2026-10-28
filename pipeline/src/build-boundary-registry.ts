@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 import type {
 	BoundaryRegistry,
 	BoundaryRelease,
-} from "../../shared/boundaryRegistry";
+} from "@uk-data-atlas/catalogue";
 import { sha256 } from "../../shared/contentHash";
 import {
 	boundaryReleaseDeprecations,

@@ -1,4 +1,4 @@
-import type { BoundaryReleaseDeprecation } from "@uk-data-atlas/catalogue";
+import type { BoundaryReleaseDeprecation } from "./boundaryReleaseDeprecations";
 
 export type BoundarySource = {
 	publisher: string;

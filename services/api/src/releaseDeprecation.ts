@@ -1,4 +1,4 @@
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { deprecationFields } from "./operationTemplates";
 import type { ApiResponse } from "./routeResponse";
 

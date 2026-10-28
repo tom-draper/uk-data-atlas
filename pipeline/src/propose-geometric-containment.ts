@@ -8,7 +8,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory } from "../../shared/areaInventory";
-import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeometricContainmentCrosswalkAdapter } from "../../shared/crosswalkAdapters";
 import type { CrosswalkInventory } from "../../shared/crosswalkInventory";
 import { isGeographyKind } from "@uk-data-atlas/geography";

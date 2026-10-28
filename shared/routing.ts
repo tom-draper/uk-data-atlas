@@ -1,6 +1,6 @@
 import type { AreaInventory } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkArtifact } from "./crosswalkTypes";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { AnyMeasureObservationArtifact, DataCatalog } from "./dataCatalog";

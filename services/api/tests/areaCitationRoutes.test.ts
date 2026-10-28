@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/routing";
-import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	registry,
 	areaLookup,

@@ -14,7 +14,7 @@ import type {
 	AreaInventory,
 	AreaReleaseArtifact,
 } from "../../shared/areaInventory";
-import type { BoundaryRegistry } from "../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	type DataCatalog,
 	observationArtifactName,

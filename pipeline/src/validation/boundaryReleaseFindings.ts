@@ -1,4 +1,4 @@
-import type { BoundaryRegistry } from "../../../shared/boundaryRegistry";
+import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
