@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { csvRecords } from "@uk-data-atlas/atlas-runtime/storage";
+import { csvRecords } from "@uk-data-atlas/artifacts";
 
 const SOURCE_URL =
 	"https://www.arcgis.com/sharing/rest/content/items/e0bc41722b1a4b76a6ecfff14f91cbb4/data";

@@ -8,7 +8,7 @@ import type {
 	SourceGeography,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { csvFields } from "@uk-data-atlas/atlas-runtime/storage";
+import { csvFields } from "@uk-data-atlas/artifacts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { sha256 } from "./values";
 

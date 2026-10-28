@@ -1,4 +1,4 @@
-import { csvRecords } from "@uk-data-atlas/atlas-runtime/storage";
+import { csvRecords } from "@uk-data-atlas/artifacts";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	mediaType,

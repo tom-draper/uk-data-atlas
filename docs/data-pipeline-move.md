@@ -412,8 +412,7 @@ declared codeInputs cover workers and other dynamically loaded code.
 
 The terrain catalogue compiler and entry point now live in
 `pipeline/src/terrainCatalogue.ts` and `pipeline/src/build-terrain-catalogue.ts`.
-The API imports the shared types in `packages/atlas-runtime/src/maps/terrainCatalogue.ts` through its
-existing type module. Terrain catalogue output stays at
+The API imports the shared types in `packages/atlas-runtime/src/maps/terrainCatalogue.ts` directly. Terrain catalogue output stays at
 `services/api/public/terrain-catalogue.json`; its bytes and content hash are
 unchanged. The build graph runs the pipeline entry point and traces its imports
 alongside the pipeline package and TypeScript configuration.
@@ -430,7 +429,7 @@ The geometry source registry compiler and entry point now live in
 `pipeline/src/geometrySourceRegistry.ts` and
 `pipeline/src/build-geometry-source-registry.ts`. Its hashing
 helper uses `@uk-data-atlas/artifacts`; the registry types live in
-`packages/atlas-runtime/`, with API re-exports for existing consumers. Area
+`packages/atlas-runtime/`. Area
 inventory artifact types also live in `packages/atlas-runtime/src/areas/areaInventory.ts`. The build
 still writes byte-identical `services/api/public/geometry-sources.json` and
 keeps the input hash cache at its existing path.
@@ -441,7 +440,7 @@ The boundary registry and geography inventory builders move with it because
 both inventory entry points call the boundary registry compiler directly.
 The source inventory compiler also moves to `pipeline/src/sourceInventory.ts`.
 The API keeps `createAreaLookup` and imports shared artifact contracts and
-readers through its existing modules. The three stages keep their output paths
+readers directly from the packages. The three stages keep their output paths
 and bytes, including per-release area files and the geography build artifacts.
 Their cache inputs include the pipeline configuration and moved imports.
 
@@ -462,7 +461,7 @@ The relationship candidate compiler and entry point now live in
 `pipeline/src/relationshipCandidates.ts` and
 `pipeline/src/build-relationship-candidates.ts`. Candidate artifact contracts,
 the crosswalk adapter reader, and geography identifier validation live in
-`packages/atlas-runtime/`, with API re-exports for existing consumers. The build graph traces
+`packages/atlas-runtime/`. The build graph traces
 the moved compiler and pipeline configuration. The builder keeps the same
 `services/api/public/relationship-candidates.json` bytes.
 
@@ -471,7 +470,7 @@ now live in `pipeline/src/relationshipPaths.ts`,
 `pipeline/src/relationshipPathAdapters.ts`, and
 `pipeline/src/build-relationship-paths.ts`. Path contracts and purpose lookup
 live in `packages/atlas-runtime/src/relationships/relationshipPaths.ts`; the API keeps its runtime path index.
-Compressed artifact access now uses `packages/artifacts/src/storedText.ts`, with API re-exports.
+Compressed artifact access now uses `packages/artifacts/src/storedText.ts`.
 The graph traces the compiler and pipeline configuration. The builder preserves
 `data/build/geography/relationship-paths.json` bytes and the existing discovery
 step limit.
@@ -480,7 +479,7 @@ The analysis geography compiler and entry point now live in
 `pipeline/src/analysisGeographies.ts` and
 `pipeline/src/build-analysis-geographies.ts`. Analysis support contracts, data
 catalogue contracts and measure geography identifiers live in
-`packages/atlas-runtime/`, with API re-exports. Unit definitions live in
+`packages/atlas-runtime/`. Unit definitions live in
 `@uk-data-atlas/catalogue/unit-registry`. The API keeps `analysisConversion` and
 its observation and unit registry runtime functions. The build graph traces
 the moved compiler and pipeline configuration. The builder preserves
@@ -488,7 +487,7 @@ the moved compiler and pipeline configuration. The builder preserves
 
 The atlas release compiler and entry point now live in
 `pipeline/src/atlasRelease.ts` and `pipeline/src/build-atlas-release.ts`.
-Release and map-resource contracts live in `packages/atlas-runtime/`, with API re-exports.
+Release and map-resource contracts live in `packages/atlas-runtime/`.
 Both initial and final release stages run the moved entry point and include
 the pipeline configuration in their cache inputs. Artifact selection, file
 hashing, release identity, and the `services/api/public/atlas-release.json`
@@ -498,19 +497,19 @@ The data catalogue entry point and dataset compilers now live in
 `pipeline/src/build-data-catalog.ts` and `pipeline/src/catalog/`. Observation
 table compilation and publication live in `pipeline/src/atlasObservationTables.ts`
 and `pipeline/src/store-observations.ts`. Common observation contracts and
-identity helpers, exact-byte SQLite observation readers, CSV parsing and country
-classification live in `packages/atlas-runtime/`, with API re-exports for runtime
-consumers. SQLite table writing lives in `@uk-data-atlas/artifacts`, and measure
+identity helpers, exact-byte SQLite observation readers and country classification
+live in `packages/atlas-runtime/`. CSV parsing and SQLite table writing live in
+`@uk-data-atlas/artifacts`, and measure
 slugging lives in `@uk-data-atlas/catalogue`. The graph traces these imports and the
 pipeline configuration. Catalogue JSON and observation artifact bytes, SQLite
 publication, cleanup, and output paths are unchanged.
 
 The SQLite area inventory and release readers, and the lazy area lookup, live
-in `packages/atlas-runtime/`. The API re-exports them for existing callers. These readers can
+in `packages/atlas-runtime/`. These readers can
 now be used by pipeline stages without importing the API boundary loader.
 
 The named location SQLite inventory reader and its data contracts live in
-`packages/atlas-runtime/`, with API re-exports. The reader still loads geometries lazily and
+`packages/atlas-runtime/`. The reader still loads geometries lazily and
 checks the inventory hash when it reads them.
 
 The area search pipeline stage runs `pipeline/src/build-area-search-index.ts`
@@ -527,8 +526,7 @@ index SQLite table conversion and publisher also live in `packages/atlas-runtime
 
 The evidence documents stage now runs `pipeline/src/build-evidence-documents.ts`.
 The evidence report compilers, catalogue and observation loaders, route
-contracts, geography resolver, and their support modules live in `packages/atlas-runtime/`, with
-API re-exports for the routes. The stage traces its own imports with esbuild
+contracts, geography resolver, and their support modules live in `packages/atlas-runtime/`. The stage traces its own imports with esbuild
 from the repository root. Document bytes, cache keys, and the
 `services/api/public/evidence-documents.json` output path are unchanged.
 
@@ -602,7 +600,7 @@ CSV and Parquet download generation in `pipeline/src/observationDownloads.ts`.
 The graph runs `pipeline/src/build-export-manifest.ts` after `data-catalog`.
 Manifest and download contracts live in `packages/atlas-runtime/`. The Parquet
 writer lives in `@uk-data-atlas/artifacts`.
-The API re-exports the manifest contracts and Parquet writer for runtime consumers.
+The API imports the manifest contracts and Parquet writer directly.
 The output paths, download formats, ordering, hashes, and publication behavior
 remain unchanged.
 
