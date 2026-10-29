@@ -2,7 +2,7 @@ import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./pairOverlap";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,
@@ -24,7 +24,7 @@ export const handleAreaOverlapRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"area" | "areaGeometry" | "explainAreaAbsence" | "hasAreaRelease" | "selectReleaseForDate" | "missingRequirement" | "relationships">): ApiResponse | undefined => {
 	if (
 		segments.length !== 6 ||
 		segments[0] !== "v1" ||

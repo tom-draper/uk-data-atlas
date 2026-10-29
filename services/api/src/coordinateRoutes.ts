@@ -14,7 +14,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -29,7 +29,7 @@ export const handleCoordinateRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<never>): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
