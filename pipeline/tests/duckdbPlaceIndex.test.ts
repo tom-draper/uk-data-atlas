@@ -17,6 +17,35 @@ const release = (
 	areas,
 });
 
+test("DuckDB place index builds searchable aliases from a fixture", async () => {
+	const lookup = createAreaLookup([
+		release("2023", [{ code: "E01", name: "York", aliases: ["Yörk"] }]),
+	]);
+	const index = await compileDuckdbPlaceIndex(
+		lookup,
+		undefined,
+		"sha256:test",
+	);
+	assert.deepEqual(index.places, [
+		{
+			place: "localAuthority/E01",
+			kind: "area",
+			geography: "localAuthority",
+			code: "E01",
+			name: "York",
+			boundaryReleases: [0],
+		},
+	]);
+	assert.deepEqual(index.releases, ["2023"]);
+	assert.deepEqual(index.names, ["york"]);
+	assert.deepEqual(index.labels, [
+		[
+			[0, 0],
+			[0, 0, "Yörk"],
+		],
+	]);
+});
+
 test("DuckDB place index preserves Node label order, aliases and releases", async () => {
 	const lookup = createAreaLookup([
 		release("2021", [
