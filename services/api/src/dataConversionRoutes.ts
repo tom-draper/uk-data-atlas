@@ -15,7 +15,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
 import { paginate } from "./pagination";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,
@@ -41,7 +41,7 @@ export const handleDataConversionRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"crosswalk" | "indexedPathSteps" | "relationshipPath" | "missingRequirement">): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
 		segments[0] !== "v1" ||
