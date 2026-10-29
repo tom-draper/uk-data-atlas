@@ -684,22 +684,33 @@ area_releases.position`, which `series.release_id` already references), then
   parents) and public health. 31 datasets are served from rows; stored
   payload JSON is 40 MB.
 
+### Step 4, batch 5: records for areas the atlas lacks (2026-10-29)
+
+- The pay and referendum files carried records for areas the atlas has no
+  boundary for: metropolitan counties (E11) and Inner and Outer London (E13)
+  in income and workplace income, and Gibraltar in Brexit. Configs excluded
+  them, so rows could not rebuild the files. The compilers now drop them
+  instead, which changes those three hashes; the excludes are gone, so the
+  build fails if such codes come back.
+- Brexit names its region as a parent, on the region release and then the
+  country release (Scotland, Wales and Northern Ireland).
+- Batch 5 adds income, workplace income and Brexit. 34 datasets are served
+  from rows; stored payload JSON is 39 MB.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker                                                         | Datasets                                                                                        |
-| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Values in arrays                                                | population, population-uk, house prices                                                         |
-| Records for areas the atlas lacks                               | income and workplace income (metropolitan counties, Inner and Outer London), Brexit (Gibraltar) |
-| A per-record list of predecessor codes                          | unemployment (`derivedFromPredecessors` on four new unitaries)                                  |
-| A parent code the compiler leaves empty                         | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash)        |
-| A record field holding the observation status                   | Brexit by constituency (`isKnownResult` is true unless the share is estimated)                  |
-| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity      |
-| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables               |
-| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                           |
+| Blocker                                                         | Datasets                                                                                   |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Values in arrays                                                | population, population-uk, house prices                                                    |
+| A per-record list of predecessor codes                          | unemployment (`derivedFromPredecessors` on four new unitaries)                             |
+| A parent code the compiler leaves empty                         | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash)   |
+| A record field holding the observation status                   | Brexit by constituency (`isKnownResult` is true unless the share is estimated)             |
+| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity |
+| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables          |
+| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                      |
 
-Arrays and status flags need new leaf kinds. Areas the atlas lacks need area
-rows (or a decision to drop them from the compiled files). Predecessor lists
+Arrays and status flags need new leaf kinds. Predecessor lists
 are succession, which crosswalks can supply. Values a derived number needs but
 the rows lack (population) must be stored or joined first.
 
@@ -726,8 +737,7 @@ from a `DeclaredDataset` in `packages/atlas-runtime/src/catalogue/statisticsData
   series keep abolished districts. Each code is placed on the header's
   release, then each `alsoIn` release in turn, so every row's foreign key is
   true. A code in no listed release fails the build unless an `exclude`
-  pattern gives a reason (metropolitan counties, Inner and Outer London,
-  Gibraltar, joint district codes).
+  pattern gives a reason (joint district codes).
 - **Period labels have one meaning.** `periods` in `declaredStatistics.ts`
   builds them: `2024` (calendar year), `2024-25` (April to March), `2024/25`
   (school year), `2026-Q1`, `2025-07`, `2026-07-01`, `2022-2024` (whole
