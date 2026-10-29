@@ -7,7 +7,10 @@ import {
 	invalidQuery,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteContext,
+	RouteRequestFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -25,12 +28,9 @@ export const handleAreaValidationRoutes = ({
 	segments,
 	method,
 	body: requestBody,
-}: RouteRequestFor<
-	| "matchAreaValues"
-	| "validateAreas"
-	| "explainAreaAbsence"
-	| "missingRequirement"
->): ApiResponse | undefined => {
+}: RouteRequestFor<"explainAreaAbsence" | "missingRequirement"> & {
+	context: Required<Pick<RouteContext, "areaValidation">>;
+}): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
@@ -77,9 +77,10 @@ export const handleAreaValidationRoutes = ({
 	if (!geography || !boundaryRelease) {
 		const unavailable = requireGeography(geographyResolver, "areas");
 		if (unavailable) return unavailable;
-		const matched = (
-			context.areaValidation ?? geographyResolver
-		).matchAreaValues(values, parents.length > 0 ? parents : undefined);
+		const matched = context.areaValidation.matchAreaValues(
+			values,
+			parents.length > 0 ? parents : undefined,
+		);
 		const manifest = matchManifest(
 			releaseId,
 			values,
@@ -93,9 +94,7 @@ export const handleAreaValidationRoutes = ({
 		};
 		return matchReportResponse(releaseId, format, manifest, body);
 	}
-	const validated = (
-		context.areaValidation ?? geographyResolver
-	).validateAreas(
+	const validated = context.areaValidation.validateAreas(
 		geography,
 		boundaryRelease,
 		values,

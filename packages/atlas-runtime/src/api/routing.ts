@@ -108,7 +108,8 @@ export type RouteDispatchContext = Omit<RouteContext, "geographyResolver"> & {
 };
 
 export type RouteRequest = {
-	context: RouteDispatchContext;
+	context: RouteDispatchContext &
+		Required<Pick<RouteContext, "areaValidation">>;
 	/**
 	 * POST only for an operation that takes a body, such as a column of codes
 	 * too long for a URL; every other request is GET.

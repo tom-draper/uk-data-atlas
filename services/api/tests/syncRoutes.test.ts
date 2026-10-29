@@ -21,8 +21,13 @@ const context = (overrides: Partial<RouteContext> = {}): RouteContext =>
 
 const request = (path: string, overrides: Partial<RouteContext> = {}) => {
 	const parsedUrl = new URL(path, "http://localhost");
+	const resources = context(overrides);
 	return {
-		context: context(overrides),
+		context: {
+			...resources,
+			areaValidation:
+				resources.areaValidation ?? resources.geographyResolver,
+		},
 		releaseId: "current-release",
 		parsedUrl,
 		segments: parsedUrl.pathname.split("/").filter(Boolean),
