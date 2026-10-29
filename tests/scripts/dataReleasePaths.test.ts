@@ -8,8 +8,36 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
+import { createHash } from "node:crypto";
 import { expect, onTestFinished, test } from "vitest";
-import { filesUnder, replaceSources } from "@/scripts/data-release.mjs";
+import {
+	filesUnder,
+	replaceSources,
+	validateReleaseDatabases,
+} from "@/scripts/data-release.mjs";
+
+test("release databases must refer to the same canonical file", async () => {
+	const build = mkdtempSync(join(tmpdir(), "atlas-release-databases-"));
+	onTestFinished(() => rmSync(build, { recursive: true, force: true }));
+	writeFileSync(join(build, "atlas.sqlite"), "canonical");
+	const database = new DatabaseSync(join(build, "atlas-cache.sqlite"));
+	database.exec(
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
+	);
+	database
+		.prepare("INSERT INTO meta VALUES (?, ?)")
+		.run(
+			"atlas-sqlite-content-hash",
+			`sha256:${createHash("sha256").update("canonical").digest("hex")}`,
+		);
+	database.close();
+	await expect(validateReleaseDatabases(build)).resolves.toBeUndefined();
+	writeFileSync(join(build, "atlas.sqlite"), "different");
+	await expect(validateReleaseDatabases(build)).rejects.toThrow(
+		"Cache release mismatch",
+	);
+});
 
 test("restoring raw sources preserves generated data and excludes it from releases", async () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-release-paths-"));
