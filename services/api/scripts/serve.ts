@@ -1,4 +1,5 @@
 import cluster from "node:cluster";
+import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -7,6 +8,7 @@ import {
 } from "../src/clusterMetrics";
 import { createApiServer, readApiCatalogues } from "../src/server";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../src/postcodeRoutes";
+import { validateCacheRelease } from "../src/cacheRelease";
 import {
 	errorFields,
 	jsonLog,
@@ -20,7 +22,31 @@ const apiRoot = resolve(
 const log = jsonLog();
 const configuration = readServeConfiguration(process.env, log);
 
-if (cluster.isPrimary && configuration.workers > 1) {
+let cacheFailure: Error | undefined;
+try {
+	validateCacheRelease(resolve(apiRoot, "../.."));
+} catch (error) {
+	cacheFailure = error instanceof Error ? error : new Error(String(error));
+}
+
+if (cacheFailure) {
+	const failure = cacheFailure;
+	log({
+		level: "error",
+		event: "cache.release_mismatch",
+		error: errorFields(failure),
+	});
+	createServer((_request, response) => {
+		response.writeHead(503, { "content-type": "application/json" });
+		response.end(
+			JSON.stringify({
+				status: "not-ready",
+				error: failure.message,
+				cause: String(failure.cause),
+			}),
+		);
+	}).listen(configuration.port, configuration.host);
+} else if (cluster.isPrimary && configuration.workers > 1) {
 	installPrimaryMetrics();
 	let stopping = false;
 	for (let index = 0; index < configuration.workers; index++) cluster.fork();
