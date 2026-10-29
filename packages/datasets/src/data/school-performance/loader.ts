@@ -32,7 +32,8 @@ export async function loadSchoolPerformance(
 
 		const code = (row["lad_code"] ?? "").trim();
 		const name = (row["lad_name"] ?? "").trim();
-		if (!code || !/^E[0-9]/.test(code)) continue;
+		// Joint districts ("E07000010 / E07000009") have no boundary.
+		if (!/^E\d{8}$/.test(code)) continue;
 
 		let yearRecords = byYear.get(year);
 		if (!yearRecords) {

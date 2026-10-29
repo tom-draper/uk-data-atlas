@@ -609,12 +609,6 @@ const schools = {
 		{ geography: "localAuthority", year: 2022 },
 		{ geography: "localAuthority", year: 2018 },
 	],
-	exclude: [
-		{
-			codes: / \/ /,
-			reason: "The publisher reports two districts as one.",
-		},
-	],
 };
 
 export const SCHOOL_PERFORMANCE: DeclaredDataset = {
