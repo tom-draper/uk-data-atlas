@@ -697,6 +697,26 @@ area_releases.position`, which `series.release_id` already references), then
 - Batch 5 adds income, workplace income and Brexit. 34 datasets are served
   from rows; stored payload JSON is 39 MB.
 
+### Step 4, batch 6: derived rules (2026-10-29)
+
+- A derived rule gets the path of the leaf it fills as well as the record, so
+  one rule can serve a pattern that matches a leaf in every period, and it may
+  give null, as the compilers do.
+- Claimant count stores `totalRate` as `claimant-rate`. It is published,
+  except for the authorities formed in 2023, where the compiler divides by
+  the 2024 mid-year population; the stored value is what the file serves.
+  `youthRate` is derived from it.
+- Child poverty derives `childrenPopulation` and pupil absence its `value`.
+  The school tables derive their top-level copies from the latest year in
+  `series`, and the disadvantage table its yearly `att8Gap`, with the
+  compiler's six-pupil floor.
+- The school compilers now drop the joint district the publisher reports as
+  one (`E07000010 / E07000009`), which has no boundary. This changes both
+  hashes, and the config's exclude is gone.
+- Batch 6 adds claimant count, child poverty, pupil absence and the three
+  school performance tables. 40 datasets are served from rows; stored
+  payload JSON is 38 MB.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
@@ -707,7 +727,6 @@ What keeps the other datasets on payloads, found by forcing `rebuild` on each
 | A parent code the compiler leaves empty                         | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash)   |
 | A record field holding the observation status                   | Brexit by constituency (`isKnownResult` is true unless the share is estimated)             |
 | Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity |
-| Derived rules not written yet                                   | claimant count, child poverty, pupil absence, all three school performance tables          |
 | Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                      |
 
 Arrays and status flags need new leaf kinds. Predecessor lists
