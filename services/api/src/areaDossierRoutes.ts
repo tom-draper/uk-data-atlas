@@ -7,7 +7,7 @@ import {
 	requirementDetail,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 
 type AreaIdentity = {
 	geography: string;
@@ -20,7 +20,15 @@ type AreaDossierResult =
 
 /** The evidence an exact area expands to with `include=dossier`. */
 export const areaDossier = (
-	context: RouteRequest["context"],
+	context: RouteContextFor<
+		| "area"
+		| "boundaryRelease"
+		| "codeReleases"
+		| "areaRelationshipSummary"
+		| "areaGeometry"
+		| "missingRequirement"
+		| "explainAreaAbsence"
+	>,
 	{ geography, boundaryRelease, code }: AreaIdentity,
 	dossierHref: (boundaryRelease: string) => string,
 ): AreaDossierResult => {

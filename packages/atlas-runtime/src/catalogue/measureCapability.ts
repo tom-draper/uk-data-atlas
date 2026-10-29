@@ -2,11 +2,24 @@ import type { ConversionMethod } from "@uk-data-atlas/measures";
 import { areaMeasureSources } from "../areas/areaResources";
 import { notBuilt, unsupported } from "../areas/capability";
 import { convertObservations } from "@uk-data-atlas/measures";
-import { isNumericObservation, type DataCatalog } from "@uk-data-atlas/measures";
+import {
+	isNumericObservation,
+	type DataCatalog,
+} from "@uk-data-atlas/measures";
 import { measureCoverage } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
 import type { MeasureContext } from "./measureContext";
 import { releaseKey } from "@uk-data-atlas/geography";
+
+export type MeasureCapabilityContext = Omit<
+	MeasureContext,
+	"geographyResolver"
+> & {
+	geographyResolver: Pick<
+		MeasureContext["geographyResolver"],
+		"crosswalkSummaries" | "crosswalk" | "missingRequirement"
+	>;
+};
 
 type Measure = DataCatalog["measures"][number];
 type Target = { geography: string; boundaryRelease: string; code?: string };
@@ -49,7 +62,7 @@ type ReleaseSource = {
 // release a context serves never changes, so neither does the outcome. Only
 // the path and the target codes it reaches are kept, not the values.
 type DryRun = { path: MeasureConversionPath; targets: Set<string> } | null;
-const dryRuns = new WeakMap<MeasureContext, Map<string, DryRun>>();
+const dryRuns = new WeakMap<MeasureCapabilityContext, Map<string, DryRun>>();
 
 /**
  * The conversions the convert route would accept onto a target: an extensive
@@ -58,7 +71,7 @@ const dryRuns = new WeakMap<MeasureContext, Map<string, DryRun>>();
  * does not refuse. A path is only offered once it is known to work.
  */
 export const conversionCoverageOnto = (
-	context: MeasureContext,
+	context: MeasureCapabilityContext,
 	measure: Measure,
 	target: Target,
 ): Array<{ path: MeasureConversionPath; targets: Set<string> }> => {
@@ -151,7 +164,7 @@ export const conversionCoverageOnto = (
 
 /** The conversions alone, for callers that do not need what each reaches. */
 const conversionsOnto = (
-	context: MeasureContext,
+	context: MeasureCapabilityContext,
 	measure: Measure,
 	target: Target,
 ): MeasureConversionPath[] =>
@@ -168,7 +181,7 @@ const conversionsOnto = (
  * over areas is never converted.
  */
 export const measureCapability = (
-	context: MeasureContext,
+	context: MeasureCapabilityContext,
 	measure: Measure,
 	target: Target,
 ): MeasureCapability => {

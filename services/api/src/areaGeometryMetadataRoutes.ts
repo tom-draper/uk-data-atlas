@@ -3,7 +3,7 @@ import { areaMetrics } from "./areaMetrics";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 /**
@@ -27,7 +27,10 @@ const AREA_METRIC_METHOD = {
  * expands it: area, perimeter, centroid and a label point.
  */
 export const areaGeometryMetrics = (
-	context: RouteRequest["context"],
+	context: Pick<
+		RouteContextFor<"missingRequirement" | "areaGeometry">,
+		"geographyResolver"
+	>,
 	identity: AreaIdentity,
 ): { metrics: Record<string, unknown> } | { response: ApiResponse } => {
 	const geographyResolver = context.geographyResolver;

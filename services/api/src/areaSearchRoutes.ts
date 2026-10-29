@@ -5,7 +5,7 @@ import {
 	invalidQuery,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 
@@ -18,7 +18,13 @@ export const handleAreaSearchRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "missingRequirement"
+	| "explainAreaAbsence"
+	| "selectReleaseForDate"
+	| "hasAreaRelease"
+	| "searchAreas"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
