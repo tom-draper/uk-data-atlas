@@ -1,5 +1,5 @@
 import { problem, type ApiResponse } from "./routeResponse";
-import type { RouteContext } from "./routing";
+import type { RouteContextFor } from "./routing";
 
 /**
  * A 404 for an area identity that says why it resolves to nothing: an
@@ -7,7 +7,7 @@ import type { RouteContext } from "./routing";
  * release does not hold, with the releases that do.
  */
 export const areaNotFound = (
-	context: RouteContext,
+	context: Pick<RouteContextFor<"explainAreaAbsence">, "geographyResolver">,
 	geography?: string,
 	boundaryRelease?: string,
 	code?: string,

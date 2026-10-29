@@ -327,7 +327,12 @@ export const postcodeInPlace = (query: string) => {
  * candidate links to the routes that place the postcode in areas.
  */
 export const postcodePlace = (
-	context: RouteRequest["context"],
+	context: {
+		geographyResolver: Pick<
+			RouteRequest["context"]["geographyResolver"],
+			"postcodeIndex"
+		>;
+	},
 	query: string,
 ): { candidate?: Record<string, unknown>; hint?: string } => {
 	const parsed = postcodeInPlace(query);

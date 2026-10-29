@@ -1,7 +1,7 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,
@@ -34,7 +34,9 @@ export const handleAreaNeighbourRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<
+	"area" | "areaNeighbours" | "explainAreaAbsence" | "missingRequirement"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 6 ||
 		segments[0] !== "v1" ||
