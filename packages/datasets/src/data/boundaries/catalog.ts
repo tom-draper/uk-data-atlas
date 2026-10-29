@@ -741,6 +741,16 @@ const CATALOG = {
 				nameKey: "ICB26NM",
 				asset: asset("integrated-care-board", "2026-04-en-bgc"),
 			},
+			{
+				id: "2023-04-en-bgc",
+				year: 2023,
+				month: 4,
+				extent: "en",
+				codeKey: "ICB23CD",
+				nameKey: "ICB23NM",
+				holdReason:
+					"Held for the NHS waiting times to March 2026, which are on these boards; the map draws the April 2026 boards.",
+			},
 		],
 	},
 	msoa: {

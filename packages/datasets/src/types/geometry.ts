@@ -291,6 +291,11 @@ interface CountyAndUnitaryAuthorityProperties2025 {
 }
 
 // Integrated care board properties by year
+interface IntegratedCareBoardProperties2023 {
+	ICB23CD: string;
+	ICB23NM: string;
+}
+
 interface IntegratedCareBoardProperties2026 {
 	ICB26CD: string;
 	ICB26NM: string;
@@ -551,6 +556,7 @@ export type YearToProperties = {
 	// Counties and unitary authorities
 	countyAndUnitaryAuthority_2025: CountyAndUnitaryAuthorityProperties2025;
 	// Integrated care boards
+	integratedCareBoard_2023: IntegratedCareBoardProperties2023;
 	integratedCareBoard_2026: IntegratedCareBoardProperties2026;
 	// Middle layer super output areas
 	msoa_2001: MSOAProperties2001;
