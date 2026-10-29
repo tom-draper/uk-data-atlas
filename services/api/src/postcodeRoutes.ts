@@ -20,7 +20,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readBatchInput } from "./batchInput";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest, RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -48,7 +48,7 @@ export type PostcodeOutcome =
  * batch reports it against the one postcode.
  */
 export const postcodeOutcome = (
-	context: RouteRequest["context"],
+	context: RouteContextFor<"postcodeIndex" | "missingRequirement">,
 	text: string,
 ): PostcodeOutcome => {
 	const parsed = parsePostcode(text);
@@ -76,7 +76,7 @@ export const postcodeOutcome = (
 
 /** The directory's provenance, as every postcode answer carries it. */
 export const postcodeSourceSummary = (
-	context: RouteRequest["context"],
+	context: RouteContextFor<"postcodeIndex" | "missingRequirement">,
 ): PostcodeSourceSummary => {
 	const { source } = context.geographyResolver.postcodeIndex()!.artifact;
 	return {
@@ -94,7 +94,7 @@ export const postcodeSourceSummary = (
  * postcode refuses one the same way.
  */
 export const findPostcode = (
-	context: RouteRequest["context"],
+	context: RouteContextFor<"postcodeIndex" | "missingRequirement">,
 	text: string,
 ): { record: PostcodeRecord; source: PostcodeSourceSummary } | ApiResponse => {
 	const { geographyResolver } = context;
