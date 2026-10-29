@@ -27,7 +27,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readBatchInput } from "./batchInput";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 
 /** Points a batch lookup accepts; more belongs in a bulk export. */
 export const MAX_BATCH_POINTS = 100;
@@ -50,7 +50,7 @@ export const handleAreaContainsRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "missingRequirement" | "postcodeIndex">): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
@@ -153,7 +153,7 @@ const coordinatePoint = (
  * it, so a postcode is answered exactly as `/postcodes/{postcode}` places it.
  */
 const postcodePoint = (
-	context: RouteRequest["context"],
+	context: RouteRequestFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "missingRequirement" | "postcodeIndex">["context"],
 	searchParams: URLSearchParams,
 	text: string,
 ): { point: LookupPoint; postcode: Record<string, unknown> } | ApiResponse => {
@@ -237,7 +237,7 @@ export const handleAreaContainsBatchRoutes = ({
 	segments,
 	method,
 	body,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "missingRequirement" | "postcodeIndex">): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||

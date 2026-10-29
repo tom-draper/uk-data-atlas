@@ -14,7 +14,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -198,7 +198,7 @@ export const latestPublishedBoundaryRelease = (
  * release. The release selection is always returned beside the result.
  */
 export const parseLookupRequest = (
-	context: RouteContext,
+	context: RouteContextFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence">,
 	searchParams: URLSearchParams,
 ): LookupRequest | ApiResponse => {
 	const geographies = [

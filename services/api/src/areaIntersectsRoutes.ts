@@ -6,7 +6,7 @@ import {
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { cursorFor, nextPageHref, readCursor } from "./pagination";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,
@@ -30,7 +30,7 @@ export const handleAreaIntersectsRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"geometryFor" | "hasAreaRelease" | "intersectingAreas" | "missingRequirement" | "selectReleaseForDate" | "explainAreaAbsence">): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
