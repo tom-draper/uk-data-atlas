@@ -178,7 +178,6 @@ export class GeographyResolver {
 	private readonly lineage: LineageResolver;
 	private readonly translator: CrosswalkTranslator;
 	private readonly capability: CapabilityResolver;
-	private readonly validation: AreaValidation;
 
 	constructor(
 		private readonly inputs: GeographyResolverInputs,
@@ -191,7 +190,6 @@ export class GeographyResolver {
 		this.postcodes = services.postcodes;
 		this.lineage = services.lineage;
 		this.translator = services.translator;
-		this.validation = services.validation;
 		this.capability = services.capability;
 	}
 
@@ -326,22 +324,6 @@ export class GeographyResolver {
 		code: string,
 	) {
 		return this.areas.explainAreaAbsence(geography, boundaryRelease, code);
-	}
-	validateAreas(
-		geography: string,
-		boundaryRelease: string,
-		values: string[],
-		parents?: string[],
-	) {
-		return this.validation.validateAreas(
-			geography,
-			boundaryRelease,
-			values,
-			parents,
-		);
-	}
-	matchAreaValues(values: string[], parents?: string[]) {
-		return this.validation.matchAreaValues(values, parents);
 	}
 	selectReleaseForDate(geography: string, month: string, country?: string) {
 		return this.areas.selectReleaseForDate(geography, month, country);

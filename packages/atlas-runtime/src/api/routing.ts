@@ -47,7 +47,7 @@ export type RouteContext = {
 	/** Compiled geography indexes and domain operations for this Atlas release. */
 	geographyResolver: Pick<GeographyResolver, keyof GeographyResolver>;
 	areaGeometryCache?: AreaGeometryCache;
-	areaValidation?: Pick<AreaValidation, "validateAreas" | "matchAreaValues">;
+	areaValidation: Pick<AreaValidation, "validateAreas" | "matchAreaValues">;
 	relationshipPathInventory?: RelationshipPathInventory;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
@@ -129,8 +129,9 @@ export type RouteRequest = {
 /** A route's geography operations, limited to those it uses. */
 export type RouteContextFor<K extends keyof GeographyResolver> = Omit<
 	RouteContext,
-	"geographyResolver"
+	"geographyResolver" | "areaValidation"
 > &
+	Partial<Pick<RouteContext, "areaValidation">> &
 	([K] extends [never]
 		? object
 		: { geographyResolver: Pick<GeographyResolver, K> });

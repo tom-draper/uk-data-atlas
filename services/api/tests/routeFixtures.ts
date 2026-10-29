@@ -172,13 +172,10 @@ export const testContext = (
 		...resources
 	} = inputs;
 	const withRegistry = { boundaryRegistry: registry, ...inputs };
-	const built = inputs.geographyResolver
-		? undefined
-		: resolverFor({
-				...withRegistry,
-				areaGeometryCache:
-					inputs.areaGeometryCache ?? areaGeometryCache,
-			});
+	const built = resolverFor({
+		...withRegistry,
+		areaGeometryCache: inputs.areaGeometryCache ?? areaGeometryCache,
+	});
 	return {
 		...resources,
 		areaGeometryCache: inputs.areaGeometryCache ?? areaGeometryCache,
@@ -192,8 +189,8 @@ export const testContext = (
 						),
 					)
 				: undefined),
-		geographyResolver: inputs.geographyResolver ?? built!.resolver,
-		areaValidation: inputs.areaValidation ?? built?.validation,
+		geographyResolver: inputs.geographyResolver ?? built.resolver,
+		areaValidation: inputs.areaValidation ?? built.validation,
 	};
 };
 

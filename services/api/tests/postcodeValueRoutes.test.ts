@@ -1,3 +1,4 @@
+import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -197,6 +198,7 @@ const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({
 		...measureObservations,
 	],
 	measureCompatibilityInventory,
+	areaValidation: createGeographyServices({}).validation,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,
 		areaLookup,
@@ -381,6 +383,7 @@ test("answers a postcode's value from the postcode area index without reading ge
 	);
 	const areaGeometryCache = new AreaGeometryCache(root, geometrySources, 6);
 	const compiled = context({
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,

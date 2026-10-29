@@ -1,3 +1,4 @@
+import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route as routeRequest } from "../src/routes";
@@ -273,6 +274,7 @@ test("uses a location's declared member geography for direct membership", () => 
 		{
 			boundaryRegistry: registry,
 			namedLocationInventory: inventory,
+			areaValidation: createGeographyServices({}).validation,
 			geographyResolver: createGeographyResolver({
 				areaLookup,
 				namedLocationLookup: lookup,
@@ -297,6 +299,7 @@ test("uses a location's declared member geography for direct membership", () => 
 		{
 			boundaryRegistry: registry,
 			namedLocationInventory: inventory,
+			areaValidation: createGeographyServices({}).validation,
 			geographyResolver: createGeographyResolver({
 				areaLookup,
 				namedLocationLookup: lookup,
@@ -339,6 +342,7 @@ test("resolves a named location into another geography through a crosswalk", () 
 	const context: RouteContext = {
 		boundaryRegistry: registry,
 		crosswalkInventory: inventory,
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,
@@ -445,6 +449,7 @@ test("resolves a named location into another geography through a crosswalk", () 
 
 	const withoutProjections: RouteContext = {
 		...context,
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,
@@ -539,6 +544,7 @@ test("says which parents a named location covers or meets", () => {
 	const context: RouteContext = {
 		boundaryRegistry: registry,
 		crosswalkInventory: inventory,
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,

@@ -1,3 +1,4 @@
+import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -146,6 +147,7 @@ const areaLookup = createAreaLookup([
 
 const context = (withGeometry = true): RouteContext => ({
 	boundaryRegistry,
+	areaValidation: createGeographyServices({}).validation,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,
 		areaLookup,
