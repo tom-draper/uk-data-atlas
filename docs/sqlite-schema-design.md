@@ -746,15 +746,24 @@ area_releases.position`, which `series.release_id` already references), then
   business activity. 50 datasets are served from rows; stored payload JSON is
   15 MB.
 
+### Step 4, batch 9: SIMD council areas (2026-10-29)
+
+- The SIMD loader coded council areas from a table keyed by name. It missed
+  Na h-Eileanan an Iar (the indicators file uses the Gaelic name), leaving 36
+  data zones with an empty code, and gave Fife, Perth and Kinross, Glasgow
+  and North Lanarkshire their codes from before 2018, which no listed release
+  has. It now takes each data zone's code from the published lookup's
+  `LAcode`. This changes SIMD's hash.
+- SIMD declares its council area parent. 51 datasets are served from rows.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker                                       | Datasets                                                                                 |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| A per-record list of predecessor codes        | unemployment (`derivedFromPredecessors` on four new unitaries)                           |
-| A parent code the compiler leaves empty       | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash) |
-| A record field holding the observation status | Brexit by constituency (`isKnownResult` is true unless the share is estimated)           |
-| Not stored as rows                            | the three election datasets, NHS waiting times (#488)                                    |
+| Blocker                                       | Datasets                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------ |
+| A per-record list of predecessor codes        | unemployment (`derivedFromPredecessors` on four new unitaries)                 |
+| A record field holding the observation status | Brexit by constituency (`isKnownResult` is true unless the share is estimated) |
+| Not stored as rows                            | the three election datasets, NHS waiting times (#488)                          |
 
 Status flags need a new leaf kind. Predecessor lists
 are succession, which crosswalks can supply.
