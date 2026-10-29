@@ -879,6 +879,66 @@ describe("declared statistics", () => {
 			).toEqual([{ key: "QHM" }]);
 		});
 
+		it("stores election text in contests and rebuilds it", () => {
+			const election: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				period: () => periods.date("2024-07-04"),
+				measures: [CRIMES],
+				fields: [{ path: "votes.{party}", measure: "crimes" }],
+				dimensions: [{ slug: "party", label: "Party" }],
+				election: {
+					kind: "general",
+					date: () => "2024-07-04",
+					contest: { result: "result", authority_code: "ladCode" },
+					elected: { given_name: "first", family_name: "last" },
+				},
+				rebuild: {},
+			};
+			const text = file({
+				E06000001: {
+					name: "Hartlepool",
+					result: "Lab gain",
+					first: "Jo",
+					last: "Example",
+					votes: { LAB: 3, CON: 2 },
+				},
+				E06000002: {
+					name: "Middlesbrough",
+					result: null,
+					ladCode: "Unknown",
+					votes: { LAB: 4 },
+				},
+			});
+			const database = write(election, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare(
+						"SELECT e.kind, e.date, c.result, c.authority_code, k.given_name, k.family_name FROM contest c JOIN election e ON e.id = c.election_id LEFT JOIN candidacy k ON k.contest_id = c.id ORDER BY c.id",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{
+					kind: "general",
+					date: "2024-07-04",
+					result: "Lab gain",
+					authority_code: null,
+					given_name: "Jo",
+					family_name: "Example",
+				},
+				{
+					kind: "general",
+					date: "2024-07-04",
+					result: null,
+					authority_code: "Unknown",
+					given_name: null,
+					family_name: null,
+				},
+			]);
+		});
+
 		it("rebuilds a derived number from another dataset's rows", () => {
 			const people: DeclaredDataset = {
 				type: "people",

@@ -144,6 +144,29 @@ export type StatisticsDataset = {
 	verify?: (database: DatabaseSync) => void;
 };
 
+/** Text a publisher gives about a contest, beside its votes. */
+export const CONTEST_COLUMNS = [
+	/** The area's name as published for this election. */
+	"area_name",
+	"authority_code",
+	"authority_name",
+	"region",
+	"country",
+	"constituency_type",
+	"result",
+	"first_party",
+	"second_party",
+] as const;
+export type ContestColumn = (typeof CONTEST_COLUMNS)[number];
+
+/** What a publisher gives about the candidate a contest elected. */
+export const CANDIDACY_COLUMNS = [
+	"given_name",
+	"family_name",
+	"gender",
+] as const;
+export type CandidacyColumn = (typeof CANDIDACY_COLUMNS)[number];
+
 /**
  * One leaf of a record, in the record's key order. Every record of a part has
  * the same leaves; only the area and its values change.
@@ -172,6 +195,9 @@ export type StatisticsLayoutLeaf = {
 	| { kind: "derived"; rule: string }
 	/** The same JSON in every record. */
 	| { kind: "literal"; value: string }
+	/** A column of the record's contest, or of the candidate it elected. */
+	| { kind: "contest"; column: ContestColumn }
+	| { kind: "candidacy"; column: CandidacyColumn }
 );
 
 /** A top-level key of a compiled dataset: its header and record layouts. */
@@ -179,6 +205,12 @@ export type StatisticsLayout = {
 	key: string;
 	/** The header as JSON, with each record set's field set to null. */
 	header: string;
+	/** The election a part holds, one contest per record. */
+	election?: {
+		kind: "general" | "local";
+		date: string;
+		release: AreaRelease;
+	};
 	records: {
 		from: string;
 		leaves: StatisticsLayoutLeaf[];
@@ -190,6 +222,9 @@ export type StatisticsLayout = {
 			parents?: ({ release: AreaRelease; code: string } | undefined)[];
 			/** Leaf positions this record lacks. */
 			absent?: number[];
+			contest?: Partial<Record<ContestColumn, string | null>>;
+			/** The candidate the contest elected, when the record names one. */
+			elected?: Partial<Record<CandidacyColumn, string | null>>;
 		}[];
 	}[];
 };
@@ -908,12 +943,13 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"records TEXT NOT NULL",
 				"position INTEGER NOT NULL",
 				"path TEXT NOT NULL",
-				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','parent_code','parent_name','derived','literal','status'))",
+				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','parent_code','parent_name','derived','literal','status','contest','candidacy'))",
 				"series_id INTEGER REFERENCES series(id)",
 				"period_id INTEGER REFERENCES period(id)",
 				"rule TEXT",
 				"literal TEXT",
 				"parent INTEGER",
+				"field TEXT",
 			],
 			key: ["dataset_id", "part", "records", "position"],
 			constraints: [
@@ -922,6 +958,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"CHECK ((kind = 'derived') = (rule IS NOT NULL))",
 				"CHECK ((kind IN ('literal','status')) = (literal IS NOT NULL))",
 				"CHECK ((kind IN ('parent_code','parent_name')) = (parent IS NOT NULL))",
+				"CHECK ((kind IN ('contest','candidacy')) = (field IS NOT NULL))",
 			],
 			rows: rows(function* ({ datasets, seriesIds, periods }, database) {
 				for (const [index, dataset] of datasets.entries()) {
@@ -960,6 +997,10 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 									leaf.kind === "parent_code" ||
 									leaf.kind === "parent_name"
 										? leaf.parent
+										: null,
+									leaf.kind === "contest" ||
+									leaf.kind === "candidacy"
+										? leaf.column
 										: null,
 								];
 							}
@@ -1040,6 +1081,101 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 												found.code,
 											).id,
 										];
+			}),
+		},
+		election: {
+			strict: true,
+			rowid: true,
+			columns: [
+				"id INTEGER NOT NULL",
+				"dataset_id INTEGER NOT NULL",
+				"part INTEGER NOT NULL",
+				"kind TEXT NOT NULL CHECK (kind IN ('general','local'))",
+				"date TEXT NOT NULL",
+				"release_id INTEGER NOT NULL REFERENCES area_releases(position)",
+			],
+			key: ["id"],
+			constraints: [
+				"UNIQUE (dataset_id, part)",
+				"FOREIGN KEY (dataset_id, part) REFERENCES dataset_part(dataset_id, position)",
+			],
+			rows: rows(function* ({ datasets }, database) {
+				let id = 0;
+				for (const [index, dataset] of datasets.entries())
+					for (const [part, { election }] of [
+						...(dataset.layouts?.() ?? []),
+					].entries())
+						if (election)
+							yield [
+								++id,
+								index + 1,
+								part,
+								election.kind,
+								election.date,
+								releasePosition(database, election.release),
+							];
+			}),
+		},
+		contest: {
+			strict: true,
+			rowid: true,
+			columns: [
+				"id INTEGER NOT NULL",
+				"election_id INTEGER NOT NULL REFERENCES election(id)",
+				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
+				...CONTEST_COLUMNS.map((column) => `${column} TEXT`),
+			],
+			key: ["id"],
+			constraints: ["UNIQUE (election_id, area_version_id)"],
+			rows: rows(function* ({ datasets }, database) {
+				let election = 0;
+				let id = 0;
+				for (const [index, dataset] of datasets.entries())
+					for (const layout of dataset.layouts?.() ?? []) {
+						if (!layout.election) continue;
+						election++;
+						for (const { areas } of layout.records)
+							for (const { release, code, contest } of areas)
+								yield [
+									++id,
+									election,
+									area(database, dataset.slug, release, code)
+										.id,
+									...CONTEST_COLUMNS.map(
+										(column) => contest?.[column] ?? null,
+									),
+								];
+					}
+			}),
+		},
+		candidacy: {
+			strict: true,
+			columns: [
+				"contest_id INTEGER NOT NULL REFERENCES contest(id)",
+				"position INTEGER NOT NULL",
+				...CANDIDACY_COLUMNS.map((column) => `${column} TEXT`),
+				"elected INTEGER NOT NULL CHECK (elected IN (0,1))",
+			],
+			key: ["contest_id", "position"],
+			rows: rows(function* ({ datasets }) {
+				let id = 0;
+				for (const dataset of datasets)
+					for (const layout of dataset.layouts?.() ?? []) {
+						if (!layout.election) continue;
+						for (const { areas } of layout.records)
+							for (const { elected } of areas) {
+								id++;
+								if (elected)
+									yield [
+										id,
+										1,
+										...CANDIDACY_COLUMNS.map(
+											(column) => elected[column] ?? null,
+										),
+										1,
+									];
+							}
+					}
 			}),
 		},
 		dataset_record_absent: {
