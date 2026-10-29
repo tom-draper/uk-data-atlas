@@ -537,12 +537,27 @@ const apiStages = [
 		},
 	),
 	stage(
+		"atlas-cache-stamp",
+		[
+			"place-index",
+			"area-search-index",
+			"postcode-counts",
+			"website-lookups",
+		],
+		["--dir", "../..", "exec", "tsx", "pipeline/src/stamp-atlas-cache.ts"],
+		{
+			cacheable: false,
+			requiredOutputs: ["data/build/atlas-cache.sqlite"],
+		},
+	),
+	stage(
 		"atlas-release",
 		[
 			"atlas-release-initial",
 			"documents",
 			"atlas-lookups",
 			"website-lookups",
+			"atlas-cache-stamp",
 		],
 		[
 			"--dir",
