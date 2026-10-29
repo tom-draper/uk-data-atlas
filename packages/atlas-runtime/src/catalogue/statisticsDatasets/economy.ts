@@ -424,6 +424,24 @@ export const HOUSING_AFFORDABILITY = single(
 export const HOUSE_PRICE: DeclaredDataset = {
 	type: "housePrice",
 	name: "wardName",
+	parents: [
+		{
+			code: "ladCode",
+			name: "ladName",
+			release: { geography: "localAuthority", year: 2021 },
+			alsoIn: [2023, 2019, 2024].map((year) => ({
+				geography: "localAuthority",
+				year,
+			})),
+		},
+		// Salford's wards, moved onto their 2021 codes, keep the code they
+		// were published under.
+		{
+			code: "sourceWardCode",
+			release: { geography: "ward", year: 2020 },
+		},
+	],
+	rebuild: {},
 	alsoIn: [2019, 2020, 2022, 2023, 2024, 2018, 2017, 2016, 2015].map(
 		(year) => ({ geography: "ward", year }),
 	),
