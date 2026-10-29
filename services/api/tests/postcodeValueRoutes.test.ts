@@ -388,6 +388,9 @@ test("answers a postcode's value from the postcode area index without reading ge
 		postcodes: createGeographyServices({
 			postcodeIndex: index,
 			postcodeAreaIndex: areaIndex,
+			boundaryRegistry,
+			areaLookup,
+			areaGeometryCache,
 		}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,

@@ -14,7 +14,10 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteContext,
+	RouteContextFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -198,7 +201,12 @@ export const latestPublishedBoundaryRelease = (
  * release. The release selection is always returned beside the result.
  */
 export const parseLookupRequest = (
-	context: RouteContextFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence">,
+	context: RouteContextFor<
+		| "boundaryRelease"
+		| "hasAreaRelease"
+		| "selectReleaseForDate"
+		| "explainAreaAbsence"
+	>,
 	searchParams: URLSearchParams,
 ): LookupRequest | ApiResponse => {
 	const geographies = [
@@ -491,12 +499,15 @@ const tolerance = (
 export const locatePoints = (
 	geographyResolver: Pick<
 		GeographyResolver,
-		| "postcodeContainingAreas"
 		| "containingAreas"
 		| "containingCodes"
 		| "releaseGeometrySource"
 		| "hasAreaRelease"
 		| "boundaryReleasesFor"
+	>,
+	postcodesService: Pick<
+		RouteContext["postcodes"],
+		"postcodeContainingAreas"
 	>,
 	request: LookupRequest,
 	points: LookupPoint[],
@@ -512,7 +523,7 @@ export const locatePoints = (
 		return (
 			(postcode === undefined
 				? undefined
-				: geographyResolver.postcodeContainingAreas(
+				: postcodesService.postcodeContainingAreas(
 						postcode,
 						geography,
 						boundaryRelease,
@@ -642,7 +653,7 @@ export const locatePoints = (
 				const countries =
 					(postcode === undefined
 						? undefined
-						: geographyResolver.postcodeContainingAreas(
+						: postcodesService.postcodeContainingAreas(
 								postcode,
 								"country",
 								countryReleaseId,

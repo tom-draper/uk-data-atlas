@@ -248,7 +248,6 @@ export const handlePostcodeRoutes = ({
 	| "hasAreaRelease"
 	| "selectReleaseForDate"
 	| "explainAreaAbsence"
-	| "postcodeContainingAreas"
 	| "containingAreas"
 	| "containingCodes"
 	| "releaseGeometrySource"
@@ -292,6 +291,7 @@ export const handlePostcodeRoutes = ({
 	const point = postcodeLookupPoint(record.centroid);
 	const [{ country, results }] = locatePoints(
 		geographyResolver,
+		context.postcodes,
 		request,
 		[point],
 		[compactPostcode(record.postcode)],
@@ -413,7 +413,6 @@ export const handlePostcodeBatchRoutes = ({
 	| "hasAreaRelease"
 	| "selectReleaseForDate"
 	| "explainAreaAbsence"
-	| "postcodeContainingAreas"
 	| "containingAreas"
 	| "containingCodes"
 	| "releaseGeometrySource"
@@ -466,6 +465,7 @@ export const handlePostcodeBatchRoutes = ({
 	);
 	const located = locatePoints(
 		geographyResolver,
+		context.postcodes,
 		request,
 		placed.map(({ point }) => point),
 		placed.map(({ index }) =>
