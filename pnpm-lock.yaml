@@ -357,6 +357,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../map-tiles
+      '@uk-data-atlas/places':
+        specifier: workspace:*
+        version: link:../places
       '@uk-data-atlas/postcodes':
         specifier: workspace:*
         version: link:../postcodes
@@ -460,6 +463,22 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  packages/places:
+    dependencies:
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../geography
+      '@uk-data-atlas/relationships':
+        specifier: workspace:*
+        version: link:../relationships
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:../search-index
+    devDependencies:
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   packages/postcodes:
     dependencies:
       '@uk-data-atlas/artifacts':
@@ -553,6 +572,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../packages/map-tiles
+      '@uk-data-atlas/places':
+        specifier: workspace:*
+        version: link:../packages/places
       '@uk-data-atlas/postcodes':
         specifier: workspace:*
         version: link:../packages/postcodes
@@ -638,6 +660,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../../packages/map-tiles
+      '@uk-data-atlas/places':
+        specifier: workspace:*
+        version: link:../../packages/places
       '@uk-data-atlas/postcodes':
         specifier: workspace:*
         version: link:../../packages/postcodes

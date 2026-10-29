@@ -13,12 +13,9 @@ import {
 	placeIndexMismatch,
 	placeIndexTables,
 } from "@uk-data-atlas/atlas-runtime/places";
-import {
-	parsePlaceReference,
-	resolvePlaces,
-} from "@uk-data-atlas/atlas-runtime/places";
+import { parsePlaceReference, resolvePlaces } from "@uk-data-atlas/places";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
 
 const release = (
 	geography: string,

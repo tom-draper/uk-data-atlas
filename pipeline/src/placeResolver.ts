@@ -1,9 +1,8 @@
+import { NamedLocationResolver } from "@uk-data-atlas/places";
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	readAreaLookup,
 	AreasResolver,
-	CatalogueResolver,
-	LocationsResolver,
 	SpatialResolver,
 	LineageResolver,
 	type GeographyResolverInputs,
@@ -28,10 +27,7 @@ export const createPlaceResolver = (
 	>,
 ) => {
 	const areas = new AreasResolver(inputs);
-	const locations = new LocationsResolver(
-		inputs,
-		new CatalogueResolver(inputs),
-	);
+	const locations = new NamedLocationResolver(inputs.namedLocationInventory);
 	const spatial = new SpatialResolver(inputs.areaGeometryCache, (id) =>
 		areas.area(id),
 	);

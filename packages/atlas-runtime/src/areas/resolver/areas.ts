@@ -12,7 +12,7 @@ import {
 	type ValidatedValue,
 } from "../batchValidation";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { resolvePlaces } from "../../places/placeResolver";
+import { resolvePlaces } from "@uk-data-atlas/places";
 import type { PlaceIndex } from "../../places/placeIndex";
 import {
 	AreaSearch,

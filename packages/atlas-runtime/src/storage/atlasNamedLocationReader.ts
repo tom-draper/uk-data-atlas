@@ -3,7 +3,7 @@ import { lazyValue } from "./lazyValue";
 import type {
 	NamedLocation,
 	NamedLocationInventory,
-} from "../places/namedLocationTypes";
+} from "@uk-data-atlas/places";
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
 import { atlasDatabasePath } from "./dataLayout";
 

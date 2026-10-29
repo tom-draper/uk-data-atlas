@@ -3,7 +3,7 @@ import { join } from "node:path";
 import type {
 	NamedLocation,
 	NamedLocationInventory,
-} from "../places/namedLocationTypes";
+} from "@uk-data-atlas/places";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 
 export const namedLocationTables = (
