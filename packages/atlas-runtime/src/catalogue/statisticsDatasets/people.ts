@@ -289,6 +289,8 @@ export const SIMD: DeclaredDataset = {
 		{ quintile: true, decile: true },
 	),
 	name: "dzName",
+	parents: districtParent("councilAreaCode", "councilAreaName"),
+	rebuild: {},
 };
 
 export const NIMDM: DeclaredDataset = {
