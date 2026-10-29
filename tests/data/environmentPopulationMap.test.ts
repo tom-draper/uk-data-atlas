@@ -73,7 +73,6 @@ describe("environment population metrics", () => {
 			{
 				E1: {
 					ladName: "Example",
-					country: "England",
 					total: { "0": 20_000, "1": 30_000 },
 					males: {},
 					females: {},
