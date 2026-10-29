@@ -119,13 +119,25 @@ export type DeclaredParent = {
 	alsoIn?: DeclaredRelease[];
 };
 
+/** What a derived rule can read besides its record. */
+export type DerivedContext = {
+	/** The record's area code. */
+	code: string;
+	/** The header of the part the record is in (its year, for most datasets). */
+	header: { readonly [key: string]: Json };
+	/** Another dataset's compiled JSON, rebuilt from its rows. */
+	dataset(slug: string): { readonly [key: string]: Json };
+};
+
 /**
- * A derived number, from the record with every stored value filled in, and the
- * path of the leaf it fills (a pattern can match a leaf in every period).
+ * A derived number, from the record with every stored value filled in, the
+ * path of the leaf it fills (a pattern can match a leaf in every period), and
+ * the record's context.
  */
 export type DerivedRule = (
 	record: { [key: string]: Json },
 	path: readonly string[],
+	context: DerivedContext,
 ) => number | null;
 
 export type DeclaredManifestEntry = {

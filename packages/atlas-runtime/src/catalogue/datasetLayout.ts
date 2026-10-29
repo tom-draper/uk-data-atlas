@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import type { DerivedRule, Json } from "./declaredStatistics";
+import type { DerivedContext, DerivedRule, Json } from "./declaredStatistics";
 
 type Leaf = {
 	path: (string | number)[];
@@ -58,6 +58,8 @@ function records(
 	leaves: Leaf[],
 	rules: Readonly<Record<string, DerivedRule>>,
 	shapes: ReadonlyMap<number, string>,
+	header: DerivedContext["header"],
+	readDataset: DerivedContext["dataset"],
 ) {
 	const valued = leaves.filter((leaf) => leaf.series !== null);
 	const derived = leaves.filter((leaf) => leaf.kind === "derived");
@@ -184,12 +186,25 @@ function records(
 					place(
 						record,
 						leaf.path,
-						compute(record, leaf.path.map(String)),
+						compute(record, leaf.path.map(String), {
+							code,
+							header,
+							dataset: readDataset,
+						}),
 					);
 		result[code] = record;
 	}
 	return result;
 }
+
+/**
+ * Datasets a derived rule reads, rebuilt once per database. Rules read only
+ * after every row is written, so a rebuild stays current.
+ */
+const readByRules = new WeakMap<
+	DatabaseSync,
+	Map<string, Record<string, Json>>
+>();
 
 /**
  * The compiled JSON of a dataset, rebuilt from its rows: parts in order, each
@@ -226,6 +241,18 @@ export function rebuildFromLayout(
 	const leafQuery = database.prepare(
 		"SELECT records, path, kind, series_id AS series, period_id AS period, rule, literal, parent FROM dataset_leaf WHERE dataset_id = ? AND part = ? ORDER BY records, position",
 	);
+	let others = readByRules.get(database);
+	if (!others) readByRules.set(database, (others = new Map()));
+	const other = (name: string) => {
+		if (name === slug) throw new Error(`${slug} reads itself`);
+		let found = others.get(name);
+		if (!found)
+			others.set(
+				name,
+				(found = JSON.parse(rebuildFromLayout(database, name))),
+			);
+		return found!;
+	};
 	const result: Record<string, Json> = {};
 	for (const part of parts) {
 		const header = JSON.parse(String(part.header)) as Record<string, Json>;
@@ -256,6 +283,8 @@ export function rebuildFromLayout(
 				leaves,
 				rules,
 				shapes,
+				header,
+				other,
 			);
 		}
 		result[String(part.key)] = header;

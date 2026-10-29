@@ -737,6 +737,82 @@ describe("declared statistics", () => {
 			).toBe(0);
 		});
 
+		it("rebuilds a derived number from another dataset's rows", () => {
+			const people: DeclaredDataset = {
+				type: "people",
+				name: "name",
+				measures: [
+					measure(
+						"residents",
+						"Residents",
+						"people",
+						"count",
+						"sum",
+						"Residents.",
+					),
+				],
+				fields: [{ path: "total", measure: "residents" }],
+				rebuild: {},
+			};
+			const rated: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				measures: [CRIMES],
+				fields: [{ path: "total", measure: "crimes" }],
+				derived: { perResident: "Crimes over the area's residents." },
+				rebuild: {
+					derived: {
+						perResident: (
+							record,
+							_path,
+							{ code, header, dataset },
+						) => {
+							const part = dataset("people")[
+								String(header.year)
+							] as {
+								data: Record<string, { total: number }>;
+							};
+							return (
+								(record.total as number) /
+								part.data[code]!.total
+							);
+						},
+					},
+				},
+			};
+			const peopleText = file({
+				E06000001: { name: "Hartlepool", total: 90 },
+				E06000002: { name: "Middlesbrough", total: 140 },
+			});
+			const text = file({
+				E06000001: {
+					name: "Hartlepool",
+					total: 3,
+					perResident: 3 / 90,
+				},
+				E06000002: {
+					name: "Middlesbrough",
+					total: 7,
+					perResident: 7 / 140,
+				},
+			});
+			const database = new DatabaseSync(":memory:");
+			// Verifying the example rebuilds it, reading people from its rows.
+			writeSqliteTables(database, {
+				...areas(),
+				...statisticsTables([
+					declaredStatistics(people, () => peopleText, {
+						...entry,
+						output: "people",
+					}),
+					declaredStatistics(rated, () => text, entry),
+				]),
+			});
+			expect(
+				rebuildFromLayout(database, "example", rated.rebuild!.derived),
+			).toBe(text);
+		});
+
 		it("refuses records that order their keys differently", () => {
 			expect(() =>
 				write(
