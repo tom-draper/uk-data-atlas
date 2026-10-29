@@ -195,6 +195,14 @@ export const CLAIMANT_COUNT: DeclaredDataset = {
 			"sum",
 			"People claiming unemployment-related benefits (the claimant count).",
 		),
+		measure(
+			"claimant-rate",
+			"Claimant rate",
+			"percent",
+			"rate",
+			"none",
+			"Claimants as a percentage of residents aged 16 to 64. Published, except for authorities formed in 2023, where the compiler divides by the 2024 mid-year population.",
+		),
 	],
 	dimensions: [
 		{
@@ -215,11 +223,22 @@ export const CLAIMANT_COUNT: DeclaredDataset = {
 			],
 		},
 	],
-	fields: [{ path: "{age-group}", measure: "claimants" }],
+	fields: [
+		{ path: "{age-group}", measure: "claimants" },
+		{ path: "totalRate", measure: "claimant-rate" },
+	],
 	derived: {
-		totalRate:
-			"Claimants as a percentage of residents aged 16 to 64, computed for current authorities.",
 		youthRate: "Derived from the youth share of claimants.",
+	},
+	rebuild: {
+		derived: {
+			youthRate: (record) => {
+				const total = record.totalCount as number;
+				const youth = record.youthCount as number;
+				const rate = record.totalRate as number;
+				return total > 0 ? (youth / total) * rate : 0;
+			},
+		},
 	},
 };
 
@@ -315,6 +334,13 @@ export const CHILD_POVERTY: DeclaredDataset = {
 	],
 	derived: {
 		childrenPopulation: "Computed by the compiler from the count and rate.",
+	},
+	rebuild: {
+		derived: {
+			childrenPopulation: (record) =>
+				(record.childCount as number) /
+				((record.childPovertyRate as number) / 100),
+		},
 	},
 };
 

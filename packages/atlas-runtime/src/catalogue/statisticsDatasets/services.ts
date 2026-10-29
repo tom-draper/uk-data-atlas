@@ -3,6 +3,7 @@ import {
 	type DeclaredDataset,
 	type DeclaredDimension,
 	type DeclaredField,
+	type DerivedRule,
 	periods,
 } from "../declaredStatistics";
 import { measure } from "./measures";
@@ -537,6 +538,14 @@ export const PUPIL_ABSENCE: DeclaredDataset = {
 		{ path: "metrics.{absence-level}", measure: "pupil-enrolments" },
 	],
 	derived: { value: "Sessions missed as a percentage of possible sessions." },
+	rebuild: {
+		derived: {
+			value: (record) => {
+				const metrics = record.metrics as Record<string, number>;
+				return (metrics.overall / metrics.sessions) * 100;
+			},
+		},
+	},
 };
 
 const SCHOOL_MEASURES = [
@@ -603,6 +612,30 @@ const latestCopies = (fields: string[]) =>
 		fields.map((field) => [field, "Copy of the latest year in series."]),
 	);
 
+/** Each top-level field read back from the latest year in `series`. */
+const latestCopyRules = (fields: string[]): Record<string, DerivedRule> =>
+	Object.fromEntries(
+		fields.map((field) => [
+			field,
+			(record) => {
+				const series = record.series as Record<
+					string,
+					Record<string, number | null>
+				>;
+				// Integer keys iterate in ascending order.
+				return series[Object.keys(series).at(-1)!][field];
+			},
+		]),
+	);
+
+const SCHOOL_COPIES = [
+	"ptL2basics94",
+	"ptL2basics95",
+	"avgAtt8",
+	"avgP8score",
+	"pupils",
+];
+
 const schools = {
 	period: schoolYear,
 	alsoIn: [
@@ -617,13 +650,8 @@ export const SCHOOL_PERFORMANCE: DeclaredDataset = {
 	...schools,
 	measures: SCHOOL_MEASURES,
 	fields: schoolFields("series.{period}."),
-	derived: latestCopies([
-		"ptL2basics94",
-		"ptL2basics95",
-		"avgAtt8",
-		"avgP8score",
-		"pupils",
-	]),
+	derived: latestCopies(SCHOOL_COPIES),
+	rebuild: { derived: latestCopyRules(SCHOOL_COPIES) },
 };
 
 export const SCHOOL_PERFORMANCE_CONSTITUENCY: DeclaredDataset = {
@@ -632,13 +660,8 @@ export const SCHOOL_PERFORMANCE_CONSTITUENCY: DeclaredDataset = {
 	period: schoolYear,
 	measures: SCHOOL_MEASURES,
 	fields: schoolFields("series.{period}."),
-	derived: latestCopies([
-		"ptL2basics94",
-		"ptL2basics95",
-		"avgAtt8",
-		"avgP8score",
-		"pupils",
-	]),
+	derived: latestCopies(SCHOOL_COPIES),
+	rebuild: { derived: latestCopyRules(SCHOOL_COPIES) },
 };
 
 const DISADVANTAGE: DeclaredDimension = {
@@ -675,6 +698,18 @@ const gapFields = (prefix: string): DeclaredField[] => [
 	},
 ];
 
+const GAP_COPIES = [
+	"att8Disadvantaged",
+	"att8NotDisadvantaged",
+	"att8Gap",
+	"engmath94Gap",
+	"disadvantagedPupils",
+	"notDisadvantagedPupils",
+];
+
+/** The compiler leaves a gap null where either side has fewer pupils. */
+const GAP_MINIMUM_PUPILS = 6;
+
 export const SCHOOL_PERFORMANCE_DISADVANTAGE: DeclaredDataset = {
 	type: "schoolPerformanceGap",
 	name: "ladName",
@@ -693,15 +728,33 @@ export const SCHOOL_PERFORMANCE_DISADVANTAGE: DeclaredDataset = {
 	dimensions: [DISADVANTAGE],
 	fields: gapFields("series.{period}."),
 	derived: {
-		...latestCopies([
-			"att8Disadvantaged",
-			"att8NotDisadvantaged",
-			"att8Gap",
-			"engmath94Gap",
-			"disadvantagedPupils",
-			"notDisadvantagedPupils",
-		]),
+		...latestCopies(GAP_COPIES),
 		"series.{period}.att8Gap":
 			"Other pupils' Attainment 8 less disadvantaged pupils'.",
+	},
+	rebuild: {
+		derived: {
+			// The yearly gaps first, so the copies read them.
+			"series.{period}.att8Gap": (record, path) => {
+				const series = record.series as Record<
+					string,
+					Record<string, number | null>
+				>;
+				const year = series[path[1]];
+				const ahead = year.att8NotDisadvantaged;
+				const behind = year.att8Disadvantaged;
+				const aheadPupils = year.notDisadvantagedPupils;
+				const behindPupils = year.disadvantagedPupils;
+				if (ahead === null || behind === null) return null;
+				if (aheadPupils === null || behindPupils === null) return null;
+				if (
+					aheadPupils < GAP_MINIMUM_PUPILS ||
+					behindPupils < GAP_MINIMUM_PUPILS
+				)
+					return null;
+				return Number((ahead - behind).toFixed(1));
+			},
+			...latestCopyRules(GAP_COPIES),
+		},
 	},
 };
