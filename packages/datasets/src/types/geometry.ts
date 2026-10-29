@@ -438,9 +438,19 @@ interface NationalParkProperties2020 {
 	NPARK20NM: string;
 }
 
+interface CountyElectoralDivisionProperties2017 {
+	CED17CD: string;
+	CED17NM: string;
+}
+
 interface CountyElectoralDivisionProperties2023 {
 	CED23CD: string;
 	CED23NM: string;
+}
+
+interface CountyElectoralDivisionProperties2025 {
+	CED25CD: string;
+	CED25NM: string;
 }
 
 interface TravelToWorkAreaProperties2011 {
@@ -586,7 +596,9 @@ export type YearToProperties = {
 	subIntegratedCareBoardLocation_2026: SubIntegratedCareBoardLocationProperties2026;
 	fireAndRescueAuthority_2021: FireAndRescueAuthorityProperties2021;
 	nationalPark_2020: NationalParkProperties2020;
+	countyElectoralDivision_2017: CountyElectoralDivisionProperties2017;
 	countyElectoralDivision_2023: CountyElectoralDivisionProperties2023;
+	countyElectoralDivision_2025: CountyElectoralDivisionProperties2025;
 	travelToWorkArea_2011: TravelToWorkAreaProperties2011;
 	parish_2024: ParishProperties2024;
 	parish_2025: ParishProperties2025;
