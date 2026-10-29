@@ -13,7 +13,7 @@ import { storeObservations } from "../../../pipeline/src/store-observations";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";
-import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
+import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AnyMeasureObservationArtifact,
