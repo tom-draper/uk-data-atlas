@@ -15,6 +15,8 @@ import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue"
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
+import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import { compileOperations } from "../../../pipeline/src/build-operations";
@@ -1073,3 +1075,35 @@ test(
 		}
 	},
 );
+
+test("readiness and metrics read the startup caches", async (t) => {
+	const cache = new AreaGeometryCache(tmpdir(), new Map(), 3);
+	const projections = new LocationProjectionStore(
+		{
+			schemaVersion: 1,
+			contentHash: "test",
+			namedLocationInventoryHash: "test",
+			crosswalkInventoryHash: "test",
+			shards: [],
+			parentShards: [],
+		},
+		() => {
+			throw new Error("unexpected projection load");
+		},
+	);
+	const context = testContext({
+		areaGeometryCache: cache,
+		locationProjectionStore: projections,
+	});
+	const { get } = await serve(t, { metrics: "open" }, context);
+	const ready = (await (await get("/readyz")).json()) as {
+		geometryCache: unknown;
+	};
+	assert.deepEqual(ready.geometryCache, cache.stats());
+	const metrics = await (await get("/metrics")).text();
+	assert.match(metrics, /atlas_api_geometry_cache/);
+	assert.match(
+		metrics,
+		/^atlas_api_location_projection_cache_shards\{kind="limit"\} 8$/m,
+	);
+});

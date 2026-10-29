@@ -12,6 +12,7 @@ import type { GeographyInventory } from "../areas/geographyInventory";
 import type { LookupManifest } from "../areas/lookupExports";
 import type { FullDetailSource } from "../areas/fullDetailDownloads";
 import type { GeographyResolver } from "../areas/geographyResolver";
+import type { AreaGeometryCache } from "../geometry/areaGeometry";
 import type {
 	LocationProjectionInventory,
 	LocationProjections,
@@ -44,6 +45,7 @@ export type RouteContext = {
 	atlasRelease?: AtlasRelease;
 	/** Compiled geography indexes and domain operations for this Atlas release. */
 	geographyResolver: Pick<GeographyResolver, keyof GeographyResolver>;
+	areaGeometryCache?: AreaGeometryCache;
 	relationshipPathInventory?: RelationshipPathInventory;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
@@ -99,10 +101,7 @@ export const mediaType = (contentType: string) =>
 export type RouteDispatchContext = Omit<RouteContext, "geographyResolver"> & {
 	geographyResolver: Omit<
 		RouteContext["geographyResolver"],
-		| "geometryCacheStats"
-		| "locationProjectionCacheStats"
-		| "warmGeometryReleases"
-		| "geographyHealth"
+		"geographyHealth"
 	>;
 };
 

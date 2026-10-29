@@ -105,7 +105,7 @@ function startWorker() {
 	// A postcode lookup without an explicit geography reads these three releases.
 	// Warm their compact store metadata and prebuilt spatial indexes before this
 	// process starts listening, so readiness never advertises a cold first lookup.
-	catalogues.geographyResolver.warmGeometryReleases(
+	catalogues.areaGeometryCache?.warm(
 		DEFAULT_POSTCODE_GEOGRAPHIES.flatMap((geography) => {
 			const selected = catalogues.geographyResolver.selectReleaseForDate(
 				geography,

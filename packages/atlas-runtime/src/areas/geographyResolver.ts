@@ -536,15 +536,6 @@ export class GeographyResolver {
 		return this.areas.resolveAreaCandidates(query);
 	}
 
-	geometryCacheStats() {
-		return this.spatial.geometryCacheStats();
-	}
-	locationProjectionCacheStats() {
-		return this.locations.locationProjectionCacheStats();
-	}
-	warmGeometryReleases(releases: Iterable<readonly [string, string]>): void {
-		this.spatial.warmGeometryReleases(releases);
-	}
 	geometryFor(identity: AreaIdentity) {
 		return this.spatial.geometryFor(identity);
 	}
