@@ -35,13 +35,11 @@ export interface PopulationDataset {
 }
 
 /**
- * A local authority's estimates for one mid-year. The ward equivalent carries
- * its parent LAD, so the analogous parent here is the country the authority
- * sits in ("E", "N", "S", "W").
+ * A local authority's estimates for one mid-year. The country is the code's
+ * first letter, so the record does not repeat it.
  */
 export interface PopulationLocalAuthorityData extends PopulationAgeSexRecord {
 	ladName: string;
-	country: string;
 }
 
 /**

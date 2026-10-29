@@ -8,15 +8,11 @@ import type {
 /** Local authority codes in the MYEB1 sheet, e.g. E06000001. */
 const LA_CODE = /^[ENSW]\d{8}$/;
 
-const emptyRecord = (
-	ladName: string,
-	country: string,
-): PopulationLocalAuthorityData => ({
+const emptyRecord = (ladName: string): PopulationLocalAuthorityData => ({
 	total: {},
 	males: {},
 	females: {},
 	ladName,
-	country,
 });
 
 /**
@@ -64,7 +60,6 @@ export async function loadPopulationUk(
 		if (!/^\d+$/.test(age)) continue;
 
 		const ladName = row[1]?.trim() || "";
-		const country = row[2]?.trim() || "";
 
 		for (const { index, year } of yearCols) {
 			const value = row[index]?.trim();
@@ -74,10 +69,7 @@ export async function loadPopulationUk(
 
 			const yearData = byYear.get(year);
 			if (!yearData) continue;
-			const record = (yearData[ladCode] ??= emptyRecord(
-				ladName,
-				country,
-			));
+			const record = (yearData[ladCode] ??= emptyRecord(ladName));
 			const bySex: AgeData = sex === "f" ? record.females : record.males;
 			bySex[age] = (bySex[age] || 0) + count;
 			record.total[age] = (record.total[age] || 0) + count;

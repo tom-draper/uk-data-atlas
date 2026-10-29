@@ -32,7 +32,6 @@ describe("loadPopulationUk", () => {
 			males: { "0": 20 },
 			females: { "0": 10 },
 			ladName: "Hartlepool",
-			country: "E",
 		});
 		expect(datasets["2012"].data["E06000001"].total).toEqual({ "0": 32 });
 	});
