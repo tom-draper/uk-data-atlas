@@ -152,6 +152,13 @@ export type StatisticsLayoutLeaf = {
 			series: number;
 			period: string;
 	  }
+	/** The JSON written for the value's status, keyed by status slug. */
+	| {
+			kind: "status";
+			series: number;
+			period: string;
+			statuses: string;
+	  }
 	| { kind: "code" | "name" }
 	/** The code or name of the record's parent area, by index into its `parents`. */
 	| { kind: "parent_code" | "parent_name"; parent: number }
@@ -860,7 +867,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"records TEXT NOT NULL",
 				"position INTEGER NOT NULL",
 				"path TEXT NOT NULL",
-				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','parent_code','parent_name','derived','literal'))",
+				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','parent_code','parent_name','derived','literal','status'))",
 				"series_id INTEGER REFERENCES series(id)",
 				"period_id INTEGER REFERENCES period(id)",
 				"rule TEXT",
@@ -870,9 +877,9 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 			key: ["dataset_id", "part", "records", "position"],
 			constraints: [
 				"FOREIGN KEY (dataset_id, part) REFERENCES dataset_part(dataset_id, position)",
-				"CHECK ((kind IN ('value','lower','upper')) = (series_id IS NOT NULL AND period_id IS NOT NULL))",
+				"CHECK ((kind IN ('value','lower','upper','status')) = (series_id IS NOT NULL AND period_id IS NOT NULL))",
 				"CHECK ((kind = 'derived') = (rule IS NOT NULL))",
-				"CHECK ((kind = 'literal') = (literal IS NOT NULL))",
+				"CHECK ((kind IN ('literal','status')) = (literal IS NOT NULL))",
 				"CHECK ((kind IN ('parent_code','parent_name')) = (parent IS NOT NULL))",
 			],
 			rows: rows(function* ({ datasets, seriesIds, periods }, database) {
@@ -886,7 +893,8 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 								const value =
 									leaf.kind === "value" ||
 									leaf.kind === "lower" ||
-									leaf.kind === "upper";
+									leaf.kind === "upper" ||
+									leaf.kind === "status";
 								if (value && ids[leaf.series] === undefined)
 									throw new Error(
 										`Unknown series ${leaf.series} in ${dataset.slug} layout`,
@@ -903,7 +911,11 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 										? periods.id(leaf.period, dataset.slug)
 										: null,
 									leaf.kind === "derived" ? leaf.rule : null,
-									leaf.kind === "literal" ? leaf.value : null,
+									leaf.kind === "literal"
+										? leaf.value
+										: leaf.kind === "status"
+											? leaf.statuses
+											: null,
 									leaf.kind === "parent_code" ||
 									leaf.kind === "parent_name"
 										? leaf.parent

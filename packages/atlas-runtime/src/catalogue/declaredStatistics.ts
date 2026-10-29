@@ -46,7 +46,11 @@ export type DeclaredField = {
 	period?: (key: string, header: DeclaredHeader) => StatisticsPeriod;
 	/** A fixed period for this field, when it differs from the record's. */
 	at?: StatisticsPeriod;
-	status?: (record: { [key: string]: Json }) => StatusSlug | undefined;
+	/**
+	 * A record path holding the value's status, with the JSON written there
+	 * for each status. A value is `observed` unless this says otherwise.
+	 */
+	status?: { path: string; values: Partial<Record<StatusSlug, Json>> };
 };
 
 export type DeclaredDimension = {
@@ -321,7 +325,12 @@ function* numbers(
 
 type Raw = {
 	/** Where the value and its bounds sit in the record. */
-	paths: { value: string[]; lower?: string[]; upper?: string[] };
+	paths: {
+		value: string[];
+		lower?: string[];
+		upper?: string[];
+		status?: string[];
+	};
 	measure: string;
 	members: Record<string, string>;
 	release: AreaRelease;
@@ -331,6 +340,8 @@ type Raw = {
 	lower?: number;
 	upper?: number;
 	status?: StatusSlug;
+	/** The JSON each status is written as, when a record path holds it. */
+	statuses?: Partial<Record<StatusSlug, Json>>;
 };
 
 /**
@@ -345,7 +356,7 @@ class RecordSample {
 	readonly nodes = new Map<string, { node: Json; code: string }>();
 	readonly claims = new Map<
 		string,
-		{ kind: "value" | "lower" | "upper"; raw: Raw }
+		{ kind: "value" | "lower" | "upper" | "status"; raw: Raw }
 	>();
 	readonly shapes = new Map<string, Set<string>>();
 	/** Paths, joined by NUL, of the nodes that are arrays. */
@@ -393,7 +404,7 @@ class RecordSample {
 	}
 
 	claim(raw: Raw) {
-		for (const kind of ["value", "lower", "upper"] as const) {
+		for (const kind of ["value", "lower", "upper", "status"] as const) {
 			const path = raw.paths[kind];
 			if (!path) continue;
 			const key = path.join("\0");
@@ -518,6 +529,10 @@ export function declaredStatistics(
 						field.upper === undefined
 							? undefined
 							: parsePath(field.upper),
+					statusSegments:
+						field.status === undefined
+							? undefined
+							: parsePath(field.status.path),
 				}));
 				const samples = new Map<string, RecordSample>();
 				const areaLists = new Map<string, LaidOutArea[]>();
@@ -691,6 +706,35 @@ export function declaredStatistics(
 									paths[which] = target;
 									return value;
 								};
+								const statusOf = () => {
+									if (!field.status) return {};
+									const target = fill(
+										field.statusSegments!,
+										bound,
+									);
+									const node = JSON.stringify(
+										follow(record, target) ?? null,
+									);
+									const found = Object.entries(
+										field.status.values,
+									).find(
+										([, value]) =>
+											JSON.stringify(value) === node,
+									);
+									if (!found)
+										throw new Error(
+											`${context}: ${target.join(".")} in ${code} is ${node}, no listed status`,
+										);
+									paths.status = target;
+									return {
+										statuses: field.status.values,
+										...(found[0] === "observed"
+											? {}
+											: {
+													status: found[0] as StatusSlug,
+												}),
+									};
+								};
 								const raw: Raw = {
 									paths,
 									measure: field.measure,
@@ -707,7 +751,7 @@ export function declaredStatistics(
 										field.upperSegments,
 										"upper",
 									),
-									status: field.status?.(record),
+									...statusOf(),
 								};
 								sample?.claim(raw);
 								yield raw;
@@ -784,6 +828,14 @@ export function declaredStatistics(
 						const path = sample.paths.get(leafKey)!;
 						const placed = laidOutPath(path, sample.arrays);
 						const claim = sample.claims.get(leafKey);
+						if (claim?.kind === "status")
+							return {
+								path: placed,
+								kind: "status",
+								series: seriesIndex.get(seriesKey(claim.raw))!,
+								period: claim.raw.period.label,
+								statuses: JSON.stringify(claim.raw.statuses),
+							};
 						if (claim)
 							return {
 								path: placed,

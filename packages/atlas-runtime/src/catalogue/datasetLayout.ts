@@ -18,6 +18,7 @@ type Row = {
 	value: number | null;
 	lower: number | null;
 	upper: number | null;
+	status: string;
 };
 
 type Node = Record<string, Json> | Json[];
@@ -85,9 +86,10 @@ function records(
 	const cells = new Map<number, Map<string, Row>>();
 	for (const row of database
 		.prepare(
-			`SELECT o.area_version_id AS area, o.series_id, o.period_id, o.value, o.lower, o.upper
+			`SELECT o.area_version_id AS area, o.series_id, o.period_id, o.value, o.lower, o.upper, st.slug AS status
 			FROM dataset_record r
 			JOIN observation o ON o.area_version_id = r.area_version_id
+			JOIN status st ON st.id = o.status_id
 			WHERE r.dataset_id = ? AND r.part = ? AND r.records = ?
 			AND o.series_id IN (${series.map(() => "?").join(",")})
 			AND o.period_id IN (${periods.map(() => "?").join(",")})`,
@@ -161,8 +163,18 @@ function records(
 			let value: Json;
 			if (leaf.series !== null) {
 				const row = values?.get(`${shape(leaf.series)}:${leaf.period}`);
+				if (leaf.kind === "status") {
+					const statuses = JSON.parse(leaf.literal!);
+					if (row && !(row.status in statuses))
+						throw new Error(
+							`${slug}: ${code} has status ${row.status}, which ${leaf.path.join(".")} cannot show`,
+						);
+					value = row ? statuses[row.status] : null;
+				}
 				// A value with no observation is null in the file.
-				value = row?.[leaf.kind as "value" | "lower" | "upper"] ?? null;
+				else
+					value =
+						row?.[leaf.kind as "value" | "lower" | "upper"] ?? null;
 			} else if (leaf.kind === "code") value = code;
 			else if (leaf.kind === "name") value = name;
 			else if (
