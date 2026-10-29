@@ -104,12 +104,19 @@ export const effectiveVotes = (candidates: Candidate[]) => {
 		totalVotes += votes;
 		if (votes > winner.votes) winner = { party: code, votes };
 	}
+	// In the party list's order, so every ward lists parties the same way.
+	const ordered = Object.fromEntries(
+		[...PARTY_INFO.map(({ key }) => key), ...Object.keys(partyVotes)]
+			.filter((key, index, keys) => keys.indexOf(key) === index)
+			.filter((key) => key in partyVotes)
+			.map((key) => [key, partyVotes[key]]),
+	);
 	if (totalVotes === 0) {
 		// An uncontested ward has no votes; its winner is whoever was elected.
 		const elected = candidates.find((candidate) => candidate.elected);
 		if (elected) winner = { party: partyCode(elected.party), votes: 0 };
 	}
-	return { partyVotes, totalVotes, winner: winner.party };
+	return { partyVotes: ordered, totalVotes, winner: winner.party };
 };
 
 /** Parses a worksheet rendered as CSV, starting at its header row. */
