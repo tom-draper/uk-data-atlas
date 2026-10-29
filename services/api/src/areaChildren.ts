@@ -1,5 +1,5 @@
 import type { AreaRelationship } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
 
 type ChildSelection =
@@ -21,7 +21,7 @@ const parseSelection = (value: string | null): ChildSelection | undefined => {
  * with a decade of superseded children. A named child release remains exact.
  */
 export const selectAreaChildren = (
-	context: RouteContext,
+	context: Pick<RouteContextFor<"selectReleaseForDate">, "geographyResolver">,
 	parentRelease: string,
 	contained: AreaRelationship[],
 	value: string | null,

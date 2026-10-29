@@ -4,7 +4,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
 import { areaDossier } from "./areaDossierRoutes";
 import { areaCapabilities } from "./areaCapabilityRoutes";
@@ -20,7 +20,23 @@ export const handleAreaIdentityRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "area"
+	| "postcodeCounts"
+	| "explainAreaAbsence"
+	| "missingRequirement"
+	| "boundaryRelease"
+	| "codeReleases"
+	| "areaRelationshipSummary"
+	| "areaGeometry"
+	| "boundaryReleasesFor"
+	| "crosswalkSummaries"
+	| "relationships"
+	| "areaIdentityRelease"
+	| "crosswalkSummary"
+	| "crosswalk"
+	| "namedLocationsForArea"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 5 ||
 		segments[0] !== "v1" ||

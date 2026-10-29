@@ -5,7 +5,7 @@ import {
 	invalidQuery,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
 import { selectAreaChildren } from "./areaChildren";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
@@ -21,7 +21,15 @@ export const handleAreaRelationshipRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "area"
+	| "relationships"
+	| "ancestorLineage"
+	| "descendantLineage"
+	| "missingRequirement"
+	| "explainAreaAbsence"
+	| "selectReleaseForDate"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 6 ||
 		segments[0] !== "v1" ||

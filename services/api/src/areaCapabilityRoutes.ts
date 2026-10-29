@@ -7,7 +7,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { measureCapability } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
 import { requirementDetail } from "@uk-data-atlas/atlas-runtime/api";
 
@@ -16,7 +16,14 @@ import { requirementDetail } from "@uk-data-atlas/atlas-runtime/api";
  * its geometry, relationships, named locations and measure coverage.
  */
 export const areaCapabilities = (
-	context: RouteRequest["context"],
+	context: RouteContextFor<
+		| "missingRequirement"
+		| "areaGeometry"
+		| "areaRelationshipSummary"
+		| "namedLocationsForArea"
+		| "crosswalkSummaries"
+		| "crosswalk"
+	>,
 	identity: AreaIdentity,
 ) => {
 	const { dataCatalog, measureCompatibilityInventory } = context;

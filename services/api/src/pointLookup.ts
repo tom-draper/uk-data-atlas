@@ -154,7 +154,12 @@ export type LookupRequest = {
 
 /** The newest unambiguous compiled release for a geography, for routes with one release input. */
 export const latestPublishedBoundaryRelease = (
-	context: RouteContext,
+	context: {
+		geographyResolver: Pick<
+			GeographyResolver,
+			"selectReleaseForDate" | "hasAreaRelease" | "explainAreaAbsence"
+		>;
+	},
 	geography: string,
 ): { id: string; selection: "latest-published" } | ApiResponse => {
 	const selected = context.geographyResolver.selectReleaseForDate(

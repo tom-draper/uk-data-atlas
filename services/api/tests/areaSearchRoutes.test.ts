@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { handleAreaSearchRoutes } from "../src/areaSearchRoutes";
 import test from "node:test";
 import {
 	route,
@@ -95,4 +96,30 @@ test("sends a name search to places rather than listing every area", () => {
 		(response.body as { detail: string }).detail,
 		/\/v1\/places\?q=manchester/,
 	);
+});
+
+test("area search accepts only its lookup operations", () => {
+	const response = handleAreaSearchRoutes({
+		context: {
+			boundaryRegistry: registry,
+			geographyResolver: {
+				missingRequirement: () => undefined,
+				explainAreaAbsence: () => undefined,
+				selectReleaseForDate: () => undefined,
+				hasAreaRelease: () => false,
+				searchAreas: () => ({
+					length: 0,
+					positionOf: () => -1,
+					slice: () => [],
+				}),
+			},
+		},
+		releaseId: "fixture",
+		parsedUrl: new URL("https://example.test/v1/areas"),
+		segments: ["v1", "areas"],
+		dispatch: () => {
+			throw new Error("Unexpected dispatch");
+		},
+	});
+	assert.equal(response?.status, 200);
 });
