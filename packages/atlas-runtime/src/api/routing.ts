@@ -113,3 +113,13 @@ export type RouteRequest = {
 	 */
 	dispatch: (url: string) => ApiResponse;
 };
+
+/** A route's geography operations, limited to those it uses. */
+export type RouteContextFor<K extends keyof GeographyResolver> = Omit<
+	RouteContext,
+	"geographyResolver"
+> & { geographyResolver: Pick<GeographyResolver, K> };
+export type RouteRequestFor<K extends keyof GeographyResolver> = Omit<
+	RouteRequest,
+	"context"
+> & { context: RouteContextFor<K> };

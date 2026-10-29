@@ -8,7 +8,7 @@ import {
 	invalidQuery,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -20,7 +20,15 @@ export const handlePlaceRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "places"
+	| "postcodeIndex"
+	| "selectReleaseForDate"
+	| "hasAreaRelease"
+	| "explainAreaAbsence"
+	| "missingRequirement"
+	| "resolveAreaCandidates"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||

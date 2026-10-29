@@ -7,7 +7,7 @@ import {
 	invalidQuery,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -25,7 +25,12 @@ export const handleAreaValidationRoutes = ({
 	segments,
 	method,
 	body: requestBody,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "matchAreaValues"
+	| "validateAreas"
+	| "explainAreaAbsence"
+	| "missingRequirement"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||

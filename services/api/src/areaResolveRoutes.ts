@@ -7,10 +7,16 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 
 type AreaQueryRequest = Pick<
-	RouteRequest,
+	RouteRequestFor<
+		| "selectReleaseForDate"
+		| "hasAreaRelease"
+		| "explainAreaAbsence"
+		| "missingRequirement"
+		| "resolveAreaCandidates"
+	>,
 	"context" | "releaseId" | "parsedUrl"
 >;
 

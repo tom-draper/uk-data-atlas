@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { handleAreaHistoryRoutes } from "../src/areaHistoryRoutes";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
@@ -180,4 +181,25 @@ test("reports each published link once, whichever end the walk reaches it from",
 			?.lineage.map(({ counterpart }) => counterpart.id),
 		["constituency/2020/E14000002"],
 	);
+});
+
+test("history route accepts only the geography operations it uses", () => {
+	const response = handleAreaHistoryRoutes({
+		context: {
+			boundaryRegistry: registry,
+			geographyResolver: {
+				areaHistory: () => undefined,
+				explainAreaAbsence: () => undefined,
+			},
+		},
+		releaseId: "fixture",
+		parsedUrl: new URL(
+			"https://example.test/v1/areas/ward/2025/E1/history",
+		),
+		segments: ["v1", "areas", "ward", "2025", "E1", "history"],
+		dispatch: () => {
+			throw new Error("Unexpected dispatch");
+		},
+	});
+	assert.equal(response?.status, 404);
 });
