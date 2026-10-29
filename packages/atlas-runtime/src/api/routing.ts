@@ -118,7 +118,7 @@ export type RouteRequest = {
 export type RouteContextFor<K extends keyof GeographyResolver> = Omit<
 	RouteContext,
 	"geographyResolver"
-> & { geographyResolver: Pick<GeographyResolver, K> };
+> & ([K] extends [never] ? object : { geographyResolver: Pick<GeographyResolver, K> });
 export type RouteRequestFor<K extends keyof GeographyResolver> = Omit<
 	RouteRequest,
 	"context"

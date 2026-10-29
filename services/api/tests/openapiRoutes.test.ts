@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route } from "../src/routes";
+import { handleOpenapiRoutes } from "../src/openapiRoutes";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { testContext } from "./routeFixtures";
 
@@ -44,4 +45,15 @@ test("reports the description as unavailable when the server has none", () => {
 		"title" in response.body && response.body.title,
 		"Description Unavailable",
 	);
+});
+
+test("serves the description without a geography resolver", () => {
+	const response = handleOpenapiRoutes({
+		context: { boundaryRegistry, openapiDocument: "openapi: 3.1.0" },
+		releaseId: "test",
+		parsedUrl: new URL("https://example.test/v1/openapi.yaml"),
+		segments: ["v1", "openapi.yaml"],
+		dispatch: () => { throw new Error("unexpected dispatch"); },
+	});
+	assert.equal(response?.status, 200);
 });
