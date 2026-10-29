@@ -7,7 +7,7 @@ import {
 	type DataCatalogInputs,
 } from "./catalog/compileDataCatalog";
 import { storeObservations } from "./store-observations";
-import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationArtifactName } from "@uk-data-atlas/measures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const datasetCatalogInputs = (

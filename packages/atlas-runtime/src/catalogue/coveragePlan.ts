@@ -1,11 +1,11 @@
 import { countryForCode } from "../areas/catalog/countries";
-import type { Country, DataCatalog } from "./dataCatalog";
+import type { Country, DataCatalog } from "@uk-data-atlas/measures";
 import {
 	conversionCoverageOnto,
 	type MeasureConversionPath,
 } from "./measureCapability";
-import { measureCoverage } from "./measureCoverage";
-import { observationsFor } from "./observationArtifacts";
+import { measureCoverage } from "@uk-data-atlas/measures";
+import { observationsFor } from "@uk-data-atlas/measures";
 import type { MeasureContext } from "./measureContext";
 import { releaseKey } from "@uk-data-atlas/geography";
 

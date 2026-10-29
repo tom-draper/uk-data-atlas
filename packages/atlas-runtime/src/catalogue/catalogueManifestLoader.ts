@@ -4,12 +4,12 @@ import type { AnalysisGeographyInventory } from "../areas/analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation";
 import type { AtlasRelease } from "../storage/atlasRelease";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { DataCatalog } from "./dataCatalog";
+import type { DataCatalog } from "@uk-data-atlas/measures";
 import type { ExportManifest } from "../storage/exportManifest";
 import type { LookupManifest } from "../areas/lookupExports";
-import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { ValidationReport } from "./validationReport";
-import { withUnitDefinitions } from "./catalogueUnits";
+import { withUnitDefinitions } from "@uk-data-atlas/measures";
 import { publicPath, readPublicManifest } from "../storage/publicManifest";
 import { repositoryRootOf } from "../storage/dataLayout";
 

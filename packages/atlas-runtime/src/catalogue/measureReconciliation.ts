@@ -8,9 +8,9 @@ import {
 	isNumericObservation,
 	type DataCatalog,
 	type MeasureSource,
-} from "./dataCatalog";
-import { measureCoverage } from "./measureCoverage";
-import { observationsFor } from "./observationArtifacts";
+} from "@uk-data-atlas/measures";
+import { measureCoverage } from "@uk-data-atlas/measures";
+import { observationsFor } from "@uk-data-atlas/measures";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";

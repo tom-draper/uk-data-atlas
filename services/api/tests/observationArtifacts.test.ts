@@ -3,12 +3,10 @@ import test from "node:test";
 import {
 	observationArtifactName,
 	type MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import {
-	tableMeasureObservations,
-	type MeasureTableArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/measures";
+import { observationsFor } from "@uk-data-atlas/measures";
+import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureTableArtifact } from "@uk-data-atlas/measures";
 
 const sourceGeography = { type: "lsoa", boundaryYear: 2021 } as const;
 const source = {

@@ -357,6 +357,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../map-tiles
+      '@uk-data-atlas/measures':
+        specifier: workspace:*
+        version: link:../measures
       '@uk-data-atlas/places':
         specifier: workspace:*
         version: link:../places
@@ -458,6 +461,19 @@ importers:
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
+    devDependencies:
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  packages/measures:
+    dependencies:
+      '@uk-data-atlas/catalogue':
+        specifier: workspace:*
+        version: link:../catalogue
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../geography
     devDependencies:
       typescript:
         specifier: ^7.0.2
@@ -572,6 +588,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../packages/map-tiles
+      '@uk-data-atlas/measures':
+        specifier: workspace:*
+        version: link:../packages/measures
       '@uk-data-atlas/places':
         specifier: workspace:*
         version: link:../packages/places
@@ -660,6 +679,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../../packages/map-tiles
+      '@uk-data-atlas/measures':
+        specifier: workspace:*
+        version: link:../../packages/measures
       '@uk-data-atlas/places':
         specifier: workspace:*
         version: link:../../packages/places

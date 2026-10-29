@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureSource } from "@uk-data-atlas/measures";
 import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";

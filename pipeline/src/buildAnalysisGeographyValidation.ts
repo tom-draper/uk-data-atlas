@@ -3,7 +3,7 @@ import {
 	observationDatabasePath,
 	readObservationText,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationArtifactName } from "@uk-data-atlas/measures";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";

@@ -1,5 +1,5 @@
 import { type DatasetInput } from "./input";
-import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/measures";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";

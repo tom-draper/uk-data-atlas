@@ -4,9 +4,9 @@ import {
 } from "./observationResolution/observationPlan";
 import type { AggregationTarget } from "./aggregationTarget";
 import { resolveAggregationTarget } from "./aggregationTarget";
-import type { CompatibilityCandidate } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
-import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureSource } from "@uk-data-atlas/measures";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 

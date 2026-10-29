@@ -1,4 +1,4 @@
-import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/measures";
 import {
 	comparePlaceCandidates,
 	type PlaceCandidate,

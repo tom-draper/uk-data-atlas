@@ -2,9 +2,9 @@ import type { ConversionMethod } from "../relationships/conversion";
 import { areaMeasureSources } from "../areas/areaResources";
 import { notBuilt, unsupported } from "../areas/capability";
 import { convertObservations } from "../relationships/conversion";
-import { isNumericObservation, type DataCatalog } from "./dataCatalog";
-import { measureCoverage } from "./measureCoverage";
-import { observationsFor } from "./observationArtifacts";
+import { isNumericObservation, type DataCatalog } from "@uk-data-atlas/measures";
+import { measureCoverage } from "@uk-data-atlas/measures";
+import { observationsFor } from "@uk-data-atlas/measures";
 import type { MeasureContext } from "./measureContext";
 import { releaseKey } from "@uk-data-atlas/geography";
 

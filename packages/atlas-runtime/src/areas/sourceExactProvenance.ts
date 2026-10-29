@@ -1,5 +1,5 @@
-import type { Measure, MeasureSource } from "../catalogue/dataCatalog";
-import type { CompatibilityStatus } from "../catalogue/measureCompatibility";
+import type { Measure, MeasureSource } from "@uk-data-atlas/measures";
+import type { CompatibilityStatus } from "@uk-data-atlas/measures";
 
 export type CallerSelectedGeometry = {
 	boundaryRelease: string;

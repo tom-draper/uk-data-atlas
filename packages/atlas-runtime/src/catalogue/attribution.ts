@@ -1,6 +1,6 @@
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { DataCatalog } from "./dataCatalog";
+import type { DataCatalog } from "@uk-data-atlas/measures";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export type Licence = { name: string; url?: string };

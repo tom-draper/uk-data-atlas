@@ -1,9 +1,9 @@
-import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureSource } from "@uk-data-atlas/measures";
 import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
 } from "./numericObservations";
-import type { ObservationArtifacts } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ObservationArtifacts } from "@uk-data-atlas/measures";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 /** Read the numeric, source-exact records required by an aggregate. */

@@ -30,7 +30,7 @@ import { compileCensus } from "./census";
 import { compileCensusSmallArea } from "./censusSmallArea";
 import { withAliases } from "./measureAliases";
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureSource } from "@uk-data-atlas/measures";
 import { compileMobileCoverage } from "./mobileCoverage";
 import { compileJobs } from "./jobs";
 import { compileEmissions } from "./emissions";

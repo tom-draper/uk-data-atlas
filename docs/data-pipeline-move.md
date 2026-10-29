@@ -606,7 +606,7 @@ remain unchanged.
 
 Measure compatibility compilation runs in `pipeline/src/build-measure-compatibility.ts`
 and `pipeline/src/measureCompatibility.ts`. The API and compiler share the
-compatibility types and partition helpers in `packages/atlas-runtime/src/catalogue/measureCompatibility.ts`.
+compatibility types and partition helpers in `packages/measures/src/measureCompatibility.ts`.
 The API and builder read observations through `packages/atlas-runtime/src/catalogue/observationTables.ts`.
 
 The lookup manifest build runs in `pipeline/src/build-lookup-manifest.ts`.

@@ -1,7 +1,7 @@
 import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
 import type { AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { PopulationObservation } from "@uk-data-atlas/measures";
 import { aggregateRecordsForTarget } from "./aggregateTargetMembers";
 import {
 	invalidQuery,
