@@ -17,7 +17,10 @@ export const reportRequest = (
 	if (method !== "GET") return route(method, url, context);
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
 	const request: RouteRequest = {
-		context,
+		context: {
+			...context,
+			areaValidation: context.areaValidation ?? context.geographyResolver,
+		},
 		releaseId:
 			context.atlasRelease?.releaseId ??
 			context.boundaryRegistry.contentHash,

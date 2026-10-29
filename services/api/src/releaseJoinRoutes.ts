@@ -99,9 +99,12 @@ export const handleReleaseJoinRoutes = (
 			"Invalid Body",
 			"parent, when sent, must be given for every row.",
 		);
-	const validated = (
-		context.areaValidation ?? context.geographyResolver
-	).validateAreas(geography, release, rows.areas, rows.parents);
+	const validated = context.areaValidation.validateAreas(
+		geography,
+		release,
+		rows.areas,
+		rows.parents,
+	);
 	if (!validated) return areaNotFound(context, geography, release);
 	const areaCodes = context.geographyResolver.areaCodes(geography, release);
 	if (!areaCodes)

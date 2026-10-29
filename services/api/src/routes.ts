@@ -59,7 +59,10 @@ const buildRequest = (
 			"The request path contains invalid encoding.",
 		);
 	return {
-		context,
+		context: {
+			...context,
+			areaValidation: context.areaValidation ?? context.geographyResolver,
+		},
 		method,
 		...(method === "POST" ? { body } : {}),
 		releaseId:

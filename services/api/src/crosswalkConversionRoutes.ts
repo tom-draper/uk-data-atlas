@@ -11,7 +11,10 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteContext,
+	RouteRequestFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 import {
 	convertSuppliedCounts,
 	readSuppliedCounts,
@@ -35,12 +38,9 @@ export const handleCrosswalkConversionRoutes = ({
 	method,
 	body,
 }: RouteRequestFor<
-	| "missingRequirement"
-	| "areaCodes"
-	| "crosswalk"
-	| "indexedPathSteps"
-	| "validateAreas"
->): ApiResponse | undefined => {
+	"missingRequirement" | "areaCodes" | "crosswalk" | "indexedPathSteps"
+> & { context: Required<Pick<RouteContext, "areaValidation">> }):
+	ApiResponse | undefined => {
 	const id = crosswalkConversionId(segments);
 	if (id === undefined) return undefined;
 	if (method !== "POST")
@@ -92,7 +92,7 @@ export const handleCrosswalkConversionRoutes = ({
 		);
 	const rows = readPostedRows(body, { withValues: true });
 	if ("status" in rows) return rows;
-	const validation = (context.areaValidation ?? resolver).validateAreas(
+	const validation = context.areaValidation.validateAreas(
 		artifact.from.geography,
 		artifact.from.boundaryRelease,
 		rows.areas,
