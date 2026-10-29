@@ -1,5 +1,5 @@
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { analysisConversion } from "./analysisGeographies";
+import { analysisConversion } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	convertThroughSteps,
 	type ConversionStep,
