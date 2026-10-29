@@ -296,7 +296,7 @@ describe("declared statistics", () => {
 		]);
 	});
 
-	it("marks values a status function flags", () => {
+	it("marks values with the status a record field holds", () => {
 		const database = write(
 			{
 				type: "example",
@@ -305,8 +305,10 @@ describe("declared statistics", () => {
 					{
 						path: "value",
 						measure: "rate",
-						status: (record) =>
-							record.known === true ? undefined : "estimated",
+						status: {
+							path: "known",
+							values: { observed: true, estimated: false },
+						},
 					},
 				],
 			},
@@ -326,6 +328,30 @@ describe("declared statistics", () => {
 			{ area_code: "E06000001", status: "observed" },
 			{ area_code: "E06000002", status: "estimated" },
 		]);
+	});
+
+	it("refuses a status field holding no listed status", () => {
+		expect(() =>
+			write(
+				{
+					type: "example",
+					measures: [RATE],
+					fields: [
+						{
+							path: "value",
+							measure: "rate",
+							status: {
+								path: "known",
+								values: { observed: true },
+							},
+						},
+					],
+				},
+				file({ E06000001: { value: 1, known: false } }),
+			),
+		).toThrow(
+			"example 2024: known in E06000001 is false, no listed status",
+		);
 	});
 
 	it("refuses numbers no field claims", () => {
@@ -735,6 +761,30 @@ describe("declared statistics", () => {
 					.prepare("SELECT count(*) AS n FROM dataset_area_name")
 					.get()?.n,
 			).toBe(0);
+		});
+
+		it("rebuilds a status field from the observation's status", () => {
+			const flagged: DeclaredDataset = {
+				type: "example",
+				measures: [RATE],
+				fields: [
+					{
+						path: "value",
+						measure: "rate",
+						status: {
+							path: "known",
+							values: { observed: true, estimated: false },
+						},
+					},
+				],
+				rebuild: {},
+			};
+			const text = file({
+				E06000001: { value: 1, known: true },
+				E06000002: { value: 2, known: false },
+			});
+			const database = write(flagged, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
 		});
 
 		it("rebuilds parents listed in an array", () => {

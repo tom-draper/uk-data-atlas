@@ -414,8 +414,10 @@ export const BREXIT_CONSTITUENCY: DeclaredDataset = {
 			path: "pctLeave",
 			measure: "referendum-vote-share",
 			members: { "referendum-answer": "leave" },
-			status: (record) =>
-				record.isKnownResult === true ? undefined : "estimated",
+			status: {
+				path: "isKnownResult",
+				values: { observed: true, estimated: false },
+			},
 		},
 	],
 };
