@@ -812,6 +812,38 @@ describe("declared statistics", () => {
 			).toBe(1);
 		});
 
+		it("rebuilds records keyed by something other than their code", () => {
+			const keyed: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				keys: { QHM: "E06000001" },
+				measures: [CRIMES],
+				fields: [{ path: "total", measure: "crimes" }],
+				rebuild: {},
+			};
+			const text = file({
+				QHM: { code: "QHM", name: "HARTLEPOOL", total: 3 },
+				E06000002: {
+					code: "E06000002",
+					name: "Middlesbrough",
+					total: 4,
+				},
+			});
+			const database = write(keyed, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare(
+						"SELECT area_code FROM v_observation ORDER BY area_code",
+					)
+					.all()
+					.map((row) => row.area_code),
+			).toEqual(["E06000001", "E06000002"]);
+			expect(
+				database.prepare("SELECT key FROM dataset_area_key").all(),
+			).toEqual([{ key: "QHM" }]);
+		});
+
 		it("rebuilds a derived number from another dataset's rows", () => {
 			const people: DeclaredDataset = {
 				type: "people",

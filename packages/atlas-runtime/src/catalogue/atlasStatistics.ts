@@ -129,6 +129,12 @@ export type StatisticsDataset = {
 		code: string;
 		name: string;
 	}>;
+	/** Record keys for areas the file keys by something other than their code. */
+	areaKeys?: () => Iterable<{
+		release: AreaRelease;
+		code: string;
+		key: string;
+	}>;
 	/**
 	 * How to lay the rows back out as the compiled JSON, for datasets served
 	 * from rows. One layout per top-level key of the file.
@@ -739,6 +745,25 @@ export function statisticsTables(
 							yield [index + 1, found.id, name];
 					}
 				}
+			}),
+		},
+		dataset_area_key: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
+				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
+				"key TEXT NOT NULL",
+			],
+			key: ["dataset_id", "area_version_id"],
+			rows: rows(function* ({ datasets }, database) {
+				for (const [index, dataset] of datasets.entries())
+					for (const { release, code, key } of dataset.areaKeys?.() ??
+						[])
+						yield [
+							index + 1,
+							area(database, dataset.slug, release, code).id,
+							key,
+						];
 			}),
 		},
 		observation: {

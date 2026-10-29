@@ -93,6 +93,12 @@ export type DeclaredDataset = {
 	alsoIn?: DeclaredRelease[];
 	/** Shorthand for `release` on the default record set. */
 	release?: (header: DeclaredHeader) => DeclaredRelease;
+	/**
+	 * Record keys that are not area codes, each with the code of the area it
+	 * stands for (an NHS organisation code for its board's GSS code). The key
+	 * is stored per area, so rows rebuild it.
+	 */
+	keys?: Readonly<Record<string, string>>;
 	/** Codes in no listed release that are left out, with why. */
 	exclude?: { codes: RegExp; reason: string }[];
 	/** Record field holding the publisher's area name. */
@@ -499,6 +505,7 @@ export function declaredStatistics(
 				parent?: string,
 			) => void,
 			onName?: (release: AreaRelease, code: string, name: string) => void,
+			onKey?: (release: AreaRelease, code: string, key: string) => void,
 			onPart?: (part: {
 				key: string;
 				header: DeclaredHeader;
@@ -557,7 +564,8 @@ export function declaredStatistics(
 					);
 					const order: LaidOutArea[] = [];
 					if (onPart) areaLists.set(set.from, order);
-					for (const [code, record] of Object.entries(records)) {
+					for (const [recordKey, record] of Object.entries(records)) {
+						const code = config.keys?.[recordKey] ?? recordKey;
 						const release = candidates.find((candidate) =>
 							areas.has(candidate, code),
 						);
@@ -626,6 +634,8 @@ export function declaredStatistics(
 								onName?.(parentRelease, parentCode, parentName);
 							return { release: parentRelease, code: parentCode };
 						});
+						if (recordKey !== code)
+							onKey?.(release, code, recordKey);
 						if (onPart) order.push({ release, code, parents });
 						let sample: RecordSample | undefined;
 						if (onPart) {
@@ -635,7 +645,7 @@ export function declaredStatistics(
 									set.from,
 									(sample = new RecordSample(context)),
 								);
-							sample.add(code, record);
+							sample.add(recordKey, record);
 						}
 						const claimed = new Set<string>();
 						for (const field of fields) {
@@ -806,10 +816,14 @@ export function declaredStatistics(
 			string,
 			{ release: AreaRelease; code: string; name: string }
 		>();
+		const keys = new Map<
+			string,
+			{ release: AreaRelease; code: string; key: string }
+		>();
 		const seen = new Set<string>();
 		let count = 0;
 		const layouts: StatisticsLayout[] = [];
-		const layOut: Parameters<typeof walk>[2] = ({
+		const layOut: Parameters<typeof walk>[3] = ({
 			key,
 			header,
 			samples,
@@ -918,6 +932,15 @@ export function declaredStatistics(
 						`${type}: ${code} is named ${known.name} and ${name}`,
 					);
 			},
+			(release, code, key) => {
+				const known = keys.get(`${release.id}\0${code}`);
+				if (known === undefined)
+					keys.set(`${release.id}\0${code}`, { release, code, key });
+				else if (known.key !== key)
+					throw new Error(
+						`${type}: ${code} is keyed ${known.key} and ${key}`,
+					);
+			},
 			config.rebuild ? layOut : undefined,
 		)) {
 			const key = seriesKey(raw);
@@ -1017,6 +1040,7 @@ export function declaredStatistics(
 					};
 			},
 			areaNames: () => names.values(),
+			areaKeys: () => keys.values(),
 			layouts: () => layouts,
 			verify(database: DatabaseSync) {
 				const row = database
