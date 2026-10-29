@@ -3,7 +3,11 @@ import type {
 	StatisticsMeasure,
 	ValueKind,
 } from "../atlasStatistics";
-import type { DeclaredDimension } from "../declaredStatistics";
+import type {
+	DeclaredDataset,
+	DeclaredDimension,
+	Json,
+} from "../declaredStatistics";
 
 /**
  * Measures shared by several datasets. A slug means one thing everywhere, and
@@ -65,11 +69,41 @@ export const LIFE_EXPECTANCY = measure(
 	"Average years a newborn would live at the period's mortality rates.",
 );
 
-/** Per-100,000-residents figures the compilers add from the population estimate. */
-export const PER_100K = {
-	"metrics.per100kPopulation":
-		"Computed by the compiler from the mid-year population estimate.",
-};
+type Records = { readonly [key: string]: Json };
+
+/**
+ * The per-100,000-residents figure the compilers add from the population
+ * estimate: `value` over the area's mid-year population in population-uk, for
+ * `year` or else the part's year. Mirrors `addPopulationMetrics`, so the sum
+ * runs over the ages in the same order.
+ */
+export const per100k = (
+	value: (record: Records) => Json,
+	year?: number,
+): Pick<DeclaredDataset, "derived" | "rebuild"> => ({
+	derived: {
+		"metrics.per100kPopulation":
+			"Computed by the compiler from the mid-year population estimate.",
+	},
+	rebuild: {
+		derived: {
+			"metrics.per100kPopulation": (record, _path, context) => {
+				const part = context.dataset("population-uk")[
+					String(year ?? context.header.year)
+				] as Records | undefined;
+				const area = (part?.data as Records | undefined)?.[
+					context.code
+				] as Records | undefined;
+				const total = Object.values(
+					(area?.total ?? {}) as Records,
+				).reduce<number>((sum, count) => sum + (count as number), 0);
+				return total > 0
+					? ((value(record) as number) / total) * 100_000
+					: null;
+			},
+		},
+	},
+});
 
 export const PREMISES = measure(
 	"premises",
