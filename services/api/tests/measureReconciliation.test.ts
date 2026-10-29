@@ -8,18 +8,18 @@ import type {
 import {
 	availableReconciliations,
 	reconcileMeasure,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/measures";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	createRelationshipPathIndex,
 	type RelationshipPath,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/measures";
 import {
 	containmentCrosswalk,
 	dataCatalog,

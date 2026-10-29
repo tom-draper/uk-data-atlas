@@ -1,7 +1,7 @@
-import type { ConversionMethod } from "../relationships/conversion";
+import type { ConversionMethod } from "@uk-data-atlas/measures";
 import { areaMeasureSources } from "../areas/areaResources";
 import { notBuilt, unsupported } from "../areas/capability";
-import { convertObservations } from "../relationships/conversion";
+import { convertObservations } from "@uk-data-atlas/measures";
 import { isNumericObservation, type DataCatalog } from "@uk-data-atlas/measures";
 import { measureCoverage } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";

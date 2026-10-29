@@ -474,6 +474,9 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
+      '@uk-data-atlas/relationships':
+        specifier: workspace:*
+        version: link:../relationships
     devDependencies:
       typescript:
         specifier: ^7.0.2

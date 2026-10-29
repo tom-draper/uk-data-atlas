@@ -3,18 +3,18 @@ import {
 	convertThroughSteps,
 	type ConversionMethod,
 	type ConversionStep,
-} from "../relationships/conversion";
+} from "./conversion";
 import {
 	isNumericObservation,
 	type DataCatalog,
 	type MeasureSource,
-} from "@uk-data-atlas/measures";
-import { measureCoverage } from "@uk-data-atlas/measures";
-import { observationsFor } from "@uk-data-atlas/measures";
+} from "./dataCatalog";
+import { measureCoverage } from "./measureCoverage";
+import { observationsFor } from "./observationArtifacts";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { MeasureContext } from "./measureContext";
+import type { ReconciliationContext as MeasureContext } from "./reconciliationContext";
 
 type Measure = DataCatalog["measures"][number];
 

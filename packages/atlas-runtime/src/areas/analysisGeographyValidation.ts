@@ -8,7 +8,7 @@ import {
 	convertObservations,
 	convertThroughSteps,
 	type ConversionResult,
-} from "../relationships/conversion";
+} from "@uk-data-atlas/measures";
 import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import {
 	isMeasureTable,

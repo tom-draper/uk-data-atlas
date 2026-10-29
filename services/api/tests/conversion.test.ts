@@ -4,7 +4,7 @@ import {
 	convertObservations,
 	convertThroughSteps,
 	type ConversionStep,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/measures";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import { buildTranslationSteps } from "@uk-data-atlas/atlas-runtime/relationships";
 

@@ -22,6 +22,7 @@ import {
 	tableMeasureObservations,
 	type MeasureTableArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationsFor, type MeasureSource } from "@uk-data-atlas/measures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const table: MeasureTableArtifact = {
@@ -545,4 +546,38 @@ test("oversized bulk text is rebuilt without evicting a smaller cached entry", (
 		() => cache.text(path, "large"),
 		/Missing SQLite measure observations/,
 	);
+});
+
+test("resolves the same observations from memory and SQLite", () => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-parity-"));
+	try {
+		writeObservationFixture(
+			join(directory, "fixture-table.json"),
+			JSON.stringify(table),
+		);
+		const source = {
+			datasetId: "fixture",
+			sourceGeography: table.sourceGeography,
+			periods: [table.period],
+		} as MeasureSource;
+		const memory = observationsFor("owned", source, table.period, {
+			measureObservations: [tableMeasureObservations(table, "owned")],
+		});
+		const stored = observationsFor("owned", source, table.period, {
+			measureObservations: [
+				readSourceObservations(
+					fixtureObservationDatabase(directory),
+					"fixture-table",
+					"owned",
+				),
+			],
+		});
+		assert.ok(memory && stored);
+		assert.equal(stored.contentHash, memory.contentHash);
+		assert.deepEqual(stored.records, memory.records);
+		for (const code of ["E01000001", "E01000002", "missing"])
+			assert.deepEqual(stored.recordFor(code), memory.recordFor(code));
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
 });
