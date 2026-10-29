@@ -1,3 +1,4 @@
+import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
 import type { StatisticsPeriod } from "../atlasStatistics";
 import {
 	type DeclaredDataset,
@@ -248,6 +249,13 @@ const unemploymentPeriod = (key: string) =>
 		? periods.financialYear(Number(key))
 		: periods.year(Number(key));
 
+/** The most districts any 2023 unitary was formed from. */
+const MOST_PREDECESSORS = Math.max(
+	...Object.values(APRIL_2023_LAD_MERGERS).map(
+		({ predecessors }) => predecessors.length,
+	),
+);
+
 export const UNEMPLOYMENT: DeclaredDataset = {
 	type: "unemployment",
 	name: "ladName",
@@ -256,6 +264,11 @@ export const UNEMPLOYMENT: DeclaredDataset = {
 		{ geography: "localAuthority", year: 2019 },
 		{ geography: "localAuthority", year: 2015 },
 	],
+	/** The districts a 2023 unitary's figures were built from, one per index. */
+	parents: Array.from({ length: MOST_PREDECESSORS }, (_, index) => ({
+		code: `derivedFromPredecessors.${index}`,
+		release: { geography: "localAuthority", year: 2021 },
+	})),
 	measures: [
 		measure(
 			"unemployment-rate",
@@ -300,6 +313,7 @@ export const UNEMPLOYMENT: DeclaredDataset = {
 		measure,
 		period: unemploymentPeriod,
 	})),
+	rebuild: {},
 };
 
 export const CHILD_POVERTY: DeclaredDataset = {
