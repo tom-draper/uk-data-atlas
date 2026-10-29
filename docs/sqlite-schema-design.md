@@ -770,12 +770,27 @@ area_releases.position`, which `series.release_id` already references), then
 - Batch 10 adds unemployment and Brexit by constituency. 53 datasets are
   served from rows; stored payload JSON is 13 MB.
 
+### Step 4, batch 11: NHS waiting times (2026-10-29)
+
+- The March 2026 waiting times are on the 42 integrated care boards in force
+  from 2023 until the April 2026 reorganisation. The atlas held only the April
+  2026 boards, so it now also holds the April 2023 release (held from the map;
+  the ONS published no boundaries for 2024 or 2025, and the 2023 codes and
+  names match the April 2025 lookup exactly).
+- The file keys boards by NHS organisation code (`QE1`). A config's `keys`
+  maps each to its area's code, and `dataset_area_key` stores the key per
+  dataset and area version, as `dataset_area_name` stores names, so rows
+  rebuild it.
+- Batch 11 adds NHS waiting times: incomplete pathways and those over 18
+  weeks, with the share over 18 weeks derived. 54 datasets are served from
+  rows.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker            | Datasets                                              |
-| ------------------ | ----------------------------------------------------- |
-| Not stored as rows | the three election datasets, NHS waiting times (#488) |
+| Blocker            | Datasets                           |
+| ------------------ | ---------------------------------- |
+| Not stored as rows | the three election datasets (#488) |
 
 ### Catalogue datasets as configuration (2026-10-27)
 
