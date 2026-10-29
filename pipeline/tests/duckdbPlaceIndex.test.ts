@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { compileDuckdbPlaceIndex } from "../src/duckdbPlaceIndex";
