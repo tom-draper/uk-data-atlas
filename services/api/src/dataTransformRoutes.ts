@@ -11,7 +11,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	areaNamedBy,
@@ -28,7 +28,7 @@ export const handleDataTransformRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"places">): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
 		segments[0] !== "v1" ||

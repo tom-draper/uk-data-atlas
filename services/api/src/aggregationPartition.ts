@@ -7,7 +7,7 @@ import { resolveAggregationTarget } from "./aggregationTarget";
 import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
 import type { MeasureSource } from "@uk-data-atlas/measures";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export type AggregationPartition = {
@@ -29,7 +29,7 @@ export const resolveAggregationPartition = ({
 	pathId,
 	sourceRelease,
 }: {
-	context: RouteContext;
+	context: RouteContextFor<"area" | "crosswalk" | "indexedPathSteps" | "relationshipPath">;
 	measureId: string;
 	period: string;
 	geography: string;

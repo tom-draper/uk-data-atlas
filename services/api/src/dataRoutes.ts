@@ -20,7 +20,7 @@ import {
 	type CallerSelectedGeometry,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { nextPageHref, paginate } from "./pagination";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	areaNamedBy,
@@ -46,7 +46,7 @@ export const handleDataRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"area" | "places" | "missingRequirement">): ApiResponse | undefined => {
 	if (segments.length !== 3 || segments[0] !== "v1" || segments[1] !== "data")
 		return undefined;
 	const { dataCatalog, measureObservations, measureCompatibilityInventory } =
