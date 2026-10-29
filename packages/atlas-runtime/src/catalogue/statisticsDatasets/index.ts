@@ -130,5 +130,5 @@ export const UNSTORED_DATASETS: Readonly<Record<string, string>> = {
 	historicalGeneralElection:
 		"Results before 2010 are on constituency boundaries the atlas has no release for.",
 	nhsWaiting:
-		"Integrated care boards are keyed by NHS organisation codes, not the GSS codes of the area tables.",
+		"The March 2026 ICBs need their matching boundary release; the held April 2026 release follows reorganisations.",
 };
