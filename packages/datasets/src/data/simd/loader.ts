@@ -6,43 +6,16 @@ import {
 } from "../../helpers/datasetAggregation/deprivation";
 import { parseCsv } from "../../helpers/parseCsv";
 
-const COUNCIL_AREA_CODES: Record<string, string> = {
-	"Aberdeen City": "S12000033",
-	Aberdeenshire: "S12000034",
-	Angus: "S12000041",
-	"Argyll and Bute": "S12000035",
-	"City of Edinburgh": "S12000036",
-	Clackmannanshire: "S12000005",
-	"Dumfries and Galloway": "S12000006",
-	"Dundee City": "S12000042",
-	"East Ayrshire": "S12000008",
-	"East Dunbartonshire": "S12000045",
-	"East Lothian": "S12000010",
-	"East Renfrewshire": "S12000011",
-	Falkirk: "S12000014",
-	Fife: "S12000015",
-	"Glasgow City": "S12000046",
-	Highland: "S12000017",
-	Inverclyde: "S12000018",
-	Midlothian: "S12000019",
-	Moray: "S12000020",
-	"Na h-Eileanan Siar": "S12000013",
-	"North Ayrshire": "S12000021",
-	"North Lanarkshire": "S12000044",
-	"Orkney Islands": "S12000023",
-	"Perth and Kinross": "S12000024",
-	Renfrewshire: "S12000038",
-	"Scottish Borders": "S12000026",
-	"Shetland Islands": "S12000027",
-	"South Ayrshire": "S12000028",
-	"South Lanarkshire": "S12000029",
-	Stirling: "S12000030",
-	"West Dunbartonshire": "S12000039",
-	"West Lothian": "S12000040",
+type PublishedRanks = {
+	rank: number;
+	decile: number;
+	quintile: number;
+	councilAreaCode: string;
 };
 
 /**
- * The published rank, decile and quintile, keyed by data zone code.
+ * The published rank, decile and quintile, and the data zone's council area
+ * code, keyed by data zone code.
  *
  * These come from the Scottish Government's data zone lookup. The indicators
  * file carries no rank, and the index is not a weighted sum of indicators, so
@@ -50,12 +23,9 @@ const COUNCIL_AREA_CODES: Record<string, string> = {
  */
 export async function publishedSIMDRanks(
 	lookupCsv: string,
-): Promise<Map<string, { rank: number; decile: number; quintile: number }>> {
+): Promise<Map<string, PublishedRanks>> {
 	const { data } = await parseCsv(lookupCsv, { header: true });
-	const ranks = new Map<
-		string,
-		{ rank: number; decile: number; quintile: number }
-	>();
+	const ranks = new Map<string, PublishedRanks>();
 	for (const row of data) {
 		const dzCode = row["DZ"]?.trim();
 		if (!dzCode?.startsWith("S01")) continue;
@@ -64,7 +34,10 @@ export async function publishedSIMDRanks(
 		const quintile = Number(row["SIMD2020v2_Quintile"]);
 		if (![rank, decile, quintile].every(Number.isInteger))
 			throw new Error(`SIMD lookup: unreadable rank for ${dzCode}`);
-		ranks.set(dzCode, { rank, decile, quintile });
+		const councilAreaCode = row["LAcode"]?.trim() ?? "";
+		if (!councilAreaCode.startsWith("S12"))
+			throw new Error(`SIMD lookup: no council area code for ${dzCode}`);
+		ranks.set(dzCode, { rank, decile, quintile, councilAreaCode });
 	}
 	return ranks;
 }
@@ -87,13 +60,14 @@ export async function loadSIMD(
 		if (!ranks)
 			throw new Error(`SIMD lookup: no published rank for ${dzCode}`);
 
-		const councilAreaName =
-			row["Council_area"]?.trim() || row["Council_Area"]?.trim() || "";
 		records[dzCode] = {
 			dzCode,
 			dzName: row["Intermediate_Zone"]?.trim() || "",
-			councilAreaCode: COUNCIL_AREA_CODES[councilAreaName] || "",
-			councilAreaName,
+			councilAreaCode: ranks.councilAreaCode,
+			councilAreaName:
+				row["Council_area"]?.trim() ||
+				row["Council_Area"]?.trim() ||
+				"",
 			simdRank: ranks.rank,
 			simdQuintile: ranks.quintile,
 			simdDecile: ranks.decile,

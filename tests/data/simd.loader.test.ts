@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { loadSIMD, publishedSIMDRanks } from "@/lib/data/simd/loader";
 
-const lookupCsv = `DZ,DZname,SIMD2020v2_Rank,SIMD2020v2_Vigintile,SIMD2020v2_Decile,SIMD2020v2_Quintile
-S01006506,Culter - 01,4691,14,7,4
-S01010891,Greenock Town Centre and East Central - 01,1,1,1,1
+const lookupCsv = `DZ,DZname,SIMD2020v2_Rank,SIMD2020v2_Vigintile,SIMD2020v2_Decile,SIMD2020v2_Quintile,LAcode,LAname
+S01006506,Culter - 01,4691,14,7,4,S12000033,Aberdeen City
+S01010891,Greenock Town Centre and East Central - 01,1,1,1,1,S12000018,Inverclyde
 `;
 
 // The indicators file has no rank at all. Its rates must not be turned into
@@ -29,6 +29,28 @@ describe("loadSIMD", () => {
 		expect(data.S01010891).toMatchObject({ simdRank: 1, simdDecile: 1 });
 	});
 
+	it("takes the council area code from the lookup, not the name", async () => {
+		// The indicators file names the Western Isles in Gaelic, and Fife's
+		// code changed in 2018, so a table keyed by name goes stale.
+		const datasets = await loadSIMD(
+			async () => indicatorsCsv.replace("Inverclyde", "Fife"),
+			lookupCsv.replace("S12000018,Inverclyde", "S12000047,Fife"),
+		);
+		expect(datasets[2020].data.S01010891).toMatchObject({
+			councilAreaCode: "S12000047",
+			councilAreaName: "Fife",
+		});
+	});
+
+	it("refuses a data zone the lookup gives no council area", async () => {
+		await expect(
+			loadSIMD(
+				async () => indicatorsCsv,
+				lookupCsv.replace("S12000018", ""),
+			),
+		).rejects.toThrow(/no council area code for S01010891/);
+	});
+
 	it("refuses a data zone the lookup does not rank", async () => {
 		const missing = lookupCsv
 			.split("\n")
@@ -47,6 +69,7 @@ describe("publishedSIMDRanks", () => {
 			rank: 1,
 			decile: 1,
 			quintile: 1,
+			councilAreaCode: "S12000018",
 		});
 		expect(ranks.size).toBe(2);
 	});
