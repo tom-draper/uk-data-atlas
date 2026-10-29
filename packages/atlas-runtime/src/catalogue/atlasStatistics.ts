@@ -206,6 +206,8 @@ export type AreaIndex = {
 	 * whose id starts with the year.
 	 */
 	release(geography: string, year: number): AreaRelease;
+	/** The same, or nothing when the atlas holds no release for the year. */
+	find(geography: string, year: number): AreaRelease | undefined;
 	has(release: AreaRelease, code: string): boolean;
 };
 
@@ -434,20 +436,34 @@ export function statisticsTables(
 				geography: String(row.geography),
 				id: String(row.id),
 			}));
-		return {
-			release(geography, year) {
-				const declared = vintages[geography]?.[year];
-				if (declared) return { geography, id: declared };
-				const matches = available.filter(
+		const find = (geography: string, year: number) => {
+			const declared = vintages[geography]?.[year];
+			if (declared)
+				return available.find(
 					(release) =>
 						release.geography === geography &&
-						release.id.startsWith(`${year}-`),
+						release.id === declared,
 				);
-				if (matches.length !== 1)
+			const matches = available.filter(
+				(release) =>
+					release.geography === geography &&
+					release.id.startsWith(`${year}-`),
+			);
+			if (matches.length > 1)
+				throw new Error(
+					`No single ${geography} release for ${year} (${matches.length} found)`,
+				);
+			return matches[0];
+		};
+		return {
+			find,
+			release(geography, year) {
+				const found = find(geography, year);
+				if (!found)
 					throw new Error(
-						`No single ${geography} release for ${year} (${matches.length} found)`,
+						`No single ${geography} release for ${year} (0 found)`,
 					);
-				return matches[0];
+				return found;
 			},
 			has: (release, code) =>
 				areaLookup(database, releasePosition(database, release)).has(
