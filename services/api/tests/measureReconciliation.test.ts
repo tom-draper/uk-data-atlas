@@ -4,7 +4,7 @@ import test from "node:test";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
-} from "../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	availableReconciliations,
 	reconcileMeasure,

@@ -4,7 +4,7 @@ import type {
 	AreaLookup,
 	AreaRecord,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import type { CrosswalkArtifact } from "../src/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	assessPathTrust,

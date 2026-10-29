@@ -3,7 +3,7 @@ import test from "node:test";
 import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import type { CrosswalkArtifact } from "../src/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import { reportRequest as routeRequest } from "./evidenceFixtures";
 import {
 	containmentCrosswalk,

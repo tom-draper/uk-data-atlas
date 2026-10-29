@@ -4,7 +4,7 @@ import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import { crosswalkShape } from "../../../pipeline/src/relationshipPaths";

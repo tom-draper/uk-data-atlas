@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { readCrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 const entry = (id: string, geography: string) => ({

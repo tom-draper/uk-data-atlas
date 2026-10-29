@@ -1,6 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { CrosswalkInventory } from "../../src/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 
 export const emptyCrosswalkAreas = (
 	directory: string,

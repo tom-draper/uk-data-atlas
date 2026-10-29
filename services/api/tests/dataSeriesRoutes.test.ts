@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
-import type { PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
+import type { PropertyCrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	MeasureObservationArtifact,
 	SourceGeography,

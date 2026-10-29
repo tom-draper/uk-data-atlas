@@ -6,7 +6,7 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	createGeographyResolver,
 	createGeographyServices,

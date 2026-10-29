@@ -5,7 +5,7 @@ import {
 	createCrosswalkInventory,
 	crosswalkInventoryFromEntries,
 } from "../../../pipeline/src/crosswalkCompiler";
-import type { PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
+import type { PropertyCrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	addRelatedCodes,
 	releaseCoverageOf,

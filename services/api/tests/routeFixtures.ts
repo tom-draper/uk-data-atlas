@@ -15,9 +15,9 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
-} from "../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
-import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
+import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,

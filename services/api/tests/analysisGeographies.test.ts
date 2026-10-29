@@ -10,7 +10,7 @@ import test from "node:test";
 import { analysisConversion } from "../src/analysisGeographies";
 import type { AnalysisGeographySupportConfig } from "../src/analysisGeographies";
 import type { GeographyKind } from "@uk-data-atlas/geography";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 
