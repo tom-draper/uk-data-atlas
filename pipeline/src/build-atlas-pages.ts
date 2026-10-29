@@ -347,7 +347,7 @@ const mapsSlugByCode = new Map<string, string>();
 const mapsSlugByName = new Map<string, string>();
 const core = JSON.parse(
 	readFileSync(
-		join(API_ROOT, "public/source-data/gazetteer.core.json"),
+		join(artifactRoot(API_ROOT), "source-data", "gazetteer.core.json"),
 		"utf8",
 	),
 ) as {
