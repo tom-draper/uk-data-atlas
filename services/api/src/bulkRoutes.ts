@@ -13,7 +13,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	observationTableOf,
 	observationTextOf,
@@ -31,7 +31,7 @@ export const handleBulkRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"areaIdentityReleaseForArtifact" | "releaseAreas" | "crosswalkSummaryForArtifact" | "crosswalk" | "namedLocationMembershipInventory">): ApiResponse | undefined => {
 	const { dataCatalog, exportManifest, lookupManifest, measureObservations } =
 		context;
 	if (

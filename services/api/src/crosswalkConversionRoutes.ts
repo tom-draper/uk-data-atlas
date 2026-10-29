@@ -11,7 +11,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	convertSuppliedCounts,
 	readSuppliedCounts,
@@ -34,7 +34,7 @@ export const handleCrosswalkConversionRoutes = ({
 	segments,
 	method,
 	body,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"missingRequirement" | "areaCodes" | "crosswalk" | "indexedPathSteps" | "validateAreas">): ApiResponse | undefined => {
 	const id = crosswalkConversionId(segments);
 	if (id === undefined) return undefined;
 	if (method !== "POST")
