@@ -3,6 +3,8 @@ import { rebuildFromLayout } from "./datasetLayout";
 import type {
 	AreaIndex,
 	AreaRelease,
+	CandidacyColumn,
+	ContestColumn,
 	StatisticsDataset,
 	StatisticsLayout,
 	StatisticsLayoutLeaf,
@@ -111,6 +113,8 @@ export type DeclaredDataset = {
 	 * used. Stored for datasets served from rows.
 	 */
 	parents?: DeclaredParent[];
+	/** Store each part as an election, with its records' text in contests. */
+	election?: DeclaredElection;
 	/**
 	 * Serve the compiled JSON from rows instead of a stored payload. The build
 	 * refuses a dataset whose rows do not rebuild it byte for byte. Each
@@ -121,6 +125,17 @@ export type DeclaredDataset = {
 };
 
 type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
+
+/** A part per election, a record per contest. */
+export type DeclaredElection = {
+	kind: "general" | "local";
+	/** The polling day of a top-level key, as `YYYY-MM-DD`. */
+	date: (key: string, header: DeclaredHeader) => string;
+	/** The record path holding each contest column's text. */
+	contest?: Partial<Record<ContestColumn, string>>;
+	/** The record path holding each column of the candidate it elected. */
+	elected?: Partial<Record<CandidacyColumn, string>>;
+};
 
 export type DeclaredParent = {
 	/** Dot-separated path to the code; an array index is a key. */
@@ -541,6 +556,66 @@ export function declaredStatistics(
 		),
 	);
 
+	/** The text columns of a record's contest and elected candidate. */
+	const electionText = (
+		record: { [key: string]: Json },
+		context: string,
+		code: string,
+	) => {
+		const read = <Column extends string>(
+			paths: Partial<Record<Column, string>> | undefined,
+		) => {
+			const found: Partial<Record<Column, string | null>> = {};
+			let any = false;
+			for (const [column, path] of Object.entries(paths ?? {}) as [
+				Column,
+				string,
+			][]) {
+				const value = follow(record, path.split("."));
+				if (value === undefined) continue;
+				if (value !== null && typeof value !== "string")
+					throw new Error(
+						`${context}: ${path} in ${code} is not text`,
+					);
+				found[column] = value;
+				any = true;
+			}
+			return any ? found : undefined;
+		};
+		if (!config.election) return {};
+		const contest = read(config.election.contest);
+		const elected = read(config.election.elected);
+		return {
+			...(contest ? { contest } : {}),
+			...(elected ? { elected } : {}),
+		};
+	};
+	/** Record paths of election text, to the leaf that rebuilds them. */
+	const electionLeaves = new Map<string, StatisticsLayoutLeaf>([
+		...Object.entries(config.election?.contest ?? {}).map(
+			([column, path]) =>
+				[
+					path,
+					{
+						path: [],
+						kind: "contest",
+						column,
+					} as StatisticsLayoutLeaf,
+				] as const,
+		),
+		...Object.entries(config.election?.elected ?? {}).map(
+			([column, path]) =>
+				[
+					path,
+					{
+						path: [],
+						kind: "candidacy",
+						column,
+					} as StatisticsLayoutLeaf,
+				] as const,
+		),
+	]);
+
 	return (areas) => {
 		/**
 		 * The listed releases the atlas holds, in order. A year it holds no
@@ -700,7 +775,13 @@ export function declaredStatistics(
 						});
 						if (recordKey !== code)
 							onKey?.(release, code, recordKey);
-						if (onPart) order.push({ release, code, parents });
+						if (onPart)
+							order.push({
+								release,
+								code,
+								parents,
+								...electionText(record, context, code),
+							});
 						let sample: RecordSample | undefined;
 						if (onPart) {
 							sample = samples.get(set.from);
@@ -905,6 +986,8 @@ export function declaredStatistics(
 					(leafKey): StatisticsLayoutLeaf => {
 						const path = sample.paths.get(leafKey)!;
 						const placed = laidOutPath(path, sample.arrays);
+						const text = electionLeaves.get(path.join("."));
+						if (text) return { ...text, path: placed };
 						const claim = sample.claims.get(leafKey);
 						if (claim?.kind === "status")
 							return {
@@ -961,8 +1044,21 @@ export function declaredStatistics(
 				});
 				return { from, leaves, areas };
 			});
+			const first = recordSets[0];
 			layouts.push({
 				key,
+				...(config.election
+					? {
+							election: {
+								kind: config.election.kind,
+								date: config.election.date(key, header),
+								release: held(
+									listed(first, header),
+									context,
+								)[0],
+							},
+						}
+					: {}),
 				header: JSON.stringify(
 					Object.fromEntries(
 						Object.entries(header).map(([field, value]) => [

@@ -9,6 +9,7 @@ type Leaf = {
 	rule: string | null;
 	literal: string | null;
 	parent: number | null;
+	field: string | null;
 };
 
 type Row = {
@@ -138,6 +139,24 @@ function records(
 		if (!found) absent.set(row.position, (found = new Set()));
 		found.add(row.leaf);
 	}
+	// Contest text, and the elected candidate's, for an election's records.
+	const texts = new Map<number, Record<string, string | null>>();
+	if (
+		leaves.some(
+			(leaf) => leaf.kind === "contest" || leaf.kind === "candidacy",
+		)
+	)
+		for (const row of database
+			.prepare(
+				`SELECT r.position, c.*, k.given_name AS candidacy_given_name, k.family_name AS candidacy_family_name, k.gender AS candidacy_gender
+				FROM dataset_record r
+				JOIN election e ON e.dataset_id = r.dataset_id AND e.part = r.part
+				JOIN contest c ON c.election_id = e.id AND c.area_version_id = r.area_version_id
+				LEFT JOIN candidacy k ON k.contest_id = c.id AND k.elected = 1
+				WHERE r.dataset_id = ? AND r.part = ? AND r.records = ?`,
+			)
+			.all(dataset, part, from) as Record<string, string | null>[])
+			texts.set(Number(row.position), row);
 	const result: Record<string, Json> = {};
 	for (const { position, area, code, name } of database
 		.prepare(
@@ -190,7 +209,16 @@ function records(
 				value = leaf.kind === "parent_code" ? parent.code : parent.name;
 			} else if (leaf.kind === "literal")
 				value = JSON.parse(leaf.literal!);
-			else value = null;
+			else if (leaf.kind === "contest" || leaf.kind === "candidacy") {
+				const text = texts.get(position);
+				if (!text) throw new Error(`${slug}: ${code} has no contest`);
+				value =
+					text[
+						leaf.kind === "contest"
+							? leaf.field!
+							: `candidacy_${leaf.field}`
+					] ?? null;
+			} else value = null;
 			place(record, leaf.path, value);
 		}
 		for (const [rule, compute] of Object.entries(rules))
@@ -252,7 +280,7 @@ export function rebuildFromLayout(
 			.map((row) => [Number(row.id), String(row.shape)]),
 	);
 	const leafQuery = database.prepare(
-		"SELECT records, path, kind, series_id AS series, period_id AS period, rule, literal, parent FROM dataset_leaf WHERE dataset_id = ? AND part = ? ORDER BY records, position",
+		"SELECT records, path, kind, series_id AS series, period_id AS period, rule, literal, parent, field FROM dataset_leaf WHERE dataset_id = ? AND part = ? ORDER BY records, position",
 	);
 	let others = readByRules.get(database);
 	if (!others) readByRules.set(database, (others = new Map()));
@@ -282,6 +310,7 @@ export function rebuildFromLayout(
 				rule: row.rule as string | null,
 				literal: row.literal as string | null,
 				parent: row.parent as number | null,
+				field: row.field as string | null,
 			});
 		}
 		for (const [from, leaves] of sets) {
