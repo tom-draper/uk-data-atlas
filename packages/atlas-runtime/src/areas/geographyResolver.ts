@@ -4,7 +4,7 @@ import type {
 	AreaLookup,
 	AreaRecord,
 } from "@uk-data-atlas/areas";
-import { summariseBatch, type ValidatedValue } from "./batchValidation";
+
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeographyInventory } from "./geographyInventory";
 import type { AreaGeometryCache } from "../geometry/areaGeometry";
@@ -30,7 +30,7 @@ import {
 	type AreaIdentity,
 	type GeographyEndpoint,
 } from "./resolver/areas";
-import { normalisePlaceName } from "@uk-data-atlas/geography";
+import { AreaValidation } from "./resolver/areaValidation";
 import { CatalogueResolver } from "./resolver/catalogue";
 import { CapabilityResolver } from "./resolver/capability";
 import { LineageResolver } from "./resolver/lineage";
@@ -132,6 +132,42 @@ export type GeographyResolverInputs = {
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 };
 
+export const createGeographyServices = (inputs: GeographyResolverInputs) => {
+	const areas = new AreasResolver(inputs);
+	const catalogue = new CatalogueResolver(inputs);
+	const locations = new LocationsResolver(inputs, catalogue);
+	const spatial = new SpatialResolver(inputs.areaGeometryCache, (identity) =>
+		areas.area(identity),
+	);
+	const postcodes = new PostcodeResolver(inputs);
+	const lineage = new LineageResolver(
+		inputs.crosswalkLookup,
+		(identity) => areas.area(identity),
+		(identity) => areas.sameCode(identity),
+	);
+	const translator = new CrosswalkTranslator(inputs);
+	const validation = new AreaValidation(areas, lineage, translator);
+	const capability = new CapabilityResolver(
+		inputs,
+		translator,
+		(identity, only) => lineage.relationships(identity, only),
+		() => lineage.hasAreaRelationships(),
+		(geography, release) => areas.boundaryRelease(geography, release),
+		(geography, release) => lineage.relatedCodes(geography, release),
+	);
+	return {
+		areas,
+		catalogue,
+		locations,
+		spatial,
+		postcodes,
+		lineage,
+		translator,
+		validation,
+		capability,
+	};
+};
+
 /** Read-only public facade over focused immutable-artifact resolvers. */
 export class GeographyResolver {
 	private readonly areas: AreasResolver;
@@ -142,32 +178,21 @@ export class GeographyResolver {
 	private readonly lineage: LineageResolver;
 	private readonly translator: CrosswalkTranslator;
 	private readonly capability: CapabilityResolver;
+	private readonly validation: AreaValidation;
 
-	constructor(private readonly inputs: GeographyResolverInputs) {
-		this.areas = new AreasResolver(inputs);
-		this.catalogue = new CatalogueResolver(inputs);
-		this.locations = new LocationsResolver(inputs, this.catalogue);
-		this.spatial = new SpatialResolver(
-			inputs.areaGeometryCache,
-			(identity) => this.areas.area(identity),
-		);
-		this.postcodes = new PostcodeResolver(inputs);
-		this.lineage = new LineageResolver(
-			inputs.crosswalkLookup,
-			(identity) => this.areas.area(identity),
-			(identity) => this.areas.sameCode(identity),
-		);
-		this.translator = new CrosswalkTranslator(inputs);
-		this.capability = new CapabilityResolver(
-			inputs,
-			this.translator,
-			(identity, only) => this.lineage.relationships(identity, only),
-			() => this.lineage.hasAreaRelationships(),
-			(geography, release) =>
-				this.areas.boundaryRelease(geography, release),
-			(geography, release) =>
-				this.lineage.relatedCodes(geography, release),
-		);
+	constructor(
+		private readonly inputs: GeographyResolverInputs,
+		services = createGeographyServices(inputs),
+	) {
+		this.areas = services.areas;
+		this.catalogue = services.catalogue;
+		this.locations = services.locations;
+		this.spatial = services.spatial;
+		this.postcodes = services.postcodes;
+		this.lineage = services.lineage;
+		this.translator = services.translator;
+		this.validation = services.validation;
+		this.capability = services.capability;
 	}
 
 	/** Describe a required geography input when it is absent. */
@@ -308,208 +333,15 @@ export class GeographyResolver {
 		values: string[],
 		parents?: string[],
 	) {
-		const validated = this.areas.validateAreas(
+		return this.validation.validateAreas(
 			geography,
 			boundaryRelease,
 			values,
+			parents,
 		);
-		if (!validated || !parents) return validated;
-		const endpoint = { geography, boundaryRelease };
-		const resolved = validated.values.map((value, index) =>
-			this.resolveParent(value, parents[index] ?? "", endpoint),
-		);
-		return { values: resolved, summary: summariseBatch(resolved) };
 	}
-
-	/**
-	 * Ranks compiled releases by values that resolve exactly. The leading result
-	 * is a likely interpretation, never an implicit conversion or a join.
-	 */
 	matchAreaValues(values: string[], parents?: string[]) {
-		const candidates = this.areaReleases()
-			.map(({ geography, boundaryRelease }) => {
-				const validated = this.validateAreas(
-					geography,
-					boundaryRelease,
-					values,
-					parents,
-				);
-				if (!validated) return undefined;
-				const resolved = validated.values.filter(
-					(value) =>
-						value.status === "valid" || value.status === "matched",
-				).length;
-				return {
-					geography,
-					boundaryRelease,
-					resolved,
-					ambiguous: validated.values.filter(
-						(value) => value.status === "ambiguous",
-					).length,
-					summary: validated.summary,
-					values: validated.values,
-				};
-			})
-			.filter(
-				(candidate): candidate is NonNullable<typeof candidate> =>
-					candidate !== undefined && candidate.resolved > 0,
-			)
-			.sort(
-				(left, right) =>
-					right.resolved - left.resolved ||
-					left.ambiguous - right.ambiguous ||
-					right.boundaryRelease.localeCompare(left.boundaryRelease) ||
-					left.geography.localeCompare(right.geography),
-			);
-		const likely = candidates[0];
-		const origins = likely
-			? likely.values.flatMap((value) => {
-					if (value.kind !== "code") return [];
-					if ("presentIn" in value)
-						return value.presentIn.map(({ boundaryRelease }) => ({
-							geography: likely.geography,
-							boundaryRelease,
-						}));
-					if ("heldBy" in value)
-						return value.heldBy.flatMap(
-							({ geography, boundaryReleases }) =>
-								boundaryReleases.map((boundaryRelease) => ({
-									geography,
-									boundaryRelease,
-								})),
-						);
-					return [];
-				})
-			: [];
-		const recommendations = likely
-			? [
-					...new Map(
-						origins.flatMap((from) =>
-							(
-								["identity", "membership", "apportion"] as const
-							).flatMap((purpose) =>
-								this.translator
-									.paths(
-										from,
-										{
-											geography: likely.geography,
-											boundaryRelease:
-												likely.boundaryRelease,
-										},
-										purpose,
-									)
-									.map((path) => [path.id, path] as const),
-							),
-						),
-					).values(),
-				]
-			: [];
-		const mixedCodeSystems = likely?.values.some(
-			(value) =>
-				value.kind === "code" &&
-				(value.status === "other-geography" || "presentIn" in value),
-		);
-		// Releases that resolve the values exactly as well as the likely one,
-		// which the values alone cannot tell apart; the newest leads only by
-		// the sort, so they are named rather than passed over.
-		const tiedWith = likely
-			? candidates
-					.slice(1)
-					.filter(
-						(candidate) =>
-							candidate.resolved === likely.resolved &&
-							candidate.ambiguous === likely.ambiguous,
-					)
-					.map(({ geography, boundaryRelease }) => ({
-						geography,
-						boundaryRelease,
-					}))
-			: [];
-		return {
-			likely: likely && {
-				geography: likely.geography,
-				boundaryRelease: likely.boundaryRelease,
-				resolved: likely.resolved,
-				summary: likely.summary,
-				...(tiedWith.length > 0 ? { tiedWith } : {}),
-			},
-			candidates: candidates
-				.slice(0, 10)
-				.map(({ values: _values, ...candidate }) => candidate),
-			values: likely?.values ?? [],
-			verdict: !likely
-				? "unmatched"
-				: likely.summary.joinable
-					? "joinable"
-					: mixedCodeSystems
-						? "mixed-code-systems"
-						: "incomplete",
-			recommendations,
-		};
-	}
-
-	private resolveParent(
-		value: ValidatedValue,
-		parentValue: string,
-		endpoint: GeographyEndpoint,
-	): ValidatedValue {
-		if (value.kind !== "name" || value.status !== "ambiguous") return value;
-		const parent = parentValue.trim();
-		if (!parent) return value;
-		const parentCode = parent.toUpperCase();
-		const parentName = normalisePlaceName(parent);
-		const candidates = value.candidates.filter((candidate) => {
-			const relationships = this.relationships(
-				{ ...endpoint, code: candidate.code },
-				"within",
-			);
-			return relationships.some(
-				(relationship) =>
-					relationship.counterpart.code === parentCode ||
-					relationship.counterpart.labels.some(
-						(label) => normalisePlaceName(label) === parentName,
-					),
-			);
-		});
-		if (candidates.length !== 1) return value;
-		const candidate = candidates[0]!;
-		const relationship = this.relationships(
-			{ ...endpoint, code: candidate.code },
-			"within",
-		).find(
-			(entry) =>
-				entry.counterpart.code === parentCode ||
-				entry.counterpart.labels.some(
-					(label) => normalisePlaceName(label) === parentName,
-				),
-		)!;
-		const { candidates: _candidates, ...base } = value;
-		return {
-			...base,
-			kind: "name",
-			status: "matched",
-			match: candidate.match,
-			area: {
-				id: candidate.id,
-				code: candidate.code,
-				name: candidate.name,
-			},
-			parent: {
-				value: parentValue,
-				match:
-					relationship.counterpart.code === parentCode
-						? "code"
-						: "name",
-				area: {
-					id: relationship.counterpart.id,
-					code: relationship.counterpart.code,
-					name:
-						relationship.counterpart.labels[0] ??
-						relationship.counterpart.code,
-				},
-				crosswalk: relationship.crosswalk.id,
-			},
-		};
+		return this.validation.matchAreaValues(values, parents);
 	}
 	selectReleaseForDate(geography: string, month: string, country?: string) {
 		return this.areas.selectReleaseForDate(geography, month, country);
@@ -763,5 +595,7 @@ export class GeographyResolver {
 	}
 }
 
-export const createGeographyResolver = (inputs: GeographyResolverInputs) =>
-	new GeographyResolver(inputs);
+export const createGeographyResolver = (
+	inputs: GeographyResolverInputs,
+	services?: ReturnType<typeof createGeographyServices>,
+) => new GeographyResolver(inputs, services);

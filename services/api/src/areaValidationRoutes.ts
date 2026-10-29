@@ -77,10 +77,9 @@ export const handleAreaValidationRoutes = ({
 	if (!geography || !boundaryRelease) {
 		const unavailable = requireGeography(geographyResolver, "areas");
 		if (unavailable) return unavailable;
-		const matched = geographyResolver.matchAreaValues(
-			values,
-			parents.length > 0 ? parents : undefined,
-		);
+		const matched = (
+			context.areaValidation ?? geographyResolver
+		).matchAreaValues(values, parents.length > 0 ? parents : undefined);
 		const manifest = matchManifest(
 			releaseId,
 			values,
@@ -94,7 +93,9 @@ export const handleAreaValidationRoutes = ({
 		};
 		return matchReportResponse(releaseId, format, manifest, body);
 	}
-	const validated = geographyResolver.validateAreas(
+	const validated = (
+		context.areaValidation ?? geographyResolver
+	).validateAreas(
 		geography,
 		boundaryRelease,
 		values,

@@ -8,7 +8,10 @@ import { readAtlasLookups } from "../storage/atlasLookups";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
-import { createGeographyResolver } from "../areas/geographyResolver";
+import {
+	createGeographyResolver,
+	createGeographyServices,
+} from "../areas/geographyResolver";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import type { AtlasRelease } from "../storage/atlasRelease";
 import {
@@ -308,30 +311,34 @@ export const readAtlasCatalogues = (
 	const relationshipPathIndex = stage("relationship-path-index", () =>
 		createRelationshipPathIndex(relationshipPathInventory),
 	);
+	const geographyInputs = {
+		boundaryRegistry,
+		geographyInventory,
+		areaInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		areaGeometryCache,
+		namedLocationInventory,
+		namedLocationLookup,
+		get placeIndex() {
+			return placeIndex();
+		},
+		get areaSearchIndex() {
+			return areaSearchIndex();
+		},
+		postcodeIndex,
+		postcodeAreaIndex,
+		postcodeCountsIndex,
+		locationProjectionStore,
+		relationshipPathIndex,
+		relationshipCandidateInventory,
+	};
+	const geographyServices = stage("geography-services", () =>
+		createGeographyServices(geographyInputs),
+	);
 	const geographyResolver = stage("geography-resolver", () =>
-		createGeographyResolver({
-			boundaryRegistry,
-			geographyInventory,
-			areaInventory,
-			areaLookup,
-			crosswalkInventory,
-			crosswalkLookup,
-			areaGeometryCache,
-			namedLocationInventory,
-			namedLocationLookup,
-			get placeIndex() {
-				return placeIndex();
-			},
-			get areaSearchIndex() {
-				return areaSearchIndex();
-			},
-			postcodeIndex,
-			postcodeAreaIndex,
-			postcodeCountsIndex,
-			locationProjectionStore,
-			relationshipPathIndex,
-			relationshipCandidateInventory,
-		}),
+		createGeographyResolver(geographyInputs, geographyServices),
 	);
 	const validationReport = stage("validation-report", () =>
 		readValidationReport(apiRoot),
@@ -357,6 +364,7 @@ export const readAtlasCatalogues = (
 		geographyInventory,
 		areaInventory,
 		geographyResolver,
+		areaValidation: geographyServices.validation,
 		areaGeometryCache,
 		relationshipPathInventory,
 		crosswalkInventory,

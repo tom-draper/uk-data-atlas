@@ -315,3 +315,25 @@ test("recommends a published relationship for a code held by another geography",
 		["ward-to-authority/reverse/membership"],
 	);
 });
+
+test("uses the separately composed validation module", () => {
+	const context = testContext({ boundaryRegistry: registry, areaLookup });
+	const validation = context.areaValidation!;
+	let calls = 0;
+	const response = routeRequest(
+		"GET",
+		"/v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001",
+		{
+			...context,
+			areaValidation: {
+				matchAreaValues: validation.matchAreaValues.bind(validation),
+				validateAreas: (...args) => {
+					calls++;
+					return validation.validateAreas(...args);
+				},
+			},
+		},
+	);
+	assert.equal(response.status, 200);
+	assert.equal(calls, 1);
+});
