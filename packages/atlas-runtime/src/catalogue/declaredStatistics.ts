@@ -72,7 +72,8 @@ export type DeclaredRecords = {
 	/** Defaults to the header's `boundaryType` and `boundaryYear`. */
 	release?: (header: DeclaredHeader) => DeclaredRelease;
 	/** Releases tried, in order, for codes not in the first. */
-	alsoIn?: DeclaredRelease[];
+	alsoIn?:
+		DeclaredRelease[] | ((header: DeclaredHeader) => DeclaredRelease[]);
 };
 
 export type DeclaredDataset = {
@@ -90,7 +91,8 @@ export type DeclaredDataset = {
 	/** Defaults to `[{ from: "data" }]`. */
 	records?: DeclaredRecords[];
 	/** Shorthand for `alsoIn` on the default record set. */
-	alsoIn?: DeclaredRelease[];
+	alsoIn?:
+		DeclaredRelease[] | ((header: DeclaredHeader) => DeclaredRelease[]);
 	/** Shorthand for `release` on the default record set. */
 	release?: (header: DeclaredHeader) => DeclaredRelease;
 	/**
@@ -540,8 +542,34 @@ export function declaredStatistics(
 	);
 
 	return (areas) => {
-		const releaseOf = (release: DeclaredRelease) =>
-			areas.release(release.geography, release.year);
+		/**
+		 * The listed releases the atlas holds, in order. A year it holds no
+		 * release for is skipped, so a dataset can name its true year and
+		 * move onto that release once it is added.
+		 */
+		const held = (releases: DeclaredRelease[], context: string) => {
+			const found = releases.flatMap((release) => {
+				const match = areas.find(release.geography, release.year);
+				return match ? [match] : [];
+			});
+			if (found.length === 0)
+				throw new Error(
+					`${context}: the atlas holds none of ${releases.map(({ geography, year }) => `${geography} ${year}`).join(", ")}`,
+				);
+			return found;
+		};
+		/** A record set's releases for a part: its own, then its fallbacks. */
+		const listed = (set: DeclaredRecords, header: DeclaredHeader) => [
+			set.release
+				? set.release(header)
+				: {
+						geography: String(header.boundaryType),
+						year: Number(header.boundaryYear),
+					},
+			...(typeof set.alsoIn === "function"
+				? set.alsoIn(header)
+				: (set.alsoIn ?? [])),
+		];
 
 		/** Every observation in the file, in file order. */
 		function* walk(
@@ -599,15 +627,7 @@ export function declaredStatistics(
 						throw new Error(
 							`${context} has no ${set.from} records`,
 						);
-					const primary = set.release
-						? set.release(header)
-						: {
-								geography: String(header.boundaryType),
-								year: Number(header.boundaryYear),
-							};
-					const candidates = [primary, ...(set.alsoIn ?? [])].map(
-						releaseOf,
-					);
+					const candidates = held(listed(set, header), context);
 					const order: LaidOutArea[] = [];
 					if (onPart) areaLists.set(set.from, order);
 					for (const [recordKey, record] of Object.entries(records)) {
@@ -664,14 +684,12 @@ export function declaredStatistics(
 								throw new Error(
 									`${context}: record ${code} has no ${[parent.code, parent.name].filter(Boolean).join(" and ")}`,
 								);
-							const parentRelease = [
-								parent.release,
-								...(parent.alsoIn ?? []),
-							]
-								.map(releaseOf)
-								.find((candidate) =>
-									areas.has(candidate, parentCode),
-								);
+							const parentRelease = held(
+								[parent.release, ...(parent.alsoIn ?? [])],
+								context,
+							).find((candidate) =>
+								areas.has(candidate, parentCode),
+							);
 							if (!parentRelease)
 								throw new Error(
 									`${context}: ${parent.code} ${parentCode} is in no listed release`,

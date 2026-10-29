@@ -382,6 +382,41 @@ describe("declared statistics", () => {
 		).toThrow("example 2024: area E07000026 is in no listed release");
 	});
 
+	it("places records on a fallback until their true year's release is held", () => {
+		const text = JSON.stringify({
+			2025: {
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				data: { E06000001: { total: 3 } },
+			},
+		});
+		const database = write(
+			{
+				type: "example",
+				alsoIn: [{ geography: "localAuthority", year: 2024 }],
+				measures: [CRIMES],
+				fields: [{ path: "total", measure: "crimes" }],
+			},
+			text,
+		);
+		expect(
+			database
+				.prepare("SELECT area_code, release FROM v_observation")
+				.all()
+				.map((row) => ({ ...row })),
+		).toEqual([{ area_code: "E06000001", release: "2024-05-uk-bgc" }]);
+		expect(() =>
+			write(
+				{
+					type: "example",
+					measures: [CRIMES],
+					fields: [{ path: "total", measure: "crimes" }],
+				},
+				text,
+			),
+		).toThrow("example 2025: the atlas holds none of localAuthority 2025");
+	});
+
 	it("refuses keys that are not declared members", () => {
 		expect(() =>
 			write(
