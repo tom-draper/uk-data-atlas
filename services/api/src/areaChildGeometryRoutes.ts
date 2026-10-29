@@ -10,7 +10,7 @@ import {
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	problem,
@@ -31,7 +31,7 @@ export const handleAreaChildGeometryRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"area" | "geometryFor" | "relationships" | "explainAreaAbsence" | "missingRequirement" | "selectReleaseForDate">): ApiResponse | undefined => {
 	if (
 		segments.length !== 7 ||
 		segments[0] !== "v1" ||

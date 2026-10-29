@@ -9,7 +9,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	choices,
 	readChoice,
@@ -26,7 +26,7 @@ export const handleBoundaryRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"boundaryRelease" | "boundaryReleasesFor" | "compareBoundaryReleases" | "hasAreaRelease" | "selectReleaseForDate" | "missingRequirement" | "explainAreaAbsence">): ApiResponse | undefined => {
 	const geographyResolver = context.geographyResolver;
 
 	if (
