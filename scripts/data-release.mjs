@@ -22,9 +22,12 @@ import {
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
+import { DatabaseSync } from "node:sqlite";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATA = join(ROOT, "data/source");
+const BUILD = join(ROOT, "data/build");
+const DATABASES = ["atlas.sqlite", "atlas-cache.sqlite"];
 const CONFIG = join(ROOT, "data-release.json");
 const LOCAL_MARKER = join(DATA, ".source-release.json");
 const STAGING = join(ROOT, ".data-release");
@@ -86,6 +89,24 @@ const sha256OrNull = async (path) => {
 };
 
 const fileSize = async (path) => (await stat(path)).size;
+
+export async function validateReleaseDatabases(build = BUILD) {
+	const canonicalHash = `sha256:${await sha256(join(build, "atlas.sqlite"))}`;
+	const database = new DatabaseSync(join(build, "atlas-cache.sqlite"), {
+		readOnly: true,
+	});
+	try {
+		const stamp = database
+			.prepare("SELECT value FROM meta WHERE key = ?")
+			.get("atlas-sqlite-content-hash")?.value;
+		if (stamp !== canonicalHash)
+			fail(
+				`Cache release mismatch: expected ${canonicalHash}, found ${String(stamp)}.`,
+			);
+	} finally {
+		database.close();
+	}
+}
 
 export async function filesUnder(directory, prefix = "") {
 	const files = [];
@@ -289,7 +310,16 @@ async function publish(tag, targetRef = "HEAD") {
 			`GitHub release ${tag} already exists. Releases are immutable snapshots; choose a new data tag.`,
 		);
 
+	await validateReleaseDatabases();
 	const assets = await createArchives(tag);
+	const databases = [];
+	for (const name of DATABASES) {
+		const path = join(BUILD, name);
+		const bytes = await fileSize(path);
+		if (bytes >= MAX_UPLOAD_BYTES)
+			fail(`${name} exceeds GitHub's 2 GiB asset limit.`);
+		databases.push({ name, bytes, sha256: await sha256(path), path });
+	}
 	console.log(
 		`Uploading ${assets.length} data assets to ${repository}@${tag}...`,
 	);
@@ -298,6 +328,7 @@ async function publish(tag, targetRef = "HEAD") {
 		"create",
 		tag,
 		...assets.map((asset) => asset.path),
+		...databases.map((asset) => asset.path),
 		"--repo",
 		repository,
 		"--target",
@@ -315,6 +346,7 @@ async function publish(tag, targetRef = "HEAD") {
 		commit: target,
 		repository,
 		assets: assets.map(({ path: _path, ...asset }) => asset),
+		databases: databases.map(({ path: _path, ...asset }) => asset),
 	};
 	await writeFile(CONFIG, `${JSON.stringify(config, null, "\t")}\n`);
 	// data/ now matches the release exactly, so it becomes the merge base.
@@ -498,6 +530,49 @@ async function download(mode) {
 		fail(
 			"No data-release.json is committed and no local source data is available.",
 		);
+	}
+	if (config.databases !== undefined) {
+		if (
+			!Array.isArray(config.databases) ||
+			config.databases.length !== DATABASES.length ||
+			DATABASES.some(
+				(name) =>
+					!config.databases.some(
+						(item) =>
+							item.name === name &&
+							Number.isSafeInteger(item.bytes) &&
+							/^[0-9a-f]{64}$/.test(item.sha256),
+					),
+			)
+		)
+			fail("data-release.json has invalid database assets.");
+		const missing = [];
+		for (const asset of config.databases)
+			if ((await sha256OrNull(join(BUILD, asset.name))) !== asset.sha256)
+				missing.push(asset);
+		if (missing.length) {
+			const workspace = join(STAGING, `databases-${config.tag}`);
+			await mkdir(workspace, { recursive: true });
+			try {
+				for (const asset of missing) {
+					const path = join(workspace, asset.name);
+					const url = `https://github.com/${config.repository}/releases/download/${encodeURIComponent(config.tag)}/${encodeURIComponent(asset.name)}`;
+					await downloadFile(url, path);
+					if (
+						(await fileSize(path)) !== asset.bytes ||
+						(await sha256(path)) !== asset.sha256
+					)
+						fail(`Checksum verification failed for ${asset.name}.`);
+				}
+				for (const asset of missing)
+					await moveFile(
+						join(workspace, asset.name),
+						join(BUILD, asset.name),
+					);
+			} finally {
+				await rm(workspace, { recursive: true, force: true });
+			}
+		}
 	}
 	let marker = null;
 	try {
