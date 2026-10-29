@@ -233,6 +233,25 @@ Nowhere,Example Council,LAB,100`,
 		});
 	});
 
+	it("lists party votes in the party list's order", () => {
+		const dataset = parseLeapLocalElection(
+			`"Example Council","E06000001","Central","E05000001","Sam Example","C","280","0"
+"Example Council","E06000001","Central","E05000001","Lee Example","Lib","40","0"
+"Example Council","E06000001","Central","E05000001","Alex Example","Lab","320","1"`,
+			{
+				year: 2019,
+				boundaryYear: 2019,
+				source: "leap",
+				path: "leap.csv",
+			},
+		);
+		expect(Object.keys(dataset.data.E05000001.partyVotes)).toEqual([
+			"LAB",
+			"CON",
+			"OTHER",
+		]);
+	});
+
 	it("replaces LEAP ward codes no ward had with the ward the row names", () => {
 		const dataset = parseLeapLocalElection(
 			`"Huntingdonshire","E07000011","Little Paxton","E05008530","Alex Example","Lab","320","1"`,
