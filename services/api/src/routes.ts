@@ -2,7 +2,7 @@ import { unexpectedQueryParameter } from "@uk-data-atlas/atlas-runtime/api";
 import { handleRoute, handleRouteAsync } from "./routeHandlers";
 import type {
 	RequestBody,
-	RouteContext,
+	RouteDispatchContext,
 	RouteRequest,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
@@ -31,7 +31,7 @@ const notFound = () =>
 const buildRequest = (
 	method: "GET" | "POST",
 	url: string | undefined,
-	context: RouteContext,
+	context: RouteDispatchContext,
 	body: RequestBody | undefined,
 ): RouteRequest | ApiResponse => {
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
@@ -79,7 +79,7 @@ const buildRequest = (
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
-	context: RouteContext,
+	context: RouteDispatchContext,
 	body?: RequestBody,
 ): ApiResponse => {
 	if (method !== "GET" && method !== "POST") return methodNotAllowed();
@@ -91,7 +91,7 @@ export const route = (
 export const routeAsync = async (
 	method: string | undefined,
 	url: string | undefined,
-	context: RouteContext,
+	context: RouteDispatchContext,
 	body?: RequestBody,
 ): Promise<ApiResponse> => {
 	if (method !== "GET" && method !== "POST")

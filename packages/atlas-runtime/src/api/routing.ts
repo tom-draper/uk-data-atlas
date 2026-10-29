@@ -43,7 +43,7 @@ export type RouteContext = {
 	crosswalkInventory?: CrosswalkInventory;
 	atlasRelease?: AtlasRelease;
 	/** Compiled geography indexes and domain operations for this Atlas release. */
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<GeographyResolver, keyof GeographyResolver>;
 	relationshipPathInventory?: RelationshipPathInventory;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
@@ -96,8 +96,18 @@ export type RequestBody = { contentType: string; text: string };
 export const mediaType = (contentType: string) =>
 	contentType.split(";", 1)[0]!.trim().toLowerCase();
 
+export type RouteDispatchContext = Omit<RouteContext, "geographyResolver"> & {
+	geographyResolver: Omit<
+		RouteContext["geographyResolver"],
+		| "geometryCacheStats"
+		| "locationProjectionCacheStats"
+		| "warmGeometryReleases"
+		| "geographyHealth"
+	>;
+};
+
 export type RouteRequest = {
-	context: RouteContext;
+	context: RouteDispatchContext;
 	/**
 	 * POST only for an operation that takes a body, such as a column of codes
 	 * too long for a URL; every other request is GET.

@@ -4,7 +4,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/api";
 import { route } from "../src/routes";
 import type {
-	RouteContext,
+	RouteDispatchContext,
 	RouteRequest,
 } from "@uk-data-atlas/atlas-runtime/api";
 
@@ -12,7 +12,7 @@ import type {
 export const reportRequest = (
 	method: string | undefined,
 	url: string | undefined,
-	context: RouteContext,
+	context: RouteDispatchContext,
 ) => {
 	if (method !== "GET") return route(method, url, context);
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
