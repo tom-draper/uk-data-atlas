@@ -9,7 +9,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
-import type { AtlasRelease } from "../src/atlasRelease";
+import type { AtlasRelease } from "@uk-data-atlas/atlas-runtime/storage";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
 	CrosswalkArtifact,

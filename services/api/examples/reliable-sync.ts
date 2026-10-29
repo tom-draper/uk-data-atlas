@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { type AtlasClient, createClient, type Step } from "./client";
-import type { AtlasRelease } from "../src/atlasRelease";
+import type { AtlasRelease } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Reliable sync: ingest current data, verify what arrived, and on the next
