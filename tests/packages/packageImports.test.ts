@@ -17,6 +17,23 @@ const sourceFiles = (directory: string): string[] =>
 		return /\.(ts|tsx|mts)$/.test(name) ? [path] : [];
 	});
 
+it("does not add API re-export shims", () => {
+	const apiSource = join(process.cwd(), "services/api/src");
+	const entryPoints = new Set(["catalogueLoader.ts", "server.ts"]);
+	const shims = sourceFiles(apiSource).filter((file) => {
+		if (entryPoints.has(relative(apiSource, file))) return false;
+		const source = readFileSync(file, "utf8")
+			.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "")
+			.trim();
+		const exports =
+			/export\s+(?:type\s+)?(?:\*(?:\s+as\s+\w+)?|\{[^}]*\})\s+from\s+["'][^"']+["'];?/g;
+		return (
+			exports.test(source) && source.replace(exports, "").trim() === ""
+		);
+	});
+	expect(shims.map((file) => relative(apiSource, file))).toEqual([]);
+});
+
 const SPECIFIER =
 	/(?:^|[\s;])(?:import|export)\b[^"'`;]*?\bfrom\s*["']([^"']+)["']|(?:^|[\s;])import\s*["']([^"']+)["']|\bimport\(\s*["']([^"']+)["']\s*\)|\brequire\(\s*["']([^"']+)["']\s*\)/g;
 
