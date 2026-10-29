@@ -123,3 +123,39 @@ export const SEX: DeclaredDimension = {
 		{ key: "female", label: "Female", parent: "all" },
 	],
 };
+
+export const ELECTORATE = measure(
+	"electorate",
+	"Electorate",
+	"electors",
+	"count",
+	"sum",
+	"People registered to vote.",
+);
+
+export const VALID_VOTES = measure(
+	"valid-votes",
+	"Valid votes",
+	"votes",
+	"count",
+	"sum",
+	"Ballots counted as valid.",
+);
+
+export const REJECTED_BALLOTS = measure(
+	"rejected-ballots",
+	"Rejected ballots",
+	"ballots",
+	"count",
+	"sum",
+	"Ballots rejected at the count.",
+);
+
+export const TURNOUT = measure(
+	"turnout",
+	"Turnout",
+	"percent",
+	"share",
+	"weighted_mean",
+	"Ballots cast as a percentage of the electorate.",
+);
