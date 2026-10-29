@@ -94,8 +94,9 @@ export type DeclaredDataset = {
 	/** Record field holding the publisher's area name. */
 	name?: string;
 	/**
-	 * Record fields naming an area each record lies in, by code and name, with
-	 * the release the codes are on. Stored for datasets served from rows.
+	 * Record fields naming another area, by code and name, with the release
+	 * the codes are on: one each record lies in, or the area its publisher
+	 * used. Stored for datasets served from rows.
 	 */
 	parents?: DeclaredParent[];
 	/**
@@ -111,7 +112,8 @@ type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
 
 export type DeclaredParent = {
 	code: string;
-	name: string;
+	/** Absent when the record names the area by code only. */
+	name?: string;
 	release: DeclaredRelease;
 	/** Releases tried, in order, for codes not in the first. */
 	alsoIn?: DeclaredRelease[];
@@ -560,7 +562,10 @@ export function declaredStatistics(
 						}
 						const parents = (config.parents ?? []).map((parent) => {
 							const parentCode = record[parent.code];
-							const parentName = record[parent.name];
+							const parentName =
+								parent.name === undefined
+									? undefined
+									: record[parent.name];
 							if (
 								parentCode === undefined &&
 								parentName === undefined
@@ -568,10 +573,11 @@ export function declaredStatistics(
 								return undefined;
 							if (
 								typeof parentCode !== "string" ||
-								typeof parentName !== "string"
+								(parent.name !== undefined &&
+									typeof parentName !== "string")
 							)
 								throw new Error(
-									`${context}: record ${code} has no ${parent.code} and ${parent.name}`,
+									`${context}: record ${code} has no ${[parent.code, parent.name].filter(Boolean).join(" and ")}`,
 								);
 							const parentRelease = [
 								parent.release,
@@ -585,7 +591,8 @@ export function declaredStatistics(
 								throw new Error(
 									`${context}: ${parent.code} ${parentCode} is in no listed release`,
 								);
-							onName?.(parentRelease, parentCode, parentName);
+							if (typeof parentName === "string")
+								onName?.(parentRelease, parentCode, parentName);
 							return { release: parentRelease, code: parentCode };
 						});
 						if (onPart) order.push({ release, code, parents });
@@ -714,7 +721,9 @@ export function declaredStatistics(
 		>(
 			(config.parents ?? []).flatMap(({ code, name }, parent) => [
 				[code, { kind: "parent_code", parent }],
-				[name, { kind: "parent_name", parent }],
+				...(name === undefined
+					? []
+					: [[name, { kind: "parent_name", parent }] as const]),
 			]),
 		);
 
