@@ -18,10 +18,7 @@ import type {
 import type { AreaSearchIndex } from "./areaSearch";
 import type { PlaceIndex } from "../places/placeIndex";
 import type { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
-import type {
-	PostcodeCounts,
-	PostcodeCountsIndex,
-} from "@uk-data-atlas/postcodes";
+import type { PostcodeCountsIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
@@ -236,12 +233,6 @@ export class GeographyResolver {
 
 	postcodeIndex() {
 		return this.postcodes.postcodeIndex();
-	}
-	postcodeCounts(identity: AreaIdentity): PostcodeCounts | undefined {
-		return this.postcodes.postcodeCounts(identity);
-	}
-	postcodeAreaIndex() {
-		return this.postcodes.postcodeAreaIndex();
 	}
 	postcodeContainingAreas(
 		postcode: string,

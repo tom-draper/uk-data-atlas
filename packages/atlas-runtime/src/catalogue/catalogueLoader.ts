@@ -365,6 +365,7 @@ export const readAtlasCatalogues = (
 		areaInventory,
 		geographyResolver,
 		areaValidation: geographyServices.validation,
+		postcodes: geographyServices.postcodes,
 		areaGeometryCache,
 		relationshipPathInventory,
 		crosswalkInventory,

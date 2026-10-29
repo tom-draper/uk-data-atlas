@@ -82,6 +82,7 @@ const resolverFor = (inputs: TestContextInputs) => {
 	return {
 		resolver: createGeographyResolver(geographyInputs, services),
 		validation: services.validation,
+		postcodes: services.postcodes,
 	};
 };
 
@@ -191,6 +192,7 @@ export const testContext = (
 				: undefined),
 		geographyResolver: inputs.geographyResolver ?? built.resolver,
 		areaValidation: inputs.areaValidation ?? built.validation,
+		postcodes: inputs.postcodes ?? built.postcodes,
 	};
 };
 
