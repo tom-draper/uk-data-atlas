@@ -103,12 +103,12 @@ back to JSON. Keep `data/build/atlas.sqlite` under the repository root when
 deploying the API.
 The `documents` stage depends on `atlas-sqlite` because it loads API catalogues.
 
-`services/api/public/terrain-catalogue.json` remains a build intermediate for
+`data/build/artifacts/terrain-catalogue.json` remains a build intermediate for
 the shared SQLite writer. The API terrain loader
 no longer reads it. The API catalogue compiler, API atlas pages and website SEO compilers read
 dataset payloads from SQLite.
 Gazetteer core and boundary assets remain API build intermediates under
-`services/api/public/source-data/`. Legacy provenance artifact labels in API
+`data/build/artifacts/source-data/`. Legacy provenance artifact labels in API
 responses remain unchanged for byte compatibility.
 
 The Next.js atlas pages pass a map of output names to hash-versioned URLs into
@@ -273,8 +273,8 @@ server rendering and precompilation decompress the selected row. Old public
 copies are removed only after a validated import succeeds. Next.js builds only
 read these rows. API page and lookup routes read the gzip files under
 `atlas-assets/`, so include that directory alongside SQLite in API deployments.
-Other API build outputs remain under `services/api/public/` during the compiler
-migration. See `docs/data-pipeline-move.md` for the remaining work.
+Other build outputs live under `data/build/artifacts/`. See
+`docs/data-pipeline-move.md` for the migration history.
 
 ### Crosswalks
 

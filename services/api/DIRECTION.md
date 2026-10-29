@@ -380,12 +380,9 @@ cost:
   `atlas.sqlite` (dataset, measure, area, release, period, value) instead of
   one JSON payload per dataset, so most new datasets become configuration
   rather than compiler code. Started with one pilot dataset.
-- **The data build outside the API.** Move build code from
-  `services/api/scripts` into the shared pipeline, so the API only serves a
-  release, and the website stops importing pages and lookups from the API's
-  build output. Started with the `pipeline/` workspace and shared release asset
-  path. Compiler entry points and other API public outputs remain to move; see
-  [the inventory and move order](../../docs/data-pipeline-move.md).
+- **The data build outside the API.** Build code runs in `pipeline/` and
+  shared packages. The API serves the resulting release, and the website reads
+  shared release assets. See [the move plan](../../docs/data-pipeline-move.md).
 - **Heavy joins out of Node.** Consider DuckDB for large tabular and spatial
   joins in the build, which spills to disk instead of exhausting memory. Keep
   our own shared-arc tiler and boundary mappings.
