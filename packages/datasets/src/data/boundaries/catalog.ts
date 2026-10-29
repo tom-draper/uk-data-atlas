@@ -1086,6 +1086,16 @@ const CATALOG = {
 	countyElectoralDivision: {
 		releases: [
 			{
+				id: "2025-05-en-bgc",
+				year: 2025,
+				month: 5,
+				extent: "en",
+				codeKey: "CED25CD",
+				nameKey: "CED25NM",
+				holdReason:
+					"Held for the May 2025 county council results; the map draws the May 2023 divisions.",
+			},
+			{
 				id: "2023-05-en-bgc",
 				year: 2023,
 				month: 5,
@@ -1093,6 +1103,16 @@ const CATALOG = {
 				codeKey: "CED23CD",
 				nameKey: "CED23NM",
 				asset: asset("county-electoral-division", "2023-05-en-bgc"),
+			},
+			{
+				id: "2017-05-en-names",
+				year: 2017,
+				month: 5,
+				extent: "en",
+				codeKey: "CED17CD",
+				nameKey: "CED17NM",
+				holdReason:
+					"Names and codes only, for the May 2017 county council results; ONS published no boundaries.",
 			},
 		],
 	},
