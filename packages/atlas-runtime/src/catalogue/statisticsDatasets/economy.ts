@@ -5,7 +5,7 @@ import {
 	type DeclaredField,
 	periods,
 } from "../declaredStatistics";
-import { PER_100K, measure } from "./measures";
+import { measure, per100k } from "./measures";
 
 /** Pay, jobs, output, prices and the labour market. */
 
@@ -161,7 +161,7 @@ export const JOBS: DeclaredDataset = {
 		),
 	],
 	fields: [{ path: "totalJobs", measure: "total-jobs" }],
-	derived: PER_100K,
+	...per100k((record) => record.totalJobs),
 };
 
 export const BUSINESS_ACTIVITY: DeclaredDataset = {
@@ -178,7 +178,7 @@ export const BUSINESS_ACTIVITY: DeclaredDataset = {
 		),
 	],
 	fields: [{ path: "value", measure: "enterprises" }],
-	derived: PER_100K,
+	...per100k((record) => record.value, 2024),
 };
 
 export const CLAIMANT_COUNT: DeclaredDataset = {

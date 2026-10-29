@@ -1,5 +1,5 @@
 import { type DeclaredDataset, periods } from "../declaredStatistics";
-import { PER_100K, PREMISES, measure } from "./measures";
+import { PREMISES, measure, per100k } from "./measures";
 
 /** Energy, emissions, air, land, waste and connectivity. */
 
@@ -195,7 +195,7 @@ const consumption = (type: string, fuel: "electricity" | "gas") => ({
 		{ path: "{meter-type}", measure: `${fuel}-consumption` },
 		{ path: "metersThousands", measure: `${fuel}-meters` },
 	],
-	derived: PER_100K,
+	...per100k((record) => record.allMetersGwh),
 });
 export const ELECTRICITY_CONSUMPTION: DeclaredDataset = consumption(
 	"electricityConsumption",
@@ -221,7 +221,7 @@ export const ELECTRIC_VEHICLE_CHARGERS: DeclaredDataset = {
 		),
 	],
 	fields: [{ path: "value", measure: "public-ev-chargers" }],
-	derived: PER_100K,
+	...per100k((record) => record.value, 2024),
 };
 
 export const WASTE: DeclaredDataset = {
@@ -250,7 +250,7 @@ export const WASTE: DeclaredDataset = {
 		{ path: "value", measure: "collected-waste" },
 		{ path: "metrics.recycledTonnes", measure: "household-waste-recycled" },
 	],
-	derived: PER_100K,
+	...per100k((record) => record.value, 2024),
 };
 
 export const LAND_AREA: DeclaredDataset = {
