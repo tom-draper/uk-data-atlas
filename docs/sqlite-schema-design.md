@@ -536,8 +536,8 @@ area_releases.position`, which `series.release_id` already references), then
 ### Catalogue datasets as configuration (2026-10-27)
 
 Every catalogue dataset whose records are numbers keyed by area code is stored
-from a `DeclaredDataset` in `shared/statisticsDatasets/`, read by
-`shared/declaredStatistics.ts`. There is no per-dataset code.
+from a `DeclaredDataset` in `packages/atlas-runtime/src/catalogue/statisticsDatasets/`, read by
+`packages/atlas-runtime/src/catalogue/declaredStatistics.ts`. There is no per-dataset code.
 
 - **Value equivalence, not byte equivalence.** The compiled JSON stays the
   bytes the website and API serve (and is hashed), so these rows are checked
@@ -587,7 +587,7 @@ measure, because turning them into bounds would compute new values.
 ## How to port a dataset
 
 Most datasets are configuration: add a `DeclaredDataset` to
-`shared/statisticsDatasets/` and list it in `STATISTICS_DATASETS`. The schema
+`packages/atlas-runtime/src/catalogue/statisticsDatasets/` and list it in `STATISTICS_DATASETS`. The schema
 and the writer do not change.
 
 1. **Fields.** Each field is a path into a record (`breakdown.{tenure}`,
@@ -608,8 +608,8 @@ and the writer do not change.
 
 A dataset that needs code (a byte-exact rebuild, or a shape configuration
 cannot describe) writes a mapper instead, a function that returns a
-`StatisticsDataset` (`shared/atlasStatistics.ts`).
-`shared/fuelPovertyStatistics.ts` is the worked example.
+`StatisticsDataset` (`packages/atlas-runtime/src/catalogue/atlasStatistics.ts`).
+`packages/atlas-runtime/src/catalogue/fuelPovertyStatistics.ts` is the worked example.
 
 1. **Declare measures.** One per quantity, not per breakdown: `crime-count`,
    not `crime-burglary`. Reuse an existing slug when the meaning is the same
@@ -633,7 +633,7 @@ cannot describe) writes a mapper instead, a function that returns a
 7. **Rebuild the old output** from rows in a reader beside the mapper, and
    call it from `verify` so the build refuses to publish different bytes. Add
    the dataset to the list passed to `statisticsTables` in
-   `shared/buildAtlasSqlite.ts`, and point its reader at the rebuild.
+   `pipeline/src/buildAtlasSqlite.ts`, and point its reader at the rebuild.
 8. **Test** with a small fixture in `tests/server/` and the real data in
    `tests/built/`, as `atlasStatistics.test.ts` does.
 

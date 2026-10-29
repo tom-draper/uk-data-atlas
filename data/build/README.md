@@ -136,13 +136,13 @@ API tables or the complete compiled release.
 
 `atlas-sqlite` writes the canonical statistics tables from
 `docs/sqlite-schema-design.md` (layer 4). Every catalogue dataset is stored
-in them except those in `UNSTORED_DATASETS` (`shared/statisticsDatasets/`):
+in them except those in `UNSTORED_DATASETS` (`packages/atlas-runtime/src/catalogue/statisticsDatasets/`):
 the three election datasets and NHS waiting times. They are separate from the API's `observations` and
 `observation_*` tables, which `data-catalog` populates and step 4 retires.
 The base database schema version is 3; the `catalogue_*` pilot tables from PR #398
 are gone.
 
-All tables are `STRICT` with integer keys. Writer: `shared/atlasStatistics.ts`.
+All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/catalogue/atlasStatistics.ts`.
 
 | Table               | Key                                       | Meaning                                                                                        |
 | ------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -168,7 +168,7 @@ release, if an observed value is null, or if a dataset's `verify` hook fails.
 members, area code and name, geography, release, period, value, status,
 method, licence).
 
-Fuel poverty (`shared/fuelPovertyStatistics.ts`) maps each record field to a
+Fuel poverty (`packages/atlas-runtime/src/catalogue/fuelPovertyStatistics.ts`) maps each record field to a
 measure (`households`, `fuel-poor-households`, `fuel-poverty-rate`) on the 2021
 LSOA release. Record order is area code order and is not stored; the mapper
 refuses unordered input. The period header (`id`, `year`, `boundaryType`,
@@ -179,8 +179,8 @@ build refuses to publish if the rebuilt bytes differ from the payload. Rebuild
 older databases with `pnpm data:build --only atlas-sqlite` before deploying the
 new reader.
 
-The other datasets are configuration in `shared/statisticsDatasets/`, read by
-`shared/declaredStatistics.ts`. Each config names the record fields that hold
+The other datasets are configuration in `packages/atlas-runtime/src/catalogue/statisticsDatasets/`, read by
+`packages/atlas-runtime/src/catalogue/declaredStatistics.ts`. Each config names the record fields that hold
 values, the measure and dimension members each one is, and the period. Every
 number in a record must be claimed by a field or listed as `derived` with a
 reason (per-100k figures, percentages the compiler computes, copies), and the
