@@ -6,7 +6,16 @@ import {
 	type DeclaredHeader,
 	periods,
 } from "../declaredStatistics";
-import { LIFE_EXPECTANCY, POPULATION, SEX, measure } from "./measures";
+import {
+	ELECTORATE,
+	LIFE_EXPECTANCY,
+	POPULATION,
+	REJECTED_BALLOTS,
+	SEX,
+	TURNOUT,
+	VALID_VOTES,
+	measure,
+} from "./measures";
 
 /** Population, life expectancy, deprivation and the EU referendum. */
 
@@ -307,30 +316,9 @@ export const NIMDM: DeclaredDataset = {
 };
 
 const REFERENDUM = [
-	measure(
-		"electorate",
-		"Electorate",
-		"electors",
-		"count",
-		"sum",
-		"People registered to vote.",
-	),
-	measure(
-		"valid-votes",
-		"Valid votes",
-		"votes",
-		"count",
-		"sum",
-		"Ballots counted as valid.",
-	),
-	measure(
-		"rejected-ballots",
-		"Rejected ballots",
-		"ballots",
-		"count",
-		"sum",
-		"Ballots rejected at the count.",
-	),
+	ELECTORATE,
+	VALID_VOTES,
+	REJECTED_BALLOTS,
 	measure(
 		"referendum-votes",
 		"Referendum votes",
@@ -348,14 +336,7 @@ const REFERENDUM = [
 		"Votes for an answer as a percentage of valid votes.",
 		{ numerator: "referendum-votes", denominator: "valid-votes" },
 	),
-	measure(
-		"turnout",
-		"Turnout",
-		"percent",
-		"share",
-		"weighted_mean",
-		"Ballots cast as a percentage of the electorate.",
-	),
+	TURNOUT,
 ];
 const ANSWER: DeclaredDimension = {
 	slug: "referendum-answer",
