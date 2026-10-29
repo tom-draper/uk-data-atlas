@@ -12,7 +12,7 @@ The gazetteer is a **browser-side projection** of UK geography, shaped around
 the boundary releases, code mappings and crosswalks the map needs. It is not
 the canonical geography source. That role belongs to the API's own geography
 compiler (`services/api/README.md`, "API-owned geography compiler and completeness",
-served by `GeographyResolver` in `services/api/src/geographyResolver.ts`), which compiles
+served by `GeographyResolver` in `packages/atlas-runtime/src/areas/geographyResolver.ts`), which compiles
 complete, release-aware areas, relationships, crosswalks, place definitions,
 spatial indexes, change events and coverage reports from the raw releases.
 

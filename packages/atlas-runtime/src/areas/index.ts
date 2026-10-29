@@ -55,3 +55,4 @@ export type {
 	ReleaseComparisonSources,
 } from "./resolver/releaseComparison";
 export * from "./resolver/spatial";
+export * from "./resolver/postcodes";

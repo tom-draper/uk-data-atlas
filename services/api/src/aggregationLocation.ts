@@ -10,7 +10,10 @@ export const resolveAggregationLocation = ({
 	geographyResolver,
 }: {
 	locationId: string | null;
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<
+		GeographyResolver,
+		"missingRequirement" | "namedLocation"
+	>;
 }): NamedLocation | ApiResponse | undefined => {
 	if (!locationId) return undefined;
 	const unavailable = requireGeography(geographyResolver, "named-locations");

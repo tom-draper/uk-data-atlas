@@ -38,7 +38,7 @@ export const parseAggregateQuery = ({
 	parsedUrl: URL;
 	measureId: string;
 	measure: Measure;
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<GeographyResolver, "places">;
 }): AggregateQuery | ApiResponse => {
 	if (
 		parsedUrl.searchParams.has("release") ||

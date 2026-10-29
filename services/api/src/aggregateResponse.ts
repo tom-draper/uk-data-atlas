@@ -51,7 +51,7 @@ export const buildAggregateResponse = ({
 	weightDescription?: string;
 	locationCoverage?: LocationCoverage;
 	coverage?: AggregateCoverage;
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<GeographyResolver, "countryIdentity">;
 	areaCode: string | null;
 }): ApiResponse => {
 	const country = location

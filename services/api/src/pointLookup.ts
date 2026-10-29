@@ -345,7 +345,7 @@ export const parseLookupRequest = (
 
 /** What a caller needs to know about a release before reading any match. */
 export const describeLookupRelease = (
-	geographyResolver: GeographyResolver,
+	geographyResolver: Pick<GeographyResolver, "releaseGeometrySource">,
 	lookupRelease: LookupRelease,
 ) => {
 	if (lookupRelease.status !== "selected") {
@@ -484,7 +484,15 @@ const tolerance = (
  * geometry; its answer is the one the geometry would give.
  */
 export const locatePoints = (
-	geographyResolver: GeographyResolver,
+	geographyResolver: Pick<
+		GeographyResolver,
+		| "postcodeContainingAreas"
+		| "containingAreas"
+		| "containingCodes"
+		| "releaseGeometrySource"
+		| "hasAreaRelease"
+		| "boundaryReleasesFor"
+	>,
 	request: LookupRequest,
 	points: LookupPoint[],
 	postcodes: Array<string | undefined> = [],

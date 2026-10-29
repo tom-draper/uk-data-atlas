@@ -2,7 +2,7 @@ import { releaseKey } from "@uk-data-atlas/geography";
 import type { GeographyResolver } from "../areas/geographyResolver";
 
 export const geographyHealthReport = (
-	geographyResolver: GeographyResolver,
+	geographyResolver: Pick<GeographyResolver, "geographyHealth">,
 	{
 		geography,
 		country,
