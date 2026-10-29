@@ -756,17 +756,26 @@ area_releases.position`, which `series.release_id` already references), then
   `LAcode`. This changes SIMD's hash.
 - SIMD declares its council area parent. 51 datasets are served from rows.
 
+### Step 4, batch 10: predecessor lists and status fields (2026-10-29)
+
+- A parent's code is a path into the record, so a list of codes is one
+  parent per index. Unemployment's four unitaries formed in 2023 list the
+  districts their figures were built from (`derivedFromPredecessors`); each
+  is a parent on the 2021 district release.
+- A field's `status` names the record path holding the value's status and
+  the JSON written there for each one. Its `status` leaf writes that JSON
+  back from the observation's stored status, so the flag needs no rows of
+  its own. Brexit by constituency's `isKnownResult` is `true` when observed
+  and `false` when estimated.
+- Batch 10 adds unemployment and Brexit by constituency. 53 datasets are
+  served from rows; stored payload JSON is 13 MB.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker                                       | Datasets                                                                       |
-| --------------------------------------------- | ------------------------------------------------------------------------------ |
-| A per-record list of predecessor codes        | unemployment (`derivedFromPredecessors` on four new unitaries)                 |
-| A record field holding the observation status | Brexit by constituency (`isKnownResult` is true unless the share is estimated) |
-| Not stored as rows                            | the three election datasets, NHS waiting times (#488)                          |
-
-Status flags need a new leaf kind. Predecessor lists
-are succession, which crosswalks can supply.
+| Blocker            | Datasets                                              |
+| ------------------ | ----------------------------------------------------- |
+| Not stored as rows | the three election datasets, NHS waiting times (#488) |
 
 ### Catalogue datasets as configuration (2026-10-27)
 
