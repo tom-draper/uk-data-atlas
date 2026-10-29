@@ -142,7 +142,10 @@ export type StatisticsDataset = {
  * One leaf of a record, in the record's key order. Every record of a part has
  * the same leaves; only the area and its values change.
  */
-export type StatisticsLayoutLeaf = { path: string[] } & (
+export type StatisticsLayoutLeaf = {
+	/** Keys from the record down; a key into an array is its index. */
+	path: (string | number)[];
+} & (
 	| {
 			kind: "value" | "lower" | "upper";
 			/** Index into the dataset's `series`. */

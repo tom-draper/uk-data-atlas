@@ -2,7 +2,7 @@ import type { DatabaseSync } from "node:sqlite";
 import type { DerivedRule, Json } from "./declaredStatistics";
 
 type Leaf = {
-	path: string[];
+	path: (string | number)[];
 	kind: string;
 	series: number | null;
 	period: number | null;
@@ -20,17 +20,25 @@ type Row = {
 	upper: number | null;
 };
 
-const place = (record: Record<string, Json>, path: string[], value: Json) => {
-	let node = record;
-	for (const key of path.slice(0, -1)) {
+type Node = Record<string, Json> | Json[];
+
+/** Set a leaf, making the objects and arrays above it; a number keys an array. */
+const place = (record: Node, path: (string | number)[], value: Json) => {
+	let node = record as Record<string | number, Json>;
+	for (const [index, key] of path.slice(0, -1).entries()) {
 		const child = node[key];
-		if (child === undefined) node = node[key] = {};
+		const array = typeof path[index + 1] === "number";
+		if (child === undefined)
+			node = (node[key] = array ? [] : {}) as Record<
+				string | number,
+				Json
+			>;
 		else if (
 			child !== null &&
 			typeof child === "object" &&
-			!Array.isArray(child)
+			Array.isArray(child) === array
 		)
-			node = child;
+			node = child as Record<string | number, Json>;
 		else throw new Error(`Layout path ${path.join(".")} crosses a value`);
 	}
 	node[path[path.length - 1]] = value;
@@ -173,7 +181,11 @@ function records(
 		for (const [rule, compute] of Object.entries(rules))
 			for (const leaf of derived)
 				if (leaf.rule === rule && !lacking?.has(leaves.indexOf(leaf)))
-					place(record, leaf.path, compute(record, leaf.path));
+					place(
+						record,
+						leaf.path,
+						compute(record, leaf.path.map(String)),
+					);
 		result[code] = record;
 	}
 	return result;
