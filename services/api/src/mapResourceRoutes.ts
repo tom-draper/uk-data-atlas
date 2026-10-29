@@ -15,7 +15,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -69,7 +69,7 @@ const unavailable = () =>
 
 /** One tier of a release, whole, in the format asked for. */
 const featureDownload = (
-	context: RouteRequest["context"],
+	context: RouteRequestFor<"areaCodes">["context"],
 	releaseId: string,
 	parsedUrl: URL,
 	features: MapResourceDescriptor["features"],
@@ -225,7 +225,7 @@ export const handleMapResourceRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"areaCodes">): ApiResponse | undefined => {
 	if (segments[0] !== "v1" || segments[1] !== "map-resources")
 		return undefined;
 	const { mapResources, mapArchives } = context;
