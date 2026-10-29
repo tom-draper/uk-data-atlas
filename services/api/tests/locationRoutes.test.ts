@@ -275,6 +275,7 @@ test("uses a location's declared member geography for direct membership", () => 
 			boundaryRegistry: registry,
 			namedLocationInventory: inventory,
 			areaValidation: createGeographyServices({}).validation,
+			postcodes: createGeographyServices({}).postcodes,
 			geographyResolver: createGeographyResolver({
 				areaLookup,
 				namedLocationLookup: lookup,
@@ -300,6 +301,7 @@ test("uses a location's declared member geography for direct membership", () => 
 			boundaryRegistry: registry,
 			namedLocationInventory: inventory,
 			areaValidation: createGeographyServices({}).validation,
+			postcodes: createGeographyServices({}).postcodes,
 			geographyResolver: createGeographyResolver({
 				areaLookup,
 				namedLocationLookup: lookup,
@@ -343,6 +345,7 @@ test("resolves a named location into another geography through a crosswalk", () 
 		boundaryRegistry: registry,
 		crosswalkInventory: inventory,
 		areaValidation: createGeographyServices({}).validation,
+		postcodes: createGeographyServices({}).postcodes,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,
@@ -450,6 +453,7 @@ test("resolves a named location into another geography through a crosswalk", () 
 	const withoutProjections: RouteContext = {
 		...context,
 		areaValidation: createGeographyServices({}).validation,
+		postcodes: createGeographyServices({}).postcodes,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,
@@ -545,6 +549,7 @@ test("says which parents a named location covers or meets", () => {
 		boundaryRegistry: registry,
 		crosswalkInventory: inventory,
 		areaValidation: createGeographyServices({}).validation,
+		postcodes: createGeographyServices({}).postcodes,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,

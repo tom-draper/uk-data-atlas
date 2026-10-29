@@ -17,6 +17,7 @@ const paths = compileRelationshipPaths(crosswalkInventory);
 const context: RouteContext = {
 	boundaryRegistry: registry,
 	areaValidation: createGeographyServices({}).validation,
+	postcodes: createGeographyServices({}).postcodes,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry: registry,
 		areaLookup,

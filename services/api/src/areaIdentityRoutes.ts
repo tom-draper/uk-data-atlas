@@ -4,7 +4,10 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteContext,
+	RouteRequestFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
 import { areaDossier } from "./areaDossierRoutes";
 import { areaCapabilities } from "./areaCapabilityRoutes";
@@ -22,7 +25,6 @@ export const handleAreaIdentityRoutes = ({
 	segments,
 }: RouteRequestFor<
 	| "area"
-	| "postcodeCounts"
 	| "explainAreaAbsence"
 	| "missingRequirement"
 	| "boundaryRelease"
@@ -36,7 +38,8 @@ export const handleAreaIdentityRoutes = ({
 	| "crosswalkSummary"
 	| "crosswalk"
 	| "namedLocationsForArea"
->): ApiResponse | undefined => {
+> & { context: Required<Pick<RouteContext, "postcodes">> }):
+	ApiResponse | undefined => {
 	if (
 		segments.length !== 5 ||
 		segments[0] !== "v1" ||
@@ -98,7 +101,7 @@ export const handleAreaIdentityRoutes = ({
 			? areaGeometryMetrics(context, identity)
 			: undefined;
 		if (metrics && "response" in metrics) return metrics.response;
-		const postcodes = geographyResolver.postcodeCounts({
+		const postcodes = context.postcodes.postcodeCounts({
 			geography,
 			boundaryRelease,
 			code: area.code,

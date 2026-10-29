@@ -148,6 +148,7 @@ const areaLookup = createAreaLookup([
 const context = (withGeometry = true): RouteContext => ({
 	boundaryRegistry,
 	areaValidation: createGeographyServices({}).validation,
+	postcodes: createGeographyServices({}).postcodes,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,
 		areaLookup,

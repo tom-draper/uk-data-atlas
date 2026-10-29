@@ -12,6 +12,7 @@ import type { GeographyInventory } from "../areas/geographyInventory";
 import type { LookupManifest } from "../areas/lookupExports";
 import type { FullDetailSource } from "../areas/fullDetailDownloads";
 import type { GeographyResolver } from "../areas/geographyResolver";
+import type { PostcodeResolver } from "../areas/resolver/postcodes";
 import type { AreaValidation } from "../areas/resolver/areaValidation";
 import type { AreaGeometryCache } from "../geometry/areaGeometry";
 import type {
@@ -48,6 +49,7 @@ export type RouteContext = {
 	geographyResolver: Pick<GeographyResolver, keyof GeographyResolver>;
 	areaGeometryCache?: AreaGeometryCache;
 	areaValidation: Pick<AreaValidation, "validateAreas" | "matchAreaValues">;
+	postcodes: Pick<PostcodeResolver, "postcodeCounts">;
 	relationshipPathInventory?: RelationshipPathInventory;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
@@ -129,9 +131,9 @@ export type RouteRequest = {
 /** A route's geography operations, limited to those it uses. */
 export type RouteContextFor<K extends keyof GeographyResolver> = Omit<
 	RouteContext,
-	"geographyResolver" | "areaValidation"
+	"geographyResolver" | "areaValidation" | "postcodes"
 > &
-	Partial<Pick<RouteContext, "areaValidation">> &
+	Partial<Pick<RouteContext, "areaValidation" | "postcodes">> &
 	([K] extends [never]
 		? object
 		: { geographyResolver: Pick<GeographyResolver, K> });

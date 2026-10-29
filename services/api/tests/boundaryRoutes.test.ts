@@ -227,6 +227,7 @@ test("resolves the boundary release to use for a date", () => {
 			],
 		},
 		areaValidation: createGeographyServices({}).validation,
+		postcodes: createGeographyServices({}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry: {
 				...registry,
@@ -310,6 +311,7 @@ test("compares release code sets without claiming that differences are geography
 	const context: RouteContext = {
 		boundaryRegistry,
 		areaValidation: createGeographyServices({}).validation,
+		postcodes: createGeographyServices({}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
@@ -452,6 +454,7 @@ test("summarises published release mappings as directional cardinality evidence"
 	const context: RouteContext = {
 		boundaryRegistry,
 		areaValidation: createGeographyServices({}).validation,
+		postcodes: createGeographyServices({}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
@@ -639,6 +642,7 @@ test("reports published extent continuity findings separately from code-set evid
 	const context: RouteContext = {
 		boundaryRegistry,
 		areaValidation: createGeographyServices({}).validation,
+		postcodes: createGeographyServices({}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
