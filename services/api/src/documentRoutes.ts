@@ -3,7 +3,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * Immutable build evidence. These are deliberately documents rather than a
@@ -13,7 +13,7 @@ export const handleDocumentRoutes = ({
 	context,
 	releaseId,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<never>): ApiResponse | undefined => {
 	if (
 		segments.length !== 3 ||
 		segments[0] !== "v1" ||

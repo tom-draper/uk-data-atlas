@@ -3,7 +3,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	choices,
 	readChoice,
@@ -68,7 +68,7 @@ const handleElevationPoint = ({
 	context,
 	releaseId,
 	parsedUrl,
-}: RouteRequest): ApiResponse => {
+}: RouteRequestFor<never>): ApiResponse => {
 	const request = parseElevationPointRequest(parsedUrl);
 	if ("status" in request) return request;
 	const provider = context.terrainProvider;
@@ -93,7 +93,7 @@ export const handleTerrainRoutesAsync = async ({
 	releaseId,
 	segments,
 	parsedUrl,
-}: RouteRequest): Promise<ApiResponse | undefined> => {
+}: RouteRequestFor<never>): Promise<ApiResponse | undefined> => {
 	if (segments[0] !== "v1" || segments[1] !== "terrain") return undefined;
 	if (!isElevationPointRoute(segments))
 		return handleTerrainRoutes({
@@ -141,7 +141,7 @@ export const handleTerrainRoutes = ({
 	releaseId,
 	segments,
 	parsedUrl,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<never>): ApiResponse | undefined => {
 	if (segments[0] !== "v1" || segments[1] !== "terrain") return undefined;
 	if (
 		segments[2] === "elevation" &&
