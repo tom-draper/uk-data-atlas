@@ -5,7 +5,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 
 /** Published crosswalk metadata and stable record pagination. */
 export const handleCrosswalkRoutes = ({
@@ -13,7 +13,7 @@ export const handleCrosswalkRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"missingRequirement" | "crosswalk" | "crosswalkSummaries">): ApiResponse | undefined => {
 	const resolver = context.geographyResolver;
 	if (
 		segments.length === 2 &&

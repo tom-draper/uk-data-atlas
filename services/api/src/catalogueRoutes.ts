@@ -3,7 +3,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { searchMeasures } from "./measureTerms";
 
 /** Dataset and measure metadata discovery, separate from analytical operations. */
@@ -12,7 +12,7 @@ export const handleCatalogueRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<never>): ApiResponse | undefined => {
 	const { dataCatalog } = context;
 	const withEvidence = <T extends { id: string }>(measure: T) =>
 		context.documents?.has(`measure-${measure.id}`)
