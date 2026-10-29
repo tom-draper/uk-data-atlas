@@ -1,11 +1,13 @@
 import type { StatisticsMeasure } from "../atlasStatistics";
 import {
 	type DeclaredDataset,
+	type DeclaredHeader,
 	type DeclaredDimension,
 	type DeclaredField,
 	type DerivedRule,
 	periods,
 } from "../declaredStatistics";
+import { ICB_ODS_TO_GSS } from "@uk-data-atlas/datasets/data/nhs-waiting/icbToGss";
 import { measure } from "./measures";
 
 /** Crime, safety, housing need, care, planning, health and schools. */
@@ -755,6 +757,74 @@ export const SCHOOL_PERFORMANCE_DISADVANTAGE: DeclaredDataset = {
 				return Number((ahead - behind).toFixed(1));
 			},
 			...latestCopyRules(GAP_COPIES),
+		},
+	},
+};
+
+const MONTHS = [
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+];
+
+/** The header's `month`, such as "March 2026". */
+const headerMonth = (_key: string, header: DeclaredHeader) => {
+	const [name, year] = String(header.month).split(" ");
+	const month = MONTHS.indexOf(name) + 1;
+	if (!month || !Number(year))
+		throw new Error(`nhsWaiting: unreadable month ${header.month}`);
+	return periods.month(Number(year), month);
+};
+
+export const NHS_WAITING: DeclaredDataset = {
+	type: "nhsWaiting",
+	name: "icbName",
+	/** Keyed by NHS organisation code, on the boards in force to March 2026. */
+	keys: ICB_ODS_TO_GSS,
+	release: () => ({ geography: "integratedCareBoard", year: 2023 }),
+	period: headerMonth,
+	measures: [
+		measure(
+			"rtt-incomplete-pathways",
+			"Patients waiting to start treatment",
+			"pathways",
+			"count",
+			"sum",
+			"Incomplete referral to treatment pathways at the end of the month.",
+		),
+		measure(
+			"rtt-incomplete-pathways-over-18-weeks",
+			"Patients waiting over 18 weeks",
+			"pathways",
+			"count",
+			"sum",
+			"Incomplete referral to treatment pathways waiting more than 18 weeks at the end of the month.",
+		),
+	],
+	fields: [
+		{ path: "total", measure: "rtt-incomplete-pathways" },
+		{
+			path: "over18Weeks",
+			measure: "rtt-incomplete-pathways-over-18-weeks",
+		},
+	],
+	derived: {
+		pctOver18Weeks: "The share of pathways waiting over 18 weeks.",
+	},
+	rebuild: {
+		derived: {
+			pctOver18Weeks: (record) =>
+				((record.over18Weeks as number) / (record.total as number)) *
+				100,
 		},
 	},
 };
