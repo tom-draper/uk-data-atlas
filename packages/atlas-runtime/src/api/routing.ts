@@ -12,6 +12,7 @@ import type { GeographyInventory } from "../areas/geographyInventory";
 import type { LookupManifest } from "../areas/lookupExports";
 import type { FullDetailSource } from "../areas/fullDetailDownloads";
 import type { GeographyResolver } from "../areas/geographyResolver";
+import type { AreaValidation } from "../areas/resolver/areaValidation";
 import type { AreaGeometryCache } from "../geometry/areaGeometry";
 import type {
 	LocationProjectionInventory,
@@ -46,6 +47,7 @@ export type RouteContext = {
 	/** Compiled geography indexes and domain operations for this Atlas release. */
 	geographyResolver: Pick<GeographyResolver, keyof GeographyResolver>;
 	areaGeometryCache?: AreaGeometryCache;
+	areaValidation?: Pick<AreaValidation, "validateAreas" | "matchAreaValues">;
 	relationshipPathInventory?: RelationshipPathInventory;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
@@ -127,7 +129,10 @@ export type RouteRequest = {
 export type RouteContextFor<K extends keyof GeographyResolver> = Omit<
 	RouteContext,
 	"geographyResolver"
-> & ([K] extends [never] ? object : { geographyResolver: Pick<GeographyResolver, K> });
+> &
+	([K] extends [never]
+		? object
+		: { geographyResolver: Pick<GeographyResolver, K> });
 export type RouteRequestFor<K extends keyof GeographyResolver> = Omit<
 	RouteRequest,
 	"context"

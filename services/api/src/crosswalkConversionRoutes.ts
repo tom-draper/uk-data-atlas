@@ -34,7 +34,13 @@ export const handleCrosswalkConversionRoutes = ({
 	segments,
 	method,
 	body,
-}: RouteRequestFor<"missingRequirement" | "areaCodes" | "crosswalk" | "indexedPathSteps" | "validateAreas">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "missingRequirement"
+	| "areaCodes"
+	| "crosswalk"
+	| "indexedPathSteps"
+	| "validateAreas"
+>): ApiResponse | undefined => {
 	const id = crosswalkConversionId(segments);
 	if (id === undefined) return undefined;
 	if (method !== "POST")
@@ -86,7 +92,7 @@ export const handleCrosswalkConversionRoutes = ({
 		);
 	const rows = readPostedRows(body, { withValues: true });
 	if ("status" in rows) return rows;
-	const validation = resolver.validateAreas(
+	const validation = (context.areaValidation ?? resolver).validateAreas(
 		artifact.from.geography,
 		artifact.from.boundaryRelease,
 		rows.areas,

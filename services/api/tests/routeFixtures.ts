@@ -4,6 +4,7 @@ import { createAreaLookup } from "../src/areaInventory";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	createGeographyResolver,
+	createGeographyServices,
 	type GeographyResolverInputs,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { route as routeRequest } from "../src/routes";
@@ -44,8 +45,8 @@ export type TestContextInputs = Partial<RouteContext> & {
 	areaGeometryCache?: GeographyResolverInputs["areaGeometryCache"];
 };
 
-const resolverFor = (inputs: TestContextInputs) =>
-	createGeographyResolver({
+const resolverFor = (inputs: TestContextInputs) => {
+	const geographyInputs = {
 		boundaryRegistry: inputs.boundaryRegistry,
 		geographyInventory: inputs.geographyInventory,
 		areaInventory: inputs.areaInventory,
@@ -76,7 +77,13 @@ const resolverFor = (inputs: TestContextInputs) =>
 			? createRelationshipPathIndex(inputs.relationshipPathInventory)
 			: undefined,
 		relationshipCandidateInventory: inputs.relationshipCandidateInventory,
-	});
+	};
+	const services = createGeographyServices(geographyInputs);
+	return {
+		resolver: createGeographyResolver(geographyInputs, services),
+		validation: services.validation,
+	};
+};
 
 // Most tests exercise one narrow dependency combination. This fixture adapter
 // keeps those cases concise while ensuring the production router only accepts
@@ -165,6 +172,13 @@ export const testContext = (
 		...resources
 	} = inputs;
 	const withRegistry = { boundaryRegistry: registry, ...inputs };
+	const built = inputs.geographyResolver
+		? undefined
+		: resolverFor({
+				...withRegistry,
+				areaGeometryCache:
+					inputs.areaGeometryCache ?? areaGeometryCache,
+			});
 	return {
 		...resources,
 		areaGeometryCache: inputs.areaGeometryCache ?? areaGeometryCache,
@@ -178,13 +192,8 @@ export const testContext = (
 						),
 					)
 				: undefined),
-		geographyResolver:
-			inputs.geographyResolver ??
-			resolverFor({
-				...withRegistry,
-				areaGeometryCache:
-					inputs.areaGeometryCache ?? areaGeometryCache,
-			}),
+		geographyResolver: inputs.geographyResolver ?? built!.resolver,
+		areaValidation: inputs.areaValidation ?? built?.validation,
 	};
 };
 
