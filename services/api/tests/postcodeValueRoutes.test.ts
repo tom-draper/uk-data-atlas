@@ -199,7 +199,7 @@ const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({
 	],
 	measureCompatibilityInventory,
 	areaValidation: createGeographyServices({}).validation,
-	postcodes: createGeographyServices({}).postcodes,
+	postcodes: createGeographyServices({ postcodeIndex: index }).postcodes,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,
 		areaLookup,
@@ -385,7 +385,10 @@ test("answers a postcode's value from the postcode area index without reading ge
 	const areaGeometryCache = new AreaGeometryCache(root, geometrySources, 6);
 	const compiled = context({
 		areaValidation: createGeographyServices({}).validation,
-		postcodes: createGeographyServices({}).postcodes,
+		postcodes: createGeographyServices({
+			postcodeIndex: index,
+			postcodeAreaIndex: areaIndex,
+		}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,

@@ -231,9 +231,6 @@ export class GeographyResolver {
 		return this.inputs.geographyInventory;
 	}
 
-	postcodeIndex() {
-		return this.postcodes.postcodeIndex();
-	}
 	postcodeContainingAreas(
 		postcode: string,
 		geography: string,

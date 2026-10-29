@@ -20,7 +20,11 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readBatchInput } from "./batchInput";
-import type { RouteRequestFor, RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteRequestFor,
+	RouteContextFor,
+	RouteContext,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -48,7 +52,9 @@ export type PostcodeOutcome =
  * batch reports it against the one postcode.
  */
 export const postcodeOutcome = (
-	context: RouteContextFor<"postcodeIndex" | "missingRequirement">,
+	context: RouteContextFor<"missingRequirement"> & {
+		postcodes: RouteContext["postcodes"];
+	},
 	text: string,
 ): PostcodeOutcome => {
 	const parsed = parsePostcode(text);
@@ -62,7 +68,7 @@ export const postcodeOutcome = (
 			status: "invalid",
 			detail: `${parsed.display} is a postcode ${parsed.kind}, which covers many postcodes. Give a full unit postcode such as ${parsed.kind === "district" ? `${parsed.display} 1AA` : `${parsed.display}AA`}.`,
 		};
-	const index = context.geographyResolver.postcodeIndex()!;
+	const index = context.postcodes.postcodeIndex()!;
 	const found = index.lookup(parsed);
 	if (found.status === "excluded")
 		return { status: "not-served", detail: found.reason };
@@ -76,9 +82,11 @@ export const postcodeOutcome = (
 
 /** The directory's provenance, as every postcode answer carries it. */
 export const postcodeSourceSummary = (
-	context: RouteContextFor<"postcodeIndex" | "missingRequirement">,
+	context: RouteContextFor<"missingRequirement"> & {
+		postcodes: RouteContext["postcodes"];
+	},
 ): PostcodeSourceSummary => {
-	const { source } = context.geographyResolver.postcodeIndex()!.artifact;
+	const { source } = context.postcodes.postcodeIndex()!.artifact;
 	return {
 		title: source.title,
 		edition: source.edition,
@@ -94,7 +102,9 @@ export const postcodeSourceSummary = (
  * postcode refuses one the same way.
  */
 export const findPostcode = (
-	context: RouteContextFor<"postcodeIndex" | "missingRequirement">,
+	context: RouteContextFor<"missingRequirement"> & {
+		postcodes: RouteContext["postcodes"];
+	},
 	text: string,
 ): { record: PostcodeRecord; source: PostcodeSourceSummary } | ApiResponse => {
 	const { geographyResolver } = context;
@@ -123,7 +133,12 @@ export type PostcodeSourceSummary = Pick<
  * centroids are known for.
  */
 const postcodeLookupRequest = (
-	context: RouteContextFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence">,
+	context: RouteContextFor<
+		| "boundaryRelease"
+		| "hasAreaRelease"
+		| "selectReleaseForDate"
+		| "explainAreaAbsence"
+	>,
 	query: URLSearchParams,
 	edition: string,
 ) => {
@@ -227,7 +242,19 @@ export const handlePostcodeRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"postcodeIndex" | "missingRequirement" | "boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "missingRequirement"
+	| "boundaryRelease"
+	| "hasAreaRelease"
+	| "selectReleaseForDate"
+	| "explainAreaAbsence"
+	| "postcodeContainingAreas"
+	| "containingAreas"
+	| "containingCodes"
+	| "releaseGeometrySource"
+	| "boundaryReleasesFor"
+> & { context: { postcodes: RouteContext["postcodes"] } }):
+	ApiResponse | undefined => {
 	if (
 		segments.length !== 3 ||
 		segments[0] !== "v1" ||
@@ -327,12 +354,7 @@ export const postcodeInPlace = (query: string) => {
  * candidate links to the routes that place the postcode in areas.
  */
 export const postcodePlace = (
-	context: {
-		geographyResolver: Pick<
-			RouteRequestFor<"postcodeIndex" | "missingRequirement" | "boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">["context"]["geographyResolver"],
-			"postcodeIndex"
-		>;
-	},
+	context: { postcodes: Pick<RouteContext["postcodes"], "postcodeIndex"> },
 	query: string,
 ): { candidate?: Record<string, unknown>; hint?: string } => {
 	const parsed = postcodeInPlace(query);
@@ -341,7 +363,7 @@ export const postcodePlace = (
 		return {
 			hint: `${parsed.display} reads as a postcode ${parsed.kind}, which covers many postcodes. A full unit postcode, such as ${parsed.kind === "district" ? `${parsed.display} 1AA` : `${parsed.display}AA`}, is found as a place.`,
 		};
-	const index = context.geographyResolver.postcodeIndex();
+	const index = context.postcodes.postcodeIndex();
 	if (!index) return {};
 	const found = index.lookup(parsed);
 	if (found.status === "excluded") return { hint: found.reason };
@@ -385,7 +407,19 @@ export const handlePostcodeBatchRoutes = ({
 	segments,
 	method,
 	body,
-}: RouteRequestFor<"postcodeIndex" | "missingRequirement" | "boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "missingRequirement"
+	| "boundaryRelease"
+	| "hasAreaRelease"
+	| "selectReleaseForDate"
+	| "explainAreaAbsence"
+	| "postcodeContainingAreas"
+	| "containingAreas"
+	| "containingCodes"
+	| "releaseGeometrySource"
+	| "boundaryReleasesFor"
+> & { context: { postcodes: RouteContext["postcodes"] } }):
+	ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
