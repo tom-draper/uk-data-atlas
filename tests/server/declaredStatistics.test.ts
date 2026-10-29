@@ -668,6 +668,75 @@ describe("declared statistics", () => {
 			]);
 		});
 
+		it("rebuilds values in arrays, keyed by index", () => {
+			const listed: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				alsoIn: [{ geography: "localAuthority", year: 2022 }],
+				measures: [CRIMES],
+				fields: [
+					{
+						path: "counts.{period}",
+						measure: "crimes",
+						period: (index) => periods.year(2020 + Number(index)),
+					},
+				],
+				rebuild: {},
+			};
+			const text = file({
+				E06000001: { name: "Hartlepool", counts: [3, null, 5] },
+				E06000002: { name: "Middlesbrough", counts: [4, 6] },
+				E07000026: { name: "Allerdale", counts: [] },
+			});
+			const database = write(listed, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare("SELECT path FROM dataset_leaf ORDER BY position")
+					.all()
+					.map((row) => row.path),
+			).toEqual([
+				'["name"]',
+				// The empty array is a literal; records with values lack it.
+				'["counts"]',
+				'["counts",0]',
+				'["counts",1]',
+				'["counts",2]',
+			]);
+		});
+
+		it("rebuilds a parent named by code only", () => {
+			const linked: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				alsoIn: [{ geography: "localAuthority", year: 2022 }],
+				measures: [CRIMES],
+				fields: [{ path: "total", measure: "crimes" }],
+				parents: [
+					{
+						code: "regionCode",
+						release: { geography: "region", year: 2025 },
+					},
+				],
+				rebuild: {},
+			};
+			const text = file({
+				E06000001: { name: "Hartlepool", total: 3 },
+				E06000002: {
+					name: "Middlesbrough",
+					regionCode: "E12000001",
+					total: 4,
+				},
+			});
+			const database = write(linked, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare("SELECT count(*) AS n FROM dataset_area_name")
+					.get()?.n,
+			).toBe(0);
+		});
+
 		it("refuses records that order their keys differently", () => {
 			expect(() =>
 				write(
