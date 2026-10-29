@@ -10,7 +10,7 @@
 	"scripts": {
 		"build:assets": "tsx src/build-atlas-assets.ts",
 		"fetch:onspd": "tsx src/sources/fetch-onspd.ts",
-		"fetch:boundaries": "tsx --max-old-space-size=4096 src/sources/fetch-ons-boundaries.ts",
+		"fetch:boundaries": "tsx --max-old-space-size=3072 src/sources/fetch-ons-boundaries.ts",
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {
