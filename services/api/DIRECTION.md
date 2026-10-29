@@ -241,12 +241,11 @@ already supports.
    remain available. Investigate the affected geometry before replacing it.
    `lsoa/2001-12-ew-bgc-v2` replaces the thinned 2001 LSOA release and is
    tiled; the thinned snapshot stays held unchanged.
-2. **Complete the missing relationships.** No published crosswalk references
-   `dataZone/2021-ni` or `nhsEnglandRegion/2022-07-en-bgc`.
-   The current candidate inventory also identifies unresolved Northern Irish
-   DEA, local-government district and super-data-zone fields. The district
-   codes match held local-authority releases and need an explicit membership
-   adapter. DEA and super-data-zone boundaries still need source imports.
+2. **Complete the missing relationships.** The published Northern Irish
+   data-zone membership adapter relates the district field to the held 2025
+   local-authority release. The candidate inventory still identifies DEA and
+   super-data-zone fields whose boundaries need source imports. The 2022 NHS
+   England region release has an area-overlap crosswalk to the 2024 release.
 3. **Backfill current and census boundaries.** The 2026 Senedd
    constituencies and the 2001 and 2011 MSOA and output-area releases are held,
    tiled and related. Separately generalised BGC files fail strict

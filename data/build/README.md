@@ -278,6 +278,12 @@ migration. See `docs/data-pipeline-move.md` for the remaining work.
 
 ### Crosswalks
 
+The Northern Irish 2021 data-zone membership adapter uses the publisher's
+`LGD2014` fields to relate each data zone to the held 2025 local-authority
+release. The archive-backed test checks that every source has one target and
+that every referenced endpoint code exists in its release. The adapter declares
+membership and does not claim geometric containment or provide weights.
+
 `crosswalk_inventory` has one row keyed by integer `position = 0` with non-null
 `schemaVersion INTEGER` and `contentHash TEXT`. Nullable `areaInventoryHash TEXT`
 records whether release coverage is present. `crosswalk_coverage` has primary
