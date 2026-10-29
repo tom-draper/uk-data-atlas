@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import { compileRelationshipCandidates } from "../../../pipeline/src/relationshipCandidates";
-import type { AreaReleaseArtifact } from "../src/areaInventory";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 
 test("recognizes only the configured release for an authoritative parent field", () => {

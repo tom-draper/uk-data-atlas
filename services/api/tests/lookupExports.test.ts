@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import test from "node:test";
-import { type AreaInventory, createAreaLookup } from "../src/areaInventory";
+import {
+	type AreaInventory,
+	createAreaLookup,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,

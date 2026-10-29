@@ -1,6 +1,6 @@
 import { compileOperationTemplates } from "../../../pipeline/src/operationTemplates";
 import { reportRequest } from "./evidenceFixtures";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	createGeographyResolver,
@@ -16,7 +16,7 @@ import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
-import type { GeographyInventory } from "../src/geographyInventory";
+import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
 import {
 	createNamedLocationLookup,

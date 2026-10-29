@@ -10,7 +10,7 @@ import { validateBatch } from "@uk-data-atlas/atlas-runtime/areas";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { namedLocationTables } from "@uk-data-atlas/atlas-runtime/storage";
-import type { AreaInventory } from "../src/areaInventory";
+import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 

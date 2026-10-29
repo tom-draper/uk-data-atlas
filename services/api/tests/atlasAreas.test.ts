@@ -13,7 +13,7 @@ import {
 	readAreaInventory,
 	readAreaLookup,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import type { AreaInventory } from "../src/areaInventory";
+import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 

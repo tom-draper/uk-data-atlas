@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import type { Polygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { convertObservations } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AreaOverlapCrosswalkAdapter,

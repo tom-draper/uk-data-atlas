@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { normalisePlaceName } from "@uk-data-atlas/geography";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import {

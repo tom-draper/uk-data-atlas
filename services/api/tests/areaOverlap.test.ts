@@ -12,7 +12,7 @@ import {
 	projectEqualArea,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AreaOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 

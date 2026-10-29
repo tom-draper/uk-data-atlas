@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { BoundaryReleaseDeprecation } from "@uk-data-atlas/catalogue";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseInPath, withReleaseHeaders } from "../src/releaseDeprecation";
 import { route as routeRequest } from "../src/routes";

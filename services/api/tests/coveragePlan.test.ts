@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { coveragePlanEvidence } from "../../../pipeline/src/evidence/measureReports";
 import { coveragePlan } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {

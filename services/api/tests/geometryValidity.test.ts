@@ -21,7 +21,7 @@ import {
 	compiledGeometryFile,
 	type GeometrySource,
 } from "@uk-data-atlas/atlas-runtime/geometry";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import {

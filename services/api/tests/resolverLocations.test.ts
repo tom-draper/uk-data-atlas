@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import type { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import type {
