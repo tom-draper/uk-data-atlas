@@ -12,7 +12,7 @@ import type {
 	ReuseContext,
 } from "./types.mts";
 
-type ManifestEntry = Awaited<ReturnType<typeof compileStaleDataset>>;
+type ManifestEntry = NonNullable<Awaited<ReturnType<typeof reuseDataset>>>;
 
 // Matches the heap the precompile scripts give the main thread.
 const WORKER_HEAP_MB = 3072;

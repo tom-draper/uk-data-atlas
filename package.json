@@ -21,7 +21,7 @@
 		"test:run": "vitest run",
 		"test:e2e": "playwright test",
 		"typecheck": "tsc --noEmit && pnpm --filter \"./packages/*\" --filter \"./clients/*\" typecheck && pnpm --dir services/mcp typecheck",
-		"check": "pnpm typecheck && pnpm format:check && vitest run --project unit && pnpm --dir services/api typecheck && pnpm --dir services/api test:unbuilt && pnpm --dir services/mcp test",
+		"check": "pnpm typecheck && pnpm --dir pipeline typecheck && pnpm format:check && vitest run --project unit && pnpm --dir services/api typecheck && pnpm --dir services/api test:unbuilt && pnpm --dir services/mcp test",
 		"check:full": "pnpm check && pnpm data:verify && vitest run --project built && pnpm --dir services/api test",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
 		"roads:serve": "node scripts/serve-os-open-roads.mjs"

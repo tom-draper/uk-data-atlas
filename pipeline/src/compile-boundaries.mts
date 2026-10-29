@@ -417,8 +417,7 @@ const releaseProperties = (
 		Object.values(topologyData.objects)[0];
 	if (!object || object.type !== "GeometryCollection") return [];
 	const decoded = feature(topologyData, object);
-	const features =
-		decoded.type === "FeatureCollection" ? decoded.features : [decoded];
+	const features = decoded.features;
 	return features.map((source) => ({
 		...source.properties,
 		areaSqKm: toPrecision(
@@ -517,7 +516,11 @@ const simplifySource = async (
 		})),
 	};
 	const simplified = simplify(
-		presimplify(topology({ [objectName]: cleaned })),
+		presimplify(
+			topology({
+				[objectName]: cleaned,
+			}) as ReturnType<typeof presimplify>,
+		),
 		MINIMUM_PLANAR_TRIANGLE_AREA,
 	);
 	const simplifiedFeatures = feature(

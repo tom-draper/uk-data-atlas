@@ -54,7 +54,9 @@ const reverseGeometry = (offset: GridOffset, geometry: Geometry): Geometry =>
  * Moves the WGS84 features the offset covers back by it. Throws when the
  * offset would move nothing, so a stale declaration cannot pass silently.
  */
-export const applyReversedGridOffset = <T extends FeatureCollection>(
+export const applyReversedGridOffset = <
+	T extends FeatureCollection<Geometry | null>,
+>(
 	collection: T,
 	offset: GridOffset,
 	codeKey: string,

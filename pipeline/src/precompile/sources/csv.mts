@@ -49,10 +49,10 @@ export const visitZipCsvRows = async (
 			finished = true;
 			resolve({ bytes, sha256: hash.digest("hex") });
 		};
-		const parser = Papa.parse<Record<string, string>>(
-			Papa.NODE_STREAM_INPUT,
-			{ header: true, skipEmptyLines: true },
-		);
+		const parser = Papa.parse(Papa.NODE_STREAM_INPUT, {
+			header: true,
+			skipEmptyLines: true,
+		});
 		unzip.stdout.on("data", (chunk: Buffer) => {
 			hash.update(chunk);
 			bytes += chunk.byteLength;
@@ -96,22 +96,19 @@ export const visitCsvRows = async (
 			input.destroy();
 			reject(error);
 		};
-		const parser = Papa.parse<Record<string, string>>(
-			Papa.NODE_STREAM_INPUT,
-			{
-				header: true,
-				skipEmptyLines: true,
-				beforeFirstChunk: (chunk) => {
-					let start = 0;
-					for (let line = 0; line < skipLines; line++) {
-						const end = chunk.indexOf("\n", start);
-						if (end === -1) return "";
-						start = end + 1;
-					}
-					return chunk.slice(start);
-				},
+		const parser = Papa.parse(Papa.NODE_STREAM_INPUT, {
+			header: true,
+			skipEmptyLines: true,
+			beforeFirstChunk: (chunk) => {
+				let start = 0;
+				for (let line = 0; line < skipLines; line++) {
+					const end = chunk.indexOf("\n", start);
+					if (end === -1) return "";
+					start = end + 1;
+				}
+				return chunk.slice(start);
 			},
-		);
+		});
 		input.on("data", (chunk: Buffer) => {
 			hash.update(chunk);
 			bytes += chunk.byteLength;
