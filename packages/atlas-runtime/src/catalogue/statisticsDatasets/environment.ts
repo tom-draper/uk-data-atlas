@@ -79,6 +79,14 @@ export const GHG_EMISSIONS: DeclaredDataset = {
 			"sum",
 			"Territorial greenhouse gas emissions in kilotonnes of carbon dioxide equivalent.",
 		),
+		measure(
+			"ghg-population",
+			"Population",
+			"thousand people",
+			"count",
+			"sum",
+			"The mid-year population the publisher divides emissions by, in thousands.",
+		),
 	],
 	dimensions: [
 		{
@@ -120,12 +128,24 @@ export const GHG_EMISSIONS: DeclaredDataset = {
 			],
 		},
 	],
-	fields: [{ path: "{emissions-sector}", measure: "ghg-emissions" }],
+	fields: [
+		{ path: "{emissions-sector}", measure: "ghg-emissions" },
+		{ path: "populationThousands", measure: "ghg-population" },
+	],
 	derived: {
 		perPersonTCO2e:
 			"Total emissions divided by the publisher's population.",
-		populationThousands:
-			"The population the publisher divides by; the population estimate is its source.",
+	},
+	rebuild: {
+		derived: {
+			// kt over thousands of people is tonnes per person.
+			perPersonTCO2e: (record) => {
+				const population = record.populationThousands as number;
+				return population > 0
+					? (record.totalKtCO2e as number) / population
+					: 0;
+			},
+		},
 	},
 };
 
