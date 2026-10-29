@@ -723,11 +723,11 @@ describe("declared statistics", () => {
 					.map((row) => row.path),
 			).toEqual([
 				'["name"]',
-				// The empty array is a literal; records with values lack it.
-				'["counts"]',
 				'["counts",0]',
 				'["counts",1]',
 				'["counts",2]',
+				// The empty array is a literal; records with values lack it.
+				'["counts"]',
 			]);
 		});
 
@@ -918,6 +918,27 @@ describe("declared statistics", () => {
 			expect(
 				rebuildFromLayout(database, "example", rated.rebuild!.derived),
 			).toBe(text);
+		});
+
+		it("merges key orders records show only in part", () => {
+			const parties: DeclaredDataset = {
+				type: "example",
+				name: "name",
+				alsoIn: [{ geography: "localAuthority", year: 2022 }],
+				measures: [CRIMES],
+				dimensions: [{ slug: "party", label: "Party" }],
+				fields: [{ path: "votes.{party}", measure: "crimes" }],
+				rebuild: {},
+			};
+			// No record shows all three; together they order a, b, c.
+			const text = file({
+				E06000001: { name: "Hartlepool", votes: { a: 1, c: 2 } },
+				E06000002: { name: "Middlesbrough", votes: { b: 3 } },
+				E07000026: { name: "Allerdale", votes: { a: 4, b: 5 } },
+			});
+			expect(rebuildFromLayout(write(parties, text), "example")).toBe(
+				text,
+			);
 		});
 
 		it("refuses records that order their keys differently", () => {

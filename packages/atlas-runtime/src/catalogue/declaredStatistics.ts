@@ -357,7 +357,10 @@ type Raw = {
  * set of leaves, so leaves a record lacks are known.
  */
 class RecordSample {
-	readonly order: string[] = [];
+	/** Leaf keys in the order first seen, and the keys each must precede. */
+	private readonly seen: string[] = [];
+	private readonly after = new Map<string, Set<string>>();
+	private merged: string[] | undefined;
 	readonly paths = new Map<string, string[]>();
 	readonly nodes = new Map<string, { node: Json; code: string }>();
 	readonly claims = new Map<
@@ -397,16 +400,59 @@ class RecordSample {
 		this.recordShapes.push(shape);
 		if (this.shapes.has(shape)) return;
 		this.shapes.set(shape, new Set(present));
-		let last = -1;
-		for (const key of present) {
-			let index = this.order.indexOf(key);
-			if (index === -1) this.order.splice((index = last + 1), 0, key);
-			else if (index <= last)
+		this.merged = undefined;
+		for (const [index, key] of present.entries()) {
+			if (!this.after.has(key)) {
+				this.after.set(key, new Set());
+				this.seen.push(key);
+			}
+			if (index === 0) continue;
+			const previous = this.after.get(present[index - 1])!;
+			if (previous.has(key)) continue;
+			if (this.reaches(key, present[index - 1]))
 				throw new Error(
 					`${this.context}: ${code} orders ${key.replaceAll("\0", ".")} differently from earlier records`,
 				);
-			last = index;
+			previous.add(key);
 		}
+	}
+
+	/** Whether `to` must come after `from` by what records have shown. */
+	private reaches(from: string, to: string) {
+		const stack = [from];
+		const visited = new Set<string>();
+		while (stack.length) {
+			const key = stack.pop()!;
+			if (key === to) return true;
+			if (visited.has(key)) continue;
+			visited.add(key);
+			stack.push(...this.after.get(key)!);
+		}
+		return false;
+	}
+
+	/**
+	 * Every leaf key, in an order each record's keys follow: a topological
+	 * order of what the records show, taking the first seen when free.
+	 */
+	get order() {
+		if (this.merged) return this.merged;
+		const before = new Map(this.seen.map((key) => [key, 0]));
+		for (const keys of this.after.values())
+			for (const key of keys) before.set(key, before.get(key)! + 1);
+		const order: string[] = [];
+		const ready = new Set(this.seen.filter((key) => !before.get(key)));
+		while (ready.size) {
+			const key = this.seen.find((candidate) => ready.has(candidate))!;
+			ready.delete(key);
+			order.push(key);
+			for (const next of this.after.get(key)!) {
+				const left = before.get(next)! - 1;
+				before.set(next, left);
+				if (left === 0) ready.add(next);
+			}
+		}
+		return (this.merged = order);
 	}
 
 	claim(raw: Raw) {
