@@ -27,7 +27,7 @@ export const assessAggregationCoverage = ({
 	byRegion?: AggregatedMembers;
 	regional?: AggregationTarget;
 	compatibleReleases: CompatibilityCandidate[];
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<GeographyResolver, "areaCodes">;
 	sourceGeography: MeasureSource["sourceGeography"];
 	areaCode: string | null;
 }): AggregateCoverage | undefined =>

@@ -21,7 +21,10 @@ export const validateLocationAggregation = ({
 }: {
 	location?: NamedLocation;
 	byLocation?: LocationAggregate;
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<
+		GeographyResolver,
+		"missingRequirement" | "reconcileMembersForYear"
+	>;
 	sourceGeography: { type: string; boundaryYear: number };
 }): LocationCoverage | ApiResponse | undefined => {
 	if (!location || !byLocation) return undefined;

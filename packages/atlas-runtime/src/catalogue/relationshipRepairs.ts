@@ -1,6 +1,8 @@
 import type { GeographyResolver } from "../areas/geographyResolver";
 
-export const relationshipRepairsReport = (resolver: GeographyResolver) => {
+export const relationshipRepairsReport = (
+	resolver: Pick<GeographyResolver, "relationshipRepairs">,
+) => {
 	const repairs = resolver.relationshipRepairs();
 	return {
 		repairs,

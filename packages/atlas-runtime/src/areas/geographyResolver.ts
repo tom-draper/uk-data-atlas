@@ -1,5 +1,9 @@
 import type { AreaRelation } from "@uk-data-atlas/relationships";
-import type { AreaInventory, AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
+import type {
+	AreaInventory,
+	AreaLookup,
+	AreaRecord,
+} from "@uk-data-atlas/areas";
 import { summariseBatch, type ValidatedValue } from "./batchValidation";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeographyInventory } from "./geographyInventory";
@@ -35,6 +39,7 @@ import {
 	type BoundaryReleaseComparison,
 } from "./resolver/releaseComparison";
 import { LocationsResolver } from "./resolver/locations";
+import { PostcodeResolver } from "./resolver/postcodes";
 import {
 	SpatialResolver,
 	type ResolvedContainingArea,
@@ -133,6 +138,7 @@ export class GeographyResolver {
 	private readonly catalogue: CatalogueResolver;
 	private readonly locations: LocationsResolver;
 	private readonly spatial: SpatialResolver;
+	private readonly postcodes: PostcodeResolver;
 	private readonly lineage: LineageResolver;
 	private readonly translator: CrosswalkTranslator;
 	private readonly capability: CapabilityResolver;
@@ -145,6 +151,7 @@ export class GeographyResolver {
 			inputs.areaGeometryCache,
 			(identity) => this.areas.area(identity),
 		);
+		this.postcodes = new PostcodeResolver(inputs);
 		this.lineage = new LineageResolver(
 			inputs.crosswalkLookup,
 			(identity) => this.areas.area(identity),
@@ -171,7 +178,7 @@ export class GeographyResolver {
 			areas: () => this.areas.hasAreas(),
 			places: () => this.areas.hasPlaceIndex(),
 			"area-search": () => this.areas.hasAreaSearch(),
-			postcodes: () => this.inputs.postcodeIndex !== undefined,
+			postcodes: () => this.postcodes.postcodeIndex() !== undefined,
 			geometry: () => this.spatial.hasAreaGeometryCache(),
 			relationships: () => this.lineage.hasAreaRelationships(),
 			"named-locations": () => this.locations.hasNamedLocationInventory(),
@@ -205,39 +212,24 @@ export class GeographyResolver {
 	}
 
 	postcodeIndex() {
-		return this.inputs.postcodeIndex;
+		return this.postcodes.postcodeIndex();
 	}
 	postcodeCounts(identity: AreaIdentity): PostcodeCounts | undefined {
-		return this.inputs.postcodeCountsIndex?.forArea(
-			identity.geography,
-			identity.boundaryRelease,
-			identity.code,
-		);
+		return this.postcodes.postcodeCounts(identity);
 	}
 	postcodeAreaIndex() {
-		return this.inputs.postcodeAreaIndex;
+		return this.postcodes.postcodeAreaIndex();
 	}
-	/**
-	 * The areas of one release a unit postcode's centroid lies in, from the
-	 * compiled postcode area index: the answer `containingAreas` gives for the
-	 * centroid, without reading geometry. Undefined when the index does not
-	 * hold the release, so the caller places the centroid live.
-	 */
 	postcodeContainingAreas(
 		postcode: string,
 		geography: string,
 		boundaryRelease: string,
 	): ResolvedContainingArea[] | undefined {
-		const matches = this.inputs.postcodeAreaIndex?.containing(
+		return this.postcodes.postcodeContainingAreas(
 			postcode,
 			geography,
 			boundaryRelease,
-		);
-		if (!matches) return undefined;
-		return this.spatial.resolvePlacedAreas(
-			geography,
-			boundaryRelease,
-			matches,
+			this.spatial,
 		);
 	}
 

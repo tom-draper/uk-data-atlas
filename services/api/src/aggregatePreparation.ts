@@ -34,7 +34,10 @@ export const prepareAggregateTarget = ({
 	location?: NamedLocation;
 	regional?: AggregationTarget;
 	areaCode: string | null;
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<
+		GeographyResolver,
+		"missingRequirement" | "reconcileMembersForYear" | "areaCodes"
+	>;
 	compatibleReleases: CompatibilityCandidate[];
 	sourceGeography: MeasureSource["sourceGeography"];
 }): PreparedAggregate | ApiResponse => {

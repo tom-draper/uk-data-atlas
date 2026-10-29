@@ -1,3 +1,4 @@
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	coveragePlan,
 	reconcileMeasure,
@@ -31,7 +32,12 @@ export const reconciliationEvidence = (
 };
 
 export const coveragePlanEvidence = (
-	context: MeasureContext,
+	context: MeasureContext & {
+		geographyResolver: Pick<
+			GeographyResolver,
+			"hasAreaRelease" | "explainAreaAbsence"
+		>;
+	},
 	measure: Measure,
 	target: { geography: string; boundaryRelease: string },
 ) => {

@@ -61,7 +61,10 @@ export const resolveAggregationTarget = ({
 	sourceRelease: string | null;
 	source: MeasureSource;
 	compatibleReleases: CompatibilityCandidate[];
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<
+		GeographyResolver,
+		"area" | "crosswalk" | "indexedPathSteps" | "relationshipPath"
+	>;
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 }): AggregationTarget | ApiResponse | undefined => {
 	if (!targetCode) return undefined;

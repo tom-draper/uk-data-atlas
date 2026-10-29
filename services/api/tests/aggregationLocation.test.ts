@@ -96,3 +96,14 @@ test("rejects a location whose geography differs from the source", () => {
 		undefined,
 	);
 });
+
+test("resolves a location with only the named-location operations", () => {
+	const result = resolveAggregationLocation({
+		locationId: "example",
+		geographyResolver: {
+			missingRequirement: () => undefined,
+			namedLocation: (id) => (id === location.id ? location : undefined),
+		},
+	});
+	assert.deepEqual(result, location);
+});

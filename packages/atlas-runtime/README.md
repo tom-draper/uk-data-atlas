@@ -27,3 +27,5 @@ Spatial queries and shared-border calculations live in `@uk-data-atlas/geometry`
 Place search and named-location membership live in `@uk-data-atlas/places`.
 
 Measure definitions, observation access, units, compatibility, coverage, geographic conversion and reconciliation live in `@uk-data-atlas/measures`.
+
+The geography resolver composes focused area, spatial, lineage, location and postcode resolvers. `PostcodeResolver` can read its indexes without constructing the geography resolver; area placement additionally takes a spatial resolver.

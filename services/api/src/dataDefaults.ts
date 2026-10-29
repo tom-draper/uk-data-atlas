@@ -196,7 +196,7 @@ export const areaNamedBy = ({
 	geography,
 	boundaryYear = null,
 }: {
-	geographyResolver: GeographyResolver;
+	geographyResolver: Pick<GeographyResolver, "places">;
 	measure: Measure;
 	place: string | null;
 	geography: string | null;
