@@ -8,12 +8,10 @@ import type {
 	LocationProjections,
 } from "../../places/locationProjections";
 import type {
-	NamedLocation,
 	NamedLocationInventory,
 	NamedLocationLookup,
 } from "../../places/namedLocations";
-import { selectNamedLocationAt } from "../../places/namedLocations";
-import { membersAt } from "../../places/namedLocations";
+import { NamedLocationResolver } from "@uk-data-atlas/places";
 import type { CatalogueResolver } from "./catalogue";
 import type { AreaIdentity } from "./areas";
 
@@ -24,54 +22,31 @@ export type LocationsResolverInputs = {
 	locationProjectionStore?: LocationProjections;
 };
 
-const memberAreaKey = (geography: string, code: string) =>
-	`${geography}/${code}`;
-
 /** Named-location membership and its materialised projections. */
 export class LocationsResolver {
-	private readonly locationsByMemberArea = new Map<string, NamedLocation[]>();
+	private readonly named: NamedLocationResolver;
 
 	constructor(
 		private readonly inputs: LocationsResolverInputs,
 		private readonly catalogue: CatalogueResolver,
 	) {
-		for (const location of inputs.namedLocationInventory?.locations ?? [])
-			for (const code of location.memberCodes) {
-				const key = memberAreaKey(location.memberGeography, code);
-				const locations = this.locationsByMemberArea.get(key) ?? [];
-				locations.push(location);
-				this.locationsByMemberArea.set(key, locations);
-			}
-		for (const locations of this.locationsByMemberArea.values())
-			locations.sort((left, right) => left.id.localeCompare(right.id));
+		this.named = new NamedLocationResolver(
+			inputs.namedLocationInventory,
+			inputs.namedLocationLookup,
+		);
 	}
 
-	namedLocation(id: string, asOf?: string): NamedLocation | undefined {
-		const location = this.inputs.namedLocationLookup?.get(id);
-		return location && selectNamedLocationAt(location, asOf);
+	namedLocation(id: string, asOf?: string) {
+		return this.named.namedLocation(id, asOf);
 	}
-
 	namedLocations(asOf?: string) {
-		return (this.inputs.namedLocationInventory?.locations ?? []).map(
-			(location) => selectNamedLocationAt(location, asOf),
-		);
+		return this.named.namedLocations(asOf);
 	}
-
 	hasNamedLocationInventory() {
-		return this.inputs.namedLocationInventory !== undefined;
+		return this.named.hasNamedLocationInventory();
 	}
-
-	namedLocationsForArea(
-		identity: AreaIdentity,
-		asOf?: string,
-	): NamedLocation[] {
-		return (
-			this.locationsByMemberArea.get(
-				memberAreaKey(identity.geography, identity.code),
-			) ?? []
-		).filter((location) =>
-			membersAt(location, asOf).includes(identity.code),
-		);
+	namedLocationsForArea(identity: AreaIdentity, asOf?: string) {
+		return this.named.namedLocationsForArea(identity, asOf);
 	}
 
 	locationProjection(

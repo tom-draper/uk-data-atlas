@@ -11,13 +11,14 @@ import {
 	type MembershipKind,
 	type ParentProjection,
 	type TraversedMember,
-} from "./locationMembership";
+} from "@uk-data-atlas/places";
 import {
 	reconcileMembers,
 	type MemberCoverage,
 } from "@uk-data-atlas/relationships";
-import type { NamedLocationInventory } from "./namedLocationTypes";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { sha256 } from "@uk-data-atlas/artifacts";
+
 import type { SQLInputValue } from "node:sqlite";
 import {
 	jsonDictionary,
