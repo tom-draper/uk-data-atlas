@@ -33,6 +33,28 @@ export function validateCacheRelease(root: string): void {
 			throw new Error(
 				`release mismatch: cache references ${String(stamped)}, atlas.sqlite is ${actual}`,
 			);
+		const canonicalDatabase = new DatabaseSync(canonical, {
+			readOnly: true,
+		});
+		const cacheDatabase = new DatabaseSync(cachePath, { readOnly: true });
+		try {
+			const payload = cacheDatabase.prepare(
+				"SELECT 1 FROM dataset_payloads WHERE output = ? AND sha256 = ?",
+			);
+			for (const dataset of canonicalDatabase
+				.prepare(
+					"SELECT output, sha256 FROM datasets WHERE payloadId IS NULL",
+				)
+				.all()) {
+				if (!payload.get(dataset.output, dataset.sha256))
+					throw new Error(
+						`Missing cached dataset payload ${String(dataset.output)} for this release`,
+					);
+			}
+		} finally {
+			cacheDatabase.close();
+			canonicalDatabase.close();
+		}
 	} catch (cause) {
 		throw new Error(
 			`Missing or mismatched atlas cache release at ${cachePath}`,
