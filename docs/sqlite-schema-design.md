@@ -731,20 +731,33 @@ area_releases.position`, which `series.release_id` already references), then
 - Batch 7 adds population, UK population and house prices. 43 datasets are
   served from rows; stored payload JSON is 30 MB.
 
+### Step 4, batch 8: derived from another dataset (2026-10-29)
+
+- A derived rule also gets the record's area code, its part's header and
+  `dataset(slug)`, another dataset's compiled JSON rebuilt from its rows
+  (once per database). Rules run only after every row is written.
+- The per-100k figures divide by the area's total in UK population: the
+  part's year for electricity, gas and jobs, 2024 for waste, EV chargers and
+  business activity. The rule sums the ages in the compiler's order, so the
+  bytes match.
+- GHG emissions stores the publisher's `populationThousands` as
+  `ghg-population` and derives `perPersonTCO2e` from it.
+- Batch 8 adds GHG emissions, gas, electricity, EV chargers, waste, jobs and
+  business activity. 50 datasets are served from rows; stored payload JSON is
+  15 MB.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker                                                         | Datasets                                                                                   |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| A per-record list of predecessor codes                          | unemployment (`derivedFromPredecessors` on four new unitaries)                             |
-| A parent code the compiler leaves empty                         | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash)   |
-| A record field holding the observation status                   | Brexit by constituency (`isKnownResult` is true unless the share is estimated)             |
-| Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity |
-| Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                      |
+| Blocker                                       | Datasets                                                                                 |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| A per-record list of predecessor codes        | unemployment (`derivedFromPredecessors` on four new unitaries)                           |
+| A parent code the compiler leaves empty       | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash) |
+| A record field holding the observation status | Brexit by constituency (`isKnownResult` is true unless the share is estimated)           |
+| Not stored as rows                            | the three election datasets, NHS waiting times (#488)                                    |
 
 Status flags need a new leaf kind. Predecessor lists
-are succession, which crosswalks can supply. Values a derived number needs but
-the rows lack (population) must be stored or joined first.
+are succession, which crosswalks can supply.
 
 ### Catalogue datasets as configuration (2026-10-27)
 
