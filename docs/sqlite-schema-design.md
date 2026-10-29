@@ -717,19 +717,32 @@ area_releases.position`, which `series.release_id` already references), then
   school performance tables. 40 datasets are served from rows; stored
   payload JSON is 38 MB.
 
+### Step 4, batch 7: values in arrays (2026-10-29)
+
+- A record node that is an array is walked like an object. Its leaves store
+  the index as a number in `dataset_leaf.path` (`["total",0]`), so the
+  rebuild knows to make an array. An empty array stays a literal.
+- A parent can be named by code only. House prices use this for
+  `sourceWardCode`, the code Salford's redrawn wards were published under,
+  on the 2020 ward release.
+- Ward population and house prices declare their district parent.
+- The UK population compiler drops `country`, the first letter of the code,
+  which nothing read. This changes its hash.
+- Batch 7 adds population, UK population and house prices. 43 datasets are
+  served from rows; stored payload JSON is 30 MB.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
 | Blocker                                                         | Datasets                                                                                   |
 | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Values in arrays                                                | population, population-uk, house prices                                                    |
 | A per-record list of predecessor codes                          | unemployment (`derivedFromPredecessors` on four new unitaries)                             |
 | A parent code the compiler leaves empty                         | SIMD (Na h-Eileanan an Iar's council area code is `""`; a compiler fix changes the hash)   |
 | A record field holding the observation status                   | Brexit by constituency (`isKnownResult` is true unless the share is estimated)             |
 | Derived from values not stored (per-100k, publisher population) | GHG emissions, gas, electricity, electric vehicle chargers, waste, jobs, business activity |
 | Not stored as rows                                              | the three election datasets, NHS waiting times (#488)                                      |
 
-Arrays and status flags need new leaf kinds. Predecessor lists
+Status flags need a new leaf kind. Predecessor lists
 are succession, which crosswalks can supply. Values a derived number needs but
 the rows lack (population) must be stored or joined first.
 
