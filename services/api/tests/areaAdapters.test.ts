@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { readAreaAdapters } from "../src/areaAdapters";
+import { readAreaAdapters } from "@uk-data-atlas/atlas-runtime/areas";
 
 const read = (manifest: unknown) => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));

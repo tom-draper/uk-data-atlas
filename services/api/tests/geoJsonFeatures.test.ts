@@ -6,7 +6,7 @@ import test, { type TestContext } from "node:test";
 import {
 	parseGeoJsonFeatures,
 	readGeoJsonFeatures,
-} from "../src/geoJsonProperties";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 const read = (t: TestContext, text: string) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-geojson-features-"));

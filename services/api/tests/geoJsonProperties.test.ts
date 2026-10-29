@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseGeoJsonProperties } from "../src/geoJsonProperties";
+import { parseGeoJsonProperties } from "@uk-data-atlas/atlas-runtime/areas";
 
 test("reads each feature's properties without its geometry", () => {
 	const text = JSON.stringify({

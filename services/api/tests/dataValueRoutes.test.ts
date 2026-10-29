@@ -1,7 +1,7 @@
 import { routeWithData } from "./routeFixtures";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { route as routeRequest } from "../src/routes";
 import {
 	dataCatalog,

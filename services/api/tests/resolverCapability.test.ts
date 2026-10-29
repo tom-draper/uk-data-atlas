@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { AreaLookup, AreaRecord } from "../src/areaInventory";
+import type {
+	AreaLookup,
+	AreaRecord,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 import {

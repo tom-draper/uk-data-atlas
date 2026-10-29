@@ -1,4 +1,4 @@
-import { createAreaLookup } from "../src/areaInventory";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
