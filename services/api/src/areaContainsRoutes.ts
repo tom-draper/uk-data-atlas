@@ -19,7 +19,7 @@ import {
 	UNDECLARED_POSTCODE_ACCURACY,
 } from "./postcodeRoutes";
 import { compactPostcode } from "@uk-data-atlas/geography";
-import { postcodeLookupPoint } from "./postcodes";
+import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import {
 	envelope,
 	invalidQuery,
