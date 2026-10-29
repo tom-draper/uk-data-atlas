@@ -117,8 +117,14 @@ export type DeclaredParent = {
 	alsoIn?: DeclaredRelease[];
 };
 
-/** A derived number, from the record with every stored value filled in. */
-export type DerivedRule = (record: { [key: string]: Json }) => number;
+/**
+ * A derived number, from the record with every stored value filled in, and the
+ * path of the leaf it fills (a pattern can match a leaf in every period).
+ */
+export type DerivedRule = (
+	record: { [key: string]: Json },
+	path: readonly string[],
+) => number | null;
 
 export type DeclaredManifestEntry = {
 	output: string;

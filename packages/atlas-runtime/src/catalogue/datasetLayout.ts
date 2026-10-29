@@ -173,7 +173,7 @@ function records(
 		for (const [rule, compute] of Object.entries(rules))
 			for (const leaf of derived)
 				if (leaf.rule === rule && !lacking?.has(leaves.indexOf(leaf)))
-					place(record, leaf.path, compute(record));
+					place(record, leaf.path, compute(record, leaf.path));
 		result[code] = record;
 	}
 	return result;
