@@ -41,6 +41,7 @@ import {
 	HOMELESSNESS,
 	NET_ADDITIONAL_DWELLINGS,
 	PLANNING_APPLICATIONS,
+	NHS_WAITING,
 	PUBLIC_HEALTH,
 	PUPIL_ABSENCE,
 	ROAD_COLLISIONS,
@@ -100,6 +101,7 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	ADULT_SOCIAL_CARE_OUTCOMES,
 	NET_ADDITIONAL_DWELLINGS,
 	PLANNING_APPLICATIONS,
+	NHS_WAITING,
 	PUBLIC_HEALTH,
 	PUPIL_ABSENCE,
 	SCHOOL_PERFORMANCE,
@@ -129,6 +131,4 @@ export const UNSTORED_DATASETS: Readonly<Record<string, string>> = {
 		"Ward results need the election tables, and several years use county division codes outside the ward releases.",
 	historicalGeneralElection:
 		"Results before 2010 are on constituency boundaries the atlas has no release for.",
-	nhsWaiting:
-		"The March 2026 ICBs need their matching boundary release; the held April 2026 release follows reorganisations.",
 };
