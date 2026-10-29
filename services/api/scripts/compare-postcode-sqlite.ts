@@ -9,7 +9,10 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { PostcodeIndexArtifact, PostcodeShard } from "../src/postcodes";
+import type {
+	PostcodeIndexArtifact,
+	PostcodeShard,
+} from "@uk-data-atlas/geography/postcode-index-types";
 
 const [beforePath, apiRoot, output] = process.argv.slice(2);
 assert.ok(

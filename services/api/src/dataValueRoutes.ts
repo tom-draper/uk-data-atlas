@@ -9,7 +9,7 @@ import {
 	postcodeInPlace,
 	UNDECLARED_POSTCODE_ACCURACY,
 } from "./postcodeRoutes";
-import { postcodeLookupPoint } from "./postcodes";
+import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import {
 	attemptSource,
 	postcodeSources,

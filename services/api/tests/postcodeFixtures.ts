@@ -8,12 +8,11 @@ import type { PostcodeSourceRow } from "../../../pipeline/src/postcodeIndex";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import { parsePostcode } from "@uk-data-atlas/geography";
-import {
-	PostcodeIndex,
-	postcodeLookupPoint,
-	type PostcodeShard,
-	type PostcodeSource,
-} from "../src/postcodes";
+import { PostcodeIndex, postcodeLookupPoint } from "@uk-data-atlas/postcodes";
+import type {
+	PostcodeShard,
+	PostcodeSource,
+} from "@uk-data-atlas/geography/postcode-index-types";
 
 export const postcodeSource: PostcodeSource = {
 	title: "ONS Postcode Directory (August 2026)",
