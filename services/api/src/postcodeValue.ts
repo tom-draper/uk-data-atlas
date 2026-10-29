@@ -14,7 +14,10 @@ import {
 	type PointResult,
 } from "./pointLookup";
 import { compactPostcode } from "@uk-data-atlas/geography";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteContext,
+	RouteContextFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 
 /**
  * Answering "what is this measure where this postcode is?".
@@ -89,7 +92,14 @@ export type PostcodePlacement =
  * A release whose geometry cannot be read is passed over for the next.
  */
 export const placeInSource = (
-	context: RouteContextFor<"boundaryRelease" | "hasAreaRelease" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">,
+	context: { postcodes: RouteContext["postcodes"] } & RouteContextFor<
+		| "boundaryRelease"
+		| "hasAreaRelease"
+		| "containingAreas"
+		| "containingCodes"
+		| "releaseGeometrySource"
+		| "boundaryReleasesFor"
+	>,
 	point: LookupPoint,
 	geography: string,
 	releases: CompatibilityCandidate[],
@@ -107,6 +117,7 @@ export const placeInSource = (
 			continue;
 		const [{ results }] = locatePoints(
 			resolver,
+			context.postcodes,
 			{
 				releases: [
 					{
@@ -200,7 +211,14 @@ export type SourceAttempt =
 
 /** Place the point in one source's areas and read the value published there. */
 export const attemptSource = (
-	context: RouteContextFor<"boundaryRelease" | "hasAreaRelease" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">,
+	context: { postcodes: RouteContext["postcodes"] } & RouteContextFor<
+		| "boundaryRelease"
+		| "hasAreaRelease"
+		| "containingAreas"
+		| "containingCodes"
+		| "releaseGeometrySource"
+		| "boundaryReleasesFor"
+	>,
 	measure: Measure,
 	source: MeasureSource,
 	releases: CompatibilityCandidate[],

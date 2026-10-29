@@ -28,4 +28,4 @@ Place search and named-location membership live in `@uk-data-atlas/places`.
 
 Measure definitions, observation access, units, compatibility, coverage, geographic conversion and reconciliation live in `@uk-data-atlas/measures`.
 
-The catalogue loader composes focused area, spatial, lineage, location and postcode resolvers and shares them with the geography facade. It supplies batch area validation directly to API routes. `PostcodeResolver` can read its indexes without constructing the geography resolver; area placement additionally takes a spatial resolver.
+The catalogue loader composes focused area, spatial, lineage, location and postcode resolvers and shares them with the geography facade. It supplies batch area validation directly to API routes. `PostcodeResolver` can read its indexes without constructing the geography resolver; area placement uses the spatial resolver supplied at construction.

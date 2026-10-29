@@ -460,6 +460,9 @@ test("answers from the postcode area index as the geometry would, without readin
 		postcodes: createGeographyServices({
 			postcodeIndex: index,
 			postcodeAreaIndex: areaIndex,
+			boundaryRegistry,
+			areaLookup,
+			areaGeometryCache,
 		}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,

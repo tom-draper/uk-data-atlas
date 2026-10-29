@@ -14,7 +14,10 @@ export type PostcodeResolverInputs = {
 
 /** Postcode indexes and area placements for a release. */
 export class PostcodeResolver {
-	constructor(private readonly inputs: PostcodeResolverInputs) {}
+	constructor(
+		private readonly inputs: PostcodeResolverInputs,
+		private readonly spatial: Pick<SpatialResolver, "resolvePlacedAreas">,
+	) {}
 	postcodeIndex() {
 		return this.inputs.postcodeIndex;
 	}
@@ -32,7 +35,6 @@ export class PostcodeResolver {
 		postcode: string,
 		geography: string,
 		boundaryRelease: string,
-		spatial: Pick<SpatialResolver, "resolvePlacedAreas">,
 	) {
 		const matches = this.inputs.postcodeAreaIndex?.containing(
 			postcode,
@@ -40,6 +42,10 @@ export class PostcodeResolver {
 			boundaryRelease,
 		);
 		if (!matches) return undefined;
-		return spatial.resolvePlacedAreas(geography, boundaryRelease, matches);
+		return this.spatial.resolvePlacedAreas(
+			geography,
+			boundaryRelease,
+			matches,
+		);
 	}
 }

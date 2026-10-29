@@ -49,7 +49,10 @@ export type RouteContext = {
 	geographyResolver: Pick<GeographyResolver, keyof GeographyResolver>;
 	areaGeometryCache?: AreaGeometryCache;
 	areaValidation: Pick<AreaValidation, "validateAreas" | "matchAreaValues">;
-	postcodes: Pick<PostcodeResolver, "postcodeCounts" | "postcodeIndex">;
+	postcodes: Pick<
+		PostcodeResolver,
+		"postcodeCounts" | "postcodeIndex" | "postcodeContainingAreas"
+	>;
 	relationshipPathInventory?: RelationshipPathInventory;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;

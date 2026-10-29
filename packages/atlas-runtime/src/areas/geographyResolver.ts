@@ -136,7 +136,7 @@ export const createGeographyServices = (inputs: GeographyResolverInputs) => {
 	const spatial = new SpatialResolver(inputs.areaGeometryCache, (identity) =>
 		areas.area(identity),
 	);
-	const postcodes = new PostcodeResolver(inputs);
+	const postcodes = new PostcodeResolver(inputs, spatial);
 	const lineage = new LineageResolver(
 		inputs.crosswalkLookup,
 		(identity) => areas.area(identity),
@@ -229,19 +229,6 @@ export class GeographyResolver {
 
 	geographyInventory() {
 		return this.inputs.geographyInventory;
-	}
-
-	postcodeContainingAreas(
-		postcode: string,
-		geography: string,
-		boundaryRelease: string,
-	): ResolvedContainingArea[] | undefined {
-		return this.postcodes.postcodeContainingAreas(
-			postcode,
-			geography,
-			boundaryRelease,
-			this.spatial,
-		);
 	}
 
 	area(identity: AreaIdentity): AreaRecord | undefined {

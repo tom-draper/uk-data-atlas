@@ -6,7 +6,10 @@ import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 
 test("looks up a postcode without area, geometry or relationship inputs", () => {
 	const { index } = postcodeIndexFor([postcodeRow("EC1A 1AA")]);
-	const resolver = new PostcodeResolver({ postcodeIndex: index });
+	const resolver = new PostcodeResolver(
+		{ postcodeIndex: index },
+		{ resolvePlacedAreas: () => undefined },
+	);
 	const postcode = parsePostcode("EC1A 1AA");
 	assert.equal(postcode?.kind, "unit");
 	if (postcode?.kind !== "unit") throw new Error("Expected a unit postcode");

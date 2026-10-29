@@ -60,6 +60,7 @@ test("reads area postcode counts from the postcode service", () => {
 		geographyInventory,
 		postcodes: {
 			postcodeIndex: () => undefined,
+			postcodeContainingAreas: () => undefined,
 			postcodeCounts: (identity) => {
 				assert.deepEqual(identity, {
 					geography: "ward",
