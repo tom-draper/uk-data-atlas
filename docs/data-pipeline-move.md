@@ -570,7 +570,6 @@ dataset's import closure, so this changed the fingerprints once more.
 This completes the terrain and operations catalogue groups in move-order step 2
 and the geometry source registry and area inventory compilers in step 3. The inventory
 above records the starting branch, not the current location of extracted files.
-The remaining catalogue groups and steps 3 and 4 still need extraction.
 
 ## First PR validation
 
@@ -632,8 +631,7 @@ from `pipeline/src/`. Their resolver and coordinate helpers are shared with the
 API. The boundary compiler lives in `pipeline/src/compile-boundaries.mts`; the
 website fingerprint includes that compiler and its shared helpers.
 
-Evidence document compilation still runs through the API catalogue and report
-handlers. The website dataset compilation scripts also remain in `scripts/`.
+The website dataset compilation scripts also remain in `scripts/`.
 
 The source acquisition tools for ONS boundary releases, lookups, the postcode
 directory and ward history now live in `pipeline/src/sources/`. They write only
