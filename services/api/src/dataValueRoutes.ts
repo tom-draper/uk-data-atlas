@@ -18,7 +18,7 @@ import {
 } from "./postcodeValue";
 import { valueForPlace } from "./placeValue";
 import { describeAttempt, describeCandidate } from "./placeResponses";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,
@@ -33,7 +33,7 @@ export const handleDataValueRoutes = ({
 	parsedUrl,
 	segments,
 	dispatch,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"places" | "releaseAreas" | "missingRequirement" | "area" | "crosswalk" | "indexedPathSteps" | "relationshipPath" | "postcodeIndex" | "boundaryRelease" | "hasAreaRelease" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "areaCodes" | "countryIdentity" | "namedLocation" | "reconcileMembersForYear">): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
 		segments[0] !== "v1" ||
@@ -226,7 +226,7 @@ export const handleDataValueRoutes = ({
  * finest the measure is published on, since that is the most local answer.
  */
 const postcodeValue = (
-	{ context, releaseId, parsedUrl, dispatch }: RouteRequest,
+	{ context, releaseId, parsedUrl, dispatch }: RouteRequestFor<"places" | "releaseAreas" | "missingRequirement" | "area" | "crosswalk" | "indexedPathSteps" | "relationshipPath" | "postcodeIndex" | "boundaryRelease" | "hasAreaRelease" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "areaCodes" | "countryIdentity" | "namedLocation" | "reconcileMembersForYear">,
 	measure: Measure,
 	postcodeText: string,
 ): ApiResponse => {

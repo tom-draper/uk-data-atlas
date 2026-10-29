@@ -1,4 +1,4 @@
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	problem,
 	type ApiResponse,
@@ -27,7 +27,7 @@ export const aggregateValue = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse => {
+}: RouteRequestFor<"area" | "crosswalk" | "indexedPathSteps" | "relationshipPath" | "places" | "missingRequirement" | "namedLocation" | "areaCodes" | "reconcileMembersForYear" | "countryIdentity">): ApiResponse => {
 	const { dataCatalog, measureObservations } = context;
 	const measureId = segments[2] as string;
 	const resolvedMeasure = resolveAggregationMeasure({

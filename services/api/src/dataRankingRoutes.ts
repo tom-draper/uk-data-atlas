@@ -6,7 +6,7 @@ import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
 import { publishedPartitions, statedDefaults } from "./dataDefaults";
 import { selectSourcePartition } from "./sourcePartition";
 import { paginate } from "./pagination";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
 	invalidQuery,
@@ -24,7 +24,7 @@ export const handleDataRankingRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<never>): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
 		segments[0] !== "v1" ||

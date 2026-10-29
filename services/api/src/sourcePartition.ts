@@ -5,7 +5,7 @@ import {
 	type ObservationPlan,
 	type Resolution,
 } from "./observationResolution/observationPlan";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 
 type SourceQuery = {
 	period?: string | null;
@@ -45,7 +45,7 @@ export const selectSourcePartition = ({
 	periodsForResolution,
 	includePeriod = true,
 }: {
-	context: RouteContext;
+	context: RouteContextFor<never>;
 	measure: Measure;
 	query: SourceQuery;
 	periods?: string[];
