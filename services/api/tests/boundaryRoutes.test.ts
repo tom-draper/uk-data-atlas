@@ -1,3 +1,4 @@
+import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
@@ -225,6 +226,7 @@ test("resolves the boundary release to use for a date", () => {
 				{ ...registry.releases[0]!, id: "2023-05-en-ward" },
 			],
 		},
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry: {
 				...registry,
@@ -307,6 +309,7 @@ test("compares release code sets without claiming that differences are geography
 	]);
 	const context: RouteContext = {
 		boundaryRegistry,
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
@@ -448,6 +451,7 @@ test("summarises published release mappings as directional cardinality evidence"
 	};
 	const context: RouteContext = {
 		boundaryRegistry,
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
@@ -634,6 +638,7 @@ test("reports published extent continuity findings separately from code-set evid
 	};
 	const context: RouteContext = {
 		boundaryRegistry,
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,

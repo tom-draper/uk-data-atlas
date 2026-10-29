@@ -7,7 +7,10 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "../src/crosswalkInventory";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	createGeographyResolver,
+	createGeographyServices,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	compileLocationProjections,
 	LocationProjectionStore,
@@ -119,8 +122,11 @@ test("builds immutable geography indexes once for route-level queries", () => {
 		},
 	);
 	assert.deepEqual(
-		resolver.validateAreas("ward", "2025-01-en-ward", ["E05000001"])
-			?.summary,
+		createGeographyServices({ areaLookup }).validation.validateAreas(
+			"ward",
+			"2025-01-en-ward",
+			["E05000001"],
+		)?.summary,
 		{
 			valueCount: 1,
 			byStatus: { valid: 1 },

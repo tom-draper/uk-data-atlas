@@ -1,3 +1,4 @@
+import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
@@ -15,6 +16,7 @@ import { registry } from "./routeFixtures";
 const paths = compileRelationshipPaths(crosswalkInventory);
 const context: RouteContext = {
 	boundaryRegistry: registry,
+	areaValidation: createGeographyServices({}).validation,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry: registry,
 		areaLookup,

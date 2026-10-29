@@ -1,3 +1,4 @@
+import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -136,6 +137,7 @@ const { index, texts } = postcodeIndexFor([
 
 const context = (withPostcodes = true): RouteContext => ({
 	boundaryRegistry,
+	areaValidation: createGeographyServices({}).validation,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,
 		areaLookup,
@@ -451,6 +453,7 @@ test("answers from the postcode area index as the geometry would, without readin
 	const areaGeometryCache = new AreaGeometryCache(root, geometrySources, 6);
 	const compiled: RouteContext = {
 		boundaryRegistry,
+		areaValidation: createGeographyServices({}).validation,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
