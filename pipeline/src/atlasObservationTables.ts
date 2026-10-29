@@ -1,5 +1,5 @@
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
-import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationArtifactName } from "@uk-data-atlas/measures";
 import { rebuildObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type {

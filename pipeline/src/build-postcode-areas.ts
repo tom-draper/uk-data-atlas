@@ -18,7 +18,7 @@ import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readBoundaryRegistry } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readSqlitePostcodeIndex as readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
-import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { AreasResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/postcodes";
 import { parsePostcode } from "@uk-data-atlas/geography";

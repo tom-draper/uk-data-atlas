@@ -3,7 +3,7 @@ import {
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
-} from "../catalogue/dataCatalog";
+} from "@uk-data-atlas/measures";
 import {
 	convertObservations,
 	convertThroughSteps,

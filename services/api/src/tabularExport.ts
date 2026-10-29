@@ -1,4 +1,4 @@
-import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureSource } from "@uk-data-atlas/measures";
 import type { CallerSelectedGeometry } from "@uk-data-atlas/atlas-runtime/areas";
 
 export type TabularFormat = "csv" | "ndjson";

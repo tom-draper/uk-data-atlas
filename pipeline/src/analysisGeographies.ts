@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/measures";
 import { isGeographyKind } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";

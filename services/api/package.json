@@ -56,7 +56,8 @@
 		"@uk-data-atlas/areas": "workspace:*",
 		"@uk-data-atlas/relationships": "workspace:*",
 		"@uk-data-atlas/geometry": "workspace:*",
-		"@uk-data-atlas/places": "workspace:*"
+		"@uk-data-atlas/places": "workspace:*",
+		"@uk-data-atlas/measures": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

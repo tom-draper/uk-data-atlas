@@ -9,10 +9,16 @@ import type {
 	MeasureObservationArtifact,
 	PopulationObservation,
 	SourceGeography,
-} from "./dataCatalog";
+} from "@uk-data-atlas/measures";
 
-import { isMeasureTable, type MeasureTableArtifact } from "./measureTable";
-export { isMeasureTable, type MeasureTableArtifact } from "./measureTable";
+import {
+	isMeasureTable,
+	type MeasureTableArtifact,
+} from "@uk-data-atlas/measures";
+export {
+	isMeasureTable,
+	type MeasureTableArtifact,
+} from "@uk-data-atlas/measures";
 
 /** The table each measure's view was taken from. */
 const tableOfView = new WeakMap<object, MeasureTableArtifact>();
@@ -25,10 +31,8 @@ const textOfView = new WeakMap<object, () => string>();
 export const observationTextOf = (artifact: object): string | undefined =>
 	textOfView.get(artifact)?.();
 
-type RecordLookup = (areaCode: string) => PopulationObservation | undefined;
-
-/** The lookup each view's period offers, keyed by the period object. */
-const lookupOfPeriod = new WeakMap<object, RecordLookup>();
+import { registerPeriodRecordLookup } from "@uk-data-atlas/measures";
+export { periodRecordLookup } from "@uk-data-atlas/measures";
 
 /** Each table's rows by area code, built the first time any measure asks. */
 const rowsByCode = new WeakMap<
@@ -56,14 +60,6 @@ export const observationTableOf = (
 	artifact: object,
 ): MeasureTableArtifact | undefined =>
 	tableOfView.get(loaderOfView.get(artifact)?.() ?? artifact);
-
-/**
- * The record a view's period holds for an area, read from the table's rows
- * without building the period's records. Absent for a period that was not
- * taken from a table, whose records are already an array to search.
- */
-export const periodRecordLookup = (period: object): RecordLookup | undefined =>
-	lookupOfPeriod.get(period);
 
 /**
  * One measure's observations as a table serves them, shaped like any other
@@ -98,7 +94,7 @@ export const tableMeasureObservations = (
 			return records;
 		},
 	};
-	lookupOfPeriod.set(period, (areaCode) => {
+	registerPeriodRecordLookup(period, (areaCode) => {
 		const value = rowsOf(table).get(areaCode)?.[column + 1];
 		return typeof value === "number"
 			? { areaCode, value, status: "observed" }

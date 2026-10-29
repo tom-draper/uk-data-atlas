@@ -2,7 +2,7 @@ import type { ObservationDownload } from "@uk-data-atlas/atlas-runtime/catalogue
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
-import type { MeasureObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureObservation } from "@uk-data-atlas/measures";
 import type { BulkExport } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	isMeasureTable,

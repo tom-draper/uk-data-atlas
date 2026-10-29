@@ -1,4 +1,4 @@
-import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/measures";
 
 /**
  * Measures that answer the same question in a nation this one does not cover.

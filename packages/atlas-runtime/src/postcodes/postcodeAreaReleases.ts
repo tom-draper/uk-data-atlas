@@ -1,5 +1,5 @@
 import type { AreasResolver } from "../areas/resolver/areas";
-import type { MeasureCompatibilityInventory } from "../catalogue/measureCompatibility";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { countryRelease } from "../areas/countryRelease";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";
 import { rankReleases } from "../areas/rankCompatibilityReleases";

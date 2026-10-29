@@ -1,5 +1,5 @@
 import type { CrosswalkArtifact } from "./crosswalkInventory";
-import type { MeasureSource } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureSource } from "@uk-data-atlas/measures";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,

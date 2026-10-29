@@ -5,7 +5,7 @@ import {
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/measures";
 import { compileExportManifest } from "./exportManifest";
 import {
 	apiRootOf,

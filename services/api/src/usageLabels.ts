@@ -1,5 +1,5 @@
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/measures";
 
 /**
  * What a request is asking about, reduced to ids from our own catalogue.

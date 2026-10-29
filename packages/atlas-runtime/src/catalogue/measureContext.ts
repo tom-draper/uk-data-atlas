@@ -1,6 +1,6 @@
 import type { GeographyResolver } from "../areas/geographyResolver";
-import type { AnyMeasureObservationArtifact, DataCatalog } from "./dataCatalog";
-import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import type { AnyMeasureObservationArtifact, DataCatalog } from "@uk-data-atlas/measures";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 
 export type MeasureContext = {
 	geographyResolver: GeographyResolver;

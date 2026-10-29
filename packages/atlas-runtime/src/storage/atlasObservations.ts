@@ -1,7 +1,7 @@
 import {
 	observationArtifactName,
 	type DataCatalog,
-} from "../catalogue/dataCatalog";
+} from "@uk-data-atlas/measures";
 import {
 	DatabaseSync,
 	type SQLInputValue,

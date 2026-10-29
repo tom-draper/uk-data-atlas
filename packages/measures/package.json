@@ -1,0 +1,21 @@
+{
+	"name": "@uk-data-atlas/measures",
+	"private": true,
+	"license": "AGPL-3.0-only",
+	"version": "0.0.0",
+	"type": "module",
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p tsconfig.json"
+	},
+	"dependencies": {
+		"@uk-data-atlas/catalogue": "workspace:*",
+		"@uk-data-atlas/geography": "workspace:*"
+	},
+	"devDependencies": {
+		"typescript": "^7.0.2"
+	}
+}

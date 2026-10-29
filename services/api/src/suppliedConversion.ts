@@ -4,7 +4,7 @@ import {
 	convertThroughSteps,
 	type ConversionStep,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { PopulationObservation } from "@uk-data-atlas/measures";
 import type { PostedRows } from "./requestRows";
 
 type Count = Pick<PopulationObservation, "areaCode" | "value">;

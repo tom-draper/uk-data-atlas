@@ -5,8 +5,7 @@ import {
 	type MeasureObservation,
 	type MeasureSource,
 } from "./dataCatalog";
-import { periodRecordLookup } from "./observationTables";
-import type { ObservationArtifactReference } from "../areas/sourceExactProvenance";
+import { periodRecordLookup } from "./periodRecordLookup";
 
 export type ObservationArtifacts = {
 	measureObservations?: AnyMeasureObservationArtifact[];
@@ -23,7 +22,7 @@ export const observationsFor = (
 	period: string,
 	artifacts: ObservationArtifacts,
 ):
-	| (ObservationArtifactReference & {
+	| ({ artifact: string; contentHash: string } & {
 			readonly records: MeasureObservation[];
 			recordFor(areaCode: string): MeasureObservation | undefined;
 	  })

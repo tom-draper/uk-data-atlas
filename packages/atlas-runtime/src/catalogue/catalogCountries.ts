@@ -1,4 +1,4 @@
-import type { Country } from "./dataCatalog";
+import type { Country } from "@uk-data-atlas/measures";
 
 /**
  * Northern Ireland's super output areas predate the GSS scheme and keep their

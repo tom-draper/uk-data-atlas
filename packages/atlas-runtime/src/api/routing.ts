@@ -6,7 +6,7 @@ import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
-} from "../catalogue/dataCatalog";
+} from "@uk-data-atlas/measures";
 import type { ExportManifest } from "../storage/exportManifest";
 import type { GeographyInventory } from "../areas/geographyInventory";
 import type { LookupManifest } from "../areas/lookupExports";
@@ -18,7 +18,7 @@ import type {
 } from "../places/locationProjections";
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import type { MapArchive } from "../maps/mapResource/archiveReader";
-import type { MeasureCompatibilityInventory } from "../catalogue/measureCompatibility";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { NamedLocationInventory } from "../places/namedLocations";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";

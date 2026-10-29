@@ -1,7 +1,7 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { isCountryCode } from "./aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
-import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/measures";
 import { CONTAINMENT_NOTE, countryOfCode } from "./pointLookup";
 import {
 	findPostcode,
