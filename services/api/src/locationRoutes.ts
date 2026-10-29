@@ -6,7 +6,7 @@ import {
 	requirementDetail,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { COVERS_MINIMUM_SHARE } from "@uk-data-atlas/atlas-runtime/places";
 import { notBuilt, unsupported } from "@uk-data-atlas/atlas-runtime/areas";
 import { areaKey } from "@uk-data-atlas/geography";
@@ -32,7 +32,7 @@ export const handleLocationRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"locationParentCrosswalks" | "locationParents" | "namedLocation" | "namedLocations" | "reconcileMembers" | "releaseAreas" | "missingRequirement" | "crosswalksToLocationMembers" | "locationProjection" | "locationReleaseViews" | "locationMemberProjectionShards" | "locationParentProjectionShards">): ApiResponse | undefined => {
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
@@ -422,7 +422,7 @@ export const handleLocationRoutes = ({
  * `include=capabilities` expands it.
  */
 const locationCapabilities = (
-	context: RouteRequest["context"],
+	context: RouteRequestFor<"locationParentCrosswalks" | "locationParents" | "namedLocation" | "namedLocations" | "reconcileMembers" | "releaseAreas" | "missingRequirement" | "crosswalksToLocationMembers" | "locationProjection" | "locationReleaseViews" | "locationMemberProjectionShards" | "locationParentProjectionShards">["context"],
 	location: NamedLocation,
 ) => {
 	const geographyResolver = context.geographyResolver;
@@ -524,7 +524,7 @@ const locationParents = ({
 	parsedUrl,
 	segments,
 }: Pick<
-	RouteRequest,
+	RouteRequestFor<"locationParentCrosswalks" | "locationParents" | "namedLocation" | "namedLocations" | "reconcileMembers" | "releaseAreas" | "missingRequirement" | "crosswalksToLocationMembers" | "locationProjection" | "locationReleaseViews" | "locationMemberProjectionShards" | "locationParentProjectionShards">,
 	"context" | "releaseId" | "parsedUrl" | "segments"
 >): ApiResponse => {
 	const geographyResolver = context.geographyResolver;

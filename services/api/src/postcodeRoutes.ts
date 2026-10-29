@@ -20,7 +20,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readBatchInput } from "./batchInput";
-import type { RouteRequest, RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor, RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -123,7 +123,7 @@ export type PostcodeSourceSummary = Pick<
  * centroids are known for.
  */
 const postcodeLookupRequest = (
-	context: RouteRequest["context"],
+	context: RouteContextFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence">,
 	query: URLSearchParams,
 	edition: string,
 ) => {
@@ -227,7 +227,7 @@ export const handlePostcodeRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"postcodeIndex" | "missingRequirement" | "boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">): ApiResponse | undefined => {
 	if (
 		segments.length !== 3 ||
 		segments[0] !== "v1" ||
@@ -329,7 +329,7 @@ export const postcodeInPlace = (query: string) => {
 export const postcodePlace = (
 	context: {
 		geographyResolver: Pick<
-			RouteRequest["context"]["geographyResolver"],
+			RouteRequestFor<"postcodeIndex" | "missingRequirement" | "boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">["context"]["geographyResolver"],
 			"postcodeIndex"
 		>;
 	},
@@ -385,7 +385,7 @@ export const handlePostcodeBatchRoutes = ({
 	segments,
 	method,
 	body,
-}: RouteRequest): ApiResponse | undefined => {
+}: RouteRequestFor<"postcodeIndex" | "missingRequirement" | "boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor">): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
