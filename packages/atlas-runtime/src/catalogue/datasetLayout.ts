@@ -141,11 +141,12 @@ function records(
 	const result: Record<string, Json> = {};
 	for (const { position, area, code, name } of database
 		.prepare(
-			`SELECT r.position, r.area_version_id AS area, a.code, coalesce(n.name, v.name) AS name
+			`SELECT r.position, r.area_version_id AS area, coalesce(k.key, a.code) AS code, coalesce(n.name, v.name) AS name
 			FROM dataset_record r
 			JOIN area_version v ON v.id = r.area_version_id
 			JOIN area a ON a.id = v.area_id
 			LEFT JOIN dataset_area_name n ON n.dataset_id = r.dataset_id AND n.area_version_id = v.id
+			LEFT JOIN dataset_area_key k ON k.dataset_id = r.dataset_id AND k.area_version_id = v.id
 			WHERE r.dataset_id = ? AND r.part = ? AND r.records = ?
 			ORDER BY r.position`,
 		)
