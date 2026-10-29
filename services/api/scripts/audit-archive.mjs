@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "./geography-build-path.ts";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

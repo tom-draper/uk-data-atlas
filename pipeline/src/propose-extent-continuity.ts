@@ -1,13 +1,19 @@
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { buildArtifactPath } from "./geography-build-path";
+import {
+	artifactDirectory,
+	configDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
+import type {
+	AreaInventory,
+	AreaReleaseArtifact,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { isGeographyKind } from "@uk-data-atlas/geography";
 
 type Release = BoundaryRegistry["releases"][number] & {
@@ -192,15 +198,12 @@ export const proposeExtentContinuity = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
+	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const { adapters, skipped } = proposeExtentContinuity(repositoryRoot);
 	for (const reason of skipped) console.log(`Skipped ${reason}`);
 	if (process.argv.includes("--write")) {
 		const path = join(
-			repositoryRoot,
-			"services",
-			"api",
-			"config",
+			configDirectory(repositoryRoot),
 			"crosswalk-adapters.json",
 		);
 		const file = JSON.parse(readFileSync(path, "utf8")) as {

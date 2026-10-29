@@ -3582,7 +3582,7 @@ beside it. A pair sharing fewer than half its codes is skipped, which
 leaves the 2024 constituency redistribution and the 2011 move to GSS local
 authority codes to methods that can describe them. A release whose
 geometry file holds no shapes is also skipped.
-`pnpm tsx scripts/propose-extent-continuity.ts --write` regenerates
+`pnpm --dir pipeline exec tsx src/propose-extent-continuity.ts --write` regenerates
 the adapters when a release is added.
 
 Chaining the releases makes an area's history long, and every crosswalk

@@ -16,7 +16,7 @@ import { buildGeographyCatalogues } from "../../../pipeline/src/build-geography-
 import {
 	buildArtifactPath,
 	geographyCatalogues,
-} from "../scripts/geography-build-path";
+} from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readBoundaryRegistry,
 	readGeographyInventory,
