@@ -34,6 +34,14 @@ const byAge = [
 export const POPULATION_WARDS: DeclaredDataset = {
 	type: "population",
 	name: "wardName",
+	parents: [
+		{
+			code: "ladCode",
+			name: "ladName",
+			release: { geography: "localAuthority", year: 2023 },
+		},
+	],
+	rebuild: {},
 	measures: [POPULATION],
 	dimensions: [SEX, AGE],
 	fields: byAge,
@@ -42,6 +50,7 @@ export const POPULATION_WARDS: DeclaredDataset = {
 export const POPULATION_UK: DeclaredDataset = {
 	type: "populationUk",
 	name: "ladName",
+	rebuild: {},
 	measures: [POPULATION],
 	dimensions: [SEX, AGE],
 	fields: byAge,
