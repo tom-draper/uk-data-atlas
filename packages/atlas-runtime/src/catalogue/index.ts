@@ -17,7 +17,7 @@ export * from "./measureCapability";
 export * from "@uk-data-atlas/measures";
 export * from "@uk-data-atlas/measures";
 export * from "./measureContext";
-export * from "./measureReconciliation";
+export * from "@uk-data-atlas/measures";
 export * from "@uk-data-atlas/measures";
 export * from "@uk-data-atlas/measures";
 export * from "./observationDownloads";
@@ -25,6 +25,4 @@ export * from "./observationLoader";
 export * from "./observationTables";
 export * from "./relationshipRepairs";
 export * from "./validationReport";
-export * from "@uk-data-atlas/measures";
-
 export * from "@uk-data-atlas/measures";

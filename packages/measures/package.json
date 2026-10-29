@@ -13,7 +13,8 @@
 	},
 	"dependencies": {
 		"@uk-data-atlas/catalogue": "workspace:*",
-		"@uk-data-atlas/geography": "workspace:*"
+		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/relationships": "workspace:*"
 	},
 	"devDependencies": {
 		"typescript": "^7.0.2"
