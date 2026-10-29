@@ -737,6 +737,31 @@ describe("declared statistics", () => {
 			).toBe(0);
 		});
 
+		it("rebuilds parents listed in an array", () => {
+			const merged: DeclaredDataset = {
+				type: "example",
+				alsoIn: [{ geography: "localAuthority", year: 2022 }],
+				measures: [CRIMES],
+				fields: [{ path: "total", measure: "crimes" }],
+				parents: [0, 1].map((index) => ({
+					code: `from.${index}`,
+					release: { geography: "localAuthority", year: 2022 },
+				})),
+				rebuild: {},
+			};
+			const text = file({
+				E06000001: { total: 3, from: ["E07000026"] },
+				E06000002: { total: 4 },
+			});
+			const database = write(merged, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare("SELECT count(*) AS n FROM dataset_record_parent")
+					.get()?.n,
+			).toBe(1);
+		});
+
 		it("rebuilds a derived number from another dataset's rows", () => {
 			const people: DeclaredDataset = {
 				type: "people",

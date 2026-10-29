@@ -111,6 +111,7 @@ export type DeclaredDataset = {
 type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
 
 export type DeclaredParent = {
+	/** Dot-separated path to the code; an array index is a key. */
 	code: string;
 	/** Absent when the record names the area by code only. */
 	name?: string;
@@ -573,11 +574,14 @@ export function declaredStatistics(
 							onName(release, code, name);
 						}
 						const parents = (config.parents ?? []).map((parent) => {
-							const parentCode = record[parent.code];
+							const parentCode = follow(
+								record,
+								parent.code.split("."),
+							);
 							const parentName =
 								parent.name === undefined
 									? undefined
-									: record[parent.name];
+									: follow(record, parent.name.split("."));
 							if (
 								parentCode === undefined &&
 								parentName === undefined
@@ -794,10 +798,7 @@ export function declaredStatistics(
 							typeof node === "string"
 						)
 							return { path: placed, kind: "name" };
-						const parent =
-							path.length === 1
-								? parentFields.get(path[0])
-								: undefined;
+						const parent = parentFields.get(path.join("."));
 						if (parent && typeof node === "string")
 							return { path: placed, ...parent };
 						if (node === code)
