@@ -288,6 +288,12 @@ const sameShape = (pattern: readonly Segment[], path: readonly string[]) =>
 			"binding" in segment || segment.literal === path[index],
 	);
 
+/** A leaf path as laid out: a key into an array is its index, a number. */
+const laidOutPath = (path: readonly string[], arrays: ReadonlySet<string>) =>
+	path.map((key, index) =>
+		arrays.has(path.slice(0, index).join("\0")) ? Number(key) : key,
+	);
+
 function* numbers(
 	node: Json,
 	path: string[] = [],
@@ -327,6 +333,8 @@ class RecordSample {
 		{ kind: "value" | "lower" | "upper"; raw: Raw }
 	>();
 	readonly shapes = new Map<string, Set<string>>();
+	/** Paths, joined by NUL, of the nodes that are arrays. */
+	readonly arrays = new Set<string>();
 	/** Each record's shape, in the file's order. */
 	readonly recordShapes: string[] = [];
 
@@ -338,9 +346,9 @@ class RecordSample {
 			if (
 				node !== null &&
 				typeof node === "object" &&
-				!Array.isArray(node) &&
 				Object.keys(node).length > 0
 			) {
+				if (Array.isArray(node)) this.arrays.add(path.join("\0"));
 				for (const [child, value] of Object.entries(node))
 					visit(value, [...path, child]);
 				return;
@@ -749,10 +757,11 @@ export function declaredStatistics(
 				const leaves = sample.order.map(
 					(leafKey): StatisticsLayoutLeaf => {
 						const path = sample.paths.get(leafKey)!;
+						const placed = laidOutPath(path, sample.arrays);
 						const claim = sample.claims.get(leafKey);
 						if (claim)
 							return {
-								path,
+								path: placed,
 								kind: claim.kind,
 								series: seriesIndex.get(seriesKey(claim.raw))!,
 								period: claim.raw.period.label,
@@ -763,14 +772,15 @@ export function declaredStatistics(
 							path[0] === config.name &&
 							typeof node === "string"
 						)
-							return { path, kind: "name" };
+							return { path: placed, kind: "name" };
 						const parent =
 							path.length === 1
 								? parentFields.get(path[0])
 								: undefined;
 						if (parent && typeof node === "string")
-							return { path, ...parent };
-						if (node === code) return { path, kind: "code" };
+							return { path: placed, ...parent };
+						if (node === code)
+							return { path: placed, kind: "code" };
 						if (typeof node === "number") {
 							const index = derived.findIndex((pattern) =>
 								sameShape(pattern, path),
@@ -780,10 +790,10 @@ export function declaredStatistics(
 								throw new Error(
 									`${type}: derived ${rule} has no rebuild rule`,
 								);
-							return { path, kind: "derived", rule };
+							return { path: placed, kind: "derived", rule };
 						}
 						return {
-							path,
+							path: placed,
 							kind: "literal",
 							value: JSON.stringify(node),
 						};
