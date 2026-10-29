@@ -1,4 +1,5 @@
 import type { DeclaredDataset } from "../declaredStatistics";
+import { LOCAL_ELECTION } from "./elections";
 import {
 	CAR_AVAILABILITY,
 	ETHNICITY,
@@ -118,6 +119,7 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	NIMDM,
 	BREXIT,
 	BREXIT_CONSTITUENCY,
+	LOCAL_ELECTION,
 ];
 
 /**
@@ -127,8 +129,6 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 export const UNSTORED_DATASETS: Readonly<Record<string, string>> = {
 	generalElection:
 		"Candidates, parties and winners need the election tables before they become observations.",
-	localElection:
-		"Ward results need the election tables, and several years use county division codes outside the ward releases.",
 	historicalGeneralElection:
 		"Results before 2010 are on constituency boundaries the atlas has no release for.",
 };
