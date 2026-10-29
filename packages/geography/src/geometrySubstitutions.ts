@@ -1,4 +1,4 @@
-import type { Feature, FeatureCollection } from "geojson";
+import type { Feature, FeatureCollection, Geometry } from "geojson";
 
 /**
  * Boundary releases whose Northern Ireland geometry is known to be displaced,
@@ -125,7 +125,7 @@ export const knownDisplacementsFor = (
 			displacement.boundaryRelease === boundaryRelease,
 	);
 
-const codeOf = (feature: Feature, codeKey: string) => {
+const codeOf = (feature: Feature<Geometry | null>, codeKey: string) => {
 	const code = feature.properties?.[codeKey];
 	return typeof code === "string" ? code : undefined;
 };
@@ -136,10 +136,12 @@ const codeOf = (feature: Feature, codeKey: string) => {
  * in the same CRS. Throws rather than serve a mixture when the two releases
  * do not hold exactly the same covered codes.
  */
-export const substituteFeatures = <T extends FeatureCollection>(
+export const substituteFeatures = <
+	T extends FeatureCollection<Geometry | null>,
+>(
 	target: T,
 	targetCodeKey: string,
-	donor: FeatureCollection,
+	donor: FeatureCollection<Geometry | null>,
 	donorCodeKey: string,
 	substitution: Pick<GeometrySubstitution, "id" | "codePrefix">,
 	label: string,
