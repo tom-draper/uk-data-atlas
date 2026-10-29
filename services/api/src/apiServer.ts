@@ -265,8 +265,8 @@ export const createApiServer = (
 		: undefined;
 	const metrics = new ApiMetrics(
 		releaseId,
-		() => catalogues.geographyResolver.geometryCacheStats(),
-		() => catalogues.geographyResolver.locationProjectionCacheStats(),
+		() => catalogues.areaGeometryCache?.stats(),
+		() => catalogues.locationProjectionStore?.stats(),
 		() => responseCache?.stats(),
 	);
 	const vocabulary = usageVocabulary(
@@ -322,7 +322,7 @@ export const createApiServer = (
 				atlasRelease: releaseId,
 				uptimeSeconds: Math.round((Date.now() - started) / 1000),
 				geometryCache:
-					catalogues.geographyResolver.geometryCacheStats() ?? null,
+					catalogues.areaGeometryCache?.stats() ?? null,
 			});
 		if (!options.metrics) return json(404, { status: "not-found" });
 		if (

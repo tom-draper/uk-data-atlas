@@ -357,6 +357,7 @@ export const readAtlasCatalogues = (
 		geographyInventory,
 		areaInventory,
 		geographyResolver,
+		areaGeometryCache,
 		relationshipPathInventory,
 		crosswalkInventory,
 		atlasRelease,

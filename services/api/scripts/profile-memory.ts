@@ -29,7 +29,7 @@ const worker = async () => {
 		crosswalkCacheBytes: config.crosswalkCacheBytes,
 		observationCacheBytes: config.observationCacheBytes,
 	});
-	catalogues.geographyResolver.warmGeometryReleases(
+	catalogues.areaGeometryCache?.warm(
 		DEFAULT_POSTCODE_GEOGRAPHIES.flatMap((geography) => {
 			const release = catalogues.geographyResolver.selectReleaseForDate(
 				geography,

@@ -167,6 +167,7 @@ export const testContext = (
 	const withRegistry = { boundaryRegistry: registry, ...inputs };
 	return {
 		...resources,
+		areaGeometryCache: inputs.areaGeometryCache ?? areaGeometryCache,
 		boundaryRegistry: withRegistry.boundaryRegistry,
 		operationMatcher:
 			inputs.operationMatcher ??

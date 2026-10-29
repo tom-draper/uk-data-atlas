@@ -1,7 +1,6 @@
 import type { AreaRecord } from "@uk-data-atlas/areas";
 import type {
 	AreaGeometryCache,
-	AreaGeometryCacheStats,
 	GeoJsonGeometry,
 	IntersectingArea,
 } from "../../geometry/areaGeometry";
@@ -71,12 +70,6 @@ export class SpatialResolver {
 
 	hasAreaGeometryCache(): boolean {
 		return this.cache !== undefined;
-	}
-	geometryCacheStats(): AreaGeometryCacheStats | undefined {
-		return this.cache?.stats();
-	}
-	warmGeometryReleases(releases: Iterable<readonly [string, string]>): void {
-		this.cache?.warm(releases);
 	}
 
 	geometryFor(identity: AreaIdentity): ResolvedGeometry | undefined {
