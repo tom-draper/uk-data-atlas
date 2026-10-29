@@ -362,8 +362,17 @@ export const parseLeapLocalElection = (
 	const rows = Papa.parse<string[]>(text, { skipEmptyLines: true }).data;
 
 	for (const row of rows) {
-		const [ladName, ladCode, wardName, wardCode, , party, votes, elected] =
-			row;
+		const [
+			ladName,
+			ladCode,
+			wardName,
+			sourceCode,
+			,
+			party,
+			votes,
+			elected,
+		] = row;
+		const wardCode = config.wardCodeTypos?.[sourceCode] ?? sourceCode;
 		// LEAP's Scottish records only contain first-preference totals, not STV
 		// transfers. Keep this FPTP-compatible series to England and Wales.
 		if (

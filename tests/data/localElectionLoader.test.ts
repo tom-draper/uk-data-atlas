@@ -233,6 +233,22 @@ Nowhere,Example Council,LAB,100`,
 		});
 	});
 
+	it("replaces LEAP ward codes no ward had with the ward the row names", () => {
+		const dataset = parseLeapLocalElection(
+			`"Huntingdonshire","E07000011","Little Paxton","E05008530","Alex Example","Lab","320","1"`,
+			{
+				year: 2016,
+				boundaryYear: 2016,
+				source: "leap",
+				path: "leap.csv",
+				wardCodeTypos: { E05008530: "E05008579" },
+			},
+		);
+		expect(Object.keys(dataset.data)).toEqual(["E05008579"]);
+		expect(dataset.data.E05008579.wardCode).toBe("E05008579");
+		expect(dataset.results).toEqual({ E05008579: "LAB" });
+	});
+
 	it("reads each configured ward sheet, candidate sheet and ward list", async () => {
 		const wardSheet = (config: ElectionTableSourceConfig) => {
 			const { fields } = config;

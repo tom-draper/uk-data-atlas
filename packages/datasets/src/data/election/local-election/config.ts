@@ -50,7 +50,19 @@ export interface ElectionTableSourceConfig extends ElectionSourceBase {
 
 export interface LeapElectionSourceConfig extends ElectionSourceBase {
 	source: "leap";
+	// Codes the source gives that no ward ever had, to the code of the ward
+	// the row names. Replaced outright, as there is no area to point back to.
+	wardCodeTypos?: Record<string, string>;
 }
+
+// LEAP gives four Huntingdonshire wards codes no ward had; the ONS names
+// and codes list for December 2016 has each name under the code here.
+const HUNTINGDONSHIRE_TYPOS = {
+	E05008530: "E05008579", // Little Paxton
+	E05008532: "E05008580", // St Ives South
+	E05002780: "E05008581", // St Neots Eaton Ford
+	E05002785: "E05008938", // Somersham
+};
 
 export type ElectionSourceConfig =
 	ElectionTableSourceConfig | LeapElectionSourceConfig;
@@ -221,11 +233,13 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		boundaryYear: 2017,
 		source: "leap",
 		path: "politics/elections/local-elections/2017/leap-2017-05-04.csv",
+		wardCodeTypos: HUNTINGDONSHIRE_TYPOS,
 	},
 	2016: {
 		year: 2016,
 		boundaryYear: 2016,
 		source: "leap",
 		path: "politics/elections/local-elections/2016/leap-2016-05-05.csv",
+		wardCodeTypos: HUNTINGDONSHIRE_TYPOS,
 	},
 };
