@@ -8,7 +8,7 @@ import {
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	areaIdentityTable,
 	compileLookupManifest,

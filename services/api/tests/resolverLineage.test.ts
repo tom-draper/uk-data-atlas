@@ -3,7 +3,7 @@ import test from "node:test";
 import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
-} from "../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import { LineageResolver } from "@uk-data-atlas/atlas-runtime/areas";
 
 const relation = (

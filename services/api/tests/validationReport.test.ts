@@ -9,12 +9,12 @@ import type {
 	AreaOverlapCrosswalkArtifact,
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
-} from "../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	Measure,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { RelationshipCandidate } from "../src/relationshipCandidates";
+import type { RelationshipCandidate } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileValidationReport } from "../../../pipeline/src/validation/compileValidationReport";
 import {
 	type MeasureTotal,

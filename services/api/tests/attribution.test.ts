@@ -5,7 +5,7 @@ import {
 	attributionText,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const dataCatalog = {

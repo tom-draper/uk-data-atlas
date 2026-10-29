@@ -1,4 +1,4 @@
-import type { CrosswalkArtifact } from "./crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 
 /**
  * How a crosswalk establishes that a source area belongs wholly to one target,

@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import type { CrosswalkArtifact } from "./crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 import { buildTranslationSteps } from "@uk-data-atlas/atlas-runtime/relationships";

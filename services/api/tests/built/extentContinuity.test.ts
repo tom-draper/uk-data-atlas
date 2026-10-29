@@ -6,7 +6,7 @@ import test from "node:test";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "../../src/crosswalkInventory";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 
 const publicDirectory = artifactRoot(
 	new URL("../..", import.meta.url).pathname,

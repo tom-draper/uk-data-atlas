@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { route as routeRequest } from "../src/routes";
-import type { CrosswalkArtifact } from "../src/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,

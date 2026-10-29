@@ -5,7 +5,7 @@ import {
 	membershipThroughSteps,
 	pathMembershipClaims,
 } from "../src/aggregationMembership";
-import type { CrosswalkArtifact } from "../src/crosswalkInventory";
+import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 
 /** Membership reads only the method, purpose and records of a crosswalk. */
 const crosswalk = (
