@@ -8,7 +8,10 @@ import {
 	invalidQuery,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteContext,
+	RouteRequestFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 
@@ -22,13 +25,13 @@ export const handlePlaceRoutes = ({
 	segments,
 }: RouteRequestFor<
 	| "places"
-	| "postcodeIndex"
 	| "selectReleaseForDate"
 	| "hasAreaRelease"
 	| "explainAreaAbsence"
 	| "missingRequirement"
 	| "resolveAreaCandidates"
->): ApiResponse | undefined => {
+> & { context: { postcodes: RouteContext["postcodes"] } }):
+	ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||

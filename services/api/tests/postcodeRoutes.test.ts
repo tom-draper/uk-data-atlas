@@ -138,7 +138,9 @@ const { index, texts } = postcodeIndexFor([
 const context = (withPostcodes = true): RouteContext => ({
 	boundaryRegistry,
 	areaValidation: createGeographyServices({}).validation,
-	postcodes: createGeographyServices({}).postcodes,
+	postcodes: createGeographyServices({
+		postcodeIndex: withPostcodes ? index : undefined,
+	}).postcodes,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,
 		areaLookup,
@@ -455,7 +457,10 @@ test("answers from the postcode area index as the geometry would, without readin
 	const compiled: RouteContext = {
 		boundaryRegistry,
 		areaValidation: createGeographyServices({}).validation,
-		postcodes: createGeographyServices({}).postcodes,
+		postcodes: createGeographyServices({
+			postcodeIndex: index,
+			postcodeAreaIndex: areaIndex,
+		}).postcodes,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,

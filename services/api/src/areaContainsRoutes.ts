@@ -27,7 +27,10 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readBatchInput } from "./batchInput";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteContext,
+	RouteRequestFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 
 /** Points a batch lookup accepts; more belongs in a bulk export. */
 export const MAX_BATCH_POINTS = 100;
@@ -50,7 +53,19 @@ export const handleAreaContainsRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "missingRequirement" | "postcodeIndex">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "boundaryRelease"
+	| "hasAreaRelease"
+	| "selectReleaseForDate"
+	| "explainAreaAbsence"
+	| "postcodeContainingAreas"
+	| "containingAreas"
+	| "containingCodes"
+	| "releaseGeometrySource"
+	| "boundaryReleasesFor"
+	| "missingRequirement"
+> & { context: { postcodes: RouteContext["postcodes"] } }):
+	ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
@@ -153,7 +168,18 @@ const coordinatePoint = (
  * it, so a postcode is answered exactly as `/postcodes/{postcode}` places it.
  */
 const postcodePoint = (
-	context: RouteRequestFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "missingRequirement" | "postcodeIndex">["context"],
+	context: RouteRequestFor<
+		| "boundaryRelease"
+		| "hasAreaRelease"
+		| "selectReleaseForDate"
+		| "explainAreaAbsence"
+		| "postcodeContainingAreas"
+		| "containingAreas"
+		| "containingCodes"
+		| "releaseGeometrySource"
+		| "boundaryReleasesFor"
+		| "missingRequirement"
+	>["context"] & { postcodes: RouteContext["postcodes"] },
 	searchParams: URLSearchParams,
 	text: string,
 ): { point: LookupPoint; postcode: Record<string, unknown> } | ApiResponse => {
@@ -237,7 +263,19 @@ export const handleAreaContainsBatchRoutes = ({
 	segments,
 	method,
 	body,
-}: RouteRequestFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "postcodeContainingAreas" | "containingAreas" | "containingCodes" | "releaseGeometrySource" | "boundaryReleasesFor" | "missingRequirement" | "postcodeIndex">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "boundaryRelease"
+	| "hasAreaRelease"
+	| "selectReleaseForDate"
+	| "explainAreaAbsence"
+	| "postcodeContainingAreas"
+	| "containingAreas"
+	| "containingCodes"
+	| "releaseGeometrySource"
+	| "boundaryReleasesFor"
+	| "missingRequirement"
+> & { context: { postcodes: RouteContext["postcodes"] } }):
+	ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
