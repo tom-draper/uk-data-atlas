@@ -27,6 +27,8 @@ export const BOUNDARY_DETAILS: Record<string, string> = {
 		"Scottish Parliament elections give each voter two votes. The first elects a constituency member by first past the post, much like a Westminster election.",
 	scottishParliamentaryRegion:
 		"The second vote in a Scottish Parliament election is for a party in the voter's region. Seven additional members are elected from each region to make the overall result more proportional.",
+	historicalConstituency:
+		"Constituency boundaries are redrawn every decade or two, so older general election results belong to constituencies that no longer exist. These hold the constituencies of each set of boundaries from 1918 to 2005 by name, as the House of Commons Library numbers them. Their boundaries were never published as digital maps, so they can't be drawn.",
 	seneddConstituency:
 		"Until 2026, Senedd elections, like the Scottish Parliament's, combined constituency members elected by first past the post with regional members. From the 2026 election, Wales uses 16 larger constituencies that each elect six members by proportional representation.",
 	seneddElectoralRegion:
