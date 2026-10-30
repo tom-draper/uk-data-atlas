@@ -16,10 +16,10 @@ export const metadata: Metadata = pageMetadata({
 	subject: "Boundaries",
 	description:
 		"Every kind of UK area in the UK Data Atlas, explained: local authorities, wards, constituencies, LSOAs, MSOAs, data zones, health boards and more, with the data published on each.",
-	path: "/geographies",
+	path: "/boundaries",
 });
 
-export default async function GeographiesPage() {
+export default async function BoundariesPage() {
 	const catalogue = await loadCatalogue();
 	const entries = boundaryEntries(catalogue);
 	const groups = boundariesByGroup(entries);
@@ -31,8 +31,8 @@ export default async function GeographiesPage() {
 				{
 					title: "Overview",
 					links: [
-						{ id: "about-geographies", title: "About geographies" },
-						{ id: "all-geographies", title: "All geographies" },
+						{ id: "about-boundaries", title: "About boundaries" },
+						{ id: "all-boundaries", title: "All boundaries" },
 					],
 				},
 				...groups.map((group) => ({
@@ -77,7 +77,7 @@ export default async function GeographiesPage() {
 				</>
 			}
 		>
-			<H2 id="about-geographies">About geographies</H2>
+			<H2 id="about-boundaries">About boundaries</H2>
 			<P>
 				Official figures are always published for a set of areas: a
 				council&apos;s figures for each local authority, a census table
@@ -107,9 +107,9 @@ export default async function GeographiesPage() {
 				.
 			</P>
 
-			<H2 id="all-geographies">All geographies</H2>
+			<H2 id="all-boundaries">All boundaries</H2>
 			<Table
-				head={["Geography", "Areas", "Coverage", "Datasets"]}
+				head={["Boundary", "Areas", "Coverage", "Datasets"]}
 				rows={groups.flatMap((group) =>
 					group.boundaries.map((boundary) => [
 						<TextLink key="name" href={`#${boundary.slug}`}>

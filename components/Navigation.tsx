@@ -22,7 +22,7 @@ export default function Navigation() {
 							buttonClass={linkClass}
 							links={[
 								{ href: "/datasets", label: "Datasets" },
-								{ href: "/geographies", label: "Boundaries" },
+								{ href: "/boundaries", label: "Boundaries" },
 							]}
 						/>
 						<Link

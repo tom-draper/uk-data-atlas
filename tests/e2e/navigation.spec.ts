@@ -18,7 +18,7 @@ test("the Data menu opens, closes on Escape and on an outside click", async ({
 		"href",
 		"/datasets",
 	);
-	await expect(boundaries).toHaveAttribute("href", "/geographies");
+	await expect(boundaries).toHaveAttribute("href", "/boundaries");
 
 	await page.keyboard.press("Escape");
 	await expect(data).toHaveAttribute("aria-expanded", "false");
@@ -45,4 +45,15 @@ test("the nav links the pages visitors look for", async ({ page }) => {
 		).toHaveAttribute("href", href);
 	}
 	await expect(nav.getByRole("link", { name: "Atlas" })).toHaveCount(0);
+});
+
+test("the old geographies address redirects to boundaries", async ({
+	page,
+}) => {
+	await page.goto("/geographies#wards");
+
+	await expect(page).toHaveURL(/\/boundaries#wards$/);
+	await expect(
+		page.getByRole("heading", { level: 1, name: "Boundaries" }),
+	).toBeVisible();
 });

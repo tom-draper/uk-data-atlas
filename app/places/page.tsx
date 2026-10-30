@@ -184,7 +184,7 @@ export default async function PlacesPage() {
 					</p>
 					<p className="mt-2 text-[14px] text-slate-500">
 						Looking for kinds of area? See{" "}
-						<Link href="/geographies" className={linkClass}>
+						<Link href="/boundaries" className={linkClass}>
 							Boundaries
 						</Link>
 						.
