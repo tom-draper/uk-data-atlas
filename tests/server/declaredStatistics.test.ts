@@ -939,6 +939,50 @@ describe("declared statistics", () => {
 			]);
 		});
 
+		it("maps record keys to codes by part", () => {
+			const parts: DeclaredDataset = {
+				type: "example",
+				keys: (key, header) =>
+					(
+						({
+							"2024:1": "E06000001",
+							"2025:1": "E06000002",
+						}) as Record<string, string>
+					)[`${header.year}:${key}`],
+				measures: [CRIMES],
+				fields: [{ path: "total", measure: "crimes" }],
+				rebuild: {},
+			};
+			// The same publisher key stands for a different area in each part.
+			const text = JSON.stringify({
+				2024: {
+					year: 2024,
+					boundaryType: "localAuthority",
+					boundaryYear: 2024,
+					data: { 1: { id: "1", total: 3 } },
+				},
+				2025: {
+					year: 2025,
+					boundaryType: "localAuthority",
+					boundaryYear: 2024,
+					data: { 1: { id: "1", total: 4 } },
+				},
+			});
+			const database = write(parts, text);
+			expect(rebuildFromLayout(database, "example")).toBe(text);
+			expect(
+				database
+					.prepare(
+						"SELECT area_code, value FROM v_observation ORDER BY area_code",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{ area_code: "E06000001", value: 3 },
+				{ area_code: "E06000002", value: 4 },
+			]);
+		});
+
 		it("rebuilds a derived number from another dataset's rows", () => {
 			const people: DeclaredDataset = {
 				type: "people",

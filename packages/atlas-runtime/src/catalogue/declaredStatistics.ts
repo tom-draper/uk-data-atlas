@@ -99,10 +99,13 @@ export type DeclaredDataset = {
 	release?: (header: DeclaredHeader) => DeclaredRelease;
 	/**
 	 * Record keys that are not area codes, each with the code of the area it
-	 * stands for (an NHS organisation code for its board's GSS code). The key
-	 * is stored per area, so rows rebuild it.
+	 * stands for (an NHS organisation code for its board's GSS code), or a
+	 * function of the key and its part's header. The key is stored per area,
+	 * so rows rebuild it.
 	 */
-	keys?: Readonly<Record<string, string>>;
+	keys?:
+		| Readonly<Record<string, string>>
+		| ((key: string, header: DeclaredHeader) => string);
 	/** Codes in no listed release that are left out, with why. */
 	exclude?: { codes: RegExp; reason: string }[];
 	/** Record field holding the publisher's area name. */
@@ -706,7 +709,10 @@ export function declaredStatistics(
 					const order: LaidOutArea[] = [];
 					if (onPart) areaLists.set(set.from, order);
 					for (const [recordKey, record] of Object.entries(records)) {
-						const code = config.keys?.[recordKey] ?? recordKey;
+						const code =
+							typeof config.keys === "function"
+								? config.keys(recordKey, header)
+								: (config.keys?.[recordKey] ?? recordKey);
 						const release = candidates.find((candidate) =>
 							areas.has(candidate, code),
 						);
