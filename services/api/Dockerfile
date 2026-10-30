@@ -18,4 +18,4 @@ RUN mkdir -p /app/data/build /var/lib/atlas-usage && chown node:node /app/data/b
 USER node
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s CMD node -e "fetch('http://127.0.0.1:3001/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["sh", "-c", "node --max-old-space-size=2560 dist/build-atlas-cache.mjs && exec node dist/serve.mjs"]
+CMD ["node", "dist/serve.mjs"]

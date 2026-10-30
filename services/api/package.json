@@ -18,7 +18,6 @@
 	"scripts": {
 		"audit:archive": "node scripts/audit-archive.mjs",
 		"generate:query-rules": "tsx scripts/build-query-rules.ts",
-		"build:cache": "tsx --max-old-space-size=2560 scripts/build-atlas-cache.ts",
 		"build": "pnpm generate:query-rules && node scripts/build-runtime.mjs",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",

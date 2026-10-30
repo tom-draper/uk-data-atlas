@@ -144,7 +144,7 @@ export function requireAtlasCache(
 		}
 	} catch (cause) {
 		throw new Error(
-			`Missing or stale ${component} cache at ${path}. Run pnpm --dir services/api build:cache from the repository root.`,
+			`Missing or stale ${component} cache at ${path}. Download the matching atlas data release.`,
 			{ cause },
 		);
 	}
@@ -165,7 +165,7 @@ export function readCachePayload(
 			.get(id);
 		if (typeof row?.payload !== "string")
 			throw new Error(
-				`Missing cache payload ${id}. Run pnpm --dir services/api build:cache.`,
+				`Missing cache payload ${id}. Download the matching atlas data release.`,
 			);
 		return row.payload;
 	} finally {

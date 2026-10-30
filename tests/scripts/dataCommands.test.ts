@@ -40,7 +40,6 @@ test("data commands use one public vocabulary", () => {
 		expect(
 			Object.keys(scripts).filter(
 				(name) =>
-					!(scripts === api.scripts && name === "build:cache") &&
 					/^(build:|datasets:|boundaries:|atlas-data:|seo:)/.test(
 						name,
 					),

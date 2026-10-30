@@ -5,7 +5,6 @@ await build({
 	absWorkingDir: resolve(import.meta.dirname, ".."),
 	entryPoints: {
 		serve: "scripts/serve.ts",
-		"build-atlas-cache": "scripts/build-atlas-cache.ts",
 		"profile-startup": "scripts/profile-startup.ts",
 		"usage-report": "scripts/usage-report.ts",
 	},

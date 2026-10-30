@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { compileDuckdbPlaceIndex } from "../src/duckdbPlaceIndex";
 
 const release = (
@@ -44,30 +43,4 @@ test("DuckDB place index builds searchable aliases from a fixture", async () => 
 			[0, 0, "Yörk"],
 		],
 	]);
-});
-
-test("DuckDB place index preserves Node label order, aliases and releases", async () => {
-	const lookup = createAreaLookup([
-		release("2021", [
-			{
-				code: "E08000003",
-				name: "City of York",
-				aliases: ["York", "City of York"],
-			},
-			{ code: "E08000004", name: "York", aliases: ["Yörk"] },
-		]),
-		release("2023", [
-			{
-				code: "E08000003",
-				name: "York",
-				aliases: ["City of York", "Yörk"],
-			},
-		]),
-	]);
-	const expected = compilePlaceIndex(lookup, undefined, "sha256:areas");
-	assert.ok(expected.names.length > 0);
-	assert.deepEqual(
-		await compileDuckdbPlaceIndex(lookup, undefined, "sha256:areas"),
-		expected,
-	);
 });
