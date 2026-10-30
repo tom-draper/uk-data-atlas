@@ -57,3 +57,11 @@ test("the old geographies address redirects to boundaries", async ({
 		page.getByRole("heading", { level: 1, name: "Boundaries" }),
 	).toBeVisible();
 });
+
+test("the old API docs geography pages redirect to boundaries", async ({
+	page,
+}) => {
+	await page.goto("/docs/v1/geographies/wards");
+
+	await expect(page).toHaveURL(/\/docs\/v1\/boundaries\/wards$/);
+});

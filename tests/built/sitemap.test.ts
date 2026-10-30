@@ -36,7 +36,7 @@ describe("sitemap", () => {
 				"/places/J01000046",
 				"/docs/v1",
 				"/docs/v1/datasets/population",
-				"/docs/v1/geographies/local-authorities",
+				"/docs/v1/boundaries/local-authorities",
 				"/docs/v1/reference/map/measure-observations",
 			]),
 		);

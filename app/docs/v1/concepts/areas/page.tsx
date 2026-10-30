@@ -103,7 +103,7 @@ export default async function AreasPage() {
 			<Callout tone="tip">
 				Not sure which release to use for a date? [Find boundaries for a
 				date](/docs/v1/reference/geography/resolve-boundary-release-for-date)
-				picks the right one. The [geography pages](/docs/v1/geographies)
+				picks the right one. The [boundary pages](/docs/v1/boundaries)
 				list every available release and its coverage.
 			</Callout>
 			<P>
@@ -198,7 +198,7 @@ export default async function AreasPage() {
 				publishers sometimes redraw an area and keep its code.
 			</P>
 			<Callout tone="note">
-				{`The archive starts at different years for each geography: ${since}. Each [geography page](/docs/v1/geographies) lists exactly which releases it has. Earlier boundaries aren't in the Atlas yet.`}
+				{`The archive starts at different years for each geography: ${since}. Each [boundary page](/docs/v1/boundaries) lists exactly which releases it has. Earlier boundaries aren't in the Atlas yet.`}
 			</Callout>
 
 			<H2 id="data">Which areas data is on</H2>
