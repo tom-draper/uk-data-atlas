@@ -1222,6 +1222,10 @@ export const API_ONLY_GEOGRAPHIES: Readonly<
 		geography: "outputArea",
 		reason: "Its 188,880 unnamed areas are more than the map can draw; the API answers hierarchy and lookup questions about them.",
 	},
+	"historical-constituency": {
+		geography: "historicalConstituency",
+		reason: "No boundaries are published for constituencies before 2010; the API holds their names so historical results have areas to sit on.",
+	},
 	"intermediate-zone": {
 		geography: "intermediateZone",
 		reason: "It is published only as a British National Grid shapefile, which the map compiler cannot read; the API reads the shapefile itself.",

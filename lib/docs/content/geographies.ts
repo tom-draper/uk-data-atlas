@@ -118,6 +118,13 @@ export const GEOGRAPHIES: Record<string, GeographyContent> = {
 		group: "electoral",
 		intro: "The eight regions that elect the Scottish Parliament's additional members.",
 	},
+	historicalConstituency: {
+		slug: "historical-constituencies",
+		title: "Historical Westminster constituencies",
+		singular: "Historical Westminster constituency",
+		group: "electoral",
+		intro: "Westminster constituencies on each set of boundaries from 1918 to 2005, as the House of Commons Library numbers them. No boundaries are published for them, so they have names but no shapes.",
+	},
 	seneddConstituency: {
 		slug: "senedd-constituencies",
 		title: "Senedd constituencies",
