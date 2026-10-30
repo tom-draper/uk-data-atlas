@@ -13,6 +13,7 @@ services:
       - ../../data/build/atlas-cache.sqlite:/app/data/build/atlas-cache.sqlite:ro
       - ../../data/build/atlas-assets:/app/data/build/atlas-assets:ro
       - ../../data/build/artifacts:/app/data/build/artifacts:ro
+      - ../../data/build/map-resources:/app/data/build/map-resources:ro
     environment:
       ATLAS_WORKERS: "2"
       ATLAS_TRUSTED_PROXY_HOPS: ${ATLAS_TRUSTED_PROXY_HOPS:-0}
