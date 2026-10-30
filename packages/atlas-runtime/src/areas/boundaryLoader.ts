@@ -84,7 +84,7 @@ export const readPlaceIndex = (
 		);
 	} catch (error) {
 		throw new Error(
-			`${(error as Error).message} Run pnpm --dir services/api build:cache from the repository root.`,
+			`${(error as Error).message} Download the matching atlas data release.`,
 			{ cause: error },
 		);
 	}
@@ -165,7 +165,7 @@ export const readAreaSearchIndex = (
 		return openAreaSearchIndexDatabase(path, areaInventory.contentHash);
 	} catch (error) {
 		throw new Error(
-			`${(error as Error).message} Run pnpm --dir services/api build:cache from the repository root.`,
+			`${(error as Error).message} Download the matching atlas data release.`,
 			{ cause: error },
 		);
 	}

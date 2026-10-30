@@ -20,7 +20,7 @@ import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
 import { storePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
-import { buildPostcodeCounts } from "../src/cache-build/buildPostcodeCounts";
+import { buildDuckdbPostcodeCounts } from "../../../pipeline/src/postcode-counts/buildDuckdbPostcodeCounts";
 import { validateShards } from "../../../pipeline/src/postcode-counts/validatePostcodeCountInputs";
 import {
 	readSqlitePostcodeAreas,
@@ -231,7 +231,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	assert.equal(index.containing("M11AA", "ward", "unknown"), undefined);
 });
 
-test("counts build entirely from SQLite, preserve zero and uncovered results, and reject corruption and stale inputs", (t) => {
+test("counts build entirely from SQLite, preserve zero and uncovered results, and reject corruption and stale inputs", async (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
 	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
 	assert.deepEqual(validateShards(root).areas, compiled.artifact);
@@ -239,7 +239,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 		join(artifactRoot(apiRoot), "postcode-counts.json"),
 		"obsolete",
 	);
-	const built = buildPostcodeCounts(root);
+	const built = await buildDuckdbPostcodeCounts(root);
 	assert.equal(built.countedAreas, 2);
 	assert.deepEqual(readSqlitePostcodeCounts(apiRoot), built.artifact);
 	assert.equal(

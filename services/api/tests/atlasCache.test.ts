@@ -36,7 +36,7 @@ test("cache publication leaves canonical bytes unchanged and detects missing and
 	const { root, canonical, apiRoot } = fixture(t);
 	assert.throws(
 		() => requireAtlasCache(apiRoot, "area-search"),
-		/build:cache/,
+		/matching atlas data release/,
 	);
 	const before = readFileSync(canonical);
 	publishCacheTables(root, "area-search", tables);
@@ -50,7 +50,7 @@ test("cache publication leaves canonical bytes unchanged and detects missing and
 	database.close();
 	assert.throws(
 		() => requireAtlasCache(apiRoot, "area-search"),
-		/stale.*area-search|area-search.*build:cache/,
+		/stale.*area-search|area-search.*matching atlas data release/,
 	);
 	publishCacheTables(root, "area-search", tables);
 	assert.equal(
