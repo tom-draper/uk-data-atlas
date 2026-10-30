@@ -827,12 +827,26 @@ area_releases.position`, which `series.release_id` already references), then
 - Batch 13 adds general elections: 5 elections and 3,250 contests. 56
   datasets are served from rows.
 
-What keeps the other datasets on payloads, found by forcing `rebuild` on each
-(the first blocker the build hit; a dataset can have more):
+### Step 4, batch 14: historical general elections (2026-10-30)
 
-| Blocker            | Datasets                            |
-| ------------------ | ----------------------------------- |
-| Not stored as rows | historical general elections (#488) |
+- The House of Commons Library numbers constituencies within each boundary
+  set, so `1` is Battersea North in 1918 and Aberavon in 1955. The API-only
+  geography `historicalConstituency` has a release per set from 1918 to 2005
+  (`1918-uk` ... `2005-uk`), written by
+  `scripts/build-historical-constituencies.mts` from the Library's file:
+  constituencies with names and no geometry, coded by the set's first year
+  and the Library's id (`1918-1`). A few 1918 Irish rows have no id and are
+  coded by name.
+- A config's `keys` can be a function of the key and its part's header, as
+  the same Library id stands for a different constituency in each set. From
+  2010 the Library uses ONS codes, on the atlas's constituency releases.
+- Each constituency's name and region are contest text. Seats, electorate,
+  votes and vote shares by party group, valid votes and turnout are
+  observations; nulls need no rows.
+- Batch 14 adds historical general elections: 28 elections and 17,698
+  contests. All 57 catalogue datasets are served from rows, and
+  `UNSTORED_DATASETS` is empty. A type listed there still keeps its payload;
+  tests cover that path with a fixture type.
 
 ### Catalogue datasets as configuration (2026-10-27)
 
