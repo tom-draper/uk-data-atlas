@@ -48,12 +48,13 @@ again. `pnpm data:build --only datasets` builds this stage and its prerequisites
 
 ## atlas-cache.sqlite
 
-This local API cache is never distributed. Search indexes, location projections,
-postcode counts and the JSON of datasets served from rows (`dataset_payloads`,
-keyed by output and manifest hash) live here. After replacing `atlas.sqlite`, regenerate it with
-`pnpm --dir services/api build:cache` from the repository root. This reads only
-the canonical database, without precompile. Missing or stale components fail with
-that command. See [generated API data](../../docs/api-generated-data.md).
+The pipeline builds this cache and distributes it alongside `atlas.sqlite`.
+It contains search indexes, location projections, postcode counts and
+`dataset_payloads` for datasets served from rows. The cache is stamped with the
+SHA-256 hash of the final canonical database. The API opens both files read-only
+and fails readiness if the cache is missing, stale, or lacks required payloads.
+Run `pnpm data:download` to restore a matching release. See
+[generated API data](../../docs/api-generated-data.md).
 
 ## atlas.sqlite
 
@@ -116,8 +117,7 @@ the client. `GET /data/catalogue/<sha256>/<output>.json` matches both output and
 hash in `datasets`, then returns the exact JSON with
 `Content-Type: application/json; charset=utf-8` and
 `Cache-Control: public, max-age=31536000, immutable`: the stored payload, or for
-a dataset served from rows the cached rebuild (rebuilt from rows and checked
-against the hash when the cache lacks it). `readAtlasPayload("dataset:<output>")`
+a dataset served from rows the prebuilt cached payload. `readAtlasPayload("dataset:<output>")`
 reads the same way. The route supplies gzip
 compression when the client accepts it, with `Vary: Accept-Encoding`. Missing outputs and stale or invalid
 hashes return 404 with `Cache-Control: no-store`, never a different payload at
@@ -205,7 +205,7 @@ a record leaves out are listed in `dataset_record_absent`. A leaf names the firs
 on an `alsoIn` release read the series with the same measure and members.
 Derived numbers are recomputed by the config's `rebuild.derived` rules. The
 compiled JSON is then not stored in `payloads`; `atlas-sqlite` and
-`build:cache` rebuild it into `atlas-cache.sqlite`, checking the manifest hash.
+the pipeline rebuilds it into `atlas-cache.sqlite`, checking the manifest hash.
 Other configured datasets keep their payloads until a later batch.
 
 Run `pnpm exec vitest run --project built tests/built/datasetPayloads.test.ts`
@@ -455,7 +455,7 @@ rows needed for matching, filters and pagination.
 
 The `area-search-index` stage replaces its tables in a temporary copy of the
 local cache and publishes it atomically, retaining other cache components. Successful builds remove the separate database and both old JSON
-variants from `services/api/public/`. The cache is excluded from the build manifest and distribution.
+variants from `services/api/public/`. The release manifest and distribution include the cache.
 
 Rebuild with `pnpm data:build --only area-search-index`. Run
 `node --import tsx scripts/verify-area-search-index.mts` to compare every stored

@@ -262,9 +262,8 @@ Next.js. Re-run that command after replacing archives independently of an app bu
 
 ### Local SQLite cache
 
-Deploy only `data/build/atlas.sqlite`. Run `pnpm --dir services/api build:cache`
-from the repository root before starting the API. Do not publish or ship
-`atlas-cache.sqlite`. The command rebuilds search, location projections and
-postcode counts from canonical SQLite without precompile. Compose mounts the
-canonical file read-only and uses a writable volume for the regenerated cache;
-the container runs the cache builder before starting its workers.
+Deploy `data/build/atlas.sqlite` and `data/build/atlas-cache.sqlite` from the
+same release. The pipeline builds and stamps the cache, and `pnpm data:download`
+restores both files. Compose mounts them read-only. The API checks the stamp and
+required dataset payloads at startup and fails readiness if they are missing or
+mismatched. It does not rebuild the cache.

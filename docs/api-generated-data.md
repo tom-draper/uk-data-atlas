@@ -13,34 +13,18 @@ metadata. Source dataset payloads retain fields absent from observation contract
 they are not interchangeable copies of those contracts.
 
 `data/build/atlas-cache.sqlite` contains `area_search_*`, `place_index_*`,
-`location_projection_*`, `postcode_counts`, and the projection and counts metadata
-in its own `payloads` table. These are API accelerators rebuilt from canonical
-SQLite data. The base SQLite build writes the projection cache, and the search
-and postcode-count stages publish their own cache components. Publishers replace
-the cache atomically and leave the canonical file unchanged.
+`location_projection_*`, `postcode_counts`, dataset payloads rebuilt from rows,
+and projection and counts metadata. The pipeline builds these components and
+stamps the cache with the SHA-256 hash of the final canonical database.
 
-After downloading or replacing the canonical database, run from the repository
-root:
+The release distributes both SQLite files. Run `pnpm data:download` to restore
+matching files, and deploy them together. Compose mounts both read-only. At
+startup the API verifies the stamp and required dataset payloads; a missing or
+mismatched cache fails readiness. The API does not build the cache.
 
-```sh
-pnpm --dir services/api build:cache
-```
-
-This command reads only the canonical database and runs no precompile stages.
-Each component stores a SHA-256 generation over its canonical input inventory
-hashes or payload bytes, the cache compiler version, and name-normalisation rules.
-Search uses the area inventory; place search also uses named locations and the
-boundary registry; projections use areas, named locations and crosswalks; counts
-use the postcode and postcode-area inventories. Readers reject missing or stale
-components with the command above. Unrelated observation updates do not invalidate
-search. Compiler changes must increment `CACHE_VERSION` in `packages/atlas-runtime/src/storage/atlasCache.ts`.
-
-Publish and download only `atlas.sqlite`. Never archive, release, or copy
-`atlas-cache.sqlite` into an image or distribution. The source-data release script
-already archives only `data/source`, and `.dockerignore` excludes all `data`.
-Compose mounts the canonical file read-only inside a writable cache volume. The
-container rebuilds its cache once before starting API workers. Outside Docker,
-`data/build` must be writable by the account running the cache command.
+Each component also stores a generation hash over its inputs and cache compiler
+version. Readers reject stale components. Compiler changes must increment
+`CACHE_VERSION` in `packages/atlas-runtime/src/storage/atlasCache.ts`.
 
 The website continues to use its own data readers and never calls the API.
 
