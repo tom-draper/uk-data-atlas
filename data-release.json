@@ -1,38 +1,38 @@
 {
 	"version": 2,
-	"tag": "data-2026-10-23",
-	"commit": "cfe9635c631794fb905b8c87fb353af77290ec20",
+	"tag": "data-2026-10-30",
+	"commit": "cd4775a48c7a6e025fb9b99429a74cc993e20f54",
 	"repository": "tom-draper/uk-data-atlas",
 	"assets": [
 		{
-			"name": "data-2026-10-23.1.tar.gz",
-			"bytes": 632235260,
-			"sha256": "2079bceb32ed5c11247ca3298e53ff75565f1501fe0226069083a8fb0d2a129f"
+			"name": "data-2026-10-30.1.tar.gz",
+			"bytes": 639230988,
+			"sha256": "a3b22e79e8e9b0756b2a6f5fb6038a8d3db20c896437caae4c67f1779c548219"
 		},
 		{
-			"name": "data-2026-10-23.2.tar.gz",
-			"bytes": 586882090,
-			"sha256": "4d3cc92fc5d82179b7730fd91a8cf75cf7269240ce158276c5c4f88e65d55cbb"
+			"name": "data-2026-10-30.2.tar.gz",
+			"bytes": 586564171,
+			"sha256": "d9439ac54992f63775c269385d660a1f44d61c83c460a572dacb225b1067495b"
 		},
 		{
-			"name": "data-2026-10-23.3.tar.gz",
-			"bytes": 755304716,
-			"sha256": "51ba0703bfbb705803fca4afc557aaabb41be925af22f9c35f8028c381974f73"
+			"name": "data-2026-10-30.3.tar.gz",
+			"bytes": 754871657,
+			"sha256": "7f29c128d0ae0661d9c1e3267ff30104292fbc5c194cf924d3503d053230c402"
 		},
 		{
-			"name": "data-2026-10-23.4.tar.gz",
-			"bytes": 975529092,
-			"sha256": "b42bfb73868d71128f0064c464caf4d55548907e4ac5696ccc62c02b513aab5d"
+			"name": "data-2026-10-30.4.tar.gz",
+			"bytes": 975083103,
+			"sha256": "ef792b0cc72d92a457f1c90d5db710885a5532f1d3c14298c2fb32adde8a8786"
 		},
 		{
-			"name": "data-2026-10-23.5.tar.gz",
-			"bytes": 421899007,
-			"sha256": "05468005684e2ea3c055341fbad689ca5ab552fffa0b18abf5b8a45fc90c6f43"
+			"name": "data-2026-10-30.5.tar.gz",
+			"bytes": 422101727,
+			"sha256": "814b7f994bcacc91feada0e77fd2698eb243c9c337706a21e190688bf89f25f9"
 		},
 		{
-			"name": "data-2026-10-23.6.tar.gz",
-			"bytes": 1017115104,
-			"sha256": "90cf04244fa8e4e90657beef798037cba328db691800147277b40755286e9108"
+			"name": "data-2026-10-30.6.tar.gz",
+			"bytes": 1016278174,
+			"sha256": "ceb82af8f093f2749431acd66ac32ed3b37f2afa194dff2c374dae959667a900"
 		}
 	]
 }
