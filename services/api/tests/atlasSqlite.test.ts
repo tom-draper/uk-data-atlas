@@ -219,7 +219,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	const { root } = fixture(context);
 	const content = '{"2024":{"value":42}}\n';
 	const entry = {
-		type: "historicalGeneralElection",
+		type: "sample",
 		output: "sample",
 		source: { name: "Sample" },
 		contract: { version: 1 },
@@ -234,7 +234,8 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	writeFileSync(join(directory, "sample.json"), content);
 	const manifest = JSON.stringify({ version: 1, datasets: [entry] });
 	writeFileSync(join(directory, "dataset-manifest.json"), manifest);
-	const path = buildAtlasSqlite(root);
+	const unstored = { sample: "A fixture kept as a payload." };
+	const path = buildAtlasSqlite(root, { unstored });
 	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
 	assert.equal(readAtlasPayload(root, "dataset-manifest"), manifest);
 	const database = new DatabaseSync(path, { readOnly: true });
@@ -263,7 +264,10 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	}
 	const before = readFileSync(path);
 	writeFileSync(join(directory, "sample.json"), "{}");
-	assert.throws(() => buildAtlasSqlite(root), /does not match its manifest/);
+	assert.throws(
+		() => buildAtlasSqlite(root, { unstored }),
+		/does not match its manifest/,
+	);
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
 });

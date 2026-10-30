@@ -32,7 +32,7 @@ beforeEach(() => {
 			version: 1,
 			datasets: [
 				{
-					type: "historicalGeneralElection",
+					type: "sample",
 					output: "sample",
 					source: {},
 					contract: {},
@@ -90,7 +90,9 @@ beforeEach(() => {
 			parentShards: [],
 		}),
 	);
-	buildAtlasSqlite(root);
+	buildAtlasSqlite(root, {
+		unstored: { sample: "A fixture kept as a payload." },
+	});
 	// The request must work without either product's JSON copies.
 	rmSync(join(root, "data/build/datasets"), { recursive: true });
 	rmSync(artifactDirectory(root), { recursive: true });
