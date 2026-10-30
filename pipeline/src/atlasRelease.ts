@@ -44,10 +44,6 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 			"atlas-sqlite",
 			join(repositoryRoot, "data/build/atlas.sqlite"),
 		),
-		artifactReference(
-			"atlas-cache-sqlite",
-			join(repositoryRoot, "data/build/atlas-cache.sqlite"),
-		),
 		...JSON_ARTIFACTS.map((id) =>
 			artifactReference(id, join(publicDirectory, `${id}.json`)),
 		),
