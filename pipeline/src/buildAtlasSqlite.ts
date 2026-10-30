@@ -236,7 +236,10 @@ export const buildAtlasSqlite = (
 		writeSqliteTables(database, tables);
 		database
 			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
-			.run("location-projection-inventory", JSON.stringify(projectionInventory));
+			.run(
+				"location-projection-inventory",
+				JSON.stringify(projectionInventory),
+			);
 	});
 
 	publishDatasetPayloads(repositoryRoot);
