@@ -814,12 +814,25 @@ area_releases.position`, which `series.release_id` already references), then
 - Batch 12 adds local elections: 9 elections and 28,840 contests. 55
   datasets are served from rows.
 
+### Step 4, batch 13: general elections (2026-10-30)
+
+- Each constituency's region, country, type, result and first and second
+  parties are contest text, and its MP the elected `candidacy` (given name,
+  family name, gender). Party votes, electorate, valid votes, rejected
+  ballots and majority are observations; turnout is derived with the
+  compiler's own function.
+- Each election names its own year's constituency release. The header gives
+  2019 for 2010 to 2019, the last year of that boundary set; the atlas pins
+  2010 and 2015 to the December 2017 release, which has the same codes.
+- Batch 13 adds general elections: 5 elections and 3,250 contests. 56
+  datasets are served from rows.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker            | Datasets                                        |
-| ------------------ | ----------------------------------------------- |
-| Not stored as rows | general and historical general elections (#488) |
+| Blocker            | Datasets                            |
+| ------------------ | ----------------------------------- |
+| Not stored as rows | historical general elections (#488) |
 
 ### Catalogue datasets as configuration (2026-10-27)
 
