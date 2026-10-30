@@ -785,12 +785,41 @@ area_releases.position`, which `series.release_id` already references), then
   weeks, with the share over 18 weeks derived. 54 datasets are served from
   rows.
 
+### Step 4, batch 12: local elections and the election tables (2026-10-29)
+
+- Each part of an election dataset is an `election` row (kind, polling day,
+  release) and each record a `contest` on its area. What a publisher says
+  about a contest beside its votes is contest text, stored as published: the
+  area's name at that election, the authority holding it (`ladCode` is a
+  district, a county or `Unknown`, depending on the source) and, for general
+  elections, the result and the elected candidate (`candidacy`). Leaves
+  `contest` and `candidacy` name the column they rebuild. Votes, electorate
+  and turnout are observations whose period is the polling day.
+- A dataset's releases name its true year. A listed year the atlas holds no
+  release for is skipped, so records sit on the nearest listed release until
+  the true one is added, then move to it with no config change. `alsoIn` can
+  depend on the part: local elections try the releases nearest each polling
+  day first.
+- The atlas holds the May 2025 county electoral divisions and the May 2017
+  ones, published as names and codes only (features with no geometry). Both
+  are held from the map.
+- The compiler corrects four Huntingdonshire ward codes LEAP gives in 2016
+  and 2017 that no ward ever had, and lists party votes in the party list's
+  order rather than the source's. Records' key orders are merged
+  topologically, so records that each show some of the parties agree on one
+  order. These change the local elections hash.
+- Before 2021 the source (LEAP) publishes no electorate or turnout; the
+  compiler writes 0 and the rebuild derives it. `totalVotes` is derived as
+  the sum of the party votes.
+- Batch 12 adds local elections: 9 elections and 28,840 contests. 55
+  datasets are served from rows.
+
 What keeps the other datasets on payloads, found by forcing `rebuild` on each
 (the first blocker the build hit; a dataset can have more):
 
-| Blocker            | Datasets                           |
-| ------------------ | ---------------------------------- |
-| Not stored as rows | the three election datasets (#488) |
+| Blocker            | Datasets                                        |
+| ------------------ | ----------------------------------------------- |
+| Not stored as rows | general and historical general elections (#488) |
 
 ### Catalogue datasets as configuration (2026-10-27)
 
@@ -962,8 +991,7 @@ fuel poverty pilot does.
   committing to shipping `atlas-geometry.gpkg`.
 - **Postcode licensing.** Confirm the ONSPD and Code-Point Open terms allow
   redistribution as a separate file in this form.
-- **Period granularity.** Whether elections use the polling date or the year
-  as their period.
+- **Period granularity.** Resolved: elections use the polling day.
 - **Should the core file be built with DuckDB** (see Foundations in
   `services/api/DIRECTION.md`) and exported to SQLite? The schema is the same
   either way.
