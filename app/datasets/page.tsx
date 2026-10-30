@@ -76,12 +76,22 @@ export default async function DatasetsPage() {
 			title="Public datasets"
 			lede={
 				<>
-					The official statistics behind the UK Data Atlas, from
-					population and house prices to deprivation and election
-					results. Each dataset below explains what it measures, who
-					publishes it, the years and nations it covers, and the{" "}
-					<TextLink href="/geographies">geographies</TextLink> its
-					figures are published on.
+					<p>
+						The statistics we hold, and which areas and years they
+						cover.
+					</p>
+					<p className="mt-2 text-[14px] text-slate-500">
+						Looking for the shapes of areas? See{" "}
+						<TextLink href="/geographies">Boundaries</TextLink>.
+					</p>
+					<p className="mt-4">
+						The official statistics behind the UK Data Atlas, from
+						population and house prices to deprivation and election
+						results. Each dataset below explains what it measures,
+						who publishes it, the years and nations it covers, and
+						the <TextLink href="/geographies">geographies</TextLink>{" "}
+						its figures are published on.
+					</p>
 				</>
 			}
 		>

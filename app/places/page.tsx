@@ -179,6 +179,17 @@ export default async function PlacesPage() {
 			lede={
 				<>
 					<p>
+						One specific area: a ward, council, constituency or
+						postcode.
+					</p>
+					<p className="mt-2 text-[14px] text-slate-500">
+						Looking for kinds of area? See{" "}
+						<Link href="/geographies" className={linkClass}>
+							Boundaries
+						</Link>
+						.
+					</p>
+					<p className="mt-4">
 						Every ward, parish, local authority and Westminster
 						constituency published since the archive began, current
 						or abolished, the major towns and cities, and the
