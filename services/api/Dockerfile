@@ -7,6 +7,7 @@ COPY services/api/package.json services/api/package.json
 RUN pnpm install --filter @uk-data-atlas/api... --frozen-lockfile
 COPY services/api/src/ services/api/src/
 COPY services/api/scripts/ services/api/scripts/
+COPY services/api/openapi.yaml services/api/openapi.yaml
 RUN pnpm --dir services/api build
 
 FROM node:24-bookworm-slim
