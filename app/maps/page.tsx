@@ -72,6 +72,12 @@ export default function MapsIndexPage() {
 							every nation, region, city and local authority in
 							the atlas. Choose a place to see every map of it.
 						</p>
+						<Link
+							href="/atlas"
+							className="mt-6 inline-flex items-center rounded-md bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] transition-colors hover:bg-slate-800"
+						>
+							Open the interactive map
+						</Link>
 					</div>
 
 					<section className="mt-10">
