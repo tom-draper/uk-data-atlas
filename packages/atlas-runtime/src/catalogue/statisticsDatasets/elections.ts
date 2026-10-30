@@ -1,4 +1,5 @@
 import { PARTY_INFO } from "@uk-data-atlas/datasets/data/election/parties";
+import { calculateTurnout } from "@uk-data-atlas/datasets/helpers/turnout";
 import {
 	type DeclaredDataset,
 	type DeclaredDimension,
@@ -6,7 +7,13 @@ import {
 	type DeclaredRelease,
 	periods,
 } from "../declaredStatistics";
-import { ELECTORATE, TURNOUT, measure } from "./measures";
+import {
+	ELECTORATE,
+	REJECTED_BALLOTS,
+	TURNOUT,
+	VALID_VOTES,
+	measure,
+} from "./measures";
 
 /** Election results, one part per election and one contest per record. */
 
@@ -119,6 +126,82 @@ export const LOCAL_ELECTION: DeclaredDataset = {
 			totalVotes: sumPartyVotes,
 			electorate: () => 0,
 			turnoutPercent: () => 0,
+		},
+	},
+};
+
+/** Polling days of the general elections, by year. */
+const GENERAL_POLLING_DAYS: Readonly<Record<string, string>> = {
+	2010: "2010-05-06",
+	2015: "2015-05-07",
+	2017: "2017-06-08",
+	2019: "2019-12-12",
+	2024: "2024-07-04",
+};
+
+const MAJORITY = measure(
+	"majority",
+	"Majority",
+	"votes",
+	"count",
+	"none",
+	"Votes by which the winning candidate led the runner-up.",
+);
+
+export const GENERAL_ELECTION: DeclaredDataset = {
+	type: "generalElection",
+	period: (key) => periods.date(pollingDay(GENERAL_POLLING_DAYS)(key)),
+	/** The election's own year; the header names the last year of a boundary set. */
+	release: (header) => ({
+		geography: "constituency",
+		year: Number(header.year),
+	}),
+	election: {
+		kind: "general",
+		date: pollingDay(GENERAL_POLLING_DAYS),
+		contest: {
+			area_name: "constituencyName",
+			region: "regionName",
+			country: "countryName",
+			constituency_type: "constituencyType",
+			result: "result",
+			first_party: "firstParty",
+			second_party: "secondParty",
+		},
+		elected: {
+			given_name: "memberFirstName",
+			family_name: "memberSurname",
+			gender: "memberGender",
+		},
+	},
+	measures: [
+		PARTY_VOTES,
+		ELECTORATE,
+		VALID_VOTES,
+		REJECTED_BALLOTS,
+		MAJORITY,
+		TURNOUT,
+	],
+	dimensions: [PARTY],
+	fields: [
+		{ path: "partyVotes.{party}", measure: "party-votes" },
+		{ path: "electorate", measure: "electorate" },
+		{ path: "validVotes", measure: "valid-votes" },
+		{ path: "invalidVotes", measure: "rejected-ballots" },
+		{ path: "majority", measure: "majority" },
+	],
+	derived: {
+		turnoutPercent:
+			"Valid and rejected ballots as a percentage of the electorate.",
+	},
+	rebuild: {
+		derived: {
+			turnoutPercent: (record) =>
+				calculateTurnout(
+					record.validVotes as number,
+					record.invalidVotes as number,
+					record.electorate as number,
+				) ?? 0,
 		},
 	},
 };

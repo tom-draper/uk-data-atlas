@@ -1,5 +1,5 @@
 import type { DeclaredDataset } from "../declaredStatistics";
-import { LOCAL_ELECTION } from "./elections";
+import { GENERAL_ELECTION, LOCAL_ELECTION } from "./elections";
 import {
 	CAR_AVAILABILITY,
 	ETHNICITY,
@@ -120,6 +120,7 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	BREXIT,
 	BREXIT_CONSTITUENCY,
 	LOCAL_ELECTION,
+	GENERAL_ELECTION,
 ];
 
 /**
@@ -127,8 +128,6 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
  * refuses a type that is in neither list.
  */
 export const UNSTORED_DATASETS: Readonly<Record<string, string>> = {
-	generalElection:
-		"Candidates, parties and winners need the election tables before they become observations.",
 	historicalGeneralElection:
 		"Results before 2010 are on constituency boundaries the atlas has no release for.",
 };
