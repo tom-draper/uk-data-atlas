@@ -81,11 +81,11 @@ export default function DocsHeader() {
 							Datasets
 						</HeaderLink>
 						<HeaderLink
-							href="/docs/v1/geographies"
-							active={pathname.startsWith("/docs/v1/geographies")}
+							href="/docs/v1/boundaries"
+							active={pathname.startsWith("/docs/v1/boundaries")}
 							className="hidden lg:block"
 						>
-							Geographies
+							Boundaries
 						</HeaderLink>
 						<HeaderLink
 							href="/docs/v1/reference"

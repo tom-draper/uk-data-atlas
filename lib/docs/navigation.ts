@@ -91,7 +91,7 @@ export function dataPageHref(slug: string): string {
 }
 
 export function geographyHref(geography: string): string {
-	return `/docs/v1/geographies/${GEOGRAPHIES[geography].slug}`;
+	return `/docs/v1/boundaries/${GEOGRAPHIES[geography].slug}`;
 }
 
 /** Dataset pages under their topics, each topic an anchor on the dataset overview. */
@@ -116,9 +116,9 @@ export const DATA: NavLink[] = [
 ];
 
 export const GEOGRAPHY_LINKS: NavLink[] = [
-	{ href: "/docs/v1/geographies", title: "All geographies" },
+	{ href: "/docs/v1/boundaries", title: "All boundaries" },
 	...GEOGRAPHY_GROUPS.map((group) => ({
-		href: `/docs/v1/geographies#${group.id}`,
+		href: `/docs/v1/boundaries#${group.id}`,
 		title: group.title,
 		children: Object.entries(GEOGRAPHIES)
 			.filter(([, content]) => content.group === group.id)
@@ -162,7 +162,7 @@ export function docsNavigation(contract: ApiContract): NavGroup[] {
 		{ title: "Using the API", links: USING_THE_API },
 		{ title: "Guides", links: GUIDES },
 		{ title: "Datasets", links: DATA },
-		{ title: "Geographies", links: GEOGRAPHY_LINKS },
+		{ title: "Boundaries", links: GEOGRAPHY_LINKS },
 		{
 			title: "API reference",
 			links: [

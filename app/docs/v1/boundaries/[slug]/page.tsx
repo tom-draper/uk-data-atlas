@@ -65,10 +65,10 @@ export default async function GeographyPage({ params }: { params: Params }) {
 		<DocPage
 			href={geographyHref(id)}
 			trail={[
-				{ label: "Geographies", href: "/docs/v1/geographies" },
+				{ label: "Boundaries", href: "/docs/v1/boundaries" },
 				{
 					label: group?.title ?? "",
-					href: `/docs/v1/geographies#${content.group}`,
+					href: `/docs/v1/boundaries#${content.group}`,
 				},
 			]}
 			title={content.title}

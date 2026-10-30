@@ -10,18 +10,18 @@ import { docsMetadata } from "@/lib/docs/metadata";
 import { geographyHref } from "@/lib/docs/navigation";
 
 export const metadata = docsMetadata(
-	"Geographies and boundaries",
+	"Boundaries",
 	"Boundaries for every kind of UK area in the UK Data Atlas API: local authorities, wards, constituencies, LSOAs, regions, health boards and more, as GeoJSON and vector tiles.",
-	"/docs/v1/geographies",
+	"/docs/v1/boundaries",
 );
 
-export default async function GeographiesPage() {
+export default async function BoundariesPage() {
 	const catalogue = await loadCatalogue();
 	return (
 		<DocPage
-			href="/docs/v1/geographies"
-			eyebrow="Geographies"
-			title="Geographies and boundaries"
+			href="/docs/v1/boundaries"
+			eyebrow="Boundaries"
+			title="Boundaries"
 			lede="Every kind of area the Atlas holds boundaries for, from countries down to small neighbourhoods. Each page lists its boundary releases, how many areas they contain, and what data is published on them. The years on each card are the span of releases the Atlas holds."
 			toc={GEOGRAPHY_GROUPS.map((group) => ({
 				id: group.id,
