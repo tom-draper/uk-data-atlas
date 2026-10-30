@@ -48,12 +48,13 @@ again. `pnpm data:build --only datasets` builds this stage and its prerequisites
 
 ## atlas-cache.sqlite
 
-The pipeline builds this cache and distributes it alongside `atlas.sqlite`.
+The pipeline builds this cache alongside `atlas.sqlite`.
 It contains search indexes, location projections, postcode counts and
 `dataset_payloads` for datasets served from rows. The cache is stamped with the
 SHA-256 hash of the final canonical database. The API opens both files read-only
 and fails readiness if the cache is missing, stale, or lacks required payloads.
-Run `pnpm data:download` to restore a matching release. See
+After restoring source data with `pnpm data:download`, run `pnpm data:build`
+to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).
 
 ## atlas.sqlite
@@ -455,7 +456,7 @@ rows needed for matching, filters and pagination.
 
 The `area-search-index` stage replaces its tables in a temporary copy of the
 local cache and publishes it atomically, retaining other cache components. Successful builds remove the separate database and both old JSON
-variants from `services/api/public/`. The release manifest and distribution include the cache.
+variants from `services/api/public/`. The source data release excludes the cache.
 
 Rebuild with `pnpm data:build --only area-search-index`. Run
 `node --import tsx scripts/verify-area-search-index.mts` to compare every stored
