@@ -1,5 +1,9 @@
 import type { DeclaredDataset } from "../declaredStatistics";
-import { GENERAL_ELECTION, LOCAL_ELECTION } from "./elections";
+import {
+	GENERAL_ELECTION,
+	HISTORICAL_GENERAL_ELECTION,
+	LOCAL_ELECTION,
+} from "./elections";
 import {
 	CAR_AVAILABILITY,
 	ETHNICITY,
@@ -121,13 +125,11 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	BREXIT_CONSTITUENCY,
 	LOCAL_ELECTION,
 	GENERAL_ELECTION,
+	HISTORICAL_GENERAL_ELECTION,
 ];
 
 /**
  * Manifest types not yet stored as statistics rows, and why. The build
  * refuses a type that is in neither list.
  */
-export const UNSTORED_DATASETS: Readonly<Record<string, string>> = {
-	historicalGeneralElection:
-		"Results before 2010 are on constituency boundaries the atlas has no release for.",
-};
+export const UNSTORED_DATASETS: Readonly<Record<string, string>> = {};
