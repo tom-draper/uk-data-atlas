@@ -17,7 +17,6 @@ const fixture = (context: TestContext) => {
 		join(root, "data/build/atlas.sqlite"),
 		Buffer.from([0, 255, 128, 3]),
 	);
-	writeFileSync(join(root, "data/build/atlas-cache.sqlite"), "cache fixture");
 	for (const id of [
 		"boundary-releases",
 		"derived-boundaries",
