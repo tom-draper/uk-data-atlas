@@ -127,7 +127,7 @@ export const canonicalReleaseRequest = (
 			`No boundary release is published for the geography ${latest.geography}.`,
 			{
 				code: "unsupported_geography",
-				links: { geographies: "/v1/geographies" },
+				links: { boundaries: "/v1/boundaries" },
 			},
 		);
 	const undated = releases.filter(

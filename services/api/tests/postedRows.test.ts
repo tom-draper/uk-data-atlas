@@ -141,9 +141,9 @@ test("validates a POSTed column exactly as the same values in a GET", () => {
 });
 
 test("refuses a POST to a route that only reads", () => {
-	const refused = post("/v1/geographies", json({ values: ["x"] }));
+	const refused = post("/v1/boundaries", json({ values: ["x"] }));
 	assert.equal(refused.status, 405);
-	assert.equal(route("PUT", "/v1/geographies", context).status, 405);
+	assert.equal(route("PUT", "/v1/boundaries", context).status, 405);
 });
 
 test("joins rows to a release, numbered as its tiles, and lists what did not join", () => {

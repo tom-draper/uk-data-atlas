@@ -80,7 +80,7 @@ export const resolveAreaQuery = ({
 					: "no_release_for_date",
 			absence: selection.absence,
 			...(selection.absence === "unknown-geography"
-				? { links: { geographies: "/v1/geographies" } }
+				? { links: { boundaries: "/v1/boundaries" } }
 				: {}),
 			...(selection.earliest ? { earliest: selection.earliest } : {}),
 			...(selection.undated.length > 0

@@ -78,7 +78,7 @@ test("reports a geography with no published boundary release", () => {
 		code: "unsupported_geography",
 		absence: "unknown-geography",
 		detail: "No boundary release is published for the geography parish.",
-		links: { geographies: "/v1/geographies" },
+		links: { boundaries: "/v1/boundaries" },
 	});
 });
 

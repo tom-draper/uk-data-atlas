@@ -193,7 +193,7 @@ x-endpoint-chooser:
   - need: convert values under a declared measure/method rule
     start: ["/data/{measure-id}/convert"]
   - need: validate a supplied code/name or discover releases
-    start: ["/areas:validate", "/geographies", "/boundary-releases"]
+    start: ["/areas:validate", "/boundaries", "/boundary-releases"]
   - need: cite, attribute or inspect the published release
     start:
       [
@@ -377,7 +377,7 @@ paths:
                   links:
                     - /v1/openapi.yaml
                     - /v1/docs
-                    - /v1/geographies
+                    - /v1/boundaries
                     - /v1/map-resources
                     - /v1/map-resources/{geography}/{release}
                     - /v1/map-resources/{geography}/{release}.pmtiles
@@ -910,11 +910,11 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
-  /geographies:
+  /boundaries:
     get:
-      operationId: listGeographies
+      operationId: listBoundaries
       tags: ["Geography"]
-      summary: List geography types with their latest boundary release
+      summary: List boundary types with their latest release
       x-likely-refusal:
         when: "Takes no input, so nothing is refused but the server-wide rate limit."
       responses:
@@ -924,7 +924,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeographySummaryListEnvelope"
-              x-example-request: "/v1/geographies"
+              x-example-request: "/v1/boundaries"
               example:
                 apiVersion: v1
                 atlasRelease:
@@ -8188,7 +8188,7 @@ components:
           code: unsupported_geography
           absence: unknown-geography
           links:
-            geographies: /v1/geographies
+            boundaries: /v1/boundaries
 
     UnknownReleaseProblem:
       description: >

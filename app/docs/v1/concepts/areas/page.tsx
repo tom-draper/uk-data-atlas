@@ -81,8 +81,7 @@ export default async function AreasPage() {
 				]}
 			/>
 			<P>
-				[List
-				geographies](/docs/v1/reference/geography/list-geographies)
+				[List boundaries](/docs/v1/reference/geography/list-boundaries)
 				returns every one the Atlas knows about.
 			</P>
 

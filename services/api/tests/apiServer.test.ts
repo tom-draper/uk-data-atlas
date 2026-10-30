@@ -68,7 +68,7 @@ const serve = async (
 
 test("identifies every response by its release and a request id", async (t) => {
 	const { get, logged } = await serve(t, { accessLog: true });
-	const response = await get("/v1/geographies", {
+	const response = await get("/v1/boundaries", {
 		headers: { "x-request-id": "client-trace-42" },
 	});
 	assert.equal(response.status, 200);
@@ -76,7 +76,7 @@ test("identifies every response by its release and a request id", async (t) => {
 	assert.equal(response.headers.get("x-request-id"), "client-trace-42");
 
 	// An id that could break a log line is replaced, not echoed.
-	const generated = await get("/v1/geographies", {
+	const generated = await get("/v1/boundaries", {
 		headers: { "x-request-id": "bad id\twith spaces" },
 	});
 	assert.match(generated.headers.get("x-request-id")!, /^[0-9a-f-]{36}$/);
@@ -94,11 +94,11 @@ test("identifies every response by its release and a request id", async (t) => {
 		})),
 		[
 			{
-				route: "/v1/geographies",
+				route: "/v1/boundaries",
 				status: 200,
 				requestId: "client-trace-42",
 			},
-			{ route: "/v1/geographies", status: 200, requestId: "generated" },
+			{ route: "/v1/boundaries", status: 200, requestId: "generated" },
 			{
 				route: "/v1/areas/{geography}/{release}/{code}",
 				status: 200,
@@ -142,7 +142,7 @@ test("answers a failing handler with a 500 that can be found in the logs", async
 		failing,
 	);
 	broken = true;
-	const response = await get("/v1/geographies");
+	const response = await get("/v1/boundaries");
 	assert.equal(response.status, 500);
 	assert.equal(
 		response.headers.get("content-type"),
@@ -161,7 +161,7 @@ test("answers a failing handler with a 500 that can be found in the logs", async
 	assert.equal(entry!.level, "error");
 	assert.equal(entry!.event, "request.failed");
 	assert.equal(entry!.requestId, body.requestId);
-	assert.equal(entry!.route, "/v1/geographies");
+	assert.equal(entry!.route, "/v1/boundaries");
 	assert.match(
 		(entry!.error as { stack: string }).stack,
 		/artifact went missing/,
@@ -170,7 +170,7 @@ test("answers a failing handler with a 500 that can be found in the logs", async
 
 	// The server is still serving afterwards.
 	broken = false;
-	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
 });
 
 test("contains a failure while finalising an otherwise successful response", async (t) => {
@@ -185,7 +185,7 @@ test("contains a failure while finalising an otherwise successful response", asy
 		},
 		onError: (error) => reported.push(error),
 	});
-	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
 	assert.equal(reported.length, 1);
 	assert.match((reported[0] as Error).message, /log sink unavailable/);
 	assert.ok(
@@ -195,24 +195,24 @@ test("contains a failure while finalising an otherwise successful response", asy
 
 	// A best-effort logging failure does not poison the server's request loop.
 	failAccessLog = false;
-	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
 });
 
 test("keeps client allowances and response headers local to each server", async (t) => {
 	const options = { rateLimit: { capacity: 1, refillPerSecond: 0.001 } };
 	const first = await serve(t, options);
 	const second = await serve(t, options);
-	const accepted = await first.get("/v1/geographies");
+	const accepted = await first.get("/v1/boundaries");
 	assert.equal(accepted.status, 200);
 	assert.equal(accepted.headers.get("ratelimit"), '"default";r=0;t=1000');
-	const refused = await first.get("/v1/geographies");
+	const refused = await first.get("/v1/boundaries");
 	assert.equal(refused.status, 429);
 	assert.equal(refused.headers.get("retry-after"), "1000");
 	assert.match((await refused.json()).detail, /this worker/);
-	const independent = await second.get("/v1/geographies");
+	const independent = await second.get("/v1/boundaries");
 	assert.equal(independent.status, 200);
 	assert.equal(independent.headers.get("ratelimit"), '"default";r=0;t=1000');
-	assert.equal((await second.get("/v1/geographies")).status, 429);
+	assert.equal((await second.get("/v1/boundaries")).status, 429);
 	assert.equal(first.server.metrics.rateLimited.value(), 1);
 	assert.equal(second.server.metrics.rateLimited.value(), 1);
 });
@@ -221,12 +221,12 @@ test("limits each client and tells it when to come back", async (t) => {
 	const { get, server } = await serve(t, {
 		rateLimit: { capacity: 2, refillPerSecond: 0.01 },
 	});
-	const first = await get("/v1/geographies");
+	const first = await get("/v1/boundaries");
 	assert.equal(first.headers.get("ratelimit-policy"), '"default";q=2;w=200');
 	assert.equal(first.headers.get("ratelimit"), '"default";r=1;t=100');
-	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
 
-	const refused = await get("/v1/geographies");
+	const refused = await get("/v1/boundaries");
 	assert.equal(refused.status, 429);
 	assert.equal(refused.headers.get("retry-after"), "100");
 	assert.equal(refused.headers.get("cache-control"), "no-store");
@@ -235,7 +235,7 @@ test("limits each client and tells it when to come back", async (t) => {
 	// A preflight and the operations endpoints are never refused: a refused
 	// probe would take a healthy instance out of service.
 	assert.equal(
-		(await get("/v1/geographies", { method: "OPTIONS" })).status,
+		(await get("/v1/boundaries", { method: "OPTIONS" })).status,
 		204,
 	);
 	assert.equal((await get("/healthz")).status, 200);
@@ -252,9 +252,9 @@ test("charges an operation that reads many shapes what it declares", async (t) =
 		"/v1/areas:intersects?geography=ward&release=2023-05-uk-bgc&bbox=-1,53,0,54",
 	);
 	assert.equal(costly.headers.get("ratelimit"), '"default";r=2;t=1000');
-	assert.equal((await get("/v1/geographies")).status, 200);
-	assert.equal((await get("/v1/geographies")).status, 200);
-	assert.equal((await get("/v1/geographies")).status, 429);
+	assert.equal((await get("/v1/boundaries")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 429);
 });
 
 test("charges point lookups once for every requested geography", async (t) => {
@@ -274,7 +274,7 @@ test("keys clients behind a trusted proxy by the address the proxy saw", async (
 		rateLimit: { capacity: 1, refillPerSecond: 0.01, trustedProxyHops: 1 },
 	});
 	const from = (forwarded: string) =>
-		get("/v1/geographies", { headers: { "x-forwarded-for": forwarded } });
+		get("/v1/boundaries", { headers: { "x-forwarded-for": forwarded } });
 	assert.equal((await from("203.0.113.1")).status, 200);
 	assert.equal((await from("203.0.113.2")).status, 200);
 	// A client cannot escape its limit by writing its own entry first.
@@ -297,8 +297,8 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 	assert.equal(health.status, 200);
 	assert.equal(health.headers.get("cache-control"), "no-store");
 
-	await get("/v1/geographies");
-	await get("/v1/geographies", { method: "HEAD" });
+	await get("/v1/boundaries");
+	await get("/v1/boundaries", { method: "HEAD" });
 
 	assert.equal((await get("/metrics")).status, 401);
 	// Without a token or an explicit opening, metrics are not there at all.
@@ -318,15 +318,15 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 	const text = await metrics.text();
 	assert.match(
 		text,
-		/^atlas_api_requests_total\{route="\/v1\/geographies",method="GET",status="200"\} 1$/m,
+		/^atlas_api_requests_total\{route="\/v1\/boundaries",method="GET",status="200"\} 1$/m,
 	);
 	assert.match(
 		text,
-		/^atlas_api_requests_total\{route="\/v1\/geographies",method="HEAD",status="200"\} 1$/m,
+		/^atlas_api_requests_total\{route="\/v1\/boundaries",method="HEAD",status="200"\} 1$/m,
 	);
 	assert.match(
 		text,
-		/^atlas_api_request_duration_seconds_bucket\{route="\/v1\/geographies",le="\+Inf"\} 2$/m,
+		/^atlas_api_request_duration_seconds_bucket\{route="\/v1\/boundaries",le="\+Inf"\} 2$/m,
 	);
 	assert.match(
 		text,
@@ -358,7 +358,7 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 		((await draining.json()) as { status: string }).status,
 		"draining",
 	);
-	const during = await get("/v1/geographies");
+	const during = await get("/v1/boundaries");
 	assert.equal(during.status, 200);
 	assert.equal(during.headers.get("connection"), "close");
 });
@@ -522,11 +522,11 @@ test("answers a repeat request from the response cache without running its handl
 		counting,
 	);
 	const afterStart = handled;
-	const first = await get("/v1/geographies");
+	const first = await get("/v1/boundaries");
 	const body = await first.text();
 	assert.equal(handled, afterStart + 1);
 
-	const second = await get("/v1/geographies");
+	const second = await get("/v1/boundaries");
 	assert.equal(await second.text(), body);
 	assert.equal(handled, afterStart + 1, "the handler did not run again");
 	assert.equal(second.status, 200);
@@ -547,7 +547,7 @@ test("answers a repeat request from the response cache without running its handl
 	assert.equal(second.headers.get("atlas-release"), atlasRelease.releaseId);
 
 	// A client that holds it is told so, again without the handler.
-	const revalidated = await get("/v1/geographies", {
+	const revalidated = await get("/v1/boundaries", {
 		headers: { "if-none-match": first.headers.get("etag")! },
 	});
 	assert.equal(revalidated.status, 304);
@@ -623,9 +623,9 @@ test("still limits a client whose requests are answered from the response cache"
 		responseCacheBytes: 1024 * 1024,
 		rateLimit: { capacity: 2, refillPerSecond: 0.001 },
 	});
-	assert.equal((await get("/v1/geographies")).status, 200);
-	assert.equal((await get("/v1/geographies")).status, 200);
-	assert.equal((await get("/v1/geographies")).status, 429);
+	assert.equal((await get("/v1/boundaries")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 429);
 });
 
 test("bounds active body reads without queuing and keeps probes available", async (t) => {
@@ -649,7 +649,7 @@ test("bounds active body reads without queuing and keeps probes available", asyn
 	t.after(() => held.destroy());
 	held.flushHeaders();
 	await accepted;
-	const refused = await get("/v1/geographies", {
+	const refused = await get("/v1/boundaries", {
 		headers: { "accept-encoding": "gzip" },
 	});
 	assert.equal(refused.status, 503);
@@ -661,7 +661,7 @@ test("bounds active body reads without queuing and keeps probes available", asyn
 	for (const path of ["/healthz", "/readyz", "/metrics"])
 		assert.equal((await get(path)).status, 200);
 	assert.equal(
-		(await get("/v1/geographies", { method: "OPTIONS" })).status,
+		(await get("/v1/boundaries", { method: "OPTIONS" })).status,
 		204,
 	);
 	// Complete the admitted body rather than waiting for its timeout.
@@ -673,7 +673,7 @@ test("bounds active body reads without queuing and keeps probes available", asyn
 	);
 	held.end("{}");
 	await completed;
-	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
 });
 
 test("releases admission after a client abandons an unfinished body", async (t) => {
@@ -699,14 +699,14 @@ test("releases admission after a client abandons an unfinished body", async (t) 
 	t.after(() => held.destroy());
 	held.flushHeaders();
 	await accepted;
-	assert.equal((await get("/v1/geographies")).status, 503);
+	assert.equal((await get("/v1/boundaries")).status, 503);
 	const closed = new Promise<void>((resolve) =>
 		connection!.once("close", () => resolve()),
 	);
 	held.destroy();
 	await closed;
 	await new Promise<void>((resolve) => setImmediate(resolve));
-	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
 });
 
 test(
@@ -743,14 +743,14 @@ test(
 				})
 				.end(),
 		);
-		assert.equal((await get("/v1/geographies")).status, 503);
+		assert.equal((await get("/v1/boundaries")).status, 503);
 		const closed = new Promise<void>((resolve) =>
 			connection!.once("close", () => resolve()),
 		);
 		download.destroy();
 		await closed;
 		await new Promise<void>((resolve) => setImmediate(resolve));
-		assert.equal((await get("/v1/geographies")).status, 200);
+		assert.equal((await get("/v1/boundaries")).status, 200);
 	},
 );
 
@@ -791,7 +791,7 @@ test("queues a request until an active slot frees", async (t) => {
 	});
 	const release = await holdSlot(t, server);
 	let answered = false;
-	const queued = get("/v1/geographies").then((response) => {
+	const queued = get("/v1/boundaries").then((response) => {
 		answered = true;
 		return response;
 	});
@@ -808,13 +808,13 @@ test("refuses a queued request once its wait times out", async (t) => {
 	});
 	const release = await holdSlot(t, server);
 	const startedAt = performance.now();
-	const refused = await get("/v1/geographies");
+	const refused = await get("/v1/boundaries");
 	assert.ok(performance.now() - startedAt >= 45);
 	assert.equal(refused.status, 503);
 	assert.equal(refused.headers.get("retry-after"), "1");
 	assert.equal((await refused.json()).title, "Server Busy");
 	await release();
-	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/boundaries")).status, 200);
 });
 
 test("refuses at once when the queue is full", async (t) => {
@@ -824,10 +824,10 @@ test("refuses at once when the queue is full", async (t) => {
 		queueTimeoutMs: 10_000,
 	});
 	const release = await holdSlot(t, server);
-	const queued = get("/v1/geographies");
+	const queued = get("/v1/boundaries");
 	await new Promise((resolve) => setTimeout(resolve, 20));
 	const startedAt = performance.now();
-	assert.equal((await get("/v1/geographies")).status, 503);
+	assert.equal((await get("/v1/boundaries")).status, 503);
 	assert.ok(performance.now() - startedAt < 1000);
 	await release();
 	assert.equal((await queued).status, 200);
@@ -846,11 +846,11 @@ test("gives up a queue place when its client disconnects", async (t) => {
 	const arrived = new Promise<void>((resolve) =>
 		server.once("request", () => resolve()),
 	);
-	socket.write("GET /v1/geographies HTTP/1.1\r\nHost: x\r\n\r\n");
+	socket.write("GET /v1/boundaries HTTP/1.1\r\nHost: x\r\n\r\n");
 	await arrived;
 	socket.destroy();
 	await new Promise((resolve) => setTimeout(resolve, 20));
-	const queued = get("/v1/geographies");
+	const queued = get("/v1/boundaries");
 	await new Promise((resolve) => setTimeout(resolve, 20));
 	await release();
 	assert.equal((await queued).status, 200);
@@ -971,7 +971,7 @@ test(
 			server.metrics.failures.value({ route: String(route) }),
 			1,
 		);
-		assert.equal((await get("/v1/geographies")).status, 200);
+		assert.equal((await get("/v1/boundaries")).status, 200);
 
 		const file = exportFiles.get(missing.artifact)!;
 		const bytes = 64 * 1024 * 1024;
@@ -998,7 +998,7 @@ test(
 			logged.some((entry) => entry.requestId === "interrupted-export"),
 			false,
 		);
-		assert.equal((await get("/v1/geographies")).status, 503);
+		assert.equal((await get("/v1/boundaries")).status, 503);
 		download.destroy();
 		for (
 			let waited = 0;
@@ -1039,7 +1039,7 @@ test(
 			server.metrics.failures.value({ route: String(route) }),
 			1,
 		);
-		assert.equal((await get("/v1/geographies")).status, 200);
+		assert.equal((await get("/v1/boundaries")).status, 200);
 
 		const content = Buffer.from(
 			"a stored export with gzip and range support\n",

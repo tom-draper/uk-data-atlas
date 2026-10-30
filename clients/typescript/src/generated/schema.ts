@@ -230,15 +230,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/geographies": {
+    "/boundaries": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List geography types with their latest boundary release */
-        get: operations["listGeographies"];
+        /** List boundary types with their latest release */
+        get: operations["listBoundaries"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1666,7 +1666,7 @@ export interface components {
          *       "code": "unsupported_geography",
          *       "absence": "unknown-geography",
          *       "links": {
-         *         "geographies": "/v1/geographies"
+         *         "boundaries": "/v1/boundaries"
          *       }
          *     }
          */
@@ -4063,7 +4063,7 @@ export interface operations {
                      *         "links": [
                      *           "/v1/openapi.yaml",
                      *           "/v1/docs",
-                     *           "/v1/geographies",
+                     *           "/v1/boundaries",
                      *           "/v1/map-resources",
                      *           "/v1/map-resources/{geography}/{release}",
                      *           "/v1/map-resources/{geography}/{release}.pmtiles",
@@ -4412,7 +4412,7 @@ export interface operations {
             503: components["responses"]["CatalogueUnavailable"];
         };
     };
-    listGeographies: {
+    listBoundaries: {
         parameters: {
             query?: never;
             header?: never;

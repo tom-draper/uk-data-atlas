@@ -26,13 +26,34 @@ export const handleBoundaryRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"boundaryRelease" | "boundaryReleasesFor" | "compareBoundaryReleases" | "hasAreaRelease" | "selectReleaseForDate" | "missingRequirement" | "explainAreaAbsence">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "boundaryRelease"
+	| "boundaryReleasesFor"
+	| "compareBoundaryReleases"
+	| "hasAreaRelease"
+	| "selectReleaseForDate"
+	| "missingRequirement"
+	| "explainAreaAbsence"
+>): ApiResponse | undefined => {
 	const geographyResolver = context.geographyResolver;
 
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
 		segments[1] === "geographies"
+	) {
+		// The list used to be served here.
+		return {
+			status: 308,
+			headers: { location: `/v1/boundaries${parsedUrl.search}` },
+			body: envelope(releaseId, { href: "/v1/boundaries" }),
+		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "boundaries"
 	) {
 		const releasesByGeography = new Map<
 			string,
@@ -100,7 +121,7 @@ export const handleBoundaryRoutes = ({
 						: "no_release_for_date",
 				absence: selection.absence,
 				...(selection.absence === "unknown-geography"
-					? { links: { geographies: "/v1/geographies" } }
+					? { links: { boundaries: "/v1/boundaries" } }
 					: {}),
 				...(selection.earliest ? { earliest: selection.earliest } : {}),
 				...(selection.undated.length > 0

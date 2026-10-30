@@ -1333,7 +1333,7 @@ The route selector in the documentation should begin with the user’s job:
 | see a trend, ranking, comparison or change                           | `/series`, `/rankings`, `/compare` or `/change` under that measure                  |
 | translate an identifier through a published crosswalk                | `/translations`                                                                     |
 | convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                                           |
-| validate a supplied code/name or discover releases                   | `/areas:validate`, `/geographies`, `/boundary-releases`                             |
+| validate a supplied code/name or discover releases                   | `/areas:validate`, `/boundaries`, `/boundary-releases`                             |
 | cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-release` and `/documents/{document-id}.json` |
 
 `/data/{measure}/value?place=` is a deliberately narrow convenience for a
@@ -1859,7 +1859,7 @@ GET /v1/datasets
 GET /v1/datasets/{dataset-id}
 GET /v1/measures
 GET /v1/measures/{measure-id}
-GET /v1/geographies
+GET /v1/boundaries
 GET /v1/boundary-releases
 GET /v1/locations
 ```
@@ -3277,7 +3277,7 @@ second inventory to maintain:
 - `GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt`, One vector tile of a boundary release
 - `GET /v1/map-resources/{geography}/{release}/join/{measure-id}`, One measure's values, numbered to match this resource's tiles
 - `GET /v1/map-resources/{geography}/{release}.pmtiles`, The whole tile pyramid as one PMTiles archive
-- `GET /v1/geographies`, List geography types with their latest boundary release
+- `GET /v1/boundaries`, List boundary types with their latest release
 - `GET /v1/boundary-releases`, List every compiled boundary release
 - `GET /v1/boundary-releases:resolve`, Select the boundary release to use for a date
 - `GET /v1/boundary-releases:compare`, Compare two releases of one geography without inferring geography change from codes
@@ -3348,7 +3348,7 @@ catalogues by the contract tests:
 
 - `GET /v1`
 - `GET /v1/openapi.yaml`
-- `GET /v1/geographies`
+- `GET /v1/boundaries`
 - `GET /v1/documents/geography-inventory.json`
 - `GET /v1/datasets`
 - `GET /v1/measures`

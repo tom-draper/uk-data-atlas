@@ -19,7 +19,7 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 		status: 404,
 		meaning:
 			"That geography isn't available, or its areas aren't compiled.",
-		fix: "Check the spelling against [List geographies](/docs/v1/reference/geography/list-geographies).",
+		fix: "Check the spelling against [List boundaries](/docs/v1/reference/geography/list-boundaries).",
 	},
 	unknown_release: {
 		status: 404,

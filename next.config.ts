@@ -32,6 +32,12 @@ const nextConfig: NextConfig = {
 				destination: "/boundaries",
 				permanent: true,
 			},
+			// The API's list of geographies is now its list of boundaries.
+			{
+				source: "/docs/v1/reference/geography/list-geographies",
+				destination: "/docs/v1/reference/geography/list-boundaries",
+				permanent: true,
+			},
 			{
 				source: "/docs/v1/data/:path*",
 				destination: "/docs/v1/datasets/:path*",

@@ -13,7 +13,7 @@ def _get_kwargs() -> dict[str, Any]:
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/geographies",
+        "url": "/boundaries",
     }
 
     return _kwargs
@@ -48,7 +48,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[GeographySummaryListEnvelope]:
-    """List geography types with their latest boundary release
+    """List boundary types with their latest release
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -71,7 +71,7 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
 ) -> GeographySummaryListEnvelope | None:
-    """List geography types with their latest boundary release
+    """List boundary types with their latest release
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -90,7 +90,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[GeographySummaryListEnvelope]:
-    """List geography types with their latest boundary release
+    """List boundary types with their latest release
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -111,7 +111,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
 ) -> GeographySummaryListEnvelope | None:
-    """List geography types with their latest boundary release
+    """List boundary types with their latest release
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

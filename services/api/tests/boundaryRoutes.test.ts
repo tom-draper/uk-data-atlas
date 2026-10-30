@@ -13,8 +13,8 @@ import {
 	testContext,
 } from "./routeFixtures";
 
-test("lists published geographies", () => {
-	const response = route("GET", "/v1/geographies", registry);
+test("lists published boundaries", () => {
+	const response = route("GET", "/v1/boundaries", registry);
 	assert.equal(response.status, 200);
 	assert.deepEqual(response.body, {
 		apiVersion: "v1",
@@ -24,6 +24,12 @@ test("lists published geographies", () => {
 		],
 		meta: { nextCursor: null },
 	});
+});
+
+test("sends the old geographies address to boundaries", () => {
+	const response = route("GET", "/v1/geographies?limit=2", registry);
+	assert.equal(response.status, 308);
+	assert.equal(response.headers?.location, "/v1/boundaries?limit=2");
 });
 
 test("gets one boundary release", () => {
