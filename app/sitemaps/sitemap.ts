@@ -116,7 +116,7 @@ export default async function sitemap(props: {
 			priority: 0.6,
 		},
 		{
-			url: `${SITE_URL}/geographies`,
+			url: `${SITE_URL}/boundaries`,
 			changeFrequency: "monthly",
 			priority: 0.6,
 		},

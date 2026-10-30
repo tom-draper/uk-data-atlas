@@ -23,12 +23,13 @@ const nextConfig: NextConfig = {
 		NEXT_PUBLIC_DATA_BASE_URL: "",
 	},
 	async redirects() {
-		// The datasets page used to live at /sources.
+		// The datasets page used to live at /sources, and the boundaries page
+		// at /geographies.
 		return [
 			{ source: "/sources", destination: "/datasets", permanent: true },
 			{
-				source: "/boundaries",
-				destination: "/geographies",
+				source: "/geographies",
+				destination: "/boundaries",
 				permanent: true,
 			},
 			{

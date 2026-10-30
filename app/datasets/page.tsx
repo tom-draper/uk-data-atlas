@@ -15,7 +15,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
 	subject: "UK Datasets",
 	description:
-		"Every official UK dataset in the UK Data Atlas, explained: what it measures, who publishes it, the years and nations covered, its licence and the geography it's published on.",
+		"Every official UK dataset in the UK Data Atlas, explained: what it measures, who publishes it, the years and nations covered, its licence and the boundaries it's published on.",
 	path: "/datasets",
 });
 
@@ -82,14 +82,14 @@ export default async function DatasetsPage() {
 					</p>
 					<p className="mt-2 text-[14px] text-slate-500">
 						Looking for the shapes of areas? See{" "}
-						<TextLink href="/geographies">Boundaries</TextLink>.
+						<TextLink href="/boundaries">Boundaries</TextLink>.
 					</p>
 					<p className="mt-4">
 						The official statistics behind the UK Data Atlas, from
 						population and house prices to deprivation and election
 						results. Each dataset below explains what it measures,
 						who publishes it, the years and nations it covers, and
-						the <TextLink href="/geographies">geographies</TextLink>{" "}
+						the <TextLink href="/boundaries">boundaries</TextLink>{" "}
 						its figures are published on.
 					</p>
 				</>
@@ -113,14 +113,14 @@ export default async function DatasetsPage() {
 			</P>
 			<P>
 				Each dataset is matched to the{" "}
-				<TextLink href="/geographies">geography</TextLink> and boundary
-				release its figures were published on, so an area&apos;s value
-				is always drawn on the lines it was counted for.
+				<TextLink href="/boundaries">boundary</TextLink> release its
+				figures were published on, so an area&apos;s value is always
+				drawn on the lines it was counted for.
 			</P>
 
 			<H2 id="all-datasets">All datasets</H2>
 			<Table
-				head={["Dataset", "Published by", "Years", "Geography"]}
+				head={["Dataset", "Published by", "Years", "Boundary"]}
 				rows={topics.flatMap((topic) =>
 					topic.datasets.map((dataset) => [
 						<TextLink key="name" href={`#${dataset.slug}`}>
@@ -170,7 +170,7 @@ export default async function DatasetsPage() {
 											]
 										: []),
 									{
-										label: "Geography",
+										label: "Boundary",
 										value: (
 											<TextLink
 												href={boundaryHref(

@@ -1,5 +1,5 @@
 /**
- * The /geographies page: a fuller explanation of each kind of area, after the
+ * The /boundaries page: a fuller explanation of each kind of area, after the
  * one-line introduction the docs share. Releases and area counts come from the
  * catalogue; the reference tests check every geography has an entry.
  */

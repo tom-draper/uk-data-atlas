@@ -23,7 +23,7 @@ describe("sitemap", () => {
 				"/",
 				"/atlas",
 				"/datasets",
-				"/geographies",
+				"/boundaries",
 				"/maps",
 				"/maps/england",
 				"/atlas/england/adult-social-care-activity",
