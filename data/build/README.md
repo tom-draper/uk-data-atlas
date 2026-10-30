@@ -204,8 +204,8 @@ with a value there. A value with no observation is written as null, and leaves
 a record leaves out are listed in `dataset_record_absent`. A leaf names the first record's series; records
 on an `alsoIn` release read the series with the same measure and members.
 Derived numbers are recomputed by the config's `rebuild.derived` rules. The
-compiled JSON is then not stored in `payloads`; `atlas-sqlite` and
-the pipeline rebuilds it into `atlas-cache.sqlite`, checking the manifest hash.
+compiled JSON is then not stored in `payloads`. The `atlas-sqlite` stage
+rebuilds it into `atlas-cache.sqlite`, checking the manifest hash.
 Other configured datasets keep their payloads until a later batch.
 
 Run `pnpm exec vitest run --project built tests/built/datasetPayloads.test.ts`
