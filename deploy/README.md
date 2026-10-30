@@ -263,7 +263,7 @@ Next.js. Re-run that command after replacing archives independently of an app bu
 ### Local SQLite cache
 
 Deploy `data/build/atlas.sqlite` and `data/build/atlas-cache.sqlite` from the
-same release. The pipeline builds and stamps the cache, and `pnpm data:download`
-restores both files. Compose mounts them read-only. The API checks the stamp and
-required dataset payloads at startup and fails readiness if they are missing or
+same build. The pipeline builds and stamps the cache. Compose mounts both files
+read-only. The API checks the stamp and required dataset payloads at startup and
+fails readiness if they are missing or
 mismatched. It does not rebuild the cache.

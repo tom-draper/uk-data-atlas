@@ -18,8 +18,9 @@ they are not interchangeable copies of those contracts.
 and projection and counts metadata. The pipeline builds these components and
 stamps the cache with the SHA-256 hash of the final canonical database.
 
-The release distributes both SQLite files. Run `pnpm data:download` to restore
-matching files, and deploy them together. Compose mounts both read-only. At
+The source release contains raw data only. After `pnpm data:download`, run
+`pnpm data:build` to build both SQLite files, and deploy them together from the
+same build. Compose mounts both read-only. At
 startup the API verifies the stamp and required dataset payloads; a missing or
 mismatched cache fails readiness. The API does not build the cache.
 

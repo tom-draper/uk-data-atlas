@@ -381,7 +381,7 @@ cost:
   one JSON payload per dataset, so most new datasets become configuration
   rather than compiler code. Started with one pilot dataset.
 - **The data build outside the API.** Build code runs in `pipeline/` and
-  shared packages. The API reads the distributed SQLite cache without building it,
+  shared packages. The API reads the deployed SQLite cache without building it,
   and the website reads shared release assets. See [the move plan](../../docs/data-pipeline-move.md).
 - **Heavy joins out of Node.** Consider DuckDB for large tabular and spatial
   joins in the build, which spills to disk instead of exhausting memory. Keep

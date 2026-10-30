@@ -313,7 +313,7 @@ The derived-boundary and source-inventory JSON summaries had no readers beyond
 the old fingerprint builder. Their compilers no longer write them; derived
 geometries and the runtime geography catalogue remain.
 
-The API stores rebuildable search, location projection and postcode-count tables
-in the local `data/build/atlas-cache.sqlite`. This file is excluded from releases
-and images. Consumers run `pnpm --dir services/api build:cache` against the
-canonical database after downloading it. See [generated API data](docs/api-generated-data.md).
+The pipeline builds search, location projection and postcode-count tables in
+`data/build/atlas-cache.sqlite`. Deploy it alongside the canonical database from
+the same build. The source data release contains only raw inputs. See
+[generated API data](docs/api-generated-data.md).

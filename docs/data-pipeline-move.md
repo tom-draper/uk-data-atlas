@@ -512,7 +512,7 @@ The named location SQLite inventory reader and its data contracts live in
 checks the inventory hash when it reads them.
 
 The area search pipeline stage runs `pipeline/src/build-area-search-index.ts`
-and uses DuckDB to build postings in the distributed cache.
+and uses DuckDB to build postings in the deployed cache.
 
 The postcode counts compiler, cache publisher and SQLite postcode and area shard
 readers live in `packages/atlas-runtime/`. Postcode types live in
@@ -616,7 +616,7 @@ by `@uk-data-atlas/search-index/node`.
 
 The place index build runs in `pipeline/src/build-place-index.ts`. Its DuckDB
 compiler deduplicates name postings, while place grouping, SQLite helpers and
-boundary release ordering are shared with the API. The API reads the distributed cache.
+boundary release ordering are shared with the API. The API reads the deployed cache.
 
 The graph now runs geometry storage, map resources, crosswalks, named locations,
 location projections, analysis geography validation, validation reports, and
