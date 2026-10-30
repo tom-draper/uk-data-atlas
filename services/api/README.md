@@ -2548,6 +2548,8 @@ docker run --rm -p 3001:3001 \
   -v "$PWD/data/build/artifacts:/app/data/build/artifacts:ro" \
   -v "$PWD/data/build/atlas-cache.sqlite:/app/data/build/atlas-cache.sqlite:ro" \
   -v "$PWD/data/build/atlas.sqlite:/app/data/build/atlas.sqlite:ro" \
+  -v "$PWD/data/build/atlas-assets:/app/data/build/atlas-assets:ro" \
+  -v "$PWD/data/build/map-resources:/app/data/build/map-resources:ro" \
   uk-data-atlas-api
 ```
 
