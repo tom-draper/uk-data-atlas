@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import { once } from "node:events";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { Agent, createServer, request } from "node:http";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import test, { before, after, type TestContext } from "node:test";
 import { setTimeout as delay } from "node:timers/promises";
 import { build } from "esbuild";
@@ -13,6 +15,23 @@ const directory = mkdtempSync(join(tmpdir(), "atlas-cluster-metrics-"));
 const executable = join(directory, "serve.mjs");
 
 before(async () => {
+	const data = join(directory, "data/build");
+	mkdirSync(data, { recursive: true });
+	const canonicalPath = join(data, "atlas.sqlite");
+	const canonical = new DatabaseSync(canonicalPath);
+	canonical.exec(
+		"CREATE TABLE datasets (output TEXT, sha256 TEXT, payloadId TEXT)",
+	);
+	canonical.close();
+	const hash = `sha256:${createHash("sha256").update(readFileSync(canonicalPath)).digest("hex")}`;
+	const cache = new DatabaseSync(join(data, "atlas-cache.sqlite"));
+	cache.exec(
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT); CREATE TABLE dataset_payloads (output TEXT, sha256 TEXT)",
+	);
+	cache
+		.prepare("INSERT INTO meta VALUES (?, ?)")
+		.run("atlas-sqlite-content-hash", hash);
+	cache.close();
 	await build({
 		entryPoints: [new URL("../scripts/serve.ts", import.meta.url).pathname],
 		outfile: executable,
@@ -64,6 +83,7 @@ const launch = async (t: TestContext, overrides: NodeJS.ProcessEnv = {}) => {
 			ATLAS_METRICS_TOKEN: "secret",
 			ATLAS_METRICS_OPEN: "off",
 			ATLAS_ACCESS_LOG: "off",
+			ATLAS_API_ROOT: join(directory, "services/api"),
 			ATLAS_SHUTDOWN_GRACE_SECONDS: "1",
 			PORT: String(port),
 			HOST: "127.0.0.1",
