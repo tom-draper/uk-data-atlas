@@ -33,7 +33,6 @@ that every function in a module is needed by both callers.
 | `scripts/build-api-surface.ts`                   | runtime-only   |
 | `scripts/build-area-inventory.ts`                | build-only     |
 | `scripts/build-area-search-index.ts`             | both           |
-| `scripts/build-atlas-cache.ts`                   | runtime-only   |
 | `scripts/build-atlas-lookups.ts`                 | build-only     |
 | `scripts/build-atlas-pages.ts`                   | build-only     |
 | `scripts/build-atlas-release.ts`                 | build-only     |
@@ -513,15 +512,14 @@ The named location SQLite inventory reader and its data contracts live in
 checks the inventory hash when it reads them.
 
 The area search pipeline stage runs `pipeline/src/build-area-search-index.ts`
-and uses DuckDB to build postings. The API cache rebuild uses the Node compiler
-in `packages/atlas-runtime/`. Both publish the same SQLite tables and clean up legacy outputs.
+and uses DuckDB to build postings in the distributed cache.
 
 The postcode counts compiler, cache publisher and SQLite postcode and area shard
 readers live in `packages/atlas-runtime/`. Postcode types live in
 `@uk-data-atlas/geography`, and code-unit ordering lives in
 `@uk-data-atlas/search-index`.
-The pipeline stage builds postcode counts with DuckDB; the API cache rebuild
-uses the shared Node builder. Both use the shared cache publisher. The postcode
+The pipeline stage builds postcode counts with DuckDB and the shared cache
+publisher. The postcode
 index SQLite table conversion and publisher also live in `packages/atlas-runtime/`.
 
 The evidence documents stage now runs `pipeline/src/build-evidence-documents.ts`.
@@ -618,8 +616,7 @@ by `@uk-data-atlas/search-index/node`.
 
 The place index build runs in `pipeline/src/build-place-index.ts`. Its DuckDB
 compiler deduplicates name postings, while place grouping, SQLite helpers and
-boundary release ordering are shared with the API. The API cache rebuild uses
-the shared Node builder.
+boundary release ordering are shared with the API. The API reads the distributed cache.
 
 The graph now runs geometry storage, map resources, crosswalks, named locations,
 location projections, analysis geography validation, validation reports, and

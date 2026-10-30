@@ -17,10 +17,9 @@ docker compose -f services/api/compose.yaml up -d
 curl --fail http://127.0.0.1:3001/readyz
 ```
 
-Compose mounts `data/build/artifacts/`, `data/build/atlas.sqlite`, and
-`data/build/atlas-assets/` read-only. Deploy these matching release outputs
-with the code, then replace the container. The separate `atlas-cache` volume
-remains writable. The data build is separate from the image build. API public
+Compose mounts `data/build/artifacts/`, `data/build/atlas.sqlite`,
+`data/build/atlas-cache.sqlite`, and `data/build/atlas-assets/` read-only. Deploy
+these matching release outputs with the code, then replace the container. The data build is separate from the image build. API public
 files contain the geometry store and manifests; SQLite contains observation
 tables and indexes. Raw sources are not required for a
 current geometry store. Serving never falls back to raw source files. Startup
