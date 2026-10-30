@@ -49,6 +49,7 @@ const statisticsInputs = (
 		source: unknown;
 		fingerprint: string;
 	}[],
+	unstored: Readonly<Record<string, string>>,
 ): StatisticsInput[] =>
 	entries.flatMap((entry): StatisticsInput[] => {
 		const read = () =>
@@ -60,13 +61,20 @@ const statisticsInputs = (
 			return [fuelPovertyStatistics(read(), entry)];
 		const config = declared.get(entry.type);
 		if (config) return [declaredStatistics(config, read, entry)];
-		if (entry.type in UNSTORED_DATASETS) return [];
+		if (entry.type in unstored) return [];
 		throw new Error(
 			`Dataset ${entry.type} has no statistics configuration; add one or list it in UNSTORED_DATASETS.`,
 		);
 	});
 
-export const buildAtlasSqlite = (repositoryRoot: string) => {
+/**
+ * Build the shared atlas database. `unstored` adds types kept as payloads
+ * to `UNSTORED_DATASETS`, so tests can cover a type no real dataset is.
+ */
+export const buildAtlasSqlite = (
+	repositoryRoot: string,
+	{ unstored = {} }: { unstored?: Readonly<Record<string, string>> } = {},
+) => {
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
 	const path = join(directory, "atlas.sqlite");
@@ -206,7 +214,12 @@ export const buildAtlasSqlite = (repositoryRoot: string) => {
 						: `dataset:${entry.output}`,
 				]),
 			},
-			...statisticsTables(statisticsInputs(directory, manifest.datasets)),
+			...statisticsTables(
+				statisticsInputs(directory, manifest.datasets, {
+					...UNSTORED_DATASETS,
+					...unstored,
+				}),
+			),
 		},
 	);
 	const written = new DatabaseSync(path, { readOnly: true });
