@@ -13,7 +13,7 @@ import {
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-	subject: "Geographies and Boundaries",
+	subject: "Boundaries",
 	description:
 		"Every kind of UK area in the UK Data Atlas, explained: local authorities, wards, constituencies, LSOAs, MSOAs, data zones, health boards and more, with the data published on each.",
 	path: "/geographies",
@@ -26,7 +26,7 @@ export default async function GeographiesPage() {
 
 	return (
 		<ReferencePage
-			label="Geographies"
+			label="Boundaries"
 			groups={[
 				{
 					title: "Overview",
@@ -53,9 +53,29 @@ export default async function GeographiesPage() {
 					],
 				},
 			]}
-			eyebrow="Geographies"
-			title="Geographies & boundaries"
-			lede="The kinds of area UK statistics are published for, from the four nations down to neighbourhoods of a few hundred people. Each one below explains what the areas are, who uses them, and which datasets in the Atlas are published on them."
+			eyebrow="Boundaries"
+			title="Boundaries"
+			lede={
+				<>
+					<p>
+						Kinds of area (wards, LSOAs, constituencies) and every
+						boundary release, with downloads.
+					</p>
+					<p className="mt-2 text-[14px] text-slate-500">
+						Looking for one specific area? See{" "}
+						<TextLink href="/places">Places</TextLink>. Looking for
+						statistics? See{" "}
+						<TextLink href="/datasets">Datasets</TextLink>.
+					</p>
+					<p className="mt-4">
+						The kinds of area UK statistics are published for, from
+						the four nations down to neighbourhoods of a few hundred
+						people. Each one below explains what the areas are, who
+						uses them, and which datasets in the Atlas are published
+						on them.
+					</p>
+				</>
+			}
 		>
 			<H2 id="about-geographies">About geographies</H2>
 			<P>
