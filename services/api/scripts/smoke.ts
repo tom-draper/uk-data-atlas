@@ -159,11 +159,11 @@ export const runSmoke = async (
 		[
 			"conditional request",
 			async () => {
-				const first = await get("/v1/geographies");
+				const first = await get("/v1/boundaries");
 				await first.body?.cancel();
 				const etag = first.headers.get("etag");
 				expect(etag?.startsWith('"sha256-'), `ETag is ${etag}`);
-				const second = await get("/v1/geographies", {
+				const second = await get("/v1/boundaries", {
 					headers: { "if-none-match": etag! },
 				});
 				expect(
@@ -177,7 +177,7 @@ export const runSmoke = async (
 		[
 			"HEAD",
 			async () => {
-				const response = await get("/v1/geographies", {
+				const response = await get("/v1/boundaries", {
 					method: "HEAD",
 				});
 				expect(response.status === 200, `answered ${response.status}`);
@@ -188,7 +188,7 @@ export const runSmoke = async (
 		[
 			"preflight",
 			async () => {
-				const response = await get("/v1/geographies", {
+				const response = await get("/v1/boundaries", {
 					method: "OPTIONS",
 					headers: {
 						origin: "https://example.org",

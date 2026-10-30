@@ -281,8 +281,8 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Download all tiles",
 		intro: "Every tile for a boundary release in a single PMTiles file. Host it on a CDN, or use it offline.",
 	},
-	listGeographies: {
-		title: "List geographies",
+	listBoundaries: {
+		title: "List boundaries",
 		intro: "List the kinds of area the Atlas knows about, such as wards, local authorities and constituencies, each with its latest boundary release.",
 	},
 	listBoundaryReleases: {

@@ -29,6 +29,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-10-30",
+		title: "Rename /v1/geographies to /v1/boundaries",
+		surface: "29b2f2539ba8",
+		breaking: true,
+		changes: [
+			"The list of the kinds of area the Atlas holds, each with its latest boundary release, moves from `/v1/geographies` to `/v1/boundaries`, and its operation is now `listBoundaries`. The response is unchanged. `/v1/geographies` answers `308 Permanent Redirect` to the new path, so a client that follows redirects keeps working.",
+			"The `links` object on an `unsupported_geography` problem names this list as `boundaries` instead of `geographies`.",
+			"The reference page for the list moves to [List boundaries](/docs/v1/reference/geography/list-boundaries), and the old address redirects to it.",
+		],
+	},
+	{
 		date: "2026-10-26",
 		title: "Deprecate superseded boundary releases",
 		surface: "f3c7fb60d63f",

@@ -1350,8 +1350,8 @@
 				]
 			}
 		},
-		"GET /geographies": {
-			"operationId": "listGeographies",
+		"GET /boundaries": {
+			"operationId": "listBoundaries",
 			"parameters": {},
 			"responses": {
 				"200 application/json": [

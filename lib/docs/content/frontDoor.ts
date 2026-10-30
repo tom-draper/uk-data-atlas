@@ -71,9 +71,9 @@ export const FRONT_DOOR: FrontDoorRoute[] = [
 		request: "/postcodes/M25DB",
 	},
 	{
-		operationId: "listGeographies",
+		operationId: "listBoundaries",
 		question: "Which kinds of area does the archive hold?",
-		request: "/geographies",
+		request: "/boundaries",
 	},
 	{
 		operationId: "listBoundaryReleases",

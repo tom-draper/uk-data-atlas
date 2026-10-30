@@ -115,6 +115,7 @@ const measureBasePath = v1("measures", { maxLength: 3 });
 const analysisPath = v1(["analysis-geographies", "analysis:plan"]);
 const boundaryPath = v1([
 	"geographies",
+	"boundaries",
 	"boundary-releases",
 	"boundary-releases:resolve",
 	"boundary-releases:compare",

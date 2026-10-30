@@ -230,7 +230,7 @@ test("answers normally when the usage directory cannot be opened", async (t) => 
 		usage: usage(join(directory, "blocker", "inside")),
 		log: (entry) => logged.push(entry.event),
 	});
-	const first = await get("/v1/geographies");
+	const first = await get("/v1/boundaries");
 	assert.equal(first.status, 200);
 	assert.deepEqual(logged, ["usage.store_unavailable"]);
 });

@@ -13,7 +13,7 @@ import {
 test("uses the immutable release id in every successful envelope", () => {
 	const response = route(
 		"GET",
-		"/v1/geographies",
+		"/v1/boundaries",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -55,7 +55,7 @@ test("uses problem details for missing resources and unsupported methods", () =>
 		],
 	);
 
-	const write = route("POST", "/v1/geographies", registry);
+	const write = route("POST", "/v1/boundaries", registry);
 	assert.equal(write.status, 405);
 	assert.equal(
 		"title" in write.body && write.body.title,

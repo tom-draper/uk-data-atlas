@@ -280,7 +280,7 @@ test("owns date-based release selection when its boundary registry is compiled",
 			code: "unsupported_geography",
 			absence: "unknown-geography",
 			detail: "No boundary release is published for the geography unknown.",
-			links: { geographies: "/v1/geographies" },
+			links: { boundaries: "/v1/boundaries" },
 		},
 	);
 });
