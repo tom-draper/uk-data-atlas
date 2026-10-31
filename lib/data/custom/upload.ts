@@ -61,18 +61,7 @@ export function uploadColumns(
 	}));
 }
 
-const PARENT_HEADER =
-	/^(lad\d*(cd|nm|code|name)?|la( ?(code|name))?|local ?authority.*|council.*|district.*|borough.*)$/i;
-
-/** The column most likely to name each row's local authority, from headers. */
-export function guessParentColumn(
-	headerCells: string[],
-	areaColumn: string,
-): string | undefined {
-	return headerCells.find(
-		(header) => header !== areaColumn && PARENT_HEADER.test(header.trim()),
-	);
-}
+export { guessParentColumn } from "./columns";
 
 /** The column most likely to hold area codes, from its header alone. */
 export function guessCodeColumn(headerCells: string[]): string | undefined {
