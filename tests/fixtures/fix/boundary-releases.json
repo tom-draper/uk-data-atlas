@@ -1,0 +1,270 @@
+{
+	"data": [
+		{
+			"id": "2026-05-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2026 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2023-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2022-12-uk-bgc-v2",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2022 (United Kingdom, generalised, clipped, v2)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2021 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2020 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2019-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2019-04-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, April 2019 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2018 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2017-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2017 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2016 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2015 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2011-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2011 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2009-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2009 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2008-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2008 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2026-05-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, May 2026 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2025 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "ward",
+			"title": "Wards, May 2025 (United Kingdom, generalised, clipped, v2)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2024 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, May 2024 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2023 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2023-05-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, May 2023 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2022-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2022 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2021 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2020 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2019-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2019-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2019 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2018 (United Kingdom, generalised, clipped)",
+			"coverage": {
+				"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+			}
+		},
+		{
+			"id": "2017-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2017 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2016 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2015 (Great Britain, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-SCT", "GB-WLS"] }
+		},
+		{
+			"id": "2011-12-ew-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2011 (England and Wales, generalised, clipped)",
+			"coverage": { "countries": ["GB-ENG", "GB-WLS"] }
+		}
+	]
+}

@@ -1,0 +1,875 @@
+{
+	"data": {
+		"id": "ward/2024-12-uk-bgc/E05013411",
+		"geography": "ward",
+		"boundaryRelease": "2024-12-uk-bgc",
+		"code": "E05013411",
+		"name": "Calne Central",
+		"lineage": [
+			{
+				"relation": "equivalent-to",
+				"depth": 1,
+				"from": "ward/2024-12-uk-bgc/E05013411",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013411",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013411",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 1,
+				"from": "ward/2024-12-uk-bgc/E05013411",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016237",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016237",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 2,
+				"from": "ward/2024-05-uk-bgc/E05013411",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013411",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013411",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016237",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016237",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016237",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016237",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013412",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013412",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016237",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013414",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013414",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2023-12-uk-bgc/E05013411",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013411",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013411",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2025-12-uk-bgc/E05016237",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016237",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016237",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013412",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013412",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013412",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013412",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016250",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016250",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013412",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016250",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016250",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013414",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013414",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013414",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013414",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016239",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016239",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013414",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016242",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016242",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2023-05-uk-bgc/E05013411",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013411",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013411",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2024-05-uk-bgc/E05013412",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013412",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013412",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016250",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016250",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016250",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2024-05-uk-bgc/E05013414",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013414",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013414",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016239",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016239",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016239",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016239",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013409",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013409",
+					"labels": ["Bromham, Roade & Roundway"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016239",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013413",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013413",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016239",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013415",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013415",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016239",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013438",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013438",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016242",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016242",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016242",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016242",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013438",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013438",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2022-12-uk-bgc/E05013411",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013411",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013411",
+					"labels": ["Calne Central"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2023-12-uk-bgc/E05013412",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013412",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013412",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2025-12-uk-bgc/E05016250",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016250",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016250",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2023-12-uk-bgc/E05013414",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013414",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013414",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2025-12-uk-bgc/E05016239",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016239",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016239",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2024-12-uk-bgc/E05013409",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013409",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013409",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 5,
+				"from": "ward/2024-12-uk-bgc/E05013409",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016236",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016236",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2024-12-uk-bgc/E05013413",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013413",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013413",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 5,
+				"from": "ward/2024-12-uk-bgc/E05013413",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016238",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016238",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2024-12-uk-bgc/E05013415",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013415",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013415",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 5,
+				"from": "ward/2024-12-uk-bgc/E05013415",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016240",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016240",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2024-12-uk-bgc/E05013438",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013438",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013438",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2025-12-uk-bgc/E05016242",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016242",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016242",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2023-05-uk-bgc/E05013412",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013412",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013412",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2023-05-uk-bgc/E05013414",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013414",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013414",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2024-05-uk-bgc/E05013409",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013409",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013409",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2025-05-uk-bgc-v2/E05016236",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016236",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016236",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2024-05-uk-bgc/E05013413",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013413",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013413",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2025-05-uk-bgc-v2/E05016238",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016238",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016238",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2024-05-uk-bgc/E05013415",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013415",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013415",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2025-05-uk-bgc-v2/E05016240",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016240",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016240",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2024-05-uk-bgc/E05013438",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013438",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013438",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2022-12-uk-bgc/E05013412",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013412",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013412",
+					"labels": ["Calne Chilvester & Abberd"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2022-12-uk-bgc/E05013414",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013414",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013414",
+					"labels": ["Calne Rural"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2023-12-uk-bgc/E05013409",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013409",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013409",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2025-12-uk-bgc/E05016236",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016236",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016236",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2023-12-uk-bgc/E05013413",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013413",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013413",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2025-12-uk-bgc/E05016238",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016238",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016238",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2023-12-uk-bgc/E05013415",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013415",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013415",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2025-12-uk-bgc/E05016240",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016240",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016240",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2023-12-uk-bgc/E05013438",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013438",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013438",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 8,
+				"from": "ward/2023-05-uk-bgc/E05013409",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013409",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013409",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 8,
+				"from": "ward/2023-05-uk-bgc/E05013413",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013413",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013413",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 8,
+				"from": "ward/2023-05-uk-bgc/E05013415",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013415",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013415",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 8,
+				"from": "ward/2023-05-uk-bgc/E05013438",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013438",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013438",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 9,
+				"from": "ward/2022-12-uk-bgc/E05013409",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013409",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013409",
+					"labels": ["Bromham, Rowde & Roundway"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 9,
+				"from": "ward/2022-12-uk-bgc/E05013413",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013413",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013413",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 9,
+				"from": "ward/2022-12-uk-bgc/E05013415",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013415",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013415",
+					"labels": ["Calne South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 9,
+				"from": "ward/2022-12-uk-bgc/E05013438",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013438",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013438",
+					"labels": ["Kington"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 10,
+				"from": "ward/2021-12-uk-bgc/E05013413",
+				"counterpart": {
+					"id": "ward/2020-12-uk-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2020-12-uk-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 11,
+				"from": "ward/2020-12-uk-bgc/E05008342",
+				"counterpart": {
+					"id": "ward/2019-12-uk-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2019-12-uk-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 12,
+				"from": "ward/2019-12-uk-bgc/E05008342",
+				"counterpart": {
+					"id": "ward/2018-12-uk-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2018-12-uk-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 12,
+				"from": "ward/2019-12-uk-bgc/E05008342",
+				"counterpart": {
+					"id": "ward/2019-12-gb-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2019-12-gb-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 13,
+				"from": "ward/2018-12-uk-bgc/E05008342",
+				"counterpart": {
+					"id": "ward/2017-12-gb-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2017-12-gb-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 14,
+				"from": "ward/2017-12-gb-bgc/E05008342",
+				"counterpart": {
+					"id": "ward/2016-12-gb-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2016-12-gb-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 15,
+				"from": "ward/2016-12-gb-bgc/E05008342",
+				"counterpart": {
+					"id": "ward/2015-12-gb-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2015-12-gb-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 16,
+				"from": "ward/2015-12-gb-bgc/E05008342",
+				"counterpart": {
+					"id": "ward/2011-12-ew-bgc/E05008342",
+					"geography": "ward",
+					"boundaryRelease": "2011-12-ew-bgc",
+					"code": "E05008342",
+					"labels": ["Calne North"]
+				}
+			}
+		]
+	}
+}

@@ -1,0 +1,628 @@
+{
+	"apiVersion": "v1",
+	"atlasRelease": "sha256:e328679310bcae2cc4d96d6e853ddb42f7ec80e98215b6608189edd8bd26bb41",
+	"data": {
+		"likely": {
+			"geography": "ward",
+			"boundaryRelease": "2024-12-uk-bgc",
+			"resolved": 26,
+			"summary": {
+				"valueCount": 27,
+				"byStatus": { "valid": 26, "malformed-code": 1 },
+				"duplicateCount": 0,
+				"normalisedCount": 0,
+				"joinable": false
+			},
+			"tiedWith": [
+				{ "geography": "ward", "boundaryRelease": "2024-05-uk-bgc" },
+				{ "geography": "ward", "boundaryRelease": "2023-12-uk-bgc" },
+				{ "geography": "ward", "boundaryRelease": "2023-05-uk-bgc" },
+				{ "geography": "ward", "boundaryRelease": "2022-12-uk-bgc" },
+				{ "geography": "ward", "boundaryRelease": "2021-12-uk-bgc" }
+			]
+		},
+		"candidates": [
+			{
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"resolved": 26,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": { "valid": 26, "malformed-code": 1 },
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc",
+				"resolved": 26,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": { "valid": 26, "malformed-code": 1 },
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc",
+				"resolved": 26,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": { "valid": 26, "malformed-code": 1 },
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc",
+				"resolved": 26,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": { "valid": 26, "malformed-code": 1 },
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc",
+				"resolved": 26,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": { "valid": 26, "malformed-code": 1 },
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc",
+				"resolved": 26,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": { "valid": 26, "malformed-code": 1 },
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc",
+				"resolved": 21,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": {
+						"valid": 21,
+						"superseded": 5,
+						"malformed-code": 1
+					},
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"resolved": 21,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": {
+						"valid": 21,
+						"superseded": 5,
+						"malformed-code": 1
+					},
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			},
+			{
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2",
+				"resolved": 21,
+				"ambiguous": 0,
+				"summary": {
+					"valueCount": 27,
+					"byStatus": {
+						"valid": 21,
+						"superseded": 5,
+						"malformed-code": 1
+					},
+					"duplicateCount": 0,
+					"normalisedCount": 0,
+					"joinable": false
+				}
+			}
+		],
+		"values": [
+			{
+				"index": 0,
+				"value": "E05013400",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013400",
+					"code": "E05013400",
+					"name": "Amesbury East & Bulford"
+				}
+			},
+			{
+				"index": 1,
+				"value": "E05013403",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013403",
+					"code": "E05013403",
+					"name": "Avon Valley"
+				}
+			},
+			{
+				"index": 2,
+				"value": "E05013408",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013408",
+					"code": "E05013408",
+					"name": "Brinkworth"
+				}
+			},
+			{
+				"index": 3,
+				"value": "E05013411",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013411",
+					"code": "E05013411",
+					"name": "Calne Central"
+				}
+			},
+			{
+				"index": 4,
+				"value": "E05013417",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013417",
+					"code": "E05013417",
+					"name": "Chippenham Cepen Park & Hunters Moon"
+				}
+			},
+			{
+				"index": 5,
+				"value": "E05013421",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013421",
+					"code": "E05013421",
+					"name": "Chippenham Monkton"
+				}
+			},
+			{
+				"index": 6,
+				"value": "E05013429",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013429",
+					"code": "E05013429",
+					"name": "Devizes North"
+				}
+			},
+			{
+				"index": 7,
+				"value": "E05013433",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013433",
+					"code": "E05013433",
+					"name": "Durrington"
+				}
+			},
+			{
+				"index": 8,
+				"value": "E05013435",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013435",
+					"code": "E05013435",
+					"name": "Fovant & Chalke Valley"
+				}
+			},
+			{
+				"index": 9,
+				"value": "E05013440",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013440",
+					"code": "E05013440",
+					"name": "Ludgershall North & Rural"
+				}
+			},
+			{
+				"index": 10,
+				"value": "E05013833",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013833",
+					"code": "E05013833",
+					"name": "Melksham East"
+				}
+			},
+			{
+				"index": 11,
+				"value": "E05013446",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013446",
+					"code": "E05013446",
+					"name": "Melksham Forest"
+				}
+			},
+			{
+				"index": 12,
+				"value": "E05013449",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013449",
+					"code": "E05013449",
+					"name": "Melksham Without West & Rural"
+				}
+			},
+			{
+				"index": 13,
+				"value": "E05013453",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013453",
+					"code": "E05013453",
+					"name": "Old Sarum & Lower Bourne Valley"
+				}
+			},
+			{
+				"index": 14,
+				"value": "E05013835",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013835",
+					"code": "E05013835",
+					"name": "Pewsey Vale West"
+				}
+			},
+			{
+				"index": 15,
+				"value": "E0513457",
+				"kind": "code",
+				"status": "malformed-code",
+				"detail": "An area code is a letter and eight digits; E0513457 has 7."
+			},
+			{
+				"index": 16,
+				"value": "E05013462",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013462",
+					"code": "E05013462",
+					"name": "Salisbury Bemerton Heath"
+				}
+			},
+			{
+				"index": 17,
+				"value": "E05013471",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013471",
+					"code": "E05013471",
+					"name": "Southwick"
+				}
+			},
+			{
+				"index": 18,
+				"value": "E05013472",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013472",
+					"code": "E05013472",
+					"name": "The Lavingtons"
+				}
+			},
+			{
+				"index": 19,
+				"value": "E05013477",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013477",
+					"code": "E05013477",
+					"name": "Trowbridge Adcroft"
+				}
+			},
+			{
+				"index": 20,
+				"value": "E05013478",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013478",
+					"code": "E05013478",
+					"name": "Trowbridge Central"
+				}
+			},
+			{
+				"index": 21,
+				"value": "E05013481",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013481",
+					"code": "E05013481",
+					"name": "Trowbridge Lambrok"
+				}
+			},
+			{
+				"index": 22,
+				"value": "E05013483",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013483",
+					"code": "E05013483",
+					"name": "Trowbridge Paxcroft"
+				}
+			},
+			{
+				"index": 23,
+				"value": "E05013484",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013484",
+					"code": "E05013484",
+					"name": "Urchfont & Bishops Cannings"
+				}
+			},
+			{
+				"index": 24,
+				"value": "E05013491",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013491",
+					"code": "E05013491",
+					"name": "Westbury West"
+				}
+			},
+			{
+				"index": 25,
+				"value": "E05013493",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013493",
+					"code": "E05013493",
+					"name": "Winsley & Westwood"
+				}
+			},
+			{
+				"index": 26,
+				"value": "E05013495",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "ward/2024-12-uk-bgc/E05013495",
+					"code": "E05013495",
+					"name": "Wylye Valley"
+				}
+			}
+		],
+		"verdict": "incomplete",
+		"recommendations": [],
+		"manifest": {
+			"schemaVersion": 1,
+			"atlasRelease": "sha256:e328679310bcae2cc4d96d6e853ddb42f7ec80e98215b6608189edd8bd26bb41",
+			"result": {
+				"verdict": "incomplete",
+				"likely": {
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"resolved": 26,
+					"summary": {
+						"valueCount": 27,
+						"byStatus": { "valid": 26, "malformed-code": 1 },
+						"duplicateCount": 0,
+						"normalisedCount": 0,
+						"joinable": false
+					},
+					"tiedWith": [
+						{
+							"geography": "ward",
+							"boundaryRelease": "2024-05-uk-bgc"
+						},
+						{
+							"geography": "ward",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						{
+							"geography": "ward",
+							"boundaryRelease": "2023-05-uk-bgc"
+						},
+						{
+							"geography": "ward",
+							"boundaryRelease": "2022-12-uk-bgc"
+						},
+						{
+							"geography": "ward",
+							"boundaryRelease": "2021-12-uk-bgc"
+						}
+					]
+				},
+				"candidates": [
+					{
+						"geography": "ward",
+						"boundaryRelease": "2024-12-uk-bgc",
+						"resolved": 26,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": { "valid": 26, "malformed-code": 1 },
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2024-05-uk-bgc",
+						"resolved": 26,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": { "valid": 26, "malformed-code": 1 },
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2023-12-uk-bgc",
+						"resolved": 26,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": { "valid": 26, "malformed-code": 1 },
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2023-05-uk-bgc",
+						"resolved": 26,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": { "valid": 26, "malformed-code": 1 },
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2022-12-uk-bgc",
+						"resolved": 26,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": { "valid": 26, "malformed-code": 1 },
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2021-12-uk-bgc",
+						"resolved": 26,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": { "valid": 26, "malformed-code": 1 },
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2026-05-uk-bgc",
+						"resolved": 21,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": {
+								"valid": 21,
+								"superseded": 5,
+								"malformed-code": 1
+							},
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2025-12-uk-bgc",
+						"resolved": 21,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": {
+								"valid": 21,
+								"superseded": 5,
+								"malformed-code": 1
+							},
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					},
+					{
+						"geography": "ward",
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"resolved": 21,
+						"ambiguous": 0,
+						"summary": {
+							"valueCount": 27,
+							"byStatus": {
+								"valid": 21,
+								"superseded": 5,
+								"malformed-code": 1
+							},
+							"duplicateCount": 0,
+							"normalisedCount": 0,
+							"joinable": false
+						}
+					}
+				],
+				"recommendations": []
+			}
+		},
+		"note": "likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it."
+	},
+	"meta": { "nextCursor": null }
+}

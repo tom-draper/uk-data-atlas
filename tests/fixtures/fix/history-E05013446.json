@@ -1,0 +1,227 @@
+{
+	"data": {
+		"id": "ward/2024-12-uk-bgc/E05013446",
+		"geography": "ward",
+		"boundaryRelease": "2024-12-uk-bgc",
+		"code": "E05013446",
+		"name": "Melksham Forest",
+		"lineage": [
+			{
+				"relation": "equivalent-to",
+				"depth": 1,
+				"from": "ward/2024-12-uk-bgc/E05013446",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013446",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013446",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 1,
+				"from": "ward/2024-12-uk-bgc/E05013446",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016253",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016253",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 1,
+				"from": "ward/2024-12-uk-bgc/E05013446",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016254",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016254",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 2,
+				"from": "ward/2024-05-uk-bgc/E05013446",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013446",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013446",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016253",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016253",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016253",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016253",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013447",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013447",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016254",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016254",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016254",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016254",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013447",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013447",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2023-12-uk-bgc/E05013446",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013446",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013446",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2025-12-uk-bgc/E05016253",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016253",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016253",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013447",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013447",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013447",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2025-12-uk-bgc/E05016254",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016254",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016254",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2023-05-uk-bgc/E05013446",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013446",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013446",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2024-05-uk-bgc/E05013447",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013447",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013447",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2022-12-uk-bgc/E05013446",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013446",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013446",
+					"labels": ["Melksham Forest"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2023-12-uk-bgc/E05013447",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013447",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013447",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2023-05-uk-bgc/E05013447",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013447",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013447",
+					"labels": ["Melksham South"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2022-12-uk-bgc/E05013447",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013447",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013447",
+					"labels": ["Melksham South"]
+				}
+			}
+		]
+	}
+}
