@@ -5,7 +5,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.geography_summary_list_envelope import GeographySummaryListEnvelope
+from ...models.list_boundaries_response_200 import ListBoundariesResponse200
 from ...types import Response
 
 
@@ -21,9 +21,9 @@ def _get_kwargs() -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GeographySummaryListEnvelope | None:
+) -> ListBoundariesResponse200 | None:
     if response.status_code == 200:
-        response_200 = GeographySummaryListEnvelope.from_dict(response.json())
+        response_200 = ListBoundariesResponse200.from_dict(response.json())
 
         return response_200
 
@@ -35,7 +35,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GeographySummaryListEnvelope]:
+) -> Response[ListBoundariesResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -47,7 +47,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[GeographySummaryListEnvelope]:
+) -> Response[ListBoundariesResponse200]:
     """List boundary types with their latest release
 
     Raises:
@@ -55,7 +55,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GeographySummaryListEnvelope]
+        Response[ListBoundariesResponse200]
     """
 
     kwargs = _get_kwargs()
@@ -70,7 +70,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-) -> GeographySummaryListEnvelope | None:
+) -> ListBoundariesResponse200 | None:
     """List boundary types with their latest release
 
     Raises:
@@ -78,7 +78,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        GeographySummaryListEnvelope
+        ListBoundariesResponse200
     """
 
     return sync_detailed(
@@ -89,7 +89,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[GeographySummaryListEnvelope]:
+) -> Response[ListBoundariesResponse200]:
     """List boundary types with their latest release
 
     Raises:
@@ -97,7 +97,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GeographySummaryListEnvelope]
+        Response[ListBoundariesResponse200]
     """
 
     kwargs = _get_kwargs()
@@ -110,7 +110,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-) -> GeographySummaryListEnvelope | None:
+) -> ListBoundariesResponse200 | None:
     """List boundary types with their latest release
 
     Raises:
@@ -118,7 +118,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        GeographySummaryListEnvelope
+        ListBoundariesResponse200
     """
 
     return (

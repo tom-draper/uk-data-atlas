@@ -452,18 +452,17 @@ paths:
   /openapi.yaml:
     get:
       operationId: getOpenapiDescription
-      tags: ["Start here"]
       summary: The OpenAPI description of this API
+      tags:
+        - Start here
+      description: >
+        Returns this document, so a client can read the binding contract from the running API rather
+        than the repository. The response is the YAML document itself; `Accept` is not negotiated on
+        any route, and a route's representations are chosen with `format` where it offers more than
+        one.
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without its
-          OpenAPI document."
-      description: >
-        Returns this document, so a client can read the binding contract from
-        the running API rather than the repository. The response is the YAML
-        document itself; `Accept` is not negotiated on any route, and a route's
-        representations are chosen with `format` where it offers more than one.
+        when: Takes no input. Refused only when the server was started without its OpenAPI document.
       responses:
         "200":
           description: The OpenAPI 3.1 description.
@@ -477,22 +476,19 @@ paths:
   /docs:
     get:
       operationId: getDocumentation
-      tags: ["Start here"]
       summary: The human documentation landing page
+      tags:
+        - Start here
+      description: >
+        An HTML page rendered from this document: an endpoint chooser that starts from the job, the
+        glossary of the identities a response carries, three copy-paste quick starts for a correct
+        map, a defensible trend and a reliable sync, and every operation grouped by task with its most
+        likely refusal. It is read from `x-endpoint-chooser`, `x-glossary`, `x-quick-starts` and each
+        operation's `x-likely-refusal`, so it cannot describe a route this document does not, and
+        every quick start request is sent as a contract test.
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without its
-          OpenAPI description."
-      description: >
-        An HTML page rendered from this document: an endpoint chooser that
-        starts from the job, the glossary of the identities a response carries,
-        three copy-paste quick starts for a correct map, a defensible trend and
-        a reliable sync, and every operation grouped by task with its most
-        likely refusal. It is read from `x-endpoint-chooser`, `x-glossary`,
-        `x-quick-starts` and each operation's `x-likely-refusal`, so it cannot
-        describe a route this document does not, and every quick start request
-        is sent as a contract test.
+        when: Takes no input. Refused only when the server was started without its OpenAPI description.
       responses:
         "200":
           description: The documentation page.
@@ -913,45 +909,83 @@ paths:
   /boundaries:
     get:
       operationId: listBoundaries
-      tags: ["Geography"]
       summary: List boundary types with their latest release
+      tags:
+        - Geography
       x-likely-refusal:
-        when: "Takes no input, so nothing is refused but the server-wide rate limit."
+        when: Takes no input, so nothing is refused but the server-wide rate limit.
       responses:
         "200":
           description: One entry per geography type present in the boundary registry.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/GeographySummaryListEnvelope"
-              x-example-request: "/v1/boundaries"
+              x-example-request: /v1/boundaries
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0a\
-                  c8d0912"
+                atlasRelease: sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912
                 data:
                   - id: constituency
                     latestRelease: 2024-07-uk-bgc
                     releaseCount: 1
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        latestRelease:
+                          type: string
+                        releaseCount:
+                          type: integer
+                          minimum: -9007199254740991
+                          maximum: 9007199254740991
+                      required:
+                        - id
+                        - latestRelease
+                        - releaseCount
+                      additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
 
   /boundary-releases:
     get:
       operationId: listBoundaryReleases
-      tags: ["Geography"]
       summary: List every compiled boundary release
+      tags:
+        - Geography
       x-likely-refusal:
-        when: "Takes no input, so nothing is refused but the server-wide rate limit."
+        when: Takes no input, so nothing is refused but the server-wide rate limit.
       responses:
         "200":
           description: The full boundary registry.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/BoundaryReleaseListEnvelope"
-              x-example-request: "/v1/boundary-releases"
+              x-example-request: /v1/boundary-releases
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -960,9 +994,8 @@ paths:
                     geography: combinedAuthority
                     title: Combined authorities, December 2025 (England, generalised, clipped)
                     description:
-                      English combined authorities and combined county authorities. ONS
-                      reports some local area statistics against these,
-                      including the life expectancy series held here.
+                      English combined authorities and combined county authorities. ONS reports some local
+                      area statistics against these, including the life expectancy series held here.
                     temporalCoverage: "2025"
                     coverage:
                       countries:
@@ -977,61 +1010,149 @@ paths:
                     metadataHash: sha256:6674a5e354661262ca18eebe9667e39774396aa2794caf8e954bd2a2e6b05e50
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        geography:
+                          type: string
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        temporalCoverage:
+                          type: string
+                        coverage:
+                          type: object
+                          properties:
+                            countries:
+                              type: array
+                              items:
+                                type: string
+                          required:
+                            - countries
+                          additionalProperties: {}
+                        source:
+                          type: object
+                          properties:
+                            publisher:
+                              type: string
+                            url:
+                              type: string
+                              format: uri
+                            retrievedAt:
+                              type: string
+                              format: date
+                            licence:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                url:
+                                  type: string
+                                  format: uri
+                              required:
+                                - name
+                              additionalProperties: {}
+                          required:
+                            - publisher
+                            - url
+                            - licence
+                          additionalProperties: {}
+                        metadataHash:
+                          type: string
+                        deprecation:
+                          type: object
+                          properties:
+                            deprecated:
+                              type: string
+                              format: date
+                              description: The date the release was deprecated.
+                            sunset:
+                              type: string
+                              format: date
+                              description: The date after which the release may be removed. Absent until one is set.
+                            replacedBy:
+                              type: string
+                              description: The id of the release, of the same geography, to use instead.
+                            reason:
+                              type: string
+                          required:
+                            - deprecated
+                            - replacedBy
+                            - reason
+                          additionalProperties: {}
+                          description:
+                            Present on a release that has been superseded. The release stays published and is not
+                            chosen by date or `latest` while its replacement covers the date; clients
+                            should move to `replacedBy` before `sunset`.
+                      required:
+                        - id
+                        - geography
+                        - title
+                        - coverage
+                        - source
+                        - metadataHash
+                      additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
 
   /boundary-releases:resolve:
     get:
       operationId: resolveBoundaryReleaseForDate
-      tags: ["Geography"]
       summary: Select the boundary release to use for a date
+      tags:
+        - Geography
+      description: >
+        Returns the latest release of a geography dated on or before `date` that covers `country` when
+        one is given, as an exact release id rather than a moving `latest` alias. Releases are
+        snapshots dated to a month, so a day narrows nothing, and the answer is the latest snapshot at
+        that date rather than a statement of which boundaries were legally in force.
+
+        `previous` and `next` are the neighbouring releases covering the same country; a change after
+        the selected release shows first in `next`. `sameMonth` is true when the date falls in the
+        release's own month, so a change that month may lie either side of it. `notCovering` lists
+        later releases passed over because they miss the country.
+
+        Releases of the same month are told apart only where one is plainly better: a subset derived
+        from another is set aside for its source, and without `country` a release covering fewer
+        countries is set aside. Each is listed in `setAside` with its reason. A deprecated release is
+        never chosen while its replacement, which is not itself deprecated, is dated on or before the
+        date and covers the country; it is set aside for it. Where no such replacement applies the
+        deprecated release is chosen, and the response carries its `Deprecation` headers. Variants
+        differing in any other way, such as clipping, are a 409 listing each in `choices`.
       x-likely-refusal:
         status: 404
         code: no_release_for_date
         when:
-          "The date is before the earliest release of that geography. The refusal
-          gives the earliest date that resolves."
-        x-example-request: "/v1/boundary-releases:resolve?geography=ward&date=1990-01-01"
-      description: >
-        Returns the latest release of a geography dated on or before `date` that
-        covers `country` when one is given, as an exact release id rather than a
-        moving `latest` alias. Releases are snapshots dated to a month, so a day
-        narrows nothing, and the answer is the latest snapshot at that date
-        rather than a statement of which boundaries were legally in force.
-
-        `previous` and `next` are the neighbouring releases covering the same
-        country; a change after the selected release shows first in `next`.
-        `sameMonth` is true when the date falls in the release's own month, so a
-        change that month may lie either side of it. `notCovering` lists later
-        releases passed over because they miss the country.
-
-        Releases of the same month are told apart only where one is plainly
-        better: a subset derived from another is set aside for its source, and
-        without `country` a release covering fewer countries is set aside. Each
-        is listed in `setAside` with its reason. A deprecated release is never
-        chosen while its replacement, which is not itself deprecated, is dated
-        on or before the date and covers the country; it is set aside for it.
-        Where no such replacement applies the deprecated release is chosen, and
-        the response carries its `Deprecation` headers. Variants differing in
-        any other way, such as clipping, are a 409 listing each in `choices`.
-      parameters:
-        - name: geography
-          in: query
-          required: true
-          schema: { type: string }
-          description: The geography to resolve a release for, e.g. `ward`.
-        - name: date
-          in: query
-          required: true
-          schema: { type: string }
-          description: A calendar date as `YYYY-MM-DD`, or a month as `YYYY-MM`.
-        - name: country
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
-          description: >
-            Restricts the answer to releases covering this country, so a Great
-            Britain release is passed over for Northern Ireland.
+          The date is before the earliest release of that geography. The refusal gives the earliest date
+          that resolves.
+        x-example-request: /v1/boundary-releases:resolve?geography=ward&date=1990-01-01
       responses:
         "200":
           description: The selected release, its neighbours and the basis of the choice.
@@ -1044,116 +1165,954 @@ paths:
               $ref: "#/components/headers/ReleaseSuccessorLink"
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/boundary-releases:resolve?geography=localAuthority&date\
-                =2023-06-30"
+              x-example-request: /v1/boundary-releases:resolve?geography=localAuthority&date=2023-06-30
               example:
                 apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                atlasRelease: sha256:a37c82c558874df4611b72cff4e74ddfbf1c587f915d157273cf67a01341b80f
                 data:
                   geography: localAuthority
                   date: 2023-06-30
                   month: 2023-06
+                  selected:
+                    id: 2023-05-uk-bgc-v2
+                    month: 2023-05
+                    title: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)
+                    countries:
+                      - GB-ENG
+                      - GB-NIR
+                      - GB-SCT
+                      - GB-WLS
+                    href: /v1/boundary-releases/localAuthority/2023-05-uk-bgc-v2
+                  sameMonth: false
+                  previous:
+                    id: 2022-12-uk-bgc-v2
+                    month: 2022-12
+                    title: Local authority districts, December 2022 (United Kingdom, generalised, clipped, v2)
+                    countries:
+                      - GB-ENG
+                      - GB-NIR
+                      - GB-SCT
+                      - GB-WLS
+                    href: /v1/boundary-releases/localAuthority/2022-12-uk-bgc-v2
+                  next:
+                    id: 2023-12-uk-bgc
+                    month: 2023-12
+                    title: Local authority districts, December 2023 (United Kingdom, generalised, clipped)
+                    countries:
+                      - GB-ENG
+                      - GB-NIR
+                      - GB-SCT
+                      - GB-WLS
+                    href: /v1/boundary-releases/localAuthority/2023-12-uk-bgc
+                  setAside: []
+                  notCovering: []
+                  basis: latest-release-dated-on-or-before
+                  note:
+                    Releases are snapshots dated to a month, so this is the latest snapshot at the date asked for,
+                    not a statement of which boundaries were legally in force on it. A change after
+                    the selected release shows first in next. When sameMonth is true the date falls in
+                    the release's own month, and a change that month may lie either side of it.
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: object
+                    properties:
+                      geography:
+                        type: string
+                      date:
+                        type: string
+                      month:
+                        type: string
+                      country:
+                        type: string
+                      selected:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          month:
+                            type: string
+                          title:
+                            type: string
+                          countries:
+                            type: array
+                            items:
+                              type: string
+                          href:
+                            type: string
+                          deprecation:
+                            type: object
+                            properties:
+                              deprecated:
+                                type: string
+                                format: date
+                                description: The date the release was deprecated.
+                              sunset:
+                                type: string
+                                format: date
+                                description: The date after which the release may be removed. Absent until one is set.
+                              replacedBy:
+                                type: string
+                                description: The id of the release, of the same geography, to use instead.
+                              reason:
+                                type: string
+                            required:
+                              - deprecated
+                              - replacedBy
+                              - reason
+                            additionalProperties: {}
+                            description:
+                              Present on a release that has been superseded. The release stays published and is not
+                              chosen by date or `latest` while its replacement covers the date;
+                              clients should move to `replacedBy` before `sunset`.
+                        required:
+                          - id
+                          - month
+                          - title
+                          - countries
+                          - href
+                        additionalProperties: {}
+                      sameMonth:
+                        type: boolean
+                      previous:
+                        anyOf:
+                          - type: object
+                            properties:
+                              id:
+                                type: string
+                              month:
+                                type: string
+                              title:
+                                type: string
+                              countries:
+                                type: array
+                                items:
+                                  type: string
+                              href:
+                                type: string
+                              deprecation:
+                                type: object
+                                properties:
+                                  deprecated:
+                                    type: string
+                                    format: date
+                                    description: The date the release was deprecated.
+                                  sunset:
+                                    type: string
+                                    format: date
+                                    description: The date after which the release may be removed. Absent until one is set.
+                                  replacedBy:
+                                    type: string
+                                    description: The id of the release, of the same geography, to use instead.
+                                  reason:
+                                    type: string
+                                required:
+                                  - deprecated
+                                  - replacedBy
+                                  - reason
+                                additionalProperties: {}
+                                description:
+                                  Present on a release that has been superseded. The release stays published and is not
+                                  chosen by date or `latest` while its replacement covers the date;
+                                  clients should move to `replacedBy` before `sunset`.
+                            required:
+                              - id
+                              - month
+                              - title
+                              - countries
+                              - href
+                            additionalProperties: {}
+                          - type: "null"
+                      next:
+                        anyOf:
+                          - type: object
+                            properties:
+                              id:
+                                type: string
+                              month:
+                                type: string
+                              title:
+                                type: string
+                              countries:
+                                type: array
+                                items:
+                                  type: string
+                              href:
+                                type: string
+                              deprecation:
+                                type: object
+                                properties:
+                                  deprecated:
+                                    type: string
+                                    format: date
+                                    description: The date the release was deprecated.
+                                  sunset:
+                                    type: string
+                                    format: date
+                                    description: The date after which the release may be removed. Absent until one is set.
+                                  replacedBy:
+                                    type: string
+                                    description: The id of the release, of the same geography, to use instead.
+                                  reason:
+                                    type: string
+                                required:
+                                  - deprecated
+                                  - replacedBy
+                                  - reason
+                                additionalProperties: {}
+                                description:
+                                  Present on a release that has been superseded. The release stays published and is not
+                                  chosen by date or `latest` while its replacement covers the date;
+                                  clients should move to `replacedBy` before `sunset`.
+                            required:
+                              - id
+                              - month
+                              - title
+                              - countries
+                              - href
+                            additionalProperties: {}
+                          - type: "null"
+                      setAside:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            month:
+                              type: string
+                            title:
+                              type: string
+                            countries:
+                              type: array
+                              items:
+                                type: string
+                            href:
+                              type: string
+                            deprecation:
+                              type: object
+                              properties:
+                                deprecated:
+                                  type: string
+                                  format: date
+                                  description: The date the release was deprecated.
+                                sunset:
+                                  type: string
+                                  format: date
+                                  description: The date after which the release may be removed. Absent until one is set.
+                                replacedBy:
+                                  type: string
+                                  description: The id of the release, of the same geography, to use instead.
+                                reason:
+                                  type: string
+                              required:
+                                - deprecated
+                                - replacedBy
+                                - reason
+                              additionalProperties: {}
+                              description:
+                                Present on a release that has been superseded. The release stays published and is not
+                                chosen by date or `latest` while its replacement covers the date;
+                                clients should move to `replacedBy` before `sunset`.
+                            reason:
+                              type: string
+                          required:
+                            - id
+                            - month
+                            - title
+                            - countries
+                            - href
+                            - reason
+                          additionalProperties: {}
+                      notCovering:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            month:
+                              type: string
+                            title:
+                              type: string
+                            countries:
+                              type: array
+                              items:
+                                type: string
+                            href:
+                              type: string
+                            deprecation:
+                              type: object
+                              properties:
+                                deprecated:
+                                  type: string
+                                  format: date
+                                  description: The date the release was deprecated.
+                                sunset:
+                                  type: string
+                                  format: date
+                                  description: The date after which the release may be removed. Absent until one is set.
+                                replacedBy:
+                                  type: string
+                                  description: The id of the release, of the same geography, to use instead.
+                                reason:
+                                  type: string
+                              required:
+                                - deprecated
+                                - replacedBy
+                                - reason
+                              additionalProperties: {}
+                              description:
+                                Present on a release that has been superseded. The release stays published and is not
+                                chosen by date or `latest` while its replacement covers the date;
+                                clients should move to `replacedBy` before `sunset`.
+                          required:
+                            - id
+                            - month
+                            - title
+                            - countries
+                            - href
+                          additionalProperties: {}
+                      undated:
+                        type: array
+                        items:
+                          type: string
+                      basis:
+                        type: string
+                        const: latest-release-dated-on-or-before
+                      note:
+                        type: string
+                    required:
+                      - geography
+                      - date
+                      - month
+                      - selected
+                      - sameMonth
+                      - previous
+                      - next
+                      - setAside
+                      - notCovering
+                      - basis
+                      - note
+                    additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
           description: >
-            No release can be selected: `code` is `unsupported_geography` for an
-            unknown geography, otherwise `no_release_for_date` with `absence`
-            saying whether the date precedes the first release, no release
-            covers the country, or none is dated to a month.
+            No release can be selected: `code` is `unsupported_geography` for an unknown geography,
+            otherwise `no_release_for_date` with `absence` saying whether the date precedes the first
+            release, no release covers the country, or none is dated to a month.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "409":
           description: >
-            Several releases share the selected month and differ in more than
-            coverage; `choices` lists them.
+            Several releases share the selected month and differ in more than coverage; `choices`
+            lists them.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
-
-  /boundary-releases:compare:
-    get:
-      operationId: compareBoundaryReleases
-      tags: ["Geography"]
-      summary: Compare two releases of one geography without inferring geography
-        change from codes
-      x-likely-refusal:
-        status: 400
-        when:
-          "One of geography, from or to is omitted, or from and to name the same
-          release."
-        x-example-request: "/v1/boundary-releases:compare?geography=ward&from=2023-05-uk-bgc"
-      description: >
-        Compares the two compiled code sets, with identifiers present in only
-        one release kept distinct from a claim that an area was added or
-        removed. Shared codes are called continuous only where a published
-        extent-continuity crosswalk measured their geometry. A code only one
-        release holds is listed under `continuity.recoded` where that crosswalk
-        found the same extent under a new code in the other. Its changed,
-        indeterminate and unmeasured findings remain review evidence, not
-        conversion claims. Other published crosswalks between the releases are
-        named separately with their directional code cardinality and bounded
-        split/merge-shaped examples. These describe published records, not a
-        legal boundary-change finding, and need no runtime polygon comparison.
       parameters:
         - name: geography
           in: query
           required: true
-          schema: { type: string }
-          description: The shared geography family of both releases.
-        - name: from
+          schema:
+            type: string
+          description: The geography to resolve a release for, e.g. `ward`.
+        - name: date
           in: query
           required: true
-          schema: { type: string }
-          description: The earlier or source release id.
-        - name: to
-          in: query
-          required: true
-          schema: { type: string }
-          description: The later or target release id.
-        - name: limit
+          schema:
+            type: string
+          description: A calendar date as `YYYY-MM-DD`, or a month as `YYYY-MM`.
+        - name: country
           in: query
           required: false
-          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
-          description:
-            Maximum sample identifiers or continuity findings in each bounded
-            list.
+          schema:
+            type: string
+            enum:
+              - GB-ENG
+              - GB-NIR
+              - GB-SCT
+              - GB-WLS
+          description: >
+            Restricts the answer to releases covering this country, so a Great Britain release is
+            passed over for Northern Ireland.
+
+  /boundary-releases:compare:
+    get:
+      operationId: compareBoundaryReleases
+      summary: Compare two releases of one geography without inferring geography change from codes
+      tags:
+        - Geography
+      description: >
+        Compares the two compiled code sets, with identifiers present in only one release kept
+        distinct from a claim that an area was added or removed. Shared codes are called continuous
+        only where a published extent-continuity crosswalk measured their geometry. A code only one
+        release holds is listed under `continuity.recoded` where that crosswalk found the same extent
+        under a new code in the other. Its changed, indeterminate and unmeasured findings remain
+        review evidence, not conversion claims. Other published crosswalks between the releases are
+        named separately with their directional code cardinality and bounded split/merge-shaped
+        examples. These describe published records, not a legal boundary-change finding, and need no
+        runtime polygon comparison.
+      x-likely-refusal:
+        status: 400
+        when: One of geography, from or to is omitted, or from and to name the same release.
+        x-example-request: /v1/boundary-releases:compare?geography=ward&from=2023-05-uk-bgc
       responses:
         "200":
           description: Release-level code, continuity and crosswalk evidence.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request:
-                "/v1/boundary-releases:compare?geography=ward&from=2023-05-u\
-                k-bgc&to=2024-12-uk-bgc"
+              x-example-request: /v1/boundary-releases:compare?geography=ward&from=2023-05-uk-bgc&to=2024-12-uk-bgc
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: object
+                    properties:
+                      geography:
+                        type: string
+                      from:
+                        type: object
+                        properties:
+                          geography:
+                            type: string
+                          boundaryRelease:
+                            type: string
+                        required:
+                          - geography
+                          - boundaryRelease
+                        additionalProperties: {}
+                      to:
+                        type: object
+                        properties:
+                          geography:
+                            type: string
+                          boundaryRelease:
+                            type: string
+                        required:
+                          - geography
+                          - boundaryRelease
+                        additionalProperties: {}
+                      summary:
+                        type: object
+                        properties:
+                          fromAreaCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          toAreaCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          sharedCodeCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          codesOnlyInFromCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          codesOnlyInToCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          continuousCodeCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          recodedCodeCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          changedExtentCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          indeterminateExtentCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          unmeasuredCodeCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          unassessedSharedCodeCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                          publishedRelationshipCount:
+                            type: integer
+                            minimum: -9007199254740991
+                            maximum: 9007199254740991
+                        required:
+                          - fromAreaCount
+                          - toAreaCount
+                          - sharedCodeCount
+                          - codesOnlyInFromCount
+                          - codesOnlyInToCount
+                          - continuousCodeCount
+                          - recodedCodeCount
+                          - changedExtentCount
+                          - indeterminateExtentCount
+                          - unmeasuredCodeCount
+                          - unassessedSharedCodeCount
+                          - publishedRelationshipCount
+                        additionalProperties: {}
+                      codes:
+                        type: object
+                        properties:
+                          onlyInFrom:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                code:
+                                  type: string
+                                name:
+                                  type: string
+                                aliases:
+                                  type: array
+                                  items:
+                                    type: string
+                              required:
+                                - id
+                                - code
+                                - name
+                              additionalProperties: {}
+                          onlyInTo:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                code:
+                                  type: string
+                                name:
+                                  type: string
+                                aliases:
+                                  type: array
+                                  items:
+                                    type: string
+                              required:
+                                - id
+                                - code
+                                - name
+                              additionalProperties: {}
+                        required:
+                          - onlyInFrom
+                          - onlyInTo
+                        additionalProperties: {}
+                      continuity:
+                        oneOf:
+                          - type: object
+                            properties:
+                              status:
+                                type: string
+                                const: not-published
+                              reason:
+                                type: string
+                            required:
+                              - status
+                              - reason
+                            additionalProperties: {}
+                          - type: object
+                            properties:
+                              status:
+                                type: string
+                                const: available
+                              crosswalks:
+                                type: array
+                                items:
+                                  type: string
+                              recoded:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    fromCode:
+                                      type: string
+                                    toCode:
+                                      type: string
+                                    widestDifferenceM:
+                                      type: number
+                                  required:
+                                    - fromCode
+                                    - toCode
+                                    - widestDifferenceM
+                                  additionalProperties: {}
+                              changedExtent:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    code:
+                                      type: string
+                                    relation:
+                                      type: string
+                                    widestDifferenceM:
+                                      type: number
+                                    fromShare:
+                                      type: number
+                                    toShare:
+                                      type: number
+                                  required:
+                                    - code
+                                    - relation
+                                    - widestDifferenceM
+                                    - fromShare
+                                    - toShare
+                                  additionalProperties: {}
+                              unmeasured:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    code:
+                                      type: string
+                                    reason:
+                                      type: string
+                                  required:
+                                    - code
+                                    - reason
+                                  additionalProperties: {}
+                              unassessedSharedCodes:
+                                type: array
+                                items:
+                                  type: string
+                            required:
+                              - status
+                              - crosswalks
+                              - recoded
+                              - changedExtent
+                              - unmeasured
+                              - unassessedSharedCodes
+                            additionalProperties: {}
+                      publishedRelationships:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            direction:
+                              type: string
+                              enum:
+                                - forward
+                                - reverse
+                            method:
+                              type: string
+                            quality:
+                              type: string
+                            relationshipPurpose:
+                              type: string
+                              enum:
+                                - identity
+                                - membership
+                            weighting:
+                              anyOf:
+                                - type: object
+                                  properties:
+                                    status:
+                                      type: string
+                                      const: not-provided
+                                  required:
+                                    - status
+                                  additionalProperties: {}
+                                - type: object
+                                  properties:
+                                    status:
+                                      type: string
+                                      const: not-applicable
+                                  required:
+                                    - status
+                                  additionalProperties: {}
+                                - type: object
+                                  properties:
+                                    status:
+                                      type: string
+                                      const: provided
+                                    basis:
+                                      type: string
+                                      const: area
+                                    normalisation:
+                                      type: string
+                                      const: per-source
+                                  required:
+                                    - status
+                                    - basis
+                                    - normalisation
+                                  additionalProperties: {}
+                                - type: object
+                                  properties:
+                                    status:
+                                      type: string
+                                      const: provided
+                                    basis:
+                                      type: string
+                                      const: population
+                                    normalisation:
+                                      type: string
+                                      const: per-source
+                                    population:
+                                      type: string
+                                    date:
+                                      type: string
+                                    blocks:
+                                      type: object
+                                      properties:
+                                        geography:
+                                          type: string
+                                        boundaryRelease:
+                                          type: string
+                                      required:
+                                        - geography
+                                        - boundaryRelease
+                                      additionalProperties: {}
+                                  required:
+                                    - status
+                                    - basis
+                                    - normalisation
+                                    - population
+                                    - date
+                                    - blocks
+                                  additionalProperties: {}
+                            mapping:
+                              type: object
+                              properties:
+                                shape:
+                                  type: string
+                                  enum:
+                                    - no-mappings
+                                    - one-to-one
+                                    - one-to-many
+                                    - many-to-one
+                                    - many-to-many
+                                fromCodeCount:
+                                  type: integer
+                                  minimum: -9007199254740991
+                                  maximum: 9007199254740991
+                                toCodeCount:
+                                  type: integer
+                                  minimum: -9007199254740991
+                                  maximum: 9007199254740991
+                                pairCount:
+                                  type: integer
+                                  minimum: -9007199254740991
+                                  maximum: 9007199254740991
+                                from:
+                                  type: object
+                                  properties:
+                                    noTargetCount:
+                                      type: integer
+                                      minimum: -9007199254740991
+                                      maximum: 9007199254740991
+                                    oneTargetCount:
+                                      type: integer
+                                      minimum: -9007199254740991
+                                      maximum: 9007199254740991
+                                    multipleTargetCount:
+                                      type: integer
+                                      minimum: -9007199254740991
+                                      maximum: 9007199254740991
+                                  required:
+                                    - noTargetCount
+                                    - oneTargetCount
+                                    - multipleTargetCount
+                                  additionalProperties: {}
+                                to:
+                                  type: object
+                                  properties:
+                                    oneSourceCount:
+                                      type: integer
+                                      minimum: -9007199254740991
+                                      maximum: 9007199254740991
+                                    multipleSourceCount:
+                                      type: integer
+                                      minimum: -9007199254740991
+                                      maximum: 9007199254740991
+                                  required:
+                                    - oneSourceCount
+                                    - multipleSourceCount
+                                  additionalProperties: {}
+                                examples:
+                                  type: object
+                                  properties:
+                                    oneToMany:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          fromCode:
+                                            type: string
+                                          toCodes:
+                                            type: array
+                                            items:
+                                              type: string
+                                        required:
+                                          - fromCode
+                                          - toCodes
+                                        additionalProperties: {}
+                                    manyToOne:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          toCode:
+                                            type: string
+                                          fromCodes:
+                                            type: array
+                                            items:
+                                              type: string
+                                        required:
+                                          - toCode
+                                          - fromCodes
+                                        additionalProperties: {}
+                                  required:
+                                    - oneToMany
+                                    - manyToOne
+                                  additionalProperties: {}
+                                note:
+                                  type: string
+                              required:
+                                - shape
+                                - fromCodeCount
+                                - toCodeCount
+                                - pairCount
+                                - from
+                                - to
+                                - examples
+                                - note
+                              additionalProperties: {}
+                            recordCount:
+                              type: integer
+                              minimum: -9007199254740991
+                              maximum: 9007199254740991
+                          required:
+                            - id
+                            - direction
+                            - method
+                            - quality
+                            - weighting
+                            - mapping
+                            - recordCount
+                          additionalProperties: {}
+                      limit:
+                        type: integer
+                        minimum: -9007199254740991
+                        maximum: 9007199254740991
+                      note:
+                        type: string
+                    required:
+                      - geography
+                      - from
+                      - to
+                      - summary
+                      - codes
+                      - continuity
+                      - publishedRelationships
+                      - limit
+                      - note
+                    additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      parameters:
+        - name: geography
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The shared geography family of both releases.
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The earlier or source release id.
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The later or target release id.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+          description: Maximum sample identifiers or continuity findings in each bounded list.
 
   /boundary-releases/{geography}/{release}:
     get:
       operationId: getBoundaryRelease
-      tags: ["Geography"]
       summary: Get one boundary release, with links to download it whole
+      tags:
+        - Geography
       x-likely-refusal:
         status: 404
         code: unknown_release
-        when: "The release is named by a date alone. A release id also names its
-          coverage and product, such as `2024-12-uk-bgc`;
-          `/v1/boundary-releases` lists them."
-        x-example-request: "/v1/boundary-releases/ward/2024-12"
+        when:
+          The release is named by a date alone. A release id also names its coverage and product, such
+          as `2024-12-uk-bgc`; `/v1/boundary-releases` lists them.
+        x-example-request: /v1/boundary-releases/ward/2024-12
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -1169,38 +2128,241 @@ paths:
               $ref: "#/components/headers/ReleaseSuccessorLink"
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/BoundaryReleaseEnvelope"
-              x-example-request: "/v1/boundary-releases/constituency/2024-07-uk-bgc"
+              x-example-request: /v1/boundary-releases/constituency/2024-07-uk-bgc
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0a\
-                  c8d0912"
+                atlasRelease: sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912
                 data:
                   id: 2024-07-uk-bgc
                   geography: constituency
-                  title:
-                    Westminster parliamentary constituencies, July 2024 (United Kingdom,
-                    generalised, clipped)
+                  title: Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)
                   description:
-                    Westminster parliamentary constituencies as published for July
-                    2024, covering the United Kingdom. Generalised to 20 m and
-                    clipped to the coastline.
+                    Westminster parliamentary constituencies as published for July 2024, covering the
+                    United Kingdom. Generalised to 20 m and clipped to the coastline.
                   temporalCoverage: "2024"
                   coverage:
-                    countries: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+                    countries:
+                      - GB-ENG
+                      - GB-NIR
+                      - GB-SCT
+                      - GB-WLS
                   source:
                     publisher: Office for National Statistics
                     url: https://geoportal.statistics.gov.uk/
                     licence:
                       name: Open Government Licence v3.0
                       url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
-                  metadataHash:
-                    "sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5\
-                    e8466f3"
+                  metadataHash: sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5e8466f3
+                  documents:
+                    validation: /v1/documents/validation-report.json
+                    health: /v1/documents/geography-health.json
+                  downloads:
+                    status: available
+                    mapResource: /v1/map-resources/constituency/2024-07-uk-bgc
+                    pmtiles: /v1/map-resources/constituency/2024-07-uk-bgc.pmtiles
+                    tileJson: /v1/map-resources/constituency/2024-07-uk-bgc/tiles.json
+                    geojson:
+                      medium: /v1/map-resources/constituency/2024-07-uk-bgc/features?tier=medium&format=geojson
+                      low: /v1/map-resources/constituency/2024-07-uk-bgc/features?tier=low&format=geojson
+                    geoparquet:
+                      full: /v1/map-resources/constituency/2024-07-uk-bgc/features?tier=full
+                      high: /v1/map-resources/constituency/2024-07-uk-bgc/features?tier=high
+                      medium: /v1/map-resources/constituency/2024-07-uk-bgc/features?tier=medium
+                      low: /v1/map-resources/constituency/2024-07-uk-bgc/features?tier=low
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      geography:
+                        type: string
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      temporalCoverage:
+                        type: string
+                      coverage:
+                        type: object
+                        properties:
+                          countries:
+                            type: array
+                            items:
+                              type: string
+                        required:
+                          - countries
+                        additionalProperties: {}
+                      source:
+                        type: object
+                        properties:
+                          publisher:
+                            type: string
+                          url:
+                            type: string
+                            format: uri
+                          retrievedAt:
+                            type: string
+                            format: date
+                          licence:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              url:
+                                type: string
+                                format: uri
+                            required:
+                              - name
+                            additionalProperties: {}
+                        required:
+                          - publisher
+                          - url
+                          - licence
+                        additionalProperties: {}
+                      metadataHash:
+                        type: string
+                      deprecation:
+                        type: object
+                        properties:
+                          deprecated:
+                            type: string
+                            format: date
+                            description: The date the release was deprecated.
+                          sunset:
+                            type: string
+                            format: date
+                            description: The date after which the release may be removed. Absent until one is set.
+                          replacedBy:
+                            type: string
+                            description: The id of the release, of the same geography, to use instead.
+                          reason:
+                            type: string
+                        required:
+                          - deprecated
+                          - replacedBy
+                          - reason
+                        additionalProperties: {}
+                        description:
+                          Present on a release that has been superseded. The release stays published and is not
+                          chosen by date or `latest` while its replacement covers the date; clients
+                          should move to `replacedBy` before `sunset`.
+                      documents:
+                        type: object
+                        properties:
+                          validation:
+                            type: string
+                          health:
+                            type: string
+                        required:
+                          - validation
+                          - health
+                        additionalProperties: {}
+                      downloads:
+                        oneOf:
+                          - type: object
+                            properties:
+                              status:
+                                type: string
+                                const: available
+                              mapResource:
+                                type: string
+                                description: The descriptor, with sizes, hashes and attribution.
+                              pmtiles:
+                                type: string
+                              tileJson:
+                                type: string
+                              geojson:
+                                type: object
+                                propertyNames:
+                                  type: string
+                                additionalProperties:
+                                  type: string
+                                description: The download for the medium and low tiers.
+                              geoparquet:
+                                type: object
+                                propertyNames:
+                                  type: string
+                                additionalProperties:
+                                  type: string
+                                description: GeoParquet downloads by tier.
+                            required:
+                              - status
+                              - mapResource
+                              - pmtiles
+                              - tileJson
+                              - geojson
+                              - geoparquet
+                            additionalProperties: {}
+                          - type: object
+                            properties:
+                              status:
+                                type: string
+                                const: untiled
+                              reason:
+                                type: string
+                              geoparquet:
+                                type: object
+                                propertyNames:
+                                  type: string
+                                additionalProperties:
+                                  type: string
+                                description: GeoParquet downloads by tier.
+                            required:
+                              - status
+                              - reason
+                              - geoparquet
+                            additionalProperties: {}
+                          - type: object
+                            properties:
+                              status:
+                                type: string
+                                const: unavailable
+                              reason:
+                                type: string
+                            required:
+                              - status
+                              - reason
+                            additionalProperties: {}
+                        description:
+                          Where to get the whole release. Available releases have vector tiles and GeoParquet
+                          downloads. Untiled releases have GeoParquet at full detail only. Unavailable
+                          releases have no readable geometry. Each remains available area by area.
+                    required:
+                      - id
+                      - geography
+                      - title
+                      - coverage
+                      - source
+                      - metadataHash
+                      - documents
+                      - downloads
+                    additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -1600,21 +2762,18 @@ paths:
   /datasets:
     get:
       operationId: listDatasets
-      tags: ["Data catalogue"]
       summary: List published source datasets and their lineage
+      tags:
+        - Data catalogue
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without the data
-          catalogue built."
+        when: Takes no input. Refused only when the server was started without the data catalogue built.
       responses:
         "200":
           description: Dataset metadata compiled from the repository dataset manifest.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/datasets"
+              x-example-request: /v1/datasets
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -1628,9 +2787,8 @@ paths:
                       name: Open Government Licence v3.0
                       url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
                     description:
-                      Modelled 2024 annual mean background NO2, PM10 and PM2.5 by local
-                      authority, averaged from Defra's 1x1 km PCM maps, with
-                      Defra's population-weighted PM2.5.
+                      Modelled 2024 annual mean background NO2, PM10 and PM2.5 by local authority, averaged
+                      from Defra's 1x1 km PCM maps, with Defra's population-weighted PM2.5.
                     inputs:
                       - kind: text
                         path: environment/air-quality/pcm-background-by-local-authority-2024.csv
@@ -1646,37 +2804,143 @@ paths:
                       sha256: 8520b94c71e1e6f1a2d1209fddeae30ea4e8c79487eef04d3402454ee85126db
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        label:
+                          type: string
+                        publisher:
+                          type: string
+                        description:
+                          type: string
+                        sourceUrl:
+                          type: string
+                        temporalCoverage:
+                          type: string
+                        licence:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            url:
+                              type: string
+                          required:
+                            - name
+                          additionalProperties: {}
+                        inputs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              kind:
+                                type: string
+                              path:
+                                type: string
+                              bytes:
+                                type: number
+                              sha256:
+                                type: string
+                            required:
+                              - kind
+                              - path
+                              - bytes
+                              - sha256
+                            additionalProperties: {}
+                        summary:
+                          type: object
+                          properties:
+                            datasetCount:
+                              type: number
+                            dataRecordCount:
+                              type: number
+                            codeYears:
+                              type: array
+                              items:
+                                type: number
+                          required:
+                            - datasetCount
+                            - dataRecordCount
+                            - codeYears
+                          additionalProperties: {}
+                        compiled:
+                          type: object
+                          properties:
+                            bytes:
+                              type: number
+                            sha256:
+                              type: string
+                          required:
+                            - bytes
+                            - sha256
+                          additionalProperties: {}
+                      required:
+                        - id
+                        - label
+                        - publisher
+                        - sourceUrl
+                        - temporalCoverage
+                        - licence
+                        - inputs
+                        - summary
+                        - compiled
+                      additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
   /datasets/{dataset-id}:
     get:
       operationId: getDataset
-      tags: ["Data catalogue"]
       summary: Get one published source dataset and its input hashes
+      tags:
+        - Data catalogue
       x-likely-refusal:
         status: 404
         when:
-          "The id is a measure's, not a dataset's. A dataset is a publisher's
-          source; `/v1/measures/{measure-id}` names the datasets behind a
-          measure."
-        x-example-request: "/v1/datasets/house-price-median"
+          The id is a measure's, not a dataset's. A dataset is a publisher's source;
+          `/v1/measures/{measure-id}` names the datasets behind a measure.
+        x-example-request: /v1/datasets/house-price-median
       parameters:
         - name: dataset-id
           in: path
           required: true
           schema:
             type: string
-          description: >
+          description: |
             A dataset id from `GET /v1/datasets`, such as `population-uk`.
       responses:
         "200":
           description: Dataset metadata and source lineage.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/datasets/population-uk"
+              x-example-request: /v1/datasets/population-uk
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -1690,8 +2954,8 @@ paths:
                     name: Open Government Licence v3.0
                     url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
                   description:
-                    UK local authority population estimates by single year of age and
-                    sex, mid-2011 to mid-2024.
+                    UK local authority population estimates by single year of age and sex, mid-2011 to
+                    mid-2024.
                   inputs:
                     - kind: xlsxSheet
                       path: demographics/population/mid-year-estimates/uk/myebtablesuk20112024.xlsx#MYEB1
@@ -1704,9 +2968,115 @@ paths:
                       - 2023
                   compiled:
                     bytes: 13350128
-                    sha256: 32adfba936cd8746fac5ccceb71299b9822e0d3c04540420106e10b5272caf10
+                    sha256: 9b65e2c5703ac54675cde58ecb4367e23abe4ef09c6bfc9902b8d13ba0f97a11
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      label:
+                        type: string
+                      publisher:
+                        type: string
+                      description:
+                        type: string
+                      sourceUrl:
+                        type: string
+                      temporalCoverage:
+                        type: string
+                      licence:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          url:
+                            type: string
+                        required:
+                          - name
+                        additionalProperties: {}
+                      inputs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            kind:
+                              type: string
+                            path:
+                              type: string
+                            bytes:
+                              type: number
+                            sha256:
+                              type: string
+                          required:
+                            - kind
+                            - path
+                            - bytes
+                            - sha256
+                          additionalProperties: {}
+                      summary:
+                        type: object
+                        properties:
+                          datasetCount:
+                            type: number
+                          dataRecordCount:
+                            type: number
+                          codeYears:
+                            type: array
+                            items:
+                              type: number
+                        required:
+                          - datasetCount
+                          - dataRecordCount
+                          - codeYears
+                        additionalProperties: {}
+                      compiled:
+                        type: object
+                        properties:
+                          bytes:
+                            type: number
+                          sha256:
+                            type: string
+                        required:
+                          - bytes
+                          - sha256
+                        additionalProperties: {}
+                    required:
+                      - id
+                      - label
+                      - publisher
+                      - sourceUrl
+                      - temporalCoverage
+                      - licence
+                      - inputs
+                      - summary
+                      - compiled
+                    additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -1715,45 +3085,32 @@ paths:
   /measures:
     get:
       operationId: listMeasures
-      tags: ["Data catalogue"]
       summary: List measures currently available to query
+      tags:
+        - Data catalogue
       description: >
-        Each measure retains its source-facing `unit` label and adds an
-        API-owned `unitDefinition`. `unitDefinition.code` is the canonical unit,
-        `scaleToCanonical` multiplies a published numeric value into that unit,
-        and `per` names an explicit denominator when one is published. For
-        example, `£ million` is `GBP` with a scale of 1000000, and percent is
-        `proportion` with a scale of 0.01. This is descriptive metadata only:
-        observation values and source artifacts are not rewritten. `q` searches
-        by the words people use: `population`, `house prices`, `deprivation`.
-        Every measure whose id, alias, label or dataset title holds all of the
-        query's words is listed, best first: an exact id or alias, then a match
-        in the label, then in the id, then anywhere. A search never chooses one
-        measure for the caller, and matching nothing is an empty list rather
-        than a refusal. A measure's `aliases`, where it has any, are other names
+        Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`.
+        `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric
+        value into that unit, and `per` names an explicit denominator when one is published. For
+        example, `£ million` is `GBP` with a scale of 1000000, and percent is `proportion` with a
+        scale of 0.01. This is descriptive metadata only: observation values and source artifacts are
+        not rewritten. `q` searches by the words people use: `population`, `house prices`,
+        `deprivation`. Every measure whose id, alias, label or dataset title holds all of the query's
+        words is listed, best first: an exact id or alias, then a match in the label, then in the id,
+        then anywhere. A search never chooses one measure for the caller, and matching nothing is an
+        empty list rather than a refusal. A measure's `aliases`, where it has any, are other names
         each naming it alone, accepted wherever its id is.
       x-likely-refusal:
         status: 503
         when:
-          "Refused only when the server was started without the data catalogue
-          built. A search that matches nothing is an empty list, not a refusal."
-      parameters:
-        - name: q
-          in: query
-          required: false
-          schema:
-            type: string
-          description:
-            Words to search measures by, such as `house prices`. Omit to list
-            every measure.
+          Refused only when the server was started without the data catalogue built. A search that
+          matches nothing is an empty list, not a refusal.
       responses:
         "200":
           description: Measure definitions, coverage and supported operations.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/measures"
+              x-example-request: /v1/measures
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -1782,9 +3139,8 @@ paths:
                             - GB-ENG
                           recordCount: 7608
                           note:
-                            Published source records are available for England and Wales only; this
-                            endpoint does not infer Scottish or Northern Irish
-                            values.
+                            Published source records are available for England and Wales only; this endpoint does not
+                            infer Scottish or Northern Irish values.
                     availability:
                       sourceExact: true
                       conversion: false
@@ -1793,41 +3149,261 @@ paths:
                       data: /v1/data/population
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        label:
+                          type: string
+                        valueKind:
+                          type: string
+                          enum:
+                            - count
+                            - quantity
+                            - ratio
+                            - currency
+                            - ordinal
+                            - categorical
+                        unit:
+                          type: string
+                        unitDefinition:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                            scaleToCanonical:
+                              type: number
+                            per:
+                              type: string
+                          required:
+                            - code
+                            - scaleToCanonical
+                          additionalProperties: {}
+                        aliases:
+                          type: array
+                          items:
+                            type: string
+                        concept:
+                          type: string
+                        elsewhere:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              measureId:
+                                type: string
+                              countries:
+                                type: array
+                                items:
+                                  type: string
+                              comparable:
+                                type: boolean
+                              reason:
+                                type: string
+                              href:
+                                type: string
+                            required:
+                              - measureId
+                              - countries
+                              - comparable
+                              - reason
+                              - href
+                            additionalProperties: {}
+                        derivedFrom:
+                          type: object
+                          properties:
+                            datasetIds:
+                              type: array
+                              items:
+                                type: string
+                            note:
+                              type: string
+                          required:
+                            - datasetIds
+                            - note
+                          additionalProperties: {}
+                        uncertainty:
+                          type: object
+                          properties:
+                            kind:
+                              type: string
+                              const: confidence-interval
+                            level:
+                              type: number
+                            note:
+                              type: string
+                          required:
+                            - kind
+                            - level
+                            - note
+                          additionalProperties: {}
+                        notes:
+                          type: array
+                          items:
+                            type: string
+                        aggregation:
+                          type: object
+                          properties:
+                            kind:
+                              type: string
+                            available:
+                              type: boolean
+                          required:
+                            - kind
+                            - available
+                          additionalProperties: {}
+                        sources:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              datasetId:
+                                type: string
+                              periods:
+                                type: array
+                                items:
+                                  type: string
+                              sourceGeography:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  codeYear:
+                                    type: number
+                                required:
+                                  - type
+                                  - codeYear
+                                additionalProperties: {}
+                              observationArtifact:
+                                type: string
+                              coverage:
+                                type: object
+                                properties:
+                                  kind:
+                                    type: string
+                                    enum:
+                                      - partial
+                                      - source-reported
+                                  countries:
+                                    type: array
+                                    items:
+                                      type: string
+                                  recordCount:
+                                    type: number
+                                  note:
+                                    type: string
+                                required:
+                                  - kind
+                                  - countries
+                                  - recordCount
+                                  - note
+                                additionalProperties: {}
+                            required:
+                              - datasetId
+                              - periods
+                              - sourceGeography
+                              - coverage
+                            additionalProperties: {}
+                        availability:
+                          type: object
+                          properties:
+                            sourceExact:
+                              type: boolean
+                              const: true
+                            conversion:
+                              type: boolean
+                              const: false
+                            aggregation:
+                              type: boolean
+                          required:
+                            - sourceExact
+                            - conversion
+                            - aggregation
+                          additionalProperties: {}
+                        links:
+                          type: object
+                          properties:
+                            data:
+                              type: string
+                          required:
+                            - data
+                          additionalProperties: {}
+                      required:
+                        - id
+                        - label
+                        - valueKind
+                        - unit
+                        - aggregation
+                        - sources
+                        - availability
+                        - links
+                      additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Words to search measures by, such as `house prices`. Omit to list every measure.
 
   /measures/{measure-id}:
     get:
       operationId: getMeasure
-      tags: ["Data catalogue"]
       summary: Get one measure's semantics and availability
+      tags:
+        - Data catalogue
+      description: >
+        A measure's definition: what it counts, the unit, whether it may be summed or averaged, and
+        which source partitions publish it with what national coverage.
+
+
+        `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical
+        code, scale and (where applicable) denominator for safe unit-aware calculations; it never
+        changes the source artifact or an observation value.
+
+
+        Where another nation publishes its own answer to the same question, the measure carries
+        `concept` and `elsewhere`. Each entry in `elsewhere` names that measure, the countries it
+        covers, and whether the two are `comparable`. For the four national deprivation indices they
+        are not: each ranks its own nation's areas from 1 against its own domains and weights, so they
+        cannot be put on one scale. The reason travels with the link rather than living in
+        documentation, because the numbers themselves give no sign of it.
       x-likely-refusal:
         status: 404
         when:
-          "The measure id is guessed rather than listed, or names several measures.
-          `deprivation` is four national indices, so it is no measure's id or
-          alias; `/v1/measures?q=deprivation` lists them."
-        x-example-request: "/v1/measures/deprivation"
-      description: >
-        A measure's definition: what it counts, the unit, whether it may be
-        summed or averaged, and which source partitions publish it with what
-        national coverage.
-
-
-        `unit` remains the published display label. `unitDefinition` supplies an
-        API-owned canonical code, scale and (where applicable) denominator for
-        safe unit-aware calculations; it never changes the source artifact or an
-        observation value.
-
-
-        Where another nation publishes its own answer to the same question, the
-        measure carries `concept` and `elsewhere`. Each entry in `elsewhere`
-        names that measure, the countries it covers, and whether the two are
-        `comparable`. For the four national deprivation indices they are not:
-        each ranks its own nation's areas from 1 against its own domains and
-        weights, so they cannot be put on one scale. The reason travels with the
-        link rather than living in documentation, because the numbers themselves
-        give no sign of it.
+          The measure id is guessed rather than listed, or names several measures. `deprivation` is four
+          national indices, so it is no measure's id or alias; `/v1/measures?q=deprivation` lists
+          them.
+        x-example-request: /v1/measures/deprivation
       parameters:
         - $ref: "#/components/parameters/MeasureId"
       responses:
@@ -1835,9 +3411,7 @@ paths:
           description: The measure definition.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/measures/population"
+              x-example-request: /v1/measures/population
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -1866,9 +3440,8 @@ paths:
                           - GB-ENG
                         recordCount: 7608
                         note:
-                          Published source records are available for England and Wales only; this
-                          endpoint does not infer Scottish or Northern Irish
-                          values.
+                          Published source records are available for England and Wales only; this endpoint does not
+                          infer Scottish or Northern Irish values.
                   availability:
                     sourceExact: true
                     conversion: false
@@ -1877,6 +3450,220 @@ paths:
                     data: /v1/data/population
                 meta:
                   nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      label:
+                        type: string
+                      valueKind:
+                        type: string
+                        enum:
+                          - count
+                          - quantity
+                          - ratio
+                          - currency
+                          - ordinal
+                          - categorical
+                      unit:
+                        type: string
+                      unitDefinition:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                          scaleToCanonical:
+                            type: number
+                          per:
+                            type: string
+                        required:
+                          - code
+                          - scaleToCanonical
+                        additionalProperties: {}
+                      aliases:
+                        type: array
+                        items:
+                          type: string
+                      concept:
+                        type: string
+                      elsewhere:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            measureId:
+                              type: string
+                            countries:
+                              type: array
+                              items:
+                                type: string
+                            comparable:
+                              type: boolean
+                            reason:
+                              type: string
+                            href:
+                              type: string
+                          required:
+                            - measureId
+                            - countries
+                            - comparable
+                            - reason
+                            - href
+                          additionalProperties: {}
+                      derivedFrom:
+                        type: object
+                        properties:
+                          datasetIds:
+                            type: array
+                            items:
+                              type: string
+                          note:
+                            type: string
+                        required:
+                          - datasetIds
+                          - note
+                        additionalProperties: {}
+                      uncertainty:
+                        type: object
+                        properties:
+                          kind:
+                            type: string
+                            const: confidence-interval
+                          level:
+                            type: number
+                          note:
+                            type: string
+                        required:
+                          - kind
+                          - level
+                          - note
+                        additionalProperties: {}
+                      notes:
+                        type: array
+                        items:
+                          type: string
+                      aggregation:
+                        type: object
+                        properties:
+                          kind:
+                            type: string
+                          available:
+                            type: boolean
+                        required:
+                          - kind
+                          - available
+                        additionalProperties: {}
+                      sources:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            datasetId:
+                              type: string
+                            periods:
+                              type: array
+                              items:
+                                type: string
+                            sourceGeography:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                codeYear:
+                                  type: number
+                              required:
+                                - type
+                                - codeYear
+                              additionalProperties: {}
+                            observationArtifact:
+                              type: string
+                            coverage:
+                              type: object
+                              properties:
+                                kind:
+                                  type: string
+                                  enum:
+                                    - partial
+                                    - source-reported
+                                countries:
+                                  type: array
+                                  items:
+                                    type: string
+                                recordCount:
+                                  type: number
+                                note:
+                                  type: string
+                              required:
+                                - kind
+                                - countries
+                                - recordCount
+                                - note
+                              additionalProperties: {}
+                          required:
+                            - datasetId
+                            - periods
+                            - sourceGeography
+                            - coverage
+                          additionalProperties: {}
+                      availability:
+                        type: object
+                        properties:
+                          sourceExact:
+                            type: boolean
+                            const: true
+                          conversion:
+                            type: boolean
+                            const: false
+                          aggregation:
+                            type: boolean
+                        required:
+                          - sourceExact
+                          - conversion
+                          - aggregation
+                        additionalProperties: {}
+                      links:
+                        type: object
+                        properties:
+                          data:
+                            type: string
+                        required:
+                          - data
+                        additionalProperties: {}
+                    required:
+                      - id
+                      - label
+                      - valueKind
+                      - unit
+                      - aggregation
+                      - sources
+                      - availability
+                      - links
+                    additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -6699,28 +8486,24 @@ paths:
   /atlas-release:
     get:
       operationId: getAtlasRelease
-      tags: ["Sync"]
       summary: Get the current build manifest
+      tags:
+        - Sync
+      description: >
+        Identifies the current build by hashes of atlas.sqlite, boundary PMTiles, and catalogues still
+        served as JSON. Export and map catalogues describe the observation and flat boundary
+        downloads. Paths are relative to the repository root and hashes cover the actual on-disk
+        bytes, including gzip encoding where present. The API retains no earlier builds. JSON
+        intermediates already represented in SQLite are omitted.
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without the
-          release manifest built."
-      description: >
-        Identifies the current build by hashes of atlas.sqlite, boundary PMTiles, and
-        catalogues still served as JSON. Export and map catalogues describe the
-        observation and flat boundary downloads. Paths are
-        relative to the repository root and hashes cover the actual on-disk
-        bytes, including gzip encoding where present. The API retains no earlier
-        builds. JSON intermediates already represented in SQLite are omitted.
+        when: Takes no input. Refused only when the server was started without the release manifest built.
       responses:
         "200":
           description: The current atlas release manifest.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/AtlasReleaseEnvelope"
-              x-example-request: "/v1/atlas-release"
+              x-example-request: /v1/atlas-release
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -6731,7 +8514,8 @@ paths:
                     - id: atlas-sqlite
                       path: data/build/atlas.sqlite
                       contentHash: sha256:6516841abb2149d864316bde871efceafbedeb0e6b681bbab588def86e06e0f2
-
+              schema:
+                $ref: "#/components/schemas/AtlasReleaseEnvelope"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -12287,7 +14071,6 @@ components:
 
     AtlasReleaseArtifactRef:
       type: object
-      required: [id, path, contentHash]
       properties:
         id:
           type: string
@@ -12297,10 +14080,13 @@ components:
         contentHash:
           type: string
           description: SHA-256 of the actual stored bytes.
+      required:
+        - id
+        - path
+        - contentHash
 
     AtlasRelease:
       type: object
-      required: [schemaVersion, releaseId, artifacts]
       properties:
         schemaVersion:
           const: 1
@@ -12310,6 +14096,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AtlasReleaseArtifactRef"
+      required:
+        - schemaVersion
+        - releaseId
+        - artifacts
 
     AtlasReleaseEnvelope:
       allOf:

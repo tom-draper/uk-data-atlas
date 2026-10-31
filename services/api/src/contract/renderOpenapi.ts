@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+import { format, resolveConfig } from "prettier";
 import { parseDocument, stringify } from "yaml";
 import { generatedPaths } from "./generatedRoutes";
 import { generatedComponents } from "./generatedComponents";
@@ -47,5 +49,15 @@ export const renderOpenapi = async (source: string) => {
 			() => `${fragment}\n\n`,
 		);
 	}
-	return output.replace(schemasPattern, () => updatedSchemas);
+	// Format like the rest of the repo so `prettier --check` agrees.
+	const filepath = fileURLToPath(
+		new URL("../../openapi.yaml", import.meta.url),
+	);
+	return format(
+		output.replace(schemasPattern, () => updatedSchemas),
+		{
+			...(await resolveConfig(filepath)),
+			filepath,
+		},
+	);
 };
