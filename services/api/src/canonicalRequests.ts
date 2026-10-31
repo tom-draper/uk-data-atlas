@@ -1,6 +1,9 @@
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { boundaryReleaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import type {
+	RouteRequest,
+	RouteRequestFor,
+} from "@uk-data-atlas/atlas-runtime/api";
 import { canonicalMeasureId } from "./catalogue/measureTerms";
 import { canonicalGeography } from "@uk-data-atlas/geography";
 
@@ -20,9 +23,9 @@ const measureSegment = (segments: string[]) =>
  * undefined when it names none. A route then only ever sees ids, and the
  * response says what the alias was read as.
  */
-export const canonicalMeasureRequest = (
-	request: RouteRequest,
-): RouteRequest | undefined => {
+export const canonicalMeasureRequest = <T extends RouteRequestFor<never>>(
+	request: T,
+): T | undefined => {
 	const catalog = request.context.dataCatalog;
 	if (!catalog) return undefined;
 	const canonical = (term: string) =>

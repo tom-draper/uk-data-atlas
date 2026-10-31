@@ -1,8 +1,24 @@
+import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
+import {
+	boundaries,
+	boundaryReleases,
+	resolveBoundary,
+	compareBoundary,
+} from "./boundaries/boundaryContract";
+import Fastify from "fastify";
+import { catalogueFastifyRoutes } from "./catalogue/catalogueFastifyRoutes";
+import { datasets, measures } from "./catalogue/catalogueContract";
+import { atlasReleaseRoutes } from "./contract/atlasReleaseRoutes";
+import { documentationRoutes } from "./contract/documentationRoutes";
+import { atlasRelease } from "./contract/atlasRelease";
+import { documentation } from "./contract/documentation";
+import { openapiDescription } from "./contract/openapiDescription";
+import type { ContractDispatch } from "./contract/registerGetRoute";
+import { sendFile } from "./sendFile";
+export { sendFile } from "./sendFile";
 import { randomUUID, timingSafeEqual } from "node:crypto";
-import { createReadStream } from "node:fs";
-import { pipeline } from "node:stream";
 import { promisify } from "node:util";
-import { createGunzip, gzip } from "node:zlib";
+import { gzip } from "node:zlib";
 import {
 	createServer,
 	type IncomingMessage,
@@ -20,7 +36,6 @@ import {
 	httpResponse,
 	preflightResponse,
 	type HttpResponse,
-	type SentFile,
 } from "./httpResponse";
 import {
 	createOperationMatcher,
@@ -64,6 +79,23 @@ const REQUEST_ID = /^[A-Za-z0-9._:-]{1,128}$/;
 const HEADERS_TIMEOUT_MS = 15_000;
 const REQUEST_TIMEOUT_MS = 30_000;
 const KEEP_ALIVE_TIMEOUT_MS = 5_000;
+
+const fastifyPaths = new Set(
+	[
+		documentation,
+		openapiDescription,
+		atlasRelease,
+		datasets,
+		measures,
+		boundaries,
+		boundaryReleases,
+		resolveBoundary,
+		compareBoundary,
+	].map(({ path }) => `/v1${path.replace("::", ":")}`),
+);
+
+export const isFastifyStaticPath = (pathname: string) =>
+	fastifyPaths.has(pathname);
 
 /**
  * The largest POST body read. A column of every output area's code with a
@@ -115,39 +147,6 @@ const readBody = (request: IncomingMessage): Promise<BodyRead> =>
 		);
 		request.on("error", () => resolve({ aborted: true }));
 	});
-
-/**
- * Streams a stored file to the client. A client that goes away mid-download,
- * as a map does when it pans past a tile, tears the whole chain down, so the
- * file is closed rather than left open waiting for a reader that never comes.
- */
-export const sendFile = (
-	file: SentFile,
-	response: ServerResponse,
-	onComplete?: (error: Error | null | undefined, bytes: number) => void,
-) => {
-	const source = createReadStream(file.path, {
-		start: file.start,
-		end: file.end,
-	});
-	let bytes = 0;
-	const decoder = file.gunzip ? createGunzip() : undefined;
-	const output = decoder ?? source;
-	const done = (error?: Error | null) => {
-		if (!error && bytes !== file.bytes)
-			error = new Error(
-				"Stored file size does not match its declared length.",
-			);
-		if (error) response.destroy(error);
-		onComplete?.(error, bytes);
-	};
-	if (decoder) pipeline(source, decoder, response, done);
-	else pipeline(source, response, done);
-	output.on("data", (chunk: Buffer) => {
-		bytes += chunk.length;
-	});
-	return source;
-};
 
 export type ApiServer = Server & {
 	/**
@@ -321,8 +320,7 @@ export const createApiServer = (
 				apiVersion: "v1",
 				atlasRelease: releaseId,
 				uptimeSeconds: Math.round((Date.now() - started) / 1000),
-				geometryCache:
-					catalogues.areaGeometryCache?.stats() ?? null,
+				geometryCache: catalogues.areaGeometryCache?.stats() ?? null,
 			});
 		if (!options.metrics) return json(404, { status: "not-found" });
 		if (
@@ -352,6 +350,7 @@ export const createApiServer = (
 		request: IncomingMessage,
 		response: ServerResponse,
 		overloaded = false,
+		contractHandler?: () => ApiResponse,
 	) => {
 		const startedAt = performance.now();
 		const incomingId = request.headers["x-request-id"];
@@ -487,11 +486,13 @@ export const createApiServer = (
 					} else {
 						storeAs = cacheKey;
 						result = await answerAsync(() =>
-							routeAsync(
-								method === "HEAD" ? "GET" : method,
-								target,
-								catalogues,
-							),
+							contractHandler
+								? Promise.resolve(contractHandler())
+								: routeAsync(
+										method === "HEAD" ? "GET" : method,
+										target,
+										catalogues,
+									),
 						);
 					}
 				}
@@ -666,6 +667,113 @@ export const createApiServer = (
 		}
 	};
 
+	const fastify = Fastify({ exposeHeadRoutes: false });
+	const pending = new WeakMap<
+		IncomingMessage,
+		{
+			overloaded: boolean;
+			started: boolean;
+			resolve: () => void;
+			reject: (error: unknown) => void;
+		}
+	>();
+	const dispatch: ContractDispatch = async (
+		request,
+		reply,
+		contractHandler,
+	) => {
+		const entry = pending.get(request.raw);
+		if (!entry) throw new Error("Missing production request");
+		entry.started = true;
+		reply.hijack();
+		try {
+			await handle(
+				request.raw,
+				reply.raw,
+				entry.overloaded,
+				contractHandler,
+			);
+			entry.resolve();
+		} catch (error) {
+			entry.reject(error);
+		}
+	};
+	void fastify.register(documentationRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(atlasReleaseRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(catalogueFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(boundaryFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+
+	const ready = fastify.ready();
+	const dispatchRequest = async (
+		request: IncomingMessage,
+		response: ServerResponse,
+		overloaded = false,
+	) => {
+		const pathname = (request.url ?? "/").split("?", 1)[0]!;
+		const catalogueDetail = /^\/v1\/(datasets|measures)\/([^/]+)$/.exec(
+			pathname,
+		);
+		const boundaryDetail =
+			/^\/v1\/boundary-releases\/([^/]+)\/([^/]+)$/.exec(pathname);
+		let fastifyDetail = false;
+		const parameters = catalogueDetail
+			? [catalogueDetail[2]!]
+			: boundaryDetail?.slice(1);
+		if (parameters) {
+			try {
+				fastifyDetail =
+					(!boundaryDetail ||
+						!decodeURIComponent(boundaryDetail[2]!).endsWith(
+							":join",
+						) ||
+						decodeURIComponent(boundaryDetail[2]!).length <= 5) &&
+					parameters.every((raw) => {
+						const id = decodeURIComponent(raw);
+						return (
+							id !== "." &&
+							id !== ".." &&
+							id.length <= 100 &&
+							raw.length <= 100
+						);
+					});
+			} catch {}
+		}
+		if (
+			(request.method !== "GET" && request.method !== "HEAD") ||
+			(!isFastifyStaticPath(pathname) && !fastifyDetail)
+		)
+			return handle(request, response, overloaded);
+		await ready;
+		if (response.destroyed) return;
+		return new Promise<void>((resolve, reject) => {
+			const entry = { overloaded, started: false, resolve, reject };
+			pending.set(request, entry);
+			response.once("finish", () => {
+				if (!entry.started) resolve();
+			});
+			response.once("close", () => {
+				if (!entry.started) resolve();
+			});
+			fastify.routing(request, response);
+		});
+	};
+
 	const startQueued = () => {
 		for (const start of queued) {
 			if (activeRequests >= maxConcurrentRequests) return;
@@ -690,7 +798,7 @@ export const createApiServer = (
 		};
 		response.once("finish", finish);
 		response.once("close", finish);
-		void handle(request, response)
+		void dispatchRequest(request, response)
 			.catch(() => response.destroy())
 			.finally(() => {
 				settled = true;
@@ -699,7 +807,9 @@ export const createApiServer = (
 	};
 
 	const refuse = (request: IncomingMessage, response: ServerResponse) => {
-		void handle(request, response, true).catch(() => response.destroy());
+		void dispatchRequest(request, response, true).catch(() =>
+			response.destroy(),
+		);
 	};
 
 	// A queued request's body is left unread until it is admitted, so waiting
@@ -742,6 +852,7 @@ export const createApiServer = (
 		},
 	);
 	server.on("close", () => {
+		void fastify.close();
 		metrics.close();
 		usage?.close();
 	});
