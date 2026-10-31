@@ -2298,6 +2298,18 @@ Two things can change under a client, and each is pinned separately.
   `src/queryRules.ts`, generated from the same document by API builds and
   typechecks. Run `pnpm generate:query-rules` from `services/api` to refresh it
   explicitly. A test checks it against the document.
+  The `GET /v1/openapi.yaml`, `GET /v1/docs`, `GET /v1/atlas-release`,
+  the dataset and measure listing and detail operations, and the geography and
+  boundary release listing, detail, selection and comparison operations have definitions in
+  `src/contract/`, `src/catalogue/` and `src/boundaries/`. The production server uses Fastify for
+  these operations, with the existing dispatcher handling unusual paths. Both
+  check successful responses with Zod. The catalogue and boundary response schemas describe
+  the public JSON fields and are generated from those same Zod contracts.
+  The Atlas release data and artifact schemas are generated from Zod. Its
+  envelope and other shared components remain in `openapi.yaml`.
+  Run `pnpm --dir services/api generate:openapi` after changing the definitions.
+  CI and the unbuilt test suite check that generated sections are current. Other
+  operations use the existing dispatcher during the migration.
 - **The data** is identified by the current Atlas release. Every response
   carries an `Atlas-Release` header, and JSON responses name it in the envelope
   too. A correction or preprocessing change replaces the current release; the

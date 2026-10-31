@@ -4,12 +4,24 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import type { RouteContext, RouteRequest } from "./routing";
 import { choices, readChoice } from "./queryParameters";
 const VALIDATION = {
 	status: { values: ["passed", "waived"] },
 	scope: { values: ["data"] },
 } as const;
+
+export const atlasReleaseResponse = (
+	atlasRelease: RouteContext["atlasRelease"],
+	releaseId: string,
+): ApiResponse =>
+	atlasRelease
+		? { status: 200, body: envelope(releaseId, atlasRelease) }
+		: problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the atlas release manifest before starting the API.",
+			);
 
 /**
  * Current-release provenance and validation routes. The release manifest
@@ -29,13 +41,7 @@ export const handleSyncRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "atlas-release"
 	) {
-		return atlasRelease
-			? { status: 200, body: envelope(releaseId, atlasRelease) }
-			: problem(
-					503,
-					"Catalogue Unavailable",
-					"Build the atlas release manifest before starting the API.",
-				);
+		return atlasReleaseResponse(atlasRelease, releaseId);
 	}
 
 	const isValidationResource =

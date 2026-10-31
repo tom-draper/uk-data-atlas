@@ -1,6 +1,7 @@
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { handleIndexRoutes } from "./indexRoutes";
+import { validateContractResponse } from "./contract/validateResponse";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
 import {
@@ -12,7 +13,7 @@ import type {
 	FullDetailSource,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
-import { handleBoundaryRoutes } from "./boundaryRoutes";
+import { handleBoundaryRoutes } from "./boundaries/boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogue/catalogueRoutes";
 import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
 import { handleCoordinateRoutes } from "./coordinateRoutes";
@@ -395,7 +396,10 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 		);
 	const handled = family?.handle(routed);
 	if (!handled) return handled;
-	const response = withPathReleaseHeaders(routed, handled);
+	const response = withPathReleaseHeaders(
+		routed,
+		validateContractResponse(routed.segments, handled),
+	);
 	if (!canonical) return response;
 	const { pathname, search } = canonical.parsedUrl;
 	return {
