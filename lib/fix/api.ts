@@ -1,7 +1,9 @@
-import { API_BASE_URL } from "@/lib/site";
+import { API_BASE_URL, API_ORIGIN } from "@/lib/site";
 import type {
 	AreaHistory,
 	BoundaryRelease,
+	BulkLookup,
+	Crosswalk,
 	ExactValidation,
 	InferredValidation,
 	ReleaseRef,
@@ -92,6 +94,49 @@ export function boundaryReleases(): Promise<BoundaryRelease[]> {
 		},
 	);
 	return releases;
+}
+
+/** Fetches `load` once per visit, and again only after it fails. */
+function once<T>(load: () => Promise<T>): () => Promise<T> {
+	let cached: Promise<T> | null = null;
+	return () => {
+		cached ??= load().catch((error) => {
+			cached = null;
+			throw error;
+		});
+		return cached;
+	};
+}
+
+/** Every published crosswalk. */
+export const crosswalks = once(() => request<Crosswalk[]>("/crosswalks"));
+
+/** Every bulk lookup table, which is where a crosswalk's rows download from. */
+export const bulkLookups = once(() =>
+	request<{ lookups: BulkLookup[] }>("/lookups").then((data) => data.lookups),
+);
+
+/** A lookup table as CSV, from the `href` its manifest gives. */
+export async function lookupCsv(
+	href: string,
+	signal?: AbortSignal,
+): Promise<string> {
+	let response: Response;
+	try {
+		response = await fetch(`${API_ORIGIN}${href}`, { signal });
+	} catch (error) {
+		if ((error as Error).name === "AbortError") throw error;
+		throw new ApiError(
+			"Couldn't reach the UK Data Atlas API. Check your connection and try again.",
+			0,
+		);
+	}
+	if (!response.ok)
+		throw new ApiError(
+			`The API answered ${response.status} for a lookup table.`,
+			response.status,
+		);
+	return response.text();
 }
 
 export function areaHistory(

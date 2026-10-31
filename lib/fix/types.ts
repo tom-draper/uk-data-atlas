@@ -101,3 +101,21 @@ export interface AreaHistory {
 	id: string;
 	lineage: LineageEntry[];
 }
+
+/** One entry of `/crosswalks`. */
+export interface Crosswalk {
+	id: string;
+	from: ReleaseRef;
+	to: ReleaseRef;
+	method: string;
+	/** The published artifact, which `/lookups` names as its source. */
+	artifact: string;
+}
+
+/** One entry of `/lookups`, a whole table to download. */
+export interface BulkLookup {
+	id: string;
+	kind: string;
+	source: { artifact: string };
+	formats: { csv?: { href: string; bytes: number } };
+}
