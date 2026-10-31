@@ -734,6 +734,9 @@ importers:
       jsts:
         specifier: 2.12.1
         version: 2.12.1
+      prettier:
+        specifier: 3.9.7
+        version: 3.9.7
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

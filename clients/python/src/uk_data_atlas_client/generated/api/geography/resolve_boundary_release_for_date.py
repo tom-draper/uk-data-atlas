@@ -5,10 +5,12 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.envelope import Envelope
 from ...models.problem import Problem
 from ...models.resolve_boundary_release_for_date_country import (
     ResolveBoundaryReleaseForDateCountry,
+)
+from ...models.resolve_boundary_release_for_date_response_200 import (
+    ResolveBoundaryReleaseForDateResponse200,
 )
 from ...types import UNSET, Response, Unset
 
@@ -45,9 +47,11 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Envelope | Problem | None:
+) -> Problem | ResolveBoundaryReleaseForDateResponse200 | None:
     if response.status_code == 200:
-        response_200 = Envelope.from_dict(response.json())
+        response_200 = ResolveBoundaryReleaseForDateResponse200.from_dict(
+            response.json()
+        )
 
         return response_200
 
@@ -74,7 +78,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Envelope | Problem]:
+) -> Response[Problem | ResolveBoundaryReleaseForDateResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -89,7 +93,7 @@ def sync_detailed(
     geography: str,
     date: str,
     country: ResolveBoundaryReleaseForDateCountry | Unset = UNSET,
-) -> Response[Envelope | Problem]:
+) -> Response[Problem | ResolveBoundaryReleaseForDateResponse200]:
     """Select the boundary release to use for a date
 
      Returns the latest release of a geography dated on or before `date` that covers `country` when one
@@ -118,7 +122,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Envelope | Problem]
+        Response[Problem | ResolveBoundaryReleaseForDateResponse200]
     """
 
     kwargs = _get_kwargs(
@@ -140,7 +144,7 @@ def sync(
     geography: str,
     date: str,
     country: ResolveBoundaryReleaseForDateCountry | Unset = UNSET,
-) -> Envelope | Problem | None:
+) -> Problem | ResolveBoundaryReleaseForDateResponse200 | None:
     """Select the boundary release to use for a date
 
      Returns the latest release of a geography dated on or before `date` that covers `country` when one
@@ -169,7 +173,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Envelope | Problem
+        Problem | ResolveBoundaryReleaseForDateResponse200
     """
 
     return sync_detailed(
@@ -186,7 +190,7 @@ async def asyncio_detailed(
     geography: str,
     date: str,
     country: ResolveBoundaryReleaseForDateCountry | Unset = UNSET,
-) -> Response[Envelope | Problem]:
+) -> Response[Problem | ResolveBoundaryReleaseForDateResponse200]:
     """Select the boundary release to use for a date
 
      Returns the latest release of a geography dated on or before `date` that covers `country` when one
@@ -215,7 +219,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Envelope | Problem]
+        Response[Problem | ResolveBoundaryReleaseForDateResponse200]
     """
 
     kwargs = _get_kwargs(
@@ -235,7 +239,7 @@ async def asyncio(
     geography: str,
     date: str,
     country: ResolveBoundaryReleaseForDateCountry | Unset = UNSET,
-) -> Envelope | Problem | None:
+) -> Problem | ResolveBoundaryReleaseForDateResponse200 | None:
     """Select the boundary release to use for a date
 
      Returns the latest release of a geography dated on or before `date` that covers `country` when one
@@ -264,7 +268,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Envelope | Problem
+        Problem | ResolveBoundaryReleaseForDateResponse200
     """
 
     return (
