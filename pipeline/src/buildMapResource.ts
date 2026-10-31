@@ -110,10 +110,12 @@ export const buildMapResources = (
 		}>;
 	};
 	const geometrySources = readGeometrySourceLookup(apiRootOf(root));
+	// Releases are compiled one at a time, so only the current one is held.
+	// Keeping two of the output area releases at once runs out of heap.
 	const cache = new AreaGeometryCache(
 		root,
 		geometrySources,
-		undefined,
+		1,
 		undefined,
 		undefined,
 		roundKeepingValidity,
