@@ -28,7 +28,7 @@ import {
 	type MatchedOperation,
 	unexpectedQueryParameter,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./postcodeRoutes";
+import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./places/postcodeRoutes";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
 import { ResponseCache } from "./responseCache";
 import {

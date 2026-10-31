@@ -6,7 +6,7 @@ import {
 	parseLookupRequest,
 	type LookupPoint,
 	type PointResult,
-} from "./pointLookup";
+} from "../pointLookup";
 import { compactPostcode, parsePostcode } from "@uk-data-atlas/geography";
 import {
 	postcodeLookupPoint,
@@ -19,14 +19,14 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { readBatchInput } from "./batchInput";
+import { readBatchInput } from "../batchInput";
 import type {
 	RouteRequestFor,
 	RouteContextFor,
 	RouteContext,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 export { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";

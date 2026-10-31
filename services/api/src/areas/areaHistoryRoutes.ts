@@ -7,7 +7,7 @@ import {
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const DEPTH =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/history"].depth;

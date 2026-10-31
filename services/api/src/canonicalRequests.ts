@@ -1,7 +1,7 @@
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { boundaryReleaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
 import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
-import { canonicalMeasureId } from "./measureTerms";
+import { canonicalMeasureId } from "./catalogue/measureTerms";
 import { canonicalGeography } from "@uk-data-atlas/geography";
 
 // Where a path carries a measure id: /v1/data/{id}, /v1/measures/{id} and a

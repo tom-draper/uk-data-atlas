@@ -4,22 +4,22 @@ import {
 	type ApiResponse,
 	type Envelope,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { readWeightedSource } from "./weightedSource";
-import { calculateWeightedAggregate } from "./weightedAggregation";
+import { readWeightedSource } from "../weightedSource";
+import { calculateWeightedAggregate } from "../weightedAggregation";
 import {
 	buildAggregateResponse,
 	type AggregateWeighting,
-} from "./aggregateResponse";
-import { parseAggregateQuery } from "./aggregateQuery";
-import { readAggregateObservations } from "./aggregateObservations";
+} from "../aggregateResponse";
+import { parseAggregateQuery } from "../aggregateQuery";
+import { readAggregateObservations } from "../aggregateObservations";
 import {
 	resolveAggregationLocation,
 	validateAggregationLocationSource,
-} from "./aggregationLocation";
-import { resolveAggregationMeasure } from "./aggregationMeasure";
-import { resolveAggregationPartition } from "./aggregationPartition";
-import { prepareAggregateTarget } from "./aggregatePreparation";
-import { statedDefaults } from "./dataDefaults";
+} from "../aggregationLocation";
+import { resolveAggregationMeasure } from "../aggregationMeasure";
+import { resolveAggregationPartition } from "../aggregationPartition";
+import { prepareAggregateTarget } from "../aggregatePreparation";
+import { statedDefaults } from "../dataDefaults";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const aggregateValue = ({

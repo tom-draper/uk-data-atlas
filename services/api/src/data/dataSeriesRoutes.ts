@@ -12,11 +12,11 @@ import {
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
-} from "./dataDefaults";
-import { selectSourcePartition } from "./sourcePartition";
+} from "../dataDefaults";
+import { selectSourcePartition } from "../sourcePartition";
 import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/areas";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import { parsePlaceParameter, requestedGeography } from "./placeParameter";
+import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {
 	envelope,
 	invalidQuery,

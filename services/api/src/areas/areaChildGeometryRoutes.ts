@@ -3,7 +3,7 @@ import {
 	GeometryBudget,
 	MAX_GEOMETRY_FEATURES,
 	geometryBudgetProblem,
-} from "./geometryBudget";
+} from "../geometryBudget";
 import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
@@ -17,9 +17,9 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
-import { selectAreaChildren } from "./areaChildren";
+import { selectAreaChildren } from "../areaChildren";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const TIER =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/children/geometry"]

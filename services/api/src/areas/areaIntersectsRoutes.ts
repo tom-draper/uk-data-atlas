@@ -1,11 +1,11 @@
-import { GeometryBudget, geometryBudgetProblem } from "./geometryBudget";
+import { GeometryBudget, geometryBudgetProblem } from "../geometryBudget";
 import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { cursorFor, nextPageHref, readCursor } from "./pagination";
-import { latestPublishedBoundaryRelease } from "./pointLookup";
+import { cursorFor, nextPageHref, readCursor } from "../pagination";
+import { latestPublishedBoundaryRelease } from "../pointLookup";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
@@ -14,7 +14,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readChoice, readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 /**
  * A box query answers with identities by default, so the cost of a wide box is

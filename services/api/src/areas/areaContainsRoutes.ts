@@ -11,13 +11,13 @@ import {
 	parseStatedAccuracy,
 	type LookupPoint,
 	type LookupInputCrs,
-} from "./pointLookup";
+} from "../pointLookup";
 import {
 	DEFAULT_POSTCODE_GEOGRAPHIES,
 	findPostcode,
 	POSTCODE_NOTE,
 	UNDECLARED_POSTCODE_ACCURACY,
-} from "./postcodeRoutes";
+} from "../places/postcodeRoutes";
 import { compactPostcode } from "@uk-data-atlas/geography";
 import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import {
@@ -26,7 +26,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { readBatchInput } from "./batchInput";
+import { readBatchInput } from "../batchInput";
 import type {
 	RouteContext,
 	RouteRequestFor,

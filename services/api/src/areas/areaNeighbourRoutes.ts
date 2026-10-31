@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { areaMetrics } from "./areaMetrics";
+import { areaMetrics } from "../areaMetrics";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const NEIGHBOURS =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/neighbours"];

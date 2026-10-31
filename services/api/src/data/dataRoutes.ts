@@ -9,26 +9,26 @@ import {
 import {
 	refused,
 	resolveObservations,
-} from "./observationResolution/observationPlan";
+} from "../observationResolution/observationPlan";
 import {
 	exportMeasureRecords,
 	type MeasureExportRecord,
 	type TabularFormat,
-} from "./tabularExport";
+} from "../tabularExport";
 import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import { nextPageHref, paginate } from "./pagination";
+import { nextPageHref, paginate } from "../pagination";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import { parsePlaceParameter, requestedGeography } from "./placeParameter";
+import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {
 	areaNamedBy,
 	defaultSource,
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
-} from "./dataDefaults";
+} from "../dataDefaults";
 import {
 	envelope,
 	invalidQuery,
@@ -36,7 +36,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const DATA = QUERY_RULES["GET /data/{measure-id}"];
 
