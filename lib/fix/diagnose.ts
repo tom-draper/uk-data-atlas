@@ -136,6 +136,8 @@ export interface RowResult {
 	area?: ValidatedArea;
 	/** Status in the latest release, when that differs from the matched one. */
 	latestStatus?: ValueStatus;
+	/** The area in the latest release, when that differs from the matched one. */
+	latestArea?: ValidatedArea;
 	/** The areas a retired code became, when its history was read. */
 	successors?: Successor[];
 	detail?: string;
@@ -233,6 +235,7 @@ export function diagnose(input: DiagnoseInput): Diagnosis {
 			area: value.area,
 			latestStatus:
 				latestIsOther && inLatest ? inLatest.status : undefined,
+			latestArea: latestIsOther ? inLatest?.area : undefined,
 			successors: input.successors.get(value.index),
 			detail: value.detail,
 			duplicateOf:
