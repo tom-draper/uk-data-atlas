@@ -3,8 +3,8 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { directRelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 import { relationshipPurposeFor } from "@uk-data-atlas/atlas-runtime/relationships";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
-import { readPostedRows } from "./requestRows";
+import { QUERY_RULES } from "../queryRules";
+import { readPostedRows } from "../requestRows";
 import {
 	envelope,
 	invalidQuery,
@@ -18,7 +18,7 @@ import type {
 import {
 	convertSuppliedCounts,
 	readSuppliedCounts,
-} from "./suppliedConversion";
+} from "../suppliedConversion";
 
 const RULES = QUERY_RULES["POST /crosswalks/{crosswalk-id}:convert"];
 

@@ -1,11 +1,11 @@
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { refused } from "./observationResolution/observationPlan";
-import { rankingOf } from "./ranking";
+import { refused } from "../observationResolution/observationPlan";
+import { rankingOf } from "../ranking";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
-import { publishedPartitions, statedDefaults } from "./dataDefaults";
-import { selectSourcePartition } from "./sourcePartition";
-import { paginate } from "./pagination";
+import { publishedPartitions, statedDefaults } from "../dataDefaults";
+import { selectSourcePartition } from "../sourcePartition";
+import { paginate } from "../pagination";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,
@@ -14,7 +14,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const RANKINGS = QUERY_RULES["GET /data/{measure-id}/rankings"];
 

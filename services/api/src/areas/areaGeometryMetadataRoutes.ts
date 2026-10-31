@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { areaMetrics } from "./areaMetrics";
+import { areaMetrics } from "../areaMetrics";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";

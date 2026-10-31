@@ -7,14 +7,14 @@ import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	refused,
 	resolveObservations,
-} from "./observationResolution/observationPlan";
-import { statisticPhrase } from "./aggregation";
+} from "../observationResolution/observationPlan";
+import { statisticPhrase } from "../aggregation";
 import {
 	convertThroughSteps,
 	type ConversionStep,
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
-import { paginate } from "./pagination";
+import { paginate } from "../pagination";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,

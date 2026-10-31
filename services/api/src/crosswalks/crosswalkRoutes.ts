@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { paginate } from "./pagination";
+import { paginate } from "../pagination";
 import {
 	envelope,
 	problem,

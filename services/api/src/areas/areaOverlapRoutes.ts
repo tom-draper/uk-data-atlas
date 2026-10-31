@@ -1,7 +1,7 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./pairOverlap";
+import { measurePairOverlap, PAIR_OVERLAP_RULES } from "../pairOverlap";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import { latestPublishedBoundaryRelease } from "./pointLookup";
+import { latestPublishedBoundaryRelease } from "../pointLookup";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,

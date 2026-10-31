@@ -11,7 +11,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const TIER =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/geometry"].tier;

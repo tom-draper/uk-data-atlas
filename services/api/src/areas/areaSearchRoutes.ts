@@ -1,5 +1,5 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { paginate } from "./pagination";
+import { paginate } from "../pagination";
 import {
 	envelope,
 	invalidQuery,
@@ -7,7 +7,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import { latestPublishedBoundaryRelease } from "./pointLookup";
+import { latestPublishedBoundaryRelease } from "../pointLookup";
 
 /**
  * List compiled area identities with stable cursor pagination. Finding an

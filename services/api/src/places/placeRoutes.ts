@@ -1,6 +1,6 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { describeCandidate } from "./placeResponses";
-import { resolveAreaQuery } from "./areaResolveRoutes";
+import { describeCandidate } from "../placeResponses";
+import { resolveAreaQuery } from "../areas/areaResolveRoutes";
 import { selectedAsOf } from "./locationRoutes";
 import { postcodePlace } from "./postcodeRoutes";
 import {
@@ -13,7 +13,7 @@ import type {
 	RouteRequestFor,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const LIMIT = QUERY_RULES["GET /places"].limit;
 

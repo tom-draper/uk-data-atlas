@@ -1,6 +1,6 @@
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { rankObservations } from "./ranking";
+import { rankObservations } from "../ranking";
 import {
 	changeRefusal,
 	changeValue,
@@ -8,19 +8,19 @@ import {
 	periodsOverlap,
 	relativeChangeRefusal,
 	type ChangeBasis,
-} from "./change";
+} from "../change";
 import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/areas";
-import { paginate } from "./pagination";
+import { paginate } from "../pagination";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import { parsePlaceParameter, requestedGeography } from "./placeParameter";
+import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {
 	areaNamedBy,
 	defaultChangePeriods,
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
-} from "./dataDefaults";
-import { selectSourcePartition } from "./sourcePartition";
+} from "../dataDefaults";
+import { selectSourcePartition } from "../sourcePartition";
 import {
 	envelope,
 	invalidQuery,
@@ -28,7 +28,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const CHANGE = QUERY_RULES["GET /data/{measure-id}/change"];
 

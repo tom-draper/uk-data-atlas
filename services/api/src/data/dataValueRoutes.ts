@@ -1,23 +1,23 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { isCountryCode } from "./aggregation";
+import { isCountryCode } from "../aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
 import type { Measure } from "@uk-data-atlas/measures";
-import { CONTAINMENT_NOTE, countryOfCode } from "./pointLookup";
+import { CONTAINMENT_NOTE, countryOfCode } from "../pointLookup";
 import {
 	findPostcode,
 	POSTCODE_NOTE,
 	postcodeInPlace,
 	UNDECLARED_POSTCODE_ACCURACY,
-} from "./postcodeRoutes";
+} from "../places/postcodeRoutes";
 import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import {
 	attemptSource,
 	postcodeSources,
 	sourceReleases,
 	type SourceAttempt,
-} from "./postcodeValue";
-import { valueForPlace } from "./placeValue";
-import { describeAttempt, describeCandidate } from "./placeResponses";
+} from "../postcodeValue";
+import { valueForPlace } from "../placeValue";
+import { describeAttempt, describeCandidate } from "../placeResponses";
 import type {
 	RouteContext,
 	RouteRequestFor,

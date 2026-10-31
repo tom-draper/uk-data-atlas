@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { createApiServer } from "../src/apiServer";
 import { readApiCatalogues } from "../src/catalogueLoader";
 import { readServeConfiguration } from "../src/serverOptions";
-import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../src/postcodeRoutes";
+import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../src/places/postcodeRoutes";
 import {
 	readMemoryScenarios,
 	runMemoryWorkload,

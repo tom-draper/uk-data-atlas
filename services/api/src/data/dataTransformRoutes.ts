@@ -1,10 +1,10 @@
-import { compareObservations } from "./comparison";
+import { compareObservations } from "../comparison";
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	refused,
 	resolveObservations,
-} from "./observationResolution/observationPlan";
+} from "../observationResolution/observationPlan";
 import {
 	envelope,
 	invalidQuery,
@@ -20,7 +20,7 @@ import {
 	publishedPartitions,
 	statedDefaults,
 	type NamedArea,
-} from "./dataDefaults";
+} from "../dataDefaults";
 
 /** Operations that compare or transform source-exact observations. */
 export const handleDataTransformRoutes = ({

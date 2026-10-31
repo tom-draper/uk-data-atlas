@@ -8,7 +8,7 @@ import {
 	parseLookupCrs,
 	parseLookupRequest,
 	parseStatedAccuracy,
-} from "./pointLookup";
+} from "../pointLookup";
 import {
 	envelope,
 	invalidQuery,
@@ -16,7 +16,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 const NEAR = QUERY_RULES["GET /areas:near"];
 

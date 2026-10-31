@@ -7,9 +7,9 @@ import {
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { areaKey } from "@uk-data-atlas/geography";
-import { selectAreaChildren } from "./areaChildren";
+import { selectAreaChildren } from "../areaChildren";
 import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
-import { QUERY_RULES } from "./queryRules";
+import { QUERY_RULES } from "../queryRules";
 
 // Parents and children state the same depth, and neither defaults it.
 const DEPTH =
