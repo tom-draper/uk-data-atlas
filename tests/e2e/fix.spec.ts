@@ -30,6 +30,22 @@ async function mockApi(page: Page) {
 			});
 		if (url.pathname === "/v1/boundary-releases")
 			return json(fixture("boundary-releases"));
+		if (url.pathname === "/v1/crosswalks")
+			return json(fixture("crosswalks"));
+		if (url.pathname === "/v1/lookups") return json(fixture("lookups"));
+		if (
+			url.pathname ===
+			"/v1/lookups/crosswalk-ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment"
+		)
+			return route.fulfill({
+				status: 200,
+				contentType: "text/csv",
+				headers: { "access-control-allow-origin": "*" },
+				body: readFileSync(
+					"tests/fixtures/fix/lookup-ward-to-local-authority.csv",
+					"utf8",
+				),
+			});
 		if (url.pathname === "/v1/areas:validate")
 			return json(
 				fixture(
@@ -90,4 +106,38 @@ test("a pasted column is checked too", async ({ page }) => {
 	await expect(
 		page.getByRole("region", { name: /What we found/ }),
 	).toContainText("Wards, December 2024");
+});
+
+test("the sample's codes move to the latest release, with their local authority", async ({
+	page,
+}) => {
+	await mockApi(page);
+	await page.goto("/fix");
+	await page.getByRole("button", { name: "Try a sample" }).click();
+
+	const update = page.getByRole("region", { name: /Update and add columns/ });
+	await expect(update).toContainText("21 rows already in Wards, May 2026");
+	await expect(update).toContainText("4 rows move to their successor");
+	await expect(update).toContainText("1 row split into several areas");
+	await expect(update).toContainText("1 row can't be moved");
+
+	await update.getByLabel("Replace the old codes").check();
+	await update.getByLabel("One row for each new area").check();
+	await update.getByLabel("Local authority districts, May 2026").check();
+
+	const download = page.waitForEvent("download");
+	await update.getByRole("button", { name: "Download updated file" }).click();
+	const file = await download;
+	expect(file.suggestedFilename()).toBe("sample-wards-updated.csv");
+	const text = readFileSync((await file.path())!, "utf8");
+	const lines = text.trim().split("\n");
+	expect(lines[0]).toBe(
+		"ward_cd,area_name,local_authority_code,local_authority_name,area_update,ward_name,households",
+	);
+	expect(lines).toHaveLength(29);
+	expect(text).toContain("E05016249,Brinkworth,E06000054,Wiltshire,updated,");
+	expect(text).toContain("E0513457,,,,not a valid code,");
+	await expect(update.getByRole("status")).toHaveText(
+		"Your updated file is downloading.",
+	);
 });

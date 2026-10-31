@@ -19,6 +19,7 @@ import type { ReleaseRef } from "@/lib/fix/types";
 import ColumnsPanel, { type ColumnChoice } from "./ColumnsPanel";
 import DiagnosisPanel from "./DiagnosisPanel";
 import InputPanel from "./InputPanel";
+import UpdatePanel from "./UpdatePanel";
 import { Button, StepHeading } from "./ui";
 
 interface Source {
@@ -194,10 +195,32 @@ export default function FixTool() {
 					result &&
 					diagnosis &&
 					!busy &&
+					area !== null &&
+					diagnosis.latest &&
+					diagnosis.matched > 0 && (
+						<section aria-labelledby="fix-update">
+							<StepHeading step={4} id="fix-update">
+								Update and add columns
+							</StepHeading>
+							<UpdatePanel
+								key={`${source.name}/${area}/${diagnosis.release?.boundaryRelease}`}
+								table={table}
+								diagnosis={diagnosis}
+								area={area}
+								sourceName={source.name}
+							/>
+						</section>
+					)}
+
+				{source &&
+					table &&
+					result &&
+					diagnosis &&
+					!busy &&
 					area !== null && (
 						<section aria-labelledby="fix-output">
-							<StepHeading step={4} id="fix-output">
-								Download
+							<StepHeading step={5} id="fix-output">
+								Reports
 							</StepHeading>
 							<div className="flex flex-wrap gap-2">
 								<Button
