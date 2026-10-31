@@ -1,0 +1,311 @@
+{
+	"data": {
+		"id": "ward/2024-12-uk-bgc/E05013408",
+		"geography": "ward",
+		"boundaryRelease": "2024-12-uk-bgc",
+		"code": "E05013408",
+		"name": "Brinkworth",
+		"lineage": [
+			{
+				"relation": "equivalent-to",
+				"depth": 1,
+				"from": "ward/2024-12-uk-bgc/E05013408",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013408",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013408",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 1,
+				"from": "ward/2024-12-uk-bgc/E05013408",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016249",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016249",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 2,
+				"from": "ward/2024-05-uk-bgc/E05013408",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013408",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013408",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016249",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016249",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016249",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "predecessor",
+				"depth": 2,
+				"from": "ward/2025-05-uk-bgc-v2/E05016249",
+				"counterpart": {
+					"id": "ward/2024-12-uk-bgc/E05013461",
+					"geography": "ward",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"code": "E05013461",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2023-12-uk-bgc/E05013408",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013408",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013408",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2025-12-uk-bgc/E05016249",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016249",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016249",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013461",
+				"counterpart": {
+					"id": "ward/2024-05-uk-bgc/E05013461",
+					"geography": "ward",
+					"boundaryRelease": "2024-05-uk-bgc",
+					"code": "E05013461",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "successor",
+				"depth": 3,
+				"from": "ward/2024-12-uk-bgc/E05013461",
+				"counterpart": {
+					"id": "ward/2025-05-uk-bgc-v2/E05016255",
+					"geography": "ward",
+					"boundaryRelease": "2025-05-uk-bgc-v2",
+					"code": "E05016255",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2023-05-uk-bgc/E05013408",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013408",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013408",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2024-05-uk-bgc/E05013461",
+				"counterpart": {
+					"id": "ward/2023-12-uk-bgc/E05013461",
+					"geography": "ward",
+					"boundaryRelease": "2023-12-uk-bgc",
+					"code": "E05013461",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 4,
+				"from": "ward/2025-05-uk-bgc-v2/E05016255",
+				"counterpart": {
+					"id": "ward/2025-12-uk-bgc/E05016255",
+					"geography": "ward",
+					"boundaryRelease": "2025-12-uk-bgc",
+					"code": "E05016255",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2022-12-uk-bgc/E05013408",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013408",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013408",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2023-12-uk-bgc/E05013461",
+				"counterpart": {
+					"id": "ward/2023-05-uk-bgc/E05013461",
+					"geography": "ward",
+					"boundaryRelease": "2023-05-uk-bgc",
+					"code": "E05013461",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 5,
+				"from": "ward/2025-12-uk-bgc/E05016255",
+				"counterpart": {
+					"id": "ward/2026-05-uk-bgc/E05016255",
+					"geography": "ward",
+					"boundaryRelease": "2026-05-uk-bgc",
+					"code": "E05016255",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2021-12-uk-bgc/E05013408",
+				"counterpart": {
+					"id": "ward/2020-12-uk-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2020-12-uk-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 6,
+				"from": "ward/2023-05-uk-bgc/E05013461",
+				"counterpart": {
+					"id": "ward/2022-12-uk-bgc/E05013461",
+					"geography": "ward",
+					"boundaryRelease": "2022-12-uk-bgc",
+					"code": "E05013461",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2020-12-uk-bgc/E05008335",
+				"counterpart": {
+					"id": "ward/2019-12-uk-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2019-12-uk-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 7,
+				"from": "ward/2022-12-uk-bgc/E05013461",
+				"counterpart": {
+					"id": "ward/2021-12-uk-bgc/E05013461",
+					"geography": "ward",
+					"boundaryRelease": "2021-12-uk-bgc",
+					"code": "E05013461",
+					"labels": ["Royal Wootton Bassett South & West"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 8,
+				"from": "ward/2019-12-uk-bgc/E05008335",
+				"counterpart": {
+					"id": "ward/2018-12-uk-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2018-12-uk-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 8,
+				"from": "ward/2019-12-uk-bgc/E05008335",
+				"counterpart": {
+					"id": "ward/2019-12-gb-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2019-12-gb-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 9,
+				"from": "ward/2018-12-uk-bgc/E05008335",
+				"counterpart": {
+					"id": "ward/2017-12-gb-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2017-12-gb-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 10,
+				"from": "ward/2017-12-gb-bgc/E05008335",
+				"counterpart": {
+					"id": "ward/2016-12-gb-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2016-12-gb-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 11,
+				"from": "ward/2016-12-gb-bgc/E05008335",
+				"counterpart": {
+					"id": "ward/2015-12-gb-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2015-12-gb-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			},
+			{
+				"relation": "equivalent-to",
+				"depth": 12,
+				"from": "ward/2015-12-gb-bgc/E05008335",
+				"counterpart": {
+					"id": "ward/2011-12-ew-bgc/E05008335",
+					"geography": "ward",
+					"boundaryRelease": "2011-12-ew-bgc",
+					"code": "E05008335",
+					"labels": ["Brinkworth"]
+				}
+			}
+		]
+	}
+}
