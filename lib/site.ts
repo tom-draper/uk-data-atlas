@@ -5,6 +5,13 @@ export const SITE_NAME = "UK Data Atlas";
 export const SITE_URL =
 	process.env.NEXT_PUBLIC_SITE_URL || "https://ukdataatlas.com";
 
+/**
+ * Where the public API is served. The docs show it in their examples, and
+ * browser tools such as /fix call it directly.
+ */
+export const API_ORIGIN = "https://api.ukdataatlas.com";
+export const API_BASE_URL = `${API_ORIGIN}/v1`;
+
 /** The site-wide share image, app/opengraph-image.tsx. */
 const SITE_IMAGE = "/opengraph-image";
 

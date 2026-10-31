@@ -9,9 +9,7 @@ import { parse } from "yaml";
  * against.
  */
 
-/** Where the public API is served. The docs show it in their examples. */
-export const API_ORIGIN = "https://api.ukdataatlas.com";
-export const API_BASE_URL = `${API_ORIGIN}/v1`;
+export { API_BASE_URL, API_ORIGIN } from "@/lib/site";
 
 const SPEC_PATH = path.join(process.cwd(), "services", "api", "openapi.yaml");
 const MAX_SCHEMA_DEPTH = 4;
