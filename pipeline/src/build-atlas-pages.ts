@@ -7,6 +7,7 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readPlaceResolver } from "./placeResolver";
+import { openComponentApiRoot } from "./componentApiRoot";
 import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import {
 	inBox,
@@ -72,7 +73,9 @@ const GEOGRAPHY_SOURCES: Record<
 const REDRAWN_SHARE = 0.02;
 const REDRAWN_KM2 = 0.05;
 
-const resolver = readPlaceResolver(API_ROOT);
+const componentRoot = openComponentApiRoot(ROOT, "atlas-base.sqlite");
+process.once("exit", componentRoot.close);
+const resolver = readPlaceResolver(API_ROOT, componentRoot.apiRoot);
 
 type Identity = { geography: string; boundaryRelease: string; code: string };
 type Relationship = {
