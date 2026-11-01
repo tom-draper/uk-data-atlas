@@ -218,7 +218,7 @@ const apiStages = [
 	),
 	stage(
 		"postcode-index",
-		["sources", "assemble-atlas"],
+		["sources", "atlas-sqlite"],
 		[
 			"--dir",
 			"../..",
@@ -226,7 +226,10 @@ const apiStages = [
 			"tsx",
 			"pipeline/src/build-postcode-index.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			requiredOutputs: ["data/build/postcode-index.sqlite"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"data-catalog",
@@ -239,7 +242,12 @@ const apiStages = [
 	),
 	stage(
 		"assemble-atlas",
-		["atlas-sqlite", "data-catalog", "geography-catalogues"],
+		[
+			"atlas-sqlite",
+			"data-catalog",
+			"geography-catalogues",
+			"postcode-index",
+		],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/assemble-atlas.ts"],
 		{
 			requiredOutputs: ["data/build/atlas.sqlite"],

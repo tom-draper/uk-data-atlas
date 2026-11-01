@@ -14,6 +14,7 @@ import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { storeObservations as writeObservations } from "../../../pipeline/src/store-observations";
 import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
 import {
 	assertObservationCatalogue,
 	readObservationInventory,
@@ -95,6 +96,7 @@ function fixture(t: TestContext) {
 		"CREATE TABLE retained (value TEXT); INSERT INTO retained VALUES ('unchanged'); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID",
 	);
 	database.close();
+	writeEmptyPostcodeComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	return { root, apiRoot, publicDirectory, path };
 }
@@ -258,6 +260,7 @@ test("failed publication retains the database and legacy JSON, and cleans tempor
 			"atlas.sqlite",
 			"geography-payloads.json",
 			"observations.sqlite",
+			"postcode-index.sqlite",
 		]);
 	}
 });
