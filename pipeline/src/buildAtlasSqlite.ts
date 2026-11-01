@@ -33,13 +33,15 @@ import {
 import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
 import {
-	copyFileSync,
+	existsSync,
 	mkdirSync,
+	mkdtempSync,
 	readFileSync,
 	renameSync,
 	rmSync,
+	symlinkSync,
 } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const declared = new Map(
@@ -83,7 +85,7 @@ export const buildAtlasSqlite = (
 ) => {
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
-	const path = join(directory, "atlas.sqlite");
+	const path = join(directory, "atlas-base.sqlite");
 	const payload = readFileSync(
 		join(artifactDirectory(repositoryRoot), "terrain-catalogue.json"),
 		"utf8",
@@ -235,28 +237,35 @@ export const buildAtlasSqlite = (
 	} finally {
 		written.close();
 	}
-	const base = join(directory, "atlas-base.sqlite");
-	const temporaryBase = `${base}.tmp`;
+	const cacheRoot = mkdtempSync(join(directory, ".atlas-base-cache-"));
+	const cacheDirectory = join(cacheRoot, "data/build");
 	try {
-		copyFileSync(path, temporaryBase);
-		renameSync(temporaryBase, base);
+		mkdirSync(cacheDirectory, { recursive: true });
+		symlinkSync(resolve(path), join(cacheDirectory, "atlas.sqlite"));
+		const cachePath = join(directory, "atlas-cache.sqlite");
+		const componentCache = join(cacheDirectory, "atlas-cache.sqlite");
+		if (existsSync(cachePath))
+			symlinkSync(resolve(cachePath), componentCache);
+		publishAtlasCache(cacheRoot, "projections", (database) => {
+			const tables = locationProjectionTables({
+				artifacts,
+				parentArtifacts,
+			});
+			for (const name of Object.keys(tables))
+				database.exec(`DROP TABLE IF EXISTS ${name}`);
+			writeSqliteTables(database, tables);
+			database
+				.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
+				.run(
+					"location-projection-inventory",
+					JSON.stringify(projectionInventory),
+				);
+		});
+		publishDatasetPayloads(cacheRoot);
+		renameSync(componentCache, cachePath);
 	} finally {
-		rmSync(temporaryBase, { force: true });
+		rmSync(cacheRoot, { recursive: true, force: true });
 	}
-	publishAtlasCache(repositoryRoot, "projections", (database) => {
-		const tables = locationProjectionTables({ artifacts, parentArtifacts });
-		for (const name of Object.keys(tables))
-			database.exec(`DROP TABLE IF EXISTS ${name}`);
-		writeSqliteTables(database, tables);
-		database
-			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
-			.run(
-				"location-projection-inventory",
-				JSON.stringify(projectionInventory),
-			);
-	});
-
-	publishDatasetPayloads(repositoryRoot);
 
 	rmSync(join(publicDirectory, "location-projections.sqlite"), {
 		force: true,

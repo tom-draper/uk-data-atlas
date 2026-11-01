@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -58,6 +59,10 @@ function fixture(t: TestContext) {
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
 	);
 	database.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
 	writeEmptyObservationComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(

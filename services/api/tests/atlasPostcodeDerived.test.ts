@@ -3,6 +3,7 @@ import { compilePostcodeAreas } from "../../../pipeline/src/postcodeAreaCompiler
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -72,6 +73,10 @@ function fixture(t: TestContext) {
 		CREATE VIEW areas AS ${AREAS_VIEW};`,
 	);
 	db.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
 	writeEmptyObservationComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	const postcodes = postcodeIndexFor([
@@ -150,6 +155,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	for (let run = 0; run < 2; run++)
 		storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
 	assembleAtlas(root);
+	assemblePostcodeAreas(root);
 	assert.equal(readAtlasPayload(root, "existing"), "retained");
 	assert.equal(
 		existsSync(join(artifactRoot(apiRoot), "postcode-areas.json")),

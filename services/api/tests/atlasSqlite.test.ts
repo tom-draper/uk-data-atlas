@@ -35,6 +35,7 @@ import {
 	mkdtempSync,
 	readFileSync,
 	rmSync,
+	symlinkSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -89,6 +90,7 @@ const fixture = (context: TestContext) => {
 		}),
 	);
 	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
+	symlinkSync("atlas-base.sqlite", join(root, "data/build/atlas.sqlite"));
 	writeFileSync(
 		join(root, "data/build/datasets/dataset-manifest.json"),
 		JSON.stringify({ version: 1, datasets: [] }),
@@ -123,10 +125,7 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 	);
 	assert.equal(before.products.length, 6);
 	const path = buildAtlasSqlite(root);
-	assert.deepEqual(
-		readFileSync(join(root, "data/build/atlas-base.sqlite")),
-		readFileSync(path),
-	);
+	assert.equal(path, join(root, "data/build/atlas-base.sqlite"));
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		assert.deepEqual(
@@ -176,6 +175,16 @@ test("terrain loader refuses a missing database even when JSON exists", (context
 		() => readTerrainCatalogue(apiRoot),
 		/unable to open database file/,
 	);
+});
+
+test("the base builder does not publish atlas.sqlite", (context) => {
+	const { root } = fixture(context);
+	const published = join(root, "data/build/atlas.sqlite");
+	rmSync(published);
+	const base = buildAtlasSqlite(root);
+	assert.equal(base, join(root, "data/build/atlas-base.sqlite"));
+	assert.equal(existsSync(base), true);
+	assert.equal(existsSync(published), false);
 });
 
 test("terrain loader refuses missing and invalid SQLite payloads", (context) => {

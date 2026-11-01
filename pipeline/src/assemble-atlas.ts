@@ -17,7 +17,7 @@ export function assembleAtlas(root: string) {
 	) as Array<{ id: string; payload: string }>;
 	const temporary = `${path}.observations.${randomUUID()}.tmp`;
 	try {
-		copyFileSync(path, temporary);
+		copyFileSync(join(root, "data/build/atlas-base.sqlite"), temporary);
 		const database = new DatabaseSync(temporary);
 		try {
 			database
