@@ -386,9 +386,9 @@ cost:
 - **Heavy joins out of Node.** Consider DuckDB for large tabular and spatial
   joins in the build, which spills to disk instead of exhausting memory. Keep
   our own shared-arc tiler and boundary mappings.
-- **Fewer stored download variants.** Each release is stored as GeoJSON and
-  GeoParquet at four detail levels plus PMTiles (5.2 GB). Keep full detail and
-  tiles, and make simplified downloads on request with caching.
+- **Fewer stored download variants.** Implemented: keep PMTiles and
+  generate whole-release GeoJSON and GeoParquet from the geometry store on
+  request, with published-hash verification and a bounded byte cache.
 - **Route schemas as the source of the contract.** Generate `openapi.yaml`
   from typed route schemas rather than maintaining both by hand, and group
   `src/` by domain.

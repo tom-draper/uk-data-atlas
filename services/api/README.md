@@ -2475,7 +2475,7 @@ line up.
   Children geometry and box queries with a `tier` process at most 250,000 source
   vertices per request, counted before simplification. An oversized collection
   returns `422 Geometry Budget Exceeded`, with no partial answer and a link to
-  the boundary release metadata and its prebuilt downloads. For box queries,
+  the boundary release metadata and its whole-release downloads. For box queries,
   reduce `limit` or omit `tier` to retrieve identities. Geometry is loaded one
   area at a time and checked before simplification. This does not bound the
   size of an individual area loaded.

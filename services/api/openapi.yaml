@@ -614,10 +614,9 @@ paths:
         drawn from, so neighbours share their borders exactly, and the ids are
         the ones a join table publishes, so values join by `id` or `code`
         without reading a tile. Every tier is published, `full` included, and
-        its size and SHA-256 are listed under `features` in the descriptor. The
-        `full` file is not stored: it is written from the geometry store when
-        asked for, and is the same file, byte for byte, each time. The first
-        request for a large release can take a few seconds. A
+        its size and SHA-256 are listed under `features` in the descriptor. Downloads are generated from the geometry store on request, checked
+        against their published hashes and cached within a bounded byte budget.
+        Cold requests for large releases can take longer; generation is serialized. A
         coarse tier keeps every border shared but is not guaranteed to be a
         valid polygon everywhere, as the descriptor's `generalisation` says. The
         file's `uk-data-atlas` metadata names the resource, tier, attribution
@@ -628,8 +627,7 @@ paths:
         published at the `medium` and `low` tiers only; `full` and `high` are
         GeoParquet only, and asking for them as GeoJSON answers 404. Each
         feature has the same `id`, and `code` and `name` properties; coordinates
-        are written to six decimal places, about 0.1 m. The file is stored
-        gzipped, so a client sending `Accept-Encoding: gzip` receives it with
+        are written to six decimal places, about 0.1 m. A client sending `Accept-Encoding: gzip` receives it with
         `Content-Encoding: gzip` and one that does not receives it decoded. The
         two encodings have different `ETag`s, and the descriptor's `bytes` and
         `contentHash` describe the decoded GeoJSON.
@@ -5689,7 +5687,7 @@ paths:
         counted before simplification. A larger request returns 422 without a
         partial collection. Reduce the page size for a box query, omit its tier
         to retrieve identities, or follow the problem's `links.downloads` to the
-        boundary release metadata and its prebuilt downloads.
+        boundary release metadata and its whole-release downloads.
 
       parameters:
         - name: bbox
@@ -6989,7 +6987,7 @@ paths:
         counted before simplification. A larger request returns 422 without a
         partial collection. Reduce the page size for a box query, omit its tier
         to retrieve identities, or follow the problem's `links.downloads` to the
-        boundary release metadata and its prebuilt downloads.
+        boundary release metadata and its whole-release downloads.
 
       parameters:
         - $ref: "#/components/parameters/Geography"
@@ -9347,8 +9345,7 @@ components:
         `bytes=-length`. This is how a PMTiles client reads an archive: the
         header, then a directory, then only the tiles it needs. Several ranges
         in one request are not supported and get the whole file, as does an
-        `If-Range` that no longer matches the ETag. Files stored gzipped (the
-        GeoJSON downloads) are always sent whole.
+        `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole.
     PointLookupCrs:
       name: crs
       in: query
@@ -11000,8 +10997,8 @@ components:
               artifact:
                 type: string
                 description:
-                  The stored file. Absent for `full`, which is written from the
-                  geometry store when asked for.
+                  The stored file, when present. Generated downloads omit this
+                  field and use their API href.
               href:
                 type: string
               rowCount:
@@ -11021,8 +11018,7 @@ components:
                   undone.
               gzipBytes:
                 type: integer
-                description:
-                  "Present when the file is stored gzipped, as GeoJSON is: its size
+                description: "Present for GeoJSON: the size of its gzip encoding
                   as sent with `Content-Encoding: gzip`."
         generalisation:
           type: object

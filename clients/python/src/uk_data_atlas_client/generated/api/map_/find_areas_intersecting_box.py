@@ -132,7 +132,7 @@ def sync_detailed(
     catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per
     request, counted before simplification. A larger request returns 422 without a partial collection.
     Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's
-    `links.downloads` to the boundary release metadata and its prebuilt downloads.
+    `links.downloads` to the boundary release metadata and its whole-release downloads.
 
     Args:
         bbox (str):
@@ -203,7 +203,7 @@ def sync(
     catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per
     request, counted before simplification. A larger request returns 422 without a partial collection.
     Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's
-    `links.downloads` to the boundary release metadata and its prebuilt downloads.
+    `links.downloads` to the boundary release metadata and its whole-release downloads.
 
     Args:
         bbox (str):
@@ -269,7 +269,7 @@ async def asyncio_detailed(
     catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per
     request, counted before simplification. A larger request returns 422 without a partial collection.
     Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's
-    `links.downloads` to the boundary release metadata and its prebuilt downloads.
+    `links.downloads` to the boundary release metadata and its whole-release downloads.
 
     Args:
         bbox (str):
@@ -338,7 +338,7 @@ async def asyncio(
     catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per
     request, counted before simplification. A larger request returns 422 without a partial collection.
     Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's
-    `links.downloads` to the boundary release metadata and its prebuilt downloads.
+    `links.downloads` to the boundary release metadata and its whole-release downloads.
 
     Args:
         bbox (str):

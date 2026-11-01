@@ -1,0 +1,152 @@
+[
+	{
+		"artifact": "map-resources/combinedAuthority-2025-12-en-bgc-high.parquet",
+		"bytes": 703288,
+		"sha256": "sha256:88d51fdc7e3964701caa58484f07a0346c1cde9f2c0c0965154039f2ddb7b402",
+		"seconds": 0.21086503099999981
+	},
+	{
+		"artifact": "map-resources/combinedAuthority-2025-12-en-bgc-medium.parquet",
+		"bytes": 255874,
+		"sha256": "sha256:991d4a37ec17a944a3265b2a0bca1b1b810f8c30531ea004948fd46b26f6e1fe",
+		"seconds": 0.10603655600000002
+	},
+	{
+		"artifact": "map-resources/combinedAuthority-2025-12-en-bgc-medium.geojson.gz",
+		"bytes": 386092,
+		"sha256": "sha256:1d9954d84170722a79ea7a25925b2e58473f0bdc2c807eb85c3b28fdc29e48ec",
+		"seconds": 0.10917789099999982
+	},
+	{
+		"artifact": "map-resources/combinedAuthority-2025-12-en-bgc-low.parquet",
+		"bytes": 31739,
+		"sha256": "sha256:f42bfc05c5778af2c3b28e28e19f9e2275dad8ece9caa9299bc7f096681db633",
+		"seconds": 0.08872427800000014
+	},
+	{
+		"artifact": "map-resources/combinedAuthority-2025-12-en-bgc-low.geojson.gz",
+		"bytes": 53593,
+		"sha256": "sha256:eb10b10d0e609c97c33bb76dc66c1ac5fb414e3ea856f26c62de8eefa446c8cf",
+		"seconds": 0.08807657700000004
+	},
+	{
+		"artifact": "map-resources/localAuthority-2024-12-uk-bgc-high.parquet",
+		"bytes": 6738125,
+		"sha256": "sha256:49133838a56b5e95c8d024f883639a06efe1a378ea41f0cf4761a619d7a35174",
+		"seconds": 1.7626742760000003
+	},
+	{
+		"artifact": "map-resources/localAuthority-2024-12-uk-bgc-medium.parquet",
+		"bytes": 2471394,
+		"sha256": "sha256:949bb84923d27a01da41bfce8a413750ac91ced4dc1915949b65b6c887cc5446",
+		"seconds": 1.4679137509999995
+	},
+	{
+		"artifact": "map-resources/localAuthority-2024-12-uk-bgc-medium.geojson.gz",
+		"bytes": 4142193,
+		"sha256": "sha256:646ded9bd6cc276a08d353c81bc70354c39859652bc25a2b1ed0acbc35ec3a9e",
+		"seconds": 1.4872165109999995
+	},
+	{
+		"artifact": "map-resources/localAuthority-2024-12-uk-bgc-low.parquet",
+		"bytes": 464098,
+		"sha256": "sha256:9200d50cf899a952c6d9ba68a1b4f4644516e4b97557f6a5580fa1d27117722a",
+		"seconds": 1.437200135
+	},
+	{
+		"artifact": "map-resources/localAuthority-2024-12-uk-bgc-low.geojson.gz",
+		"bytes": 890443,
+		"sha256": "sha256:142bec986ae6eb096fadd8ad2909a02de6816285195b7a8604809cf2ffcd724f",
+		"seconds": 1.3355548490000002
+	},
+	{
+		"artifact": "map-resources/ward-2024-12-uk-bgc-high.parquet",
+		"bytes": 14259403,
+		"sha256": "sha256:1299e4d0e0c7b3a38ab67422f225ed89bbf738b61c4bdc35589ca9992d22720c",
+		"seconds": 4.031030361
+	},
+	{
+		"artifact": "map-resources/ward-2024-12-uk-bgc-medium.parquet",
+		"bytes": 6434089,
+		"sha256": "sha256:5e36ed6b9306a424480724201f35c59ef8fad02c7ca8c0a5ef55a33fecf38a4d",
+		"seconds": 3.4623137070000003
+	},
+	{
+		"artifact": "map-resources/ward-2024-12-uk-bgc-medium.geojson.gz",
+		"bytes": 13233861,
+		"sha256": "sha256:a483765895ae3024cb3119f2217b31cb9976f6fe3586c8e172679fa529fb5c1a",
+		"seconds": 3.256395663000001
+	},
+	{
+		"artifact": "map-resources/ward-2024-12-uk-bgc-low.parquet",
+		"bytes": 1363757,
+		"sha256": "sha256:aeda5570160d67092bcd4ad165ef51735eb69f88d591521a3f16de1a13b556a9",
+		"seconds": 2.9525705330000003
+	},
+	{
+		"artifact": "map-resources/ward-2024-12-uk-bgc-low.geojson.gz",
+		"bytes": 3631318,
+		"sha256": "sha256:1059f0e7a5a2294a7dbc9ba117429bfa9c2eedeb05106a86f892340504be4186",
+		"seconds": 2.829463799000001
+	},
+	{
+		"artifact": "map-resources/lsoa-2001-12-ew-bgc-v2-high.parquet",
+		"bytes": 53297756,
+		"sha256": "sha256:df0fc853169c086cdcdf392d64b06c67fceb6bcedb322e396f2fff0e85490cb3",
+		"seconds": 22.93489029
+	},
+	{
+		"artifact": "map-resources/lsoa-2001-12-ew-bgc-v2-medium.parquet",
+		"bytes": 8983421,
+		"sha256": "sha256:8111ab3778c7f168d3afe92baa59bd2dc7d43d330f2025b2dc0c2b981d5e04d6",
+		"seconds": 20.955257628
+	},
+	{
+		"artifact": "map-resources/lsoa-2001-12-ew-bgc-v2-medium.geojson.gz",
+		"bytes": 23629068,
+		"sha256": "sha256:b7aa58a4bd86c336fc0da9d78edf5382b420dd9d28c2a1b987e4718eecec8660",
+		"seconds": 20.859651423999996
+	},
+	{
+		"artifact": "map-resources/lsoa-2001-12-ew-bgc-v2-low.parquet",
+		"bytes": 2983035,
+		"sha256": "sha256:d64a8cbc1b53c81bfa1bae8a58a581c76b5d7077e893a70d5010dbe9c7a91698",
+		"seconds": 20.617651291
+	},
+	{
+		"artifact": "map-resources/lsoa-2001-12-ew-bgc-v2-low.geojson.gz",
+		"bytes": 10780364,
+		"sha256": "sha256:99db9dcd4b6a8258a747623060070705b5d2fc1c07de13560b392283397deb31",
+		"seconds": 20.56230852399999
+	},
+	{
+		"artifact": "map-resources/outputArea-2021-12-ew-bgc-v2-high.parquet",
+		"bytes": 47842379,
+		"sha256": "sha256:ebc0be1b1b2dd0ee95cb7e6c1cbd119a8cb497286c683f1f95f6512ff2fc2de9",
+		"seconds": 15.968569587
+	},
+	{
+		"artifact": "map-resources/outputArea-2021-12-ew-bgc-v2-medium.parquet",
+		"bytes": 25664428,
+		"sha256": "sha256:f034bd708e616f9509a2bda63c216372c785f5c2c063c554ba0d2851d07330a1",
+		"seconds": 14.404157487
+	},
+	{
+		"artifact": "map-resources/outputArea-2021-12-ew-bgc-v2-medium.geojson.gz",
+		"bytes": 75384213,
+		"sha256": "sha256:f064b037238b6e692df117b178cccf3c7eaf078313c7a862f37beaad6a1a3f1e",
+		"seconds": 15.292989728999997
+	},
+	{
+		"artifact": "map-resources/outputArea-2021-12-ew-bgc-v2-low.parquet",
+		"bytes": 16215764,
+		"sha256": "sha256:c1cce5a6bcf93934a9726634a5016f6494e8bed7d6511544ce65b8ae5af9b69c",
+		"seconds": 15.419061812
+	},
+	{
+		"artifact": "map-resources/outputArea-2021-12-ew-bgc-v2-low.geojson.gz",
+		"bytes": 56353419,
+		"sha256": "sha256:79f0c4e4cf90a8abd31a0a67c3993f8b27e289c5ac40b1a4d67402e2c5cfb50f",
+		"seconds": 14.992356331999996
+	}
+]

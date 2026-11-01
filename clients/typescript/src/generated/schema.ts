@@ -153,8 +153,8 @@ export interface paths {
         };
         /**
          * A whole boundary release as one GeoParquet or GeoJSON file
-         * @description The flat form of the resource, for a warehouse or a GIS that holds features rather than tiles: GeoParquet 1.1 with one row per area, carrying the same `id`, `code` and `name` as the tiles, its shape as WKB in OGC:CRS84, and a `bbox` covering column a reader can filter on. Each tier is compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code` without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are listed under `features` in the descriptor. The `full` file is not stored: it is written from the geometry store when asked for, and is the same file, byte for byte, each time. The first request for a large release can take a few seconds. A coarse tier keeps every border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy loaded on its own is still citable.
-         *     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. The file is stored gzipped, so a client sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
+         * @description The flat form of the resource, for a warehouse or a GIS that holds features rather than tiles: GeoParquet 1.1 with one row per area, carrying the same `id`, `code` and `name` as the tiles, its shape as WKB in OGC:CRS84, and a `bbox` covering column a reader can filter on. Each tier is compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code` without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are listed under `features` in the descriptor. Downloads are generated from the geometry store on request, checked against their published hashes and cached within a bounded byte budget. Cold requests for large releases can take longer; generation is serialized. A coarse tier keeps every border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy loaded on its own is still citable.
+         *     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. A client sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
          *     The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any reader that fetches Parquet over HTTP can read its footer and only the row groups it needs. The GeoJSON is always sent whole.
          */
         get: operations["getMapResourceFeatures"];
@@ -836,7 +836,7 @@ export interface paths {
          *
          *     Identities come back by default, each with its own bounding box, and the coordinates are opted into with `tier`, which generalises every match exactly as the geometry route does. That keeps the cost of a wide box bounded whether or not a caller wants geometry with it. The same caveat applies: above `full`, matches are generalised one at a time and neighbours drawn together may disagree along a shared border.
          *
-         *     Results come a page at a time in code order, `limit` to a page, 200 by default and 1000 at most. `matched` counts every area the box meets, `truncated` says whether more follow this page, and `nextCursor`, with a `Link: rel="next"` header, fetches them. For every area of a release, the whole-release download is quicker. The cap is on results rather than on the box: a box covering the whole country is a reasonable analysis question, and it is the geometry that is expensive, not the extent. A box matching nothing is an empty answer, not an error; a geography and release the catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its prebuilt downloads.
+         *     Results come a page at a time in code order, `limit` to a page, 200 by default and 1000 at most. `matched` counts every area the box meets, `truncated` says whether more follow this page, and `nextCursor`, with a `Link: rel="next"` header, fetches them. For every area of a release, the whole-release download is quicker. The cap is on results rather than on the box: a box covering the whole country is a reasonable analysis question, and it is the geometry that is expensive, not the extent. A box matching nothing is an empty answer, not an error; a geography and release the catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its whole-release downloads.
          */
         get: operations["findAreasIntersectingBox"];
         put?: never;
@@ -1072,7 +1072,7 @@ export interface paths {
          *
          *     `tier` generalises every member, exactly as on the geometry route, and is the reason this endpoint is usable at all for a large authority. The method is reported once for the collection rather than on each member; each member reports only what the tier cost it, so one that lost an island can be told from one that did not. Note the caveat that travels with it: members are generalised one at a time, so above `full` neighbours in the same collection may disagree along a shared border.
          *
-         *     A member that is published as a relationship but has no servable geometry is listed in `withoutGeometry` with the reason, rather than being passed over. `collection.members` and `collection.withGeometry` disagreeing is how a caller tells a partial collection from a complete one; the response is still a 200. At most 1,000 children may be requested in one collection. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its prebuilt downloads.
+         *     A member that is published as a relationship but has no servable geometry is listed in `withoutGeometry` with the reason, rather than being passed over. `collection.members` and `collection.withGeometry` disagreeing is how a caller tells a partial collection from a complete one; the response is still a 200. At most 1,000 children may be requested in one collection. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its whole-release downloads.
          */
         get: operations["getAreaChildrenGeometry"];
         put?: never;
@@ -2438,7 +2438,7 @@ export interface components {
                 toleranceM: number;
                 /** @enum {string} */
                 format: "geoparquet-1.1" | "geojson";
-                /** @description The stored file. Absent for `full`, which is written from the geometry store when asked for. */
+                /** @description The stored file, when present. Generated downloads omit this field and use their API href. */
                 artifact?: string;
                 href: string;
                 /** @description One row per area in the release. */
@@ -2448,7 +2448,7 @@ export interface components {
                 bytes: number;
                 /** @description SHA-256 of the file served at `href`, once any content encoding is undone. */
                 contentHash: string;
-                /** @description Present when the file is stored gzipped, as GeoJSON is: its size as sent with `Content-Encoding: gzip`. */
+                /** @description Present for GeoJSON: the size of its gzip encoding as sent with `Content-Encoding: gzip`. */
                 gzipBytes?: number;
             }[];
             /** @description The terms the tiers were compiled on, in plain words. */
@@ -3963,7 +3963,7 @@ export interface components {
         };
     };
     parameters: {
-        /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. Files stored gzipped (the GeoJSON downloads) are always sent whole. */
+        /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole. */
         ByteRange: string;
         /** @description The input coordinate reference system. The default `EPSG:4326` uses `lng` and `lat`; `EPSG:27700` uses British National Grid `easting` and `northing` or an Ordnance Survey `gridref`; `EPSG:29902` uses Irish Grid `easting` and `northing`. */
         PointLookupCrs: "EPSG:4326" | "EPSG:27700" | "EPSG:29902";
@@ -4254,7 +4254,7 @@ export interface operations {
                 format?: "geoparquet" | "geojson";
             };
             header?: {
-                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. Files stored gzipped (the GeoJSON downloads) are always sent whole. */
+                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole. */
                 Range?: components["parameters"]["ByteRange"];
             };
             path: {
@@ -4381,7 +4381,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. Files stored gzipped (the GeoJSON downloads) are always sent whole. */
+                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole. */
                 Range?: components["parameters"]["ByteRange"];
             };
             path: {

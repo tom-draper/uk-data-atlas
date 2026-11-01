@@ -25,10 +25,10 @@ class MapResourceFeaturesItem:
         row_count (int): One row per area in the release.
         tier (MapResourceFeaturesItemTier):
         tolerance_m (float):
-        artifact (str | Unset): The stored file. Absent for `full`, which is written from the geometry store when asked
-            for.
-        gzip_bytes (int | Unset): Present when the file is stored gzipped, as GeoJSON is: its size as sent with
-            `Content-Encoding: gzip`.
+        artifact (str | Unset): The stored file, when present. Generated downloads omit this field and use their API
+            href.
+        gzip_bytes (int | Unset): Present for GeoJSON: the size of its gzip encoding as sent with `Content-Encoding:
+            gzip`.
     """
 
     bytes_: int
