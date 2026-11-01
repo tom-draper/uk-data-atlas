@@ -1,6 +1,9 @@
 import { assembleWebsiteAssets } from "../pipeline/src/assemble-website-assets";
+import { assembleAtlas } from "../pipeline/src/assemble-atlas";
+import { assemblePostcodeAreas } from "../pipeline/src/assemble-postcode-areas";
 import { buildAtlasAssets } from "../pipeline/src/build-atlas-assets";
 import { buildAtlasSqlite } from "../pipeline/src/buildAtlasSqlite";
+import { buildDataCatalog } from "../pipeline/src/build-data-catalog";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
  * chunks, using the catalogue intermediates in data/build/datasets.
@@ -92,7 +95,10 @@ async function compileSelected(names: readonly string[]) {
 
 	await compileCatalogueDatasets(names);
 	buildAtlasSqlite(ROOT);
+	buildDataCatalog(ROOT);
 	buildAtlasAssets(ROOT);
+	assembleAtlas(ROOT);
+	assemblePostcodeAreas(ROOT);
 	assembleWebsiteAssets(ROOT);
 	const { datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);

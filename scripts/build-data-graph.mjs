@@ -94,7 +94,6 @@ const apiStages = [
 		{
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			requiredOutputs: [
-				"data/build/atlas.sqlite",
 				"data/build/atlas-base.sqlite",
 				"data/build/atlas-cache.sqlite",
 			],
@@ -204,7 +203,7 @@ const apiStages = [
 	),
 	stage(
 		"area-search-index",
-		["atlas-sqlite"],
+		["assemble-atlas"],
 		[
 			"--dir",
 			"../..",

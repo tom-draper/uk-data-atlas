@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -48,6 +49,10 @@ const fixture = (t: TestContext) => {
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
 	);
 	database.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
 	writeEmptyObservationComponent(root);
 	writeEmptyPostcodeComponent(root);
 	for (const id of geographyCatalogues) {
@@ -194,7 +199,9 @@ test("missing compiler inputs leave the database and old public files intact", (
 test("a failed SQLite update keeps the previous database and removes its temporary copy", (t) => {
 	const { root, apiRoot } = fixture(t);
 	const path = join(root, "data/build/atlas.sqlite");
-	const database = new DatabaseSync(path);
+	const database = new DatabaseSync(
+		join(root, "data/build/atlas-base.sqlite"),
+	);
 	database.exec(
 		"CREATE TRIGGER reject_catalogue BEFORE INSERT ON payloads WHEN NEW.id = 'analysis-geographies' BEGIN SELECT RAISE(ABORT, 'rejected catalogue'); END;",
 	);

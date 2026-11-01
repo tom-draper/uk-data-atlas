@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -97,6 +98,10 @@ function fixture(t: TestContext) {
 		"CREATE TABLE retained (value TEXT); INSERT INTO retained VALUES ('unchanged'); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID",
 	);
 	database.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
 	writeEmptyPostcodeComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	return { root, apiRoot, publicDirectory, path };
@@ -131,9 +136,9 @@ test("reassembly retains statistics for other tables", (t) => {
 	const { root, path } = fixture(t);
 	storeObservations(root, catalog, entries());
 	const database = new DatabaseSync(path);
-	database.exec(
-		"UPDATE sqlite_stat1 SET stat = 'original' WHERE tbl = 'retained'",
-	);
+	const original = database
+		.prepare("SELECT stat FROM sqlite_stat1 WHERE tbl = 'retained'")
+		.get()?.stat;
 	database.close();
 	storeObservations(root, catalog, entries());
 	const result = new DatabaseSync(path, { readOnly: true });
@@ -142,7 +147,7 @@ test("reassembly retains statistics for other tables", (t) => {
 			result
 				.prepare("SELECT stat FROM sqlite_stat1 WHERE tbl = 'retained'")
 				.get()?.stat,
-			"original",
+			original,
 		);
 	} finally {
 		result.close();
@@ -272,6 +277,7 @@ test("failed publication retains the database and legacy JSON, and cleans tempor
 		);
 		assert.deepEqual(readdirSync(join(root, "data/build")), [
 			"artifacts",
+			"atlas-base.sqlite",
 			"atlas.sqlite",
 			"geography-payloads.json",
 			"observations.sqlite",
