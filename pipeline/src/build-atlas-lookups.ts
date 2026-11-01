@@ -5,6 +5,7 @@ import { join, resolve } from "node:path";
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
 import { readLookupResolver } from "./lookupResolver";
+import { withComponentApiRoot } from "./componentApiRoot";
 import {
 	ATLAS_LOOKUPS_DIRECTORY,
 	atlasAssetsDirectory,
@@ -22,9 +23,14 @@ const directory = join(publicDirectory, ATLAS_LOOKUPS_DIRECTORY);
 
 rmSync(join(publicDirectory, ATLAS_LOOKUPS_MANIFEST), { force: true });
 rmSync(directory, { recursive: true, force: true });
-const lookups = compileAtlasLookups(
-	readLookupResolver(apiRoot),
-	ATLAS_BOUNDARY_VINTAGES,
+const lookups = withComponentApiRoot(
+	repositoryRootOf(apiRoot),
+	"atlas-base.sqlite",
+	(databaseRoot) =>
+		compileAtlasLookups(
+			readLookupResolver(databaseRoot, repositoryRootOf(apiRoot)),
+			ATLAS_BOUNDARY_VINTAGES,
+		),
 );
 
 mkdirSync(directory, { recursive: true });
