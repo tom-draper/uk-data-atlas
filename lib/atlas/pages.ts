@@ -1,6 +1,6 @@
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { PlaceKind } from "@/lib/data/gazetteer/places";
-import type { DatasetSource } from "@/lib/data/catalog/types";
+import type { DatasetSource } from "@uk-data-atlas/datasets/data/catalog/types";
 import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
 import type { ChartDatasetType } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";

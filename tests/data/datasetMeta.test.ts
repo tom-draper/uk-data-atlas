@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseDatasetMeta } from "@/lib/data/catalog/meta";
+import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
 
 const valid = () => ({
 	id: "2025",

@@ -211,7 +211,7 @@ resolver's same-area answers between years), and
 The proposed `DatasetManifest` was largely realised under other names:
 
 - `DatasetDefinition` and its `DatasetIngestionContract`
-  (`lib/data/catalog/types.ts`) declare each dataset's geography, source and
+  (`packages/datasets/src/data/catalog/types.ts`) declare each dataset's geography, source and
   payload layout, and `DatasetLocationScope` covers datasets keyed by another
   geography (`kind: "mapped"`).
 - `BOUNDARY_CAPABILITIES` declares how each boundary family reduces to a named

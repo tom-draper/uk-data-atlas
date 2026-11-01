@@ -13,7 +13,7 @@ import { getProp } from "../lib/data/boundaries/properties";
 import {
 	codeKeyedFieldsFor,
 	type DatasetPayloadLayout,
-} from "../lib/data/catalog/types";
+} from "@uk-data-atlas/datasets/data/catalog/types";
 import { aggregatePopulation } from "../lib/helpers/datasetAggregation/population";
 const REGION_CHUNK_KEYS = [
 	"E12000001",
