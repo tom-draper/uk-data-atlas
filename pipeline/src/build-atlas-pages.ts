@@ -1,4 +1,3 @@
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import {
 	compilePlaceFacts,
@@ -38,10 +37,7 @@ import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 const ROOT = resolve(import.meta.dirname, "../..");
 const API_ROOT = apiRootOf(ROOT);
 const readDataset = (output: string) =>
-	readAtlasPayload(
-		ROOT,
-		output === "dataset-manifest" ? output : `dataset:${output}`,
-	);
+	readFileSync(join(ROOT, "data/build/datasets", `${output}.json`), "utf8");
 const BOUNDARIES = join(artifactRoot(API_ROOT), "source-data", "boundaries");
 
 /**
