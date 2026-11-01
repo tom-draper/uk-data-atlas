@@ -56,6 +56,7 @@ export const compileAreaOverlapCrosswalk = (
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
 	readGeometry: typeof readGeometries = readGeometries,
+	candidateCodes?: ReadonlyMap<string, readonly string[]>,
 ): AreaOverlapCrosswalkArtifact => {
 	const minimumTargetCoverage =
 		adapter.minimumTargetCoverage ?? adapter.minimumCoverage;
@@ -112,12 +113,14 @@ export const compileAreaOverlapCrosswalk = (
 		geometrySources,
 	);
 
-	const targetIndex = new CrosswalkSpatialIndex(
-		[...targets.geometries].map((value) => ({
-			value,
-			bounds: value[1].bounds,
-		})),
-	);
+	const targetIndex = candidateCodes
+		? undefined
+		: new CrosswalkSpatialIndex(
+				[...targets.geometries].map((value) => ({
+					value,
+					bounds: value[1].bounds,
+				})),
+			);
 	for (const [sourceCode, excluded] of Object.entries(excludedPairs))
 		if (sources.geometries.has(sourceCode))
 			for (const targetCode of Object.keys(excluded))
@@ -137,7 +140,14 @@ export const compileAreaOverlapCrosswalk = (
 
 	for (const [sourceCode, source] of sources.geometries) {
 		const overlaps: Array<{ code: string; overlapAreaM2: number }> = [];
-		for (const [targetCode, target] of targetIndex.query(source.bounds)) {
+		for (const [targetCode, target] of candidateCodes
+			? (candidateCodes.get(sourceCode) ?? []).map((code) => {
+					const target = targets.geometries.get(code);
+					if (!target)
+						throw new Error(`Unknown target geometry ${code}`);
+					return [code, target] as const;
+				})
+			: targetIndex!.query(source.bounds)) {
 			const excluded = excludedPairs[sourceCode]?.[targetCode];
 			if (excluded !== undefined) {
 				appliedExcludedPairs.add(`${sourceCode}|${targetCode}`);
