@@ -1,3 +1,4 @@
+import { withComponentApiRoot } from "../../../pipeline/src/componentApiRoot";
 import { compilePostcodeAreas } from "../../../pipeline/src/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
@@ -111,6 +112,17 @@ function fixture(t: TestContext) {
 	const texts = new Map(compiled.files.map((file) => [file.path, file.text]));
 	return { root, apiRoot, path, compiled, texts };
 }
+
+test("postcode index readers work from the component without an atlas database", (t) => {
+	const { root, path } = fixture(t);
+	rmSync(path);
+	const count = withComponentApiRoot(
+		root,
+		"postcode-index.sqlite",
+		(apiRoot) => readPostcodeIndex(apiRoot).artifact.counts.postcodes,
+	);
+	assert.equal(count, 3);
+});
 
 test("postcode area component leaves the published database unchanged", (t) => {
 	const { root, path, compiled, texts } = fixture(t);
