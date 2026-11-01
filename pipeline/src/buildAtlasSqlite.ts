@@ -32,7 +32,13 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, rmSync } from "node:fs";
+import {
+	copyFileSync,
+	mkdirSync,
+	readFileSync,
+	renameSync,
+	rmSync,
+} from "node:fs";
 import { join } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
@@ -228,6 +234,14 @@ export const buildAtlasSqlite = (
 			throw new Error("Area versions on another geography's release");
 	} finally {
 		written.close();
+	}
+	const base = join(directory, "atlas-base.sqlite");
+	const temporaryBase = `${base}.tmp`;
+	try {
+		copyFileSync(path, temporaryBase);
+		renameSync(temporaryBase, base);
+	} finally {
+		rmSync(temporaryBase, { force: true });
 	}
 	publishAtlasCache(repositoryRoot, "projections", (database) => {
 		const tables = locationProjectionTables({ artifacts, parentArtifacts });

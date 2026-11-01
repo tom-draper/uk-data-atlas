@@ -194,6 +194,11 @@ test("atlas assembly depends on each declared component output", () => {
 			"website-lookups",
 		),
 	);
+	assert.ok(
+		stage("atlas-sqlite").requiredOutputs.includes(
+			"data/build/atlas-base.sqlite",
+		),
+	);
 	assert.deepEqual(stage("data-catalog").dependencies, ["datasets"]);
 	assert.deepEqual(stage("postcode-index").dependencies, ["sources"]);
 	assert.ok(
