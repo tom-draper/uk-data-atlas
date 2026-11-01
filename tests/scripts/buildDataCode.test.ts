@@ -169,6 +169,21 @@ test("atlas assembly depends on each declared component output", () => {
 			"data/build/postcode-index.sqlite",
 		),
 	);
+	assert.ok(
+		stage("postcode-areas").requiredOutputs.includes(
+			"data/build/postcode-areas-component/manifest.json",
+		),
+	);
+	assert.ok(
+		stage("postcode-areas").outputs.includes(
+			"data/build/postcode-areas-component",
+		),
+	);
+	assert.ok(
+		stage("assemble-postcode-areas").dependencies.includes(
+			"postcode-areas",
+		),
+	);
 	assert.ok(stage("assemble-atlas").dependencies.includes("data-catalog"));
 	assert.ok(
 		stage("assemble-atlas").dependencies.includes("geography-catalogues"),

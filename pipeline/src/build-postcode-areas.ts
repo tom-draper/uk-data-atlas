@@ -1,10 +1,14 @@
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
-import { readSqlitePostcodeAreaShard } from "@uk-data-atlas/atlas-runtime/storage";
-import { storePostcodeAreas } from "./storePostcodeAreas";
+import {
+	postcodeAreasDirectory,
+	readPostcodeAreaComponent,
+	storePostcodeAreas,
+} from "./storePostcodeAreas";
+import { existsSync, readFileSync } from "node:fs";
 
 import { availableParallelism } from "node:os";
-import { dirname, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
 	isMainThread,
@@ -166,18 +170,14 @@ const runJob = (job: Job) =>
 
 /** The previous build, when it placed these very postcodes. */
 const previousBuild = (repositoryRoot: string, postcodeIndex: string) => {
-	let text: string;
-	try {
-		text = readAtlasPayload(repositoryRoot, "postcode-areas");
-	} catch (error) {
-		if (
-			error instanceof Error &&
-			error.message.startsWith("Missing payload postcode-areas")
-		)
-			return undefined;
-		throw error;
-	}
-	const artifact: PostcodeAreasArtifact = JSON.parse(text);
+	const manifest = join(
+		postcodeAreasDirectory(repositoryRoot),
+		"manifest.json",
+	);
+	if (!existsSync(manifest)) return undefined;
+	const artifact: PostcodeAreasArtifact = JSON.parse(
+		readFileSync(manifest, "utf8"),
+	);
 	if (
 		artifact.schemaVersion !== 1 ||
 		artifact.postcodeIndex !== postcodeIndex
@@ -283,9 +283,15 @@ export const buildPostcodeAreas = async (
 		const shards = function* () {
 			let offset = 0;
 			for (const [index, entry] of previous.shards.entries()) {
-				const shard = JSON.parse(
-					readSqlitePostcodeAreaShard(apiRoot, entry.path),
-				) as PostcodeAreasShard;
+				const text = readPostcodeAreaComponent(
+					repositoryRoot,
+					entry.path,
+				);
+				if (sha256(text) !== entry.contentHash)
+					throw new Error(
+						`Invalid postcode area shard ${entry.path}`,
+					);
+				const shard = JSON.parse(text) as PostcodeAreasShard;
 				yield { offset, shard };
 				offset += postcodeIndex.artifact.shards[index]!.postcodes;
 			}
