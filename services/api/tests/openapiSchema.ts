@@ -37,6 +37,7 @@ const ASSERTIONS = new Set([
 	"oneOf",
 	"pattern",
 	"properties",
+	"propertyNames",
 	"required",
 	"type",
 ]);
@@ -169,6 +170,15 @@ export const schemaViolations = (
 			if (!(name in object))
 				violations.push(`${at}.${name}: required but absent`);
 		for (const [name, member] of Object.entries(object)) {
+			if (schema.propertyNames !== undefined)
+				violations.push(
+					...schemaViolations(
+						document,
+						schema.propertyNames as Schema | boolean,
+						name,
+						`${at}.${name}`,
+					),
+				);
 			const declared = properties[name];
 			if (declared)
 				violations.push(

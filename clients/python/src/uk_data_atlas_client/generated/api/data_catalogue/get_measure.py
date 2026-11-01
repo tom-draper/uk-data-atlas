@@ -6,7 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.envelope import Envelope
+from ...models.get_measure_response_200 import GetMeasureResponse200
 from ...models.problem import Problem
 from ...types import Response
 
@@ -27,9 +27,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Envelope | Problem | None:
+) -> GetMeasureResponse200 | Problem | None:
     if response.status_code == 200:
-        response_200 = Envelope.from_dict(response.json())
+        response_200 = GetMeasureResponse200.from_dict(response.json())
 
         return response_200
 
@@ -51,7 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Envelope | Problem]:
+) -> Response[GetMeasureResponse200 | Problem]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -64,7 +64,7 @@ def sync_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[Envelope | Problem]:
+) -> Response[GetMeasureResponse200 | Problem]:
     """Get one measure's semantics and availability
 
      A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
@@ -89,7 +89,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Envelope | Problem]
+        Response[GetMeasureResponse200 | Problem]
     """
 
     kwargs = _get_kwargs(
@@ -107,7 +107,7 @@ def sync(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Envelope | Problem | None:
+) -> GetMeasureResponse200 | Problem | None:
     """Get one measure's semantics and availability
 
      A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
@@ -132,7 +132,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Envelope | Problem
+        GetMeasureResponse200 | Problem
     """
 
     return sync_detailed(
@@ -145,7 +145,7 @@ async def asyncio_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[Envelope | Problem]:
+) -> Response[GetMeasureResponse200 | Problem]:
     """Get one measure's semantics and availability
 
      A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
@@ -170,7 +170,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Envelope | Problem]
+        Response[GetMeasureResponse200 | Problem]
     """
 
     kwargs = _get_kwargs(
@@ -186,7 +186,7 @@ async def asyncio(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Envelope | Problem | None:
+) -> GetMeasureResponse200 | Problem | None:
     """Get one measure's semantics and availability
 
      A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
@@ -211,7 +211,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Envelope | Problem
+        GetMeasureResponse200 | Problem
     """
 
     return (

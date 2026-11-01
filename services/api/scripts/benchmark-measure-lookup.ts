@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { once } from "node:events";
 import { createApiServer } from "../src/apiServer";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { canonicalMeasureId } from "../src/measureTerms";
+import { canonicalMeasureId } from "../src/catalogue/measureTerms";
 import { dataCatalog, testContext } from "../tests/routeFixtures";
 
 // From services/api: node --import tsx scripts/benchmark-measure-lookup.ts

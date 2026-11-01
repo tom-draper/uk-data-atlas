@@ -123,6 +123,7 @@ const featureDownload = (
 			release,
 			topology,
 			entry.contentHash,
+			...(tier === "full" ? [] : ([{ tier, format }] as const)),
 		);
 		if (built?.status === "stale")
 			return problem(

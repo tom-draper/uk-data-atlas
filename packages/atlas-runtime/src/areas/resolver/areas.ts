@@ -5,7 +5,7 @@ import type {
 	AreaRecord,
 } from "@uk-data-atlas/areas";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
-import { explainAreaAbsence, type AreaAbsence } from "../../areas/areaAbsence";
+import { explainAreaAbsence, type AreaAbsence } from "../areaAbsence";
 import {
 	summariseBatch,
 	validateBatch,
@@ -19,13 +19,13 @@ import {
 	type AreaMatches,
 	type AreaSearchFilters,
 	type AreaSearchIndex,
-} from "../../areas/areaSearch";
+} from "../areaSearch";
 import {
 	compareBoundaryReleases,
 	derivedReleaseSources,
 	selectReleaseForDate,
 	type ReleaseSelection,
-} from "../../areas/releaseForDate";
+} from "../releaseForDate";
 import { exactNameMatch, type NameMatch } from "@uk-data-atlas/geography";
 
 import type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";

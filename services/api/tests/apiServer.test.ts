@@ -1,3 +1,4 @@
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	fixtureObservationDatabase,
 	writeObservationFixture,
@@ -14,7 +15,14 @@ import { compileExportManifest } from "../../../pipeline/src/exportManifest";
 import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
+import {
+	createApiServer,
+	isFastifyStaticPath,
+	MAX_BODY_BYTES,
+	sendFile,
+} from "../src/apiServer";
+import { httpResponse } from "../src/httpResponse";
+import { route } from "../src/routes";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
@@ -24,6 +32,7 @@ import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import {
 	atlasRelease,
+	registry,
 	dataCatalog,
 	measureObservations,
 	compatibleWardAreaLookup,
@@ -658,6 +667,9 @@ test("bounds active body reads without queuing and keeps probes available", asyn
 	assert.equal(refused.headers.get("access-control-allow-origin"), "*");
 	assert.equal(refused.headers.get("content-encoding"), null);
 	assert.equal((await refused.json()).title, "Server Busy");
+	const refusedContract = await get("/v1/atlas-release");
+	assert.equal(refusedContract.status, 503);
+	assert.equal((await refusedContract.json()).title, "Server Busy");
 	for (const path of ["/healthz", "/readyz", "/metrics"])
 		assert.equal((await get(path)).status, 200);
 	assert.equal(
@@ -1106,4 +1118,497 @@ test("readiness and metrics read the startup caches", async (t) => {
 		metrics,
 		/^atlas_api_location_projection_cache_shards\{kind="limit"\} 8$/m,
 	);
+});
+
+test("rejects an Atlas release response that violates its contract", async (t) => {
+	const invalidArtifact = JSON.parse(
+		'{"id":"sqlite","path":"data.sqlite","contentHash":12}',
+	);
+	const context = testContext({
+		atlasRelease: { ...atlasRelease, artifacts: [invalidArtifact] },
+		openapiDocument,
+		operationMatcher,
+	});
+	const { get, logged } = await serve(t, {}, context);
+	const response = await get("/v1/atlas-release");
+	assert.equal(response.status, 500);
+	assert.equal((await response.json()).title, "Internal Server Error");
+	assert.equal(logged.at(-1)?.event, "request.failed");
+});
+
+test("production routes geography listings through Fastify", () => {
+	assert.equal(isFastifyStaticPath("/v1/boundaries"), true);
+	assert.equal(isFastifyStaticPath("/v1/boundary-releases"), true);
+	assert.equal(isFastifyStaticPath("/v1/boundary-releases:resolve"), true);
+	assert.equal(isFastifyStaticPath("/v1/boundary-releases:compare"), true);
+});
+
+test("production contract routes preserve dispatcher responses and HTTP controls", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+	});
+	const { get, logged } = await serve(
+		t,
+		{ accessLog: true, responseCacheBytes: 1024 * 1024 },
+		context,
+	);
+	for (const path of [
+		"/v1/atlas-release",
+		"/v1/openapi.yaml",
+		"/v1/docs",
+		"/v1/boundaries",
+		"/v1/boundary-releases",
+	]) {
+		const expected = httpResponse({ method: "GET", headers: {} }, () =>
+			route("GET", path, context),
+		);
+		const response = await get(path, {
+			headers: {
+				"accept-encoding": "identity",
+				"x-request-id": "contract-test",
+			},
+		});
+		assert.equal(response.status, expected.status, path);
+		assert.equal(await response.text(), expected.body, path);
+		assert.equal(response.headers.get("etag"), expected.headers.etag, path);
+		assert.equal(response.headers.get("x-request-id"), "contract-test");
+		const head = await get(path, {
+			method: "HEAD",
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(head.status, 200, path);
+		assert.equal(await head.text(), "", path);
+		assert.equal(head.headers.get("etag"), expected.headers.etag, path);
+		const conditional = await get(path, {
+			headers: {
+				"accept-encoding": "identity",
+				"if-none-match": expected.headers.etag!,
+			},
+		});
+		assert.equal(conditional.status, 304, path);
+		const query = await get(`${path}?unexpected=1`);
+		assert.equal(query.status, 400, path);
+		assert.deepEqual(
+			await query.json(),
+			route("GET", `${path}?unexpected=1`, context).body,
+			path,
+		);
+	}
+	assert.ok(
+		logged.some(
+			(entry) =>
+				entry.route === "/v1/atlas-release" && entry.status === 200,
+		),
+	);
+});
+
+test("Fastify contract routes use the server rate limiter", async (t) => {
+	const { get, server } = await serve(t, {
+		rateLimit: { capacity: 1, refillPerSecond: 0.01 },
+	});
+	assert.equal((await get("/v1/atlas-release")).status, 200);
+	const refused = await get("/v1/atlas-release");
+	assert.equal(refused.status, 429);
+	assert.equal(refused.headers.get("retry-after"), "100");
+	assert.equal(server.metrics.rateLimited.value(), 1);
+});
+
+test("Fastify catalogue listings match the dispatcher", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		dataCatalog,
+		openapiDocument,
+		operationMatcher,
+		documents: new Map([
+			["measure-population", { body: "{}", contentHash: "fixture" }],
+		]),
+	});
+	const { get } = await serve(
+		t,
+		{ responseCacheBytes: 1024 * 1024 },
+		context,
+	);
+	for (const path of [
+		"/v1/datasets",
+		"/v1/measures",
+		"/v1/measures?q=population",
+		"/v1/measures?q=missing",
+		"/v1/measures?q=",
+		"/v1/measures?unknown=1",
+		"/v1/datasets?unknown=1",
+	]) {
+		const expected = httpResponse({ method: "GET", headers: {} }, () =>
+			route("GET", path, context),
+		);
+		const response = await get(path, {
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(response.status, expected.status, path);
+		assert.equal(await response.text(), expected.body, path);
+		assert.equal(
+			response.headers.get("etag"),
+			expected.headers.etag ?? null,
+			path,
+		);
+		const head = await get(path, {
+			method: "HEAD",
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(head.status, expected.status, path);
+		assert.equal(await head.text(), "", path);
+	}
+});
+
+test("Fastify catalogue listings preserve an unavailable catalogue response", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+	});
+	const { get } = await serve(t, {}, context);
+	for (const path of ["/v1/datasets", "/v1/measures?q=population"]) {
+		const expected = route("GET", path, context);
+		const response = await get(path);
+		assert.equal(response.status, 503, path);
+		assert.deepEqual(await response.json(), expected.body, path);
+	}
+});
+
+test("Fastify catalogue listings reject a malformed successful response", async (t) => {
+	const malformed = JSON.parse('{"id":"population","label":12}');
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+		dataCatalog: { ...dataCatalog, datasets: [malformed] },
+	});
+	const { get, logged } = await serve(t, {}, context);
+	const response = await get("/v1/datasets");
+	assert.equal(response.status, 500);
+	assert.equal((await response.json()).title, "Internal Server Error");
+	assert.equal(logged.at(-1)?.event, "request.failed");
+});
+
+test("Fastify catalogue listings preserve measure alias canonicalization without an operation matcher", async (t) => {
+	const catalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) =>
+			measure.id === "population"
+				? { ...measure, aliases: ["residents"] }
+				: measure,
+		),
+	};
+	const context = testContext({ atlasRelease, dataCatalog: catalog });
+	context.operationMatcher = undefined;
+	const { get } = await serve(t, {}, context);
+	for (const path of [
+		"/v1/datasets?measure=residents",
+		"/v1/measures?q=population&measure=residents",
+		"/v1/measures/residents?measure=residents",
+	]) {
+		const expected = route("GET", path, context);
+		const response = await get(path);
+		assert.equal(response.status, expected.status, path);
+		const expectedHttp = httpResponse(
+			{ method: "GET", headers: {} },
+			() => expected,
+		);
+		assert.equal(await response.text(), expectedHttp.body, path);
+		assert.equal(
+			response.headers.get("content-location"),
+			expected.headers?.["content-location"] ?? null,
+			path,
+		);
+		assert.match(
+			response.headers.get("content-location")!,
+			/measure=population/,
+		);
+	}
+});
+
+test("Fastify catalogue detail routes preserve dispatcher behaviour", async (t) => {
+	const catalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) =>
+			measure.id === "population"
+				? { ...measure, aliases: ["residents"] }
+				: measure,
+		),
+	};
+	const context = testContext({
+		atlasRelease,
+		dataCatalog: catalog,
+		openapiDocument,
+		operationMatcher,
+		documents: new Map([
+			["measure-population", { body: "{}", contentHash: "fixture" }],
+		]),
+	});
+	const { get } = await serve(
+		t,
+		{ responseCacheBytes: 1024 * 1024 },
+		context,
+	);
+	for (const path of [
+		"/v1/datasets/population",
+		"/v1/measures/population",
+		"/v1/measures/residents",
+		"/v1/measures/%70opulation",
+		"/v1/datasets/unknown",
+		"/v1/measures/unknown",
+		"/v1/measures/population?unknown=1",
+		"/v1/measures/a%2Fb",
+		`/v1/measures/${"x".repeat(150)}`,
+	]) {
+		const expected = httpResponse({ method: "GET", headers: {} }, () =>
+			route("GET", path, context),
+		);
+		const response = await get(path, {
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(response.status, expected.status, path);
+		assert.equal(await response.text(), expected.body, path);
+		assert.equal(
+			response.headers.get("content-location"),
+			expected.headers["content-location"] ?? null,
+			path,
+		);
+		const head = await get(path, {
+			method: "HEAD",
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(head.status, expected.status, path);
+		assert.equal(await head.text(), "", path);
+	}
+});
+
+test("Fastify catalogue detail routes report an unavailable catalogue", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+	});
+	const { get } = await serve(t, {}, context);
+	for (const path of [
+		"/v1/datasets/population",
+		"/v1/measures/population",
+		`/v1/measures/${"%70".repeat(80)}`,
+	]) {
+		const response = await get(path);
+		assert.equal(response.status, 503, path);
+		assert.deepEqual(
+			await response.json(),
+			route("GET", path, context).body,
+			path,
+		);
+	}
+});
+
+test("Fastify catalogue detail routes reject malformed successful responses", async (t) => {
+	const malformed = JSON.parse('{"id":"population","label":12}');
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+		dataCatalog: { ...dataCatalog, datasets: [malformed] },
+	});
+	const { get, logged } = await serve(t, {}, context);
+	const response = await get("/v1/datasets/population");
+	assert.equal(response.status, 500);
+	assert.equal((await response.json()).title, "Internal Server Error");
+	assert.equal(logged.at(-1)?.event, "request.failed");
+});
+
+test("catalogue detail responses remain validated when a long id uses the dispatcher", async (t) => {
+	const id = "x".repeat(150);
+	const malformed = JSON.parse(JSON.stringify({ id, label: 12 }));
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+		dataCatalog: { ...dataCatalog, datasets: [malformed] },
+	});
+	const { get } = await serve(t, {}, context);
+	const response = await get(`/v1/datasets/${id}`);
+	assert.equal(response.status, 500);
+	assert.equal((await response.json()).title, "Internal Server Error");
+});
+
+test("Fastify rejects a boundary release that violates its response contract", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+	});
+	const releases = context.geographyResolver.boundaryReleasesFor();
+	assert.ok(releases.length > 0);
+	context.geographyResolver = {
+		...context.geographyResolver,
+		boundaryReleasesFor: () => [{ ...releases[0]!, title: 123 } as never],
+	};
+	const { get, logged } = await serve(t, {}, context);
+	const response = await get("/v1/boundary-releases");
+	assert.equal(response.status, 500);
+	assert.equal((await response.json()).title, "Internal Server Error");
+	assert.equal(logged.at(-1)?.event, "request.failed");
+});
+
+test("Fastify boundary release detail preserves dispatcher behaviour", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+	});
+	const { get } = await serve(
+		t,
+		{ responseCacheBytes: 1024 * 1024 },
+		context,
+	);
+	for (const path of [
+		"/v1/boundary-releases/ward/2025-01-en-ward",
+		"/v1/boundary-releases/ward/latest",
+		"/v1/boundary-releases/%77ard/2025-01-en-ward",
+		"/v1/boundary-releases/ward/missing",
+		"/v1/boundary-releases/ward/2025-01-en-ward?unknown=1",
+		"/v1/boundary-releases/ward/a%2Fb",
+		`/v1/boundary-releases/ward/${"x".repeat(150)}`,
+	]) {
+		const expected = httpResponse({ method: "GET", headers: {} }, () =>
+			route("GET", path, context),
+		);
+		const response = await get(path, {
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(response.status, expected.status, path);
+		assert.equal(await response.text(), expected.body, path);
+		for (const header of [
+			"content-location",
+			"deprecation",
+			"sunset",
+			"link",
+			"etag",
+		]) {
+			assert.equal(
+				response.headers.get(header),
+				expected.headers[header] ?? null,
+				`${path} ${header}`,
+			);
+		}
+		const head = await get(path, {
+			method: "HEAD",
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(head.status, expected.status, path);
+		assert.equal(await head.text(), "", path);
+	}
+});
+
+test("boundary release detail rejects malformed data on Fastify and fallback paths", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+	});
+	const release = context.geographyResolver.boundaryReleasesFor()[0]!;
+	context.geographyResolver = {
+		...context.geographyResolver,
+		boundaryRelease: () => ({ ...release, title: 123 }) as never,
+	};
+	const { get } = await serve(t, {}, context);
+	for (const id of [release.id, "x".repeat(150)]) {
+		const response = await get(`/v1/boundary-releases/ward/${id}`);
+		assert.equal(response.status, 500, id);
+		assert.equal((await response.json()).title, "Internal Server Error");
+	}
+});
+
+test("Fastify boundary release detail keeps deprecation headers", async (t) => {
+	const boundaryRegistry = {
+		...registry,
+		releases: [
+			{
+				...registry.releases[0]!,
+				deprecation: {
+					deprecated: "2025-01-01",
+					sunset: "2027-01-01",
+					replacedBy: "2026-01-en-ward",
+					reason: "Superseded",
+				},
+			},
+		],
+	};
+	const context = testContext({
+		atlasRelease,
+		boundaryRegistry,
+		openapiDocument,
+		operationMatcher,
+	});
+	const path = "/v1/boundary-releases/ward/2025-01-en-ward";
+	const expected = httpResponse({ method: "GET", headers: {} }, () =>
+		route("GET", path, context),
+	);
+	const { get } = await serve(t, {}, context);
+	const response = await get(path, {
+		headers: { "accept-encoding": "identity" },
+	});
+	assert.equal(response.status, 200);
+	for (const header of ["deprecation", "sunset", "link"]) {
+		assert.ok(expected.headers[header], header);
+		assert.equal(
+			response.headers.get(header),
+			expected.headers[header],
+			header,
+		);
+	}
+});
+
+test("Fastify boundary selection and comparison preserve dispatcher responses", async (t) => {
+	const boundaryRegistry = {
+		...registry,
+		releases: [
+			{ ...registry.releases[0]!, id: "2024-05-en-ward" },
+			{ ...registry.releases[0]!, id: "2025-05-en-ward" },
+		],
+	};
+	const areaLookup = createAreaLookup(
+		["2024-05-en-ward", "2025-05-en-ward"].map((boundaryRelease) => ({
+			schemaVersion: 1,
+			contentHash: `sha256:${boundaryRelease}`,
+			geography: "ward",
+			boundaryRelease,
+			codeProperty: "code",
+			nameProperty: "name",
+			areas: [{ code: "E05000001", name: "Ward" }],
+		})),
+	);
+	const context = testContext({
+		atlasRelease,
+		boundaryRegistry,
+		areaLookup,
+		openapiDocument,
+		operationMatcher,
+	});
+	const { get } = await serve(t, {}, context);
+	for (const path of [
+		"/v1/boundary-releases:resolve?geography=ward&date=2025-05",
+		"/v1/boundary-releases:resolve?geography=ward&date=2020-01",
+		"/v1/boundary-releases:resolve?date=2025-05",
+		"/v1/boundary-releases:resolve?geography=ward&date=2025-05&unknown=1",
+		"/v1/boundary-releases:compare?geography=ward&from=2024-05-en-ward&to=2025-05-en-ward",
+		"/v1/boundary-releases:compare?geography=ward&from=2024-05-en-ward&to=2024-05-en-ward",
+	]) {
+		const expected = httpResponse({ method: "GET", headers: {} }, () =>
+			route("GET", path, context),
+		);
+		const response = await get(path, {
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(response.status, expected.status, path);
+		assert.equal(await response.text(), expected.body, path);
+		const head = await get(path, { method: "HEAD" });
+		assert.equal(head.status, expected.status, path);
+		assert.equal(await head.text(), "", path);
+	}
 });

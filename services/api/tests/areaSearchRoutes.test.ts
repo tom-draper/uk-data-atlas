@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { handleAreaSearchRoutes } from "../src/areaSearchRoutes";
+import { handleAreaSearchRoutes } from "../src/areas/areaSearchRoutes";
 import test from "node:test";
 import {
 	route,

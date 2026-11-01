@@ -26,6 +26,10 @@ test("refines tiny shared rings without changing their arcs or dropping an area"
 	const tiers = compileTiers(topology);
 	assert.deepEqual([...tiers.keys()], ["full", "high", "medium", "low"]);
 	for (const [tier, compiled] of tiers) {
+		assert.deepEqual(
+			compileTiers(topology, [tier]),
+			new Map([[tier, compiled]]),
+		);
 		assert.equal(compiled.areas.size, 2);
 		assert.equal(compiled.verticesAfter, 10);
 		assert.equal(compiled.refinedArcs, tier === "full" ? 0 : 3);

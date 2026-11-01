@@ -1,3 +1,5 @@
+import { documentation } from "./contract/documentation";
+import { openapiDescription } from "./contract/openapiDescription";
 import { docsPage } from "./docsPage";
 import {
 	envelope,
@@ -9,7 +11,8 @@ import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 export const isOpenapiRoute = (segments: string[]) =>
 	segments.length === 2 &&
 	segments[0] === "v1" &&
-	(segments[1] === "openapi.yaml" || segments[1] === "docs");
+	(`/${segments[1]}` === openapiDescription.path ||
+		`/${segments[1]}` === documentation.path);
 
 /**
  * The OpenAPI description this server implements, served as the document
@@ -30,7 +33,7 @@ export const handleOpenapiRoutes = ({
 			"Description Unavailable",
 			"The server was started without its OpenAPI description.",
 		);
-	if (segments[1] === "docs")
+	if (`/${segments[1]}` === documentation.path)
 		return {
 			status: 200,
 			body: envelope(releaseId, {

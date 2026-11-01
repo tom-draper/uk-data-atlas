@@ -53,7 +53,9 @@ test("serves the description without a geography resolver", () => {
 		releaseId: "test",
 		parsedUrl: new URL("https://example.test/v1/openapi.yaml"),
 		segments: ["v1", "openapi.yaml"],
-		dispatch: () => { throw new Error("unexpected dispatch"); },
+		dispatch: () => {
+			throw new Error("unexpected dispatch");
+		},
 	});
 	assert.equal(response?.status, 200);
 });

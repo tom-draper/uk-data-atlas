@@ -6,7 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.boundary_release_envelope import BoundaryReleaseEnvelope
+from ...models.get_boundary_release_response_200 import GetBoundaryReleaseResponse200
 from ...models.problem import Problem
 from ...types import Response
 
@@ -29,9 +29,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> BoundaryReleaseEnvelope | Problem | None:
+) -> GetBoundaryReleaseResponse200 | Problem | None:
     if response.status_code == 200:
-        response_200 = BoundaryReleaseEnvelope.from_dict(response.json())
+        response_200 = GetBoundaryReleaseResponse200.from_dict(response.json())
 
         return response_200
 
@@ -48,7 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[BoundaryReleaseEnvelope | Problem]:
+) -> Response[GetBoundaryReleaseResponse200 | Problem]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -62,7 +62,7 @@ def sync_detailed(
     release: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[BoundaryReleaseEnvelope | Problem]:
+) -> Response[GetBoundaryReleaseResponse200 | Problem]:
     """Get one boundary release, with links to download it whole
 
     Args:
@@ -74,7 +74,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[BoundaryReleaseEnvelope | Problem]
+        Response[GetBoundaryReleaseResponse200 | Problem]
     """
 
     kwargs = _get_kwargs(
@@ -94,7 +94,7 @@ def sync(
     release: str,
     *,
     client: AuthenticatedClient | Client,
-) -> BoundaryReleaseEnvelope | Problem | None:
+) -> GetBoundaryReleaseResponse200 | Problem | None:
     """Get one boundary release, with links to download it whole
 
     Args:
@@ -106,7 +106,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        BoundaryReleaseEnvelope | Problem
+        GetBoundaryReleaseResponse200 | Problem
     """
 
     return sync_detailed(
@@ -121,7 +121,7 @@ async def asyncio_detailed(
     release: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[BoundaryReleaseEnvelope | Problem]:
+) -> Response[GetBoundaryReleaseResponse200 | Problem]:
     """Get one boundary release, with links to download it whole
 
     Args:
@@ -133,7 +133,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[BoundaryReleaseEnvelope | Problem]
+        Response[GetBoundaryReleaseResponse200 | Problem]
     """
 
     kwargs = _get_kwargs(
@@ -151,7 +151,7 @@ async def asyncio(
     release: str,
     *,
     client: AuthenticatedClient | Client,
-) -> BoundaryReleaseEnvelope | Problem | None:
+) -> GetBoundaryReleaseResponse200 | Problem | None:
     """Get one boundary release, with links to download it whole
 
     Args:
@@ -163,7 +163,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        BoundaryReleaseEnvelope | Problem
+        GetBoundaryReleaseResponse200 | Problem
     """
 
     return (

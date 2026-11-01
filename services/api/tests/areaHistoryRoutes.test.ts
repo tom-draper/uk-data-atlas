@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { handleAreaHistoryRoutes } from "../src/areaHistoryRoutes";
+import { handleAreaHistoryRoutes } from "../src/areas/areaHistoryRoutes";
 import test from "node:test";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";

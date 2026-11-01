@@ -1,3 +1,8 @@
+import { sha256 } from "@uk-data-atlas/artifacts";
+import {
+	buildSimplifiedDownload,
+	type SimplifiedDownload,
+} from "../maps/mapResource/simplifiedDownload";
 import type { AreaGeometryCache } from "../geometry/areaGeometry";
 import type { GeographyResolver } from "./geographyResolver";
 import {
@@ -21,12 +26,12 @@ type Request = [
 	boundaryRelease: string,
 	topology: FullDetailRelease["topology"],
 	contentHash: string,
+	download?: SimplifiedDownload,
 ];
 
 /**
- * What a route asks for a full-tier download. `build` is for a server, which
- * awaits the download rather than building it while every other request
- * waits.
+ * Map downloads requested by routes. Servers use `build` to coalesce requests
+ * and serialize generation across releases.
  */
 export type FullDetailSource = {
 	get(...request: Request): FullDetailResult;
@@ -34,9 +39,9 @@ export type FullDetailSource = {
 };
 
 /**
- * Full-tier map downloads, built from the geometry store on request (see
- * `mapResource/fullDetail.ts`). The build published each one's hash, so a
- * download that no longer matches it, because the store or the area names
+ * Map downloads, built from the geometry store on request. The build publishes
+ * each download's hash. A download that no longer matches it, because the store
+ * or the area names
  * changed since, is refused rather than served under the old hash. The most
  * recent are kept, up to a byte budget, since a download is often retried or
  * fetched by several clients at once.
@@ -45,6 +50,7 @@ export class FullDetailDownloads implements FullDetailSource {
 	private readonly built = new Map<string, Buffer>();
 	private readonly building = new Map<string, Promise<FullDetailResult>>();
 	private bytes = 0;
+	private queue: Promise<void> = Promise.resolve();
 
 	constructor(
 		private readonly cache: AreaGeometryCache,
@@ -73,13 +79,19 @@ export class FullDetailDownloads implements FullDetailSource {
 		if (!release) return { status: "unavailable" };
 		return this.keep(
 			request,
-			buildFullDetailParquet(this.cache, release.release, release.names),
+			request[4]
+				? this.simplified(release, request[4])
+				: buildFullDetailParquet(
+						this.cache,
+						release.release,
+						release.names,
+					),
 		);
 	}
 
 	/**
-	 * The download, built without holding up other requests for long. Callers
-	 * asking for one already being built share that build.
+	 * The download, queued with other generation work. Callers asking for one
+	 * already being built share that build.
 	 */
 	build(...request: Request): Promise<FullDetailResult> {
 		const held = this.held(...request);
@@ -90,15 +102,37 @@ export class FullDetailDownloads implements FullDetailSource {
 		if (pending) return pending;
 		const release = this.release(...request);
 		if (!release) return Promise.resolve({ status: "unavailable" });
-		const started = buildFullDetailParquetAsync(
+		const started = this.queue
+			.then(async () => {
+				const full = request[4]
+					? this.simplified(release, request[4])
+					: await buildFullDetailParquetAsync(
+							this.cache,
+							release.release,
+							release.names,
+						);
+				return this.keep(request, full);
+			})
+			.finally(() => this.building.delete(key));
+		this.queue = started.then(
+			() => {},
+			() => {},
+		);
+		this.building.set(key, started);
+		return started;
+	}
+
+	private simplified(
+		release: { release: FullDetailRelease; names: Map<string, string> },
+		download: SimplifiedDownload,
+	) {
+		const body = buildSimplifiedDownload(
 			this.cache,
 			release.release,
 			release.names,
-		)
-			.then((full) => this.keep(request, full))
-			.finally(() => this.building.delete(key));
-		this.building.set(key, started);
-		return started;
+			download,
+		);
+		return body ? { body, contentHash: sha256(body) } : undefined;
 	}
 
 	private key(geography: string, boundaryRelease: string, hash: string) {
@@ -127,7 +161,7 @@ export class FullDetailDownloads implements FullDetailSource {
 
 	private keep(
 		[geography, boundaryRelease, , contentHash]: Request,
-		full: FullDetailDownload | undefined,
+		full: Pick<FullDetailDownload, "body" | "contentHash"> | undefined,
 	): FullDetailResult {
 		if (!full) return { status: "unavailable" };
 		if (full.contentHash !== contentHash) return { status: "stale" };

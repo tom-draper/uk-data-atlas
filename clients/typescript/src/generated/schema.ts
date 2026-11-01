@@ -153,8 +153,8 @@ export interface paths {
         };
         /**
          * A whole boundary release as one GeoParquet or GeoJSON file
-         * @description The flat form of the resource, for a warehouse or a GIS that holds features rather than tiles: GeoParquet 1.1 with one row per area, carrying the same `id`, `code` and `name` as the tiles, its shape as WKB in OGC:CRS84, and a `bbox` covering column a reader can filter on. Each tier is compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code` without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are listed under `features` in the descriptor. The `full` file is not stored: it is written from the geometry store when asked for, and is the same file, byte for byte, each time. The first request for a large release can take a few seconds. A coarse tier keeps every border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy loaded on its own is still citable.
-         *     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. The file is stored gzipped, so a client sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
+         * @description The flat form of the resource, for a warehouse or a GIS that holds features rather than tiles: GeoParquet 1.1 with one row per area, carrying the same `id`, `code` and `name` as the tiles, its shape as WKB in OGC:CRS84, and a `bbox` covering column a reader can filter on. Each tier is compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code` without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are listed under `features` in the descriptor. Downloads are generated from the geometry store on request, checked against their published hashes and cached within a bounded byte budget. Cold requests for large releases can take longer; generation is serialized. A coarse tier keeps every border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy loaded on its own is still citable.
+         *     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. A client sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
          *     The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any reader that fetches Parquet over HTTP can read its footer and only the row groups it needs. The GeoJSON is always sent whole.
          */
         get: operations["getMapResourceFeatures"];
@@ -836,7 +836,7 @@ export interface paths {
          *
          *     Identities come back by default, each with its own bounding box, and the coordinates are opted into with `tier`, which generalises every match exactly as the geometry route does. That keeps the cost of a wide box bounded whether or not a caller wants geometry with it. The same caveat applies: above `full`, matches are generalised one at a time and neighbours drawn together may disagree along a shared border.
          *
-         *     Results come a page at a time in code order, `limit` to a page, 200 by default and 1000 at most. `matched` counts every area the box meets, `truncated` says whether more follow this page, and `nextCursor`, with a `Link: rel="next"` header, fetches them. For every area of a release, the whole-release download is quicker. The cap is on results rather than on the box: a box covering the whole country is a reasonable analysis question, and it is the geometry that is expensive, not the extent. A box matching nothing is an empty answer, not an error; a geography and release the catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its prebuilt downloads.
+         *     Results come a page at a time in code order, `limit` to a page, 200 by default and 1000 at most. `matched` counts every area the box meets, `truncated` says whether more follow this page, and `nextCursor`, with a `Link: rel="next"` header, fetches them. For every area of a release, the whole-release download is quicker. The cap is on results rather than on the box: a box covering the whole country is a reasonable analysis question, and it is the geometry that is expensive, not the extent. A box matching nothing is an empty answer, not an error; a geography and release the catalogue does not carry is a 404. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its whole-release downloads.
          */
         get: operations["findAreasIntersectingBox"];
         put?: never;
@@ -1072,7 +1072,7 @@ export interface paths {
          *
          *     `tier` generalises every member, exactly as on the geometry route, and is the reason this endpoint is usable at all for a large authority. The method is reported once for the collection rather than on each member; each member reports only what the tier cost it, so one that lost an island can be told from one that did not. Note the caveat that travels with it: members are generalised one at a time, so above `full` neighbours in the same collection may disagree along a shared border.
          *
-         *     A member that is published as a relationship but has no servable geometry is listed in `withoutGeometry` with the reason, rather than being passed over. `collection.members` and `collection.withGeometry` disagreeing is how a caller tells a partial collection from a complete one; the response is still a 200. At most 1,000 children may be requested in one collection. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its prebuilt downloads.
+         *     A member that is published as a relationship but has no servable geometry is listed in `withoutGeometry` with the reason, rather than being passed over. `collection.members` and `collection.withGeometry` disagreeing is how a caller tells a partial collection from a complete one; the response is still a 200. At most 1,000 children may be requested in one collection. Geometry collections process at most 250,000 source vertices per request, counted before simplification. A larger request returns 422 without a partial collection. Reduce the page size for a box query, omit its tier to retrieve identities, or follow the problem's `links.downloads` to the boundary release metadata and its whole-release downloads.
          */
         get: operations["getAreaChildrenGeometry"];
         put?: never;
@@ -2438,7 +2438,7 @@ export interface components {
                 toleranceM: number;
                 /** @enum {string} */
                 format: "geoparquet-1.1" | "geojson";
-                /** @description The stored file. Absent for `full`, which is written from the geometry store when asked for. */
+                /** @description The stored file, when present. Generated downloads omit this field and use their API href. */
                 artifact?: string;
                 href: string;
                 /** @description One row per area in the release. */
@@ -2448,7 +2448,7 @@ export interface components {
                 bytes: number;
                 /** @description SHA-256 of the file served at `href`, once any content encoding is undone. */
                 contentHash: string;
-                /** @description Present when the file is stored gzipped, as GeoJSON is: its size as sent with `Content-Encoding: gzip`. */
+                /** @description Present for GeoJSON: the size of its gzip encoding as sent with `Content-Encoding: gzip`. */
                 gzipBytes?: number;
             }[];
             /** @description The terms the tiers were compiled on, in plain words. */
@@ -3963,7 +3963,7 @@ export interface components {
         };
     };
     parameters: {
-        /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. Files stored gzipped (the GeoJSON downloads) are always sent whole. */
+        /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole. */
         ByteRange: string;
         /** @description The input coordinate reference system. The default `EPSG:4326` uses `lng` and `lat`; `EPSG:27700` uses British National Grid `easting` and `northing` or an Ordnance Survey `gridref`; `EPSG:29902` uses Irish Grid `easting` and `northing`. */
         PointLookupCrs: "EPSG:4326" | "EPSG:27700" | "EPSG:29902";
@@ -4254,7 +4254,7 @@ export interface operations {
                 format?: "geoparquet" | "geojson";
             };
             header?: {
-                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. Files stored gzipped (the GeoJSON downloads) are always sent whole. */
+                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole. */
                 Range?: components["parameters"]["ByteRange"];
             };
             path: {
@@ -4381,7 +4381,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. Files stored gzipped (the GeoJSON downloads) are always sent whole. */
+                /** @description One byte range of the file, as `bytes=start-end`, `bytes=start-` or `bytes=-length`. This is how a PMTiles client reads an archive: the header, then a directory, then only the tiles it needs. Several ranges in one request are not supported and get the whole file, as does an `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole. */
                 Range?: components["parameters"]["ByteRange"];
             };
             path: {
@@ -4443,7 +4443,25 @@ export interface operations {
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["GeographySummaryListEnvelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: ({
+                            id: string;
+                            latestRelease: string;
+                            releaseCount: number;
+                        } & {
+                            [key: string]: unknown;
+                        })[];
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -4496,7 +4514,67 @@ export interface operations {
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["BoundaryReleaseListEnvelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: ({
+                            id: string;
+                            geography: string;
+                            title: string;
+                            description?: string;
+                            temporalCoverage?: string;
+                            coverage: {
+                                countries: string[];
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            source: {
+                                publisher: string;
+                                /** Format: uri */
+                                url: string;
+                                /** Format: date */
+                                retrievedAt?: string;
+                                licence: {
+                                    name: string;
+                                    /** Format: uri */
+                                    url?: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            metadataHash: string;
+                            /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+                            deprecation?: {
+                                /**
+                                 * Format: date
+                                 * @description The date the release was deprecated.
+                                 */
+                                deprecated: string;
+                                /**
+                                 * Format: date
+                                 * @description The date after which the release may be removed. Absent until one is set.
+                                 */
+                                sunset?: string;
+                                /** @description The id of the release, of the same geography, to use instead. */
+                                replacedBy: string;
+                                reason: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } & {
+                            [key: string]: unknown;
+                        })[];
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -4529,18 +4607,219 @@ export interface operations {
                     /**
                      * @example {
                      *       "apiVersion": "v1",
-                     *       "atlasRelease": "sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
+                     *       "atlasRelease": "sha256:a37c82c558874df4611b72cff4e74ddfbf1c587f915d157273cf67a01341b80f",
                      *       "data": {
                      *         "geography": "localAuthority",
                      *         "date": "2023-06-30",
-                     *         "month": "2023-06"
+                     *         "month": "2023-06",
+                     *         "selected": {
+                     *           "id": "2023-05-uk-bgc-v2",
+                     *           "month": "2023-05",
+                     *           "title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+                     *           "countries": [
+                     *             "GB-ENG",
+                     *             "GB-NIR",
+                     *             "GB-SCT",
+                     *             "GB-WLS"
+                     *           ],
+                     *           "href": "/v1/boundary-releases/localAuthority/2023-05-uk-bgc-v2"
+                     *         },
+                     *         "sameMonth": false,
+                     *         "previous": {
+                     *           "id": "2022-12-uk-bgc-v2",
+                     *           "month": "2022-12",
+                     *           "title": "Local authority districts, December 2022 (United Kingdom, generalised, clipped, v2)",
+                     *           "countries": [
+                     *             "GB-ENG",
+                     *             "GB-NIR",
+                     *             "GB-SCT",
+                     *             "GB-WLS"
+                     *           ],
+                     *           "href": "/v1/boundary-releases/localAuthority/2022-12-uk-bgc-v2"
+                     *         },
+                     *         "next": {
+                     *           "id": "2023-12-uk-bgc",
+                     *           "month": "2023-12",
+                     *           "title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+                     *           "countries": [
+                     *             "GB-ENG",
+                     *             "GB-NIR",
+                     *             "GB-SCT",
+                     *             "GB-WLS"
+                     *           ],
+                     *           "href": "/v1/boundary-releases/localAuthority/2023-12-uk-bgc"
+                     *         },
+                     *         "setAside": [],
+                     *         "notCovering": [],
+                     *         "basis": "latest-release-dated-on-or-before",
+                     *         "note": "Releases are snapshots dated to a month, so this is the latest snapshot at the date asked for, not a statement of which boundaries were legally in force on it. A change after the selected release shows first in next. When sameMonth is true the date falls in the release's own month, and a change that month may lie either side of it."
                      *       },
                      *       "meta": {
                      *         "nextCursor": null
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["Envelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: {
+                            geography: string;
+                            date: string;
+                            month: string;
+                            country?: string;
+                            selected: {
+                                id: string;
+                                month: string;
+                                title: string;
+                                countries: string[];
+                                href: string;
+                                /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+                                deprecation?: {
+                                    /**
+                                     * Format: date
+                                     * @description The date the release was deprecated.
+                                     */
+                                    deprecated: string;
+                                    /**
+                                     * Format: date
+                                     * @description The date after which the release may be removed. Absent until one is set.
+                                     */
+                                    sunset?: string;
+                                    /** @description The id of the release, of the same geography, to use instead. */
+                                    replacedBy: string;
+                                    reason: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            sameMonth: boolean;
+                            previous: ({
+                                id: string;
+                                month: string;
+                                title: string;
+                                countries: string[];
+                                href: string;
+                                /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+                                deprecation?: {
+                                    /**
+                                     * Format: date
+                                     * @description The date the release was deprecated.
+                                     */
+                                    deprecated: string;
+                                    /**
+                                     * Format: date
+                                     * @description The date after which the release may be removed. Absent until one is set.
+                                     */
+                                    sunset?: string;
+                                    /** @description The id of the release, of the same geography, to use instead. */
+                                    replacedBy: string;
+                                    reason: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            }) | null;
+                            next: ({
+                                id: string;
+                                month: string;
+                                title: string;
+                                countries: string[];
+                                href: string;
+                                /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+                                deprecation?: {
+                                    /**
+                                     * Format: date
+                                     * @description The date the release was deprecated.
+                                     */
+                                    deprecated: string;
+                                    /**
+                                     * Format: date
+                                     * @description The date after which the release may be removed. Absent until one is set.
+                                     */
+                                    sunset?: string;
+                                    /** @description The id of the release, of the same geography, to use instead. */
+                                    replacedBy: string;
+                                    reason: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            }) | null;
+                            setAside: ({
+                                id: string;
+                                month: string;
+                                title: string;
+                                countries: string[];
+                                href: string;
+                                /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+                                deprecation?: {
+                                    /**
+                                     * Format: date
+                                     * @description The date the release was deprecated.
+                                     */
+                                    deprecated: string;
+                                    /**
+                                     * Format: date
+                                     * @description The date after which the release may be removed. Absent until one is set.
+                                     */
+                                    sunset?: string;
+                                    /** @description The id of the release, of the same geography, to use instead. */
+                                    replacedBy: string;
+                                    reason: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                                reason: string;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            notCovering: ({
+                                id: string;
+                                month: string;
+                                title: string;
+                                countries: string[];
+                                href: string;
+                                /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+                                deprecation?: {
+                                    /**
+                                     * Format: date
+                                     * @description The date the release was deprecated.
+                                     */
+                                    deprecated: string;
+                                    /**
+                                     * Format: date
+                                     * @description The date after which the release may be removed. Absent until one is set.
+                                     */
+                                    sunset?: string;
+                                    /** @description The id of the release, of the same geography, to use instead. */
+                                    replacedBy: string;
+                                    reason: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            undated?: string[];
+                            /** @constant */
+                            basis: "latest-release-dated-on-or-before";
+                            note: string;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             400: components["responses"]["InvalidQuery"];
@@ -4588,7 +4867,197 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: {
+                            geography: string;
+                            from: {
+                                geography: string;
+                                boundaryRelease: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            to: {
+                                geography: string;
+                                boundaryRelease: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            summary: {
+                                fromAreaCount: number;
+                                toAreaCount: number;
+                                sharedCodeCount: number;
+                                codesOnlyInFromCount: number;
+                                codesOnlyInToCount: number;
+                                continuousCodeCount: number;
+                                recodedCodeCount: number;
+                                changedExtentCount: number;
+                                indeterminateExtentCount: number;
+                                unmeasuredCodeCount: number;
+                                unassessedSharedCodeCount: number;
+                                publishedRelationshipCount: number;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            codes: {
+                                onlyInFrom: ({
+                                    id: string;
+                                    code: string;
+                                    name: string;
+                                    aliases?: string[];
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                                onlyInTo: ({
+                                    id: string;
+                                    code: string;
+                                    name: string;
+                                    aliases?: string[];
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            continuity: ({
+                                /** @constant */
+                                status: "not-published";
+                                reason: string;
+                            } & {
+                                [key: string]: unknown;
+                            }) | ({
+                                /** @constant */
+                                status: "available";
+                                crosswalks: string[];
+                                recoded: ({
+                                    fromCode: string;
+                                    toCode: string;
+                                    widestDifferenceM: number;
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                                changedExtent: ({
+                                    code: string;
+                                    relation: string;
+                                    widestDifferenceM: number;
+                                    fromShare: number;
+                                    toShare: number;
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                                unmeasured: ({
+                                    code: string;
+                                    reason: string;
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                                unassessedSharedCodes: string[];
+                            } & {
+                                [key: string]: unknown;
+                            });
+                            publishedRelationships: ({
+                                id: string;
+                                /** @enum {string} */
+                                direction: "forward" | "reverse";
+                                method: string;
+                                quality: string;
+                                /** @enum {string} */
+                                relationshipPurpose?: "identity" | "membership";
+                                weighting: ({
+                                    /** @constant */
+                                    status: "not-provided";
+                                } & {
+                                    [key: string]: unknown;
+                                }) | ({
+                                    /** @constant */
+                                    status: "not-applicable";
+                                } & {
+                                    [key: string]: unknown;
+                                }) | ({
+                                    /** @constant */
+                                    status: "provided";
+                                    /** @constant */
+                                    basis: "area";
+                                    /** @constant */
+                                    normalisation: "per-source";
+                                } & {
+                                    [key: string]: unknown;
+                                }) | ({
+                                    /** @constant */
+                                    status: "provided";
+                                    /** @constant */
+                                    basis: "population";
+                                    /** @constant */
+                                    normalisation: "per-source";
+                                    population: string;
+                                    date: string;
+                                    blocks: {
+                                        geography: string;
+                                        boundaryRelease: string;
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                } & {
+                                    [key: string]: unknown;
+                                });
+                                mapping: {
+                                    /** @enum {string} */
+                                    shape: "no-mappings" | "one-to-one" | "one-to-many" | "many-to-one" | "many-to-many";
+                                    fromCodeCount: number;
+                                    toCodeCount: number;
+                                    pairCount: number;
+                                    from: {
+                                        noTargetCount: number;
+                                        oneTargetCount: number;
+                                        multipleTargetCount: number;
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                    to: {
+                                        oneSourceCount: number;
+                                        multipleSourceCount: number;
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                    examples: {
+                                        oneToMany: ({
+                                            fromCode: string;
+                                            toCodes: string[];
+                                        } & {
+                                            [key: string]: unknown;
+                                        })[];
+                                        manyToOne: ({
+                                            toCode: string;
+                                            fromCodes: string[];
+                                        } & {
+                                            [key: string]: unknown;
+                                        })[];
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                    note: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                                recordCount: number;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            limit: number;
+                            note: string;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             400: components["responses"]["InvalidQuery"];
@@ -4645,14 +5114,135 @@ export interface operations {
                      *             "url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
                      *           }
                      *         },
-                     *         "metadataHash": "sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5e8466f3"
+                     *         "metadataHash": "sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5e8466f3",
+                     *         "documents": {
+                     *           "validation": "/v1/documents/validation-report.json",
+                     *           "health": "/v1/documents/geography-health.json"
+                     *         },
+                     *         "downloads": {
+                     *           "status": "available",
+                     *           "mapResource": "/v1/map-resources/constituency/2024-07-uk-bgc",
+                     *           "pmtiles": "/v1/map-resources/constituency/2024-07-uk-bgc.pmtiles",
+                     *           "tileJson": "/v1/map-resources/constituency/2024-07-uk-bgc/tiles.json",
+                     *           "geojson": {
+                     *             "medium": "/v1/map-resources/constituency/2024-07-uk-bgc/features?tier=medium&format=geojson",
+                     *             "low": "/v1/map-resources/constituency/2024-07-uk-bgc/features?tier=low&format=geojson"
+                     *           },
+                     *           "geoparquet": {
+                     *             "full": "/v1/map-resources/constituency/2024-07-uk-bgc/features?tier=full",
+                     *             "high": "/v1/map-resources/constituency/2024-07-uk-bgc/features?tier=high",
+                     *             "medium": "/v1/map-resources/constituency/2024-07-uk-bgc/features?tier=medium",
+                     *             "low": "/v1/map-resources/constituency/2024-07-uk-bgc/features?tier=low"
+                     *           }
+                     *         }
                      *       },
                      *       "meta": {
                      *         "nextCursor": null
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["BoundaryReleaseEnvelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: {
+                            id: string;
+                            geography: string;
+                            title: string;
+                            description?: string;
+                            temporalCoverage?: string;
+                            coverage: {
+                                countries: string[];
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            source: {
+                                publisher: string;
+                                /** Format: uri */
+                                url: string;
+                                /** Format: date */
+                                retrievedAt?: string;
+                                licence: {
+                                    name: string;
+                                    /** Format: uri */
+                                    url?: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            metadataHash: string;
+                            /** @description Present on a release that has been superseded. The release stays published and is not chosen by date or `latest` while its replacement covers the date; clients should move to `replacedBy` before `sunset`. */
+                            deprecation?: {
+                                /**
+                                 * Format: date
+                                 * @description The date the release was deprecated.
+                                 */
+                                deprecated: string;
+                                /**
+                                 * Format: date
+                                 * @description The date after which the release may be removed. Absent until one is set.
+                                 */
+                                sunset?: string;
+                                /** @description The id of the release, of the same geography, to use instead. */
+                                replacedBy: string;
+                                reason: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            documents: {
+                                validation: string;
+                                health: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            /** @description Where to get the whole release. Available releases have vector tiles and GeoParquet downloads. Untiled releases have GeoParquet at full detail only. Unavailable releases have no readable geometry. Each remains available area by area. */
+                            downloads: ({
+                                /** @constant */
+                                status: "available";
+                                /** @description The descriptor, with sizes, hashes and attribution. */
+                                mapResource: string;
+                                pmtiles: string;
+                                tileJson: string;
+                                /** @description The download for the medium and low tiers. */
+                                geojson: {
+                                    [key: string]: string;
+                                };
+                                /** @description GeoParquet downloads by tier. */
+                                geoparquet: {
+                                    [key: string]: string;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            }) | ({
+                                /** @constant */
+                                status: "untiled";
+                                reason: string;
+                                /** @description GeoParquet downloads by tier. */
+                                geoparquet: {
+                                    [key: string]: string;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            }) | ({
+                                /** @constant */
+                                status: "unavailable";
+                                reason: string;
+                            } & {
+                                [key: string]: unknown;
+                            });
+                        } & {
+                            [key: string]: unknown;
+                        };
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             404: components["responses"]["NotFound"];
@@ -5027,7 +5617,55 @@ export interface operations {
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["Envelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: ({
+                            id: string;
+                            label: string;
+                            publisher: string;
+                            description?: string;
+                            sourceUrl: string;
+                            temporalCoverage: string;
+                            licence: {
+                                name: string;
+                                url?: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            inputs: ({
+                                kind: string;
+                                path: string;
+                                bytes: number;
+                                sha256: string;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            summary: {
+                                datasetCount: number;
+                                dataRecordCount: number;
+                                codeYears: number[];
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            compiled: {
+                                bytes: number;
+                                sha256: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } & {
+                            [key: string]: unknown;
+                        })[];
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             503: components["responses"]["CatalogueUnavailable"];
@@ -5083,7 +5721,7 @@ export interface operations {
                      *         },
                      *         "compiled": {
                      *           "bytes": 13350128,
-                     *           "sha256": "32adfba936cd8746fac5ccceb71299b9822e0d3c04540420106e10b5272caf10"
+                     *           "sha256": "9b65e2c5703ac54675cde58ecb4367e23abe4ef09c6bfc9902b8d13ba0f97a11"
                      *         }
                      *       },
                      *       "meta": {
@@ -5091,7 +5729,55 @@ export interface operations {
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["Envelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: {
+                            id: string;
+                            label: string;
+                            publisher: string;
+                            description?: string;
+                            sourceUrl: string;
+                            temporalCoverage: string;
+                            licence: {
+                                name: string;
+                                url?: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            inputs: ({
+                                kind: string;
+                                path: string;
+                                bytes: number;
+                                sha256: string;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            summary: {
+                                datasetCount: number;
+                                dataRecordCount: number;
+                                codeYears: number[];
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            compiled: {
+                                bytes: number;
+                                sha256: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } & {
+                            [key: string]: unknown;
+                        };
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             404: components["responses"]["NotFound"];
@@ -5170,7 +5856,102 @@ export interface operations {
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["Envelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: ({
+                            id: string;
+                            label: string;
+                            /** @enum {string} */
+                            valueKind: "count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";
+                            unit: string;
+                            unitDefinition?: {
+                                code: string;
+                                scaleToCanonical: number;
+                                per?: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            aliases?: string[];
+                            concept?: string;
+                            elsewhere?: ({
+                                measureId: string;
+                                countries: string[];
+                                comparable: boolean;
+                                reason: string;
+                                href: string;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            derivedFrom?: {
+                                datasetIds: string[];
+                                note: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            uncertainty?: {
+                                /** @constant */
+                                kind: "confidence-interval";
+                                level: number;
+                                note: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            notes?: string[];
+                            aggregation: {
+                                kind: string;
+                                available: boolean;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            sources: ({
+                                datasetId: string;
+                                periods: string[];
+                                sourceGeography: {
+                                    type: string;
+                                    codeYear: number;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                                observationArtifact?: string;
+                                coverage: {
+                                    /** @enum {string} */
+                                    kind: "partial" | "source-reported";
+                                    countries: string[];
+                                    recordCount: number;
+                                    note: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            availability: {
+                                /** @constant */
+                                sourceExact: true;
+                                /** @constant */
+                                conversion: false;
+                                aggregation: boolean;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            links: {
+                                data: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } & {
+                            [key: string]: unknown;
+                        })[];
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             503: components["responses"]["CatalogueUnavailable"];
@@ -5246,7 +6027,102 @@ export interface operations {
                      *       }
                      *     }
                      */
-                    "application/json": components["schemas"]["Envelope"];
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: {
+                            id: string;
+                            label: string;
+                            /** @enum {string} */
+                            valueKind: "count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";
+                            unit: string;
+                            unitDefinition?: {
+                                code: string;
+                                scaleToCanonical: number;
+                                per?: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            aliases?: string[];
+                            concept?: string;
+                            elsewhere?: ({
+                                measureId: string;
+                                countries: string[];
+                                comparable: boolean;
+                                reason: string;
+                                href: string;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            derivedFrom?: {
+                                datasetIds: string[];
+                                note: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            uncertainty?: {
+                                /** @constant */
+                                kind: "confidence-interval";
+                                level: number;
+                                note: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            notes?: string[];
+                            aggregation: {
+                                kind: string;
+                                available: boolean;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            sources: ({
+                                datasetId: string;
+                                periods: string[];
+                                sourceGeography: {
+                                    type: string;
+                                    codeYear: number;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                                observationArtifact?: string;
+                                coverage: {
+                                    /** @enum {string} */
+                                    kind: "partial" | "source-reported";
+                                    countries: string[];
+                                    recordCount: number;
+                                    note: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            availability: {
+                                /** @constant */
+                                sourceExact: true;
+                                /** @constant */
+                                conversion: false;
+                                aggregation: boolean;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            links: {
+                                data: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } & {
+                            [key: string]: unknown;
+                        };
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             404: components["responses"]["NotFound"];

@@ -29,7 +29,9 @@ export const resolveAggregationPartition = ({
 	pathId,
 	sourceRelease,
 }: {
-	context: RouteContextFor<"area" | "crosswalk" | "indexedPathSteps" | "relationshipPath">;
+	context: RouteContextFor<
+		"area" | "crosswalk" | "indexedPathSteps" | "relationshipPath"
+	>;
 	measureId: string;
 	period: string;
 	geography: string;

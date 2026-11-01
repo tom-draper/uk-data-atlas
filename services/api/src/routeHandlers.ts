@@ -1,6 +1,7 @@
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
 import { handleIndexRoutes } from "./indexRoutes";
+import { validateContractResponse } from "./contract/validateResponse";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
 import {
@@ -12,46 +13,46 @@ import type {
 	FullDetailSource,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
-import { handleBoundaryRoutes } from "./boundaryRoutes";
-import { handleCatalogueRoutes } from "./catalogueRoutes";
+import { handleBoundaryRoutes } from "./boundaries/boundaryRoutes";
+import { handleCatalogueRoutes } from "./catalogue/catalogueRoutes";
 import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
 import { handleCoordinateRoutes } from "./coordinateRoutes";
-import { handleDataRoutes } from "./dataRoutes";
-import { handleDataSeriesRoutes } from "./dataSeriesRoutes";
-import { handleDataRankingRoutes } from "./dataRankingRoutes";
-import { handleDataChangeRoutes } from "./dataChangeRoutes";
-import { handleDataValueRoutes } from "./dataValueRoutes";
-import { handlePlaceRoutes } from "./placeRoutes";
+import { handleDataRoutes } from "./data/dataRoutes";
+import { handleDataSeriesRoutes } from "./data/dataSeriesRoutes";
+import { handleDataRankingRoutes } from "./data/dataRankingRoutes";
+import { handleDataChangeRoutes } from "./data/dataChangeRoutes";
+import { handleDataValueRoutes } from "./data/dataValueRoutes";
+import { handlePlaceRoutes } from "./places/placeRoutes";
 import {
 	handlePostcodeBatchRoutes,
 	handlePostcodeRoutes,
-} from "./postcodeRoutes";
-import { handleDataTransformRoutes } from "./dataTransformRoutes";
-import { handleDataConversionRoutes } from "./dataConversionRoutes";
+} from "./places/postcodeRoutes";
+import { handleDataTransformRoutes } from "./data/dataTransformRoutes";
+import { handleDataConversionRoutes } from "./data/dataConversionRoutes";
 import { handleAnalysisGeographyRoutes } from "@uk-data-atlas/atlas-runtime/api";
-import { handleAreaSearchRoutes } from "./areaSearchRoutes";
+import { handleAreaSearchRoutes } from "./areas/areaSearchRoutes";
 import {
 	handleAreaContainsBatchRoutes,
 	handleAreaContainsRoutes,
-} from "./areaContainsRoutes";
-import { handleAreaNearRoutes } from "./areaNearRoutes";
-import { handleAreaIntersectsRoutes } from "./areaIntersectsRoutes";
-import { handleAreaValidationRoutes } from "./areaValidationRoutes";
-import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
-import { handleAreaHistoryRoutes } from "./areaHistoryRoutes";
-import { handleAreaRelationshipRoutes } from "./areaRelationshipRoutes";
-import { handleAreaChildGeometryRoutes } from "./areaChildGeometryRoutes";
-import { handleAreaNeighbourRoutes } from "./areaNeighbourRoutes";
-import { handleAreaOverlapRoutes } from "./areaOverlapRoutes";
-import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
+} from "./areas/areaContainsRoutes";
+import { handleAreaNearRoutes } from "./areas/areaNearRoutes";
+import { handleAreaIntersectsRoutes } from "./areas/areaIntersectsRoutes";
+import { handleAreaValidationRoutes } from "./areas/areaValidationRoutes";
+import { handleAreaIdentityRoutes } from "./areas/areaIdentityRoutes";
+import { handleAreaHistoryRoutes } from "./areas/areaHistoryRoutes";
+import { handleAreaRelationshipRoutes } from "./areas/areaRelationshipRoutes";
+import { handleAreaChildGeometryRoutes } from "./areas/areaChildGeometryRoutes";
+import { handleAreaNeighbourRoutes } from "./areas/areaNeighbourRoutes";
+import { handleAreaOverlapRoutes } from "./areas/areaOverlapRoutes";
+import { handleAreaGeometryRoutes } from "./areas/areaGeometryRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
-import { handleLocationRoutes } from "./locationRoutes";
-import { handleCrosswalkRoutes } from "./crosswalkRoutes";
+import { handleLocationRoutes } from "./places/locationRoutes";
+import { handleCrosswalkRoutes } from "./crosswalks/crosswalkRoutes";
 import {
 	crosswalkConversionId,
 	handleCrosswalkConversionRoutes,
-} from "./crosswalkConversionRoutes";
+} from "./crosswalks/crosswalkConversionRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
 import { handleGovernanceRoutes } from "@uk-data-atlas/atlas-runtime/api";
 import { handleSyncRoutes } from "@uk-data-atlas/atlas-runtime/api";
@@ -395,7 +396,10 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 		);
 	const handled = family?.handle(routed);
 	if (!handled) return handled;
-	const response = withPathReleaseHeaders(routed, handled);
+	const response = withPathReleaseHeaders(
+		routed,
+		validateContractResponse(routed.segments, handled),
+	);
 	if (!canonical) return response;
 	const { pathname, search } = canonical.parsedUrl;
 	return {

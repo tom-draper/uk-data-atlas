@@ -114,6 +114,8 @@ export const decomposeArcs = (
 			`A release of ${vertices.length} distinct vertices is too large to decompose; the limit is ${EDGE_SHIFT}.`,
 		);
 
+	// Both indexes are large; their lifetimes must not overlap.
+	vertexIds.clear();
 	const edgeIds = new Map<number, number>();
 	const edgeStart: number[] = [];
 	const edgeEnd: number[] = [];
@@ -153,6 +155,8 @@ export const decomposeArcs = (
 			}
 		}
 	}
+
+	edgeIds.clear();
 
 	// Which pair of areas an edge separates, as one number, and then whether
 	// every edge at a vertex separates the same pair.

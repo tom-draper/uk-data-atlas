@@ -6,7 +6,7 @@ import test from "node:test";
 import { gzipSync } from "node:zlib";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { readPostedRows } from "../src/requestRows";
-import { route } from "../src/routes";
+import { route, routeAsync } from "../src/routes";
 import type {
 	RequestBody,
 	RouteContext,
@@ -304,4 +304,78 @@ test("gives a POSTed column the same CSV match report as a GET", () => {
 	assert.equal(posted.status, 200);
 	assert.match(posted.representation?.contentType ?? "", /text\/csv/);
 	assert.equal(posted.representation?.body, got.representation?.body);
+});
+
+test("joins generated GeoJSON after validating the posted rows", async () => {
+	const content = Buffer.from(
+		JSON.stringify({
+			type: "FeatureCollection",
+			features: [
+				{
+					type: "Feature",
+					id: 2,
+					properties: { code: "E05000002" },
+					geometry: { type: "Point", coordinates: [0, 2] },
+				},
+			],
+		}),
+	);
+	let builds = 0;
+	const withMap: RouteContext = {
+		...context,
+		mapResources: {
+			resources: [
+				{
+					id: "ward/2025-01-en-ward",
+					geography: "ward",
+					boundaryRelease: "2025-01-en-ward",
+					tiles: { layer: "areas" },
+					attribution: {
+						text: "Source: Example",
+						href: "/v1/attribution",
+					},
+					features: [
+						{
+							tier: "low",
+							format: "geojson",
+							bytes: content.length,
+							contentHash: "hash",
+						},
+					],
+				} as MapResourceDescriptor,
+			],
+		},
+		fullDetailDownloads: {
+			get: () => assert.fail("Async join should await generation"),
+			build: async (...asked) => {
+				builds++;
+				assert.deepEqual(asked, [
+					"ward",
+					"2025-01-en-ward",
+					"shared-arc",
+					"hash",
+					{ tier: "low", format: "geojson" },
+				]);
+				return { status: "built", body: content };
+			},
+		},
+	};
+	const response = await routeAsync(
+		"POST",
+		`${JOIN}?format=geojson&tier=low`,
+		withMap,
+		json({ rows: [{ area: "E05000002", value: 7 }] }),
+	);
+	assert.equal(response.status, 200);
+	assert.equal(builds, 1);
+	const collection = JSON.parse(String(response.representation?.body));
+	assert.equal(collection.features[0].properties.value, 7);
+	const invalid = await routeAsync(
+		"POST",
+		`${JOIN}?format=geojson&tier=low`,
+		withMap,
+		json({ invalid: true }),
+	);
+	assert.equal(invalid.status, 400);
+	assert.equal(builds, 1);
 });

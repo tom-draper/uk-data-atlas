@@ -5,7 +5,9 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.boundary_release_list_envelope import BoundaryReleaseListEnvelope
+from ...models.list_boundary_releases_response_200 import (
+    ListBoundaryReleasesResponse200,
+)
 from ...types import Response
 
 
@@ -21,9 +23,9 @@ def _get_kwargs() -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> BoundaryReleaseListEnvelope | None:
+) -> ListBoundaryReleasesResponse200 | None:
     if response.status_code == 200:
-        response_200 = BoundaryReleaseListEnvelope.from_dict(response.json())
+        response_200 = ListBoundaryReleasesResponse200.from_dict(response.json())
 
         return response_200
 
@@ -35,7 +37,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[BoundaryReleaseListEnvelope]:
+) -> Response[ListBoundaryReleasesResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -47,7 +49,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[BoundaryReleaseListEnvelope]:
+) -> Response[ListBoundaryReleasesResponse200]:
     """List every compiled boundary release
 
     Raises:
@@ -55,7 +57,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[BoundaryReleaseListEnvelope]
+        Response[ListBoundaryReleasesResponse200]
     """
 
     kwargs = _get_kwargs()
@@ -70,7 +72,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-) -> BoundaryReleaseListEnvelope | None:
+) -> ListBoundaryReleasesResponse200 | None:
     """List every compiled boundary release
 
     Raises:
@@ -78,7 +80,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        BoundaryReleaseListEnvelope
+        ListBoundaryReleasesResponse200
     """
 
     return sync_detailed(
@@ -89,7 +91,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[BoundaryReleaseListEnvelope]:
+) -> Response[ListBoundaryReleasesResponse200]:
     """List every compiled boundary release
 
     Raises:
@@ -97,7 +99,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[BoundaryReleaseListEnvelope]
+        Response[ListBoundaryReleasesResponse200]
     """
 
     kwargs = _get_kwargs()
@@ -110,7 +112,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-) -> BoundaryReleaseListEnvelope | None:
+) -> ListBoundaryReleasesResponse200 | None:
     """List every compiled boundary release
 
     Raises:
@@ -118,7 +120,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        BoundaryReleaseListEnvelope
+        ListBoundaryReleasesResponse200
     """
 
     return (

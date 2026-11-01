@@ -17,8 +17,11 @@ import {
 import { readTable, ROW_LIMIT, type Table } from "@/lib/fix/table";
 import type { ReleaseRef } from "@/lib/fix/types";
 import ColumnsPanel, { type ColumnChoice } from "./ColumnsPanel";
+import ConvertPanel from "./ConvertPanel";
 import DiagnosisPanel from "./DiagnosisPanel";
 import InputPanel from "./InputPanel";
+import MapPanel from "./MapPanel";
+import UpdatePanel from "./UpdatePanel";
 import { Button, StepHeading } from "./ui";
 
 interface Source {
@@ -191,13 +194,76 @@ export default function FixTool() {
 
 				{source &&
 					table &&
+					diagnosis &&
+					!busy &&
+					area !== null &&
+					diagnosis.release &&
+					diagnosis.matched > 0 && (
+						<section aria-labelledby="fix-map">
+							<StepHeading step={4} id="fix-map">
+								Map preview
+							</StepHeading>
+							<MapPanel
+								key={`${source.name}/${area}/${diagnosis.release.boundaryRelease}`}
+								table={table}
+								diagnosis={diagnosis}
+								values={choice.values}
+							/>
+						</section>
+					)}
+
+				{source &&
+					table &&
+					result &&
+					diagnosis &&
+					!busy &&
+					area !== null &&
+					diagnosis.latest &&
+					diagnosis.matched > 0 && (
+						<section aria-labelledby="fix-update">
+							<StepHeading step={5} id="fix-update">
+								Update and add columns
+							</StepHeading>
+							<UpdatePanel
+								key={`${source.name}/${area}/${diagnosis.release?.boundaryRelease}`}
+								table={table}
+								diagnosis={diagnosis}
+								area={area}
+								sourceName={source.name}
+							/>
+						</section>
+					)}
+
+				{source &&
+					table &&
+					diagnosis &&
+					!busy &&
+					area !== null &&
+					diagnosis.release &&
+					diagnosis.matched > 0 && (
+						<section aria-labelledby="fix-convert">
+							<StepHeading step={6} id="fix-convert">
+								Convert to another geography
+							</StepHeading>
+							<ConvertPanel
+								key={`${source.name}/${area}/${diagnosis.release.boundaryRelease}/${choice.values.join(",")}`}
+								table={table}
+								diagnosis={diagnosis}
+								values={choice.values}
+								sourceName={source.name}
+							/>
+						</section>
+					)}
+
+				{source &&
+					table &&
 					result &&
 					diagnosis &&
 					!busy &&
 					area !== null && (
 						<section aria-labelledby="fix-output">
-							<StepHeading step={4} id="fix-output">
-								Download
+							<StepHeading step={7} id="fix-output">
+								Reports
 							</StepHeading>
 							<div className="flex flex-wrap gap-2">
 								<Button

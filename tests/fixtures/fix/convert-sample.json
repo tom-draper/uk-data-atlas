@@ -1,0 +1,52 @@
+{
+	"apiVersion": "v1",
+	"atlasRelease": "sha256:e328679310bcae2cc4d96d6e853ddb42f7ec80e98215b6608189edd8bd26bb41",
+	"data": {
+		"from": { "geography": "ward", "boundaryRelease": "2024-12-uk-bgc" },
+		"to": {
+			"geography": "localAuthority",
+			"boundaryRelease": "2024-12-uk-bgc"
+		},
+		"semantics": "count",
+		"input": {
+			"contentHash": "sha256:714cf73667f0992b3715e89cd16ba2f4b211b6d8cb543f50515e050d81b77552",
+			"rowCount": 26,
+			"normalisedCount": 0
+		},
+		"crosswalk": {
+			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+			"href": "/v1/crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+			"contentHash": "sha256:3f808003bd00f729f4442e1667c858a4d31977198dc2903eabe13702d8c87526",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-applicable" }
+		},
+		"method": "exact",
+		"coverage": {
+			"scope": "published-crosswalk",
+			"crosswalkSourceAreas": 8396,
+			"sourceAreasSupplied": 26,
+			"targetsComplete": 0,
+			"targetsPartial": 1,
+			"targetsNotReached": 360,
+			"sourceAreas": 8396
+		},
+		"inputTotal": 85666,
+		"outputTotal": 85666,
+		"records": [
+			{
+				"areaCode": "E06000054",
+				"value": 85666,
+				"status": "derived",
+				"inputAreaCount": 26,
+				"coverage": {
+					"status": "partial",
+					"sourceCount": 98,
+					"suppliedSourceCount": 26
+				}
+			}
+		],
+		"note": "Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."
+	},
+	"meta": { "nextCursor": null }
+}

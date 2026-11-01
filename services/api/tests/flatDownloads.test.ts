@@ -221,3 +221,113 @@ test("builds a full-detail download off the main thread, once for callers asking
 		(built as { body: Buffer }).body,
 	);
 });
+
+test("simplified downloads match published hashes, coalesce, cache and reject stale bytes", async (t) => {
+	const { compileMapResource } =
+		await import("../../../pipeline/src/compileMapResource");
+	const root = mkdtempSync(join(tmpdir(), "atlas-simplified-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data/source"), { recursive: true });
+	writeFileSync(
+		join(root, "data/source/areas.geojson"),
+		JSON.stringify({
+			type: "FeatureCollection",
+			features: ["A", "B"].map((code, i) => ({
+				properties: { CODE: code },
+				geometry: { type: "Polygon", coordinates: square(i, 50) },
+			})),
+		}),
+	);
+	const cache = new AreaGeometryCache(
+		root,
+		new Map([
+			[
+				"ward/test",
+				{
+					input: "areas.geojson",
+					crs: "EPSG:4326",
+					codeProperty: "CODE",
+				},
+			],
+		]),
+	);
+	const release = {
+		geography: "ward",
+		id: "test",
+		title: "Test wards",
+		coverage: { countries: ["England"] },
+		metadataHash: "test",
+		source: {
+			publisher: "ONS",
+			url: "https://example.com",
+			licence: { name: "OGL" },
+		},
+	};
+	const names = new Map([
+		["A", "Ay"],
+		["B", "Bee"],
+	]);
+	const compiled = compileMapResource(
+		cache,
+		release,
+		names,
+		"map-resources/test.pmtiles",
+	);
+	assert.equal(compiled.descriptor.features.length, 6);
+	assert.ok(compiled.descriptor.features.every((entry) => !entry.artifact));
+	const resolver = {
+		boundaryRelease: () => release,
+		releaseAreas: () =>
+			new Map([...names].map(([code, name]) => [code, { code, name }])),
+	};
+	const downloads = new FullDetailDownloads(cache, resolver);
+	for (const entry of compiled.descriptor.features) {
+		if (entry.tier === "full") continue;
+		const download = {
+			tier: entry.tier,
+			format:
+				entry.format === "geojson"
+					? ("geojson" as const)
+					: ("geoparquet" as const),
+		};
+		const request = [
+			"ward",
+			"test",
+			"shared-arc",
+			entry.contentHash,
+			download,
+		] as const;
+		const pending = downloads.build(...request);
+		assert.equal(downloads.build(...request), pending);
+		const result = await pending;
+		assert.equal(result.status, "built");
+		if (result.status !== "built") assert.fail("Download unavailable");
+		assert.equal(result.body.length, entry.bytes);
+		assert.equal(sha256(result.body), entry.contentHash);
+		assert.equal(downloads.get(...request).status, "built");
+		assert.equal(downloads.held(...request)?.body, result.body);
+		assert.deepEqual(
+			await downloads.build(
+				"ward",
+				"test",
+				"shared-arc",
+				"stale",
+				download,
+			),
+			{ status: "stale" },
+		);
+	}
+	const uncached = new FullDetailDownloads(cache, resolver, 0);
+	const entry = compiled.descriptor.features.find(
+		(entry) => entry.tier === "low" && entry.format === "geojson",
+	)!;
+	const request = [
+		"ward",
+		"test",
+		"shared-arc",
+		entry.contentHash,
+		{ tier: "low", format: "geojson" },
+	] as const;
+	assert.equal((await uncached.build(...request)).status, "built");
+	assert.equal(uncached.held(...request), undefined);
+});
