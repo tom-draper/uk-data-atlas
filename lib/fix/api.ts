@@ -137,6 +137,46 @@ export function convertCounts(
 	);
 }
 
+export interface MapTiles {
+	tiles: string[];
+	minzoom: number;
+	maxzoom: number;
+	bounds: [number, number, number, number];
+	attribution: string;
+	/** The layer in each tile that holds the areas. */
+	layer: string;
+}
+
+/**
+ * A release's vector tiles. The TileJSON comes in the API's envelope, with
+ * tile paths relative to the API, so it is unwrapped here for MapLibre.
+ */
+export function mapTiles(
+	release: ReleaseRef,
+	signal?: AbortSignal,
+): Promise<MapTiles> {
+	const path = [release.geography, release.boundaryRelease]
+		.map(encodeURIComponent)
+		.join("/");
+	return request<{
+		tiles: string[];
+		minzoom: number;
+		maxzoom: number;
+		bounds: [number, number, number, number];
+		attribution: string;
+		vector_layers: { id: string }[];
+	}>(`/map-resources/${path}/tiles.json`, { signal }).then((json) => ({
+		tiles: json.tiles.map((tile) =>
+			tile.startsWith("/") ? `${API_ORIGIN}${tile}` : tile,
+		),
+		minzoom: json.minzoom,
+		maxzoom: json.maxzoom,
+		bounds: json.bounds,
+		attribution: json.attribution,
+		layer: json.vector_layers[0]?.id ?? "boundaries",
+	}));
+}
+
 /** A lookup table as CSV, from the `href` its manifest gives. */
 export async function lookupCsv(
 	href: string,
