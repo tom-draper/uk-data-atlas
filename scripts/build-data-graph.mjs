@@ -218,7 +218,7 @@ const apiStages = [
 	),
 	stage(
 		"postcode-index",
-		["sources", "atlas-sqlite"],
+		["sources"],
 		[
 			"--dir",
 			"../..",
