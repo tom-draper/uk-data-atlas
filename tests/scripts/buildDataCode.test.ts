@@ -151,6 +151,30 @@ test("builder discovery does not execute scripts or include generated JSON", () 
 	assert.ok(!inputs.some((path: string) => path.startsWith("public/data/")));
 });
 
+test("atlas assembly depends on each declared component output", () => {
+	const stage = (name: string) =>
+		buildDataStages.find((entry) => entry.name === name)!;
+	assert.ok(
+		stage("data-catalog").requiredOutputs.includes(
+			"data/build/observations.sqlite",
+		),
+	);
+	assert.ok(
+		stage("geography-catalogues").requiredOutputs.includes(
+			"data/build/geography-payloads.json",
+		),
+	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("data-catalog"));
+	assert.ok(
+		stage("assemble-atlas").dependencies.includes("geography-catalogues"),
+	);
+	assert.ok(
+		stage("assemble-atlas").requiredOutputs.includes(
+			"data/build/atlas.sqlite",
+		),
+	);
+});
+
 test("production builders resolve without UI code and include declared workers and compiler sources", () => {
 	const root = resolve(".");
 	const files = execFileSync(

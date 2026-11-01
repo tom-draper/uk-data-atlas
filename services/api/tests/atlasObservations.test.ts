@@ -13,7 +13,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { storeObservations as writeObservations } from "../../../pipeline/src/store-observations";
-import { assembleObservations } from "../../../pipeline/src/assemble-observations";
+import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
 import {
 	assertObservationCatalogue,
 	readObservationInventory,
@@ -79,7 +79,7 @@ const entries = (): Array<readonly [string, string]> => [
 
 function storeObservations(...args: Parameters<typeof writeObservations>) {
 	writeObservations(...args);
-	assembleObservations(args[0]);
+	assembleAtlas(args[0]);
 }
 
 function fixture(t: TestContext) {
@@ -92,9 +92,10 @@ function fixture(t: TestContext) {
 	const path = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(path);
 	database.exec(
-		"CREATE TABLE retained (value TEXT); INSERT INTO retained VALUES ('unchanged')",
+		"CREATE TABLE retained (value TEXT); INSERT INTO retained VALUES ('unchanged'); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID",
 	);
 	database.close();
+	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	return { root, apiRoot, publicDirectory, path };
 }
 
@@ -116,7 +117,7 @@ test("writes observations separately until assembly", (t) => {
 		"numeric-observations",
 		"shared-table",
 	]);
-	assembleObservations(root);
+	assembleAtlas(root);
 	assert.deepEqual([...readObservationInventory(path).names].sort(), [
 		"numeric-observations",
 		"shared-table",
@@ -255,6 +256,7 @@ test("failed publication retains the database and legacy JSON, and cleans tempor
 		assert.deepEqual(readdirSync(join(root, "data/build")), [
 			"artifacts",
 			"atlas.sqlite",
+			"geography-payloads.json",
 			"observations.sqlite",
 		]);
 	}

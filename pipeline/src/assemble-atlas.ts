@@ -1,15 +1,20 @@
 import { randomUUID } from "node:crypto";
-import { copyFileSync, renameSync, rmSync } from "node:fs";
+import { copyFileSync, readFileSync, renameSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { observationBuildPath } from "./observation-build-path";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
 
 const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
 
-export function assembleObservations(root: string) {
+export function assembleAtlas(root: string) {
 	const path = join(root, "data/build/atlas.sqlite");
 	const component = observationBuildPath(root);
+	const payloads = JSON.parse(
+		readFileSync(join(root, "data/build/geography-payloads.json"), "utf8"),
+	) as Array<{ id: string; payload: string }>;
 	const temporary = `${path}.observations.${randomUUID()}.tmp`;
 	try {
 		copyFileSync(path, temporary);
@@ -83,6 +88,13 @@ export function assembleObservations(root: string) {
 				for (const row of [...previousStats, ...stats])
 					insert.run(row.tbl!, row.idx!, row.stat!);
 			}
+			const insertPayload = database.prepare(
+				"INSERT OR REPLACE INTO payloads (id, payload) VALUES (?, ?)",
+			);
+			database.exec("BEGIN");
+			for (const { id, payload } of payloads)
+				insertPayload.run(id, payload);
+			database.exec("COMMIT");
 			database.exec("VACUUM");
 		} finally {
 			database.close();
@@ -91,11 +103,13 @@ export function assembleObservations(root: string) {
 	} finally {
 		rmSync(temporary, { force: true });
 	}
+	for (const id of geographyCatalogues)
+		rmSync(join(artifactDirectory(root), `${id}.json`), { force: true });
 	return path;
 }
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath)
 	console.log(
-		`Assembled observations into ${assembleObservations(resolve(dirname(scriptPath), "../.."))}`,
+		`Assembled atlas components into ${assembleAtlas(resolve(dirname(scriptPath), "../.."))}`,
 	);
