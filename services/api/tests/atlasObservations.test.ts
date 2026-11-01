@@ -12,6 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
+import { AtlasDatasetInput } from "../../../pipeline/src/catalog/input";
 import { storeObservations as writeObservations } from "../../../pipeline/src/store-observations";
 import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
 import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
@@ -146,6 +147,20 @@ test("reassembly retains statistics for other tables", (t) => {
 	} finally {
 		result.close();
 	}
+});
+
+test("catalogue input reads the dataset output without an atlas database", (t) => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-dataset-input-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
+	writeFileSync(
+		join(root, "data/build/datasets/population.json"),
+		"dataset bytes",
+	);
+	assert.equal(
+		new AtlasDatasetInput(root, "population").read(),
+		"dataset bytes",
+	);
 });
 
 test("publishes exact SQLite payloads once per source, preserves other tables, and removes JSON after success", (t) => {

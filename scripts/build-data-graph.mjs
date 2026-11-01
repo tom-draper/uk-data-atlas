@@ -233,7 +233,7 @@ const apiStages = [
 	),
 	stage(
 		"data-catalog",
-		["atlas-sqlite"],
+		["datasets"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-data-catalog.ts"],
 		{
 			requiredOutputs: ["data/build/observations.sqlite"],

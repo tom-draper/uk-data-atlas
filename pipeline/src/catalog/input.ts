@@ -1,21 +1,34 @@
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 
 export class AtlasDatasetInput {
 	constructor(
 		readonly repositoryRoot: string,
 		readonly output: string,
+		readonly source: "datasets" | "atlas" = "datasets",
 	) {}
 	read() {
-		return readAtlasPayload(
-			this.repositoryRoot,
-			this.output === "dataset-manifest"
-				? this.output
-				: `dataset:${this.output}`,
+		if (this.source === "atlas")
+			return readAtlasPayload(
+				this.repositoryRoot,
+				this.output === "dataset-manifest"
+					? this.output
+					: `dataset:${this.output}`,
+			);
+		return readFileSync(
+			join(
+				this.repositoryRoot,
+				"data/build/datasets",
+				`${this.output}.json`,
+			),
+			"utf8",
 		);
 	}
 	toString() {
-		return `data/build/atlas.sqlite:${this.output}`;
+		return this.source === "atlas"
+			? `data/build/atlas.sqlite:${this.output}`
+			: `data/build/datasets/${this.output}.json`;
 	}
 }
 

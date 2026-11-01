@@ -194,6 +194,7 @@ test("atlas assembly depends on each declared component output", () => {
 			"website-lookups",
 		),
 	);
+	assert.deepEqual(stage("data-catalog").dependencies, ["datasets"]);
 	assert.ok(stage("assemble-atlas").dependencies.includes("data-catalog"));
 	assert.ok(
 		stage("assemble-atlas").dependencies.includes("geography-catalogues"),
