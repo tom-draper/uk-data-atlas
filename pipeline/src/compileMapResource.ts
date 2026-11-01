@@ -49,7 +49,6 @@ export const compileMapResource = (
 	artifact: string,
 ): {
 	archive: Buffer;
-	features: Array<{ artifact: string; body: Buffer }>;
 	descriptor: MapResourceDescriptor;
 } => {
 	const { geography, id: boundaryRelease } = release;
@@ -99,7 +98,6 @@ export const compileMapResource = (
 	const id = releaseKey(geography, boundaryRelease);
 	type Download = {
 		entry: MapResourceDescriptor["features"][number];
-		body?: Buffer;
 	};
 	const features = [...compiledTiers].flatMap(
 		([tier, compiled]): Download[] => {
@@ -157,15 +155,10 @@ export const compileMapResource = (
 					entry: {
 						...base,
 						format: "geoparquet-1.1",
-						artifact: artifact.replace(
-							/\.pmtiles$/,
-							`-${tier}.parquet`,
-						),
 						href: `/v1/map-resources/${id}/features?tier=${tier}`,
 						bytes: parquet.length,
 						contentHash: sha256(parquet),
 					},
-					body: parquet,
 				},
 			];
 			if (!GEOJSON_TIERS.includes(tier)) return downloads;
@@ -178,25 +171,17 @@ export const compileMapResource = (
 				entry: {
 					...base,
 					format: "geojson",
-					artifact: artifact.replace(
-						/\.pmtiles$/,
-						`-${tier}.geojson.gz`,
-					),
 					href: `/v1/map-resources/${id}/features?tier=${tier}&format=geojson`,
 					bytes: geoJson.bytes,
 					contentHash: geoJson.contentHash,
 					gzipBytes: geoJson.gzipped.length,
 				},
-				body: geoJson.gzipped,
 			});
 			return downloads;
 		},
 	);
 	return {
 		archive,
-		features: features.flatMap(({ entry, body }) =>
-			entry.artifact && body ? [{ artifact: entry.artifact, body }] : [],
-		),
 		descriptor: {
 			id,
 			geography,

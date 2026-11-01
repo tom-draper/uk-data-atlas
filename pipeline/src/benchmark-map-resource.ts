@@ -53,11 +53,10 @@ const elapsedMs = performance.now() - started;
 const cpu = process.cpuUsage(cpuStarted);
 assert.ok(result.descriptor.areaCount > 0);
 assert.ok(result.descriptor.tiles.tileCount > 0);
-assert.equal(result.features.length, 8);
+assert.ok(result.descriptor.features.every((entry) => !entry.artifact));
 const hash = createHash("sha256");
 hash.update(JSON.stringify(result.descriptor));
 hash.update(result.archive);
-for (const feature of result.features) hash.update(feature.body);
 console.log(
 	JSON.stringify({
 		id,
@@ -65,12 +64,7 @@ console.log(
 		cpuMs: (cpu.user + cpu.system) / 1000,
 		areas: result.descriptor.areaCount,
 		tiles: result.descriptor.tiles.tileCount,
-		bytes:
-			result.archive.length +
-			result.features.reduce(
-				(sum, feature) => sum + feature.body.length,
-				0,
-			),
+		bytes: result.archive.length,
 		sha256: hash.digest("hex"),
 	}),
 );
