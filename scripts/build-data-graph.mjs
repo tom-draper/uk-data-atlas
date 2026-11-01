@@ -559,7 +559,6 @@ const apiStages = [
 		"atlas-lookups",
 		[
 			"geography-catalogues",
-			"assemble-atlas",
 			"atlas-sqlite",
 			"area-inventory",
 			"crosswalk-inventory",
