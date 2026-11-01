@@ -1,11 +1,15 @@
-import { PartyVotes, PartyCode, Party } from "../types/common";
+import {
+	PartyVotes,
+	PartyCode,
+	Party,
+} from "@uk-data-atlas/datasets/types/common";
 import {
 	AggregatedGeneralElectionData,
 	GeneralElectionConstituencyData,
 	GeneralElectionDataset,
 	ProcessedPartyData,
-} from "../types/elections";
-import { PARTIES } from "../data/election/parties";
+} from "@uk-data-atlas/datasets/types/elections";
+import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import type { SelectedArea } from "../types/areas";
 import {
 	selectedAreaConstituencyRecord,

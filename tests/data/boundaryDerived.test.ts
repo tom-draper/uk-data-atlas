@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { featureAreaSqKm, featureExtent } from "@/lib/data/boundaries/derived";
-import { polygonAreaSqKm } from "@/lib/helpers/population";
+import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
 import type { Feature } from "@/lib/types";
 
 // A square degree off the south coast, big enough that the area is well clear

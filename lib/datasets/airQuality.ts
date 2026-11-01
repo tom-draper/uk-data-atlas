@@ -1,6 +1,6 @@
 import { airQualityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { airQualityAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { AirQualityDataset } from "@/lib/types/airQuality";
+import type { AirQualityDataset } from "@uk-data-atlas/datasets/types/airQuality";
 import type { ChartDatasetDefinition } from "./types";
 
 export const airQualityDefinition: ChartDatasetDefinition<AirQualityDataset> = {

@@ -1,6 +1,6 @@
 import { wimdDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { wimdAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { WIMDDataset } from "@/lib/types/wimd";
+import type { WIMDDataset } from "@uk-data-atlas/datasets/types/wimd";
 import { deprivationRankMap } from "./deprivationRankMap";
 import type { ChartDatasetDefinition } from "./types";
 

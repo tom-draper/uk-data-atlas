@@ -10,7 +10,7 @@ import {
 	atlasLocationsFor,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
-import type { DatasetCountry } from "@/lib/types/coverage";
+import type { DatasetCountry } from "@uk-data-atlas/datasets/types/coverage";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({

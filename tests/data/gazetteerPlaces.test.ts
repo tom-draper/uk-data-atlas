@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolvePlaces } from "@/lib/data/gazetteer/places";
+import { resolvePlaces } from "@uk-data-atlas/datasets/data/gazetteer/places";
 
 describe("resolvePlaces", () => {
 	const locations = {

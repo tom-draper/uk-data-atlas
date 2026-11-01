@@ -1,6 +1,6 @@
 import { fuelPovertyDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { fuelPovertyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
+import type { FuelPovertyDataset } from "@uk-data-atlas/datasets/types/fuelPoverty";
 import type { ChartDatasetDefinition } from "./types";
 
 export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =

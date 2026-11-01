@@ -7,7 +7,7 @@ import {
 	PLANNING_MEASURES,
 } from "@/lib/helpers/planningApplicationsMeasures";
 import { defineValueCard } from "./valueCard";
-import type { IndicatorRecord } from "@/lib/types/indicator";
+import type { IndicatorRecord } from "@uk-data-atlas/datasets/types/indicator";
 const planningAggregation = createBoundaryAggregationSpec(
 	"planning-counts",
 	"any",
@@ -17,7 +17,7 @@ const planningAggregation = createBoundaryAggregationSpec(
 		),
 );
 
-import type { IndicatorDataset } from "@/lib/types/indicator";
+import type { IndicatorDataset } from "@uk-data-atlas/datasets/types/indicator";
 import { indicatorCard } from "./indicatorCard";
 import type { ChartDatasetDefinition } from "./types";
 export const planningApplicationsDefinition: ChartDatasetDefinition<

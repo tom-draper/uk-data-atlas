@@ -1,6 +1,6 @@
 import { broadbandDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { broadbandAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { BroadbandDataset } from "@/lib/types/broadband";
+import type { BroadbandDataset } from "@uk-data-atlas/datasets/types/broadband";
 import type { ChartDatasetDefinition } from "./types";
 
 export const broadbandDefinition: ChartDatasetDefinition<BroadbandDataset> = {

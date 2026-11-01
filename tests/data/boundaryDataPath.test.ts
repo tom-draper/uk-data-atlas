@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { localDataPath } from "@/lib/data/boundaries/dataPath";
+import { localDataPath } from "@uk-data-atlas/datasets/data/boundaries/dataPath";
 
 describe("localDataPath", () => {
 	it("strips deployment cache keys from same-origin data URLs", () => {

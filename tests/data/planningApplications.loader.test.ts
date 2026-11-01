@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadPlanningApplications } from "@/lib/data/new-datasets/loader";
+import { loadPlanningApplications } from "@uk-data-atlas/datasets/data/new-datasets/loader";
 
 describe("loadPlanningApplications", () => {
 	it("aggregates application rows as they are read from the CSV", async () => {

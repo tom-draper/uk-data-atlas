@@ -1,6 +1,6 @@
 import { lifeExpectancyDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { lifeExpectancyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
+import type { LifeExpectancyDataset } from "@uk-data-atlas/datasets/types/lifeExpectancy";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
 const calculateStats: ChartDefinition<LifeExpectancyDataset>["calculateStats"] =

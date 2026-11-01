@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadNHSWaiting } from "@/lib/data/nhs-waiting/loader";
+import { loadNHSWaiting } from "@uk-data-atlas/datasets/data/nhs-waiting/loader";
 
 describe("loadNHSWaiting", () => {
 	it("aggregates rows as they are read from the archive", async () => {

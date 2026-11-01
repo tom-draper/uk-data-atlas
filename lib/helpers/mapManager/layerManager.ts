@@ -1,5 +1,5 @@
 import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
-import type { BoundaryGeojson } from "@/lib/types/geometry";
+import type { BoundaryGeojson } from "@uk-data-atlas/datasets/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapInstance } from "@/lib/types/mapInstance";
 import type { MapLayer } from "./layers";

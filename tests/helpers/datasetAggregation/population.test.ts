@@ -5,7 +5,7 @@ import {
 	buildPopulationStats,
 	type PopulationTotals,
 } from "@/lib/helpers/datasetAggregation/population";
-import { polygonAreaSqKm } from "@/lib/helpers/population";
+import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
 import { CODE_KEY, SQUARE, features } from "./fixtures";
 
 const ward = (

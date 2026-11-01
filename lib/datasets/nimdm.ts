@@ -1,6 +1,6 @@
 import { nimdmDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { nimdmAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { NIMDMDataset } from "@/lib/types/nimdm";
+import type { NIMDMDataset } from "@uk-data-atlas/datasets/types/nimdm";
 import { deprivationRankMap } from "./deprivationRankMap";
 import type { ChartDatasetDefinition } from "./types";
 

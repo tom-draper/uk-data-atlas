@@ -7,10 +7,10 @@ import { readFileSync } from "fs";
 import { gzipSync } from "zlib";
 import { join } from "path";
 import { feature } from "topojson-client";
-import { polygonAreaSqKm } from "../lib/helpers/population";
+import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
 import { getProp } from "../lib/data/boundaries/boundaries";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
-import { pointInRing } from "../lib/data/gazetteer/geometry";
+import { pointInRing } from "@uk-data-atlas/datasets/data/gazetteer/geometry";
 
 const B = join(process.cwd(), "data/build/website-boundaries", "boundaries");
 const FILES = {

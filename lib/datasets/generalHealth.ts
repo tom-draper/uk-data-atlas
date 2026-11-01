@@ -1,5 +1,8 @@
 import { generalHealthDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/generalHealth";
-import type { IndicatorDataset, IndicatorRecord } from "@/lib/types/indicator";
+import type {
+	IndicatorDataset,
+	IndicatorRecord,
+} from "@uk-data-atlas/datasets/types/indicator";
 import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { schoolPerformanceDefinition } from "@/lib/datasets/schoolPerformance";
-import type { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
+import type { SchoolPerformanceDataset } from "@uk-data-atlas/datasets/types/schoolPerformance";
 
 const dataset: SchoolPerformanceDataset = {
 	id: "schoolPerformance2025",

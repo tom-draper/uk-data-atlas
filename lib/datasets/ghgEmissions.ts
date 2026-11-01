@@ -1,6 +1,6 @@
 import { ghgEmissionsDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { ghgEmissionsAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { GhgEmissionsDataset } from "@/lib/types/ghgEmissions";
+import type { GhgEmissionsDataset } from "@uk-data-atlas/datasets/types/ghgEmissions";
 import type { ChartDatasetDefinition } from "./types";
 
 export const ghgEmissionsDefinition: ChartDatasetDefinition<GhgEmissionsDataset> =

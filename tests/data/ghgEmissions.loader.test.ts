@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadGhgEmissions } from "@/lib/data/ghg-emissions/loader";
+import { loadGhgEmissions } from "@uk-data-atlas/datasets/data/ghg-emissions/loader";
 import { aggregateGhgEmissions } from "@/lib/helpers/datasetAggregation/numeric";
 
 const csv = `ladCode,ladName,year,populationThousands,areaKm2,transport,domestic,industry,commercial,publicSector,agriculture,waste,lulucf

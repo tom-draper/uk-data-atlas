@@ -1,4 +1,4 @@
-import type { IndicatorRecord } from "@/lib/types/indicator";
+import type { IndicatorRecord } from "@uk-data-atlas/datasets/types/indicator";
 export const PLANNING_MEASURES = [
 	{ value: "received", label: "Applications received" },
 	{ value: "decided", label: "Applications decided" },

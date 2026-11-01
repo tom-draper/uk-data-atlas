@@ -1,9 +1,12 @@
 import localAuthorityCounty from "./boundaries/localAuthorityCounty.json";
 import { gazetteer } from "./gazetteer/static";
-import type { Crosswalk } from "./gazetteer/types";
+import type { Crosswalk } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./boundaries/catalog";
-import { boundaryCapabilityFor } from "./boundaries/capabilities";
-import { getProp, countryPrefixForBoundaryCode } from "./boundaries/properties";
+import { boundaryCapabilityFor } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
+import {
+	getProp,
+	countryPrefixForBoundaryCode,
+} from "@uk-data-atlas/datasets/data/boundaries/properties";
 import { atlasLookupUrl } from "../helpers/atlasData";
 import {
 	codeKeyedFieldsFor,

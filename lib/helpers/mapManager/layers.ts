@@ -1,4 +1,4 @@
-import type { BoundaryGeojson } from "@/lib/types/geometry";
+import type { BoundaryGeojson } from "@uk-data-atlas/datasets/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { PointTooltip } from "@/lib/types/custom";
 import type { NetworkVectorLayer } from "@/lib/types/network";

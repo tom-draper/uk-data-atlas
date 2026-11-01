@@ -2,7 +2,7 @@ import { aggregateFuelPoverty } from "./datasetAggregation/numeric";
 import type {
 	AggregatedFuelPovertyData,
 	FuelPovertyDataset,
-} from "@/lib/types/fuelPoverty";
+} from "@uk-data-atlas/datasets/types/fuelPoverty";
 
 /**
  * Roll published LSOA estimates up to their local-authority parent. Rates are

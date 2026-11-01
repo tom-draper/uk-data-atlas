@@ -1,9 +1,12 @@
 import { pmtilesURL } from "@/lib/map/tilesUrl";
-import { getFeatureProp } from "@/lib/types/geometry";
+import { getFeatureProp } from "@uk-data-atlas/datasets/types/geometry";
 import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
 import type { GeoJSONSource } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
-import type { BoundaryGeojson, Feature } from "@/lib/types/geometry";
+import type {
+	BoundaryGeojson,
+	Feature,
+} from "@uk-data-atlas/datasets/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapInstance } from "@/lib/types/mapInstance";
 import { DEFAULT_COLOR } from "./featureBuilder";

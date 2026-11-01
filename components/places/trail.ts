@@ -1,5 +1,5 @@
 import { namedHref } from "@/lib/places/labels";
-import type { NamedRef } from "@/lib/places/profile";
+import type { NamedRef } from "@uk-data-atlas/catalogue/place-profile";
 
 export type Crumb = { label: string; href?: string };
 

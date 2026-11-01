@@ -9,7 +9,7 @@ import {
 	TRAVEL_TO_WORK_COLORS,
 	TRAVEL_TO_WORK_MODES,
 	type TravelToWorkMode,
-} from "@/lib/types/travelToWork";
+} from "@uk-data-atlas/datasets/types/travelToWork";
 
 const config: BreakdownChartConfig<TravelToWorkMode> = {
 	datasetType: "travelToWork",

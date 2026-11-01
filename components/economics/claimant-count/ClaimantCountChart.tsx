@@ -15,7 +15,7 @@ import type {
 	AggregatedClaimantCountData,
 	ClaimantCountDataset,
 	ClaimantCountLADData,
-} from "@/lib/types/claimantCount";
+} from "@uk-data-atlas/datasets/types/claimantCount";
 
 export default function ClaimantCountChart({
 	activeDataset,

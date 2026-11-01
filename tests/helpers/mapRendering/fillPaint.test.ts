@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { PARTIES } from "@/lib/data/election/parties";
+import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale/ethnicityColors";
 import {
 	electionWinnerPaint,

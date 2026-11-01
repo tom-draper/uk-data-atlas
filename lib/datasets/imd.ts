@@ -1,7 +1,7 @@
 import { imdDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { imdRange } from "@/lib/helpers/imdMeasures";
 import { imdAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { IMDDataset } from "@/lib/types/imd";
+import type { IMDDataset } from "@uk-data-atlas/datasets/types/imd";
 import type { ChartDatasetDefinition } from "./types";
 
 export const imdDefinition: ChartDatasetDefinition<IMDDataset> = {
