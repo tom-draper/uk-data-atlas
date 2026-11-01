@@ -1,7 +1,4 @@
-import {
-	observationDatabasePath,
-	assertObservationCatalogue,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { assertObservationCatalogue } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readSourceObservations,
@@ -20,10 +17,8 @@ import {
 	observationArtifactName,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileMeasureCompatibility } from "./measureCompatibility";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { observationBuildPath } from "./observation-build-path";
 
 const read = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;
@@ -52,7 +47,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 	const dataCatalog = read<DataCatalog>(
 		join(publicDirectory, "data-catalog.json"),
 	);
-	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
+	const databasePath = observationBuildPath(repositoryRoot);
 	assertObservationCatalogue(databasePath, dataCatalog);
 	// A table serves several measures, so it is read once.
 	const tables = new Map<string, MeasureTableArtifact>();

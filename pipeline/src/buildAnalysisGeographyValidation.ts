@@ -1,6 +1,5 @@
 import {
 	assertObservationCatalogue,
-	observationDatabasePath,
 	readObservationText,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { observationArtifactName } from "@uk-data-atlas/measures";
@@ -17,10 +16,8 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { observationBuildPath } from "./observation-build-path";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);
@@ -57,7 +54,7 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 			return [entry.id, artifact] as const;
 		}),
 	);
-	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
+	const databasePath = observationBuildPath(repositoryRoot);
 	assertObservationCatalogue(databasePath, dataCatalog);
 	const names = new Set(
 		dataCatalog.measures.flatMap((measure) =>

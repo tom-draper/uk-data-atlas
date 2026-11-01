@@ -1,7 +1,4 @@
-import {
-	observationDatabasePath,
-	assertObservationCatalogue,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { assertObservationCatalogue } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -23,10 +20,10 @@ import { compileValidationReport } from "./validation/compileValidationReport";
 import { readMeasureTotals, readValidationWaivers } from "./validation/inputs";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
-	apiRootOf,
 	artifactDirectory,
 	configDirectory,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { observationBuildPath } from "./observation-build-path";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);
@@ -43,7 +40,7 @@ export const buildValidationReport = (repositoryRoot: string) => {
 	);
 	const exportManifest = read<ExportManifest>("export-manifest.json");
 	const dataCatalog = read<DataCatalog>("data-catalog.json");
-	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
+	const databasePath = observationBuildPath(repositoryRoot);
 	assertObservationCatalogue(databasePath, dataCatalog);
 	const report = compileValidationReport({
 		boundaryRegistry: read<BoundaryRegistry>("boundary-releases.json"),
