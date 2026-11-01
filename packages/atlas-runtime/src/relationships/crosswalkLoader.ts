@@ -6,7 +6,10 @@ import { readAtlasPayload } from "../storage/atlasSqlite";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
-import type { CrosswalkHeader, CrosswalkLookup } from "@uk-data-atlas/relationships";
+import type {
+	CrosswalkHeader,
+	CrosswalkLookup,
+} from "@uk-data-atlas/relationships";
 import { atlasDatabasePath, repositoryRootOf } from "../storage/dataLayout";
 
 export const readCrosswalkInventory = readSqliteCrosswalkInventory;
