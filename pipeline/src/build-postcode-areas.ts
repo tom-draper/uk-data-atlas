@@ -20,7 +20,7 @@ import {
 import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import { readBoundaryRegistry } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry";
 import { readSqlitePostcodeIndex as readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
@@ -233,25 +233,32 @@ export const buildPostcodeAreas = async (
 				return { postcodeArtifact, lng, lat, longitudes, latitudes };
 			},
 		);
-	const areaInventory = readAreaInventory(apiRoot);
 	const geometrySources = readGeometrySources(apiRoot);
-	const resolver = new AreasResolver({
-		boundaryRegistry: readBoundaryRegistry(apiRoot),
-		areaInventory,
-		areaLookup: readAreaLookup(apiRoot, areaInventory),
-	});
-	const chosen = postcodeAreaReleases(
-		resolver,
-		readPublicManifest<MeasureCompatibilityInventory>(
-			apiRoot,
-			"measure-compatibility.json",
-			"measures",
-			"measure compatibility inventory",
-		),
-		postcodeArtifact.source.edition,
-		(geography, boundaryRelease) =>
-			geometrySources.get(releaseKey(geography, boundaryRelease))
-				?.inputHash !== undefined,
+	const { areaInventory, chosen } = withComponentApiRoot(
+		repositoryRoot,
+		"atlas-base.sqlite",
+		(baseApiRoot) => {
+			const areaInventory = readAreaInventory(baseApiRoot);
+			const resolver = new AreasResolver({
+				boundaryRegistry: readBuildBoundaryRegistry(repositoryRoot),
+				areaInventory,
+				areaLookup: readAreaLookup(baseApiRoot, areaInventory),
+			});
+			const chosen = postcodeAreaReleases(
+				resolver,
+				readPublicManifest<MeasureCompatibilityInventory>(
+					apiRoot,
+					"measure-compatibility.json",
+					"measures",
+					"measure compatibility inventory",
+				),
+				postcodeArtifact.source.edition,
+				(geography, boundaryRelease) =>
+					geometrySources.get(releaseKey(geography, boundaryRelease))
+						?.inputHash !== undefined,
+			);
+			return { areaInventory, chosen };
+		},
 	);
 	const inputsOf = (geography: string, boundaryRelease: string) => {
 		const release = areaInventory.releases.find(
