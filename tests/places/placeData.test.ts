@@ -3,11 +3,11 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
-import { assembleWebsiteAssets } from "@/pipeline/src/assemble-website-assets";
+import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
 
 const buildAtlasAssets = (root: string) => {
 	stageAtlasAssets(root);
-	assembleWebsiteAssets(root);
+	assembleAtlas(root);
 };
 
 const index = {

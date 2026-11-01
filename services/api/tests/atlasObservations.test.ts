@@ -281,9 +281,20 @@ test("failed publication retains the database and legacy JSON, and cleans tempor
 			"atlas.sqlite",
 			"geography-payloads.json",
 			"observations.sqlite",
+			"postcode-areas-component",
 			"postcode-index.sqlite",
+			"website-assets.sqlite",
 		]);
 	}
+});
+
+test("a missing component leaves the published database intact", (t) => {
+	const { root, path } = fixture(t);
+	storeObservations(root, catalog, entries());
+	const before = readFileSync(path);
+	rmSync(join(root, "data/build/website-assets.sqlite"));
+	assert.throws(() => assembleAtlas(root), /Missing atlas component/);
+	assert.deepEqual(readFileSync(path), before);
 });
 
 test("rejects stale catalogues, missing SQLite rows and corrupted bytes without JSON fallback", (t) => {

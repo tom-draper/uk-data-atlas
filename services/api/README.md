@@ -20,7 +20,9 @@ stamps the cache with the SHA-256 hash of the final canonical database.
 
 The source release contains raw data only. After `pnpm data:download`, run
 `pnpm data:build` to build both SQLite files, and deploy them together from the
-same build. Compose mounts both read-only. At
+same build. The pipeline builds separate base, observation, geography,
+postcode and website-asset components, then `assemble-atlas` publishes the
+canonical database. Compose mounts both read-only. At
 startup the API verifies the stamp and required dataset payloads; a missing or
 mismatched cache fails readiness. The API does not build the cache.
 
@@ -55,9 +57,11 @@ an implementation proposal, not a promise that every listed endpoint is ready.
 The dataset JSON and browser-facing TopoJSON are internal build products;
 their shape and filenames must remain free to change.
 
-The API builds directly from raw `data/source/` without website output.
+The API and website build from raw `data/source/` and shared build components.
+The website does not fetch its precompiled data from the API.
 `pnpm data:build --only datasets` at the repository root compiles catalogue datasets.
-The `atlas-sqlite` stage stores them in `data/build/atlas.sqlite` for the API to read.
+The `atlas-sqlite` stage builds the base component; `assemble-atlas` combines it
+with the other components in `data/build/atlas.sqlite` for the API to read.
 `pnpm --dir ../.. data:build --only api-datasets` builds gazetteer core and boundary assets under
 `data/build/artifacts/source-data/`. These outputs are gitignored.
 After changing shared dataset compilers, run `pnpm --dir ../.. data:build --from datasets`
@@ -128,8 +132,8 @@ two bytes per text code unit plus its UTF-8 source byte count for parsed data.
 The default budget is 64 MiB; oversized entries are served without retention. An artifact is only
 stored if its rows rebuild its exact bytes, which means records must use the
 compilers' key order, periods and areas must ascend, and a period must have
-records. The `data-catalog` stage runs `ANALYZE`, then `VACUUM`, after replacing the
-tables. Run `pnpm data:build --from data-catalog` to rebuild them.
+records. The `assemble-atlas` stage runs `ANALYZE` and `VACUUM` while building
+the database. Run `pnpm data:build --from data-catalog` to rebuild the tables.
 
 The old reader cannot read this database schema. Deploy the rebuilt database and
 matching API code together. From the repository root, run
@@ -1113,7 +1117,8 @@ fetch the postcode directory from ONS.
       nothing. `pnpm --dir ../.. data:build --only postcode-areas` places each release's postcode
       centroids by the live lookup's own containment test and nearest-edge
       distance, and checks a sample of each against a live lookup, failing on
-      any difference. A postcode lookup, batch or value then reads a district
+      any difference. Run `pnpm data:build --from postcode-areas` to assemble
+      the component into the published database. A postcode lookup, batch or value then reads a district
       shard rather than loading national geometry. Any other release is still
       placed live. The build takes about
       20 minutes with three workers, reuses any release whose postcodes, areas
@@ -1317,7 +1322,7 @@ The route selector in the documentation should begin with the user’s job:
 | see a trend, ranking, comparison or change                           | `/series`, `/rankings`, `/compare` or `/change` under that measure                  |
 | translate an identifier through a published crosswalk                | `/translations`                                                                     |
 | convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                                           |
-| validate a supplied code/name or discover releases                   | `/areas:validate`, `/boundaries`, `/boundary-releases`                             |
+| validate a supplied code/name or discover releases                   | `/areas:validate`, `/boundaries`, `/boundary-releases`                              |
 | cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-release` and `/documents/{document-id}.json` |
 
 `/data/{measure}/value?place=` is a deliberately narrow convenience for a

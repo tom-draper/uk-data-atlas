@@ -17,7 +17,11 @@ import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex as writePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
 import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
-import { writeEmptyObservationComponent } from "./atlasComponentFixtures";
+import {
+	writeEmptyObservationComponent,
+	writeEmptyPostcodeAreas,
+	writeEmptyWebsiteComponent,
+} from "./atlasComponentFixtures";
 import { buildPostcodeIndex } from "../../../pipeline/src/build-postcode-index";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
@@ -43,6 +47,7 @@ const rows = [
 ];
 function storePostcodeIndex(...args: Parameters<typeof writePostcodeIndex>) {
 	writePostcodeIndex(...args);
+	writeEmptyPostcodeAreas(args[0]);
 	assembleAtlas(args[0]);
 }
 function fixture(t: TestContext) {
@@ -64,6 +69,7 @@ function fixture(t: TestContext) {
 		join(root, "data/build/atlas-base.sqlite"),
 	);
 	writeEmptyObservationComponent(root);
+	writeEmptyWebsiteComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(
 		join(artifactRoot(apiRoot), "postcode-index.json"),
@@ -246,6 +252,7 @@ test("the source builder reads filtered gzip rows into the postcode component", 
 		}),
 	);
 	const result = await buildPostcodeIndex(root);
+	writeEmptyPostcodeAreas(root);
 	assembleAtlas(root);
 	assert.equal(result.artifact.counts.postcodes, 6);
 	assert.equal(
