@@ -3,6 +3,7 @@ import type {
 	AreaHistory,
 	BoundaryRelease,
 	BulkLookup,
+	ConvertedCounts,
 	Crosswalk,
 	ExactValidation,
 	InferredValidation,
@@ -115,6 +116,26 @@ export const crosswalks = once(() => request<Crosswalk[]>("/crosswalks"));
 export const bulkLookups = once(() =>
 	request<{ lookups: BulkLookup[] }>("/lookups").then((data) => data.lookups),
 );
+
+/** One column of counts moved through a crosswalk. Nothing is stored. */
+export function convertCounts(
+	crosswalk: string,
+	rows: { code: string; value: number }[],
+	weighting?: "area" | "population",
+	signal?: AbortSignal,
+): Promise<ConvertedCounts> {
+	const params = new URLSearchParams({ semantics: "count" });
+	if (weighting) params.set("weighting", weighting);
+	return request(
+		`/crosswalks/${encodeURIComponent(crosswalk)}:convert?${params}`,
+		{
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ rows }),
+			signal,
+		},
+	);
+}
 
 /** A lookup table as CSV, from the `href` its manifest gives. */
 export async function lookupCsv(
