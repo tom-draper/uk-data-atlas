@@ -9,6 +9,15 @@ export function withComponentApiRoot<T>(
 	component: string,
 	read: (apiRoot: string) => T,
 ): T {
+	const componentRoot = openComponentApiRoot(root, component);
+	try {
+		return read(componentRoot.apiRoot);
+	} finally {
+		componentRoot.close();
+	}
+}
+
+export function openComponentApiRoot(root: string, component: string) {
 	const temporary = mkdtempSync(join(tmpdir(), "atlas-component-"));
 	try {
 		const directory = join(temporary, "data/build");
@@ -17,8 +26,12 @@ export function withComponentApiRoot<T>(
 			resolve(root, "data/build", component),
 			join(directory, "atlas.sqlite"),
 		);
-		return read(apiRootOf(temporary));
-	} finally {
+		return {
+			apiRoot: apiRootOf(temporary),
+			close: () => rmSync(temporary, { recursive: true, force: true }),
+		};
+	} catch (error) {
 		rmSync(temporary, { recursive: true, force: true });
+		throw error;
 	}
 }

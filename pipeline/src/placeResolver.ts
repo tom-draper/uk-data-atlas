@@ -7,7 +7,8 @@ import {
 	LineageResolver,
 	type GeographyResolverInputs,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import { readBoundaryRegistry } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry";
+import { repositoryRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
@@ -48,15 +49,15 @@ export const createPlaceResolver = (
 	};
 };
 
-export const readPlaceResolver = (apiRoot: string) => {
-	const areaInventory = readSqliteAreaInventory(apiRoot);
-	const crosswalkInventory = readCrosswalkInventory(apiRoot);
+export const readPlaceResolver = (apiRoot: string, databaseRoot: string) => {
+	const areaInventory = readSqliteAreaInventory(databaseRoot);
+	const crosswalkInventory = readCrosswalkInventory(databaseRoot);
 	return createPlaceResolver({
 		areaInventory,
-		areaLookup: readAreaLookup(apiRoot, areaInventory),
-		crosswalkLookup: readCrosswalkLookup(apiRoot, crosswalkInventory),
+		areaLookup: readAreaLookup(databaseRoot, areaInventory),
+		crosswalkLookup: readCrosswalkLookup(databaseRoot, crosswalkInventory),
 		areaGeometryCache: createAreaGeometryCache(apiRoot),
-		namedLocationInventory: readNamedLocationInventory(apiRoot),
-		boundaryRegistry: readBoundaryRegistry(apiRoot),
+		namedLocationInventory: readNamedLocationInventory(databaseRoot),
+		boundaryRegistry: readBuildBoundaryRegistry(repositoryRootOf(apiRoot)),
 	});
 };

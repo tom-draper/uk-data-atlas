@@ -617,7 +617,7 @@ const apiStages = [
 		"atlas-pages",
 		[
 			"geography-catalogues",
-			"assemble-atlas",
+			"atlas-sqlite",
 			"api-datasets",
 			"boundary-registry",
 			"geometry-store",
