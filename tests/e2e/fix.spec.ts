@@ -46,12 +46,19 @@ async function mockApi(page: Page) {
 					"utf8",
 				),
 			});
+		if (
+			url.pathname ===
+			"/v1/crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment:convert"
+		)
+			return json(fixture("convert-sample"));
 		if (url.pathname === "/v1/areas:validate")
 			return json(
 				fixture(
-					url.searchParams.get("release")
-						? "validate-sample-latest"
-						: "validate-sample-inferred",
+					url.searchParams.get("geography") === "localAuthority"
+						? "validate-sample-converted"
+						: url.searchParams.get("release")
+							? "validate-sample-latest"
+							: "validate-sample-inferred",
 				),
 			);
 		const history = url.pathname.match(/\/history$/)
@@ -139,5 +146,45 @@ test("the sample's codes move to the latest release, with their local authority"
 	expect(text).toContain("E0513457,,,,not a valid code,");
 	await expect(update.getByRole("status")).toHaveText(
 		"Your updated file is downloading.",
+	);
+});
+
+test("the sample's households add up to their local authority", async ({
+	page,
+}) => {
+	await mockApi(page);
+	await page.goto("/fix");
+	await page.getByRole("button", { name: "Try a sample" }).click();
+
+	const convert = page.getByRole("region", {
+		name: /Convert to another geography/,
+	});
+	await expect(convert.getByLabel("Convert to")).toHaveValue(
+		"ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+	);
+	await expect(convert.getByLabel("households")).toBeChecked();
+	await expect(convert).toContainText(
+		"households: 26 rows go in, 1 row left out",
+	);
+
+	const request = page.waitForRequest(/:convert/);
+	await convert.getByRole("button", { name: "Convert", exact: true }).click();
+	expect((await request).postDataJSON().rows).toHaveLength(26);
+	await expect(convert).toContainText(
+		"Totals for 1 area in Local authority districts, December 2024",
+	);
+	await expect(convert).toContainText("1 is partial");
+
+	const download = page.waitForEvent("download");
+	await convert
+		.getByRole("button", { name: "Download converted file" })
+		.click();
+	const file = await download;
+	expect(file.suggestedFilename()).toBe(
+		"sample-wards-by-local-authority.csv",
+	);
+	expect(readFileSync((await file.path())!, "utf8")).toBe(
+		"local_authority_code,local_authority_name,households,households_coverage\n" +
+			"E06000054,Wiltshire,85666,partial: 26 of 98 wards\n",
 	);
 });
