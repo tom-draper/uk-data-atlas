@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { GEOJSON_TIERS } from "@uk-data-atlas/atlas-runtime/maps";
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
+import type { FullDetailSource } from "@uk-data-atlas/atlas-runtime/areas";
 import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/areas";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
@@ -212,7 +213,11 @@ export const handleReleaseJoinRoutes = (
 			candidate.tier === tier && candidate.format === "geojson",
 	);
 	const stored = entry?.artifact && context.mapFeatures?.get(entry.artifact);
-	if (!resource || !entry || (!stored && loadedJson === undefined))
+	if (
+		!resource ||
+		!entry ||
+		(!stored && entry.artifact && loadedJson === undefined)
+	)
 		return problem(
 			503,
 			"Catalogue Unavailable",
@@ -227,11 +232,30 @@ export const handleReleaseJoinRoutes = (
 		);
 	let json = loadedJson;
 	if (json === undefined) {
-		if (!stored) throw new Error("The GeoJSON join has no map asset");
-		const raw = readFileSync(stored.path);
-		json = (
-			stored.gzipBytes !== undefined ? gunzipSync(raw) : raw
-		).toString("utf8");
+		if (!stored) {
+			const built = context.fullDetailDownloads?.get(
+				geography,
+				release,
+				"shared-arc",
+				entry.contentHash,
+				{
+					tier: tier === "medium" ? "medium" : "low",
+					format: "geojson",
+				},
+			);
+			if (built?.status !== "built")
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					"The published GeoJSON could not be generated.",
+				);
+			json = built.body.toString("utf8");
+		} else {
+			const raw = readFileSync(stored.path);
+			json = (
+				stored.gzipBytes !== undefined ? gunzipSync(raw) : raw
+			).toString("utf8");
+		}
 	}
 	const collection = JSON.parse(json) as {
 		features: Array<{
@@ -277,14 +301,13 @@ export const handleReleaseJoinRoutesAsync = async (
 ): Promise<ApiResponse | undefined> => {
 	if (
 		request.method !== "POST" ||
-		request.parsedUrl.searchParams.get("format") !== "geojson" ||
-		!request.context.mapResources?.assetBaseUrl
+		request.parsedUrl.searchParams.get("format") !== "geojson"
 	)
 		return handleReleaseJoinRoutes(request);
 	const target = joinRelease(request.segments);
 	if (!target) return undefined;
 	const tier = request.parsedUrl.searchParams.get("tier") ?? "medium";
-	const resource = request.context.mapResources.resources.find(
+	const resource = request.context.mapResources?.resources.find(
 		(resource) =>
 			resource.geography === target.geography &&
 			resource.boundaryRelease === target.release,
@@ -293,6 +316,35 @@ export const handleReleaseJoinRoutesAsync = async (
 		(entry) => entry.tier === tier && entry.format === "geojson",
 	);
 	if (!entry || entry.bytes > MAX_GEOJSON_JOIN_BYTES)
+		return handleReleaseJoinRoutes(request);
+	if (!entry.artifact) {
+		let asked: Parameters<FullDetailSource["get"]> | undefined;
+		const first = handleReleaseJoinRoutes({
+			...request,
+			context: {
+				...request.context,
+				fullDetailDownloads: {
+					get: (...args) => {
+						asked = args;
+						return { status: "unavailable" };
+					},
+				},
+			},
+		});
+		if (!asked) return first;
+		const downloads = request.context.fullDetailDownloads;
+		const built = downloads?.build
+			? await downloads.build(...asked)
+			: downloads?.get(...asked);
+		if (built?.status !== "built")
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"The published GeoJSON could not be generated.",
+			);
+		return handleReleaseJoinRoutes(request, built.body.toString("utf8"));
+	}
+	if (!request.context.mapResources?.assetBaseUrl)
 		return handleReleaseJoinRoutes(request);
 	try {
 		const response = await fetch(entry.href, {

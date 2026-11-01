@@ -128,15 +128,16 @@ const compileTier = (
 /** Compile every tier from one removal sequence per arc, including refinements. */
 export const compileTiers = (
 	topology: Topology,
+	tiers: readonly GeometryTier[] = Object.keys(GEOMETRY_TIERS).filter(
+		isGeometryTier,
+	),
 ): Map<GeometryTier, TierGeometry> => {
 	const maxThresholdM2 = Math.max(...Object.values(GEOMETRY_TIERS)) ** 2;
 	const importance = topology.arcs.map((arc, index) =>
 		vertexImportance(arc, topology.closed[index]!, maxThresholdM2),
 	);
 	return new Map(
-		Object.keys(GEOMETRY_TIERS)
-			.filter(isGeometryTier)
-			.map((tier) => [tier, compileTier(topology, tier, importance)]),
+		tiers.map((tier) => [tier, compileTier(topology, tier, importance)]),
 	);
 };
 
