@@ -12,9 +12,15 @@ import { gunzipSync } from "node:zlib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as page } from "@/app/data/atlas-pages/[file]/route";
 import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
-import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { assembleWebsiteAssets } from "@/pipeline/src/assemble-website-assets";
 import { readAtlasAssetText } from "@uk-data-atlas/atlas-runtime/storage";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
+
+const buildAtlasAssets = (root: string) => {
+	stageAtlasAssets(root);
+	assembleWebsiteAssets(root);
+};
 
 let fixture: ReturnType<typeof websiteAssetsFixture>;
 const request = (file = "places-index.json", headers: HeadersInit = {}) =>
@@ -95,6 +101,15 @@ describe("SQLite website assets", () => {
 		const response = await request(file);
 		expect(response.status).toBe(404);
 		expect(response.headers.get("Cache-Control")).toBe("no-store");
+	});
+	it("stages assets without changing the database", () => {
+		const path = join(fixture.root, "data/build/atlas.sqlite");
+		const before = readFileSync(path);
+		stageAtlasAssets(fixture.root);
+		expect(readFileSync(path)).toEqual(before);
+		expect(
+			existsSync(join(fixture.root, "data/build/website-assets.sqlite")),
+		).toBe(true);
 	});
 	it("keeps the database unchanged on an identical import", () => {
 		const path = join(fixture.root, "data/build/atlas.sqlite");

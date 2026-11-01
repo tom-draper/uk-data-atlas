@@ -184,6 +184,16 @@ test("atlas assembly depends on each declared component output", () => {
 			"postcode-areas",
 		),
 	);
+	assert.ok(
+		stage("website-lookups").requiredOutputs.includes(
+			"data/build/website-assets.sqlite",
+		),
+	);
+	assert.ok(
+		stage("assemble-website-assets").dependencies.includes(
+			"website-lookups",
+		),
+	);
 	assert.ok(stage("assemble-atlas").dependencies.includes("data-catalog"));
 	assert.ok(
 		stage("assemble-atlas").dependencies.includes("geography-catalogues"),
