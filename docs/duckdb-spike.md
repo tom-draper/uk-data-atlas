@@ -6,7 +6,7 @@ Do not replace the crosswalk or map-resource stages with this approach yet. The 
 
 ## Measurements
 
-Measured on 2026-11-01 on Linux x86-64, 12 logical CPUs, 7.6 GiB RAM, Node 26.10.0, pnpm 12.5.1, DuckDB 1.4.5 and the spatial extension. Each `/usr/bin/time -v` measurement includes process startup, input loading, compilation and output. Maximum RSS is the largest individual process reported by time, not the sum of the process tree. Stages ran one at a time with one crosswalk worker. Inputs and previous build artifacts were copied into an independent worktree. The stage runs use the configured `data:build` stage commands through `runBuild`, with dependency stages excluded because their outputs already existed.
+Measured at base commit `ad5033cc` on 2026-11-01 on Linux x86-64, 12 logical CPUs, 7.6 GiB RAM, Node 26.10.0, pnpm 12.5.1, DuckDB 1.4.5 and the spatial extension. Each `/usr/bin/time -v` measurement includes process startup, input loading, compilation and output. Maximum RSS is the largest individual process reported by time, not the sum of the process tree. Stages ran one at a time with one crosswalk worker. Inputs and previous build artifacts were copied into an independent worktree. The stage runs use the configured `data:build` stage commands through `runBuild`, with dependency stages excluded because their outputs already existed.
 
 | Work                                                           | Runs |               Wall seconds |              Peak RSS MiB | Work performed                                                                                                                |
 | -------------------------------------------------------------- | ---: | -------------------------: | ------------------------: | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -24,13 +24,13 @@ DuckDB was configured with `memory_limit='2GB'` and a private temporary director
 
 ## Equivalence
 
-The NHS region run produced seven records and content hash `sha256:e9a4a5e5af18c3f392f44446331daa10759f67a5964465f82a82d7ed87411cac` in all ten repeated runs. The Node profiler also checked that hash against the stored artifact. The 650-record constituency run produced `sha256:5ecf406ed595ea270efb3693662f71b61e664b51309019ca417527095fe29ece` on both paths, and the Node profiler matched the stored artifact. These hashes cover the complete serialized crosswalk content, including records, validation and provenance. No output differences were observed for these inputs. They do not prove equivalence for every adapter or for a replacement of the clipping algorithm.
+The NHS region run produced seven records and content hash `sha256:e9a4a5e5af18c3f392f44446331daa10759f67a5964465f82a82d7ed87411cac` in all ten repeated runs. The Node profiler also checked that hash against the stored artifact. The 650-record constituency run produced `sha256:5ecf406ed595ea270efb3693662f71b61e664b51309019ca417527095fe29ece` on both paths, and the Node profiler matched the stored artifact. A local fixture test also checks that the spatial candidate join keeps touching and degenerate bounds in source and target order. These hashes cover the complete serialized crosswalk content, including records, validation and provenance. No output differences were observed for these inputs. They do not prove equivalence for every adapter or for a replacement of the clipping algorithm.
 
 ## Installation and complexity
 
 The workspace already depends on `@duckdb/node-api` 1.4.5-r.1, so this experiment adds no package dependency. Its installed Linux x64 binding occupies about 63 MiB, the API and wrapper about 1 MiB, and the separately downloaded spatial extension 84 MiB. These are local on-disk sizes, not compressed download sizes. The spatial extension must be installed before the command can load it.
 
-A frozen workspace `pnpm install` succeeded locally. The API Dockerfile built successfully and its build-stage install downloaded the native binding. A separate `node:24-bookworm-slim` container installed the same package and loaded the binding with `SELECT 1`. The production API image copies the bundled API output, not the pipeline or the extension. CI's full workspace install and `pnpm check` run on GitHub remain to be confirmed by the PR checks; the local install alone does not establish CI success.
+A frozen workspace `pnpm install` succeeded locally. The API Dockerfile built successfully and its build-stage install downloaded the native binding. A separate `node:24-bookworm-slim` container installed the same package and loaded the binding with `SELECT 1`. The production API image copies the bundled API output, not the pipeline or the extension. GitHub Actions is disabled for this repository, so the CI install could not be verified. The local install does not establish CI success.
 
 The prototype needs a second spatial index implementation, a temporary directory and native extension setup. It preserves the existing shared-arc tiler and boundary mappings. Its extra candidate list and retained Node geometry make it unsuitable as a memory fix in its current form. A larger redesign would need to stream geometry into DuckDB, retain the current corrections and sliver decisions, and demonstrate matching results without materializing both releases in Node.
 
@@ -45,8 +45,11 @@ node --input-type=module -e 'import {DuckDBInstance} from "@duckdb/node-api"; co
 Before each run, inspect `ps aux | grep -E 'node|tsx|duckdb'` and wait for other heavy builds. For example:
 
 ```sh
+pnpm exec tsx --test pipeline/spike-tests/duckdb-crosswalk-candidates.test.ts
 id=constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
+ps aux | grep -E 'node|tsx|duckdb'
 /usr/bin/time -v pnpm exec tsx --max-old-space-size=3072 pipeline/src/profile-crosswalks.ts --workers=1 "$id"
+ps aux | grep -E 'node|tsx|duckdb'
 /usr/bin/time -v pnpm exec tsx --max-old-space-size=3072 pipeline/src/spike-duckdb-crosswalk.ts "$id" /tmp/duckdb-crosswalk.json
 ```
 
