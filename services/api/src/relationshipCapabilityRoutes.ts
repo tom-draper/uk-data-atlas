@@ -149,7 +149,12 @@ export const handleRelationshipCapabilityRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"conversionPlan" | "hasAreaRelease" | "relationshipCapabilitiesFrom" | "relationshipCapability">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "conversionPlan"
+	| "hasAreaRelease"
+	| "relationshipCapabilitiesFrom"
+	| "relationshipCapability"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||

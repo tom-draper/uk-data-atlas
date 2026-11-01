@@ -27,7 +27,18 @@ export const aggregateValue = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"area" | "crosswalk" | "indexedPathSteps" | "relationshipPath" | "places" | "missingRequirement" | "namedLocation" | "areaCodes" | "reconcileMembersForYear" | "countryIdentity">): ApiResponse => {
+}: RouteRequestFor<
+	| "area"
+	| "crosswalk"
+	| "indexedPathSteps"
+	| "relationshipPath"
+	| "places"
+	| "missingRequirement"
+	| "namedLocation"
+	| "areaCodes"
+	| "reconcileMembersForYear"
+	| "countryIdentity"
+>): ApiResponse => {
 	const { dataCatalog, measureObservations } = context;
 	const measureId = segments[2] as string;
 	const resolvedMeasure = resolveAggregationMeasure({

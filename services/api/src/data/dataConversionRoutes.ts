@@ -41,7 +41,9 @@ export const handleDataConversionRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"crosswalk" | "indexedPathSteps" | "relationshipPath" | "missingRequirement">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	"crosswalk" | "indexedPathSteps" | "relationshipPath" | "missingRequirement"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
 		segments[0] !== "v1" ||

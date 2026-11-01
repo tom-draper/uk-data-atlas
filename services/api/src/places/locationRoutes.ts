@@ -32,7 +32,20 @@ export const handleLocationRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"locationParentCrosswalks" | "locationParents" | "namedLocation" | "namedLocations" | "reconcileMembers" | "releaseAreas" | "missingRequirement" | "crosswalksToLocationMembers" | "locationProjection" | "locationReleaseViews" | "locationMemberProjectionShards" | "locationParentProjectionShards">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "locationParentCrosswalks"
+	| "locationParents"
+	| "namedLocation"
+	| "namedLocations"
+	| "reconcileMembers"
+	| "releaseAreas"
+	| "missingRequirement"
+	| "crosswalksToLocationMembers"
+	| "locationProjection"
+	| "locationReleaseViews"
+	| "locationMemberProjectionShards"
+	| "locationParentProjectionShards"
+>): ApiResponse | undefined => {
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
@@ -422,7 +435,20 @@ export const handleLocationRoutes = ({
  * `include=capabilities` expands it.
  */
 const locationCapabilities = (
-	context: RouteRequestFor<"locationParentCrosswalks" | "locationParents" | "namedLocation" | "namedLocations" | "reconcileMembers" | "releaseAreas" | "missingRequirement" | "crosswalksToLocationMembers" | "locationProjection" | "locationReleaseViews" | "locationMemberProjectionShards" | "locationParentProjectionShards">["context"],
+	context: RouteRequestFor<
+		| "locationParentCrosswalks"
+		| "locationParents"
+		| "namedLocation"
+		| "namedLocations"
+		| "reconcileMembers"
+		| "releaseAreas"
+		| "missingRequirement"
+		| "crosswalksToLocationMembers"
+		| "locationProjection"
+		| "locationReleaseViews"
+		| "locationMemberProjectionShards"
+		| "locationParentProjectionShards"
+	>["context"],
 	location: NamedLocation,
 ) => {
 	const geographyResolver = context.geographyResolver;
@@ -524,7 +550,20 @@ const locationParents = ({
 	parsedUrl,
 	segments,
 }: Pick<
-	RouteRequestFor<"locationParentCrosswalks" | "locationParents" | "namedLocation" | "namedLocations" | "reconcileMembers" | "releaseAreas" | "missingRequirement" | "crosswalksToLocationMembers" | "locationProjection" | "locationReleaseViews" | "locationMemberProjectionShards" | "locationParentProjectionShards">,
+	RouteRequestFor<
+		| "locationParentCrosswalks"
+		| "locationParents"
+		| "namedLocation"
+		| "namedLocations"
+		| "reconcileMembers"
+		| "releaseAreas"
+		| "missingRequirement"
+		| "crosswalksToLocationMembers"
+		| "locationProjection"
+		| "locationReleaseViews"
+		| "locationMemberProjectionShards"
+		| "locationParentProjectionShards"
+	>,
 	"context" | "releaseId" | "parsedUrl" | "segments"
 >): ApiResponse => {
 	const geographyResolver = context.geographyResolver;
