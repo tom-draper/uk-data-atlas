@@ -119,19 +119,19 @@ def sync_detailed(
     compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their
     borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code`
     without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are
-    listed under `features` in the descriptor. The `full` file is not stored: it is written from the
-    geometry store when asked for, and is the same file, byte for byte, each time. The first request for
-    a large release can take a few seconds. A coarse tier keeps every border shared but is not
-    guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's
-    `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy
-    loaded on its own is still citable.
+    listed under `features` in the descriptor. Downloads are generated from the geometry store on
+    request, checked against their published hashes and cached within a bounded byte budget. Cold
+    requests for large releases can take longer; generation is serialized. A coarse tier keeps every
+    border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's
+    `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and
+    publisher file hash, so a copy loaded on its own is still citable.
     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open
     GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are
     GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and
-    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. The file
-    is stored gzipped, so a client sending `Accept-Encoding: gzip` receives it with `Content-Encoding:
-    gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the
-    descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
+    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. A client
+    sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not
+    receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and
+    `contentHash` describe the decoded GeoJSON.
     The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any reader that fetches Parquet
     over HTTP can read its footer and only the row groups it needs. The GeoJSON is always sent whole.
 
@@ -184,19 +184,19 @@ def sync(
     compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their
     borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code`
     without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are
-    listed under `features` in the descriptor. The `full` file is not stored: it is written from the
-    geometry store when asked for, and is the same file, byte for byte, each time. The first request for
-    a large release can take a few seconds. A coarse tier keeps every border shared but is not
-    guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's
-    `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy
-    loaded on its own is still citable.
+    listed under `features` in the descriptor. Downloads are generated from the geometry store on
+    request, checked against their published hashes and cached within a bounded byte budget. Cold
+    requests for large releases can take longer; generation is serialized. A coarse tier keeps every
+    border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's
+    `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and
+    publisher file hash, so a copy loaded on its own is still citable.
     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open
     GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are
     GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and
-    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. The file
-    is stored gzipped, so a client sending `Accept-Encoding: gzip` receives it with `Content-Encoding:
-    gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the
-    descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
+    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. A client
+    sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not
+    receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and
+    `contentHash` describe the decoded GeoJSON.
     The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any reader that fetches Parquet
     over HTTP can read its footer and only the row groups it needs. The GeoJSON is always sent whole.
 
@@ -244,19 +244,19 @@ async def asyncio_detailed(
     compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their
     borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code`
     without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are
-    listed under `features` in the descriptor. The `full` file is not stored: it is written from the
-    geometry store when asked for, and is the same file, byte for byte, each time. The first request for
-    a large release can take a few seconds. A coarse tier keeps every border shared but is not
-    guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's
-    `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy
-    loaded on its own is still citable.
+    listed under `features` in the descriptor. Downloads are generated from the geometry store on
+    request, checked against their published hashes and cached within a bounded byte budget. Cold
+    requests for large releases can take longer; generation is serialized. A coarse tier keeps every
+    border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's
+    `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and
+    publisher file hash, so a copy loaded on its own is still citable.
     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open
     GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are
     GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and
-    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. The file
-    is stored gzipped, so a client sending `Accept-Encoding: gzip` receives it with `Content-Encoding:
-    gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the
-    descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
+    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. A client
+    sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not
+    receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and
+    `contentHash` describe the decoded GeoJSON.
     The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any reader that fetches Parquet
     over HTTP can read its footer and only the row groups it needs. The GeoJSON is always sent whole.
 
@@ -307,19 +307,19 @@ async def asyncio(
     compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours share their
     borders exactly, and the ids are the ones a join table publishes, so values join by `id` or `code`
     without reading a tile. Every tier is published, `full` included, and its size and SHA-256 are
-    listed under `features` in the descriptor. The `full` file is not stored: it is written from the
-    geometry store when asked for, and is the same file, byte for byte, each time. The first request for
-    a large release can take a few seconds. A coarse tier keeps every border shared but is not
-    guaranteed to be a valid polygon everywhere, as the descriptor's `generalisation` says. The file's
-    `uk-data-atlas` metadata names the resource, tier, attribution and publisher file hash, so a copy
-    loaded on its own is still citable.
+    listed under `features` in the descriptor. Downloads are generated from the geometry store on
+    request, checked against their published hashes and cached within a bounded byte budget. Cold
+    requests for large releases can take longer; generation is serialized. A coarse tier keeps every
+    border shared but is not guaranteed to be a valid polygon everywhere, as the descriptor's
+    `generalisation` says. The file's `uk-data-atlas` metadata names the resource, tier, attribution and
+    publisher file hash, so a copy loaded on its own is still citable.
     `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools that open
     GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and `high` are
     GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the same `id`, and
-    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. The file
-    is stored gzipped, so a client sending `Accept-Encoding: gzip` receives it with `Content-Encoding:
-    gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and the
-    descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
+    `code` and `name` properties; coordinates are written to six decimal places, about 0.1 m. A client
+    sending `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and one that does not
+    receives it decoded. The two encodings have different `ETag`s, and the descriptor's `bytes` and
+    `contentHash` describe the decoded GeoJSON.
     The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any reader that fetches Parquet
     over HTTP can read its footer and only the row groups it needs. The GeoJSON is always sent whole.
 

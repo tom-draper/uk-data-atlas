@@ -62,21 +62,28 @@ API can let clients spoof their rate-limit identity.
 ## Map files on object storage
 
 Upload the files named by `map-resources.json` to a release-specific object
-storage prefix, preserving their artifact paths. These are the PMTiles archives
-and each GeoJSON and GeoParquet download, including untiled releases. Set
+storage prefix, preserving their artifact paths. These are the PMTiles archives. Set
 `ATLAS_MAP_ASSET_BASE_URL` to the HTTPS CDN URL for that prefix. For example:
 
 ```sh
 export ATLAS_MAP_ASSET_BASE_URL=https://maps.example.com/releases/2026-10-12
 ```
 
-With this setting, descriptors link to the CDN and API download routes redirect
-to it. The API does not open local PMTiles archives, so map files can be omitted
+With this setting, tile descriptors link to the CDN and PMTiles download routes
+redirect to it. The API does not open local PMTiles archives, so map files can be omitted
 from its volume. Keep `map-resources.json` on the volume.
 
-Full-detail (`tier=full`) GeoParquet downloads have no artifact: the API writes
-them from the geometry store when asked for, so they are always served by the
-API, never by the CDN. Keep `geometry-store/` on the volume.
+Whole-release GeoParquet and GeoJSON downloads have no artifact. The API
+builds them from the geometry store on request and verifies their published
+SHA-256 before serving them. PMTiles remain stored and can use the CDN.
+The process keeps up to 64 MiB of recently generated download bytes in memory;
+larger files are served without retention. Concurrent requests for the same
+file share a build, and generation is serialized across releases. A cold
+simplified download runs shared-arc generalisation and can delay other requests
+while that CPU work runs. Warm downloads use the byte cache. Restarting the API
+clears this cache. Keep the geometry store and release manifest from the same
+build, or generation returns 503 rather than serving bytes under a stale hash.
+Rebuilding map resources removes the obsolete simplified download files.
 
 PMTiles clients can read archives directly with HTTP range requests. Configure
 the CDN to support Range, GET, HEAD and CORS, and expose `ETag`, `Content-Range`
