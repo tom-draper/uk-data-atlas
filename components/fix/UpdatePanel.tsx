@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState } from "react";
 import { Download } from "lucide-react";
 import { Card } from "@/components/docs/Page";
 import {
@@ -25,78 +25,10 @@ import {
 	type CodeMode,
 	type SplitMode,
 } from "@/lib/fix/update";
-import { Button, labelClass, ToneIcon } from "./ui";
+import { Button, Check, Choice, labelClass, ToneIcon } from "./ui";
 
 const count = (value: number) => value.toLocaleString("en-GB");
 const rows = (value: number) => `${count(value)} row${value === 1 ? "" : "s"}`;
-
-function Choice({
-	name,
-	value,
-	checked,
-	onChange,
-	children,
-	hint,
-}: {
-	name: string;
-	value: string;
-	checked: boolean;
-	onChange: (value: string) => void;
-	children: ReactNode;
-	hint?: string;
-}) {
-	return (
-		<label className="flex gap-2 text-[14px] text-slate-700">
-			<input
-				type="radio"
-				name={name}
-				value={value}
-				checked={checked}
-				onChange={() => onChange(value)}
-				className="mt-[3px] h-4 w-4 shrink-0 accent-slate-900"
-			/>
-			<span>
-				{children}
-				{hint && (
-					<span className="block text-[13px] text-slate-500">
-						{hint}
-					</span>
-				)}
-			</span>
-		</label>
-	);
-}
-
-function Check({
-	checked,
-	onChange,
-	children,
-	hint,
-}: {
-	checked: boolean;
-	onChange: (checked: boolean) => void;
-	children: ReactNode;
-	hint?: string;
-}) {
-	return (
-		<label className="flex gap-2 text-[14px] text-slate-700">
-			<input
-				type="checkbox"
-				checked={checked}
-				onChange={(event) => onChange(event.target.checked)}
-				className="mt-[3px] h-4 w-4 shrink-0 accent-slate-900"
-			/>
-			<span>
-				{children}
-				{hint && (
-					<span className="block text-[13px] text-slate-500">
-						{hint}
-					</span>
-				)}
-			</span>
-		</label>
-	);
-}
 
 /** Parent lookups already read this visit, by crosswalk id. */
 const parentCache = new Map<string, Promise<Map<string, Successor[]>>>();

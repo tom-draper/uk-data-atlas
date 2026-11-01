@@ -81,3 +81,73 @@ export const selectClass =
 	"min-h-10 w-full rounded-md border border-slate-900/15 bg-white px-3 py-2 text-[14px] text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-slate-900";
 
 export const labelClass = "mb-1 block text-[13px] font-medium text-slate-600";
+
+/** A radio button with its label and an optional hint. */
+export function Choice({
+	name,
+	value,
+	checked,
+	onChange,
+	children,
+	hint,
+}: {
+	name: string;
+	value: string;
+	checked: boolean;
+	onChange: (value: string) => void;
+	children: ReactNode;
+	hint?: string;
+}) {
+	return (
+		<label className="flex gap-2 text-[14px] text-slate-700">
+			<input
+				type="radio"
+				name={name}
+				value={value}
+				checked={checked}
+				onChange={() => onChange(value)}
+				className="mt-[3px] h-4 w-4 shrink-0 accent-slate-900"
+			/>
+			<span>
+				{children}
+				{hint && (
+					<span className="block text-[13px] text-slate-500">
+						{hint}
+					</span>
+				)}
+			</span>
+		</label>
+	);
+}
+
+/** A checkbox with its label and an optional hint. */
+export function Check({
+	checked,
+	onChange,
+	children,
+	hint,
+}: {
+	checked: boolean;
+	onChange: (checked: boolean) => void;
+	children: ReactNode;
+	hint?: string;
+}) {
+	return (
+		<label className="flex gap-2 text-[14px] text-slate-700">
+			<input
+				type="checkbox"
+				checked={checked}
+				onChange={(event) => onChange(event.target.checked)}
+				className="mt-[3px] h-4 w-4 shrink-0 accent-slate-900"
+			/>
+			<span>
+				{children}
+				{hint && (
+					<span className="block text-[13px] text-slate-500">
+						{hint}
+					</span>
+				)}
+			</span>
+		</label>
+	);
+}
