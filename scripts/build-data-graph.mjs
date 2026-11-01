@@ -386,7 +386,6 @@ const apiStages = [
 	stage(
 		"geography-catalogues",
 		[
-			"atlas-sqlite",
 			"boundary-registry",
 			"geography-inventory",
 			"relationship-paths",
