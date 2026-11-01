@@ -17,6 +17,7 @@ import {
 import { readTable, ROW_LIMIT, type Table } from "@/lib/fix/table";
 import type { ReleaseRef } from "@/lib/fix/types";
 import ColumnsPanel, { type ColumnChoice } from "./ColumnsPanel";
+import ConvertPanel from "./ConvertPanel";
 import DiagnosisPanel from "./DiagnosisPanel";
 import InputPanel from "./InputPanel";
 import UpdatePanel from "./UpdatePanel";
@@ -214,12 +215,33 @@ export default function FixTool() {
 
 				{source &&
 					table &&
+					diagnosis &&
+					!busy &&
+					area !== null &&
+					diagnosis.release &&
+					diagnosis.matched > 0 && (
+						<section aria-labelledby="fix-convert">
+							<StepHeading step={5} id="fix-convert">
+								Convert to another geography
+							</StepHeading>
+							<ConvertPanel
+								key={`${source.name}/${area}/${diagnosis.release.boundaryRelease}/${choice.values.join(",")}`}
+								table={table}
+								diagnosis={diagnosis}
+								values={choice.values}
+								sourceName={source.name}
+							/>
+						</section>
+					)}
+
+				{source &&
+					table &&
 					result &&
 					diagnosis &&
 					!busy &&
 					area !== null && (
 						<section aria-labelledby="fix-output">
-							<StepHeading step={5} id="fix-output">
+							<StepHeading step={6} id="fix-output">
 								Reports
 							</StepHeading>
 							<div className="flex flex-wrap gap-2">
