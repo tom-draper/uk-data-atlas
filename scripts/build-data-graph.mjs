@@ -282,7 +282,7 @@ const apiStages = [
 		"postcode-areas",
 		[
 			"geography-catalogues",
-			"atlas-sqlite",
+			"assemble-atlas",
 			"postcode-index",
 			"area-inventory",
 			"geometry-store",
@@ -296,11 +296,29 @@ const apiStages = [
 			"--max-old-space-size=3072",
 			"pipeline/src/build-postcode-areas.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+			outputs: ["data/build/postcode-areas-component"],
+			requiredOutputs: [
+				"data/build/postcode-areas-component/manifest.json",
+			],
+		},
+	),
+	stage(
+		"assemble-postcode-areas",
+		["assemble-atlas", "postcode-areas"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/assemble-postcode-areas.ts",
+		],
+		{ requiredOutputs: ["data/build/atlas.sqlite"] },
 	),
 	stage(
 		"postcode-counts",
-		["postcode-index", "postcode-areas"],
+		["postcode-index", "assemble-postcode-areas"],
 		[
 			"--dir",
 			"../..",

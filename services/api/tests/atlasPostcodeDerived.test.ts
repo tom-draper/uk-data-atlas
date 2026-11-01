@@ -21,7 +21,8 @@ import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
 import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
 import { writeEmptyObservationComponent } from "./atlasComponentFixtures";
-import { storePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
+import { storePostcodeAreas as writePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
+import { assemblePostcodeAreas } from "../../../pipeline/src/assemble-postcode-areas";
 import { buildDuckdbPostcodeCounts } from "../../../pipeline/src/postcode-counts/buildDuckdbPostcodeCounts";
 import { validateShards } from "../../../pipeline/src/postcode-counts/validatePostcodeCountInputs";
 import {
@@ -36,6 +37,15 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
+
+const storePostcodeAreas: typeof writePostcodeAreas = (
+	root,
+	artifact,
+	readShard,
+) => {
+	writePostcodeAreas(root, artifact, readShard);
+	return assemblePostcodeAreas(root);
+};
 
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-postcode-derived-"));
@@ -101,6 +111,19 @@ function fixture(t: TestContext) {
 	const texts = new Map(compiled.files.map((file) => [file.path, file.text]));
 	return { root, apiRoot, path, compiled, texts };
 }
+
+test("postcode area component leaves the published database unchanged", (t) => {
+	const { root, path, compiled, texts } = fixture(t);
+	const before = readFileSync(path);
+	const manifest = writePostcodeAreas(root, compiled.artifact, (name) =>
+		texts.get(name)!,
+	);
+	assert.deepEqual(readFileSync(path), before);
+	assert.deepEqual(
+		JSON.parse(readFileSync(manifest, "utf8")),
+		compiled.artifact,
+	);
+});
 
 test("SQLite mappings retain exact bytes, boundary matches, distances and empty placements without JSON", (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
