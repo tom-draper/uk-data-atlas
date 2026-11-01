@@ -1,3 +1,4 @@
+import { withComponentApiRoot } from "./componentApiRoot";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import {
@@ -51,7 +52,7 @@ import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-type
 import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
- * Compile postcode placements into atlas.sqlite: the areas each postcode's centroid lies in,
+ * Compile postcode placements into a component: the areas each postcode's centroid lies in,
  * for the releases postcode answers read by default.
  *
  * Each release is placed in a worker thread holding that release's geometry,
@@ -191,7 +192,47 @@ export const buildPostcodeAreas = async (
 	options: { workers?: number; verifyEvery?: number; rebuild?: boolean } = {},
 ) => {
 	const apiRoot = apiRootOf(repositoryRoot);
-	const postcodeIndex = readPostcodeIndex(apiRoot);
+	const { postcodeArtifact, lng, lat, longitudes, latitudes } =
+		withComponentApiRoot(
+			repositoryRoot,
+			"postcode-index.sqlite",
+			(postcodeApiRoot) => {
+				const postcodeIndex = readPostcodeIndex(postcodeApiRoot);
+				const postcodeArtifact = postcodeIndex.artifact;
+				const count = postcodeArtifact.counts.postcodes;
+				const longitudes = new SharedArrayBuffer(count * 8);
+				const latitudes = new SharedArrayBuffer(count * 8);
+				const lng = new Float64Array(longitudes).fill(Number.NaN);
+				const lat = new Float64Array(latitudes).fill(Number.NaN);
+				let at = 0;
+				for (const entry of postcodeArtifact.shards) {
+					const shard = JSON.parse(
+						readSqlitePostcodeShard(postcodeApiRoot, entry),
+					) as PostcodeShard;
+					for (const postcode of shard.postcodes) {
+						const found = postcodeIndex.lookup(
+							parsePostcode(postcode) as Extract<
+								ReturnType<typeof parsePostcode>,
+								{ kind: "unit" }
+							>,
+						);
+						if (found.status === "found" && found.record.centroid) {
+							const point = postcodeLookupPoint(
+								found.record.centroid,
+							);
+							lng[at] = point.lng;
+							lat[at] = point.lat;
+						}
+						at += 1;
+					}
+				}
+				if (at !== count)
+					throw new Error(
+						`The postcode index counts ${count} postcodes but holds ${at}.`,
+					);
+				return { postcodeArtifact, lng, lat, longitudes, latitudes };
+			},
+		);
 	const areaInventory = readAreaInventory(apiRoot);
 	const geometrySources = readGeometrySources(apiRoot);
 	const resolver = new AreasResolver({
@@ -207,7 +248,7 @@ export const buildPostcodeAreas = async (
 			"measures",
 			"measure compatibility inventory",
 		),
-		postcodeIndex.artifact.source.edition,
+		postcodeArtifact.source.edition,
 		(geography, boundaryRelease) =>
 			geometrySources.get(releaseKey(geography, boundaryRelease))
 				?.inputHash !== undefined,
@@ -227,40 +268,11 @@ export const buildPostcodeAreas = async (
 		};
 	};
 
-	// Every centroid, in the postcode index's shard order.
-	const count = postcodeIndex.artifact.counts.postcodes;
-	const longitudes = new SharedArrayBuffer(count * 8);
-	const latitudes = new SharedArrayBuffer(count * 8);
-	const lng = new Float64Array(longitudes).fill(Number.NaN);
-	const lat = new Float64Array(latitudes).fill(Number.NaN);
-	let at = 0;
-	for (const entry of postcodeIndex.artifact.shards) {
-		const shard = JSON.parse(
-			readSqlitePostcodeShard(apiRoot, entry),
-		) as PostcodeShard;
-		for (const postcode of shard.postcodes) {
-			const found = postcodeIndex.lookup(
-				parsePostcode(postcode) as Extract<
-					ReturnType<typeof parsePostcode>,
-					{ kind: "unit" }
-				>,
-			);
-			if (found.status === "found" && found.record.centroid) {
-				const point = postcodeLookupPoint(found.record.centroid);
-				lng[at] = point.lng;
-				lat[at] = point.lat;
-			}
-			at += 1;
-		}
-	}
-	if (at !== count)
-		throw new Error(
-			`The postcode index counts ${count} postcodes but holds ${at}.`,
-		);
+	const count = postcodeArtifact.counts.postcodes;
 
 	const previous = options.rebuild
 		? undefined
-		: previousBuild(repositoryRoot, postcodeIndex.artifact.contentHash);
+		: previousBuild(repositoryRoot, postcodeArtifact.contentHash);
 	const reusable = new Set(
 		(previous?.releases ?? []).flatMap((release) => {
 			const current = inputsOf(
@@ -293,7 +305,7 @@ export const buildPostcodeAreas = async (
 					);
 				const shard = JSON.parse(text) as PostcodeAreasShard;
 				yield { offset, shard };
-				offset += postcodeIndex.artifact.shards[index]!.postcodes;
+				offset += postcodeArtifact.shards[index]!.postcodes;
 			}
 		};
 		const reused = placementsFromShards(
@@ -363,7 +375,7 @@ export const buildPostcodeAreas = async (
 		return { release: entry, placements };
 	});
 	const { artifact, files } = compilePostcodeAreas(
-		postcodeIndex.artifact,
+		postcodeArtifact,
 		releases,
 	);
 	const texts = new Map(files.map((file) => [file.path, file.text]));
