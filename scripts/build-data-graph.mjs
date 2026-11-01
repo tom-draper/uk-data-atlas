@@ -283,7 +283,7 @@ const apiStages = [
 		"postcode-areas",
 		[
 			"geography-catalogues",
-			"assemble-atlas",
+			"atlas-sqlite",
 			"postcode-index",
 			"area-inventory",
 			"geometry-store",
