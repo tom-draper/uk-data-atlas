@@ -123,6 +123,10 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 	);
 	assert.equal(before.products.length, 6);
 	const path = buildAtlasSqlite(root);
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/atlas-base.sqlite")),
+		readFileSync(path),
+	);
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		assert.deepEqual(
