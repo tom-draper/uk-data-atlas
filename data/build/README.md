@@ -138,9 +138,10 @@ API tables or the complete compiled release.
 
 `atlas-sqlite` writes the canonical statistics tables from
 `docs/sqlite-schema-design.md` (layer 4). Every catalogue dataset is stored
-in them except those in `UNSTORED_DATASETS` (`packages/atlas-runtime/src/catalogue/statisticsDatasets/`):
-the three election datasets and NHS waiting times. They are separate from the API's `observations` and
-`observation_*` tables, which `data-catalog` populates and step 4 retires.
+in them. `UNSTORED_DATASETS` (`packages/atlas-runtime/src/catalogue/statisticsDatasets/`)
+lists any exception with its reason, and is empty. They are separate from the API's `observations` and
+`observation_*` tables, which `data-catalog` populates and the migration's last step removes once the API
+reads the statistics tables.
 The base database schema version is 3; the `catalogue_*` pilot tables from PR #398
 are gone.
 
@@ -207,7 +208,7 @@ on an `alsoIn` release read the series with the same measure and members.
 Derived numbers are recomputed by the config's `rebuild.derived` rules. The
 compiled JSON is then not stored in `payloads`. The `atlas-sqlite` stage
 rebuilds it into `atlas-cache.sqlite`, checking the manifest hash.
-Other configured datasets keep their payloads until a later batch.
+Every configured dataset sets `rebuild`, so none keeps a payload.
 
 Run `pnpm exec vitest run --project built tests/built/datasetPayloads.test.ts`
 to check every dataset served from rows rebuilds to its manifest hash, has no
