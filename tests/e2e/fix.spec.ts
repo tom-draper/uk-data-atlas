@@ -10,6 +10,14 @@ const fixture = (name: string) =>
 	readFileSync(`tests/fixtures/fix/${name}.json`, "utf8");
 
 async function mockApi(page: Page) {
+	// An empty basemap, so the map step does not reach CARTO.
+	await page.route("https://basemaps.cartocdn.com/**", (route) =>
+		route.fulfill({
+			status: 200,
+			contentType: "application/json",
+			body: JSON.stringify({ version: 8, sources: {}, layers: [] }),
+		}),
+	);
 	await page.route("https://api.ukdataatlas.com/v1/**", async (route) => {
 		const url = new URL(route.request().url());
 		const json = (body: string) =>
@@ -51,6 +59,13 @@ async function mockApi(page: Page) {
 			"/v1/crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment:convert"
 		)
 			return json(fixture("convert-sample"));
+		if (url.pathname === "/v1/map-resources/ward/2024-12-uk-bgc/tiles.json")
+			return json(fixture("tiles-ward-2024-12"));
+		if (url.pathname.endsWith(".mvt"))
+			return route.fulfill({
+				status: 204,
+				headers: { "access-control-allow-origin": "*" },
+			});
 		if (url.pathname === "/v1/areas:validate")
 			return json(
 				fixture(
@@ -186,5 +201,34 @@ test("the sample's households add up to their local authority", async ({
 	expect(readFileSync((await file.path())!, "utf8")).toBe(
 		"local_authority_code,local_authority_name,households,households_coverage\n" +
 			"E06000054,Wiltshire,85666,partial: 26 of 98 wards\n",
+	);
+});
+
+test("the sample's wards are mapped by status, or shaded by households", async ({
+	page,
+}) => {
+	await mockApi(page);
+	await page.goto("/fix");
+	await page.getByRole("button", { name: "Try a sample" }).click();
+
+	const map = page.locator('section[aria-labelledby="fix-map"]');
+	await expect(
+		map.getByRole("img", {
+			name: "26 areas from your file on a map of Wards, December 2024",
+		}),
+	).toBeVisible();
+	const key = map.getByRole("list", { name: "Key" });
+	await expect(key).toContainText("OK: Current in Wards, May 2026");
+	await expect(key).toContainText(
+		"Warning: Retired since Wards, December 2024",
+	);
+	await expect(map).toContainText(
+		"1 row isn't drawn, because the code wasn't matched.",
+	);
+
+	await map.getByLabel("Colour by").selectOption({ label: "households" });
+	await expect(key.getByRole("listitem")).toHaveCount(5);
+	await expect(key.getByRole("listitem").first()).toHaveText(
+		"1,818 to 2,445",
 	);
 });

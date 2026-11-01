@@ -1,0 +1,30 @@
+{
+	"apiVersion": "v1",
+	"atlasRelease": "sha256:e328679310bcae2cc4d96d6e853ddb42f7ec80e98215b6608189edd8bd26bb41",
+	"data": {
+		"tilejson": "3.0.0",
+		"name": "ward/2024-12-uk-bgc",
+		"description": "Wards, December 2024 (United Kingdom, generalised, clipped)",
+		"attribution": "Contains Office for National Statistics data, Open Government Licence v3.0",
+		"scheme": "xyz",
+		"format": "pbf",
+		"tiles": [
+			"/v1/map-resources/ward/2024-12-uk-bgc/tiles/{z}/{x}/{y}.mvt"
+		],
+		"minzoom": 0,
+		"maxzoom": 12,
+		"bounds": [-8.6499958, 49.8647926, 1.7637056, 60.8607658],
+		"center": [-3.4431450999999997, 55.362779200000006, 0],
+		"vector_layers": [
+			{
+				"id": "boundaries",
+				"description": "Wards, December 2024 (United Kingdom, generalised, clipped)",
+				"minzoom": 0,
+				"maxzoom": 12,
+				"fields": { "code": "String", "name": "String" }
+			}
+		],
+		"x-content-hash": "sha256:dd7dd46f243bf5400a59f5cff46829fc582fd8b9b5e4a3120d962330b09f9a4b"
+	},
+	"meta": { "nextCursor": null }
+}
