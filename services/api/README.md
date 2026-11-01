@@ -1317,7 +1317,7 @@ The route selector in the documentation should begin with the user’s job:
 | see a trend, ranking, comparison or change                           | `/series`, `/rankings`, `/compare` or `/change` under that measure                  |
 | translate an identifier through a published crosswalk                | `/translations`                                                                     |
 | convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                                           |
-| validate a supplied code/name or discover releases                   | `/areas:validate`, `/boundaries`, `/boundary-releases`                             |
+| validate a supplied code/name or discover releases                   | `/areas:validate`, `/boundaries`, `/boundary-releases`                              |
 | cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-release` and `/documents/{document-id}.json` |
 
 `/data/{measure}/value?place=` is a deliberately narrow convenience for a

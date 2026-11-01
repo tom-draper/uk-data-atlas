@@ -24,7 +24,15 @@ export const handleAreaOverlapRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"area" | "areaGeometry" | "explainAreaAbsence" | "hasAreaRelease" | "selectReleaseForDate" | "missingRequirement" | "relationships">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "area"
+	| "areaGeometry"
+	| "explainAreaAbsence"
+	| "hasAreaRelease"
+	| "selectReleaseForDate"
+	| "missingRequirement"
+	| "relationships"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 6 ||
 		segments[0] !== "v1" ||

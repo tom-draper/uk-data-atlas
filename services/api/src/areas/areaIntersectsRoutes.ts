@@ -30,7 +30,14 @@ export const handleAreaIntersectsRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"geometryFor" | "hasAreaRelease" | "intersectingAreas" | "missingRequirement" | "selectReleaseForDate" | "explainAreaAbsence">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "geometryFor"
+	| "hasAreaRelease"
+	| "intersectingAreas"
+	| "missingRequirement"
+	| "selectReleaseForDate"
+	| "explainAreaAbsence"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||

@@ -31,7 +31,13 @@ export const handleBulkRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"areaIdentityReleaseForArtifact" | "releaseAreas" | "crosswalkSummaryForArtifact" | "crosswalk" | "namedLocationMembershipInventory">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "areaIdentityReleaseForArtifact"
+	| "releaseAreas"
+	| "crosswalkSummaryForArtifact"
+	| "crosswalk"
+	| "namedLocationMembershipInventory"
+>): ApiResponse | undefined => {
 	const { dataCatalog, exportManifest, lookupManifest, measureObservations } =
 		context;
 	if (

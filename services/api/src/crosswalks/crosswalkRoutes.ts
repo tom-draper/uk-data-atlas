@@ -13,7 +13,8 @@ export const handleCrosswalkRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"missingRequirement" | "crosswalk" | "crosswalkSummaries">): ApiResponse | undefined => {
+}: RouteRequestFor<"missingRequirement" | "crosswalk" | "crosswalkSummaries">):
+	ApiResponse | undefined => {
 	const resolver = context.geographyResolver;
 	if (
 		segments.length === 2 &&

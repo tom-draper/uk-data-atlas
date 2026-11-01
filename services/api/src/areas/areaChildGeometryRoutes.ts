@@ -31,7 +31,14 @@ export const handleAreaChildGeometryRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"area" | "geometryFor" | "relationships" | "explainAreaAbsence" | "missingRequirement" | "selectReleaseForDate">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "area"
+	| "geometryFor"
+	| "relationships"
+	| "explainAreaAbsence"
+	| "missingRequirement"
+	| "selectReleaseForDate"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 7 ||
 		segments[0] !== "v1" ||

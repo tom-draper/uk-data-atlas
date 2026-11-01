@@ -30,7 +30,15 @@ export const handleAreaNearRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-}: RouteRequestFor<"boundaryRelease" | "hasAreaRelease" | "selectReleaseForDate" | "explainAreaAbsence" | "releaseGeometrySource" | "nearestAreas" | "missingRequirement">): ApiResponse | undefined => {
+}: RouteRequestFor<
+	| "boundaryRelease"
+	| "hasAreaRelease"
+	| "selectReleaseForDate"
+	| "explainAreaAbsence"
+	| "releaseGeometrySource"
+	| "nearestAreas"
+	| "missingRequirement"
+>): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||

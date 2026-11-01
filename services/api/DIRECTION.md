@@ -178,7 +178,7 @@ The current contract has 71 paths after aggregation and evidence routes were fol
 | Its history, parents, children, neighbours      | `…/history`, `…/parents`, `…/children`, `…/neighbours`                                               |
 | What's here (point, postcode or grid reference) | `GET /areas:contains`                                                                                |
 | Postcode                                        | `GET /postcodes/{postcode}`                                                                          |
-| Browse the archive                              | `GET /boundaries`, `GET /boundary-releases`                                                         |
+| Browse the archive                              | `GET /boundaries`, `GET /boundary-releases`                                                          |
 | One release, whole                              | `GET /boundary-releases/{geography}/{release}`, with `.geojson`, `.parquet` and `.pmtiles` downloads |
 | Which release on a date                         | `GET /boundary-releases:resolve`                                                                     |
 | Named places                                    | `GET /locations/{id}`, `…/members`, `…/geometry`                                                     |
