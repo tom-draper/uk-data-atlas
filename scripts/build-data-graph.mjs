@@ -189,6 +189,7 @@ const apiStages = [
 		"place-index",
 		[
 			"geography-catalogues",
+			"assemble-atlas",
 			"atlas-sqlite",
 			"boundary-registry",
 			"area-inventory",
@@ -217,7 +218,7 @@ const apiStages = [
 	),
 	stage(
 		"postcode-index",
-		["sources", "atlas-sqlite"],
+		["sources", "assemble-atlas"],
 		[
 			"--dir",
 			"../..",
@@ -237,15 +238,9 @@ const apiStages = [
 		},
 	),
 	stage(
-		"assemble-observations",
-		["atlas-sqlite", "data-catalog"],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"pipeline/src/assemble-observations.ts",
-		],
+		"assemble-atlas",
+		["atlas-sqlite", "data-catalog", "geography-catalogues"],
+		["--dir", "../..", "exec", "tsx", "pipeline/src/assemble-atlas.ts"],
 		{
 			requiredOutputs: ["data/build/atlas.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -371,7 +366,6 @@ const apiStages = [
 			"relationship-paths",
 			"analysis-geographies",
 			"analysis-geography-validation",
-			"assemble-observations",
 		],
 		[
 			"--dir",
@@ -380,7 +374,10 @@ const apiStages = [
 			"tsx",
 			"pipeline/src/build-geography-catalogues.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			requiredOutputs: ["data/build/geography-payloads.json"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"location-projections",
@@ -536,6 +533,7 @@ const apiStages = [
 		"atlas-lookups",
 		[
 			"geography-catalogues",
+			"assemble-atlas",
 			"atlas-sqlite",
 			"area-inventory",
 			"crosswalk-inventory",
@@ -593,6 +591,7 @@ const apiStages = [
 		"atlas-pages",
 		[
 			"geography-catalogues",
+			"assemble-atlas",
 			"api-datasets",
 			"boundary-registry",
 			"geometry-store",

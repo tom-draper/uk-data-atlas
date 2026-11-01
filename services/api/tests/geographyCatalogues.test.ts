@@ -13,6 +13,7 @@ import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildGeographyCatalogues } from "../../../pipeline/src/build-geography-catalogues";
+import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
 import {
 	buildArtifactPath,
 	geographyCatalogues,
@@ -43,6 +44,11 @@ const fixture = (t: TestContext) => {
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
 	);
 	database.close();
+	const observations = new DatabaseSync(
+		join(root, "data/build/observations.sqlite"),
+	);
+	observations.exec("CREATE TABLE observations (id INTEGER); ANALYZE");
+	observations.close();
 	for (const id of geographyCatalogues) {
 		const path = buildArtifactPath(root, `${id}.json`);
 		mkdirSync(dirname(path), { recursive: true });
@@ -78,8 +84,14 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 			readFileSync(buildArtifactPath(root, `${id}.json`), "utf8"),
 		]),
 	);
+	const before = readFileSync(join(root, "data/build/atlas.sqlite"));
 	buildGeographyCatalogues(root);
 	buildGeographyCatalogues(root);
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/atlas.sqlite")),
+		before,
+	);
+	assembleAtlas(root);
 	for (const [id, payload] of expected) {
 		assert.equal(readAtlasPayload(root, id), payload);
 		assert.equal(
@@ -187,7 +199,8 @@ test("a failed SQLite update keeps the previous database and removes its tempora
 	);
 	database.close();
 	const before = readFileSync(path);
-	assert.throws(() => buildGeographyCatalogues(root), /rejected catalogue/);
+	buildGeographyCatalogues(root);
+	assert.throws(() => assembleAtlas(root), /rejected catalogue/);
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(existsSync(`${path}.geography.tmp`), false);
 	assert.equal(
