@@ -13,7 +13,7 @@ import {
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 } from "@/lib/data/boundaries/catalog";
-import { parseDatasetMeta } from "@/lib/data/catalog/meta";
+import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
 import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 const ROOT = join(process.cwd(), "data/source", "boundaries");

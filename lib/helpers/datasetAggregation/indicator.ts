@@ -1,7 +1,7 @@
 import type {
 	AggregatedIndicatorData,
 	IndicatorRecord,
-} from "@/lib/types/indicator";
+} from "@uk-data-atlas/datasets/types/indicator";
 
 /** Counts and quantities are source totals, so they aggregate by summing. */
 export const aggregateIndicator = (

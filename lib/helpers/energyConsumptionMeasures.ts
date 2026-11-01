@@ -1,4 +1,4 @@
-import type { EnergyConsumptionLADData } from "@/lib/types/energyConsumption";
+import type { EnergyConsumptionLADData } from "@uk-data-atlas/datasets/types/energyConsumption";
 export const ENERGY_SECTORS = [
 	{ value: "allMetersGwh", label: "All meters" },
 	{ value: "domesticGwh", label: "Domestic meters" },

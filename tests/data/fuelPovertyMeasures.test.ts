@@ -1,7 +1,7 @@
 import { it, expect } from "vitest";
 import { fuelPovertyDefinition } from "@/lib/datasets/fuelPoverty";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import type { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
+import type { FuelPovertyDataset } from "@uk-data-atlas/datasets/types/fuelPoverty";
 it("maps rate or household count without filling absent areas", () => {
 	const dataset = {
 		data: { E1: { fuelPovertyRate: 12.5, fuelPoorHouseholdCount: 125 } },

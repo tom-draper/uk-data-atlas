@@ -1,6 +1,6 @@
 import { gazetteer } from "@/lib/data/gazetteer/static";
-import type { PlaceKind } from "@/lib/data/gazetteer/places";
-import type { DatasetSource } from "@/lib/data/catalog/types";
+import type { PlaceKind } from "@uk-data-atlas/datasets/data/gazetteer/places";
+import type { DatasetSource } from "@uk-data-atlas/datasets/data/catalog/types";
 import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
 import type { ChartDatasetType } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
@@ -10,7 +10,7 @@ import {
 	visualizationRefFromActiveViz,
 } from "@/lib/helpers/visualization";
 import type { ActiveViz, VizView } from "@/lib/types";
-import type { DatasetCountry } from "@/lib/types/coverage";
+import type { DatasetCountry } from "@uk-data-atlas/datasets/types/coverage";
 
 /**
  * Every atlas map has its own page, `/atlas/{location}/{map}`, so search

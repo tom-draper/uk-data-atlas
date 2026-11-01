@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { claimantCountDefinition } from "@/lib/datasets/claimantCount";
-import type { ClaimantCountDataset } from "@/lib/types/claimantCount";
+import type { ClaimantCountDataset } from "@uk-data-atlas/datasets/types/claimantCount";
 
 const dataset: ClaimantCountDataset = {
 	id: "claimantCount2026",

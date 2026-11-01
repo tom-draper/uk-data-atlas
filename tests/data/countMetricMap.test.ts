@@ -3,8 +3,8 @@ import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { businessActivityDefinition } from "@/lib/datasets/businessActivity";
 import { electricVehicleChargersDefinition } from "@/lib/datasets/electricVehicleChargers";
 import { jobsDefinition } from "@/lib/datasets/jobs";
-import type { IndicatorDataset } from "@/lib/types/indicator";
-import type { JobsDataset } from "@/lib/types/jobs";
+import type { IndicatorDataset } from "@uk-data-atlas/datasets/types/indicator";
+import type { JobsDataset } from "@uk-data-atlas/datasets/types/jobs";
 
 const dataset = <T extends "businessActivity" | "electricVehicleChargers">(
 	type: T,

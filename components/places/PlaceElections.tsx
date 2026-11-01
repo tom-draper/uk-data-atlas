@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Card } from "@/components/docs/Page";
 import { linkClass, Section } from "@/components/places/PlaceUi";
-import { PARTIES } from "@/lib/data/election/parties";
+import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import type { CouncilElection, WardElections } from "@/lib/places/elections";
 
 const OTHER_COLOR = "#94a3b8";

@@ -2,7 +2,7 @@ import {
 	calculateTotal,
 	calculateMedianAge,
 	polygonAreaSqKm,
-} from "@/lib/helpers/population";
+} from "@uk-data-atlas/datasets/helpers/population";
 import type { PopulationWardData } from "@/lib/types";
 import type { BoundaryGeometry } from "@lib/types";
 

@@ -1,4 +1,4 @@
-import type { IndicatorRecord } from "@/lib/types/indicator";
+import type { IndicatorRecord } from "@uk-data-atlas/datasets/types/indicator";
 import type { WasteOptions } from "@/lib/types/mapOptions";
 
 export type WasteStats = Pick<IndicatorRecord, "value" | "metrics">;

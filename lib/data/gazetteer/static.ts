@@ -4,6 +4,6 @@
 // and lazily by lib/data/boundaries/constituencyLadOverlaps.ts.
 import coreJson from "@/public/data/datasets/gazetteer.core.json";
 import { Gazetteer } from "./gazetteer";
-import type { GazetteerCore } from "./types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 
 export const gazetteer = new Gazetteer(coreJson as unknown as GazetteerCore);

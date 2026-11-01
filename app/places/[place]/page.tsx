@@ -11,7 +11,7 @@ import {
 	loadPlaceIndex,
 	placeEntry,
 } from "@/lib/places/load";
-import { isAreaCode } from "@/lib/places/profile";
+import { isAreaCode } from "@uk-data-atlas/catalogue/place-profile";
 import { areaSummary } from "@/lib/places/summary";
 import { pageMetadata, titleCase } from "@/lib/site";
 

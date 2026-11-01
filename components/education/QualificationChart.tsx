@@ -9,7 +9,7 @@ import {
 	QUALIFICATION_COLORS,
 	QUALIFICATION_LEVELS,
 	type QualificationKey,
-} from "@/lib/types/qualification";
+} from "@uk-data-atlas/datasets/types/qualification";
 
 const config: BreakdownChartConfig<QualificationKey> = {
 	datasetType: "qualification",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadBrexitConstituency } from "@/lib/data/brexit-constituency/loader";
+import { loadBrexitConstituency } from "@uk-data-atlas/datasets/data/brexit-constituency/loader";
 
 describe("loadBrexitConstituency", () => {
 	it("keeps England while excluding Wales, Scotland and Northern Ireland", async () => {

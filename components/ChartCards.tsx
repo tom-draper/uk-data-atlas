@@ -8,7 +8,7 @@ import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
-import type { BoundaryData } from "@/lib/types/boundaries";
+import type { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
 import type { ChartKey } from "@/lib/context/ChartVisibilityContext";
 import type { ChartComponentProps } from "./chartComponentTypes";
 import { ViewportGatedChart } from "./ViewportGatedChart";

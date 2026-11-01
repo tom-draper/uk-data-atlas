@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { regionalGdpItl3Definition as definition } from "@/lib/datasets/regionalGdpItl3";
 import { aggregateRegionalGdp } from "@/lib/helpers/datasetAggregation/numeric";
-import type { RegionalGdpItl3Dataset } from "@/lib/types/regionalGdp";
+import type { RegionalGdpItl3Dataset } from "@uk-data-atlas/datasets/types/regionalGdp";
 const dataset: RegionalGdpItl3Dataset = {
 	id: "gdp2023",
 	type: "regionalGdpItl3",

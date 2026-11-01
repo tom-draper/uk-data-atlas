@@ -6,7 +6,7 @@ import {
 	type DatasetConfig,
 } from "@/lib/helpers/aggregateDataset";
 import type { Dataset } from "@/lib/types/datasets";
-import type { BoundaryData } from "@/lib/types/boundaries";
+import type { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 
 /** Memoized chart aggregation with the shared aggregateDataset cache beneath it. */

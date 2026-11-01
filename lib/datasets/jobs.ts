@@ -5,7 +5,7 @@ import type {
 	AggregatedJobsData,
 	JobsDataset,
 	JobsLADData,
-} from "@/lib/types/jobs";
+} from "@uk-data-atlas/datasets/types/jobs";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";
 

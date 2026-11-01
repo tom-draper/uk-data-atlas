@@ -8,7 +8,7 @@ import {
 	type MapRanking,
 	type RankedArea,
 } from "@/lib/atlas/rankings";
-import type { PlaceGeography } from "@/lib/places/profile";
+import type { PlaceGeography } from "@uk-data-atlas/catalogue/place-profile";
 
 /**
  * A place page's key figures: a few of the atlas's ranked maps, each with the

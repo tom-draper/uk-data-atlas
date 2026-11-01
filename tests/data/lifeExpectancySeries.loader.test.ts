@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	loadLifeExpectancySeries,
 	loadLifeExpectancySeriesRows,
-} from "@/lib/data/life-expectancy/seriesLoader";
+} from "@uk-data-atlas/datasets/data/life-expectancy/seriesLoader";
 
 const HEADER =
 	"Period,Country,Area type,Area code,Area name,Sex,Sex code,Age band,Age group,Life expectancy,Lower confidence interval,Upper confidence interval";

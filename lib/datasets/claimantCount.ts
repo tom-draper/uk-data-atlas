@@ -3,7 +3,7 @@ import { claimantCountAggregation } from "@/lib/helpers/datasetAggregation/speci
 import type {
 	AggregatedClaimantCountData,
 	ClaimantCountDataset,
-} from "@/lib/types/claimantCount";
+} from "@uk-data-atlas/datasets/types/claimantCount";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";
 

@@ -1,6 +1,6 @@
 import { carAvailabilityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { carAvailabilityAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { CarAvailabilityDataset } from "@/lib/types/carAvailability";
+import type { CarAvailabilityDataset } from "@uk-data-atlas/datasets/types/carAvailability";
 import type { ChartDatasetDefinition } from "./types";
 
 export const carAvailabilityDefinition: ChartDatasetDefinition<CarAvailabilityDataset> =

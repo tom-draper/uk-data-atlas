@@ -1,6 +1,9 @@
 import { areaKindNoun, countryOf, listNames } from "@/lib/places/labels";
 import { loadPlaceIndex } from "@/lib/places/load";
-import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
+import {
+	releaseLabel,
+	type AreaProfile,
+} from "@uk-data-atlas/catalogue/place-profile";
 
 /** One sentence on what an area is and which boundary releases carry it. */
 export async function areaSummary(profile: AreaProfile) {

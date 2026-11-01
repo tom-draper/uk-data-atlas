@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
 	decodeCompactPayload,
 	encodeCompactPayload,
-} from "@/lib/data/compactPayload";
-import { decodeYearArrays, encodeYearArrays } from "@/lib/data/yearArrays";
+} from "@uk-data-atlas/catalogue/compactPayload";
+import {
+	decodeYearArrays,
+	encodeYearArrays,
+} from "@uk-data-atlas/catalogue/yearArrays";
 
 const edition = (
 	data: Record<string, unknown>,

@@ -1,7 +1,7 @@
 import { renderGeneralElection } from "@/lib/helpers/mapRendering";
 import { generalElectionAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { generalElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
-import type { GeneralElectionDataset } from "@/lib/types/elections";
+import type { GeneralElectionDataset } from "@uk-data-atlas/datasets/types/elections";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
 const calculateStats: ChartDefinition<GeneralElectionDataset>["calculateStats"] =

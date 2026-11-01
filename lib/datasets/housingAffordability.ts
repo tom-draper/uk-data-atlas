@@ -1,6 +1,6 @@
 import { housingAffordabilityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { averageIndicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { IndicatorDataset } from "@/lib/types/indicator";
+import type { IndicatorDataset } from "@uk-data-atlas/datasets/types/indicator";
 import { indicatorCard } from "./indicatorCard";
 import type { ChartDatasetDefinition } from "./types";
 export const housingAffordabilityDefinition: ChartDatasetDefinition<

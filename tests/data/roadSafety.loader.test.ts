@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { loadRoadSafety } from "@/lib/data/road-safety/loader";
 import { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
-import type { GazetteerCore } from "@/lib/data/gazetteer/types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 
 // Two collisions in Greater Manchester and one in London. A fourth sits on the

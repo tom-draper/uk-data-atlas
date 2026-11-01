@@ -5,16 +5,16 @@ import {
 	Feature,
 	Features,
 	getFeatureProp,
-} from "@lib/types/geometry";
+} from "@uk-data-atlas/datasets/types/geometry";
 import {
 	LocalElectionDataset,
 	GeneralElectionDataset,
-} from "@lib/types/elections";
-import { EthnicityDataset } from "@lib/types/ethnicity";
+} from "@uk-data-atlas/datasets/types/elections";
+import { EthnicityDataset } from "@uk-data-atlas/datasets/types/ethnicity";
 import {
 	BrexitLADDataset,
 	BrexitConstituencyDataset,
-} from "@lib/types/referendum";
+} from "@uk-data-atlas/datasets/types/referendum";
 import { MapOptions } from "@lib/types/mapOptions";
 import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import { getColorForBrexitLeave } from "../colorScale/datasetColors";

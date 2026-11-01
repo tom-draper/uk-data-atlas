@@ -13,7 +13,7 @@ import {
 	type PostcodeSectors,
 	type SourceDistrict,
 } from "../lib/places/postcodes";
-import { decodeCompactPayload } from "../lib/data/compactPayload";
+import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import { readSqlitePostcodeAreaShard } from "@uk-data-atlas/atlas-runtime/storage";
 import { postcodeDistrictWhere } from "@uk-data-atlas/atlas-runtime/storage";
 import type {

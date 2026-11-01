@@ -1,6 +1,6 @@
 import { simdDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { simdAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { SIMDDataset } from "@/lib/types/simd";
+import type { SIMDDataset } from "@uk-data-atlas/datasets/types/simd";
 import { deprivationRankMap } from "./deprivationRankMap";
 import type { ChartDatasetDefinition } from "./types";
 

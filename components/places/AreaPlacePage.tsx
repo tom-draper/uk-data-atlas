@@ -39,7 +39,10 @@ import {
 } from "@/lib/places/headlines";
 import { loadAreaProfile, loadPlaceIndex } from "@/lib/places/load";
 import { areaPostcodeDistricts } from "@/lib/places/postcodes";
-import { releaseLabel, type AreaProfile } from "@/lib/places/profile";
+import {
+	releaseLabel,
+	type AreaProfile,
+} from "@uk-data-atlas/catalogue/place-profile";
 import { areaSummary } from "@/lib/places/summary";
 
 type Council = AreaProfile["parents"][number];

@@ -1,7 +1,7 @@
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { mobileCoverageDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { mobileCoverageAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { MobileCoverageDataset } from "@/lib/types/mobileCoverage";
+import type { MobileCoverageDataset } from "@uk-data-atlas/datasets/types/mobileCoverage";
 import type { ChartDatasetDefinition } from "./types";
 
 export const mobileCoverageDefinition: ChartDatasetDefinition<MobileCoverageDataset> =

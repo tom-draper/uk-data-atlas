@@ -1,6 +1,6 @@
 import { it, expect } from "vitest";
 import { summariseIMD } from "@uk-data-atlas/datasets/helpers/datasetAggregation/deprivation";
-import type { IMDLSOAData } from "@/lib/types/imd";
+import type { IMDLSOAData } from "@uk-data-atlas/datasets/types/imd";
 it("population weights domain scores and preserves negative scores", () => {
 	const a = {
 		population: 100,

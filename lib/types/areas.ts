@@ -3,7 +3,7 @@ import {
 	LocalElectionWardData,
 	GeneralElectionConstituencyData,
 	LocalAuthorityData,
-} from "./elections";
+} from "@uk-data-atlas/datasets/types/elections";
 
 type LsoaAreaData = {
 	lsoaCode?: string;

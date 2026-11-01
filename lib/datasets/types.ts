@@ -1,7 +1,7 @@
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
 import type { MapRenderContext } from "@/lib/helpers/mapRendering";
 import type { ActiveViz, VizView } from "@/lib/types/datasets";
-import type { BoundaryGeojson } from "@/lib/types/geometry";
+import type { BoundaryGeojson } from "@uk-data-atlas/datasets/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ComponentType } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";

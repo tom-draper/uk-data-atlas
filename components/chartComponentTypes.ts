@@ -2,7 +2,7 @@ import type { MapOptions } from "@/lib/types/mapOptions";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
-import type { BoundaryData } from "@/lib/types/boundaries";
+import type { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
 
 /** Props supplied by the registry-driven chart card renderer. */
 export interface ChartComponentProps {
