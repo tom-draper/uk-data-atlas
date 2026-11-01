@@ -2,7 +2,13 @@ import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
-import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { assembleWebsiteAssets } from "@/pipeline/src/assemble-website-assets";
+
+const buildAtlasAssets = (root: string) => {
+	stageAtlasAssets(root);
+	assembleWebsiteAssets(root);
+};
 
 const index = {
 	version: 1,

@@ -5,8 +5,14 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { ATLAS_LOOKUP_NAMES } from "@/scripts/atlas-lookups";
-import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { assembleWebsiteAssets } from "@/pipeline/src/assemble-website-assets";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
+
+const buildAtlasAssets = (root: string) => {
+	stageAtlasAssets(root);
+	assembleWebsiteAssets(root);
+};
 
 export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
 	const root = mkdtempSync(join(tmpdir(), "website-assets-"));

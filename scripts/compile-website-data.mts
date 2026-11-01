@@ -1,3 +1,4 @@
+import { assembleWebsiteAssets } from "../pipeline/src/assemble-website-assets";
 import { buildAtlasAssets } from "../pipeline/src/build-atlas-assets";
 import { buildAtlasSqlite } from "../pipeline/src/buildAtlasSqlite";
 /**
@@ -92,6 +93,7 @@ async function compileSelected(names: readonly string[]) {
 	await compileCatalogueDatasets(names);
 	buildAtlasSqlite(ROOT);
 	buildAtlasAssets(ROOT);
+	assembleWebsiteAssets(ROOT);
 	const { datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const compiledDatasets: CompiledDatasets = new Map();

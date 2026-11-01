@@ -116,6 +116,7 @@ const apiOrder = [
 	"atlas-lookups",
 	"atlas-pages",
 	"website-lookups",
+	"assemble-website-assets",
 	"atlas-cache-stamp",
 	"atlas-release",
 ];
@@ -138,6 +139,7 @@ test("rebuilding atlas pages imports SQLite assets before sealing the release an
 	assert.deepEqual(stages(build.run(["--from", "atlas-pages"])), [
 		"atlas-pages",
 		"website-lookups",
+		"assemble-website-assets",
 		"atlas-cache-stamp",
 		"atlas-release",
 		"website-datasets",
@@ -206,6 +208,7 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"atlas-lookups",
 		"atlas-pages",
 		"website-lookups",
+		"assemble-website-assets",
 		"atlas-cache-stamp",
 		"atlas-release",
 		"website-datasets",

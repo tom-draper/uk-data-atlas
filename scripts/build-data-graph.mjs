@@ -585,7 +585,7 @@ const apiStages = [
 			"place-index",
 			"area-search-index",
 			"postcode-counts",
-			"website-lookups",
+			"assemble-website-assets",
 		],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/stamp-atlas-cache.ts"],
 		{
@@ -599,7 +599,7 @@ const apiStages = [
 			"atlas-release-initial",
 			"documents",
 			"atlas-lookups",
-			"website-lookups",
+			"assemble-website-assets",
 			"atlas-cache-stamp",
 		],
 		[
@@ -694,13 +694,25 @@ const websiteStages = [
 		["atlas-lookups", "atlas-pages"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-atlas-assets.ts"],
 		{
-			requiredOutputs: ["data/build/atlas.sqlite"],
+			requiredOutputs: ["data/build/website-assets.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
+		"assemble-website-assets",
+		["website-lookups", "assemble-postcode-areas"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/assemble-website-assets.ts",
+		],
+		{ requiredOutputs: ["data/build/atlas.sqlite"] },
+	),
+	stage(
 		"website-datasets",
-		["atlas-sqlite", "website-lookups", "website-tiles"],
+		["atlas-sqlite", "assemble-website-assets", "website-tiles"],
 		[
 			"--dir",
 			"../..",
