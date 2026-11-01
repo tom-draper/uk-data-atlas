@@ -247,6 +247,8 @@ const apiStages = [
 			"data-catalog",
 			"geography-catalogues",
 			"postcode-index",
+			"postcode-areas",
+			"website-lookups",
 		],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/assemble-atlas.ts"],
 		{
@@ -305,20 +307,8 @@ const apiStages = [
 		},
 	),
 	stage(
-		"assemble-postcode-areas",
-		["assemble-atlas", "postcode-areas"],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"pipeline/src/assemble-postcode-areas.ts",
-		],
-		{ requiredOutputs: ["data/build/atlas.sqlite"] },
-	),
-	stage(
 		"postcode-counts",
-		["postcode-index", "assemble-postcode-areas"],
+		["postcode-index", "assemble-atlas"],
 		[
 			"--dir",
 			"../..",
@@ -583,7 +573,7 @@ const apiStages = [
 			"place-index",
 			"area-search-index",
 			"postcode-counts",
-			"assemble-website-assets",
+			"assemble-atlas",
 		],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/stamp-atlas-cache.ts"],
 		{
@@ -597,7 +587,7 @@ const apiStages = [
 			"atlas-release-initial",
 			"documents",
 			"atlas-lookups",
-			"assemble-website-assets",
+			"assemble-atlas",
 			"atlas-cache-stamp",
 		],
 		[
@@ -697,20 +687,8 @@ const websiteStages = [
 		},
 	),
 	stage(
-		"assemble-website-assets",
-		["website-lookups", "assemble-postcode-areas"],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"pipeline/src/assemble-website-assets.ts",
-		],
-		{ requiredOutputs: ["data/build/atlas.sqlite"] },
-	),
-	stage(
 		"website-datasets",
-		["atlas-sqlite", "assemble-website-assets", "website-tiles"],
+		["atlas-sqlite", "assemble-atlas", "website-tiles"],
 		[
 			"--dir",
 			"../..",

@@ -179,21 +179,13 @@ test("atlas assembly depends on each declared component output", () => {
 			"data/build/postcode-areas-component",
 		),
 	);
-	assert.ok(
-		stage("assemble-postcode-areas").dependencies.includes(
-			"postcode-areas",
-		),
-	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("postcode-areas"));
 	assert.ok(
 		stage("website-lookups").requiredOutputs.includes(
 			"data/build/website-assets.sqlite",
 		),
 	);
-	assert.ok(
-		stage("assemble-website-assets").dependencies.includes(
-			"website-lookups",
-		),
-	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("website-lookups"));
 	assert.ok(
 		stage("atlas-sqlite").requiredOutputs.includes(
 			"data/build/atlas-base.sqlite",
@@ -213,6 +205,16 @@ test("atlas assembly depends on each declared component output", () => {
 		stage("assemble-atlas").requiredOutputs.includes(
 			"data/build/atlas.sqlite",
 		),
+	);
+	assert.deepEqual(
+		buildDataStages
+			.filter((entry) =>
+				[...entry.outputs, ...entry.requiredOutputs].includes(
+					"data/build/atlas.sqlite",
+				),
+			)
+			.map((entry) => entry.name),
+		["assemble-atlas"],
 	);
 });
 

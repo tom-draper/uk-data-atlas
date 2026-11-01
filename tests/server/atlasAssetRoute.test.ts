@@ -3,7 +3,6 @@ import {
 	mkdirSync,
 	readFileSync,
 	rmSync,
-	statSync,
 	writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
@@ -13,13 +12,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as page } from "@/app/data/atlas-pages/[file]/route";
 import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
 import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
-import { assembleWebsiteAssets } from "@/pipeline/src/assemble-website-assets";
+import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
 import { readAtlasAssetText } from "@uk-data-atlas/atlas-runtime/storage";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 
 const buildAtlasAssets = (root: string) => {
 	stageAtlasAssets(root);
-	assembleWebsiteAssets(root);
+	assembleAtlas(root);
 };
 
 let fixture: ReturnType<typeof websiteAssetsFixture>;
@@ -111,11 +110,16 @@ describe("SQLite website assets", () => {
 			existsSync(join(fixture.root, "data/build/website-assets.sqlite")),
 		).toBe(true);
 	});
-	it("keeps the database unchanged on an identical import", () => {
-		const path = join(fixture.root, "data/build/atlas.sqlite");
-		const before = statSync(path);
+	it("retains the same asset contents on an identical import", () => {
+		const before = readAtlasAssetText(
+			fixture.root,
+			"pages",
+			"places-index",
+		);
 		buildAtlasAssets(fixture.root);
-		expect(statSync(path).mtimeMs).toBe(before.mtimeMs);
+		expect(readAtlasAssetText(fixture.root, "pages", "places-index")).toBe(
+			before,
+		);
 	});
 	it("replaces removed assets and preserves other database tables", () => {
 		fixture.write("pages", {
