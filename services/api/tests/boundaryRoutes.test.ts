@@ -156,7 +156,8 @@ test("links a boundary release to its whole-release downloads", async () => {
 		},
 		fullDetailDownloads: {
 			get: (...asked) => {
-				builds.push(asked);
+				assert.equal(asked.length, 4);
+				builds.push(asked.map(String));
 				return { status: "built", body: built };
 			},
 		},
@@ -180,7 +181,8 @@ test("links a boundary release to its whole-release downloads", async () => {
 		fullDetailDownloads: {
 			get: () => assert.fail("built on the request's own turn"),
 			build: async (...asked) => {
-				builds.push(asked);
+				assert.equal(asked.length, 4);
+				builds.push(asked.map(String));
 				return { status: "built", body: built };
 			},
 		},
@@ -688,4 +690,61 @@ test("reports published extent continuity findings separately from code-set evid
 		unmeasured: [],
 		unassessedSharedCodes: [],
 	});
+});
+
+test("awaits simplified downloads at their API URL even with CDN tiles", async () => {
+	const body = Buffer.from('{"type":"FeatureCollection","features":[]}');
+	let builds = 0;
+	const context = testContext({
+		mapResources: {
+			assetBaseUrl: "https://maps.example.com",
+			resources: [
+				{
+					id: "ward/test",
+					geography: "ward",
+					boundaryRelease: "test",
+					tiles: {},
+					features: [
+						{
+							tier: "low",
+							format: "geojson",
+							contentHash: "hash",
+							bytes: body.length,
+							href: "/v1/map-resources/ward/test/features?tier=low&format=geojson",
+						},
+					],
+				} as never,
+			],
+		},
+		fullDetailDownloads: {
+			get: () => assert.fail("Should await the download"),
+			build: async (...asked) => {
+				builds++;
+				assert.deepEqual(asked, [
+					"ward",
+					"test",
+					"shared-arc",
+					"hash",
+					{ tier: "low", format: "geojson" },
+				]);
+				return { status: "built", body };
+			},
+		},
+	});
+	const result = await routeAsync(
+		"GET",
+		"/v1/map-resources/ward/test/features?tier=low&format=geojson",
+		context,
+	);
+	assert.equal(result.status, 200);
+	assert.equal(result.representation?.body, body);
+	assert.equal(result.representation?.contentType, "application/geo+json");
+	assert.equal(builds, 1);
+	const invalid = await routeAsync(
+		"GET",
+		"/v1/map-resources/ward/test/features?tier=full&format=geojson",
+		context,
+	);
+	assert.equal(invalid.status, 404);
+	assert.equal(builds, 1);
 });

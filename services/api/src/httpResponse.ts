@@ -240,7 +240,8 @@ export const httpResponse = (
 	// as a stored file is, unless its route has already encoded it.
 	const compressible =
 		!stored &&
-		!held &&
+		(!held ||
+			result.representation?.contentType === "application/geo+json") &&
 		headers["content-encoding"] === undefined &&
 		COMPRESSIBLE.test(headers["content-type"] ?? "");
 	const compress =
@@ -269,7 +270,7 @@ export const httpResponse = (
 	const etag = stored
 		? storedEntityTag(stored, gzipped)
 		: held
-			? storedEntityTag(held, false)
+			? storedEntityTag(held, compress)
 			: compress
 				? gzippedTag(entityTag(body as string | Buffer))
 				: entityTag(body as string | Buffer);
@@ -284,7 +285,9 @@ export const httpResponse = (
 	const size =
 		stored && stored.gzipBytes === undefined
 			? stored.bytes
-			: held?.bytes.length;
+			: result.representation?.contentType === "application/geo+json"
+				? undefined
+				: held?.bytes.length;
 	if (size !== undefined && result.status === 200) {
 		headers["accept-ranges"] = "bytes";
 		const ifRange = [request.headers["if-range"]].flat()[0];

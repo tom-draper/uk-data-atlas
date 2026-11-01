@@ -9,7 +9,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
  * It carries the same features as the GeoParquet download of the tier, with
  * the same ids, so the two are interchangeable. Coordinates are written to six
  * decimal places, about 0.1 m, well inside the generalisation of every
- * release. The file is stored gzipped; the hash and size describe the GeoJSON
+ * release. Returns a gzip encoding; the hash and size describe the GeoJSON
  * itself, which is what a client receives once it is decoded.
  */
 
@@ -24,7 +24,7 @@ const roundCoordinates = (value: unknown): unknown =>
 			? value.map(roundCoordinates)
 			: value;
 
-export const buildGeoJson = (
+export const buildGeoJsonBody = (
 	features: Array<{
 		id: number;
 		code: string;
@@ -32,7 +32,7 @@ export const buildGeoJson = (
 		geometry: GeoJsonGeometry;
 	}>,
 	metadata: { mapResource: string; tier: string; attribution: string },
-): { gzipped: Buffer; bytes: number; contentHash: string } => {
+): Buffer => {
 	// Each feature is its own chunk, so the largest release never has to be
 	// one JavaScript string.
 	const chunks: Buffer[] = [
@@ -67,7 +67,13 @@ export const buildGeoJson = (
 			),
 		);
 	chunks.push(Buffer.from("]}\n"));
-	const body = Buffer.concat(chunks);
+	return Buffer.concat(chunks);
+};
+
+export const buildGeoJson = (
+	...args: Parameters<typeof buildGeoJsonBody>
+): { gzipped: Buffer; bytes: number; contentHash: string } => {
+	const body = buildGeoJsonBody(...args);
 	return {
 		// Level 9 took five times as long as 6 to save under half a percent.
 		gzipped: gzipSync(body, { level: 6 }),
