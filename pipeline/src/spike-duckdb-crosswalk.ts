@@ -17,6 +17,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
+import { duckdbCrosswalkCandidates } from "./duckdbCrosswalkCandidates";
 
 const root = resolve(import.meta.dirname, "../..");
 const id = process.argv[2];
@@ -68,38 +69,11 @@ try {
 	await connection.run("SET memory_limit='2GB'");
 	await connection.run(`SET temp_directory='${temp.replaceAll("'", "''")}'`);
 	await connection.run("LOAD spatial");
-	await connection.run(
-		"CREATE TABLE boxes (side INTEGER, position INTEGER, code VARCHAR, minx DOUBLE, miny DOUBLE, maxx DOUBLE, maxy DOUBLE)",
+	const candidates = await duckdbCrosswalkCandidates(
+		connection,
+		sources.geometries,
+		targets.geometries,
 	);
-	const appender = await connection.createAppender("boxes");
-	try {
-		for (const [side, geometries] of [
-			[0, sources.geometries],
-			[1, targets.geometries],
-		] as const) {
-			let position = 0;
-			for (const [code, geometry] of geometries) {
-				appender.appendInteger(side);
-				appender.appendInteger(position++);
-				appender.appendVarchar(code);
-				for (const value of geometry.bounds)
-					appender.appendDouble(value);
-				appender.endRow();
-			}
-		}
-	} finally {
-		appender.closeSync();
-	}
-	const rows = await connection.runAndReadAll(
-		`SELECT s.code, t.code FROM boxes s JOIN boxes t ON ST_Intersects(ST_MakeEnvelope(s.minx, s.miny, s.maxx, s.maxy), ST_MakeEnvelope(t.minx, t.miny, t.maxx, t.maxy)) WHERE s.side = 0 AND t.side = 1 ORDER BY s.position, t.position`,
-	);
-	const candidates = new Map<string, string[]>();
-	for (const [source, target] of rows.getRows()) {
-		const key = String(source);
-		const codes = candidates.get(key) ?? [];
-		codes.push(String(target));
-		candidates.set(key, codes);
-	}
 	const read: typeof readGeometries = (_root, _id, endpoint) =>
 		endpoint.geography === adapter.from.geography &&
 		endpoint.boundaryRelease === adapter.from.boundaryRelease
