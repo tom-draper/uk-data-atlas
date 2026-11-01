@@ -19,6 +19,8 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
+import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import { writeEmptyObservationComponent } from "./atlasComponentFixtures";
 import { storePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
 import { buildDuckdbPostcodeCounts } from "../../../pipeline/src/postcode-counts/buildDuckdbPostcodeCounts";
 import { validateShards } from "../../../pipeline/src/postcode-counts/validatePostcodeCountInputs";
@@ -59,6 +61,8 @@ function fixture(t: TestContext) {
 		CREATE VIEW areas AS ${AREAS_VIEW};`,
 	);
 	db.close();
+	writeEmptyObservationComponent(root);
+	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	const postcodes = postcodeIndexFor([
 		postcodeRow("M1 1AA", { usrtypind: "1" }),
 		postcodeRow("M1 1AB", { doterm: "200102" }),
@@ -67,6 +71,7 @@ function fixture(t: TestContext) {
 	storePostcodeIndex(root, postcodes.artifact, (path) =>
 		postcodes.texts.get(path)!,
 	);
+	assembleAtlas(root);
 	const compiled = compilePostcodeAreas(postcodes.artifact, [
 		{
 			release: {
@@ -109,6 +114,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	);
 	for (let run = 0; run < 2; run++)
 		storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
+	assembleAtlas(root);
 	assert.equal(readAtlasPayload(root, "existing"), "retained");
 	assert.equal(
 		existsSync(join(artifactRoot(apiRoot), "postcode-areas.json")),

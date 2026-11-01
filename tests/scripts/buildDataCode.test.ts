@@ -164,10 +164,16 @@ test("atlas assembly depends on each declared component output", () => {
 			"data/build/geography-payloads.json",
 		),
 	);
+	assert.ok(
+		stage("postcode-index").requiredOutputs.includes(
+			"data/build/postcode-index.sqlite",
+		),
+	);
 	assert.ok(stage("assemble-atlas").dependencies.includes("data-catalog"));
 	assert.ok(
 		stage("assemble-atlas").dependencies.includes("geography-catalogues"),
 	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("postcode-index"));
 	assert.ok(
 		stage("assemble-atlas").requiredOutputs.includes(
 			"data/build/atlas.sqlite",
