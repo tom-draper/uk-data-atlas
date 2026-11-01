@@ -12,7 +12,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { storeObservations } from "../../../pipeline/src/store-observations";
+import { storeObservations as writeObservations } from "../../../pipeline/src/store-observations";
+import { assembleObservations } from "../../../pipeline/src/assemble-observations";
 import {
 	assertObservationCatalogue,
 	readObservationInventory,
@@ -76,6 +77,11 @@ const entries = (): Array<readonly [string, string]> => [
 	[table.id, `${JSON.stringify(table)}\n`],
 ];
 
+function storeObservations(...args: Parameters<typeof writeObservations>) {
+	writeObservations(...args);
+	assembleObservations(args[0]);
+}
+
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-observations-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -100,6 +106,44 @@ function mutate(path: string, sql: string) {
 		database.close();
 	}
 }
+
+test("writes observations separately until assembly", (t) => {
+	const { root, path } = fixture(t);
+	const before = readFileSync(path);
+	const component = writeObservations(root, catalog, entries());
+	assert.deepEqual(readFileSync(path), before);
+	assert.deepEqual([...readObservationInventory(component).names].sort(), [
+		"numeric-observations",
+		"shared-table",
+	]);
+	assembleObservations(root);
+	assert.deepEqual([...readObservationInventory(path).names].sort(), [
+		"numeric-observations",
+		"shared-table",
+	]);
+});
+
+test("reassembly retains statistics for other tables", (t) => {
+	const { root, path } = fixture(t);
+	storeObservations(root, catalog, entries());
+	const database = new DatabaseSync(path);
+	database.exec(
+		"UPDATE sqlite_stat1 SET stat = 'original' WHERE tbl = 'retained'",
+	);
+	database.close();
+	storeObservations(root, catalog, entries());
+	const result = new DatabaseSync(path, { readOnly: true });
+	try {
+		assert.equal(
+			result
+				.prepare("SELECT stat FROM sqlite_stat1 WHERE tbl = 'retained'")
+				.get()?.stat,
+			"original",
+		);
+	} finally {
+		result.close();
+	}
+});
 
 test("publishes exact SQLite payloads once per source, preserves other tables, and removes JSON after success", (t) => {
 	const { root, apiRoot, publicDirectory, path } = fixture(t);
@@ -211,6 +255,7 @@ test("failed publication retains the database and legacy JSON, and cleans tempor
 		assert.deepEqual(readdirSync(join(root, "data/build")), [
 			"artifacts",
 			"atlas.sqlite",
+			"observations.sqlite",
 		]);
 	}
 });

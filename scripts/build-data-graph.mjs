@@ -231,7 +231,25 @@ const apiStages = [
 		"data-catalog",
 		["atlas-sqlite"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-data-catalog.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			requiredOutputs: ["data/build/observations.sqlite"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
+	stage(
+		"assemble-observations",
+		["atlas-sqlite", "data-catalog"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/assemble-observations.ts",
+		],
+		{
+			requiredOutputs: ["data/build/atlas.sqlite"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"measure-compatibility",
@@ -353,6 +371,7 @@ const apiStages = [
 			"relationship-paths",
 			"analysis-geographies",
 			"analysis-geography-validation",
+			"assemble-observations",
 		],
 		[
 			"--dir",

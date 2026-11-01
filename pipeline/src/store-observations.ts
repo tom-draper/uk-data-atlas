@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { copyFileSync, readdirSync, renameSync, rmSync } from "node:fs";
+import { readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { replaceObservationTables } from "./atlasObservationTables";
+import { observationBuildPath } from "./observation-build-path";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationArtifactName,
@@ -10,13 +11,13 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
-/** Publish one complete observation generation while preserving other atlas tables. */
+/** Publish one complete observation generation. */
 export function storeObservations(
 	root: string,
 	catalog: DataCatalog,
 	artifacts: Iterable<readonly [string, string]>,
 ) {
-	const path = join(root, "data/build/atlas.sqlite");
+	const path = observationBuildPath(root);
 	const temporary = `${path}.observations.${randomUUID()}.tmp`;
 	const required = new Set(
 		catalog.measures.flatMap((measure) =>
@@ -41,7 +42,6 @@ export function storeObservations(
 			`Missing observation artifacts: ${[...required].join(", ")}`,
 		);
 	try {
-		copyFileSync(path, temporary);
 		const database = new DatabaseSync(temporary);
 		try {
 			database.exec(

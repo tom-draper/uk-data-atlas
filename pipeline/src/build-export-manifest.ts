@@ -1,16 +1,11 @@
-import {
-	observationDatabasePath,
-	assertObservationCatalogue,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { assertObservationCatalogue } from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import { compileExportManifest } from "./exportManifest";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { observationBuildPath } from "./observation-build-path";
 
 export const buildExportManifest = (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);
@@ -18,7 +13,7 @@ export const buildExportManifest = (repositoryRoot: string) => {
 	const dataCatalog = JSON.parse(
 		readFileSync(dataCatalogPath, "utf8"),
 	) as DataCatalog;
-	const databasePath = observationDatabasePath(apiRootOf(repositoryRoot));
+	const databasePath = observationBuildPath(repositoryRoot);
 	assertObservationCatalogue(databasePath, dataCatalog);
 	const manifest = compileExportManifest(
 		publicDirectory,
