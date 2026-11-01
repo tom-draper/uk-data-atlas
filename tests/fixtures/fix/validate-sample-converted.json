@@ -1,0 +1,48 @@
+{
+	"apiVersion": "v1",
+	"atlasRelease": "sha256:e328679310bcae2cc4d96d6e853ddb42f7ec80e98215b6608189edd8bd26bb41",
+	"data": {
+		"geography": "localAuthority",
+		"boundaryRelease": "2024-12-uk-bgc",
+		"summary": {
+			"valueCount": 1,
+			"byStatus": { "valid": 1 },
+			"duplicateCount": 0,
+			"normalisedCount": 0,
+			"joinable": true
+		},
+		"values": [
+			{
+				"index": 0,
+				"value": "E06000054",
+				"kind": "code",
+				"status": "valid",
+				"area": {
+					"id": "localAuthority/2024-12-uk-bgc/E06000054",
+					"code": "E06000054",
+					"name": "Wiltshire"
+				}
+			}
+		],
+		"manifest": {
+			"schemaVersion": 1,
+			"atlasRelease": "sha256:e328679310bcae2cc4d96d6e853ddb42f7ec80e98215b6608189edd8bd26bb41",
+			"input": {
+				"sha256": "sha256:d784b2ddc86d77f61ede9d3b43da7a940955699c3cf0325874cd2d5569cfb4bd",
+				"values": ["E06000054"]
+			},
+			"result": {
+				"verdict": "joinable",
+				"likely": {
+					"geography": "localAuthority",
+					"boundaryRelease": "2024-12-uk-bgc",
+					"resolved": 1
+				},
+				"candidates": [],
+				"recommendations": []
+			}
+		},
+		"note": "Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \"City of\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."
+	},
+	"meta": { "nextCursor": null }
+}

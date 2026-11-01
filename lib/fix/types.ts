@@ -1,7 +1,7 @@
 /**
  * The parts of the API's responses the fix page reads. They mirror
- * `services/api/openapi.yaml` for `/areas:validate`, `/boundary-releases` and
- * `/areas/{geography}/{release}/{code}/history`, and name only the fields the
+ * `services/api/openapi.yaml` for `/areas:validate`, `/boundary-releases`,
+ * `/areas/{geography}/{release}/{code}/history` and the crosswalk routes, and name only the fields the
  * page uses.
  */
 
@@ -108,8 +108,37 @@ export interface Crosswalk {
 	from: ReleaseRef;
 	to: ReleaseRef;
 	method: string;
+	/** Weights published for splitting an area's counts, if any. */
+	weighting?: { status: string; basis?: "area" | "population" };
 	/** The published artifact, which `/lookups` names as its source. */
 	artifact: string;
+}
+
+/** `/crosswalks/{id}:convert`, one column of counts on the target geography. */
+export interface ConvertedCounts {
+	from: ReleaseRef;
+	to: ReleaseRef;
+	method: "exact" | "area-weighted" | "population-weighted";
+	coverage: {
+		crosswalkSourceAreas: number;
+		sourceAreasSupplied: number;
+		targetsComplete: number;
+		targetsPartial: number;
+		targetsNotReached: number;
+	};
+	inputTotal: number;
+	outputTotal: number;
+	records: {
+		areaCode: string;
+		value: number;
+		inputAreaCount: number;
+		coverage: {
+			status: "complete" | "partial";
+			sourceCount: number;
+			suppliedSourceCount: number;
+		};
+	}[];
+	note: string;
 }
 
 /** One entry of `/lookups`, a whole table to download. */
