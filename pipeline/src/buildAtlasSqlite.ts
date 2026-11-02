@@ -43,6 +43,7 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { censusStatistics } from "./censusStatistics";
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),
@@ -106,6 +107,10 @@ export const buildAtlasSqlite = (
 		}[];
 	};
 	const publicDirectory = artifactDirectory(repositoryRoot);
+	const censusDirectory = join(
+		repositoryRoot,
+		"data/source/demographics/census-2021-small-area",
+	);
 	const projectionDirectory = join(directory, "location-projections");
 	const projectionPayload = readFileSync(
 		join(projectionDirectory, "location-projection-inventory.json"),
@@ -222,12 +227,15 @@ export const buildAtlasSqlite = (
 						: `dataset:${entry.output}`,
 				]),
 			},
-			...statisticsTables(
-				statisticsInputs(directory, manifest.datasets, {
+			...statisticsTables([
+				...statisticsInputs(directory, manifest.datasets, {
 					...UNSTORED_DATASETS,
 					...unstored,
 				}),
-			),
+				...(existsSync(censusDirectory)
+					? censusStatistics(censusDirectory)
+					: []),
+			]),
 		},
 	);
 	const written = new DatabaseSync(path, { readOnly: true });
