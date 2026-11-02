@@ -24,6 +24,10 @@ const election = () => {
 		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER);
 		CREATE TABLE period (id INTEGER PRIMARY KEY, label TEXT);
 		CREATE TABLE status (id INTEGER PRIMARY KEY, slug TEXT);
+		CREATE TABLE election (id INTEGER PRIMARY KEY, dataset_id INTEGER, date TEXT);
+		CREATE TABLE contest (id INTEGER PRIMARY KEY, election_id INTEGER, area_version_id INTEGER, winner TEXT);
+		INSERT INTO election VALUES (1, 1, '2019-05-02');
+		INSERT INTO contest VALUES (1, 1, 1, 'LAB'), (2, 1, 2, 'GREEN'), (3, 1, 3, NULL);
 		CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, status_id INTEGER);
 		INSERT INTO dataset VALUES (1, 'local-election');
 		INSERT INTO measure VALUES (1, 'party-votes'), (2, 'valid-votes');
@@ -162,6 +166,13 @@ describe("observation artifacts rebuilt from statistics rows", () => {
 				status: "observed",
 				confidenceInterval: { lower: -25, upper: 75 },
 			},
+		]);
+	});
+
+	it("reads each contest's winner as a category", () => {
+		expect(rebuild({ ...labour, contest: "winner" })).toEqual([
+			{ areaCode: "E05000001", category: "LAB", status: "observed" },
+			{ areaCode: "E05000002", category: "GREEN", status: "observed" },
 		]);
 	});
 
