@@ -106,7 +106,9 @@ const resolvedFrom = (series: Series, reading: DimensionReading) =>
 
 /** The headers a response read through the dimension layer carries. */
 const readingHeaders = (reading: DimensionReading) => ({
-	"content-location": reading.canonicalUrl,
+	...(reading.canonicalUrl
+		? { "content-location": reading.canonicalUrl }
+		: {}),
 	...(reading.resolvedFrom?.deprecated ? { deprecation: "true" } : {}),
 });
 
