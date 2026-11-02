@@ -9,6 +9,11 @@ import {
 } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { atlasDatabasePath } from "./dataLayout";
+import {
+	rebuildStatisticsObservationText,
+	type StatisticsArtifact,
+	type StatisticsSelector,
+} from "./atlasStatisticsObservations";
 
 export const observationDatabasePath = (apiRoot: string) =>
 	atlasDatabasePath(apiRoot);
@@ -251,11 +256,17 @@ export function rebuildObservationText(database: DatabaseSync, id: string) {
 	};
 }
 
-/** Exact artifact bytes are shared by query views and JSON/CSV/Parquet exports. */
+/**
+ * Exact artifact bytes are shared by query views and JSON/CSV/Parquet exports.
+ * An artifact the read path names is rebuilt from the statistics tables, and
+ * checked against the hash its observation-table copy was stored with while
+ * that copy remains.
+ */
 export function readObservationText(
 	path: string,
 	id: string,
 	expectedGeneration?: string,
+	statistics?: { selector: StatisticsSelector; artifact: StatisticsArtifact },
 ): string {
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
@@ -268,6 +279,23 @@ export function readObservationText(
 			throw new Error(
 				"SQLite observations changed while serving. Restart the API after the data build.",
 			);
+		if (statistics) {
+			const text = rebuildStatisticsObservationText(
+				database,
+				statistics.selector,
+				statistics.artifact,
+			);
+			const stored = database
+				.prepare(
+					"SELECT payloadHash FROM observation_series WHERE artifactId = ?",
+				)
+				.get(id)?.payloadHash;
+			if (typeof stored === "string" && sha256(text) !== stored)
+				throw new Error(
+					`Statistics rows no longer rebuild ${id}. Run pnpm --dir services/api generate:statistics-read-path.`,
+				);
+			return text;
+		}
 		const stored = rebuildObservationText(database, id);
 		if (!stored)
 			throw new Error(`Missing SQLite measure observations: ${id}`);
