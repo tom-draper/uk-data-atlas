@@ -98,6 +98,7 @@ beforeEach(() => {
 	);
 	buildAtlasSqlite(root, {
 		unstored: { sample: "A fixture kept as a payload." },
+		censusTables: [],
 	});
 	symlinkSync("atlas-base.sqlite", join(root, "data/build/atlas.sqlite"));
 	// The request must work without either product's JSON copies.

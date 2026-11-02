@@ -36,14 +36,14 @@ test("binds a census measure only when every source partition is complete", () =
 			CREATE TABLE observation (series_id INTEGER, period_id INTEGER);
 			CREATE TABLE period (id INTEGER, label TEXT);
 			INSERT INTO dataset VALUES (1, 'census-2021-ts007a');
-			INSERT INTO measure VALUES (1, 'census-2021-ts007a-count');
-			INSERT INTO series VALUES (1, 1, 1, 1), (2, 1, 1, 2);
+			INSERT INTO measure VALUES (1, 'usual-residents');
+			INSERT INTO series VALUES (1, 1, 1, 1), (2, 1, 1, 2), (3, 1, 1, 1);
 			INSERT INTO area_releases VALUES (1, 'lsoa', 'lsoa-2021'), (2, 'msoa', 'msoa-2021');
-			INSERT INTO dimension VALUES (1, 'census-2021-ts007a-category');
+			INSERT INTO dimension VALUES (1, 'age-band');
 			INSERT INTO dimension_member VALUES (1, '0-to-4');
 			INSERT INTO series_member VALUES (1, 1, 1), (2, 1, 1);
-			INSERT INTO period VALUES (1, '2021');
-			INSERT INTO observation VALUES (1, 1), (2, 1);
+			INSERT INTO period VALUES (1, '2021-census');
+			INSERT INTO observation VALUES (1, 1), (2, 1), (3, 1), (3, 1);
 		`);
 		const measure = {
 			id: "age-0-to-4",
@@ -63,16 +63,33 @@ test("binds a census measure only when every source partition is complete", () =
 				},
 			],
 		} as unknown as Measure;
-		assert.equal(bindCensusStatistics(db, measure)?.length, 2);
+		const ids = {
+			"age-0-to-4": {
+				measure: "usual-residents",
+				dimensions: { "age-band": "0-to-4" },
+			},
+		};
+		const bound = bindCensusStatistics(db, measure, ids);
+		assert.equal(bound?.length, 2);
+		assert.deepEqual(bound?.[0], {
+			dataset: "census-2021-ts007a",
+			measure: "usual-residents",
+			members: { "age-band": "0-to-4" },
+			exact: true,
+			geography: "lsoa",
+			release: "lsoa-2021",
+			periods: ["2021-census"],
+		});
+		assert.equal(bindCensusStatistics(db, measure, {}), undefined);
 		measure.sources.push({
 			...measure.sources[0]!,
 			datasetId: "ethnicity",
 		});
-		assert.equal(bindCensusStatistics(db, measure), undefined);
-		assert.equal(bindCensusStatistics(db, measure, true)?.length, 2);
+		assert.equal(bindCensusStatistics(db, measure, ids), undefined);
+		assert.equal(bindCensusStatistics(db, measure, ids, true)?.length, 2);
 		measure.sources.pop();
 		measure.sources[1]!.coverage.recordCount = 2;
-		assert.equal(bindCensusStatistics(db, measure), undefined);
+		assert.equal(bindCensusStatistics(db, measure, ids), undefined);
 	} finally {
 		db.close();
 	}

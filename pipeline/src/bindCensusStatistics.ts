@@ -1,12 +1,17 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { CENSUS_SMALL_AREA_TABLES } from "./catalog/censusSmallArea";
 import type { StatisticsSelection } from "./statisticsExport";
 
-/** Bind a complete small-area census measure to its canonical series. */
+/**
+ * Bind a complete small-area census measure to its canonical series: the
+ * measure and members the measure mapping names its census column by.
+ */
 export function bindCensusStatistics(
 	database: DatabaseSync,
 	measure: Measure,
+	ids: MeasureDimensionsConfig["ids"],
 	allowOtherSources = false,
 ): StatisticsSelection[] | undefined {
 	for (const table of CENSUS_SMALL_AREA_TABLES) {
@@ -14,10 +19,11 @@ export function bindCensusStatistics(
 			([suffix]) => `${table.measurePrefix}-${suffix}` === measure.id,
 		);
 		if (!category) continue;
-		if (measure.unit !== table.unit || !measure.sources.length)
+		const mapping = ids[measure.id];
+		if (!mapping || measure.unit !== table.unit || !measure.sources.length)
 			return undefined;
+		const members = mapping.dimensions ?? {};
 		const dataset = `census-2021-${table.table}`;
-		const dimension = `${dataset}-category`;
 		const selection: StatisticsSelection[] = [];
 		for (const source of measure.sources) {
 			if (source.datasetId !== dataset) {
@@ -32,21 +38,36 @@ export function bindCensusStatistics(
 				source.periods[0] !== "2021"
 			)
 				return undefined;
+			// The series with exactly the mapped members, so a total is not
+			// matched by every breakdown of its measure.
 			const rows = database
 				.prepare(
-					`SELECT r.id AS release, count(*) AS count
+					`SELECT r.id AS release, p.label AS period, count(*) AS count
 				FROM dataset d JOIN series s ON s.dataset_id = d.id
 				JOIN measure m ON m.id = s.measure_id
 				JOIN area_releases r ON r.position = s.release_id
-				JOIN series_member sm ON sm.series_id = s.id
-				JOIN dimension dim ON dim.id = sm.dimension_id
-				JOIN dimension_member dm ON dm.id = sm.member_id
 				JOIN observation o ON o.series_id = s.id
 				JOIN period p ON p.id = o.period_id
-				WHERE d.slug = ? AND m.slug = ? AND r.geography = ? AND dim.slug = ? AND dm.code = ? AND p.label = '2021'
-				GROUP BY r.id`,
+				WHERE d.slug = ? AND m.slug = ? AND r.geography = ?
+				AND (p.label = '2021' OR p.label LIKE '2021-%')
+				AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
+				AND NOT EXISTS (
+					SELECT 1 FROM json_each(?) expected WHERE NOT EXISTS (
+						SELECT 1 FROM series_member sm
+						JOIN dimension dim ON dim.id = sm.dimension_id
+						JOIN dimension_member dm ON dm.id = sm.member_id
+						WHERE sm.series_id = s.id AND dim.slug = expected.key AND dm.code = expected.value
+					)
 				)
-				.all(dataset, `${dataset}-count`, type, dimension, category[0]);
+				GROUP BY r.id, p.label`,
+				)
+				.all(
+					dataset,
+					mapping.measure,
+					type,
+					Object.keys(members).length,
+					JSON.stringify(members),
+				);
 			if (
 				rows.length !== 1 ||
 				Number(rows[0]!.count) !== source.coverage.recordCount
@@ -54,11 +75,12 @@ export function bindCensusStatistics(
 				return undefined;
 			selection.push({
 				dataset,
-				measure: `${dataset}-count`,
-				members: { [dimension]: category[0] },
+				measure: mapping.measure,
+				members,
+				exact: true,
 				geography: type,
 				release: String(rows[0]!.release),
-				periods: ["2021"],
+				periods: [String(rows[0]!.period)],
 			});
 		}
 		return selection.length ? selection : undefined;
