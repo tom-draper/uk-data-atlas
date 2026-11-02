@@ -44,6 +44,8 @@ export const STATUSES = [
 	["provisional", "Provisional"],
 	["suppressed", "Suppressed"],
 	["not_applicable", "Not applicable"],
+	/** Computed by the atlas from finer published values, such as an area mean of grid cells. */
+	["derived", "Derived"],
 ] as const;
 export type StatusSlug = (typeof STATUSES)[number][0];
 
