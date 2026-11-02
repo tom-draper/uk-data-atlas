@@ -450,7 +450,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 ];
 
-const GEOGRAPHIES = [
+export const CENSUS_SMALL_AREA_GEOGRAPHIES = [
 	{ type: "lsoa", prefixes: ["E01", "W01"], label: "2021 LSOAs" },
 	{ type: "msoa", prefixes: ["E02", "W02"], label: "2021 MSOAs" },
 ] as const satisfies ReadonlyArray<{
@@ -461,7 +461,8 @@ const GEOGRAPHIES = [
 
 const BOUNDARY_YEAR = 2021;
 const PERIOD = "2021";
-const DATA_DIRECTORY = "demographics/census-2021-small-area";
+export const CENSUS_SMALL_AREA_DIRECTORY =
+	"demographics/census-2021-small-area";
 
 const fileSha256 = (content: Buffer) =>
 	createHash("sha256").update(content).digest("hex");
@@ -470,10 +471,14 @@ const fileSha256 = (content: Buffer) =>
 export const censusTableArtifactName = (table: string, geography: string) =>
 	`census-2021-${table}-${geography}-${BOUNDARY_YEAR}-table`;
 
-const tableRecords = (
+/**
+ * A table's rows for one geography, as an area code and a count per
+ * category in the table's category order, checked to add to the total.
+ */
+export const censusTableRecords = (
 	path: string,
 	table: CensusTable,
-	geography: (typeof GEOGRAPHIES)[number],
+	geography: (typeof CENSUS_SMALL_AREA_GEOGRAPHIES)[number],
 ) => {
 	const lines = readFileSync(path, "utf8")
 		.replace(/^﻿/, "")
@@ -545,7 +550,7 @@ export const compileCensusSmallArea = (
 		const directory = join(
 			repositoryRoot,
 			"data/source",
-			DATA_DIRECTORY,
+			CENSUS_SMALL_AREA_DIRECTORY,
 			table.table,
 		);
 		const meta = JSON.parse(
@@ -561,10 +566,10 @@ export const compileCensusSmallArea = (
 		const measureIds = table.categories.map(
 			([suffix]) => `${table.measurePrefix}-${suffix}`,
 		);
-		const built = GEOGRAPHIES.map((geography) => {
+		const built = CENSUS_SMALL_AREA_GEOGRAPHIES.map((geography) => {
 			const file = `census2021-${table.table}-${geography.type}.csv`;
 			const content = readFileSync(join(directory, file));
-			const records = tableRecords(
+			const records = censusTableRecords(
 				join(directory, file),
 				table,
 				geography,
@@ -591,7 +596,7 @@ export const compileCensusSmallArea = (
 				artifact,
 				input: {
 					kind: "text",
-					path: `${DATA_DIRECTORY}/${table.table}/${file}`,
+					path: `${CENSUS_SMALL_AREA_DIRECTORY}/${table.table}/${file}`,
 					bytes: content.byteLength,
 					sha256: fileSha256(content),
 				},
