@@ -958,6 +958,9 @@
 		"GET /map-resources/{geography}/{release}/join/{measure-id}": {
 			"operationId": "getMapResourceJoin",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:geography": {
 					"required": true
 				},
@@ -3225,9 +3228,21 @@
 					"data[].availability.conversion",
 					"data[].availability.sourceExact",
 					"data[].concept",
+					"data[].defaults",
 					"data[].derivedFrom",
 					"data[].derivedFrom.datasetIds",
 					"data[].derivedFrom.note",
+					"data[].description",
+					"data[].dimensions",
+					"data[].dimensions[].id",
+					"data[].dimensions[].label",
+					"data[].dimensions[].members",
+					"data[].dimensions[].members[].code",
+					"data[].dimensions[].members[].label",
+					"data[].dimensions[].members[].parent",
+					"data[].dimensions[].total",
+					"data[].documents",
+					"data[].documents.evidence",
 					"data[].elsewhere",
 					"data[].elsewhere[].comparable",
 					"data[].elsewhere[].countries",
@@ -3238,7 +3253,44 @@
 					"data[].label",
 					"data[].links",
 					"data[].links.data",
+					"data[].matchedMembers",
+					"data[].matchedMembers[].dimension",
+					"data[].matchedMembers[].href",
+					"data[].matchedMembers[].label",
+					"data[].matchedMembers[].member",
 					"data[].notes",
+					"data[].resolvedFrom",
+					"data[].resolvedFrom.datasetId",
+					"data[].resolvedFrom.deprecated",
+					"data[].resolvedFrom.dimensions",
+					"data[].resolvedFrom.id",
+					"data[].resolvedFrom.measure",
+					"data[].series",
+					"data[].series[].datasetId",
+					"data[].series[].deprecatedAlias",
+					"data[].series[].dimensions",
+					"data[].series[].documents",
+					"data[].series[].documents.evidence",
+					"data[].series[].href",
+					"data[].series[].label",
+					"data[].series[].notes",
+					"data[].series[].sources",
+					"data[].series[].sources[].coverage",
+					"data[].series[].sources[].coverage.countries",
+					"data[].series[].sources[].coverage.kind",
+					"data[].series[].sources[].coverage.note",
+					"data[].series[].sources[].coverage.recordCount",
+					"data[].series[].sources[].datasetId",
+					"data[].series[].sources[].observationArtifact",
+					"data[].series[].sources[].periods",
+					"data[].series[].sources[].sourceGeography",
+					"data[].series[].sources[].sourceGeography.codeYear",
+					"data[].series[].sources[].sourceGeography.type",
+					"data[].series[].uncertainty",
+					"data[].series[].uncertainty.kind",
+					"data[].series[].uncertainty.level",
+					"data[].series[].uncertainty.note",
+					"data[].series[].unit",
 					"data[].sources",
 					"data[].sources[].coverage",
 					"data[].sources[].coverage.countries",
@@ -3339,9 +3391,21 @@
 					"data.availability.conversion",
 					"data.availability.sourceExact",
 					"data.concept",
+					"data.defaults",
 					"data.derivedFrom",
 					"data.derivedFrom.datasetIds",
 					"data.derivedFrom.note",
+					"data.description",
+					"data.dimensions",
+					"data.dimensions[].id",
+					"data.dimensions[].label",
+					"data.dimensions[].members",
+					"data.dimensions[].members[].code",
+					"data.dimensions[].members[].label",
+					"data.dimensions[].members[].parent",
+					"data.dimensions[].total",
+					"data.documents",
+					"data.documents.evidence",
 					"data.elsewhere",
 					"data.elsewhere[].comparable",
 					"data.elsewhere[].countries",
@@ -3352,7 +3416,44 @@
 					"data.label",
 					"data.links",
 					"data.links.data",
+					"data.matchedMembers",
+					"data.matchedMembers[].dimension",
+					"data.matchedMembers[].href",
+					"data.matchedMembers[].label",
+					"data.matchedMembers[].member",
 					"data.notes",
+					"data.resolvedFrom",
+					"data.resolvedFrom.datasetId",
+					"data.resolvedFrom.deprecated",
+					"data.resolvedFrom.dimensions",
+					"data.resolvedFrom.id",
+					"data.resolvedFrom.measure",
+					"data.series",
+					"data.series[].datasetId",
+					"data.series[].deprecatedAlias",
+					"data.series[].dimensions",
+					"data.series[].documents",
+					"data.series[].documents.evidence",
+					"data.series[].href",
+					"data.series[].label",
+					"data.series[].notes",
+					"data.series[].sources",
+					"data.series[].sources[].coverage",
+					"data.series[].sources[].coverage.countries",
+					"data.series[].sources[].coverage.kind",
+					"data.series[].sources[].coverage.note",
+					"data.series[].sources[].coverage.recordCount",
+					"data.series[].sources[].datasetId",
+					"data.series[].sources[].observationArtifact",
+					"data.series[].sources[].periods",
+					"data.series[].sources[].sourceGeography",
+					"data.series[].sources[].sourceGeography.codeYear",
+					"data.series[].sources[].sourceGeography.type",
+					"data.series[].uncertainty",
+					"data.series[].uncertainty.kind",
+					"data.series[].uncertainty.level",
+					"data.series[].uncertainty.note",
+					"data.series[].unit",
 					"data.sources",
 					"data.sources[].coverage",
 					"data.sources[].coverage.countries",
@@ -3704,6 +3805,9 @@
 		"GET /data/{measure-id}": {
 			"operationId": "getMeasureObservations",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:measure-id": {
 					"required": true
 				},
@@ -4035,6 +4139,9 @@
 		"GET /data/{measure-id}/convert": {
 			"operationId": "convertSourceExactMeasure",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:measure-id": {
 					"required": true
 				},
@@ -4291,6 +4398,9 @@
 		"GET /data/{measure-id}/series": {
 			"operationId": "getSourceExactMeasureSeries",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:measure-id": {
 					"required": true
 				},
@@ -4591,6 +4701,9 @@
 		"GET /data/{measure-id}/rankings": {
 			"operationId": "getSourceExactMeasureRankings",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:measure-id": {
 					"required": true
 				},
@@ -5788,6 +5901,9 @@
 		"GET /data/{measure-id}/value": {
 			"operationId": "getMeasureValueForPlace",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:measure-id": {
 					"required": true
 				},
@@ -6091,6 +6207,9 @@
 		"GET /data/{measure-id}/change": {
 			"operationId": "getSourceExactMeasureChange",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:measure-id": {
 					"required": true
 				},
@@ -6404,6 +6523,9 @@
 		"GET /data/{measure-id}/compare": {
 			"operationId": "compareSourceExactMeasureAreas",
 			"parameters": {
+				"query:dimensions": {
+					"required": false
+				},
 				"path:measure-id": {
 					"required": true
 				},

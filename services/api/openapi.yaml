@@ -790,6 +790,7 @@ paths:
         parsing and record materialisation occur before this check; this is
         not a heap or RSS ceiling.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
         - $ref: "#/components/parameters/MeasureId"
@@ -3086,17 +3087,35 @@ paths:
       tags:
         - Data catalogue
       description: >
+        A measure is the thing measured, such as `population`, `recorded-crimes` or
+        `party-vote-share`. Its breakdowns are `dimensions`, each with the members it is published
+        for, such as `offence` with `burglary`; a member's `parent` is the member it is part of, and
+        `total` names the member every other is part of, which a request that leaves the dimension out
+        is given. Ask for a breakdown with a dimension filter on the data routes: `GET
+        /v1/data/recorded-crimes/value?place=Leeds&offence=burglary`. Geography and period are never
+        part of a measure id; they are `geography`, `codeYear` and `period`.
+
+
+        `series` lists each combination of members published, with the request that reads it, its
+        sources and the deprecated alias it was published under before, where it had one, such as
+        `crime-burglary`. `sources`, `aggregation`, `unit` and `links` stay at the top level for the
+        measure as a whole.
+
+
         Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`.
         `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric
-        value into that unit, and `per` names an explicit denominator when one is published. For
-        example, `£ million` is `GBP` with a scale of 1000000, and percent is `proportion` with a
-        scale of 0.01. This is descriptive metadata only: observation values and source artifacts are
-        not rewritten. `q` searches by the words people use: `population`, `house prices`,
-        `deprivation`. Every measure whose id, alias, label or dataset title holds all of the query's
-        words is listed, best first: an exact id or alias, then a match in the label, then in the id,
-        then anywhere. A search never chooses one measure for the caller, and matching nothing is an
-        empty list rather than a refusal. A measure's `aliases`, where it has any, are other names
-        each naming it alone, accepted wherever its id is.
+        value into that unit, and `per` names an explicit denominator when one is published. This is
+        descriptive metadata only: observation values and source artifacts are not rewritten.
+
+
+        `q` searches by the words people use: `population`, `house prices`, `burglary`, `Labour vote
+        share`. Every measure whose id, alias, label, dataset title or members hold all of the query's
+        words is listed, best first: an exact id or alias, then a match in the label, then in the
+        label and one member's, then in the id, then anywhere. A match that rests on members lists
+        them in `matchedMembers`, each with the request that filters on it. A search never chooses one
+        measure for the caller, and matching nothing is an empty list rather than a refusal. A
+        measure's `aliases`, where it has any, are other names each naming it alone, accepted wherever
+        its id is.
       x-likely-refusal:
         status: 503
         when:
@@ -3113,16 +3132,41 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - id: population
-                    label: Population estimate
+                    label: Population
+                    description: Mid-year population estimate.
                     valueKind: count
                     unit: people
                     unitDefinition:
                       code: "1"
                       scaleToCanonical: 1
+                    aliases:
+                      - population-estimate
+                      - population-estimates
                     aggregation:
                       kind: extensive
                       operation: sum
                       available: true
+                    dimensions: []
+                    series:
+                      - dimensions: {}
+                        label: Population estimate
+                        href: /v1/data/population
+                        sources:
+                          - datasetId: population
+                            periods:
+                              - "2022"
+                            sourceGeography:
+                              type: ward
+                              codeYear: 2023
+                            coverage:
+                              kind: partial
+                              countries:
+                                - GB-ENG
+                                - GB-WLS
+                              recordCount: 7608
+                              note:
+                                Published source records are available for England and Wales only; this endpoint does not
+                                infer Scottish or Northern Irish values.
                     sources:
                       - datasetId: population
                         periods:
@@ -3134,6 +3178,7 @@ paths:
                           kind: partial
                           countries:
                             - GB-ENG
+                            - GB-WLS
                           recordCount: 7608
                           note:
                             Published source records are available for England and Wales only; this endpoint does not
@@ -3172,6 +3217,8 @@ paths:
                         id:
                           type: string
                         label:
+                          type: string
+                        description:
                           type: string
                         valueKind:
                           type: string
@@ -3270,6 +3317,149 @@ paths:
                             - kind
                             - available
                           additionalProperties: {}
+                        dimensions:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              label:
+                                type: string
+                              total:
+                                type: string
+                              members:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    code:
+                                      type: string
+                                    label:
+                                      type: string
+                                    parent:
+                                      type: string
+                                  required:
+                                    - code
+                                    - label
+                                  additionalProperties: {}
+                            required:
+                              - id
+                              - label
+                              - members
+                            additionalProperties: {}
+                        defaults:
+                          type: object
+                          propertyNames:
+                            type: string
+                          additionalProperties:
+                            type: string
+                        series:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              dimensions:
+                                type: object
+                                propertyNames:
+                                  type: string
+                                additionalProperties:
+                                  type: string
+                              datasetId:
+                                type: string
+                              label:
+                                type: string
+                              unit:
+                                type: string
+                              deprecatedAlias:
+                                type: string
+                              href:
+                                type: string
+                              sources:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    datasetId:
+                                      type: string
+                                    periods:
+                                      type: array
+                                      items:
+                                        type: string
+                                    sourceGeography:
+                                      type: object
+                                      properties:
+                                        type:
+                                          type: string
+                                        codeYear:
+                                          type: number
+                                      required:
+                                        - type
+                                        - codeYear
+                                      additionalProperties: {}
+                                    observationArtifact:
+                                      type: string
+                                    coverage:
+                                      type: object
+                                      properties:
+                                        kind:
+                                          type: string
+                                          enum:
+                                            - partial
+                                            - source-reported
+                                        countries:
+                                          type: array
+                                          items:
+                                            type: string
+                                        recordCount:
+                                          type: number
+                                        note:
+                                          type: string
+                                      required:
+                                        - kind
+                                        - countries
+                                        - recordCount
+                                        - note
+                                      additionalProperties: {}
+                                  required:
+                                    - datasetId
+                                    - periods
+                                    - sourceGeography
+                                    - coverage
+                                  additionalProperties: {}
+                              notes:
+                                type: array
+                                items:
+                                  type: string
+                              uncertainty:
+                                type: object
+                                properties:
+                                  kind:
+                                    type: string
+                                    const: confidence-interval
+                                  level:
+                                    type: number
+                                  note:
+                                    type: string
+                                required:
+                                  - kind
+                                  - level
+                                  - note
+                                additionalProperties: {}
+                              documents:
+                                type: object
+                                properties:
+                                  evidence:
+                                    type: string
+                                required:
+                                  - evidence
+                                additionalProperties: {}
+                            required:
+                              - dimensions
+                              - label
+                              - href
+                              - sources
+                            additionalProperties: {}
                         sources:
                           type: array
                           items:
@@ -3346,12 +3536,65 @@ paths:
                           required:
                             - data
                           additionalProperties: {}
+                        documents:
+                          type: object
+                          properties:
+                            evidence:
+                              type: string
+                          required:
+                            - evidence
+                          additionalProperties: {}
+                        matchedMembers:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              dimension:
+                                type: string
+                              member:
+                                type: string
+                              label:
+                                type: string
+                              href:
+                                type: string
+                            required:
+                              - dimension
+                              - member
+                              - label
+                              - href
+                            additionalProperties: {}
+                        resolvedFrom:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            measure:
+                              type: string
+                            dimensions:
+                              type: object
+                              propertyNames:
+                                type: string
+                              additionalProperties:
+                                type: string
+                            datasetId:
+                              type: string
+                            deprecated:
+                              type: boolean
+                          required:
+                            - id
+                            - measure
+                            - dimensions
+                            - deprecated
+                          additionalProperties: {}
                       required:
                         - id
                         - label
+                        - description
                         - valueKind
                         - unit
                         - aggregation
+                        - dimensions
+                        - series
                         - sources
                         - availability
                         - links
@@ -3379,8 +3622,14 @@ paths:
       tags:
         - Data catalogue
       description: >
-        A measure's definition: what it counts, the unit, whether it may be summed or averaged, and
-        which source partitions publish it with what national coverage.
+        A measure's definition: what it measures, the unit, whether it may be summed or averaged, its
+        dimensions and their members, and the series and source partitions published for each
+        combination of members, with national coverage.
+
+
+        An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it
+        answers with its measure's definition, `resolvedFrom` says which members it stood for, and the
+        response carries a `Deprecation` header. It has no sunset date.
 
 
         `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical
@@ -3408,15 +3657,16 @@ paths:
           description: The measure definition.
           content:
             application/json:
-              x-example-request: /v1/measures/population
+              x-example-request: /v1/measures/crime-burglary
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  id: population
-                  label: Population estimate
+                  id: recorded-crimes
+                  label: Police recorded crime
+                  description: Offences recorded by the police.
                   valueKind: count
-                  unit: people
+                  unit: offences
                   unitDefinition:
                     code: "1"
                     scaleToCanonical: 1
@@ -3424,27 +3674,70 @@ paths:
                     kind: extensive
                     operation: sum
                     available: true
+                  dimensions:
+                    - id: offence
+                      label: Offence group
+                      total: total
+                      members:
+                        - code: total
+                          label: All recorded crime
+                        - code: theft
+                          label: Theft offences
+                          parent: total
+                        - code: burglary
+                          label: Burglary
+                          parent: theft
+                  series:
+                    - dimensions:
+                        offence: burglary
+                      label: Burglary
+                      deprecatedAlias: crime-burglary
+                      href: /v1/data/recorded-crimes?offence=burglary
+                      sources:
+                        - datasetId: crime
+                          periods:
+                            - year-ending-2026-03
+                          sourceGeography:
+                            type: communitySafetyPartnership
+                            codeYear: 2023
+                          coverage:
+                            kind: source-reported
+                            countries:
+                              - GB-ENG
+                              - GB-WLS
+                            recordCount: 309
+                            note:
+                              Published source records cover every community safety partnership in England and Wales except
+                              those whose crime the police recorded as unassigned, which are not
+                              served.
                   sources:
-                    - datasetId: population
+                    - datasetId: crime
                       periods:
-                        - "2022"
+                        - year-ending-2026-03
                       sourceGeography:
-                        type: ward
+                        type: communitySafetyPartnership
                         codeYear: 2023
                       coverage:
-                        kind: partial
+                        kind: source-reported
                         countries:
                           - GB-ENG
-                        recordCount: 7608
+                          - GB-WLS
+                        recordCount: 309
                         note:
-                          Published source records are available for England and Wales only; this endpoint does not
-                          infer Scottish or Northern Irish values.
+                          Published source records cover every community safety partnership in England and Wales except
+                          those whose crime the police recorded as unassigned, which are not served.
                   availability:
                     sourceExact: true
                     conversion: false
                     aggregation: true
                   links:
-                    data: /v1/data/population
+                    data: /v1/data/recorded-crimes
+                  resolvedFrom:
+                    id: crime-burglary
+                    measure: recorded-crimes
+                    dimensions:
+                      offence: burglary
+                    deprecated: true
                 meta:
                   nextCursor: null
               schema:
@@ -3471,6 +3764,8 @@ paths:
                       id:
                         type: string
                       label:
+                        type: string
+                      description:
                         type: string
                       valueKind:
                         type: string
@@ -3569,6 +3864,149 @@ paths:
                           - kind
                           - available
                         additionalProperties: {}
+                      dimensions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            label:
+                              type: string
+                            total:
+                              type: string
+                            members:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  code:
+                                    type: string
+                                  label:
+                                    type: string
+                                  parent:
+                                    type: string
+                                required:
+                                  - code
+                                  - label
+                                additionalProperties: {}
+                          required:
+                            - id
+                            - label
+                            - members
+                          additionalProperties: {}
+                      defaults:
+                        type: object
+                        propertyNames:
+                          type: string
+                        additionalProperties:
+                          type: string
+                      series:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            dimensions:
+                              type: object
+                              propertyNames:
+                                type: string
+                              additionalProperties:
+                                type: string
+                            datasetId:
+                              type: string
+                            label:
+                              type: string
+                            unit:
+                              type: string
+                            deprecatedAlias:
+                              type: string
+                            href:
+                              type: string
+                            sources:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  datasetId:
+                                    type: string
+                                  periods:
+                                    type: array
+                                    items:
+                                      type: string
+                                  sourceGeography:
+                                    type: object
+                                    properties:
+                                      type:
+                                        type: string
+                                      codeYear:
+                                        type: number
+                                    required:
+                                      - type
+                                      - codeYear
+                                    additionalProperties: {}
+                                  observationArtifact:
+                                    type: string
+                                  coverage:
+                                    type: object
+                                    properties:
+                                      kind:
+                                        type: string
+                                        enum:
+                                          - partial
+                                          - source-reported
+                                      countries:
+                                        type: array
+                                        items:
+                                          type: string
+                                      recordCount:
+                                        type: number
+                                      note:
+                                        type: string
+                                    required:
+                                      - kind
+                                      - countries
+                                      - recordCount
+                                      - note
+                                    additionalProperties: {}
+                                required:
+                                  - datasetId
+                                  - periods
+                                  - sourceGeography
+                                  - coverage
+                                additionalProperties: {}
+                            notes:
+                              type: array
+                              items:
+                                type: string
+                            uncertainty:
+                              type: object
+                              properties:
+                                kind:
+                                  type: string
+                                  const: confidence-interval
+                                level:
+                                  type: number
+                                note:
+                                  type: string
+                              required:
+                                - kind
+                                - level
+                                - note
+                              additionalProperties: {}
+                            documents:
+                              type: object
+                              properties:
+                                evidence:
+                                  type: string
+                              required:
+                                - evidence
+                              additionalProperties: {}
+                          required:
+                            - dimensions
+                            - label
+                            - href
+                            - sources
+                          additionalProperties: {}
                       sources:
                         type: array
                         items:
@@ -3645,12 +4083,65 @@ paths:
                         required:
                           - data
                         additionalProperties: {}
+                      documents:
+                        type: object
+                        properties:
+                          evidence:
+                            type: string
+                        required:
+                          - evidence
+                        additionalProperties: {}
+                      matchedMembers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            dimension:
+                              type: string
+                            member:
+                              type: string
+                            label:
+                              type: string
+                            href:
+                              type: string
+                          required:
+                            - dimension
+                            - member
+                            - label
+                            - href
+                          additionalProperties: {}
+                      resolvedFrom:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          measure:
+                            type: string
+                          dimensions:
+                            type: object
+                            propertyNames:
+                              type: string
+                            additionalProperties:
+                              type: string
+                          datasetId:
+                            type: string
+                          deprecated:
+                            type: boolean
+                        required:
+                          - id
+                          - measure
+                          - dimensions
+                          - deprecated
+                        additionalProperties: {}
                     required:
                       - id
                       - label
+                      - description
                       - valueKind
                       - unit
                       - aggregation
+                      - dimensions
+                      - series
                       - sources
                       - availability
                       - links
@@ -3870,6 +4361,7 @@ paths:
         artifact, along with the selected geography match and an explicit
         statement that no transformation has been applied.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - name: measure-id
           in: path
           required: true
@@ -3955,7 +4447,7 @@ paths:
                 data:
                   measure:
                     id: population
-                    label: Population estimate
+                    label: Population
                     valueKind: count
                     unit: people
                     aggregation:
@@ -4118,6 +4610,7 @@ paths:
         A source code the crosswalk does not carry, or a split source with no
         published weight, is rejected rather than partially converted.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
         - name: crosswalk
           in: query
@@ -4160,7 +4653,7 @@ paths:
                 data:
                   measure:
                     id: population
-                    label: Population estimate
+                    label: Population
                     valueKind: count
                     unit: people
                     aggregation:
@@ -4293,6 +4786,12 @@ paths:
           choice carries the request that asks about it alone."
         x-example-request: "/v1/data/population/series?place=Newport"
       description: >
+        A measure with dimensions answers for the members its filters name,
+        such as `?offence=burglary`; a dimension left out takes its total where
+        one is published, and several members or `*` answer one `breakdown`
+        entry per series, as `/value` does.
+
+
         Returns all published observations for one area code within one source
         geography and code vintage. `place` accepts an area name, code or
         reference. With no source partition, the current published partition for
@@ -4304,6 +4803,7 @@ paths:
         when a measure has more than one source for the requested geography and
         boundary year.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
         - $ref: "#/components/parameters/Place"
         - $ref: "#/components/parameters/PlaceSourceGeography"
@@ -4343,7 +4843,7 @@ paths:
                 data:
                   measure:
                     id: population
-                    label: Population estimate
+                    label: Population
                     valueKind: count
                     unit: people
                     aggregation:
@@ -4466,6 +4966,7 @@ paths:
         preceding observations (1, 1, 3). It does not select a boundary release,
         convert values or aggregate them.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
         - $ref: "#/components/parameters/OptionalSourcePeriod"
         - $ref: "#/components/parameters/OptionalSourceGeography"
@@ -4495,7 +4996,7 @@ paths:
                 data:
                   measure:
                     id: population
-                    label: Population estimate
+                    label: Population
                     valueKind: count
                     unit: people
                     aggregation:
@@ -5081,6 +5582,19 @@ paths:
         why for each, such as a median, which cannot be summed over a region.
 
 
+        A measure with dimensions answers for the members its filters name:
+        `GET /v1/data/party-vote-share/value?place=Holborn and St
+        Pancras&party=lab`. A dimension left out takes its total where one is
+        published, and `defaults` and `dimensions` say which member was used.
+        Several members, or `*`, answer every matching series at once:
+        `data.breakdown` holds one entry per series, each with its
+        `dimensions` and the answer (`data`) or refusal (`problem`) that series
+        gives, so `GET /v1/data/recorded-crimes/value?place=Leeds&offence=*` is
+        every crime type for Leeds. A deprecated alias such as `crime-burglary`
+        answers as its measure with its members fixed, and says so in
+        `resolvedFrom`.
+
+
         Give `postcode` instead of `place` to answer for where a unit postcode
         is: `GET /v1/data/imd-decile/value?postcode=M1 1AE`. The postcode's
         centroid is placed in the areas the data was published for, as drawn for
@@ -5094,6 +5608,7 @@ paths:
         with `choices`, and a postcode no geography answers is a 422 with a
         `candidates` member saying why for each.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
         - name: place
           in: query
@@ -5169,7 +5684,7 @@ paths:
                 data:
                   measure:
                     id: population
-                    label: Population estimate
+                    label: Population
                     valueKind: count
                     unit: people
                   question:
@@ -5287,6 +5802,7 @@ paths:
         `coverage.onlyAtStart` and `coverage.onlyAtEnd` rather than paired with
         anything.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
         - name: geography
           in: query
@@ -5430,6 +5946,7 @@ paths:
         change. The route does not select a boundary release, convert values or
         aggregate them.
       parameters:
+        - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
         - $ref: "#/components/parameters/OptionalSourcePeriod"
         - $ref: "#/components/parameters/OptionalSourceGeography"
@@ -5462,7 +5979,7 @@ paths:
                 data:
                   measure:
                     id: population
-                    label: Population estimate
+                    label: Population
                     valueKind: count
                     unit: people
                     aggregation:
@@ -9731,11 +10248,44 @@ components:
       schema:
         type: string
       description: >
-        A measure id from `GET /v1/measures`, such as `population`, or one of
-        its `aliases`, such as `house-prices`. An alias is read as the id it
-        names, and the response's `Content-Location` header gives the request it
-        was read as. Case, spaces and punctuation are set aside, so `House
-        Prices` is `house-prices`.
+        A measure id from `GET /v1/measures`, such as `population` or
+        `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An
+        alias is read as the id it names, and the response's
+        `Content-Location` header gives the request it was read as. Case,
+        spaces and punctuation are set aside, so `House Prices` is
+        `house-prices`. A measure's breakdowns are chosen with dimension
+        filters, not with the id: `recorded-crimes` with `offence=burglary`,
+        not `crime-burglary`. The older ids that carried a breakdown, such as
+        `crime-burglary`, `ethnicity-african` or
+        `general-election-lab-vote-share`, are deprecated aliases (see
+        `DeprecatedMeasureAlias`). Each still works and is read as its measure
+        with its members fixed; the response names it in `resolvedFrom` and
+        carries a `Deprecation` header. They have no sunset date.
+    Dimensions:
+      name: dimensions
+      in: query
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        additionalProperties:
+          type: string
+      description: >
+        Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each
+        dimension is also its own query parameter, so `offence=burglary` is the
+        same filter. `GET /v1/measures/{measure-id}` lists a measure's
+        dimensions and their members. A filter takes one member, several
+        separated by commas (`party=lab,con`), or `*` for every member. A
+        dimension left out takes its total where the measure publishes one,
+        such as `offence=total`, and the response states the member chosen in
+        `defaults` and `dimensions`. Where no total is published, or the
+        filter asks for several members, `/value` and `/series` answer every
+        matching series at once, one `breakdown` entry each; an operation that
+        answers one series refuses with `ambiguous_dimension` and lists a
+        request for each in `choices`. Where two datasets publish the same
+        measure and members, such as general and local election votes, the
+        place's geography or `datasetId` chooses between them.
     AreaCode:
       name: code
       in: path
@@ -10073,6 +10623,11 @@ components:
             - unknown_query_parameter
             - no_release_for_date
             - ambiguous_release
+            - unknown_dimension
+            - unknown_dimension_member
+            - conflicting_dimension_filter
+            - no_matching_series
+            - ambiguous_dimension
           description: >
             On a 404 from an area or boundary release route:
             `unsupported_geography` when the geography is not published or the
@@ -10094,7 +10649,13 @@ components:
             `invalid_cursor` for a cursor this API did not issue or that belongs
             to another query, and `unknown_query_parameter` when the operation
             does not declare a supplied parameter. From a release resolution:
-            `no_release_for_date` and `ambiguous_release`.
+            `no_release_for_date` and `ambiguous_release`. From a measure's
+            dimension filters: `unknown_dimension` and `unknown_dimension_member`
+            (400) for a dimension or member the measure does not have,
+            `conflicting_dimension_filter` (400) when a deprecated alias fixes a
+            different member, `no_matching_series` (404) when no series has the
+            members asked for, and `ambiguous_dimension` (409) when the request
+            leaves several series and the operation answers one.
         absence:
           type: string
           enum:
@@ -10493,6 +11054,1211 @@ components:
               match: prefix
               served: false
               reason: house-price-median is not published for constituency areas.
+
+    UnknownDimensionProblem:
+      description: A dimension filter names a dimension the measure does not have.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, dimensions]
+          properties:
+            status: { enum: [400] }
+            code:
+              const: unknown_dimension
+            dimensions:
+              type: array
+              items: { type: string }
+      examples:
+        - type: https://api.ukdataatlas.com/problems/invalid-query
+          title: Invalid Query
+          status: 400
+          detail: recorded-crimes has no party dimension. Its dimensions are offence.
+          code: unknown_dimension
+          dimensions:
+            - offence
+
+    UnknownDimensionMemberProblem:
+      description: A dimension filter names a member the measure does not publish.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, dimension, members]
+          properties:
+            status: { enum: [400] }
+            code:
+              const: unknown_dimension_member
+            dimension: { type: string }
+            members:
+              type: array
+              items: { type: string }
+      examples:
+        - type: https://api.ukdataatlas.com/problems/invalid-query
+          title: Invalid Query
+          status: 400
+          detail: arson is not a member of offence for recorded-crimes. GET
+            /v1/measures/recorded-crimes lists them.
+          code: unknown_dimension_member
+          dimension: offence
+          members:
+            - total
+            - burglary
+
+    ConflictingDimensionFilterProblem:
+      description:
+        A deprecated alias fixes a member, and a filter asks for a different member
+        of the same dimension.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code]
+          properties:
+            status: { enum: [400] }
+            code:
+              const: conflicting_dimension_filter
+      examples:
+        - type: https://api.ukdataatlas.com/problems/invalid-query
+          title: Invalid Query
+          status: 400
+          detail:
+            crime-burglary is recorded-crimes with offence=burglary, so it cannot also
+            be filtered to offence=robbery. Use /v1/data/recorded-crimes to choose
+            members.
+          code: conflicting_dimension_filter
+
+    NoMatchingSeriesProblem:
+      description: The measure publishes no series for that combination of members.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, choices]
+          properties:
+            status: { enum: [404] }
+            code:
+              const: no_matching_series
+            choices:
+              type: array
+              items: { $ref: "#/components/schemas/SeriesChoice" }
+      examples:
+        - type: https://api.ukdataatlas.com/problems/not-found
+          title: Not Found
+          status: 404
+          detail:
+            party-vote-share is not published for that combination of members from
+            local-election. GET /v1/measures/party-vote-share lists the series it
+            has.
+          code: no_matching_series
+          choices:
+            - dimensions:
+                party: lab
+              datasetId: general-election
+              label: General election vote share for Labour
+              href: /v1/data/party-vote-share/value?place=Holborn&party=lab&datasetId=general-election
+
+    AmbiguousDimensionProblem:
+      description:
+        The request leaves the measure several series and the operation answers
+        one, or the series are not parts of one breakdown.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, choices]
+          properties:
+            status: { enum: [409] }
+            code:
+              const: ambiguous_dimension
+            choices:
+              type: array
+              items: { $ref: "#/components/schemas/SeriesChoice" }
+      examples:
+        - type: https://api.ukdataatlas.com/problems/ambiguous-measure
+          title: Ambiguous Measure
+          status: 409
+          detail:
+            party-votes has 2 series for that request that are not parts of one
+            breakdown. Choose one; each request is listed in choices.
+          code: ambiguous_dimension
+          choices:
+            - dimensions:
+                party: lab
+              datasetId: general-election
+              label: General election votes for Labour
+              href: /v1/data/party-votes?party=lab&datasetId=general-election
+            - dimensions:
+                party: lab
+              datasetId: local-election
+              label: Local election votes for Labour
+              href: /v1/data/party-votes?party=lab&datasetId=local-election
+
+    SeriesChoice:
+      description: One series of a measure, and the request that reads it.
+      type: object
+      required: [dimensions, label, href]
+      properties:
+        dimensions:
+          type: object
+          additionalProperties: { type: string }
+        datasetId: { type: string }
+        label: { type: string }
+        href: { type: string }
+
+    DeprecatedMeasureAlias:
+      description:
+        An older measure id that named a breakdown, and sometimes a dataset, as part of the id.
+        Each is still accepted wherever a measure id is, and is read as the measure and members
+        `x-resolves-to` gives; the response names it in `resolvedFrom` and carries a `Deprecation`
+        header. Name the measure and filter on its dimensions instead. No sunset date is set.
+      type: string
+      deprecated: true
+      enum:
+        - adult-social-care-activity
+        - adult-social-care-outcomes
+        - age-0-to-4
+        - age-10-to-14
+        - age-15-to-19
+        - age-20-to-24
+        - age-25-to-29
+        - age-30-to-34
+        - age-35-to-39
+        - age-40-to-44
+        - age-45-to-49
+        - age-5-to-9
+        - age-50-to-54
+        - age-55-to-59
+        - age-60-to-64
+        - age-65-to-69
+        - age-70-to-74
+        - age-75-to-79
+        - age-80-to-84
+        - age-85-plus
+        - broadband-full-fibre-availability
+        - broadband-gigabit-availability
+        - broadband-superfast-availability
+        - broadband-ultrafast-availability
+        - business-activity
+        - car-availability-none
+        - car-availability-one
+        - car-availability-three-or-more
+        - car-availability-total
+        - car-availability-two
+        - claimant-count
+        - claimant-count-16-to-24
+        - council-tax
+        - crime-bicycle-theft
+        - crime-burglary
+        - crime-criminal-damage-and-arson
+        - crime-death-or-serious-injury-by-illegal-driving
+        - crime-drug-offences
+        - crime-homicide
+        - crime-miscellaneous-crimes-against-society
+        - crime-non-residential-burglary
+        - crime-other-theft
+        - crime-possession-of-weapons
+        - crime-public-order-offences
+        - crime-residential-burglary
+        - crime-robbery
+        - crime-sexual-offences
+        - crime-shoplifting
+        - crime-stalking-and-harassment
+        - crime-theft-from-the-person
+        - crime-theft-offences
+        - crime-total
+        - crime-vehicle-offences
+        - crime-violence-against-the-person
+        - crime-violence-with-injury
+        - crime-violence-without-injury
+        - economic-activity-employed
+        - economic-activity-inactive-long-term-sick
+        - economic-activity-inactive-looking-after-home
+        - economic-activity-inactive-other
+        - economic-activity-inactive-retired
+        - economic-activity-inactive-student
+        - economic-activity-student-employed
+        - economic-activity-student-unemployed
+        - economic-activity-total
+        - economic-activity-unemployed
+        - electric-vehicle-chargers
+        - electricity-consumption-domestic
+        - electricity-consumption-non-domestic
+        - ethnicity-african
+        - ethnicity-any-other
+        - ethnicity-arab
+        - ethnicity-bangladeshi
+        - ethnicity-caribbean
+        - ethnicity-chinese
+        - ethnicity-gypsy-or-irish-traveller
+        - ethnicity-indian
+        - ethnicity-irish
+        - ethnicity-other-asian
+        - ethnicity-other-black
+        - ethnicity-other-mixed
+        - ethnicity-other-white
+        - ethnicity-pakistani
+        - ethnicity-roma
+        - ethnicity-white-and-asian
+        - ethnicity-white-and-black-african
+        - ethnicity-white-and-black-caribbean
+        - ethnicity-white-british
+        - gas-consumption-domestic
+        - gas-consumption-non-domestic
+        - general-election-apni-vote-share
+        - general-election-apni-votes
+        - general-election-brx-vote-share
+        - general-election-brx-votes
+        - general-election-con-vote-share
+        - general-election-con-votes
+        - general-election-dup-vote-share
+        - general-election-dup-votes
+        - general-election-green-vote-share
+        - general-election-green-votes
+        - general-election-lab-vote-share
+        - general-election-lab-votes
+        - general-election-ld-vote-share
+        - general-election-ld-votes
+        - general-election-other-vote-share
+        - general-election-other-votes
+        - general-election-pc-vote-share
+        - general-election-pc-votes
+        - general-election-ruk-vote-share
+        - general-election-ruk-votes
+        - general-election-sdlp-vote-share
+        - general-election-sdlp-votes
+        - general-election-sf-vote-share
+        - general-election-sf-votes
+        - general-election-snp-vote-share
+        - general-election-snp-votes
+        - general-election-turnout
+        - general-election-ukip-vote-share
+        - general-election-ukip-votes
+        - general-election-uup-vote-share
+        - general-election-uup-votes
+        - general-election-valid-votes
+        - general-election-winning-party
+        - general-health-bad
+        - general-health-fair
+        - general-health-good
+        - general-health-total
+        - general-health-very-bad
+        - general-health-very-good
+        - household-composition-cohabiting-dependent-children
+        - household-composition-cohabiting-no-children
+        - household-composition-cohabiting-non-dependent-children
+        - household-composition-family-all-66-plus
+        - household-composition-lone-parent-dependent-children
+        - household-composition-lone-parent-non-dependent-children
+        - household-composition-married-dependent-children
+        - household-composition-married-no-children
+        - household-composition-married-non-dependent-children
+        - household-composition-one-person-66-plus
+        - household-composition-one-person-other
+        - household-composition-other
+        - household-composition-other-family
+        - household-composition-other-with-dependent-children
+        - household-composition-total
+        - life-expectancy-female
+        - life-expectancy-male
+        - local-election-con-votes
+        - local-election-effective-votes
+        - local-election-green-votes
+        - local-election-ind-votes
+        - local-election-lab-votes
+        - local-election-ld-votes
+        - local-election-other-votes
+        - local-election-pc-votes
+        - local-election-ref-votes
+        - local-election-turnout
+        - local-election-ukip-votes
+        - local-election-winning-party
+        - local-government-finance
+        - median-annual-pay
+        - median-hourly-pay
+        - median-workplace-annual-pay
+        - median-workplace-hourly-pay
+        - mobile-4g-coverage
+        - mobile-5g-coverage
+        - no2-background-mean
+        - pm10-background-mean
+        - pm25-background-mean
+        - qualification-apprenticeship
+        - qualification-level-1
+        - qualification-level-2
+        - qualification-level-3
+        - qualification-level-4-plus
+        - qualification-none
+        - qualification-other
+        - qualification-total
+        - road-collisions-fatal
+        - road-collisions-serious
+        - road-collisions-slight
+        - temporary-accommodation-children
+        - temporary-accommodation-households
+        - temporary-accommodation-households-with-children
+        - tenure-owned-outright
+        - tenure-owned-with-mortgage
+        - tenure-private-rented-landlord
+        - tenure-private-rented-other
+        - tenure-rent-free
+        - tenure-shared-ownership
+        - tenure-social-rented-council
+        - tenure-social-rented-other
+        - tenure-total
+        - travel-to-work-bicycle
+        - travel-to-work-car
+        - travel-to-work-home
+        - travel-to-work-motorcycle
+        - travel-to-work-on-foot
+        - travel-to-work-other
+        - travel-to-work-public-transport
+        - travel-to-work-taxi
+        - travel-to-work-total
+        - unemployment-level
+        - usual-residents-in-communal-establishments
+        - usual-residents-in-households
+        - usual-residents-total
+        - waste
+      x-resolves-to:
+        adult-social-care-activity:
+          measure: long-term-support-clients
+        adult-social-care-outcomes:
+          measure: social-care-quality-of-life
+        age-0-to-4:
+          measure: usual-residents
+          dimensions:
+            age-band: 0-to-4
+        age-10-to-14:
+          measure: usual-residents
+          dimensions:
+            age-band: 10-to-14
+        age-15-to-19:
+          measure: usual-residents
+          dimensions:
+            age-band: 15-to-19
+        age-20-to-24:
+          measure: usual-residents
+          dimensions:
+            age-band: 20-to-24
+        age-25-to-29:
+          measure: usual-residents
+          dimensions:
+            age-band: 25-to-29
+        age-30-to-34:
+          measure: usual-residents
+          dimensions:
+            age-band: 30-to-34
+        age-35-to-39:
+          measure: usual-residents
+          dimensions:
+            age-band: 35-to-39
+        age-40-to-44:
+          measure: usual-residents
+          dimensions:
+            age-band: 40-to-44
+        age-45-to-49:
+          measure: usual-residents
+          dimensions:
+            age-band: 45-to-49
+        age-5-to-9:
+          measure: usual-residents
+          dimensions:
+            age-band: 5-to-9
+        age-50-to-54:
+          measure: usual-residents
+          dimensions:
+            age-band: 50-to-54
+        age-55-to-59:
+          measure: usual-residents
+          dimensions:
+            age-band: 55-to-59
+        age-60-to-64:
+          measure: usual-residents
+          dimensions:
+            age-band: 60-to-64
+        age-65-to-69:
+          measure: usual-residents
+          dimensions:
+            age-band: 65-to-69
+        age-70-to-74:
+          measure: usual-residents
+          dimensions:
+            age-band: 70-to-74
+        age-75-to-79:
+          measure: usual-residents
+          dimensions:
+            age-band: 75-to-79
+        age-80-to-84:
+          measure: usual-residents
+          dimensions:
+            age-band: 80-to-84
+        age-85-plus:
+          measure: usual-residents
+          dimensions:
+            age-band: 85-plus
+        broadband-full-fibre-availability:
+          measure: broadband-availability
+          dimensions:
+            broadband-speed: full-fibre
+        broadband-gigabit-availability:
+          measure: broadband-availability
+          dimensions:
+            broadband-speed: gigabit
+        broadband-superfast-availability:
+          measure: broadband-availability
+          dimensions:
+            broadband-speed: superfast
+        broadband-ultrafast-availability:
+          measure: broadband-availability
+          dimensions:
+            broadband-speed: ultrafast
+        business-activity:
+          measure: enterprises
+        car-availability-none:
+          measure: households
+          dimensions:
+            cars-or-vans: none
+        car-availability-one:
+          measure: households
+          dimensions:
+            cars-or-vans: one
+        car-availability-three-or-more:
+          measure: households
+          dimensions:
+            cars-or-vans: three-or-more
+        car-availability-total:
+          measure: households
+          dimensions:
+            cars-or-vans: total
+        car-availability-two:
+          measure: households
+          dimensions:
+            cars-or-vans: two
+        claimant-count:
+          measure: claimants
+          dimensions:
+            age-group: 16-plus
+        claimant-count-16-to-24:
+          measure: claimants
+          dimensions:
+            age-group: 16-to-24
+        council-tax:
+          measure: band-d-council-tax
+        crime-bicycle-theft:
+          measure: recorded-crimes
+          dimensions:
+            offence: bicycle-theft
+        crime-burglary:
+          measure: recorded-crimes
+          dimensions:
+            offence: burglary
+        crime-criminal-damage-and-arson:
+          measure: recorded-crimes
+          dimensions:
+            offence: criminal-damage-and-arson
+        crime-death-or-serious-injury-by-illegal-driving:
+          measure: recorded-crimes
+          dimensions:
+            offence: death-or-serious-injury-by-unlawful-driving
+        crime-drug-offences:
+          measure: recorded-crimes
+          dimensions:
+            offence: drug-offences
+        crime-homicide:
+          measure: recorded-crimes
+          dimensions:
+            offence: homicide
+        crime-miscellaneous-crimes-against-society:
+          measure: recorded-crimes
+          dimensions:
+            offence: miscellaneous-crimes-against-society
+        crime-non-residential-burglary:
+          measure: recorded-crimes
+          dimensions:
+            offence: non-residential-burglary
+        crime-other-theft:
+          measure: recorded-crimes
+          dimensions:
+            offence: other-theft
+        crime-possession-of-weapons:
+          measure: recorded-crimes
+          dimensions:
+            offence: possession-of-weapons
+        crime-public-order-offences:
+          measure: recorded-crimes
+          dimensions:
+            offence: public-order-offences
+        crime-residential-burglary:
+          measure: recorded-crimes
+          dimensions:
+            offence: residential-burglary
+        crime-robbery:
+          measure: recorded-crimes
+          dimensions:
+            offence: robbery
+        crime-sexual-offences:
+          measure: recorded-crimes
+          dimensions:
+            offence: sexual-offences
+        crime-shoplifting:
+          measure: recorded-crimes
+          dimensions:
+            offence: shoplifting
+        crime-stalking-and-harassment:
+          measure: recorded-crimes
+          dimensions:
+            offence: stalking-and-harassment
+        crime-theft-from-the-person:
+          measure: recorded-crimes
+          dimensions:
+            offence: theft-from-the-person
+        crime-theft-offences:
+          measure: recorded-crimes
+          dimensions:
+            offence: theft
+        crime-total:
+          measure: recorded-crimes
+          dimensions:
+            offence: total
+        crime-vehicle-offences:
+          measure: recorded-crimes
+          dimensions:
+            offence: vehicle-offences
+        crime-violence-against-the-person:
+          measure: recorded-crimes
+          dimensions:
+            offence: violence-against-the-person
+        crime-violence-with-injury:
+          measure: recorded-crimes
+          dimensions:
+            offence: violence-with-injury
+        crime-violence-without-injury:
+          measure: recorded-crimes
+          dimensions:
+            offence: violence-without-injury
+        economic-activity-employed:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: employed
+        economic-activity-inactive-long-term-sick:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: inactive-long-term-sick
+        economic-activity-inactive-looking-after-home:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: inactive-looking-after-home
+        economic-activity-inactive-other:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: inactive-other
+        economic-activity-inactive-retired:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: inactive-retired
+        economic-activity-inactive-student:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: inactive-student
+        economic-activity-student-employed:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: student-employed
+        economic-activity-student-unemployed:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: student-unemployed
+        economic-activity-total:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: total
+        economic-activity-unemployed:
+          measure: usual-residents-16-plus
+          dimensions:
+            economic-activity: unemployed
+        electric-vehicle-chargers:
+          measure: public-ev-chargers
+        electricity-consumption-domestic:
+          measure: electricity-consumption
+          dimensions:
+            meter-type: domestic
+        electricity-consumption-non-domestic:
+          measure: electricity-consumption
+          dimensions:
+            meter-type: non-domestic
+        ethnicity-african:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: african
+        ethnicity-any-other:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: any-other-ethnic-group
+        ethnicity-arab:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: arab
+        ethnicity-bangladeshi:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: bangladeshi
+        ethnicity-caribbean:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: caribbean
+        ethnicity-chinese:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: chinese
+        ethnicity-gypsy-or-irish-traveller:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: gypsy-or-irish-traveller
+        ethnicity-indian:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: indian
+        ethnicity-irish:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: irish
+        ethnicity-other-asian:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: other-asian
+        ethnicity-other-black:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: other-black
+        ethnicity-other-mixed:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: other-mixed-or-multiple-ethnic-groups
+        ethnicity-other-white:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: other-white
+        ethnicity-pakistani:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: pakistani
+        ethnicity-roma:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: roma
+        ethnicity-white-and-asian:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: white-and-asian
+        ethnicity-white-and-black-african:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: white-and-black-african
+        ethnicity-white-and-black-caribbean:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: white-and-black-caribbean
+        ethnicity-white-british:
+          measure: usual-residents
+          dimensions:
+            ethnic-group: english-welsh-scottish-northern-irish-or-british
+        gas-consumption-domestic:
+          measure: gas-consumption
+          dimensions:
+            meter-type: domestic
+        gas-consumption-non-domestic:
+          measure: gas-consumption
+          dimensions:
+            meter-type: non-domestic
+        general-election-apni-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: apni
+          datasetId: general-election
+        general-election-apni-votes:
+          measure: party-votes
+          dimensions:
+            party: apni
+          datasetId: general-election
+        general-election-brx-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: brx
+          datasetId: general-election
+        general-election-brx-votes:
+          measure: party-votes
+          dimensions:
+            party: brx
+          datasetId: general-election
+        general-election-con-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: con
+          datasetId: general-election
+        general-election-con-votes:
+          measure: party-votes
+          dimensions:
+            party: con
+          datasetId: general-election
+        general-election-dup-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: dup
+          datasetId: general-election
+        general-election-dup-votes:
+          measure: party-votes
+          dimensions:
+            party: dup
+          datasetId: general-election
+        general-election-green-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: green
+          datasetId: general-election
+        general-election-green-votes:
+          measure: party-votes
+          dimensions:
+            party: green
+          datasetId: general-election
+        general-election-lab-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: lab
+          datasetId: general-election
+        general-election-lab-votes:
+          measure: party-votes
+          dimensions:
+            party: lab
+          datasetId: general-election
+        general-election-ld-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: ld
+          datasetId: general-election
+        general-election-ld-votes:
+          measure: party-votes
+          dimensions:
+            party: ld
+          datasetId: general-election
+        general-election-other-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: other
+          datasetId: general-election
+        general-election-other-votes:
+          measure: party-votes
+          dimensions:
+            party: other
+          datasetId: general-election
+        general-election-pc-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: pc
+          datasetId: general-election
+        general-election-pc-votes:
+          measure: party-votes
+          dimensions:
+            party: pc
+          datasetId: general-election
+        general-election-ruk-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: ruk
+          datasetId: general-election
+        general-election-ruk-votes:
+          measure: party-votes
+          dimensions:
+            party: ruk
+          datasetId: general-election
+        general-election-sdlp-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: sdlp
+          datasetId: general-election
+        general-election-sdlp-votes:
+          measure: party-votes
+          dimensions:
+            party: sdlp
+          datasetId: general-election
+        general-election-sf-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: sf
+          datasetId: general-election
+        general-election-sf-votes:
+          measure: party-votes
+          dimensions:
+            party: sf
+          datasetId: general-election
+        general-election-snp-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: snp
+          datasetId: general-election
+        general-election-snp-votes:
+          measure: party-votes
+          dimensions:
+            party: snp
+          datasetId: general-election
+        general-election-turnout:
+          measure: turnout
+          datasetId: general-election
+        general-election-ukip-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: ukip
+          datasetId: general-election
+        general-election-ukip-votes:
+          measure: party-votes
+          dimensions:
+            party: ukip
+          datasetId: general-election
+        general-election-uup-vote-share:
+          measure: party-vote-share
+          dimensions:
+            party: uup
+          datasetId: general-election
+        general-election-uup-votes:
+          measure: party-votes
+          dimensions:
+            party: uup
+          datasetId: general-election
+        general-election-valid-votes:
+          measure: valid-votes
+          datasetId: general-election
+        general-election-winning-party:
+          measure: winning-party
+          datasetId: general-election
+        general-health-bad:
+          measure: usual-residents
+          dimensions:
+            general-health: bad
+        general-health-fair:
+          measure: usual-residents
+          dimensions:
+            general-health: fair
+        general-health-good:
+          measure: usual-residents
+          dimensions:
+            general-health: good
+        general-health-total:
+          measure: usual-residents
+          dimensions:
+            general-health: total
+        general-health-very-bad:
+          measure: usual-residents
+          dimensions:
+            general-health: very-bad
+        general-health-very-good:
+          measure: usual-residents
+          dimensions:
+            general-health: very-good
+        household-composition-cohabiting-dependent-children:
+          measure: households
+          dimensions:
+            household-composition: cohabiting-dependent-children
+        household-composition-cohabiting-no-children:
+          measure: households
+          dimensions:
+            household-composition: cohabiting-no-children
+        household-composition-cohabiting-non-dependent-children:
+          measure: households
+          dimensions:
+            household-composition: cohabiting-non-dependent-children
+        household-composition-family-all-66-plus:
+          measure: households
+          dimensions:
+            household-composition: family-all-66-plus
+        household-composition-lone-parent-dependent-children:
+          measure: households
+          dimensions:
+            household-composition: lone-parent-dependent-children
+        household-composition-lone-parent-non-dependent-children:
+          measure: households
+          dimensions:
+            household-composition: lone-parent-non-dependent-children
+        household-composition-married-dependent-children:
+          measure: households
+          dimensions:
+            household-composition: married-dependent-children
+        household-composition-married-no-children:
+          measure: households
+          dimensions:
+            household-composition: married-no-children
+        household-composition-married-non-dependent-children:
+          measure: households
+          dimensions:
+            household-composition: married-non-dependent-children
+        household-composition-one-person-66-plus:
+          measure: households
+          dimensions:
+            household-composition: one-person-66-plus
+        household-composition-one-person-other:
+          measure: households
+          dimensions:
+            household-composition: one-person-other
+        household-composition-other:
+          measure: households
+          dimensions:
+            household-composition: other
+        household-composition-other-family:
+          measure: households
+          dimensions:
+            household-composition: other-family
+        household-composition-other-with-dependent-children:
+          measure: households
+          dimensions:
+            household-composition: other-with-dependent-children
+        household-composition-total:
+          measure: households
+          dimensions:
+            household-composition: total
+        life-expectancy-female:
+          measure: life-expectancy
+          dimensions:
+            sex: female
+        life-expectancy-male:
+          measure: life-expectancy
+          dimensions:
+            sex: male
+        local-election-con-votes:
+          measure: party-votes
+          dimensions:
+            party: con
+          datasetId: local-election
+        local-election-effective-votes:
+          measure: effective-votes
+          datasetId: local-election
+        local-election-green-votes:
+          measure: party-votes
+          dimensions:
+            party: green
+          datasetId: local-election
+        local-election-ind-votes:
+          measure: party-votes
+          dimensions:
+            party: ind
+          datasetId: local-election
+        local-election-lab-votes:
+          measure: party-votes
+          dimensions:
+            party: lab
+          datasetId: local-election
+        local-election-ld-votes:
+          measure: party-votes
+          dimensions:
+            party: ld
+          datasetId: local-election
+        local-election-other-votes:
+          measure: party-votes
+          dimensions:
+            party: other
+          datasetId: local-election
+        local-election-pc-votes:
+          measure: party-votes
+          dimensions:
+            party: pc
+          datasetId: local-election
+        local-election-ref-votes:
+          measure: party-votes
+          dimensions:
+            party: ref
+          datasetId: local-election
+        local-election-turnout:
+          measure: turnout
+          datasetId: local-election
+        local-election-ukip-votes:
+          measure: party-votes
+          dimensions:
+            party: ukip
+          datasetId: local-election
+        local-election-winning-party:
+          measure: winning-party
+          datasetId: local-election
+        local-government-finance:
+          measure: education-services-budget
+        median-annual-pay:
+          measure: gross-annual-pay
+          dimensions:
+            pay-statistic: median
+            earnings-place: residence
+        median-hourly-pay:
+          measure: gross-hourly-pay
+          dimensions:
+            pay-statistic: median
+            earnings-place: residence
+        median-workplace-annual-pay:
+          measure: gross-annual-pay
+          dimensions:
+            pay-statistic: median
+            earnings-place: workplace
+        median-workplace-hourly-pay:
+          measure: gross-hourly-pay
+          dimensions:
+            pay-statistic: median
+            earnings-place: workplace
+        mobile-4g-coverage:
+          measure: mobile-premises-coverage
+          dimensions:
+            mobile-technology: 4g
+            coverage-location: indoor
+            mobile-operators: all
+        mobile-5g-coverage:
+          measure: mobile-premises-coverage
+          dimensions:
+            mobile-technology: 5g
+            coverage-location: outdoor
+            mobile-operators: all
+        no2-background-mean:
+          measure: background-concentration
+          dimensions:
+            pollutant: no2
+        pm10-background-mean:
+          measure: background-concentration
+          dimensions:
+            pollutant: pm10
+        pm25-background-mean:
+          measure: background-concentration
+          dimensions:
+            pollutant: pm25
+        qualification-apprenticeship:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: apprenticeship
+        qualification-level-1:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: level-1
+        qualification-level-2:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: level-2
+        qualification-level-3:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: level-3
+        qualification-level-4-plus:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: level-4-plus
+        qualification-none:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: none
+        qualification-other:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: other
+        qualification-total:
+          measure: usual-residents-16-plus
+          dimensions:
+            highest-qualification: total
+        road-collisions-fatal:
+          measure: road-collisions
+          dimensions:
+            collision-severity: fatal
+        road-collisions-serious:
+          measure: road-collisions
+          dimensions:
+            collision-severity: serious
+        road-collisions-slight:
+          measure: road-collisions
+          dimensions:
+            collision-severity: slight
+        temporary-accommodation-children:
+          measure: children-in-temporary-accommodation
+        temporary-accommodation-households:
+          measure: households-in-temporary-accommodation
+          dimensions:
+            household-type: all
+        temporary-accommodation-households-with-children:
+          measure: households-in-temporary-accommodation
+          dimensions:
+            household-type: with-children
+        tenure-owned-outright:
+          measure: households
+          dimensions:
+            tenure: owned-outright
+        tenure-owned-with-mortgage:
+          measure: households
+          dimensions:
+            tenure: owned-with-mortgage
+        tenure-private-rented-landlord:
+          measure: households
+          dimensions:
+            tenure: private-rented-landlord
+        tenure-private-rented-other:
+          measure: households
+          dimensions:
+            tenure: private-rented-other
+        tenure-rent-free:
+          measure: households
+          dimensions:
+            tenure: rent-free
+        tenure-shared-ownership:
+          measure: households
+          dimensions:
+            tenure: shared-ownership
+        tenure-social-rented-council:
+          measure: households
+          dimensions:
+            tenure: social-rented-council
+        tenure-social-rented-other:
+          measure: households
+          dimensions:
+            tenure: social-rented-other
+        tenure-total:
+          measure: households
+          dimensions:
+            tenure: total
+        travel-to-work-bicycle:
+          measure: people-in-employment
+          dimensions:
+            travel-method: bicycle
+        travel-to-work-car:
+          measure: people-in-employment
+          dimensions:
+            travel-method: car
+        travel-to-work-home:
+          measure: people-in-employment
+          dimensions:
+            travel-method: home
+        travel-to-work-motorcycle:
+          measure: people-in-employment
+          dimensions:
+            travel-method: motorcycle
+        travel-to-work-on-foot:
+          measure: people-in-employment
+          dimensions:
+            travel-method: on-foot
+        travel-to-work-other:
+          measure: people-in-employment
+          dimensions:
+            travel-method: other
+        travel-to-work-public-transport:
+          measure: people-in-employment
+          dimensions:
+            travel-method: public-transport
+        travel-to-work-taxi:
+          measure: people-in-employment
+          dimensions:
+            travel-method: taxi
+        travel-to-work-total:
+          measure: people-in-employment
+          dimensions:
+            travel-method: total
+        unemployment-level:
+          measure: unemployed-people
+        usual-residents-in-communal-establishments:
+          measure: usual-residents
+          dimensions:
+            residence-type: communal-establishment
+        usual-residents-in-households:
+          measure: usual-residents
+          dimensions:
+            residence-type: household
+        usual-residents-total:
+          measure: usual-residents
+          dimensions:
+            residence-type: total
+        waste:
+          measure: collected-waste
 
     AmbiguousPlaceProblem:
       description: >
