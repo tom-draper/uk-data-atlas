@@ -24,6 +24,7 @@ import {
 	rebuildStatisticsObservationText,
 	type StatisticsReadPath,
 	type StatisticsSelector,
+	type StatisticsTableSelector,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
@@ -290,8 +291,36 @@ for (const measure of catalog.measures)
 		const storedText = readObservationText(databasePath, name);
 		const stored = JSON.parse(storedText) as Artifact;
 		if (isMeasureTable(stored)) {
-			plan.observations[name] ??=
-				"A census table artifact, read whole by every measure it serves; tables are not yet rebuilt from statistics rows.";
+			// One table serves several measures; plan it once.
+			if (name in plan.statistics || name in plan.observations) continue;
+			const table: StatisticsTableSelector = {
+				kind: "measure-table",
+				id: stored.id,
+				datasetId: stored.datasetId,
+				geography: stored.sourceGeography.type,
+				boundaryYear: stored.sourceGeography.boundaryYear,
+				period: stored.period,
+				measures: stored.measures,
+				columns: stored.measures.map((id) => ({
+					measure: config.ids[id]!.measure,
+					dimensions: config.ids[id]!.dimensions ?? {},
+				})),
+			};
+			try {
+				if (
+					rebuildStatisticsObservationText(database, table, {
+						measureId: measure.id,
+						sourceGeography: source.sourceGeography,
+						periods: source.periods,
+					}) === storedText
+				)
+					plan.statistics[name] = table;
+				else
+					plan.observations[name] =
+						"The statistics rows do not rebuild this census table byte for byte.";
+			} catch (error) {
+				plan.observations[name] = (error as Error).message;
+			}
 			continue;
 		}
 		const selector = selectorFor(
