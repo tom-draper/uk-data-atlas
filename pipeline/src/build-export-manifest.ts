@@ -1,4 +1,8 @@
-import { assertObservationCatalogue } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	assertObservationCatalogue,
+	configDirectory,
+	type StatisticsReadPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -34,6 +38,12 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		measureId: string;
 		field: NonNullable<CompiledMeasure["statisticsField"]>;
 	}>;
+	const readPath = JSON.parse(
+		readFileSync(
+			join(configDirectory(repositoryRoot), "statistics-read-path.json"),
+			"utf8",
+		),
+	) as StatisticsReadPath;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),
 		{ readOnly: true },
@@ -45,6 +55,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 				database,
 				measure,
 				bindings,
+				readPath,
 			);
 			if (!selection) continue;
 			const formats = await compileMeasureDownloads(

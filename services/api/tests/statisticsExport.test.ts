@@ -14,6 +14,7 @@ import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
 import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
 import { bindReviewedStatistics } from "../../../pipeline/src/bindReviewedStatistics";
+import statisticsReadPath from "../config/statistics-read-path.json" with { type: "json" };
 import { bindCompiledFields } from "../../../pipeline/src/bindCompiledFields";
 import { compileMeasureDownloads } from "../../../pipeline/src/measureDownloads";
 import { gunzipSync } from "node:zlib";
@@ -108,9 +109,15 @@ test("uses reviewed source mappings only when each requested period exists", () 
 				},
 			],
 		} as unknown as Measure;
-		assert.equal(bindReviewedStatistics(db, measure)?.length, 1);
+		assert.equal(
+			bindReviewedStatistics(db, measure, statisticsReadPath)?.length,
+			1,
+		);
 		measure.sources[0]!.periods.push("2022");
-		assert.equal(bindReviewedStatistics(db, measure), undefined);
+		assert.equal(
+			bindReviewedStatistics(db, measure, statisticsReadPath),
+			undefined,
+		);
 	} finally {
 		db.close();
 	}
