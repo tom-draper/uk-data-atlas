@@ -106,6 +106,23 @@ describe("observation artifacts rebuilt from statistics rows", () => {
 		]);
 	});
 
+	it("adds measures and scales the quotient, as turnout is computed", () => {
+		expect(
+			rebuild({
+				...labour,
+				plus: ["valid-votes"],
+				ratio: {
+					measure: "valid-votes",
+					scale: 100,
+					scaleQuotient: true,
+				},
+			}),
+		).toEqual([
+			{ areaCode: "E05000001", value: 150, status: "observed" },
+			{ areaCode: "E05099999", value: 150, status: "observed" },
+		]);
+	});
+
 	it("sums a dimension with no total", () => {
 		expect(rebuild({ ...labour, dimensions: {}, sum: ["party"] })).toEqual([
 			{ areaCode: "E05000001", value: 300, status: "observed" },

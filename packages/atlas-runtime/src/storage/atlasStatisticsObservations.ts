@@ -47,7 +47,17 @@ export type StatisticsSelector = {
 		measure: string;
 		dimensions?: Record<string, string>;
 		scale: number;
+		/**
+		 * Scale the quotient rather than the numerator, as turnout is
+		 * computed, so the floating point result is the published one.
+		 */
+		scaleQuotient?: true;
 	};
+	/**
+	 * Measures of the same dataset added to this one in each area and
+	 * period: turnout counts valid votes and rejected ballots.
+	 */
+	plus?: string[];
 };
 
 /**
@@ -201,6 +211,22 @@ export function rebuildStatisticsObservationText(
 	artifact: StatisticsArtifact,
 ): string {
 	const byPeriod = periodRows(database, selector, artifact);
+	for (const measure of selector.plus ?? []) {
+		const added = periodRows(
+			database,
+			{ ...selector, measure, dimensions: {}, sum: undefined },
+			artifact,
+		);
+		for (const [period, records] of byPeriod)
+			for (const row of records.values()) {
+				const value = added.get(period)?.get(row.code)?.value;
+				if (row.value === null || value === undefined || value === null)
+					throw new Error(
+						`${row.code} has no ${measure} to add to ${artifact.measureId} for ${period}.`,
+					);
+				row.value += value;
+			}
+	}
 	if (selector.absentAsZero) {
 		const contests = periodRows(
 			database,
@@ -234,7 +260,7 @@ export function rebuildStatisticsObservationText(
 			},
 			artifact,
 		);
-		const { scale } = selector.ratio;
+		const { scale, scaleQuotient } = selector.ratio;
 		for (const [period, records] of byPeriod)
 			for (const row of records.values()) {
 				const denominator = denominators
@@ -244,7 +270,9 @@ export function rebuildStatisticsObservationText(
 					throw new Error(
 						`${row.code} has no ${selector.ratio.measure} to divide ${artifact.measureId} by for ${period}.`,
 					);
-				row.value = (scale * row.value) / denominator;
+				row.value = scaleQuotient
+					? (row.value / denominator) * scale
+					: (scale * row.value) / denominator;
 				row.lower = row.upper = null;
 			}
 	}
