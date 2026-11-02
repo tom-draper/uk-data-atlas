@@ -1,0 +1,246 @@
+import { readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
+import { fileURLToPath } from "node:url";
+import {
+	isMeasureTable,
+	observationArtifactName,
+	totalMember,
+	type DataCatalog,
+} from "@uk-data-atlas/measures";
+import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	artifactRoot,
+	atlasDatabasePath,
+	readObservationText,
+	rebuildStatisticsObservationText,
+	type StatisticsReadPath,
+	type StatisticsSelector,
+} from "@uk-data-atlas/atlas-runtime/storage";
+
+/**
+ * Decide, artifact by artifact, whether the API reads observations from the
+ * statistics tables or the observation tables, and write the decision to
+ * `config/statistics-read-path.json`.
+ *
+ * An artifact moves only when the statistics rows rebuild it byte for byte,
+ * so every number, status, interval, period and area is unchanged. Any other
+ * artifact stays where it is, and the reason says what differs, so that a
+ * difference is reported rather than hidden.
+ */
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const databasePath = atlasDatabasePath(apiRoot);
+const catalog = JSON.parse(
+	readFileSync(join(artifactRoot(apiRoot), "data-catalog.json"), "utf8"),
+) as DataCatalog;
+const { config, vocabulary } = readMeasureDimensionsConfig(apiRoot);
+const database = new DatabaseSync(databasePath, { readOnly: true });
+
+/** The dimensions each statistics series of a dataset and measure carries. */
+const seriesDimensions = (
+	datasetId: string,
+	measure: string,
+	geography: string,
+) =>
+	database
+		.prepare(
+			"SELECT s.id, group_concat(d.slug) AS dimensions FROM series s JOIN dataset ds ON ds.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.position = s.release_id LEFT JOIN series_member sm ON sm.series_id = s.id LEFT JOIN dimension d ON d.id = sm.dimension_id WHERE ds.slug = ? AND m.slug = ? AND r.geography = ? GROUP BY s.id",
+		)
+		.all(datasetId, measure, geography)
+		.map((row) =>
+			row.dimensions === null ? [] : String(row.dimensions).split(","),
+		);
+
+/**
+ * The series an artifact would be read from. A dimension the mapping leaves
+ * open is fixed at its total where it has one, and summed over otherwise.
+ */
+const selectorFor = (
+	measureId: string,
+	datasetId: string,
+	geography: string,
+): StatisticsSelector | string => {
+	const mapping = config.ids[measureId]!;
+	if (!(mapping.measure in vocabulary.measures))
+		return `${mapping.measure} is not in the statistics tables.`;
+	for (const dimension of Object.keys(mapping.dimensions ?? {}))
+		if (!(dimension in vocabulary.dimensions))
+			return `The ${dimension} dimension is not in the statistics tables.`;
+	const held = seriesDimensions(datasetId, mapping.measure, geography);
+	if (held.length === 0)
+		return `The statistics tables hold no ${mapping.measure} series from ${datasetId} on ${geography}.`;
+	const dimensions = { ...(mapping.dimensions ?? {}) };
+	const sum: string[] = [];
+	for (const dimension of new Set(held.flat())) {
+		if (dimension in dimensions) continue;
+		const total = totalMember(vocabulary.dimensions[dimension]!.members);
+		if (total) dimensions[dimension] = total;
+		else sum.push(dimension);
+	}
+	return {
+		datasetId,
+		measure: mapping.measure,
+		dimensions,
+		geography,
+		...(sum.length > 0 ? { sum: sum.sort() } : {}),
+	};
+};
+
+/** The releases of a geography published in a code year. */
+const releasesIn = (geography: string, year: number) =>
+	database
+		.prepare(
+			"SELECT id FROM area_releases WHERE geography = ? AND id LIKE ? ORDER BY id",
+		)
+		.all(geography, `${year}-%`)
+		.map((row) => String(row.id));
+
+type Record = {
+	areaCode: string;
+	value?: number | null;
+	status?: string;
+	category?: string;
+	sourceAreaCode?: string;
+	confidenceInterval?: unknown;
+};
+type Artifact = { periods: Array<{ period: string; records: Record[] }> };
+
+/** What differs between the stored artifact and its rebuild, in a sentence. */
+const difference = (stored: Artifact, rebuilt: Artifact) => {
+	const index = (artifact: Artifact) =>
+		new Map(
+			artifact.periods.flatMap(({ period, records }) =>
+				records.map(
+					(record) =>
+						[`${period} ${record.areaCode}`, record] as const,
+				),
+			),
+		);
+	const before = index(stored);
+	const after = index(rebuilt);
+	let missing = 0;
+	let missingZero = 0;
+	let extra = 0;
+	let values = 0;
+	let other = 0;
+	let example: string | undefined;
+	for (const [key, record] of before) {
+		const held = after.get(key);
+		if (!held) {
+			missing++;
+			if (record.value === 0) missingZero++;
+			example ??= `${key} is missing`;
+		} else if (record.value !== held.value) {
+			values++;
+			example ??= `${key} is ${String(record.value)}, rebuilt as ${String(held.value)}`;
+		} else if (JSON.stringify(record) !== JSON.stringify(held)) {
+			other++;
+			example ??= `${key} is ${JSON.stringify(record)}, rebuilt as ${JSON.stringify(held)}`;
+		}
+	}
+	for (const key of after.keys()) if (!before.has(key)) extra++;
+	const parts = [
+		missing &&
+			`${missing} of ${before.size} records are missing${missingZero ? ` (${missingZero} of them zero)` : ""}`,
+		values && `${values} values differ`,
+		other && `${other} records differ in status, interval or source code`,
+		extra && `${extra} records are extra`,
+	].filter(Boolean);
+	return parts.length
+		? `The statistics rows do not rebuild it: ${parts.join(", ")}. For example, ${example}.`
+		: "The statistics rows rebuild the same records in a different layout.";
+};
+
+const plan: StatisticsReadPath = {
+	schemaVersion: 1,
+	statistics: {},
+	observations: {},
+};
+for (const measure of catalog.measures)
+	for (const source of measure.sources) {
+		const name = observationArtifactName(measure.id, source);
+		const storedText = readObservationText(databasePath, name);
+		const stored = JSON.parse(storedText) as Artifact;
+		if (isMeasureTable(stored)) {
+			plan.observations[name] ??=
+				"A census table artifact, read whole by every measure it serves; tables are not yet rebuilt from statistics rows.";
+			continue;
+		}
+		if (
+			stored.periods.some(({ records }) =>
+				records.some((record) => record.category !== undefined),
+			)
+		) {
+			plan.observations[name] =
+				"Its values are categories, which the statistics tables do not hold for this measure.";
+			continue;
+		}
+		const selector = selectorFor(
+			measure.id,
+			source.datasetId,
+			source.sourceGeography.type,
+		);
+		if (typeof selector === "string") {
+			plan.observations[name] = selector;
+			continue;
+		}
+		const rebuild = (candidate: StatisticsSelector) =>
+			rebuildStatisticsObservationText(database, candidate, {
+				measureId: measure.id,
+				sourceGeography: source.sourceGeography,
+				periods: source.periods,
+			});
+		let rebuiltText: string;
+		try {
+			rebuiltText = rebuild(selector);
+		} catch (error) {
+			plan.observations[name] = (error as Error).message;
+			continue;
+		}
+		// A census source on a later code year lists only the codes that
+		// year's releases still use.
+		const narrowed = {
+			...selector,
+			areasIn: releasesIn(
+				source.sourceGeography.type,
+				source.sourceGeography.boundaryYear,
+			),
+		};
+		if (rebuiltText !== storedText && narrowed.areasIn.length > 0) {
+			const narrowedText = rebuild(narrowed);
+			if (narrowedText === storedText) {
+				plan.statistics[name] = narrowed;
+				continue;
+			}
+		}
+		if (rebuiltText === storedText) plan.statistics[name] = selector;
+		else
+			plan.observations[name] = difference(
+				stored,
+				JSON.parse(rebuiltText) as Artifact,
+			);
+	}
+database.close();
+
+const sorted = <T>(entries: { [key: string]: T }) =>
+	Object.fromEntries(
+		Object.entries(entries).sort(([left], [right]) =>
+			left.localeCompare(right),
+		),
+	);
+const file = join(apiRoot, "config", "statistics-read-path.json");
+writeFileSync(
+	file,
+	`${JSON.stringify(
+		{
+			schemaVersion: 1,
+			statistics: sorted(plan.statistics),
+			observations: sorted(plan.observations),
+		},
+		null,
+		"\t",
+	)}\n`,
+);
+console.log(
+	`${Object.keys(plan.statistics).length} artifacts read from statistics rows, ${Object.keys(plan.observations).length} from observation tables. Wrote ${file}`,
+);

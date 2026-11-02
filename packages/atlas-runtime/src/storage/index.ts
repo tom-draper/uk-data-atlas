@@ -26,3 +26,4 @@ export * from "./publicJson";
 export * from "./publicManifest";
 export * from "./sqliteIndex";
 export * from "./atlasStatisticsVocabulary";
+export * from "./atlasStatisticsObservations";

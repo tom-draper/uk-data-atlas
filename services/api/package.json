@@ -37,7 +37,8 @@
 		"start:dev": "tsx scripts/serve.ts",
 		"docs:examples": "tsx scripts/refresh-problem-examples.ts",
 		"usage:report": "tsx scripts/usage-report.ts",
-		"generate:statistics-vocabulary": "tsx scripts/build-statistics-vocabulary.ts"
+		"generate:statistics-vocabulary": "tsx scripts/build-statistics-vocabulary.ts",
+		"generate:statistics-read-path": "tsx scripts/build-statistics-read-path.ts"
 	},
 	"dependencies": {
 		"@fastify/swagger": "^9.9.2",

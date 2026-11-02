@@ -1,0 +1,223 @@
+import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
+import { sha256 } from "@uk-data-atlas/artifacts";
+import type { SourceGeography } from "@uk-data-atlas/measures";
+
+/**
+ * Which statistics series an observation artifact is read from. The dataset,
+ * measure and members name the series; `geography` takes every release of
+ * it, since the statistics tables keep each record on the release its code
+ * belongs to, where an artifact lists them all under one code year.
+ */
+export type StatisticsSelector = {
+	datasetId: string;
+	measure: string;
+	/** Members fixed on each dimension the series carries. */
+	dimensions: Record<string, string>;
+	geography: string;
+	/**
+	 * Dimensions summed over, where the artifact is their total and the
+	 * statistics tables hold only the parts: population is published by
+	 * single year of age, and an area's population is their sum.
+	 */
+	sum?: string[];
+	/**
+	 * Releases whose areas the artifact lists. The statistics tables keep a
+	 * census record for every code it was published for, where an artifact on
+	 * a later code year lists only the codes that year still uses.
+	 */
+	areasIn?: string[];
+};
+
+/**
+ * Which artifacts are read from the statistics tables, and why each other
+ * artifact is still read from the observation tables. Written by
+ * `pnpm --dir services/api generate:statistics-read-path`, which moves an
+ * artifact only when its rebuilt bytes are identical to the stored ones.
+ */
+export type StatisticsReadPath = {
+	schemaVersion: 1;
+	statistics: Record<string, StatisticsSelector>;
+	observations: Record<string, string>;
+};
+
+/** What the catalogue says about the artifact being rebuilt. */
+export type StatisticsArtifact = {
+	measureId: string;
+	sourceGeography: SourceGeography;
+	/** The catalogue's periods for the source, in its order. */
+	periods: string[];
+};
+
+type Row = {
+	code: string;
+	period: string;
+	value: number | null;
+	lower: number | null;
+	upper: number | null;
+	status: string;
+};
+
+/** The ids of the series a selector names. */
+const selectedSeries = (
+	database: DatabaseSync,
+	selector: StatisticsSelector,
+) => {
+	const series = database
+		.prepare(
+			"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.position = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
+		)
+		.all(selector.datasetId, selector.measure, selector.geography)
+		.map((row) => Number(row.id));
+	const members = database.prepare(
+		"SELECT d.slug AS dimension, m.code FROM series_member sm JOIN dimension d ON d.id = sm.dimension_id JOIN dimension_member m ON m.id = sm.member_id WHERE sm.series_id = ?",
+	);
+	const summed = new Set(selector.sum ?? []);
+	return series.filter((id) => {
+		const held = new Map(
+			members
+				.all(id)
+				.map((row) => [String(row.dimension), String(row.code)]),
+		);
+		for (const [dimension, code] of Object.entries(selector.dimensions))
+			if (held.get(dimension) !== code) return false;
+		for (const dimension of held.keys())
+			if (!(dimension in selector.dimensions) && !summed.has(dimension))
+				return false;
+		return true;
+	});
+};
+
+const rowsOf = (database: DatabaseSync, seriesId: number): Row[] =>
+	database
+		.prepare(
+			"SELECT a.code, p.label AS period, o.value, o.lower, o.upper, st.slug AS status FROM observation o JOIN area_version v ON v.id = o.area_version_id JOIN area a ON a.id = v.area_id JOIN period p ON p.id = o.period_id JOIN status st ON st.id = o.status_id WHERE o.series_id = ?",
+		)
+		.all(seriesId)
+		.map((row: Record<string, SQLOutputValue>) => ({
+			code: String(row.code),
+			period: String(row.period),
+			value: row.value === null ? null : Number(row.value),
+			lower: row.lower === null ? null : Number(row.lower),
+			upper: row.upper === null ? null : Number(row.upper),
+			status: String(row.status),
+		}));
+
+/**
+ * The statistics period a catalogue period is stored as: the same label, or
+ * the one label that extends it, such as `2021-census` for `2021` or an
+ * election's date for its year.
+ */
+export const statisticsPeriod = (period: string, held: Set<string>) => {
+	if (held.has(period)) return period;
+	const extended = [...held].filter((label) =>
+		label.startsWith(`${period}-`),
+	);
+	return extended.length === 1 ? extended[0] : undefined;
+};
+
+/**
+ * An observation artifact rebuilt from the statistics tables, as the text
+ * the data catalogue build stores it as: periods in the catalogue's order,
+ * records in area code order, and the content hash of the rest.
+ */
+export function rebuildStatisticsObservationText(
+	database: DatabaseSync,
+	selector: StatisticsSelector,
+	artifact: StatisticsArtifact,
+): string {
+	const series = selectedSeries(database, selector);
+	if (series.length === 0)
+		throw new Error(
+			`No statistics series matches ${artifact.measureId} on ${selector.geography}.`,
+		);
+	const byPeriod = new Map<string, Map<string, Row>>();
+	for (const id of series)
+		for (const row of rowsOf(database, id)) {
+			let records = byPeriod.get(row.period);
+			if (!records) byPeriod.set(row.period, (records = new Map()));
+			const held = records.get(row.code);
+			if (!held) {
+				records.set(row.code, { ...row });
+				continue;
+			}
+			if (!selector.sum?.length)
+				throw new Error(
+					`${row.code} has two ${artifact.measureId} values for ${row.period} in the statistics tables.`,
+				);
+			if (row.value === null || held.value === null)
+				throw new Error(
+					`${row.code} has a part with no value for ${row.period}, so ${artifact.measureId} cannot be summed.`,
+				);
+			held.value += row.value;
+		}
+	if (selector.areasIn) {
+		const statement = database.prepare(
+			"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE r.geography = ? AND r.id = ?",
+		);
+		const listed = new Set(
+			selector.areasIn.flatMap((release) =>
+				statement
+					.all(selector.geography, release)
+					.map((row) => String(row.code)),
+			),
+		);
+		for (const records of byPeriod.values())
+			for (const code of records.keys())
+				if (!listed.has(code)) records.delete(code);
+	}
+	const heldPeriods = new Set(byPeriod.keys());
+	const periods = artifact.periods.map((period) => {
+		const label = statisticsPeriod(period, heldPeriods);
+		const records = [...(label ? byPeriod.get(label)! : new Map()).values()]
+			.sort((left, right) =>
+				left.code < right.code ? -1 : left.code > right.code ? 1 : 0,
+			)
+			.map((row: Row) => ({
+				areaCode: row.code,
+				value: row.value,
+				status: row.status,
+				...(row.lower === null || row.upper === null
+					? {}
+					: {
+							confidenceInterval: {
+								lower: row.lower,
+								upper: row.upper,
+							},
+						}),
+			}));
+		return { period, records };
+	});
+	const sourceGeography = {
+		type: artifact.sourceGeography.type,
+		boundaryYear: artifact.sourceGeography.boundaryYear,
+	};
+	const contentHash = sha256(
+		JSON.stringify({
+			schemaVersion: 1,
+			measureId: artifact.measureId,
+			sourceGeography,
+			periods,
+		}),
+	);
+	return `${JSON.stringify({
+		schemaVersion: 1,
+		contentHash,
+		measureId: artifact.measureId,
+		sourceGeography,
+		periods,
+	})}\n`;
+}
+
+/** Rebuild one artifact, opening the database for the read. */
+export function readStatisticsObservationText(
+	path: string,
+	selector: StatisticsSelector,
+	artifact: StatisticsArtifact,
+): string {
+	const database = new DatabaseSync(path, { readOnly: true });
+	try {
+		return rebuildStatisticsObservationText(database, selector, artifact);
+	} finally {
+		database.close();
+	}
+}
