@@ -9,3 +9,4 @@ export * from "./periodRecordLookup";
 export * from "./conversion";
 export * from "./reconciliationContext";
 export * from "./measureReconciliation";
+export * from "./measureDimensions";

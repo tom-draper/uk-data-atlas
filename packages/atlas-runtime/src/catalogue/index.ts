@@ -31,3 +31,4 @@ export * from "./datasetPayloads";
 export * from "./declaredStatistics";
 export * from "./statisticsDatasets";
 export * from "./statisticsDatasets/measures";
+export * from "./measureDimensionsLoader";
