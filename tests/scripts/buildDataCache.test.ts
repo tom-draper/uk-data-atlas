@@ -330,6 +330,7 @@ test("restoring a deleted shared API cache rebuilds every component", () => {
 		return { ...original, dependencies: ["base"] };
 	});
 	const run = () => {
+		const executed: string[] = [];
 		assert.equal(
 			runBuild({
 				stages: [
@@ -350,6 +351,7 @@ test("restoring a deleted shared API cache rebuilds every component", () => {
 						environment: {},
 					}),
 				execute: (current: { name: string }) => {
+					executed.push(current.name);
 					const values =
 						current.name === "base"
 							? []
@@ -367,11 +369,12 @@ test("restoring a deleted shared API cache rebuilds every component", () => {
 			"base",
 			...components,
 		]);
+		return executed;
 	};
-	run();
-	run();
+	assert.deepEqual(run(), ["base", ...components]);
+	assert.deepEqual(run(), components);
 	unlinkSync(path);
-	run();
+	assert.deepEqual(run(), ["base", ...components]);
 });
 
 test("adopt reuses current outputs after a cache version change without executing stages", () => {
