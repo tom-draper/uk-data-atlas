@@ -5,6 +5,11 @@ import {
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { searchMeasures } from "./measureTerms";
+import { dimensionCatalogue } from "../dimensions/dimensionCatalogue";
+import {
+	describeMeasure,
+	searchDimensionalMeasures,
+} from "../dimensions/measureDiscovery";
 
 /** Dataset and measure metadata discovery, separate from analytical operations. */
 export const handleCatalogueRoutes = ({
@@ -49,6 +54,71 @@ export const handleCatalogueRoutes = ({
 					"Not Found",
 					"No published dataset matches that id.",
 				);
+	}
+	// Measures with their dimensions, where the mapping is loaded.
+	const dimensional =
+		dataCatalog && context.measureDimensions
+			? dimensionCatalogue(dataCatalog, context.measureDimensions)
+			: undefined;
+	if (dimensional && segments[1] === "measures" && segments.length === 2) {
+		const query = parsedUrl.searchParams.get("q");
+		return {
+			status: 200,
+			body: envelope(
+				releaseId,
+				query === null
+					? dimensional.measures.map((measure) =>
+							describeMeasure(measure, context.documents),
+						)
+					: searchDimensionalMeasures(
+							dataCatalog!,
+							dimensional,
+							query,
+						).map(({ measure, members }) => ({
+							...describeMeasure(measure, context.documents),
+							...(members.length > 0
+								? { matchedMembers: members }
+								: {}),
+						})),
+			),
+		};
+	}
+	if (dimensional && segments[1] === "measures" && segments.length === 3) {
+		const term = segments[2]!;
+		const named = dimensional.measure(term);
+		const aliased = named ? undefined : dimensional.series(term);
+		const measure = named ?? aliased?.measure;
+		if (!measure)
+			return problem(
+				404,
+				"Not Found",
+				"No published measure matches that id.",
+			);
+		const description = describeMeasure(measure, context.documents);
+		return {
+			status: 200,
+			headers:
+				aliased?.series.id !== measure.id && aliased
+					? { deprecation: "true" }
+					: undefined,
+			body: envelope(
+				releaseId,
+				aliased && aliased.series.id !== measure.id
+					? {
+							...description,
+							resolvedFrom: {
+								id: term,
+								measure: measure.id,
+								dimensions: aliased.series.dimensions,
+								...(aliased.series.datasetId
+									? { datasetId: aliased.series.datasetId }
+									: {}),
+								deprecated: true,
+							},
+						}
+					: description,
+			),
+		};
 	}
 	if (segments[1] === "measures" && segments.length === 2) {
 		// A search never picks one: it lists every match, best first, and an
