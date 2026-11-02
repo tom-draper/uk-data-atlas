@@ -5,6 +5,7 @@ import {
 	ParquetFileWriter,
 	type ParquetColumn,
 } from "@uk-data-atlas/artifacts";
+import { electionStatisticsExport } from "./electionStatisticsExport";
 
 const baseColumns = [
 	["dataset", "string"],
@@ -190,8 +191,12 @@ export function exportStatisticsMeasure(
 		? `s.id IN (SELECT series_id FROM (${selectedRows}))`
 		: "m.slug = ?";
 	const parameter = selection ? JSON.stringify(selection) : measure;
-	const dimensions =
-		measure === "population"
+	const election = electionStatisticsExport(measure);
+	const dimensions = election
+		? election.party
+			? [{ id: 0, slug: "party" }]
+			: []
+		: measure === "population"
 			? []
 			: database
 					.prepare(
@@ -241,8 +246,9 @@ export function exportStatisticsMeasure(
 	const values = aggregatePopulation
 		? "CASE WHEN count(o.value) = count(*) THEN sum(o.value) END, NULL, NULL, NULL, CASE WHEN count(DISTINCT st.slug) = 1 THEN min(st.slug) ELSE 'derived' END"
 		: `o.value, ${lower}, ${upper}, c.code, st.slug`;
-	const statement =
-		database.prepare(`SELECT d.slug, ?, m.unit, r.geography, r.id,
+	const statement = database.prepare(
+		election?.sql ??
+			`SELECT d.slug, ?, m.unit, r.geography, r.id,
 		a.code, p.label, ${values}
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
@@ -256,7 +262,8 @@ export function exportStatisticsMeasure(
 		${intervalJoins}
 		WHERE ${filter}
 		${aggregatePopulation ? "GROUP BY d.slug, m.unit, r.geography, r.id, a.code, p.label" : ""}
-		ORDER BY r.geography, r.id, p.label, a.code, d.slug${aggregatePopulation ? "" : ", s.key"}`);
+		ORDER BY r.geography, r.id, p.label, a.code, d.slug${aggregatePopulation ? "" : ", s.key"}`,
+	);
 	statement.setReturnArrays(true);
 	const csv = openSync(paths.csv, "w");
 	const parquet = new ParquetFileWriter(paths.parquet, { columns });
@@ -281,10 +288,15 @@ export function exportStatisticsMeasure(
 			csv,
 			`${columns.map((column) => cell(column.name)).join(",")}\r\n`,
 		);
+		const parameters = election
+			? [measure]
+			: [
+					measure,
+					...dimensions.map((dimension) => dimension.id as number),
+					parameter,
+				];
 		for (const row of statement.iterate(
-			measure,
-			...dimensions.map((dimension) => dimension.id as number),
-			parameter,
+			...parameters,
 		) as unknown as Iterable<SQLOutputValue[]>) {
 			csvRows.push(`${row.map(cell).join(",")}\r\n`);
 			row.forEach((value, index) =>

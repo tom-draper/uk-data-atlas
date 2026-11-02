@@ -244,6 +244,47 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			DELETE FROM series WHERE id IN (3, 4);
 			DELETE FROM measure WHERE id = 2;
 			DELETE FROM dataset WHERE id = 2;`);
+		db.exec(`INSERT INTO dataset VALUES (2, 'general-election'), (3, 'local-election');
+			INSERT INTO measure VALUES (2, 'valid-votes', 'votes'), (3, 'party-votes', 'votes'), (4, 'electorate', 'electors'), (5, 'rejected-ballots', 'ballots');
+			INSERT INTO dimension VALUES (2, 'party');
+			INSERT INTO dimension_member VALUES (3, 'con'), (4, 'lab');
+			INSERT INTO series VALUES (3, 2, 2, 1, 'valid'), (4, 2, 3, 1, 'con'), (5, 2, 4, 1, 'electorate'), (6, 2, 5, 1, 'rejected'), (7, 3, 3, 1, 'local-con'), (8, 3, 3, 1, 'local-lab');
+			INSERT INTO series_member VALUES (4, 2, 3), (7, 2, 3), (8, 2, 4);
+			INSERT INTO observation VALUES (3, 1, 1, 100, NULL, NULL, NULL, 1), (3, 2, 1, 200, NULL, NULL, NULL, 1), (4, 1, 1, 10, NULL, NULL, NULL, 1), (5, 1, 1, 125, NULL, NULL, NULL, 1), (5, 2, 1, 250, NULL, NULL, NULL, 1), (6, 1, 1, 5, NULL, NULL, NULL, 1), (6, 2, 1, 10, NULL, NULL, NULL, 1), (7, 1, 1, 10, NULL, NULL, NULL, 1), (8, 1, 1, 20, NULL, NULL, NULL, 1), (8, 2, 1, 30, NULL, NULL, NULL, 1);`);
+		for (const [id, values] of [
+			["general-election-con-votes", [10, 0]],
+			["general-election-con-vote-share", [10, 0]],
+			["general-election-turnout", [84, 84]],
+			["local-election-con-votes", [10, 0]],
+			["local-election-effective-votes", [30, 30]],
+		] as const) {
+			assert.equal(exportStatisticsMeasure(db, id, paths), 2);
+			const rows = Papa.parse<Record<string, unknown>>(
+				readFileSync(paths.csv, "utf8"),
+				{
+					header: true,
+					dynamicTyping: (field) =>
+						["value", "lower", "upper"].includes(String(field)),
+					skipEmptyLines: true,
+					transform: (value) => (value === "" ? null : value),
+				},
+			);
+			assert.deepEqual(
+				rows.data,
+				readParquet(readFileSync(paths.parquet)).rows,
+			);
+			assert.deepEqual(
+				rows.data.map(({ value }) => value),
+				values,
+			);
+		}
+		db.exec(`DELETE FROM observation WHERE series_id BETWEEN 3 AND 8;
+			DELETE FROM series_member WHERE series_id IN (4, 7, 8);
+			DELETE FROM series WHERE id BETWEEN 3 AND 8;
+			DELETE FROM dimension WHERE id = 2;
+			DELETE FROM dimension_member WHERE id IN (3, 4);
+			DELETE FROM measure WHERE id BETWEEN 2 AND 5;
+			DELETE FROM dataset WHERE id IN (2, 3);`);
 		exportStatisticsMeasure(db, "households", paths);
 		const first = [readFileSync(paths.csv), readFileSync(paths.parquet)];
 		exportStatisticsMeasure(db, "households", paths);

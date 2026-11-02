@@ -38,6 +38,7 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 	"pm25-background-mean": [["air-quality", "pm25Mean"]],
 	"general-election-valid-votes": [["general-election", "validVotes"]],
 	"local-election-turnout": [["local-election", "turnoutPercent"]],
+	"local-election-effective-votes": [["local-election", "partyVotes.LAB"]],
 	"mobile-4g-coverage": [["mobile-coverage", "pct4GIndoorAll"]],
 	"mobile-5g-coverage": [["mobile-coverage", "pct5GOutdoorAll"]],
 	"claimant-count": [["claimant-count", "totalCount"]],
