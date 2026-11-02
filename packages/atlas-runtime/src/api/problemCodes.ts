@@ -134,6 +134,47 @@ export const PROBLEM_CODES = {
 		example:
 			"/v1/boundary-releases:resolve?geography=ward&date=2019-12-15&country=GB-ENG",
 	},
+	unknown_dimension: {
+		statuses: [400],
+		members: ["dimensions"],
+		alternatives: ["dimensions"],
+		meaning:
+			"A dimension filter names a dimension the measure does not have; `dimensions` lists the ones it has.",
+		example: "/v1/data/recorded-crimes/value?place=Leeds&party=lab",
+	},
+	unknown_dimension_member: {
+		statuses: [400],
+		members: ["dimension", "members"],
+		alternatives: ["members"],
+		meaning:
+			"A dimension filter names a member the measure does not publish; `members` lists the ones it does.",
+		example: "/v1/data/recorded-crimes/value?place=Leeds&offence=arson",
+	},
+	conflicting_dimension_filter: {
+		statuses: [400],
+		members: [],
+		alternatives: [],
+		meaning:
+			"An old encoded measure id fixes a member, and a filter asks for a different member of the same dimension.",
+		example: "/v1/data/crime-burglary/value?place=Leeds&offence=robbery",
+	},
+	no_matching_series: {
+		statuses: [404],
+		members: ["choices"],
+		alternatives: ["choices"],
+		meaning:
+			"The measure publishes no series for that combination of members; `choices` lists a request for each series it has.",
+		example:
+			"/v1/data/party-vote-share/value?place=Holborn&party=lab&datasetId=local-election",
+	},
+	ambiguous_dimension: {
+		statuses: [409],
+		members: ["choices"],
+		alternatives: ["choices"],
+		meaning:
+			"The request leaves the measure several series and the operation answers one, or the series are not parts of one breakdown; `choices` lists a request for each.",
+		example: "/v1/data/party-votes?party=lab",
+	},
 } as const satisfies Record<string, ProblemCodeDefinition>;
 
 export type ProblemCode = keyof typeof PROBLEM_CODES;

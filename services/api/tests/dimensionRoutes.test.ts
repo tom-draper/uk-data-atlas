@@ -1,0 +1,360 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import type {
+	DataCatalog,
+	Measure,
+	MeasureDimensions,
+	MeasureObservationArtifact,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { route } from "../src/routes";
+import {
+	areaLookup,
+	crosswalkInventory,
+	crosswalkLookup,
+	dataCatalog,
+	geographyInventory,
+	measureCompatibilityInventory,
+	populationLocalAuthorityObservations,
+	populationObservations,
+	testContext,
+} from "./routeFixtures";
+
+/**
+ * Measures named with dimension filters. The fixture publishes crime as three
+ * catalogue ids (`crime-total`, `crime-burglary`, `crime-robbery`) and votes
+ * for one party from two datasets, and maps them onto `recorded-crimes` by
+ * offence and `party-votes` by party.
+ */
+
+const template = dataCatalog.measures[0]!;
+
+const wardMeasure = (
+	id: string,
+	label: string,
+	datasetId: string,
+	type: "ward" | "localAuthority" = "ward",
+): Measure => ({
+	...template,
+	id,
+	label,
+	unit: "offences",
+	sources: [
+		{
+			datasetId,
+			periods: ["2022"],
+			sourceGeography: { type, boundaryYear: 2023 },
+			coverage: {
+				kind: "partial",
+				countries: ["GB-ENG", "GB-WLS"],
+				recordCount: 2,
+				note: "England and Wales only.",
+			},
+		},
+	],
+	links: { data: `/v1/data/${id}` },
+});
+
+const observations = (
+	measureId: string,
+	values: [number, number],
+	type: "ward" | "localAuthority" = "ward",
+): MeasureObservationArtifact => ({
+	schemaVersion: 1,
+	contentHash: `sha256:${measureId}`,
+	measureId,
+	sourceGeography: { type, boundaryYear: 2023 },
+	periods: [
+		{
+			period: "2022",
+			records: (type === "ward"
+				? ["E05000001", "W05000001"]
+				: ["E06000001", "N09000001"]
+			).map((areaCode, index) => ({
+				areaCode,
+				value: values[index]!,
+				status: "observed" as const,
+			})),
+		},
+	],
+});
+
+const catalog: DataCatalog = {
+	...dataCatalog,
+	measures: [
+		...dataCatalog.measures,
+		wardMeasure("crime-total", "Total recorded crime", "crime"),
+		wardMeasure("crime-burglary", "Burglary", "crime"),
+		wardMeasure("crime-robbery", "Robbery", "crime"),
+		wardMeasure(
+			"local-election-lab-votes",
+			"Local votes for Labour",
+			"local",
+		),
+		wardMeasure(
+			"general-election-lab-votes",
+			"General votes for Labour",
+			"general",
+			"localAuthority",
+		),
+	],
+};
+
+const measureDimensions: MeasureDimensions = {
+	vocabulary: {
+		schemaVersion: 1,
+		measures: {
+			population: {
+				label: "Population",
+				description: "People.",
+				unit: "people",
+				valueKind: "count",
+				aggregation: "sum",
+			},
+			"recorded-crimes": {
+				label: "Police recorded crime",
+				description: "Offences recorded by the police.",
+				unit: "offences",
+				valueKind: "count",
+				aggregation: "sum",
+			},
+			"party-votes": {
+				label: "Party votes",
+				description: "Votes cast for a party.",
+				unit: "votes",
+				valueKind: "count",
+				aggregation: "sum",
+			},
+		},
+		dimensions: {
+			offence: {
+				label: "Offence",
+				members: [
+					{ code: "total", label: "All recorded crime" },
+					{ code: "theft", label: "Theft offences", parent: "total" },
+					{ code: "burglary", label: "Burglary", parent: "theft" },
+					{ code: "robbery", label: "Robbery", parent: "total" },
+				],
+			},
+			party: {
+				label: "Party",
+				members: [
+					{ code: "lab", label: "Labour" },
+					{ code: "con", label: "Conservative" },
+				],
+			},
+		},
+	},
+	config: {
+		schemaVersion: 1,
+		measures: {},
+		dimensions: {},
+		members: {},
+		defaults: {},
+		ids: {
+			population: { measure: "population" },
+			"crime-total": {
+				measure: "recorded-crimes",
+				dimensions: { offence: "total" },
+			},
+			"crime-burglary": {
+				measure: "recorded-crimes",
+				dimensions: { offence: "burglary" },
+			},
+			"crime-robbery": {
+				measure: "recorded-crimes",
+				dimensions: { offence: "robbery" },
+			},
+			"local-election-lab-votes": {
+				measure: "party-votes",
+				dimensions: { party: "lab" },
+				datasetId: "local",
+			},
+			"general-election-lab-votes": {
+				measure: "party-votes",
+				dimensions: { party: "lab" },
+				datasetId: "general",
+			},
+		},
+	},
+};
+
+const context = testContext({
+	geographyInventory,
+	areaLookup,
+	crosswalkInventory,
+	crosswalkLookup,
+	dataCatalog: catalog,
+	measureCompatibilityInventory,
+	measureDimensions,
+	measureObservations: [
+		populationObservations,
+		populationLocalAuthorityObservations,
+		observations("crime-total", [50, 70]),
+		observations("crime-burglary", [5, 7]),
+		observations("crime-robbery", [2, 3]),
+		observations("local-election-lab-votes", [400, 600]),
+		observations(
+			"general-election-lab-votes",
+			[9000, 8000],
+			"localAuthority",
+		),
+	],
+});
+
+const get = (url: string) => route("GET", url, context);
+const data = (response: ReturnType<typeof get>) =>
+	(response.body as { data: Record<string, unknown> }).data;
+
+test("reads a measure with a member filter as that series", () => {
+	const response = get(
+		"/v1/data/recorded-crimes/value?place=ward/E05000001&offence=burglary",
+	);
+	assert.equal(response.status, 200);
+	const body = data(response);
+	assert.deepEqual(
+		body.answer && (body.answer as { value: number }).value,
+		5,
+	);
+	assert.deepEqual(body.dimensions, {
+		offence: { member: "burglary", label: "Burglary" },
+	});
+	assert.equal((body.measure as { id: string }).id, "recorded-crimes");
+	assert.equal(body.resolvedFrom, undefined);
+	assert.match(String(body.via), /^\/v1\/data\/recorded-crimes\/series\?/);
+	assert.match(String(body.via), /offence=burglary/);
+});
+
+test("takes the dimensions object form of a filter", () => {
+	const response = get(
+		"/v1/data/recorded-crimes/value?place=ward/E05000001&dimensions%5Boffence%5D=robbery",
+	);
+	assert.equal(response.status, 200);
+	assert.equal((data(response).answer as { value: number }).value, 2);
+});
+
+test("uses a dimension's total when the request names no member, and says so", () => {
+	const response = get("/v1/data/recorded-crimes/value?place=ward/E05000001");
+	assert.equal(response.status, 200);
+	const body = data(response);
+	assert.equal((body.answer as { value: number }).value, 50);
+	assert.deepEqual(body.defaults, { offence: "total" });
+	assert.deepEqual(body.dimensions, {
+		offence: {
+			member: "total",
+			label: "All recorded crime",
+			defaulted: true,
+		},
+	});
+	assert.match(String(body.note), /No offence was given, so its total/);
+	assert.equal(
+		response.headers?.["content-location"],
+		"/v1/data/recorded-crimes/value?place=ward%2FE05000001&offence=total",
+	);
+});
+
+test("reads an old encoded id as its measure and members, and marks it deprecated", () => {
+	const response = get("/v1/data/crime-burglary/value?place=ward/E05000001");
+	assert.equal(response.status, 200);
+	const body = data(response);
+	assert.equal((body.answer as { value: number }).value, 5);
+	assert.deepEqual(body.resolvedFrom, {
+		id: "crime-burglary",
+		measure: "recorded-crimes",
+		dimensions: { offence: "burglary" },
+		deprecated: true,
+	});
+	assert.equal(response.headers?.deprecation, "true");
+	assert.equal(
+		response.headers?.["content-location"],
+		"/v1/data/recorded-crimes/value?place=ward%2FE05000001&offence=burglary",
+	);
+});
+
+test("answers every member at once for *", () => {
+	const response = get(
+		"/v1/data/recorded-crimes/value?place=ward/E05000001&offence=*",
+	);
+	assert.equal(response.status, 200);
+	const body = data(response) as {
+		breakdown: Array<{
+			dimensions: Record<string, { member: string }>;
+			data: { answer: { value: number } };
+		}>;
+	};
+	assert.deepEqual(
+		body.breakdown.map((entry) => [
+			entry.dimensions.offence!.member,
+			entry.data.answer.value,
+		]),
+		[
+			["total", 50],
+			["burglary", 5],
+			["robbery", 2],
+		],
+	);
+});
+
+test("refuses a member or dimension the measure does not have", () => {
+	const member = get(
+		"/v1/data/recorded-crimes/value?place=Abbey&offence=arson",
+	);
+	assert.equal(member.status, 400);
+	assert.equal(
+		(member.body as { code?: string }).code,
+		"unknown_dimension_member",
+	);
+	assert.deepEqual((member.body as { members?: string[] }).members, [
+		"total",
+		"burglary",
+		"robbery",
+	]);
+	const dimension = get(
+		"/v1/data/recorded-crimes/value?place=Abbey&party=lab",
+	);
+	assert.equal(dimension.status, 400);
+	assert.equal(
+		(dimension.body as { code?: string }).code,
+		"unknown_dimension",
+	);
+});
+
+test("refuses a filter that contradicts an old id's member", () => {
+	const response = get(
+		"/v1/data/crime-burglary/value?place=ward/E05000001&offence=robbery",
+	);
+	assert.equal(response.status, 400);
+	assert.equal(
+		(response.body as { code?: string }).code,
+		"conflicting_dimension_filter",
+	);
+});
+
+test("an operation that answers one series refuses a breakdown with choices", () => {
+	const response = get("/v1/data/recorded-crimes?offence=*");
+	assert.equal(response.status, 409);
+	const body = response.body as {
+		code?: string;
+		choices?: Array<{ href: string }>;
+	};
+	assert.equal(body.code, "ambiguous_dimension");
+	assert.deepEqual(
+		body.choices?.map((choice) => choice.href),
+		[
+			"/v1/data/recorded-crimes?offence=total",
+			"/v1/data/recorded-crimes?offence=burglary",
+			"/v1/data/recorded-crimes?offence=robbery",
+		],
+	);
+});
+
+test("tells two datasets' series apart by the place's geography", () => {
+	const ward = get(
+		"/v1/data/party-votes/value?place=ward/E05000001&party=lab",
+	);
+	assert.equal(ward.status, 200);
+	assert.equal((data(ward).answer as { value: number }).value, 400);
+	const table = get("/v1/data/party-votes?party=lab");
+	assert.equal(table.status, 409);
+	const chosen = get("/v1/data/party-votes?party=lab&datasetId=general");
+	assert.equal(chosen.status, 200);
+});
