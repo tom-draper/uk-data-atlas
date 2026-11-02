@@ -48,7 +48,12 @@ const restate = (
 	reading: DimensionReading,
 	key?: string,
 ): unknown => {
-	if (typeof value === "string") return rewriteLink(value, series, reading);
+	if (typeof value === "string")
+		return series.id === reading.measure.id &&
+			Object.keys(series.dimensions).length === 0 &&
+			!series.datasetId
+			? value
+			: rewriteLink(value, series, reading);
 	if (Array.isArray(value))
 		return value.map((item) => restate(item, series, reading));
 	if (!isObject(value)) return value;
