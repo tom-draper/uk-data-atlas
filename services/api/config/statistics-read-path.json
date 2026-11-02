@@ -1204,17 +1204,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-con-votes-ward-2017-observations": {
@@ -1226,17 +1259,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-con-votes-ward-2018-observations": {
@@ -1248,17 +1314,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-con-votes-ward-2019-observations": {
@@ -1270,17 +1369,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-con-votes-ward-2021-observations": {
@@ -1337,17 +1469,50 @@
 				"party"
 			],
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-effective-votes-ward-2017-observations": {
@@ -1359,17 +1524,50 @@
 				"party"
 			],
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-effective-votes-ward-2018-observations": {
@@ -1381,17 +1579,50 @@
 				"party"
 			],
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-effective-votes-ward-2019-observations": {
@@ -1403,17 +1634,50 @@
 				"party"
 			],
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-effective-votes-ward-2021-observations": {
@@ -1470,17 +1734,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-green-votes-ward-2017-observations": {
@@ -1492,17 +1789,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-green-votes-ward-2018-observations": {
@@ -1514,17 +1844,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-green-votes-ward-2019-observations": {
@@ -1536,17 +1899,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-green-votes-ward-2021-observations": {
@@ -1603,17 +1999,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ind-votes-ward-2017-observations": {
@@ -1625,17 +2054,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ind-votes-ward-2018-observations": {
@@ -1647,17 +2109,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ind-votes-ward-2019-observations": {
@@ -1669,17 +2164,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ind-votes-ward-2021-observations": {
@@ -1736,17 +2264,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-lab-votes-ward-2017-observations": {
@@ -1758,17 +2319,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-lab-votes-ward-2018-observations": {
@@ -1780,17 +2374,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-lab-votes-ward-2019-observations": {
@@ -1802,17 +2429,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-lab-votes-ward-2021-observations": {
@@ -1869,17 +2529,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ld-votes-ward-2017-observations": {
@@ -1891,17 +2584,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ld-votes-ward-2018-observations": {
@@ -1913,17 +2639,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ld-votes-ward-2019-observations": {
@@ -1935,17 +2694,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ld-votes-ward-2021-observations": {
@@ -2002,17 +2794,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-other-votes-ward-2017-observations": {
@@ -2024,17 +2849,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-other-votes-ward-2018-observations": {
@@ -2046,17 +2904,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-other-votes-ward-2019-observations": {
@@ -2068,17 +2959,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-other-votes-ward-2021-observations": {
@@ -2135,17 +3059,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-pc-votes-ward-2017-observations": {
@@ -2157,17 +3114,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-pc-votes-ward-2018-observations": {
@@ -2179,17 +3169,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-pc-votes-ward-2019-observations": {
@@ -2201,17 +3224,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-pc-votes-ward-2021-observations": {
@@ -2268,17 +3324,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ref-votes-ward-2017-observations": {
@@ -2290,17 +3379,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ref-votes-ward-2018-observations": {
@@ -2312,17 +3434,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ref-votes-ward-2019-observations": {
@@ -2334,17 +3489,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ref-votes-ward-2021-observations": {
@@ -2431,17 +3619,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ukip-votes-ward-2017-observations": {
@@ -2453,17 +3674,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ukip-votes-ward-2018-observations": {
@@ -2475,17 +3729,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ukip-votes-ward-2019-observations": {
@@ -2497,17 +3784,50 @@
 			"geography": "ward",
 			"absentAsZero": true,
 			"servedCodes": {
-				"E05011348": "E05010919",
-				"E05011349": "E05010920",
-				"E05012969": "E05010931",
-				"E05008537": "E05008939",
-				"W05000868": "W05001012",
-				"E05012841": "E05011382",
-				"E05012842": "E05011383",
-				"E05012647": "E05011386",
-				"E05012648": "E05011392",
-				"E05013830": "E05011393",
-				"E05013831": "E05011412"
+				"E05011348": {
+					"areaCode": "E05010919",
+					"sourceAreaCode": "E05011348"
+				},
+				"E05011349": {
+					"areaCode": "E05010920",
+					"sourceAreaCode": "E05011349"
+				},
+				"E05012969": {
+					"areaCode": "E05010931",
+					"sourceAreaCode": "E05012969"
+				},
+				"E05008537": {
+					"areaCode": "E05008939",
+					"sourceAreaCode": "E05008537"
+				},
+				"W05000868": {
+					"areaCode": "W05001012",
+					"sourceAreaCode": "W05000868"
+				},
+				"E05012841": {
+					"areaCode": "E05011382",
+					"sourceAreaCode": "E05012841"
+				},
+				"E05012842": {
+					"areaCode": "E05011383",
+					"sourceAreaCode": "E05012842"
+				},
+				"E05012647": {
+					"areaCode": "E05011386",
+					"sourceAreaCode": "E05012647"
+				},
+				"E05012648": {
+					"areaCode": "E05011392",
+					"sourceAreaCode": "E05012648"
+				},
+				"E05013830": {
+					"areaCode": "E05011393",
+					"sourceAreaCode": "E05013830"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
 			}
 		},
 		"local-election-ukip-votes-ward-2021-observations": {

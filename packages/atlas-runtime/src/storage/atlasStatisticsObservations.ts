@@ -33,11 +33,13 @@ export type StatisticsSelector = {
 	 */
 	absentAsZero?: true;
 	/**
-	 * Codes served in place of the code a row is stored under, as source
-	 * code to served code. The record keeps the stored code as its
-	 * `sourceAreaCode`.
+	 * The code a row is served under, by the code it is stored under, and
+	 * the publisher's code where the record names one: a local election ward
+	 * moved onto a geometrically identical code keeps its published code as
+	 * `sourceAreaCode`, and a house price compiled onto a redrawn ward's new
+	 * code is served under the old code it was published for.
 	 */
-	servedCodes?: Record<string, string>;
+	servedCodes?: Record<string, { areaCode: string; sourceAreaCode?: string }>;
 	/**
 	 * Divide by another measure of the same dataset, in the same area and
 	 * period, and multiply by `scale`: vote share is a party's votes over
@@ -295,10 +297,14 @@ export function rebuildStatisticsObservationText(
 	const periods = artifact.periods.map((period) => {
 		const label = statisticsPeriod(period, heldPeriods);
 		const records = [...(label ? byPeriod.get(label)! : new Map()).values()]
-			.map((row: Row) => ({
-				row,
-				served: selector.servedCodes?.[row.code] ?? row.code,
-			}))
+			.map((row: Row) => {
+				const served = selector.servedCodes?.[row.code];
+				return {
+					row,
+					served: served?.areaCode ?? row.code,
+					source: served?.sourceAreaCode,
+				};
+			})
 			.sort((left, right) =>
 				left.served < right.served
 					? -1
@@ -306,9 +312,9 @@ export function rebuildStatisticsObservationText(
 						? 1
 						: 0,
 			)
-			.map(({ row, served }) => ({
+			.map(({ row, served, source }) => ({
 				areaCode: served,
-				...(served === row.code ? {} : { sourceAreaCode: row.code }),
+				...(source === undefined ? {} : { sourceAreaCode: source }),
 				value: row.value,
 				status: row.status,
 				...(row.lower === null || row.upper === null
