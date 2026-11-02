@@ -8,6 +8,10 @@ import {
 	totalMember,
 	type DataCatalog,
 } from "@uk-data-atlas/measures";
+import {
+	SERVED_LOCAL_ELECTION_WARD_CODES,
+	SERVED_WARD_CODES_UNTIL,
+} from "@uk-data-atlas/datasets/data/election/local-election/servedWardCodes";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactRoot,
@@ -52,6 +56,25 @@ const seriesDimensions = (
 		);
 
 /**
+ * Measures the API serves that the statistics tables hold as parts of
+ * another: a party's vote share is its votes over the valid votes, and a
+ * local election's effective votes are every party's votes summed.
+ */
+const COMPUTED: Record<
+	string,
+	{ measure: string; ratio?: StatisticsSelector["ratio"] }
+> = {
+	"party-vote-share": {
+		measure: "party-votes",
+		ratio: { measure: "valid-votes", scale: 100 },
+	},
+	"effective-votes": { measure: "party-votes" },
+};
+
+/** Measures where an area with no row in a contest polled nothing. */
+const ABSENT_AS_ZERO = new Set(["party-votes"]);
+
+/**
  * The series an artifact would be read from. A dimension the mapping leaves
  * open is fixed at its total where it has one, and summed over otherwise.
  */
@@ -59,16 +82,19 @@ const selectorFor = (
 	measureId: string,
 	datasetId: string,
 	geography: string,
+	boundaryYear: number,
 ): StatisticsSelector | string => {
 	const mapping = config.ids[measureId]!;
-	if (!(mapping.measure in vocabulary.measures))
+	const computed = COMPUTED[mapping.measure];
+	const measure = computed?.measure ?? mapping.measure;
+	if (!(measure in vocabulary.measures))
 		return `${mapping.measure} is not in the statistics tables.`;
 	for (const dimension of Object.keys(mapping.dimensions ?? {}))
 		if (!(dimension in vocabulary.dimensions))
 			return `The ${dimension} dimension is not in the statistics tables.`;
-	const held = seriesDimensions(datasetId, mapping.measure, geography);
+	const held = seriesDimensions(datasetId, measure, geography);
 	if (held.length === 0)
-		return `The statistics tables hold no ${mapping.measure} series from ${datasetId} on ${geography}.`;
+		return `The statistics tables hold no ${measure} series from ${datasetId} on ${geography}.`;
 	const dimensions = { ...(mapping.dimensions ?? {}) };
 	const sum: string[] = [];
 	for (const dimension of new Set(held.flat())) {
@@ -77,12 +103,21 @@ const selectorFor = (
 		if (total) dimensions[dimension] = total;
 		else sum.push(dimension);
 	}
+	const servedCodes =
+		datasetId === "local-election" && boundaryYear < SERVED_WARD_CODES_UNTIL
+			? Object.fromEntries(SERVED_LOCAL_ELECTION_WARD_CODES)
+			: undefined;
 	return {
 		datasetId,
-		measure: mapping.measure,
+		measure,
 		dimensions,
 		geography,
 		...(sum.length > 0 ? { sum: sum.sort() } : {}),
+		...(ABSENT_AS_ZERO.has(measure) && sum.length === 0
+			? { absentAsZero: true as const }
+			: {}),
+		...(servedCodes ? { servedCodes } : {}),
+		...(computed?.ratio ? { ratio: computed.ratio } : {}),
 	};
 };
 
@@ -95,7 +130,7 @@ const releasesIn = (geography: string, year: number) =>
 		.all(geography, `${year}-%`)
 		.map((row) => String(row.id));
 
-type Record = {
+type StoredRecord = {
 	areaCode: string;
 	value?: number | null;
 	status?: string;
@@ -103,7 +138,7 @@ type Record = {
 	sourceAreaCode?: string;
 	confidenceInterval?: unknown;
 };
-type Artifact = { periods: Array<{ period: string; records: Record[] }> };
+type Artifact = { periods: Array<{ period: string; records: StoredRecord[] }> };
 
 /** What differs between the stored artifact and its rebuild, in a sentence. */
 const difference = (stored: Artifact, rebuilt: Artifact) => {
@@ -179,6 +214,7 @@ for (const measure of catalog.measures)
 			measure.id,
 			source.datasetId,
 			source.sourceGeography.type,
+			source.sourceGeography.boundaryYear,
 		);
 		if (typeof selector === "string") {
 			plan.observations[name] = selector;
