@@ -143,6 +143,28 @@ describe("observation artifacts rebuilt from statistics rows", () => {
 		]);
 	});
 
+	it("bounds a value by a half-width measure, rounded", () => {
+		expect(
+			rebuild({
+				...labour,
+				halfWidth: { measure: "valid-votes", digits: 1 },
+			}),
+		).toEqual([
+			{
+				areaCode: "E05000001",
+				value: 300,
+				status: "observed",
+				confidenceInterval: { lower: -300, upper: 900 },
+			},
+			{
+				areaCode: "E05099999",
+				value: 25,
+				status: "observed",
+				confidenceInterval: { lower: -25, upper: 75 },
+			},
+		]);
+	});
+
 	it("sums a dimension with no total", () => {
 		expect(rebuild({ ...labour, dimensions: {}, sum: ["party"] })).toEqual([
 			{ areaCode: "E05000001", value: 300, status: "observed" },

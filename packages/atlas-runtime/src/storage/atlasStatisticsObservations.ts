@@ -60,6 +60,12 @@ export type StatisticsSelector = {
 	 * period: turnout counts valid votes and rejected ballots.
 	 */
 	plus?: string[];
+	/**
+	 * A measure of the same dataset holding the half-width of each value's
+	 * confidence interval, as unemployment is published. The bounds are the
+	 * value less and plus it, rounded to `digits` decimal places.
+	 */
+	halfWidth?: { measure: string; digits: number };
 };
 
 /**
@@ -276,6 +282,23 @@ export function rebuildStatisticsObservationText(
 					? (row.value / denominator) * scale
 					: (scale * row.value) / denominator;
 				row.lower = row.upper = null;
+			}
+	}
+	if (selector.halfWidth) {
+		const { measure, digits } = selector.halfWidth;
+		const widths = periodRows(
+			database,
+			{ ...selector, measure, dimensions: {}, sum: undefined },
+			artifact,
+		);
+		const round = (value: number) => Number(value.toFixed(digits));
+		for (const [period, records] of byPeriod)
+			for (const row of records.values()) {
+				const width = widths.get(period)?.get(row.code)?.value;
+				if (row.value === null || width === undefined || width === null)
+					continue;
+				row.lower = round(row.value - width);
+				row.upper = round(row.value + width);
 			}
 	}
 	if (selector.areasIn) {
