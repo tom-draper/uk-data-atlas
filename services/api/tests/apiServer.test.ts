@@ -1261,6 +1261,65 @@ test("Fastify catalogue listings match the dispatcher", async (t) => {
 	}
 });
 
+test("discovery and evidence documents preserve their HTTP responses", async (t) => {
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+		documents: new Map([
+			["fixture", { body: '{"value":1}\n', contentHash: "fixture" }],
+		]),
+	});
+	const { get } = await serve(t, {}, context);
+	for (const [path, status] of [
+		["/v1", 200],
+		["/v1/", 200],
+		["/v1?unexpected=1", 400],
+		["/v1/documents/fixture.json", 200],
+		["/v1/documents/missing.json", 404],
+		["/v1/documents/fixture.json?unexpected=1", 400],
+	] as const) {
+		const expected = httpResponse({ method: "GET", headers: {} }, () =>
+			route("GET", path, context),
+		);
+		const response = await get(path, {
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(expected.status, status, path);
+		assert.equal(response.status, expected.status, path);
+		assert.equal(await response.text(), expected.body, path);
+		for (const name of [
+			"content-type",
+			"cache-control",
+			"etag",
+			"vary",
+			"access-control-allow-origin",
+		]) {
+			assert.equal(
+				response.headers.get(name),
+				expected.headers[name] ?? null,
+				`${path}: ${name}`,
+			);
+		}
+		const head = await get(path, {
+			method: "HEAD",
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(head.status, expected.status, path);
+		assert.equal(await head.text(), "", path);
+		if (expected.headers.etag) {
+			const cached = await get(path, {
+				headers: {
+					"accept-encoding": "identity",
+					"if-none-match": expected.headers.etag,
+				},
+			});
+			assert.equal(cached.status, 304, path);
+			assert.equal(await cached.text(), "", path);
+		}
+	}
+});
+
 test("Fastify catalogue listings preserve an unavailable catalogue response", async (t) => {
 	const context = testContext({
 		atlasRelease,
