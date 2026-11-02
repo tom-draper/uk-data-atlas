@@ -221,9 +221,22 @@ export function exportStatisticsMeasure(
 		WHERE sm.series_id = s.id AND sm.dimension_id = ?)`,
 		)
 		.join(", ");
+	const intervalMeasure =
+		measure === "unemployment-rate"
+			? "unemployment-rate-interval"
+			: measure === "unemployment-level"
+				? "unemployed-people-interval"
+				: undefined;
+	const intervalJoins = intervalMeasure
+		? `LEFT JOIN measure im ON im.slug = '${intervalMeasure}'
+		LEFT JOIN series ins ON ins.dataset_id = s.dataset_id AND ins.release_id = s.release_id AND ins.measure_id = im.id
+		LEFT JOIN observation ino ON ino.series_id = ins.id AND ino.area_version_id = o.area_version_id AND ino.period_id = o.period_id`
+		: "";
+	const lower = intervalMeasure ? "round(o.value - ino.value, 1)" : "o.lower";
+	const upper = intervalMeasure ? "round(o.value + ino.value, 1)" : "o.upper";
 	const statement =
 		database.prepare(`SELECT d.slug, ?, m.unit, r.geography, r.id,
-		a.code, p.label, o.value, o.lower, o.upper, c.code, st.slug
+		a.code, p.label, o.value, ${lower}, ${upper}, c.code, st.slug
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
 		JOIN dataset d ON d.id = s.dataset_id
@@ -233,6 +246,7 @@ export function exportStatisticsMeasure(
 		JOIN period p ON p.id = o.period_id
 		JOIN status st ON st.id = o.status_id
 		LEFT JOIN dimension_member c ON c.id = o.category_id
+		${intervalJoins}
 		WHERE ${filter}
 		ORDER BY r.geography, r.id, p.label, a.code, d.slug, s.key`);
 	statement.setReturnArrays(true);
