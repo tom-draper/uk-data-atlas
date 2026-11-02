@@ -10579,7 +10579,11 @@ components:
           type: array
           description: >
             On a 409 Ambiguous Place: each place the name could mean, with its
-            answer and the request that asks about it alone, as an object. On a
+            answer and the request that asks about it alone, as an object. On an
+            `ambiguous_dimension` or `no_matching_series` problem: each series of
+            the measure, as an object with its `dimensions`, its `datasetId`
+            where that tells it apart, its `label`, and the request that reads
+            it as `href`. On a
             refusal from an area's children routes: each release the children
             are published in, as a `{geography}/{release}` string.
           items:
@@ -10718,6 +10722,17 @@ components:
             properties:
               id: { type: string }
               href: { type: string }
+        dimensions:
+          type: array
+          items: { type: string }
+          description: On an `unknown_dimension` problem, the dimensions the measure has.
+        dimension:
+          type: string
+          description: On an `unknown_dimension_member` problem, the dimension the filter named.
+        members:
+          type: array
+          items: { type: string }
+          description: On an `unknown_dimension_member` problem, the members that dimension has.
         links:
           type: object
           additionalProperties: { type: string }
@@ -11065,9 +11080,6 @@ components:
             status: { enum: [400] }
             code:
               const: unknown_dimension
-            dimensions:
-              type: array
-              items: { type: string }
       examples:
         - type: https://api.ukdataatlas.com/problems/invalid-query
           title: Invalid Query
@@ -11087,10 +11099,6 @@ components:
             status: { enum: [400] }
             code:
               const: unknown_dimension_member
-            dimension: { type: string }
-            members:
-              type: array
-              items: { type: string }
       examples:
         - type: https://api.ukdataatlas.com/problems/invalid-query
           title: Invalid Query
@@ -11135,9 +11143,6 @@ components:
             status: { enum: [404] }
             code:
               const: no_matching_series
-            choices:
-              type: array
-              items: { $ref: "#/components/schemas/SeriesChoice" }
       examples:
         - type: https://api.ukdataatlas.com/problems/not-found
           title: Not Found
@@ -11166,9 +11171,6 @@ components:
             status: { enum: [409] }
             code:
               const: ambiguous_dimension
-            choices:
-              type: array
-              items: { $ref: "#/components/schemas/SeriesChoice" }
       examples:
         - type: https://api.ukdataatlas.com/problems/ambiguous-measure
           title: Ambiguous Measure
@@ -11188,18 +11190,6 @@ components:
               datasetId: local-election
               label: Local election votes for Labour
               href: /v1/data/party-votes?party=lab&datasetId=local-election
-
-    SeriesChoice:
-      description: One series of a measure, and the request that reads it.
-      type: object
-      required: [dimensions, label, href]
-      properties:
-        dimensions:
-          type: object
-          additionalProperties: { type: string }
-        datasetId: { type: string }
-        label: { type: string }
-        href: { type: string }
 
     DeprecatedMeasureAlias:
       description:

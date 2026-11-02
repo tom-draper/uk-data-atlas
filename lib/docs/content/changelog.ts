@@ -31,7 +31,7 @@ export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-02",
 		title: "Measures with dimension filters",
-		surface: "a56ca5b83a20",
+		surface: "9958d13497e9",
 		breaking: true,
 		changes: [
 			"A measure is now the thing measured, and its breakdowns are dimensions: `recorded-crimes` with `offence=burglary` rather than `crime-burglary`, `party-vote-share` with `party=lab` rather than `general-election-lab-vote-share`. The data routes and a map join take each dimension as a query parameter, or as `dimensions[offence]=burglary`, with one member, several separated by commas, or `*` for all. A dimension left out takes its total where one is published, and the response says which member it used in `defaults` and `dimensions`.",
