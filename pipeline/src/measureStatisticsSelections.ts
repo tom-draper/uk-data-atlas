@@ -25,6 +25,40 @@ export function measureStatisticsSelections(
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
 ): StatisticsSelection[] | undefined {
+	if (
+		measure.id === "general-election-winning-party" ||
+		measure.id === "local-election-winning-party"
+	) {
+		const dataset = measure.id.replace(/-winning-party$/, "");
+		const rows = database
+			.prepare(
+				`SELECT r.geography, r.id AS release, p.label AS period FROM dataset d
+            JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
+            JOIN area_releases r ON r.position=s.release_id JOIN observation o ON o.series_id=s.id
+            JOIN period p ON p.id=o.period_id WHERE d.slug=? AND m.slug='source-winning-party'
+            GROUP BY r.geography,r.id,p.label`,
+			)
+			.all(dataset);
+		if (
+			!measure.sources.every((source) =>
+				source.periods.every((period) =>
+					rows.some((row) =>
+						String(row.period).startsWith(`${period}-`),
+					),
+				),
+			)
+		)
+			return undefined;
+		return rows.map((row) => ({
+			dataset,
+			measure: "source-winning-party",
+			members: {},
+			exact: true,
+			geography: String(row.geography),
+			release: String(row.release),
+			periods: [String(row.period)],
+		}));
+	}
 	if (measure.id === "house-price-median") {
 		const rows = database
 			.prepare(

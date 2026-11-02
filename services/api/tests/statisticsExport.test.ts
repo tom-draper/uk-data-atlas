@@ -201,7 +201,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO dataset VALUES (1, 'census');
 			INSERT INTO measure VALUES (1, 'households', 'households');
 			INSERT INTO dimension VALUES (1, 'tenure');
-			INSERT INTO dimension_member VALUES (1, 'rented'), (2, 'owned');
+			INSERT INTO dimension_member VALUES (1, 'rented'), (2, 'owned'), (100, 'LAB');
 			INSERT INTO series VALUES (1, 1, 1, 1, 'rented'), (2, 1, 1, 1, 'owned');
 			INSERT INTO series_member VALUES (1, 1, 1), (2, 1, 2);
 			INSERT INTO area_releases VALUES (1, 'ward', '2021');
@@ -211,7 +211,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO dataset_part VALUES (1, 0, '2021');
 			INSERT INTO dataset_leaf VALUES (1, 0, 'data', '["rented"]', 'value', 1, 1), (1, 0, 'data', '["owned"]', 'value', 2, 1);
 			INSERT INTO status VALUES (1, 'observed'), (2, 'suppressed');
-			INSERT INTO observation VALUES (1, 2, 1, 10, 9, 11, NULL, 1), (2, 1, 1, NULL, NULL, NULL, NULL, 2);
+			INSERT INTO observation VALUES (1, 2, 1, 10, 9, 11, NULL, 1), (2, 1, 1, NULL, NULL, NULL, 100, 2);
 		`);
 		const paths = {
 			csv: join(directory, "rows.csv"),
@@ -238,6 +238,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			csv.data.map((row) => row.area_code),
 			["E01", "E02"],
 		);
+		assert.equal(csv.data[0]?.category, "LAB");
 		assert.deepEqual(
 			csv.data.map((row) => row.dimension_tenure),
 			["owned", "rented"],

@@ -45,6 +45,7 @@ import { join, resolve } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { censusStatistics } from "./censusStatistics";
 import { crimePartnershipStatistics } from "./crimePartnershipStatistics";
+import { electionWinnerStatistics } from "./electionWinnerStatistics";
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),
@@ -72,6 +73,19 @@ const statisticsInputs = (
 		const config = declared.get(entry.type);
 		if (config) {
 			const statistics = declaredStatistics(config, read, entry);
+			if (
+				entry.type === "generalElection" ||
+				entry.type === "localElection"
+			)
+				return [
+					(areas) =>
+						electionWinnerStatistics(
+							statistics(areas),
+							areas,
+							config,
+							join(directory, `datasets/${entry.output}.json`),
+						),
+				];
 			return entry.type === "crime"
 				? [
 						(areas) =>
