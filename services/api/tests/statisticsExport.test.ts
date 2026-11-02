@@ -13,6 +13,7 @@ import {
 import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
 import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
+import { bindCompiledFields } from "../../../pipeline/src/bindCompiledFields";
 import { compileMeasureDownloads } from "../../../pipeline/src/measureDownloads";
 import { gunzipSync } from "node:zlib";
 import { measureStatisticsSelections } from "../../../pipeline/src/measureStatisticsSelections";
@@ -46,11 +47,13 @@ test("binds a census measure only when every source partition is complete", () =
 			unit: "usual residents",
 			sources: [
 				{
+					datasetId: "census-2021-ts007a",
 					sourceGeography: { type: "lsoa", boundaryYear: 2021 },
 					periods: ["2021"],
 					coverage: { recordCount: 1 },
 				},
 				{
+					datasetId: "census-2021-ts007a",
 					sourceGeography: { type: "msoa", boundaryYear: 2021 },
 					periods: ["2021"],
 					coverage: { recordCount: 1 },
@@ -58,6 +61,10 @@ test("binds a census measure only when every source partition is complete", () =
 			],
 		} as unknown as Measure;
 		assert.equal(bindCensusStatistics(db, measure)?.length, 2);
+		measure.sources.push({ ...measure.sources[0]!, datasetId: "ethnicity" });
+		assert.equal(bindCensusStatistics(db, measure), undefined);
+		assert.equal(bindCensusStatistics(db, measure, true)?.length, 2);
+		measure.sources.pop();
 		measure.sources[1]!.coverage.recordCount = 2;
 		assert.equal(bindCensusStatistics(db, measure), undefined);
 	} finally {
@@ -448,6 +455,20 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				(row) => row.release === "2022" && row.period === "2022",
 			),
 		);
+		db.exec(`UPDATE dataset SET slug = 'jobs';
+			UPDATE dataset_leaf SET path = '["totalJobs"]' WHERE path = '["rented"]'`);
+		const jobs = {
+			id: "total-jobs",
+			sources: [{ datasetId: "jobs" }],
+		} as unknown as Measure;
+		const jobsSelection = bindCompiledFields(db, jobs);
+		assert.ok(jobsSelection);
+		assert.equal(
+			exportStatisticsMeasure(db, "total-jobs", paths, jobsSelection),
+			2052,
+		);
+		jobs.sources.push({ datasetId: "other" } as Measure["sources"][number]);
+		assert.equal(bindCompiledFields(db, jobs), undefined);
 	} finally {
 		db.close();
 		rmSync(directory, { recursive: true, force: true });
