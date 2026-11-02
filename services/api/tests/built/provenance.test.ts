@@ -48,7 +48,7 @@ const answered = (url: string) => {
 	assert.equal(response.status, 200, url);
 	return response.body as {
 		atlasRelease: string;
-		data: { provenance: Provenance };
+		data: { provenance: Provenance; resolvedFrom?: { id: string } };
 	};
 };
 
@@ -112,8 +112,19 @@ test("agrees with its own envelope and with the partition asked for", () => {
 		const { provenance } = body.data;
 		if (provenance.atlasRelease.id !== body.atlasRelease)
 			wrong.push(`${partition.url}: provenance names another release`);
-		if (provenance.measure.id !== partition.measure)
+		// A catalogue id that encoded a breakdown is read as its measure, and
+		// the response names the id it was read from.
+		const mapped =
+			catalogues.measureDimensions.config.ids[partition.measure]!.measure;
+		if (provenance.measure.id !== mapped)
 			wrong.push(`${partition.url}: provenance names another measure`);
+		if (
+			mapped !== partition.measure &&
+			body.data.resolvedFrom?.id !== partition.measure
+		)
+			wrong.push(
+				`${partition.url}: no resolvedFrom names the id asked for`,
+			);
 		if (provenance.source.dataset.id !== partition.datasetId)
 			wrong.push(`${partition.url}: provenance names another dataset`);
 		if (
