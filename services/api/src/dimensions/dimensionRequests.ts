@@ -54,8 +54,11 @@ export type DimensionReading = {
 	resolvedFrom?: { id: string; deprecated: boolean };
 	/** Dimensions the request left out, and the member chosen for each. */
 	defaulted: Record<string, string>;
-	/** The request as the API reads it, in measure-and-filter form. */
-	canonicalUrl: string;
+	/**
+	 * The request as the API reads it, in measure-and-filter form, where that
+	 * differs from what was asked: an alias, a default or `dimensions[...]`.
+	 */
+	canonicalUrl?: string;
 };
 
 export type DimensionResolution =
@@ -370,12 +373,18 @@ export const resolveDimensionRequest = (
 	const canonical = new URL(parsed);
 	for (const name of names) canonical.searchParams.delete(name);
 	for (const [dimension, codes] of filters)
-		if (!(dimension in fixed) || aliased)
-			canonical.searchParams.set(dimension, codes.join(","));
+		canonical.searchParams.set(dimension, codes.join(","));
 	for (const [dimension, code] of Object.entries(defaulted))
 		canonical.searchParams.set(dimension, code);
 	const canonicalPath = [...segments];
 	canonicalPath[position.index] = measure.id;
+	const canonicalUrl = `/${canonicalPath
+		.map((segment) => encodeURIComponent(segment).replaceAll("%3A", ":"))
+		.join("/")}${canonical.search}`;
+	const rewrittenRequest =
+		aliased !== undefined ||
+		Object.keys(defaulted).length > 0 ||
+		names.some((name) => name.startsWith("dimensions["));
 	const reading: DimensionReading = {
 		measure,
 		...(aliased
@@ -387,11 +396,7 @@ export const resolveDimensionRequest = (
 				}
 			: {}),
 		defaulted,
-		canonicalUrl: `/${canonicalPath
-			.map((segment) =>
-				encodeURIComponent(segment).replaceAll("%3A", ":"),
-			)
-			.join("/")}${canonical.search}`,
+		...(rewrittenRequest ? { canonicalUrl } : {}),
 	};
 	if (candidates.length === 1)
 		return {
