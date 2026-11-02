@@ -1,3 +1,7 @@
+import {
+	SERVED_LOCAL_ELECTION_WARD_CODES,
+	SERVED_WARD_CODES_UNTIL,
+} from "@uk-data-atlas/datasets/data/election/local-election/servedWardCodes";
 import { type DatasetInput, readDatasetInput } from "./input";
 import type {
 	SourceGeography,
@@ -14,25 +18,6 @@ type ElectionMeasureField =
 	| { kind: "field"; field: string }
 	| { kind: "partyVotes"; party: string }
 	| { kind: "partyVoteShare"; party: string; denominator: string };
-
-/**
- * LEAP source codes with the same official ward extent as the polling year's
- * release under the Atlas's published 99% overlap rule. Materially different
- * boundaries deliberately remain on the publisher's code.
- */
-const servedLocalElectionWardCodeCorrections = new Map<string, string>([
-	["E05011348", "E05010919"],
-	["E05011349", "E05010920"],
-	["E05012969", "E05010931"],
-	["E05008537", "E05008939"],
-	["W05000868", "W05001012"],
-	["E05012841", "E05011382"],
-	["E05012842", "E05011383"],
-	["E05012647", "E05011386"],
-	["E05012648", "E05011392"],
-	["E05013830", "E05011393"],
-	["E05013831", "E05011412"],
-]);
 
 const electionCodeKind = (code: string) =>
 	/^[EW]05\d{6}$/.test(code)
@@ -89,7 +74,9 @@ const electionFieldPeriods = (
 			// boundary-year release. Legacy equivalence corrections can point
 			// to retired codes that are no longer present from 2021 onward.
 			const corrections =
-				entry.boundaryYear >= 2021 ? undefined : wardCodeCorrections;
+				entry.boundaryYear >= SERVED_WARD_CODES_UNTIL
+					? undefined
+					: wardCodeCorrections;
 			const data = object(entry.data, `${path}.${period}.data`);
 			const unaddressableCodes = Object.keys(data).filter(
 				(areaCode) => !electionCodeKind(areaCode) && areaCode !== "NA",
@@ -243,7 +230,9 @@ const electionWinnerPeriods = (
 			// release; applying them to modern polls emits codes retired before
 			// the declared 2021+ boundary vintage.
 			const corrections =
-				entry.boundaryYear >= 2021 ? undefined : wardCodeCorrections;
+				entry.boundaryYear >= SERVED_WARD_CODES_UNTIL
+					? undefined
+					: wardCodeCorrections;
 			const results = object(entry.results, `${path}.${period}.results`);
 			return {
 				period,
@@ -731,14 +720,14 @@ export const compileElections = (
 			partyVoteNote:
 				"Only the party's highest-polling candidate in a ward counts, so a party fielding several candidates in a multi-member ward is counted once. Independents are counted the same way, and every other party or group as its own party within Other candidates.",
 			turnoutPeriods: "reported",
-			wardCodeCorrections: servedLocalElectionWardCodeCorrections,
+			wardCodeCorrections: SERVED_LOCAL_ELECTION_WARD_CODES,
 		}),
 		...electionWinnerMeasures({
 			datasetId: "local-election",
 			path: localElectionPath,
 			geography: "ward",
 			label: "Local election",
-			wardCodeCorrections: servedLocalElectionWardCodeCorrections,
+			wardCodeCorrections: SERVED_LOCAL_ELECTION_WARD_CODES,
 		}),
 	];
 	const electionMeasureDefinitions = [
