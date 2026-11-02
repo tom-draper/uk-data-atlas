@@ -1,5 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import { rebuildFromLayout } from "./datasetLayout";
+import { seriesKey as canonicalSeriesKey } from "./atlasStatistics";
 import type {
 	AreaIndex,
 	AreaRelease,
@@ -1211,9 +1212,15 @@ export function declaredStatistics(
 			verify(database: DatabaseSync) {
 				const row = database
 					.prepare(
-						"SELECT count(*) AS n FROM observation o JOIN series s ON s.id = o.series_id JOIN dataset d ON d.id = s.dataset_id WHERE d.slug = ?",
+						"SELECT count(*) AS n FROM observation o JOIN series s ON s.id = o.series_id WHERE s.key IN (SELECT value FROM json_each(?))",
 					)
-					.get(entry.output);
+					.get(
+						JSON.stringify(
+							series.map((item) =>
+								canonicalSeriesKey(entry.output, item),
+							),
+						),
+					);
 				if (Number(row?.n) !== count)
 					throw new Error(
 						`${type}: ${Number(row?.n)} observation rows for ${count} values`,
