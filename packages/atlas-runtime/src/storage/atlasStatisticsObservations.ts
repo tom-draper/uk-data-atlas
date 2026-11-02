@@ -89,6 +89,24 @@ export type StatisticsSelector = {
 };
 
 /**
+ * A census table artifact, one row per area and a value per measure, read
+ * from one series per column: each column's measure and members, on the
+ * table's dataset and geography.
+ */
+export type StatisticsTableSelector = {
+	kind: "measure-table";
+	id: string;
+	datasetId: string;
+	geography: string;
+	boundaryYear: number;
+	/** The catalogue period the table is published for. */
+	period: string;
+	/** The catalogue measure each column serves, in column order. */
+	measures: string[];
+	columns: Array<{ measure: string; dimensions: Record<string, string> }>;
+};
+
+/**
  * Which artifacts are read from the statistics tables, and why each other
  * artifact is still read from the observation tables. Written by
  * `pnpm --dir services/api generate:statistics-read-path`, which moves an
@@ -96,7 +114,7 @@ export type StatisticsSelector = {
  */
 export type StatisticsReadPath = {
 	schemaVersion: 1;
-	statistics: Record<string, StatisticsSelector>;
+	statistics: Record<string, StatisticsSelector | StatisticsTableSelector>;
 	observations: Record<string, string>;
 };
 
@@ -265,9 +283,10 @@ const periodRows = (
  */
 export function rebuildStatisticsObservationText(
 	database: DatabaseSync,
-	selector: StatisticsSelector,
+	selector: StatisticsSelector | StatisticsTableSelector,
 	artifact: StatisticsArtifact,
 ): string {
+	if ("kind" in selector) return rebuildTableText(database, selector);
 	const byPeriod = selector.contest
 		? contestRows(database, selector, selector.contest)
 		: periodRows(database, selector, artifact);
@@ -438,10 +457,66 @@ export function rebuildStatisticsObservationText(
 	})}\n`;
 }
 
+/**
+ * A census table rebuilt from its columns' series, as the data catalogue
+ * build stores it: rows in area code order, null where a column has no row,
+ * and the content hash of the rest.
+ */
+function rebuildTableText(
+	database: DatabaseSync,
+	selector: StatisticsTableSelector,
+): string {
+	const artifact = {
+		measureId: selector.id,
+		sourceGeography: {
+			type: selector.geography,
+			boundaryYear: selector.boundaryYear,
+		},
+		periods: [selector.period],
+	} as StatisticsArtifact;
+	const columns = selector.columns.map(({ measure, dimensions }) => {
+		const byPeriod = periodRows(
+			database,
+			{
+				datasetId: selector.datasetId,
+				measure,
+				dimensions,
+				geography: selector.geography,
+			},
+			artifact,
+		);
+		const label = statisticsPeriod(
+			selector.period,
+			new Set(byPeriod.keys()),
+		);
+		return label ? byPeriod.get(label)! : new Map<string, Row>();
+	});
+	const codes = [
+		...new Set(columns.flatMap((rows) => [...rows.keys()])),
+	].sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
+	const withoutHash = {
+		schemaVersion: 1,
+		kind: "measure-table",
+		id: selector.id,
+		datasetId: selector.datasetId,
+		sourceGeography: artifact.sourceGeography,
+		period: selector.period,
+		measures: selector.measures,
+		records: codes.map((code) => [
+			code,
+			...columns.map((rows) => rows.get(code)?.value ?? null),
+		]),
+	};
+	return `${JSON.stringify({
+		...withoutHash,
+		contentHash: sha256(JSON.stringify(withoutHash)),
+	})}\n`;
+}
+
 /** Rebuild one artifact, opening the database for the read. */
 export function readStatisticsObservationText(
 	path: string,
-	selector: StatisticsSelector,
+	selector: StatisticsSelector | StatisticsTableSelector,
 	artifact: StatisticsArtifact,
 ): string {
 	const database = new DatabaseSync(path, { readOnly: true });

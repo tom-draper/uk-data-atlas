@@ -13,6 +13,7 @@ import {
 	rebuildStatisticsObservationText,
 	type StatisticsArtifact,
 	type StatisticsSelector,
+	type StatisticsTableSelector,
 } from "./atlasStatisticsObservations";
 
 export const observationDatabasePath = (apiRoot: string) =>
@@ -266,7 +267,10 @@ export function readObservationText(
 	path: string,
 	id: string,
 	expectedGeneration?: string,
-	statistics?: { selector: StatisticsSelector; artifact: StatisticsArtifact },
+	statistics?: {
+		selector: StatisticsSelector | StatisticsTableSelector;
+		artifact: StatisticsArtifact;
+	},
 ): string {
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {

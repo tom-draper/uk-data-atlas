@@ -196,6 +196,45 @@ describe("observation artifacts rebuilt from statistics rows", () => {
 		]);
 	});
 
+	it("rebuilds a table, one column per series, in area code order", () => {
+		const table = JSON.parse(
+			rebuildStatisticsObservationText(
+				election(),
+				{
+					kind: "measure-table",
+					id: "votes-ward-2019-table",
+					datasetId: "local-election",
+					geography: "ward",
+					boundaryYear: 2019,
+					period: "2019",
+					measures: ["lab-votes", "green-votes"],
+					columns: [
+						{
+							measure: "party-votes",
+							dimensions: { party: "lab" },
+						},
+						{
+							measure: "party-votes",
+							dimensions: { party: "green" },
+						},
+					],
+				},
+				{
+					measureId: "lab-votes",
+					sourceGeography: { type: "ward", boundaryYear: 2019 },
+					periods: ["2019"],
+				},
+			),
+		) as { kind: string; records: unknown[]; contentHash: string };
+		expect(table.kind).toBe("measure-table");
+		expect(table.records).toEqual([
+			["E05000001", 300, null],
+			["E05000002", null, 40],
+			["E05099999", 25, null],
+		]);
+		expect(table.contentHash).toMatch(/^sha256:/);
+	});
+
 	it("sums a dimension with no total", () => {
 		expect(rebuild({ ...labour, dimensions: {}, sum: ["party"] })).toEqual([
 			{ areaCode: "E05000001", value: 300, status: "observed" },
