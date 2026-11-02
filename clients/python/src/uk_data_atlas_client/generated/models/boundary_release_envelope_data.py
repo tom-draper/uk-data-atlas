@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -61,10 +61,10 @@ class BoundaryReleaseEnvelopeData:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.boundary_release_downloads_type_0 import (
-            BoundaryReleaseDownloadsType0,
+            BoundaryReleaseDownloadsType0,  # noqa: PLC0415
         )
         from ..models.boundary_release_downloads_type_1 import (
-            BoundaryReleaseDownloadsType1,
+            BoundaryReleaseDownloadsType1,  # noqa: PLC0415
         )
 
         coverage = self.coverage.to_dict()
@@ -80,9 +80,9 @@ class BoundaryReleaseEnvelopeData:
         title = self.title
 
         downloads: dict[str, Any]
-        if isinstance(self.downloads, BoundaryReleaseDownloadsType0) or isinstance(
-            self.downloads, BoundaryReleaseDownloadsType1
-        ):
+        if isinstance(self.downloads, BoundaryReleaseDownloadsType0):
+            downloads = self.downloads.to_dict()
+        elif isinstance(self.downloads, BoundaryReleaseDownloadsType1):
             downloads = self.downloads.to_dict()
         else:
             downloads = self.downloads.to_dict()
@@ -118,19 +118,25 @@ class BoundaryReleaseEnvelopeData:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.boundary_release_coverage import BoundaryReleaseCoverage
-        from ..models.boundary_release_deprecation import BoundaryReleaseDeprecation
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.boundary_release_coverage import (
+            BoundaryReleaseCoverage,  # noqa: PLC0415
+        )
+        from ..models.boundary_release_deprecation import (
+            BoundaryReleaseDeprecation,  # noqa: PLC0415
+        )
         from ..models.boundary_release_downloads_type_0 import (
-            BoundaryReleaseDownloadsType0,
+            BoundaryReleaseDownloadsType0,  # noqa: PLC0415
         )
         from ..models.boundary_release_downloads_type_1 import (
-            BoundaryReleaseDownloadsType1,
+            BoundaryReleaseDownloadsType1,  # noqa: PLC0415
         )
         from ..models.boundary_release_downloads_type_2 import (
-            BoundaryReleaseDownloadsType2,
+            BoundaryReleaseDownloadsType2,  # noqa: PLC0415
         )
-        from ..models.boundary_release_source import BoundaryReleaseSource
+        from ..models.boundary_release_source import (
+            BoundaryReleaseSource,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         coverage = BoundaryReleaseCoverage.from_dict(d.pop("coverage"))

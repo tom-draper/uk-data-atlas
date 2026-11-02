@@ -5,7 +5,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
-    Self,
     TypeVar,
     cast,
 )
@@ -65,11 +64,13 @@ class ListMeasuresResponse200:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.list_measures_response_200_data_item import (
-            ListMeasuresResponse200DataItem,
+            ListMeasuresResponse200DataItem,  # noqa: PLC0415
         )
-        from ..models.list_measures_response_200_meta import ListMeasuresResponse200Meta
+        from ..models.list_measures_response_200_meta import (
+            ListMeasuresResponse200Meta,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         api_version = cast(Literal["v1"], d.pop("apiVersion"))

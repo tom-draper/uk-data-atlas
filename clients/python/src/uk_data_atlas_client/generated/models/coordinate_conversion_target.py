@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -79,12 +79,12 @@ class CoordinateConversionTarget:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.coordinate_conversion_target_grid_reference import (
-            CoordinateConversionTargetGridReference,
+            CoordinateConversionTargetGridReference,  # noqa: PLC0415
         )
         from ..models.coordinate_conversion_target_transformation import (
-            CoordinateConversionTargetTransformation,
+            CoordinateConversionTargetTransformation,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

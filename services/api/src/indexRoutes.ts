@@ -56,6 +56,7 @@ export const indexResponse = (releaseId: string): ApiResponse => {
 				"/v1/areas:near",
 				"/v1/areas:intersects",
 				"/v1/areas:validate",
+				"/v1/areas/{geography}/{code}/similar",
 				"/v1/areas/{geography}/{release}/{code}",
 				"/v1/areas/{geography}/{release}/{code}/history",
 				"/v1/areas/{geography}/{release}/{code}/parents",

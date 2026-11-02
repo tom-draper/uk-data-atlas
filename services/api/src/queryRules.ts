@@ -351,4 +351,15 @@ export const QUERY_RULES = {
 			default: 100,
 		},
 	},
+	"GET /areas/{geography}/{code}/similar": {
+		limit: {
+			minimum: 1,
+			maximum: 100,
+			default: 10,
+		},
+		method: {
+			values: ["zscore-euclidean", "rank-euclidean"],
+			default: "zscore-euclidean",
+		},
+	},
 } as const;

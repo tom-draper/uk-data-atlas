@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -35,7 +35,7 @@ class PointLookupReleaseSelection:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.release_reference import ReleaseReference
+        from ..models.release_reference import ReleaseReference  # noqa: PLC0415
 
         policy = self.policy.value
 
@@ -68,8 +68,8 @@ class PointLookupReleaseSelection:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.release_reference import ReleaseReference
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.release_reference import ReleaseReference  # noqa: PLC0415
 
         d = dict(src_dict)
         policy = PointLookupReleaseSelectionPolicy(d.pop("policy"))

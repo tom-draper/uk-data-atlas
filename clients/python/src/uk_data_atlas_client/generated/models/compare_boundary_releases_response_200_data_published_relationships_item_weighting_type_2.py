@@ -4,7 +4,6 @@ from collections.abc import Mapping
 from typing import (
     Any,
     Literal,
-    Self,
     TypeVar,
     cast,
 )
@@ -52,7 +51,7 @@ class CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingT
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
         basis = cast(Literal["area"], d.pop("basis"))
         if basis != "area":

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -75,13 +75,13 @@ class CompareBoundaryReleasesResponse200DataPublishedRelationshipsItem:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_0 import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType0,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType0,  # noqa: PLC0415
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_1 import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType1,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType1,  # noqa: PLC0415
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_2 import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType2,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType2,  # noqa: PLC0415
         )
 
         direction = self.direction.value
@@ -97,19 +97,19 @@ class CompareBoundaryReleasesResponse200DataPublishedRelationshipsItem:
         record_count = self.record_count
 
         weighting: dict[str, Any]
-        if (
-            isinstance(
-                self.weighting,
-                CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType0,
-            )
-            or isinstance(
-                self.weighting,
-                CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType1,
-            )
-            or isinstance(
-                self.weighting,
-                CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType2,
-            )
+        if isinstance(
+            self.weighting,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType0,
+        ):
+            weighting = self.weighting.to_dict()
+        elif isinstance(
+            self.weighting,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType1,
+        ):
+            weighting = self.weighting.to_dict()
+        elif isinstance(
+            self.weighting,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType2,
         ):
             weighting = self.weighting.to_dict()
         else:
@@ -138,21 +138,21 @@ class CompareBoundaryReleasesResponse200DataPublishedRelationshipsItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_mapping import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemMapping,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemMapping,  # noqa: PLC0415
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_0 import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType0,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType0,  # noqa: PLC0415
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_1 import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType1,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType1,  # noqa: PLC0415
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_2 import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType2,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType2,  # noqa: PLC0415
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_3 import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType3,
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType3,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

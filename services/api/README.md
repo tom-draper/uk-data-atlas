@@ -785,6 +785,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Rank a source-exact measure partition through
       `GET /v1/data/{measure-id}/rankings`, using documented competition ranks
       for ties and refusing release selection, conversion and aggregation.
+- [x] Find similar areas through
+      `GET /v1/areas/{geography}/{code}/similar`, choosing up to ten numeric
+      measures for one period. The response names the distance method and its
+      scaling statistics, and excludes areas missing any chosen value.
 - [x] Compare two source-exact areas through
       `GET /v1/data/{measure-id}/compare`, with explicitly named baseline and
       comparison sides, a directed same-unit difference, and no relative
@@ -1320,6 +1324,7 @@ The route selector in the documentation should begin with the user’s job:
 | draw a whole release as a map, or load its features into a warehouse | `/map-resources/{geography}/{release}` and its `features`                           |
 | render values or download source-exact observations                  | `/data/{measure}`                                                                   |
 | see a trend, ranking, comparison or change                           | `/series`, `/rankings`, `/compare` or `/change` under that measure                  |
+| find councils similar across chosen measures                         | `/areas/{geography}/{code}/similar`                                                 |
 | translate an identifier through a published crosswalk                | `/translations`                                                                     |
 | convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                                           |
 | validate a supplied code/name or discover releases                   | `/areas:validate`, `/boundaries`, `/boundary-releases`                              |
@@ -3261,6 +3266,7 @@ second inventory to maintain:
 - `GET /v1/data/{measure-id}/rankings`, Rank areas within one source-exact measure partition
 - `GET /v1/data/{measure-id}/change`, Rank areas by change between two periods of one measure partition
 - `GET /v1/data/{measure-id}/compare`, Compare two areas within one source-exact measure partition
+- `GET /v1/areas/{geography}/{code}/similar`, Find areas most similar across selected measures
 
 **Sync**
 

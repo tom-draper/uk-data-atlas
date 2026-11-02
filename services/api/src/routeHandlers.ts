@@ -44,6 +44,7 @@ import { handleAreaChildGeometryRoutes } from "./areas/areaChildGeometryRoutes";
 import { handleAreaNeighbourRoutes } from "./areas/areaNeighbourRoutes";
 import { handleAreaOverlapRoutes } from "./areas/areaOverlapRoutes";
 import { handleAreaGeometryRoutes } from "./areas/areaGeometryRoutes";
+import { handleSimilarAreaRoutes } from "./areas/similarAreaRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
 import { handleLocationRoutes } from "./places/locationRoutes";
@@ -258,8 +259,14 @@ const routeFamilies: RouteFamily[] = [
 		acceptsPost: true,
 	},
 	{
+		name: "similar-areas",
+		owns: v1("areas", { length: 5, at: { 4: "similar" } }),
+		handle: handleSimilarAreaRoutes,
+	},
+	{
 		name: "area-identity",
-		owns: v1("areas", { length: 5 }),
+		owns: (segments) =>
+			v1("areas", { length: 5 })(segments) && segments[4] !== "similar",
 		handle: handleAreaIdentityRoutes,
 	},
 	{

@@ -179,6 +179,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Highest values come first. Set `order=asc` to start from the lowest.",
 		],
 	},
+	findSimilarAreas: {
+		title: "Find similar areas",
+		intro: "Find areas closest to one target across the numeric measures you choose. The response states the distance method, each measure's scaling statistics, and the values used for every result.",
+		tips: [
+			"Use `zscore-euclidean` to give each measure equal weight after standardising it. Use `rank-euclidean` when extreme values would otherwise dominate the comparison.",
+			"Every measure must publish the requested geography and period. The response excludes areas that are missing any selected value and gives their count.",
+		],
+	},
 	getSourceExactMeasureChange: {
 		title: "Rank areas by change",
 		intro: "Find where things changed most between two periods, such as where population grew fastest between 2011 and 2022. Add `place` to see one area's change and where it ranks against all the others.",
