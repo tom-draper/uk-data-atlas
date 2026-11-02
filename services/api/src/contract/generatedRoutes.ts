@@ -31,6 +31,8 @@ import { atlasReleaseRoutes } from "./atlasReleaseRoutes";
 import { documentation } from "./documentation";
 import { documentationRoutes } from "./documentationRoutes";
 import { openapiDescription } from "./openapiDescription";
+import { rootRoutes } from "./rootRoutes";
+import { rootMetadata } from "./rootMetadata";
 
 export const createContractApp = async (context: RouteContextFor<never>) => {
 	const app = Fastify({ exposeHeadRoutes: false });
@@ -41,6 +43,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 		},
 	});
 	await app.register(documentationRoutes, { context });
+	await app.register(rootRoutes, { context });
 	await app.register(atlasReleaseRoutes, { context });
 	await app.register(catalogueFastifyRoutes, { context });
 	await app.register(boundaryFastifyRoutes, { context });
@@ -60,6 +63,8 @@ export const generatedPaths = async () => {
 			operation,
 		]),
 	);
+	if (!paths["/"]?.get) throw new Error("Missing Fastify operation: /");
+	Object.assign(paths["/"].get, rootMetadata);
 	for (const route of [openapiDescription, documentation, atlasRelease]) {
 		const operation = paths[route.path]?.get;
 		if (!operation)

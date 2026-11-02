@@ -23,6 +23,8 @@ import {
 } from "../src/apiServer";
 import { httpResponse } from "../src/httpResponse";
 import { route } from "../src/routes";
+import { indexResponse } from "../src/indexRoutes";
+import { getOnlyMethodNotAllowed } from "../src/routeHandlers";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
@@ -1280,7 +1282,9 @@ test("discovery and evidence documents preserve their HTTP responses", async (t)
 		["/v1/documents/fixture.json?unexpected=1", 400],
 	] as const) {
 		const expected = httpResponse({ method: "GET", headers: {} }, () =>
-			route("GET", path, context),
+			path === "/v1" || path === "/v1/"
+				? indexResponse(atlasRelease.releaseId)
+				: route("GET", path, context),
 		);
 		const response = await get(path, {
 			headers: { "accept-encoding": "identity" },
@@ -1318,6 +1322,43 @@ test("discovery and evidence documents preserve their HTTP responses", async (t)
 			assert.equal(await cached.text(), "", path);
 		}
 	}
+	for (const path of ["/v1", "/v1/"]) {
+		const expected = httpResponse(
+			{ method: "POST", headers: {} },
+			getOnlyMethodNotAllowed,
+		);
+		const response = await get(path, { method: "POST" });
+		assert.equal(expected.status, 405, path);
+		assert.equal(response.status, expected.status, path);
+		assert.equal(await response.text(), expected.body, path);
+		assert.equal(
+			response.headers.get("cache-control"),
+			expected.headers["cache-control"],
+			path,
+		);
+	}
+});
+
+test("discovery accepts decoded and repeated-slash paths and refuses POST bodies", async (t) => {
+	const { get } = await serve(t);
+	const canonical = await get("/v1", {
+		headers: { "accept-encoding": "identity" },
+	});
+	const body = await canonical.text();
+	for (const path of ["/%76%31", "/v1//"]) {
+		const response = await get(path, {
+			headers: { "accept-encoding": "identity" },
+		});
+		assert.equal(response.status, 200, path);
+		assert.equal(await response.text(), body, path);
+	}
+	const post = await get("/v1", {
+		method: "POST",
+		headers: { "content-type": "application/json" },
+		body: "not json",
+	});
+	assert.equal(post.status, 405);
+	assert.equal((await post.json()).title, "Method Not Allowed");
 });
 
 test("Fastify catalogue listings preserve an unavailable catalogue response", async (t) => {

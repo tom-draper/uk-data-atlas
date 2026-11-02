@@ -13,6 +13,7 @@ import { documentationRoutes } from "./contract/documentationRoutes";
 import { atlasRelease } from "./contract/atlasRelease";
 import { documentation } from "./contract/documentation";
 import { openapiDescription } from "./contract/openapiDescription";
+import { rootRoutes } from "./contract/rootRoutes";
 import type { ContractDispatch } from "./contract/registerGetRoute";
 import { sendFile } from "./sendFile";
 export { sendFile } from "./sendFile";
@@ -95,7 +96,7 @@ const fastifyPaths = new Set(
 );
 
 export const isFastifyStaticPath = (pathname: string) =>
-	fastifyPaths.has(pathname);
+	pathname === "/v1" || pathname === "/v1/" || fastifyPaths.has(pathname);
 
 /**
  * The largest POST body read. A column of every output area's code with a
@@ -463,11 +464,14 @@ export const createApiServer = (
 						);
 					else
 						result = await answerAsync(() =>
-							routeAsync("POST", target, catalogues, {
-								contentType:
-									request.headers["content-type"] ?? "",
-								text: read.text,
-							}),
+							contractHandler
+								? Promise.resolve(contractHandler())
+								: routeAsync("POST", target, catalogues, {
+										contentType:
+											request.headers["content-type"] ??
+											"",
+										text: read.text,
+									}),
 						);
 				} else {
 					// An answer is a function of the release and the request, except
@@ -673,6 +677,7 @@ export const createApiServer = (
 		{
 			overloaded: boolean;
 			started: boolean;
+			url: string | undefined;
 			resolve: () => void;
 			reject: (error: unknown) => void;
 		}
@@ -685,6 +690,7 @@ export const createApiServer = (
 		const entry = pending.get(request.raw);
 		if (!entry) throw new Error("Missing production request");
 		entry.started = true;
+		request.raw.url = entry.url;
 		reply.hijack();
 		try {
 			await handle(
@@ -699,6 +705,11 @@ export const createApiServer = (
 		}
 	};
 	void fastify.register(documentationRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(rootRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,
@@ -726,6 +737,17 @@ export const createApiServer = (
 		overloaded = false,
 	) => {
 		const pathname = (request.url ?? "/").split("?", 1)[0]!;
+		let rootPath = false;
+		try {
+			const parts = new URL(
+				request.url ?? "/",
+				"http://localhost",
+			).pathname
+				.split("/")
+				.filter(Boolean)
+				.map(decodeURIComponent);
+			rootPath = parts.length === 1 && parts[0] === "v1";
+		} catch {}
 		const catalogueDetail = /^\/v1\/(datasets|measures)\/([^/]+)$/.exec(
 			pathname,
 		);
@@ -755,14 +777,22 @@ export const createApiServer = (
 			} catch {}
 		}
 		if (
-			(request.method !== "GET" && request.method !== "HEAD") ||
-			(!isFastifyStaticPath(pathname) && !fastifyDetail)
+			(request.method !== "GET" &&
+				request.method !== "HEAD" &&
+				!(request.method === "POST" && rootPath)) ||
+			(!rootPath && !isFastifyStaticPath(pathname) && !fastifyDetail)
 		)
 			return handle(request, response, overloaded);
 		await ready;
 		if (response.destroyed) return;
 		return new Promise<void>((resolve, reject) => {
-			const entry = { overloaded, started: false, resolve, reject };
+			const entry = {
+				overloaded,
+				started: false,
+				url: request.url,
+				resolve,
+				reject,
+			};
 			pending.set(request, entry);
 			response.once("finish", () => {
 				if (!entry.started) resolve();
@@ -770,6 +800,7 @@ export const createApiServer = (
 			response.once("close", () => {
 				if (!entry.started) resolve();
 			});
+			if (rootPath) request.url = "/v1";
 			fastify.routing(request, response);
 		});
 	};

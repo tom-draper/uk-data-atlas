@@ -11,6 +11,7 @@ import { CONVERSION_METHODS } from "@uk-data-atlas/atlas-runtime/relationships";
 import { COMPATIBILITY_STATUSES } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { PROBLEM_CODES } from "@uk-data-atlas/atlas-runtime/api";
 import { route as domainRoute } from "../../src/routes";
+import { indexResponse } from "../../src/indexRoutes";
 import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { readApiCatalogues } from "../../src/server";
 import {
@@ -35,7 +36,13 @@ import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 const route = (
 	...args: Parameters<typeof domainRoute>
 ): ReturnType<typeof domainRoute> => {
-	const result = domainRoute(...args);
+	const result =
+		args[0] === "GET" && args[1] === "/v1"
+			? indexResponse(
+					args[2].atlasRelease?.releaseId ??
+						args[2].boundaryRegistry.contentHash,
+				)
+			: domainRoute(...args);
 	const wire = httpResponse({ method: args[0], headers: {} }, () => result);
 	if (
 		typeof wire.body === "string" &&
