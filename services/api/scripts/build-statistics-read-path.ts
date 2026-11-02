@@ -61,13 +61,28 @@ const seriesDimensions = (
 
 /**
  * Measures the API serves that the statistics tables hold as parts of
- * another: a party's vote share is its votes over the valid votes, and a
- * local election's effective votes are every party's votes summed.
+ * another: a party's vote share is its votes over the valid votes, a local
+ * election's effective votes are every party's votes summed, and population
+ * density is population over land area.
  */
 const COMPUTED: Record<
 	string,
-	Pick<StatisticsSelector, "measure" | "ratio" | "plus">
+	Pick<StatisticsSelector, "measure" | "ratio" | "plus" | "status">
 > = {
+	// Residents per square kilometre of land, from the 2024 land area.
+	"population-density": {
+		measure: "population",
+		ratio: {
+			datasetId: "land-area",
+			measure: "area",
+			dimensions: { surface: "land" },
+			period: "2024",
+			denominatorDivisor: 100,
+			scale: 1,
+			scaleQuotient: true,
+		},
+		status: "derived",
+	},
 	"party-vote-share": {
 		measure: "party-votes",
 		ratio: { measure: "valid-votes", scale: 100 },
@@ -82,7 +97,10 @@ const COMPUTED: Record<
  */
 const DERIVED: Record<
 	string,
-	Record<string, Pick<StatisticsSelector, "measure" | "ratio" | "plus">>
+	Record<
+		string,
+		Pick<StatisticsSelector, "measure" | "ratio" | "plus" | "status">
+	>
 > = {
 	"general-election": {
 		turnout: {
@@ -192,6 +210,7 @@ const selectorFor = (
 		...(HALF_WIDTHS[measure] ? { halfWidth: HALF_WIDTHS[measure] } : {}),
 		...(computed?.plus ? { plus: computed.plus } : {}),
 		...(computed?.ratio ? { ratio: computed.ratio } : {}),
+		...(computed?.status ? { status: computed.status } : {}),
 	};
 };
 
