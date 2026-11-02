@@ -22,6 +22,7 @@ import type {
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import type { MapArchive } from "../maps/mapResource/archiveReader";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
+import type { MeasureDimensions } from "../catalogue/measureDimensionsLoader";
 import type { NamedLocationInventory } from "../places/namedLocations";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
@@ -60,6 +61,12 @@ export type RouteContext = {
 	locationProjectionInventory?: LocationProjectionInventory;
 	locationProjectionStore?: LocationProjections;
 	dataCatalog?: DataCatalog;
+	/**
+	 * How each catalogue measure id maps onto a measure and its dimension
+	 * members. Absent, a request names catalogue ids only and dimension
+	 * filters are not accepted.
+	 */
+	measureDimensions?: MeasureDimensions;
 	/** Versioned terrain product definitions and their honest availability. */
 	terrainCatalogue?: TerrainCatalogue;
 	/** Optional versioned terrain source; absent means no elevation values are published. */

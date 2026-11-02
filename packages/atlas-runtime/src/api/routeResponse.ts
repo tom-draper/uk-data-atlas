@@ -45,6 +45,12 @@ export type Problem = {
 	earliest?: unknown;
 	undated?: string[];
 	links?: Record<string, string>;
+	/** A measure's dimensions, where a filter named one it does not have. */
+	dimensions?: string[];
+	/** The dimension a filter named, where it named an unknown member. */
+	dimension?: string;
+	/** A dimension's members, where a filter named one it does not publish. */
+	members?: string[];
 	/** Quoted on a failure the server did not expect, to find it in the logs. */
 	requestId?: string;
 };

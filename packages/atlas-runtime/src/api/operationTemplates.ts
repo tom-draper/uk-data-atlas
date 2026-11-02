@@ -109,11 +109,17 @@ const editDistance = (left: string, right: string) => {
 	return previous[right.length]!;
 };
 
-/** The first undeclared query parameter, with a useful spelling correction where possible. */
+/**
+ * The first undeclared query parameter, with a useful spelling correction
+ * where possible. An operation that declares `dimensions` also takes each
+ * dimension filter, as `dimensions[offence]` or as a parameter named after
+ * the dimension, `offence`.
+ */
 export const unexpectedQueryParameter = (
 	operation: OperationTemplate | undefined,
 	method: string,
 	target: string,
+	dimensionIds: ReadonlySet<string> = new Set(),
 ) => {
 	const key =
 		method === "HEAD" ? "get" : (method.toLowerCase() as "get" | "post");
@@ -123,8 +129,15 @@ export const unexpectedQueryParameter = (
 	const supplied = [
 		...new URL(target, "http://localhost").searchParams.keys(),
 	];
+	const filters = declared.includes("dimensions");
 	const parameter = supplied.find(
-		(name) => !declared.includes(name) && !refused.includes(name),
+		(name) =>
+			!declared.includes(name) &&
+			!refused.includes(name) &&
+			!(
+				filters &&
+				(dimensionIds.has(name) || /^dimensions\[[^\]]+\]$/.test(name))
+			),
 	);
 	if (!parameter) return undefined;
 	const nearest = declared

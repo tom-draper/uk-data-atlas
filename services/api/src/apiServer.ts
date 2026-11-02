@@ -55,6 +55,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { routeAsync } from "./routes";
+import { dimensionCatalogue } from "./dimensions/dimensionCatalogue";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	DEFAULT_MAX_URL_LENGTH,
@@ -266,6 +267,14 @@ export const createApiServer = (
 		catalogues.boundaryRegistry.contentHash;
 	const matchOperation =
 		catalogues.operationMatcher ?? (() => ({ route: "unmatched" }));
+	// Dimension filters are query parameters named after each dimension.
+	const dimensionIds =
+		catalogues.dataCatalog && catalogues.measureDimensions
+			? dimensionCatalogue(
+					catalogues.dataCatalog,
+					catalogues.measureDimensions,
+				).dimensionIds
+			: undefined;
 	const responseCache = options.responseCacheBytes
 		? new ResponseCache(options.responseCacheBytes)
 		: undefined;
@@ -397,6 +406,7 @@ export const createApiServer = (
 				matched.operation,
 				method,
 				target,
+				dimensionIds,
 			);
 			const queryProblem = unexpected
 				? problem(

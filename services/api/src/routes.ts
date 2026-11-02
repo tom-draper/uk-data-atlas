@@ -7,6 +7,12 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
+import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
+import {
+	breakdownResponse,
+	seriesResponse,
+} from "./dimensions/dimensionResponses";
+
 export { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 const decodePathSegment = (segment: string) => {
@@ -67,16 +73,14 @@ const buildRequest = (
 			context.boundaryRegistry.contentHash,
 		parsedUrl,
 		segments: segments as string[],
-		dispatch: (nextUrl) => route("GET", nextUrl, context),
+		// A route's own calls name series by catalogue id, so they skip the
+		// dimension layer and are never restated twice.
+		dispatch: (nextUrl) => routeSeries("GET", nextUrl, context),
 	};
 };
 
-/**
- * Route a request against named, independently-built catalogues. Keeping the
- * dependencies in one object prevents a newly added artifact from silently
- * shifting a long positional argument list at every call site.
- */
-export const route = (
+/** Route a request that names series by catalogue id. */
+const routeSeries = (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteDispatchContext,
@@ -88,15 +92,88 @@ export const route = (
 	return handleRoute(request) ?? notFound();
 };
 
-export const routeAsync = async (
+const routeSeriesAsync = async (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
 ): Promise<ApiResponse> => {
 	if (method !== "GET" && method !== "POST")
-		return route(method, url, context, body);
+		return routeSeries(method, url, context, body);
 	const request = buildRequest(method, url, context, body);
 	if ("status" in request) return request;
 	return (await handleRouteAsync(request)) ?? notFound();
+};
+
+/**
+ * Route a request against named, independently-built catalogues. Keeping the
+ * dependencies in one object prevents a newly added artifact from silently
+ * shifting a long positional argument list at every call site.
+ *
+ * A request naming a measure and dimension filters is first read as the
+ * series it means, or the several it answers together.
+ */
+export const route = (
+	method: string | undefined,
+	url: string | undefined,
+	context: RouteDispatchContext,
+	body?: RequestBody,
+): ApiResponse => {
+	const resolved = resolveDimensionRequest(url ?? "/", context);
+	switch (resolved.kind) {
+		case "unchanged":
+			return routeSeries(method, url, context, body);
+		case "problem":
+			return resolved.response;
+		case "series":
+			return seriesResponse(
+				routeSeries(method, resolved.url, context, body),
+				resolved.series,
+				resolved.reading,
+			);
+		case "breakdown":
+			return breakdownResponse(
+				resolved.entries.map(({ url: entryUrl, series }) => ({
+					series,
+					response: routeSeries(method, entryUrl, context, body),
+				})),
+				resolved.reading,
+			);
+	}
+};
+
+export const routeAsync = async (
+	method: string | undefined,
+	url: string | undefined,
+	context: RouteDispatchContext,
+	body?: RequestBody,
+): Promise<ApiResponse> => {
+	const resolved = resolveDimensionRequest(url ?? "/", context);
+	switch (resolved.kind) {
+		case "unchanged":
+			return routeSeriesAsync(method, url, context, body);
+		case "problem":
+			return resolved.response;
+		case "series":
+			return seriesResponse(
+				await routeSeriesAsync(method, resolved.url, context, body),
+				resolved.series,
+				resolved.reading,
+			);
+		case "breakdown":
+			return breakdownResponse(
+				await Promise.all(
+					resolved.entries.map(async ({ url: entryUrl, series }) => ({
+						series,
+						response: await routeSeriesAsync(
+							method,
+							entryUrl,
+							context,
+							body,
+						),
+					})),
+				),
+				resolved.reading,
+			);
+	}
 };
