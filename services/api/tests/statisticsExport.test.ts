@@ -12,6 +12,8 @@ import {
 import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
 import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
+import { compileMeasureDownloads } from "../../../pipeline/src/measureDownloads";
+import { gunzipSync } from "node:zlib";
 import { measureStatisticsSelections } from "../../../pipeline/src/measureStatisticsSelections";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 
@@ -62,7 +64,7 @@ test("binds a census measure only when every source partition is complete", () =
 	}
 });
 
-test("exports identical sorted canonical rows in CSV and Parquet", () => {
+test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 	const db = new DatabaseSync(":memory:");
 	const directory = mkdtempSync(join(tmpdir(), "statistics-export-"));
 	try {
@@ -370,6 +372,59 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 		assert.deepEqual(
 			largeCsv.data,
 			readParquet(readFileSync(paths.parquet)).rows,
+		);
+		const chosen = [
+			{
+				dataset: "census",
+				path: ["rented"],
+				geography: "ward",
+				release: "2021",
+				periods: ["2021"],
+			},
+		];
+		const downloads = await compileMeasureDownloads(
+			db,
+			directory,
+			"rented-homes",
+			chosen,
+		);
+		const csvDownload = downloads.find((item) => item.format === "csv")!;
+		const parquetDownload = downloads.find(
+			(item) => item.format === "parquet",
+		)!;
+		const csvBytes = gunzipSync(
+			readFileSync(join(directory, csvDownload.artifact)),
+		);
+		const csvRows = Papa.parse<Record<string, unknown>>(
+			csvBytes.toString("utf8"),
+			{
+				header: true,
+				dynamicTyping: (field) =>
+					typeof field === "string" &&
+					["value", "lower", "upper"].includes(field),
+				skipEmptyLines: true,
+				transform: (value) => (value === "" ? null : value),
+			},
+		);
+		assert.deepEqual(csvRows.errors, []);
+		assert.deepEqual(
+			csvRows.data,
+			readParquet(readFileSync(join(directory, parquetDownload.artifact)))
+				.rows,
+		);
+		const firstGzip = readFileSync(join(directory, csvDownload.artifact));
+		assert.deepEqual(
+			await compileMeasureDownloads(
+				db,
+				directory,
+				"rented-homes",
+				chosen,
+			),
+			downloads,
+		);
+		assert.deepEqual(
+			readFileSync(join(directory, csvDownload.artifact)),
+			firstGzip,
 		);
 	} finally {
 		db.close();

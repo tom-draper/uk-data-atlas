@@ -236,7 +236,10 @@ const apiStages = [
 		["datasets"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-data-catalog.ts"],
 		{
-			requiredOutputs: ["data/build/observations.sqlite"],
+			requiredOutputs: [
+				"data/build/observations.sqlite",
+				"data/build/measure-statistics-fields.json",
+			],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
@@ -270,7 +273,7 @@ const apiStages = [
 	),
 	stage(
 		"export-manifest",
-		["data-catalog"],
+		["data-catalog", "atlas-sqlite"],
 		[
 			"--dir",
 			"../..",
