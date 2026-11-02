@@ -54,6 +54,11 @@ export type DeclaredField = {
 	 * for each status. A value is `observed` unless this says otherwise.
 	 */
 	status?: { path: string; values: Partial<Record<StatusSlug, Json>> };
+	/**
+	 * The status of every value of the field, where the record holds none:
+	 * an area mean the compiler averages from grid cells is `derived`.
+	 */
+	statusOfAll?: Exclude<StatusSlug, "observed">;
 };
 
 export type DeclaredDimension = {
@@ -869,6 +874,8 @@ export function declaredStatistics(
 									return value;
 								};
 								const statusOf = () => {
+									if (field.statusOfAll)
+										return { status: field.statusOfAll };
 									if (!field.status) return {};
 									const target = fill(
 										field.statusSegments!,
