@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -55,12 +55,8 @@ class CrosswalkSummary:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.crosswalk_weighting_type_0 import (
-            CrosswalkWeightingType0,  # noqa: PLC0415
-        )
-        from ..models.crosswalk_weighting_type_1 import (
-            CrosswalkWeightingType1,  # noqa: PLC0415
-        )
+        from ..models.crosswalk_weighting_type_0 import CrosswalkWeightingType0
+        from ..models.crosswalk_weighting_type_1 import CrosswalkWeightingType1
 
         artifact = self.artifact
 
@@ -79,9 +75,9 @@ class CrosswalkSummary:
         to = self.to.to_dict()
 
         weighting: dict[str, Any]
-        if isinstance(self.weighting, CrosswalkWeightingType0):
-            weighting = self.weighting.to_dict()
-        elif isinstance(self.weighting, CrosswalkWeightingType1):
+        if isinstance(self.weighting, CrosswalkWeightingType0) or isinstance(
+            self.weighting, CrosswalkWeightingType1
+        ):
             weighting = self.weighting.to_dict()
         else:
             weighting = self.weighting.to_dict()
@@ -105,17 +101,11 @@ class CrosswalkSummary:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.crosswalk_side import CrosswalkSide  # noqa: PLC0415
-        from ..models.crosswalk_weighting_type_0 import (
-            CrosswalkWeightingType0,  # noqa: PLC0415
-        )
-        from ..models.crosswalk_weighting_type_1 import (
-            CrosswalkWeightingType1,  # noqa: PLC0415
-        )
-        from ..models.crosswalk_weighting_type_2 import (
-            CrosswalkWeightingType2,  # noqa: PLC0415
-        )
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.crosswalk_side import CrosswalkSide
+        from ..models.crosswalk_weighting_type_0 import CrosswalkWeightingType0
+        from ..models.crosswalk_weighting_type_1 import CrosswalkWeightingType1
+        from ..models.crosswalk_weighting_type_2 import CrosswalkWeightingType2
 
         d = dict(src_dict)
         artifact = d.pop("artifact")

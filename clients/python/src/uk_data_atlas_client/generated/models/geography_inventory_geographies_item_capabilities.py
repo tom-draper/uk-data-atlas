@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -47,12 +47,12 @@ class GeographyInventoryGeographiesItemCapabilities:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.geography_inventory_geographies_item_capabilities_area_identities import (
-            GeographyInventoryGeographiesItemCapabilitiesAreaIdentities,  # noqa: PLC0415
+            GeographyInventoryGeographiesItemCapabilitiesAreaIdentities,
         )
         from ..models.geography_inventory_geographies_item_capabilities_relationships import (
-            GeographyInventoryGeographiesItemCapabilitiesRelationships,  # noqa: PLC0415
+            GeographyInventoryGeographiesItemCapabilitiesRelationships,
         )
 
         d = dict(src_dict)

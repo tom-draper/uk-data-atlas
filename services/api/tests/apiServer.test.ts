@@ -77,6 +77,99 @@ const serve = async (
 	};
 };
 
+test("streams whole-measure downloads with hash-pinned caching", async (t) => {
+	const directory = mkdtempSync(join(tmpdir(), "measure-http-"));
+	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	const csv = Buffer.from("area_code,value\r\nE01,7\r\n");
+	const parquet = Buffer.from("PAR1fixturePAR1");
+	const gzip = gzipSync(csv);
+	writeFileSync(join(directory, "rows.csv.gz"), gzip);
+	writeFileSync(join(directory, "rows.parquet"), parquet);
+	const csvHash = sha256(csv);
+	const parquetHash = sha256(parquet);
+	const formats = [
+		{
+			format: "csv" as const,
+			artifact: "rows.csv.gz",
+			href: "/",
+			bytes: csv.length,
+			gzipBytes: gzip.length,
+			contentHash: csvHash,
+		},
+		{
+			format: "parquet" as const,
+			artifact: "rows.parquet",
+			href: "/",
+			bytes: parquet.length,
+			contentHash: parquetHash,
+		},
+	];
+	const exportManifest = {
+		schemaVersion: 1 as const,
+		contentHash: "sha256:manifest",
+		dataCatalogHash: dataCatalog.contentHash,
+		fields: {},
+		datasets: {},
+		exports: [],
+		measureExports: [{ measureId: "small-area-fixture", formats }],
+	};
+	const exportFiles = new Map(
+		formats.map((file) => [
+			file.artifact,
+			{
+				path: join(directory, file.artifact),
+				bytes: file.bytes,
+				contentHash: file.contentHash,
+				...("gzipBytes" in file ? { gzipBytes: file.gzipBytes } : {}),
+			},
+		]),
+	);
+	const { get } = await serve(
+		t,
+		{},
+		testContext({
+			atlasRelease,
+			openapiDocument,
+			operationMatcher,
+			dataCatalog,
+			exportManifest,
+			exportFiles,
+		}),
+	);
+	const path = `/v1/data/small-area-fixture/export?format=csv&hash=${csvHash.slice(7)}`;
+	const response = await get(path);
+	assert.equal(response.status, 200);
+	assert.equal(await response.text(), csv.toString());
+	assert.equal(
+		response.headers.get("cache-control"),
+		"public, max-age=31536000, immutable",
+	);
+	const conditional = await get(path, {
+		headers: { "if-none-match": response.headers.get("etag")! },
+	});
+	assert.equal(conditional.status, 304);
+	assert.equal(
+		conditional.headers.get("cache-control"),
+		"public, max-age=31536000, immutable",
+	);
+	const ranged = await get(
+		"/v1/data/small-area-fixture/export?format=parquet",
+		{ headers: { range: "bytes=0-3" } },
+	);
+	assert.equal(ranged.status, 206);
+	assert.equal(await ranged.text(), "PAR1");
+	assert.equal(
+		(await get("/v1/data/small-area-fixture/export?format=xml")).status,
+		400,
+	);
+	assert.equal(
+		(await get("/v1/data/small-area-fixture/export?format=csv&hash=wrong"))
+			.status,
+		404,
+	);
+	assert.equal((await get("/v1/data/no-such-measure/export")).status, 404);
+});
+
 test("identifies every response by its release and a request id", async (t) => {
 	const { get, logged } = await serve(t, { accessLog: true });
 	const response = await get("/v1/boundaries", {

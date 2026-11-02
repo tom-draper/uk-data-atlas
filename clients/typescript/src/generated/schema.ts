@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/data/{measure-id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download every observation for a measure
+         * @description Download a measure across all its published areas and periods. Rows are ordered by geography, boundary release, period, area code, dataset and series. CSV and Parquet contain the same rows, including dimension members, status and uncertainty bounds when available. A hash-pinned URL is immutable.
+         */
+        get: operations["downloadMeasure"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/": {
         parameters: {
             query?: never;
@@ -4203,6 +4223,38 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    downloadMeasure: {
+        parameters: {
+            query?: {
+                /** @description Output format, default parquet. */
+                format?: "parquet" | "csv";
+                /** @description Pin the SHA-256 content hash for immutable caching. */
+                hash?: string;
+            };
+            header?: never;
+            path: {
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
+                "measure-id": components["parameters"]["MeasureId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The whole measure as a file. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.apache.parquet": string;
+                    "text/csv": string;
+                };
+            };
+            400: components["responses"]["InvalidQuery"];
+            404: components["responses"]["NotFound"];
+            503: components["responses"]["CatalogueUnavailable"];
+        };
+    };
     getRoot: {
         parameters: {
             query?: never;
@@ -4254,6 +4306,7 @@ export interface operations {
                      *           "/v1/crosswalks",
                      *           "/v1/crosswalks/{crosswalk-id}",
                      *           "/v1/crosswalks/{crosswalk-id}/records",
+                     *           "/v1/data/{measure-id}/export",
                      *           "/v1/exports",
                      *           "/v1/exports/{export-id}",
                      *           "/v1/atlas-release"

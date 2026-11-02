@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -234,48 +234,48 @@ class GetMeasureResponse200Data:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.get_measure_response_200_data_aggregation import (
-            GetMeasureResponse200DataAggregation,  # noqa: PLC0415
+            GetMeasureResponse200DataAggregation,
         )
         from ..models.get_measure_response_200_data_availability import (
-            GetMeasureResponse200DataAvailability,  # noqa: PLC0415
+            GetMeasureResponse200DataAvailability,
         )
         from ..models.get_measure_response_200_data_defaults import (
-            GetMeasureResponse200DataDefaults,  # noqa: PLC0415
+            GetMeasureResponse200DataDefaults,
         )
         from ..models.get_measure_response_200_data_derived_from import (
-            GetMeasureResponse200DataDerivedFrom,  # noqa: PLC0415
+            GetMeasureResponse200DataDerivedFrom,
         )
         from ..models.get_measure_response_200_data_dimensions_item import (
-            GetMeasureResponse200DataDimensionsItem,  # noqa: PLC0415
+            GetMeasureResponse200DataDimensionsItem,
         )
         from ..models.get_measure_response_200_data_documents import (
-            GetMeasureResponse200DataDocuments,  # noqa: PLC0415
+            GetMeasureResponse200DataDocuments,
         )
         from ..models.get_measure_response_200_data_elsewhere_item import (
-            GetMeasureResponse200DataElsewhereItem,  # noqa: PLC0415
+            GetMeasureResponse200DataElsewhereItem,
         )
         from ..models.get_measure_response_200_data_links import (
-            GetMeasureResponse200DataLinks,  # noqa: PLC0415
+            GetMeasureResponse200DataLinks,
         )
         from ..models.get_measure_response_200_data_matched_members_item import (
-            GetMeasureResponse200DataMatchedMembersItem,  # noqa: PLC0415
+            GetMeasureResponse200DataMatchedMembersItem,
         )
         from ..models.get_measure_response_200_data_resolved_from import (
-            GetMeasureResponse200DataResolvedFrom,  # noqa: PLC0415
+            GetMeasureResponse200DataResolvedFrom,
         )
         from ..models.get_measure_response_200_data_series_item import (
-            GetMeasureResponse200DataSeriesItem,  # noqa: PLC0415
+            GetMeasureResponse200DataSeriesItem,
         )
         from ..models.get_measure_response_200_data_sources_item import (
-            GetMeasureResponse200DataSourcesItem,  # noqa: PLC0415
+            GetMeasureResponse200DataSourcesItem,
         )
         from ..models.get_measure_response_200_data_uncertainty import (
-            GetMeasureResponse200DataUncertainty,  # noqa: PLC0415
+            GetMeasureResponse200DataUncertainty,
         )
         from ..models.get_measure_response_200_data_unit_definition import (
-            GetMeasureResponse200DataUnitDefinition,  # noqa: PLC0415
+            GetMeasureResponse200DataUnitDefinition,
         )
 
         d = dict(src_dict)

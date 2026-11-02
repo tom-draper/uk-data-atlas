@@ -30,6 +30,7 @@ test("generated route contracts match the published description", async () => {
 		"/boundary-releases:resolve",
 		"/boundary-releases:compare",
 		"/areas/{geography}/{code}/similar",
+		"/data/{measure-id}/export",
 	]);
 	for (const [path, item] of Object.entries(paths)) {
 		assert.deepEqual(document.paths[path], item, path);

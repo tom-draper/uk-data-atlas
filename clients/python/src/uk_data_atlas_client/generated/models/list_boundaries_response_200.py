@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    Self,
     TypeVar,
     cast,
 )
@@ -64,12 +65,12 @@ class ListBoundariesResponse200:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.list_boundaries_response_200_data_item import (
-            ListBoundariesResponse200DataItem,  # noqa: PLC0415
+            ListBoundariesResponse200DataItem,
         )
         from ..models.list_boundaries_response_200_meta import (
-            ListBoundariesResponse200Meta,  # noqa: PLC0415
+            ListBoundariesResponse200Meta,
         )
 
         d = dict(src_dict)

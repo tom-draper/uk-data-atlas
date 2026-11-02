@@ -25,6 +25,86 @@ const EXPORT = QUERY_RULES["GET /exports/{export-id}"];
 
 const LOOKUP = QUERY_RULES["GET /lookups/{lookup-id}"];
 
+/** A prebuilt download containing every published partition of one measure. */
+export const handleMeasureExport = ({
+	context,
+	releaseId,
+	parsedUrl,
+	segments,
+}: Pick<
+	RouteRequestFor<never>,
+	"context" | "releaseId" | "parsedUrl" | "segments"
+>): ApiResponse => {
+	if (!context.dataCatalog || !context.exportManifest)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the data catalogue and export manifest before downloading a measure.",
+		);
+	const measure = context.dataCatalog.measures.find(
+		(item) => item.id === segments[2],
+	);
+	if (!measure)
+		return problem(404, "Not Found", "No measure matches that identity.");
+	const formats = parsedUrl.searchParams.getAll("format");
+	const hashes = parsedUrl.searchParams.getAll("hash");
+	if (
+		formats.length > 1 ||
+		hashes.length > 1 ||
+		(formats[0] !== undefined && !["csv", "parquet"].includes(formats[0]))
+	)
+		return invalidQuery(
+			"format must be csv or parquet, and each parameter may appear only once.",
+		);
+	const format = formats[0] ?? "parquet";
+	const entry = context.exportManifest.measureExports?.find(
+		(item) => item.measureId === measure.id,
+	);
+	const download = entry?.formats.find((item) => item.format === format);
+	if (!download)
+		return problem(
+			503,
+			"Export Unavailable",
+			"The complete measure export has not been built.",
+		);
+	const hash = download.contentHash.replace(/^sha256:/, "");
+	if (hashes[0] !== undefined && hashes[0] !== hash)
+		return problem(
+			404,
+			"Not Found",
+			"No measure export matches that content hash.",
+		);
+	const file = context.exportFiles?.get(download.artifact);
+	if (
+		!file ||
+		file.contentHash !== download.contentHash ||
+		file.bytes !== download.bytes ||
+		file.gzipBytes !== download.gzipBytes
+	)
+		return problem(
+			503,
+			"Export Unavailable",
+			"The requested measure export is missing or does not match its manifest.",
+		);
+	return {
+		status: 200,
+		body: envelope(releaseId, entry),
+		representation: {
+			contentType:
+				format === "csv"
+					? "text/csv; charset=utf-8"
+					: "application/vnd.apache.parquet",
+			body: file,
+			headers: {
+				"content-disposition": `attachment; filename="${measure.id}.${format}"`,
+				...(hashes.length
+					? { "cache-control": "public, max-age=31536000, immutable" }
+					: {}),
+			},
+		},
+	};
+};
+
 /** Immutable observation exports and rendered lookup artifacts. */
 export const handleBulkRoutes = ({
 	context,
@@ -40,6 +120,13 @@ export const handleBulkRoutes = ({
 >): ApiResponse | undefined => {
 	const { dataCatalog, exportManifest, lookupManifest, measureObservations } =
 		context;
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "data" &&
+		segments[3] === "export"
+	)
+		return handleMeasureExport({ context, releaseId, parsedUrl, segments });
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&

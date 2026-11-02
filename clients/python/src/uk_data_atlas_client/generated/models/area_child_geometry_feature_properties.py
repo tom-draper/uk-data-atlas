@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -92,14 +92,14 @@ class AreaChildGeometryFeatureProperties:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.area_child_geometry_feature_properties_generalisation import (
-            AreaChildGeometryFeaturePropertiesGeneralisation,  # noqa: PLC0415
+            AreaChildGeometryFeaturePropertiesGeneralisation,
         )
         from ..models.area_child_geometry_feature_properties_membership import (
-            AreaChildGeometryFeaturePropertiesMembership,  # noqa: PLC0415
+            AreaChildGeometryFeaturePropertiesMembership,
         )
-        from ..models.geometry_source import GeometrySource  # noqa: PLC0415
+        from ..models.geometry_source import GeometrySource
 
         d = dict(src_dict)
         boundary_release = d.pop("boundaryRelease")

@@ -3270,6 +3270,7 @@ second inventory to maintain:
 
 **Sync**
 
+- `GET /v1/data/{measure-id}/export`, Download a whole measure as CSV or Parquet
 - `GET /v1/exports`, List release-pinned whole observation artifacts
 - `GET /v1/exports/{export-id}`, Download one immutable source observation artifact
 - `GET /v1/lookups`, List whole lookup tables for download
@@ -3821,6 +3822,14 @@ with `?status=waived` for just the exceptions, and each boundary release,
 crosswalk, measure and export's checks are also served at `/v1/documents/validation-report.json`
 followed by the resource's own path. Conversion checks, such as preserved
 totals across a crosswalk, belong here once conversion is offered.
+
+`GET /v1/data/{measure-id}/export?format=csv` downloads the measure's observations
+across its published areas and periods. Use `format=parquet` for the same rows
+in Parquet; it is the default. Columns include area code, boundary release,
+period, value, unit, status, uncertainty bounds and any dimension members.
+Rows are ordered by geography, release, period, area code, dataset and series.
+The export manifest lists each file's content hash and a hash-pinned URL with
+immutable caching. CSV is stored compressed and streamed to clients.
 
 `GET /v1/exports` lists every source partition as a whole, immutable JSON
 download. `GET /v1/exports/{export-id}` returns that exact observation

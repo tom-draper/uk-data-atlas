@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -48,7 +48,7 @@ class AnalysisGeographyListEnvelopeDataAnalysisGeographiesItem:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.analysis_crosswalk import AnalysisCrosswalk  # noqa: PLC0415
+        from ..models.analysis_crosswalk import AnalysisCrosswalk
 
         basis = self.basis.value
 
@@ -85,12 +85,12 @@ class AnalysisGeographyListEnvelopeDataAnalysisGeographiesItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.analysis_crosswalk import AnalysisCrosswalk  # noqa: PLC0415
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.analysis_crosswalk import AnalysisCrosswalk
         from ..models.analysis_geography_list_envelope_data_analysis_geographies_item_conversion_type_1 import (
-            AnalysisGeographyListEnvelopeDataAnalysisGeographiesItemConversionType1,  # noqa: PLC0415
+            AnalysisGeographyListEnvelopeDataAnalysisGeographiesItemConversionType1,
         )
-        from ..models.analysis_source import AnalysisSource  # noqa: PLC0415
+        from ..models.analysis_source import AnalysisSource
 
         d = dict(src_dict)
         basis = AnalysisGeographyListEnvelopeDataAnalysisGeographiesItemBasis(

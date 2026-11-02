@@ -340,7 +340,9 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "bulk",
-		owns: v1(["exports", "lookups"]),
+		owns: (segments) =>
+			v1(["exports", "lookups"])(segments) ||
+			v1("data", { length: 4, at: { 3: "export" } })(segments),
 		handle: handleBulkRoutes,
 	},
 	{

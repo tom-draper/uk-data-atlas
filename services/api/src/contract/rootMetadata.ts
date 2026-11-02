@@ -51,6 +51,7 @@ export const rootMetadata = {
 								"/v1/crosswalks",
 								"/v1/crosswalks/{crosswalk-id}",
 								"/v1/crosswalks/{crosswalk-id}/records",
+								"/v1/data/{measure-id}/export",
 								"/v1/exports",
 								"/v1/exports/{export-id}",
 								"/v1/atlas-release",

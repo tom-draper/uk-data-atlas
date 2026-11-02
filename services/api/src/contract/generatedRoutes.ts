@@ -14,6 +14,8 @@ import {
 import { boundaryReleaseMetadata } from "../boundaries/boundaryReleaseMetadata";
 import { boundaryReleasesMetadata } from "../boundaries/boundaryReleasesMetadata";
 import { boundariesMetadata } from "../boundaries/boundariesMetadata";
+import { measureExportRoutes } from "../data/measureExportRoutes";
+import { measureExportMetadata } from "../data/measureExportContract";
 import Fastify from "fastify";
 import { z } from "zod";
 import {
@@ -51,6 +53,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(catalogueFastifyRoutes, { context });
 	await app.register(boundaryFastifyRoutes, { context });
 	await app.register(similarAreasFastifyRoutes, { context });
+	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
 };
@@ -140,6 +143,10 @@ export const generatedPaths = async () => {
 			},
 		});
 	}
+	const exportOperation = paths["/data/{measure-id}/export"]?.get;
+	if (!exportOperation)
+		throw new Error("Missing Fastify operation: measure export");
+	Object.assign(exportOperation, measureExportMetadata);
 	await app.close();
 	return paths;
 };

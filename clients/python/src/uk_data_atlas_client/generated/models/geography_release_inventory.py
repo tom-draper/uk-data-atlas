@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -37,12 +37,8 @@ class GeographyReleaseInventory:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.area_identity_coverage_type_0 import (
-            AreaIdentityCoverageType0,  # noqa: PLC0415
-        )
-        from ..models.relationship_coverage_type_0 import (
-            RelationshipCoverageType0,  # noqa: PLC0415
-        )
+        from ..models.area_identity_coverage_type_0 import AreaIdentityCoverageType0
+        from ..models.relationship_coverage_type_0 import RelationshipCoverageType0
 
         area_identities: dict[str, Any]
         if isinstance(self.area_identities, AreaIdentityCoverageType0):
@@ -80,19 +76,11 @@ class GeographyReleaseInventory:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.area_identity_coverage_type_0 import (
-            AreaIdentityCoverageType0,  # noqa: PLC0415
-        )
-        from ..models.area_identity_coverage_type_1 import (
-            AreaIdentityCoverageType1,  # noqa: PLC0415
-        )
-        from ..models.relationship_coverage_type_0 import (
-            RelationshipCoverageType0,  # noqa: PLC0415
-        )
-        from ..models.relationship_coverage_type_1 import (
-            RelationshipCoverageType1,  # noqa: PLC0415
-        )
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.area_identity_coverage_type_0 import AreaIdentityCoverageType0
+        from ..models.area_identity_coverage_type_1 import AreaIdentityCoverageType1
+        from ..models.relationship_coverage_type_0 import RelationshipCoverageType0
+        from ..models.relationship_coverage_type_1 import RelationshipCoverageType1
 
         d = dict(src_dict)
 

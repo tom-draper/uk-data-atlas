@@ -1,6 +1,12 @@
 // Generated from openapi.yaml by `pnpm --dir services/api generate:query-rules`. Do not edit.
 
 export const QUERY_RULES = {
+	"GET /data/{measure-id}/export": {
+		format: {
+			values: ["parquet", "csv"],
+			default: "parquet",
+		},
+	},
 	"GET /map-resources/{geography}/{release}/features": {
 		tier: {
 			values: ["full", "high", "medium", "low"],

@@ -168,12 +168,16 @@ export const matchesEntityTag = (
 		.some((tag) => tag.trim() === "*" || opaque(tag) === opaque(etag));
 };
 
-const notModified = (etag: string, vary: string | undefined): HttpResponse => ({
+const notModified = (
+	etag: string,
+	vary: string | undefined,
+	freshness = SUCCESS_CACHE_CONTROL,
+): HttpResponse => ({
 	status: 304,
 	headers: {
 		...CROSS_ORIGIN,
 		etag,
-		"cache-control": SUCCESS_CACHE_CONTROL,
+		"cache-control": freshness,
 		...(vary ? { vary } : {}),
 	},
 });
@@ -188,7 +192,11 @@ export const cachedHttpResponse = (
 	answer: CachedAnswer,
 ): HttpResponse =>
 	matchesEntityTag(request.headers["if-none-match"], answer.etag)
-		? notModified(answer.etag, answer.headers.vary)
+		? notModified(
+				answer.etag,
+				answer.headers.vary,
+				answer.headers["cache-control"],
+			)
 		: { status: answer.status, headers: answer.headers, body: answer.body };
 
 /**
@@ -261,7 +269,7 @@ export const httpResponse = (
 	}
 	// 204 says there is nothing to send, so it carries neither a body nor a
 	// validator to revalidate one with.
-	const freshness = SUCCESS_CACHE_CONTROL;
+	const freshness = headers["cache-control"] ?? SUCCESS_CACHE_CONTROL;
 	if (result.status === 204)
 		return {
 			status: 204,
@@ -277,7 +285,7 @@ export const httpResponse = (
 	headers.etag = etag;
 	headers["cache-control"] = freshness;
 	if (matchesEntityTag(request.headers["if-none-match"], etag))
-		return notModified(etag, headers.vary);
+		return notModified(etag, headers.vary, freshness);
 	// A file sent as it is stored, or a body with a known hash, can be read
 	// in pieces. That is how a PMTiles client reads an archive (the header,
 	// then a directory, then the tiles it needs) and how DuckDB or GDAL read

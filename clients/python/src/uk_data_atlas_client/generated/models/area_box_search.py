@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -120,13 +120,11 @@ class AreaBoxSearch:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.area_box_search_generalisation_method import (
-            AreaBoxSearchGeneralisationMethod,  # noqa: PLC0415
+            AreaBoxSearchGeneralisationMethod,
         )
-        from ..models.area_box_search_matches_item import (
-            AreaBoxSearchMatchesItem,  # noqa: PLC0415
-        )
+        from ..models.area_box_search_matches_item import AreaBoxSearchMatchesItem
 
         d = dict(src_dict)
         bbox = cast(list[float], d.pop("bbox"))
