@@ -26,6 +26,28 @@ export type StatisticsSelector = {
 	 * a later code year lists only the codes that year still uses.
 	 */
 	areasIn?: string[];
+	/**
+	 * Read an area with no row as zero, where the measure's other series
+	 * hold a row for it in the period: a party that stood no candidate in a
+	 * contest polled no votes there.
+	 */
+	absentAsZero?: true;
+	/**
+	 * Codes served in place of the code a row is stored under, as source
+	 * code to served code. The record keeps the stored code as its
+	 * `sourceAreaCode`.
+	 */
+	servedCodes?: Record<string, string>;
+	/**
+	 * Divide by another measure of the same dataset, in the same area and
+	 * period, and multiply by `scale`: vote share is a party's votes over
+	 * the valid votes, as a percentage.
+	 */
+	ratio?: {
+		measure: string;
+		dimensions?: Record<string, string>;
+		scale: number;
+	};
 };
 
 /**
@@ -60,7 +82,10 @@ type Row = {
 /** The ids of the series a selector names. */
 const selectedSeries = (
 	database: DatabaseSync,
-	selector: StatisticsSelector,
+	selector: Pick<
+		StatisticsSelector,
+		"datasetId" | "measure" | "dimensions" | "geography" | "sum"
+	>,
 ) => {
 	const series = database
 		.prepare(
@@ -116,16 +141,27 @@ export const statisticsPeriod = (period: string, held: Set<string>) => {
 };
 
 /**
- * An observation artifact rebuilt from the statistics tables, as the text
- * the data catalogue build stores it as: periods in the catalogue's order,
- * records in area code order, and the content hash of the rest.
+ * The rows of the series a selector names, by period and area code. Parts of
+ * a summed dimension are added; `any` takes every series of the measure and
+ * keeps one row per area, for the set of areas the measure covers.
  */
-export function rebuildStatisticsObservationText(
+const periodRows = (
 	database: DatabaseSync,
-	selector: StatisticsSelector,
+	selector: Pick<
+		StatisticsSelector,
+		"datasetId" | "measure" | "dimensions" | "geography" | "sum"
+	>,
 	artifact: StatisticsArtifact,
-): string {
-	const series = selectedSeries(database, selector);
+	any = false,
+) => {
+	const series = any
+		? database
+				.prepare(
+					"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.position = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
+				)
+				.all(selector.datasetId, selector.measure, selector.geography)
+				.map((row) => Number(row.id))
+		: selectedSeries(database, selector);
 	if (series.length === 0)
 		throw new Error(
 			`No statistics series matches ${artifact.measureId} on ${selector.geography}.`,
@@ -140,6 +176,7 @@ export function rebuildStatisticsObservationText(
 				records.set(row.code, { ...row });
 				continue;
 			}
+			if (any) continue;
 			if (!selector.sum?.length)
 				throw new Error(
 					`${row.code} has two ${artifact.measureId} values for ${row.period} in the statistics tables.`,
@@ -150,6 +187,67 @@ export function rebuildStatisticsObservationText(
 				);
 			held.value += row.value;
 		}
+	return byPeriod;
+};
+
+/**
+ * An observation artifact rebuilt from the statistics tables, as the text
+ * the data catalogue build stores it as: periods in the catalogue's order,
+ * records in area code order, and the content hash of the rest.
+ */
+export function rebuildStatisticsObservationText(
+	database: DatabaseSync,
+	selector: StatisticsSelector,
+	artifact: StatisticsArtifact,
+): string {
+	const byPeriod = periodRows(database, selector, artifact);
+	if (selector.absentAsZero) {
+		const contests = periodRows(
+			database,
+			{ ...selector, dimensions: {}, sum: undefined },
+			artifact,
+			true,
+		);
+		for (const [period, held] of contests) {
+			let records = byPeriod.get(period);
+			if (!records) byPeriod.set(period, (records = new Map()));
+			for (const code of held.keys())
+				if (!records.has(code))
+					records.set(code, {
+						code,
+						period,
+						value: 0,
+						lower: null,
+						upper: null,
+						status: "observed",
+					});
+		}
+	}
+	if (selector.ratio) {
+		const denominators = periodRows(
+			database,
+			{
+				datasetId: selector.datasetId,
+				measure: selector.ratio.measure,
+				dimensions: selector.ratio.dimensions ?? {},
+				geography: selector.geography,
+			},
+			artifact,
+		);
+		const { scale } = selector.ratio;
+		for (const [period, records] of byPeriod)
+			for (const row of records.values()) {
+				const denominator = denominators
+					.get(period)
+					?.get(row.code)?.value;
+				if (row.value === null || !denominator || denominator <= 0)
+					throw new Error(
+						`${row.code} has no ${selector.ratio.measure} to divide ${artifact.measureId} by for ${period}.`,
+					);
+				row.value = (scale * row.value) / denominator;
+				row.lower = row.upper = null;
+			}
+	}
 	if (selector.areasIn) {
 		const statement = database.prepare(
 			"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE r.geography = ? AND r.id = ?",
@@ -169,11 +267,20 @@ export function rebuildStatisticsObservationText(
 	const periods = artifact.periods.map((period) => {
 		const label = statisticsPeriod(period, heldPeriods);
 		const records = [...(label ? byPeriod.get(label)! : new Map()).values()]
-			.sort((left, right) =>
-				left.code < right.code ? -1 : left.code > right.code ? 1 : 0,
-			)
 			.map((row: Row) => ({
-				areaCode: row.code,
+				row,
+				served: selector.servedCodes?.[row.code] ?? row.code,
+			}))
+			.sort((left, right) =>
+				left.served < right.served
+					? -1
+					: left.served > right.served
+						? 1
+						: 0,
+			)
+			.map(({ row, served }) => ({
+				areaCode: served,
+				...(served === row.code ? {} : { sourceAreaCode: row.code }),
 				value: row.value,
 				status: row.status,
 				...(row.lower === null || row.upper === null
