@@ -12,6 +12,10 @@ import {
 	SERVED_LOCAL_ELECTION_WARD_CODES,
 	SERVED_WARD_CODES_UNTIL,
 } from "@uk-data-atlas/datasets/data/election/local-election/servedWardCodes";
+import {
+	HOUSE_PRICE_SERVED_WARD_CODES,
+	SALFORD_WARD_CODE_REMAP,
+} from "@uk-data-atlas/datasets/data/house-price/wardCodes";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactRoot,
@@ -110,6 +114,16 @@ const servedCodesFor = (
 				{ areaCode: served, sourceAreaCode: source },
 			]),
 		);
+	if (datasetId === "house-price")
+		return Object.fromEntries([
+			...Object.entries(SALFORD_WARD_CODE_REMAP).map(
+				([published, compiled]) => [compiled, { areaCode: published }],
+			),
+			...[...HOUSE_PRICE_SERVED_WARD_CODES].map(([source, served]) => [
+				source,
+				{ areaCode: served, sourceAreaCode: source },
+			]),
+		]);
 	return undefined;
 };
 
