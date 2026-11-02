@@ -9,6 +9,7 @@ import { bindCensusStatistics } from "./bindCensusStatistics";
 import { bindStatisticsField } from "./bindStatisticsField";
 import { bindCompiledFields } from "./bindCompiledFields";
 import { bindReviewedStatistics } from "./bindReviewedStatistics";
+import { electionStatisticsExport } from "./electionStatisticsExport";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
@@ -24,6 +25,35 @@ export function measureStatisticsSelections(
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
 ): StatisticsSelection[] | undefined {
+	if (electionStatisticsExport(measure.id)) {
+		const anchor = measure.id.startsWith("general-")
+			? "general-election-valid-votes"
+			: "local-election-effective-votes";
+		const selection = bindCompiledFields(database, {
+			...measure,
+			id: anchor,
+		});
+		if (
+			!selection ||
+			measure.sources.some((source) =>
+				source.periods.some(
+					(period) =>
+						!selection.some(
+							(part) =>
+								part.geography ===
+									source.sourceGeography.type &&
+								part.periods.some(
+									(label) =>
+										label === period ||
+										label.startsWith(`${period}-`),
+								),
+						),
+				),
+			)
+		)
+			return undefined;
+		return selection;
+	}
 	const census = bindCensusStatistics(database, measure, true);
 	if (census) {
 		const datasets = new Set(census.map((selection) => selection.dataset));
