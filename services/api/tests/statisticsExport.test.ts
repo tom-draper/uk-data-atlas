@@ -15,6 +15,7 @@ import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
 import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
 import { bindReviewedStatistics } from "../../../pipeline/src/bindReviewedStatistics";
 import statisticsReadPath from "../config/statistics-read-path.json" with { type: "json" };
+import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 import { bindCompiledFields } from "../../../pipeline/src/bindCompiledFields";
 import { compileMeasureDownloads } from "../../../pipeline/src/measureDownloads";
 import { gunzipSync } from "node:zlib";
@@ -109,15 +110,10 @@ test("uses reviewed source mappings only when each requested period exists", () 
 				},
 			],
 		} as unknown as Measure;
-		assert.equal(
-			bindReviewedStatistics(db, measure, statisticsReadPath)?.length,
-			1,
-		);
+		const reviewed = statisticsReadPath as StatisticsReadPath;
+		assert.equal(bindReviewedStatistics(db, measure, reviewed)?.length, 1);
 		measure.sources[0]!.periods.push("2022");
-		assert.equal(
-			bindReviewedStatistics(db, measure, statisticsReadPath),
-			undefined,
-		);
+		assert.equal(bindReviewedStatistics(db, measure, reviewed), undefined);
 	} finally {
 		db.close();
 	}
