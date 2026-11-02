@@ -876,17 +876,23 @@ members, rather than one id per breakdown.
   periods and areas are unchanged. `services/api/config/statistics-read-path.json`
   names each artifact's series (dataset, measure, members, geography, and
   any dimension summed over, such as `age` for population) and why each
-  other artifact stays on `observations`. On the 2026-10-31 build 112 of 322
-  artifacts moved. The rest differ, and the differences are reported rather
-  than smoothed over: crime is published here on local authorities but the
-  API serves community safety partnerships; election rows here leave out the
-  zero votes the API lists for parties that did not stand, and four to nine
-  published local election values per year are missing; house prices lack
-  588 values; unemployment stores a half-width where the API serves the
-  published bounds; air-quality area means are `observed` here but `derived`
-  in the API; vote share, turnout and winner are not stored for general
-  elections; and census LSOA and MSOA tables are read whole. So the
-  `observation_*` tables and their writer stay until these are stored here.
+  other artifact stays on `observations`. A selector can also read what the
+  API serves but these tables hold another way, each rule checked by the
+  same byte comparison: a party with no row in a contest polled zero
+  (`absentAsZero`); a row is served under a corrected or published code
+  (`servedCodes`, from the shared local election and house price ward code
+  lists); a measure is added to another (`plus`) or divided by one
+  (`ratio`), so vote share is party votes over valid votes and general
+  election turnout is valid votes and rejected ballots over the electorate;
+  and a half-width measure gives a value's published bounds (`halfWidth`).
+  On the 2026-10-31 build 269 of 322 artifacts moved. The rest differ, and
+  the differences are reported rather than smoothed over: crime is stored
+  here on local authorities, but the API serves community safety
+  partnerships, which these tables do not hold; air-quality area means are
+  `observed` here but `derived` in the API; the winning party is not stored
+  as a category; population density is computed from two datasets; and
+  census LSOA and MSOA tables are read whole. So the `observation_*` tables
+  and their writer stay until these are stored here.
 - **Periods.** A catalogue period reads the statistics period with the same
   label, or the one label that extends it: `2021` is `2021-census`, an
   election year is its polling day.
