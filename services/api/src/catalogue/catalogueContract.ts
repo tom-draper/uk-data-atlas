@@ -35,9 +35,45 @@ const dataset = z.looseObject({
 	}),
 	compiled: z.looseObject({ bytes: z.number(), sha256: z.string() }),
 });
+const measureSource = z.looseObject({
+	datasetId: z.string(),
+	periods: z.array(z.string()),
+	sourceGeography: z.looseObject({
+		type: z.string(),
+		codeYear: z.number(),
+	}),
+	observationArtifact: z.string().optional(),
+	coverage: z.looseObject({
+		kind: z.enum(["partial", "source-reported"]),
+		countries: z.array(z.string()),
+		recordCount: z.number(),
+		note: z.string(),
+	}),
+});
+const uncertainty = z.looseObject({
+	kind: z.literal("confidence-interval"),
+	level: z.number(),
+	note: z.string(),
+});
+const evidence = z.looseObject({ evidence: z.string() });
+/** One way a measure is broken down, and the members it is published for. */
+const dimension = z.looseObject({
+	id: z.string(),
+	label: z.string(),
+	total: z.string().optional(),
+	members: z.array(
+		z.looseObject({
+			code: z.string(),
+			label: z.string(),
+			parent: z.string().optional(),
+		}),
+	),
+});
+const members = z.record(z.string(), z.string());
 const measure = z.looseObject({
 	id: z.string(),
 	label: z.string(),
+	description: z.string(),
 	valueKind: z.enum([
 		"count",
 		"quantity",
@@ -70,38 +106,52 @@ const measure = z.looseObject({
 	derivedFrom: z
 		.looseObject({ datasetIds: z.array(z.string()), note: z.string() })
 		.optional(),
-	uncertainty: z
-		.looseObject({
-			kind: z.literal("confidence-interval"),
-			level: z.number(),
-			note: z.string(),
-		})
-		.optional(),
+	uncertainty: uncertainty.optional(),
 	notes: z.array(z.string()).optional(),
 	aggregation: z.looseObject({ kind: z.string(), available: z.boolean() }),
-	sources: z.array(
+	dimensions: z.array(dimension),
+	defaults: members.optional(),
+	series: z.array(
 		z.looseObject({
-			datasetId: z.string(),
-			periods: z.array(z.string()),
-			sourceGeography: z.looseObject({
-				type: z.string(),
-				codeYear: z.number(),
-			}),
-			observationArtifact: z.string().optional(),
-			coverage: z.looseObject({
-				kind: z.enum(["partial", "source-reported"]),
-				countries: z.array(z.string()),
-				recordCount: z.number(),
-				note: z.string(),
-			}),
+			dimensions: members,
+			datasetId: z.string().optional(),
+			label: z.string(),
+			unit: z.string().optional(),
+			deprecatedAlias: z.string().optional(),
+			href: z.string(),
+			sources: z.array(measureSource),
+			notes: z.array(z.string()).optional(),
+			uncertainty: uncertainty.optional(),
+			documents: evidence.optional(),
 		}),
 	),
+	sources: z.array(measureSource),
 	availability: z.looseObject({
 		sourceExact: z.literal(true),
 		conversion: z.literal(false),
 		aggregation: z.boolean(),
 	}),
 	links: z.looseObject({ data: z.string() }),
+	documents: evidence.optional(),
+	matchedMembers: z
+		.array(
+			z.looseObject({
+				dimension: z.string(),
+				member: z.string(),
+				label: z.string(),
+				href: z.string(),
+			}),
+		)
+		.optional(),
+	resolvedFrom: z
+		.looseObject({
+			id: z.string(),
+			measure: z.string(),
+			dimensions: members,
+			datasetId: z.string().optional(),
+			deprecated: z.boolean(),
+		})
+		.optional(),
 });
 
 export const datasets = {

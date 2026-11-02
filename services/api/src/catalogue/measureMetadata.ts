@@ -8,7 +8,7 @@ export const measureMetadata = {
 		"x-example-request": "/v1/measures/deprivation",
 	},
 	description:
-		"A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which source partitions publish it with what national coverage.\n\n`unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code, scale and (where applicable) denominator for safe unit-aware calculations; it never changes the source artifact or an observation value.\n\nWhere another nation publishes its own answer to the same question, the measure carries `concept` and `elsewhere`. Each entry in `elsewhere` names that measure, the countries it covers, and whether the two are `comparable`. For the four national deprivation indices they are not: each ranks its own nation's areas from 1 against its own domains and weights, so they cannot be put on one scale. The reason travels with the link rather than living in documentation, because the numbers themselves give no sign of it.\n",
+		"A measure's definition: what it measures, the unit, whether it may be summed or averaged, its dimensions and their members, and the series and source partitions published for each combination of members, with national coverage.\n\nAn older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers with its measure's definition, `resolvedFrom` says which members it stood for, and the response carries a `Deprecation` header. It has no sunset date.\n\n`unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code, scale and (where applicable) denominator for safe unit-aware calculations; it never changes the source artifact or an observation value.\n\nWhere another nation publishes its own answer to the same question, the measure carries `concept` and `elsewhere`. Each entry in `elsewhere` names that measure, the countries it covers, and whether the two are `comparable`. For the four national deprivation indices they are not: each ranks its own nation's areas from 1 against its own domains and weights, so they cannot be put on one scale. The reason travels with the link rather than living in documentation, because the numbers themselves give no sign of it.\n",
 	parameters: [
 		{
 			$ref: "#/components/parameters/MeasureId",
@@ -19,16 +19,17 @@ export const measureMetadata = {
 			description: "The measure definition.",
 			content: {
 				"application/json": {
-					"x-example-request": "/v1/measures/population",
+					"x-example-request": "/v1/measures/crime-burglary",
 					example: {
 						apiVersion: "v1",
 						atlasRelease:
 							"sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
 						data: {
-							id: "population",
-							label: "Population estimate",
+							id: "recorded-crimes",
+							label: "Police recorded crime",
+							description: "Offences recorded by the police.",
 							valueKind: "count",
-							unit: "people",
+							unit: "offences",
 							unitDefinition: {
 								code: "1",
 								scaleToCanonical: 1,
@@ -38,19 +39,68 @@ export const measureMetadata = {
 								operation: "sum",
 								available: true,
 							},
+							dimensions: [
+								{
+									id: "offence",
+									label: "Offence group",
+									total: "total",
+									members: [
+										{
+											code: "total",
+											label: "All recorded crime",
+										},
+										{
+											code: "theft",
+											label: "Theft offences",
+											parent: "total",
+										},
+										{
+											code: "burglary",
+											label: "Burglary",
+											parent: "theft",
+										},
+									],
+								},
+							],
+							series: [
+								{
+									dimensions: {
+										offence: "burglary",
+									},
+									label: "Burglary",
+									deprecatedAlias: "crime-burglary",
+									href: "/v1/data/recorded-crimes?offence=burglary",
+									sources: [
+										{
+											datasetId: "crime",
+											periods: ["year-ending-2026-03"],
+											sourceGeography: {
+												type: "communitySafetyPartnership",
+												codeYear: 2023,
+											},
+											coverage: {
+												kind: "source-reported",
+												countries: ["GB-ENG", "GB-WLS"],
+												recordCount: 309,
+												note: "Published source records cover every community safety partnership in England and Wales except those whose crime the police recorded as unassigned, which are not served.",
+											},
+										},
+									],
+								},
+							],
 							sources: [
 								{
-									datasetId: "population",
-									periods: ["2022"],
+									datasetId: "crime",
+									periods: ["year-ending-2026-03"],
 									sourceGeography: {
-										type: "ward",
+										type: "communitySafetyPartnership",
 										codeYear: 2023,
 									},
 									coverage: {
-										kind: "partial",
-										countries: ["GB-ENG"],
-										recordCount: 7608,
-										note: "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.",
+										kind: "source-reported",
+										countries: ["GB-ENG", "GB-WLS"],
+										recordCount: 309,
+										note: "Published source records cover every community safety partnership in England and Wales except those whose crime the police recorded as unassigned, which are not served.",
 									},
 								},
 							],
@@ -60,7 +110,15 @@ export const measureMetadata = {
 								aggregation: true,
 							},
 							links: {
-								data: "/v1/data/population",
+								data: "/v1/data/recorded-crimes",
+							},
+							resolvedFrom: {
+								id: "crime-burglary",
+								measure: "recorded-crimes",
+								dimensions: {
+									offence: "burglary",
+								},
+								deprecated: true,
 							},
 						},
 						meta: {
