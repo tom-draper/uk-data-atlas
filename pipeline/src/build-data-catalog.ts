@@ -7,8 +7,15 @@ import {
 	type DataCatalogInputs,
 } from "./catalog/compileDataCatalog";
 import { storeObservations } from "./store-observations";
-import { observationArtifactName } from "@uk-data-atlas/measures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	assertMeasureDimensions,
+	observationArtifactName,
+} from "@uk-data-atlas/measures";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
+import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 export const datasetCatalogInputs = (
 	repositoryRoot: string,
@@ -85,6 +92,12 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		electionObservations,
 		censusTables,
 	} = compileDataCatalog(inputs);
+	// Every measure id must say which measure and dimension members it is,
+	// so an id that encodes a breakdown is never published unmapped.
+	const { config, vocabulary } = readMeasureDimensionsConfig(
+		apiRootOf(repositoryRoot),
+	);
+	assertMeasureDimensions(catalog, config, vocabulary);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationArtifacts = [
 		ghgEmissionsObservations,
