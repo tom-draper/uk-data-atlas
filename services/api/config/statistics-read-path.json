@@ -3947,6 +3947,27 @@
 			"dimensions": {},
 			"geography": "constituency"
 		},
+		"population-density-observations": {
+			"datasetId": "population-uk",
+			"measure": "population",
+			"dimensions": {
+				"sex": "all"
+			},
+			"geography": "localAuthority",
+			"sum": ["age"],
+			"ratio": {
+				"datasetId": "land-area",
+				"measure": "area",
+				"dimensions": {
+					"surface": "land"
+				},
+				"period": "2024",
+				"denominatorDivisor": 100,
+				"scale": 1,
+				"scaleQuotient": true
+			},
+			"status": "derived"
+		},
 		"population-local-authority-observations": {
 			"datasetId": "population-uk",
 			"measure": "population",
@@ -4356,20 +4377,19 @@
 		"crime-violence-against-the-person-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
 		"crime-violence-with-injury-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
 		"crime-violence-without-injury-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
-		"general-election-winning-party-constituency-2019-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"general-election-winning-party-constituency-2024-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2016-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2017-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2018-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2019-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2021-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2022-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2023-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2024-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"local-election-winning-party-ward-2025-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
+		"general-election-winning-party-constituency-2019-observations": "no such column: c.winner",
+		"general-election-winning-party-constituency-2024-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2016-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2017-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2018-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2019-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2021-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2022-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2023-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2024-observations": "no such column: c.winner",
+		"local-election-winning-party-ward-2025-observations": "no such column: c.winner",
 		"no2-background-mean-observations": "The statistics rows do not rebuild it: 361 records differ in status, interval or source code. For example, 2024 E06000001 is {\"areaCode\":\"E06000001\",\"value\":6.84,\"status\":\"derived\"}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":6.84,\"status\":\"observed\"}.",
 		"pm10-background-mean-observations": "The statistics rows do not rebuild it: 361 records differ in status, interval or source code. For example, 2024 E06000001 is {\"areaCode\":\"E06000001\",\"value\":9.86,\"status\":\"derived\"}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":9.86,\"status\":\"observed\"}.",
-		"pm25-background-mean-observations": "The statistics rows do not rebuild it: 361 records differ in status, interval or source code. For example, 2024 E06000001 is {\"areaCode\":\"E06000001\",\"value\":5.4,\"status\":\"derived\"}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":5.4,\"status\":\"observed\"}.",
-		"population-density-observations": "population-density is not in the statistics tables."
+		"pm25-background-mean-observations": "The statistics rows do not rebuild it: 361 records differ in status, interval or source code. For example, 2024 E06000001 is {\"areaCode\":\"E06000001\",\"value\":5.4,\"status\":\"derived\"}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":5.4,\"status\":\"observed\"}."
 	}
 }
