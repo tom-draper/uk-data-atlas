@@ -62,13 +62,31 @@ const seriesDimensions = (
  */
 const COMPUTED: Record<
 	string,
-	{ measure: string; ratio?: StatisticsSelector["ratio"] }
+	Pick<StatisticsSelector, "measure" | "ratio" | "plus">
 > = {
 	"party-vote-share": {
 		measure: "party-votes",
 		ratio: { measure: "valid-votes", scale: 100 },
 	},
 	"effective-votes": { measure: "party-votes" },
+};
+
+/**
+ * Measures a dataset derives from its other measures rather than storing:
+ * a general election's turnout is its valid votes and rejected ballots as a
+ * percentage of the electorate.
+ */
+const DERIVED: Record<
+	string,
+	Record<string, Pick<StatisticsSelector, "measure" | "ratio" | "plus">>
+> = {
+	"general-election": {
+		turnout: {
+			measure: "valid-votes",
+			plus: ["rejected-ballots"],
+			ratio: { measure: "electorate", scale: 100, scaleQuotient: true },
+		},
+	},
 };
 
 /** Measures where an area with no row in a contest polled nothing. */
@@ -85,7 +103,8 @@ const selectorFor = (
 	boundaryYear: number,
 ): StatisticsSelector | string => {
 	const mapping = config.ids[measureId]!;
-	const computed = COMPUTED[mapping.measure];
+	const computed =
+		DERIVED[datasetId]?.[mapping.measure] ?? COMPUTED[mapping.measure];
 	const measure = computed?.measure ?? mapping.measure;
 	if (!(measure in vocabulary.measures))
 		return `${mapping.measure} is not in the statistics tables.`;
@@ -117,6 +136,7 @@ const selectorFor = (
 			? { absentAsZero: true as const }
 			: {}),
 		...(servedCodes ? { servedCodes } : {}),
+		...(computed?.plus ? { plus: computed.plus } : {}),
 		...(computed?.ratio ? { ratio: computed.ratio } : {}),
 	};
 };
