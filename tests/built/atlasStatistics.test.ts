@@ -113,7 +113,7 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 			datasets: [{ ...entry, fingerprint: entry.compiled.sha256 }],
 		});
 		writeFileSync(join(output, "datasets/fuel-poverty.json"), text);
-		const path = buildAtlasSqlite(root);
+		const path = buildAtlasSqlite(root, { censusTables: [] });
 		symlinkSync("atlas-base.sqlite", join(output, "atlas.sqlite"));
 		const database = new DatabaseSync(path);
 		try {

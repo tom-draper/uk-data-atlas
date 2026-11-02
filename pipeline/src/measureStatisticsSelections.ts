@@ -5,6 +5,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { CompiledMeasure } from "./catalog/manifest";
 import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
+import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { bindCensusStatistics } from "./bindCensusStatistics";
 import { bindStatisticsField } from "./bindStatisticsField";
 import { bindCompiledFields } from "./bindCompiledFields";
@@ -24,6 +25,7 @@ export function measureStatisticsSelections(
 	measure: Measure,
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
+	ids?: MeasureDimensionsConfig["ids"],
 ): StatisticsSelection[] | undefined {
 	if (
 		measure.id === "general-election-winning-party" ||
@@ -131,7 +133,7 @@ export function measureStatisticsSelections(
 			return undefined;
 		return selection;
 	}
-	const census = bindCensusStatistics(database, measure, true);
+	const census = ids && bindCensusStatistics(database, measure, ids, true);
 	if (census) {
 		const datasets = new Set(census.map((selection) => selection.dataset));
 		const remainingSources = measure.sources.filter(

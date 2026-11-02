@@ -124,7 +124,7 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 		"terrain catalogue",
 	);
 	assert.equal(before.products.length, 6);
-	const path = buildAtlasSqlite(root);
+	const path = buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(path, join(root, "data/build/atlas-base.sqlite"));
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
@@ -181,7 +181,7 @@ test("the base builder does not publish atlas.sqlite", (context) => {
 	const { root } = fixture(context);
 	const published = join(root, "data/build/atlas.sqlite");
 	rmSync(published);
-	const base = buildAtlasSqlite(root);
+	const base = buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(base, join(root, "data/build/atlas-base.sqlite"));
 	assert.equal(existsSync(base), true);
 	assert.equal(existsSync(published), false);
@@ -189,7 +189,7 @@ test("the base builder does not publish atlas.sqlite", (context) => {
 
 test("terrain loader refuses missing and invalid SQLite payloads", (context) => {
 	const { root, apiRoot } = fixture(context);
-	const path = buildAtlasSqlite(root);
+	const path = buildAtlasSqlite(root, { censusTables: [] });
 	const database = new DatabaseSync(path);
 	try {
 		database.prepare("DELETE FROM payloads").run();
@@ -214,15 +214,15 @@ test("terrain loader refuses missing and invalid SQLite payloads", (context) => 
 
 test("rebuilding SQLite replaces the payload and a missing input preserves the last build", (context) => {
 	const { root, apiRoot } = fixture(context);
-	const path = buildAtlasSqlite(root);
+	const path = buildAtlasSqlite(root, { censusTables: [] });
 	const database = new DatabaseSync(path);
 	database.prepare("UPDATE payloads SET payload = '{}'").run();
 	database.close();
-	buildAtlasSqlite(root);
+	buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(readTerrainCatalogue(apiRoot).products.length, 6);
 	const before = readFileSync(path);
 	rmSync(join(artifactRoot(apiRoot), "terrain-catalogue.json"));
-	assert.throws(() => buildAtlasSqlite(root), /ENOENT/);
+	assert.throws(() => buildAtlasSqlite(root, { censusTables: [] }), /ENOENT/);
 	assert.deepEqual(readFileSync(path), before);
 });
 
@@ -246,7 +246,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	const manifest = JSON.stringify({ version: 1, datasets: [entry] });
 	writeFileSync(join(directory, "dataset-manifest.json"), manifest);
 	const unstored = { sample: "A fixture kept as a payload." };
-	const path = buildAtlasSqlite(root, { unstored });
+	const path = buildAtlasSqlite(root, { unstored, censusTables: [] });
 	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
 	assert.equal(readAtlasPayload(root, "dataset-manifest"), manifest);
 	const database = new DatabaseSync(path, { readOnly: true });
@@ -276,7 +276,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	const before = readFileSync(path);
 	writeFileSync(join(directory, "sample.json"), "{}");
 	assert.throws(
-		() => buildAtlasSqlite(root, { unstored }),
+		() => buildAtlasSqlite(root, { unstored, censusTables: [] }),
 		/does not match its manifest/,
 	);
 	assert.deepEqual(readFileSync(path), before);
@@ -319,7 +319,7 @@ test("split atlas serves projection routes from the local cache without projecti
 	}
 	const obsolete = join(artifactRoot(apiRoot), "location-projections.sqlite");
 	writeFileSync(obsolete, "obsolete database");
-	buildAtlasSqlite(root);
+	buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(existsSync(obsolete), false);
 	const published = readFileSync(join(root, "data/build/atlas.sqlite"));
 	writeFileSync(
@@ -332,7 +332,10 @@ test("split atlas serves projection routes from the local cache without projecti
 			})),
 		}),
 	);
-	assert.throws(() => buildAtlasSqlite(root), /does not match its inventory/);
+	assert.throws(
+		() => buildAtlasSqlite(root, { censusTables: [] }),
+		/does not match its inventory/,
+	);
 	assert.deepEqual(
 		readFileSync(join(root, "data/build/atlas.sqlite")),
 		published,
@@ -424,7 +427,7 @@ test("projection compilation writes build intermediates and removes old public c
 		"location-projection-inventory.json",
 	])
 		assert.equal(existsSync(join(publicDirectory, name)), false);
-	buildAtlasSqlite(root);
+	buildAtlasSqlite(root, { censusTables: [] });
 	assert.deepEqual(
 		readLocationProjectionInventory(
 			apiRoot,

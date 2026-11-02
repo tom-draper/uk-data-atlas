@@ -31,6 +31,11 @@ import {
 	areaTables,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { DatabaseSync } from "node:sqlite";
+import { censusSmallAreaStatistics } from "./censusSmallAreaStatistics";
+import {
+	CENSUS_SMALL_AREA_TABLES,
+	type CensusTable,
+} from "./catalog/censusSmallArea";
 import { createHash } from "node:crypto";
 import {
 	existsSync,
@@ -43,7 +48,6 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { censusStatistics } from "./censusStatistics";
 import { crimePartnershipStatistics } from "./crimePartnershipStatistics";
 import { electionWinnerStatistics } from "./electionWinnerStatistics";
 
@@ -110,10 +114,18 @@ const statisticsInputs = (
 /**
  * Build the shared atlas database. `unstored` adds types kept as payloads
  * to `UNSTORED_DATASETS`, so tests can cover a type no real dataset is.
+ * `censusTables` are the census small-area tables stored, read from
+ * `data/source`; a fixture without those files stores none.
  */
 export const buildAtlasSqlite = (
 	repositoryRoot: string,
-	{ unstored = {} }: { unstored?: Readonly<Record<string, string>> } = {},
+	{
+		unstored = {},
+		censusTables = CENSUS_SMALL_AREA_TABLES,
+	}: {
+		unstored?: Readonly<Record<string, string>>;
+		censusTables?: readonly CensusTable[];
+	} = {},
 ) => {
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
@@ -138,10 +150,6 @@ export const buildAtlasSqlite = (
 		}[];
 	};
 	const publicDirectory = artifactDirectory(repositoryRoot);
-	const censusDirectory = join(
-		repositoryRoot,
-		"data/source/demographics/census-2021-small-area",
-	);
 	const projectionDirectory = join(directory, "location-projections");
 	const projectionPayload = readFileSync(
 		join(projectionDirectory, "location-projection-inventory.json"),
@@ -263,9 +271,9 @@ export const buildAtlasSqlite = (
 					...UNSTORED_DATASETS,
 					...unstored,
 				}),
-				...(existsSync(censusDirectory)
-					? censusStatistics(censusDirectory)
-					: []),
+				// After the declared datasets, whose measures and members
+				// the census tables share.
+				...censusSmallAreaStatistics(repositoryRoot, censusTables),
 			]),
 		},
 	);
