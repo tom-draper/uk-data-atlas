@@ -44,6 +44,7 @@ import {
 import { join, resolve } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { censusStatistics } from "./censusStatistics";
+import { crimePartnershipStatistics } from "./crimePartnershipStatistics";
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),
@@ -69,7 +70,23 @@ const statisticsInputs = (
 		if (entry.type === "fuelPoverty")
 			return [fuelPovertyStatistics(read(), entry)];
 		const config = declared.get(entry.type);
-		if (config) return [declaredStatistics(config, read, entry)];
+		if (config) {
+			const statistics = declaredStatistics(config, read, entry);
+			return entry.type === "crime"
+				? [
+						(areas) =>
+							crimePartnershipStatistics(
+								statistics(areas),
+								areas,
+								config,
+								join(
+									directory,
+									`datasets/${entry.output}.json`,
+								),
+							),
+					]
+				: [statistics];
+		}
 		if (entry.type in unstored) return [];
 		throw new Error(
 			`Dataset ${entry.type} has no statistics configuration; add one or list it in UNSTORED_DATASETS.`,
