@@ -58,7 +58,10 @@
 				"cars-or-vans": "none"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"car-availability-one-observations": {
 			"datasetId": "car-availability",
@@ -67,7 +70,10 @@
 				"cars-or-vans": "one"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"car-availability-three-or-more-observations": {
 			"datasetId": "car-availability",
@@ -76,7 +82,10 @@
 				"cars-or-vans": "three-or-more"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"car-availability-total-observations": {
 			"datasetId": "car-availability",
@@ -85,7 +94,10 @@
 				"cars-or-vans": "total"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"car-availability-two-observations": {
 			"datasetId": "car-availability",
@@ -94,7 +106,10 @@
 				"cars-or-vans": "two"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"claimant-count-16-to-24-observations": {
 			"datasetId": "claimant-count",
@@ -103,7 +118,10 @@
 				"age-group": "16-to-24"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2024-05-uk-bgc", "2024-12-uk-bgc"]
+			"areasIn": [
+				"2024-05-uk-bgc",
+				"2024-12-uk-bgc"
+			]
 		},
 		"claimant-count-observations": {
 			"datasetId": "claimant-count",
@@ -112,7 +130,10 @@
 				"age-group": "16-plus"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2024-05-uk-bgc", "2024-12-uk-bgc"]
+			"areasIn": [
+				"2024-05-uk-bgc",
+				"2024-12-uk-bgc"
+			]
 		},
 		"council-tax-observations": {
 			"datasetId": "council-tax",
@@ -157,7 +178,10 @@
 				"ethnic-group": "african"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-any-other-observations": {
 			"datasetId": "ethnicity",
@@ -166,7 +190,10 @@
 				"ethnic-group": "any-other-ethnic-group"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-arab-observations": {
 			"datasetId": "ethnicity",
@@ -175,7 +202,10 @@
 				"ethnic-group": "arab"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-bangladeshi-observations": {
 			"datasetId": "ethnicity",
@@ -184,7 +214,10 @@
 				"ethnic-group": "bangladeshi"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-caribbean-observations": {
 			"datasetId": "ethnicity",
@@ -193,7 +226,10 @@
 				"ethnic-group": "caribbean"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-chinese-observations": {
 			"datasetId": "ethnicity",
@@ -202,7 +238,10 @@
 				"ethnic-group": "chinese"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-gypsy-or-irish-traveller-observations": {
 			"datasetId": "ethnicity",
@@ -211,7 +250,10 @@
 				"ethnic-group": "gypsy-or-irish-traveller"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-indian-observations": {
 			"datasetId": "ethnicity",
@@ -220,7 +262,10 @@
 				"ethnic-group": "indian"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-irish-observations": {
 			"datasetId": "ethnicity",
@@ -229,7 +274,10 @@
 				"ethnic-group": "irish"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-other-asian-observations": {
 			"datasetId": "ethnicity",
@@ -238,7 +286,10 @@
 				"ethnic-group": "other-asian"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-other-black-observations": {
 			"datasetId": "ethnicity",
@@ -247,7 +298,10 @@
 				"ethnic-group": "other-black"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-other-mixed-observations": {
 			"datasetId": "ethnicity",
@@ -256,7 +310,10 @@
 				"ethnic-group": "other-mixed-or-multiple-ethnic-groups"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-other-white-observations": {
 			"datasetId": "ethnicity",
@@ -265,7 +322,10 @@
 				"ethnic-group": "other-white"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-pakistani-observations": {
 			"datasetId": "ethnicity",
@@ -274,7 +334,10 @@
 				"ethnic-group": "pakistani"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-roma-observations": {
 			"datasetId": "ethnicity",
@@ -283,7 +346,10 @@
 				"ethnic-group": "roma"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-white-and-asian-observations": {
 			"datasetId": "ethnicity",
@@ -292,7 +358,10 @@
 				"ethnic-group": "white-and-asian"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-white-and-black-african-observations": {
 			"datasetId": "ethnicity",
@@ -301,7 +370,10 @@
 				"ethnic-group": "white-and-black-african"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-white-and-black-caribbean-observations": {
 			"datasetId": "ethnicity",
@@ -310,7 +382,10 @@
 				"ethnic-group": "white-and-black-caribbean"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"ethnicity-white-british-observations": {
 			"datasetId": "ethnicity",
@@ -319,7 +394,10 @@
 				"ethnic-group": "english-welsh-scottish-northern-irish-or-british"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"gas-consumption-domestic-observations": {
 			"datasetId": "gas-consumption",
@@ -362,6 +440,666 @@
 			"measure": "gdp",
 			"dimensions": {},
 			"geography": "itl3"
+		},
+		"general-election-apni-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "apni"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-apni-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "apni"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-apni-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "apni"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-apni-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "apni"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-brx-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "brx"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-brx-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "brx"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-brx-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "brx"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-brx-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "brx"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-con-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-con-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-con-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-con-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-dup-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "dup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-dup-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "dup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-dup-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "dup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-dup-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "dup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-green-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-green-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-green-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-green-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-lab-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-lab-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-lab-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-lab-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-ld-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-ld-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-ld-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-ld-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-other-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-other-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-other-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-other-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-pc-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-pc-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-pc-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-pc-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-ruk-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ruk"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-ruk-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ruk"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-ruk-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ruk"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-ruk-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ruk"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-sdlp-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sdlp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-sdlp-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sdlp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-sdlp-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sdlp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-sdlp-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sdlp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-sf-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sf"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-sf-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sf"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-sf-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sf"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-sf-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "sf"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-snp-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "snp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-snp-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "snp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-snp-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "snp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-snp-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "snp"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-ukip-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-ukip-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-ukip-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-ukip-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-uup-vote-share-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "uup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-uup-vote-share-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "uup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true,
+			"ratio": {
+				"measure": "valid-votes",
+				"scale": 100
+			}
+		},
+		"general-election-uup-votes-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "uup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
+		},
+		"general-election-uup-votes-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "uup"
+			},
+			"geography": "constituency",
+			"absentAsZero": true
 		},
 		"general-election-valid-votes-constituency-2019-observations": {
 			"datasetId": "general-election",
@@ -429,6 +1167,1203 @@
 			},
 			"geography": "localAuthority"
 		},
+		"local-election-con-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-con-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-con-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-con-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-con-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-con-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-con-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-con-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-con-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "con"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-effective-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			],
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-effective-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			],
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-effective-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			],
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-effective-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			],
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-effective-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			]
+		},
+		"local-election-effective-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			]
+		},
+		"local-election-effective-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			]
+		},
+		"local-election-effective-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			]
+		},
+		"local-election-effective-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {},
+			"geography": "ward",
+			"sum": [
+				"party"
+			]
+		},
+		"local-election-green-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-green-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-green-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-green-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-green-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-green-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-green-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-green-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-green-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "green"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ind-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ind-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ind-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ind-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ind-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ind-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ind-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ind-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ind-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ind"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-lab-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-lab-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-lab-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-lab-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-lab-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-lab-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-lab-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-lab-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-lab-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "lab"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ld-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ld-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ld-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ld-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ld-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ld-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ld-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ld-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ld-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ld"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-other-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-other-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-other-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-other-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-other-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-other-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-other-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-other-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-other-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "other"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-pc-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-pc-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-pc-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-pc-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-pc-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-pc-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-pc-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-pc-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-pc-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "pc"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ref-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ref-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ref-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ref-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ref-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ref-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ref-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ref-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ref-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ref"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
 		"local-election-turnout-ward-2021-observations": {
 			"datasetId": "local-election",
 			"measure": "turnout",
@@ -458,6 +2393,139 @@
 			"measure": "turnout",
 			"dimensions": {},
 			"geography": "ward"
+		},
+		"local-election-ukip-votes-ward-2016-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ukip-votes-ward-2017-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ukip-votes-ward-2018-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ukip-votes-ward-2019-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true,
+			"servedCodes": {
+				"E05011348": "E05010919",
+				"E05011349": "E05010920",
+				"E05012969": "E05010931",
+				"E05008537": "E05008939",
+				"W05000868": "W05001012",
+				"E05012841": "E05011382",
+				"E05012842": "E05011383",
+				"E05012647": "E05011386",
+				"E05012648": "E05011392",
+				"E05013830": "E05011393",
+				"E05013831": "E05011412"
+			}
+		},
+		"local-election-ukip-votes-ward-2021-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ukip-votes-ward-2022-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ukip-votes-ward-2023-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ukip-votes-ward-2024-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true
+		},
+		"local-election-ukip-votes-ward-2025-observations": {
+			"datasetId": "local-election",
+			"measure": "party-votes",
+			"dimensions": {
+				"party": "ukip"
+			},
+			"geography": "ward",
+			"absentAsZero": true
 		},
 		"local-government-finance-observations": {
 			"datasetId": "local-government-finance",
@@ -566,7 +2634,9 @@
 				"sex": "all"
 			},
 			"geography": "localAuthority",
-			"sum": ["age"]
+			"sum": [
+				"age"
+			]
 		},
 		"population-observations": {
 			"datasetId": "population",
@@ -575,7 +2645,9 @@
 				"sex": "all"
 			},
 			"geography": "ward",
-			"sum": ["age"]
+			"sum": [
+				"age"
+			]
 		},
 		"qualification-apprenticeship-observations": {
 			"datasetId": "qualification",
@@ -584,7 +2656,10 @@
 				"highest-qualification": "apprenticeship"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"qualification-level-1-observations": {
 			"datasetId": "qualification",
@@ -593,7 +2668,10 @@
 				"highest-qualification": "level-1"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"qualification-level-2-observations": {
 			"datasetId": "qualification",
@@ -602,7 +2680,10 @@
 				"highest-qualification": "level-2"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"qualification-level-3-observations": {
 			"datasetId": "qualification",
@@ -611,7 +2692,10 @@
 				"highest-qualification": "level-3"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"qualification-level-4-plus-observations": {
 			"datasetId": "qualification",
@@ -620,7 +2704,10 @@
 				"highest-qualification": "level-4-plus"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"qualification-none-observations": {
 			"datasetId": "qualification",
@@ -629,7 +2716,10 @@
 				"highest-qualification": "none"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"qualification-other-observations": {
 			"datasetId": "qualification",
@@ -638,7 +2728,10 @@
 				"highest-qualification": "other"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"qualification-total-observations": {
 			"datasetId": "qualification",
@@ -647,7 +2740,10 @@
 				"highest-qualification": "total"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"road-collisions-fatal-local-authority-2024-observations": {
 			"datasetId": "road-collisions",
@@ -792,7 +2888,10 @@
 				"travel-method": "bicycle"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-car-observations": {
 			"datasetId": "travel-to-work",
@@ -801,7 +2900,10 @@
 				"travel-method": "car"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-home-observations": {
 			"datasetId": "travel-to-work",
@@ -810,7 +2912,10 @@
 				"travel-method": "home"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-motorcycle-observations": {
 			"datasetId": "travel-to-work",
@@ -819,7 +2924,10 @@
 				"travel-method": "motorcycle"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-on-foot-observations": {
 			"datasetId": "travel-to-work",
@@ -828,7 +2936,10 @@
 				"travel-method": "on-foot"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-other-observations": {
 			"datasetId": "travel-to-work",
@@ -837,7 +2948,10 @@
 				"travel-method": "other"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-public-transport-observations": {
 			"datasetId": "travel-to-work",
@@ -846,7 +2960,10 @@
 				"travel-method": "public-transport"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-taxi-observations": {
 			"datasetId": "travel-to-work",
@@ -855,7 +2972,10 @@
 				"travel-method": "taxi"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"travel-to-work-total-observations": {
 			"datasetId": "travel-to-work",
@@ -864,7 +2984,10 @@
 				"travel-method": "total"
 			},
 			"geography": "localAuthority",
-			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
+			"areasIn": [
+				"2023-05-uk-bgc-v2",
+				"2023-12-uk-bgc"
+			]
 		},
 		"waste-observations": {
 			"datasetId": "waste",
@@ -924,161 +3047,11 @@
 		"crime-violence-against-the-person-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
 		"crime-violence-with-injury-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
 		"crime-violence-without-injury-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
-		"general-election-apni-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-apni-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-apni-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2528 of 2600 records are missing (2528 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-apni-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 632 of 650 records are missing (632 of them zero). For example, 2024 E14001063 is missing.",
-		"general-election-brx-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-brx-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-brx-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2325 of 2600 records are missing (2325 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-brx-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 650 of 650 records are missing (650 of them zero). For example, 2024 E14001063 is missing.",
-		"general-election-con-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-con-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-con-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 49 of 2600 records are missing (49 of them zero). For example, 2010 E14000608 is missing.",
-		"general-election-con-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 15 of 650 records are missing (15 of them zero). For example, 2024 E14001170 is missing.",
-		"general-election-dup-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-dup-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-dup-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2534 of 2600 records are missing (2534 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-dup-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 634 of 650 records are missing (634 of them zero). For example, 2024 E14001063 is missing.",
-		"general-election-green-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-green-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-green-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 728 of 2600 records are missing (728 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-green-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 21 of 650 records are missing (21 of them zero). For example, 2024 E14001286 is missing.",
-		"general-election-lab-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-lab-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-lab-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 76 of 2600 records are missing (76 of them zero). For example, 2010 E14000608 is missing.",
-		"general-election-lab-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 19 of 650 records are missing (19 of them zero). For example, 2024 E14001170 is missing.",
-		"general-election-ld-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-ld-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-ld-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 98 of 2600 records are missing (98 of them zero). For example, 2010 E14000608 is missing.",
-		"general-election-ld-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 20 of 650 records are missing (20 of them zero). For example, 2024 E14001170 is missing.",
-		"general-election-other-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-other-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-other-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 1051 of 2600 records are missing (1051 of them zero). For example, 2010 E14000532 is missing.",
-		"general-election-other-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 94 of 650 records are missing (94 of them zero). For example, 2024 E14001064 is missing.",
-		"general-election-pc-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-pc-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-pc-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2444 of 2600 records are missing (2444 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-pc-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 618 of 650 records are missing (618 of them zero). For example, 2024 E14001063 is missing.",
-		"general-election-ruk-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-ruk-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-ruk-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2600 of 2600 records are missing (2600 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-ruk-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 41 of 650 records are missing (41 of them zero). For example, 2024 E14001129 is missing.",
-		"general-election-sdlp-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-sdlp-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-sdlp-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2531 of 2600 records are missing (2531 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-sdlp-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 632 of 650 records are missing (632 of them zero). For example, 2024 E14001063 is missing.",
-		"general-election-sf-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-sf-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-sf-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2532 of 2600 records are missing (2532 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-sf-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 636 of 650 records are missing (636 of them zero). For example, 2024 E14001063 is missing.",
-		"general-election-snp-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-snp-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-snp-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2364 of 2600 records are missing (2364 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-snp-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 593 of 650 records are missing (593 of them zero). For example, 2024 E14001063 is missing.",
 		"general-election-turnout-constituency-2019-observations": "The statistics tables hold no turnout series from general-election on constituency.",
 		"general-election-turnout-constituency-2024-observations": "The statistics tables hold no turnout series from general-election on constituency.",
-		"general-election-ukip-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-ukip-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-ukip-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 1040 of 2600 records are missing (1040 of them zero). For example, 2010 E14000531 is missing.",
-		"general-election-ukip-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 650 of 650 records are missing (650 of them zero). For example, 2024 E14001063 is missing.",
-		"general-election-uup-vote-share-constituency-2019-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-uup-vote-share-constituency-2024-observations": "The statistics tables hold no party-vote-share series from general-election on constituency.",
-		"general-election-uup-votes-constituency-2019-observations": "The statistics rows do not rebuild it: 2538 of 2600 records are missing (2538 of them zero). For example, 2010 E14000530 is missing.",
-		"general-election-uup-votes-constituency-2024-observations": "The statistics rows do not rebuild it: 633 of 650 records are missing (633 of them zero). For example, 2024 E14001063 is missing.",
 		"general-election-winning-party-constituency-2019-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"general-election-winning-party-constituency-2024-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"house-price-median-observations": "The statistics rows do not rebuild it: 588 of 225225 records are missing, 588 records are extra. For example, 1995 E05000759 is missing.",
-		"local-election-con-votes-ward-2016-observations": "The statistics rows do not rebuild it: 33 of 2210 records are missing (29 of them zero), 4 records are extra. For example, 2016 E05000722 is missing.",
-		"local-election-con-votes-ward-2017-observations": "The statistics rows do not rebuild it: 444 of 1392 records are missing (443 of them zero), 1 records are extra. For example, 2017 E05009160 is missing.",
-		"local-election-con-votes-ward-2018-observations": "The statistics rows do not rebuild it: 17 of 2748 records are missing (10 of them zero), 7 records are extra. For example, 2018 E05001347 is missing.",
-		"local-election-con-votes-ward-2019-observations": "The statistics rows do not rebuild it: 55 of 5273 records are missing (46 of them zero), 9 records are extra. For example, 2019 E05001697 is missing.",
-		"local-election-con-votes-ward-2021-observations": "The statistics rows do not rebuild it: 15 of 2497 records are missing (15 of them zero). For example, 2021 E05001364 is missing.",
-		"local-election-con-votes-ward-2022-observations": "The statistics rows do not rebuild it: 302 of 3531 records are missing (302 of them zero). For example, 2022 E05000719 is missing.",
-		"local-election-con-votes-ward-2023-observations": "The statistics rows do not rebuild it: 108 of 4792 records are missing (108 of them zero). For example, 2023 E05001141 is missing.",
-		"local-election-con-votes-ward-2024-observations": "The statistics rows do not rebuild it: 46 of 1903 records are missing (46 of them zero). For example, 2024 E05001135 is missing.",
-		"local-election-con-votes-ward-2025-observations": "The statistics rows do not rebuild it: 4 of 513 records are missing (4 of them zero). For example, 2025 E05013301 is missing.",
-		"local-election-effective-votes-ward-2016-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2017-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2018-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2019-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2021-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2022-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2023-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2024-observations": "effective-votes is not in the statistics tables.",
-		"local-election-effective-votes-ward-2025-observations": "effective-votes is not in the statistics tables.",
-		"local-election-green-votes-ward-2016-observations": "The statistics rows do not rebuild it: 866 of 2210 records are missing (863 of them zero), 3 records are extra. For example, 2016 E05000634 is missing.",
-		"local-election-green-votes-ward-2017-observations": "The statistics rows do not rebuild it: 1144 of 1392 records are missing (1143 of them zero), 1 records are extra. For example, 2017 E05001631 is missing.",
-		"local-election-green-votes-ward-2018-observations": "The statistics rows do not rebuild it: 1070 of 2748 records are missing (1063 of them zero), 7 records are extra. For example, 2018 E05000026 is missing.",
-		"local-election-green-votes-ward-2019-observations": "The statistics rows do not rebuild it: 2992 of 5273 records are missing (2985 of them zero), 7 records are extra. For example, 2019 E05000650 is missing.",
-		"local-election-green-votes-ward-2021-observations": "The statistics rows do not rebuild it: 850 of 2497 records are missing (850 of them zero). For example, 2021 E05000650 is missing.",
-		"local-election-green-votes-ward-2022-observations": "The statistics rows do not rebuild it: 1647 of 3531 records are missing (1647 of them zero). For example, 2022 E05000651 is missing.",
-		"local-election-green-votes-ward-2023-observations": "The statistics rows do not rebuild it: 2114 of 4792 records are missing (2114 of them zero). For example, 2023 E05000946 is missing.",
-		"local-election-green-votes-ward-2024-observations": "The statistics rows do not rebuild it: 494 of 1903 records are missing (494 of them zero). For example, 2024 E05000934 is missing.",
-		"local-election-green-votes-ward-2025-observations": "The statistics rows do not rebuild it: 205 of 513 records are missing (205 of them zero). For example, 2025 E05013273 is missing.",
-		"local-election-ind-votes-ward-2016-observations": "The statistics rows do not rebuild it: 1974 of 2210 records are missing (1974 of them zero). For example, 2016 E05000060 is missing.",
-		"local-election-ind-votes-ward-2017-observations": "The statistics rows do not rebuild it: 685 of 1392 records are missing (685 of them zero). For example, 2017 E05000134 is missing.",
-		"local-election-ind-votes-ward-2018-observations": "The statistics rows do not rebuild it: 2413 of 2748 records are missing (2413 of them zero). For example, 2018 E05000026 is missing.",
-		"local-election-ind-votes-ward-2019-observations": "The statistics rows do not rebuild it: 4031 of 5273 records are missing (4031 of them zero). For example, 2019 E05000652 is missing.",
-		"local-election-ind-votes-ward-2021-observations": "The statistics rows do not rebuild it: 1964 of 2497 records are missing (1964 of them zero). For example, 2021 E05000650 is missing.",
-		"local-election-ind-votes-ward-2022-observations": "The statistics rows do not rebuild it: 2735 of 3531 records are missing (2735 of them zero). For example, 2022 E05000650 is missing.",
-		"local-election-ind-votes-ward-2023-observations": "The statistics rows do not rebuild it: 3521 of 4792 records are missing (3521 of them zero). For example, 2023 E05000932 is missing.",
-		"local-election-ind-votes-ward-2024-observations": "The statistics rows do not rebuild it: 1502 of 1903 records are missing (1502 of them zero). For example, 2024 E05000932 is missing.",
-		"local-election-ind-votes-ward-2025-observations": "The statistics rows do not rebuild it: 342 of 513 records are missing (342 of them zero). For example, 2025 E05010728 is missing.",
-		"local-election-lab-votes-ward-2016-observations": "The statistics rows do not rebuild it: 51 of 2210 records are missing (47 of them zero), 4 records are extra. For example, 2016 E05003169 is missing.",
-		"local-election-lab-votes-ward-2017-observations": "The statistics rows do not rebuild it: 397 of 1392 records are missing (396 of them zero), 1 records are extra. For example, 2017 E05004650 is missing.",
-		"local-election-lab-votes-ward-2018-observations": "The statistics rows do not rebuild it: 23 of 2748 records are missing (16 of them zero), 7 records are extra. For example, 2018 E05004035 is missing.",
-		"local-election-lab-votes-ward-2019-observations": "The statistics rows do not rebuild it: 825 of 5273 records are missing (817 of them zero), 8 records are extra. For example, 2019 E05000837 is missing.",
-		"local-election-lab-votes-ward-2021-observations": "The statistics rows do not rebuild it: 140 of 2497 records are missing (140 of them zero). For example, 2021 E05004296 is missing.",
-		"local-election-lab-votes-ward-2022-observations": "The statistics rows do not rebuild it: 343 of 3531 records are missing (343 of them zero). For example, 2022 E05004149 is missing.",
-		"local-election-lab-votes-ward-2023-observations": "The statistics rows do not rebuild it: 711 of 4792 records are missing (711 of them zero). For example, 2023 E05004190 is missing.",
-		"local-election-lab-votes-ward-2024-observations": "The statistics rows do not rebuild it: 36 of 1903 records are missing (36 of them zero). For example, 2024 E05009354 is missing.",
-		"local-election-lab-votes-ward-2025-observations": "The statistics rows do not rebuild it: 78 of 513 records are missing (78 of them zero). For example, 2025 E05013273 is missing.",
-		"local-election-ld-votes-ward-2016-observations": "The statistics rows do not rebuild it: 715 of 2210 records are missing (712 of them zero), 3 records are extra. For example, 2016 E05000672 is missing.",
-		"local-election-ld-votes-ward-2017-observations": "The statistics rows do not rebuild it: 794 of 1392 records are missing (793 of them zero), 1 records are extra. For example, 2017 E05003159 is missing.",
-		"local-election-ld-votes-ward-2018-observations": "The statistics rows do not rebuild it: 624 of 2748 records are missing (618 of them zero), 6 records are extra. For example, 2018 E05000026 is missing.",
-		"local-election-ld-votes-ward-2019-observations": "The statistics rows do not rebuild it: 2055 of 5273 records are missing (2046 of them zero), 9 records are extra. For example, 2019 E05000743 is missing.",
-		"local-election-ld-votes-ward-2021-observations": "The statistics rows do not rebuild it: 538 of 2497 records are missing (538 of them zero). For example, 2021 E05000739 is missing.",
-		"local-election-ld-votes-ward-2022-observations": "The statistics rows do not rebuild it: 1216 of 3531 records are missing (1216 of them zero). For example, 2022 E05000800 is missing.",
-		"local-election-ld-votes-ward-2023-observations": "The statistics rows do not rebuild it: 1490 of 4792 records are missing (1490 of them zero). For example, 2023 E05000936 is missing.",
-		"local-election-ld-votes-ward-2024-observations": "The statistics rows do not rebuild it: 420 of 1903 records are missing (420 of them zero). For example, 2024 E05000936 is missing.",
-		"local-election-ld-votes-ward-2025-observations": "The statistics rows do not rebuild it: 51 of 513 records are missing (51 of them zero). For example, 2025 E05010730 is missing.",
-		"local-election-other-votes-ward-2016-observations": "The statistics rows do not rebuild it: 1747 of 2210 records are missing (1747 of them zero). For example, 2016 E05000060 is missing.",
-		"local-election-other-votes-ward-2017-observations": "The statistics rows do not rebuild it: 1248 of 1392 records are missing (1248 of them zero). For example, 2017 E05000134 is missing.",
-		"local-election-other-votes-ward-2018-observations": "The statistics rows do not rebuild it: 2211 of 2748 records are missing (2208 of them zero), 3 records are extra. For example, 2018 E05000026 is missing.",
-		"local-election-other-votes-ward-2019-observations": "The statistics rows do not rebuild it: 4517 of 5273 records are missing (4513 of them zero), 4 records are extra. For example, 2019 E05000650 is missing.",
-		"local-election-other-votes-ward-2021-observations": "The statistics rows do not rebuild it: 1787 of 2497 records are missing (1787 of them zero). For example, 2021 E05000651 is missing.",
-		"local-election-other-votes-ward-2022-observations": "The statistics rows do not rebuild it: 2723 of 3531 records are missing (2723 of them zero). For example, 2022 E05000650 is missing.",
-		"local-election-other-votes-ward-2023-observations": "The statistics rows do not rebuild it: 3753 of 4792 records are missing (3753 of them zero). For example, 2023 E05000932 is missing.",
-		"local-election-other-votes-ward-2024-observations": "The statistics rows do not rebuild it: 1293 of 1903 records are missing (1293 of them zero). For example, 2024 E05000932 is missing.",
-		"local-election-other-votes-ward-2025-observations": "The statistics rows do not rebuild it: 448 of 513 records are missing (448 of them zero). For example, 2025 E05010729 is missing.",
-		"local-election-pc-votes-ward-2016-observations": "The statistics rows do not rebuild it: 2209 of 2210 records are missing (2209 of them zero). For example, 2016 E05000060 is missing.",
-		"local-election-pc-votes-ward-2017-observations": "The statistics rows do not rebuild it: 969 of 1392 records are missing (968 of them zero), 1 records are extra. For example, 2017 E05000134 is missing.",
-		"local-election-pc-votes-ward-2018-observations": "The statistics rows do not rebuild it: 2748 of 2748 records are missing (2748 of them zero). For example, 2018 E05000026 is missing.",
-		"local-election-pc-votes-ward-2019-observations": "The statistics rows do not rebuild it: 5273 of 5273 records are missing (5273 of them zero). For example, 2019 E05000650 is missing.",
-		"local-election-pc-votes-ward-2021-observations": "The statistics rows do not rebuild it: 2497 of 2497 records are missing (2497 of them zero). For example, 2021 E05000650 is missing.",
-		"local-election-pc-votes-ward-2022-observations": "The statistics rows do not rebuild it: 3189 of 3531 records are missing (3189 of them zero). For example, 2022 E05000650 is missing.",
-		"local-election-pc-votes-ward-2023-observations": "The statistics rows do not rebuild it: 4792 of 4792 records are missing (4792 of them zero). For example, 2023 E05000932 is missing.",
-		"local-election-pc-votes-ward-2024-observations": "The statistics rows do not rebuild it: 1903 of 1903 records are missing (1903 of them zero). For example, 2024 E05000932 is missing.",
-		"local-election-pc-votes-ward-2025-observations": "The statistics rows do not rebuild it: 513 of 513 records are missing (513 of them zero). For example, 2025 E05010728 is missing.",
-		"local-election-ref-votes-ward-2016-observations": "The statistics rows do not rebuild it: 2210 of 2210 records are missing (2210 of them zero). For example, 2016 E05000060 is missing.",
-		"local-election-ref-votes-ward-2017-observations": "The statistics rows do not rebuild it: 1392 of 1392 records are missing (1392 of them zero). For example, 2017 E05000134 is missing.",
-		"local-election-ref-votes-ward-2018-observations": "The statistics rows do not rebuild it: 2748 of 2748 records are missing (2748 of them zero). For example, 2018 E05000026 is missing.",
-		"local-election-ref-votes-ward-2019-observations": "The statistics rows do not rebuild it: 5273 of 5273 records are missing (5273 of them zero). For example, 2019 E05000650 is missing.",
-		"local-election-ref-votes-ward-2021-observations": "The statistics rows do not rebuild it: 2348 of 2497 records are missing (2348 of them zero). For example, 2021 E05000650 is missing.",
-		"local-election-ref-votes-ward-2022-observations": "The statistics rows do not rebuild it: 3409 of 3531 records are missing (3409 of them zero). For example, 2022 E05000719 is missing.",
-		"local-election-ref-votes-ward-2023-observations": "The statistics rows do not rebuild it: 4423 of 4792 records are missing (4423 of them zero). For example, 2023 E05000932 is missing.",
-		"local-election-ref-votes-ward-2024-observations": "The statistics rows do not rebuild it: 1606 of 1903 records are missing (1606 of them zero). For example, 2024 E05000932 is missing.",
-		"local-election-ref-votes-ward-2025-observations": "The statistics rows do not rebuild it: 1 of 513 records are missing (1 of them zero). For example, 2025 E05015961 is missing.",
-		"local-election-ukip-votes-ward-2016-observations": "The statistics rows do not rebuild it: 870 of 2210 records are missing (868 of them zero), 2 records are extra. For example, 2016 E05000670 is missing.",
-		"local-election-ukip-votes-ward-2017-observations": "The statistics rows do not rebuild it: 1206 of 1392 records are missing (1205 of them zero), 1 records are extra. For example, 2017 E05000670 is missing.",
-		"local-election-ukip-votes-ward-2018-observations": "The statistics rows do not rebuild it: 2168 of 2748 records are missing (2168 of them zero). For example, 2018 E05000026 is missing.",
-		"local-election-ukip-votes-ward-2019-observations": "The statistics rows do not rebuild it: 3973 of 5273 records are missing (3968 of them zero), 5 records are extra. For example, 2019 E05000670 is missing.",
-		"local-election-ukip-votes-ward-2021-observations": "The statistics rows do not rebuild it: 2421 of 2497 records are missing (2421 of them zero). For example, 2021 E05000650 is missing.",
-		"local-election-ukip-votes-ward-2022-observations": "The statistics rows do not rebuild it: 3515 of 3531 records are missing (3515 of them zero). For example, 2022 E05000650 is missing.",
-		"local-election-ukip-votes-ward-2023-observations": "The statistics rows do not rebuild it: 4748 of 4792 records are missing (4748 of them zero). For example, 2023 E05000932 is missing.",
-		"local-election-ukip-votes-ward-2024-observations": "The statistics rows do not rebuild it: 1890 of 1903 records are missing (1890 of them zero). For example, 2024 E05000932 is missing.",
-		"local-election-ukip-votes-ward-2025-observations": "The statistics rows do not rebuild it: 511 of 513 records are missing (511 of them zero). For example, 2025 E05010728 is missing.",
 		"local-election-winning-party-ward-2016-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"local-election-winning-party-ward-2017-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"local-election-winning-party-ward-2018-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
