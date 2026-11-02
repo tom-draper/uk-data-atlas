@@ -58,10 +58,7 @@
 				"cars-or-vans": "none"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"car-availability-one-observations": {
 			"datasetId": "car-availability",
@@ -70,10 +67,7 @@
 				"cars-or-vans": "one"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"car-availability-three-or-more-observations": {
 			"datasetId": "car-availability",
@@ -82,10 +76,7 @@
 				"cars-or-vans": "three-or-more"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"car-availability-total-observations": {
 			"datasetId": "car-availability",
@@ -94,10 +85,7 @@
 				"cars-or-vans": "total"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"car-availability-two-observations": {
 			"datasetId": "car-availability",
@@ -106,10 +94,7 @@
 				"cars-or-vans": "two"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"claimant-count-16-to-24-observations": {
 			"datasetId": "claimant-count",
@@ -118,10 +103,7 @@
 				"age-group": "16-to-24"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2024-05-uk-bgc",
-				"2024-12-uk-bgc"
-			]
+			"areasIn": ["2024-05-uk-bgc", "2024-12-uk-bgc"]
 		},
 		"claimant-count-observations": {
 			"datasetId": "claimant-count",
@@ -130,10 +112,7 @@
 				"age-group": "16-plus"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2024-05-uk-bgc",
-				"2024-12-uk-bgc"
-			]
+			"areasIn": ["2024-05-uk-bgc", "2024-12-uk-bgc"]
 		},
 		"council-tax-observations": {
 			"datasetId": "council-tax",
@@ -178,10 +157,7 @@
 				"ethnic-group": "african"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-any-other-observations": {
 			"datasetId": "ethnicity",
@@ -190,10 +166,7 @@
 				"ethnic-group": "any-other-ethnic-group"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-arab-observations": {
 			"datasetId": "ethnicity",
@@ -202,10 +175,7 @@
 				"ethnic-group": "arab"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-bangladeshi-observations": {
 			"datasetId": "ethnicity",
@@ -214,10 +184,7 @@
 				"ethnic-group": "bangladeshi"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-caribbean-observations": {
 			"datasetId": "ethnicity",
@@ -226,10 +193,7 @@
 				"ethnic-group": "caribbean"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-chinese-observations": {
 			"datasetId": "ethnicity",
@@ -238,10 +202,7 @@
 				"ethnic-group": "chinese"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-gypsy-or-irish-traveller-observations": {
 			"datasetId": "ethnicity",
@@ -250,10 +211,7 @@
 				"ethnic-group": "gypsy-or-irish-traveller"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-indian-observations": {
 			"datasetId": "ethnicity",
@@ -262,10 +220,7 @@
 				"ethnic-group": "indian"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-irish-observations": {
 			"datasetId": "ethnicity",
@@ -274,10 +229,7 @@
 				"ethnic-group": "irish"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-other-asian-observations": {
 			"datasetId": "ethnicity",
@@ -286,10 +238,7 @@
 				"ethnic-group": "other-asian"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-other-black-observations": {
 			"datasetId": "ethnicity",
@@ -298,10 +247,7 @@
 				"ethnic-group": "other-black"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-other-mixed-observations": {
 			"datasetId": "ethnicity",
@@ -310,10 +256,7 @@
 				"ethnic-group": "other-mixed-or-multiple-ethnic-groups"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-other-white-observations": {
 			"datasetId": "ethnicity",
@@ -322,10 +265,7 @@
 				"ethnic-group": "other-white"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-pakistani-observations": {
 			"datasetId": "ethnicity",
@@ -334,10 +274,7 @@
 				"ethnic-group": "pakistani"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-roma-observations": {
 			"datasetId": "ethnicity",
@@ -346,10 +283,7 @@
 				"ethnic-group": "roma"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-white-and-asian-observations": {
 			"datasetId": "ethnicity",
@@ -358,10 +292,7 @@
 				"ethnic-group": "white-and-asian"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-white-and-black-african-observations": {
 			"datasetId": "ethnicity",
@@ -370,10 +301,7 @@
 				"ethnic-group": "white-and-black-african"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-white-and-black-caribbean-observations": {
 			"datasetId": "ethnicity",
@@ -382,10 +310,7 @@
 				"ethnic-group": "white-and-black-caribbean"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"ethnicity-white-british-observations": {
 			"datasetId": "ethnicity",
@@ -394,10 +319,7 @@
 				"ethnic-group": "english-welsh-scottish-northern-irish-or-british"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"gas-consumption-domestic-observations": {
 			"datasetId": "gas-consumption",
@@ -1018,9 +940,7 @@
 			"measure": "valid-votes",
 			"dimensions": {},
 			"geography": "constituency",
-			"plus": [
-				"rejected-ballots"
-			],
+			"plus": ["rejected-ballots"],
 			"ratio": {
 				"measure": "electorate",
 				"scale": 100,
@@ -1032,9 +952,7 @@
 			"measure": "valid-votes",
 			"dimensions": {},
 			"geography": "constituency",
-			"plus": [
-				"rejected-ballots"
-			],
+			"plus": ["rejected-ballots"],
 			"ratio": {
 				"measure": "electorate",
 				"scale": 100,
@@ -1537,9 +1455,7 @@
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			],
+			"sum": ["party"],
 			"servedCodes": {
 				"E05011348": {
 					"areaCode": "E05010919",
@@ -1592,9 +1508,7 @@
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			],
+			"sum": ["party"],
 			"servedCodes": {
 				"E05011348": {
 					"areaCode": "E05010919",
@@ -1647,9 +1561,7 @@
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			],
+			"sum": ["party"],
 			"servedCodes": {
 				"E05011348": {
 					"areaCode": "E05010919",
@@ -1702,9 +1614,7 @@
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			],
+			"sum": ["party"],
 			"servedCodes": {
 				"E05011348": {
 					"areaCode": "E05010919",
@@ -1757,45 +1667,35 @@
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			]
+			"sum": ["party"]
 		},
 		"local-election-effective-votes-ward-2022-observations": {
 			"datasetId": "local-election",
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			]
+			"sum": ["party"]
 		},
 		"local-election-effective-votes-ward-2023-observations": {
 			"datasetId": "local-election",
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			]
+			"sum": ["party"]
 		},
 		"local-election-effective-votes-ward-2024-observations": {
 			"datasetId": "local-election",
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			]
+			"sum": ["party"]
 		},
 		"local-election-effective-votes-ward-2025-observations": {
 			"datasetId": "local-election",
 			"measure": "party-votes",
 			"dimensions": {},
 			"geography": "ward",
-			"sum": [
-				"party"
-			]
+			"sum": ["party"]
 		},
 		"local-election-green-votes-ward-2016-observations": {
 			"datasetId": "local-election",
@@ -4054,9 +3954,7 @@
 				"sex": "all"
 			},
 			"geography": "localAuthority",
-			"sum": [
-				"age"
-			]
+			"sum": ["age"]
 		},
 		"population-observations": {
 			"datasetId": "population",
@@ -4065,9 +3963,7 @@
 				"sex": "all"
 			},
 			"geography": "ward",
-			"sum": [
-				"age"
-			]
+			"sum": ["age"]
 		},
 		"qualification-apprenticeship-observations": {
 			"datasetId": "qualification",
@@ -4076,10 +3972,7 @@
 				"highest-qualification": "apprenticeship"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"qualification-level-1-observations": {
 			"datasetId": "qualification",
@@ -4088,10 +3981,7 @@
 				"highest-qualification": "level-1"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"qualification-level-2-observations": {
 			"datasetId": "qualification",
@@ -4100,10 +3990,7 @@
 				"highest-qualification": "level-2"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"qualification-level-3-observations": {
 			"datasetId": "qualification",
@@ -4112,10 +3999,7 @@
 				"highest-qualification": "level-3"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"qualification-level-4-plus-observations": {
 			"datasetId": "qualification",
@@ -4124,10 +4008,7 @@
 				"highest-qualification": "level-4-plus"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"qualification-none-observations": {
 			"datasetId": "qualification",
@@ -4136,10 +4017,7 @@
 				"highest-qualification": "none"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"qualification-other-observations": {
 			"datasetId": "qualification",
@@ -4148,10 +4026,7 @@
 				"highest-qualification": "other"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"qualification-total-observations": {
 			"datasetId": "qualification",
@@ -4160,10 +4035,7 @@
 				"highest-qualification": "total"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"road-collisions-fatal-local-authority-2024-observations": {
 			"datasetId": "road-collisions",
@@ -4308,10 +4180,7 @@
 				"travel-method": "bicycle"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-car-observations": {
 			"datasetId": "travel-to-work",
@@ -4320,10 +4189,7 @@
 				"travel-method": "car"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-home-observations": {
 			"datasetId": "travel-to-work",
@@ -4332,10 +4198,7 @@
 				"travel-method": "home"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-motorcycle-observations": {
 			"datasetId": "travel-to-work",
@@ -4344,10 +4207,7 @@
 				"travel-method": "motorcycle"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-on-foot-observations": {
 			"datasetId": "travel-to-work",
@@ -4356,10 +4216,7 @@
 				"travel-method": "on-foot"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-other-observations": {
 			"datasetId": "travel-to-work",
@@ -4368,10 +4225,7 @@
 				"travel-method": "other"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-public-transport-observations": {
 			"datasetId": "travel-to-work",
@@ -4380,10 +4234,7 @@
 				"travel-method": "public-transport"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-taxi-observations": {
 			"datasetId": "travel-to-work",
@@ -4392,10 +4243,7 @@
 				"travel-method": "taxi"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"travel-to-work-total-observations": {
 			"datasetId": "travel-to-work",
@@ -4404,10 +4252,7 @@
 				"travel-method": "total"
 			},
 			"geography": "localAuthority",
-			"areasIn": [
-				"2023-05-uk-bgc-v2",
-				"2023-12-uk-bgc"
-			]
+			"areasIn": ["2023-05-uk-bgc-v2", "2023-12-uk-bgc"]
 		},
 		"unemployment-level-localAuthority-2019-observations": {
 			"datasetId": "unemployment",
@@ -4418,10 +4263,7 @@
 				"measure": "unemployed-people-interval",
 				"digits": 1
 			},
-			"areasIn": [
-				"2019-04-uk-bgc",
-				"2019-12-uk-bgc"
-			]
+			"areasIn": ["2019-04-uk-bgc", "2019-12-uk-bgc"]
 		},
 		"unemployment-level-localAuthority-2021-observations": {
 			"datasetId": "unemployment",
@@ -4432,9 +4274,7 @@
 				"measure": "unemployed-people-interval",
 				"digits": 1
 			},
-			"areasIn": [
-				"2021-12-uk-bgc"
-			]
+			"areasIn": ["2021-12-uk-bgc"]
 		},
 		"unemployment-rate-localAuthority-2019-observations": {
 			"datasetId": "unemployment",
@@ -4445,10 +4285,7 @@
 				"measure": "unemployment-rate-interval",
 				"digits": 1
 			},
-			"areasIn": [
-				"2019-04-uk-bgc",
-				"2019-12-uk-bgc"
-			]
+			"areasIn": ["2019-04-uk-bgc", "2019-12-uk-bgc"]
 		},
 		"unemployment-rate-localAuthority-2021-observations": {
 			"datasetId": "unemployment",
@@ -4459,9 +4296,7 @@
 				"measure": "unemployment-rate-interval",
 				"digits": 1
 			},
-			"areasIn": [
-				"2021-12-uk-bgc"
-			]
+			"areasIn": ["2021-12-uk-bgc"]
 		},
 		"waste-observations": {
 			"datasetId": "waste",
