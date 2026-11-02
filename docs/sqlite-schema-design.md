@@ -848,6 +848,49 @@ area_releases.position`, which `series.release_id` already references), then
   `UNSTORED_DATASETS` is empty. A type listed there still keeps its payload;
   tests cover that path with a fixture type.
 
+### API measures and dimensions (2026-11-02)
+
+The API now speaks this section's model: a measure, its dimensions and their
+members, rather than one id per breakdown.
+
+- **Mapping, not a table yet.** `services/api/config/measure-dimensions.json`
+  maps each of the 228 API catalogue ids onto a `measure` slug and members,
+  with a `datasetId` where two datasets publish the same measure and members
+  (general and local election votes). It plays the part `measure_alias` was
+  meant to; the data catalogue build refuses an id with no mapping. The 228
+  ids become 51 measures; 205 of them are now deprecated aliases.
+- **Vocabulary from these tables.** Labels, parents and order come from
+  `measure`, `dimension` and `dimension_member`, copied to
+  `services/api/config/statistics-vocabulary.json` by
+  `pnpm --dir services/api generate:statistics-vocabulary`; a built test
+  fails while the copy and the tables differ. A dimension's total is the one
+  member every other is part of (`offence=total`, `sex=all`).
+- **What the API holds that these tables do not.** Three measures
+  (`winning-party`, `effective-votes`, `population-density`), four
+  dimensions (`age-band`, `economic-activity`, `household-composition`,
+  `residence-type`, from census tables TS007a, TS066, TS003 and TS001) and
+  four finer `tenure` members are declared in the mapping, each with a
+  reason, until their series are stored here.
+- **Read path.** An API observation artifact is read from `observation` rows
+  only when they rebuild it byte for byte, so values, statuses, intervals,
+  periods and areas are unchanged. `services/api/config/statistics-read-path.json`
+  names each artifact's series (dataset, measure, members, geography, and
+  any dimension summed over, such as `age` for population) and why each
+  other artifact stays on `observations`. On the 2026-10-31 build 112 of 322
+  artifacts moved. The rest differ, and the differences are reported rather
+  than smoothed over: crime is published here on local authorities but the
+  API serves community safety partnerships; election rows here leave out the
+  zero votes the API lists for parties that did not stand, and four to nine
+  published local election values per year are missing; house prices lack
+  588 values; unemployment stores a half-width where the API serves the
+  published bounds; air-quality area means are `observed` here but `derived`
+  in the API; vote share, turnout and winner are not stored for general
+  elections; and census LSOA and MSOA tables are read whole. So the
+  `observation_*` tables and their writer stay until these are stored here.
+- **Periods.** A catalogue period reads the statistics period with the same
+  label, or the one label that extends it: `2021` is `2021-census`, an
+  election year is its polling day.
+
 ### Catalogue datasets as configuration (2026-10-27)
 
 Every catalogue dataset whose records are numbers keyed by area code is stored

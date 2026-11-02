@@ -119,19 +119,23 @@ questions as they occur to us. Status is from the local run on 2026-09-29,
 updated against a local build on 2026-09-30. Later implementation findings are
 identified below; they do not represent a fresh run of every original question.
 
-| Question                                           | Status         | Notes                                                                                                                                                                                                              |
-| -------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| What's the population of North Wales?              | ✅ one request | `/data/population/value?place=north wales` gives 697,115 (2024) and lists the other "North Wales" places it could have meant.                                                                                      |
-| Which measures are about house prices?             | ✅ one request | `/measures?q=house prices` finds `house-price-median`, and `house-prices` is accepted wherever the id is. `q=deprivation` lists all four national indices rather than choosing one.                                |
-| I have 100 LAD codes; which boundary set are they? | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. The codes can be POSTed as CSV or JSON, and releases that match equally well are named in `likely.tiedWith`.                                        |
-| What replaced Allerdale?                           | ✅             | `history` gives Cumberland (E06000063), April 2023.                                                                                                                                                                |
-| Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                                        |
-| What's at this postcode?                           | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                                              |
-| What's the history of Lancashire?                  | ⚠️ partial     | Ceremonial and historic definitions, dated membership, alternative definitions and membership comparisons are implemented. Earlier boundary vintages and legally dated reorganisation events remain separate work. |
-| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. All 104 releases download whole; four that are not coverages have no tiles and download at full detail only.                       |
-| Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                                 |
-| Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Supplied counts can be POSTed to a named crosswalk. This particular ward-to-constituency request still depends on a published crosswalk for the exact releases.                                                    |
-| What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
+| Question                                               | Status         | Notes                                                                                                                                                                                                              |
+| ------------------------------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| What's the population of North Wales?                  | ✅ one request | `/data/population/value?place=north wales` gives 697,115 (2024) and lists the other "North Wales" places it could have meant.                                                                                      |
+| Which measures are about house prices?                 | ✅ one request | `/measures?q=house prices` finds `house-price-median`, and `house-prices` is accepted wherever the id is. `q=deprivation` lists all four national indices rather than choosing one.                                |
+| I have 100 LAD codes; which boundary set are they?     | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. The codes can be POSTed as CSV or JSON, and releases that match equally well are named in `likely.tiedWith`.                                        |
+| What replaced Allerdale?                               | ✅             | `history` gives Cumberland (E06000063), April 2023.                                                                                                                                                                |
+| Which wards are in Manchester?                         | ✅             | `children`.                                                                                                                                                                                                        |
+| What's at this postcode?                               | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                                              |
+| What's the history of Lancashire?                      | ⚠️ partial     | Ceremonial and historic definitions, dated membership, alternative definitions and membership comparisons are implemented. Earlier boundary vintages and legally dated reorganisation events remain separate work. |
+| Give me all 2019 ward boundaries as one file           | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. All 104 releases download whole; four that are not coverages have no tiles and download at full detail only.                       |
+| Map my CSV of 2019 ward values                         | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                                 |
+| Convert my 2019 ward counts to 2024 constituencies     | ⚠️             | Supplied counts can be POSTed to a named crosswalk. This particular ward-to-constituency request still depends on a published crosswalk for the exact releases.                                                    |
+| What is Labour's vote share in Holborn and St Pancras? | ✅ one request | `/data/party-vote-share/value?place=constituency/E14001290&party=lab`. `/measures?q=Labour vote share` finds the measure and names `party=lab` in `matchedMembers`.                                                |
+| Every crime type for a place                           | ✅ one request | `/data/recorded-crimes/value?place=...&offence=*` answers all 23 offence groups as `breakdown`; with no `offence`, the total, stated in `defaults`.                                                                |
+| Ethnic groups in an LSOA                               | ✅ one request | `/data/usual-residents/value?place=lsoa/E01000001&ethnic-group=*`. Census tables are perturbed separately, so the groups need not add to the published total exactly.                                              |
+| Does `crime-burglary` still work?                      | ✅             | Every older encoded id is a deprecated alias, read as its measure and members and named in `resolvedFrom`.                                                                                                         |
+| What were the boundaries of X in 2005?                 | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
 
 ## UX rules
 
@@ -153,6 +157,17 @@ identified below; they do not represent a fresh run of every original question.
    anything a person might type, `period` for observation time. Done for
    `place`: every data route takes it in place of `areaCode`, `locationId`,
    `targetCode` and `regionCode`. Done: `codeYear` names the source partition's area-code vintage. `release` names a boundary release.
+   Done (2026-11-02): a `measure` is the thing measured, and its breakdowns
+   are `dimensions` with members, as the statistics tables hold them:
+   `recorded-crimes` with `offence=burglary`, `party-vote-share` with
+   `party=lab`. Neither a breakdown, a geography nor a year is part of a
+   measure id. A dimension left out takes its total where one is published,
+   stated in `defaults`; `*` or a list answers several members as
+   `breakdown`. The 205 older ids that encoded a breakdown, such as
+   `crime-burglary`, are deprecated aliases with no sunset date, listed in
+   `DeprecatedMeasureAlias` and named in `resolvedFrom` when used.
+   `services/api/config/measure-dimensions.json` maps every catalogue id, and
+   the data build refuses an unmapped one.
 5. **Accept what people have.** Wherever an area is expected, accept a code,
    a name, a postcode or a named location, and resolve it the same way
    `/data/{measure}/value?place=` does, reporting the other matches.
@@ -379,7 +394,15 @@ cost:
 - **Observations as rows.** Store each observation as a row in
   `atlas.sqlite` (dataset, measure, area, release, period, value) instead of
   one JSON payload per dataset, so most new datasets become configuration
-  rather than compiler code. Started with one pilot dataset.
+  rather than compiler code. Started with one pilot dataset. The API now
+  reads 112 of its 322 observation artifacts from the statistics rows, each
+  only because the rows rebuild it byte for byte
+  (`config/statistics-read-path.json`, which also says why each other
+  artifact stays on the observation tables). Crime (community safety
+  partnerships), election results, census LSOA and MSOA tables, unemployment
+  intervals, air-quality area means, house prices and population density are
+  still read from the observation tables, so those tables and their writer
+  stay until the statistics rows hold them.
 - **The data build outside the API.** Build code runs in `pipeline/` and
   shared packages. The API reads the deployed SQLite cache without building it,
   and the website reads shared release assets. See [the move plan](../../docs/data-pipeline-move.md).
