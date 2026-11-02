@@ -8,6 +8,9 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.ambiguous_place_problem import AmbiguousPlaceProblem
 from ...models.envelope import Envelope
+from ...models.get_source_exact_measure_series_dimensions import (
+    GetSourceExactMeasureSeriesDimensions,
+)
 from ...models.get_source_exact_measure_series_geography import (
     GetSourceExactMeasureSeriesGeography,
 )
@@ -18,6 +21,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     measure_id: str,
     *,
+    dimensions: GetSourceExactMeasureSeriesDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     geography: GetSourceExactMeasureSeriesGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -26,6 +30,12 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
 
     params["place"] = place
 
@@ -108,6 +118,7 @@ def sync_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureSeriesDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     geography: GetSourceExactMeasureSeriesGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -116,7 +127,11 @@ def sync_detailed(
 ) -> Response[AmbiguousPlaceProblem | Envelope | Problem]:
     """Retrieve a source-exact or reviewed derived time series
 
-     Returns all published observations for one area code within one source geography and code vintage.
+     A measure with dimensions answers for the members its filters name, such as `?offence=burglary`; a
+    dimension left out takes its total where one is published, and several members or `*` answer one
+    `breakdown` entry per series, as `/value` does.
+
+    Returns all published observations for one area code within one source geography and code vintage.
     `place` accepts an area name, code or reference. With no source partition, the current published
     partition for that place is selected and returned as `defaults`. Without `to`, the result is source-
     exact: it does not select a boundary release, convert values or aggregate them. With `to`, the
@@ -126,6 +141,7 @@ def sync_detailed(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureSeriesDimensions | Unset):
         place (str | Unset):
         geography (GetSourceExactMeasureSeriesGeography | Unset):
         code_year (int | Unset):
@@ -142,6 +158,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         place=place,
         geography=geography,
         code_year=code_year,
@@ -160,6 +177,7 @@ def sync(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureSeriesDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     geography: GetSourceExactMeasureSeriesGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -168,7 +186,11 @@ def sync(
 ) -> AmbiguousPlaceProblem | Envelope | Problem | None:
     """Retrieve a source-exact or reviewed derived time series
 
-     Returns all published observations for one area code within one source geography and code vintage.
+     A measure with dimensions answers for the members its filters name, such as `?offence=burglary`; a
+    dimension left out takes its total where one is published, and several members or `*` answer one
+    `breakdown` entry per series, as `/value` does.
+
+    Returns all published observations for one area code within one source geography and code vintage.
     `place` accepts an area name, code or reference. With no source partition, the current published
     partition for that place is selected and returned as `defaults`. Without `to`, the result is source-
     exact: it does not select a boundary release, convert values or aggregate them. With `to`, the
@@ -178,6 +200,7 @@ def sync(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureSeriesDimensions | Unset):
         place (str | Unset):
         geography (GetSourceExactMeasureSeriesGeography | Unset):
         code_year (int | Unset):
@@ -195,6 +218,7 @@ def sync(
     return sync_detailed(
         measure_id=measure_id,
         client=client,
+        dimensions=dimensions,
         place=place,
         geography=geography,
         code_year=code_year,
@@ -207,6 +231,7 @@ async def asyncio_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureSeriesDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     geography: GetSourceExactMeasureSeriesGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -215,7 +240,11 @@ async def asyncio_detailed(
 ) -> Response[AmbiguousPlaceProblem | Envelope | Problem]:
     """Retrieve a source-exact or reviewed derived time series
 
-     Returns all published observations for one area code within one source geography and code vintage.
+     A measure with dimensions answers for the members its filters name, such as `?offence=burglary`; a
+    dimension left out takes its total where one is published, and several members or `*` answer one
+    `breakdown` entry per series, as `/value` does.
+
+    Returns all published observations for one area code within one source geography and code vintage.
     `place` accepts an area name, code or reference. With no source partition, the current published
     partition for that place is selected and returned as `defaults`. Without `to`, the result is source-
     exact: it does not select a boundary release, convert values or aggregate them. With `to`, the
@@ -225,6 +254,7 @@ async def asyncio_detailed(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureSeriesDimensions | Unset):
         place (str | Unset):
         geography (GetSourceExactMeasureSeriesGeography | Unset):
         code_year (int | Unset):
@@ -241,6 +271,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         place=place,
         geography=geography,
         code_year=code_year,
@@ -257,6 +288,7 @@ async def asyncio(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureSeriesDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     geography: GetSourceExactMeasureSeriesGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -265,7 +297,11 @@ async def asyncio(
 ) -> AmbiguousPlaceProblem | Envelope | Problem | None:
     """Retrieve a source-exact or reviewed derived time series
 
-     Returns all published observations for one area code within one source geography and code vintage.
+     A measure with dimensions answers for the members its filters name, such as `?offence=burglary`; a
+    dimension left out takes its total where one is published, and several members or `*` answer one
+    `breakdown` entry per series, as `/value` does.
+
+    Returns all published observations for one area code within one source geography and code vintage.
     `place` accepts an area name, code or reference. With no source partition, the current published
     partition for that place is selected and returned as `defaults`. Without `to`, the result is source-
     exact: it does not select a boundary release, convert values or aggregate them. With `to`, the
@@ -275,6 +311,7 @@ async def asyncio(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureSeriesDimensions | Unset):
         place (str | Unset):
         geography (GetSourceExactMeasureSeriesGeography | Unset):
         code_year (int | Unset):
@@ -293,6 +330,7 @@ async def asyncio(
         await asyncio_detailed(
             measure_id=measure_id,
             client=client,
+            dimensions=dimensions,
             place=place,
             geography=geography,
             code_year=code_year,

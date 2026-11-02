@@ -5,6 +5,9 @@ from .aggregation_not_supported_problem_code import AggregationNotSupportedProbl
 from .aggregation_not_supported_problem_status import (
     AggregationNotSupportedProblemStatus,
 )
+from .ambiguous_dimension_problem import AmbiguousDimensionProblem
+from .ambiguous_dimension_problem_code import AmbiguousDimensionProblemCode
+from .ambiguous_dimension_problem_status import AmbiguousDimensionProblemStatus
 from .ambiguous_place_problem import AmbiguousPlaceProblem
 from .ambiguous_place_problem_code import AmbiguousPlaceProblemCode
 from .ambiguous_place_problem_status import AmbiguousPlaceProblemStatus
@@ -302,14 +305,25 @@ from .compare_boundary_releases_response_200_meta import (
 from .compare_named_location_membership_response_200 import (
     CompareNamedLocationMembershipResponse200,
 )
+from .compare_source_exact_measure_areas_dimensions import (
+    CompareSourceExactMeasureAreasDimensions,
+)
 from .compare_source_exact_measure_areas_geography import (
     CompareSourceExactMeasureAreasGeography,
+)
+from .conflicting_dimension_filter_problem import ConflictingDimensionFilterProblem
+from .conflicting_dimension_filter_problem_code import (
+    ConflictingDimensionFilterProblemCode,
+)
+from .conflicting_dimension_filter_problem_status import (
+    ConflictingDimensionFilterProblemStatus,
 )
 from .conversion_not_available_problem import ConversionNotAvailableProblem
 from .conversion_not_available_problem_code import ConversionNotAvailableProblemCode
 from .conversion_not_available_problem_status import ConversionNotAvailableProblemStatus
 from .convert_coordinate_crs import ConvertCoordinateCrs
 from .convert_coordinate_to import ConvertCoordinateTo
+from .convert_source_exact_measure_dimensions import ConvertSourceExactMeasureDimensions
 from .convert_source_exact_measure_geography import ConvertSourceExactMeasureGeography
 from .convert_supplied_counts_json_body import ConvertSuppliedCountsJsonBody
 from .convert_supplied_counts_json_body_rows_item import (
@@ -387,6 +401,7 @@ from .crosswalk_weighting_type_2_normalisation import (
     CrosswalkWeightingType2Normalisation,
 )
 from .crosswalk_weighting_type_2_status import CrosswalkWeightingType2Status
+from .deprecated_measure_alias import DeprecatedMeasureAlias
 from .download_bulk_export_format import DownloadBulkExportFormat
 from .download_bulk_export_response_200 import DownloadBulkExportResponse200
 from .download_bulk_lookup_format import DownloadBulkLookupFormat
@@ -518,7 +533,9 @@ from .get_dataset_response_200_meta import GetDatasetResponse200Meta
 from .get_evidence_document_response_200 import GetEvidenceDocumentResponse200
 from .get_map_resource_features_format import GetMapResourceFeaturesFormat
 from .get_map_resource_features_tier import GetMapResourceFeaturesTier
+from .get_map_resource_join_dimensions import GetMapResourceJoinDimensions
 from .get_map_resource_join_format import GetMapResourceJoinFormat
+from .get_measure_observations_dimensions import GetMeasureObservationsDimensions
 from .get_measure_observations_format import GetMeasureObservationsFormat
 from .get_measure_observations_geography import GetMeasureObservationsGeography
 from .get_measure_observations_include import GetMeasureObservationsInclude
@@ -531,13 +548,54 @@ from .get_measure_response_200_data_aggregation import (
 from .get_measure_response_200_data_availability import (
     GetMeasureResponse200DataAvailability,
 )
+from .get_measure_response_200_data_defaults import GetMeasureResponse200DataDefaults
 from .get_measure_response_200_data_derived_from import (
     GetMeasureResponse200DataDerivedFrom,
 )
+from .get_measure_response_200_data_dimensions_item import (
+    GetMeasureResponse200DataDimensionsItem,
+)
+from .get_measure_response_200_data_dimensions_item_members_item import (
+    GetMeasureResponse200DataDimensionsItemMembersItem,
+)
+from .get_measure_response_200_data_documents import GetMeasureResponse200DataDocuments
 from .get_measure_response_200_data_elsewhere_item import (
     GetMeasureResponse200DataElsewhereItem,
 )
 from .get_measure_response_200_data_links import GetMeasureResponse200DataLinks
+from .get_measure_response_200_data_matched_members_item import (
+    GetMeasureResponse200DataMatchedMembersItem,
+)
+from .get_measure_response_200_data_resolved_from import (
+    GetMeasureResponse200DataResolvedFrom,
+)
+from .get_measure_response_200_data_resolved_from_dimensions import (
+    GetMeasureResponse200DataResolvedFromDimensions,
+)
+from .get_measure_response_200_data_series_item import (
+    GetMeasureResponse200DataSeriesItem,
+)
+from .get_measure_response_200_data_series_item_dimensions import (
+    GetMeasureResponse200DataSeriesItemDimensions,
+)
+from .get_measure_response_200_data_series_item_documents import (
+    GetMeasureResponse200DataSeriesItemDocuments,
+)
+from .get_measure_response_200_data_series_item_sources_item import (
+    GetMeasureResponse200DataSeriesItemSourcesItem,
+)
+from .get_measure_response_200_data_series_item_sources_item_coverage import (
+    GetMeasureResponse200DataSeriesItemSourcesItemCoverage,
+)
+from .get_measure_response_200_data_series_item_sources_item_coverage_kind import (
+    GetMeasureResponse200DataSeriesItemSourcesItemCoverageKind,
+)
+from .get_measure_response_200_data_series_item_sources_item_source_geography import (
+    GetMeasureResponse200DataSeriesItemSourcesItemSourceGeography,
+)
+from .get_measure_response_200_data_series_item_uncertainty import (
+    GetMeasureResponse200DataSeriesItemUncertainty,
+)
 from .get_measure_response_200_data_sources_item import (
     GetMeasureResponse200DataSourcesItem,
 )
@@ -558,6 +616,7 @@ from .get_measure_response_200_data_unit_definition import (
 )
 from .get_measure_response_200_data_value_kind import GetMeasureResponse200DataValueKind
 from .get_measure_response_200_meta import GetMeasureResponse200Meta
+from .get_measure_value_for_place_dimensions import GetMeasureValueForPlaceDimensions
 from .get_named_location_alternatives_response_200 import (
     GetNamedLocationAlternativesResponse200,
 )
@@ -569,11 +628,20 @@ from .get_named_location_members_response_200 import GetNamedLocationMembersResp
 from .get_named_location_parents_response_200 import GetNamedLocationParentsResponse200
 from .get_named_location_response_200 import GetNamedLocationResponse200
 from .get_source_exact_measure_change_by import GetSourceExactMeasureChangeBy
+from .get_source_exact_measure_change_dimensions import (
+    GetSourceExactMeasureChangeDimensions,
+)
 from .get_source_exact_measure_change_order import GetSourceExactMeasureChangeOrder
+from .get_source_exact_measure_rankings_dimensions import (
+    GetSourceExactMeasureRankingsDimensions,
+)
 from .get_source_exact_measure_rankings_geography import (
     GetSourceExactMeasureRankingsGeography,
 )
 from .get_source_exact_measure_rankings_order import GetSourceExactMeasureRankingsOrder
+from .get_source_exact_measure_series_dimensions import (
+    GetSourceExactMeasureSeriesDimensions,
+)
 from .get_source_exact_measure_series_geography import (
     GetSourceExactMeasureSeriesGeography,
 )
@@ -643,14 +711,59 @@ from .list_measures_response_200_data_item_aggregation import (
 from .list_measures_response_200_data_item_availability import (
     ListMeasuresResponse200DataItemAvailability,
 )
+from .list_measures_response_200_data_item_defaults import (
+    ListMeasuresResponse200DataItemDefaults,
+)
 from .list_measures_response_200_data_item_derived_from import (
     ListMeasuresResponse200DataItemDerivedFrom,
+)
+from .list_measures_response_200_data_item_dimensions_item import (
+    ListMeasuresResponse200DataItemDimensionsItem,
+)
+from .list_measures_response_200_data_item_dimensions_item_members_item import (
+    ListMeasuresResponse200DataItemDimensionsItemMembersItem,
+)
+from .list_measures_response_200_data_item_documents import (
+    ListMeasuresResponse200DataItemDocuments,
 )
 from .list_measures_response_200_data_item_elsewhere_item import (
     ListMeasuresResponse200DataItemElsewhereItem,
 )
 from .list_measures_response_200_data_item_links import (
     ListMeasuresResponse200DataItemLinks,
+)
+from .list_measures_response_200_data_item_matched_members_item import (
+    ListMeasuresResponse200DataItemMatchedMembersItem,
+)
+from .list_measures_response_200_data_item_resolved_from import (
+    ListMeasuresResponse200DataItemResolvedFrom,
+)
+from .list_measures_response_200_data_item_resolved_from_dimensions import (
+    ListMeasuresResponse200DataItemResolvedFromDimensions,
+)
+from .list_measures_response_200_data_item_series_item import (
+    ListMeasuresResponse200DataItemSeriesItem,
+)
+from .list_measures_response_200_data_item_series_item_dimensions import (
+    ListMeasuresResponse200DataItemSeriesItemDimensions,
+)
+from .list_measures_response_200_data_item_series_item_documents import (
+    ListMeasuresResponse200DataItemSeriesItemDocuments,
+)
+from .list_measures_response_200_data_item_series_item_sources_item import (
+    ListMeasuresResponse200DataItemSeriesItemSourcesItem,
+)
+from .list_measures_response_200_data_item_series_item_sources_item_coverage import (
+    ListMeasuresResponse200DataItemSeriesItemSourcesItemCoverage,
+)
+from .list_measures_response_200_data_item_series_item_sources_item_coverage_kind import (
+    ListMeasuresResponse200DataItemSeriesItemSourcesItemCoverageKind,
+)
+from .list_measures_response_200_data_item_series_item_sources_item_source_geography import (
+    ListMeasuresResponse200DataItemSeriesItemSourcesItemSourceGeography,
+)
+from .list_measures_response_200_data_item_series_item_uncertainty import (
+    ListMeasuresResponse200DataItemSeriesItemUncertainty,
 )
 from .list_measures_response_200_data_item_sources_item import (
     ListMeasuresResponse200DataItemSourcesItem,
@@ -747,6 +860,9 @@ from .nearest_areas_relation import NearestAreasRelation
 from .nearest_areas_results_item import NearestAreasResultsItem
 from .nearest_areas_results_item_nearest_item import NearestAreasResultsItemNearestItem
 from .nearest_areas_results_item_status import NearestAreasResultsItemStatus
+from .no_matching_series_problem import NoMatchingSeriesProblem
+from .no_matching_series_problem_code import NoMatchingSeriesProblemCode
+from .no_matching_series_problem_status import NoMatchingSeriesProblemStatus
 from .no_release_for_date_problem import NoReleaseForDateProblem
 from .no_release_for_date_problem_code import NoReleaseForDateProblemCode
 from .no_release_for_date_problem_status import NoReleaseForDateProblemStatus
@@ -969,6 +1085,12 @@ from .tile_json_envelope_data_vector_layers_item import (
 )
 from .translate_area_code_purpose import TranslateAreaCodePurpose
 from .translate_area_code_response_200 import TranslateAreaCodeResponse200
+from .unknown_dimension_member_problem import UnknownDimensionMemberProblem
+from .unknown_dimension_member_problem_code import UnknownDimensionMemberProblemCode
+from .unknown_dimension_member_problem_status import UnknownDimensionMemberProblemStatus
+from .unknown_dimension_problem import UnknownDimensionProblem
+from .unknown_dimension_problem_code import UnknownDimensionProblemCode
+from .unknown_dimension_problem_status import UnknownDimensionProblemStatus
 from .unknown_query_parameter_problem import UnknownQueryParameterProblem
 from .unknown_query_parameter_problem_code import UnknownQueryParameterProblemCode
 from .unknown_query_parameter_problem_status import UnknownQueryParameterProblemStatus
@@ -1003,6 +1125,9 @@ __all__ = (
     "AggregationNotSupportedProblem",
     "AggregationNotSupportedProblemCode",
     "AggregationNotSupportedProblemStatus",
+    "AmbiguousDimensionProblem",
+    "AmbiguousDimensionProblemCode",
+    "AmbiguousDimensionProblemStatus",
     "AmbiguousPlaceProblem",
     "AmbiguousPlaceProblemCode",
     "AmbiguousPlaceProblemStatus",
@@ -1174,12 +1299,17 @@ __all__ = (
     "CompareBoundaryReleasesResponse200DataTo",
     "CompareBoundaryReleasesResponse200Meta",
     "CompareNamedLocationMembershipResponse200",
+    "CompareSourceExactMeasureAreasDimensions",
     "CompareSourceExactMeasureAreasGeography",
+    "ConflictingDimensionFilterProblem",
+    "ConflictingDimensionFilterProblemCode",
+    "ConflictingDimensionFilterProblemStatus",
     "ConversionNotAvailableProblem",
     "ConversionNotAvailableProblemCode",
     "ConversionNotAvailableProblemStatus",
     "ConvertCoordinateCrs",
     "ConvertCoordinateTo",
+    "ConvertSourceExactMeasureDimensions",
     "ConvertSourceExactMeasureGeography",
     "ConvertSuppliedCountsJsonBody",
     "ConvertSuppliedCountsJsonBodyRowsItem",
@@ -1227,6 +1357,7 @@ __all__ = (
     "CrosswalkWeightingType2Basis",
     "CrosswalkWeightingType2Normalisation",
     "CrosswalkWeightingType2Status",
+    "DeprecatedMeasureAlias",
     "DownloadBulkExportFormat",
     "DownloadBulkExportResponse200",
     "DownloadBulkLookupFormat",
@@ -1316,7 +1447,9 @@ __all__ = (
     "GetEvidenceDocumentResponse200",
     "GetMapResourceFeaturesFormat",
     "GetMapResourceFeaturesTier",
+    "GetMapResourceJoinDimensions",
     "GetMapResourceJoinFormat",
+    "GetMeasureObservationsDimensions",
     "GetMeasureObservationsFormat",
     "GetMeasureObservationsGeography",
     "GetMeasureObservationsInclude",
@@ -1325,9 +1458,24 @@ __all__ = (
     "GetMeasureResponse200Data",
     "GetMeasureResponse200DataAggregation",
     "GetMeasureResponse200DataAvailability",
+    "GetMeasureResponse200DataDefaults",
     "GetMeasureResponse200DataDerivedFrom",
+    "GetMeasureResponse200DataDimensionsItem",
+    "GetMeasureResponse200DataDimensionsItemMembersItem",
+    "GetMeasureResponse200DataDocuments",
     "GetMeasureResponse200DataElsewhereItem",
     "GetMeasureResponse200DataLinks",
+    "GetMeasureResponse200DataMatchedMembersItem",
+    "GetMeasureResponse200DataResolvedFrom",
+    "GetMeasureResponse200DataResolvedFromDimensions",
+    "GetMeasureResponse200DataSeriesItem",
+    "GetMeasureResponse200DataSeriesItemDimensions",
+    "GetMeasureResponse200DataSeriesItemDocuments",
+    "GetMeasureResponse200DataSeriesItemSourcesItem",
+    "GetMeasureResponse200DataSeriesItemSourcesItemCoverage",
+    "GetMeasureResponse200DataSeriesItemSourcesItemCoverageKind",
+    "GetMeasureResponse200DataSeriesItemSourcesItemSourceGeography",
+    "GetMeasureResponse200DataSeriesItemUncertainty",
     "GetMeasureResponse200DataSourcesItem",
     "GetMeasureResponse200DataSourcesItemCoverage",
     "GetMeasureResponse200DataSourcesItemCoverageKind",
@@ -1336,6 +1484,7 @@ __all__ = (
     "GetMeasureResponse200DataUnitDefinition",
     "GetMeasureResponse200DataValueKind",
     "GetMeasureResponse200Meta",
+    "GetMeasureValueForPlaceDimensions",
     "GetNamedLocationAlternativesResponse200",
     "GetNamedLocationGeometryResponse200",
     "GetNamedLocationIncludeItem",
@@ -1343,9 +1492,12 @@ __all__ = (
     "GetNamedLocationParentsResponse200",
     "GetNamedLocationResponse200",
     "GetSourceExactMeasureChangeBy",
+    "GetSourceExactMeasureChangeDimensions",
     "GetSourceExactMeasureChangeOrder",
+    "GetSourceExactMeasureRankingsDimensions",
     "GetSourceExactMeasureRankingsGeography",
     "GetSourceExactMeasureRankingsOrder",
+    "GetSourceExactMeasureSeriesDimensions",
     "GetSourceExactMeasureSeriesGeography",
     "GetTerrainElevationPointInterpolation",
     "IncompatibleGeometryProblem",
@@ -1383,9 +1535,24 @@ __all__ = (
     "ListMeasuresResponse200DataItem",
     "ListMeasuresResponse200DataItemAggregation",
     "ListMeasuresResponse200DataItemAvailability",
+    "ListMeasuresResponse200DataItemDefaults",
     "ListMeasuresResponse200DataItemDerivedFrom",
+    "ListMeasuresResponse200DataItemDimensionsItem",
+    "ListMeasuresResponse200DataItemDimensionsItemMembersItem",
+    "ListMeasuresResponse200DataItemDocuments",
     "ListMeasuresResponse200DataItemElsewhereItem",
     "ListMeasuresResponse200DataItemLinks",
+    "ListMeasuresResponse200DataItemMatchedMembersItem",
+    "ListMeasuresResponse200DataItemResolvedFrom",
+    "ListMeasuresResponse200DataItemResolvedFromDimensions",
+    "ListMeasuresResponse200DataItemSeriesItem",
+    "ListMeasuresResponse200DataItemSeriesItemDimensions",
+    "ListMeasuresResponse200DataItemSeriesItemDocuments",
+    "ListMeasuresResponse200DataItemSeriesItemSourcesItem",
+    "ListMeasuresResponse200DataItemSeriesItemSourcesItemCoverage",
+    "ListMeasuresResponse200DataItemSeriesItemSourcesItemCoverageKind",
+    "ListMeasuresResponse200DataItemSeriesItemSourcesItemSourceGeography",
+    "ListMeasuresResponse200DataItemSeriesItemUncertainty",
     "ListMeasuresResponse200DataItemSourcesItem",
     "ListMeasuresResponse200DataItemSourcesItemCoverage",
     "ListMeasuresResponse200DataItemSourcesItemCoverageKind",
@@ -1453,6 +1620,9 @@ __all__ = (
     "NearestAreasResultsItem",
     "NearestAreasResultsItemNearestItem",
     "NearestAreasResultsItemStatus",
+    "NoMatchingSeriesProblem",
+    "NoMatchingSeriesProblemCode",
+    "NoMatchingSeriesProblemStatus",
     "NoReleaseForDateProblem",
     "NoReleaseForDateProblemCode",
     "NoReleaseForDateProblemStatus",
@@ -1599,6 +1769,12 @@ __all__ = (
     "TileJsonEnvelopeDataVectorLayersItem",
     "TranslateAreaCodePurpose",
     "TranslateAreaCodeResponse200",
+    "UnknownDimensionMemberProblem",
+    "UnknownDimensionMemberProblemCode",
+    "UnknownDimensionMemberProblemStatus",
+    "UnknownDimensionProblem",
+    "UnknownDimensionProblemCode",
+    "UnknownDimensionProblemStatus",
     "UnknownQueryParameterProblem",
     "UnknownQueryParameterProblemCode",
     "UnknownQueryParameterProblemStatus",

@@ -67,8 +67,13 @@ def sync_detailed(
 ) -> Response[GetMeasureResponse200 | Problem]:
     """Get one measure's semantics and availability
 
-     A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
-    source partitions publish it with what national coverage.
+     A measure's definition: what it measures, the unit, whether it may be summed or averaged, its
+    dimensions and their members, and the series and source partitions published for each combination of
+    members, with national coverage.
+
+    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
+    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
+    carries a `Deprecation` header. It has no sunset date.
 
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the
@@ -110,8 +115,13 @@ def sync(
 ) -> GetMeasureResponse200 | Problem | None:
     """Get one measure's semantics and availability
 
-     A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
-    source partitions publish it with what national coverage.
+     A measure's definition: what it measures, the unit, whether it may be summed or averaged, its
+    dimensions and their members, and the series and source partitions published for each combination of
+    members, with national coverage.
+
+    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
+    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
+    carries a `Deprecation` header. It has no sunset date.
 
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the
@@ -148,8 +158,13 @@ async def asyncio_detailed(
 ) -> Response[GetMeasureResponse200 | Problem]:
     """Get one measure's semantics and availability
 
-     A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
-    source partitions publish it with what national coverage.
+     A measure's definition: what it measures, the unit, whether it may be summed or averaged, its
+    dimensions and their members, and the series and source partitions published for each combination of
+    members, with national coverage.
+
+    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
+    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
+    carries a `Deprecation` header. It has no sunset date.
 
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the
@@ -189,8 +204,13 @@ async def asyncio(
 ) -> GetMeasureResponse200 | Problem | None:
     """Get one measure's semantics and availability
 
-     A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which
-    source partitions publish it with what national coverage.
+     A measure's definition: what it measures, the unit, whether it may be summed or averaged, its
+    dimensions and their members, and the series and source partitions published for each combination of
+    members, with national coverage.
+
+    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
+    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
+    carries a `Deprecation` header. It has no sunset date.
 
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the

@@ -6,6 +6,9 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.convert_source_exact_measure_dimensions import (
+    ConvertSourceExactMeasureDimensions,
+)
 from ...models.convert_source_exact_measure_geography import (
     ConvertSourceExactMeasureGeography,
 )
@@ -17,6 +20,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     measure_id: str,
     *,
+    dimensions: ConvertSourceExactMeasureDimensions | Unset = UNSET,
     crosswalk: str | Unset = UNSET,
     path: str | Unset = UNSET,
     period: str,
@@ -27,6 +31,12 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
 
     params["crosswalk"] = crosswalk
 
@@ -105,6 +115,7 @@ def sync_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: ConvertSourceExactMeasureDimensions | Unset = UNSET,
     crosswalk: str | Unset = UNSET,
     path: str | Unset = UNSET,
     period: str,
@@ -144,6 +155,7 @@ def sync_detailed(
 
     Args:
         measure_id (str):
+        dimensions (ConvertSourceExactMeasureDimensions | Unset):
         crosswalk (str | Unset):
         path (str | Unset):
         period (str):
@@ -162,6 +174,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         crosswalk=crosswalk,
         path=path,
         period=period,
@@ -182,6 +195,7 @@ def sync(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: ConvertSourceExactMeasureDimensions | Unset = UNSET,
     crosswalk: str | Unset = UNSET,
     path: str | Unset = UNSET,
     period: str,
@@ -221,6 +235,7 @@ def sync(
 
     Args:
         measure_id (str):
+        dimensions (ConvertSourceExactMeasureDimensions | Unset):
         crosswalk (str | Unset):
         path (str | Unset):
         period (str):
@@ -240,6 +255,7 @@ def sync(
     return sync_detailed(
         measure_id=measure_id,
         client=client,
+        dimensions=dimensions,
         crosswalk=crosswalk,
         path=path,
         period=period,
@@ -254,6 +270,7 @@ async def asyncio_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: ConvertSourceExactMeasureDimensions | Unset = UNSET,
     crosswalk: str | Unset = UNSET,
     path: str | Unset = UNSET,
     period: str,
@@ -293,6 +310,7 @@ async def asyncio_detailed(
 
     Args:
         measure_id (str):
+        dimensions (ConvertSourceExactMeasureDimensions | Unset):
         crosswalk (str | Unset):
         path (str | Unset):
         period (str):
@@ -311,6 +329,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         crosswalk=crosswalk,
         path=path,
         period=period,
@@ -329,6 +348,7 @@ async def asyncio(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: ConvertSourceExactMeasureDimensions | Unset = UNSET,
     crosswalk: str | Unset = UNSET,
     path: str | Unset = UNSET,
     period: str,
@@ -368,6 +388,7 @@ async def asyncio(
 
     Args:
         measure_id (str):
+        dimensions (ConvertSourceExactMeasureDimensions | Unset):
         crosswalk (str | Unset):
         path (str | Unset):
         period (str):
@@ -388,6 +409,7 @@ async def asyncio(
         await asyncio_detailed(
             measure_id=measure_id,
             client=client,
+            dimensions=dimensions,
             crosswalk=crosswalk,
             path=path,
             period=period,

@@ -471,7 +471,13 @@ export interface paths {
         };
         /**
          * List measures currently available to query
-         * @description Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`. `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric value into that unit, and `per` names an explicit denominator when one is published. For example, `£ million` is `GBP` with a scale of 1000000, and percent is `proportion` with a scale of 0.01. This is descriptive metadata only: observation values and source artifacts are not rewritten. `q` searches by the words people use: `population`, `house prices`, `deprivation`. Every measure whose id, alias, label or dataset title holds all of the query's words is listed, best first: an exact id or alias, then a match in the label, then in the id, then anywhere. A search never chooses one measure for the caller, and matching nothing is an empty list rather than a refusal. A measure's `aliases`, where it has any, are other names each naming it alone, accepted wherever its id is.
+         * @description A measure is the thing measured, such as `population`, `recorded-crimes` or `party-vote-share`. Its breakdowns are `dimensions`, each with the members it is published for, such as `offence` with `burglary`; a member's `parent` is the member it is part of, and `total` names the member every other is part of, which a request that leaves the dimension out is given. Ask for a breakdown with a dimension filter on the data routes: `GET /v1/data/recorded-crimes/value?place=Leeds&offence=burglary`. Geography and period are never part of a measure id; they are `geography`, `codeYear` and `period`.
+         *
+         *     `series` lists each combination of members published, with the request that reads it, its sources and the deprecated alias it was published under before, where it had one, such as `crime-burglary`. `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a whole.
+         *
+         *     Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`. `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric value into that unit, and `per` names an explicit denominator when one is published. This is descriptive metadata only: observation values and source artifacts are not rewritten.
+         *
+         *     `q` searches by the words people use: `population`, `house prices`, `burglary`, `Labour vote share`. Every measure whose id, alias, label, dataset title or members hold all of the query's words is listed, best first: an exact id or alias, then a match in the label, then in the label and one member's, then in the id, then anywhere. A match that rests on members lists them in `matchedMembers`, each with the request that filters on it. A search never chooses one measure for the caller, and matching nothing is an empty list rather than a refusal. A measure's `aliases`, where it has any, are other names each naming it alone, accepted wherever its id is.
          */
         get: operations["listMeasures"];
         put?: never;
@@ -491,7 +497,9 @@ export interface paths {
         };
         /**
          * Get one measure's semantics and availability
-         * @description A measure's definition: what it counts, the unit, whether it may be summed or averaged, and which source partitions publish it with what national coverage.
+         * @description A measure's definition: what it measures, the unit, whether it may be summed or averaged, its dimensions and their members, and the series and source partitions published for each combination of members, with national coverage.
+         *
+         *     An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers with its measure's definition, `resolvedFrom` says which members it stood for, and the response carries a `Deprecation` header. It has no sunset date.
          *
          *     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code, scale and (where applicable) denominator for safe unit-aware calculations; it never changes the source artifact or an observation value.
          *
@@ -610,7 +618,9 @@ export interface paths {
         };
         /**
          * Retrieve a source-exact or reviewed derived time series
-         * @description Returns all published observations for one area code within one source geography and code vintage. `place` accepts an area name, code or reference. With no source partition, the current published partition for that place is selected and returned as `defaults`. Without `to`, the result is source-exact: it does not select a boundary release, convert values or aggregate them. With `to`, the result is available only where the exact source partition has a reviewed conversion; every returned value is then labelled `derived` on that named frame. Supply `datasetId` when a measure has more than one source for the requested geography and boundary year.
+         * @description A measure with dimensions answers for the members its filters name, such as `?offence=burglary`; a dimension left out takes its total where one is published, and several members or `*` answer one `breakdown` entry per series, as `/value` does.
+         *
+         *     Returns all published observations for one area code within one source geography and code vintage. `place` accepts an area name, code or reference. With no source partition, the current published partition for that place is selected and returned as `defaults`. Without `to`, the result is source-exact: it does not select a boundary release, convert values or aggregate them. With `to`, the result is available only where the exact source partition has a reviewed conversion; every returned value is then labelled `derived` on that named frame. Supply `datasetId` when a measure has more than one source for the requested geography and boundary year.
          */
         get: operations["getSourceExactMeasureSeries"];
         put?: never;
@@ -739,6 +749,8 @@ export interface paths {
          *     The candidate is chosen by what the measure can answer rather than by guessing what was meant. Places matching the name exactly are tried first; names merely beginning with it only when no exact match answers. Answers resting on the same partition, period and area codes are the same ground reached two ways and count once, keeping the publisher's own observation over an aggregate of one member: Manchester the authority and Manchester the curated location of that authority give one answer. The other places the name matched are listed in `otherMatches`, answered or not.
          *
          *     When the name gives more than one distinct answer, the usual geography tier chooses the most likely match. `question.placeDefaulted` says this happened and `otherMatches` lists every alternative with its answer or refusal. "Newport", for example, defaults to the Welsh authority over wards of the same name. When the name matches places but the measure answers none, the response is a 422 with a `candidates` member saying why for each, such as a median, which cannot be summed over a region.
+         *
+         *     A measure with dimensions answers for the members its filters name: `GET /v1/data/party-vote-share/value?place=Holborn and St Pancras&party=lab`. A dimension left out takes its total where one is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`, answer every matching series at once: `data.breakdown` holds one entry per series, each with its `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated alias such as `crime-burglary` answers as its measure with its members fixed, and says so in `resolvedFrom`.
          *
          *     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published for, as drawn for the data's own boundary year rather than today's, in a boundary release holding that partition's codes; `boundaryMatch` names it. With no `geography`, the finest geography the measure is published on is tried first, and a coarser one only where a finer does not cover the postcode's country or has no value there; `passedOver` says why, and `otherGeographies` gives the request for each other geography. A centroid on a shared boundary whose areas answer differently is a 409 with `choices`, and a postcode no geography answers is a 422 with a `candidates` member saying why for each.
          */
@@ -1629,7 +1641,7 @@ export interface components {
             status: number;
             detail: string;
             geometrySource?: components["schemas"]["GeometrySource"];
-            /** @description On a 409 Ambiguous Place: each place the name could mean, with its answer and the request that asks about it alone, as an object. On a refusal from an area's children routes: each release the children are published in, as a `{geography}/{release}` string. */
+            /** @description On a 409 Ambiguous Place: each place the name could mean, with its answer and the request that asks about it alone, as an object. On an `ambiguous_dimension` or `no_matching_series` problem: each series of the measure, as an object with its `dimensions`, its `datasetId` where that tells it apart, its `label`, and the request that reads it as `href`. On a refusal from an area's children routes: each release the children are published in, as a `{geography}/{release}` string. */
             choices?: (Record<string, never> | string)[];
             /** @description On a 422 Place Not Served: each place the name matched, and why the measure does not answer it. */
             candidates?: Record<string, never>[];
@@ -1643,10 +1655,10 @@ export interface components {
                 validation: Record<string, never>;
             }[];
             /**
-             * @description On a 404 from an area or boundary release route: `unsupported_geography` when the geography is not published or the release's area identities are not compiled, `unknown_release` when the geography has no release with that id, and `area_not_in_release` when the release does not hold the code. On a 422 from an aggregate or a conversion: `aggregation_not_supported` when the measure's values do not add over areas or its weights cannot be used, `conversion_not_available` when the named crosswalk or source release cannot carry the partition without dropping, splitting or assuming values, and `partial_coverage` when a named location or a weight partition leaves out areas the sum would need. A partial country or region total is not refused; it is a 200 whose coverage says so. From a value request for a place: `ambiguous_place` when the name means several places the measure answers differently. From an observation request: `incompatible_geometry` when the chosen boundary release does not hold every source code. On a 400: `invalid_format` for a `format` the route does not serve, `invalid_cursor` for a cursor this API did not issue or that belongs to another query, and `unknown_query_parameter` when the operation does not declare a supplied parameter. From a release resolution: `no_release_for_date` and `ambiguous_release`.
+             * @description On a 404 from an area or boundary release route: `unsupported_geography` when the geography is not published or the release's area identities are not compiled, `unknown_release` when the geography has no release with that id, and `area_not_in_release` when the release does not hold the code. On a 422 from an aggregate or a conversion: `aggregation_not_supported` when the measure's values do not add over areas or its weights cannot be used, `conversion_not_available` when the named crosswalk or source release cannot carry the partition without dropping, splitting or assuming values, and `partial_coverage` when a named location or a weight partition leaves out areas the sum would need. A partial country or region total is not refused; it is a 200 whose coverage says so. From a value request for a place: `ambiguous_place` when the name means several places the measure answers differently. From an observation request: `incompatible_geometry` when the chosen boundary release does not hold every source code. On a 400: `invalid_format` for a `format` the route does not serve, `invalid_cursor` for a cursor this API did not issue or that belongs to another query, and `unknown_query_parameter` when the operation does not declare a supplied parameter. From a release resolution: `no_release_for_date` and `ambiguous_release`. From a measure's dimension filters: `unknown_dimension` and `unknown_dimension_member` (400) for a dimension or member the measure does not have, `conflicting_dimension_filter` (400) when a deprecated alias fixes a different member, `no_matching_series` (404) when no series has the members asked for, and `ambiguous_dimension` (409) when the request leaves several series and the operation answers one.
              * @enum {string}
              */
-            code?: "place_not_served" | "unsupported_geography" | "unknown_release" | "area_not_in_release" | "aggregation_not_supported" | "conversion_not_available" | "partial_coverage" | "ambiguous_place" | "incompatible_geometry" | "invalid_format" | "invalid_cursor" | "unknown_query_parameter" | "no_release_for_date" | "ambiguous_release";
+            code?: "place_not_served" | "unsupported_geography" | "unknown_release" | "area_not_in_release" | "aggregation_not_supported" | "conversion_not_available" | "partial_coverage" | "ambiguous_place" | "incompatible_geometry" | "invalid_format" | "invalid_cursor" | "unknown_query_parameter" | "no_release_for_date" | "ambiguous_release" | "unknown_dimension" | "unknown_dimension_member" | "conflicting_dimension_filter" | "no_matching_series" | "ambiguous_dimension";
             /**
              * @description Which absence left the area or conversion unresolved. For a conversion, the crosswalk starts at another geography, does not map some source areas, or splits some across targets with no published weight. For an area, a code is `superseded` when only older releases of the geography hold it, `not-yet-current` when only newer ones do, `absent-from-release` when releases on both sides or undated releases hold it, and `unknown` when no compiled release does. The classification uses code membership only: a superseded code may have been abolished, merged or recoded, and none of those is claimed.
              * @enum {string}
@@ -1671,6 +1683,12 @@ export interface components {
                 id: string;
                 href: string;
             }[];
+            /** @description On an `unknown_dimension` problem, the dimensions the measure has. */
+            dimensions?: string[];
+            /** @description On an `unknown_dimension_member` problem, the dimension the filter named. */
+            dimension?: string;
+            /** @description On an `unknown_dimension_member` problem, the members that dimension has. */
+            members?: string[];
             /** @description With `unknown-geography`, the geography list; with `release-not-compiled`, the boundary release. */
             links?: {
                 [key: string]: string;
@@ -2039,6 +2057,128 @@ export interface components {
             /** @constant */
             code: "place_not_served";
         };
+        /**
+         * @description A dimension filter names a dimension the measure does not have.
+         * @example {
+         *       "type": "https://api.ukdataatlas.com/problems/invalid-query",
+         *       "title": "Invalid Query",
+         *       "status": 400,
+         *       "detail": "recorded-crimes has no party dimension. Its dimensions are offence.",
+         *       "code": "unknown_dimension",
+         *       "dimensions": [
+         *         "offence"
+         *       ]
+         *     }
+         */
+        UnknownDimensionProblem: components["schemas"]["Problem"] & {
+            /** @enum {unknown} */
+            status?: 400;
+            /** @constant */
+            code: "unknown_dimension";
+        };
+        /**
+         * @description A dimension filter names a member the measure does not publish.
+         * @example {
+         *       "type": "https://api.ukdataatlas.com/problems/invalid-query",
+         *       "title": "Invalid Query",
+         *       "status": 400,
+         *       "detail": "arson is not a member of offence for recorded-crimes. GET /v1/measures/recorded-crimes lists them.",
+         *       "code": "unknown_dimension_member",
+         *       "dimension": "offence",
+         *       "members": [
+         *         "total",
+         *         "burglary"
+         *       ]
+         *     }
+         */
+        UnknownDimensionMemberProblem: components["schemas"]["Problem"] & {
+            /** @enum {unknown} */
+            status?: 400;
+            /** @constant */
+            code: "unknown_dimension_member";
+        };
+        /**
+         * @description A deprecated alias fixes a member, and a filter asks for a different member of the same dimension.
+         * @example {
+         *       "type": "https://api.ukdataatlas.com/problems/invalid-query",
+         *       "title": "Invalid Query",
+         *       "status": 400,
+         *       "detail": "crime-burglary is recorded-crimes with offence=burglary, so it cannot also be filtered to offence=robbery. Use /v1/data/recorded-crimes to choose members.",
+         *       "code": "conflicting_dimension_filter"
+         *     }
+         */
+        ConflictingDimensionFilterProblem: components["schemas"]["Problem"] & {
+            /** @enum {unknown} */
+            status?: 400;
+            /** @constant */
+            code: "conflicting_dimension_filter";
+        };
+        /**
+         * @description The measure publishes no series for that combination of members.
+         * @example {
+         *       "type": "https://api.ukdataatlas.com/problems/not-found",
+         *       "title": "Not Found",
+         *       "status": 404,
+         *       "detail": "party-vote-share is not published for that combination of members from local-election. GET /v1/measures/party-vote-share lists the series it has.",
+         *       "code": "no_matching_series",
+         *       "choices": [
+         *         {
+         *           "dimensions": {
+         *             "party": "lab"
+         *           },
+         *           "datasetId": "general-election",
+         *           "label": "General election vote share for Labour",
+         *           "href": "/v1/data/party-vote-share/value?place=Holborn&party=lab&datasetId=general-election"
+         *         }
+         *       ]
+         *     }
+         */
+        NoMatchingSeriesProblem: components["schemas"]["Problem"] & {
+            /** @enum {unknown} */
+            status?: 404;
+            /** @constant */
+            code: "no_matching_series";
+        };
+        /**
+         * @description The request leaves the measure several series and the operation answers one, or the series are not parts of one breakdown.
+         * @example {
+         *       "type": "https://api.ukdataatlas.com/problems/ambiguous-measure",
+         *       "title": "Ambiguous Measure",
+         *       "status": 409,
+         *       "detail": "party-votes has 2 series for that request that are not parts of one breakdown. Choose one; each request is listed in choices.",
+         *       "code": "ambiguous_dimension",
+         *       "choices": [
+         *         {
+         *           "dimensions": {
+         *             "party": "lab"
+         *           },
+         *           "datasetId": "general-election",
+         *           "label": "General election votes for Labour",
+         *           "href": "/v1/data/party-votes?party=lab&datasetId=general-election"
+         *         },
+         *         {
+         *           "dimensions": {
+         *             "party": "lab"
+         *           },
+         *           "datasetId": "local-election",
+         *           "label": "Local election votes for Labour",
+         *           "href": "/v1/data/party-votes?party=lab&datasetId=local-election"
+         *         }
+         *       ]
+         *     }
+         */
+        AmbiguousDimensionProblem: components["schemas"]["Problem"] & {
+            /** @enum {unknown} */
+            status?: 409;
+            /** @constant */
+            code: "ambiguous_dimension";
+        };
+        /**
+         * @deprecated
+         * @description An older measure id that named a breakdown, and sometimes a dataset, as part of the id. Each is still accepted wherever a measure id is, and is read as the measure and members `x-resolves-to` gives; the response names it in `resolvedFrom` and carries a `Deprecation` header. Name the measure and filter on its dimensions instead. No sunset date is set.
+         * @enum {string}
+         */
+        DeprecatedMeasureAlias: "adult-social-care-activity" | "adult-social-care-outcomes" | "age-0-to-4" | "age-10-to-14" | "age-15-to-19" | "age-20-to-24" | "age-25-to-29" | "age-30-to-34" | "age-35-to-39" | "age-40-to-44" | "age-45-to-49" | "age-5-to-9" | "age-50-to-54" | "age-55-to-59" | "age-60-to-64" | "age-65-to-69" | "age-70-to-74" | "age-75-to-79" | "age-80-to-84" | "age-85-plus" | "broadband-full-fibre-availability" | "broadband-gigabit-availability" | "broadband-superfast-availability" | "broadband-ultrafast-availability" | "business-activity" | "car-availability-none" | "car-availability-one" | "car-availability-three-or-more" | "car-availability-total" | "car-availability-two" | "claimant-count" | "claimant-count-16-to-24" | "council-tax" | "crime-bicycle-theft" | "crime-burglary" | "crime-criminal-damage-and-arson" | "crime-death-or-serious-injury-by-illegal-driving" | "crime-drug-offences" | "crime-homicide" | "crime-miscellaneous-crimes-against-society" | "crime-non-residential-burglary" | "crime-other-theft" | "crime-possession-of-weapons" | "crime-public-order-offences" | "crime-residential-burglary" | "crime-robbery" | "crime-sexual-offences" | "crime-shoplifting" | "crime-stalking-and-harassment" | "crime-theft-from-the-person" | "crime-theft-offences" | "crime-total" | "crime-vehicle-offences" | "crime-violence-against-the-person" | "crime-violence-with-injury" | "crime-violence-without-injury" | "economic-activity-employed" | "economic-activity-inactive-long-term-sick" | "economic-activity-inactive-looking-after-home" | "economic-activity-inactive-other" | "economic-activity-inactive-retired" | "economic-activity-inactive-student" | "economic-activity-student-employed" | "economic-activity-student-unemployed" | "economic-activity-total" | "economic-activity-unemployed" | "electric-vehicle-chargers" | "electricity-consumption-domestic" | "electricity-consumption-non-domestic" | "ethnicity-african" | "ethnicity-any-other" | "ethnicity-arab" | "ethnicity-bangladeshi" | "ethnicity-caribbean" | "ethnicity-chinese" | "ethnicity-gypsy-or-irish-traveller" | "ethnicity-indian" | "ethnicity-irish" | "ethnicity-other-asian" | "ethnicity-other-black" | "ethnicity-other-mixed" | "ethnicity-other-white" | "ethnicity-pakistani" | "ethnicity-roma" | "ethnicity-white-and-asian" | "ethnicity-white-and-black-african" | "ethnicity-white-and-black-caribbean" | "ethnicity-white-british" | "gas-consumption-domestic" | "gas-consumption-non-domestic" | "general-election-apni-vote-share" | "general-election-apni-votes" | "general-election-brx-vote-share" | "general-election-brx-votes" | "general-election-con-vote-share" | "general-election-con-votes" | "general-election-dup-vote-share" | "general-election-dup-votes" | "general-election-green-vote-share" | "general-election-green-votes" | "general-election-lab-vote-share" | "general-election-lab-votes" | "general-election-ld-vote-share" | "general-election-ld-votes" | "general-election-other-vote-share" | "general-election-other-votes" | "general-election-pc-vote-share" | "general-election-pc-votes" | "general-election-ruk-vote-share" | "general-election-ruk-votes" | "general-election-sdlp-vote-share" | "general-election-sdlp-votes" | "general-election-sf-vote-share" | "general-election-sf-votes" | "general-election-snp-vote-share" | "general-election-snp-votes" | "general-election-turnout" | "general-election-ukip-vote-share" | "general-election-ukip-votes" | "general-election-uup-vote-share" | "general-election-uup-votes" | "general-election-valid-votes" | "general-election-winning-party" | "general-health-bad" | "general-health-fair" | "general-health-good" | "general-health-total" | "general-health-very-bad" | "general-health-very-good" | "household-composition-cohabiting-dependent-children" | "household-composition-cohabiting-no-children" | "household-composition-cohabiting-non-dependent-children" | "household-composition-family-all-66-plus" | "household-composition-lone-parent-dependent-children" | "household-composition-lone-parent-non-dependent-children" | "household-composition-married-dependent-children" | "household-composition-married-no-children" | "household-composition-married-non-dependent-children" | "household-composition-one-person-66-plus" | "household-composition-one-person-other" | "household-composition-other" | "household-composition-other-family" | "household-composition-other-with-dependent-children" | "household-composition-total" | "life-expectancy-female" | "life-expectancy-male" | "local-election-con-votes" | "local-election-effective-votes" | "local-election-green-votes" | "local-election-ind-votes" | "local-election-lab-votes" | "local-election-ld-votes" | "local-election-other-votes" | "local-election-pc-votes" | "local-election-ref-votes" | "local-election-turnout" | "local-election-ukip-votes" | "local-election-winning-party" | "local-government-finance" | "median-annual-pay" | "median-hourly-pay" | "median-workplace-annual-pay" | "median-workplace-hourly-pay" | "mobile-4g-coverage" | "mobile-5g-coverage" | "no2-background-mean" | "pm10-background-mean" | "pm25-background-mean" | "qualification-apprenticeship" | "qualification-level-1" | "qualification-level-2" | "qualification-level-3" | "qualification-level-4-plus" | "qualification-none" | "qualification-other" | "qualification-total" | "road-collisions-fatal" | "road-collisions-serious" | "road-collisions-slight" | "temporary-accommodation-children" | "temporary-accommodation-households" | "temporary-accommodation-households-with-children" | "tenure-owned-outright" | "tenure-owned-with-mortgage" | "tenure-private-rented-landlord" | "tenure-private-rented-other" | "tenure-rent-free" | "tenure-shared-ownership" | "tenure-social-rented-council" | "tenure-social-rented-other" | "tenure-total" | "travel-to-work-bicycle" | "travel-to-work-car" | "travel-to-work-home" | "travel-to-work-motorcycle" | "travel-to-work-on-foot" | "travel-to-work-other" | "travel-to-work-public-transport" | "travel-to-work-taxi" | "travel-to-work-total" | "unemployment-level" | "usual-residents-in-communal-establishments" | "usual-residents-in-households" | "usual-residents-total" | "waste";
         /**
          * @description The place name means more than one place, and the measure answers them differently; `choices` carries each answer and the request that asks about it alone. Produced by `GET /v1/data/population/series?place=Newport`.
          * @example {
@@ -4017,8 +4157,12 @@ export interface components {
         Release: string;
         /** @description A crosswalk id, e.g. `constituency-2010-to-2024-official-lookup-v2`. */
         CrosswalkId: string;
-        /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+        /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
         MeasureId: string;
+        /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+        Dimensions: {
+            [key: string]: string;
+        };
         /** @description An area's official code in that release, e.g. `E05000932`. */
         AreaCode: string;
         /** @description An export id from `GET /v1/exports`; one source partition of one measure. */
@@ -4351,6 +4495,8 @@ export interface operations {
     getMapResourceJoin: {
         parameters: {
             query: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /** @description The observation period the values describe. */
                 period: string;
                 /** @description The measure's source geography, where it publishes more than one partition. Without it an ambiguous request is refused with the partitions listed rather than one being chosen by catalogue order. */
@@ -4366,7 +4512,7 @@ export interface operations {
                 geography: components["parameters"]["Geography"];
                 /** @description A boundary release id, e.g. `2024-07-uk-bgc`, or `latest` for the geography's newest release: the one `/boundary-releases:resolve` chooses for the furthest date. A response to `latest` names the release it read in `Content-Location`. A geography whose newest month holds several releases that differ in more than coverage, or that has a release whose id and registry metadata supply no date, is refused with `409` and the releases that could be newest. */
                 release: components["parameters"]["Release"];
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -5829,18 +5975,52 @@ export interface operations {
                      *       "data": [
                      *         {
                      *           "id": "population",
-                     *           "label": "Population estimate",
+                     *           "label": "Population",
+                     *           "description": "Mid-year population estimate.",
                      *           "valueKind": "count",
                      *           "unit": "people",
                      *           "unitDefinition": {
                      *             "code": "1",
                      *             "scaleToCanonical": 1
                      *           },
+                     *           "aliases": [
+                     *             "population-estimate",
+                     *             "population-estimates"
+                     *           ],
                      *           "aggregation": {
                      *             "kind": "extensive",
                      *             "operation": "sum",
                      *             "available": true
                      *           },
+                     *           "dimensions": [],
+                     *           "series": [
+                     *             {
+                     *               "dimensions": {},
+                     *               "label": "Population estimate",
+                     *               "href": "/v1/data/population",
+                     *               "sources": [
+                     *                 {
+                     *                   "datasetId": "population",
+                     *                   "periods": [
+                     *                     "2022"
+                     *                   ],
+                     *                   "sourceGeography": {
+                     *                     "type": "ward",
+                     *                     "codeYear": 2023
+                     *                   },
+                     *                   "coverage": {
+                     *                     "kind": "partial",
+                     *                     "countries": [
+                     *                       "GB-ENG",
+                     *                       "GB-WLS"
+                     *                     ],
+                     *                     "recordCount": 7608,
+                     *                     "note": "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+                     *                   }
+                     *                 }
+                     *               ]
+                     *             }
+                     *           ],
                      *           "sources": [
                      *             {
                      *               "datasetId": "population",
@@ -5854,7 +6034,8 @@ export interface operations {
                      *               "coverage": {
                      *                 "kind": "partial",
                      *                 "countries": [
-                     *                   "GB-ENG"
+                     *                   "GB-ENG",
+                     *                   "GB-WLS"
                      *                 ],
                      *                 "recordCount": 7608,
                      *                 "note": "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
@@ -5888,6 +6069,7 @@ export interface operations {
                         data: ({
                             id: string;
                             label: string;
+                            description: string;
                             /** @enum {string} */
                             valueKind: "count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";
                             unit: string;
@@ -5930,6 +6112,71 @@ export interface operations {
                             } & {
                                 [key: string]: unknown;
                             };
+                            dimensions: ({
+                                id: string;
+                                label: string;
+                                total?: string;
+                                members: ({
+                                    code: string;
+                                    label: string;
+                                    parent?: string;
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            defaults?: {
+                                [key: string]: string;
+                            };
+                            series: ({
+                                dimensions: {
+                                    [key: string]: string;
+                                };
+                                datasetId?: string;
+                                label: string;
+                                unit?: string;
+                                deprecatedAlias?: string;
+                                href: string;
+                                sources: ({
+                                    datasetId: string;
+                                    periods: string[];
+                                    sourceGeography: {
+                                        type: string;
+                                        codeYear: number;
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                    observationArtifact?: string;
+                                    coverage: {
+                                        /** @enum {string} */
+                                        kind: "partial" | "source-reported";
+                                        countries: string[];
+                                        recordCount: number;
+                                        note: string;
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                                notes?: string[];
+                                uncertainty?: {
+                                    /** @constant */
+                                    kind: "confidence-interval";
+                                    level: number;
+                                    note: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                                documents?: {
+                                    evidence: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            })[];
                             sources: ({
                                 datasetId: string;
                                 periods: string[];
@@ -5963,6 +6210,30 @@ export interface operations {
                             };
                             links: {
                                 data: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            documents?: {
+                                evidence: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            matchedMembers?: ({
+                                dimension: string;
+                                member: string;
+                                label: string;
+                                href: string;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            resolvedFrom?: {
+                                id: string;
+                                measure: string;
+                                dimensions: {
+                                    [key: string]: string;
+                                };
+                                datasetId?: string;
+                                deprecated: boolean;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -5982,7 +6253,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -6000,10 +6271,11 @@ export interface operations {
                      *       "apiVersion": "v1",
                      *       "atlasRelease": "sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
                      *       "data": {
-                     *         "id": "population",
-                     *         "label": "Population estimate",
+                     *         "id": "recorded-crimes",
+                     *         "label": "Police recorded crime",
+                     *         "description": "Offences recorded by the police.",
                      *         "valueKind": "count",
-                     *         "unit": "people",
+                     *         "unit": "offences",
                      *         "unitDefinition": {
                      *           "code": "1",
                      *           "scaleToCanonical": 1
@@ -6013,23 +6285,78 @@ export interface operations {
                      *           "operation": "sum",
                      *           "available": true
                      *         },
+                     *         "dimensions": [
+                     *           {
+                     *             "id": "offence",
+                     *             "label": "Offence group",
+                     *             "total": "total",
+                     *             "members": [
+                     *               {
+                     *                 "code": "total",
+                     *                 "label": "All recorded crime"
+                     *               },
+                     *               {
+                     *                 "code": "theft",
+                     *                 "label": "Theft offences",
+                     *                 "parent": "total"
+                     *               },
+                     *               {
+                     *                 "code": "burglary",
+                     *                 "label": "Burglary",
+                     *                 "parent": "theft"
+                     *               }
+                     *             ]
+                     *           }
+                     *         ],
+                     *         "series": [
+                     *           {
+                     *             "dimensions": {
+                     *               "offence": "burglary"
+                     *             },
+                     *             "label": "Burglary",
+                     *             "deprecatedAlias": "crime-burglary",
+                     *             "href": "/v1/data/recorded-crimes?offence=burglary",
+                     *             "sources": [
+                     *               {
+                     *                 "datasetId": "crime",
+                     *                 "periods": [
+                     *                   "year-ending-2026-03"
+                     *                 ],
+                     *                 "sourceGeography": {
+                     *                   "type": "communitySafetyPartnership",
+                     *                   "codeYear": 2023
+                     *                 },
+                     *                 "coverage": {
+                     *                   "kind": "source-reported",
+                     *                   "countries": [
+                     *                     "GB-ENG",
+                     *                     "GB-WLS"
+                     *                   ],
+                     *                   "recordCount": 309,
+                     *                   "note": "Published source records cover every community safety partnership in England and Wales except those whose crime the police recorded as unassigned, which are not served."
+                     *                 }
+                     *               }
+                     *             ]
+                     *           }
+                     *         ],
                      *         "sources": [
                      *           {
-                     *             "datasetId": "population",
+                     *             "datasetId": "crime",
                      *             "periods": [
-                     *               "2022"
+                     *               "year-ending-2026-03"
                      *             ],
                      *             "sourceGeography": {
-                     *               "type": "ward",
+                     *               "type": "communitySafetyPartnership",
                      *               "codeYear": 2023
                      *             },
                      *             "coverage": {
-                     *               "kind": "partial",
+                     *               "kind": "source-reported",
                      *               "countries": [
-                     *                 "GB-ENG"
+                     *                 "GB-ENG",
+                     *                 "GB-WLS"
                      *               ],
-                     *               "recordCount": 7608,
-                     *               "note": "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+                     *               "recordCount": 309,
+                     *               "note": "Published source records cover every community safety partnership in England and Wales except those whose crime the police recorded as unassigned, which are not served."
                      *             }
                      *           }
                      *         ],
@@ -6039,7 +6366,15 @@ export interface operations {
                      *           "aggregation": true
                      *         },
                      *         "links": {
-                     *           "data": "/v1/data/population"
+                     *           "data": "/v1/data/recorded-crimes"
+                     *         },
+                     *         "resolvedFrom": {
+                     *           "id": "crime-burglary",
+                     *           "measure": "recorded-crimes",
+                     *           "dimensions": {
+                     *             "offence": "burglary"
+                     *           },
+                     *           "deprecated": true
                      *         }
                      *       },
                      *       "meta": {
@@ -6059,6 +6394,7 @@ export interface operations {
                         data: {
                             id: string;
                             label: string;
+                            description: string;
                             /** @enum {string} */
                             valueKind: "count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";
                             unit: string;
@@ -6101,6 +6437,71 @@ export interface operations {
                             } & {
                                 [key: string]: unknown;
                             };
+                            dimensions: ({
+                                id: string;
+                                label: string;
+                                total?: string;
+                                members: ({
+                                    code: string;
+                                    label: string;
+                                    parent?: string;
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            defaults?: {
+                                [key: string]: string;
+                            };
+                            series: ({
+                                dimensions: {
+                                    [key: string]: string;
+                                };
+                                datasetId?: string;
+                                label: string;
+                                unit?: string;
+                                deprecatedAlias?: string;
+                                href: string;
+                                sources: ({
+                                    datasetId: string;
+                                    periods: string[];
+                                    sourceGeography: {
+                                        type: string;
+                                        codeYear: number;
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                    observationArtifact?: string;
+                                    coverage: {
+                                        /** @enum {string} */
+                                        kind: "partial" | "source-reported";
+                                        countries: string[];
+                                        recordCount: number;
+                                        note: string;
+                                    } & {
+                                        [key: string]: unknown;
+                                    };
+                                } & {
+                                    [key: string]: unknown;
+                                })[];
+                                notes?: string[];
+                                uncertainty?: {
+                                    /** @constant */
+                                    kind: "confidence-interval";
+                                    level: number;
+                                    note: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                                documents?: {
+                                    evidence: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            })[];
                             sources: ({
                                 datasetId: string;
                                 periods: string[];
@@ -6134,6 +6535,30 @@ export interface operations {
                             };
                             links: {
                                 data: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            documents?: {
+                                evidence: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            matchedMembers?: ({
+                                dimension: string;
+                                member: string;
+                                label: string;
+                                href: string;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            resolvedFrom?: {
+                                id: string;
+                                measure: string;
+                                dimensions: {
+                                    [key: string]: string;
+                                };
+                                datasetId?: string;
+                                deprecated: boolean;
                             } & {
                                 [key: string]: unknown;
                             };
@@ -6201,6 +6626,8 @@ export interface operations {
     getMeasureObservations: {
         parameters: {
             query?: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /** @description The observation period as the partition publishes it. Left out, the partition's latest period is used and returned in `defaults`. */
                 period?: components["parameters"]["OptionalSourcePeriod"];
                 /** @description The geography the publisher observed the values on, selecting one source partition with `codeYear`. It may be left out when an area named in the request is published on one geography of the measure, or when the measure is published on only one; geographies are never chosen between, so a measure published on several otherwise needs it. A selected geography is returned in `defaults`. */
@@ -6246,7 +6673,7 @@ export interface operations {
                      *       "data": {
                      *         "measure": {
                      *           "id": "population",
-                     *           "label": "Population estimate",
+                     *           "label": "Population",
                      *           "valueKind": "count",
                      *           "unit": "people",
                      *           "aggregation": {
@@ -6379,6 +6806,8 @@ export interface operations {
     convertSourceExactMeasure: {
         parameters: {
             query: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /** @description A crosswalk id returned by `GET /crosswalks`, applied forward. Required unless `path` is named; naming both is refused. */
                 crosswalk?: string;
                 /** @description A relationship path id returned by `GET /relationships`, applied through every step. Required unless `crosswalk` is named; naming both is refused. */
@@ -6396,7 +6825,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -6416,7 +6845,7 @@ export interface operations {
                      *       "data": {
                      *         "measure": {
                      *           "id": "population",
-                     *           "label": "Population estimate",
+                     *           "label": "Population",
                      *           "valueKind": "count",
                      *           "unit": "people",
                      *           "aggregation": {
@@ -6566,6 +6995,8 @@ export interface operations {
     getSourceExactMeasureSeries: {
         parameters: {
             query?: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /** @description The area, as its name, its code in the source partition, such as `E08000035`, or a place reference from `/places`, such as `localAuthority/E08000035`, which also names its geography. A name is read among the areas the measure is published for; one that means several is a 409 listing each. A postcode, or a larger place the measure is summed over, is answered by `/data/{measure-id}/value`. */
                 place?: components["parameters"]["Place"];
                 /** @description The geography the publisher observed the values on. With `codeYear` it selects one source partition of the measure; it never converts values onto another geography. It may be left out when `place` is a reference such as `localAuthority/E08000035`, which names it. */
@@ -6579,7 +7010,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -6599,7 +7030,7 @@ export interface operations {
                      *       "data": {
                      *         "measure": {
                      *           "id": "population",
-                     *           "label": "Population estimate",
+                     *           "label": "Population",
                      *           "valueKind": "count",
                      *           "unit": "people",
                      *           "aggregation": {
@@ -6731,6 +7162,8 @@ export interface operations {
     getSourceExactMeasureRankings: {
         parameters: {
             query?: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /** @description The observation period as the partition publishes it. Left out, the partition's latest period is used and returned in `defaults`. */
                 period?: components["parameters"]["OptionalSourcePeriod"];
                 /** @description The geography the publisher observed the values on, selecting one source partition with `codeYear`. It may be left out when an area named in the request is published on one geography of the measure, or when the measure is published on only one; geographies are never chosen between, so a measure published on several otherwise needs it. A selected geography is returned in `defaults`. */
@@ -6746,7 +7179,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -6766,7 +7199,7 @@ export interface operations {
                      *       "data": {
                      *         "measure": {
                      *           "id": "population",
-                     *           "label": "Population estimate",
+                     *           "label": "Population",
                      *           "valueKind": "count",
                      *           "unit": "people",
                      *           "aggregation": {
@@ -7283,6 +7716,8 @@ export interface operations {
     getMeasureValueForPlace: {
         parameters: {
             query?: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /**
                  * @description A place name, an area code, a unit postcode, or a place reference such as `localAuthority/E08000003` or `postcode/SW1A1AA` from `GET /v1/places`. One of `place` or `postcode` is required.
                  * @example North West
@@ -7310,7 +7745,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7330,7 +7765,7 @@ export interface operations {
                      *       "data": {
                      *         "measure": {
                      *           "id": "population",
-                     *           "label": "Population estimate",
+                     *           "label": "Population",
                      *           "valueKind": "count",
                      *           "unit": "people"
                      *         },
@@ -7411,6 +7846,8 @@ export interface operations {
     getSourceExactMeasureChange: {
         parameters: {
             query?: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /** @description The geography of the source partition the change is measured inside. Both periods come from that one partition. */
                 geography?: string;
                 /** @description The year of the boundaries the values are published on. Left out, the geography's newest partition is used and returned in `defaults`, unless two datasets share it, when `datasetId` must choose. */
@@ -7438,7 +7875,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7520,6 +7957,8 @@ export interface operations {
     compareSourceExactMeasureAreas: {
         parameters: {
             query: {
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
                 /** @description The observation period as the partition publishes it. Left out, the partition's latest period is used and returned in `defaults`. */
                 period?: components["parameters"]["OptionalSourcePeriod"];
                 /** @description The geography the publisher observed the values on, selecting one source partition with `codeYear`. It may be left out when an area named in the request is published on one geography of the measure, or when the measure is published on only one; geographies are never chosen between, so a measure published on several otherwise needs it. A selected geography is returned in `defaults`. */
@@ -7533,7 +7972,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. The older ids that carried a breakdown, such as `crime-burglary`, `ethnicity-african` or `general-election-lab-vote-share`, are deprecated aliases (see `DeprecatedMeasureAlias`). Each still works and is read as its measure with its members fixed; the response names it in `resolvedFrom` and carries a `Deprecation` header. They have no sunset date. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7553,7 +7992,7 @@ export interface operations {
                      *       "data": {
                      *         "measure": {
                      *           "id": "population",
-                     *           "label": "Population estimate",
+                     *           "label": "Population",
                      *           "valueKind": "count",
                      *           "unit": "people",
                      *           "aggregation": {
