@@ -31,6 +31,44 @@ describe("find_place", () => {
 	});
 });
 
+describe("dimension filters", () => {
+	it("sends get_value's dimensions as dimensions[...] parameters", async () => {
+		const { client, requests } = mockApi();
+		await getValue.run(
+			{
+				measure: "party-vote-share",
+				place: "Holborn and St Pancras",
+				dimensions: { party: "lab" },
+			},
+			client,
+		);
+		assert.equal(
+			requests[0]!.url.pathname,
+			"/v1/data/party-vote-share/value",
+		);
+		assert.deepEqual(params(requests[0]!), {
+			place: "Holborn and St Pancras",
+			"dimensions[party]": "lab",
+		});
+	});
+
+	it("sends get_series's dimensions too", async () => {
+		const { client, requests } = mockApi();
+		await getSeries.run(
+			{
+				measure: "recorded-crimes",
+				place: "E22000101",
+				dimensions: { offence: "*" },
+			},
+			client,
+		);
+		assert.deepEqual(params(requests[0]!), {
+			place: "E22000101",
+			"dimensions[offence]": "*",
+		});
+	});
+});
+
 describe("get_value", () => {
 	it("maps the measure into the path and keeps defaults and method", async () => {
 		const data = {

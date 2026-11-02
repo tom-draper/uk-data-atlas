@@ -27,6 +27,25 @@ async function call(
 	return render(request, await client.get(path, query), transform);
 }
 
+/** Dimension filters as the API's `dimensions[...]` query parameters. */
+const dimensionQuery = (dimensions?: Record<string, string>): Query =>
+	Object.fromEntries(
+		Object.entries(dimensions ?? {}).map(([dimension, member]) => [
+			`dimensions[${dimension}]`,
+			member,
+		]),
+	);
+
+const dimensionsInput = z
+	.record(z.string(), z.string())
+	.optional()
+	.describe(
+		'Filters on the measure\'s dimensions, from find_measures, such as `{ "offence": "burglary" }` ' +
+			'or `{ "party": "lab" }`. A value may list several members separated by commas, or be `*` ' +
+			"for every member. Omit a dimension to get its total where one is published; the reply's `defaults` " +
+			"says which member was used.",
+	);
+
 const PLACE_REF_NOTE =
 	"A place reference such as `localAuthority/E08000003` (from find_place) asks about one exact area.";
 
@@ -74,7 +93,10 @@ export const getValue = defineTool({
 		"several areas) and `otherMatches` for other places the name could have meant. If `period` is omitted " +
 		"the latest is used and the reply says so (`periodDefaulted`). Always state the period, the method and " +
 		"any defaulting when you quote the number. If the name is ambiguous the call fails with the choices; " +
-		"do not guess between them.",
+		"do not guess between them. A measure with dimensions (find_measures lists them) takes `dimensions`, " +
+		"such as `{ party: 'lab' }` for Labour's vote share; several members or `*` return `data.breakdown`, one " +
+		"entry per member, so 'every crime type in Leeds' is one call. A reply with `resolvedFrom` was asked " +
+		"with an older id; use the measure and dimensions it names next time.",
 	inputSchema: {
 		measure: z
 			.string()
@@ -113,9 +135,10 @@ export const getValue = defineTool({
 			.describe(
 				"With `postcode`, the boundary year of the partition to answer from. Omit for the newest.",
 			),
+		dimensions: dimensionsInput,
 	},
 	run: (
-		{ measure, place, postcode, period, geography, codeYear },
+		{ measure, place, postcode, period, geography, codeYear, dimensions },
 		client,
 	) => {
 		if (!place && !postcode)
@@ -128,6 +151,7 @@ export const getValue = defineTool({
 			period,
 			geography,
 			codeYear,
+			...dimensionQuery(dimensions),
 		});
 	},
 });
@@ -140,7 +164,8 @@ export const getSeries = defineTool({
 		"Values are source-exact: every period is on the same area codes, with no conversion. The reply's " +
 		"`defaults` lists what the API chose for you (source geography, boundary year); repeat those when " +
 		"describing the series. A name meaning several areas fails with the choices, so pass a place reference " +
-		"from find_place. Use get_value instead for a single figure.",
+		"from find_place. Use get_value instead for a single figure. Filter a measure's dimensions with " +
+		"`dimensions`, as in get_value.",
 	inputSchema: {
 		measure: z
 			.string()
@@ -171,13 +196,18 @@ export const getSeries = defineTool({
 			.describe(
 				"Choose a dataset when the measure has several for the same geography and year.",
 			),
+		dimensions: dimensionsInput,
 	},
-	run: ({ measure, place, geography, codeYear, datasetId }, client) =>
+	run: (
+		{ measure, place, geography, codeYear, datasetId, dimensions },
+		client,
+	) =>
 		call(client, `/data/${segment(measure)}/series`, {
 			place,
 			geography,
 			codeYear,
 			datasetId,
+			...dimensionQuery(dimensions),
 		}),
 });
 
@@ -186,9 +216,12 @@ export const findMeasures = defineTool({
 	title: "Find measures",
 	description:
 		"Search the catalogue of published measures by the words people use ('house prices', 'deprivation', " +
-		"'life expectancy'). Returns measure ids with labels, units, what they can be aggregated by and their " +
-		"source geographies, best match first. It lists every plausible match rather than choosing one. " +
-		"Use the returned `id` in get_value and get_series. Omit `q` to list all measures.",
+		"'burglary', 'Labour vote share'). Returns measures with labels, units, what they can be aggregated by, " +
+		"their source geographies and their `dimensions`: the breakdowns, such as `offence` or `party`, with " +
+		"each member's code and label. When the words name a member, `matchedMembers` says which dimension " +
+		"and member to filter on. It lists every plausible match rather than choosing one. Use the returned " +
+		"`id` as `measure` and the members as `dimensions` in get_value and get_series. Omit `q` to list all " +
+		"measures.",
 	inputSchema: {
 		q: z
 			.string()
