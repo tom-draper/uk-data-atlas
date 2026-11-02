@@ -1,3 +1,4 @@
+import { closeSync, openSync, writeFileSync } from "node:fs";
 import { promisify } from "node:util";
 import { gzip, gzipSync, type ZlibOptions } from "node:zlib";
 
@@ -453,17 +454,16 @@ export const writeParquetAsync = async (
 	);
 };
 
-const assemble = (
+const encodeRowGroup = (
 	table: ParquetTable,
 	bodies: Buffer[],
 	compressedPages: Buffer[],
-): Buffer => {
+	startOffset: number,
+) => {
 	const rowCount = table.columns[0]!.values.length;
-	const schema = schemaElements(table.columns);
 	const columns = leafOrder(table.columns);
-
-	const chunks: Buffer[] = [MAGIC];
-	let offset = MAGIC.length;
+	const chunks: Buffer[] = [];
+	let offset = startOffset;
 	let totalUncompressed = 0;
 	let totalCompressed = 0;
 	const columnChunks: Field[][] = [];
@@ -522,6 +522,27 @@ const assemble = (
 		totalCompressed += compressedSize;
 	}
 
+	return {
+		chunks,
+		rowCount,
+		offset,
+		metadata: [
+			{ id: 1, kind: "list-struct", value: columnChunks },
+			{ id: 2, kind: "i64", value: totalUncompressed },
+			{ id: 3, kind: "i64", value: rowCount },
+			{ id: 5, kind: "i64", value: startOffset },
+			{ id: 6, kind: "i64", value: totalCompressed },
+		] satisfies Field[],
+	};
+};
+
+const parquetFooter = (
+	table: ParquetTable,
+	rowCount: number,
+	rowGroups: Field[][],
+) => {
+	const schema = schemaElements(table.columns);
+	const columns = leafOrder(table.columns);
 	const footer = thrift([
 		{ id: 1, kind: "i32", value: 1 },
 		{ id: 2, kind: "list-struct", value: schema },
@@ -529,15 +550,7 @@ const assemble = (
 		{
 			id: 4,
 			kind: "list-struct",
-			value: [
-				[
-					{ id: 1, kind: "list-struct", value: columnChunks },
-					{ id: 2, kind: "i64", value: totalUncompressed },
-					{ id: 3, kind: "i64", value: rowCount },
-					{ id: 5, kind: "i64", value: MAGIC.length },
-					{ id: 6, kind: "i64", value: totalCompressed },
-				],
-			],
+			value: rowGroups,
 		},
 		...(table.metadata && Object.keys(table.metadata).length > 0
 			? [
@@ -566,6 +579,79 @@ const assemble = (
 	]);
 	const length = Buffer.alloc(4);
 	length.writeUInt32LE(footer.length);
-	chunks.push(footer, length, MAGIC);
-	return Buffer.concat(chunks);
+	return Buffer.concat([footer, length, MAGIC]);
 };
+
+const assemble = (
+	table: ParquetTable,
+	bodies: Buffer[],
+	compressedPages: Buffer[],
+): Buffer => {
+	const group = encodeRowGroup(table, bodies, compressedPages, MAGIC.length);
+	return Buffer.concat([
+		MAGIC,
+		...group.chunks,
+		parquetFooter(table, group.rowCount, [group.metadata]),
+	]);
+};
+
+export class ParquetFileWriter {
+	private readonly fd: number;
+	private offset = MAGIC.length;
+	private rowCount = 0;
+	private readonly rowGroups: Field[][] = [];
+	private readonly schema: string;
+
+	constructor(
+		path: string,
+		private readonly table: ParquetTable,
+	) {
+		this.schema = JSON.stringify(
+			table.columns.map(({ name, type, optional }) => ({
+				name,
+				type,
+				optional: !!optional,
+			})),
+		);
+		schemaElements(table.columns);
+		this.fd = openSync(path, "w");
+		writeFileSync(this.fd, MAGIC);
+	}
+
+	write(columns: ParquetColumn[]) {
+		const schema = JSON.stringify(
+			columns.map(({ name, type, optional }) => ({
+				name,
+				type,
+				optional: !!optional,
+			})),
+		);
+		if (schema !== this.schema)
+			throw new Error(
+				"Parquet row group schema does not match the file schema.",
+			);
+		const table = { columns };
+		const bodies = pages(table);
+		const group = encodeRowGroup(
+			table,
+			bodies,
+			bodies.map((body) => gzipSync(body, PAGE_GZIP)),
+			this.offset,
+		);
+		for (const chunk of group.chunks) writeFileSync(this.fd, chunk);
+		this.rowGroups.push(group.metadata);
+		this.rowCount += group.rowCount;
+		this.offset = group.offset;
+	}
+
+	close() {
+		try {
+			writeFileSync(
+				this.fd,
+				parquetFooter(this.table, this.rowCount, this.rowGroups),
+			);
+		} finally {
+			closeSync(this.fd);
+		}
+	}
+}
