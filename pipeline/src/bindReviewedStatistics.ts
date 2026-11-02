@@ -1,7 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import { observationArtifactName, type Measure } from "@uk-data-atlas/measures";
 import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
-import readPath from "../../services/api/config/statistics-read-path.json" with { type: "json" };
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
@@ -11,8 +10,8 @@ import {
 export function bindReviewedStatistics(
 	database: DatabaseSync,
 	measure: Measure,
+	reviewed: StatisticsReadPath,
 ): StatisticsSelection[] | undefined {
-	const reviewed = readPath as StatisticsReadPath;
 	const selected: StatisticsSelection[] = [];
 	for (const source of measure.sources) {
 		const selector =

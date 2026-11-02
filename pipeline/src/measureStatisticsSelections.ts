@@ -4,6 +4,7 @@ import {
 	type Measure,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { CompiledMeasure } from "./catalog/manifest";
+import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 import { bindCensusStatistics } from "./bindCensusStatistics";
 import { bindStatisticsField } from "./bindStatisticsField";
 import { bindCompiledFields } from "./bindCompiledFields";
@@ -21,6 +22,7 @@ export function measureStatisticsSelections(
 	database: DatabaseSync,
 	measure: Measure,
 	bindings: readonly Binding[],
+	readPath?: StatisticsReadPath,
 ): StatisticsSelection[] | undefined {
 	const census = bindCensusStatistics(database, measure, true);
 	if (census) {
@@ -40,7 +42,8 @@ export function measureStatisticsSelections(
 	}
 	const compiled = bindCompiledFields(database, measure);
 	if (compiled) return compiled;
-	const reviewed = bindReviewedStatistics(database, measure);
+	const reviewed =
+		readPath && bindReviewedStatistics(database, measure, readPath);
 	if (reviewed) return reviewed;
 	if (!measure.sources.length) return undefined;
 	const result: StatisticsSelection[] = [];
