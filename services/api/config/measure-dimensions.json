@@ -4,7 +4,7 @@
 		"winning-party": {
 			"label": "Winning party",
 			"description": "The party whose candidate won the contest, or won most seats in a multi-member ward.",
-			"reason": "The statistics tables hold votes by party, not the winner, so this is read from the observation tables."
+			"reason": "The statistics tables hold the winner as text on each contest, not as a series."
 		},
 		"effective-votes": {
 			"label": "Effective votes",
@@ -14,7 +14,7 @@
 		"population-density": {
 			"label": "Population density",
 			"description": "Residents per square kilometre, computed from the population estimate and the area's land area.",
-			"reason": "Derived by the API from two datasets, so it has no published series in the statistics tables."
+			"reason": "Computed from the population and land area series of two datasets, so it has no series of its own."
 		}
 	},
 	"dimensions": {
