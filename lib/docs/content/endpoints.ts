@@ -14,6 +14,14 @@ export interface EndpointContent {
 }
 
 export const ENDPOINTS: Record<string, EndpointContent> = {
+	downloadMeasure: {
+		title: "Download a whole measure",
+		intro: "Download a measure across its published areas and periods as one CSV or Parquet file.",
+		tips: [
+			"Use `format=csv` for CSV; Parquet is the default. Both contain the same rows, including dimension members, status and uncertainty bounds when held.",
+			"The export manifest gives a hash-pinned URL for immutable caching. Rows are ordered by geography, boundary release, period, area code, dataset and series.",
+		],
+	},
 	// Essentials
 	getRoot: {
 		title: "List every route",

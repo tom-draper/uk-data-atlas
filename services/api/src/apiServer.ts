@@ -1,6 +1,7 @@
 import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
 import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
 import { similarAreasContract } from "./areas/similarAreasContract";
+import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
 	boundaries,
 	boundaryReleases,
@@ -750,6 +751,11 @@ export const createApiServer = (
 		context: catalogues,
 		dispatch,
 	});
+	void fastify.register(measureExportRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
 
 	const ready = fastify.ready();
 	const dispatchRequest = async (
@@ -774,10 +780,13 @@ export const createApiServer = (
 		);
 		const boundaryDetail =
 			/^\/v1\/boundary-releases\/([^/]+)\/([^/]+)$/.exec(pathname);
+		const measureExportDetail = /^\/v1\/data\/([^/]+)\/export$/.exec(
+			pathname,
+		);
 		let fastifyDetail = false;
 		const parameters = catalogueDetail
 			? [catalogueDetail[2]!]
-			: boundaryDetail?.slice(1);
+			: (boundaryDetail?.slice(1) ?? measureExportDetail?.slice(1));
 		if (parameters) {
 			try {
 				fastifyDetail =

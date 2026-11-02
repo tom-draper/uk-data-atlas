@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -117,23 +117,13 @@ class MapResource:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.map_resource_attribution import (
-            MapResourceAttribution,  # noqa: PLC0415
-        )
-        from ..models.map_resource_features_item import (
-            MapResourceFeaturesItem,  # noqa: PLC0415
-        )
-        from ..models.map_resource_generalisation import (
-            MapResourceGeneralisation,  # noqa: PLC0415
-        )
-        from ..models.map_resource_geometry_source import (
-            MapResourceGeometrySource,  # noqa: PLC0415
-        )
-        from ..models.map_resource_tiers_item import (
-            MapResourceTiersItem,  # noqa: PLC0415
-        )
-        from ..models.map_resource_tiles import MapResourceTiles  # noqa: PLC0415
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.map_resource_attribution import MapResourceAttribution
+        from ..models.map_resource_features_item import MapResourceFeaturesItem
+        from ..models.map_resource_generalisation import MapResourceGeneralisation
+        from ..models.map_resource_geometry_source import MapResourceGeometrySource
+        from ..models.map_resource_tiers_item import MapResourceTiersItem
+        from ..models.map_resource_tiles import MapResourceTiles
 
         d = dict(src_dict)
         arc_count = d.pop("arcCount")

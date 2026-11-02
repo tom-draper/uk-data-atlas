@@ -405,6 +405,7 @@ from .deprecated_measure_alias import DeprecatedMeasureAlias
 from .download_bulk_export_format import DownloadBulkExportFormat
 from .download_bulk_export_response_200 import DownloadBulkExportResponse200
 from .download_bulk_lookup_format import DownloadBulkLookupFormat
+from .download_measure_format import DownloadMeasureFormat
 from .download_urls import DownloadUrls
 from .envelope import Envelope
 from .envelope_api_version import EnvelopeApiVersion
@@ -1361,6 +1362,7 @@ __all__ = (
     "DownloadBulkExportFormat",
     "DownloadBulkExportResponse200",
     "DownloadBulkLookupFormat",
+    "DownloadMeasureFormat",
     "DownloadUrls",
     "Envelope",
     "EnvelopeApiVersion",
@@ -1393,6 +1395,7 @@ __all__ = (
     "Generalisation",
     "GeneralisationMethod",
     "GeneralisationTier",
+    "GeoJsonGeometry",
     "GeographyInventory",
     "GeographyInventoryEnvelope",
     "GeographyInventoryGeographiesItem",
@@ -1406,7 +1409,6 @@ __all__ = (
     "GeographyReleaseInventory",
     "GeographySummary",
     "GeographySummaryListEnvelope",
-    "GeoJsonGeometry",
     "GeometrySource",
     "GeometrySourceCorrectionsItem",
     "GeometrySourceTransformation",
@@ -1731,9 +1733,9 @@ __all__ = (
     "ResolveBoundaryReleaseForDateResponse200DataSetAsideItemDeprecation",
     "ResolveBoundaryReleaseForDateResponse200Meta",
     "ResolvePlacesCountry",
+    "ResolvePostcodeView",
     "ResolvePostcodesBody",
     "ResolvePostcodesView",
-    "ResolvePostcodeView",
     "RootDocument",
     "RootEnvelope",
     "SuppliedCountConversionEnvelope",

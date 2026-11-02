@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -95,21 +95,21 @@ class AnalysisGeographyValidationEnvelopeDataSupportsItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.analysis_geography_validation_envelope_data_supports_item_crosswalk import (
-            AnalysisGeographyValidationEnvelopeDataSupportsItemCrosswalk,  # noqa: PLC0415
+            AnalysisGeographyValidationEnvelopeDataSupportsItemCrosswalk,
         )
         from ..models.analysis_geography_validation_envelope_data_supports_item_observations import (
-            AnalysisGeographyValidationEnvelopeDataSupportsItemObservations,  # noqa: PLC0415
+            AnalysisGeographyValidationEnvelopeDataSupportsItemObservations,
         )
         from ..models.analysis_geography_validation_envelope_data_supports_item_path import (
-            AnalysisGeographyValidationEnvelopeDataSupportsItemPath,  # noqa: PLC0415
+            AnalysisGeographyValidationEnvelopeDataSupportsItemPath,
         )
         from ..models.analysis_geography_validation_envelope_data_supports_item_periods_item import (
-            AnalysisGeographyValidationEnvelopeDataSupportsItemPeriodsItem,  # noqa: PLC0415
+            AnalysisGeographyValidationEnvelopeDataSupportsItemPeriodsItem,
         )
-        from ..models.analysis_source import AnalysisSource  # noqa: PLC0415
-        from ..models.crosswalk_side import CrosswalkSide  # noqa: PLC0415
+        from ..models.analysis_source import AnalysisSource
+        from ..models.crosswalk_side import CrosswalkSide
 
         d = dict(src_dict)
         analysis_geography = CrosswalkSide.from_dict(d.pop("analysisGeography"))

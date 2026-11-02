@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    Self,
     TypeVar,
     cast,
 )
@@ -73,12 +74,12 @@ class GetBoundaryReleaseResponse200DataDownloadsType0:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.get_boundary_release_response_200_data_downloads_type_0_geojson import (
-            GetBoundaryReleaseResponse200DataDownloadsType0Geojson,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDownloadsType0Geojson,
         )
         from ..models.get_boundary_release_response_200_data_downloads_type_0_geoparquet import (
-            GetBoundaryReleaseResponse200DataDownloadsType0Geoparquet,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDownloadsType0Geoparquet,
         )
 
         d = dict(src_dict)

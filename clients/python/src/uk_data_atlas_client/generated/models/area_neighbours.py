@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -93,15 +93,11 @@ class AreaNeighbours:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.area_neighbours_border import (
-            AreaNeighboursBorder,  # noqa: PLC0415
-        )
-        from ..models.area_neighbours_method import (
-            AreaNeighboursMethod,  # noqa: PLC0415
-        )
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.area_neighbours_border import AreaNeighboursBorder
+        from ..models.area_neighbours_method import AreaNeighboursMethod
         from ..models.area_neighbours_neighbours_item import (
-            AreaNeighboursNeighboursItem,  # noqa: PLC0415
+            AreaNeighboursNeighboursItem,
         )
 
         d = dict(src_dict)

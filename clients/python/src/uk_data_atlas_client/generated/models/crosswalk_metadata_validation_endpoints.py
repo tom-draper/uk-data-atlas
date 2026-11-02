@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -32,7 +32,7 @@ class CrosswalkMetadataValidationEndpoints:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.crosswalk_endpoint_validation_type_0 import (
-            CrosswalkEndpointValidationType0,  # noqa: PLC0415
+            CrosswalkEndpointValidationType0,
         )
 
         from_: dict[str, Any]
@@ -59,12 +59,12 @@ class CrosswalkMetadataValidationEndpoints:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.crosswalk_endpoint_validation_type_0 import (
-            CrosswalkEndpointValidationType0,  # noqa: PLC0415
+            CrosswalkEndpointValidationType0,
         )
         from ..models.crosswalk_endpoint_validation_type_1 import (
-            CrosswalkEndpointValidationType1,  # noqa: PLC0415
+            CrosswalkEndpointValidationType1,
         )
 
         d = dict(src_dict)

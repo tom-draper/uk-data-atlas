@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -118,14 +118,12 @@ class AreaDetail:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.area_detail_capabilities import (
-            AreaDetailCapabilities,  # noqa: PLC0415
-        )
-        from ..models.area_detail_citation import AreaDetailCitation  # noqa: PLC0415
-        from ..models.area_detail_dossier import AreaDetailDossier  # noqa: PLC0415
-        from ..models.area_metrics import AreaMetrics  # noqa: PLC0415
-        from ..models.area_postcode_counts import AreaPostcodeCounts  # noqa: PLC0415
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.area_detail_capabilities import AreaDetailCapabilities
+        from ..models.area_detail_citation import AreaDetailCitation
+        from ..models.area_detail_dossier import AreaDetailDossier
+        from ..models.area_metrics import AreaMetrics
+        from ..models.area_postcode_counts import AreaPostcodeCounts
 
         d = dict(src_dict)
         boundary_release = d.pop("boundaryRelease")

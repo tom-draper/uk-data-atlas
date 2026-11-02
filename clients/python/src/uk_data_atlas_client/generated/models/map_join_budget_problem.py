@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -108,9 +108,7 @@ class MapJoinBudgetProblem:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.problem_choices_item_type_0 import (
-            ProblemChoicesItemType0,  # noqa: PLC0415
-        )
+        from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
 
         detail = self.detail
 
@@ -242,22 +240,16 @@ class MapJoinBudgetProblem:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.geometry_source import GeometrySource  # noqa: PLC0415
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.geometry_source import GeometrySource
         from ..models.problem_available_releases_item import (
-            ProblemAvailableReleasesItem,  # noqa: PLC0415
+            ProblemAvailableReleasesItem,
         )
-        from ..models.problem_candidates_item import (
-            ProblemCandidatesItem,  # noqa: PLC0415
-        )
-        from ..models.problem_choices_item_type_0 import (
-            ProblemChoicesItemType0,  # noqa: PLC0415
-        )
-        from ..models.problem_links import ProblemLinks  # noqa: PLC0415
-        from ..models.problem_present_in_item import (
-            ProblemPresentInItem,  # noqa: PLC0415
-        )
-        from ..models.problem_rejected_item import ProblemRejectedItem  # noqa: PLC0415
+        from ..models.problem_candidates_item import ProblemCandidatesItem
+        from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
+        from ..models.problem_links import ProblemLinks
+        from ..models.problem_present_in_item import ProblemPresentInItem
+        from ..models.problem_rejected_item import ProblemRejectedItem
 
         d = dict(src_dict)
         detail = d.pop("detail")

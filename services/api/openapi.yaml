@@ -351,6 +351,61 @@ servers:
   - url: http://127.0.0.1:3001/v1
     description: Local development server (pnpm start)
 paths:
+  /data/{measure-id}/export:
+    get:
+      operationId: downloadMeasure
+      summary: Download every observation for a measure
+      tags:
+        - Sync
+      description:
+        Download a measure across all its published areas and periods. Rows are ordered by
+        geography, boundary release, period, area code, dataset and series. CSV and Parquet contain
+        the same rows, including dimension members, status and uncertainty bounds when available. A
+        hash-pinned URL is immutable.
+      x-likely-refusal:
+        status: 404
+        when: The measure id or pinned content hash does not exist.
+        x-example-request: /v1/data/not-a-measure/export
+      parameters:
+        - $ref: "#/components/parameters/MeasureId"
+        - name: format
+          in: query
+          required: false
+          description: Output format, default parquet.
+          schema:
+            type: string
+            enum:
+              - parquet
+              - csv
+            default: parquet
+        - name: hash
+          in: query
+          required: false
+          description: Pin the SHA-256 content hash for immutable caching.
+          schema:
+            type: string
+            pattern: ^[0-9a-f]{64}$
+      responses:
+        "200":
+          description: The whole measure as a file.
+          content:
+            application/vnd.apache.parquet:
+              x-example-request: /v1/data/crime-burglary/export?format=parquet
+              schema:
+                type: string
+                format: binary
+            text/csv:
+              x-example-request: /v1/data/crime-burglary/export?format=csv
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /:
     get:
       operationId: getRoot
@@ -403,6 +458,7 @@ paths:
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
                     - /v1/crosswalks/{crosswalk-id}/records
+                    - /v1/data/{measure-id}/export
                     - /v1/exports
                     - /v1/exports/{export-id}
                     - /v1/atlas-release

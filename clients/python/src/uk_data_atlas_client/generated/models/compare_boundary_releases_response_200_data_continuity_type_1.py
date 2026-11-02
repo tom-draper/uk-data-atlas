@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    Self,
     TypeVar,
     cast,
 )
@@ -89,15 +90,15 @@ class CompareBoundaryReleasesResponse200DataContinuityType1:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.compare_boundary_releases_response_200_data_continuity_type_1_changed_extent_item import (
-            CompareBoundaryReleasesResponse200DataContinuityType1ChangedExtentItem,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataContinuityType1ChangedExtentItem,
         )
         from ..models.compare_boundary_releases_response_200_data_continuity_type_1_recoded_item import (
-            CompareBoundaryReleasesResponse200DataContinuityType1RecodedItem,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataContinuityType1RecodedItem,
         )
         from ..models.compare_boundary_releases_response_200_data_continuity_type_1_unmeasured_item import (
-            CompareBoundaryReleasesResponse200DataContinuityType1UnmeasuredItem,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataContinuityType1UnmeasuredItem,
         )
 
         d = dict(src_dict)
