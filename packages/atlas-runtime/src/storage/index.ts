@@ -25,3 +25,4 @@ export * from "./lazyValue";
 export * from "./publicJson";
 export * from "./publicManifest";
 export * from "./sqliteIndex";
+export * from "./atlasStatisticsVocabulary";
