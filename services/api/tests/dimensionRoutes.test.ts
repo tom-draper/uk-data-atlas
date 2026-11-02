@@ -358,3 +358,68 @@ test("tells two datasets' series apart by the place's geography", () => {
 	const chosen = get("/v1/data/party-votes?party=lab&datasetId=general");
 	assert.equal(chosen.status, 200);
 });
+
+test("lists measures with their dimensions and the series each member has", () => {
+	const response = get("/v1/measures");
+	const measures = data(response) as unknown as Array<{
+		id: string;
+		dimensions: Array<{ id: string; total?: string; members: unknown[] }>;
+		series: Array<{ deprecatedAlias?: string; href: string }>;
+	}>;
+	const crime = measures.find((measure) => measure.id === "recorded-crimes")!;
+	assert.deepEqual(crime.dimensions, [
+		{
+			id: "offence",
+			label: "Offence",
+			total: "total",
+			members: [
+				{ code: "total", label: "All recorded crime" },
+				{ code: "burglary", label: "Burglary", parent: "total" },
+				{ code: "robbery", label: "Robbery", parent: "total" },
+			],
+		},
+	]);
+	assert.deepEqual(
+		crime.series.map((series) => [series.deprecatedAlias, series.href]),
+		[
+			["crime-total", "/v1/data/recorded-crimes?offence=total"],
+			["crime-burglary", "/v1/data/recorded-crimes?offence=burglary"],
+			["crime-robbery", "/v1/data/recorded-crimes?offence=robbery"],
+		],
+	);
+	assert.ok(!measures.some((measure) => measure.id === "crime-burglary"));
+});
+
+test("finds a measure by a member's name and says which member to filter on", () => {
+	const response = get("/v1/measures?q=burglary");
+	const [first] = data(response) as unknown as Array<{
+		id: string;
+		matchedMembers?: Array<{
+			dimension: string;
+			member: string;
+			href: string;
+		}>;
+	}>;
+	assert.equal(first?.id, "recorded-crimes");
+	assert.deepEqual(first?.matchedMembers, [
+		{
+			dimension: "offence",
+			member: "burglary",
+			label: "Burglary",
+			href: "/v1/data/recorded-crimes?offence=burglary",
+		},
+	]);
+});
+
+test("describes an old id's measure and says what it resolved from", () => {
+	const response = get("/v1/measures/crime-robbery");
+	assert.equal(response.status, 200);
+	const body = data(response);
+	assert.equal(body.id, "recorded-crimes");
+	assert.deepEqual(body.resolvedFrom, {
+		id: "crime-robbery",
+		measure: "recorded-crimes",
+		dimensions: { offence: "robbery" },
+		deprecated: true,
+	});
+});
