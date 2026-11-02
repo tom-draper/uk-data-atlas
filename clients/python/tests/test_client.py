@@ -37,6 +37,19 @@ def test_value_asks_the_value_route_and_returns_the_envelope():
     assert result["data"]["answer"]["value"] == 697115
 
 
+def test_value_passes_dimension_filters():
+    seen = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request.url)
+        return httpx.Response(200, json=envelope({"answer": {"value": 2921}}))
+
+    atlas(handler).value("recorded-crimes", "Manchester", dimensions={"offence": "burglary"})
+
+    assert seen[0].params["offence"] == "burglary"
+    assert seen[0].path == "/v1/data/recorded-crimes/value"
+
+
 def test_places_and_measures_pass_the_search_text():
     seen = []
 

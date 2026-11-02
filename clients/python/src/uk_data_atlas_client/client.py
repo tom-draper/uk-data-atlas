@@ -20,7 +20,12 @@ from .generated.api.start_here import (
 )
 from .generated.api.trend import get_source_exact_measure_series
 from .generated.client import Client
-from .generated.models import Envelope, PostcodeLookupEnvelope
+from .generated.models import (
+    Envelope,
+    GetMeasureValueForPlaceDimensions,
+    GetSourceExactMeasureSeriesDimensions,
+    PostcodeLookupEnvelope,
+)
 from .generated.types import UNSET, Response
 
 DEFAULT_BASE_URL = "https://api.ukdataatlas.com/v1"
@@ -94,16 +99,37 @@ class AtlasClient:
         """What a postcode sits in."""
         return _ok(resolve_postcode.sync_detailed(postcode, client=self.client, **query))
 
-    def value(self, measure: str, place: str, **query: Any) -> Envelope:
-        """One measure for one place: a name, code, postcode or place reference."""
+    def value(
+        self,
+        measure: str,
+        place: str,
+        dimensions: dict[str, str] | None = None,
+        **query: Any,
+    ) -> Envelope:
+        """One measure for one place: a name, code, postcode or place reference.
+
+        `dimensions` filters the measure's breakdowns, such as
+        `{"offence": "burglary"}`; a member list separated by commas, or `*`,
+        answers several series at once as `data.breakdown`.
+        """
+        if dimensions is not None:
+            query["dimensions"] = GetMeasureValueForPlaceDimensions.from_dict(dimensions)
         return _ok(
             get_measure_value_for_place.sync_detailed(
                 measure, client=self.client, place=place, **query
             )
         )
 
-    def series(self, measure: str, place: str, **query: Any) -> Envelope:
-        """One measure for one place over time."""
+    def series(
+        self,
+        measure: str,
+        place: str,
+        dimensions: dict[str, str] | None = None,
+        **query: Any,
+    ) -> Envelope:
+        """One measure for one place over time, filtered as `value` is."""
+        if dimensions is not None:
+            query["dimensions"] = GetSourceExactMeasureSeriesDimensions.from_dict(dimensions)
         return _ok(
             get_source_exact_measure_series.sync_detailed(
                 measure, client=self.client, place=place, **query

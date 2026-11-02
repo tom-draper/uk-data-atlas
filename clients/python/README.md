@@ -43,6 +43,12 @@ Leaving `period` out takes the latest, and the answer says so
 (`periodDefaulted`). Ask for another with `atlas.value("population", "North
 West", period="2021")`.
 
+A measure's breakdowns are dimension filters. `atlas.value("recorded-crimes",
+"Leeds", dimensions={"offence": "burglary"})` is burglary in Leeds, and
+`{"offence": "*"}` is every crime type at once, in `data["breakdown"]`. Leaving
+a dimension out takes its total, and the answer says so in `defaults`.
+`atlas.measures("burglary")` lists each measure's dimensions and members.
+
 ### Which measures are about house prices?
 
 ```python
