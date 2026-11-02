@@ -54,7 +54,21 @@ export type StatisticsSelector = {
 		 * computed, so the floating point result is the published one.
 		 */
 		scaleQuotient?: true;
+		/** Another dataset holding the denominator, such as land area. */
+		datasetId?: string;
+		/** The one period of the denominator used for every period. */
+		period?: string;
+		/**
+		 * Divide the denominator by this first: land area is stored in
+		 * hectares, and density is per square kilometre.
+		 */
+		denominatorDivisor?: number;
 	};
+	/**
+	 * The status of every record, where the API computes the value rather
+	 * than reading a published one: population density is `derived`.
+	 */
+	status?: "derived";
 	/**
 	 * Measures of the same dataset added to this one in each area and
 	 * period: turnout counts valid votes and rejected ballots.
@@ -299,19 +313,28 @@ export function rebuildStatisticsObservationText(
 		const denominators = periodRows(
 			database,
 			{
-				datasetId: selector.datasetId,
+				datasetId: selector.ratio.datasetId ?? selector.datasetId,
 				measure: selector.ratio.measure,
 				dimensions: selector.ratio.dimensions ?? {},
 				geography: selector.geography,
 			},
 			artifact,
 		);
-		const { scale, scaleQuotient } = selector.ratio;
+		const {
+			scale,
+			scaleQuotient,
+			period: fixed,
+			denominatorDivisor,
+		} = selector.ratio;
 		for (const [period, records] of byPeriod)
 			for (const row of records.values()) {
-				const denominator = denominators
-					.get(period)
+				const stored = denominators
+					.get(fixed ?? period)
 					?.get(row.code)?.value;
+				const denominator =
+					stored == null || denominatorDivisor === undefined
+						? stored
+						: stored / denominatorDivisor;
 				if (row.value === null || !denominator || denominator <= 0)
 					throw new Error(
 						`${row.code} has no ${selector.ratio.measure} to divide ${artifact.measureId} by for ${period}.`,
@@ -339,6 +362,9 @@ export function rebuildStatisticsObservationText(
 				row.upper = round(row.value + width);
 			}
 	}
+	if (selector.status)
+		for (const records of byPeriod.values())
+			for (const row of records.values()) row.status = selector.status;
 	if (selector.areasIn) {
 		const statement = database.prepare(
 			"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE r.geography = ? AND r.id = ?",

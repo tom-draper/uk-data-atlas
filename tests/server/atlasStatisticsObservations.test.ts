@@ -169,6 +169,26 @@ describe("observation artifacts rebuilt from statistics rows", () => {
 		]);
 	});
 
+	it("divides by another dataset's measure in one period, as derived", () => {
+		expect(
+			rebuild({
+				...labour,
+				ratio: {
+					datasetId: "local-election",
+					measure: "valid-votes",
+					period: "2019-05-02",
+					denominatorDivisor: 2,
+					scale: 1,
+					scaleQuotient: true,
+				},
+				status: "derived",
+			}),
+		).toEqual([
+			{ areaCode: "E05000001", value: 1, status: "derived" },
+			{ areaCode: "E05099999", value: 1, status: "derived" },
+		]);
+	});
+
 	it("reads each contest's winner as a category", () => {
 		expect(rebuild({ ...labour, contest: "winner" })).toEqual([
 			{ areaCode: "E05000001", category: "LAB", status: "observed" },
