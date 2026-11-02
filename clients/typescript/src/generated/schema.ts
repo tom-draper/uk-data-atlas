@@ -1587,6 +1587,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/areas/{geography}/{code}/similar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Find areas most similar across selected measures
+         * @description Loads each selected measure's source-exact partition for the requested geography and period. All partitions must use the same boundary year. `zscore-euclidean` standardises every measure by its all-area mean and population standard deviation before calculating Euclidean distance. `rank-euclidean` uses average ranks, which is less sensitive to skewed values. Areas missing any selected value are excluded. The dropped count covers areas present in at least one selected partition.
+         */
+        get: operations["findSimilarAreas"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -10428,6 +10448,137 @@ export interface operations {
                 };
             };
             404: components["responses"]["NotFound"];
+        };
+    };
+    findSimilarAreas: {
+        parameters: {
+            query: {
+                /** @description One to ten comma-separated measure ids. */
+                measures: string;
+                /** @description A period served by every selected measure. */
+                period: string;
+                limit?: number;
+                method?: "zscore-euclidean" | "rank-euclidean";
+            };
+            header?: never;
+            path: {
+                /** @description The source geography shared by every selected measure. */
+                geography: string;
+                /** @description The target area's source code. */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The selected method, its scaling statistics and the nearest areas in deterministic order. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "apiVersion": "v1",
+                     *       "atlasRelease": "sha256:example",
+                     *       "data": {
+                     *         "target": {
+                     *           "geography": "localAuthority",
+                     *           "code": "E08000010"
+                     *         },
+                     *         "method": "zscore-euclidean",
+                     *         "measures": [
+                     *           {
+                     *             "id": "population",
+                     *             "period": "2024",
+                     *             "sourceGeography": {
+                     *               "type": "localAuthority",
+                     *               "codeYear": 2023
+                     *             },
+                     *             "mean": 173060,
+                     *             "standardDeviation": 96004.4
+                     *           }
+                     *         ],
+                     *         "droppedAreaCount": 0,
+                     *         "areas": [
+                     *           {
+                     *             "areaCode": "E08000011",
+                     *             "distance": 0.44,
+                     *             "rank": 1,
+                     *             "values": {
+                     *               "population": 160128
+                     *             }
+                     *           }
+                     *         ]
+                     *       },
+                     *       "meta": {
+                     *         "nextCursor": null
+                     *       }
+                     *     }
+                     */
+                    "application/json": {
+                        /** @constant */
+                        apiVersion: "v1";
+                        atlasRelease: string;
+                        meta: {
+                            nextCursor: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        };
+                        data: {
+                            target: {
+                                geography: string;
+                                code: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                            /** @enum {string} */
+                            method: "zscore-euclidean" | "rank-euclidean";
+                            measures: ({
+                                id: string;
+                                period: string;
+                                sourceGeography: {
+                                    type: string;
+                                    codeYear: number;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                                mean: number;
+                                standardDeviation: number;
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                            droppedAreaCount: number;
+                            areas: ({
+                                areaCode: string;
+                                distance: number;
+                                rank: number;
+                                values: {
+                                    [key: string]: number;
+                                };
+                            } & {
+                                [key: string]: unknown;
+                            })[];
+                        } & {
+                            [key: string]: unknown;
+                        };
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            400: components["responses"]["InvalidQuery"];
+            404: components["responses"]["NotFound"];
+            /** @description A selected measure is categorical, the target is missing a selected value, or the partitions use different boundary years. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            503: components["responses"]["CatalogueUnavailable"];
         };
     };
 }

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -160,30 +160,30 @@ class GetMeasureResponse200Data:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.get_measure_response_200_data_aggregation import (
-            GetMeasureResponse200DataAggregation,
+            GetMeasureResponse200DataAggregation,  # noqa: PLC0415
         )
         from ..models.get_measure_response_200_data_availability import (
-            GetMeasureResponse200DataAvailability,
+            GetMeasureResponse200DataAvailability,  # noqa: PLC0415
         )
         from ..models.get_measure_response_200_data_derived_from import (
-            GetMeasureResponse200DataDerivedFrom,
+            GetMeasureResponse200DataDerivedFrom,  # noqa: PLC0415
         )
         from ..models.get_measure_response_200_data_elsewhere_item import (
-            GetMeasureResponse200DataElsewhereItem,
+            GetMeasureResponse200DataElsewhereItem,  # noqa: PLC0415
         )
         from ..models.get_measure_response_200_data_links import (
-            GetMeasureResponse200DataLinks,
+            GetMeasureResponse200DataLinks,  # noqa: PLC0415
         )
         from ..models.get_measure_response_200_data_sources_item import (
-            GetMeasureResponse200DataSourcesItem,
+            GetMeasureResponse200DataSourcesItem,  # noqa: PLC0415
         )
         from ..models.get_measure_response_200_data_uncertainty import (
-            GetMeasureResponse200DataUncertainty,
+            GetMeasureResponse200DataUncertainty,  # noqa: PLC0415
         )
         from ..models.get_measure_response_200_data_unit_definition import (
-            GetMeasureResponse200DataUnitDefinition,
+            GetMeasureResponse200DataUnitDefinition,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

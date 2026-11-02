@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -54,8 +54,12 @@ class GeometrySource:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.geometry_validity_type_0 import GeometryValidityType0
-        from ..models.geometry_validity_type_1 import GeometryValidityType1
+        from ..models.geometry_validity_type_0 import (
+            GeometryValidityType0,  # noqa: PLC0415
+        )
+        from ..models.geometry_validity_type_1 import (
+            GeometryValidityType1,  # noqa: PLC0415
+        )
 
         source_crs = self.source_crs
 
@@ -77,9 +81,9 @@ class GeometrySource:
         validity: dict[str, Any] | Unset
         if isinstance(self.validity, Unset):
             validity = UNSET
-        elif isinstance(self.validity, GeometryValidityType0) or isinstance(
-            self.validity, GeometryValidityType1
-        ):
+        elif isinstance(self.validity, GeometryValidityType0):
+            validity = self.validity.to_dict()
+        elif isinstance(self.validity, GeometryValidityType1):
             validity = self.validity.to_dict()
         else:
             validity = self.validity.to_dict()
@@ -105,14 +109,22 @@ class GeometrySource:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.geometry_source_corrections_item import (
-            GeometrySourceCorrectionsItem,
+            GeometrySourceCorrectionsItem,  # noqa: PLC0415
         )
-        from ..models.geometry_source_transformation import GeometrySourceTransformation
-        from ..models.geometry_validity_type_0 import GeometryValidityType0
-        from ..models.geometry_validity_type_1 import GeometryValidityType1
-        from ..models.geometry_validity_type_2 import GeometryValidityType2
+        from ..models.geometry_source_transformation import (
+            GeometrySourceTransformation,  # noqa: PLC0415
+        )
+        from ..models.geometry_validity_type_0 import (
+            GeometryValidityType0,  # noqa: PLC0415
+        )
+        from ..models.geometry_validity_type_1 import (
+            GeometryValidityType1,  # noqa: PLC0415
+        )
+        from ..models.geometry_validity_type_2 import (
+            GeometryValidityType2,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         source_crs = d.pop("sourceCrs")

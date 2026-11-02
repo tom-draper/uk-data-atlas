@@ -4,7 +4,6 @@ from collections.abc import Mapping
 from typing import (
     Any,
     Literal,
-    Self,
     TypeVar,
     cast,
 )
@@ -49,7 +48,7 @@ class GetMeasureResponse200DataUncertainty:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
         kind = cast(Literal["confidence-interval"], d.pop("kind"))
         if kind != "confidence-interval":

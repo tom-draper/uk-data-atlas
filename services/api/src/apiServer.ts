@@ -1,4 +1,6 @@
 import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
+import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
+import { similarAreasContract } from "./areas/similarAreasContract";
 import {
 	boundaries,
 	boundaryReleases,
@@ -92,11 +94,15 @@ const fastifyPaths = new Set(
 		boundaryReleases,
 		resolveBoundary,
 		compareBoundary,
+		similarAreasContract,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
 export const isFastifyStaticPath = (pathname: string) =>
-	pathname === "/v1" || pathname === "/v1/" || fastifyPaths.has(pathname);
+	pathname === "/v1" ||
+	pathname === "/v1/" ||
+	fastifyPaths.has(pathname) ||
+	/^\/v1\/areas\/[^/]+\/[^/]+\/similar$/.test(pathname);
 
 /**
  * The largest POST body read. A column of every output area's code with a
@@ -725,6 +731,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(boundaryFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(similarAreasFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,

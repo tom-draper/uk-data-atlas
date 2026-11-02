@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -82,11 +82,15 @@ class PointContainment:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.lookup_point import LookupPoint
-        from ..models.point_containment_postcode import PointContainmentPostcode
-        from ..models.point_containment_results_item import PointContainmentResultsItem
-        from ..models.point_country import PointCountry
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.lookup_point import LookupPoint  # noqa: PLC0415
+        from ..models.point_containment_postcode import (
+            PointContainmentPostcode,  # noqa: PLC0415
+        )
+        from ..models.point_containment_results_item import (
+            PointContainmentResultsItem,  # noqa: PLC0415
+        )
+        from ..models.point_country import PointCountry  # noqa: PLC0415
 
         d = dict(src_dict)
         boundary_rule = PointContainmentBoundaryRule(d.pop("boundaryRule"))

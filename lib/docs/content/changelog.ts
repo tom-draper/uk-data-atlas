@@ -29,6 +29,14 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-01",
+		title: "Find similar areas across selected measures",
+		surface: "204216231d17",
+		changes: [
+			"`GET /v1/areas/{geography}/{code}/similar` finds areas nearest to a target across one to ten numeric measures for one period. It reports the selected method, each measure's scaling statistics, excluded areas, and the values behind each result. Existing requests are unchanged.",
+		],
+	},
+	{
 		date: "2026-10-30",
 		title: "Rename /v1/geographies to /v1/boundaries",
 		surface: "29b2f2539ba8",

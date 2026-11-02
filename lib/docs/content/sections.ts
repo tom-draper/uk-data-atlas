@@ -18,7 +18,7 @@ export const SECTIONS: Record<string, SectionContent> = {
 	},
 	trend: {
 		title: "Analysis",
-		intro: "Work with a measure over time and across areas: time series, rankings, change between periods, comparisons, totals and conversions.",
+		intro: "Work with measures over time and across areas: time series, rankings, similarity, change between periods, comparisons, totals and conversions.",
 	},
 	sync: {
 		title: "Bulk data & releases",

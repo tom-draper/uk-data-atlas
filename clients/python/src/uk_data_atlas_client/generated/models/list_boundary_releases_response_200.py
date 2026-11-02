@@ -5,7 +5,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
-    Self,
     TypeVar,
     cast,
 )
@@ -67,12 +66,12 @@ class ListBoundaryReleasesResponse200:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.list_boundary_releases_response_200_data_item import (
-            ListBoundaryReleasesResponse200DataItem,
+            ListBoundaryReleasesResponse200DataItem,  # noqa: PLC0415
         )
         from ..models.list_boundary_releases_response_200_meta import (
-            ListBoundaryReleasesResponse200Meta,
+            ListBoundaryReleasesResponse200Meta,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

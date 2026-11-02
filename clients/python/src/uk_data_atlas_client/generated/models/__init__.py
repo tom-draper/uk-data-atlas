@@ -409,6 +409,28 @@ from .find_containing_areas_crs import FindContainingAreasCrs
 from .find_containing_areas_for_points_body import FindContainingAreasForPointsBody
 from .find_containing_areas_for_points_crs import FindContainingAreasForPointsCrs
 from .find_nearest_areas_crs import FindNearestAreasCrs
+from .find_similar_areas_method import FindSimilarAreasMethod
+from .find_similar_areas_response_200 import FindSimilarAreasResponse200
+from .find_similar_areas_response_200_data import FindSimilarAreasResponse200Data
+from .find_similar_areas_response_200_data_areas_item import (
+    FindSimilarAreasResponse200DataAreasItem,
+)
+from .find_similar_areas_response_200_data_areas_item_values import (
+    FindSimilarAreasResponse200DataAreasItemValues,
+)
+from .find_similar_areas_response_200_data_measures_item import (
+    FindSimilarAreasResponse200DataMeasuresItem,
+)
+from .find_similar_areas_response_200_data_measures_item_source_geography import (
+    FindSimilarAreasResponse200DataMeasuresItemSourceGeography,
+)
+from .find_similar_areas_response_200_data_method import (
+    FindSimilarAreasResponse200DataMethod,
+)
+from .find_similar_areas_response_200_data_target import (
+    FindSimilarAreasResponse200DataTarget,
+)
+from .find_similar_areas_response_200_meta import FindSimilarAreasResponse200Meta
 from .generalisation import Generalisation
 from .generalisation_method import GeneralisationMethod
 from .generalisation_tier import GeneralisationTier
@@ -1227,10 +1249,19 @@ __all__ = (
     "FindContainingAreasForPointsBody",
     "FindContainingAreasForPointsCrs",
     "FindNearestAreasCrs",
+    "FindSimilarAreasMethod",
+    "FindSimilarAreasResponse200",
+    "FindSimilarAreasResponse200Data",
+    "FindSimilarAreasResponse200DataAreasItem",
+    "FindSimilarAreasResponse200DataAreasItemValues",
+    "FindSimilarAreasResponse200DataMeasuresItem",
+    "FindSimilarAreasResponse200DataMeasuresItemSourceGeography",
+    "FindSimilarAreasResponse200DataMethod",
+    "FindSimilarAreasResponse200DataTarget",
+    "FindSimilarAreasResponse200Meta",
     "Generalisation",
     "GeneralisationMethod",
     "GeneralisationTier",
-    "GeoJsonGeometry",
     "GeographyInventory",
     "GeographyInventoryEnvelope",
     "GeographyInventoryGeographiesItem",
@@ -1244,6 +1275,7 @@ __all__ = (
     "GeographyReleaseInventory",
     "GeographySummary",
     "GeographySummaryListEnvelope",
+    "GeoJsonGeometry",
     "GeometrySource",
     "GeometrySourceCorrectionsItem",
     "GeometrySourceTransformation",
@@ -1529,9 +1561,9 @@ __all__ = (
     "ResolveBoundaryReleaseForDateResponse200DataSetAsideItemDeprecation",
     "ResolveBoundaryReleaseForDateResponse200Meta",
     "ResolvePlacesCountry",
-    "ResolvePostcodeView",
     "ResolvePostcodesBody",
     "ResolvePostcodesView",
+    "ResolvePostcodeView",
     "RootDocument",
     "RootEnvelope",
     "SuppliedCountConversionEnvelope",

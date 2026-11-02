@@ -1,6 +1,9 @@
 import { resolveBoundaryMetadata } from "../boundaries/resolveBoundaryMetadata";
 import { compareBoundaryMetadata } from "../boundaries/compareBoundaryMetadata";
 import { boundaryFastifyRoutes } from "../boundaries/boundaryFastifyRoutes";
+import { similarAreasFastifyRoutes } from "../areas/similarAreasFastifyRoutes";
+import { similarAreasContract } from "../areas/similarAreasContract";
+import { similarAreasMetadata } from "../areas/similarAreasMetadata";
 import {
 	boundaryReleaseDetail,
 	resolveBoundary,
@@ -47,6 +50,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(atlasReleaseRoutes, { context });
 	await app.register(catalogueFastifyRoutes, { context });
 	await app.register(boundaryFastifyRoutes, { context });
+	await app.register(similarAreasFastifyRoutes, { context });
 	await app.ready();
 	return app;
 };
@@ -108,6 +112,11 @@ export const generatedPaths = async () => {
 		["/datasets/{dataset-id}", datasetMetadata, datasetDetail],
 		["/measures", measuresMetadata, measures],
 		["/measures/{measure-id}", measureMetadata, measureDetail],
+		[
+			"/areas/{geography}/{code}/similar",
+			similarAreasMetadata,
+			similarAreasContract,
+		],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
