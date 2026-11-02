@@ -7,6 +7,9 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.envelope import Envelope
+from ...models.get_source_exact_measure_rankings_dimensions import (
+    GetSourceExactMeasureRankingsDimensions,
+)
 from ...models.get_source_exact_measure_rankings_geography import (
     GetSourceExactMeasureRankingsGeography,
 )
@@ -20,6 +23,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     measure_id: str,
     *,
+    dimensions: GetSourceExactMeasureRankingsDimensions | Unset = UNSET,
     period: str | Unset = UNSET,
     geography: GetSourceExactMeasureRankingsGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -30,6 +34,12 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
 
     params["period"] = period
 
@@ -113,6 +123,7 @@ def sync_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureRankingsDimensions | Unset = UNSET,
     period: str | Unset = UNSET,
     geography: GetSourceExactMeasureRankingsGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -130,6 +141,7 @@ def sync_detailed(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureRankingsDimensions | Unset):
         period (str | Unset):
         geography (GetSourceExactMeasureRankingsGeography | Unset):
         code_year (int | Unset):
@@ -148,6 +160,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         period=period,
         geography=geography,
         code_year=code_year,
@@ -167,6 +180,7 @@ def sync(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureRankingsDimensions | Unset = UNSET,
     period: str | Unset = UNSET,
     geography: GetSourceExactMeasureRankingsGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -184,6 +198,7 @@ def sync(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureRankingsDimensions | Unset):
         period (str | Unset):
         geography (GetSourceExactMeasureRankingsGeography | Unset):
         code_year (int | Unset):
@@ -203,6 +218,7 @@ def sync(
     return sync_detailed(
         measure_id=measure_id,
         client=client,
+        dimensions=dimensions,
         period=period,
         geography=geography,
         code_year=code_year,
@@ -216,6 +232,7 @@ async def asyncio_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureRankingsDimensions | Unset = UNSET,
     period: str | Unset = UNSET,
     geography: GetSourceExactMeasureRankingsGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -233,6 +250,7 @@ async def asyncio_detailed(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureRankingsDimensions | Unset):
         period (str | Unset):
         geography (GetSourceExactMeasureRankingsGeography | Unset):
         code_year (int | Unset):
@@ -251,6 +269,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         period=period,
         geography=geography,
         code_year=code_year,
@@ -268,6 +287,7 @@ async def asyncio(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetSourceExactMeasureRankingsDimensions | Unset = UNSET,
     period: str | Unset = UNSET,
     geography: GetSourceExactMeasureRankingsGeography | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -285,6 +305,7 @@ async def asyncio(
 
     Args:
         measure_id (str):
+        dimensions (GetSourceExactMeasureRankingsDimensions | Unset):
         period (str | Unset):
         geography (GetSourceExactMeasureRankingsGeography | Unset):
         code_year (int | Unset):
@@ -305,6 +326,7 @@ async def asyncio(
         await asyncio_detailed(
             measure_id=measure_id,
             client=client,
+            dimensions=dimensions,
             period=period,
             geography=geography,
             code_year=code_year,

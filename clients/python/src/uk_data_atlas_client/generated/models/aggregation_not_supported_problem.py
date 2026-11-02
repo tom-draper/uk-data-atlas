@@ -50,7 +50,11 @@ class AggregationNotSupportedProblem:
                 request: `incompatible_geometry` when the chosen boundary release does not hold every source code. On a 400:
                 `invalid_format` for a `format` the route does not serve, `invalid_cursor` for a cursor this API did not issue
                 or that belongs to another query, and `unknown_query_parameter` when the operation does not declare a supplied
-                parameter. From a release resolution: `no_release_for_date` and `ambiguous_release`.
+                parameter. From a release resolution: `no_release_for_date` and `ambiguous_release`. From a measure's dimension
+                filters: `unknown_dimension` and `unknown_dimension_member` (400) for a dimension or member the measure does not
+                have, `conflicting_dimension_filter` (400) when a deprecated alias fixes a different member,
+                `no_matching_series` (404) when no series has the members asked for, and `ambiguous_dimension` (409) when the
+                request leaves several series and the operation answers one.
             absence (ProblemAbsence | Unset): Which absence left the area or conversion unresolved. For a conversion, the
                 crosswalk starts at another geography, does not map some source areas, or splits some across targets with no
                 published weight. For an area, a code is `superseded` when only older releases of the geography hold it, `not-
@@ -65,13 +69,18 @@ class AggregationNotSupportedProblem:
             candidates (list[ProblemCandidatesItem] | Unset): On a 422 Place Not Served: each place the name matched, and
                 why the measure does not answer it.
             choices (list[ProblemChoicesItemType0 | str] | Unset): On a 409 Ambiguous Place: each place the name could mean,
-                with its answer and the request that asks about it alone, as an object. On a refusal from an area's children
-                routes: each release the children are published in, as a `{geography}/{release}` string.
+                with its answer and the request that asks about it alone, as an object. On an `ambiguous_dimension` or
+                `no_matching_series` problem: each series of the measure, as an object with its `dimensions`, its `datasetId`
+                where that tells it apart, its `label`, and the request that reads it as `href`. On a refusal from an area's
+                children routes: each release the children are published in, as a `{geography}/{release}` string.
+            dimension (str | Unset): On an `unknown_dimension_member` problem, the dimension the filter named.
+            dimensions (list[str] | Unset): On an `unknown_dimension` problem, the dimensions the measure has.
             geometry_source (GeometrySource | Unset): Where the served WGS84 geometry came from. `transformation` is present
                 only when the source was reprojected. Per-area compiled geometry carries `validity`; release-wide provenance and
                 direct source reads omit it.
             links (ProblemLinks | Unset): With `unknown-geography`, the geography list; with `release-not-compiled`, the
                 boundary release.
+            members (list[str] | Unset): On an `unknown_dimension_member` problem, the members that dimension has.
             parameter (str | Unset): The query parameter the operation does not declare.
             present_in (list[ProblemPresentInItem] | Unset): With `area_not_in_release`: the compiled releases that do hold
                 the code, with the name it carries in each.
@@ -91,8 +100,11 @@ class AggregationNotSupportedProblem:
     available_releases: list[ProblemAvailableReleasesItem] | Unset = UNSET
     candidates: list[ProblemCandidatesItem] | Unset = UNSET
     choices: list[ProblemChoicesItemType0 | str] | Unset = UNSET
+    dimension: str | Unset = UNSET
+    dimensions: list[str] | Unset = UNSET
     geometry_source: GeometrySource | Unset = UNSET
     links: ProblemLinks | Unset = UNSET
+    members: list[str] | Unset = UNSET
     parameter: str | Unset = UNSET
     present_in: list[ProblemPresentInItem] | Unset = UNSET
     rejected: list[ProblemRejectedItem] | Unset = UNSET
@@ -150,6 +162,12 @@ class AggregationNotSupportedProblem:
                     choices_item = choices_item_data
                 choices.append(choices_item)
 
+        dimension = self.dimension
+
+        dimensions: list[str] | Unset = UNSET
+        if not isinstance(self.dimensions, Unset):
+            dimensions = self.dimensions
+
         geometry_source: dict[str, Any] | Unset = UNSET
         if not isinstance(self.geometry_source, Unset):
             geometry_source = self.geometry_source.to_dict()
@@ -157,6 +175,10 @@ class AggregationNotSupportedProblem:
         links: dict[str, Any] | Unset = UNSET
         if not isinstance(self.links, Unset):
             links = self.links.to_dict()
+
+        members: list[str] | Unset = UNSET
+        if not isinstance(self.members, Unset):
+            members = self.members
 
         parameter = self.parameter
 
@@ -201,10 +223,16 @@ class AggregationNotSupportedProblem:
             field_dict["candidates"] = candidates
         if choices is not UNSET:
             field_dict["choices"] = choices
+        if dimension is not UNSET:
+            field_dict["dimension"] = dimension
+        if dimensions is not UNSET:
+            field_dict["dimensions"] = dimensions
         if geometry_source is not UNSET:
             field_dict["geometrySource"] = geometry_source
         if links is not UNSET:
             field_dict["links"] = links
+        if members is not UNSET:
+            field_dict["members"] = members
         if parameter is not UNSET:
             field_dict["parameter"] = parameter
         if present_in is not UNSET:
@@ -299,6 +327,10 @@ class AggregationNotSupportedProblem:
 
                 choices.append(choices_item)
 
+        dimension = d.pop("dimension", UNSET)
+
+        dimensions = cast(list[str], d.pop("dimensions", UNSET))
+
         _geometry_source = d.pop("geometrySource", UNSET)
         geometry_source: GeometrySource | Unset
         if isinstance(_geometry_source, Unset):
@@ -312,6 +344,8 @@ class AggregationNotSupportedProblem:
             links = UNSET
         else:
             links = ProblemLinks.from_dict(_links)
+
+        members = cast(list[str], d.pop("members", UNSET))
 
         parameter = d.pop("parameter", UNSET)
 
@@ -349,8 +383,11 @@ class AggregationNotSupportedProblem:
             available_releases=available_releases,
             candidates=candidates,
             choices=choices,
+            dimension=dimension,
+            dimensions=dimensions,
             geometry_source=geometry_source,
             links=links,
+            members=members,
             parameter=parameter,
             present_in=present_in,
             rejected=rejected,

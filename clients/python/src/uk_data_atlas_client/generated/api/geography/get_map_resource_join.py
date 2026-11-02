@@ -6,6 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.get_map_resource_join_dimensions import GetMapResourceJoinDimensions
 from ...models.get_map_resource_join_format import GetMapResourceJoinFormat
 from ...models.incompatible_geometry_problem import IncompatibleGeometryProblem
 from ...models.map_join_budget_problem import MapJoinBudgetProblem
@@ -19,6 +20,7 @@ def _get_kwargs(
     release: str,
     measure_id: str,
     *,
+    dimensions: GetMapResourceJoinDimensions | Unset = UNSET,
     period: str,
     geography_query: str | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -26,6 +28,12 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
 
     params["period"] = period
 
@@ -134,6 +142,7 @@ def sync_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMapResourceJoinDimensions | Unset = UNSET,
     period: str,
     geography_query: str | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -168,6 +177,7 @@ def sync_detailed(
         geography_path (str):
         release (str):
         measure_id (str):
+        dimensions (GetMapResourceJoinDimensions | Unset):
         period (str):
         geography_query (str | Unset):
         code_year (int | Unset):
@@ -185,6 +195,7 @@ def sync_detailed(
         geography_path=geography_path,
         release=release,
         measure_id=measure_id,
+        dimensions=dimensions,
         period=period,
         geography_query=geography_query,
         code_year=code_year,
@@ -204,6 +215,7 @@ def sync(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMapResourceJoinDimensions | Unset = UNSET,
     period: str,
     geography_query: str | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -239,6 +251,7 @@ def sync(
         geography_path (str):
         release (str):
         measure_id (str):
+        dimensions (GetMapResourceJoinDimensions | Unset):
         period (str):
         geography_query (str | Unset):
         code_year (int | Unset):
@@ -257,6 +270,7 @@ def sync(
         release=release,
         measure_id=measure_id,
         client=client,
+        dimensions=dimensions,
         period=period,
         geography_query=geography_query,
         code_year=code_year,
@@ -270,6 +284,7 @@ async def asyncio_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMapResourceJoinDimensions | Unset = UNSET,
     period: str,
     geography_query: str | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -304,6 +319,7 @@ async def asyncio_detailed(
         geography_path (str):
         release (str):
         measure_id (str):
+        dimensions (GetMapResourceJoinDimensions | Unset):
         period (str):
         geography_query (str | Unset):
         code_year (int | Unset):
@@ -321,6 +337,7 @@ async def asyncio_detailed(
         geography_path=geography_path,
         release=release,
         measure_id=measure_id,
+        dimensions=dimensions,
         period=period,
         geography_query=geography_query,
         code_year=code_year,
@@ -338,6 +355,7 @@ async def asyncio(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMapResourceJoinDimensions | Unset = UNSET,
     period: str,
     geography_query: str | Unset = UNSET,
     code_year: int | Unset = UNSET,
@@ -373,6 +391,7 @@ async def asyncio(
         geography_path (str):
         release (str):
         measure_id (str):
+        dimensions (GetMapResourceJoinDimensions | Unset):
         period (str):
         geography_query (str | Unset):
         code_year (int | Unset):
@@ -392,6 +411,7 @@ async def asyncio(
             release=release,
             measure_id=measure_id,
             client=client,
+            dimensions=dimensions,
             period=period,
             geography_query=geography_query,
             code_year=code_year,

@@ -7,6 +7,9 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.envelope import Envelope
+from ...models.get_measure_value_for_place_dimensions import (
+    GetMeasureValueForPlaceDimensions,
+)
 from ...models.place_not_served_problem import PlaceNotServedProblem
 from ...models.problem import Problem
 from ...types import UNSET, Response, Unset
@@ -15,6 +18,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     measure_id: str,
     *,
+    dimensions: GetMeasureValueForPlaceDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     postcode: str | Unset = UNSET,
     geography: str | Unset = UNSET,
@@ -27,6 +31,12 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
 
     params["place"] = place
 
@@ -113,6 +123,7 @@ def sync_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMeasureValueForPlaceDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     postcode: str | Unset = UNSET,
     geography: str | Unset = UNSET,
@@ -154,6 +165,15 @@ def sync_detailed(
     same name. When the name matches places but the measure answers none, the response is a 422 with a
     `candidates` member saying why for each, such as a median, which cannot be summed over a region.
 
+    A measure with dimensions answers for the members its filters name: `GET /v1/data/party-vote-
+    share/value?place=Holborn and St Pancras&party=lab`. A dimension left out takes its total where one
+    is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
+    answer every matching series at once: `data.breakdown` holds one entry per series, each with its
+    `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
+    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
+    `resolvedFrom`.
+
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published
     for, as drawn for the data's own boundary year rather than today's, in a boundary release holding
@@ -166,6 +186,7 @@ def sync_detailed(
 
     Args:
         measure_id (str):
+        dimensions (GetMeasureValueForPlaceDimensions | Unset):
         place (str | Unset):
         postcode (str | Unset):
         geography (str | Unset):
@@ -186,6 +207,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         place=place,
         postcode=postcode,
         geography=geography,
@@ -208,6 +230,7 @@ def sync(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMeasureValueForPlaceDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     postcode: str | Unset = UNSET,
     geography: str | Unset = UNSET,
@@ -249,6 +272,15 @@ def sync(
     same name. When the name matches places but the measure answers none, the response is a 422 with a
     `candidates` member saying why for each, such as a median, which cannot be summed over a region.
 
+    A measure with dimensions answers for the members its filters name: `GET /v1/data/party-vote-
+    share/value?place=Holborn and St Pancras&party=lab`. A dimension left out takes its total where one
+    is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
+    answer every matching series at once: `data.breakdown` holds one entry per series, each with its
+    `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
+    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
+    `resolvedFrom`.
+
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published
     for, as drawn for the data's own boundary year rather than today's, in a boundary release holding
@@ -261,6 +293,7 @@ def sync(
 
     Args:
         measure_id (str):
+        dimensions (GetMeasureValueForPlaceDimensions | Unset):
         place (str | Unset):
         postcode (str | Unset):
         geography (str | Unset):
@@ -282,6 +315,7 @@ def sync(
     return sync_detailed(
         measure_id=measure_id,
         client=client,
+        dimensions=dimensions,
         place=place,
         postcode=postcode,
         geography=geography,
@@ -298,6 +332,7 @@ async def asyncio_detailed(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMeasureValueForPlaceDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     postcode: str | Unset = UNSET,
     geography: str | Unset = UNSET,
@@ -339,6 +374,15 @@ async def asyncio_detailed(
     same name. When the name matches places but the measure answers none, the response is a 422 with a
     `candidates` member saying why for each, such as a median, which cannot be summed over a region.
 
+    A measure with dimensions answers for the members its filters name: `GET /v1/data/party-vote-
+    share/value?place=Holborn and St Pancras&party=lab`. A dimension left out takes its total where one
+    is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
+    answer every matching series at once: `data.breakdown` holds one entry per series, each with its
+    `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
+    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
+    `resolvedFrom`.
+
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published
     for, as drawn for the data's own boundary year rather than today's, in a boundary release holding
@@ -351,6 +395,7 @@ async def asyncio_detailed(
 
     Args:
         measure_id (str):
+        dimensions (GetMeasureValueForPlaceDimensions | Unset):
         place (str | Unset):
         postcode (str | Unset):
         geography (str | Unset):
@@ -371,6 +416,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         measure_id=measure_id,
+        dimensions=dimensions,
         place=place,
         postcode=postcode,
         geography=geography,
@@ -391,6 +437,7 @@ async def asyncio(
     measure_id: str,
     *,
     client: AuthenticatedClient | Client,
+    dimensions: GetMeasureValueForPlaceDimensions | Unset = UNSET,
     place: str | Unset = UNSET,
     postcode: str | Unset = UNSET,
     geography: str | Unset = UNSET,
@@ -432,6 +479,15 @@ async def asyncio(
     same name. When the name matches places but the measure answers none, the response is a 422 with a
     `candidates` member saying why for each, such as a median, which cannot be summed over a region.
 
+    A measure with dimensions answers for the members its filters name: `GET /v1/data/party-vote-
+    share/value?place=Holborn and St Pancras&party=lab`. A dimension left out takes its total where one
+    is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
+    answer every matching series at once: `data.breakdown` holds one entry per series, each with its
+    `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
+    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
+    `resolvedFrom`.
+
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published
     for, as drawn for the data's own boundary year rather than today's, in a boundary release holding
@@ -444,6 +500,7 @@ async def asyncio(
 
     Args:
         measure_id (str):
+        dimensions (GetMeasureValueForPlaceDimensions | Unset):
         place (str | Unset):
         postcode (str | Unset):
         geography (str | Unset):
@@ -466,6 +523,7 @@ async def asyncio(
         await asyncio_detailed(
             measure_id=measure_id,
             client=client,
+            dimensions=dimensions,
             place=place,
             postcode=postcode,
             geography=geography,
