@@ -147,6 +147,18 @@ const selectorFor = (
 	boundaryYear: number,
 ): StatisticsSelector | string => {
 	const mapping = config.ids[measureId]!;
+	if (mapping.measure === "winning-party") {
+		// The winner is stored as text on each contest, not as a series.
+		const servedCodes = servedCodesFor(datasetId, boundaryYear);
+		return {
+			datasetId,
+			measure: mapping.measure,
+			dimensions: {},
+			geography,
+			contest: "winner",
+			...(servedCodes ? { servedCodes } : {}),
+		};
+	}
 	const computed =
 		DERIVED[datasetId]?.[mapping.measure] ?? COMPUTED[mapping.measure];
 	const measure = computed?.measure ?? mapping.measure;
@@ -261,15 +273,6 @@ for (const measure of catalog.measures)
 		if (isMeasureTable(stored)) {
 			plan.observations[name] ??=
 				"A census table artifact, read whole by every measure it serves; tables are not yet rebuilt from statistics rows.";
-			continue;
-		}
-		if (
-			stored.periods.some(({ records }) =>
-				records.some((record) => record.category !== undefined),
-			)
-		) {
-			plan.observations[name] =
-				"Its values are categories, which the statistics tables do not hold for this measure.";
 			continue;
 		}
 		const selector = selectorFor(
