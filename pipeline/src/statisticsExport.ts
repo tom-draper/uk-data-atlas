@@ -33,7 +33,7 @@ export type StatisticsSelection = StatisticsSourceSelection &
 	(
 		| { path: string[] }
 		| { measure: string; dimension: string; member: string }
-		| { measure: string; members: Record<string, string> }
+		| { measure: string; members: Record<string, string>; exact?: true }
 	);
 
 const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
@@ -63,6 +63,9 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 	AND selected_release.geography = json_extract(selection.value, '$.geography')
 	AND selected_release.id = json_extract(selection.value, '$.release')
 	AND (json_type(selection.value, '$.members') = 'object' OR json_type(selection.value, '$.dimension') = 'text')
+	AND (json_extract(selection.value, '$.exact') IS NOT 1 OR
+		(SELECT count(*) FROM series_member sm WHERE sm.series_id = selected_series.id) =
+		(SELECT count(*) FROM json_each(selection.value, '$.members')))
 	AND NOT EXISTS (
 		SELECT 1 FROM json_each(COALESCE(json_extract(selection.value, '$.members'),
 			json_object(json_extract(selection.value, '$.dimension'), json_extract(selection.value, '$.member')))) expected
@@ -73,6 +76,81 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 		)
 	)
 `;
+
+/** Include every canonical period and release for the same series dimensions. */
+export function expandStatisticsSelection(
+	database: DatabaseSync,
+	selection: readonly StatisticsSelection[],
+): StatisticsSelection[] {
+	const initial = database
+		.prepare(`SELECT DISTINCT series_id FROM (${selectedRows})`)
+		.all(JSON.stringify(selection));
+	const details =
+		database.prepare(`SELECT d.slug AS dataset, m.slug AS measure, s.dataset_id, s.measure_id
+		FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id WHERE s.id = ?`);
+	const dimensions =
+		database.prepare(`SELECT dim.slug, dm.code FROM series_member sm
+		JOIN dimension dim ON dim.id = sm.dimension_id JOIN dimension_member dm ON dm.id = sm.member_id
+		WHERE sm.series_id = ? ORDER BY dim.slug`);
+	const related =
+		database.prepare(`SELECT r.geography, r.id AS release, p.label AS period
+		FROM series s JOIN area_releases r ON r.position = s.release_id
+		JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id
+		WHERE s.dataset_id = ? AND s.measure_id = ?
+		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
+		AND NOT EXISTS (SELECT 1 FROM json_each(?) expected WHERE NOT EXISTS (
+			SELECT 1 FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
+			JOIN dimension_member dm ON dm.id = sm.member_id
+			WHERE sm.series_id = s.id AND dim.slug = expected.key AND dm.code = expected.value
+		)) GROUP BY s.id, p.id ORDER BY r.geography, r.id, p.label`);
+	const result = new Map<string, StatisticsSelection>();
+	const visited = new Set<string>();
+	for (const row of initial) {
+		const id = row.series_id as number;
+		const series = details.get(id);
+		if (!series) throw new Error(`Missing canonical series ${id}`);
+		const members = Object.fromEntries(
+			dimensions
+				.all(id)
+				.map((item) => [String(item.slug), String(item.code)]),
+		);
+		const signature = JSON.stringify([
+			series.dataset_id,
+			series.measure_id,
+			members,
+		]);
+		if (visited.has(signature)) continue;
+		visited.add(signature);
+		for (const item of related.all(
+			series.dataset_id!,
+			series.measure_id!,
+			Object.keys(members).length,
+			JSON.stringify(members),
+		)) {
+			const key = JSON.stringify([
+				signature,
+				item.geography,
+				item.release,
+			]);
+			let entry = result.get(key);
+			if (!entry) {
+				entry = {
+					dataset: String(series.dataset),
+					measure: String(series.measure),
+					members,
+					exact: true,
+					geography: String(item.geography),
+					release: String(item.release),
+					periods: [],
+				};
+				result.set(key, entry);
+			}
+			if (!entry.periods.includes(String(item.period)))
+				entry.periods.push(String(item.period));
+		}
+	}
+	return [...result.values()];
+}
 
 export function hashStatisticsSelection(
 	database: DatabaseSync,
