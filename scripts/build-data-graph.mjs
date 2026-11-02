@@ -281,7 +281,13 @@ const apiStages = [
 			"tsx",
 			"pipeline/src/build-export-manifest.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			codeInputs: [
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+				"services/api/config/statistics-read-path.json",
+			],
+		},
 	),
 	stage(
 		"postcode-areas",

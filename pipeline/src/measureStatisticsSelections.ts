@@ -7,6 +7,7 @@ import type { CompiledMeasure } from "./catalog/manifest";
 import { bindCensusStatistics } from "./bindCensusStatistics";
 import { bindStatisticsField } from "./bindStatisticsField";
 import { bindCompiledFields } from "./bindCompiledFields";
+import { bindReviewedStatistics } from "./bindReviewedStatistics";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
@@ -39,6 +40,8 @@ export function measureStatisticsSelections(
 	}
 	const compiled = bindCompiledFields(database, measure);
 	if (compiled) return compiled;
+	const reviewed = bindReviewedStatistics(database, measure);
+	if (reviewed) return reviewed;
 	if (!measure.sources.length) return undefined;
 	const result: StatisticsSelection[] = [];
 	for (const source of measure.sources) {

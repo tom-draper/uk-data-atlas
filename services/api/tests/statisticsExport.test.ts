@@ -13,6 +13,7 @@ import {
 import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
 import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
+import { bindReviewedStatistics } from "../../../pipeline/src/bindReviewedStatistics";
 import { bindCompiledFields } from "../../../pipeline/src/bindCompiledFields";
 import { compileMeasureDownloads } from "../../../pipeline/src/measureDownloads";
 import { gunzipSync } from "node:zlib";
@@ -70,6 +71,46 @@ test("binds a census measure only when every source partition is complete", () =
 		measure.sources.pop();
 		measure.sources[1]!.coverage.recordCount = 2;
 		assert.equal(bindCensusStatistics(db, measure), undefined);
+	} finally {
+		db.close();
+	}
+});
+
+test("uses reviewed source mappings only when each requested period exists", () => {
+	const db = new DatabaseSync(":memory:");
+	try {
+		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
+			CREATE TABLE measure (id INTEGER, slug TEXT);
+			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
+			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+			CREATE TABLE dimension (id INTEGER, slug TEXT);
+			CREATE TABLE dimension_member (id INTEGER, code TEXT);
+			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
+			CREATE TABLE observation (series_id INTEGER, period_id INTEGER);
+			CREATE TABLE period (id INTEGER, label TEXT);
+			CREATE TABLE dataset_leaf (series_id INTEGER, period_id INTEGER, dataset_id INTEGER, kind TEXT, path TEXT);
+			INSERT INTO dataset VALUES (1, 'population');
+			INSERT INTO measure VALUES (1, 'population');
+			INSERT INTO series VALUES (1, 1, 1, 1);
+			INSERT INTO area_releases VALUES (1, 'ward', 'ward-2021');
+			INSERT INTO dimension VALUES (1, 'sex'), (2, 'age');
+			INSERT INTO dimension_member VALUES (1, 'all'), (2, '0');
+			INSERT INTO series_member VALUES (1, 1, 1), (1, 2, 2);
+			INSERT INTO period VALUES (1, '2021');
+			INSERT INTO observation VALUES (1, 1);`);
+		const measure = {
+			id: "population",
+			sources: [
+				{
+					datasetId: "population",
+					periods: ["2021"],
+					sourceGeography: { type: "ward", boundaryYear: 2021 },
+				},
+			],
+		} as unknown as Measure;
+		assert.equal(bindReviewedStatistics(db, measure)?.length, 1);
+		measure.sources[0]!.periods.push("2022");
+		assert.equal(bindReviewedStatistics(db, measure), undefined);
 	} finally {
 		db.close();
 	}
@@ -172,6 +213,33 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		db.exec(`DELETE FROM observation WHERE series_id IN (3, 4);
 			DELETE FROM series WHERE id IN (3, 4);
 			DELETE FROM measure WHERE id IN (2, 3);
+			DELETE FROM dataset WHERE id = 2;`);
+		db.exec(`INSERT INTO dataset VALUES (2, 'population-uk');
+			INSERT INTO measure VALUES (2, 'population', 'people');
+			INSERT INTO series VALUES (3, 2, 2, 1, 'age-0'), (4, 2, 2, 1, 'age-1');
+			INSERT INTO observation VALUES (3, 1, 1, 10, NULL, NULL, NULL, 1), (4, 1, 1, 12, NULL, NULL, NULL, 1), (3, 2, 1, 3, NULL, NULL, NULL, 1), (4, 2, 1, 4, NULL, NULL, NULL, 1);`);
+		assert.equal(exportStatisticsMeasure(db, "population", paths), 2);
+		const population = Papa.parse<Record<string, unknown>>(
+			readFileSync(paths.csv, "utf8"),
+			{
+				header: true,
+				dynamicTyping: (field) =>
+					["value", "lower", "upper"].includes(String(field)),
+				skipEmptyLines: true,
+				transform: (value) => (value === "" ? null : value),
+			},
+		);
+		assert.deepEqual(
+			population.data,
+			readParquet(readFileSync(paths.parquet)).rows,
+		);
+		assert.deepEqual(
+			population.data.map(({ value }) => value),
+			[22, 7],
+		);
+		db.exec(`DELETE FROM observation WHERE series_id IN (3, 4);
+			DELETE FROM series WHERE id IN (3, 4);
+			DELETE FROM measure WHERE id = 2;
 			DELETE FROM dataset WHERE id = 2;`);
 		exportStatisticsMeasure(db, "households", paths);
 		const first = [readFileSync(paths.csv), readFileSync(paths.parquet)];
