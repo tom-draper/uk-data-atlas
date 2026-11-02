@@ -6,7 +6,10 @@ import {
 import type { CompiledMeasure } from "./catalog/manifest";
 import { bindCensusStatistics } from "./bindCensusStatistics";
 import { bindStatisticsField } from "./bindStatisticsField";
-import type { StatisticsSelection } from "./statisticsExport";
+import {
+	expandStatisticsSelection,
+	type StatisticsSelection,
+} from "./statisticsExport";
 
 type Field = NonNullable<CompiledMeasure["statisticsField"]>;
 type Binding = { measureId: string; field: Field };
@@ -18,7 +21,7 @@ export function measureStatisticsSelections(
 	bindings: readonly Binding[],
 ): StatisticsSelection[] | undefined {
 	const census = bindCensusStatistics(database, measure);
-	if (census) return census;
+	if (census) return expandStatisticsSelection(database, census);
 	if (!measure.sources.length) return undefined;
 	const result: StatisticsSelection[] = [];
 	for (const source of measure.sources) {
@@ -51,5 +54,7 @@ export function measureStatisticsSelections(
 			result.push(...selection);
 		}
 	}
-	return result.length ? result : undefined;
+	return result.length
+		? expandStatisticsSelection(database, result)
+		: undefined;
 }

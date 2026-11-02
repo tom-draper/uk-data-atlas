@@ -7,6 +7,7 @@ import test from "node:test";
 import Papa from "papaparse";
 import {
 	exportStatisticsMeasure,
+	expandStatisticsSelection,
 	hashStatisticsSelection,
 } from "../../../pipeline/src/statisticsExport";
 import { readParquet } from "./parquetFixtures";
@@ -425,6 +426,27 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		assert.deepEqual(
 			readFileSync(join(directory, csvDownload.artifact)),
 			firstGzip,
+		);
+		db.exec(`
+			INSERT INTO area_releases VALUES (2, 'ward', '2022');
+			INSERT INTO period VALUES (2, '2022');
+			INSERT INTO series VALUES (3, 1, 1, 2, 'rented-2022');
+			INSERT INTO series_member VALUES (3, 1, 1), (3, 2, 3);
+			INSERT INTO observation VALUES (3, 1, 2, 11, NULL, NULL, NULL, 1);
+		`);
+		const expanded = expandStatisticsSelection(db, chosen);
+		assert.equal(
+			exportStatisticsMeasure(db, "rented-homes", paths, expanded),
+			2052,
+		);
+		const expandedCsv = Papa.parse<Record<string, string>>(
+			readFileSync(paths.csv, "utf8"),
+			{ header: true, skipEmptyLines: true },
+		);
+		assert.ok(
+			expandedCsv.data.some(
+				(row) => row.release === "2022" && row.period === "2022",
+			),
 		);
 	} finally {
 		db.close();
