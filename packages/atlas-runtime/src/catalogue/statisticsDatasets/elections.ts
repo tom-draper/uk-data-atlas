@@ -100,6 +100,7 @@ export const LOCAL_ELECTION: DeclaredDataset = {
 	election: {
 		kind: "local",
 		date: pollingDay(LOCAL_POLLING_DAYS),
+		results: "results",
 		contest: {
 			area_name: "wardName",
 			authority_code: "ladCode",
@@ -161,6 +162,7 @@ export const GENERAL_ELECTION: DeclaredDataset = {
 	election: {
 		kind: "general",
 		date: pollingDay(GENERAL_POLLING_DAYS),
+		results: "results",
 		contest: {
 			area_name: "constituencyName",
 			region: "regionName",

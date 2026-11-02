@@ -144,6 +144,11 @@ export type DeclaredElection = {
 	contest?: Partial<Record<ContestColumn, string>>;
 	/** The record path holding each column of the candidate it elected. */
 	elected?: Partial<Record<CandidacyColumn, string>>;
+	/**
+	 * A header field holding each contest's winning party, keyed as the
+	 * records are, stored as the contest's `winner`.
+	 */
+	results?: string;
 };
 
 export type DeclaredParent = {
@@ -570,6 +575,8 @@ export function declaredStatistics(
 		record: { [key: string]: Json },
 		context: string,
 		code: string,
+		header: DeclaredHeader,
+		recordKey: string,
 	) => {
 		const read = <Column extends string>(
 			paths: Partial<Record<Column, string>> | undefined,
@@ -592,7 +599,24 @@ export function declaredStatistics(
 			return any ? found : undefined;
 		};
 		if (!config.election) return {};
-		const contest = read(config.election.contest);
+		let contest = read(config.election.contest);
+		const { results } = config.election;
+		if (results !== undefined) {
+			const winners = header[results];
+			const winner =
+				winners !== null &&
+				typeof winners === "object" &&
+				!Array.isArray(winners)
+					? winners[recordKey]
+					: undefined;
+			if (winner !== undefined) {
+				if (typeof winner !== "string")
+					throw new Error(
+						`${context}: ${results}.${recordKey} is not a party`,
+					);
+				contest = { ...contest, winner };
+			}
+		}
 		const elected = read(config.election.elected);
 		return {
 			...(contest ? { contest } : {}),
@@ -792,7 +816,13 @@ export function declaredStatistics(
 								release,
 								code,
 								parents,
-								...electionText(record, context, code),
+								...electionText(
+									record,
+									context,
+									code,
+									header,
+									recordKey,
+								),
 							});
 						let sample: RecordSample | undefined;
 						if (onPart) {

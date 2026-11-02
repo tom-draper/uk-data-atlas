@@ -158,6 +158,8 @@ export const CONTEST_COLUMNS = [
 	"result",
 	"first_party",
 	"second_party",
+	/** The party the publisher declares won, by its party key. */
+	"winner",
 ] as const;
 export type ContestColumn = (typeof CONTEST_COLUMNS)[number];
 
