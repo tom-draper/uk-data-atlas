@@ -33,6 +33,7 @@ export type StatisticsSelection = StatisticsSourceSelection &
 	(
 		| { path: string[] }
 		| { measure: string; dimension: string; member: string }
+		| { measure: string; members: Record<string, string> }
 	);
 
 const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
@@ -54,9 +55,6 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 	JOIN dataset selected_dataset ON selected_dataset.id = selected_series.dataset_id
 	JOIN measure selected_measure ON selected_measure.id = selected_series.measure_id
 	JOIN area_releases selected_release ON selected_release.position = selected_series.release_id
-	JOIN series_member selected_member ON selected_member.series_id = selected_series.id
-	JOIN dimension selected_dimension ON selected_dimension.id = selected_member.dimension_id
-	JOIN dimension_member selected_code ON selected_code.id = selected_member.member_id
 	JOIN selections selection
 	JOIN json_each(selection.value, '$.periods') selected_period
 	JOIN period selected_label ON selected_label.label = selected_period.value
@@ -64,8 +62,16 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 	AND selected_measure.slug = json_extract(selection.value, '$.measure')
 	AND selected_release.geography = json_extract(selection.value, '$.geography')
 	AND selected_release.id = json_extract(selection.value, '$.release')
-	AND selected_dimension.slug = json_extract(selection.value, '$.dimension')
-	AND selected_code.code = json_extract(selection.value, '$.member')
+	AND (json_type(selection.value, '$.members') = 'object' OR json_type(selection.value, '$.dimension') = 'text')
+	AND NOT EXISTS (
+		SELECT 1 FROM json_each(COALESCE(json_extract(selection.value, '$.members'),
+			json_object(json_extract(selection.value, '$.dimension'), json_extract(selection.value, '$.member')))) expected
+		WHERE NOT EXISTS (
+			SELECT 1 FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
+			JOIN dimension_member dm ON dm.id = sm.member_id
+			WHERE sm.series_id = selected_series.id AND dim.slug = expected.key AND dm.code = expected.value
+		)
+	)
 `;
 
 export function hashStatisticsSelection(
