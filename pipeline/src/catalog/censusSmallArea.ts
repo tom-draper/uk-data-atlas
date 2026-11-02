@@ -472,8 +472,9 @@ export const censusTableArtifactName = (table: string, geography: string) =>
 	`census-2021-${table}-${geography}-${BOUNDARY_YEAR}-table`;
 
 /**
- * A table's rows for one geography, as an area code and a count per
- * category in the table's category order, checked to add to the total.
+ * A table's rows for one geography, in area code order, as an area code and
+ * a count per category in the table's category order, checked to add to the
+ * total.
  */
 export const censusTableRecords = (
 	path: string,
@@ -499,34 +500,52 @@ export const censusTableRecords = (
 		column === table.totalColumn ? [] : [columns[index]!],
 	);
 	const seen = new Set<string>();
-	return lines.slice(1).map((line, index) => {
-		const fields = csvFields(line);
-		const code = fields[2] ?? "";
-		const where = `${path} row ${index + 2}`;
-		if (fields[0] !== PERIOD)
-			throw new Error(`${where}: date is ${fields[0]}, not ${PERIOD}`);
-		if (!geography.prefixes.some((prefix) => code.startsWith(prefix)))
-			throw new Error(
-				`${where}: ${code} is not a ${geography.label} code`,
-			);
-		if (seen.has(code)) throw new Error(`${where}: ${code} repeats`);
-		seen.add(code);
-		const value = (column: number) => {
-			const parsed = Number(fields[column]);
-			if (!Number.isInteger(parsed) || parsed < 0)
-				throw new Error(`${where}: ${header[column]} is not a count`);
-			return parsed;
-		};
-		const sum = leaves.reduce(
-			(running, column) => running + value(column),
-			0,
-		);
-		if (sum !== value(total))
-			throw new Error(
-				`${where}: the categories sum to ${sum}, not the total ${value(total)}`,
-			);
-		return [code, ...columns.map(value)] as [string, ...number[]];
-	});
+	return (
+		lines
+			.slice(1)
+			.map((line, index) => {
+				const fields = csvFields(line);
+				const code = fields[2] ?? "";
+				const where = `${path} row ${index + 2}`;
+				if (fields[0] !== PERIOD)
+					throw new Error(
+						`${where}: date is ${fields[0]}, not ${PERIOD}`,
+					);
+				if (
+					!geography.prefixes.some((prefix) =>
+						code.startsWith(prefix),
+					)
+				)
+					throw new Error(
+						`${where}: ${code} is not a ${geography.label} code`,
+					);
+				if (seen.has(code))
+					throw new Error(`${where}: ${code} repeats`);
+				seen.add(code);
+				const value = (column: number) => {
+					const parsed = Number(fields[column]);
+					if (!Number.isInteger(parsed) || parsed < 0)
+						throw new Error(
+							`${where}: ${header[column]} is not a count`,
+						);
+					return parsed;
+				};
+				const sum = leaves.reduce(
+					(running, column) => running + value(column),
+					0,
+				);
+				if (sum !== value(total))
+					throw new Error(
+						`${where}: the categories sum to ${sum}, not the total ${value(total)}`,
+					);
+				return [code, ...columns.map(value)] as [string, ...number[]];
+			})
+			// In area code order, as every other observation artifact is, so a
+			// table rebuilt from statistics rows has the same bytes.
+			.sort(([left], [right]) =>
+				left < right ? -1 : left > right ? 1 : 0,
+			)
+	);
 };
 
 export type CensusSmallArea = {
