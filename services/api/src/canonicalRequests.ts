@@ -5,6 +5,7 @@ import type {
 	RouteRequestFor,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { canonicalMeasureId } from "./catalogue/measureTerms";
+import { dimensionCatalogue } from "./dimensions/dimensionCatalogue";
 import { canonicalGeography } from "@uk-data-atlas/geography";
 
 // Where a path carries a measure id: /v1/data/{id}, /v1/measures/{id} and a
@@ -35,17 +36,34 @@ export const canonicalMeasureRequest = <T extends RouteRequestFor<never>>(
 	if (position !== undefined && segments[position] !== undefined)
 		segments[position] = canonical(segments[position]!);
 	const url = new URL(request.parsedUrl);
+	// A `measure` parameter names one series. A measure id names its only
+	// series, or the one with every dimension at its total.
+	const dimensional = request.context.measureDimensions
+		? dimensionCatalogue(catalog, request.context.measureDimensions)
+		: undefined;
+	const seriesOf = (term: string) => {
+		const measure = dimensional?.measure(term);
+		if (!measure) return canonical(term);
+		const totals = measure.series.filter((series) =>
+			measure.dimensions.every(
+				(dimension) =>
+					series.dimensions[dimension.id] === undefined ||
+					series.dimensions[dimension.id] === dimension.total,
+			),
+		);
+		return totals.length === 1 ? totals[0]!.id : canonical(term);
+	};
 	const measures = url.searchParams.getAll("measure");
 	if (measures.length > 0) {
 		url.searchParams.delete("measure");
 		for (const measure of measures)
-			url.searchParams.append("measure", canonical(measure));
+			url.searchParams.append("measure", seriesOf(measure));
 	}
 	url.pathname = `/${segments.map(encodeURIComponent).join("/")}`;
 	const changed =
 		segments.some(
 			(segment, index) => segment !== request.segments[index],
-		) || measures.some((measure) => canonical(measure) !== measure);
+		) || measures.some((measure) => seriesOf(measure) !== measure);
 	return changed ? { ...request, parsedUrl: url, segments } : undefined;
 };
 
