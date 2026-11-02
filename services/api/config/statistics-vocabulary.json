@@ -1,0 +1,2015 @@
+{
+	"schemaVersion": 1,
+	"measures": {
+		"adult-excess-weight": {
+			"label": "Adults overweight or obese",
+			"description": "Adults aged 18 and over classified as overweight or obese.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "none"
+		},
+		"air-quality-grid-cells": {
+			"label": "Air quality grid cells",
+			"description": "1 km grid cells of the background pollution maps averaged for the area.",
+			"unit": "grid cells",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"area": {
+			"label": "Area",
+			"description": "Area of the boundary, in hectares.",
+			"unit": "hectares",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"ashe-jobs": {
+			"label": "Employee jobs in the earnings survey",
+			"description": "Employee jobs the Annual Survey of Hours and Earnings estimates pay for, in thousands.",
+			"unit": "thousand jobs",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"attainment-8": {
+			"label": "Average Attainment 8 score",
+			"description": "Average Attainment 8 score of key stage 4 pupils.",
+			"unit": "score",
+			"valueKind": "mean",
+			"aggregation": "weighted_mean"
+		},
+		"background-concentration": {
+			"label": "Background concentration",
+			"description": "Modelled annual mean background concentration, averaged over the area's 1 km grid cells.",
+			"unit": "micrograms per cubic metre",
+			"valueKind": "mean",
+			"aggregation": "weighted_mean"
+		},
+		"band-d-council-tax": {
+			"label": "Average Band D council tax",
+			"description": "Average area Band D council tax, including major precepts.",
+			"unit": "gbp",
+			"valueKind": "amount",
+			"aggregation": "weighted_mean"
+		},
+		"broadband-availability": {
+			"label": "Broadband availability",
+			"description": "Premises that can get fixed broadband at the speed, as a percentage of premises.",
+			"unit": "percent of premises",
+			"valueKind": "share",
+			"aggregation": "weighted_mean"
+		},
+		"children-in-relative-low-income": {
+			"label": "Children in relative low income families",
+			"description": "Children under 16 in families with below 60% of median income before housing costs.",
+			"unit": "children",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"children-in-relative-low-income-rate": {
+			"label": "Children in relative low income families, rate",
+			"description": "Children in relative low income families before housing costs as a percentage of children under 16.",
+			"unit": "percent",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"children-in-temporary-accommodation": {
+			"label": "Children in temporary accommodation",
+			"description": "Children in households in temporary accommodation at the end of the quarter.",
+			"unit": "children",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"claimant-rate": {
+			"label": "Claimant rate",
+			"description": "Claimants as a percentage of residents aged 16 to 64. Published, except for authorities formed in 2023, where the compiler divides by the 2024 mid-year population.",
+			"unit": "percent",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"claimants": {
+			"label": "Claimants",
+			"description": "People claiming unemployment-related benefits (the claimant count).",
+			"unit": "people",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"collected-waste": {
+			"label": "Local authority collected waste",
+			"description": "Waste collected by the local authority, collection authorities only.",
+			"unit": "tonnes",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"education-services-budget": {
+			"label": "Education services revenue budget",
+			"description": "Budgeted net revenue expenditure on education services.",
+			"unit": "gbp thousand",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"electorate": {
+			"label": "Electorate",
+			"description": "People registered to vote.",
+			"unit": "electors",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"electricity-consumption": {
+			"label": "Electricity consumption",
+			"description": "Metered electricity consumption in gigawatt hours.",
+			"unit": "gwh",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"electricity-meters": {
+			"label": "Electricity meters",
+			"description": "Electricity meters, in thousands.",
+			"unit": "thousand meters",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"enterprises": {
+			"label": "VAT and/or PAYE based enterprises",
+			"description": "Enterprises registered for VAT or PAYE, summed over the published broad industry groups.",
+			"unit": "enterprises",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"fuel-poor-households": {
+			"label": "Fuel poor households",
+			"description": "Households in fuel poverty under the Low Income Low Energy Efficiency measure.",
+			"unit": "households",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"fuel-poverty-rate": {
+			"label": "Fuel poverty rate",
+			"description": "Fuel poor households as a percentage of all households.",
+			"unit": "percent",
+			"valueKind": "rate",
+			"aggregation": "ratio"
+		},
+		"gas-consumption": {
+			"label": "Gas consumption",
+			"description": "Metered gas consumption in gigawatt hours.",
+			"unit": "gwh",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"gas-meters": {
+			"label": "Gas meters",
+			"description": "Gas meters, in thousands.",
+			"unit": "thousand meters",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"gcse-english-maths-grade-4": {
+			"label": "English and maths at grade 4 or above",
+			"description": "Key stage 4 pupils achieving grade 4 or above in English and maths.",
+			"unit": "percent of pupils",
+			"valueKind": "share",
+			"aggregation": "weighted_mean"
+		},
+		"gcse-english-maths-grade-4-gap": {
+			"label": "Disadvantage gap in English and maths at grade 4 or above",
+			"description": "Other pupils' rate of grade 4 or above in English and maths less disadvantaged pupils' rate.",
+			"unit": "percentage points",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"gcse-english-maths-grade-5": {
+			"label": "English and maths at grade 5 or above",
+			"description": "Key stage 4 pupils achieving grade 5 or above in English and maths.",
+			"unit": "percent of pupils",
+			"valueKind": "share",
+			"aggregation": "weighted_mean"
+		},
+		"gdp": {
+			"label": "Gross domestic product",
+			"description": "Gross domestic product at current market prices.",
+			"unit": "gbp million",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"ghg-emissions": {
+			"label": "Greenhouse gas emissions",
+			"description": "Territorial greenhouse gas emissions in kilotonnes of carbon dioxide equivalent.",
+			"unit": "kt co2e",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"ghg-population": {
+			"label": "Population",
+			"description": "The mid-year population the publisher divides emissions by, in thousands.",
+			"unit": "thousand people",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"gross-annual-pay": {
+			"label": "Gross annual pay",
+			"description": "Gross annual pay of employees, from the Annual Survey of Hours and Earnings.",
+			"unit": "gbp per year",
+			"valueKind": "amount",
+			"aggregation": "none"
+		},
+		"gross-annual-pay-change": {
+			"label": "Change in gross annual pay",
+			"description": "Percentage change in gross annual pay on the previous year.",
+			"unit": "percent",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"gross-hourly-pay": {
+			"label": "Gross hourly pay",
+			"description": "Gross hourly pay of employees, excluding overtime, from the Annual Survey of Hours and Earnings.",
+			"unit": "gbp per hour",
+			"valueKind": "amount",
+			"aggregation": "none"
+		},
+		"gross-hourly-pay-change": {
+			"label": "Change in gross hourly pay",
+			"description": "Percentage change in gross hourly pay on the previous year.",
+			"unit": "percent",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"gva": {
+			"label": "Gross value added",
+			"description": "Balanced gross value added at current basic prices.",
+			"unit": "gbp million",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"healthy-life-expectancy": {
+			"label": "Healthy life expectancy at birth",
+			"description": "Average years a newborn would live in very good or good health at the period's rates.",
+			"unit": "years",
+			"valueKind": "mean",
+			"aggregation": "none"
+		},
+		"house-price-mean": {
+			"label": "Mean house price",
+			"description": "Mean price paid for residential property sold in the year.",
+			"unit": "gbp",
+			"valueKind": "mean",
+			"aggregation": "none"
+		},
+		"house-price-median": {
+			"label": "Median house price",
+			"description": "Median price paid for residential property sold in the year.",
+			"unit": "gbp",
+			"valueKind": "median",
+			"aggregation": "none"
+		},
+		"house-price-to-earnings-ratio": {
+			"label": "House price to earnings ratio",
+			"description": "Median price of existing dwellings divided by median gross annual residence-based earnings.",
+			"unit": "ratio",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"household-waste-recycled": {
+			"label": "Household waste sent for recycling",
+			"description": "Household waste sent for reuse, recycling or composting.",
+			"unit": "tonnes",
+			"valueKind": "amount",
+			"aggregation": "sum"
+		},
+		"households": {
+			"label": "Households",
+			"description": "Number of households.",
+			"unit": "households",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"households-in-temporary-accommodation": {
+			"label": "Households in temporary accommodation",
+			"description": "Households in temporary accommodation arranged by the local authority at the end of the quarter.",
+			"unit": "households",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"households-in-temporary-accommodation-rate": {
+			"label": "Households in temporary accommodation per 1,000",
+			"description": "Households in temporary accommodation per 1,000 households, as published.",
+			"unit": "per 1,000 households",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"imd-decile": {
+			"label": "Index of Multiple Deprivation decile",
+			"description": "Tenth of LSOAs in England by the Index of Multiple Deprivation, where 1 is the most deprived.",
+			"unit": "decile",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"imd-domain-score": {
+			"label": "Index of Multiple Deprivation domain score",
+			"description": "Score for one domain of the English Index of Multiple Deprivation; income and employment are rates.",
+			"unit": "score",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"imd-rank": {
+			"label": "Index of Multiple Deprivation rank",
+			"description": "Rank of LSOAs in England by the Index of Multiple Deprivation, where 1 is the most deprived.",
+			"unit": "rank",
+			"valueKind": "rank",
+			"aggregation": "none"
+		},
+		"imd-score": {
+			"label": "Index of Multiple Deprivation score",
+			"description": "Index of Multiple Deprivation score; higher is more deprived.",
+			"unit": "score",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"key-stage-4-pupils": {
+			"label": "Key stage 4 pupils",
+			"description": "Pupils at the end of key stage 4.",
+			"unit": "pupils",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"life-expectancy": {
+			"label": "Life expectancy at birth",
+			"description": "Average years a newborn would live at the period's mortality rates.",
+			"unit": "years",
+			"valueKind": "mean",
+			"aggregation": "none"
+		},
+		"long-term-support-clients": {
+			"label": "Clients receiving long-term support",
+			"description": "Adult social care clients receiving long-term support during the year.",
+			"unit": "clients",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"majority": {
+			"label": "Majority",
+			"description": "Votes by which the winning candidate led the runner-up.",
+			"unit": "votes",
+			"valueKind": "count",
+			"aggregation": "none"
+		},
+		"mobile-area-coverage": {
+			"label": "Mobile coverage of land",
+			"description": "Land area with outdoor mobile coverage, as a percentage of the area.",
+			"unit": "percent of area",
+			"valueKind": "share",
+			"aggregation": "weighted_mean"
+		},
+		"mobile-premises-coverage": {
+			"label": "Mobile coverage of premises",
+			"description": "Premises with mobile coverage, as a percentage of premises.",
+			"unit": "percent of premises",
+			"valueKind": "share",
+			"aggregation": "weighted_mean"
+		},
+		"net-additional-dwellings": {
+			"label": "Net additional dwellings",
+			"description": "New dwellings and conversions less demolitions over the year.",
+			"unit": "dwellings",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"nimdm-rank": {
+			"label": "Northern Ireland Multiple Deprivation Measure rank",
+			"description": "Rank of super output areas in Northern Ireland by the Northern Ireland Multiple Deprivation Measure, where 1 is the most deprived.",
+			"unit": "rank",
+			"valueKind": "rank",
+			"aggregation": "none"
+		},
+		"party-vote-share": {
+			"label": "Party vote share",
+			"description": "Votes for a party as a percentage of valid votes.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "ratio"
+		},
+		"party-votes": {
+			"label": "Party votes",
+			"description": "Votes for a party's candidates. Where a ward elects several councillors, the votes of the party's highest-polling candidate, so each voter counts once.",
+			"unit": "votes",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"people-in-employment": {
+			"label": "People in employment",
+			"description": "Usual residents aged 16 and over in employment in the week before the census.",
+			"unit": "people",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"physically-active-adults": {
+			"label": "Physically active adults",
+			"description": "Adults aged 19 and over doing at least 150 moderate intensity equivalent minutes of activity a week.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "none"
+		},
+		"planning-applications": {
+			"label": "Planning applications",
+			"description": "Planning applications handled by the local planning authority in the quarter.",
+			"unit": "applications",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"pm25-population-weighted": {
+			"label": "Population-weighted PM2.5",
+			"description": "Annual mean PM2.5 concentration weighted by where people live.",
+			"unit": "micrograms per cubic metre",
+			"valueKind": "mean",
+			"aggregation": "weighted_mean"
+		},
+		"pm25-population-weighted-anthropogenic": {
+			"label": "Population-weighted anthropogenic PM2.5",
+			"description": "Human-made part of the annual mean PM2.5 concentration, weighted by where people live.",
+			"unit": "micrograms per cubic metre",
+			"valueKind": "mean",
+			"aggregation": "weighted_mean"
+		},
+		"population": {
+			"label": "Population",
+			"description": "Mid-year population estimate.",
+			"unit": "people",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"premises": {
+			"label": "Premises",
+			"description": "Residential and business premises.",
+			"unit": "premises",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"preventable-mortality": {
+			"label": "Mortality from preventable causes",
+			"description": "Age-standardised deaths from causes considered preventable, per 100,000 people.",
+			"unit": "per 100,000",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"progress-8": {
+			"label": "Average Progress 8 score",
+			"description": "Average Progress 8 score of key stage 4 pupils.",
+			"unit": "score",
+			"valueKind": "mean",
+			"aggregation": "weighted_mean"
+		},
+		"public-ev-chargers": {
+			"label": "Public electric vehicle chargers",
+			"description": "Publicly available electric vehicle charging devices.",
+			"unit": "chargers",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"pupil-enrolments": {
+			"label": "Pupil enrolments",
+			"description": "Pupil enrolments in state-funded schools.",
+			"unit": "enrolments",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"reception-excess-weight": {
+			"label": "Reception children overweight or obese",
+			"description": "Children in reception year who are overweight or obese, as a percentage of those measured.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "none"
+		},
+		"recorded-crimes": {
+			"label": "Police recorded crime",
+			"description": "Offences recorded by the police.",
+			"unit": "offences",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"referendum-vote-share": {
+			"label": "Referendum vote share",
+			"description": "Votes for an answer as a percentage of valid votes.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "ratio"
+		},
+		"referendum-votes": {
+			"label": "Referendum votes",
+			"description": "Valid votes cast for an answer.",
+			"unit": "votes",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"rejected-ballots": {
+			"label": "Rejected ballots",
+			"description": "Ballots rejected at the count.",
+			"unit": "ballots",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"road-collisions": {
+			"label": "Reported road collisions",
+			"description": "Road collisions involving personal injury reported to the police.",
+			"unit": "collisions",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"rtt-incomplete-pathways": {
+			"label": "Patients waiting to start treatment",
+			"description": "Incomplete referral to treatment pathways at the end of the month.",
+			"unit": "pathways",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"rtt-incomplete-pathways-over-18-weeks": {
+			"label": "Patients waiting over 18 weeks",
+			"description": "Incomplete referral to treatment pathways waiting more than 18 weeks at the end of the month.",
+			"unit": "pathways",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"school-sessions": {
+			"label": "School sessions",
+			"description": "Half-day school sessions in state-funded schools.",
+			"unit": "sessions",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"seats": {
+			"label": "Seats",
+			"description": "Members the constituency returned to Parliament.",
+			"unit": "seats",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"simd-decile": {
+			"label": "Scottish Index of Multiple Deprivation decile",
+			"description": "Tenth of data zones in Scotland by the Scottish Index of Multiple Deprivation, where 1 is the most deprived.",
+			"unit": "decile",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"simd-quintile": {
+			"label": "Scottish Index of Multiple Deprivation quintile",
+			"description": "Fifth of data zones in Scotland by the Scottish Index of Multiple Deprivation, where 1 is the most deprived.",
+			"unit": "quintile",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"simd-rank": {
+			"label": "Scottish Index of Multiple Deprivation rank",
+			"description": "Rank of data zones in Scotland by the Scottish Index of Multiple Deprivation, where 1 is the most deprived.",
+			"unit": "rank",
+			"valueKind": "rank",
+			"aggregation": "none"
+		},
+		"smoking-prevalence": {
+			"label": "Smoking prevalence in adults",
+			"description": "Adults aged 18 and over who currently smoke.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "none"
+		},
+		"social-care-quality-of-life": {
+			"label": "Social care-related quality of life",
+			"description": "Average social care-related quality of life score of service users (ASCOF 1A).",
+			"unit": "score out of 24",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"total-jobs": {
+			"label": "Total jobs",
+			"description": "Jobs located in the area: employee jobs, self-employment, government-supported trainees and HM Forces.",
+			"unit": "jobs",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"turnout": {
+			"label": "Turnout",
+			"description": "Ballots cast as a percentage of the electorate.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "weighted_mean"
+		},
+		"unemployed-people": {
+			"label": "Unemployed people",
+			"description": "Model-based unemployed residents aged 16 and over.",
+			"unit": "people",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"unemployed-people-interval": {
+			"label": "Unemployed people confidence interval",
+			"description": "Half-width of the published 95% confidence interval around unemployed people.",
+			"unit": "people",
+			"valueKind": "count",
+			"aggregation": "none"
+		},
+		"unemployment-rate": {
+			"label": "Unemployment rate",
+			"description": "Model-based unemployed residents aged 16 and over as a percentage of the economically active.",
+			"unit": "percent",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"unemployment-rate-interval": {
+			"label": "Unemployment rate confidence interval",
+			"description": "Half-width of the published 95% confidence interval around the unemployment rate.",
+			"unit": "percentage points",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
+		"usual-residents": {
+			"label": "Usual residents",
+			"description": "Usual residents counted by the census.",
+			"unit": "people",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"usual-residents-16-plus": {
+			"label": "Usual residents aged 16 and over",
+			"description": "Usual residents aged 16 and over counted by the census.",
+			"unit": "people",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"valid-votes": {
+			"label": "Valid votes",
+			"description": "Ballots counted as valid.",
+			"unit": "votes",
+			"valueKind": "count",
+			"aggregation": "sum"
+		},
+		"wimd-decile": {
+			"label": "Welsh Index of Multiple Deprivation decile",
+			"description": "Tenth of LSOAs in Wales by the Welsh Index of Multiple Deprivation, where 1 is the most deprived.",
+			"unit": "decile",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"wimd-rank": {
+			"label": "Welsh Index of Multiple Deprivation rank",
+			"description": "Rank of LSOAs in Wales by the Welsh Index of Multiple Deprivation, where 1 is the most deprived.",
+			"unit": "rank",
+			"valueKind": "rank",
+			"aggregation": "none"
+		},
+		"wimd-score": {
+			"label": "Welsh Index of Multiple Deprivation score",
+			"description": "Welsh Index of Multiple Deprivation score; higher is more deprived.",
+			"unit": "score",
+			"valueKind": "index",
+			"aggregation": "none"
+		},
+		"year-6-excess-weight": {
+			"label": "Year 6 children overweight or obese",
+			"description": "Children in year 6 who are overweight or obese, as a percentage of those measured.",
+			"unit": "percent",
+			"valueKind": "share",
+			"aggregation": "none"
+		}
+	},
+	"dimensions": {
+		"absence-level": {
+			"label": "Absence level",
+			"members": [
+				{
+					"code": "all",
+					"label": "All enrolments"
+				},
+				{
+					"code": "persistent",
+					"label": "Persistently absent (10% or more of sessions)",
+					"parent": "all"
+				},
+				{
+					"code": "severe",
+					"label": "Severely absent (50% or more of sessions)",
+					"parent": "all"
+				}
+			]
+		},
+		"age": {
+			"label": "Age",
+			"members": [
+				{
+					"code": "0",
+					"label": "Aged 0"
+				},
+				{
+					"code": "1",
+					"label": "Aged 1"
+				},
+				{
+					"code": "2",
+					"label": "Aged 2"
+				},
+				{
+					"code": "3",
+					"label": "Aged 3"
+				},
+				{
+					"code": "4",
+					"label": "Aged 4"
+				},
+				{
+					"code": "5",
+					"label": "Aged 5"
+				},
+				{
+					"code": "6",
+					"label": "Aged 6"
+				},
+				{
+					"code": "7",
+					"label": "Aged 7"
+				},
+				{
+					"code": "8",
+					"label": "Aged 8"
+				},
+				{
+					"code": "9",
+					"label": "Aged 9"
+				},
+				{
+					"code": "10",
+					"label": "Aged 10"
+				},
+				{
+					"code": "11",
+					"label": "Aged 11"
+				},
+				{
+					"code": "12",
+					"label": "Aged 12"
+				},
+				{
+					"code": "13",
+					"label": "Aged 13"
+				},
+				{
+					"code": "14",
+					"label": "Aged 14"
+				},
+				{
+					"code": "15",
+					"label": "Aged 15"
+				},
+				{
+					"code": "16",
+					"label": "Aged 16"
+				},
+				{
+					"code": "17",
+					"label": "Aged 17"
+				},
+				{
+					"code": "18",
+					"label": "Aged 18"
+				},
+				{
+					"code": "19",
+					"label": "Aged 19"
+				},
+				{
+					"code": "20",
+					"label": "Aged 20"
+				},
+				{
+					"code": "21",
+					"label": "Aged 21"
+				},
+				{
+					"code": "22",
+					"label": "Aged 22"
+				},
+				{
+					"code": "23",
+					"label": "Aged 23"
+				},
+				{
+					"code": "24",
+					"label": "Aged 24"
+				},
+				{
+					"code": "25",
+					"label": "Aged 25"
+				},
+				{
+					"code": "26",
+					"label": "Aged 26"
+				},
+				{
+					"code": "27",
+					"label": "Aged 27"
+				},
+				{
+					"code": "28",
+					"label": "Aged 28"
+				},
+				{
+					"code": "29",
+					"label": "Aged 29"
+				},
+				{
+					"code": "30",
+					"label": "Aged 30"
+				},
+				{
+					"code": "31",
+					"label": "Aged 31"
+				},
+				{
+					"code": "32",
+					"label": "Aged 32"
+				},
+				{
+					"code": "33",
+					"label": "Aged 33"
+				},
+				{
+					"code": "34",
+					"label": "Aged 34"
+				},
+				{
+					"code": "35",
+					"label": "Aged 35"
+				},
+				{
+					"code": "36",
+					"label": "Aged 36"
+				},
+				{
+					"code": "37",
+					"label": "Aged 37"
+				},
+				{
+					"code": "38",
+					"label": "Aged 38"
+				},
+				{
+					"code": "39",
+					"label": "Aged 39"
+				},
+				{
+					"code": "40",
+					"label": "Aged 40"
+				},
+				{
+					"code": "41",
+					"label": "Aged 41"
+				},
+				{
+					"code": "42",
+					"label": "Aged 42"
+				},
+				{
+					"code": "43",
+					"label": "Aged 43"
+				},
+				{
+					"code": "44",
+					"label": "Aged 44"
+				},
+				{
+					"code": "45",
+					"label": "Aged 45"
+				},
+				{
+					"code": "46",
+					"label": "Aged 46"
+				},
+				{
+					"code": "47",
+					"label": "Aged 47"
+				},
+				{
+					"code": "48",
+					"label": "Aged 48"
+				},
+				{
+					"code": "49",
+					"label": "Aged 49"
+				},
+				{
+					"code": "50",
+					"label": "Aged 50"
+				},
+				{
+					"code": "51",
+					"label": "Aged 51"
+				},
+				{
+					"code": "52",
+					"label": "Aged 52"
+				},
+				{
+					"code": "53",
+					"label": "Aged 53"
+				},
+				{
+					"code": "54",
+					"label": "Aged 54"
+				},
+				{
+					"code": "55",
+					"label": "Aged 55"
+				},
+				{
+					"code": "56",
+					"label": "Aged 56"
+				},
+				{
+					"code": "57",
+					"label": "Aged 57"
+				},
+				{
+					"code": "58",
+					"label": "Aged 58"
+				},
+				{
+					"code": "59",
+					"label": "Aged 59"
+				},
+				{
+					"code": "60",
+					"label": "Aged 60"
+				},
+				{
+					"code": "61",
+					"label": "Aged 61"
+				},
+				{
+					"code": "62",
+					"label": "Aged 62"
+				},
+				{
+					"code": "63",
+					"label": "Aged 63"
+				},
+				{
+					"code": "64",
+					"label": "Aged 64"
+				},
+				{
+					"code": "65",
+					"label": "Aged 65"
+				},
+				{
+					"code": "66",
+					"label": "Aged 66"
+				},
+				{
+					"code": "67",
+					"label": "Aged 67"
+				},
+				{
+					"code": "68",
+					"label": "Aged 68"
+				},
+				{
+					"code": "69",
+					"label": "Aged 69"
+				},
+				{
+					"code": "70",
+					"label": "Aged 70"
+				},
+				{
+					"code": "71",
+					"label": "Aged 71"
+				},
+				{
+					"code": "72",
+					"label": "Aged 72"
+				},
+				{
+					"code": "73",
+					"label": "Aged 73"
+				},
+				{
+					"code": "74",
+					"label": "Aged 74"
+				},
+				{
+					"code": "75",
+					"label": "Aged 75"
+				},
+				{
+					"code": "76",
+					"label": "Aged 76"
+				},
+				{
+					"code": "77",
+					"label": "Aged 77"
+				},
+				{
+					"code": "78",
+					"label": "Aged 78"
+				},
+				{
+					"code": "79",
+					"label": "Aged 79"
+				},
+				{
+					"code": "80",
+					"label": "Aged 80"
+				},
+				{
+					"code": "81",
+					"label": "Aged 81"
+				},
+				{
+					"code": "82",
+					"label": "Aged 82"
+				},
+				{
+					"code": "83",
+					"label": "Aged 83"
+				},
+				{
+					"code": "84",
+					"label": "Aged 84"
+				},
+				{
+					"code": "85",
+					"label": "Aged 85"
+				},
+				{
+					"code": "86",
+					"label": "Aged 86"
+				},
+				{
+					"code": "87",
+					"label": "Aged 87"
+				},
+				{
+					"code": "88",
+					"label": "Aged 88"
+				},
+				{
+					"code": "89",
+					"label": "Aged 89"
+				},
+				{
+					"code": "90-plus",
+					"label": "Aged 90 and over"
+				}
+			]
+		},
+		"age-group": {
+			"label": "Age group",
+			"members": [
+				{
+					"code": "16-plus",
+					"label": "Aged 16 and over"
+				},
+				{
+					"code": "16-to-24",
+					"label": "Aged 16 to 24",
+					"parent": "16-plus"
+				}
+			]
+		},
+		"application-stage": {
+			"label": "Application stage",
+			"members": [
+				{
+					"code": "received",
+					"label": "Received"
+				},
+				{
+					"code": "decided",
+					"label": "Decided"
+				},
+				{
+					"code": "withdrawn",
+					"label": "Withdrawn"
+				}
+			]
+		},
+		"broadband-speed": {
+			"label": "Broadband speed",
+			"members": [
+				{
+					"code": "superfast",
+					"label": "Superfast (30 Mbit/s or more)"
+				},
+				{
+					"code": "ultrafast",
+					"label": "Ultrafast (300 Mbit/s or more)"
+				},
+				{
+					"code": "full-fibre",
+					"label": "Full fibre"
+				},
+				{
+					"code": "gigabit",
+					"label": "Gigabit capable"
+				}
+			]
+		},
+		"cars-or-vans": {
+			"label": "Cars or vans available",
+			"members": [
+				{
+					"code": "total",
+					"label": "All households"
+				},
+				{
+					"code": "none",
+					"label": "No cars or vans",
+					"parent": "total"
+				},
+				{
+					"code": "one",
+					"label": "One car or van",
+					"parent": "total"
+				},
+				{
+					"code": "two",
+					"label": "Two cars or vans",
+					"parent": "total"
+				},
+				{
+					"code": "three-or-more",
+					"label": "Three or more cars or vans",
+					"parent": "total"
+				}
+			]
+		},
+		"collision-severity": {
+			"label": "Collision severity",
+			"members": [
+				{
+					"code": "all",
+					"label": "All severities"
+				},
+				{
+					"code": "fatal",
+					"label": "Fatal",
+					"parent": "all"
+				},
+				{
+					"code": "serious",
+					"label": "Serious",
+					"parent": "all"
+				},
+				{
+					"code": "slight",
+					"label": "Slight",
+					"parent": "all"
+				}
+			]
+		},
+		"coverage-location": {
+			"label": "Coverage location",
+			"members": [
+				{
+					"code": "indoor",
+					"label": "Indoors"
+				},
+				{
+					"code": "outdoor",
+					"label": "Outdoors"
+				}
+			]
+		},
+		"deprivation-domain": {
+			"label": "Deprivation domain",
+			"members": [
+				{
+					"code": "income",
+					"label": "Income"
+				},
+				{
+					"code": "employment",
+					"label": "Employment"
+				},
+				{
+					"code": "education",
+					"label": "Education, skills and training"
+				},
+				{
+					"code": "health",
+					"label": "Health deprivation and disability"
+				},
+				{
+					"code": "crime",
+					"label": "Crime"
+				},
+				{
+					"code": "housing",
+					"label": "Barriers to housing and services"
+				},
+				{
+					"code": "living-environment",
+					"label": "Living environment"
+				}
+			]
+		},
+		"disadvantage": {
+			"label": "Disadvantage",
+			"members": [
+				{
+					"code": "disadvantaged",
+					"label": "Disadvantaged pupils"
+				},
+				{
+					"code": "not-disadvantaged",
+					"label": "Other pupils"
+				}
+			]
+		},
+		"earnings-place": {
+			"label": "Place earnings are measured",
+			"members": [
+				{
+					"code": "residence",
+					"label": "Where employees live"
+				},
+				{
+					"code": "workplace",
+					"label": "Where employees work"
+				}
+			]
+		},
+		"emissions-sector": {
+			"label": "Emissions sector",
+			"members": [
+				{
+					"code": "total",
+					"label": "All sectors"
+				},
+				{
+					"code": "total-excluding-land-use",
+					"label": "All sectors except land use, land-use change and forestry"
+				},
+				{
+					"code": "transport",
+					"label": "Transport",
+					"parent": "total"
+				},
+				{
+					"code": "domestic",
+					"label": "Domestic",
+					"parent": "total"
+				},
+				{
+					"code": "industry",
+					"label": "Industry",
+					"parent": "total"
+				},
+				{
+					"code": "commercial",
+					"label": "Commercial",
+					"parent": "total"
+				},
+				{
+					"code": "public-sector",
+					"label": "Public sector",
+					"parent": "total"
+				},
+				{
+					"code": "agriculture",
+					"label": "Agriculture",
+					"parent": "total"
+				},
+				{
+					"code": "waste",
+					"label": "Waste",
+					"parent": "total"
+				},
+				{
+					"code": "land-use",
+					"label": "Land use, land-use change and forestry",
+					"parent": "total"
+				}
+			]
+		},
+		"ethnic-group": {
+			"label": "Ethnic group",
+			"members": [
+				{
+					"code": "asian-asian-british-or-asian-welsh",
+					"label": "Asian, Asian British or Asian Welsh"
+				},
+				{
+					"code": "bangladeshi",
+					"label": "Bangladeshi",
+					"parent": "asian-asian-british-or-asian-welsh"
+				},
+				{
+					"code": "chinese",
+					"label": "Chinese",
+					"parent": "asian-asian-british-or-asian-welsh"
+				},
+				{
+					"code": "indian",
+					"label": "Indian",
+					"parent": "asian-asian-british-or-asian-welsh"
+				},
+				{
+					"code": "pakistani",
+					"label": "Pakistani",
+					"parent": "asian-asian-british-or-asian-welsh"
+				},
+				{
+					"code": "other-asian",
+					"label": "Other Asian",
+					"parent": "asian-asian-british-or-asian-welsh"
+				},
+				{
+					"code": "black-black-british-black-welsh-caribbean-or-african",
+					"label": "Black, Black British, Black Welsh, Caribbean or African"
+				},
+				{
+					"code": "african",
+					"label": "African",
+					"parent": "black-black-british-black-welsh-caribbean-or-african"
+				},
+				{
+					"code": "caribbean",
+					"label": "Caribbean",
+					"parent": "black-black-british-black-welsh-caribbean-or-african"
+				},
+				{
+					"code": "other-black",
+					"label": "Other Black",
+					"parent": "black-black-british-black-welsh-caribbean-or-african"
+				},
+				{
+					"code": "mixed-or-multiple-ethnic-groups",
+					"label": "Mixed or Multiple ethnic groups"
+				},
+				{
+					"code": "white-and-asian",
+					"label": "White and Asian",
+					"parent": "mixed-or-multiple-ethnic-groups"
+				},
+				{
+					"code": "white-and-black-african",
+					"label": "White and Black African",
+					"parent": "mixed-or-multiple-ethnic-groups"
+				},
+				{
+					"code": "white-and-black-caribbean",
+					"label": "White and Black Caribbean",
+					"parent": "mixed-or-multiple-ethnic-groups"
+				},
+				{
+					"code": "other-mixed-or-multiple-ethnic-groups",
+					"label": "Other Mixed or Multiple ethnic groups",
+					"parent": "mixed-or-multiple-ethnic-groups"
+				},
+				{
+					"code": "white",
+					"label": "White"
+				},
+				{
+					"code": "english-welsh-scottish-northern-irish-or-british",
+					"label": "English, Welsh, Scottish, Northern Irish or British",
+					"parent": "white"
+				},
+				{
+					"code": "irish",
+					"label": "Irish",
+					"parent": "white"
+				},
+				{
+					"code": "gypsy-or-irish-traveller",
+					"label": "Gypsy or Irish Traveller",
+					"parent": "white"
+				},
+				{
+					"code": "roma",
+					"label": "Roma",
+					"parent": "white"
+				},
+				{
+					"code": "other-white",
+					"label": "Other White",
+					"parent": "white"
+				},
+				{
+					"code": "other-ethnic-group",
+					"label": "Other ethnic group"
+				},
+				{
+					"code": "arab",
+					"label": "Arab",
+					"parent": "other-ethnic-group"
+				},
+				{
+					"code": "any-other-ethnic-group",
+					"label": "Any other ethnic group",
+					"parent": "other-ethnic-group"
+				}
+			]
+		},
+		"general-health": {
+			"label": "General health",
+			"members": [
+				{
+					"code": "total",
+					"label": "All usual residents"
+				},
+				{
+					"code": "very-good",
+					"label": "Very good health",
+					"parent": "total"
+				},
+				{
+					"code": "good",
+					"label": "Good health",
+					"parent": "total"
+				},
+				{
+					"code": "fair",
+					"label": "Fair health",
+					"parent": "total"
+				},
+				{
+					"code": "bad",
+					"label": "Bad health",
+					"parent": "total"
+				},
+				{
+					"code": "very-bad",
+					"label": "Very bad health",
+					"parent": "total"
+				}
+			]
+		},
+		"highest-qualification": {
+			"label": "Highest level of qualification",
+			"members": [
+				{
+					"code": "total",
+					"label": "All usual residents aged 16 and over"
+				},
+				{
+					"code": "none",
+					"label": "No qualifications",
+					"parent": "total"
+				},
+				{
+					"code": "level-1",
+					"label": "Level 1 and entry level",
+					"parent": "total"
+				},
+				{
+					"code": "level-2",
+					"label": "Level 2",
+					"parent": "total"
+				},
+				{
+					"code": "apprenticeship",
+					"label": "Apprenticeship",
+					"parent": "total"
+				},
+				{
+					"code": "level-3",
+					"label": "Level 3",
+					"parent": "total"
+				},
+				{
+					"code": "level-4-plus",
+					"label": "Level 4 and above",
+					"parent": "total"
+				},
+				{
+					"code": "other",
+					"label": "Other qualifications",
+					"parent": "total"
+				}
+			]
+		},
+		"household-type": {
+			"label": "Household type",
+			"members": [
+				{
+					"code": "all",
+					"label": "All households"
+				},
+				{
+					"code": "with-children",
+					"label": "Households with children",
+					"parent": "all"
+				}
+			]
+		},
+		"meter-type": {
+			"label": "Meter type",
+			"members": [
+				{
+					"code": "all",
+					"label": "All meters"
+				},
+				{
+					"code": "domestic",
+					"label": "Domestic",
+					"parent": "all"
+				},
+				{
+					"code": "non-domestic",
+					"label": "Non-domestic",
+					"parent": "all"
+				}
+			]
+		},
+		"mobile-operators": {
+			"label": "Mobile operators",
+			"members": [
+				{
+					"code": "all",
+					"label": "All four operators"
+				},
+				{
+					"code": "any",
+					"label": "At least one operator"
+				}
+			]
+		},
+		"mobile-technology": {
+			"label": "Mobile technology",
+			"members": [
+				{
+					"code": "4g",
+					"label": "4G"
+				},
+				{
+					"code": "5g",
+					"label": "5G"
+				}
+			]
+		},
+		"offence": {
+			"label": "Offence group",
+			"members": [
+				{
+					"code": "total",
+					"label": "All recorded crime"
+				},
+				{
+					"code": "violence-against-the-person",
+					"label": "Violence against the person",
+					"parent": "total"
+				},
+				{
+					"code": "homicide",
+					"label": "Homicide",
+					"parent": "violence-against-the-person"
+				},
+				{
+					"code": "death-or-serious-injury-by-unlawful-driving",
+					"label": "Death or serious injury caused by unlawful driving",
+					"parent": "violence-against-the-person"
+				},
+				{
+					"code": "violence-with-injury",
+					"label": "Violence with injury",
+					"parent": "violence-against-the-person"
+				},
+				{
+					"code": "violence-without-injury",
+					"label": "Violence without injury",
+					"parent": "violence-against-the-person"
+				},
+				{
+					"code": "stalking-and-harassment",
+					"label": "Stalking and harassment",
+					"parent": "violence-against-the-person"
+				},
+				{
+					"code": "sexual-offences",
+					"label": "Sexual offences",
+					"parent": "total"
+				},
+				{
+					"code": "robbery",
+					"label": "Robbery",
+					"parent": "total"
+				},
+				{
+					"code": "theft",
+					"label": "Theft offences",
+					"parent": "total"
+				},
+				{
+					"code": "burglary",
+					"label": "Burglary",
+					"parent": "theft"
+				},
+				{
+					"code": "residential-burglary",
+					"label": "Residential burglary",
+					"parent": "burglary"
+				},
+				{
+					"code": "non-residential-burglary",
+					"label": "Non-residential burglary",
+					"parent": "burglary"
+				},
+				{
+					"code": "vehicle-offences",
+					"label": "Vehicle offences",
+					"parent": "theft"
+				},
+				{
+					"code": "theft-from-the-person",
+					"label": "Theft from the person",
+					"parent": "theft"
+				},
+				{
+					"code": "bicycle-theft",
+					"label": "Bicycle theft",
+					"parent": "theft"
+				},
+				{
+					"code": "shoplifting",
+					"label": "Shoplifting",
+					"parent": "theft"
+				},
+				{
+					"code": "other-theft",
+					"label": "All other theft offences",
+					"parent": "theft"
+				},
+				{
+					"code": "criminal-damage-and-arson",
+					"label": "Criminal damage and arson",
+					"parent": "total"
+				},
+				{
+					"code": "drug-offences",
+					"label": "Drug offences",
+					"parent": "total"
+				},
+				{
+					"code": "possession-of-weapons",
+					"label": "Possession of weapons offences",
+					"parent": "total"
+				},
+				{
+					"code": "public-order-offences",
+					"label": "Public order offences",
+					"parent": "total"
+				},
+				{
+					"code": "miscellaneous-crimes-against-society",
+					"label": "Miscellaneous crimes against society",
+					"parent": "total"
+				}
+			]
+		},
+		"party": {
+			"label": "Party",
+			"members": [
+				{
+					"code": "lab",
+					"label": "Labour"
+				},
+				{
+					"code": "con",
+					"label": "Conservative"
+				},
+				{
+					"code": "ld",
+					"label": "Liberal Democrat"
+				},
+				{
+					"code": "green",
+					"label": "Green"
+				},
+				{
+					"code": "ref",
+					"label": "Reform"
+				},
+				{
+					"code": "snp",
+					"label": "Scottish National Party"
+				},
+				{
+					"code": "pc",
+					"label": "Plaid Cymru"
+				},
+				{
+					"code": "sf",
+					"label": "Sinn Fein"
+				},
+				{
+					"code": "dup",
+					"label": "Democratic Unionist Party"
+				},
+				{
+					"code": "sdlp",
+					"label": "Social Democratic & Labour Party"
+				},
+				{
+					"code": "apni",
+					"label": "Alliance Party"
+				},
+				{
+					"code": "ind",
+					"label": "Independent"
+				},
+				{
+					"code": "brx",
+					"label": "Brexit Party"
+				},
+				{
+					"code": "ukip",
+					"label": "UKIP"
+				},
+				{
+					"code": "ruk",
+					"label": "Reform"
+				},
+				{
+					"code": "uup",
+					"label": "UUP"
+				},
+				{
+					"code": "other",
+					"label": "Other"
+				}
+			]
+		},
+		"party-group": {
+			"label": "Party group",
+			"members": [
+				{
+					"code": "con",
+					"label": "Conservative"
+				},
+				{
+					"code": "lib",
+					"label": "Liberal, SDP-Liberal Alliance and Liberal Democrat"
+				},
+				{
+					"code": "lab",
+					"label": "Labour"
+				},
+				{
+					"code": "nat",
+					"label": "Scottish and Welsh nationalist"
+				},
+				{
+					"code": "other",
+					"label": "Other"
+				}
+			]
+		},
+		"pay-period": {
+			"label": "Pay period",
+			"members": [
+				{
+					"code": "annual",
+					"label": "Annual"
+				},
+				{
+					"code": "hourly",
+					"label": "Hourly"
+				}
+			]
+		},
+		"pay-statistic": {
+			"label": "Pay statistic",
+			"members": [
+				{
+					"code": "median",
+					"label": "Median"
+				},
+				{
+					"code": "mean",
+					"label": "Mean"
+				},
+				{
+					"code": "p10",
+					"label": "10th percentile"
+				},
+				{
+					"code": "p20",
+					"label": "20th percentile"
+				},
+				{
+					"code": "p25",
+					"label": "25th percentile"
+				},
+				{
+					"code": "p30",
+					"label": "30th percentile"
+				},
+				{
+					"code": "p40",
+					"label": "40th percentile"
+				},
+				{
+					"code": "p60",
+					"label": "60th percentile"
+				},
+				{
+					"code": "p70",
+					"label": "70th percentile"
+				},
+				{
+					"code": "p75",
+					"label": "75th percentile"
+				},
+				{
+					"code": "p80",
+					"label": "80th percentile"
+				},
+				{
+					"code": "p90",
+					"label": "90th percentile"
+				}
+			]
+		},
+		"pollutant": {
+			"label": "Pollutant",
+			"members": [
+				{
+					"code": "no2",
+					"label": "Nitrogen dioxide"
+				},
+				{
+					"code": "pm25",
+					"label": "PM2.5"
+				},
+				{
+					"code": "pm10",
+					"label": "PM10"
+				}
+			]
+		},
+		"referendum-answer": {
+			"label": "Referendum answer",
+			"members": [
+				{
+					"code": "remain",
+					"label": "Remain a member of the European Union"
+				},
+				{
+					"code": "leave",
+					"label": "Leave the European Union"
+				}
+			]
+		},
+		"session-type": {
+			"label": "Session type",
+			"members": [
+				{
+					"code": "possible",
+					"label": "Possible sessions"
+				},
+				{
+					"code": "absent",
+					"label": "Sessions missed",
+					"parent": "possible"
+				},
+				{
+					"code": "authorised",
+					"label": "Authorised absence",
+					"parent": "absent"
+				},
+				{
+					"code": "unauthorised",
+					"label": "Unauthorised absence",
+					"parent": "absent"
+				}
+			]
+		},
+		"sex": {
+			"label": "Sex",
+			"members": [
+				{
+					"code": "all",
+					"label": "All people"
+				},
+				{
+					"code": "male",
+					"label": "Male",
+					"parent": "all"
+				},
+				{
+					"code": "female",
+					"label": "Female",
+					"parent": "all"
+				}
+			]
+		},
+		"surface": {
+			"label": "Surface",
+			"members": [
+				{
+					"code": "extent",
+					"label": "Extent to mean high water"
+				},
+				{
+					"code": "land",
+					"label": "Land",
+					"parent": "extent"
+				},
+				{
+					"code": "inland-water",
+					"label": "Inland water",
+					"parent": "extent"
+				}
+			]
+		},
+		"tenure": {
+			"label": "Tenure",
+			"members": [
+				{
+					"code": "total",
+					"label": "All households"
+				},
+				{
+					"code": "owned",
+					"label": "Owned",
+					"parent": "total"
+				},
+				{
+					"code": "owned-outright",
+					"label": "Owns outright",
+					"parent": "owned"
+				},
+				{
+					"code": "owned-with-mortgage",
+					"label": "Owns with a mortgage or loan",
+					"parent": "owned"
+				},
+				{
+					"code": "shared-ownership",
+					"label": "Shared ownership",
+					"parent": "total"
+				},
+				{
+					"code": "social-rented",
+					"label": "Social rented",
+					"parent": "total"
+				},
+				{
+					"code": "private-rented",
+					"label": "Private rented",
+					"parent": "total"
+				},
+				{
+					"code": "rent-free",
+					"label": "Lives rent free",
+					"parent": "total"
+				}
+			]
+		},
+		"travel-method": {
+			"label": "Method of travel to work",
+			"members": [
+				{
+					"code": "total",
+					"label": "All people in employment"
+				},
+				{
+					"code": "home",
+					"label": "Work mainly at or from home",
+					"parent": "total"
+				},
+				{
+					"code": "public-transport",
+					"label": "Public transport",
+					"parent": "total"
+				},
+				{
+					"code": "car",
+					"label": "Car or van",
+					"parent": "total"
+				},
+				{
+					"code": "taxi",
+					"label": "Taxi",
+					"parent": "total"
+				},
+				{
+					"code": "motorcycle",
+					"label": "Motorcycle, scooter or moped",
+					"parent": "total"
+				},
+				{
+					"code": "bicycle",
+					"label": "Bicycle",
+					"parent": "total"
+				},
+				{
+					"code": "on-foot",
+					"label": "On foot",
+					"parent": "total"
+				},
+				{
+					"code": "other",
+					"label": "Other method",
+					"parent": "total"
+				}
+			]
+		}
+	}
+}
