@@ -6,6 +6,7 @@ import {
 import type { CompiledMeasure } from "./catalog/manifest";
 import { bindCensusStatistics } from "./bindCensusStatistics";
 import { bindStatisticsField } from "./bindStatisticsField";
+import { bindCompiledFields } from "./bindCompiledFields";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
@@ -20,8 +21,24 @@ export function measureStatisticsSelections(
 	measure: Measure,
 	bindings: readonly Binding[],
 ): StatisticsSelection[] | undefined {
-	const census = bindCensusStatistics(database, measure);
-	if (census) return expandStatisticsSelection(database, census);
+	const census = bindCensusStatistics(database, measure, true);
+	if (census) {
+		const datasets = new Set(census.map((selection) => selection.dataset));
+		const remainingSources = measure.sources.filter(
+			(source) => !datasets.has(source.datasetId),
+		);
+		if (!remainingSources.length)
+			return expandStatisticsSelection(database, census);
+		const remaining = bindCompiledFields(database, {
+			...measure,
+			sources: remainingSources,
+		});
+		return remaining
+			? [...expandStatisticsSelection(database, census), ...remaining]
+			: undefined;
+	}
+	const compiled = bindCompiledFields(database, measure);
+	if (compiled) return compiled;
 	if (!measure.sources.length) return undefined;
 	const result: StatisticsSelection[] = [];
 	for (const source of measure.sources) {

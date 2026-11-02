@@ -7,6 +7,7 @@ import type { StatisticsSelection } from "./statisticsExport";
 export function bindCensusStatistics(
 	database: DatabaseSync,
 	measure: Measure,
+	allowOtherSources = false,
 ): StatisticsSelection[] | undefined {
 	for (const table of CENSUS_SMALL_AREA_TABLES) {
 		const category = table.categories.find(
@@ -19,6 +20,10 @@ export function bindCensusStatistics(
 		const dimension = `${dataset}-category`;
 		const selection: StatisticsSelection[] = [];
 		for (const source of measure.sources) {
+			if (source.datasetId !== dataset) {
+				if (allowOtherSources) continue;
+				return undefined;
+			}
 			const { type, boundaryYear } = source.sourceGeography;
 			if (
 				!["lsoa", "msoa"].includes(type) ||
@@ -56,7 +61,7 @@ export function bindCensusStatistics(
 				periods: ["2021"],
 			});
 		}
-		return selection;
+		return selection.length ? selection : undefined;
 	}
 	return undefined;
 }
