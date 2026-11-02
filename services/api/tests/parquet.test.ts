@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
 	CREATED_BY,
+	ParquetFileWriter,
 	writeParquet,
 	writeParquetAsync,
 	type ParquetTable,
@@ -258,4 +262,36 @@ test("writes the same file whether pages are compressed here or off the main thr
 		metadata: { about: "test" },
 	};
 	assert.deepEqual(await writeParquetAsync(table), writeParquet(table));
+});
+
+test("writes bounded row groups deterministically", () => {
+	const directory = mkdtempSync(join(tmpdir(), "atlas-parquet-"));
+	try {
+		const path = join(directory, "rows.parquet");
+		const write = () => {
+			const writer = new ParquetFileWriter(path, table);
+			writer.write(
+				table.columns.map((column) => ({
+					...column,
+					values: column.values.slice(0, 1),
+				})),
+			);
+			writer.write(
+				table.columns.map((column) => ({
+					...column,
+					values: column.values.slice(1),
+				})),
+			);
+			writer.close();
+			return readFileSync(path);
+		};
+		const first = write();
+		assert.deepEqual(
+			readParquet(first).rows,
+			readParquet(writeParquet(table)).rows,
+		);
+		assert.deepEqual(write(), first);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
 });

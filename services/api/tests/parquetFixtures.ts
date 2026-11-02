@@ -253,6 +253,7 @@ export const readParquet = (file: Buffer): ParquetFile => {
 		() => ({}),
 	);
 	const chunks = new Map<string, ThriftStruct>();
+	let rowOffset = 0;
 	for (const [groupIndex, group] of structs(footer, 4).entries()) {
 		const columns = structs(group, 1);
 		if (columns.length !== leaves.length)
@@ -326,12 +327,13 @@ export const readParquet = (file: Buffer): ParquetFile => {
 					`${leaf.path.join(".")} has ${values.length} values.`,
 				);
 			values.forEach((value, row) => {
-				let target = rows[row]!;
+				let target = rows[rowOffset + row]!;
 				for (const part of leaf.path.slice(0, -1))
 					target = (target[part] ??= {}) as Record<string, unknown>;
 				target[leaf.path.at(-1)!] = value;
 			});
 		});
+		rowOffset += groupRows;
 	}
 
 	return {
