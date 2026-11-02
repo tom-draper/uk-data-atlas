@@ -190,16 +190,19 @@ export function exportStatisticsMeasure(
 		? `s.id IN (SELECT series_id FROM (${selectedRows}))`
 		: "m.slug = ?";
 	const parameter = selection ? JSON.stringify(selection) : measure;
-	const dimensions = database
-		.prepare(
-			`SELECT DISTINCT d.id, d.slug FROM series s
+	const dimensions =
+		measure === "population"
+			? []
+			: database
+					.prepare(
+						`SELECT DISTINCT d.id, d.slug FROM series s
 			JOIN measure m ON m.id = s.measure_id
 			JOIN area_releases r ON r.position = s.release_id
 			JOIN series_member sm ON sm.series_id = s.id
 			JOIN dimension d ON d.id = sm.dimension_id
 			WHERE ${dimensionFilter} ORDER BY d.slug`,
-		)
-		.all(parameter);
+					)
+					.all(parameter);
 	const columns: ParquetColumn[] = [
 		...baseColumns.map(([name, type]) => ({
 			name,
@@ -234,9 +237,13 @@ export function exportStatisticsMeasure(
 		: "";
 	const lower = intervalMeasure ? "round(o.value - ino.value, 1)" : "o.lower";
 	const upper = intervalMeasure ? "round(o.value + ino.value, 1)" : "o.upper";
+	const aggregatePopulation = measure === "population";
+	const values = aggregatePopulation
+		? "CASE WHEN count(o.value) = count(*) THEN sum(o.value) END, NULL, NULL, NULL, CASE WHEN count(DISTINCT st.slug) = 1 THEN min(st.slug) ELSE 'derived' END"
+		: `o.value, ${lower}, ${upper}, c.code, st.slug`;
 	const statement =
 		database.prepare(`SELECT d.slug, ?, m.unit, r.geography, r.id,
-		a.code, p.label, o.value, ${lower}, ${upper}, c.code, st.slug
+		a.code, p.label, ${values}
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
 		JOIN dataset d ON d.id = s.dataset_id
@@ -248,7 +255,8 @@ export function exportStatisticsMeasure(
 		LEFT JOIN dimension_member c ON c.id = o.category_id
 		${intervalJoins}
 		WHERE ${filter}
-		ORDER BY r.geography, r.id, p.label, a.code, d.slug, s.key`);
+		${aggregatePopulation ? "GROUP BY d.slug, m.unit, r.geography, r.id, a.code, p.label" : ""}
+		ORDER BY r.geography, r.id, p.label, a.code, d.slug${aggregatePopulation ? "" : ", s.key"}`);
 	statement.setReturnArrays(true);
 	const csv = openSync(paths.csv, "w");
 	const parquet = new ParquetFileWriter(paths.parquet, { columns });
