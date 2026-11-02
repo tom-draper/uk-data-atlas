@@ -25,6 +25,21 @@ export function measureStatisticsSelections(
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
 ): StatisticsSelection[] | undefined {
+	if (measure.id === "population-density" && readPath) {
+		return bindReviewedStatistics(
+			database,
+			{
+				...measure,
+				id: "population",
+				sources: measure.sources.map((source) => ({
+					...source,
+					observationArtifact:
+						"population-local-authority-observations",
+				})),
+			},
+			readPath,
+		);
+	}
 	if (electionStatisticsExport(measure.id)) {
 		const anchor = measure.id.startsWith("general-")
 			? "general-election-valid-votes"
