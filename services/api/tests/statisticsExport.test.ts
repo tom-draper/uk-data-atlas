@@ -12,6 +12,7 @@ import {
 import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
 import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
+import { measureStatisticsSelections } from "../../../pipeline/src/measureStatisticsSelections";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 test("binds a census measure only when every source partition is complete", () => {
@@ -197,6 +198,27 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 				periods: ["2021"],
 			},
 		]);
+		const catalogueMeasure = {
+			id: "rented-homes",
+			unit: "households",
+			sources: [
+				{
+					datasetId: "census",
+					sourceGeography: { type: "ward", boundaryYear: 2021 },
+					periods: ["2021"],
+				},
+			],
+		} as unknown as Measure;
+		const bindings = [{ measureId: "rented-homes", field }];
+		assert.equal(
+			measureStatisticsSelections(db, catalogueMeasure, bindings)?.length,
+			1,
+		);
+		catalogueMeasure.sources[0]!.periods.push("2022");
+		assert.equal(
+			measureStatisticsSelections(db, catalogueMeasure, bindings),
+			undefined,
+		);
 		assert.equal(
 			bindStatisticsField(db, { ...field, recordCount: 2 }, "households"),
 			undefined,
