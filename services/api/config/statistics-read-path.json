@@ -1167,6 +1167,78 @@
 			"dimensions": {},
 			"geography": "itl3"
 		},
+		"house-price-median-observations": {
+			"datasetId": "house-price",
+			"measure": "house-price-median",
+			"dimensions": {},
+			"geography": "ward",
+			"servedCodes": {
+				"E05013018": {
+					"areaCode": "E05000759"
+				},
+				"E05013020": {
+					"areaCode": "E05000760"
+				},
+				"E05013021": {
+					"areaCode": "E05000761"
+				},
+				"E05013022": {
+					"areaCode": "E05000762"
+				},
+				"E05013023": {
+					"areaCode": "E05000763"
+				},
+				"E05013024": {
+					"areaCode": "E05000764"
+				},
+				"E05013025": {
+					"areaCode": "E05000765"
+				},
+				"E05013019": {
+					"areaCode": "E05000766"
+				},
+				"E05013026": {
+					"areaCode": "E05000767"
+				},
+				"E05013030": {
+					"areaCode": "E05000768"
+				},
+				"E05013027": {
+					"areaCode": "E05000769"
+				},
+				"E05013028": {
+					"areaCode": "E05000770"
+				},
+				"E05013029": {
+					"areaCode": "E05000771"
+				},
+				"E05013032": {
+					"areaCode": "E05000772"
+				},
+				"E05013033": {
+					"areaCode": "E05000773"
+				},
+				"E05013034": {
+					"areaCode": "E05000774"
+				},
+				"E05013035": {
+					"areaCode": "E05000775"
+				},
+				"E05013036": {
+					"areaCode": "E05000776"
+				},
+				"E05013031": {
+					"areaCode": "E05000777"
+				},
+				"E05013037": {
+					"areaCode": "E05000778"
+				},
+				"E05013831": {
+					"areaCode": "E05011412",
+					"sourceAreaCode": "E05013831"
+				}
+			}
+		},
 		"imd-decile-observations": {
 			"datasetId": "imd",
 			"measure": "imd-decile",
@@ -4397,7 +4469,6 @@
 		"crime-violence-without-injury-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
 		"general-election-winning-party-constituency-2019-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"general-election-winning-party-constituency-2024-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
-		"house-price-median-observations": "The statistics rows do not rebuild it: 588 of 225225 records are missing, 588 records are extra. For example, 1995 E05000759 is missing.",
 		"local-election-winning-party-ward-2016-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"local-election-winning-party-ward-2017-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"local-election-winning-party-ward-2018-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
