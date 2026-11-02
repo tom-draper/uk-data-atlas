@@ -66,6 +66,12 @@ export type StatisticsSelector = {
 	 * value less and plus it, rounded to `digits` decimal places.
 	 */
 	halfWidth?: { measure: string; digits: number };
+	/**
+	 * Read a contest's text as the category of each record, instead of a
+	 * series: the party that won each contest of the dataset's elections.
+	 * `measure` and `dimensions` are then unused.
+	 */
+	contest?: "winner";
 };
 
 /**
@@ -91,6 +97,8 @@ export type StatisticsArtifact = {
 type Row = {
 	code: string;
 	period: string;
+	/** Set where the record is a category rather than a value. */
+	category?: string;
 	value: number | null;
 	lower: number | null;
 	upper: number | null;
@@ -158,6 +166,34 @@ export const statisticsPeriod = (period: string, held: Set<string>) => {
 	return extended.length === 1 ? extended[0] : undefined;
 };
 
+/** A contest column of a dataset's elections, by polling day and area code. */
+const contestRows = (
+	database: DatabaseSync,
+	selector: StatisticsSelector,
+	column: "winner",
+) => {
+	const byPeriod = new Map<string, Map<string, Row>>();
+	for (const row of database
+		.prepare(
+			`SELECT a.code, e.date, c.${column} AS category FROM contest c JOIN election e ON e.id = c.election_id JOIN dataset d ON d.id = e.dataset_id JOIN area_version v ON v.id = c.area_version_id JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE d.slug = ? AND r.geography = ? AND c.${column} IS NOT NULL`,
+		)
+		.all(selector.datasetId, selector.geography)) {
+		const period = String(row.date);
+		let records = byPeriod.get(period);
+		if (!records) byPeriod.set(period, (records = new Map()));
+		records.set(String(row.code), {
+			code: String(row.code),
+			period,
+			category: String(row.category),
+			value: null,
+			lower: null,
+			upper: null,
+			status: "observed",
+		});
+	}
+	return byPeriod;
+};
+
 /**
  * The rows of the series a selector names, by period and area code. Parts of
  * a summed dimension are added; `any` takes every series of the measure and
@@ -218,7 +254,9 @@ export function rebuildStatisticsObservationText(
 	selector: StatisticsSelector,
 	artifact: StatisticsArtifact,
 ): string {
-	const byPeriod = periodRows(database, selector, artifact);
+	const byPeriod = selector.contest
+		? contestRows(database, selector, selector.contest)
+		: periodRows(database, selector, artifact);
 	for (const measure of selector.plus ?? []) {
 		const added = periodRows(
 			database,
@@ -338,7 +376,9 @@ export function rebuildStatisticsObservationText(
 			.map(({ row, served, source }) => ({
 				areaCode: served,
 				...(source === undefined ? {} : { sourceAreaCode: source }),
-				value: row.value,
+				...(row.category === undefined
+					? { value: row.value }
+					: { category: row.category }),
 				status: row.status,
 				...(row.lower === null || row.upper === null
 					? {}
