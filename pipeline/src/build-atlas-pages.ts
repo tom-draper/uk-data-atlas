@@ -1,4 +1,3 @@
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import {
 	compilePlaceFacts,
@@ -8,6 +7,7 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readPlaceResolver } from "./placeResolver";
+import { openComponentApiRoot } from "./componentApiRoot";
 import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import {
 	inBox,
@@ -38,10 +38,7 @@ import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 const ROOT = resolve(import.meta.dirname, "../..");
 const API_ROOT = apiRootOf(ROOT);
 const readDataset = (output: string) =>
-	readAtlasPayload(
-		ROOT,
-		output === "dataset-manifest" ? output : `dataset:${output}`,
-	);
+	readFileSync(join(ROOT, "data/build/datasets", `${output}.json`), "utf8");
 const BOUNDARIES = join(artifactRoot(API_ROOT), "source-data", "boundaries");
 
 /**
@@ -76,7 +73,9 @@ const GEOGRAPHY_SOURCES: Record<
 const REDRAWN_SHARE = 0.02;
 const REDRAWN_KM2 = 0.05;
 
-const resolver = readPlaceResolver(API_ROOT);
+const componentRoot = openComponentApiRoot(ROOT, "atlas-base.sqlite");
+process.once("exit", componentRoot.close);
+const resolver = readPlaceResolver(API_ROOT, componentRoot.apiRoot);
 
 type Identity = { geography: string; boundaryRelease: string; code: string };
 type Relationship = {

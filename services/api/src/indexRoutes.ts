@@ -1,12 +1,7 @@
 import { envelope, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 
 /** The API's entry point, linking every resource it serves. */
-export const handleIndexRoutes = ({
-	releaseId,
-	segments,
-}: RouteRequestFor<never>): ApiResponse | undefined => {
-	if (segments.length !== 1 || segments[0] !== "v1") return undefined;
+export const indexResponse = (releaseId: string): ApiResponse => {
 	return {
 		status: 200,
 		body: envelope(releaseId, {

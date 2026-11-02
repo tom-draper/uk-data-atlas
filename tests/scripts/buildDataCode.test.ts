@@ -151,6 +151,73 @@ test("builder discovery does not execute scripts or include generated JSON", () 
 	assert.ok(!inputs.some((path: string) => path.startsWith("public/data/")));
 });
 
+test("atlas assembly depends on each declared component output", () => {
+	const stage = (name: string) =>
+		buildDataStages.find((entry) => entry.name === name)!;
+	assert.ok(
+		stage("data-catalog").requiredOutputs.includes(
+			"data/build/observations.sqlite",
+		),
+	);
+	assert.ok(
+		stage("geography-catalogues").requiredOutputs.includes(
+			"data/build/geography-payloads.json",
+		),
+	);
+	assert.ok(
+		stage("postcode-index").requiredOutputs.includes(
+			"data/build/postcode-index.sqlite",
+		),
+	);
+	assert.ok(
+		stage("postcode-areas").requiredOutputs.includes(
+			"data/build/postcode-areas-component/manifest.json",
+		),
+	);
+	assert.ok(
+		stage("postcode-areas").outputs.includes(
+			"data/build/postcode-areas-component",
+		),
+	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("postcode-areas"));
+	assert.ok(
+		stage("website-lookups").requiredOutputs.includes(
+			"data/build/website-assets.sqlite",
+		),
+	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("website-lookups"));
+	assert.ok(
+		stage("atlas-sqlite").requiredOutputs.includes(
+			"data/build/atlas-base.sqlite",
+		),
+	);
+	assert.deepEqual(stage("data-catalog").dependencies, ["datasets"]);
+	assert.deepEqual(stage("postcode-index").dependencies, ["sources"]);
+	assert.ok(
+		!stage("geography-catalogues").dependencies.includes("atlas-sqlite"),
+	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("data-catalog"));
+	assert.ok(
+		stage("assemble-atlas").dependencies.includes("geography-catalogues"),
+	);
+	assert.ok(stage("assemble-atlas").dependencies.includes("postcode-index"));
+	assert.ok(
+		stage("assemble-atlas").requiredOutputs.includes(
+			"data/build/atlas.sqlite",
+		),
+	);
+	assert.deepEqual(
+		buildDataStages
+			.filter((entry) =>
+				[...entry.outputs, ...entry.requiredOutputs].includes(
+					"data/build/atlas.sqlite",
+				),
+			)
+			.map((entry) => entry.name),
+		["assemble-atlas"],
+	);
+});
+
 test("production builders resolve without UI code and include declared workers and compiler sources", () => {
 	const root = resolve(".");
 	const files = execFileSync(

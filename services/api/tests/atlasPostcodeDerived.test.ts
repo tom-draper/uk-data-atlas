@@ -1,7 +1,9 @@
+import { withComponentApiRoot } from "../../../pipeline/src/componentApiRoot";
 import { compilePostcodeAreas } from "../../../pipeline/src/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -19,7 +21,13 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
-import { storePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
+import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import {
+	writeEmptyObservationComponent,
+	writeEmptyPostcodeAreas,
+	writeEmptyWebsiteComponent,
+} from "./atlasComponentFixtures";
+import { storePostcodeAreas as writePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
 import { buildDuckdbPostcodeCounts } from "../../../pipeline/src/postcode-counts/buildDuckdbPostcodeCounts";
 import { validateShards } from "../../../pipeline/src/postcode-counts/validatePostcodeCountInputs";
 import {
@@ -34,6 +42,15 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
+
+const storePostcodeAreas: typeof writePostcodeAreas = (
+	root,
+	artifact,
+	readShard,
+) => {
+	writePostcodeAreas(root, artifact, readShard);
+	return assembleAtlas(root);
+};
 
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-postcode-derived-"));
@@ -59,6 +76,12 @@ function fixture(t: TestContext) {
 		CREATE VIEW areas AS ${AREAS_VIEW};`,
 	);
 	db.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
+	writeEmptyObservationComponent(root);
+	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	const postcodes = postcodeIndexFor([
 		postcodeRow("M1 1AA", { usrtypind: "1" }),
 		postcodeRow("M1 1AB", { doterm: "200102" }),
@@ -67,6 +90,9 @@ function fixture(t: TestContext) {
 	storePostcodeIndex(root, postcodes.artifact, (path) =>
 		postcodes.texts.get(path)!,
 	);
+	writeEmptyPostcodeAreas(root);
+	writeEmptyWebsiteComponent(root);
+	assembleAtlas(root);
 	const compiled = compilePostcodeAreas(postcodes.artifact, [
 		{
 			release: {
@@ -97,8 +123,48 @@ function fixture(t: TestContext) {
 	return { root, apiRoot, path, compiled, texts };
 }
 
+test("postcode index readers work from the component without an atlas database", (t) => {
+	const { root, path } = fixture(t);
+	rmSync(path);
+	const count = withComponentApiRoot(
+		root,
+		"postcode-index.sqlite",
+		(apiRoot) => readPostcodeIndex(apiRoot).artifact.counts.postcodes,
+	);
+	assert.equal(count, 3);
+});
+
+test("postcode area component leaves the published database unchanged", (t) => {
+	const { root, path, compiled, texts } = fixture(t);
+	const before = readFileSync(path);
+	const manifest = writePostcodeAreas(root, compiled.artifact, (name) =>
+		texts.get(name)!,
+	);
+	assert.deepEqual(readFileSync(path), before);
+	assert.deepEqual(
+		JSON.parse(readFileSync(manifest, "utf8")),
+		compiled.artifact,
+	);
+});
+
+test("a corrupt postcode area component does not replace the published database", (t) => {
+	const { root, path, compiled, texts } = fixture(t);
+	writePostcodeAreas(root, compiled.artifact, (name) => texts.get(name)!);
+	const before = readFileSync(path);
+	const shard = compiled.artifact.shards[0]!;
+	writeFileSync(
+		join(root, "data/build/postcode-areas-component", `${shard.path}.gz`),
+		"corrupt",
+	);
+	assert.throws(() => assembleAtlas(root));
+	assert.deepEqual(readFileSync(path), before);
+});
+
 test("SQLite mappings retain exact bytes, boundary matches, distances and empty placements without JSON", (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
+	mkdirSync(join(artifactRoot(apiRoot), "postcode-areas"), {
+		recursive: true,
+	});
 	writeFileSync(
 		join(artifactRoot(apiRoot), "postcode-areas.json"),
 		"obsolete",
@@ -109,6 +175,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	);
 	for (let run = 0; run < 2; run++)
 		storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
+	assembleAtlas(root);
 	assert.equal(readAtlasPayload(root, "existing"), "retained");
 	assert.equal(
 		existsSync(join(artifactRoot(apiRoot), "postcode-areas.json")),
@@ -329,7 +396,7 @@ test("stored area corruption fails the shard hash check", (t) => {
 
 test("repeated geographies use exact releases and preserve shard release order", (t) => {
 	const { root, apiRoot, path, compiled } = fixture(t);
-	const db = new DatabaseSync(path);
+	const db = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	db.exec(
 		"INSERT INTO area_releases VALUES (1, 'ward', '2025'); INSERT INTO area_version VALUES (3, 1, 1, 'Old area A', NULL, NULL, NULL, 1)",
 	);

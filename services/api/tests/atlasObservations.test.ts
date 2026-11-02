@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -12,7 +13,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { storeObservations } from "../../../pipeline/src/store-observations";
+import { AtlasDatasetInput } from "../../../pipeline/src/catalog/input";
+import { storeObservations as writeObservations } from "../../../pipeline/src/store-observations";
+import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
 import {
 	assertObservationCatalogue,
 	readObservationInventory,
@@ -76,6 +80,11 @@ const entries = (): Array<readonly [string, string]> => [
 	[table.id, `${JSON.stringify(table)}\n`],
 ];
 
+function storeObservations(...args: Parameters<typeof writeObservations>) {
+	writeObservations(...args);
+	assembleAtlas(args[0]);
+}
+
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-observations-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -86,9 +95,15 @@ function fixture(t: TestContext) {
 	const path = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(path);
 	database.exec(
-		"CREATE TABLE retained (value TEXT); INSERT INTO retained VALUES ('unchanged')",
+		"CREATE TABLE retained (value TEXT); INSERT INTO retained VALUES ('unchanged'); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID",
 	);
 	database.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
+	writeEmptyPostcodeComponent(root);
+	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	return { root, apiRoot, publicDirectory, path };
 }
 
@@ -100,6 +115,58 @@ function mutate(path: string, sql: string) {
 		database.close();
 	}
 }
+
+test("writes observations separately until assembly", (t) => {
+	const { root, path } = fixture(t);
+	const before = readFileSync(path);
+	const component = writeObservations(root, catalog, entries());
+	assert.deepEqual(readFileSync(path), before);
+	assert.deepEqual([...readObservationInventory(component).names].sort(), [
+		"numeric-observations",
+		"shared-table",
+	]);
+	assembleAtlas(root);
+	assert.deepEqual([...readObservationInventory(path).names].sort(), [
+		"numeric-observations",
+		"shared-table",
+	]);
+});
+
+test("reassembly retains statistics for other tables", (t) => {
+	const { root, path } = fixture(t);
+	storeObservations(root, catalog, entries());
+	const database = new DatabaseSync(path);
+	const original = database
+		.prepare("SELECT stat FROM sqlite_stat1 WHERE tbl = 'retained'")
+		.get()?.stat;
+	database.close();
+	storeObservations(root, catalog, entries());
+	const result = new DatabaseSync(path, { readOnly: true });
+	try {
+		assert.equal(
+			result
+				.prepare("SELECT stat FROM sqlite_stat1 WHERE tbl = 'retained'")
+				.get()?.stat,
+			original,
+		);
+	} finally {
+		result.close();
+	}
+});
+
+test("catalogue input reads the dataset output without an atlas database", (t) => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-dataset-input-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
+	writeFileSync(
+		join(root, "data/build/datasets/population.json"),
+		"dataset bytes",
+	);
+	assert.equal(
+		new AtlasDatasetInput(root, "population").read(),
+		"dataset bytes",
+	);
+});
 
 test("publishes exact SQLite payloads once per source, preserves other tables, and removes JSON after success", (t) => {
 	const { root, apiRoot, publicDirectory, path } = fixture(t);
@@ -210,9 +277,24 @@ test("failed publication retains the database and legacy JSON, and cleans tempor
 		);
 		assert.deepEqual(readdirSync(join(root, "data/build")), [
 			"artifacts",
+			"atlas-base.sqlite",
 			"atlas.sqlite",
+			"geography-payloads.json",
+			"observations.sqlite",
+			"postcode-areas-component",
+			"postcode-index.sqlite",
+			"website-assets.sqlite",
 		]);
 	}
+});
+
+test("a missing component leaves the published database intact", (t) => {
+	const { root, path } = fixture(t);
+	storeObservations(root, catalog, entries());
+	const before = readFileSync(path);
+	rmSync(join(root, "data/build/website-assets.sqlite"));
+	assert.throws(() => assembleAtlas(root), /Missing atlas component/);
+	assert.deepEqual(readFileSync(path), before);
 });
 
 test("rejects stale catalogues, missing SQLite rows and corrupted bytes without JSON fallback", (t) => {

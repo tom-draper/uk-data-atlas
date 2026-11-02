@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -13,6 +14,11 @@ import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildGeographyCatalogues } from "../../../pipeline/src/build-geography-catalogues";
+import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import {
+	writeEmptyObservationComponent,
+	writeEmptyPostcodeComponent,
+} from "./atlasComponentFixtures";
 import {
 	buildArtifactPath,
 	geographyCatalogues,
@@ -43,6 +49,12 @@ const fixture = (t: TestContext) => {
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
 	);
 	database.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
+	writeEmptyObservationComponent(root);
+	writeEmptyPostcodeComponent(root);
 	for (const id of geographyCatalogues) {
 		const path = buildArtifactPath(root, `${id}.json`);
 		mkdirSync(dirname(path), { recursive: true });
@@ -78,8 +90,14 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 			readFileSync(buildArtifactPath(root, `${id}.json`), "utf8"),
 		]),
 	);
+	const before = readFileSync(join(root, "data/build/atlas.sqlite"));
 	buildGeographyCatalogues(root);
 	buildGeographyCatalogues(root);
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/atlas.sqlite")),
+		before,
+	);
+	assembleAtlas(root);
 	for (const [id, payload] of expected) {
 		assert.equal(readAtlasPayload(root, id), payload);
 		assert.equal(
@@ -181,13 +199,16 @@ test("missing compiler inputs leave the database and old public files intact", (
 test("a failed SQLite update keeps the previous database and removes its temporary copy", (t) => {
 	const { root, apiRoot } = fixture(t);
 	const path = join(root, "data/build/atlas.sqlite");
-	const database = new DatabaseSync(path);
+	const database = new DatabaseSync(
+		join(root, "data/build/atlas-base.sqlite"),
+	);
 	database.exec(
 		"CREATE TRIGGER reject_catalogue BEFORE INSERT ON payloads WHEN NEW.id = 'analysis-geographies' BEGIN SELECT RAISE(ABORT, 'rejected catalogue'); END;",
 	);
 	database.close();
 	const before = readFileSync(path);
-	assert.throws(() => buildGeographyCatalogues(root), /rejected catalogue/);
+	buildGeographyCatalogues(root);
+	assert.throws(() => assembleAtlas(root), /rejected catalogue/);
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(existsSync(`${path}.geography.tmp`), false);
 	assert.equal(

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -14,7 +15,13 @@ import test, { type TestContext } from "node:test";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
-import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
+import { storePostcodeIndex as writePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
+import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import {
+	writeEmptyObservationComponent,
+	writeEmptyPostcodeAreas,
+	writeEmptyWebsiteComponent,
+} from "./atlasComponentFixtures";
 import { buildPostcodeIndex } from "../../../pipeline/src/build-postcode-index";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
@@ -38,6 +45,11 @@ const rows = [
 	postcodeRow("CF1 1AA", { ctry: "W92000004", gridind: "8" }),
 	postcodeRow("BT1 1AA", { ctry: "N92000002" }),
 ];
+function storePostcodeIndex(...args: Parameters<typeof writePostcodeIndex>) {
+	writePostcodeIndex(...args);
+	writeEmptyPostcodeAreas(args[0]);
+	assembleAtlas(args[0]);
+}
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-postcodes-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -52,6 +64,13 @@ function fixture(t: TestContext) {
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
 	);
 	database.close();
+	copyFileSync(
+		join(root, "data/build/atlas.sqlite"),
+		join(root, "data/build/atlas-base.sqlite"),
+	);
+	writeEmptyObservationComponent(root);
+	writeEmptyWebsiteComponent(root);
+	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(
 		join(artifactRoot(apiRoot), "postcode-index.json"),
 		"obsolete",
@@ -183,7 +202,23 @@ test("corrupt stored records are refused and missing SQLite never falls back to 
 	assert.throws(() => readPostcodeIndex(apiRoot));
 });
 
-test("the source builder reads filtered gzip rows and writes only to the shared database", async (t) => {
+test("reassembling an unchanged component repairs corrupt postcode fields", (t) => {
+	const { root, apiRoot, path } = fixture(t);
+	const before = postcodeIndexFor(rows);
+	storePostcodeIndex(root, before.artifact, (name) =>
+		before.texts.get(name)!,
+	);
+	const database = new DatabaseSync(path);
+	database.exec("UPDATE postcodes SET introduced = 199901");
+	database.close();
+	assembleAtlas(root);
+	assert.equal(
+		readSqlitePostcodeShard(apiRoot, before.artifact.shards[0]!),
+		before.texts.get(before.artifact.shards[0]!.path),
+	);
+});
+
+test("the source builder reads filtered gzip rows into the postcode component", async (t) => {
 	const { root, apiRoot } = fixture(t);
 	const directory = join(root, "data/source/postcodes/onspd/2026-08");
 	mkdirSync(directory, { recursive: true });
@@ -217,6 +252,8 @@ test("the source builder reads filtered gzip rows and writes only to the shared 
 		}),
 	);
 	const result = await buildPostcodeIndex(root);
+	writeEmptyPostcodeAreas(root);
+	assembleAtlas(root);
 	assert.equal(result.artifact.counts.postcodes, 6);
 	assert.equal(
 		readPostcodeIndex(apiRoot).artifact.contentHash,

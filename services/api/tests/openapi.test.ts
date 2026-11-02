@@ -3,8 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { parse } from "yaml";
 import { route } from "../src/routes";
+import { indexResponse } from "../src/indexRoutes";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { testContext } from "./routeFixtures";
 
 type OpenApiOperation = {
 	operationId?: string;
@@ -104,11 +104,7 @@ test("resolves every component reference", () => {
 });
 
 test("documents exactly the routes advertised by the API index", () => {
-	const response = route(
-		"GET",
-		"/v1",
-		testContext({ boundaryRegistry: registry }),
-	);
+	const response = indexResponse(registry.contentHash);
 	assert.equal(response.status, 200);
 	const { links } = (response.body as { data: { links: string[] } }).data;
 	// Placeholders are compared by name too, so the index and the spec

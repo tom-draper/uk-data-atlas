@@ -1,40 +1,25 @@
-import { copyFileSync, renameSync, rmSync } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { join } from "node:path";
-import { DatabaseSync } from "node:sqlite";
-import { writePostcodeAreas } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	existsSync,
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	renameSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
+import { dirname, join } from "node:path";
+import { gzipSync, gunzipSync } from "node:zlib";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
-/** Publish complete tables atomically, preserving the other atlas data. */
-function store(
-	root: string,
-	id: string,
-	write: (database: DatabaseSync) => void,
-) {
-	const path = join(root, "data/build/atlas.sqlite");
-	const temporary = `${path}.${id}.${randomUUID()}.tmp`;
-	try {
-		copyFileSync(path, temporary);
-		const database = new DatabaseSync(temporary);
-		try {
-			database.exec("PRAGMA foreign_keys = ON; BEGIN");
-			write(database);
-			database.exec("COMMIT");
-			if (id === "postcode-areas") database.exec("VACUUM");
-		} finally {
-			database.close();
-		}
-		renameSync(temporary, path);
-	} finally {
-		rmSync(temporary, { force: true });
-	}
-	const publicRoot = artifactDirectory(root);
-	rmSync(join(publicRoot, id), { recursive: true, force: true });
-	for (const suffix of [".json", ".json.gz"])
-		rmSync(join(publicRoot, `${id}${suffix}`), { force: true });
-	return path;
+export const postcodeAreasDirectory = (root: string) =>
+	join(root, "data/build/postcode-areas-component");
+
+export function readPostcodeAreaComponent(root: string, path: string) {
+	return gunzipSync(
+		readFileSync(join(postcodeAreasDirectory(root), `${path}.gz`)),
+	).toString("utf8");
 }
 
 export function storePostcodeAreas(
@@ -42,10 +27,32 @@ export function storePostcodeAreas(
 	artifact: PostcodeAreasArtifact,
 	readShard: (path: string) => string,
 ) {
-	return store(root, "postcode-areas", (database) => {
-		writePostcodeAreas(database, artifact, readShard);
-		database
-			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
-			.run("postcode-areas", JSON.stringify(artifact));
-	});
+	const directory = postcodeAreasDirectory(root);
+	const temporary = mkdtempSync(join(root, "data/build/.postcode-areas-"));
+	const backup = `${directory}.${randomUUID()}.backup`;
+	try {
+		for (const entry of artifact.shards) {
+			const text = readShard(entry.path);
+			if (sha256(text) !== entry.contentHash)
+				throw new Error(`Invalid postcode area shard ${entry.path}`);
+			const path = join(temporary, `${entry.path}.gz`);
+			mkdirSync(dirname(path), { recursive: true });
+			writeFileSync(path, gzipSync(text));
+		}
+		writeFileSync(
+			join(temporary, "manifest.json"),
+			JSON.stringify(artifact),
+		);
+		if (existsSync(directory)) renameSync(directory, backup);
+		try {
+			renameSync(temporary, directory);
+		} catch (error) {
+			if (existsSync(backup)) renameSync(backup, directory);
+			throw error;
+		}
+		rmSync(backup, { recursive: true, force: true });
+	} finally {
+		rmSync(temporary, { recursive: true, force: true });
+	}
+	return join(directory, "manifest.json");
 }

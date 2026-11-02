@@ -1,9 +1,12 @@
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import {
+	buildArtifactPath,
+	readAreaLookup,
+} from "@uk-data-atlas/atlas-runtime/areas";
+import { readFileSync } from "node:fs";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-	readRelationshipPathInventory,
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { releaseKey, type LookupResolver } from "@uk-data-atlas/geography";
 import {
@@ -11,6 +14,7 @@ import {
 	createRelationshipPathIndex,
 	type CrosswalkInventory,
 	type CrosswalkTranslatorInputs,
+	type RelationshipPathInventory,
 } from "@uk-data-atlas/relationships";
 
 export const createLookupResolver = (
@@ -35,14 +39,22 @@ export const createLookupResolver = (
 	};
 };
 
-export const readLookupResolver = (apiRoot: string) => {
+export const readLookupResolver = (apiRoot: string, repositoryRoot: string) => {
 	const inventory = readSqliteAreaInventory(apiRoot);
 	const areaLookup = readAreaLookup(apiRoot, inventory);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
-	const relationshipPathIndex = createRelationshipPathIndex(
-		readRelationshipPathInventory(apiRoot, crosswalkInventory),
-	);
+	const path = buildArtifactPath(repositoryRoot, "relationship-paths.json");
+	const paths = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as RelationshipPathInventory;
+	if (
+		paths.schemaVersion !== 1 ||
+		!Array.isArray(paths.paths) ||
+		paths.crosswalkInventoryHash !== crosswalkInventory.contentHash
+	)
+		throw new Error(`Invalid relationship path inventory at ${path}`);
+	const relationshipPathIndex = createRelationshipPathIndex(paths);
 	return createLookupResolver({
 		areaLookup,
 		crosswalkInventory,

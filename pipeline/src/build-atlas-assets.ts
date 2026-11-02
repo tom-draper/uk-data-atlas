@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
-import { existsSync, readFileSync, rmSync } from "node:fs";
+import { createHash, randomUUID } from "node:crypto";
+import { readFileSync, renameSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gunzipSync } from "node:zlib";
@@ -9,7 +9,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
 
-/** Assemble release assets before the release manifest hashes the database. */
+/** Validate and stage release assets before assembling the database. */
 export function buildAtlasAssets(root: string) {
 	const publicDirectory = atlasAssetsDirectory(root);
 	const assets: {
@@ -79,45 +79,30 @@ export function buildAtlasAssets(root: string) {
 			if (!ids.has(id))
 				throw new Error(`Missing atlas ${kind} asset ${id}`);
 	}
-	const path = join(root, "data/build/atlas.sqlite");
-	if (!existsSync(path))
-		throw new Error("Missing atlas.sqlite. Run pnpm data:build first.");
-	const database = new DatabaseSync(path);
+	const path = join(root, "data/build/website-assets.sqlite");
+	const temporary = `${path}.${randomUUID()}.tmp`;
 	try {
-		database.exec("BEGIN IMMEDIATE");
-		database.exec(`CREATE TABLE IF NOT EXISTS website_assets (
-			kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL,
-			gzip BLOB NOT NULL, PRIMARY KEY (kind, id)
-		) WITHOUT ROWID`);
-		const current = database
-			.prepare("SELECT kind, id, sha256 FROM website_assets")
-			.all();
-		const hashes = new Map(
-			current.map((row) => [`${row.kind}:${row.id}`, row.sha256]),
-		);
-		if (
-			current.length !== assets.length ||
-			assets.some(
-				(asset) =>
-					hashes.get(`${asset.kind}:${asset.id}`) !== asset.sha256,
-			)
-		) {
-			database.exec("DELETE FROM website_assets");
+		const database = new DatabaseSync(temporary);
+		try {
+			database.exec(`CREATE TABLE website_assets (
+				kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL,
+				gzip BLOB NOT NULL, PRIMARY KEY (kind, id)
+			) WITHOUT ROWID`);
+			database.exec("BEGIN");
 			const insert = database.prepare(
 				"INSERT INTO website_assets VALUES (?, ?, ?, ?)",
 			);
 			for (const asset of assets)
 				insert.run(asset.kind, asset.id, asset.sha256, asset.gzip);
+			database.exec("COMMIT");
+		} finally {
+			database.close();
 		}
-		database.exec("COMMIT");
+		renameSync(temporary, path);
 	} finally {
-		database.close();
+		rmSync(temporary, { force: true });
 	}
-	for (const directory of ["atlas-lookups", "atlas-pages", "precompiled"])
-		rmSync(join(root, "public/data", directory), {
-			recursive: true,
-			force: true,
-		});
+	return path;
 }
 
 if (
@@ -125,5 +110,7 @@ if (
 	resolve(process.argv[1]) === resolve(import.meta.filename)
 ) {
 	buildAtlasAssets(resolve(import.meta.dirname, "../.."));
-	console.log("Website pages and lookups are stored in atlas.sqlite.");
+	console.log(
+		"Website pages and lookups are staged in website-assets.sqlite.",
+	);
 }

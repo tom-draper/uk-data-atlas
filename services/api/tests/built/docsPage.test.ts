@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { renderDocsPage, type OpenApiGuide } from "../../src/docsPage";
 import { route } from "../../src/routes";
+import { indexResponse } from "../../src/indexRoutes";
 import { readApiCatalogues } from "../../src/server";
 
 /**
@@ -124,7 +125,7 @@ test("publishes the README's glossary word for word", () => {
 });
 
 test("serves the landing page the index points to", () => {
-	const index = route("GET", "/v1", catalogues).body as {
+	const index = indexResponse(catalogues.atlasRelease.releaseId).body as {
 		data: { documentation: string; links: string[] };
 	};
 	assert.equal(index.data.documentation, "/v1/docs");

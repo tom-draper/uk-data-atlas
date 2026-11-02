@@ -396,6 +396,17 @@ export function createStageCache({
 			snapshot = null;
 			const after = currentSnapshot();
 			if (!cacheable) {
+				let changed = false;
+				for (const [path, stamp] of after) {
+					if (sameStamp(before.get(path), stamp)) continue;
+					for (const record of Object.values(state.stages)) {
+						if (path in record.outputs) {
+							delete record.outputs[path];
+							changed = true;
+						}
+					}
+				}
+				if (changed) save();
 				inputs = null;
 				files = null;
 				stageInputs.clear();

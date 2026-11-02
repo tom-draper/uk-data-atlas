@@ -23,11 +23,13 @@ const segmentsFor = (path: string) =>
 
 test("every documented path is owned by exactly one route family", () => {
 	assert.ok(documentedPaths.length > 0);
-	const misowned = documentedPaths.flatMap((path) => {
-		const families = routeFamiliesOwning(segmentsFor(path));
-		return families.length === 1
-			? []
-			: [`${path}: ${families.join(", ") || "no family"}`];
-	});
+	const misowned = documentedPaths
+		.filter((path) => path !== "/")
+		.flatMap((path) => {
+			const families = routeFamiliesOwning(segmentsFor(path));
+			return families.length === 1
+				? []
+				: [`${path}: ${families.join(", ") || "no family"}`];
+		});
 	assert.deepEqual(misowned, []);
 });

@@ -94,7 +94,7 @@ const apiStages = [
 		{
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			requiredOutputs: [
-				"data/build/atlas.sqlite",
+				"data/build/atlas-base.sqlite",
 				"data/build/atlas-cache.sqlite",
 			],
 		},
@@ -189,6 +189,7 @@ const apiStages = [
 		"place-index",
 		[
 			"geography-catalogues",
+			"assemble-atlas",
 			"atlas-sqlite",
 			"boundary-registry",
 			"area-inventory",
@@ -202,7 +203,7 @@ const apiStages = [
 	),
 	stage(
 		"area-search-index",
-		["atlas-sqlite"],
+		["assemble-atlas"],
 		[
 			"--dir",
 			"../..",
@@ -217,7 +218,7 @@ const apiStages = [
 	),
 	stage(
 		"postcode-index",
-		["sources", "atlas-sqlite"],
+		["sources"],
 		[
 			"--dir",
 			"../..",
@@ -225,13 +226,35 @@ const apiStages = [
 			"tsx",
 			"pipeline/src/build-postcode-index.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			requiredOutputs: ["data/build/postcode-index.sqlite"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"data-catalog",
-		["atlas-sqlite"],
+		["datasets"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-data-catalog.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			requiredOutputs: ["data/build/observations.sqlite"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
+	stage(
+		"assemble-atlas",
+		[
+			"atlas-sqlite",
+			"data-catalog",
+			"geography-catalogues",
+			"postcode-index",
+			"postcode-areas",
+			"website-lookups",
+		],
+		["--dir", "../..", "exec", "tsx", "pipeline/src/assemble-atlas.ts"],
+		{
+			requiredOutputs: ["data/build/atlas.sqlite"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"measure-compatibility",
@@ -275,11 +298,17 @@ const apiStages = [
 			"--max-old-space-size=3072",
 			"pipeline/src/build-postcode-areas.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+			outputs: ["data/build/postcode-areas-component"],
+			requiredOutputs: [
+				"data/build/postcode-areas-component/manifest.json",
+			],
+		},
 	),
 	stage(
 		"postcode-counts",
-		["postcode-index", "postcode-areas"],
+		["postcode-index", "assemble-atlas"],
 		[
 			"--dir",
 			"../..",
@@ -347,7 +376,6 @@ const apiStages = [
 	stage(
 		"geography-catalogues",
 		[
-			"atlas-sqlite",
 			"boundary-registry",
 			"geography-inventory",
 			"relationship-paths",
@@ -361,7 +389,10 @@ const apiStages = [
 			"tsx",
 			"pipeline/src/build-geography-catalogues.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			requiredOutputs: ["data/build/geography-payloads.json"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"location-projections",
@@ -542,7 +573,7 @@ const apiStages = [
 			"place-index",
 			"area-search-index",
 			"postcode-counts",
-			"website-lookups",
+			"assemble-atlas",
 		],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/stamp-atlas-cache.ts"],
 		{
@@ -556,7 +587,7 @@ const apiStages = [
 			"atlas-release-initial",
 			"documents",
 			"atlas-lookups",
-			"website-lookups",
+			"assemble-atlas",
 			"atlas-cache-stamp",
 		],
 		[
@@ -574,6 +605,7 @@ const apiStages = [
 		"atlas-pages",
 		[
 			"geography-catalogues",
+			"atlas-sqlite",
 			"api-datasets",
 			"boundary-registry",
 			"geometry-store",
@@ -650,13 +682,13 @@ const websiteStages = [
 		["atlas-lookups", "atlas-pages"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-atlas-assets.ts"],
 		{
-			requiredOutputs: ["data/build/atlas.sqlite"],
+			requiredOutputs: ["data/build/website-assets.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
 		"website-datasets",
-		["atlas-sqlite", "website-lookups", "website-tiles"],
+		["atlas-sqlite", "assemble-atlas", "website-tiles"],
 		[
 			"--dir",
 			"../..",

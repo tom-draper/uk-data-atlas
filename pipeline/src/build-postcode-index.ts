@@ -6,7 +6,7 @@ import { buildDuckdbPostcodeIndex } from "./duckdbPostcodeIndex";
 
 /**
  * Compile the newest filtered ONS Postcode Directory under
- * data/source/postcodes/onspd into the shared atlas.sqlite database.
+ * data/source/postcodes/onspd into the postcode index component.
  * District ordering is retained for postcode-to-area joins. The stored source excludes
  * Northern Ireland before it is included in the public data release.
  */

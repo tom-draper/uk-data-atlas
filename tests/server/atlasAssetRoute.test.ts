@@ -3,7 +3,6 @@ import {
 	mkdirSync,
 	readFileSync,
 	rmSync,
-	statSync,
 	writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
@@ -12,9 +11,15 @@ import { gunzipSync } from "node:zlib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as page } from "@/app/data/atlas-pages/[file]/route";
 import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
-import { buildAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
+import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
 import { readAtlasAssetText } from "@uk-data-atlas/atlas-runtime/storage";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
+
+const buildAtlasAssets = (root: string) => {
+	stageAtlasAssets(root);
+	assembleAtlas(root);
+};
 
 let fixture: ReturnType<typeof websiteAssetsFixture>;
 const request = (file = "places-index.json", headers: HeadersInit = {}) =>
@@ -96,11 +101,25 @@ describe("SQLite website assets", () => {
 		expect(response.status).toBe(404);
 		expect(response.headers.get("Cache-Control")).toBe("no-store");
 	});
-	it("keeps the database unchanged on an identical import", () => {
+	it("stages assets without changing the database", () => {
 		const path = join(fixture.root, "data/build/atlas.sqlite");
-		const before = statSync(path);
+		const before = readFileSync(path);
+		stageAtlasAssets(fixture.root);
+		expect(readFileSync(path)).toEqual(before);
+		expect(
+			existsSync(join(fixture.root, "data/build/website-assets.sqlite")),
+		).toBe(true);
+	});
+	it("retains the same asset contents on an identical import", () => {
+		const before = readAtlasAssetText(
+			fixture.root,
+			"pages",
+			"places-index",
+		);
 		buildAtlasAssets(fixture.root);
-		expect(statSync(path).mtimeMs).toBe(before.mtimeMs);
+		expect(readAtlasAssetText(fixture.root, "pages", "places-index")).toBe(
+			before,
+		);
 	});
 	it("replaces removed assets and preserves other database tables", () => {
 		fixture.write("pages", {

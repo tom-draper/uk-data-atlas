@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { atlasReleaseArtifact, atlasReleaseData } from "./atlasRelease";
+import { rootDocument } from "./rootContract";
 
 export const generatedComponents = () => {
 	const artifact = z.toJSONSchema(atlasReleaseArtifact);
@@ -15,7 +16,13 @@ export const generatedComponents = () => {
 		...releaseSchema
 	} = release;
 	const properties = releaseSchema.properties!;
+	const {
+		$schema: _rootSchema,
+		additionalProperties: _rootExtra,
+		...rootSchema
+	} = z.toJSONSchema(rootDocument);
 	return {
+		RootDocument: rootSchema,
 		AtlasReleaseArtifactRef: artifactSchema,
 		AtlasRelease: {
 			...releaseSchema,

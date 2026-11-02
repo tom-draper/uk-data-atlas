@@ -18,6 +18,7 @@ test("generated route contracts match the published description", async () => {
 	assert.deepEqual(Object.keys(paths), [
 		"/openapi.yaml",
 		"/docs",
+		"/",
 		"/atlas-release",
 		"/datasets",
 		"/datasets/{dataset-id}",
@@ -32,6 +33,18 @@ test("generated route contracts match the published description", async () => {
 	for (const [path, item] of Object.entries(paths)) {
 		assert.deepEqual(document.paths[path], item, path);
 	}
+});
+
+test("the discovery schema validates its public document", () => {
+	const schema = document.components.schemas.RootDocument;
+	assert.deepEqual(
+		schemaViolations(document, schema, { name: "Atlas", links: [] }),
+		[],
+	);
+	assert.notDeepEqual(
+		schemaViolations(document, schema, { name: "Atlas", links: [1] }),
+		[],
+	);
 });
 
 test("the generated route sections are up to date", () => {
