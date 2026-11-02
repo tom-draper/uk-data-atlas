@@ -7,6 +7,7 @@ import type {
 	StatisticsArtifact,
 	StatisticsReadPath,
 	StatisticsSelector,
+	StatisticsTableSelector,
 } from "../storage/atlasStatisticsObservations";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import type {
@@ -138,7 +139,10 @@ export class ObservationCache {
 	/** Artifacts read from the statistics tables, with what the catalogue says of each. */
 	private readonly statistics = new Map<
 		string,
-		{ selector: StatisticsSelector; artifact: StatisticsArtifact }
+		{
+			selector: StatisticsSelector | StatisticsTableSelector;
+			artifact: StatisticsArtifact;
+		}
 	>();
 
 	constructor(private readonly maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES) {

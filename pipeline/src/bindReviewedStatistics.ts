@@ -32,6 +32,7 @@ export function bindReviewedStatistics(
 			reviewed.statistics[observationArtifactName(measure.id, source)];
 		if (
 			!selector ||
+			"kind" in selector ||
 			Object.keys(selector).some((key) => !PLAIN_SELECTOR.has(key)) ||
 			selector.datasetId !== source.datasetId ||
 			(selector.sum?.length && measure.id !== "population")
