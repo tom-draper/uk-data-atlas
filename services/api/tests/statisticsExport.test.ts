@@ -240,6 +240,56 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			population.data.map(({ value }) => value),
 			[22, 7],
 		);
+		db.exec(`INSERT INTO dataset VALUES (3, 'land-area');
+			INSERT INTO measure VALUES (3, 'area', 'hectares');
+			INSERT INTO series VALUES (5, 3, 3, 1, 'land');
+			INSERT INTO dimension VALUES (2, 'surface');
+			INSERT INTO dimension_member VALUES (3, 'land');
+			INSERT INTO series_member VALUES (5, 2, 3);
+			INSERT INTO period VALUES (2, '2024');
+			INSERT INTO observation VALUES (5, 1, 2, 100, NULL, NULL, NULL, 1), (5, 2, 2, 200, NULL, NULL, NULL, 1);`);
+		assert.equal(
+			exportStatisticsMeasure(db, "population-density", paths, [
+				{
+					dataset: "population-uk",
+					measure: "population",
+					members: {},
+					geography: "ward",
+					release: "2021",
+					periods: ["2021"],
+				},
+			]),
+			2,
+		);
+		const density = Papa.parse<Record<string, unknown>>(
+			readFileSync(paths.csv, "utf8"),
+			{
+				header: true,
+				dynamicTyping: (field) =>
+					["value", "lower", "upper"].includes(String(field)),
+				skipEmptyLines: true,
+				transform: (value) => (value === "" ? null : value),
+			},
+		);
+		assert.deepEqual(
+			density.data,
+			readParquet(readFileSync(paths.parquet)).rows,
+		);
+		assert.deepEqual(
+			density.data.map(({ value, status }) => [value, status]),
+			[
+				[22, "derived"],
+				[3.5, "derived"],
+			],
+		);
+		db.exec(`DELETE FROM observation WHERE series_id = 5;
+			DELETE FROM series_member WHERE series_id = 5;
+			DELETE FROM series WHERE id = 5;
+			DELETE FROM dimension WHERE id = 2;
+			DELETE FROM dimension_member WHERE id = 3;
+			DELETE FROM period WHERE id = 2;
+			DELETE FROM measure WHERE id = 3;
+			DELETE FROM dataset WHERE id = 3;`);
 		db.exec(`DELETE FROM observation WHERE series_id IN (3, 4);
 			DELETE FROM series WHERE id IN (3, 4);
 			DELETE FROM measure WHERE id = 2;

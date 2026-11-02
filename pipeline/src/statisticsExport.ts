@@ -196,7 +196,7 @@ export function exportStatisticsMeasure(
 		? election.party
 			? [{ id: 0, slug: "party" }]
 			: []
-		: measure === "population"
+		: measure === "population" || measure === "population-density"
 			? []
 			: database
 					.prepare(
@@ -242,13 +242,22 @@ export function exportStatisticsMeasure(
 		: "";
 	const lower = intervalMeasure ? "round(o.value - ino.value, 1)" : "o.lower";
 	const upper = intervalMeasure ? "round(o.value + ino.value, 1)" : "o.upper";
-	const aggregatePopulation = measure === "population";
-	const values = aggregatePopulation
-		? "CASE WHEN count(o.value) = count(*) THEN sum(o.value) END, NULL, NULL, NULL, CASE WHEN count(DISTINCT st.slug) = 1 THEN min(st.slug) ELSE 'derived' END"
-		: `o.value, ${lower}, ${upper}, c.code, st.slug`;
+	const density = measure === "population-density";
+	const aggregatePopulation = measure === "population" || density;
+	const landArea = `(SELECT lo.value / 100.0 FROM dataset ld JOIN series ls ON ls.dataset_id=ld.id
+		JOIN measure lm ON lm.id=ls.measure_id JOIN series_member lsm ON lsm.series_id=ls.id
+		JOIN dimension ldim ON ldim.id=lsm.dimension_id JOIN dimension_member ldm ON ldm.id=lsm.member_id
+		JOIN observation lo ON lo.series_id=ls.id JOIN area_version lav ON lav.id=lo.area_version_id
+		JOIN period lp ON lp.id=lo.period_id WHERE ld.slug='land-area' AND lm.slug='area'
+		AND ldim.slug='surface' AND ldm.code='land' AND lp.label='2024' AND lav.area_id=a.id LIMIT 1)`;
+	const values = density
+		? `CASE WHEN count(o.value) = count(*) THEN sum(o.value) / nullif(${landArea}, 0) END, NULL, NULL, NULL, 'derived'`
+		: aggregatePopulation
+			? "CASE WHEN count(o.value) = count(*) THEN sum(o.value) END, NULL, NULL, NULL, CASE WHEN count(DISTINCT st.slug) = 1 THEN min(st.slug) ELSE 'derived' END"
+			: `o.value, ${lower}, ${upper}, c.code, st.slug`;
 	const statement = database.prepare(
 		election?.sql ??
-			`SELECT d.slug, ?, m.unit, r.geography, r.id,
+			`SELECT d.slug, ?, ${density ? "'people per square kilometre'" : "m.unit"}, r.geography, r.id,
 		a.code, p.label, ${values}
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
