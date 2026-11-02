@@ -24,6 +24,8 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 	),
 	"ghg-emissions": [["ghg-emissions", "totalKtCO2e"]],
 	"total-jobs": [["jobs", "totalJobs"]],
+	"life-expectancy-male": [["life-expectancy-series", "male.value"]],
+	"life-expectancy-female": [["life-expectancy-series", "female.value"]],
 	"road-collisions": [["road-collisions", "collisions"]],
 	"road-collisions-fatal": [["road-collisions", "fatal"]],
 	"road-collisions-serious": [["road-collisions", "serious"]],
