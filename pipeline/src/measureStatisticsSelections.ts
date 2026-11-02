@@ -1,0 +1,55 @@
+import type { DatabaseSync } from "node:sqlite";
+import {
+	STATISTICS_DATASETS,
+	type Measure,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { CompiledMeasure } from "./catalog/manifest";
+import { bindCensusStatistics } from "./bindCensusStatistics";
+import { bindStatisticsField } from "./bindStatisticsField";
+import type { StatisticsSelection } from "./statisticsExport";
+
+type Field = NonNullable<CompiledMeasure["statisticsField"]>;
+type Binding = { measureId: string; field: Field };
+
+/** Resolve every catalogue partition, or return nothing rather than a partial measure. */
+export function measureStatisticsSelections(
+	database: DatabaseSync,
+	measure: Measure,
+	bindings: readonly Binding[],
+): StatisticsSelection[] | undefined {
+	const census = bindCensusStatistics(database, measure);
+	if (census) return census;
+	if (!measure.sources.length) return undefined;
+	const result: StatisticsSelection[] = [];
+	for (const source of measure.sources) {
+		for (const period of source.periods) {
+			const matches = bindings.filter(
+				({ measureId, field }) =>
+					measureId === measure.id &&
+					field.dataset === source.datasetId &&
+					field.geography === source.sourceGeography.type &&
+					field.boundaryYear ===
+						source.sourceGeography.boundaryYear &&
+					field.publishedPeriod === period,
+			);
+			if (matches.length !== 1) return undefined;
+			const field = matches[0]!.field;
+			const config = STATISTICS_DATASETS.find(
+				({ type }) =>
+					type.replace(
+						/[A-Z]/g,
+						(letter) => `-${letter.toLowerCase()}`,
+					) === field.dataset,
+			);
+			const selection = bindStatisticsField(
+				database,
+				field,
+				measure.unit,
+				config,
+			);
+			if (!selection) return undefined;
+			result.push(...selection);
+		}
+	}
+	return result.length ? result : undefined;
+}
