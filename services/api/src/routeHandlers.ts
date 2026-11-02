@@ -1,6 +1,5 @@
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
-import { handleIndexRoutes } from "./indexRoutes";
 import { validateContractResponse } from "./contract/validateResponse";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
@@ -128,11 +127,6 @@ const boundaryPath = v1([
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
-	{
-		name: "index",
-		owns: (segments) => segments.length === 1 && segments[0] === "v1",
-		handle: handleIndexRoutes,
-	},
 	{
 		name: "openapi",
 		owns: isOpenapiRoute,
@@ -363,6 +357,13 @@ const routeFamilies: RouteFamily[] = [
 export const routeFamiliesOwning = (segments: string[]) =>
 	routeFamilies.filter(({ owns }) => owns(segments)).map(({ name }) => name);
 
+export const getOnlyMethodNotAllowed = () =>
+	problem(
+		405,
+		"Method Not Allowed",
+		"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can.",
+	);
+
 /** The response with the headers of the deprecated release its path names. */
 const withPathReleaseHeaders = (
 	request: RouteRequest,
@@ -389,11 +390,7 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 	const routed = canonical ?? request;
 	const family = routeFamilies.find(({ owns }) => owns(routed.segments));
 	if (family && routed.method === "POST" && !family.acceptsPost)
-		return problem(
-			405,
-			"Method Not Allowed",
-			"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can.",
-		);
+		return getOnlyMethodNotAllowed();
 	const handled = family?.handle(routed);
 	if (!handled) return handled;
 	const response = withPathReleaseHeaders(
