@@ -19,6 +19,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
+			CREATE TABLE dataset_leaf (dataset_id INTEGER, path TEXT, kind TEXT, series_id INTEGER, period_id INTEGER);
 			CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, category_id INTEGER, status_id INTEGER);
 			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER);
@@ -35,6 +36,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 			INSERT INTO area VALUES (1, 'E01'), (2, 'E02');
 			INSERT INTO area_version VALUES (1, 1), (2, 2);
 			INSERT INTO period VALUES (1, '2021');
+			INSERT INTO dataset_leaf VALUES (1, '["rented"]', 'value', 1, 1), (1, '["owned"]', 'value', 2, 1);
 			INSERT INTO status VALUES (1, 'observed'), (2, 'suppressed');
 			INSERT INTO observation VALUES (1, 2, 1, 10, 9, 11, NULL, 1), (2, 1, 1, NULL, NULL, NULL, NULL, 2);
 		`);
@@ -72,6 +74,69 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 		assert.deepEqual(
 			[readFileSync(paths.csv), readFileSync(paths.parquet)],
 			first,
+		);
+		assert.equal(
+			exportStatisticsMeasure(db, "rented-homes", paths, [
+				{
+					dataset: "census",
+					path: ["rented"],
+					geography: "ward",
+					release: "2021",
+					periods: ["2021"],
+				},
+			]),
+			1,
+		);
+		const selected = Papa.parse<Record<string, unknown>>(
+			readFileSync(paths.csv, "utf8"),
+			{
+				header: true,
+				dynamicTyping: (field) =>
+					typeof field === "string" &&
+					["value", "lower", "upper"].includes(field),
+				skipEmptyLines: true,
+				transform: (value) => (value === "" ? null : value),
+			},
+		);
+		assert.deepEqual(selected.errors, []);
+		assert.deepEqual(
+			selected.data,
+			readParquet(readFileSync(paths.parquet)).rows,
+		);
+		assert.equal(selected.data[0]?.dimension_tenure, "rented");
+		assert.equal(selected.data[0]?.measure, "rented-homes");
+		assert.equal(
+			exportStatisticsMeasure(db, "rented-homes", paths, [
+				{
+					dataset: "census",
+					measure: "households",
+					dimension: "tenure",
+					member: "rented",
+					geography: "ward",
+					release: "2021",
+					periods: ["2021"],
+				},
+				{
+					dataset: "census",
+					path: ["rented"],
+					geography: "ward",
+					release: "2021",
+					periods: ["2021"],
+				},
+			]),
+			1,
+		);
+		assert.equal(
+			exportStatisticsMeasure(db, "rented-homes", paths, [
+				{
+					dataset: "census",
+					path: ["rented"],
+					geography: "ward",
+					release: "2021",
+					periods: ["2020"],
+				},
+			]),
+			0,
 		);
 		db.exec(`
 			WITH RECURSIVE n(x) AS (VALUES (3) UNION ALL SELECT x + 1 FROM n WHERE x < 2052)
