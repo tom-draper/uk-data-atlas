@@ -866,11 +866,14 @@ members, rather than one id per breakdown.
   fails while the copy and the tables differ. A dimension's total is the one
   member every other is part of (`offence=total`, `sex=all`).
 - **What the API holds that these tables do not.** Three measures
-  (`winning-party`, `effective-votes`, `population-density`), four
+  (`winning-party`, `effective-votes`, `population-density`) are declared in
+  the mapping, each with a reason: the API reads them from stored contests
+  and series, but they are not series of their own. The census tables'
   dimensions (`age-band`, `economic-activity`, `household-composition`,
-  `residence-type`, from census tables TS007a, TS066, TS003 and TS001) and
-  four finer `tenure` members are declared in the mapping, each with a
-  reason, until their series are stored here.
+  `residence-type`) and finer `tenure` members are declared with the census
+  tables in the pipeline, and stay in the mapping only until the vocabulary
+  is regenerated from a build that stores them; the mapping check then
+  refuses them there.
 - **Read path.** An API observation artifact is read from `observation` rows
   only when they rebuild it byte for byte, so values, statuses, intervals,
   periods and areas are unchanged. `services/api/config/statistics-read-path.json`
@@ -884,15 +887,17 @@ members, rather than one id per breakdown.
   lists); a measure is added to another (`plus`) or divided by one
   (`ratio`), so vote share is party votes over valid votes and general
   election turnout is valid votes and rejected ballots over the electorate;
-  and a half-width measure gives a value's published bounds (`halfWidth`).
-  On the 2026-10-31 build 269 of 322 artifacts moved. The rest differ, and
-  the differences are reported rather than smoothed over: crime is stored
-  here on local authorities, but the API serves community safety
-  partnerships, which these tables do not hold; air-quality area means are
-  `observed` here but `derived` in the API; the winning party is not stored
-  as a category; population density is computed from two datasets; and
-  census LSOA and MSOA tables are read whole. So the `observation_*` tables
-  and their writer stay until these are stored here.
+  a half-width measure gives a value's published bounds (`halfWidth`); a
+  contest's stored winner is a category (`contest`); a ratio can take its
+  denominator from another dataset in one period, as population density
+  takes land area; and a census table is rebuilt from one series per
+  column (a `measure-table` selector). On the 2026-10-31 build 270 of 322
+  artifacts moved. The other 52 move once a build stores what they need:
+  recorded crime by community safety partnership (a second record set of
+  the crime dataset), air-quality area means with the `derived` status the
+  compiler gives them, each contest's winner, and the census small-area
+  tables, read from the Nomis files under `data/source`. Until then the
+  `observation_*` tables and their writer stay.
 - **Periods.** A catalogue period reads the statistics period with the same
   label, or the one label that extends it: `2021` is `2021-census`, an
   election year is its polling day.
