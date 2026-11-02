@@ -392,7 +392,10 @@ export const readAtlasCatalogues = (
 		terrainAsyncProvider,
 		exportManifest,
 		exportFiles: new Map(
-			exportManifest.exports.flatMap((entry) =>
+			[
+				...exportManifest.exports,
+				...(exportManifest.measureExports ?? []),
+			].flatMap((entry) =>
 				(entry.formats ?? []).map(
 					(format) =>
 						[

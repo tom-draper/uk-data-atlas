@@ -62,4 +62,9 @@ export type ExportManifest = {
 	fields: Record<string, string>;
 	datasets: Record<string, ExportDataset>;
 	exports: BulkExport[];
+	/** Whole-measure downloads, built from canonical statistics. */
+	measureExports?: Array<{
+		measureId: string;
+		formats: ObservationDownload[];
+	}>;
 };
