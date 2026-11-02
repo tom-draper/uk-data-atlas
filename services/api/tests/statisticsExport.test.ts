@@ -138,6 +138,42 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			csv.data.map((row) => row.dimension_tenure),
 			["owned", "rented"],
 		);
+		db.exec(`
+			INSERT INTO dataset VALUES (2, 'unemployment');
+			INSERT INTO measure VALUES (2, 'unemployment-rate', 'percent'), (3, 'unemployment-rate-interval', 'percentage points');
+			INSERT INTO series VALUES (3, 2, 2, 1, 'rate'), (4, 2, 3, 1, 'interval');
+			INSERT INTO observation VALUES (3, 1, 1, 10.2, NULL, NULL, NULL, 1), (4, 1, 1, 1.1, NULL, NULL, NULL, 1), (3, 2, 1, 4.3, NULL, NULL, NULL, 1);
+		`);
+		assert.equal(
+			exportStatisticsMeasure(db, "unemployment-rate", paths),
+			2,
+		);
+		const intervals = Papa.parse<Record<string, unknown>>(
+			readFileSync(paths.csv, "utf8"),
+			{
+				header: true,
+				dynamicTyping: (field) =>
+					["value", "lower", "upper"].includes(String(field)),
+				skipEmptyLines: true,
+				transform: (value) => (value === "" ? null : value),
+			},
+		);
+		assert.deepEqual(
+			intervals.data,
+			readParquet(readFileSync(paths.parquet)).rows,
+		);
+		assert.deepEqual(
+			intervals.data.map(({ lower, upper }) => [lower, upper]),
+			[
+				[9.1, 11.3],
+				[null, null],
+			],
+		);
+		db.exec(`DELETE FROM observation WHERE series_id IN (3, 4);
+			DELETE FROM series WHERE id IN (3, 4);
+			DELETE FROM measure WHERE id IN (2, 3);
+			DELETE FROM dataset WHERE id = 2;`);
+		exportStatisticsMeasure(db, "households", paths);
 		const first = [readFileSync(paths.csv), readFileSync(paths.parquet)];
 		exportStatisticsMeasure(db, "households", paths);
 		assert.deepEqual(

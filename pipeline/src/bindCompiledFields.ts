@@ -26,6 +26,8 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 	"total-jobs": [["jobs", "totalJobs"]],
 	"life-expectancy-male": [["life-expectancy-series", "male.value"]],
 	"life-expectancy-female": [["life-expectancy-series", "female.value"]],
+	"unemployment-rate": [["unemployment", "rates.1996"]],
+	"unemployment-level": [["unemployment", "levels.1996"]],
 	"road-collisions": [["road-collisions", "collisions"]],
 	"road-collisions-fatal": [["road-collisions", "fatal"]],
 	"road-collisions-serious": [["road-collisions", "serious"]],
