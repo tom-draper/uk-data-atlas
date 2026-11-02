@@ -4,6 +4,12 @@ import {
 	readObservationText,
 } from "../storage/atlasObservations";
 import type {
+	StatisticsArtifact,
+	StatisticsReadPath,
+	StatisticsSelector,
+} from "../storage/atlasStatisticsObservations";
+import { observationArtifactName } from "@uk-data-atlas/measures";
+import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 	MeasureObservationArtifact,
@@ -129,6 +135,12 @@ export class ObservationCache {
 		ReturnType<typeof readObservationInventory>
 	>();
 
+	/** Artifacts read from the statistics tables, with what the catalogue says of each. */
+	private readonly statistics = new Map<
+		string,
+		{ selector: StatisticsSelector; artifact: StatisticsArtifact }
+	>();
+
 	constructor(private readonly maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES) {
 		if (!Number.isSafeInteger(maxBytes) || maxBytes < 0)
 			throw new Error(
@@ -136,11 +148,35 @@ export class ObservationCache {
 			);
 	}
 
-	bindCatalogue(databasePath: string, catalog: DataCatalog) {
+	bindCatalogue(
+		databasePath: string,
+		catalog: DataCatalog,
+		readPath?: StatisticsReadPath,
+	) {
 		this.inventories.set(
 			databasePath,
 			assertObservationCatalogue(databasePath, catalog),
 		);
+		if (!readPath) return;
+		for (const measure of catalog.measures)
+			for (const source of measure.sources) {
+				const name = observationArtifactName(measure.id, source);
+				const selector = readPath.statistics[name];
+				if (selector)
+					this.statistics.set(`${databasePath}:${name}`, {
+						selector,
+						artifact: {
+							measureId: measure.id,
+							sourceGeography: source.sourceGeography,
+							periods: source.periods,
+						},
+					});
+			}
+	}
+
+	/** Whether an artifact is read from the statistics tables. */
+	readsStatistics(databasePath: string, artifactName: string) {
+		return this.statistics.has(`${databasePath}:${artifactName}`);
 	}
 
 	private inventory(databasePath: string) {
@@ -174,6 +210,7 @@ export class ObservationCache {
 				databasePath,
 				artifactName,
 				this.inventory(databasePath).generationHash,
+				this.statistics.get(path),
 			);
 			entry = {
 				text,

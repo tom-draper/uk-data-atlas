@@ -56,6 +56,7 @@ import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactRoot, repositoryRootOf } from "../storage/dataLayout";
+import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations";
 
 const EVIDENCE_DOCUMENTS = [
 	"analysis-geography-validation",
@@ -142,6 +143,12 @@ export type CatalogueOptions = {
 	geometryCacheReleases?: number;
 	crosswalkCacheBytes?: number;
 	observationCacheBytes?: number;
+	/**
+	 * Which observation artifacts are read from the statistics tables. The
+	 * API passes its reviewed read path; without one, every artifact is read
+	 * from the observation tables.
+	 */
+	statisticsReadPath?: StatisticsReadPath;
 	/**
 	 * Told before rejecting a compiled geometry release that no longer matches
 	 * its registered source.
@@ -354,6 +361,7 @@ export const readAtlasCatalogues = (
 			apiRoot,
 			dataCatalog,
 			options.observationCacheBytes,
+			options.statisticsReadPath,
 		),
 	);
 	const measureCompatibilityInventory = stage("measure-compatibility", () =>
