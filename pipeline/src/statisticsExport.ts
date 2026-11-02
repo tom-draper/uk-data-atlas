@@ -1,4 +1,5 @@
 import { closeSync, openSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import type { DatabaseSync, SQLOutputValue } from "node:sqlite";
 import {
 	ParquetFileWriter,
@@ -67,15 +68,40 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 	AND selected_code.code = json_extract(selection.value, '$.member')
 `;
 
+export function hashStatisticsSelection(
+	database: DatabaseSync,
+	selection: readonly StatisticsSelection[],
+) {
+	const query = database.prepare(`SELECT a.code, o.value, st.slug
+		FROM (${selectedRows}) selected
+		CROSS JOIN observation o ON o.series_id = selected.series_id AND o.period_id = selected.period_id
+		JOIN series s ON s.id = o.series_id
+		JOIN area_version av ON av.id = o.area_version_id
+		JOIN area a ON a.id = av.area_id
+		JOIN status st ON st.id = o.status_id
+		ORDER BY a.code, s.key, o.period_id`);
+	query.setReturnArrays(true);
+	const hash = createHash("sha256");
+	let recordCount = 0;
+	for (const row of query.iterate(
+		JSON.stringify(selection),
+	) as unknown as Iterable<SQLOutputValue[]>) {
+		hash.update(`${JSON.stringify(row)}\n`);
+		recordCount++;
+	}
+	return { recordCount, recordHash: hash.digest("hex") };
+}
+
 export function exportStatisticsMeasure(
 	database: DatabaseSync,
 	measure: string,
 	paths: { csv: string; parquet: string },
 	selection?: readonly StatisticsSelection[],
 ) {
-	const filter = selection
-		? `(s.id, o.period_id) IN (${selectedRows})`
-		: "m.slug = ?";
+	const source = selection
+		? `(${selectedRows}) selected CROSS JOIN observation o ON o.series_id = selected.series_id AND o.period_id = selected.period_id JOIN series s ON s.id = o.series_id`
+		: "series s JOIN observation o ON o.series_id = s.id";
+	const filter = selection ? "1" : "m.slug = ?";
 	const dimensionFilter = selection
 		? `s.id IN (SELECT series_id FROM (${selectedRows}))`
 		: "m.slug = ?";
@@ -115,10 +141,9 @@ export function exportStatisticsMeasure(
 		database.prepare(`SELECT d.slug, ?, m.unit, r.geography, r.id,
 		a.code, p.label, o.value, o.lower, o.upper, c.code, st.slug
 		${memberColumns ? `, ${memberColumns}` : ""}
-		FROM series s JOIN measure m ON m.id = s.measure_id
+		FROM ${source} JOIN measure m ON m.id = s.measure_id
 		JOIN dataset d ON d.id = s.dataset_id
 		JOIN area_releases r ON r.position = s.release_id
-		JOIN observation o ON o.series_id = s.id
 		JOIN area_version av ON av.id = o.area_version_id
 		JOIN area a ON a.id = av.area_id
 		JOIN period p ON p.id = o.period_id

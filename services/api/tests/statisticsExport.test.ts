@@ -5,8 +5,12 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 import Papa from "papaparse";
-import { exportStatisticsMeasure } from "../../../pipeline/src/statisticsExport";
+import {
+	exportStatisticsMeasure,
+	hashStatisticsSelection,
+} from "../../../pipeline/src/statisticsExport";
 import { readParquet } from "./parquetFixtures";
+import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
 
 test("exports identical sorted canonical rows in CSV and Parquet", () => {
 	const db = new DatabaseSync(":memory:");
@@ -19,7 +23,8 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
-			CREATE TABLE dataset_leaf (dataset_id INTEGER, path TEXT, kind TEXT, series_id INTEGER, period_id INTEGER);
+			CREATE TABLE dataset_part (dataset_id INTEGER, position INTEGER, key TEXT);
+			CREATE TABLE dataset_leaf (dataset_id INTEGER, part INTEGER, records TEXT, path TEXT, kind TEXT, series_id INTEGER, period_id INTEGER);
 			CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, category_id INTEGER, status_id INTEGER);
 			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER);
@@ -36,7 +41,8 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 			INSERT INTO area VALUES (1, 'E01'), (2, 'E02');
 			INSERT INTO area_version VALUES (1, 1), (2, 2);
 			INSERT INTO period VALUES (1, '2021');
-			INSERT INTO dataset_leaf VALUES (1, '["rented"]', 'value', 1, 1), (1, '["owned"]', 'value', 2, 1);
+			INSERT INTO dataset_part VALUES (1, 0, '2021');
+			INSERT INTO dataset_leaf VALUES (1, 0, 'data', '["rented"]', 'value', 1, 1), (1, 0, 'data', '["owned"]', 'value', 2, 1);
 			INSERT INTO status VALUES (1, 'observed'), (2, 'suppressed');
 			INSERT INTO observation VALUES (1, 2, 1, 10, 9, 11, NULL, 1), (2, 1, 1, NULL, NULL, NULL, NULL, 2);
 		`);
@@ -105,6 +111,78 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 		);
 		assert.equal(selected.data[0]?.dimension_tenure, "rented");
 		assert.equal(selected.data[0]?.measure, "rented-homes");
+		assert.deepEqual(
+			hashStatisticsSelection(db, [
+				{
+					dataset: "census",
+					path: ["rented"],
+					geography: "ward",
+					release: "2021",
+					periods: ["2021"],
+				},
+			]),
+			{
+				recordCount: 1,
+				recordHash:
+					"7f04a3fba5d12c0f87f083ad56ec21c97ee75877ef5e83d9a8e4eb2888ea7e2b",
+			},
+		);
+		const field = {
+			dataset: "census",
+			field: "rented",
+			records: "data",
+			sourcePeriod: "2021",
+			publishedPeriod: "2021",
+			geography: "ward",
+			boundaryYear: 2021,
+			recordCount: 1,
+			recordHash:
+				"7f04a3fba5d12c0f87f083ad56ec21c97ee75877ef5e83d9a8e4eb2888ea7e2b",
+		};
+		assert.deepEqual(bindStatisticsField(db, field, "households"), [
+			{
+				dataset: "census",
+				path: ["rented"],
+				geography: "ward",
+				release: "2021",
+				periods: ["2021"],
+			},
+		]);
+		assert.equal(
+			bindStatisticsField(db, { ...field, recordCount: 2 }, "households"),
+			undefined,
+		);
+		assert.equal(bindStatisticsField(db, field, "people"), undefined);
+		assert.deepEqual(
+			bindStatisticsField(
+				db,
+				{ ...field, records: "partnerships" },
+				"households",
+				{
+					type: "census",
+					measures: [],
+					fields: [{ path: "{tenure}", measure: "households" }],
+					dimensions: [
+						{
+							slug: "tenure",
+							label: "Tenure",
+							members: [{ key: "rented", code: "rented" }],
+						},
+					],
+				},
+			),
+			[
+				{
+					dataset: "census",
+					measure: "households",
+					dimension: "tenure",
+					member: "rented",
+					geography: "ward",
+					release: "2021",
+					periods: ["2021"],
+				},
+			],
+		);
 		assert.equal(
 			exportStatisticsMeasure(db, "rented-homes", paths, [
 				{

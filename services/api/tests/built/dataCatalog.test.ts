@@ -1938,6 +1938,26 @@ test("publishes recorded crime by community safety partnership", () => {
 			measure.id.startsWith("crime-"),
 		);
 		assert.equal(crimeMeasures.length, 23);
+		assert.deepEqual(
+			result.statisticsFields.find(
+				({ measureId }) => measureId === "crime-total",
+			),
+			{
+				measureId: "crime-total",
+				field: {
+					dataset: "crime",
+					field: "totalRecordedCrime",
+					records: "partnerships",
+					sourcePeriod: "2026",
+					publishedPeriod: "year-ending-2026-03",
+					geography: "communitySafetyPartnership",
+					boundaryYear: 2023,
+					recordCount: 2,
+					recordHash:
+						"3bf0b9e0cf14a13103ca0bc2d9a308f6fd1fdf146c2f17c06fbfb596188acd38",
+				},
+			},
+		);
 		assert.deepEqual(crimeMeasures[0]?.sources[0]?.sourceGeography, {
 			type: "communitySafetyPartnership",
 			boundaryYear: 2023,

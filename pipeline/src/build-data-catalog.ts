@@ -84,6 +84,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		regionalGdpObservations,
 		energyConsumptionObservations,
 		indicatorObservations,
+		statisticsFields,
 		populationDensityObservations,
 		housePriceObservations,
 		imdObservations,
@@ -146,6 +147,10 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		observationEntries(),
 	);
 	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
+	writeFileSync(
+		join(repositoryRoot, "data/build/measure-statistics-fields.json"),
+		`${JSON.stringify(statisticsFields)}\n`,
+	);
 	return {
 		catalogPath,
 		databasePath,
