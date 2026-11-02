@@ -1013,6 +1013,34 @@
 			"geography": "constituency",
 			"absentAsZero": true
 		},
+		"general-election-turnout-constituency-2019-observations": {
+			"datasetId": "general-election",
+			"measure": "valid-votes",
+			"dimensions": {},
+			"geography": "constituency",
+			"plus": [
+				"rejected-ballots"
+			],
+			"ratio": {
+				"measure": "electorate",
+				"scale": 100,
+				"scaleQuotient": true
+			}
+		},
+		"general-election-turnout-constituency-2024-observations": {
+			"datasetId": "general-election",
+			"measure": "valid-votes",
+			"dimensions": {},
+			"geography": "constituency",
+			"plus": [
+				"rejected-ballots"
+			],
+			"ratio": {
+				"measure": "electorate",
+				"scale": 100,
+				"scaleQuotient": true
+			}
+		},
 		"general-election-ukip-vote-share-constituency-2019-observations": {
 			"datasetId": "general-election",
 			"measure": "party-votes",
@@ -3047,8 +3075,6 @@
 		"crime-violence-against-the-person-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
 		"crime-violence-with-injury-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
 		"crime-violence-without-injury-observations": "The statistics tables hold no recorded-crimes series from crime on communitySafetyPartnership.",
-		"general-election-turnout-constituency-2019-observations": "The statistics tables hold no turnout series from general-election on constituency.",
-		"general-election-turnout-constituency-2024-observations": "The statistics tables hold no turnout series from general-election on constituency.",
 		"general-election-winning-party-constituency-2019-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"general-election-winning-party-constituency-2024-observations": "Its values are categories, which the statistics tables do not hold for this measure.",
 		"house-price-median-observations": "The statistics rows do not rebuild it: 588 of 225225 records are missing, 588 records are extra. For example, 1995 E05000759 is missing.",
