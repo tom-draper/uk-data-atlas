@@ -52,13 +52,21 @@ export const AIR_QUALITY: DeclaredDataset = {
 			],
 		},
 	],
+	// The compiler averages the 1 km grid over each area, so the means and
+	// their cell counts are derived; the population-weighted figures are
+	// published per area.
 	fields: [
 		...["no2", "pm25", "pm10"].map((pollutant) => ({
 			path: `${pollutant}Mean`,
 			measure: "background-concentration",
 			members: { pollutant },
+			statusOfAll: "derived" as const,
 		})),
-		{ path: "gridCells", measure: "air-quality-grid-cells" },
+		{
+			path: "gridCells",
+			measure: "air-quality-grid-cells",
+			statusOfAll: "derived",
+		},
 		{ path: "pm25PopulationWeighted", measure: "pm25-population-weighted" },
 		{
 			path: "pm25PopulationWeightedAnthropogenic",
