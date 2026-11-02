@@ -76,12 +76,25 @@ test("publishes datasets, measures and source-exact population observations", ()
 		dataCatalog.datasets,
 	);
 
+	// A measure with no breakdown is one series: its own definition, with
+	// no dimensions, and that series listed under it.
 	const measure = routeWithData("/v1/measures/population");
 	assert.equal(measure.status, 200);
-	assert.deepEqual(
-		"data" in measure.body && measure.body.data,
-		dataCatalog.measures[0],
-	);
+	const { sources, ...definition } = dataCatalog.measures[0]!;
+	assert.deepEqual("data" in measure.body && measure.body.data, {
+		...definition,
+		description: definition.label,
+		dimensions: [],
+		series: [
+			{
+				dimensions: {},
+				label: definition.label,
+				href: "/v1/data/population",
+				sources,
+			},
+		],
+		sources,
+	});
 
 	const first = routeWithData(
 		"/v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1",
