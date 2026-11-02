@@ -119,6 +119,66 @@ test("uses reviewed source mappings only when each requested period exists", () 
 	}
 });
 
+test("exports house prices under the publisher's ward code and release", () => {
+	const db = new DatabaseSync(":memory:");
+	const directory = mkdtempSync(join(tmpdir(), "house-price-export-"));
+	try {
+		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
+			CREATE TABLE measure (id INTEGER, slug TEXT, unit TEXT);
+			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, key TEXT);
+			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+			CREATE TABLE area (id INTEGER, code TEXT);
+			CREATE TABLE area_version (id INTEGER, area_id INTEGER, release_id INTEGER);
+			CREATE TABLE period (id INTEGER, label TEXT);
+			CREATE TABLE status (id INTEGER, slug TEXT);
+			CREATE TABLE dimension (id INTEGER, slug TEXT);
+			CREATE TABLE dimension_member (id INTEGER, code TEXT);
+			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
+			CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, category_id INTEGER, status_id INTEGER);
+			CREATE TABLE dataset_leaf (series_id INTEGER, period_id INTEGER, dataset_id INTEGER, kind TEXT, path TEXT);
+			CREATE TABLE dataset_record (dataset_id INTEGER, part INTEGER, records TEXT, position INTEGER, area_version_id INTEGER);
+			CREATE TABLE dataset_record_parent (dataset_id INTEGER, part INTEGER, records TEXT, position INTEGER, parent INTEGER, area_version_id INTEGER);
+			INSERT INTO dataset VALUES (1, 'house-price');
+			INSERT INTO measure VALUES (1, 'house-price-median', 'gbp');
+			INSERT INTO area_releases VALUES (1, 'ward', '2021-12-uk-bgc'), (2, 'ward', '2020-12-uk-bgc');
+			INSERT INTO area VALUES (1, 'E-new'), (2, 'E-old');
+			INSERT INTO area_version VALUES (1, 1, 1), (2, 2, 2);
+			INSERT INTO series VALUES (1, 1, 1, 1, 'prices');
+			INSERT INTO period VALUES (1, '2022');
+			INSERT INTO status VALUES (1, 'observed');
+			INSERT INTO observation VALUES (1, 1, 1, 150000, NULL, NULL, NULL, 1);
+			INSERT INTO dataset_record VALUES (1, 0, 'data', 1, 1);
+			INSERT INTO dataset_record_parent VALUES (1, 0, 'data', 1, 1, 2);`);
+		const paths = {
+			csv: join(directory, "rows.csv"),
+			parquet: join(directory, "rows.parquet"),
+		};
+		assert.equal(
+			exportStatisticsMeasure(db, "house-price-median", paths),
+			1,
+		);
+		const rows = Papa.parse<Record<string, unknown>>(
+			readFileSync(paths.csv, "utf8"),
+			{
+				header: true,
+				dynamicTyping: (field) =>
+					["value", "lower", "upper"].includes(String(field)),
+				skipEmptyLines: true,
+				transform: (value) => (value === "" ? null : value),
+			},
+		);
+		assert.deepEqual(
+			rows.data,
+			readParquet(readFileSync(paths.parquet)).rows,
+		);
+		assert.equal(rows.data[0]?.area_code, "E-old");
+		assert.equal(rows.data[0]?.release, "2020-12-uk-bgc");
+	} finally {
+		db.close();
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
 test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 	const db = new DatabaseSync(":memory:");
 	const directory = mkdtempSync(join(tmpdir(), "statistics-export-"));

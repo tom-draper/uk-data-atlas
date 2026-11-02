@@ -243,6 +243,7 @@ export function exportStatisticsMeasure(
 	const lower = intervalMeasure ? "round(o.value - ino.value, 1)" : "o.lower";
 	const upper = intervalMeasure ? "round(o.value + ino.value, 1)" : "o.upper";
 	const density = measure === "population-density";
+	const housePrice = measure === "house-price-median";
 	const aggregatePopulation = measure === "population" || density;
 	const landArea = `(SELECT lo.value / 100.0 FROM dataset ld JOIN series ls ON ls.dataset_id=ld.id
 		JOIN measure lm ON lm.id=ls.measure_id JOIN series_member lsm ON lsm.series_id=ls.id
@@ -255,10 +256,24 @@ export function exportStatisticsMeasure(
 		: aggregatePopulation
 			? "CASE WHEN count(o.value) = count(*) THEN sum(o.value) END, NULL, NULL, NULL, CASE WHEN count(DISTINCT st.slug) = 1 THEN min(st.slug) ELSE 'derived' END"
 			: `o.value, ${lower}, ${upper}, c.code, st.slug`;
+	const houseJoin = housePrice
+		? `LEFT JOIN (
+		SELECT dr.area_version_id, parent_area.code FROM dataset_record dr
+		JOIN dataset_record_parent dp ON dp.dataset_id=dr.dataset_id AND dp.part=dr.part AND dp.records=dr.records AND dp.position=dr.position AND dp.parent=1
+		JOIN area_version parent_version ON parent_version.id=dp.area_version_id JOIN area parent_area ON parent_area.id=parent_version.area_id
+		WHERE dr.dataset_id=(SELECT id FROM dataset WHERE slug='house-price')
+	) house_parent ON house_parent.area_version_id=o.area_version_id`
+		: "";
+	const areaCode = housePrice
+		? "CASE WHEN a.code='E05013831' THEN 'E05011412' ELSE coalesce(house_parent.code,a.code) END"
+		: "a.code";
+	const release = housePrice
+		? `coalesce((SELECT r2.id FROM area a2 JOIN area_version av2 ON av2.area_id=a2.id JOIN area_releases r2 ON r2.position=av2.release_id WHERE a2.code=${areaCode} AND r2.geography='ward' AND r2.id LIKE '2020-%' LIMIT 1), r.id)`
+		: "r.id";
 	const statement = database.prepare(
 		election?.sql ??
-			`SELECT d.slug, ?, ${density ? "'people per square kilometre'" : "m.unit"}, r.geography, r.id,
-		a.code, p.label, ${values}
+			`SELECT d.slug, ?, ${density ? "'people per square kilometre'" : "m.unit"}, r.geography, ${release},
+		${areaCode}, p.label, ${values}
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
 		JOIN dataset d ON d.id = s.dataset_id
@@ -269,9 +284,10 @@ export function exportStatisticsMeasure(
 		JOIN status st ON st.id = o.status_id
 		LEFT JOIN dimension_member c ON c.id = o.category_id
 		${intervalJoins}
+		${houseJoin}
 		WHERE ${filter}
 		${aggregatePopulation ? "GROUP BY d.slug, m.unit, r.geography, r.id, a.code, p.label" : ""}
-		ORDER BY r.geography, r.id, p.label, a.code, d.slug${aggregatePopulation ? "" : ", s.key"}`,
+		ORDER BY 4, 5, 7, 6, 1${aggregatePopulation ? "" : ", s.key"}`,
 	);
 	statement.setReturnArrays(true);
 	const csv = openSync(paths.csv, "w");

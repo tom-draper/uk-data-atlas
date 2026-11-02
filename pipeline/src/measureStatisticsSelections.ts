@@ -25,6 +25,34 @@ export function measureStatisticsSelections(
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
 ): StatisticsSelection[] | undefined {
+	if (measure.id === "house-price-median") {
+		const rows = database
+			.prepare(
+				`SELECT r.id AS release, p.label AS period FROM dataset d
+			JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
+			JOIN area_releases r ON r.position=s.release_id JOIN observation o ON o.series_id=s.id
+			JOIN period p ON p.id=o.period_id WHERE d.slug='house-price' AND m.slug='house-price-median'
+			AND r.geography='ward' AND p.label <= '2022' GROUP BY r.id,p.label`,
+			)
+			.all();
+		if (
+			!measure.sources.every((source) =>
+				source.periods.every((period) =>
+					rows.some((row) => row.period === period),
+				),
+			)
+		)
+			return undefined;
+		return rows.map((row) => ({
+			dataset: "house-price",
+			measure: "house-price-median",
+			members: {},
+			exact: true,
+			geography: "ward",
+			release: String(row.release),
+			periods: [String(row.period)],
+		}));
+	}
 	if (measure.id === "population-density" && readPath) {
 		return bindReviewedStatistics(
 			database,
