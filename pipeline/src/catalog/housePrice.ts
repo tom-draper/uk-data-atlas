@@ -1,3 +1,4 @@
+import { HOUSE_PRICE_SERVED_WARD_CODES } from "@uk-data-atlas/datasets/data/house-price/wardCodes";
 import { type DatasetInput, readDatasetInput } from "./input";
 import type {
 	Measure,
@@ -15,16 +16,6 @@ import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
  * not comparable and so is not published as a period.
  */
 const LAST_DECEMBER_PERIOD = 2022;
-
-/**
- * A code-only repair is safe only where the official geometries are identical.
- * Temple Newsam's December 2020 and December 2021 ward geometries are
- * identical, while Garforth & Swillington's are not and must stay on the
- * publisher's later code.
- */
-const servedWardCodeCorrections = new Map([
-	["E05013831", "E05011412"], // Temple Newsam, December 2021 -> December 2020
-]);
 
 /**
  * The house price partition, restored to the codes its publisher used.
@@ -55,7 +46,7 @@ const housePricePeriods = (
 		const publisherAreaCode =
 			typeof sourceWardCode === "string" ? sourceWardCode : compiledCode;
 		const areaCode =
-			servedWardCodeCorrections.get(publisherAreaCode) ??
+			HOUSE_PRICE_SERVED_WARD_CODES.get(publisherAreaCode) ??
 			publisherAreaCode;
 		if (!/^[EW]\d{8}$/.test(areaCode)) {
 			throw new Error(`${path}: unsupported ward code ${areaCode}`);
