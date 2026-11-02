@@ -89,4 +89,34 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 			"Several releases from the same month could fit, and they differ in more than coverage.",
 		fix: "Pick one of the `choices` in the response and use its release id.",
 	},
+	unknown_dimension: {
+		status: 400,
+		meaning:
+			"A dimension filter names a dimension the measure does not have.",
+		fix: "Use one of the dimensions the response lists in `dimensions`, or drop the filter.",
+	},
+	unknown_dimension_member: {
+		status: 400,
+		meaning:
+			"A dimension filter names a member the measure is not published for.",
+		fix: "Use one of the codes the response lists in `members`, or `*` for all of them.",
+	},
+	conflicting_dimension_filter: {
+		status: 400,
+		meaning:
+			"An older measure id already fixes a member, and a filter asks for a different one.",
+		fix: "Name the measure itself, such as `recorded-crimes`, and give the member you want as a filter.",
+	},
+	no_matching_series: {
+		status: 404,
+		meaning:
+			"The measure is not published for that combination of members or dataset.",
+		fix: "Pick one of the `choices` in the response; each is a request for a series the measure has.",
+	},
+	ambiguous_dimension: {
+		status: 409,
+		meaning:
+			"The request leaves several series of the measure and this operation answers one.",
+		fix: "Pick one of the `choices`, or ask `/value` or `/series`, which answer several members at once.",
+	},
 };
