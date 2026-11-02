@@ -4409,6 +4409,60 @@
 				"2023-12-uk-bgc"
 			]
 		},
+		"unemployment-level-localAuthority-2019-observations": {
+			"datasetId": "unemployment",
+			"measure": "unemployed-people",
+			"dimensions": {},
+			"geography": "localAuthority",
+			"halfWidth": {
+				"measure": "unemployed-people-interval",
+				"digits": 1
+			},
+			"areasIn": [
+				"2019-04-uk-bgc",
+				"2019-12-uk-bgc"
+			]
+		},
+		"unemployment-level-localAuthority-2021-observations": {
+			"datasetId": "unemployment",
+			"measure": "unemployed-people",
+			"dimensions": {},
+			"geography": "localAuthority",
+			"halfWidth": {
+				"measure": "unemployed-people-interval",
+				"digits": 1
+			},
+			"areasIn": [
+				"2021-12-uk-bgc"
+			]
+		},
+		"unemployment-rate-localAuthority-2019-observations": {
+			"datasetId": "unemployment",
+			"measure": "unemployment-rate",
+			"dimensions": {},
+			"geography": "localAuthority",
+			"halfWidth": {
+				"measure": "unemployment-rate-interval",
+				"digits": 1
+			},
+			"areasIn": [
+				"2019-04-uk-bgc",
+				"2019-12-uk-bgc"
+			]
+		},
+		"unemployment-rate-localAuthority-2021-observations": {
+			"datasetId": "unemployment",
+			"measure": "unemployment-rate",
+			"dimensions": {},
+			"geography": "localAuthority",
+			"halfWidth": {
+				"measure": "unemployment-rate-interval",
+				"digits": 1
+			},
+			"areasIn": [
+				"2021-12-uk-bgc"
+			]
+		},
 		"waste-observations": {
 			"datasetId": "waste",
 			"measure": "collected-waste",
@@ -4481,10 +4535,6 @@
 		"no2-background-mean-observations": "The statistics rows do not rebuild it: 361 records differ in status, interval or source code. For example, 2024 E06000001 is {\"areaCode\":\"E06000001\",\"value\":6.84,\"status\":\"derived\"}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":6.84,\"status\":\"observed\"}.",
 		"pm10-background-mean-observations": "The statistics rows do not rebuild it: 361 records differ in status, interval or source code. For example, 2024 E06000001 is {\"areaCode\":\"E06000001\",\"value\":9.86,\"status\":\"derived\"}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":9.86,\"status\":\"observed\"}.",
 		"pm25-background-mean-observations": "The statistics rows do not rebuild it: 361 records differ in status, interval or source code. For example, 2024 E06000001 is {\"areaCode\":\"E06000001\",\"value\":5.4,\"status\":\"derived\"}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":5.4,\"status\":\"observed\"}.",
-		"population-density-observations": "population-density is not in the statistics tables.",
-		"unemployment-level-localAuthority-2019-observations": "The statistics rows do not rebuild it: 9272 records differ in status, interval or source code, 98 records are extra. For example, 1996-97 E06000001 is {\"areaCode\":\"E06000001\",\"value\":4600,\"status\":\"observed\",\"confidenceInterval\":{\"lower\":3700,\"upper\":5500}}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":4600,\"status\":\"observed\"}.",
-		"unemployment-level-localAuthority-2021-observations": "The statistics rows do not rebuild it: 690 records differ in status, interval or source code, 30 records are extra. For example, 2020 E06000001 is {\"areaCode\":\"E06000001\",\"value\":3300,\"status\":\"observed\",\"confidenceInterval\":{\"lower\":2700,\"upper\":3900}}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":3300,\"status\":\"observed\"}.",
-		"unemployment-rate-localAuthority-2019-observations": "The statistics rows do not rebuild it: 9256 records differ in status, interval or source code, 98 records are extra. For example, 1996-97 E06000001 is {\"areaCode\":\"E06000001\",\"value\":11,\"status\":\"observed\",\"confidenceInterval\":{\"lower\":8.5,\"upper\":13.5}}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":11,\"status\":\"observed\"}.",
-		"unemployment-rate-localAuthority-2021-observations": "The statistics rows do not rebuild it: 690 records differ in status, interval or source code, 30 records are extra. For example, 2020 E06000001 is {\"areaCode\":\"E06000001\",\"value\":7.8,\"status\":\"observed\",\"confidenceInterval\":{\"lower\":6.3,\"upper\":9.3}}, rebuilt as {\"areaCode\":\"E06000001\",\"value\":7.8,\"status\":\"observed\"}."
+		"population-density-observations": "population-density is not in the statistics tables."
 	}
 }

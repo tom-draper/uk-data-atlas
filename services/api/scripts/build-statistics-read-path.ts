@@ -93,6 +93,15 @@ const DERIVED: Record<
 	},
 };
 
+/**
+ * Measures published with the half-width of their confidence interval as a
+ * measure of its own, rounded as the publisher gives the value.
+ */
+const HALF_WIDTHS: Record<string, StatisticsSelector["halfWidth"]> = {
+	"unemployment-rate": { measure: "unemployment-rate-interval", digits: 1 },
+	"unemployed-people": { measure: "unemployed-people-interval", digits: 1 },
+};
+
 /** Measures where an area with no row in a contest polled nothing. */
 const ABSENT_AS_ZERO = new Set(["party-votes"]);
 
@@ -168,6 +177,7 @@ const selectorFor = (
 			? { absentAsZero: true as const }
 			: {}),
 		...(servedCodes ? { servedCodes } : {}),
+		...(HALF_WIDTHS[measure] ? { halfWidth: HALF_WIDTHS[measure] } : {}),
 		...(computed?.plus ? { plus: computed.plus } : {}),
 		...(computed?.ratio ? { ratio: computed.ratio } : {}),
 	};
