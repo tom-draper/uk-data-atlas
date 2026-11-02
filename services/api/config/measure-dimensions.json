@@ -9,7 +9,7 @@
 		"effective-votes": {
 			"label": "Effective votes",
 			"description": "Votes counted towards party totals in a local election, as the publisher defines them.",
-			"reason": "Not yet in the statistics tables."
+			"reason": "The statistics tables hold the party votes it sums, not the sum, so it is read as their total."
 		},
 		"population-density": {
 			"label": "Population density",
