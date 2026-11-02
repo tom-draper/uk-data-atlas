@@ -93,6 +93,27 @@ const DERIVED: Record<
 const ABSENT_AS_ZERO = new Set(["party-votes"]);
 
 /**
+ * The codes a dataset serves in place of those its rows are stored under,
+ * as the observation artifacts were built.
+ */
+const servedCodesFor = (
+	datasetId: string,
+	boundaryYear: number,
+): StatisticsSelector["servedCodes"] => {
+	if (
+		datasetId === "local-election" &&
+		boundaryYear < SERVED_WARD_CODES_UNTIL
+	)
+		return Object.fromEntries(
+			[...SERVED_LOCAL_ELECTION_WARD_CODES].map(([source, served]) => [
+				source,
+				{ areaCode: served, sourceAreaCode: source },
+			]),
+		);
+	return undefined;
+};
+
+/**
  * The series an artifact would be read from. A dimension the mapping leaves
  * open is fixed at its total where it has one, and summed over otherwise.
  */
@@ -122,10 +143,7 @@ const selectorFor = (
 		if (total) dimensions[dimension] = total;
 		else sum.push(dimension);
 	}
-	const servedCodes =
-		datasetId === "local-election" && boundaryYear < SERVED_WARD_CODES_UNTIL
-			? Object.fromEntries(SERVED_LOCAL_ELECTION_WARD_CODES)
-			: undefined;
+	const servedCodes = servedCodesFor(datasetId, boundaryYear);
 	return {
 		datasetId,
 		measure,

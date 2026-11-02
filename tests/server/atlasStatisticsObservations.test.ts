@@ -78,9 +78,17 @@ describe("observation artifacts rebuilt from statistics rows", () => {
 		]);
 	});
 
-	it("serves a corrected code and keeps the stored one as its source", () => {
+	it("serves a corrected code and keeps the published one as its source", () => {
 		expect(
-			rebuild({ ...labour, servedCodes: { E05099999: "E05000003" } }),
+			rebuild({
+				...labour,
+				servedCodes: {
+					E05099999: {
+						areaCode: "E05000003",
+						sourceAreaCode: "E05099999",
+					},
+				},
+			}),
 		).toEqual([
 			{ areaCode: "E05000001", value: 300, status: "observed" },
 			{
@@ -103,6 +111,18 @@ describe("observation artifacts rebuilt from statistics rows", () => {
 			{ areaCode: "E05000001", value: 50, status: "observed" },
 			{ areaCode: "E05000002", value: 0, status: "observed" },
 			{ areaCode: "E05099999", value: 50, status: "observed" },
+		]);
+	});
+
+	it("serves a compiled code under the code it was published for", () => {
+		expect(
+			rebuild({
+				...labour,
+				servedCodes: { E05099999: { areaCode: "E05000000" } },
+			}),
+		).toEqual([
+			{ areaCode: "E05000000", value: 25, status: "observed" },
+			{ areaCode: "E05000001", value: 300, status: "observed" },
 		]);
 	});
 
