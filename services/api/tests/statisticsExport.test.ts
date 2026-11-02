@@ -61,7 +61,10 @@ test("binds a census measure only when every source partition is complete", () =
 			],
 		} as unknown as Measure;
 		assert.equal(bindCensusStatistics(db, measure)?.length, 2);
-		measure.sources.push({ ...measure.sources[0]!, datasetId: "ethnicity" });
+		measure.sources.push({
+			...measure.sources[0]!,
+			datasetId: "ethnicity",
+		});
 		assert.equal(bindCensusStatistics(db, measure), undefined);
 		assert.equal(bindCensusStatistics(db, measure, true)?.length, 2);
 		measure.sources.pop();
