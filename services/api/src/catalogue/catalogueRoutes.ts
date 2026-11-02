@@ -5,7 +5,10 @@ import {
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { searchMeasures } from "./measureTerms";
-import { dimensionCatalogue } from "../dimensions/dimensionCatalogue";
+import {
+	dimensionCatalogue,
+	identityDimensions,
+} from "../dimensions/dimensionCatalogue";
 import {
 	describeMeasure,
 	searchDimensionalMeasures,
@@ -56,10 +59,12 @@ export const handleCatalogueRoutes = ({
 				);
 	}
 	// Measures with their dimensions, where the mapping is loaded.
-	const dimensional =
-		dataCatalog && context.measureDimensions
-			? dimensionCatalogue(dataCatalog, context.measureDimensions)
-			: undefined;
+	const dimensional = dataCatalog
+		? dimensionCatalogue(
+				dataCatalog,
+				context.measureDimensions ?? identityDimensions(dataCatalog),
+			)
+		: undefined;
 	if (dimensional && segments[1] === "measures" && segments.length === 2) {
 		const query = parsedUrl.searchParams.get("q");
 		return {

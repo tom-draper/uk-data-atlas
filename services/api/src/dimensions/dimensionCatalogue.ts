@@ -146,7 +146,6 @@ export const dimensionCatalogue = (
 			defaults: config.defaults[id] ?? {},
 		};
 	});
-	measures.sort((left, right) => left.id.localeCompare(right.id));
 	const measureIndex = new Map(
 		measures.map((measure) => [measure.id, measure]),
 	);
@@ -168,6 +167,44 @@ export const dimensionCatalogue = (
 		),
 	};
 	byCatalogue.set(catalog, built);
+	return built;
+};
+
+const identities = new WeakMap<DataCatalog, MeasureDimensions>();
+
+/**
+ * Each catalogue measure as a measure of its own with no dimensions, for a
+ * server started without the reviewed mapping, such as a test fixture.
+ */
+export const identityDimensions = (catalog: DataCatalog): MeasureDimensions => {
+	const cached = identities.get(catalog);
+	if (cached) return cached;
+	const built: MeasureDimensions = {
+		vocabulary: { schemaVersion: 1, measures: {}, dimensions: {} },
+		config: {
+			schemaVersion: 1,
+			measures: Object.fromEntries(
+				catalog.measures.map((measure) => [
+					measure.id,
+					{
+						label: measure.label,
+						description: measure.label,
+						reason: "",
+					},
+				]),
+			),
+			dimensions: {},
+			members: {},
+			defaults: {},
+			ids: Object.fromEntries(
+				catalog.measures.map((measure) => [
+					measure.id,
+					{ measure: measure.id },
+				]),
+			),
+		},
+	};
+	identities.set(catalog, built);
 	return built;
 };
 
