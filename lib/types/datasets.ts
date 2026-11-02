@@ -1,33 +1,48 @@
 // lib/types/datasets.ts
-import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
-import { AggregatedCrimeData, CrimeDataset } from "./crime";
+import {
+	HousePriceDataset,
+	AggregatedHousePriceData,
+} from "@uk-data-atlas/datasets/types/housePrice";
+import {
+	AggregatedCrimeData,
+	CrimeDataset,
+} from "@uk-data-atlas/datasets/types/crime";
 import {
 	AggregatedIncomeData,
 	IncomeDataset,
 	WorkplaceIncomeDataset,
-} from "./income";
+} from "@uk-data-atlas/datasets/types/income";
 import { AggregatedCustomData, CustomDataset } from "./custom";
 import { NetworkDataset } from "./network";
-import { AggregatedBroadbandData, BroadbandDataset } from "./broadband";
-import { AggregatedAirQualityData, AirQualityDataset } from "./airQuality";
+import {
+	AggregatedBroadbandData,
+	BroadbandDataset,
+} from "@uk-data-atlas/datasets/types/broadband";
+import {
+	AggregatedAirQualityData,
+	AirQualityDataset,
+} from "@uk-data-atlas/datasets/types/airQuality";
 import {
 	AggregatedClaimantCountData,
 	ClaimantCountDataset,
-} from "./claimantCount";
+} from "@uk-data-atlas/datasets/types/claimantCount";
 import {
 	AggregatedSchoolPerformanceData,
 	SchoolPerformanceDataset,
-} from "./schoolPerformance";
-import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
+} from "@uk-data-atlas/datasets/types/schoolPerformance";
+import {
+	AggregatedNHSWaitingData,
+	NHSWaitingDataset,
+} from "@uk-data-atlas/datasets/types/nhsWaiting";
 import {
 	AggregatedUnemploymentData,
 	UnemploymentDataset,
-} from "./unemployment";
+} from "@uk-data-atlas/datasets/types/unemployment";
 import type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
 } from "@/lib/data/catalog";
-import type { DatasetCoverage } from "./coverage";
+import type { DatasetCoverage } from "@uk-data-atlas/datasets/types/coverage";
 
 type DatasetValue =
 	| HousePriceDataset

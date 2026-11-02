@@ -2,7 +2,7 @@ import { it, expect } from "vitest";
 import { ghgEmissionsDefinition } from "@/lib/datasets/ghgEmissions";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { aggregateGhgEmissions } from "@/lib/helpers/datasetAggregation/numeric";
-import type { GhgEmissionsDataset } from "@/lib/types/ghgEmissions";
+import type { GhgEmissionsDataset } from "@uk-data-atlas/datasets/types/ghgEmissions";
 const record = {
 	ladCode: "E1",
 	ladName: "Area",

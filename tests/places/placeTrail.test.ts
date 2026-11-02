@@ -5,7 +5,7 @@ import {
 	regionIn,
 	UNITED_KINGDOM,
 } from "@/components/places/trail";
-import type { NamedRef } from "@/lib/places/profile";
+import type { NamedRef } from "@uk-data-atlas/catalogue/place-profile";
 
 const region: NamedRef = {
 	id: "north-west",

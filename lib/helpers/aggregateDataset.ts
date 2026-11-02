@@ -1,6 +1,9 @@
 import type { Dataset } from "@lib/types/datasets";
-import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
-import type { BoundaryGeojson } from "@lib/types/geometry";
+import type {
+	BoundaryType,
+	BoundaryData,
+} from "@uk-data-atlas/datasets/types/boundaries";
+import type { BoundaryGeojson } from "@uk-data-atlas/datasets/types/geometry";
 import { DatasetAggregator } from "./datasetAggregation";
 import { cacheKey } from "./cacheKey";
 

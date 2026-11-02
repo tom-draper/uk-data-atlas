@@ -1,7 +1,7 @@
 import { renderBrexitConstituency } from "@/lib/helpers/mapRendering";
 import { brexitConstituencyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { brexitConstituencyDatasetDefinition } from "@/lib/data/catalog/definitions";
-import type { BrexitConstituencyDataset } from "@/lib/types/referendum";
+import type { BrexitConstituencyDataset } from "@uk-data-atlas/datasets/types/referendum";
 import type { ChartDatasetDefinition } from "./types";
 
 export const brexitConstituencyDefinition: ChartDatasetDefinition<BrexitConstituencyDataset> =

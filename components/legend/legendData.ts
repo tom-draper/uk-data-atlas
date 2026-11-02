@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { PARTIES } from "@/lib/data/election/parties";
+import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
@@ -13,7 +13,7 @@ import type {
 	PartyCode,
 	WardStats,
 } from "@/lib/types";
-import type { BoundaryData } from "@/lib/types/boundaries";
+import type { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
 import type {
 	EthnicityDisplayData,
 	LegendAggregates,

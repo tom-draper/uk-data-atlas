@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadRoadCollisionsByAuthority } from "@/lib/data/road-safety/authorityLoader";
+import { loadRoadCollisionsByAuthority } from "@uk-data-atlas/datasets/data/road-safety/authorityLoader";
 
 const csv = (rows: Array<[string, string, string, string?]>) =>
 	[

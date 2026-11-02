@@ -3,7 +3,7 @@ import { nhsWaitingAggregation } from "@/lib/helpers/datasetAggregation/specific
 import type {
 	AggregatedNHSWaitingData,
 	NHSWaitingDataset,
-} from "@/lib/types/nhsWaiting";
+} from "@uk-data-atlas/datasets/types/nhsWaiting";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";
 

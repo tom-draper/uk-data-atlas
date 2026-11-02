@@ -1,6 +1,6 @@
 import { housePriceDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { housePriceAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { HousePriceDataset } from "@/lib/types/housePrice";
+import type { HousePriceDataset } from "@uk-data-atlas/datasets/types/housePrice";
 import type { ChartDatasetDefinition } from "./types";
 
 export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {

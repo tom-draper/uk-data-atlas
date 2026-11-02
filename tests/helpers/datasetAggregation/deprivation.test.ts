@@ -7,7 +7,7 @@ import {
 	NIMDM_MOST_DEPRIVED_RANK,
 	summariseDeprivation,
 	summariseDeprivationBy,
-} from "@/lib/helpers/datasetAggregation/deprivation";
+} from "@uk-data-atlas/datasets/helpers/datasetAggregation/deprivation";
 import { CODE_KEY, features } from "./fixtures";
 
 describe("aggregateSIMD", () => {

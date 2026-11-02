@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { incomeDefinition } from "@/lib/datasets/income";
-import type { IncomeDataset } from "@/lib/types/income";
+import type { IncomeDataset } from "@uk-data-atlas/datasets/types/income";
 
 const dataset: IncomeDataset = {
 	id: "income2025",

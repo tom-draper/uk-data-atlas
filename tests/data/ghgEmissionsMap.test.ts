@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { ghgEmissionsDefinition } from "@/lib/datasets/ghgEmissions";
-import type { GhgEmissionsDataset } from "@/lib/types/ghgEmissions";
+import type { GhgEmissionsDataset } from "@uk-data-atlas/datasets/types/ghgEmissions";
 
 const dataset: GhgEmissionsDataset = {
 	id: "ghgEmissions2024",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadHousePrice } from "@/lib/data/house-price/loader";
+import { loadHousePrice } from "@uk-data-atlas/datasets/data/house-price/loader";
 
 const rows = [
 	["Median price paid by ward"],

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { loadSIMD, publishedSIMDRanks } from "@/lib/data/simd/loader";
+import {
+	loadSIMD,
+	publishedSIMDRanks,
+} from "@uk-data-atlas/datasets/data/simd/loader";
 
 const lookupCsv = `DZ,DZname,SIMD2020v2_Rank,SIMD2020v2_Vigintile,SIMD2020v2_Decile,SIMD2020v2_Quintile,LAcode,LAname
 S01006506,Culter - 01,4691,14,7,4,S12000033,Aberdeen City

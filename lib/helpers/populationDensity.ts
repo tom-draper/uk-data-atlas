@@ -1,6 +1,6 @@
 import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
-import { calculateTotal } from "@/lib/helpers/population";
+import { calculateTotal } from "@uk-data-atlas/datasets/helpers/population";
 import { detectWardCodeForYear } from "@/lib/helpers/mapManager/propertyDetector";
 import type {
 	AggregatedPopulationData,

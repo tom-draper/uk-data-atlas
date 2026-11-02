@@ -3,7 +3,7 @@ import {
 	releaseLabel,
 	type AreaRef,
 	type NamedRef,
-} from "@/lib/places/profile";
+} from "@uk-data-atlas/catalogue/place-profile";
 
 const GEOGRAPHY_NAMES: Record<string, [singular: string, plural: string]> = {
 	ward: ["Ward", "Wards"],

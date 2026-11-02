@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadHousingAffordability } from "@/lib/data/new-datasets/loader";
+import { loadHousingAffordability } from "@uk-data-atlas/datasets/data/new-datasets/loader";
 
 // Table 5c as the xlsx reader renders it: a title row, the header row, one
 // row per district with "[x]" where ONS suppresses the ratio, then a blank.

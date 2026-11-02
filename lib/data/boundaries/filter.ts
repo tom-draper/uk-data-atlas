@@ -1,10 +1,13 @@
 import type { BoundaryGeojson } from "@lib/types";
 import { gazetteer } from "@lib/data/gazetteer/static";
-import type { Crosswalk } from "../gazetteer/types";
+import type { Crosswalk } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { featureExtent } from "./derived";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
-import { boundaryCapabilityFor } from "./capabilities";
-import { getProp, countryPrefixForBoundaryCode } from "./properties";
+import { boundaryCapabilityFor } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
+import {
+	getProp,
+	countryPrefixForBoundaryCode,
+} from "@uk-data-atlas/datasets/data/boundaries/properties";
 
 // ONS LAD25 → CTYUA25 lookup (April 2025, UK, v2).
 import localAuthorityCounty from "./localAuthorityCounty.json";

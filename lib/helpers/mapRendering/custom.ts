@@ -1,5 +1,5 @@
 import type { BoundaryGeojson, CustomDataset } from "@lib/types";
-import type { ColorRange } from "@/lib/types/common";
+import type { ColorRange } from "@uk-data-atlas/datasets/types/common";
 import type { MapOptions } from "@lib/types/mapOptions";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import { gazetteer } from "@/lib/data/gazetteer/static";

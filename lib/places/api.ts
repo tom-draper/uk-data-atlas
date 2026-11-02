@@ -1,4 +1,7 @@
-import type { AreaProfile, NamedProfile } from "@/lib/places/profile";
+import type {
+	AreaProfile,
+	NamedProfile,
+} from "@uk-data-atlas/catalogue/place-profile";
 
 /**
  * The API requests that answer each part of a place page, with the docs page

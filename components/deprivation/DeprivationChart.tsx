@@ -3,7 +3,7 @@ import type { ActiveViz, Dataset } from "@lib/types";
 import type {
 	DeprivationSummary,
 	ScoredDeprivationSummary,
-} from "@/lib/types/deprivation";
+} from "@uk-data-atlas/datasets/types/deprivation";
 import DecileChart from "./DecileChart";
 import { formatCount } from "@/lib/helpers/formatCount";
 

@@ -1,1 +1,0 @@
-export { ethnicityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/ethnicity";

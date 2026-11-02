@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadFuelPoverty } from "@/lib/data/fuel-poverty/loader";
+import { loadFuelPoverty } from "@uk-data-atlas/datasets/data/fuel-poverty/loader";
 
 describe("loadFuelPoverty", () => {
 	it("aggregates LSOA rows as they are read from the ODS table", async () => {

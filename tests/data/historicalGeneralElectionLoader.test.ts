@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseHistoricalGeneralElectionCsv } from "@/lib/data/historical-general-election/loader";
+import { parseHistoricalGeneralElectionCsv } from "@uk-data-atlas/datasets/data/historical-general-election/loader";
 
 const HEADER =
 	"constituency_id,seats,constituency_name,country/region,electorate,con_votes,con_share,lib_votes ,lib_share,lab_votes,lab_share,natSW_votes,natSW_share,oth_votes,oth_share,total_votes,turnout ,election,boundary_set,";

@@ -14,7 +14,7 @@ import {
 	type AreaGroup,
 	type DatasetCoverage,
 	type NamedRef,
-} from "@/lib/places/profile";
+} from "@uk-data-atlas/catalogue/place-profile";
 import { JsonLd, placeJsonLd } from "@/lib/atlas/structuredData";
 
 export const linkClass =

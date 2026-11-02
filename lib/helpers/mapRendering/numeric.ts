@@ -1,6 +1,6 @@
 import type { BoundaryGeojson } from "@lib/types";
-import type { BoundaryType } from "@/lib/types/boundaries";
-import type { ColorRange } from "@/lib/types/common";
+import type { BoundaryType } from "@uk-data-atlas/datasets/types/boundaries";
+import type { ColorRange } from "@uk-data-atlas/datasets/types/common";
 import type { MapOptions, NumericMapOptionsKey } from "@lib/types/mapOptions";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import type { BoundaryCodeScope } from "../mapManager/propertyDetector";

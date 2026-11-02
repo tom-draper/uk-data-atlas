@@ -15,7 +15,7 @@ import {
 	type CustomImport,
 	type CustomImportIssue,
 } from "./import";
-import type { BoundaryType } from "@/lib/types/boundaries";
+import type { BoundaryType } from "@uk-data-atlas/datasets/types/boundaries";
 import { GEOGRAPHIES } from "@/lib/docs/content/geographies";
 
 /** A column offered to the pickers, with a taste of its first data row. */

@@ -1,7 +1,7 @@
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { join } from "node:path";
 import { ATLAS_LOCATIONS } from "../lib/atlas/pages";
-import { decodeCompactPayload } from "../lib/data/compactPayload";
+import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import {
 	compileRanking,
 	hasRankingPage,

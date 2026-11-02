@@ -4,7 +4,7 @@ import {
 	atlasPageHeading,
 } from "@/lib/atlas/pages";
 import { atlasMapSnippet } from "@/lib/atlas/snippets";
-import type { DatasetCountry } from "@/lib/types/coverage";
+import type { DatasetCountry } from "@uk-data-atlas/datasets/types/coverage";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 /** Schema.org data for search engines, rendered as JSON-LD. */

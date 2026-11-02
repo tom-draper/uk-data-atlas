@@ -1,6 +1,6 @@
 import { join } from "path";
 import { Gazetteer } from "../../lib/data/gazetteer/gazetteer";
-import type { GazetteerCore } from "../../lib/data/gazetteer/types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { loadRoadSafety } from "../../lib/data/road-safety/loader";
 import {
 	elapsedSince,

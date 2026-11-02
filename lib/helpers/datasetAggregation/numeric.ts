@@ -3,49 +3,49 @@ import { getFeatureProp } from "@/lib/types";
 import type {
 	AggregatedBroadbandData,
 	BroadbandDataset,
-} from "@/lib/types/broadband";
+} from "@uk-data-atlas/datasets/types/broadband";
 import type {
 	AggregatedAirQualityData,
 	AirQualityDataset,
-} from "@/lib/types/airQuality";
+} from "@uk-data-atlas/datasets/types/airQuality";
 import type {
 	AggregatedClaimantCountData,
 	ClaimantCountDataset,
-} from "@/lib/types/claimantCount";
+} from "@uk-data-atlas/datasets/types/claimantCount";
 import type {
 	AggregatedChildPovertyData,
 	ChildPovertyDataset,
-} from "@/lib/types/childPoverty";
+} from "@uk-data-atlas/datasets/types/childPoverty";
 import type {
 	AggregatedHomelessnessData,
 	HomelessnessDataset,
-} from "@/lib/types/homelessness";
+} from "@uk-data-atlas/datasets/types/homelessness";
 import type {
 	AggregatedFuelPovertyData,
 	FuelPovertyDataset,
-} from "@/lib/types/fuelPoverty";
+} from "@uk-data-atlas/datasets/types/fuelPoverty";
 import type {
 	AggregatedGhgEmissionsData,
 	GhgEmissionsDataset,
-} from "@/lib/types/ghgEmissions";
+} from "@uk-data-atlas/datasets/types/ghgEmissions";
 import type {
 	AggregatedMobileCoverageData,
 	MobileCoverageDataset,
-} from "@/lib/types/mobileCoverage";
+} from "@uk-data-atlas/datasets/types/mobileCoverage";
 import type {
 	AggregatedSchoolPerformanceData,
 	AggregatedSchoolPerformanceGapData,
 	SchoolPerformanceGapMeasures,
 	SchoolPerformanceMeasures,
-} from "@/lib/types/schoolPerformance";
+} from "@uk-data-atlas/datasets/types/schoolPerformance";
 import type {
 	AggregatedEnergyConsumptionData,
 	EnergyConsumptionLADData,
-} from "@/lib/types/energyConsumption";
+} from "@uk-data-atlas/datasets/types/energyConsumption";
 import type {
 	AggregatedRegionalGdpData,
 	RegionalGdpAreaData,
-} from "@/lib/types/regionalGdp";
+} from "@uk-data-atlas/datasets/types/regionalGdp";
 
 /** Collects the numeric dataset records represented by the active boundaries. */
 export function collectBoundaryRecords<T>(

@@ -3,7 +3,7 @@ import type { ActiveViz, Dataset, SelectedArea } from "@lib/types";
 import type {
 	DeprivationSummary,
 	ScoredDeprivationSummary,
-} from "@/lib/types/deprivation";
+} from "@uk-data-atlas/datasets/types/deprivation";
 import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 import {
 	DeprivationChart,

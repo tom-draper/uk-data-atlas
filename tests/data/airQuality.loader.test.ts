@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadAirQuality } from "@/lib/data/air-quality/loader";
+import { loadAirQuality } from "@uk-data-atlas/datasets/data/air-quality/loader";
 
 const areaMeans = `ladCode,ladName,gridCells,no2Mean,pm10Mean,pm25Mean
 E09000001,"City of London",3,33.22,17.96,11.00

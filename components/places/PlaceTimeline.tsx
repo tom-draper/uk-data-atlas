@@ -14,7 +14,7 @@ import {
 	type AreaProfile,
 	type AreaRef,
 	type TimelineEvent,
-} from "@/lib/places/profile";
+} from "@uk-data-atlas/catalogue/place-profile";
 
 const linkClass =
 	"font-medium text-slate-800 underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700";

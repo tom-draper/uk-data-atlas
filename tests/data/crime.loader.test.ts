@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadCrime } from "@/lib/data/crime/loader";
+import { loadCrime } from "@uk-data-atlas/datasets/data/crime/loader";
 
 const counts = (total: number) =>
 	[total, ...Array.from({ length: 22 }, () => 1)].join(",");

@@ -1,6 +1,6 @@
 // lib/types/mapOptions.ts
 import { Datasets } from "./datasets";
-import { ColorRange } from "./common";
+import { ColorRange } from "@uk-data-atlas/datasets/types/common";
 import type { BaseMapStyle } from "../config/baseMapStyles";
 import type { CatalogueDatasetType } from "@/lib/data/catalog";
 

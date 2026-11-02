@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { MapRanking } from "@/lib/atlas/rankings";
-import { decodeCompactPayload } from "@/lib/data/compactPayload";
+import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 
 /**
  * A sanity check on the published figures. A council's count, per resident,

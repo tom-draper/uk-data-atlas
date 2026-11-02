@@ -1,6 +1,6 @@
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { join } from "node:path";
-import { decodeCompactPayload } from "../lib/data/compactPayload";
+import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import { compileMapFigures, type FigureInputs } from "../lib/atlas/figures";
 
 const DATASETS = join(process.cwd(), "public", "data", "datasets");

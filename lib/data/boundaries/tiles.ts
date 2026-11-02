@@ -1,11 +1,14 @@
 import { withCDN } from "@/lib/helpers/cdn";
-import { getFeatureProp } from "@/lib/types/geometry";
+import { getFeatureProp } from "@uk-data-atlas/datasets/types/geometry";
 import {
 	parseBoundaryResources,
 	type BoundaryResources,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import type { BoundaryGeojson, PropertyKeys } from "@/lib/types/geometry";
+import type {
+	BoundaryGeojson,
+	PropertyKeys,
+} from "@uk-data-atlas/datasets/types/geometry";
 import {
 	BOUNDARY_CATALOG,
 	boundaryArchiveAsset,

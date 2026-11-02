@@ -4,7 +4,7 @@
  * dataset. Keeping those stages separate lets new file formats and mappings
  * arrive without teaching map rendering about raw uploads.
  */
-import type { BoundaryType } from "@/lib/types/boundaries";
+import type { BoundaryType } from "@uk-data-atlas/datasets/types/boundaries";
 import type { CustomDataset, CustomPoint } from "@/lib/types/custom";
 
 export interface CustomImportDocument {

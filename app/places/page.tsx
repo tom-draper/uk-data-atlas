@@ -18,7 +18,7 @@ import {
 	compareDistricts,
 	loadPostcodeDistricts,
 } from "@/lib/places/postcodes";
-import type { PlaceIndexEntry } from "@/lib/places/profile";
+import type { PlaceIndexEntry } from "@uk-data-atlas/catalogue/place-profile";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({

@@ -8,7 +8,7 @@ import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures"
 import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
-import { PUBLIC_HEALTH_MEASURES } from "@/lib/helpers/publicHealthMeasures";
+import { PUBLIC_HEALTH_MEASURES } from "@uk-data-atlas/datasets/data/public-health/loader";
 import { ABSENCE_MEASURES } from "@/lib/helpers/pupilAbsenceMeasures";
 import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";
 import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";

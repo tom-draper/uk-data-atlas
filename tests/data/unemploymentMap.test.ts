@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { unemploymentDefinition } from "@/lib/datasets/unemployment";
-import type { UnemploymentDataset } from "@/lib/types/unemployment";
+import type { UnemploymentDataset } from "@uk-data-atlas/datasets/types/unemployment";
 
 const dataset: UnemploymentDataset = {
 	id: "unemployment",

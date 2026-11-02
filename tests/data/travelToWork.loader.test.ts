@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { loadTravelToWork } from "@/lib/data/travel-to-work/loader";
+import { loadTravelToWork } from "@uk-data-atlas/datasets/data/travel-to-work/loader";
 import { aggregateTravelToWork } from "@/lib/helpers/datasetAggregation/demographics";
-import { APRIL_2023_LAD_MERGERS } from "@/lib/data/localAuthority/reorganisations";
+import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
 
 const HEADER =
 	"Lower tier local authorities Code,Lower tier local authorities,Method used to travel to workplace (12 categories) Code,Method used to travel to workplace (12 categories),Observation";

@@ -1,6 +1,6 @@
 import { travelToWorkDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { travelToWorkAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { TravelToWorkDataset } from "@/lib/types/travelToWork";
+import type { TravelToWorkDataset } from "@uk-data-atlas/datasets/types/travelToWork";
 import type { ChartDatasetDefinition } from "./types";
 
 export const travelToWorkDefinition: ChartDatasetDefinition<TravelToWorkDataset> =

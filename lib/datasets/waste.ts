@@ -1,7 +1,7 @@
 import { wasteDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { wasteAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { wasteValue, type WasteStats } from "@/lib/helpers/waste";
-import type { IndicatorDataset } from "@/lib/types/indicator";
+import type { IndicatorDataset } from "@uk-data-atlas/datasets/types/indicator";
 import type { WasteOptions } from "@/lib/types/mapOptions";
 import { defineValueCard } from "./valueCard";
 import type { ChartDatasetDefinition } from "./types";

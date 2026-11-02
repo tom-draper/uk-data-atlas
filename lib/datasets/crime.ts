@@ -1,6 +1,9 @@
 import { crimeDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { crimeAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { AggregatedCrimeData, CrimeDataset } from "@/lib/types/crime";
+import type {
+	AggregatedCrimeData,
+	CrimeDataset,
+} from "@uk-data-atlas/datasets/types/crime";
 import { formatCount } from "@/lib/helpers/formatCount";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";

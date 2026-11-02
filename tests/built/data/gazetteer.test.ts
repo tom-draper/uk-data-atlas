@@ -2,11 +2,11 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
-import type { GazetteerCore } from "@/lib/data/gazetteer/types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { readAtlasLookup } from "@/scripts/atlas-lookups";
 import type { ConstituencyLadOverlaps } from "@/lib/data/boundaries/constituencyLadOverlaps";
-import { LOCATIONS } from "@/lib/data/locations";
-import { OFFICIAL_PLACES } from "@/lib/data/gazetteer/places";
+import { LOCATIONS } from "@uk-data-atlas/datasets/data/locations";
+import { OFFICIAL_PLACES } from "@uk-data-atlas/datasets/data/gazetteer/places";
 
 const PRECOMPILED = join(process.cwd(), "public", "data", "datasets");
 const core = JSON.parse(

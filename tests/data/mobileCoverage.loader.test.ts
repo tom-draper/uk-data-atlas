@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadMobileCoverage } from "@/lib/data/mobile-coverage/loader";
+import { loadMobileCoverage } from "@uk-data-atlas/datasets/data/mobile-coverage/loader";
 import { aggregateMobileCoverage } from "@/lib/helpers/datasetAggregation/numeric";
 
 // The published columns are percentages of premises, or of landmass, reached by

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadPopulationConstituencyYear } from "@/lib/data/population-constituency/loader";
+import { loadPopulationConstituencyYear } from "@uk-data-atlas/datasets/data/population-constituency/loader";
 
 // Three preamble lines, then the header, then England's and Wales's rows.
 const sheet = (rows: string[]) =>

@@ -1,5 +1,8 @@
 import { housingTenureDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/housingTenure";
-import type { IndicatorDataset, IndicatorRecord } from "@/lib/types/indicator";
+import type {
+	IndicatorDataset,
+	IndicatorRecord,
+} from "@uk-data-atlas/datasets/types/indicator";
 import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";

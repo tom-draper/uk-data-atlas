@@ -20,7 +20,7 @@ import {
 import { namedRequests } from "@/lib/places/api";
 import { dateLabel, namedKindName } from "@/lib/places/labels";
 import { loadAreaProfiles } from "@/lib/places/load";
-import type { NamedProfile } from "@/lib/places/profile";
+import type { NamedProfile } from "@uk-data-atlas/catalogue/place-profile";
 
 /** Wards are listed on a named place's page up to this many. */
 const LISTED_WARDS = 2500;

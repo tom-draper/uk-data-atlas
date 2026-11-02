@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
 	addMergedClaimantAuthorities,
 	CLAIMANT_COUNT_LAD_PREDECESSORS,
-} from "@/lib/data/claimant-count/loader";
-import type { ClaimantCountLADData } from "@/lib/types/claimantCount";
+} from "@uk-data-atlas/datasets/data/claimant-count/loader";
+import type { ClaimantCountLADData } from "@uk-data-atlas/datasets/types/claimantCount";
 
 describe("addMergedClaimantAuthorities", () => {
 	const sourceRecords = () =>

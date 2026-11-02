@@ -10,7 +10,7 @@
  * boundary, so a page draws the wards its postcodes fall in.
  */
 
-import type { BoundingBox } from "@/lib/places/profile";
+import type { BoundingBox } from "@uk-data-atlas/catalogue/place-profile";
 
 export const POSTCODE_GEOGRAPHIES = [
 	"localAuthority",

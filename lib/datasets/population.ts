@@ -5,7 +5,7 @@ import {
 } from "@/lib/helpers/mapRendering";
 import { populationAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { populationDatasetDefinition } from "@/lib/data/catalog/definitions";
-import type { PopulationDataset } from "@/lib/types/population";
+import type { PopulationDataset } from "@uk-data-atlas/datasets/types/population";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
 const calculateStats: ChartDefinition<PopulationDataset>["calculateStats"] = (

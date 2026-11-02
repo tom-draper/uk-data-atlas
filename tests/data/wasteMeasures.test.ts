@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { wasteCard, wasteDefinition } from "@/lib/datasets/waste";
 import { aggregateWaste, wasteValue } from "@/lib/helpers/waste";
-import type { IndicatorDataset, IndicatorRecord } from "@/lib/types/indicator";
+import type {
+	IndicatorDataset,
+	IndicatorRecord,
+} from "@uk-data-atlas/datasets/types/indicator";
 import type { WasteOptions } from "@/lib/types/mapOptions";
 
 const records: IndicatorRecord[] = [

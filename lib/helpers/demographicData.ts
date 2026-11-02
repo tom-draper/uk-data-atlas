@@ -3,7 +3,7 @@ import type { SelectedArea } from "../types/areas";
 import type {
 	PopulationDataset,
 	PopulationWardData,
-} from "../types/population";
+} from "@uk-data-atlas/datasets/types/population";
 import { cacheKey } from "./cacheKey";
 
 const MAX_LAD_CACHE_ENTRIES = 50;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { GENERAL_ELECTION_SOURCES } from "@/lib/data/election/general-election/config";
-import { parseGeneralElectionCsv } from "@/lib/data/election/general-election/load";
+import { GENERAL_ELECTION_SOURCES } from "@uk-data-atlas/datasets/data/election/general-election/config";
+import { parseGeneralElectionCsv } from "@uk-data-atlas/datasets/data/election/general-election/load";
 
 describe("2010 general-election source", () => {
 	it("normalises the UCUNF column to the UUP party key", () => {

@@ -1,7 +1,7 @@
 import { renderEthnicity } from "@/lib/helpers/mapRendering";
 import { ethnicityAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { ethnicityDatasetDefinition } from "@/lib/data/catalog/definitions";
-import type { EthnicityDataset } from "@/lib/types/ethnicity";
+import type { EthnicityDataset } from "@uk-data-atlas/datasets/types/ethnicity";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
 const calculateStats: ChartDefinition<EthnicityDataset>["calculateStats"] = (

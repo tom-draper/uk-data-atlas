@@ -1,4 +1,4 @@
-import { BoundaryType } from "./boundaries";
+import { BoundaryType } from "@uk-data-atlas/datasets/types/boundaries";
 
 export interface CustomPoint {
 	lng: number;

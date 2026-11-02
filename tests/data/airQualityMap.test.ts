@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { airQualityDefinition } from "@/lib/datasets/airQuality";
-import type { AirQualityDataset } from "@/lib/types/airQuality";
+import type { AirQualityDataset } from "@uk-data-atlas/datasets/types/airQuality";
 
 const dataset: AirQualityDataset = {
 	id: "airQuality2024",

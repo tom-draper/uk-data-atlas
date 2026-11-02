@@ -7,7 +7,7 @@ import {
 	type NamedRef,
 	type PlaceIndex,
 	type PlaceIndexEntry,
-} from "@/lib/places/profile";
+} from "@uk-data-atlas/catalogue/place-profile";
 
 export const loadPlaceIndex = () => readAtlasPage<PlaceIndex>("places-index");
 const readProfiles = (path: string) =>

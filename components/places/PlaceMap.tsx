@@ -8,7 +8,7 @@ import {
 	decodeOutline,
 	type BoundingBox,
 	type Outline,
-} from "@/lib/places/profile";
+} from "@uk-data-atlas/catalogue/place-profile";
 
 export type PlaceShape = {
 	code: string;

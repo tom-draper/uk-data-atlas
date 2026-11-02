@@ -1,4 +1,7 @@
-import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
+import {
+	codeKeyedFieldsFor,
+	type DatasetPayloadLayout,
+} from "@uk-data-atlas/datasets/data/catalog/types";
 
 type DatasetPayload = Record<string, unknown>;
 

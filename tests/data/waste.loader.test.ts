@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadWaste } from "@/lib/data/new-datasets/loader";
+import { loadWaste } from "@uk-data-atlas/datasets/data/new-datasets/loader";
 
 describe("loadWaste", () => {
 	it("aggregates collection rows as they are read from the ODS table", async () => {

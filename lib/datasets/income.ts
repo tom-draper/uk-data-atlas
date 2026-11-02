@@ -1,6 +1,6 @@
 import { incomeDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { incomeAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { IncomeDataset } from "@/lib/types/income";
+import type { IncomeDataset } from "@uk-data-atlas/datasets/types/income";
 import type { ChartDatasetDefinition } from "./types";
 
 export const incomeDefinition: ChartDatasetDefinition<IncomeDataset> = {

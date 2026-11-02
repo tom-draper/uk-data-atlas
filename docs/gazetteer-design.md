@@ -25,7 +25,7 @@ the curated named locations from this project's `gazetteer.core.json`. Section
 Location knowledge was spread across three overlapping modules, each rebuilt in
 the browser from megabytes of boundary geometry on every load:
 
-- `LOCATIONS` (`lib/data/locations.ts`): named area to LAD codes and a bounding
+- `LOCATIONS` (`packages/datasets/src/data/locations.ts`): named area to LAD codes and a bounding
   box.
 - `areaBank` (`lib/data/areaBank.ts`): per `(level, year)` code sets and
   `name -> code` maps for matching uploaded CSV columns.
@@ -149,7 +149,7 @@ for all of them.
 ## 5. Data model as built
 
 ```ts
-// lib/data/gazetteer/types.ts
+// packages/datasets/src/data/gazetteer/types.ts
 type Level =
 	| "region"
 	| "county"
@@ -211,7 +211,7 @@ resolver's same-area answers between years), and
 The proposed `DatasetManifest` was largely realised under other names:
 
 - `DatasetDefinition` and its `DatasetIngestionContract`
-  (`lib/data/catalog/types.ts`) declare each dataset's geography, source and
+  (`packages/datasets/src/data/catalog/types.ts`) declare each dataset's geography, source and
   payload layout, and `DatasetLocationScope` covers datasets keyed by another
   geography (`kind: "mapped"`).
 - `BOUNDARY_CAPABILITIES` declares how each boundary family reduces to a named
@@ -331,7 +331,7 @@ API, official places take their members from the ONS lookups already in
 `data/source/lookups`, and every named location says what it is. The build order is
 unchanged; the API reads the result from the core as before.
 
-- `lib/data/gazetteer/places.ts` lists the official places: the 9 English
+- `packages/datasets/src/data/gazetteer/places.ts` lists the official places: the 9 English
   regions, Greater Manchester (combined authority), and the 5 counties whose
   name means the ONS county (Gloucestershire, Hertfordshire, Norfolk,
   Oxfordshire, Suffolk). Their current members come from the lookup; curated

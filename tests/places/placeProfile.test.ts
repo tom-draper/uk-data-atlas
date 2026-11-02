@@ -19,7 +19,7 @@ import {
 	placeShard,
 	releaseCovers,
 	releaseLabel,
-} from "@/lib/places/profile";
+} from "@uk-data-atlas/catalogue/place-profile";
 
 describe("place outlines", () => {
 	it("decode to what was encoded, to about 10 m", () => {

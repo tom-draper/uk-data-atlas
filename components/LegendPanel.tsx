@@ -1,6 +1,6 @@
 "use client";
 
-import { PARTIES } from "@/lib/data/election/parties";
+import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import {
@@ -14,7 +14,7 @@ import type {
 	EthnicityCode,
 	PartyCode,
 } from "@/lib/types";
-import type { BoundaryData } from "@/lib/types/boundaries";
+import type { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";

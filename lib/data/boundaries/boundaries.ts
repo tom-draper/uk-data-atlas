@@ -3,7 +3,7 @@ import type { BoundaryYear } from "./catalog";
 
 export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
-export { getProp } from "./properties";
+export { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
 export { filterFeatures } from "./filter";
 
 export type WardYear = BoundaryYear<"ward">;

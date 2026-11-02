@@ -3,7 +3,7 @@ import {
 	loadWIMD,
 	publishedWIMDRanks,
 	welshLSOAPopulations,
-} from "@/lib/data/wimd/loader";
+} from "@uk-data-atlas/datasets/data/wimd/loader";
 
 const cell = (value: string) =>
 	`<table:table-cell office:value-type="string"><text:p>${value}</text:p></table:table-cell>`;

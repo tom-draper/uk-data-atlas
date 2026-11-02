@@ -6,7 +6,7 @@ import type {
 	PropertyKeys,
 } from "@lib/types";
 import { getFeatureProp } from "@lib/types";
-import { calculateTotal } from "../population";
+import { calculateTotal } from "@uk-data-atlas/datasets/helpers/population";
 import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import { calculateAgeGroups } from "../ageDistribution";
 

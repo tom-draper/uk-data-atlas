@@ -1,4 +1,4 @@
-import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog/registry";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
 import { datasetSlug } from "@/lib/datasets";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
 import { BOUNDARY_DETAILS } from "@/lib/reference/boundaries";

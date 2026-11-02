@@ -4,7 +4,7 @@ import { join } from "path";
 import { isDeepStrictEqual } from "util";
 import { describe, expect, it } from "vitest";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
-import { decodeCompactPayload } from "@/lib/data/compactPayload";
+import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import { mergeDatasetPayloads } from "@/lib/data/mergeDatasetPayloads";
 import {
 	REGION_CHUNK_KEYS,

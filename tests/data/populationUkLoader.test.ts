@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadPopulationUk } from "@/lib/data/population/ukLoader";
+import { loadPopulationUk } from "@uk-data-atlas/datasets/data/population/ukLoader";
 
 const TITLE =
 	"Annual mid-year population estimates for United Kingdom local authorities (as of April 2023), by sex and single year of age";

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { homelessnessDefinition } from "@/lib/datasets/homelessness";
-import type { HomelessnessDataset } from "@/lib/types/homelessness";
+import type { HomelessnessDataset } from "@uk-data-atlas/datasets/types/homelessness";
 
 const dataset: HomelessnessDataset = {
 	id: "homelessness2026q1",

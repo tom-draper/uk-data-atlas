@@ -1,6 +1,6 @@
 import { BOUNDARY_CATALOG } from "./catalog";
 import { atlasLookupUrl } from "@/lib/helpers/atlasData";
-import type { Crosswalk } from "../gazetteer/types";
+import type { Crosswalk } from "@uk-data-atlas/datasets/data/gazetteer/types";
 
 /**
  * Constituency-to-local-authority overlaps derived offline for every served

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { endYear, measureSeries, readMeasures } from "@/lib/data/education/ks4";
-import type { SchoolPerformanceMeasures } from "@/lib/types/schoolPerformance";
+import {
+	endYear,
+	measureSeries,
+	readMeasures,
+} from "@uk-data-atlas/datasets/data/education/ks4";
+import type { SchoolPerformanceMeasures } from "@uk-data-atlas/datasets/types/schoolPerformance";
 
 describe("endYear", () => {
 	it("uses the final calendar year of an academic-year identifier", () => {

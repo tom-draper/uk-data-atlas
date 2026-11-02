@@ -7,7 +7,7 @@ import {
 	type AreaProfile,
 	type NamedProfile,
 	type PlaceIndex,
-} from "@/lib/places/profile";
+} from "@uk-data-atlas/catalogue/place-profile";
 
 const index = await readAtlasPage<PlaceIndex>("places-index");
 const names = new Set(

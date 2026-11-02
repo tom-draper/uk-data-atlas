@@ -1,9 +1,9 @@
-import type { CrimeDataset } from "@/lib/types/crime";
-import type { HousePriceDataset } from "@/lib/types/housePrice";
-import type { IncomeDataset } from "@/lib/types/income";
-import type { LandAreaDataset } from "@/lib/types/landArea";
-import type { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
-import type { PopulationUkDataset } from "@/lib/types/population";
+import type { CrimeDataset } from "@uk-data-atlas/datasets/types/crime";
+import type { HousePriceDataset } from "@uk-data-atlas/datasets/types/housePrice";
+import type { IncomeDataset } from "@uk-data-atlas/datasets/types/income";
+import type { LandAreaDataset } from "@uk-data-atlas/datasets/types/landArea";
+import type { LifeExpectancyDataset } from "@uk-data-atlas/datasets/types/lifeExpectancy";
+import type { PopulationUkDataset } from "@uk-data-atlas/datasets/types/population";
 import {
 	ATLAS_LOCATIONS,
 	type AtlasLocation,

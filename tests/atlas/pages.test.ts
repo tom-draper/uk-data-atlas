@@ -18,7 +18,7 @@ import {
 } from "@/lib/atlas/pages";
 import gazetteerCore from "@/public/data/datasets/gazetteer.core.json";
 import { gazetteer } from "@/lib/data/gazetteer/static";
-import type { GazetteerCore } from "@/lib/data/gazetteer/types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 
 const location = (slug: string) => findAtlasLocation(slug)!;
 const map = (slug: string) => findAtlasMap(slug)!;

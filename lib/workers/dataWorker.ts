@@ -2,7 +2,7 @@ import {
 	filterDatasetPayloadForLocation,
 	type DatasetLocationFilter,
 } from "../data/datasetLocationFilter";
-import { decodeCompactPayload } from "../data/compactPayload";
+import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import { mergeDatasetPayloads } from "../data/mergeDatasetPayloads";
 import { BOUNDARY_TYPES } from "../data/boundaries/catalog";
 

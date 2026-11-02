@@ -1,7 +1,7 @@
 import { renderLocalElection } from "@/lib/helpers/mapRendering";
 import { localElectionAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { localElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
-import type { LocalElectionDataset } from "@/lib/types/elections";
+import type { LocalElectionDataset } from "@uk-data-atlas/datasets/types/elections";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
 const calculateStats: ChartDefinition<LocalElectionDataset>["calculateStats"] =

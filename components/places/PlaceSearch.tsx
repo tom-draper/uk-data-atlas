@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fetchAtlasPage } from "@/lib/helpers/atlasData";
 import { placeKindName } from "@/lib/places/labels";
-import type { PlaceIndex, PlaceIndexEntry } from "@/lib/places/profile";
+import type {
+	PlaceIndex,
+	PlaceIndexEntry,
+} from "@uk-data-atlas/catalogue/place-profile";
 
 const normalise = (text: string) =>
 	text

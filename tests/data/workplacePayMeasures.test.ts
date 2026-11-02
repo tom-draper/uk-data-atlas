@@ -3,7 +3,7 @@ import {
 	workplacePay,
 	averageWorkplacePay,
 } from "@/lib/helpers/workplaceIncomeMeasures";
-import type { IncomeLADData } from "@/lib/types/income";
+import type { IncomeLADData } from "@uk-data-atlas/datasets/types/income";
 it("keeps resident and workplace measures separate and ignores suppressed estimates", () => {
 	const records = [
 		{
