@@ -66,13 +66,14 @@ export default function ConstituencyGuidePage() {
 						operationId="getMeasureObservations"
 					/>
 					<P>
-						Votes and vote shares are one measure per party. Search
-						the catalogue to list them, then ask for the ones you
-						need:
+						Votes and vote shares are one measure each, broken down
+						by party. Search the catalogue to see the parties, then
+						filter on the one you need, or ask for `party=*` to get
+						every party at once:
 					</P>
 					<Request url={`${API}/measures?q=vote%20share`} />
 					<Request
-						url={`${API}/data/general-election-lab-vote-share?${PARTITION}&place=${SEAT}`}
+						url={`${API}/data/party-vote-share?${PARTITION}&place=${SEAT}&party=lab`}
 					/>
 				</Step>
 
