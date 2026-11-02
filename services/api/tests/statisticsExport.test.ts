@@ -11,6 +11,55 @@ import {
 } from "../../../pipeline/src/statisticsExport";
 import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
+import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+
+test("binds a census measure only when every source partition is complete", () => {
+	const db = new DatabaseSync(":memory:");
+	try {
+		db.exec(`
+			CREATE TABLE dataset (id INTEGER, slug TEXT);
+			CREATE TABLE measure (id INTEGER, slug TEXT);
+			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
+			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
+			CREATE TABLE dimension (id INTEGER, slug TEXT);
+			CREATE TABLE dimension_member (id INTEGER, code TEXT);
+			CREATE TABLE observation (series_id INTEGER, period_id INTEGER);
+			CREATE TABLE period (id INTEGER, label TEXT);
+			INSERT INTO dataset VALUES (1, 'census-2021-ts007a');
+			INSERT INTO measure VALUES (1, 'census-2021-ts007a-count');
+			INSERT INTO series VALUES (1, 1, 1, 1), (2, 1, 1, 2);
+			INSERT INTO area_releases VALUES (1, 'lsoa', 'lsoa-2021'), (2, 'msoa', 'msoa-2021');
+			INSERT INTO dimension VALUES (1, 'census-2021-ts007a-category');
+			INSERT INTO dimension_member VALUES (1, '0-to-4');
+			INSERT INTO series_member VALUES (1, 1, 1), (2, 1, 1);
+			INSERT INTO period VALUES (1, '2021');
+			INSERT INTO observation VALUES (1, 1), (2, 1);
+		`);
+		const measure = {
+			id: "age-0-to-4",
+			unit: "usual residents",
+			sources: [
+				{
+					sourceGeography: { type: "lsoa", boundaryYear: 2021 },
+					periods: ["2021"],
+					coverage: { recordCount: 1 },
+				},
+				{
+					sourceGeography: { type: "msoa", boundaryYear: 2021 },
+					periods: ["2021"],
+					coverage: { recordCount: 1 },
+				},
+			],
+		} as unknown as Measure;
+		assert.equal(bindCensusStatistics(db, measure)?.length, 2);
+		measure.sources[1]!.coverage.recordCount = 2;
+		assert.equal(bindCensusStatistics(db, measure), undefined);
+	} finally {
+		db.close();
+	}
+});
 
 test("exports identical sorted canonical rows in CSV and Parquet", () => {
 	const db = new DatabaseSync(":memory:");
@@ -153,6 +202,9 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 			undefined,
 		);
 		assert.equal(bindStatisticsField(db, field, "people"), undefined);
+		db.exec("UPDATE measure SET unit = 'percent of premises'");
+		assert.ok(bindStatisticsField(db, field, "% of premises"));
+		db.exec("UPDATE measure SET unit = 'households'");
 		assert.deepEqual(
 			bindStatisticsField(
 				db,
@@ -175,13 +227,69 @@ test("exports identical sorted canonical rows in CSV and Parquet", () => {
 				{
 					dataset: "census",
 					measure: "households",
-					dimension: "tenure",
-					member: "rented",
+					members: { tenure: "rented" },
 					geography: "ward",
 					release: "2021",
 					periods: ["2021"],
 				},
 			],
+		);
+		db.exec(`INSERT INTO dimension VALUES (2, 'place');
+			INSERT INTO dimension_member VALUES (3, 'residence');
+			INSERT INTO series_member VALUES (1, 2, 3)`);
+		const config = {
+			type: "census",
+			measures: [],
+			fields: [
+				{
+					path: "{tenure}",
+					measure: "households",
+					members: { place: "residence" },
+				},
+			],
+			dimensions: [
+				{
+					slug: "tenure",
+					label: "Tenure",
+					members: [{ key: "rented", code: "rented" }],
+				},
+				{
+					slug: "place",
+					label: "Place",
+					members: [
+						{ key: "residence", code: "residence" },
+						{ key: "workplace", code: "workplace" },
+					],
+				},
+			],
+		};
+		assert.deepEqual(
+			bindStatisticsField(
+				db,
+				{ ...field, records: "partnerships" },
+				"households",
+				config,
+			),
+			[
+				{
+					dataset: "census",
+					measure: "households",
+					members: { place: "residence", tenure: "rented" },
+					geography: "ward",
+					release: "2021",
+					periods: ["2021"],
+				},
+			],
+		);
+		config.fields[0]!.members.place = "workplace";
+		assert.equal(
+			bindStatisticsField(
+				db,
+				{ ...field, records: "partnerships" },
+				"households",
+				config,
+			),
+			undefined,
 		);
 		assert.equal(
 			exportStatisticsMeasure(db, "rented-homes", paths, [
