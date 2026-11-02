@@ -7,6 +7,7 @@ import type {
 import { sha256 } from "./values";
 import {
 	type CatalogManifest,
+	type CompiledMeasure,
 	type DatasetManifest,
 	compileDataset,
 } from "./manifest";
@@ -157,6 +158,10 @@ export const compileDataCatalog = ({
 	jobsObservations: MeasureObservationArtifact;
 	mobileCoverageObservations: MeasureObservationArtifact[];
 	indicatorObservations: MeasureObservationArtifact[];
+	statisticsFields: Array<{
+		measureId: string;
+		field: NonNullable<CompiledMeasure["statisticsField"]>;
+	}>;
 	censusObservations: MeasureObservationArtifact[];
 	populationDensityObservations: MeasureObservationArtifact;
 	housePriceObservations: MeasureObservationArtifact;
@@ -370,6 +375,12 @@ export const compileDataCatalog = ({
 			...indicatorObservations.map(({ artifact }) => artifact),
 			...unemployment.artifacts,
 		],
+		statisticsFields: indicatorObservations.flatMap(
+			({ measure, statisticsField }) =>
+				statisticsField
+					? [{ measureId: measure.id, field: statisticsField }]
+					: [],
+		),
 		imdObservations: deprivation.artifacts,
 		lifeExpectancyObservations: lifeExpectancy.artifacts,
 		electionObservations: elections.artifacts,

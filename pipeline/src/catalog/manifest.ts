@@ -16,6 +16,18 @@ export type CatalogManifest = {
 export type CompiledMeasure = {
 	measure: Measure;
 	artifact: MeasureObservationArtifact;
+	/** The compiled dataset field used by the measure, when it is direct. */
+	statisticsField?: {
+		dataset: string;
+		field: string;
+		records: string;
+		sourcePeriod: string;
+		publishedPeriod: string;
+		geography: string;
+		boundaryYear: number;
+		recordCount: number;
+		recordHash: string;
+	};
 };
 
 export type DatasetManifest = {

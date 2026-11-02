@@ -10,6 +10,7 @@ import { localAuthorityFieldWithGaps } from "./localAuthorityFields";
 import { onApril2023Authorities } from "./authorityChanges";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 import { sha256 } from "./values";
+import { createHash } from "node:crypto";
 
 export type Indicator = {
 	id: string;
@@ -116,6 +117,11 @@ export const publishIndicators = (
 			.filter((code) => !published.has(code))
 			.sort();
 		const periods = [{ period: spec.period, records }];
+		const recordHash = createHash("sha256");
+		for (const record of records)
+			recordHash.update(
+				`${JSON.stringify([record.areaCode, record.value, record.status])}\n`,
+			);
 		const content = JSON.stringify({
 			schemaVersion: 1,
 			measureId: indicator.id,
@@ -126,6 +132,21 @@ export const publishIndicators = (
 			periods,
 		});
 		indicatorObservations.push({
+			...(!spec.mergeApril2023 && !indicator.status
+				? {
+						statisticsField: {
+							dataset: spec.datasetId,
+							field: indicator.field,
+							records: spec.table ?? "data",
+							sourcePeriod: read.period,
+							publishedPeriod: spec.period,
+							geography,
+							boundaryYear: partitionBoundaryYear,
+							recordCount: records.length,
+							recordHash: recordHash.digest("hex"),
+						},
+					}
+				: {}),
 			measure: {
 				id: indicator.id,
 				label: indicator.label,
