@@ -662,3 +662,39 @@ shared data layout. Keeping them as separate JSON outputs avoids changing the
 SQLite component and makes each stage's output explicit. The committed
 vocabulary remains for the unbuilt dimension mapping check. A built test checks
 that it matches the generated vocabulary.
+
+## Retiring the observation tables
+
+The API can rebuild all 322 artifacts from statistics rows, but these consumers
+still depend on the observation tables:
+
+- `pipeline/src/build-statistics-read-path.ts` reads independently compiled
+  artifact bytes to verify each selector. Keep a new independent source, such
+  as the original compiler's serialized artifacts, for this comparison before
+  removing the tables.
+- `pipeline/src/exportManifest.ts` and `pipeline/src/build-export-manifest.ts`
+  read artifact bytes and check their catalogue generation. Rebuild the bytes
+  from statistics selectors and replace the generation check with equivalent
+  catalogue and input validation.
+- `pipeline/src/build-measure-compatibility.ts` and
+  `pipeline/src/build-validation-report.ts` read measure views and validate the
+  observation catalogue. Read statistics-backed measure views and retain the
+  catalogue validation.
+- `pipeline/src/buildAnalysisGeographyValidation.ts` reads whole artifacts,
+  including shared census tables. Rebuild those artifacts from statistics
+  selectors for its validation input.
+- `pipeline/src/assemble-atlas.ts` copies the observation component into the
+  release database. Remove that component after all its readers have migrated.
+- `packages/atlas-runtime/src/catalogue/observationLoader.ts` and
+  `observationTables.ts` use the table inventory, generation hash, payload
+  hashes and fallback reader. Replace those checks with statistics-backed
+  catalogue and artifact validation. `storage/atlasObservations.ts` implements
+  the table reads and checks and can then lose the table-specific helpers.
+- `services/api/tests/built/statisticsReadPath.test.ts` and
+  `provenance.test.ts` compare against table-backed artifacts. Point those tests
+  at the independent compiled artifacts. Table-writer and fixture tests under
+  `services/api/tests/` can retire with the writer.
+
+`pipeline/src/store-observations.ts` and `atlasObservationTables.ts` write and
+verify the tables. Remove them and `observations.sqlite` only after those
+consumers have replacements and the independent byte comparison passes.
