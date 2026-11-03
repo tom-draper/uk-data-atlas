@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { compileRelationshipCandidates } from "../../../pipeline/src/relationshipCandidates";
+import { compileRelationshipCandidates } from "../src/relationshipCandidates";
 import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 

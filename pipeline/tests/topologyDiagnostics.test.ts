@@ -8,7 +8,7 @@ import {
 	type GeoJsonGeometry,
 } from "@uk-data-atlas/atlas-runtime/geometry";
 import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
-import { compileMapResource } from "../../../pipeline/src/compileMapResource";
+import { compileMapResource } from "../src/compileMapResource";
 
 const left: GeoJsonGeometry = {
 	type: "Polygon",

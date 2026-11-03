@@ -15,7 +15,7 @@ import type {
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { RelationshipCandidate } from "@uk-data-atlas/atlas-runtime/relationships";
-import { compileValidationReport } from "../../../pipeline/src/validation/compileValidationReport";
+import { compileValidationReport } from "../src/validation/compileValidationReport";
 import {
 	type MeasureTotal,
 	type ObservationArtifact,
@@ -23,7 +23,7 @@ import {
 	readValidationWaivers,
 	type ValidationInputs,
 	type ValidationWaiver,
-} from "../../../pipeline/src/validation/inputs";
+} from "../src/validation/inputs";
 
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;

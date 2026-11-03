@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createLookupResolver } from "../../../pipeline/src/lookupResolver";
+import { createLookupResolver } from "../src/lookupResolver";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 
