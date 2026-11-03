@@ -74,8 +74,9 @@ type Records = { readonly [key: string]: Json };
 /**
  * The per-100,000-residents figure the compilers add from the population
  * estimate: `value` over the area's mid-year population in population-uk, for
- * `year` or else the part's year. Mirrors `addPopulationMetrics`, so the sum
- * runs over the ages in the same order.
+ * `year` or else the part's year, left out where population-uk lacks the
+ * area. Mirrors `addPopulationMetrics`, so the sum runs over the ages in the
+ * same order.
  */
 export const per100k = (
 	value: (record: Records) => Json,
@@ -94,6 +95,7 @@ export const per100k = (
 				const area = (part?.data as Records | undefined)?.[
 					context.code
 				] as Records | undefined;
+				if (!area) return undefined;
 				const total = Object.values(
 					(area?.total ?? {}) as Records,
 				).reduce<number>((sum, count) => sum + (count as number), 0);

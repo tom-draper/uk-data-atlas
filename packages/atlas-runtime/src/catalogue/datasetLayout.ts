@@ -231,7 +231,7 @@ function records(
 							code,
 							header,
 							dataset: readDataset,
-						}),
+						}) ?? null,
 					);
 		result[code] = record;
 	}
