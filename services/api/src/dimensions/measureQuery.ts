@@ -11,6 +11,7 @@ import {
 	readFilters,
 	readMeasureTerm,
 	selectSeries,
+	seriesDatasets,
 	unknownDimension,
 	type DimensionContext,
 } from "./seriesSelection";
@@ -22,8 +23,9 @@ import {
  * Each value names one series. A measure takes the dimension filters that
  * name its own dimensions, and a dimension left out takes its total, as in a
  * path. With several `measure` values a filter applies to each measure that
- * has the dimension and is ignored by those that do not. A reviewed human
- * alias such as `house-prices` is accepted; an old encoded series id such as
+ * has the dimension and is ignored by those that do not, and so is `datasetId`,
+ * which chooses between datasets that publish the same members, such as
+ * general and local election turnout. A reviewed human alias such as `house-prices` is accepted; an old encoded series id such as
  * `crime-burglary` is refused with the measure and members that replace it.
  *
  * The routes read series by their catalogue id, so the request is rewritten
@@ -147,7 +149,14 @@ export const resolveMeasureQuery = (
 		const selected = selectSeries({
 			measure,
 			filters: own,
-			datasetId,
+			datasetId:
+				datasetId !== undefined &&
+				measures.length > 1 &&
+				!measure.series.some((series) =>
+					seriesDatasets(series).includes(datasetId),
+				)
+					? undefined
+					: datasetId,
 			url: parsed,
 			context,
 			hrefFor,
@@ -178,7 +187,11 @@ export const resolveMeasureQuery = (
 					new Set([...(stated.get(dimension) ?? []), ...codes]),
 				);
 	}
-	if (names.length === 0 && ids.every((id, index) => id === terms[index]))
+	if (
+		names.length === 0 &&
+		!(datasetId !== undefined && measures.length > 0) &&
+		ids.every((id, index) => id === terms[index])
+	)
 		return { kind: "unchanged" };
 	const rewrite = (measuresOut: string[]) => {
 		const next = new URL(parsed);
@@ -189,6 +202,8 @@ export const resolveMeasureQuery = (
 		return next;
 	};
 	const internal = rewrite(ids);
+	// The series ids already say which dataset.
+	if (measures.length > 0) internal.searchParams.delete("datasetId");
 	const external = rewrite(publicMeasures);
 	for (const [dimension, codes] of stated)
 		external.searchParams.set(dimension, [...codes].join(","));
