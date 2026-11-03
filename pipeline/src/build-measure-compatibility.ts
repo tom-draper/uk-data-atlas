@@ -1,8 +1,8 @@
-import { assertObservationCatalogue } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import {
-	readSourceObservations,
-	type MeasureTableArtifact,
+	isMeasureTable,
+	tableMeasureObservations,
+	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -12,13 +12,10 @@ import type {
 	AreaReleaseArtifact,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import {
-	type DataCatalog,
-	observationArtifactName,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileMeasureCompatibility } from "./statistics/measureCompatibility";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { observationBuildPath } from "./statistics/observationBuildPath";
+import { openStatisticsArtifactReader } from "./statisticsArtifacts";
 
 const read = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;
@@ -47,30 +44,37 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 	const dataCatalog = read<DataCatalog>(
 		join(publicDirectory, "data-catalog.json"),
 	);
-	const databasePath = observationBuildPath(repositoryRoot);
-	assertObservationCatalogue(databasePath, dataCatalog);
-	// A table serves several measures, so it is read once.
-	const tables = new Map<string, MeasureTableArtifact>();
-	const compatibility = compileMeasureCompatibility(
+	const { database, readArtifact } = openStatisticsArtifactReader(
+		repositoryRoot,
 		dataCatalog,
-		read<BoundaryRegistry>(
-			buildArtifactPath(repositoryRoot, "boundary-releases.json"),
-		),
-		artifacts,
-		dataCatalog.measures.flatMap((measure) =>
-			measure.sources.map((source) =>
-				readSourceObservations(
-					databasePath,
-					observationArtifactName(measure.id, source),
-					measure.id,
-					tables,
-				),
-			),
-		),
 	);
-	const outputPath = join(publicDirectory, "measure-compatibility.json");
-	writeFileSync(outputPath, `${JSON.stringify(compatibility, null, "\t")}\n`);
-	return { outputPath, measureCount: compatibility.measures.length };
+	try {
+		const compatibility = compileMeasureCompatibility(
+			dataCatalog,
+			read<BoundaryRegistry>(
+				buildArtifactPath(repositoryRoot, "boundary-releases.json"),
+			),
+			artifacts,
+			dataCatalog.measures.flatMap((measure) =>
+				measure.sources.map((source) => {
+					const artifact: unknown = JSON.parse(
+						readArtifact(measure.id, source),
+					);
+					return isMeasureTable(artifact)
+						? tableMeasureObservations(artifact, measure.id)
+						: (artifact as AnyMeasureObservationArtifact);
+				}),
+			),
+		);
+		const outputPath = join(publicDirectory, "measure-compatibility.json");
+		writeFileSync(
+			outputPath,
+			`${JSON.stringify(compatibility, null, "\t")}\n`,
+		);
+		return { outputPath, measureCount: compatibility.measures.length };
+	} finally {
+		database.close();
+	}
 };
 
 const scriptPath = fileURLToPath(import.meta.url);

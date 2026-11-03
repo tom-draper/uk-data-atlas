@@ -211,7 +211,12 @@ const apiStages = [
 	),
 	stage(
 		"measure-compatibility",
-		["data-catalog", "boundary-registry", "area-inventory"],
+		[
+			"data-catalog",
+			"boundary-registry",
+			"area-inventory",
+			"statistics-read-path",
+		],
 		["exec", "tsx", "pipeline/src/build-measure-compatibility.ts"],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
