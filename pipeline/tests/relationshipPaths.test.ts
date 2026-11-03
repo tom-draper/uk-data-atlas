@@ -5,7 +5,7 @@ import {
 	createRelationshipPathIndex,
 	type CrosswalkShape,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import { compileRelationshipPaths } from "../../../pipeline/src/relationshipPaths";
+import { compileRelationshipPaths } from "../src/relationshipPaths";
 import { crosswalkInventory } from "./geographyFixtures";
 
 test("publishes only explicit, directional paths with their valid purpose", () => {

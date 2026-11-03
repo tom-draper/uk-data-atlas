@@ -9,17 +9,17 @@ import {
 	exportStatisticsMeasure,
 	expandStatisticsSelection,
 	hashStatisticsSelection,
-} from "../../../pipeline/src/statisticsExport";
+} from "../src/statisticsExport";
 import { readParquet } from "./parquetFixtures";
-import { bindStatisticsField } from "../../../pipeline/src/bindStatisticsField";
-import { bindCensusStatistics } from "../../../pipeline/src/bindCensusStatistics";
-import { bindReviewedStatistics } from "../../../pipeline/src/bindReviewedStatistics";
+import { bindStatisticsField } from "../src/bindStatisticsField";
+import { bindCensusStatistics } from "../src/bindCensusStatistics";
+import { bindReviewedStatistics } from "../src/bindReviewedStatistics";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
-import { bindCompiledFields } from "../../../pipeline/src/bindCompiledFields";
-import { compileMeasureDownloads } from "../../../pipeline/src/measureDownloads";
+import { bindCompiledFields } from "../src/bindCompiledFields";
+import { compileMeasureDownloads } from "../src/measureDownloads";
 import { gunzipSync } from "node:zlib";
-import { measureStatisticsSelections } from "../../../pipeline/src/measureStatisticsSelections";
+import { measureStatisticsSelections } from "../src/measureStatisticsSelections";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 test("binds a census measure only when every source partition is complete", () => {

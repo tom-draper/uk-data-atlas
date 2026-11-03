@@ -12,10 +12,10 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { fetchOnsBoundary } from "../../../pipeline/src/sources/fetch-ons-boundaries";
-import type { OnsBoundarySource } from "../../../pipeline/src/sources/onsBoundarySources";
-import { createBoundaryRegistry } from "../../../pipeline/src/build-boundary-registry";
-import { compileAreas } from "../../../pipeline/src/areaInventory";
+import { fetchOnsBoundary } from "../src/sources/fetch-ons-boundaries";
+import type { OnsBoundarySource } from "../src/sources/onsBoundarySources";
+import { createBoundaryRegistry } from "../src/build-boundary-registry";
+import { compileAreas } from "../src/areaInventory";
 
 const source: OnsBoundarySource = {
 	geography: "seneddConstituency",

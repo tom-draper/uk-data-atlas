@@ -12,7 +12,7 @@ import { delimiter, join, resolve } from "node:path";
 import test, { type TestContext } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const root = fileURLToPath(new URL("../../../", import.meta.url));
+const root = fileURLToPath(new URL("../../", import.meta.url));
 const runner = join(root, "scripts/build-data.mjs");
 
 function fixture(context: TestContext) {
