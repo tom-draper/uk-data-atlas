@@ -10,7 +10,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { resolvePlaces } from "@uk-data-atlas/atlas-runtime/places";
-import { buildLocationProjections } from "../../../pipeline/src/buildLocationProjections";
+import { buildLocationProjections } from "./pipelineFixtures";
 import { createNamedLocationLookup } from "@uk-data-atlas/atlas-runtime/places";
 import {
 	compileLocationProjections,
@@ -42,8 +42,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { buildAtlasSqlite } from "../../../pipeline/src/buildAtlasSqlite";
-import { buildTerrainCatalogue } from "../../../pipeline/src/build-terrain-catalogue";
+import { buildAtlasSqlite } from "./pipelineFixtures";
+import { buildTerrainCatalogue } from "./pipelineFixtures";
 import { readTerrainCatalogue } from "@uk-data-atlas/atlas-runtime/areas";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import { route } from "../src/routes";

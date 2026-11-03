@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { connect, type AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
-import { compileExportManifest } from "../../../pipeline/src/exportManifest";
+import { compileExportManifest } from "./pipelineFixtures";
 import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
@@ -29,7 +29,7 @@ import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
-import { compileOperations } from "../../../pipeline/src/build-operations";
+import { compileOperations } from "./pipelineFixtures";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import {

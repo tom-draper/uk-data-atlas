@@ -13,9 +13,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { AtlasDatasetInput } from "../../../pipeline/src/catalog/input";
-import { storeObservations as writeObservations } from "../../../pipeline/src/store-observations";
-import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import { AtlasDatasetInput } from "./pipelineFixtures";
+import { storeObservations as writeObservations } from "./pipelineFixtures";
+import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
 import {
 	assertObservationCatalogue,
@@ -28,8 +28,8 @@ import {
 	observationTableOf,
 	type MeasureTableArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { compileExportManifest } from "../../../pipeline/src/exportManifest";
-import { compileMeasureCompatibility } from "../../../pipeline/src/measureCompatibility";
+import { compileExportManifest } from "./pipelineFixtures";
+import { compileMeasureCompatibility } from "./pipelineFixtures";
 import { route } from "../src/routes";
 import { dataCatalog, measureObservations, testContext } from "./routeFixtures";
 import type {
