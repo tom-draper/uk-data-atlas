@@ -34,7 +34,6 @@ export default defineConfig({
 						"tests/**/*.test.ts",
 						"tests/data/**/*.test.mts",
 						"packages/*/tests/**/*.test.ts",
-						"pipeline/tests/**/*.test.ts",
 					],
 					exclude: [...configDefaults.exclude, BUILT_TESTS],
 					sequence: { groupOrder: 0 },

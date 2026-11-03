@@ -8,6 +8,7 @@
 		"node": ">=24 <27"
 	},
 	"scripts": {
+		"test": "tsx --test --test-concurrency=2 tests/*.test.ts",
 		"build:assets": "tsx src/build-atlas-assets.ts",
 		"fetch:onspd": "tsx src/sources/fetch-onspd.ts",
 		"fetch:boundaries": "tsx --max-old-space-size=3072 src/sources/fetch-ons-boundaries.ts",
