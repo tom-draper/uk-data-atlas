@@ -376,7 +376,7 @@ export const readAtlasCatalogues = (
 	);
 	const measureObservations = stage("measure-observations", () =>
 		readMeasureObservations(
-			apiRoot,
+			repositoryRootOf(apiRoot),
 			dataCatalog,
 			options.observationCacheBytes,
 			options.statisticsReadPath,

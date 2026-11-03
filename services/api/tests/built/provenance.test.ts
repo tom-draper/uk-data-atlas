@@ -94,7 +94,7 @@ test("names an artifact that exists and hashes to what it says", () => {
 			// artifact without its hash must hash to its hash.
 			const { contentHash, ...content } = JSON.parse(
 				readObservationText(
-					observationDatabasePath(apiRoot),
+					observationDatabasePath(resolve(apiRoot, "../..")),
 					observations.artifact,
 				),
 			) as { contentHash: string };

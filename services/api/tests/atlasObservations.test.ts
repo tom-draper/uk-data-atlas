@@ -195,7 +195,7 @@ test("publishes exact SQLite payloads once per source, preserves other tables, a
 	} finally {
 		database.close();
 	}
-	const [own, owned, rented] = readMeasureObservations(apiRoot, catalog);
+	const [own, owned, rented] = readMeasureObservations(root, catalog);
 	assert.deepEqual(JSON.parse(JSON.stringify(own)), numeric);
 	assert.deepEqual(owned.periods[0].records, [
 		{ areaCode: "E01000001", value: 0, status: "observed" },
@@ -210,7 +210,7 @@ test("publishes exact SQLite payloads once per source, preserves other tables, a
 test("compatibility and exports consume SQLite with unchanged hashes, bytes and table contracts", (t) => {
 	const { root, apiRoot, publicDirectory, path } = fixture(t);
 	storeObservations(root, catalog, entries());
-	const views = readMeasureObservations(apiRoot, catalog);
+	const views = readMeasureObservations(root, catalog);
 	const eager = catalog.measures.map((measure) =>
 		readSourceObservations(
 			path,
@@ -300,13 +300,13 @@ test("a missing component leaves the published database intact", (t) => {
 test("rejects stale catalogues, missing SQLite rows and corrupted bytes without JSON fallback", (t) => {
 	const { root, apiRoot, publicDirectory, path } = fixture(t);
 	assert.throws(
-		() => readMeasureObservations(apiRoot, catalog),
+		() => readMeasureObservations(root, catalog),
 		/pnpm data:build --from data-catalog/,
 	);
 	storeObservations(root, catalog, entries());
 	assert.throws(
 		() =>
-			readMeasureObservations(apiRoot, {
+			readMeasureObservations(root, {
 				...catalog,
 				contentHash: "stale",
 			}),
@@ -321,7 +321,7 @@ test("rejects stale catalogues, missing SQLite rows and corrupted bytes without 
 		"UPDATE observations SET value = value + 1 WHERE seriesId = (SELECT position FROM observation_series WHERE artifactId = 'numeric-observations')",
 	);
 	assert.throws(
-		() => readMeasureObservations(apiRoot, catalog)[0].periods,
+		() => readMeasureObservations(root, catalog)[0].periods,
 		/Corrupt SQLite measure observations/,
 	);
 	assert.throws(
@@ -345,7 +345,7 @@ test("rejects stale catalogues, missing SQLite rows and corrupted bytes without 
 test("live lazy views reject a newly published generation after cache eviction", (t) => {
 	const { root, apiRoot } = fixture(t);
 	storeObservations(root, catalog, entries());
-	const views = readMeasureObservations(apiRoot, catalog, 0);
+	const views = readMeasureObservations(root, catalog, 0);
 	assert.equal(views[0].periods[0].records[0].areaCode, "E01000001");
 	const changed = entries();
 	changed[0] = [
@@ -354,14 +354,14 @@ test("live lazy views reject a newly published generation after cache eviction",
 	];
 	storeObservations(root, catalog, changed);
 	assert.throws(() => views[0].periods, /changed while serving/);
-	assert.deepEqual(readMeasureObservations(apiRoot, catalog)[0].periods, []);
+	assert.deepEqual(readMeasureObservations(root, catalog)[0].periods, []);
 });
 
 test("JSON downloads return the stored bytes and refuse mismatched manifest bytes", (t) => {
 	const { root, apiRoot, publicDirectory, path } = fixture(t);
 	storeObservations(root, catalog, entries());
 	const manifest = compileExportManifest(publicDirectory, catalog, path);
-	const observations = readMeasureObservations(apiRoot, catalog);
+	const observations = readMeasureObservations(root, catalog);
 	const context = testContext({
 		dataCatalog: catalog,
 		measureObservations: observations,

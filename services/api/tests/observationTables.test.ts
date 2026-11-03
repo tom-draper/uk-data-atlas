@@ -468,7 +468,7 @@ test("catalogue views share the configured observation budget", (t) => {
 		join(directory, "data/build/atlas.sqlite"),
 	);
 	const [a, b, rented] = readMeasureObservations(
-		join(directory, "services/api"),
+		directory,
 		catalogue,
 		Buffer.byteLength(text) + text.length * 2,
 	);

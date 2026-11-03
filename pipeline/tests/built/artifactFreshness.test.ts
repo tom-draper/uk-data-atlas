@@ -208,7 +208,7 @@ test("builds measure compatibility from the current observations and areas", () 
 	const { inputs } = read("measure-compatibility.json");
 	const observationHashes = new Map(
 		readMeasureObservations(
-			apiRoot,
+			resolve(apiRoot, "../.."),
 			readDataCatalog(resolve(apiRoot, "../..")),
 		).map((artifact) => [
 			observationPartitionKey(artifact),
