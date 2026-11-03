@@ -9,8 +9,9 @@ import { atlasDatabasePath } from "./dataLayout";
 
 export const readSqliteNamedLocationInventory = (
 	apiRoot: string,
+	databasePath = atlasDatabasePath(apiRoot),
 ): NamedLocationInventory => {
-	const path = atlasDatabasePath(apiRoot);
+	const path = databasePath;
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		const header = database

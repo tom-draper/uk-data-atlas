@@ -5,9 +5,14 @@ import { repositoryRootOf } from "./dataLayout";
 
 export const readSqlitePostcodeIndexArtifact = (
 	apiRoot: string,
+	databasePath?: string,
 ): PostcodeIndexArtifact => {
 	const artifact: PostcodeIndexArtifact = JSON.parse(
-		readAtlasPayload(repositoryRootOf(apiRoot), "postcode-index"),
+		readAtlasPayload(
+			repositoryRootOf(apiRoot),
+			"postcode-index",
+			databasePath,
+		),
 	);
 	const mismatch = postcodeIndexMismatch(artifact);
 	if (mismatch)

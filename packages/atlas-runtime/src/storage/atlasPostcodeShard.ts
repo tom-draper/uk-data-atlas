@@ -23,8 +23,9 @@ export const postcodeDistrictWhere =
 export const readSqlitePostcodeShard = (
 	apiRoot: string,
 	entry: PostcodeIndexArtifact["shards"][number],
+	databasePath = atlasDatabasePath(apiRoot),
 ): string => {
-	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+	const database = new DatabaseSync(databasePath, {
 		readOnly: true,
 	});
 	try {

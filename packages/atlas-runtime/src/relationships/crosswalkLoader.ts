@@ -28,6 +28,7 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 		private readonly apiRoot: string,
 		inventory: CrosswalkInventory,
 		private readonly maxBytes: number,
+		private readonly databasePath?: string,
 	) {
 		if (!Number.isSafeInteger(maxBytes) || maxBytes < 0)
 			throw new Error(
@@ -45,7 +46,11 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 		}
 		const expected = this.entries.find((crosswalk) => crosswalk.id === id);
 		if (!expected) return undefined;
-		const { artifact, bytes } = readSqliteCrosswalk(this.apiRoot, expected);
+		const { artifact, bytes } = readSqliteCrosswalk(
+			this.apiRoot,
+			expected,
+			this.databasePath,
+		);
 		if (bytes <= this.maxBytes) {
 			while (this.bytes + bytes > this.maxBytes) {
 				const oldest = this.loaded.keys().next().value!;
@@ -75,7 +80,9 @@ export const readCrosswalkLookup = (
 	apiRoot: string,
 	inventory: CrosswalkInventory,
 	maxBytes = DEFAULT_CROSSWALK_CACHE_BYTES,
-): CrosswalkLookup => new LazyCrosswalkLookup(apiRoot, inventory, maxBytes);
+	databasePath?: string,
+): CrosswalkLookup =>
+	new LazyCrosswalkLookup(apiRoot, inventory, maxBytes, databasePath);
 
 export const readRelationshipPathInventory = (
 	apiRoot: string,

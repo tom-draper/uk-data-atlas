@@ -4,8 +4,11 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
 /** Server-only access to the shared compiled release. Connections close before atomic replacements. */
-export function readAtlasPayload(repositoryRoot: string, id: string): string {
-	const path = join(repositoryRoot, "data/build/atlas.sqlite");
+export function readAtlasPayload(
+	repositoryRoot: string,
+	id: string,
+	path = join(repositoryRoot, "data/build/atlas.sqlite"),
+): string {
 	const database = new DatabaseSync(path, { readOnly: true });
 	let stored: unknown;
 	try {
