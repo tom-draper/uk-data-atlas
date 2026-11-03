@@ -37,7 +37,7 @@ const readPath = JSON.parse(
 	readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 ) as StatisticsReadPath;
 
-test("names every catalogue artifact once, as statistics or observations", () => {
+test("names every catalogue artifact once as statistics", () => {
 	const names = new Set(
 		catalog.measures.flatMap((measure) =>
 			measure.sources.map((source) =>
@@ -51,6 +51,7 @@ test("names every catalogue artifact once, as statistics or observations", () =>
 	];
 	assert.equal(new Set(planned).size, planned.length);
 	assert.deepEqual(new Set(planned), names);
+	assert.deepEqual(readPath.observations, {});
 });
 
 test("rebuilds every moved artifact by value from statistics rows", () => {
@@ -58,7 +59,7 @@ test("rebuilds every moved artifact by value from statistics rows", () => {
 		for (const source of measure.sources) {
 			const name = observationArtifactName(measure.id, source);
 			const selector = readPath.statistics[name];
-			if (!selector) continue;
+			assert.ok(selector, `Missing selector for ${name}`);
 			assert.ok(
 				observationValuesEqual(
 					readStatisticsObservationText(databasePath, selector, {
@@ -126,22 +127,40 @@ const samples = () => {
 };
 
 test("serves the same answers from statistics rows as from compiled artifacts", () => {
+	let activeKey = "";
+	let activeArtifact: AnyMeasureObservationArtifact;
 	const legacy = {
 		...catalogues,
 		measureObservations: catalog.measures.flatMap((measure) =>
 			measure.sources.map((source) => {
-				const artifact: unknown = JSON.parse(
-					readFileSync(
-						compiledObservationPath(
-							repositoryRoot,
-							observationArtifactName(measure.id, source),
-						),
-						"utf8",
-					),
-				);
-				return isMeasureTable(artifact)
-					? tableMeasureObservations(artifact, measure.id)
-					: (artifact as AnyMeasureObservationArtifact);
+				const name = observationArtifactName(measure.id, source);
+				const key = `${name}:${measure.id}`;
+				const load = () => {
+					if (activeKey !== key) {
+						const artifact: unknown = JSON.parse(
+							readFileSync(
+								compiledObservationPath(repositoryRoot, name),
+								"utf8",
+							),
+						);
+						activeArtifact = isMeasureTable(artifact)
+							? tableMeasureObservations(artifact, measure.id)
+							: (artifact as AnyMeasureObservationArtifact);
+						activeKey = key;
+					}
+					return activeArtifact;
+				};
+				return {
+					schemaVersion: 1,
+					measureId: measure.id,
+					sourceGeography: source.sourceGeography,
+					get contentHash() {
+						return load().contentHash;
+					},
+					get periods() {
+						return load().periods;
+					},
+				} as AnyMeasureObservationArtifact;
 			}),
 		),
 	};

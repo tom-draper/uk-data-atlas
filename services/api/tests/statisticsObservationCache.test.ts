@@ -40,6 +40,7 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	`);
 	database.close();
 	const catalog = {
+		contentHash: "fixture-hash",
 		measures: [
 			{
 				id: "count",
@@ -55,6 +56,7 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	} as unknown as DataCatalog;
 	const readPath: StatisticsReadPath = {
 		schemaVersion: 1,
+		dataCatalogHash: "fixture-hash",
 		statistics: {
 			"count-observations": {
 				datasetId: "fixture",
@@ -65,18 +67,32 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		},
 		observations: {},
 	};
-	const [view] = readMeasureObservations(
-		join(root, "services/api"),
-		catalog,
-		0,
-		readPath,
-	);
+	const [view] = readMeasureObservations(root, catalog, 0, readPath);
 	assert.deepEqual(view?.periods[0]?.records, [
 		{ areaCode: "E1", value: 42, status: "observed" },
 	]);
+	const [cached] = readMeasureObservations(root, catalog, 4096, readPath);
+	assert.deepEqual(cached?.periods[0]?.records[0], {
+		areaCode: "E1",
+		value: 42,
+		status: "observed",
+	});
+	const update = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
+	update.exec("UPDATE observation SET value = 43");
+	update.close();
+	assert.deepEqual(cached?.periods[0]?.records[0], {
+		areaCode: "E1",
+		value: 42,
+		status: "observed",
+	});
+	assert.deepEqual(view?.periods[0]?.records[0], {
+		areaCode: "E1",
+		value: 43,
+		status: "observed",
+	});
 	assert.throws(
 		() =>
-			readMeasureObservations(join(root, "services/api"), catalog, 0, {
+			readMeasureObservations(root, catalog, 0, {
 				...readPath,
 				observations: { extra: "missing" },
 			}),

@@ -19,7 +19,6 @@ import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
 import {
-	writeEmptyObservationComponent,
 	writeEmptyPostcodeAreas,
 	writeEmptyWebsiteComponent,
 } from "./atlasComponentFixtures";
@@ -75,7 +74,6 @@ function fixture(t: TestContext) {
 		join(root, "data/build/atlas.sqlite"),
 		join(root, "data/build/atlas-base.sqlite"),
 	);
-	writeEmptyObservationComponent(root);
 	writeEmptyWebsiteComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(

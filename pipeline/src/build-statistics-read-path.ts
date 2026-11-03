@@ -31,14 +31,8 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
- * Decide, artifact by artifact, whether the API reads observations from the
- * statistics tables or the observation tables, and write the decision to
- * `data/build/statistics-read-path.json`.
- *
- * An artifact moves only when the statistics rows rebuild its parsed values,
- * so every number, status, interval, period and area is unchanged. Any other
- * artifact stays where it is, and the reason says what differs, so that a
- * difference is reported rather than hidden.
+ * Select statistics rows for every artifact and check their values against
+ * the independently compiled artifacts.
  */
 const repositoryRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),
@@ -291,6 +285,7 @@ const difference = (stored: Artifact, rebuilt: Artifact) => {
 
 const plan: StatisticsReadPath = {
 	schemaVersion: 1,
+	dataCatalogHash: catalog.contentHash,
 	statistics: {},
 	observations: {},
 };
@@ -389,6 +384,14 @@ for (const measure of catalog.measures)
 			);
 	}
 database.close();
+if (Object.keys(plan.observations).length)
+	throw new Error(
+		`Statistics selectors failed validation:\n${Object.entries(
+			plan.observations,
+		)
+			.map(([name, reason]) => `${name}: ${reason}`)
+			.join("\n")}`,
+	);
 
 const sorted = <T>(entries: { [key: string]: T }) =>
 	Object.fromEntries(
@@ -402,6 +405,7 @@ writeFileSync(
 	`${JSON.stringify(
 		{
 			schemaVersion: 1,
+			dataCatalogHash: plan.dataCatalogHash,
 			statistics: sorted(plan.statistics),
 			observations: sorted(plan.observations),
 		},
@@ -410,5 +414,5 @@ writeFileSync(
 	)}\n`,
 );
 console.log(
-	`${Object.keys(plan.statistics).length} artifacts read from statistics rows, ${Object.keys(plan.observations).length} from observation tables. Wrote ${file}`,
+	`${Object.keys(plan.statistics).length} artifacts read from statistics rows. Wrote ${file}`,
 );

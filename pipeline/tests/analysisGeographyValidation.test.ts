@@ -353,6 +353,7 @@ test("analysis validation builds from statistics rows", (t) => {
 		join(root, "data/build/statistics-read-path.json"),
 		JSON.stringify({
 			schemaVersion: 1,
+			dataCatalogHash: catalogue.contentHash,
 			statistics: {
 				"fixture-observations": {
 					datasetId: "fixture-dataset",

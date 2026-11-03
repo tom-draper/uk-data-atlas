@@ -1,8 +1,4 @@
-import {
-	assertObservationCatalogue,
-	readObservationInventory,
-	readObservationText,
-} from "../storage/atlasObservations";
+import { DatabaseSync } from "node:sqlite";
 import type {
 	StatisticsArtifact,
 	StatisticsReadPath,
@@ -132,11 +128,6 @@ type ObservationCacheEntry = {
 export class ObservationCache {
 	private readonly entries = new Map<string, ObservationCacheEntry>();
 	private bytes = 0;
-	private readonly inventories = new Map<
-		string,
-		ReturnType<typeof readObservationInventory>
-	>();
-	private readonly statisticsCatalogues = new Set<string>();
 
 	/** Artifacts read from the statistics tables, with what the catalogue says of each. */
 	private readonly statistics = new Map<
@@ -157,14 +148,23 @@ export class ObservationCache {
 	bindCatalogue(
 		databasePath: string,
 		catalog: DataCatalog,
-		readPath?: StatisticsReadPath,
+		readPath: StatisticsReadPath,
 	) {
-		if (!readPath || Object.keys(readPath.statistics).length === 0) {
-			this.inventories.set(
-				databasePath,
-				assertObservationCatalogue(databasePath, catalog),
+		if (readPath.dataCatalogHash !== catalog.contentHash)
+			throw new Error(
+				"Statistics selectors do not match the data catalogue.",
 			);
-			return;
+		const database = new DatabaseSync(databasePath, { readOnly: true });
+		try {
+			const tables = database
+				.prepare(
+					"SELECT name FROM sqlite_schema WHERE type = 'table' AND name IN ('series', 'observation')",
+				)
+				.all();
+			if (tables.length !== 2)
+				throw new Error("Missing statistics tables in atlas database.");
+		} finally {
+			database.close();
 		}
 		if (Object.keys(readPath.observations).length)
 			throw new Error(
@@ -190,7 +190,6 @@ export class ObservationCache {
 		for (const name of Object.keys(readPath.statistics))
 			if (!names.has(name))
 				throw new Error(`Unexpected statistics selector: ${name}.`);
-		this.statisticsCatalogues.add(databasePath);
 	}
 
 	/** Whether an artifact is read from the statistics tables. */
@@ -198,19 +197,8 @@ export class ObservationCache {
 		return this.statistics.has(`${databasePath}:${artifactName}`);
 	}
 
-	private inventory(databasePath: string) {
-		let inventory = this.inventories.get(databasePath);
-		if (!inventory) {
-			inventory = readObservationInventory(databasePath);
-			this.inventories.set(databasePath, inventory);
-		}
-		return inventory;
-	}
-
 	has(databasePath: string, artifactName: string): boolean {
-		if (this.statisticsCatalogues.has(databasePath))
-			return this.statistics.has(`${databasePath}:${artifactName}`);
-		return this.inventory(databasePath).names.has(artifactName);
+		return this.statistics.has(`${databasePath}:${artifactName}`);
 	}
 
 	text(databasePath: string, artifactName: string): string {
@@ -228,17 +216,15 @@ export class ObservationCache {
 			this.entries.set(path, entry);
 		} else {
 			const statistics = this.statistics.get(path);
-			const text = statistics
-				? readStatisticsObservationText(
-						databasePath,
-						statistics.selector,
-						statistics.artifact,
-					)
-				: readObservationText(
-						databasePath,
-						artifactName,
-						this.inventory(databasePath).generationHash,
-					);
+			if (!statistics)
+				throw new Error(
+					`Missing statistics selector for ${artifactName}.`,
+				);
+			const text = readStatisticsObservationText(
+				databasePath,
+				statistics.selector,
+				statistics.artifact,
+			);
 			entry = {
 				text,
 				views: new Map(),
@@ -275,29 +261,6 @@ export class ObservationCache {
 		return view;
 	}
 }
-
-/**
- * Read the observations a measure source names from SQLite,
- * whether the artifact is the measure's own or a table it shares. Tables are
- * read once per cache, however many of their measures are asked for.
- */
-export const readSourceObservations = (
-	databasePath: string,
-	artifactName: string,
-	measureId: string,
-	tables: Map<string, MeasureTableArtifact> = new Map(),
-): AnyMeasureObservationArtifact => {
-	const cached = tables.get(artifactName);
-	if (cached) return tableMeasureObservations(cached, measureId);
-	const parsed = JSON.parse(
-		readObservationText(databasePath, artifactName),
-	) as unknown;
-	if (isMeasureTable(parsed)) {
-		tables.set(artifactName, parsed);
-		return tableMeasureObservations(parsed, measureId);
-	}
-	return parsed as AnyMeasureObservationArtifact;
-};
 
 /**
  * A measure source's observations that are read when first used, shaped like

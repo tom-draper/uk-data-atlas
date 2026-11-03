@@ -6,7 +6,6 @@ import {
 	compileDataCatalog,
 	type DataCatalogInputs,
 } from "./catalog/compileDataCatalog";
-import { storeObservations } from "./store-observations";
 import {
 	assertMeasureDimensions,
 	observationArtifactName,
@@ -152,11 +151,23 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 			yield [table.id, text];
 		}
 	}
-	const databasePath = storeObservations(
-		repositoryRoot,
-		catalog,
-		observationEntries(),
+	const required = new Set(
+		catalog.measures.flatMap((measure) =>
+			measure.sources.map((source) =>
+				observationArtifactName(measure.id, source),
+			),
+		),
 	);
+	for (const [name] of observationEntries()) {
+		if (!required.delete(name))
+			throw new Error(
+				`Unexpected or duplicate observation artifact: ${name}`,
+			);
+	}
+	if (required.size)
+		throw new Error(
+			`Missing observation artifacts: ${[...required].join(", ")}`,
+		);
 	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
 	writeFileSync(
 		join(repositoryRoot, "data/build/measure-statistics-fields.json"),
@@ -164,7 +175,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	);
 	return {
 		catalogPath,
-		databasePath,
 		populationRecordCount: populationObservations.reduce(
 			(count, observations) =>
 				count +

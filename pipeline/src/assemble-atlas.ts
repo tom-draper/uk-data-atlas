@@ -9,7 +9,6 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
-import { observationBuildPath } from "./statistics/observationBuildPath";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { writePostcodeAreas } from "./storage/index";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
@@ -19,14 +18,11 @@ import {
 } from "./postcodes/storePostcodeAreas";
 import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
 
-const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
-
 export function assembleAtlas(root: string) {
 	const directory = join(root, "data/build");
 	const path = join(directory, "atlas.sqlite");
 	const components = [
 		join(directory, "atlas-base.sqlite"),
-		observationBuildPath(root),
 		join(directory, "postcode-index.sqlite"),
 		join(directory, "website-assets.sqlite"),
 	] as const;
@@ -48,35 +44,14 @@ export function assembleAtlas(root: string) {
 		const database = new DatabaseSync(temporary);
 		try {
 			database
-				.prepare("ATTACH DATABASE ? AS observations_component")
+				.prepare("ATTACH DATABASE ? AS postcode_component")
 				.run(components[1]);
 			database
-				.prepare("ATTACH DATABASE ? AS postcode_component")
-				.run(components[2]);
-			database
 				.prepare("ATTACH DATABASE ? AS website_component")
-				.run(components[3]);
-			const objects = database
-				.prepare(
-					"SELECT type, name, sql FROM observations_component.sqlite_schema WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' ORDER BY rowid",
-				)
-				.all() as Array<{ type: string; name: string; sql: string }>;
+				.run(components[2]);
 			database.exec(
 				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
-			for (const object of objects.filter(
-				({ type }) => type === "table",
-			)) {
-				database.exec(object.sql);
-				database.exec(
-					`INSERT INTO main.${quote(object.name)} SELECT * FROM observations_component.${quote(object.name)}`,
-				);
-			}
-			for (const object of objects.filter(
-				({ type }) => type === "index" || type === "view",
-			))
-				database.exec(object.sql);
-			database.exec("COMMIT; ANALYZE; BEGIN");
 			const insertPayload = database.prepare(
 				"INSERT OR REPLACE INTO payloads (id, payload) VALUES (?, ?)",
 			);

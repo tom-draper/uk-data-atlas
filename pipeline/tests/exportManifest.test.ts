@@ -18,7 +18,6 @@ import {
 	observationArtifactName,
 	type DataCatalog,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { readObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 import { compileExportManifest as compileManifest } from "../src/atlas/exportManifest";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readParquet } from "./parquetFixtures";
@@ -29,9 +28,12 @@ const compileExportManifest = (
 	databasePath: string,
 ) =>
 	compileManifest(directory, dataCatalog, (measureId, source) =>
-		readObservationText(
-			databasePath,
-			observationArtifactName(measureId, source),
+		readFileSync(
+			join(
+				databasePath,
+				`${observationArtifactName(measureId, source)}.json`,
+			),
+			"utf8",
 		),
 	);
 
@@ -194,7 +196,7 @@ test("fails before a catalogued observation artifact exists", () => {
 					catalog,
 					fixtureObservationDatabase(directory),
 				),
-			/Missing SQLite measure observations: fixture-observations/,
+			/ENOENT/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

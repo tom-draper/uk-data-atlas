@@ -20,7 +20,7 @@ stamps the cache with the SHA-256 hash of the final canonical database.
 
 The source release contains raw data only. After `pnpm data:download`, run
 `pnpm data:build` to build both SQLite files, and deploy them together from the
-same build. The pipeline builds separate base, observation, geography,
+same build. The pipeline builds separate base, geography,
 postcode and website-asset components, then `assemble-atlas` publishes the
 canonical database. The API only reads both files. At
 startup the API verifies the stamp and required dataset payloads; a missing or
@@ -89,58 +89,17 @@ publisher labels in `crosswalk_label` only where they differ from
 API rebuilds each artifact from these rows in code order, using each
 crosswalk's stored field order. See `data/build/README.md`.
 
-Observations are stored as rows, not as JSON text. `observation_series` has one
-row per artifact (`artifactId`, `contentHash`, source geography and the hash of
-the JSON the API serves), and `observation_measures`, `observation_periods`,
-`observation_areas` and `observation_statuses` give each measure, period label,
-area code and status an integer id in sort order. `observations` holds one row
-per `(seriesId, periodId, areaId)` with `value` and `statusId`. The rarer record
-fields live in sparse tables keyed the same way: `observation_source_areas`
-(`sourceAreaCode`), `observation_categories` (`category`) and
-`observation_intervals` (`lower`, `upper`). Each shared census table has one
-wide `observation_<table>` table with a REAL column per measure, and
-`observation_tables` and `observation_table_columns` map the artifact to it.
-`observations_decoded` exposes ordinary series as readable rows. The
-`observations_census` view unpivots wide census tables, one row per measure and
-area, including NULL cells. Its status, source area, category and confidence
-fields are NULL. `observations_all` combines both with the same columns. The
-per-table `*_decoded` views retain the wide format.
+The API reconstructs observations from the `dataset`, `measure`, `series`,
+`observation`, `area_version`, `period` and related statistics tables. The
+generated `statistics-read-path.json` binds each catalogue artifact to its
+statistics selectors and catalogue hash. The build compares reconstructed
+values, statuses, bounds, areas and periods against independent compiler output.
+Exports and compatibility checks use the same statistics-backed reads.
 
-`observation_measures` includes catalogue labels, units, value kinds, aggregation
-rules and weights, concepts and uncertainty metadata. Missing catalogue entries
-have NULL metadata. Join `observation_series.datasetId` to
-`observation_datasets.datasetId` for publisher, source URL, temporal coverage,
-licence and description. All observation tables remain STRICT. `observations` has an index on
-`(areaId, seriesId, periodId)` for queries across measures for one area.
-
-For example:
-
-```sql
-SELECT measureId, period, value, category, status
-FROM observations_all
-WHERE areaCode = 'E01000001'
-ORDER BY measureId, period;
-```
-
-Road collisions store the total beside its slight, serious and fatal measures, as
-the API serves all four.
-
-The API rebuilds each artifact's JSON from these rows and checks it against the
-stored hash, so responses, hashes and ETags are unchanged. Bulk JSON exports
-reuse rebuilt text in the same LRU as parsed observations. Each entry charges
-two bytes per text code unit plus its UTF-8 source byte count for parsed data.
-The default budget is 64 MiB; oversized entries are served without retention. An artifact is only
-stored if its rows rebuild its exact bytes, which means records must use the
-compilers' key order, periods and areas must ascend, and a period must have
-records. The `assemble-atlas` stage runs `ANALYZE` and `VACUUM` while building
-the database. Run `pnpm data:build --from data-catalog` to rebuild the tables.
-
-The old reader cannot read this database schema. Deploy the rebuilt database and
-matching API code together. From the repository root, run
-`pnpm data:build --from atlas-sqlite --no-cache` to rebuild SQLite and its downstream
-stages before starting the API. Observation storage is unchanged. Unifying the
-separate `observation_areas` code list from PR #387 with `areas` is a follow-up
-after both PRs land.
+Bulk JSON text and parsed observations share an LRU cache. Each entry charges
+two bytes per text code unit plus its UTF-8 byte count. The default budget is
+64 MiB; oversized entries are served without retention. Deploy the generated
+read path and vocabulary with the database from the same build.
 
 To compare a baseline database built before this area schema change with the
 current API's area and crosswalk output, run this command from the repository root. A nonzero exit indicates a mismatch or

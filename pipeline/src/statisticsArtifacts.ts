@@ -8,7 +8,6 @@ import {
 } from "@uk-data-atlas/measures";
 import {
 	rebuildStatisticsObservationText,
-	apiRootOf,
 	statisticsReadPathPath,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -18,6 +17,10 @@ export const statisticsArtifactReader = (
 	catalog: DataCatalog,
 	readPath: StatisticsReadPath,
 ) => {
+	if (readPath.dataCatalogHash !== catalog.contentHash)
+		throw new Error(
+			"Statistics selectors do not match the data catalogue.",
+		);
 	const names = new Set<string>();
 	const datasets = new Set(catalog.datasets.map((dataset) => dataset.id));
 	for (const measure of catalog.measures) {
@@ -55,7 +58,7 @@ export const openStatisticsArtifactReader = (
 	catalog: DataCatalog,
 ) => {
 	const readPath = JSON.parse(
-		readFileSync(statisticsReadPathPath(apiRootOf(repositoryRoot)), "utf8"),
+		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 	) as StatisticsReadPath;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),

@@ -129,6 +129,7 @@ test("uses reviewed source mappings only when each requested period exists", () 
 		} as unknown as Measure;
 		const reviewed: StatisticsReadPath = {
 			schemaVersion: 1,
+			dataCatalogHash: "fixture-hash",
 			statistics: {
 				[observationArtifactName(measure.id, measure.sources[0]!)]: {
 					datasetId: "population",
