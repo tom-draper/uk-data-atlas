@@ -9,6 +9,7 @@
 	},
 	"scripts": {
 		"test": "tsx --test --test-concurrency=2 tests/*.test.ts",
+		"test:built": "tsx --test --test-concurrency=2 tests/built/*.test.ts",
 		"build:assets": "tsx src/build-atlas-assets.ts",
 		"fetch:onspd": "tsx src/sources/fetch-onspd.ts",
 		"fetch:boundaries": "tsx --max-old-space-size=3072 src/sources/fetch-ons-boundaries.ts",
