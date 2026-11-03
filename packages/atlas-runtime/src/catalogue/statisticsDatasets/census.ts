@@ -1,4 +1,8 @@
-import { type DeclaredDataset, periods } from "../declaredStatistics";
+import {
+	type DeclaredDataset,
+	type Json,
+	periods,
+} from "../declaredStatistics";
 import { yearParts } from "../declaredPayload";
 import { HOUSEHOLDS, USUAL_RESIDENTS, measure } from "./measures";
 
@@ -280,9 +284,75 @@ export const TRAVEL_TO_WORK: DeclaredDataset = {
 	],
 };
 
+/** The census's code for each ethnic group. */
+const ETHNICITY_CODES: Readonly<Record<string, string>> = Object.fromEntries(
+	[
+		"Bangladeshi",
+		"Chinese",
+		"Indian",
+		"Pakistani",
+		"Other Asian",
+		"African",
+		"Caribbean",
+		"Other Black",
+		"White and Asian",
+		"White and Black African",
+		"White and Black Caribbean",
+		"Other Mixed or Multiple ethnic groups",
+		"English, Welsh, Scottish, Northern Irish or British",
+		"Irish",
+		"Gypsy or Irish Traveller",
+		"Roma",
+		"Other White",
+		"Arab",
+		"Any other ethnic group",
+	].map((name, index) => [name, String(index + 1)]),
+);
+
 export const ETHNICITY: DeclaredDataset = {
 	type: "ethnicity",
 	rebuild: {},
+	payload: {
+		parts: yearParts(
+			"ethnicity",
+			"localAuthority",
+			2024,
+			{ coverageCountries: ["GB-ENG", "GB-WLS"] },
+			["2021"],
+		),
+		/** Each group's entries carry their label and the census's code. */
+		fill: (record) => {
+			for (const group of Object.values(record))
+				for (const [name, entry] of Object.entries(
+					group as Record<string, Record<string, Json>>,
+				)) {
+					entry.ethnicity = name;
+					entry.code = ETHNICITY_CODES[name];
+				}
+		},
+		/** The largest group in each area. */
+		summary: (records) => ({
+			results: Object.fromEntries(
+				Object.entries(records).map(([code, record]) => {
+					let largest = "";
+					let most = -1;
+					for (const group of Object.values(
+						record as Record<string, Record<string, Json>>,
+					))
+						for (const [name, entry] of Object.entries(group))
+							if (
+								(entry as { population: number }).population >
+								most
+							) {
+								most = (entry as { population: number })
+									.population;
+								largest = name;
+							}
+					return [code, largest];
+				}),
+			),
+		}),
+	},
 	...districts2021,
 	period: census2021,
 	measures: [USUAL_RESIDENTS],
