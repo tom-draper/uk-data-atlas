@@ -108,11 +108,11 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 	assert.equal(readAtlasPayload(root, "dataset:existing"), "retained");
 	rmSync(join(root, "data/build/geography"), { recursive: true });
 	assert.deepEqual(
-		readBoundaryRegistry(apiRoot),
+		readBoundaryRegistry(root),
 		JSON.parse(expected.get("boundary-releases")!),
 	);
 	assert.deepEqual(
-		readGeographyInventory(apiRoot),
+		readGeographyInventory(root),
 		JSON.parse(expected.get("geography-inventory")!),
 	);
 	const crosswalks = {

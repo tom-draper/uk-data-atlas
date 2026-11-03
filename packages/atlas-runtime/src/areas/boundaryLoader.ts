@@ -33,9 +33,11 @@ import { atlasDatabasePath, repositoryRootOf } from "../storage/dataLayout";
 
 export { readBoundaryRegistry } from "../catalogue/boundaryCatalogue";
 
-export const readGeographyInventory = (apiRoot: string): GeographyInventory =>
+export const readGeographyInventory = (
+	repositoryRoot: string,
+): GeographyInventory =>
 	readGeographyCatalogue<GeographyInventory>(
-		apiRoot,
+		repositoryRoot,
 		"geography-inventory",
 		"releases",
 		"geography inventory",

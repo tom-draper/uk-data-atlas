@@ -178,10 +178,10 @@ export const readAtlasCatalogues = (
 		return value;
 	};
 	const boundaryRegistry = stage("boundary-registry", () =>
-		readBoundaryRegistry(apiRoot),
+		readBoundaryRegistry(repositoryRootOf(apiRoot)),
 	);
 	const geographyInventory = stage("geography-inventory", () =>
-		readGeographyInventory(apiRoot),
+		readGeographyInventory(repositoryRootOf(apiRoot)),
 	);
 	const areaInventory = stage("area-inventory", () =>
 		readAreaInventory(repositoryRootOf(apiRoot)),
@@ -266,7 +266,7 @@ export const readAtlasCatalogues = (
 	);
 	const relationshipCandidateInventory = stage(
 		"relationship-candidate-inventory",
-		() => readRelationshipCandidateInventory(apiRoot),
+		() => readRelationshipCandidateInventory(repositoryRootOf(apiRoot)),
 	);
 	const namedLocationLookup = stage("named-location-lookup", () =>
 		createNamedLocations(namedLocationInventory),
