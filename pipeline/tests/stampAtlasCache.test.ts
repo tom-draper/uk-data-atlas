@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { test } from "vitest";
+import { test } from "node:test";
 import { stampAtlasCache } from "../src/stamp-atlas-cache";
 
 test("stamps the cache with the canonical database content hash", () => {
