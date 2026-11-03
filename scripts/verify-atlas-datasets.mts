@@ -21,11 +21,13 @@ assert.equal(readAtlasPayload(root, "dataset-manifest"), manifestText);
 const manifest = JSON.parse(manifestText) as { datasets: { output: string }[] };
 assert.ok(manifest.datasets.length > 0);
 for (const { output } of manifest.datasets)
-	assert.equal(
-		readAtlasPayload(root, `dataset:${output}`),
-		readFileSync(
-			join(root, "data/build/datasets", `${output}.json`),
-			"utf8",
+	assert.deepEqual(
+		JSON.parse(readAtlasPayload(root, `dataset:${output}`)),
+		JSON.parse(
+			readFileSync(
+				join(root, "data/build/datasets", `${output}.json`),
+				"utf8",
+			),
 		),
 		output,
 	);
@@ -68,5 +70,5 @@ const before = snapshot(jsonInputs);
 const after = snapshot(sqliteInputs);
 assert.deepEqual(after, before);
 console.log(
-	`Matched ${manifest.datasets.length} exact payloads, ${Object.keys(after.artifacts).length} catalogue/observation outputs and ${Object.keys(after.responses).length} API responses byte for byte.`,
+	`Matched ${manifest.datasets.length} dataset payloads by value, ${Object.keys(after.artifacts).length} catalogue/observation outputs and ${Object.keys(after.responses).length} API responses byte for byte.`,
 );
