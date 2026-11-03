@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { ApiMetrics } from "../src/apiMetrics";
 
 test("exports the location projection cache's shards and events", (t) => {
@@ -15,7 +15,7 @@ test("exports the location projection cache's shards and events", (t) => {
 			loadSeconds: 0.25,
 		}),
 	);
-	t.after(() => metrics.close());
+	t.onTestFinished(() => metrics.close());
 	const text = metrics.render();
 	assert.match(
 		text,
@@ -37,6 +37,6 @@ test("exports the location projection cache's shards and events", (t) => {
 
 test("leaves the location projection cache out when there is none", (t) => {
 	const metrics = new ApiMetrics("release");
-	t.after(() => metrics.close());
+	t.onTestFinished(() => metrics.close());
 	assert.doesNotMatch(metrics.render(), /location_projection_cache/);
 });

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { createBoundaryRegistry } from "../src/build-boundary-registry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { selectReleaseForDate } from "@uk-data-atlas/atlas-runtime/areas";
@@ -10,7 +10,7 @@ import { createSourceInventory } from "../src/sourceInventory";
 
 test("keeps the ONS names-and-codes table out of boundary release selection", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-source-classification-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	let namesAndCodesMetadata = "";
 	for (const id of ["2011-12-sc-nc", "2011-12-sc-bfc"]) {
 		const directory = join(

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { rankingOf, rankObservations } from "../src/ranking";
 
 test("uses competition ranking and orders ties by area code", () => {

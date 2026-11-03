@@ -15,7 +15,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test from "node:test";
+import { test } from "vitest";
 import { crosswalkTables } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	readCrosswalkInventory,
@@ -27,7 +27,9 @@ import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("crosswalk edges rebuild artifacts with zero weights, labels and empty targets", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-crosswalks-"));
-	context.after(() => rmSync(root, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(root, { recursive: true, force: true }),
+	);
 	const apiRoot = join(root, "services/api");
 	const directory = join(
 		artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),

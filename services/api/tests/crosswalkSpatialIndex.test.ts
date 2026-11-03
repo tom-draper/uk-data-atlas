@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
 import {
 	boundsIntersect,

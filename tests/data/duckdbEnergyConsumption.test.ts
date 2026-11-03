@@ -5,13 +5,14 @@ test("DuckDB energy consumption fixtures", () => {
 	const result = spawnSync(
 		process.execPath,
 		[
-			"--import",
-			"tsx",
-			"--test",
+			"node_modules/vitest/vitest.mjs",
+			"run",
+			"--project",
+			"duckdb-fixtures",
 			"tests/duckdb-fixtures/energy-consumption.test.mts",
 		],
 		{ encoding: "utf8" },
 	);
 	expect(result.status, result.stderr || result.stdout).toBe(0);
-	expect(result.stdout).toMatch(/pass 2/);
+	expect(result.stdout).toMatch(/2 passed/);
 });

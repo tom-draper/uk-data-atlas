@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, renameSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	DataCatalog,
@@ -286,7 +286,7 @@ test("a lazy table view resolves to its table and a missing or mismatched payloa
 
 test("evicts least recently used artifacts and reloads through live lazy views", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const text = JSON.stringify(table);
 	for (const name of ["a", "b", "c"])
 		writeObservationFixture(join(directory, `${name}.json`), text);
@@ -333,7 +333,7 @@ test("evicts least recently used artifacts and reloads through live lazy views",
 
 test("does not retain oversized observations or displace a cached small artifact", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const text = JSON.stringify(table);
 	writeObservationFixture(join(directory, "small.json"), text);
 	writeObservationFixture(
@@ -375,7 +375,7 @@ test("does not retain oversized observations or displace a cached small artifact
 
 test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-budget-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const own: AnyMeasureObservationArtifact = {
 		schemaVersion: 1,
 		contentHash: "sha256:own",
@@ -417,7 +417,7 @@ test("bounds ordinary observation artifacts as well as shared tables", (t) => {
 
 test("catalogue views share the configured observation budget", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-catalogue-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	mkdirSync(artifactDirectory(directory), { recursive: true });
 	const text = JSON.stringify(table);
 	for (const name of ["a", "b"])
@@ -482,7 +482,7 @@ test("catalogue views share the configured observation budget", (t) => {
 
 test("bulk text shares the LRU budget and refreshes recency", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-text-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const text = JSON.stringify(table);
 	for (const name of ["a", "b", "c"])
 		writeObservationFixture(join(directory, `${name}.json`), text);
@@ -520,7 +520,7 @@ test("bulk text shares the LRU budget and refreshes recency", (t) => {
 
 test("oversized bulk text is rebuilt without evicting a smaller cached entry", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-text-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const text = JSON.stringify(table);
 	writeObservationFixture(join(directory, "small.json"), text);
 	writeObservationFixture(

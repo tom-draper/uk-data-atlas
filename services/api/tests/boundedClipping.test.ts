@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test, vi } from "vitest";
 import type { MultiPolygon } from "polygon-clipping";
 import { BoundedClipper } from "@uk-data-atlas/atlas-runtime/geometry";
 
@@ -78,13 +78,11 @@ test("clips against a registered geometry, and keeps it across a restart", () =>
 	}
 });
 
-test("waits for its result when a notification arrives before the worker message", (t) => {
+test("waits for its result when a notification arrives before the worker message", () => {
 	const clipper = new BoundedClipper(10_000);
 	const wait = Atomics.wait;
 	let notifications = 0;
-	t.mock.method(
-		Atomics,
-		"wait",
+	vi.spyOn(Atomics, "wait").mockImplementation(
 		(...args: Parameters<typeof Atomics.wait>) => {
 			if (notifications++ === 0) return "ok";
 			return wait(...args);

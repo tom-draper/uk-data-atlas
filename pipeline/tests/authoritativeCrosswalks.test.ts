@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
@@ -30,11 +30,8 @@ test("configures NHS overlap and NI published membership with distinct claims", 
 
 // Opt in against a downloaded archive. Compilation only reads this root.
 const repositoryRoot = process.env.CROSSWALK_PROOF_ROOT;
-test(
+test.skipIf(!repositoryRoot)(
 	"compiles NHS recodes and all NI memberships against the held archive",
-	{
-		skip: !repositoryRoot,
-	},
 	() => {
 		assert.ok(repositoryRoot);
 		const { artifacts } = compileCrosswalks(

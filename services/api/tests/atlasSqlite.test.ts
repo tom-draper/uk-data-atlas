@@ -42,7 +42,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { buildAtlasSqlite } from "./pipelineFixtures";
 import { buildTerrainCatalogue } from "./pipelineFixtures";
 import { readTerrainCatalogue } from "@uk-data-atlas/atlas-runtime/areas";
@@ -54,7 +54,9 @@ import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (context: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-sqlite-"));
-	context.after(() => rmSync(root, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(root, { recursive: true, force: true }),
+	);
 	const apiRoot = join(root, "services/api");
 	mkdirSync(artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")), {
 		recursive: true,

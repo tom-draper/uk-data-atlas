@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test, vi } from "vitest";
 import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import { route } from "../src/routes";
 import {
@@ -38,20 +38,24 @@ const context = () =>
 		crosswalkLookup,
 	});
 
-test("refuses too many children before reading any geometry", (t) => {
+test("refuses too many children before reading any geometry", () => {
 	const ctx = context();
-	t.mock.method(ctx.geographyResolver, "missingRequirement", () => undefined);
+	vi.spyOn(ctx.geographyResolver, "missingRequirement").mockImplementation(
+		() => undefined,
+	);
 	const children = ctx.geographyResolver.relationships(parent, "contains");
 	assert.equal(children.length, 1);
-	t.mock.method(ctx.geographyResolver, "relationships", () =>
+	vi.spyOn(ctx.geographyResolver, "relationships").mockImplementation(() =>
 		Array.from({ length: 1001 }, () => children[0]!),
 	);
-	const reads = t.mock.method(ctx.geographyResolver, "geometryFor", () => {
-		throw new Error("Must not load geometry");
-	});
+	const reads = vi
+		.spyOn(ctx.geographyResolver, "geometryFor")
+		.mockImplementation(() => {
+			throw new Error("Must not load geometry");
+		});
 	const response = route("GET", childrenUrl, ctx);
 	assert.equal(response.status, 422);
-	assert.equal(reads.mock.callCount(), 0);
+	assert.equal(reads.mock.calls.length, 0);
 	assert.ok("detail" in response.body);
 	assert.match(String(response.body.detail), /1,000/);
 	assert.ok("links" in response.body);
@@ -61,10 +65,12 @@ test("refuses too many children before reading any geometry", (t) => {
 	);
 });
 
-test("refuses a child whose source vertex count exceeds the budget before simplification", (t) => {
+test("refuses a child whose source vertex count exceeds the budget before simplification", () => {
 	const ctx = context();
-	t.mock.method(ctx.geographyResolver, "missingRequirement", () => undefined);
-	t.mock.method(ctx.geographyResolver, "geometryFor", () => ({
+	vi.spyOn(ctx.geographyResolver, "missingRequirement").mockImplementation(
+		() => undefined,
+	);
+	vi.spyOn(ctx.geographyResolver, "geometryFor").mockImplementation(() => ({
 		geometry: geometry(250001),
 		geometrySource: { sourceCrs: "EPSG:4326" },
 	}));
@@ -76,7 +82,7 @@ test("refuses a child whose source vertex count exceeds the budget before simpli
 	}
 });
 
-test("loads box geometries incrementally and stops when their cumulative vertices exceed the budget", (t) => {
+test("loads box geometries incrementally and stops when their cumulative vertices exceed the budget", () => {
 	const ctx = context();
 	const area = ctx.geographyResolver.area(child)!;
 	const match = {
@@ -87,33 +93,39 @@ test("loads box geometries incrementally and stops when their cumulative vertice
 		boundingBox: [-2, 54, -1, 55] as [number, number, number, number],
 		geometrySource: { sourceCrs: "EPSG:4326" },
 	};
-	const find = t.mock.method(
-		ctx.geographyResolver,
-		"intersectingAreas",
-		() => ({ matched: 3, more: false, matches: [match, match, match] }),
-	);
-	const reads = t.mock.method(ctx.geographyResolver, "geometryFor", () => ({
-		geometry: geometry(125001),
-		geometrySource: { sourceCrs: "EPSG:4326" },
-	}));
+	const find = vi
+		.spyOn(ctx.geographyResolver, "intersectingAreas")
+		.mockImplementation(() => ({
+			matched: 3,
+			more: false,
+			matches: [match, match, match],
+		}));
+	const reads = vi
+		.spyOn(ctx.geographyResolver, "geometryFor")
+		.mockImplementation(() => ({
+			geometry: geometry(125001),
+			geometrySource: { sourceCrs: "EPSG:4326" },
+		}));
 	const response = route("GET", `${boxUrl}&tier=full`, ctx);
 	assert.equal(response.status, 422);
-	assert.equal(find.mock.calls[0]!.arguments[4], false);
-	assert.equal(reads.mock.callCount(), 2);
+	assert.equal(find.mock.calls[0]![4], false);
+	assert.equal(reads.mock.calls.length, 2);
 	assert.ok("links" in response.body);
 	assert.equal(
 		response.body.links?.downloads,
 		"/v1/boundary-releases/ward/2025-01-en-ward",
 	);
-	reads.mock.resetCalls();
+	reads.mockClear();
 	assert.equal(route("GET", boxUrl, ctx).status, 200);
-	assert.equal(reads.mock.callCount(), 0);
+	assert.equal(reads.mock.calls.length, 0);
 });
 
-test("accepts a collection at the source vertex budget", (t) => {
+test("accepts a collection at the source vertex budget", () => {
 	const ctx = context();
-	t.mock.method(ctx.geographyResolver, "missingRequirement", () => undefined);
-	t.mock.method(ctx.geographyResolver, "geometryFor", () => ({
+	vi.spyOn(ctx.geographyResolver, "missingRequirement").mockImplementation(
+		() => undefined,
+	);
+	vi.spyOn(ctx.geographyResolver, "geometryFor").mockImplementation(() => ({
 		geometry: geometry(250000),
 		geometrySource: { sourceCrs: "EPSG:4326" },
 	}));

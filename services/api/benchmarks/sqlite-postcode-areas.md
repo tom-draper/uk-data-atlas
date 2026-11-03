@@ -77,7 +77,7 @@ changed manifest payload or foreign-key violation. The JSON result must report
 
 ## Checks
 
-From `services/api`, with `NODE_OPTIONS=--max-old-space-size=2560`:
+At the time, from `services/api`, with `NODE_OPTIONS=--max-old-space-size=2560`, the historical commands were:
 
 ```sh
 npx tsx --test --test-concurrency=2 tests/atlasPostcodes.test.ts tests/atlasPostcodeDerived.test.ts tests/postcodes.test.ts tests/postcodeAreas.test.ts tests/postcodeRoutes.test.ts tests/postcodeValueRoutes.test.ts tests/atlasSqlite.test.ts tests/lazyCatalogues.test.ts

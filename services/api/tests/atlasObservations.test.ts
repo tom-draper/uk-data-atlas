@@ -13,7 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { AtlasDatasetInput } from "./pipelineFixtures";
 import { storeObservations as writeObservations } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
@@ -88,7 +88,7 @@ function storeObservations(...args: Parameters<typeof writeObservations>) {
 
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-observations-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
 	const publicDirectory = artifactDirectory(
 		resolveRepositoryRoot(apiRoot, "../.."),
@@ -159,7 +159,7 @@ test("reassembly retains statistics for other tables", (t) => {
 
 test("catalogue input reads the dataset output without an atlas database", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-dataset-input-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
 	writeFileSync(
 		join(root, "data/build/datasets/population.json"),

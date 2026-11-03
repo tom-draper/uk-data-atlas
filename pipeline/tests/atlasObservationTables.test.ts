@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
-import test from "node:test";
+import { test } from "vitest";
 import { dataCatalog } from "./contextFixtures";
 import { replaceObservationTables } from "../src/atlasObservationTables";
 import { rebuildObservationText } from "@uk-data-atlas/atlas-runtime/storage";

@@ -2,7 +2,7 @@ import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { measureDimensionProblems } from "@uk-data-atlas/measures";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";

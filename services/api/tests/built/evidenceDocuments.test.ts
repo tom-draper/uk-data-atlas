@@ -12,7 +12,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { createApiServer } from "../../src/apiServer";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -25,7 +25,9 @@ const apiRoot = resolve(import.meta.dirname, "../..");
 
 test("loads evidence build inputs when the previous document manifest is stale", (t) => {
 	const repository = mkdtempSync(join(tmpdir(), "evidence-rebuild-"));
-	t.after(() => rmSync(repository, { recursive: true, force: true }));
+	t.onTestFinished(() =>
+		rmSync(repository, { recursive: true, force: true }),
+	);
 	const root = join(repository, "services/api");
 	mkdirSync(root, { recursive: true });
 	// Link every project and data entry except the artifacts, which hold the
@@ -95,7 +97,7 @@ test("links measures to immutable reports and retires evidence query endpoints",
 	);
 	const server = createApiServer(catalogues);
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
-	t.after(() => {
+	t.onTestFinished(() => {
 		server.closeAllConnections();
 		server.close();
 	});
@@ -171,7 +173,7 @@ test("serves geography evidence from SQLite with exact bytes and conditional ETa
 		readApiCatalogues(resolveRepositoryRoot(apiRoot, "../..")),
 	);
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
-	t.after(() => {
+	t.onTestFinished(() => {
 		server.closeAllConnections();
 		server.close();
 	});

@@ -11,7 +11,7 @@ import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { observationPartitionKey } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { openapiDocumentHash } from "@uk-data-atlas/atlas-runtime/api";

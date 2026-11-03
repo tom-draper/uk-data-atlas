@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { isGeographyKind } from "@uk-data-atlas/geography";
 
 test("recognises published geographies awaiting relationship coverage", () => {

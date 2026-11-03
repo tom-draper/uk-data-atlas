@@ -2,7 +2,7 @@ import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,

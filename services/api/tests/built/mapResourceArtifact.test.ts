@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { dirname, join, resolve } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { tileId, TILE_TYPE_MVT } from "@uk-data-atlas/map-tiles/pmtiles";

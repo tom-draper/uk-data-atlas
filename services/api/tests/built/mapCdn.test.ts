@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import {
 	readMapAssets,
@@ -122,7 +122,7 @@ test("joins GeoJSON fetched from object storage through the real HTTP server", a
 		);
 	});
 	await new Promise<void>((ready) => assets.listen(0, "127.0.0.1", ready));
-	t.after(() => {
+	t.onTestFinished(() => {
 		assets.closeAllConnections();
 		assets.close();
 	});
@@ -137,7 +137,7 @@ test("joins GeoJSON fetched from object storage through the real HTTP server", a
 	catalogues.mapFeatures.clear();
 	const api = createApiServer(catalogues);
 	await new Promise<void>((ready) => api.listen(0, "127.0.0.1", ready));
-	t.after(() => {
+	t.onTestFinished(() => {
 		api.closeAllConnections();
 		api.close();
 	});

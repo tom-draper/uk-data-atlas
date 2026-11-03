@@ -2,7 +2,7 @@ import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
 import { dirname, resolve } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { createClient } from "../../examples/client";
 import { run as correctMap } from "../../examples/correct-map";
@@ -34,7 +34,7 @@ test("walks the golden paths against a running server", async (t) => {
 	await new Promise<void>((ready) => {
 		server.listen(0, "127.0.0.1", ready);
 	});
-	t.after(() => {
+	t.onTestFinished(() => {
 		server.close();
 	});
 	const { port } = server.address() as AddressInfo;
@@ -88,7 +88,7 @@ test("builds a map the tutorial page can actually draw", async (t) => {
 	await new Promise<void>((ready) => {
 		server.listen(0, "127.0.0.1", ready);
 	});
-	t.after(() => {
+	t.onTestFinished(() => {
 		server.close();
 	});
 	const { port } = server.address() as AddressInfo;

@@ -11,7 +11,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { fetchOnsBoundary } from "../src/sources/fetch-ons-boundaries";
 import type { OnsBoundarySource } from "../src/sources/onsBoundarySources";
 import { createBoundaryRegistry } from "../src/build-boundary-registry";
@@ -81,7 +81,7 @@ const fetcher = (
 
 test("downloads every page and compiles the resulting boundary snapshot", async (context) => {
 	const repositoryRoot = mkdtempSync(join(tmpdir(), "atlas-ons-boundaries-"));
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	const { request, urls } = fetcher();
@@ -143,7 +143,7 @@ test("rejects duplicates and missing geometry without publishing a snapshot", as
 	const repositoryRoot = mkdtempSync(
 		join(tmpdir(), "atlas-ons-boundaries-invalid-"),
 	);
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	for (const features of [
@@ -192,7 +192,7 @@ test("rejects a changed publisher count before downloading pages", async (contex
 	const repositoryRoot = mkdtempSync(
 		join(tmpdir(), "atlas-ons-boundaries-count-"),
 	);
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	const { request, urls } = fetcher();
@@ -218,7 +218,7 @@ test("removes partial pages after a failed download", async (context) => {
 	const repositoryRoot = mkdtempSync(
 		join(tmpdir(), "atlas-ons-boundaries-failure-"),
 	);
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	const { request } = fetcher();
@@ -251,7 +251,7 @@ test("removes partial pages after a failed download", async (context) => {
 
 test("retries dropped connections and server errors", async (context) => {
 	const repositoryRoot = mkdtempSync(join(tmpdir(), "atlas-ons-retry-"));
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	const { request } = fetcher();
@@ -280,7 +280,7 @@ test("does not replace an existing snapshot with changed source bytes", async (c
 	const repositoryRoot = mkdtempSync(
 		join(tmpdir(), "atlas-ons-boundaries-existing-"),
 	);
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	const { request } = fetcher();
@@ -323,7 +323,7 @@ test("rejects changed publisher bytes even when every code and the count match",
 	const repositoryRoot = mkdtempSync(
 		join(tmpdir(), "atlas-ons-boundaries-hash-"),
 	);
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	const { request } = fetcher();
@@ -350,7 +350,7 @@ test("rejects changed publisher bytes even when every code and the count match",
 
 test("rejects publisher changes during acquisition and removes staging", async (context) => {
 	const repositoryRoot = mkdtempSync(join(tmpdir(), "atlas-ons-changing-"));
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	for (const change of ["count", "revision"]) {
@@ -393,7 +393,7 @@ test("rejects publisher changes during acquisition and removes staging", async (
 
 test("refuses an existing snapshot with missing or changed provenance", async (context) => {
 	const repositoryRoot = mkdtempSync(join(tmpdir(), "atlas-ons-provenance-"));
-	context.after(() =>
+	context.onTestFinished(() =>
 		rmSync(repositoryRoot, { recursive: true, force: true }),
 	);
 	const { request } = fetcher();

@@ -12,7 +12,7 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildGeographyCatalogues } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
@@ -39,7 +39,7 @@ import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "geography-catalogues-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	mkdirSync(artifactDirectory(root), { recursive: true });
 	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"));

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { similarAreas } from "../src/similarAreas";
 
 test("finds z-score Euclidean neighbours from hand-computed values", () => {

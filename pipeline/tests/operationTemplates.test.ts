@@ -9,7 +9,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { parse } from "yaml";
 import { buildOperations, compileOperations } from "../src/build-operations";
 import {
@@ -177,7 +177,7 @@ test("leaves a parameter an operation refuses with its reason to the operation",
 
 test("writes the operations into an API root with no artifacts directory yet", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-operations-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
 	mkdirSync(apiRoot, { recursive: true });
 	writeFileSync(join(apiRoot, "openapi.yaml"), "openapi: 3.1.0\npaths: {}\n");

@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Papa from "papaparse";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vitest";
 import { strict as assert } from "node:assert";
 import { loadPublicHealth } from "../../packages/datasets/src/data/public-health/loader";
 import { withDuckdbPublicHealth } from "../../pipeline/src/precompile/duckdbPublicHealth.mts";

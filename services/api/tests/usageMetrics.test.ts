@@ -10,7 +10,7 @@ import {
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { createApiServer } from "../src/apiServer";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import { compileOperations } from "./pipelineFixtures";
@@ -44,7 +44,7 @@ const serve = async (t: TestContext, options: ServerOptions = {}) => {
 		options,
 	);
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
-	t.after(() => {
+	t.onTestFinished(() => {
 		server.close();
 	});
 	const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -120,7 +120,7 @@ test("leaves nothing a caller typed in the metrics", async (t) => {
 
 const usageDirectory = (t: TestContext) => {
 	const path = mkdtempSync(join(tmpdir(), "usage-server-"));
-	t.after(() => rmSync(path, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(path, { recursive: true, force: true }));
 	return path;
 };
 
@@ -146,7 +146,7 @@ test("keeps daily counts across a server restart", async (t) => {
 		await stopped(server);
 	}
 	const reader = UsageStore.openReadOnly(directory);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.deepEqual(
 		reader.totals(today(), ["measure"], { present: ["measure"] }),
 		[
@@ -177,7 +177,7 @@ test("writes counts only when flushed, not per request", async (t) => {
 	const { server, get } = await serve(t, { usage: usage(directory) });
 	await get(`/v1/data/${measure}`);
 	const reader = UsageStore.openReadOnly(directory);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.deepEqual(reader.totals("2000-01-01", ["route"]), []);
 	server.flushUsage();
 	assert.equal(reader.totals("2000-01-01", ["route"]).length, 1);
@@ -207,7 +207,7 @@ test("stores no trace of a postcode, place, coordinates or caller", async (t) =>
 	);
 	// What it does hold is routes, outcomes and catalogue ids.
 	const reader = UsageStore.openReadOnly(directory);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	const routes = reader
 		.totals("2000-01-01", ["route"])
 		.map(({ route }) => route ?? "")

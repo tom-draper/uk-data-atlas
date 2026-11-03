@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { route as routeRequest, routeAsync } from "../src/routes";
 import { createTerrainCatalogue } from "./pipelineFixtures";
 import { testContext } from "./routeFixtures";

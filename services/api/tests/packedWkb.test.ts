@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import { packedWkb, toWkb } from "@uk-data-atlas/atlas-runtime/maps";
 import { packGeometry } from "@uk-data-atlas/geography/packed-geometry";

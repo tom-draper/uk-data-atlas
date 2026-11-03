@@ -10,7 +10,7 @@
 	"scripts": {
 		"start": "tsx src/cli.ts",
 		"smoke": "tsx scripts/smoke.ts",
-		"test": "tsx --test tests/*.test.ts",
+		"test": "vitest run --config ../../vitest.config.mts --project mcp",
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {

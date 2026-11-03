@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { readCrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";

@@ -11,7 +11,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { parse } from "yaml";
 import { buildGeometryStore } from "./pipelineFixtures";
 import {
@@ -220,7 +220,7 @@ test("validates XY while preserving additional ordinates", () => {
 
 test("compiles deterministic reports and serves them with metrics and provenance", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-validity-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services", "api");
 	const publicRoot = artifactDirectory(
 		resolveRepositoryRoot(apiRoot, "../.."),
@@ -287,7 +287,7 @@ test("compiles deterministic reports and serves them with metrics and provenance
 	assert.equal(readFileSync(sourcePath, "utf8"), sourceBytes);
 	assert.equal(sha256(readFileSync(sourcePath)), source.inputHash);
 	const stored = readGeometryStore(storePath, source)!;
-	t.after(() => stored.close());
+	t.onTestFinished(() => stored.close());
 	assert.equal(stored.validity("missing"), undefined);
 	const bowTie = stored.validity(features[2]!.properties.CODE);
 	assert.equal(bowTie?.status, "invalid");
@@ -396,7 +396,7 @@ test("compiles deterministic reports and serves them with metrics and provenance
 
 test("reads older stores without claiming their geometry was validated", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-validity-legacy-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const source: GeometrySource = {
 		input: "fixture.geojson",
 		crs: "EPSG:4326",
@@ -410,6 +410,6 @@ test("reads older stores without claiming their geometry was validated", (t) => 
 		]),
 	);
 	const stored = readGeometryStore(path, source)!;
-	t.after(() => stored.close());
+	t.onTestFinished(() => stored.close());
 	assert.deepEqual(stored.validity("A"), uncompiledGeometryValidity);
 });

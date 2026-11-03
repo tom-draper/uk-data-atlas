@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	AREA_GEOGRAPHY_MISMATCH,
 	addAreaVersion,
@@ -20,7 +20,9 @@ import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("relational areas preserve inventory order, aliases and record order without JSON", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-areas-"));
-	context.after(() => rmSync(root, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(root, { recursive: true, force: true }),
+	);
 	const apiRoot = join(root, "services/api");
 	const directory = artifactDirectory(
 		resolveRepositoryRoot(apiRoot, "../.."),
@@ -124,7 +126,9 @@ test("relational areas preserve inventory order, aliases and record order withou
 
 test("an area keeps one identity across releases, with a version per release", (context) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-area-identity-"));
-	context.after(() => rmSync(directory, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(directory, { recursive: true, force: true }),
+	);
 	const release = (geography: string, id: string, codes: string[]) => {
 		const artifact = `${geography}-${id}.json`;
 		writeFileSync(
@@ -163,7 +167,7 @@ test("an area keeps one identity across releases, with a version per release", (
 	const path = join(directory, "atlas.sqlite");
 	writeSqliteIndex(path, {}, areaTables(directory));
 	const database = new DatabaseSync(path);
-	context.after(() => database.close());
+	context.onTestFinished(() => database.close());
 	const versions = () =>
 		database
 			.prepare(

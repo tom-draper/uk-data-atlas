@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { gzipSync } from "node:zlib";
 import { compileTileset } from "@uk-data-atlas/map-tiles/compileTileset";
 import { readHeader, readMetadata } from "./pmtilesFixtures";

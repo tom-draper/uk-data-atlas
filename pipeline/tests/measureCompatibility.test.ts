@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {

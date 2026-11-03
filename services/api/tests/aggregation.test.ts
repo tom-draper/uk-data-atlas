@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { assessCoverage, summariseCoverage } from "../src/aggregation";
 
 test("counts the expected areas an aggregate did not include", () => {

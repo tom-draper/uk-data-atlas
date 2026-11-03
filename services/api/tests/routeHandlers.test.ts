@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import test from "node:test";
+import { test } from "vitest";
 import { routeFamiliesOwning } from "../src/routeHandlers";
 
 // Path keys sit at a two-space indent under `paths:` in openapi.yaml.

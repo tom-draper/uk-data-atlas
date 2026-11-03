@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { MeasureObservationArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import Fastify from "fastify";
 import { similarAreasFastifyRoutes } from "../src/areas/similarAreasFastifyRoutes";
@@ -76,7 +76,7 @@ test("finds similar areas through the Fastify contract route", async (t) => {
 			measureObservations: similarObservations,
 		}),
 	});
-	t.after(() => app.close());
+	t.onTestFinished(() => app.close());
 	const response = await app.inject(request);
 	assert.equal(response.statusCode, 200, response.body);
 	assert.deepEqual(response.json().data, {

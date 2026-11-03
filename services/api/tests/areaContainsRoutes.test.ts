@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import test, { after } from "node:test";
+import { test, afterAll } from "vitest";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
@@ -86,7 +86,7 @@ const countries = [
 ];
 
 const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-point-lookup-"));
-after(() => rmSync(root, { recursive: true, force: true }));
+afterAll(() => rmSync(root, { recursive: true, force: true }));
 
 const geometrySources = new Map<
 	string,

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "../../src/build-boundary-registry";

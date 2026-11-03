@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { createServer } from "../src/server.ts";

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { normalisePlaceName } from "@uk-data-atlas/geography";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
@@ -278,7 +278,9 @@ test("serves a compiled index only against the inputs it was built from", () => 
 
 test("answers from its SQLite tables exactly as from the artifact", (context) => {
 	const directory = mkdtempSync(join(tmpdir(), "place-index-"));
-	context.after(() => rmSync(directory, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(directory, { recursive: true, force: true }),
+	);
 	const path = join(directory, "atlas.sqlite");
 	writeSqliteIndex(path, { schemaVersion: "1" }, placeIndexTables(index));
 	const stored = openPlaceIndexDatabase(path, "sha256:areas", namedLocations);

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { readServeConfiguration } from "../src/serverOptions";
 
 test("keeps 32 MB of answers by default and lets the cache be sized or turned off", () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	readMemoryScenarios,
 	runMemoryWorkload,
@@ -44,7 +44,9 @@ test("measures completed streamed responses at the requested concurrency", async
 			response.end("load");
 		}, 10);
 	});
-	t.after(() => server.close());
+	t.onTestFinished(() => {
+		server.close();
+	});
 	await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
 	const address = server.address();
 	assert.ok(address && typeof address !== "string");
@@ -66,7 +68,9 @@ test("reports unexpected HTTP responses as a failed scenario", async (t) => {
 		response.writeHead(503);
 		response.end("busy");
 	});
-	t.after(() => server.close());
+	t.onTestFinished(() => {
+		server.close();
+	});
 	await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
 	const address = server.address();
 	assert.ok(address && typeof address !== "string");
@@ -81,7 +85,9 @@ test("reports unexpected HTTP responses as a failed scenario", async (t) => {
 
 test("counts transport failures without dropping the scenario report", async (t) => {
 	const server = createServer((request) => request.socket.destroy());
-	t.after(() => server.close());
+	t.onTestFinished(() => {
+		server.close();
+	});
 	await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
 	const address = server.address();
 	assert.ok(address && typeof address !== "string");

@@ -2,7 +2,7 @@ import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";

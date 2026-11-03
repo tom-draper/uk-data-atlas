@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { routeWithData } from "./routeFixtures";
 
 test("compares two source-exact areas in an explicit direction", () => {

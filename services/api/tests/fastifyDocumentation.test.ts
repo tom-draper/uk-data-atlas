@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import test from "node:test";
+import { test } from "vitest";
 import { gunzipSync } from "node:zlib";
 import Fastify from "fastify";
 import { documentationRoutes } from "../src/contract/documentationRoutes";

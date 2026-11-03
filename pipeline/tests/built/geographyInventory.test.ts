@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { tmpdir } from "node:os";
 import { createBoundaryRegistry } from "../../src/build-boundary-registry";
 import { createGeographyInventory } from "../../src/geographyInventory";

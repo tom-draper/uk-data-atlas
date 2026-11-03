@@ -10,16 +10,16 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { test } from "node:test";
+import { test } from "vitest";
 import {
 	atlasCachePath,
 	publishCacheTables,
 	requireAtlasCache,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
-function fixture(t: { after: (fn: () => void) => void }) {
+function fixture(t: { onTestFinished: (fn: () => void) => void }) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const canonical = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(canonical);

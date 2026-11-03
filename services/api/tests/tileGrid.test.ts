@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { Coordinate } from "@uk-data-atlas/geography/geometry-point-containment";
 import {
 	clipRing,

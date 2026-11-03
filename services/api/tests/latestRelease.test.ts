@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { route } from "../src/routes";
 import { areaLookup, registry, testContext } from "./routeFixtures";
