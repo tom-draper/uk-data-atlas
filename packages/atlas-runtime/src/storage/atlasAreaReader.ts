@@ -1,10 +1,10 @@
 import { DatabaseSync } from "node:sqlite";
 import type { AreaInventory, AreaRecord } from "@uk-data-atlas/areas";
-import { atlasDatabasePath, repositoryRootOf } from "./dataLayout";
+import { atlasDatabasePath } from "./dataLayout";
 
 export const readSqliteAreaInventory = (
-	apiRoot: string,
-	databasePath = atlasDatabasePath(repositoryRootOf(apiRoot)),
+	repositoryRoot: string,
+	databasePath = atlasDatabasePath(repositoryRoot),
 ): AreaInventory => {
 	const database = new DatabaseSync(databasePath, {
 		readOnly: true,
@@ -60,12 +60,12 @@ export const readSqliteAreaInventory = (
 };
 
 export const readSqliteAreas = (
-	apiRoot: string,
+	repositoryRoot: string,
 	release: Extract<
 		AreaInventory["releases"][number],
 		{ status: "available" }
 	>,
-	databasePath = atlasDatabasePath(repositoryRootOf(apiRoot)),
+	databasePath = atlasDatabasePath(repositoryRoot),
 ): AreaRecord[] => {
 	const database = new DatabaseSync(databasePath, {
 		readOnly: true,

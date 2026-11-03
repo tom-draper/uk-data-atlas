@@ -4,17 +4,13 @@ import { areaSearchIndexTables } from "@uk-data-atlas/atlas-runtime/areas";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { publishCacheTables } from "@uk-data-atlas/atlas-runtime/storage";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { compileDuckdbAreaSearchIndex } from "./duckdbAreaSearch";
 
 export async function buildDuckdbAreaSearchIndex(root: string) {
-	const apiRoot = apiRootOf(root);
-	const inventory = readSqliteAreaInventory(apiRoot);
+	const inventory = readSqliteAreaInventory(root);
 	const index = await compileDuckdbAreaSearchIndex(
-		readAreaLookup(apiRoot, inventory),
+		readAreaLookup(root, inventory),
 		inventory.contentHash,
 	);
 	const outputPath = publishCacheTables(

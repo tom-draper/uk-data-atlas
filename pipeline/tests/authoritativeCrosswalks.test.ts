@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { join } from "node:path";
 import test from "node:test";
 import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
@@ -38,11 +37,10 @@ test(
 	},
 	() => {
 		assert.ok(repositoryRoot);
-		const apiRoot = join(repositoryRoot, "services/api");
 		const { artifacts } = compileCrosswalks(
 			repositoryRoot,
 			adapters.filter(({ id }) => id === nhsId || id === niId),
-			readAreaLookup(apiRoot),
+			readAreaLookup(repositoryRoot),
 			readGeometrySourceLookup(repositoryRoot),
 		);
 		const nhs = artifacts.find(({ id }) => id === nhsId);

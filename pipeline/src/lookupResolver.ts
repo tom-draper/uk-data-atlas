@@ -45,9 +45,9 @@ export const readLookupResolver = (
 	databasePath: string,
 ) => {
 	const apiRoot = apiRootOf(repositoryRoot);
-	const inventory = readSqliteAreaInventory(apiRoot, databasePath);
+	const inventory = readSqliteAreaInventory(repositoryRoot, databasePath);
 	const areaLookup = readAreaLookup(
-		apiRoot,
+		repositoryRoot,
 		inventory,
 		undefined,
 		databasePath,

@@ -184,10 +184,10 @@ export const readAtlasCatalogues = (
 		readGeographyInventory(apiRoot),
 	);
 	const areaInventory = stage("area-inventory", () =>
-		readAreaInventory(apiRoot),
+		readAreaInventory(repositoryRootOf(apiRoot)),
 	);
 	const areaLookup = stage("area-lookup", () =>
-		readAreaLookup(apiRoot, areaInventory),
+		readAreaLookup(repositoryRootOf(apiRoot), areaInventory),
 	);
 	const namedLocationInventory = stage("named-location-inventory", () =>
 		readNamedLocationInventory(apiRoot),

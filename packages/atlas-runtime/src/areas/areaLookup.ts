@@ -17,13 +17,13 @@ import {
 export const DEFAULT_AREA_CACHE_RECORDS = 1_000_000;
 
 export const readAreaLookup = (
-	apiRoot: string,
+	repositoryRoot: string,
 	inventory?: AreaInventory,
 	maxRecords = DEFAULT_AREA_CACHE_RECORDS,
 	databasePath?: string,
 ): AreaLookup =>
 	new LazyAreaLookup(
-		(release) => readSqliteAreas(apiRoot, release, databasePath),
-		inventory ?? readSqliteAreaInventory(apiRoot, databasePath),
+		(release) => readSqliteAreas(repositoryRoot, release, databasePath),
+		inventory ?? readSqliteAreaInventory(repositoryRoot, databasePath),
 		maxRecords,
 	);
