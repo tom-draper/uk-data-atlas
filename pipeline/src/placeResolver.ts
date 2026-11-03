@@ -8,7 +8,7 @@ import {
 	type GeographyResolverInputs,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry";
-import { repositoryRootOf } from "@uk-data-atlas/atlas-runtime/storage";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
@@ -49,7 +49,11 @@ export const createPlaceResolver = (
 	};
 };
 
-export const readPlaceResolver = (apiRoot: string, databasePath: string) => {
+export const readPlaceResolver = (
+	repositoryRoot: string,
+	databasePath: string,
+) => {
+	const apiRoot = apiRootOf(repositoryRoot);
 	const areaInventory = readSqliteAreaInventory(apiRoot, databasePath);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot, databasePath);
 	return createPlaceResolver({
@@ -66,11 +70,11 @@ export const readPlaceResolver = (apiRoot: string, databasePath: string) => {
 			undefined,
 			databasePath,
 		),
-		areaGeometryCache: createAreaGeometryCache(repositoryRootOf(apiRoot)),
+		areaGeometryCache: createAreaGeometryCache(repositoryRoot),
 		namedLocationInventory: readNamedLocationInventory(
 			apiRoot,
 			databasePath,
 		),
-		boundaryRegistry: readBuildBoundaryRegistry(repositoryRootOf(apiRoot)),
+		boundaryRegistry: readBuildBoundaryRegistry(repositoryRoot),
 	});
 };
