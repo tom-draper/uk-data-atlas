@@ -8,6 +8,7 @@ import type {
 	CandidacyColumn,
 	ContestColumn,
 	StatisticsDataset,
+	StatisticsElection,
 	StatisticsLayout,
 	StatisticsLayoutLeaf,
 	AreaRelationship,
@@ -732,6 +733,18 @@ export function declaredStatistics(
 				child: { release: AreaRelease; code: string };
 				parent: { release: AreaRelease; code: string };
 			}) => void,
+			onElection?: (election: {
+				label: string;
+				kind: "general" | "local";
+				date: string;
+				release: AreaRelease;
+				contests: {
+					release: AreaRelease;
+					code: string;
+					contest?: Partial<Record<ContestColumn, string | null>>;
+					elected?: Partial<Record<CandidacyColumn, string | null>>;
+				}[];
+			}) => void,
 			onPart?: (part: {
 				key: string;
 				header: DeclaredHeader;
@@ -781,7 +794,7 @@ export function declaredStatistics(
 						);
 					const candidates = held(listed(set, header), context);
 					const order: LaidOutArea[] = [];
-					if (onPart) areaLists.set(set.from, order);
+					if (onPart || onElection) areaLists.set(set.from, order);
 					for (const [recordKey, record] of Object.entries(records)) {
 						const code =
 							typeof config.keys === "function"
@@ -864,7 +877,7 @@ export function declaredStatistics(
 								});
 						if (recordKey !== code)
 							onKey?.(release, code, recordKey);
-						if (onPart)
+						if (onPart || onElection)
 							order.push({
 								release,
 								code,
@@ -1023,6 +1036,16 @@ export function declaredStatistics(
 						}
 					}
 				}
+				if (onElection && config.election) {
+					const first = recordSets[0];
+					onElection({
+						label: key,
+						kind: config.election.kind,
+						date: config.election.date(key, header),
+						release: held(listed(first, header), context)[0],
+						contests: areaLists.get(first.from)!,
+					});
+				}
 				onPart?.({ key, header, samples, areas: areaLists });
 			}
 		}
@@ -1062,6 +1085,7 @@ export function declaredStatistics(
 			string,
 			{ release: AreaRelease; code: string; key: string }
 		>();
+		const elections: StatisticsElection[] = [];
 		const related = new Map<
 			string,
 			{
@@ -1073,7 +1097,7 @@ export function declaredStatistics(
 		const seen = new Set<string>();
 		let count = 0;
 		const layouts: StatisticsLayout[] = [];
-		const layOut: Parameters<typeof walk>[4] = ({
+		const layOut: Parameters<typeof walk>[5] = ({
 			key,
 			header,
 			samples,
@@ -1152,18 +1176,6 @@ export function declaredStatistics(
 			const first = recordSets[0];
 			layouts.push({
 				key,
-				...(config.election
-					? {
-							election: {
-								kind: config.election.kind,
-								date: config.election.date(key, header),
-								release: held(
-									listed(first, header),
-									context,
-								)[0],
-							},
-						}
-					: {}),
 				header: JSON.stringify(
 					Object.fromEntries(
 						Object.entries(header).map(([field, value]) => [
@@ -1216,6 +1228,7 @@ export function declaredStatistics(
 				]);
 				if (!related.has(key)) related.set(key, relation);
 			},
+			(election) => elections.push(election),
 			useLayout ? layOut : undefined,
 		)) {
 			const key = seriesKey(raw);
@@ -1317,6 +1330,7 @@ export function declaredStatistics(
 			areaNames: () => names.values(),
 			areaKeys: () => keys.values(),
 			relationships: () => related.values(),
+			elections: () => elections,
 			layouts: () => layouts,
 			verify(database: DatabaseSync) {
 				const row = database

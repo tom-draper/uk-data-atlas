@@ -26,6 +26,15 @@ it. Each row names its dataset, so the source and licence are known, and its
 two area versions, so the releases are known. It is separate from the
 crosswalks, which are computed from boundaries and weights.
 
+`election`, `contest` and `candidacy` hold what election results carry beyond
+their observations. An `election` names its dataset, the publisher's label for
+it (`2024`, `1974O`), its kind (`general` or `local`), its polling day and the
+release its areas are on. A `contest` is one area's contest at an election, with
+the publisher's text: area name, region, country, constituency type, result,
+the two leading parties and the party declared the winner. `candidacy` holds the
+candidate a contest elected. Votes, electorates and turnout are observations
+dated on the polling day.
+
 The `dataset_part`, `dataset_leaf`, `dataset_record`,
 `dataset_record_parent` and `dataset_record_absent` tables describe the
 website's dataset payload layouts. The cache holds rebuilt payloads with their
