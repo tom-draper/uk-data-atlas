@@ -9,6 +9,7 @@ import {
 import { publishAtlasCache } from "../storage/index";
 import {
 	generatedFromRows,
+	payloadValuesEqual,
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -31,7 +32,6 @@ import {
 	type CensusTable,
 } from "../catalog/censusSmallArea";
 import { createHash } from "node:crypto";
-import { isDeepStrictEqual } from "node:util";
 import {
 	existsSync,
 	mkdirSync,
@@ -287,7 +287,9 @@ export const buildAtlasSqlite = (
 				entry.type,
 				entry.output,
 			);
-			if (!isDeepStrictEqual(JSON.parse(generated), JSON.parse(compiled)))
+			if (
+				!payloadValuesEqual(JSON.parse(generated), JSON.parse(compiled))
+			)
 				throw new Error(
 					`${entry.type}: statistics rows do not match compiled dataset values`,
 				);

@@ -300,6 +300,58 @@ describe("declared statistics", () => {
 		}
 	});
 
+	it("generates parent areas and header summaries from rows", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			alsoIn: [{ geography: "localAuthority", year: 2022 }],
+			measures: [CRIMES],
+			fields: [{ path: "total", measure: "crimes" }],
+			parents: [
+				{
+					code: "regionCode",
+					name: "regionName",
+					release: { geography: "region", year: 2025 },
+				},
+			],
+			payload: {
+				parts: yearParts("example", "localAuthority", 2024),
+				code: "code",
+				summary: (records) => ({
+					total: Object.values(records).reduce<number>(
+						(sum, record) =>
+							sum + ((record as { total: number }).total ?? 0),
+						0,
+					),
+				}),
+			},
+		};
+		const record = (code: string, name: string, total: number) => ({
+			code,
+			name,
+			regionCode: "E12000001",
+			regionName: "North East England",
+			total,
+		});
+		const expected = JSON.parse(
+			file(
+				{
+					E06000001: record("E06000001", "Hartlepool", 3),
+					E06000002: record("E06000002", "Middlesbrough", 4),
+				},
+				{ total: 7 },
+			),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			expect(
+				JSON.parse(rebuildFromDeclaration(database, config, "example")),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("maps fields, members, periods, intervals and releases from configuration", () => {
 		const config: DeclaredDataset = {
 			type: "example",

@@ -130,6 +130,36 @@ export function rebuildFromDeclaration(
 		.get(slug)?.id;
 	if (typeof dataset !== "number") throw new Error(`Unknown dataset ${slug}`);
 
+	// The areas a publisher relates each record to, by record key.
+	type Related = { code: string; name: string; geography: string };
+	const related = new Map<string, Map<string, Related[]>>();
+	if (config.parents?.length)
+		for (const row of database
+			.prepare(
+				`SELECT r.relation, coalesce(k.key, ca.code) AS child, pa.code AS code,
+					coalesce(n.name, pv.name) AS name, pr.geography AS geography
+				FROM area_relationship r
+				JOIN area_version cv ON cv.id = r.child_version_id
+				JOIN area ca ON ca.id = cv.area_id
+				LEFT JOIN dataset_area_key k ON k.dataset_id = r.dataset_id AND k.area_version_id = cv.id
+				JOIN area_version pv ON pv.id = r.parent_version_id
+				JOIN area pa ON pa.id = pv.area_id
+				JOIN area_releases pr ON pr.position = pv.release_id
+				LEFT JOIN dataset_area_name n ON n.dataset_id = r.dataset_id AND n.area_version_id = pv.id
+				WHERE r.dataset_id = ? ORDER BY pa.code`,
+			)
+			.all(dataset)) {
+			const byRelation = related.get(String(row.child)) ?? new Map();
+			related.set(String(row.child), byRelation);
+			const list = byRelation.get(String(row.relation)) ?? [];
+			byRelation.set(String(row.relation), list);
+			list.push({
+				code: String(row.code),
+				name: String(row.name),
+				geography: String(row.geography),
+			});
+		}
+
 	// code -> key for each dimension: declared keys, else the stored label.
 	const keyOf = new Map<string, Map<string, string>>();
 	for (const dimension of config.dimensions ?? [])
@@ -369,6 +399,33 @@ export function rebuildFromDeclaration(
 					(period === undefined || observedIn.get(code)?.has(period))
 				)
 					place(target, path, null, arrays);
+		// Related areas: a record's n-th parent field of a kind takes its n-th area.
+		const kinds = new Map<string, number>();
+		const geographies = (
+			parent: NonNullable<typeof config.parents>[number],
+		) =>
+			new Set([
+				parent.release.geography,
+				...(parent.alsoIn ?? []).map((release) => release.geography),
+			]);
+		for (const [code, target] of records) {
+			kinds.clear();
+			for (const parent of config.parents ?? []) {
+				const relation = parent.relation ?? "parent";
+				const geos = geographies(parent);
+				const kind = `${relation}\0${[...geos].join(",")}`;
+				const taken = kinds.get(kind) ?? 0;
+				kinds.set(kind, taken + 1);
+				const found = related
+					.get(code)
+					?.get(relation)
+					?.filter((area) => geos.has(area.geography))[taken];
+				if (!found) continue;
+				place(target, parent.code.split("."), found.code, arrays);
+				if (parent.name !== undefined)
+					place(target, parent.name.split("."), found.name, arrays);
+			}
+		}
 		// Derived numbers, from each record's stored values, in rule order.
 		for (const [rule, compute] of Object.entries(
 			config.rebuild?.derived ?? {},
@@ -390,9 +447,11 @@ export function rebuildFromDeclaration(
 				`${context}: no records; declare the part optional`,
 			);
 		}
+		const data = Object.fromEntries(records);
 		result[key] = {
 			...header,
-			data: Object.fromEntries(records),
+			...(spec.summary ? spec.summary(data, full) : {}),
+			data,
 		} as Json;
 	}
 	if (Object.keys(result).length === 0)
