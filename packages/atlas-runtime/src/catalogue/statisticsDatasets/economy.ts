@@ -164,6 +164,12 @@ export const WORKPLACE_INCOME: DeclaredDataset = {
 
 export const JOBS: DeclaredDataset = {
 	type: "jobs",
+	payload: {
+		parts: yearParts("jobs", "localAuthority", 2023, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+		}),
+		code: "ladCode",
+	},
 	name: "ladName",
 	measures: [
 		measure(
@@ -181,6 +187,12 @@ export const JOBS: DeclaredDataset = {
 
 export const BUSINESS_ACTIVITY: DeclaredDataset = {
 	type: "businessActivity",
+	payload: {
+		parts: yearParts("businessActivity", "localAuthority", 2025, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+		}),
+		code: "code",
+	},
 	name: "name",
 	measures: [
 		measure(
@@ -198,6 +210,12 @@ export const BUSINESS_ACTIVITY: DeclaredDataset = {
 
 export const CLAIMANT_COUNT: DeclaredDataset = {
 	type: "claimantCount",
+	payload: {
+		parts: yearParts("claimantCount", "localAuthority", 2024, {
+			month: "Apr 2026",
+		}),
+		code: "ladCode",
+	},
 	name: "ladName",
 	period: () => periods.month(2026, 4),
 	alsoIn: [{ geography: "localAuthority", year: 2022 }],
@@ -332,6 +350,18 @@ export const UNEMPLOYMENT: DeclaredDataset = {
 
 export const CHILD_POVERTY: DeclaredDataset = {
 	type: "childPoverty",
+	payload: {
+		parts: yearParts(
+			"childPoverty",
+			"localAuthority",
+			2024,
+			{
+				measure: "relativeLowIncomeBeforeHousingCosts",
+			},
+			["2022", "2023", "2024", "2025"],
+		),
+		code: "ladCode",
+	},
 	name: "ladName",
 	/** Keys are the financial year's end. */
 	period: (key) => periods.financialYear(Number(key) - 1),
