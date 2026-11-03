@@ -13,7 +13,7 @@ import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationsh
 import { isGeographyKind } from "@uk-data-atlas/geography";
 import type { readGeometries as readGeometriesForCache } from "@uk-data-atlas/atlas-runtime/areas";
 import { measureContainment } from "./geometricContainment";
-import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 
 // The sliver width the area-overlap crosswalks use, so every method here
 // agrees on what counts as two borders generalised apart.
@@ -74,7 +74,7 @@ export const proposeGeometricContainment = (
 		JSON.parse(
 			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),
 		) as T;
-	const geometrySources = readRepositoryGeometrySourceLookup(repositoryRoot);
+	const geometrySources = readGeometrySourceLookup(repositoryRoot);
 	const areaCounts = new Map(
 		read<AreaInventory>("area-inventory.json")
 			.releases.filter((release) => release.status === "available")

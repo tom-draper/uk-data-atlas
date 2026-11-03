@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks, type CrosswalkArtifact } from "./crosswalkCompiler";
-import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
@@ -86,7 +86,7 @@ try {
 			root,
 			tasks,
 			areaLookup,
-			readRepositoryGeometrySourceLookup(root),
+			readGeometrySourceLookup(root),
 		)) {
 			writeCrosswalkArtifact(outputDirectory, artifact);
 			report(artifact, (performance.now() - taskStarted) / 1000);

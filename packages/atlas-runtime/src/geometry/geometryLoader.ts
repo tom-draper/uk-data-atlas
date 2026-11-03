@@ -1,11 +1,11 @@
 import { join } from "node:path";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
-import { readRepositoryGeometrySourceLookup } from "./geometrySources";
+import { readGeometrySourceLookup } from "./geometrySources";
 import { artifactDirectory } from "../storage/dataLayout";
 
 export const readGeometrySources = (
 	repositoryRoot: string,
-): GeometrySourceLookup => readRepositoryGeometrySourceLookup(repositoryRoot);
+): GeometrySourceLookup => readGeometrySourceLookup(repositoryRoot);
 
 /**
  * Build the bounded geometry cache used by spatial routes. Keeping the source

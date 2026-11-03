@@ -127,7 +127,7 @@ export const crosswalkWorkerFixture = () => {
 		area,
 		population,
 		areaLookup: readCompiledAreaLookup(outputDirectory).areaLookup,
-		geometrySources: readGeometrySourceLookup(join(root, "services/api")),
+		geometrySources: readGeometrySourceLookup(root),
 		cleanup: () => rmSync(root, { recursive: true, force: true }),
 	};
 };

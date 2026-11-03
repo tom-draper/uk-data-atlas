@@ -1,14 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { GeometrySource, GeometrySourceLookup } from "./areaGeometry";
-import { artifactDirectory, repositoryRootOf } from "../storage/dataLayout";
+import { artifactDirectory } from "../storage/dataLayout";
 type Registry = { schemaVersion?: unknown; releases?: unknown };
 export const readGeometrySourceLookup = (
-	apiRoot: string,
-): GeometrySourceLookup =>
-	readRepositoryGeometrySourceLookup(repositoryRootOf(apiRoot));
-
-export const readRepositoryGeometrySourceLookup = (
 	repositoryRoot: string,
 ): GeometrySourceLookup => {
 	const registry = JSON.parse(

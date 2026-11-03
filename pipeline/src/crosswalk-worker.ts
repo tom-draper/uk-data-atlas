@@ -3,7 +3,7 @@ import {
 	createCrosswalkCompiler,
 	type CrosswalkArtifact,
 } from "./crosswalkCompiler";
-import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
@@ -22,7 +22,7 @@ const { areaLookup } = readCompiledAreaLookup(artifactDirectory(root));
 const compile = createCrosswalkCompiler(
 	root,
 	areaLookup,
-	readRepositoryGeometrySourceLookup(root),
+	readGeometrySourceLookup(root),
 );
 process.on("message", (work: CrosswalkWork) => {
 	const started = performance.now();

@@ -7,7 +7,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import {
 	AreaGeometryCache,
-	readRepositoryGeometrySourceLookup,
+	readGeometrySourceLookup,
 } from "@uk-data-atlas/atlas-runtime/geometry";
 import { buildSimplifiedDownload } from "../../packages/atlas-runtime/src/maps/mapResource/simplifiedDownload";
 
@@ -45,7 +45,7 @@ const names = new Map(areas.areas.map((area) => [area.code, area.name]));
 // Use the deployed geometry store, as the server does, rather than source geometry.
 const cache = new AreaGeometryCache(
 	root,
-	readRepositoryGeometrySourceLookup(root),
+	readGeometrySourceLookup(root),
 	1,
 	join(root, "data/build/artifacts/geometry-store"),
 );
