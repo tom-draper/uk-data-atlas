@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
-import { createAtlasRelease } from "../../../pipeline/src/atlasRelease";
+import { createAtlasRelease } from "../src/atlasRelease";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (context: TestContext) => {

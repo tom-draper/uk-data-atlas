@@ -8,8 +8,8 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { buildAnalysisGeographyValidation } from "../../../pipeline/src/buildAnalysisGeographyValidation";
-import { storeObservations } from "../../../pipeline/src/store-observations";
+import { buildAnalysisGeographyValidation } from "../src/buildAnalysisGeographyValidation";
+import { storeObservations } from "../src/store-observations";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";

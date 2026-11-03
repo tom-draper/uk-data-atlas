@@ -4,7 +4,7 @@ import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	createCrosswalkInventory,
 	crosswalkInventoryFromEntries,
-} from "../../../pipeline/src/crosswalkCompiler";
+} from "../src/crosswalkCompiler";
 import type { PropertyCrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	addRelatedCodes,

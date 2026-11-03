@@ -6,8 +6,8 @@ import test from "node:test";
 import {
 	cachedEvidenceMeasure,
 	writeEvidenceDocument,
-} from "../../../pipeline/src/evidence/evidenceDocumentStore";
-import { buildEvidenceMeasure } from "../../../pipeline/src/evidence/buildEvidenceMeasure";
+} from "../src/evidence/evidenceDocumentStore";
+import { buildEvidenceMeasure } from "../src/evidence/buildEvidenceMeasure";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 test("writes published evidence and reuses only matching cached inputs", () => {

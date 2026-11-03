@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createPlaceResolver } from "../../../pipeline/src/placeResolver";
+import { createPlaceResolver } from "../src/placeResolver";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 
 test("place build resolver answers with the same supplied area and relationship data", () => {

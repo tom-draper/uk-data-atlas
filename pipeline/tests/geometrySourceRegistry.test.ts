@@ -10,7 +10,7 @@ import {
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { createGeometrySourceRegistry } from "../../../pipeline/src/geometrySourceRegistry";
+import { createGeometrySourceRegistry } from "../src/geometrySourceRegistry";
 import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 
 const writeBoundarySource = (

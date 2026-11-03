@@ -1,7 +1,7 @@
 import {
 	compileAnalysisGeographies,
 	readAnalysisGeographySupport,
-} from "../../../pipeline/src/analysisGeographies";
+} from "../src/analysisGeographies";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
