@@ -21,9 +21,10 @@ const measureSegment = (segments: string[]) =>
 				: undefined;
 
 /**
- * The request with every measure alias replaced by the id it names, or
+ * The request with a path's measure alias replaced by the id it names, or
  * undefined when it names none. A route then only ever sees ids, and the
- * response says what the alias was read as.
+ * response says what the alias was read as. A `measure` query parameter is
+ * read earlier, with its dimension filters, by `resolveMeasureQuery`.
  */
 export const canonicalMeasureRequest = <T extends RouteRequestFor<never>>(
 	request: T,
@@ -48,34 +49,10 @@ export const canonicalMeasureRequest = <T extends RouteRequestFor<never>>(
 		segments[position] = series?.measure.id ?? id;
 	}
 	const url = new URL(request.parsedUrl);
-	// A `measure` parameter names one series. A measure id names its only
-	// series, or the one with every dimension at its total.
-	const dimensional = request.context.measureDimensions
-		? dimensionCatalogue(catalog, request.context.measureDimensions)
-		: undefined;
-	const seriesOf = (term: string) => {
-		const measure = dimensional?.measure(term);
-		if (!measure) return canonical(term);
-		const totals = measure.series.filter((series) =>
-			measure.dimensions.every(
-				(dimension) =>
-					series.dimensions[dimension.id] === undefined ||
-					series.dimensions[dimension.id] === dimension.total,
-			),
-		);
-		return totals.length === 1 ? totals[0]!.id : canonical(term);
-	};
-	const measures = url.searchParams.getAll("measure");
-	if (measures.length > 0) {
-		url.searchParams.delete("measure");
-		for (const measure of measures)
-			url.searchParams.append("measure", seriesOf(measure));
-	}
 	url.pathname = `/${segments.map(encodeURIComponent).join("/")}`;
-	const changed =
-		segments.some(
-			(segment, index) => segment !== request.segments[index],
-		) || measures.some((measure) => seriesOf(measure) !== measure);
+	const changed = segments.some(
+		(segment, index) => segment !== request.segments[index],
+	);
 	return changed ? { ...request, parsedUrl: url, segments } : undefined;
 };
 

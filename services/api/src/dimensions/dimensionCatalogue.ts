@@ -227,3 +227,21 @@ export const describeMembers = (
 				];
 			}),
 	);
+
+/**
+ * A catalogue measure id as the public measure and members it is read as, for
+ * a response that would otherwise name a series by its internal id.
+ */
+export const publicSeries = (
+	catalog: DataCatalog,
+	dimensions: MeasureDimensions | undefined,
+	id: string,
+): { id: string; dimensions: Record<string, string> } => {
+	const found = dimensionCatalogue(
+		catalog,
+		dimensions ?? identityDimensions(catalog),
+	).series(id);
+	return found
+		? { id: found.measure.id, dimensions: found.series.dimensions }
+		: { id, dimensions: {} };
+};
