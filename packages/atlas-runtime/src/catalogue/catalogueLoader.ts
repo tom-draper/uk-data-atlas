@@ -193,7 +193,7 @@ export const readAtlasCatalogues = (
 		readNamedLocationInventory(apiRoot),
 	);
 	const crosswalkInventory = stage("crosswalk-inventory", () =>
-		readCrosswalkInventory(apiRoot),
+		readCrosswalkInventory(repositoryRootOf(apiRoot)),
 	);
 	const dataCatalog = stage("data-catalog", () => readDataCatalog(apiRoot));
 	const terrainCatalogue = stage("terrain-catalogue", () =>
@@ -235,7 +235,7 @@ export const readAtlasCatalogues = (
 	);
 	const crosswalkLookup = stage("crosswalk-lookup", () =>
 		readCrosswalkLookup(
-			apiRoot,
+			repositoryRootOf(apiRoot),
 			crosswalkInventory,
 			options.crosswalkCacheBytes,
 		),

@@ -80,7 +80,10 @@ test("reads a crosswalk artifact only when it is asked for", () => {
 			artifact(directory, "ward-to-lad");
 			artifact(directory, "parish-to-lad");
 			store(directory, inventory);
-			const lookup = readCrosswalkLookup(directory, inventory);
+			const lookup = readCrosswalkLookup(
+				join(directory, "../.."),
+				inventory,
+			);
 
 			rmSync(
 				join(
@@ -108,7 +111,10 @@ test("selects by header and lists in inventory order", () => {
 		(directory, inventory) => {
 			for (const { id } of inventory.crosswalks) artifact(directory, id);
 			store(directory, inventory);
-			const lookup = readCrosswalkLookup(directory, inventory);
+			const lookup = readCrosswalkLookup(
+				join(directory, "../.."),
+				inventory,
+			);
 
 			assert.deepEqual(
 				lookup.where!(({ from }) => from.geography === "ward").map(
@@ -127,7 +133,10 @@ test("selects by header and lists in inventory order", () => {
 test("refuses a missing database and stale SQLite artifact", () => {
 	withArtifacts([["ward-to-lad", "ward"]], (directory, inventory) => {
 		assert.throws(
-			() => readCrosswalkLookup(directory, inventory).get("ward-to-lad"),
+			() =>
+				readCrosswalkLookup(join(directory, "../.."), inventory).get(
+					"ward-to-lad",
+				),
 			/unable to open database file/,
 		);
 		artifact(directory, "ward-to-lad");
@@ -138,7 +147,10 @@ test("refuses a missing database and stale SQLite artifact", () => {
 		database.prepare("UPDATE crosswalk SET content_hash = 'stale'").run();
 		database.close();
 		assert.throws(
-			() => readCrosswalkLookup(directory, inventory).get("ward-to-lad"),
+			() =>
+				readCrosswalkLookup(join(directory, "../.."), inventory).get(
+					"ward-to-lad",
+				),
 			/Invalid crosswalk artifact/,
 		);
 	});
@@ -162,7 +174,11 @@ test("evicts the least recently used crosswalk by JSON bytes and reloads it", ()
 				}),
 			);
 			store(directory, inventory);
-			const lookup = readCrosswalkLookup(directory, inventory, bytes * 2);
+			const lookup = readCrosswalkLookup(
+				join(directory, "../.."),
+				inventory,
+				bytes * 2,
+			);
 			const a = lookup.get("a");
 			const b = lookup.get("b");
 			assert.equal(lookup.get("a"), a);
@@ -191,11 +207,19 @@ test("serves an oversized crosswalk without retaining it or evicting a smaller o
 				}),
 			);
 			store(directory, inventory);
-			const lookup = readCrosswalkLookup(directory, inventory, bytes);
+			const lookup = readCrosswalkLookup(
+				join(directory, "../.."),
+				inventory,
+				bytes,
+			);
 			const a = lookup.get("a");
 			assert.notEqual(lookup.get("larger"), lookup.get("larger"));
 			assert.equal(lookup.get("a"), a);
-			const uncached = readCrosswalkLookup(directory, inventory, 0);
+			const uncached = readCrosswalkLookup(
+				join(directory, "../.."),
+				inventory,
+				0,
+			);
 			assert.notEqual(uncached.get("a"), uncached.get("a"));
 		},
 	);
