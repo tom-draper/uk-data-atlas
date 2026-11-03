@@ -553,6 +553,64 @@ describe("declared statistics", () => {
 		}
 	});
 
+	it("generates parents per record set, with null where a record has none", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: { data: "name", regions: "regionName" },
+			measures: [CRIMES],
+			fields: [{ path: "total", measure: "crimes" }],
+			records: [
+				{ from: "data" },
+				{
+					from: "regions",
+					release: () => ({ geography: "region", year: 2025 }),
+				},
+			],
+			parents: [
+				{
+					sets: ["regions"],
+					nullable: true,
+					relation: "coterminous",
+					code: "authorityCode",
+					release: { geography: "localAuthority", year: 2024 },
+				},
+			],
+			payload: {
+				parts: yearParts("example", "localAuthority", 2024),
+				code: { data: "code", regions: "regionCode" },
+			},
+		};
+		const expected = JSON.parse(
+			file(
+				{
+					E06000001: {
+						name: "Hartlepool",
+						code: "E06000001",
+						total: 3,
+					},
+				},
+				{
+					regions: {
+						E12000001: {
+							regionName: "North East",
+							regionCode: "E12000001",
+							authorityCode: null,
+							total: 9,
+						},
+					},
+				},
+			),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			expect(
+				JSON.parse(rebuildFromDeclaration(database, config, "example")),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("generates parent areas and header summaries from rows", () => {
 		const config: DeclaredDataset = {
 			type: "example",

@@ -313,7 +313,11 @@ export function rebuildFromDeclaration(
 				if (!found) {
 					found = {};
 					records.set(code, found);
-					if (config.name !== undefined) found[config.name] = name;
+					const nameField =
+						typeof config.name === "string"
+							? config.name
+							: config.name?.[set.from];
+					if (nameField !== undefined) found[nameField] = name;
 					if (codeField !== undefined) found[codeField] = code;
 				}
 				return found;
@@ -555,6 +559,8 @@ export function rebuildFromDeclaration(
 			for (const [code, target] of records) {
 				kinds.clear();
 				for (const parent of config.parents ?? []) {
+					if (!(parent.sets ?? [sets[0].from]).includes(set.from))
+						continue;
 					const relation = parent.relation ?? "parent";
 					const geos = geographies(parent);
 					const kind = `${relation}\0${[...geos].join(",")}`;
@@ -564,7 +570,19 @@ export function rebuildFromDeclaration(
 						.get(code)
 						?.get(relation)
 						?.filter((area) => geos.has(area.geography))[taken];
-					if (!found) continue;
+					if (!found) {
+						if (parent.nullable) {
+							place(target, parent.code.split("."), null, arrays);
+							if (parent.name !== undefined)
+								place(
+									target,
+									parent.name.split("."),
+									null,
+									arrays,
+								);
+						}
+						continue;
+					}
 					place(target, parent.code.split("."), found.code, arrays);
 					if (parent.name !== undefined)
 						place(
@@ -576,7 +594,8 @@ export function rebuildFromDeclaration(
 				}
 			}
 			if (spec.fill)
-				for (const [code, target] of records) spec.fill(target, code);
+				for (const [code, target] of records)
+					spec.fill(target, code, sections);
 			if (spec.without)
 				for (const [code, target] of records)
 					for (const path of spec.without(
