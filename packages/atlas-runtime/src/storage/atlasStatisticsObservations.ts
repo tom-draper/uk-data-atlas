@@ -114,6 +114,7 @@ export type StatisticsTableSelector = {
  */
 export type StatisticsReadPath = {
 	schemaVersion: 1;
+	dataCatalogHash: string;
 	statistics: Record<string, StatisticsSelector | StatisticsTableSelector>;
 	observations: Record<string, string>;
 };

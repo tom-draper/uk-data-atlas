@@ -156,7 +156,7 @@ test("atlas assembly depends on each declared component output", () => {
 		buildDataStages.find((entry) => entry.name === name)!;
 	assert.ok(
 		stage("data-catalog").requiredOutputs.includes(
-			"data/build/observations.sqlite",
+			"data/build/compiled-observations",
 		),
 	);
 	assert.ok(
@@ -495,10 +495,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-data-catalog.ts",
 		"pipeline/src/catalog/compileDataCatalog.ts",
-		"pipeline/src/store-observations.ts",
-		"pipeline/src/statistics/atlasObservationTables.ts",
 		"packages/measures/src/dataCatalog.ts",
-		"packages/atlas-runtime/src/storage/atlasObservations.ts",
 		"packages/artifacts/src/sqliteTables.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",

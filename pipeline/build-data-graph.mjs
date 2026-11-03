@@ -186,7 +186,6 @@ const apiStages = [
 		["exec", "tsx", "pipeline/src/build-data-catalog.ts"],
 		{
 			requiredOutputs: [
-				"data/build/observations.sqlite",
 				"data/build/compiled-observations",
 				"data/build/measure-statistics-fields.json",
 			],

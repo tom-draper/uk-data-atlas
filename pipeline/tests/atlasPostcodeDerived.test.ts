@@ -23,7 +23,6 @@ import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex } from "../src/postcodes/storePostcodeIndex";
 import { assembleAtlas } from "../src/assemble-atlas";
 import {
-	writeEmptyObservationComponent,
 	writeEmptyPostcodeAreas,
 	writeEmptyWebsiteComponent,
 } from "./atlasComponentFixtures";
@@ -86,7 +85,6 @@ function fixture(t: TestContext) {
 		join(root, "data/build/atlas.sqlite"),
 		join(root, "data/build/atlas-base.sqlite"),
 	);
-	writeEmptyObservationComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	const postcodes = postcodeIndexFor([
 		postcodeRow("M1 1AA", { usrtypind: "1" }),

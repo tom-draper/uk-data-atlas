@@ -7,10 +7,7 @@ import { gzipSync } from "node:zlib";
 import { ATLAS_LOOKUP_NAMES } from "@/scripts/atlas-lookups";
 import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
 import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
-import {
-	writeEmptyObservationComponent,
-	writeEmptyPostcodeComponent,
-} from "@/services/api/tests/atlasComponentFixtures";
+import { writeEmptyPostcodeComponent } from "@/services/api/tests/atlasComponentFixtures";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
 
 const buildAtlasAssets = (root: string) => {
@@ -28,7 +25,6 @@ export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
 		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT); INSERT INTO payloads VALUES ('fixture', 'preserved')",
 	);
 	database.close();
-	writeEmptyObservationComponent(root);
 	writeEmptyPostcodeComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	const write = (kind: AtlasAssetKind, values: Record<string, unknown>) => {

@@ -139,11 +139,14 @@ API tables or the complete compiled release.
 `atlas-sqlite` writes the canonical statistics tables from
 `docs/sqlite-schema-design.md` (layer 4). Every catalogue dataset is stored
 in them. `UNSTORED_DATASETS` (`packages/atlas-runtime/src/catalogue/statisticsDatasets/`)
-lists any exception with its reason, and is empty. They are separate from the API's `observations` and
-`observation_*` tables, which `data-catalog` populates and the migration's last step removes once the API
-reads the statistics tables.
-The base database schema version is 3; the `catalogue_*` pilot tables from PR #398
-are gone.
+lists any exception with its reason, and is empty. The API reads its observations
+from these same statistics rows. The base database schema version is 3.
+
+`data-catalog` writes independently compiled observation artifacts under
+`compiled-observations/`. `statistics-read-path` compares their values, statuses,
+intervals, periods and areas with statistics-backed artifacts and records the
+selectors in `statistics-read-path.json`. The build fails if an artifact cannot
+be reconstructed. These compiler outputs are build inputs, not API storage.
 
 All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/catalogue/atlasStatistics.ts`.
 

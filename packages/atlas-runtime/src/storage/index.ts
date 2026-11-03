@@ -4,7 +4,6 @@ export * from "./atlasCache";
 export * from "./atlasCrosswalks";
 export * from "./atlasLookups";
 export * from "./atlasNamedLocationReader";
-export * from "./atlasObservations";
 export * from "./atlasPages";
 export * from "./atlasPostcodeAreaReader";
 export * from "./atlasPostcodeAreaShard";

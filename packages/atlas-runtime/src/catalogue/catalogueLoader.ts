@@ -151,8 +151,7 @@ export type CatalogueOptions = {
 	observationCacheBytes?: number;
 	/**
 	 * Which observation artifacts are read from the statistics tables. The
-	 * API passes its reviewed read path; without one, every artifact is read
-	 * from the observation tables.
+	 * API passes its reviewed read path; without one, the build output is read.
 	 */
 	statisticsReadPath?: StatisticsReadPath;
 	/**

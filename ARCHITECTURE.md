@@ -285,8 +285,8 @@ projections live in the local `atlas-cache.sqlite`. The API reads these
 directly. Their JSON outputs remain build and release intermediates. Named
 locations compile from area JSON before the shared SQLite database is written.
 The statistics vocabulary and read-path stages write JSON under `data/build/`.
-The read-path stage compares statistics rows with the observation component
-before assembly. The API reads both files from the deployed build. Other API
+The read-path stage compares statistics rows with independently compiled
+observation values before assembly. The API reads both files from the deployed build. Other API
 loaders still read their JSON outputs.
 See [data/build/README.md](data/build/README.md) for the database schema.
 

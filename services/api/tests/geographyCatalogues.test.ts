@@ -16,10 +16,7 @@ import { test, type TestContext } from "vitest";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildGeographyCatalogues } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
-import {
-	writeEmptyObservationComponent,
-	writeEmptyPostcodeComponent,
-} from "./atlasComponentFixtures";
+import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
 import {
 	buildArtifactPath,
 	geographyCatalogues,
@@ -51,7 +48,6 @@ const fixture = (t: TestContext) => {
 		join(root, "data/build/atlas.sqlite"),
 		join(root, "data/build/atlas-base.sqlite"),
 	);
-	writeEmptyObservationComponent(root);
 	writeEmptyPostcodeComponent(root);
 	for (const id of geographyCatalogues) {
 		const path = buildArtifactPath(root, `${id}.json`);

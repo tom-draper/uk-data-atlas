@@ -4,14 +4,6 @@ import { compilePostcodeAreas } from "../src/postcodes/postcodeAreaCompiler";
 import { storePostcodeAreas } from "../src/postcodes/storePostcodeAreas";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 
-export function writeEmptyObservationComponent(root: string) {
-	const database = new DatabaseSync(
-		join(root, "data/build/observations.sqlite"),
-	);
-	database.exec("CREATE TABLE observations (id INTEGER); ANALYZE");
-	database.close();
-}
-
 export function writeEmptyPostcodeComponent(root: string) {
 	const database = new DatabaseSync(
 		join(root, "data/build/postcode-index.sqlite"),

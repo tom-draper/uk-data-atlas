@@ -12,6 +12,7 @@ test("requires an exact selector inventory for the catalogue", () => {
 	const database = new DatabaseSync(":memory:");
 	try {
 		const catalog = {
+			contentHash: "fixture-hash",
 			datasets: [{ id: "dataset" }],
 			measures: [{ id: "count", sources: [{ datasetId: "dataset" }] }],
 		} as unknown as DataCatalog;
@@ -23,11 +24,20 @@ test("requires an exact selector inventory for the catalogue", () => {
 		};
 		const readPath: StatisticsReadPath = {
 			schemaVersion: 1,
+			dataCatalogHash: "fixture-hash",
 			statistics: { "count-observations": selector },
 			observations: {},
 		};
 		assert.doesNotThrow(() =>
 			statisticsArtifactReader(database, catalog, readPath),
+		);
+		assert.throws(
+			() =>
+				statisticsArtifactReader(database, catalog, {
+					...readPath,
+					dataCatalogHash: "stale",
+				}),
+			/do not match/,
 		);
 		assert.throws(
 			() =>
