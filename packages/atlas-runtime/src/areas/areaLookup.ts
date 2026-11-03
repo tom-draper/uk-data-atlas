@@ -18,12 +18,12 @@ export const DEFAULT_AREA_CACHE_RECORDS = 1_000_000;
 
 export const readAreaLookup = (
 	apiRoot: string,
-	inventory: AreaInventory = readSqliteAreaInventory(apiRoot),
+	inventory?: AreaInventory,
 	maxRecords = DEFAULT_AREA_CACHE_RECORDS,
 	databasePath?: string,
 ): AreaLookup =>
 	new LazyAreaLookup(
 		(release) => readSqliteAreas(apiRoot, release, databasePath),
-		inventory,
+		inventory ?? readSqliteAreaInventory(apiRoot, databasePath),
 		maxRecords,
 	);
