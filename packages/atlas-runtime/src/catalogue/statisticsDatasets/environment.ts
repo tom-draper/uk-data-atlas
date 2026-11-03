@@ -78,6 +78,12 @@ export const AIR_QUALITY: DeclaredDataset = {
 
 export const GHG_EMISSIONS: DeclaredDataset = {
 	type: "ghgEmissions",
+	payload: {
+		parts: yearParts("ghgEmissions", "localAuthority", 2025, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+		}),
+		code: "ladCode",
+	},
 	name: "ladName",
 	measures: [
 		measure(
@@ -217,6 +223,12 @@ export const GAS_CONSUMPTION: DeclaredDataset = consumption(
 
 export const ELECTRIC_VEHICLE_CHARGERS: DeclaredDataset = {
 	type: "electricVehicleChargers",
+	payload: {
+		parts: yearParts("electricVehicleChargers", "localAuthority", 2026, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+		}),
+		code: "code",
+	},
 	name: "name",
 	period: () => periods.date("2026-07-01"),
 	measures: [
@@ -235,6 +247,18 @@ export const ELECTRIC_VEHICLE_CHARGERS: DeclaredDataset = {
 
 export const WASTE: DeclaredDataset = {
 	type: "waste",
+	payload: {
+		parts: yearParts(
+			"waste",
+			"localAuthority",
+			2025,
+			{
+				coverageCountries: ["GB-ENG"],
+			},
+			["2025"],
+		),
+		code: "code",
+	},
 	name: "name",
 	period: () => periods.financialYear(2024),
 	measures: [
@@ -264,6 +288,12 @@ export const WASTE: DeclaredDataset = {
 
 export const LAND_AREA: DeclaredDataset = {
 	type: "landArea",
+	payload: {
+		parts: yearParts("landArea", "localAuthority", 2024, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+		}),
+		code: "ladCode",
+	},
 	name: "ladName",
 	measures: [
 		measure(
