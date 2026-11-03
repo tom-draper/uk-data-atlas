@@ -563,3 +563,21 @@ test("refuses an unknown dimension or member in a measure query parameter", () =
 	assert.equal(many.status, 409);
 	assert.equal((many.body as { code?: string }).code, "ambiguous_dimension");
 });
+
+test("chooses between datasets of a measure with datasetId", () => {
+	const ambiguous = get("/v1/attribution?measure=party-votes&party=lab");
+	assert.equal(ambiguous.status, 409);
+	assert.equal(
+		(ambiguous.body as { code?: string }).code,
+		"ambiguous_dimension",
+	);
+	const response = get(
+		"/v1/attribution?measure=party-votes&measure=recorded-crimes&datasetId=general",
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(resourceIds(response).sort(), ["crime", "general"]);
+	assert.equal(
+		response.headers?.["content-location"],
+		"/v1/attribution?datasetId=general&measure=party-votes&measure=recorded-crimes",
+	);
+});
