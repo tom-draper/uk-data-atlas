@@ -28,6 +28,7 @@ export * from "./atlasStatistics";
 export * from "./fuelPovertyStatistics";
 export * from "./datasetLayout";
 export * from "./datasetPayloads";
+export * from "./declaredPayload";
 export * from "./declaredStatistics";
 export * from "./statisticsDatasets";
 export * from "./statisticsDatasets/measures";

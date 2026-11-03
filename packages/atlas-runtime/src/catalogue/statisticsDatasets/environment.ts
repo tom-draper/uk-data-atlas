@@ -1,4 +1,5 @@
 import { type DeclaredDataset, periods } from "../declaredStatistics";
+import { yearParts } from "../declaredPayload";
 import { PREMISES, measure, per100k } from "./measures";
 
 /** Energy, emissions, air, land, waste and connectivity. */
@@ -311,6 +312,10 @@ export const LAND_AREA: DeclaredDataset = {
 export const BROADBAND: DeclaredDataset = {
 	type: "broadband",
 	rebuild: {},
+	payload: {
+		parts: yearParts("broadband", "localAuthority", 2024),
+		code: "ladCode",
+	},
 	name: "ladName",
 	period: () => periods.month(2025, 7),
 	measures: [
@@ -361,6 +366,12 @@ export const BROADBAND: DeclaredDataset = {
 export const MOBILE_COVERAGE: DeclaredDataset = {
 	type: "mobileCoverage",
 	rebuild: {},
+	payload: {
+		parts: yearParts("mobileCoverage", "localAuthority", 2024, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+		}),
+		code: "ladCode",
+	},
 	name: "ladName",
 	measures: [
 		measure(

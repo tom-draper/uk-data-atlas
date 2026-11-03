@@ -9,6 +9,10 @@ import {
 import { rebuildFromLayout } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
+	rebuildFromDeclaration,
+	yearParts,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
 	rebuildDatasetPayload,
 	STATISTICS_DATASETS,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -126,6 +130,72 @@ const RATE = measure(
 );
 
 describe("declared statistics", () => {
+	it("generates a declared payload from rows alone", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "ladName",
+			measures: [CRIMES, RATE],
+			dimensions: [
+				{
+					slug: "offence",
+					label: "Offence",
+					members: [
+						{ key: "total", code: "all", label: "All offences" },
+						{ key: "theft", label: "Theft" },
+					],
+				},
+			],
+			fields: [
+				{
+					path: "headline",
+					measure: "crimes",
+					members: { offence: "all" },
+				},
+				{ path: "byOffence.{offence}", measure: "crimes" },
+				{
+					path: "rate",
+					lower: "interval.lower",
+					upper: "interval.upper",
+					measure: "rate",
+				},
+			],
+			payload: {
+				parts: yearParts("example", "localAuthority", 2024),
+				code: "ladCode",
+			},
+		};
+		const record = (
+			code: string,
+			name: string,
+			rest: Record<string, unknown>,
+		) => ({ ladCode: code, ladName: name, ...rest });
+		/** `headline` claims the all-offences series, so `byOffence` holds the rest. */
+		const expected = JSON.parse(
+			file({
+				E06000001: record("E06000001", "Hartlepool", {
+					headline: 10,
+					byOffence: { theft: 4 },
+					rate: 5,
+					interval: { lower: 4, upper: 6 },
+				}),
+				E06000002: record("E06000002", "Middlesbrough", {
+					headline: 3,
+					byOffence: { theft: null },
+					rate: null,
+					interval: { lower: null, upper: null },
+				}),
+			}),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			expect(
+				JSON.parse(rebuildFromDeclaration(database, config, "example")),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("generates air quality from observations without layout tables", () => {
 		const config = STATISTICS_DATASETS.find(
 			(dataset) => dataset.type === "airQuality",

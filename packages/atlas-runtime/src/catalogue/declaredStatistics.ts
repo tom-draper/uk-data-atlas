@@ -132,6 +132,21 @@ export type DeclaredDataset = {
 	 * in the order listed, exactly as its compiler computes it.
 	 */
 	rebuild?: { derived?: Record<string, DerivedRule> };
+	/**
+	 * Generate the JSON from rows and this declaration alone, with no layout
+	 * tables. Only for datasets whose records hold the area's name and code
+	 * and values the fields map.
+	 */
+	payload?: DeclaredPayload;
+};
+
+export type DeclaredPayload = {
+	/** The parts of the file for the periods the rows hold, in order. */
+	parts: (labels: string[]) => { key: string; header: DeclaredHeader }[];
+	/** The record field holding the area's code. */
+	code?: string;
+	/** Dot-separated paths of containers that are arrays. */
+	arrays?: string[];
 };
 
 type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
@@ -533,6 +548,7 @@ export function declaredStatistics(
 	const type = config.type;
 	const useLayout =
 		config.rebuild !== undefined &&
+		config.payload === undefined &&
 		!(type === "airQuality" && entry.output === "air-quality");
 	const recordSets: DeclaredRecords[] = config.records ?? [
 		{ from: "data", release: config.release, alsoIn: config.alsoIn },
