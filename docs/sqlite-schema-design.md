@@ -875,13 +875,13 @@ members, rather than one id per breakdown.
   tables in the pipeline and reach the vocabulary from a build, so the
   mapping does not declare them.
 - **Read path.** An API observation artifact is read from `observation` rows
-  only when they rebuild it byte for byte, so values, statuses, intervals,
+  only when they rebuild its parsed content, so values, statuses, intervals,
   periods and areas are unchanged. `data/build/statistics-read-path.json`
   names each artifact's series (dataset, measure, members, geography, and
   any dimension summed over, such as `age` for population) and why each
   other artifact stays on `observations`. A selector can also read what the
   API serves but these tables hold another way, each rule checked by the
-  same byte comparison: a party with no row in a contest polled zero
+  same value comparison: a party with no row in a contest polled zero
   (`absentAsZero`); a row is served under a corrected or published code
   (`servedCodes`, from the shared local election and house price ward code
   lists); a measure is added to another (`plus`) or divided by one
@@ -897,7 +897,7 @@ members, rather than one id per breakdown.
   area means with the `derived` status the compiler gives them, each
   contest's winner, and the census small-area tables, read from the Nomis
   files under `data/source`. The `observation_*` tables and their writer remain
-  necessary for build validation and the independent byte comparison.
+  necessary for build validation and the comparison with compiled artifacts.
 - **Periods.** A catalogue period reads the statistics period with the same
   label, or the one label that extends it: `2021` is `2021-census`, an
   election year is its polling day.

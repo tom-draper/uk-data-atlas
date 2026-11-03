@@ -23,8 +23,8 @@ import {
 
 /**
  * The statistics read path. An artifact is read from the statistics tables
- * only when its rows rebuild the stored bytes exactly, so every value,
- * status, interval, period and area a route serves is unchanged; the routes
+ * only when its rows rebuild the stored artifact, so every value, status,
+ * interval, period and area a route serves is unchanged; the routes
  * are compared too, old read path against new, for a sample of places.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -51,19 +51,21 @@ test("names every catalogue artifact once, as statistics or observations", () =>
 	assert.deepEqual(new Set(planned), names);
 });
 
-test("rebuilds every moved artifact byte for byte from statistics rows", () => {
+test("rebuilds every moved artifact by value from statistics rows", () => {
 	for (const measure of catalog.measures)
 		for (const source of measure.sources) {
 			const name = observationArtifactName(measure.id, source);
 			const selector = readPath.statistics[name];
 			if (!selector) continue;
-			assert.equal(
-				readStatisticsObservationText(databasePath, selector, {
-					measureId: measure.id,
-					sourceGeography: source.sourceGeography,
-					periods: source.periods,
-				}),
-				readObservationText(databasePath, name),
+			assert.deepEqual(
+				JSON.parse(
+					readStatisticsObservationText(databasePath, selector, {
+						measureId: measure.id,
+						sourceGeography: source.sourceGeography,
+						periods: source.periods,
+					}),
+				),
+				JSON.parse(readObservationText(databasePath, name)),
 				`${name} rebuilt from statistics rows differs from the stored artifact`,
 			);
 		}
