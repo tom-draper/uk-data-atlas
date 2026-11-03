@@ -8,16 +8,19 @@ import { readSqlitePostcodeIndexArtifact } from "./atlasPostcodeIndexReader";
 import { PostcodeIndex } from "@uk-data-atlas/postcodes";
 
 export const readSqlitePostcodeIndex = (
-	apiRoot: string,
+	repositoryRoot: string,
 	databasePath?: string,
 ): PostcodeIndex => {
-	const artifact = readSqlitePostcodeIndexArtifact(apiRoot, databasePath);
+	const artifact = readSqlitePostcodeIndexArtifact(
+		repositoryRoot,
+		databasePath,
+	);
 	const entries = new Map(
 		artifact.shards.map((entry) => [entry.path, entry]),
 	);
 	return new PostcodeIndex(artifact, (path) => {
 		const entry = entries.get(path);
 		if (!entry) throw new Error(`Unknown postcode shard ${path}`);
-		return readSqlitePostcodeShard(apiRoot, entry, databasePath);
+		return readSqlitePostcodeShard(repositoryRoot, entry, databasePath);
 	});
 };

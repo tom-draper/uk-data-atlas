@@ -123,10 +123,10 @@ function fixture(t: TestContext) {
 }
 
 test("postcode index readers work from the component without an atlas database", (t) => {
-	const { root, apiRoot, path } = fixture(t);
+	const { root, path } = fixture(t);
 	rmSync(path);
 	const count = readPostcodeIndex(
-		apiRoot,
+		root,
 		join(root, "data/build/postcode-index.sqlite"),
 	).artifact.counts.postcodes;
 	assert.equal(count, 3);
@@ -257,7 +257,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 			},
 		],
 	]);
-	const postcodes = readPostcodeIndex(apiRoot);
+	const postcodes = readPostcodeIndex(root);
 	const index = readPostcodeAreaIndex(
 		apiRoot,
 		postcodes,
@@ -311,7 +311,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 		existsSync(join(artifactRoot(apiRoot), "postcode-counts.json")),
 		false,
 	);
-	const postcodes = readPostcodeIndex(apiRoot);
+	const postcodes = readPostcodeIndex(root);
 	const areas = new PostcodeAreaIndex(compiled.artifact, postcodes, (path) =>
 		readSqlitePostcodeAreaShard(apiRoot, path),
 	);
