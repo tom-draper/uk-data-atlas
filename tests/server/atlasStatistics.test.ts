@@ -120,6 +120,20 @@ const memory = (tables: Record<string, SqliteTable>) => {
 };
 
 describe("fuel poverty on the statistics model", () => {
+	it("validates fuel poverty values independently of JSON formatting", () => {
+		const text = fuelPovertyText({
+			E01000001: record("E01000001", "City of London 001A"),
+		});
+		const formatted = JSON.stringify(JSON.parse(text), null, 2);
+		const database = memory({
+			...statisticsTables([fuelPovertyStatistics(formatted, entry)]),
+		});
+		expect(JSON.parse(rebuildFuelPoverty(database))).toEqual(
+			JSON.parse(text),
+		);
+		database.close();
+	});
+
 	it("rebuilds the payload byte for byte and serves it from rows through the cache", () => {
 		const root = mkdtempSync(join(tmpdir(), "statistics-rows-"));
 		const path = join(root, "data/build/atlas.sqlite");
