@@ -14,15 +14,14 @@ import { readStoredText } from "@uk-data-atlas/artifacts";
 
 it("rebuilds every crosswalk artifact byte for byte from edge rows", () => {
 	const root = process.cwd();
-	const apiRoot = join(root, "services/api");
-	const inventory = readSqliteCrosswalkInventory(apiRoot);
+	const inventory = readSqliteCrosswalkInventory(root);
 	expect(inventory.crosswalks.length).toBeGreaterThan(0);
 	const mismatches: string[] = [];
 	for (const entry of inventory.crosswalks) {
 		const text = readStoredText(
 			join(artifactDirectory(root), entry.artifact),
 		);
-		const { artifact, bytes } = readSqliteCrosswalk(apiRoot, entry);
+		const { artifact, bytes } = readSqliteCrosswalk(root, entry);
 		// Artifacts are written tab-indented.
 		const rebuilt =
 			JSON.stringify(artifact, null, "\t") +

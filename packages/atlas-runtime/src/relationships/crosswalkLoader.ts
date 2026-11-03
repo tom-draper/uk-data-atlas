@@ -25,7 +25,7 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 	private bytes = 0;
 
 	constructor(
-		private readonly apiRoot: string,
+		private readonly repositoryRoot: string,
 		inventory: CrosswalkInventory,
 		private readonly maxBytes: number,
 		private readonly databasePath?: string,
@@ -47,7 +47,7 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 		const expected = this.entries.find((crosswalk) => crosswalk.id === id);
 		if (!expected) return undefined;
 		const { artifact, bytes } = readSqliteCrosswalk(
-			this.apiRoot,
+			this.repositoryRoot,
 			expected,
 			this.databasePath,
 		);
@@ -77,12 +77,12 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 }
 
 export const readCrosswalkLookup = (
-	apiRoot: string,
+	repositoryRoot: string,
 	inventory: CrosswalkInventory,
 	maxBytes = DEFAULT_CROSSWALK_CACHE_BYTES,
 	databasePath?: string,
 ): CrosswalkLookup =>
-	new LazyCrosswalkLookup(apiRoot, inventory, maxBytes, databasePath);
+	new LazyCrosswalkLookup(repositoryRoot, inventory, maxBytes, databasePath);
 
 export const readRelationshipPathInventory = (
 	apiRoot: string,

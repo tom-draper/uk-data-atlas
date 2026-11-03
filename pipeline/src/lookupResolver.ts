@@ -1,5 +1,4 @@
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	buildArtifactPath,
 	readAreaLookup,
@@ -44,7 +43,6 @@ export const readLookupResolver = (
 	repositoryRoot: string,
 	databasePath: string,
 ) => {
-	const apiRoot = apiRootOf(repositoryRoot);
 	const inventory = readSqliteAreaInventory(repositoryRoot, databasePath);
 	const areaLookup = readAreaLookup(
 		repositoryRoot,
@@ -52,9 +50,12 @@ export const readLookupResolver = (
 		undefined,
 		databasePath,
 	);
-	const crosswalkInventory = readCrosswalkInventory(apiRoot, databasePath);
+	const crosswalkInventory = readCrosswalkInventory(
+		repositoryRoot,
+		databasePath,
+	);
 	const crosswalkLookup = readCrosswalkLookup(
-		apiRoot,
+		repositoryRoot,
 		crosswalkInventory,
 		undefined,
 		databasePath,

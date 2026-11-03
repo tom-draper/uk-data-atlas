@@ -142,14 +142,12 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		);
 	rebuild();
 	assert.equal(
-		JSON.stringify(readCrosswalkInventory(apiRoot)),
+		JSON.stringify(readCrosswalkInventory(root)),
 		JSON.stringify(inventory),
 	);
 	for (const value of artifacts)
 		assert.equal(
-			JSON.stringify(
-				readCrosswalkLookup(apiRoot, inventory).get(value.id),
-			),
+			JSON.stringify(readCrosswalkLookup(root, inventory).get(value.id)),
 			JSON.stringify(value),
 		);
 	assert.deepEqual(readSqliteAreas(root, areaInventory.releases[0]), [
@@ -369,9 +367,7 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 	refuse({ ...artifact, contentHash: "stale" }, /Invalid crosswalk artifact/);
 	rmSync(artifactRoot(apiRoot), { recursive: true });
 	assert.equal(
-		JSON.stringify(
-			readCrosswalkLookup(apiRoot, inventory).get(artifact.id),
-		),
+		JSON.stringify(readCrosswalkLookup(root, inventory).get(artifact.id)),
 		JSON.stringify(artifact),
 	);
 });
