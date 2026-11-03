@@ -1,5 +1,4 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { resolve as resolveRepositoryRoot } from "node:path";
 import { createServer } from "node:http";
 import { createApiServer } from "../../src/apiServer";
 import { readFileSync } from "node:fs";
