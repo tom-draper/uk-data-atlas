@@ -545,8 +545,9 @@ LEFT JOIN crosswalk_weight w ON w.crosswalk_id = e.crosswalk_id AND w.from_versi
 
 export const readSqliteCrosswalkInventory = (
 	apiRoot: string,
+	databasePath = atlasDatabasePath(apiRoot),
 ): CrosswalkInventory => {
-	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+	const database = new DatabaseSync(databasePath, {
 		readOnly: true,
 	});
 	try {
@@ -627,8 +628,9 @@ const endpointOf = (
 export const readSqliteCrosswalk = (
 	apiRoot: string,
 	expected: CrosswalkInventory["crosswalks"][number],
+	databasePath = atlasDatabasePath(apiRoot),
 ) => {
-	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+	const database = new DatabaseSync(databasePath, {
 		readOnly: true,
 	});
 	try {
