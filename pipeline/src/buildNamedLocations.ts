@@ -25,10 +25,7 @@ import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import { compileNamedLocationGeometry } from "@uk-data-atlas/atlas-runtime/places";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
@@ -95,9 +92,8 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 		"named-locations.json",
 	);
 	const parsed = compileNamedLocations(source);
-	const apiRoot = apiRootOf(repositoryRoot);
 	const areaInventory = readPublicManifest<AreaInventory>(
-		apiRoot,
+		repositoryRoot,
 		"area-inventory.json",
 		"releases",
 		"area inventory",

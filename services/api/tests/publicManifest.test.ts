@@ -17,7 +17,7 @@ const apiRootWith = (t: TestContext, manifest: unknown) => {
 		join(artifactRoot(apiRoot), "fixture.json"),
 		JSON.stringify(manifest),
 	);
-	return apiRoot;
+	return root;
 };
 
 test("reads a schema-1 manifest whose list is an array", (t) => {
@@ -39,17 +39,17 @@ for (const [name, manifest] of [
 	["a list that is not an array", { schemaVersion: 1, entries: {} }],
 ] as const) {
 	test(`refuses a manifest with ${name}`, (t) => {
-		const apiRoot = apiRootWith(t, manifest);
+		const root = apiRootWith(t, manifest);
 		assert.throws(
 			() =>
 				readPublicManifest<Fixture>(
-					apiRoot,
+					root,
 					"fixture.json",
 					"entries",
 					"fixture manifest",
 				),
 			{
-				message: `Invalid fixture manifest at ${join(artifactRoot(apiRoot), "fixture.json")}`,
+				message: `Invalid fixture manifest at ${join(root, "data/build/artifacts/fixture.json")}`,
 			},
 		);
 	});

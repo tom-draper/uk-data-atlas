@@ -118,7 +118,7 @@ const fixture = (context: TestContext) => {
 test("SQLite terrain loader and every discovery response match the JSON loader byte for byte", (context) => {
 	const { root, apiRoot } = fixture(context);
 	const before = readPublicManifest<TerrainCatalogue>(
-		apiRoot,
+		root,
 		"terrain-catalogue.json",
 		"products",
 		"terrain catalogue",
