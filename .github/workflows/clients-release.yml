@@ -1,0 +1,64 @@
+name: Release API clients
+
+# Builds the TypeScript and Python clients from services/api/openapi.yaml and
+# attaches the packages to the run. The generated code is not committed, so a
+# release is the only place a built package comes from. Run it by hand from
+# the commit to release; nothing publishes yet.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build clients
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pnpm install --frozen-lockfile
+      # Writes both generated trees, creating clients/python/.venv for the
+      # Python generator.
+      - run: pnpm clients:generate
+      - run: pnpm --dir clients/typescript typecheck
+      - run: pnpm --dir clients/typescript build
+      - run: pnpm --dir clients/typescript pack --pack-destination "$RUNNER_TEMP/clients"
+      - run: |
+          clients/python/.venv/bin/pip install --quiet './clients/python[test]' build
+          clients/python/.venv/bin/python -m pytest clients/python
+          clients/python/.venv/bin/python -m build --outdir "$RUNNER_TEMP/clients" clients/python
+      - uses: actions/upload-artifact@v4
+        with:
+          name: api-clients
+          path: ${{ runner.temp }}/clients/*
+          if-no-files-found: error
+
+  # TODO: publish once the package names and registry accounts exist. Both
+  # packages are private until then (clients/typescript/package.json).
+  #
+  # publish:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   environment: clients-release
+  #   permissions:
+  #     id-token: write
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: api-clients
+  #         path: dist
+  #     # npm: remove "private" from clients/typescript/package.json, then
+  #     #   npm publish dist/uk-data-atlas-client-*.tgz --provenance
+  #     # PyPI (trusted publishing):
+  #     #   - uses: pypa/gh-action-pypi-publish@release/v1
+  #     #     with:
+  #     #       packages-dir: dist
