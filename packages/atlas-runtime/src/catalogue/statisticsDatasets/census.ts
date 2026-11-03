@@ -17,6 +17,29 @@ const districts2021 = {
 
 export const CAR_AVAILABILITY: DeclaredDataset = {
 	type: "carAvailability",
+	payload: {
+		parts: () => [
+			{
+				key: "2021",
+				header: {
+					id: "carAvailability2021",
+					type: "carAvailability",
+					year: 2021,
+					boundaryType: "localAuthority",
+					boundaryYear: 2025,
+					metadata: {
+						source: "Office for National Statistics. Census 2021: Car or van availability, England and Wales. TS045.",
+						notes: [
+							"England and Wales only. Shares are of households, not of people.",
+							"The top category is open-ended, so the table gives no vehicle count.",
+						],
+					},
+					coverageCountries: ["GB-ENG", "GB-WLS"],
+				},
+			},
+		],
+		code: "ladCode",
+	},
 	rebuild: {},
 	...districts2021,
 	period: census2021,
@@ -59,6 +82,28 @@ export const CAR_AVAILABILITY: DeclaredDataset = {
 
 export const QUALIFICATION: DeclaredDataset = {
 	type: "qualification",
+	payload: {
+		parts: () => [
+			{
+				key: "2021",
+				header: {
+					id: "qualifications2021",
+					type: "qualification",
+					year: 2021,
+					boundaryType: "localAuthority",
+					boundaryYear: 2025,
+					metadata: {
+						source: "Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067.",
+						notes: [
+							"England and Wales only. Covers usual residents aged 16 and over; residents under 16, whom the table records as 'Does not apply', are excluded.",
+						],
+					},
+					coverageCountries: ["GB-ENG", "GB-WLS"],
+				},
+			},
+		],
+		code: "ladCode",
+	},
 	rebuild: {},
 	...districts2021,
 	period: census2021,
@@ -137,6 +182,29 @@ export const QUALIFICATION: DeclaredDataset = {
 
 export const TRAVEL_TO_WORK: DeclaredDataset = {
 	type: "travelToWork",
+	payload: {
+		parts: () => [
+			{
+				key: "2021",
+				header: {
+					id: "travelToWork2021",
+					type: "travelToWork",
+					year: 2021,
+					boundaryType: "localAuthority",
+					boundaryYear: 2025,
+					metadata: {
+						source: "Office for National Statistics. Census 2021: Method used to travel to workplace, England and Wales. TS061.",
+						notes: [
+							"England and Wales only. Shares are of people in employment, so those not in employment or aged under 16 are excluded.",
+							"Working mainly at or from home is counted as a method of travel, as the census reports it.",
+						],
+					},
+					coverageCountries: ["GB-ENG", "GB-WLS"],
+				},
+			},
+		],
+		code: "ladCode",
+	},
 	rebuild: {},
 	...districts2021,
 	period: census2021,
