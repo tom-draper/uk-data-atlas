@@ -264,7 +264,10 @@ export const readAtlasCatalogues = (
 			),
 	);
 	const relationshipPathInventory = stage("relationship-path-inventory", () =>
-		readRelationshipPathInventory(apiRoot, crosswalkInventory),
+		readRelationshipPathInventory(
+			repositoryRootOf(apiRoot),
+			crosswalkInventory,
+		),
 	);
 	const relationshipCandidateInventory = stage(
 		"relationship-candidate-inventory",

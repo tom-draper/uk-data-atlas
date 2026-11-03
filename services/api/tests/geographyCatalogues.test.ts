@@ -130,7 +130,7 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 		datasets: [],
 		measures: [],
 	} as const;
-	const paths = readRelationshipPathInventory(apiRoot, {
+	const paths = readRelationshipPathInventory(root, {
 		...crosswalks,
 		crosswalks: [],
 	});
@@ -155,7 +155,7 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 	);
 	assert.throws(
 		() =>
-			readRelationshipPathInventory(apiRoot, {
+			readRelationshipPathInventory(root, {
 				...crosswalks,
 				contentHash: "stale",
 				crosswalks: [],
