@@ -7,8 +7,6 @@ import type { Table } from "./table";
  * codes is still found.
  */
 
-/** A GSS code: a letter and eight digits, such as E05013408. */
-export const GSS_CODE = /^[A-Za-z]\d{8}$/;
 /** Shaped like a code but maybe mistyped: a letter and some digits. */
 const CODE_LIKE = /^[A-Za-z]\d{4,12}$/;
 const NUMBER = /^[-+]?(\d{1,3}(,\d{3})+|\d+)?(\.\d+)?$/;

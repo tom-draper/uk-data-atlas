@@ -59,15 +59,6 @@ export function releaseLabel(
 	return release.title.replace(/\s*\(.*\)\s*$/, "");
 }
 
-/** The release's own words for what makes it distinct, such as "Great Britain, generalised". */
-export function releaseDetail(
-	releases: BoundaryRelease[],
-	ref: ReleaseRef,
-): string | null {
-	const release = findRelease(releases, ref);
-	return release?.title.match(/\(([^)]*)\)\s*$/)?.[1] ?? null;
-}
-
 /** "Wards" from a release title, for talking about a geography in general. */
 export function geographyLabel(
 	releases: BoundaryRelease[],

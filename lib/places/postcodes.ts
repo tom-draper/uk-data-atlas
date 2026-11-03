@@ -424,10 +424,6 @@ export function loadPostcodeSectors() {
 	return compiledSectors;
 }
 
-export async function postcodeDistrict(district: string) {
-	return (await loadPostcodeDistricts())?.districts[district];
-}
-
 let byArea:
 	Promise<Map<string, [district: string, live: number][]>> | undefined;
 
