@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -15,13 +16,15 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("relational areas preserve inventory order, aliases and record order without JSON", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-areas-"));
 	context.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	const directory = artifactRoot(apiRoot);
+	const directory = artifactDirectory(
+		resolveRepositoryRoot(apiRoot, "../.."),
+	);
 	mkdirSync(directory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const inventory: AreaInventory = {

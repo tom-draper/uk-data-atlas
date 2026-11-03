@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import {
 	requireAtlasCache,
 	readCachePayload,
@@ -19,7 +20,7 @@ import {
 	readMeasureTotals,
 	readValidationWaivers,
 } from "../../src/validation/inputs";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * A compiled artifact records the content hash of each artifact it was built
@@ -32,7 +33,7 @@ const apiRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),
 	"../../../services/api",
 );
-const publicRoot = artifactRoot(apiRoot);
+const publicRoot = artifactDirectory(resolveRepositoryRoot(apiRoot, "../.."));
 const read = (path: string) => {
 	if (path === "place-index.json" || path === "area-search-index.json") {
 		const table =

@@ -10,7 +10,7 @@ import {
 import { onApril2023Authorities } from "../../src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const dataset = (
 	output: string,
@@ -2090,7 +2090,7 @@ test("names what covers the nations a measure does not", () => {
 	const catalog = JSON.parse(
 		readFileSync(
 			join(
-				artifactRoot(
+				artifactDirectory(
 					resolve(
 						dirname(fileURLToPath(import.meta.url)),
 						"../../../services/api",

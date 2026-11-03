@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import {
 	copyFileSync,
@@ -34,10 +35,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import {
-	artifactDirectory,
-	artifactRoot,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "geography-catalogues-"));
@@ -101,7 +99,12 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 	for (const [id, payload] of expected) {
 		assert.equal(readAtlasPayload(root, id), payload);
 		assert.equal(
-			existsSync(join(artifactRoot(apiRoot), `${id}.json`)),
+			existsSync(
+				join(
+					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+					`${id}.json`,
+				),
+			),
 			false,
 		);
 	}
@@ -187,7 +190,12 @@ test("missing compiler inputs leave the database and old public files intact", (
 		before,
 	);
 	assert.equal(
-		existsSync(join(artifactRoot(apiRoot), "boundary-releases.json")),
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"boundary-releases.json",
+			),
+		),
 		true,
 	);
 	assert.equal(
@@ -212,7 +220,12 @@ test("a failed SQLite update keeps the previous database and removes its tempora
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(existsSync(`${path}.geography.tmp`), false);
 	assert.equal(
-		existsSync(join(artifactRoot(apiRoot), "boundary-releases.json")),
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"boundary-releases.json",
+			),
+		),
 		true,
 	);
 });

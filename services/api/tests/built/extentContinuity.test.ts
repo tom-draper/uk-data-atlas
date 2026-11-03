@@ -1,4 +1,4 @@
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { join } from "node:path";
@@ -8,7 +8,7 @@ import type {
 	CrosswalkInventory,
 } from "@uk-data-atlas/atlas-runtime/relationships";
 
-const publicDirectory = artifactRoot(
+const publicDirectory = artifactDirectory(
 	new URL("../..", import.meta.url).pathname,
 );
 

@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -19,7 +20,7 @@ import {
 	packGeometry,
 	unpackGeometry,
 } from "@uk-data-atlas/geography/packed-geometry";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const square = (west: number, south: number, size: number) => [
 	[
@@ -388,11 +389,17 @@ test("rechecks missing and stale stores after eviction without a source fallback
 test("the API factory validates the store and serves without raw boundary files", (t) => {
 	const { root, sources } = gridRelease(t);
 	const apiRoot = join(root, "services", "api");
-	const store = join(artifactRoot(apiRoot), "geometry-store");
+	const store = join(
+		artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+		"geometry-store",
+	);
 	mkdirSync(store, { recursive: true });
 	const source = sources.get("ward/2025-05-uk-bgc")!;
 	writeFileSync(
-		join(artifactRoot(apiRoot), "geometry-sources.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"geometry-sources.json",
+		),
 		JSON.stringify({
 			schemaVersion: 1,
 			releases: [

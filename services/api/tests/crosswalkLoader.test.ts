@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import { DatabaseSync } from "node:sqlite";
@@ -10,7 +11,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { readCrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const entry = (id: string, geography: string) => ({
 	id,
@@ -25,7 +26,9 @@ const entry = (id: string, geography: string) => ({
 });
 
 const store = (apiRoot: string, inventory: CrosswalkInventory) => {
-	const directory = artifactRoot(apiRoot);
+	const directory = artifactDirectory(
+		resolveRepositoryRoot(apiRoot, "../.."),
+	);
 	writeFileSync(
 		join(directory, "crosswalk-inventory.json"),
 		JSON.stringify(inventory),
@@ -46,9 +49,15 @@ const withArtifacts = (
 	const root = mkdtempSync(join(tmpdir(), "crosswalk-loader-"));
 	const directory = join(root, "services/api");
 	try {
-		mkdirSync(join(artifactRoot(directory), "crosswalks"), {
-			recursive: true,
-		});
+		mkdirSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(directory, "../..")),
+				"crosswalks",
+			),
+			{
+				recursive: true,
+			},
+		);
 		const inventory = {
 			schemaVersion: 1,
 			contentHash: "sha256:inventory",
@@ -66,7 +75,11 @@ const artifact = (
 	contentHash = `sha256:${id}`,
 ) =>
 	writeFileSync(
-		join(artifactRoot(directory), "crosswalks", `${id}.json`),
+		join(
+			artifactDirectory(resolveRepositoryRoot(directory, "../..")),
+			"crosswalks",
+			`${id}.json`,
+		),
 		JSON.stringify({ schemaVersion: 1, id, contentHash, records: [] }),
 	);
 
@@ -87,7 +100,9 @@ test("reads a crosswalk artifact only when it is asked for", () => {
 
 			rmSync(
 				join(
-					artifactRoot(directory),
+					artifactDirectory(
+						resolveRepositoryRoot(directory, "../.."),
+					),
 					"crosswalks",
 					"parish-to-lad.json",
 				),

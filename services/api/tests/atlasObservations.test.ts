@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import {
 	copyFileSync,
@@ -36,7 +37,7 @@ import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const originalMeasure = dataCatalog.measures.find(
 	(measure) => measure.id === "small-area-fixture",
@@ -89,7 +90,9 @@ function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-observations-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	const publicDirectory = artifactRoot(apiRoot);
+	const publicDirectory = artifactDirectory(
+		resolveRepositoryRoot(apiRoot, "../.."),
+	);
 	mkdirSync(publicDirectory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const path = join(root, "data/build/atlas.sqlite");

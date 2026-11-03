@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -22,7 +23,7 @@ import {
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * The published artifact, held to the descriptor that describes it.
@@ -34,7 +35,7 @@ import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
  */
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const publicRoot = artifactRoot(apiRoot);
+const publicRoot = artifactDirectory(resolveRepositoryRoot(apiRoot, "../.."));
 
 const manifest = JSON.parse(
 	readFileSync(join(publicRoot, "map-resources.json"), "utf8"),

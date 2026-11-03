@@ -1,4 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { createServer } from "node:http";
 import { createApiServer } from "../../src/apiServer";
 import { readFileSync } from "node:fs";
@@ -13,7 +14,7 @@ import {
 	readMapResources,
 } from "@uk-data-atlas/atlas-runtime/maps";
 import { route } from "../../src/routes";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
 const assetBase = "https://maps.example.com/releases/test";
@@ -23,10 +24,18 @@ test("CDN mode needs only the map manifest, with no local archives", () => {
 	const repository = mkdtempSync(join(tmpdir(), "map-cdn-"));
 	const root = join(repository, "services/api");
 	try {
-		mkdirSync(artifactRoot(root), { recursive: true });
+		mkdirSync(artifactDirectory(resolveRepositoryRoot(root, "../..")), {
+			recursive: true,
+		});
 		copyFileSync(
-			join(artifactRoot(apiRoot), "map-resources.json"),
-			join(artifactRoot(root), "map-resources.json"),
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"map-resources.json",
+			),
+			join(
+				artifactDirectory(resolveRepositoryRoot(root, "../..")),
+				"map-resources.json",
+			),
 		);
 		const resources = readMapResources(repository, assetBase, tileBase);
 		assert.ok(resources.resources.length > 0);

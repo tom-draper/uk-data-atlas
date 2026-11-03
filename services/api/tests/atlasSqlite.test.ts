@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import { AreaSearch } from "@uk-data-atlas/atlas-runtime/areas";
 import {
@@ -49,16 +50,15 @@ import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import { route } from "../src/routes";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { testContext } from "./routeFixtures";
-import {
-	artifactDirectory,
-	artifactRoot,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (context: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-sqlite-"));
 	context.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	mkdirSync(artifactRoot(apiRoot), { recursive: true });
+	mkdirSync(artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")), {
+		recursive: true,
+	});
 	buildTerrainCatalogue(root);
 	writeFileSync(
 		join(artifactDirectory(root), "named-locations.json"),
@@ -81,7 +81,10 @@ const fixture = (context: TestContext) => {
 		}),
 	);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "area-inventory.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"area-inventory.json",
+		),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "areas",
@@ -142,14 +145,22 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 				)
 				.get()?.payload,
 			readFileSync(
-				join(artifactRoot(apiRoot), "terrain-catalogue.json"),
+				join(
+					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+					"terrain-catalogue.json",
+				),
 				"utf8",
 			),
 		);
 	} finally {
 		database.close();
 	}
-	rmSync(join(artifactRoot(apiRoot), "terrain-catalogue.json"));
+	rmSync(
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"terrain-catalogue.json",
+		),
+	);
 	const after = readTerrainCatalogue(root);
 	assert.equal(JSON.stringify(after), JSON.stringify(before));
 	for (const url of [
@@ -221,7 +232,12 @@ test("rebuilding SQLite replaces the payload and a missing input preserves the l
 	buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(readTerrainCatalogue(root).products.length, 6);
 	const before = readFileSync(path);
-	rmSync(join(artifactRoot(apiRoot), "terrain-catalogue.json"));
+	rmSync(
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"terrain-catalogue.json",
+		),
+	);
 	assert.throws(() => buildAtlasSqlite(root, { censusTables: [] }), /ENOENT/);
 	assert.deepEqual(readFileSync(path), before);
 });
@@ -317,7 +333,10 @@ test("split atlas serves projection routes from the local cache without projecti
 			JSON.stringify(artifact),
 		);
 	}
-	const obsolete = join(artifactRoot(apiRoot), "location-projections.sqlite");
+	const obsolete = join(
+		artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+		"location-projections.sqlite",
+	);
 	writeFileSync(obsolete, "obsolete database");
 	buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(existsSync(obsolete), false);
@@ -397,7 +416,9 @@ test("split atlas serves projection routes from the local cache without projecti
 
 test("projection compilation writes build intermediates and removes old public copies", (context) => {
 	const { root, apiRoot } = fixture(context);
-	const publicDirectory = artifactRoot(apiRoot);
+	const publicDirectory = artifactDirectory(
+		resolveRepositoryRoot(apiRoot, "../.."),
+	);
 	for (const name of [
 		"location-projections",
 		"location-parent-projections",
