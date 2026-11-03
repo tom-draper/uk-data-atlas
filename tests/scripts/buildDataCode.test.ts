@@ -1,4 +1,4 @@
-import { buildDataStages } from "@/scripts/build-data-graph.mjs";
+import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 import { execFileSync } from "node:child_process";
 import assert from "node:assert/strict";
 import {
@@ -12,9 +12,9 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { onTestFinished, test } from "vitest";
-import { stageCodeFiles } from "@/scripts/build-data-code.mjs";
-import { createStageCache } from "@/scripts/build-data-cache.mjs";
-import { runBuild } from "@/scripts/build-data.mjs";
+import { stageCodeFiles } from "@/pipeline/build-data-code.mjs";
+import { createStageCache } from "@/pipeline/build-data-cache.mjs";
+import { runBuild } from "@/pipeline/build-data.mjs";
 
 function fixture() {
 	const root = mkdtempSync(join(tmpdir(), "atlas-stage-code-"));

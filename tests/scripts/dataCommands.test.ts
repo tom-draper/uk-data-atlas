@@ -10,7 +10,7 @@ import {
 import { tmpdir } from "node:os";
 import { delimiter, join, resolve } from "node:path";
 import { expect, onTestFinished, test } from "vitest";
-import { buildDataStages } from "@/scripts/build-data-graph.mjs";
+import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 
 test("data stages invoke existing scripts without public command aliases", () => {
 	for (const stage of buildDataStages) {

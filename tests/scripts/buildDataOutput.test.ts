@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "vitest";
-import { createLinePrefixer } from "@/scripts/build-data-output.mjs";
+import { createLinePrefixer } from "@/pipeline/build-data-output.mjs";
 
 const relay = fileURLToPath(
-	new URL("../../scripts/build-data-relay.mjs", import.meta.url),
+	new URL("../../pipeline/build-data-relay.mjs", import.meta.url),
 );
 
 const prefixed = (chunks: string[], overwrite = false) => {

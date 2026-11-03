@@ -13,10 +13,10 @@ const commonFiles = new Set([
 	"tsconfig.json",
 	"data-release.json",
 	"services/api/tsconfig.json",
-	"scripts/build-data.mjs",
-	"scripts/build-data-graph.mjs",
-	"scripts/build-data-cache.mjs",
-	"scripts/build-data-code.mjs",
+	"pipeline/build-data.mjs",
+	"pipeline/build-data-graph.mjs",
+	"pipeline/build-data-cache.mjs",
+	"pipeline/build-data-code.mjs",
 ]);
 const runtimeConfig = {
 	"pipeline/src/build-atlas-sqlite.ts": ["measure-dimensions.json"],
