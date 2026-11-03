@@ -20,10 +20,7 @@ import {
 	type BoundaryReleaseSummary,
 } from "./compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compile every boundary release into a map resource: its tiles and the hashes and
@@ -39,9 +36,7 @@ import {
 const sourceFiles = (directory: string) =>
 	readdirSync(
 		resolve(
-			apiRootOf(
-				resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
-			),
+			resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
 			directory,
 		),
 	)
@@ -49,32 +44,32 @@ const sourceFiles = (directory: string) =>
 		.map((name) => `${directory}/${name}`);
 
 /**
- * The code a map resource is compiled by, relative to services/api: a change
+ * The code a map resource is compiled by, relative to the repository root: a change
  * to any of it rebuilds every release.
  */
 const COMPILER_SOURCES = [
-	...sourceFiles("../../packages/atlas-runtime/src/maps/mapResource"),
+	...sourceFiles("packages/atlas-runtime/src/maps/mapResource"),
 	// The tiler, shared with the website's precompile.
-	...sourceFiles("../../packages/map-tiles/src"),
-	"../../packages/artifacts/src/parquet.ts",
-	"../../pipeline/src/flatDownloads.ts",
-	"../../pipeline/src/compileMapResource.ts",
-	"../../pipeline/src/buildMapResource.ts",
+	...sourceFiles("packages/map-tiles/src"),
+	"packages/artifacts/src/parquet.ts",
+	"pipeline/src/flatDownloads.ts",
+	"pipeline/src/compileMapResource.ts",
+	"pipeline/src/buildMapResource.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
-	"../../pipeline/src/compileGeometryValidity.ts",
-	"../../packages/atlas-runtime/src/geometry/areaGeometry.ts",
-	"../../packages/atlas-runtime/src/areas/geoJsonProperties.ts",
-	"../../packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
-	"../../packages/atlas-runtime/src/geometry/gridOffset.ts",
-	"../../packages/geography/src/packedGeometry.ts",
-	"../../packages/geography/src/coordinates/reprojection.ts",
-	"../../packages/geography/src/geometryPointContainment.ts",
-	"../../packages/geography/src/geometryPositions.ts",
-	"../../packages/geography/src/geometryTypes.ts",
-	"../../packages/geography/src/geometryProvenance.ts",
-	"../../packages/shapefile/src/shapefile.ts",
-	"../../packages/shapefile/src/dbf.ts",
+	"pipeline/src/compileGeometryValidity.ts",
+	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
+	"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
+	"packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
+	"packages/atlas-runtime/src/geometry/gridOffset.ts",
+	"packages/geography/src/packedGeometry.ts",
+	"packages/geography/src/coordinates/reprojection.ts",
+	"packages/geography/src/geometryPointContainment.ts",
+	"packages/geography/src/geometryPositions.ts",
+	"packages/geography/src/geometryTypes.ts",
+	"packages/geography/src/geometryProvenance.ts",
+	"packages/shapefile/src/shapefile.ts",
+	"packages/shapefile/src/dbf.ts",
 ];
 
 const sha256 = (content: string | Buffer) =>
@@ -126,7 +121,7 @@ export const buildMapResources = (
 
 	const compiler = sha256(
 		COMPILER_SOURCES.map((path) =>
-			readFileSync(join(apiRootOf(root), path), "utf8"),
+			readFileSync(join(root, path), "utf8"),
 		).join("\0"),
 	);
 	// Each compiled release's key and descriptor, saved as soon as it is

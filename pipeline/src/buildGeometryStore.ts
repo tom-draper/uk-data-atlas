@@ -39,28 +39,27 @@ import {
 
 /** The code a compiled release depends on: a change to any rebuilds them all. */
 const COMPILER_SOURCES = [
-	"package.json",
-	"../../pipeline/src/buildGeometryStore.ts",
-	"../../pipeline/src/compileGeometryValidity.ts",
-	"../../packages/atlas-runtime/src/geometry/areaGeometry.ts",
-	"../../packages/atlas-runtime/src/areas/geoJsonProperties.ts",
-	"../../packages/atlas-runtime/src/geometry/geometryStore.ts",
-	"../../packages/geography/src/geometryValidity.ts",
-	"../../packages/geography/src/geometrySpatialIndex.ts",
-	"../../packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
-	"../../packages/atlas-runtime/src/geometry/gridOffset.ts",
-	"../../packages/geography/src/packedGeometry.ts",
-	"../../packages/geography/src/coordinates/reprojection.ts",
-	"../../packages/geography/src/geometryPointContainment.ts",
-	"../../packages/geography/src/geometryPositions.ts",
-	"../../packages/geography/src/geometryTypes.ts",
-	"../../packages/geography/src/areaDistance.ts",
-	"../../packages/geometry/src/borders.ts",
-	"../../packages/geometry/src/spatialQueries.ts",
-	"../../packages/shapefile/src/dbf.ts",
-	"../../packages/geography/src/geometryProvenance.ts",
-	"../../packages/shapefile/src/shapefile.ts",
-	"../../packages/geography/src/geometrySubstitutions.ts",
+	"pipeline/src/buildGeometryStore.ts",
+	"pipeline/src/compileGeometryValidity.ts",
+	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
+	"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
+	"packages/atlas-runtime/src/geometry/geometryStore.ts",
+	"packages/geography/src/geometryValidity.ts",
+	"packages/geography/src/geometrySpatialIndex.ts",
+	"packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
+	"packages/atlas-runtime/src/geometry/gridOffset.ts",
+	"packages/geography/src/packedGeometry.ts",
+	"packages/geography/src/coordinates/reprojection.ts",
+	"packages/geography/src/geometryPointContainment.ts",
+	"packages/geography/src/geometryPositions.ts",
+	"packages/geography/src/geometryTypes.ts",
+	"packages/geography/src/areaDistance.ts",
+	"packages/geometry/src/borders.ts",
+	"packages/geometry/src/spatialQueries.ts",
+	"packages/shapefile/src/dbf.ts",
+	"packages/geography/src/geometryProvenance.ts",
+	"packages/shapefile/src/shapefile.ts",
+	"packages/geography/src/geometrySubstitutions.ts",
 ];
 
 const sha256 = (content: string | Buffer) =>
@@ -70,14 +69,16 @@ export const buildGeometryStore = (
 	root: string,
 	log: (line: string) => void = () => {},
 ) => {
-	const apiRoot = apiRootOf(root);
 	const sources = readGeometrySourceLookup(root);
 	const directory = join(artifactDirectory(root), "geometry-store");
 	mkdirSync(directory, { recursive: true });
 	const compiler = sha256(
-		COMPILER_SOURCES.map((path) =>
-			readFileSync(join(apiRoot, path), "utf8"),
-		).join("\0"),
+		[
+			readFileSync(join(apiRootOf(root), "package.json"), "utf8"),
+			...COMPILER_SOURCES.map((path) =>
+				readFileSync(join(root, path), "utf8"),
+			),
+		].join("\0"),
 	);
 	const statePath = join(directory, "build-state.json");
 	const previous: Record<string, string> = existsSync(statePath)
