@@ -153,8 +153,11 @@ export type DeclaredPayload = {
 	parts: (
 		labels: string[],
 	) => { key: string; header: DeclaredHeader; optional?: true }[];
-	/** The record field holding the area's code. */
-	code?: string;
+	/**
+	 * The record field holding the area's code, or for a dataset with several
+	 * record sets, the field of each set's records.
+	 */
+	code?: string | Record<string, string>;
 	/**
 	 * Header fields computed from the generated records, such as a count or
 	 * average over the areas inside each area they name.
@@ -163,6 +166,12 @@ export type DeclaredPayload = {
 		records: { [code: string]: Json },
 		header: DeclaredHeader,
 	) => { [field: string]: Json };
+	/**
+	 * Header fields of the compiled dataset that the generated payload does not
+	 * have, because nothing in the rows says them. The comparison with the
+	 * compiled dataset ignores them.
+	 */
+	dropped?: string[];
 	/** Dot-separated paths of containers that are arrays. */
 	arrays?: string[];
 	/**

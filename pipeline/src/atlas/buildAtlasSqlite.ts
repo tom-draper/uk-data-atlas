@@ -8,6 +8,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishAtlasCache } from "../storage/index";
 import {
+	comparableCompiled,
 	generatedFromRows,
 	payloadValuesEqual,
 	rebuildDatasetPayload,
