@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-	repositoryRootOf,
+	configDirectory,
 	statisticsVocabularyPath,
 } from "../storage/dataLayout";
 import {
@@ -21,25 +21,25 @@ const readJson = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;
 
 /** Read the reviewed mapping without loading generated data. */
-export const readMeasureDimensionsMapping = (apiRoot: string) =>
+export const readMeasureDimensionsMapping = (repositoryRoot: string) =>
 	readJson<MeasureDimensionsConfig>(
-		join(apiRoot, "config", "measure-dimensions.json"),
+		join(configDirectory(repositoryRoot), "measure-dimensions.json"),
 	);
 
-/** Read the mapping and generated vocabulary, given the API root. */
+/** Read the mapping and generated vocabulary, given the repository root. */
 export const readMeasureDimensionsConfig = (
-	apiRoot: string,
+	repositoryRoot: string,
 ): MeasureDimensions => ({
-	config: readMeasureDimensionsMapping(apiRoot),
-	vocabulary: readJson(statisticsVocabularyPath(repositoryRootOf(apiRoot))),
+	config: readMeasureDimensionsMapping(repositoryRoot),
+	vocabulary: readJson(statisticsVocabularyPath(repositoryRoot)),
 });
 
 /** Read the mapping and refuse it unless it maps every catalogue measure id. */
 export const readMeasureDimensions = (
-	apiRoot: string,
+	repositoryRoot: string,
 	catalog: DataCatalog,
 ): MeasureDimensions => {
-	const dimensions = readMeasureDimensionsConfig(apiRoot);
+	const dimensions = readMeasureDimensionsConfig(repositoryRoot);
 	assertMeasureDimensions(catalog, dimensions.config, dimensions.vocabulary);
 	return dimensions;
 };

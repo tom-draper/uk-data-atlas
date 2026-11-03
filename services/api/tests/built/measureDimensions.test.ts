@@ -15,7 +15,9 @@ import {
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 test("the generated vocabulary is what the statistics tables hold", () => {
-	const { vocabulary } = readMeasureDimensionsConfig(apiRoot);
+	const { vocabulary } = readMeasureDimensionsConfig(
+		resolve(apiRoot, "../.."),
+	);
 	assert.deepEqual(
 		readStatisticsVocabulary(atlasDatabasePath(resolve(apiRoot, "../.."))),
 		vocabulary,
@@ -24,7 +26,9 @@ test("the generated vocabulary is what the statistics tables hold", () => {
 });
 
 test("the committed vocabulary for the unbuilt mapping check matches the generated vocabulary", () => {
-	const { vocabulary } = readMeasureDimensionsConfig(apiRoot);
+	const { vocabulary } = readMeasureDimensionsConfig(
+		resolve(apiRoot, "../.."),
+	);
 	const held = JSON.parse(
 		readFileSync(
 			join(apiRoot, "config/statistics-vocabulary.json"),
@@ -38,7 +42,9 @@ test("every built catalogue measure id is mapped to a measure and its members", 
 	const catalog = JSON.parse(
 		readFileSync(join(artifactRoot(apiRoot), "data-catalog.json"), "utf8"),
 	) as DataCatalog;
-	const { config, vocabulary } = readMeasureDimensionsConfig(apiRoot);
+	const { config, vocabulary } = readMeasureDimensionsConfig(
+		resolve(apiRoot, "../.."),
+	);
 	assert.deepEqual(measureDimensionProblems(catalog, config, vocabulary), []);
 	assert.equal(Object.keys(config.ids).length, catalog.measures.length);
 });

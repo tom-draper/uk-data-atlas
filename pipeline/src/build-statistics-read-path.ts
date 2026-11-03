@@ -19,7 +19,6 @@ import {
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactDirectory,
-	apiRootOf,
 	statisticsReadPathPath,
 	buildDirectory,
 	readObservationText,
@@ -39,9 +38,6 @@ import {
  * artifact stays where it is, and the reason says what differs, so that a
  * difference is reported rather than hidden.
  */
-const apiRoot = apiRootOf(
-	resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
-);
 const repositoryRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),
 	"../..",
@@ -57,7 +53,7 @@ const catalog = JSON.parse(
 		"utf8",
 	),
 ) as DataCatalog;
-const { config, vocabulary } = readMeasureDimensionsConfig(apiRoot);
+const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
 const database = new DatabaseSync(databasePath, { readOnly: true });
 
 /** The dimensions each statistics series of a dataset and measure carries. */

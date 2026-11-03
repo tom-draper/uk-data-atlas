@@ -220,7 +220,7 @@ test("names the one member every other is part of as the total", () => {
 });
 
 test("the checked-in mapping is consistent with the checked-in vocabulary", () => {
-	const mapping = readMeasureDimensionsMapping(apiRoot);
+	const mapping = readMeasureDimensionsMapping(resolve(apiRoot, "../.."));
 	const held = JSON.parse(
 		readFileSync(
 			join(apiRoot, "config/statistics-vocabulary.json"),
