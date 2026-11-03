@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -48,10 +48,12 @@ class AreaOverlapRecord:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.area_overlap_record_source import AreaOverlapRecordSource
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.area_overlap_record_source import (
+            AreaOverlapRecordSource,  # noqa: PLC0415
+        )
         from ..models.area_overlap_record_targets_item import (
-            AreaOverlapRecordTargetsItem,
+            AreaOverlapRecordTargetsItem,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

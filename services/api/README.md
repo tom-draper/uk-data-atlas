@@ -3949,3 +3949,11 @@ file and its hash for a substitution. Each response's
 `properties.geometrySource` names the source CRS and any transformation. A source in any other CRS is refused
 rather than served unprojected. This is a raw per-area lookup, not the tiled or
 simplified delivery the full proposal describes for map rendering at scale.
+
+## Retired measure ids
+
+Data and measure paths accept canonical measure slugs and reviewed human aliases.
+Use dimension filters for breakdowns, for example `recorded-crimes` with
+`offence=burglary`. Retired path ids return a 404 with the replacement. Some
+`measure` query parameters still accept old series ids and do not yet support
+dimension filters.

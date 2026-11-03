@@ -4,6 +4,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import { retiredMeasure } from "../dimensions/retiredMeasure";
 import { searchMeasures } from "./measureTerms";
 import {
 	dimensionCatalogue,
@@ -99,29 +100,13 @@ export const handleCatalogueRoutes = ({
 				"Not Found",
 				"No published measure matches that id.",
 			);
-		const description = describeMeasure(measure, context.documents);
+		if (aliased && aliased.series.id !== measure.id)
+			return retiredMeasure(term, measure, aliased.series);
 		return {
 			status: 200,
-			headers:
-				aliased?.series.id !== measure.id && aliased
-					? { deprecation: "true" }
-					: undefined,
 			body: envelope(
 				releaseId,
-				aliased && aliased.series.id !== measure.id
-					? {
-							...description,
-							resolvedFrom: {
-								id: term,
-								measure: measure.id,
-								dimensions: aliased.series.dimensions,
-								...(aliased.series.datasetId
-									? { datasetId: aliased.series.datasetId }
-									: {}),
-								deprecated: true,
-							},
-						}
-					: description,
+				describeMeasure(measure, context.documents),
 			),
 		};
 	}

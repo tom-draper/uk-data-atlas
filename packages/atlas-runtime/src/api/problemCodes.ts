@@ -150,13 +150,13 @@ export const PROBLEM_CODES = {
 			"A dimension filter names a member the measure does not publish; `members` lists the ones it does.",
 		example: "/v1/data/recorded-crimes/value?place=Leeds&offence=arson",
 	},
-	conflicting_dimension_filter: {
-		statuses: [400],
-		members: [],
-		alternatives: [],
+	retired_measure_id: {
+		statuses: [404],
+		members: ["measure", "members"],
+		alternatives: ["measure", "members"],
 		meaning:
-			"An old encoded measure id fixes a member, and a filter asks for a different member of the same dimension.",
-		example: "/v1/data/crime-burglary/value?place=Leeds&offence=robbery",
+			"The measure id is retired; use the canonical measure and members instead.",
+		example: "/v1/data/crime-burglary/value?place=Leeds",
 	},
 	no_matching_series: {
 		statuses: [404],

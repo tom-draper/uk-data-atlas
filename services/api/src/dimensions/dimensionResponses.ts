@@ -105,7 +105,6 @@ const resolvedFrom = (series: Series, reading: DimensionReading) =>
 				measure: reading.measure.id,
 				dimensions: series.dimensions,
 				...(series.datasetId ? { datasetId: series.datasetId } : {}),
-				deprecated: reading.resolvedFrom.deprecated,
 			}
 		: undefined;
 
@@ -114,7 +113,6 @@ const readingHeaders = (reading: DimensionReading) => ({
 	...(reading.canonicalUrl
 		? { "content-location": reading.canonicalUrl }
 		: {}),
-	...(reading.resolvedFrom?.deprecated ? { deprecation: "true" } : {}),
 });
 
 /** Add what was read to a route's data, where its data is an object. */

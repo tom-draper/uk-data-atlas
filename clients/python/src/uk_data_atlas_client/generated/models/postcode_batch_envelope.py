@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -35,7 +35,7 @@ class PostcodeBatchEnvelope:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.postcode_batch import PostcodeBatch
+        from ..models.postcode_batch import PostcodeBatch  # noqa: PLC0415
 
         api_version = self.api_version.value
 
@@ -66,10 +66,12 @@ class PostcodeBatchEnvelope:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.compact_postcode_batch import CompactPostcodeBatch
-        from ..models.envelope_meta import EnvelopeMeta
-        from ..models.postcode_batch import PostcodeBatch
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.compact_postcode_batch import (
+            CompactPostcodeBatch,  # noqa: PLC0415
+        )
+        from ..models.envelope_meta import EnvelopeMeta  # noqa: PLC0415
+        from ..models.postcode_batch import PostcodeBatch  # noqa: PLC0415
 
         d = dict(src_dict)
         api_version = EnvelopeApiVersion(d.pop("apiVersion"))

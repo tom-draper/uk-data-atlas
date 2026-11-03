@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -57,8 +57,10 @@ class PostcodeLookupSource:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.postcode_lookup_source_licence import PostcodeLookupSourceLicence
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.postcode_lookup_source_licence import (
+            PostcodeLookupSourceLicence,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         attribution = cast(list[str], d.pop("attribution"))

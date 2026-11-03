@@ -134,7 +134,7 @@ identified below; they do not represent a fresh run of every original question.
 | What is Labour's vote share in Holborn and St Pancras? | ✅ one request | `/data/party-vote-share/value?place=constituency/E14001290&party=lab`. `/measures?q=Labour vote share` finds the measure and names `party=lab` in `matchedMembers`.                                                |
 | Every crime type for a place                           | ✅ one request | `/data/recorded-crimes/value?place=...&offence=*` answers all 23 offence groups as `breakdown`; with no `offence`, the total, stated in `defaults`.                                                                |
 | Ethnic groups in an LSOA                               | ✅ one request | `/data/usual-residents/value?place=lsoa/E01000001&ethnic-group=*`. Census tables are perturbed separately, so the groups need not add to the published total exactly.                                              |
-| Does `crime-burglary` still work?                      | ✅             | Every older encoded id is a deprecated alias, read as its measure and members and named in `resolvedFrom`.                                                                                                         |
+| Does `crime-burglary` still work?                      | ❌             | Retired path ids return a 404 naming the canonical measure and members. Some `measure` query parameters still accept old series ids.                                                                               |
 | What were the boundaries of X in 2005?                 | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
 
 ## UX rules
@@ -163,9 +163,9 @@ identified below; they do not represent a fresh run of every original question.
    `party=lab`. Neither a breakdown, a geography nor a year is part of a
    measure id. A dimension left out takes its total where one is published,
    stated in `defaults`; `*` or a list answers several members as
-   `breakdown`. The 205 older ids that encoded a breakdown, such as
-   `crime-burglary`, are deprecated aliases with no sunset date, listed in
-   `DeprecatedMeasureAlias` and named in `resolvedFrom` when used.
+   `breakdown`. Retired path ids such as `crime-burglary` return a 404 with
+   the canonical measure and members. Some `measure` query parameters still
+   accept internal series ids and do not support dimension filters.
    `services/api/config/measure-dimensions.json` maps every catalogue id, and
    the data build refuses an unmapped one.
 5. **Accept what people have.** Wherever an area is expected, accept a code,

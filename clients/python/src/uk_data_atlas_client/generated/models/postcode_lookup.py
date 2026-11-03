@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -70,7 +70,9 @@ class PostcodeLookup:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.postcode_lookup_centroid_type_1 import PostcodeLookupCentroidType1
+        from ..models.postcode_lookup_centroid_type_1 import (
+            PostcodeLookupCentroidType1,  # noqa: PLC0415
+        )
 
         centroid: dict[str, Any] | None
         if isinstance(self.centroid, PostcodeLookupCentroidType1):
@@ -157,12 +159,18 @@ class PostcodeLookup:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.lookup_point import LookupPoint
-        from ..models.point_country import PointCountry
-        from ..models.postcode_lookup_centroid_type_1 import PostcodeLookupCentroidType1
-        from ..models.postcode_lookup_results_item import PostcodeLookupResultsItem
-        from ..models.postcode_lookup_source import PostcodeLookupSource
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.lookup_point import LookupPoint  # noqa: PLC0415
+        from ..models.point_country import PointCountry  # noqa: PLC0415
+        from ..models.postcode_lookup_centroid_type_1 import (
+            PostcodeLookupCentroidType1,  # noqa: PLC0415
+        )
+        from ..models.postcode_lookup_results_item import (
+            PostcodeLookupResultsItem,  # noqa: PLC0415
+        )
+        from ..models.postcode_lookup_source import (
+            PostcodeLookupSource,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

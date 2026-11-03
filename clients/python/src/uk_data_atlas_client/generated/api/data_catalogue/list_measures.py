@@ -75,9 +75,9 @@ def sync_detailed(
     crimes/value?place=Leeds&offence=burglary`. Geography and period are never part of a measure id;
     they are `geography`, `codeYear` and `period`.
 
-    `series` lists each combination of members published, with the request that reads it, its sources
-    and the deprecated alias it was published under before, where it had one, such as `crime-burglary`.
-    `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a whole.
+    `series` lists each combination of members published, with the request that reads it and its
+    sources. `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a
+    whole.
 
     Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`.
     `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric value
@@ -129,9 +129,9 @@ def sync(
     crimes/value?place=Leeds&offence=burglary`. Geography and period are never part of a measure id;
     they are `geography`, `codeYear` and `period`.
 
-    `series` lists each combination of members published, with the request that reads it, its sources
-    and the deprecated alias it was published under before, where it had one, such as `crime-burglary`.
-    `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a whole.
+    `series` lists each combination of members published, with the request that reads it and its
+    sources. `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a
+    whole.
 
     Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`.
     `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric value
@@ -178,9 +178,9 @@ async def asyncio_detailed(
     crimes/value?place=Leeds&offence=burglary`. Geography and period are never part of a measure id;
     they are `geography`, `codeYear` and `period`.
 
-    `series` lists each combination of members published, with the request that reads it, its sources
-    and the deprecated alias it was published under before, where it had one, such as `crime-burglary`.
-    `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a whole.
+    `series` lists each combination of members published, with the request that reads it and its
+    sources. `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a
+    whole.
 
     Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`.
     `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric value
@@ -230,9 +230,9 @@ async def asyncio(
     crimes/value?place=Leeds&offence=burglary`. Geography and period are never part of a measure id;
     they are `geography`, `codeYear` and `period`.
 
-    `series` lists each combination of members published, with the request that reads it, its sources
-    and the deprecated alias it was published under before, where it had one, such as `crime-burglary`.
-    `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a whole.
+    `series` lists each combination of members published, with the request that reads it and its
+    sources. `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as a
+    whole.
 
     Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`.
     `unitDefinition.code` is the canonical unit, `scaleToCanonical` multiplies a published numeric value

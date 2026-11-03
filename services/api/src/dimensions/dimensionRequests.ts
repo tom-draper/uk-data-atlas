@@ -4,6 +4,8 @@ import {
 	type ApiResponse,
 	type RouteDispatchContext,
 } from "@uk-data-atlas/atlas-runtime/api";
+import { retiredMeasure } from "./retiredMeasure";
+import { measureSlug } from "@uk-data-atlas/catalogue";
 import { canonicalMeasureId } from "../catalogue/measureTerms";
 import {
 	dimensionCatalogue,
@@ -20,9 +22,7 @@ import {
  * parameter named after the dimension, or `dimensions[offence]=burglary`; it
  * takes one member, several separated by commas, or `*` for every member.
  * A dimension left out takes its total where the measure publishes one, and
- * the response says so in `defaults`. Old encoded ids such as `crime-burglary`
- * still work: each is read as its measure with its members fixed, and the
- * response names it in `resolvedFrom`.
+ * the response says so in `defaults`.
  */
 
 /** Where a path carries a measure id, and the operation it names. */
@@ -50,8 +50,8 @@ export type ResolvedMembers = Record<
 /** What a resolved request says about how it was read. */
 export type DimensionReading = {
 	measure: DimensionalMeasure;
-	/** The term the request named, where it was an alias or old id. */
-	resolvedFrom?: { id: string; deprecated: boolean };
+	/** The reviewed alias the request named. */
+	resolvedFrom?: { id: string };
 	/** Dimensions the request left out, and the member chosen for each. */
 	defaulted: Record<string, string>;
 	/**
@@ -146,10 +146,20 @@ const sameShape = (left: Series, right: Series) =>
  * Narrow series that differ only by dataset to those published on the
  * geography asked for, or on one the place could be.
  */
+type DimensionContext = Pick<
+	RouteDispatchContext,
+	"dataCatalog" | "measureDimensions"
+> & {
+	geographyResolver?: Pick<
+		RouteDispatchContext["geographyResolver"],
+		"places"
+	>;
+};
+
 const narrowByGeography = (
 	candidates: Series[],
 	url: URL,
-	context: RouteDispatchContext,
+	context: DimensionContext,
 ) => {
 	if (new Set(candidates.flatMap(seriesDatasets)).size <= 1)
 		return candidates;
@@ -179,7 +189,7 @@ const narrowByGeography = (
 /** Read a request's measure and filters, or leave it as it is. */
 export const resolveDimensionRequest = (
 	url: string,
-	context: RouteDispatchContext,
+	context: DimensionContext,
 ): DimensionResolution => {
 	const { dataCatalog, measureDimensions } = context;
 	if (!dataCatalog || !measureDimensions) return { kind: "unchanged" };
@@ -203,11 +213,20 @@ export const resolveDimensionRequest = (
 		!named && catalogueId ? catalogue.series(catalogueId) : undefined;
 	const measure = named ?? aliased?.measure;
 	if (!measure) return { kind: "unchanged" };
+	if (
+		aliased &&
+		(catalogueId === term || measureSlug(term) === catalogueId) &&
+		aliased.series.id !== measure.id
+	)
+		return {
+			kind: "problem",
+			response: retiredMeasure(term, measure, aliased.series),
+		};
 	const { filters, names } = readFilters(
 		parsed.searchParams,
 		catalogue.dimensionIds,
 	);
-	// The measure detail lists every member, and resolves old ids itself.
+	// The measure detail lists every member.
 	if (position.operation === "measure")
 		return names.length > 0
 			? {
@@ -217,7 +236,7 @@ export const resolveDimensionRequest = (
 					),
 				}
 			: { kind: "unchanged" };
-	// An old id fixes its members; a filter may repeat one but not change it.
+	// A reviewed alias may name a series; a filter cannot change its members.
 	const fixed = aliased?.series.dimensions ?? {};
 	for (const [dimension, code] of Object.entries(fixed)) {
 		const asked = filters.get(dimension);
@@ -226,7 +245,6 @@ export const resolveDimensionRequest = (
 				kind: "problem",
 				response: invalidQuery(
 					`${term} is ${measure.id} with ${dimension}=${code}, so it cannot also be filtered to ${dimension}=${asked.join(",")}. Use /v1/data/${measure.id} to choose members.`,
-					{ code: "conflicting_dimension_filter" },
 				),
 			};
 		filters.set(dimension, [code]);
@@ -391,7 +409,6 @@ export const resolveDimensionRequest = (
 			? {
 					resolvedFrom: {
 						id: term,
-						deprecated: aliased.series.id !== measure.id,
 					},
 				}
 			: {}),

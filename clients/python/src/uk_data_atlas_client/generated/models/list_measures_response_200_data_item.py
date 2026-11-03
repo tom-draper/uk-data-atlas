@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -38,9 +38,6 @@ if TYPE_CHECKING:
     )
     from ..models.list_measures_response_200_data_item_matched_members_item import (
         ListMeasuresResponse200DataItemMatchedMembersItem,
-    )
-    from ..models.list_measures_response_200_data_item_resolved_from import (
-        ListMeasuresResponse200DataItemResolvedFrom,
     )
     from ..models.list_measures_response_200_data_item_series_item import (
         ListMeasuresResponse200DataItemSeriesItem,
@@ -82,7 +79,6 @@ class ListMeasuresResponse200DataItem:
         elsewhere (list[ListMeasuresResponse200DataItemElsewhereItem] | Unset):
         matched_members (list[ListMeasuresResponse200DataItemMatchedMembersItem] | Unset):
         notes (list[str] | Unset):
-        resolved_from (ListMeasuresResponse200DataItemResolvedFrom | Unset):
         uncertainty (ListMeasuresResponse200DataItemUncertainty | Unset):
         unit_definition (ListMeasuresResponse200DataItemUnitDefinition | Unset):
     """
@@ -108,7 +104,6 @@ class ListMeasuresResponse200DataItem:
         UNSET
     )
     notes: list[str] | Unset = UNSET
-    resolved_from: ListMeasuresResponse200DataItemResolvedFrom | Unset = UNSET
     uncertainty: ListMeasuresResponse200DataItemUncertainty | Unset = UNSET
     unit_definition: ListMeasuresResponse200DataItemUnitDefinition | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -181,10 +176,6 @@ class ListMeasuresResponse200DataItem:
         if not isinstance(self.notes, Unset):
             notes = self.notes
 
-        resolved_from: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.resolved_from, Unset):
-            resolved_from = self.resolved_from.to_dict()
-
         uncertainty: dict[str, Any] | Unset = UNSET
         if not isinstance(self.uncertainty, Unset):
             uncertainty = self.uncertainty.to_dict()
@@ -226,8 +217,6 @@ class ListMeasuresResponse200DataItem:
             field_dict["matchedMembers"] = matched_members
         if notes is not UNSET:
             field_dict["notes"] = notes
-        if resolved_from is not UNSET:
-            field_dict["resolvedFrom"] = resolved_from
         if uncertainty is not UNSET:
             field_dict["uncertainty"] = uncertainty
         if unit_definition is not UNSET:
@@ -236,48 +225,45 @@ class ListMeasuresResponse200DataItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.list_measures_response_200_data_item_aggregation import (
-            ListMeasuresResponse200DataItemAggregation,
+            ListMeasuresResponse200DataItemAggregation,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_availability import (
-            ListMeasuresResponse200DataItemAvailability,
+            ListMeasuresResponse200DataItemAvailability,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_defaults import (
-            ListMeasuresResponse200DataItemDefaults,
+            ListMeasuresResponse200DataItemDefaults,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_derived_from import (
-            ListMeasuresResponse200DataItemDerivedFrom,
+            ListMeasuresResponse200DataItemDerivedFrom,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_dimensions_item import (
-            ListMeasuresResponse200DataItemDimensionsItem,
+            ListMeasuresResponse200DataItemDimensionsItem,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_documents import (
-            ListMeasuresResponse200DataItemDocuments,
+            ListMeasuresResponse200DataItemDocuments,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_elsewhere_item import (
-            ListMeasuresResponse200DataItemElsewhereItem,
+            ListMeasuresResponse200DataItemElsewhereItem,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_links import (
-            ListMeasuresResponse200DataItemLinks,
+            ListMeasuresResponse200DataItemLinks,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_matched_members_item import (
-            ListMeasuresResponse200DataItemMatchedMembersItem,
-        )
-        from ..models.list_measures_response_200_data_item_resolved_from import (
-            ListMeasuresResponse200DataItemResolvedFrom,
+            ListMeasuresResponse200DataItemMatchedMembersItem,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_series_item import (
-            ListMeasuresResponse200DataItemSeriesItem,
+            ListMeasuresResponse200DataItemSeriesItem,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_sources_item import (
-            ListMeasuresResponse200DataItemSourcesItem,
+            ListMeasuresResponse200DataItemSourcesItem,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_uncertainty import (
-            ListMeasuresResponse200DataItemUncertainty,
+            ListMeasuresResponse200DataItemUncertainty,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_unit_definition import (
-            ListMeasuresResponse200DataItemUnitDefinition,
+            ListMeasuresResponse200DataItemUnitDefinition,  # noqa: PLC0415
         )
 
         d = dict(src_dict)
@@ -383,15 +369,6 @@ class ListMeasuresResponse200DataItem:
 
         notes = cast(list[str], d.pop("notes", UNSET))
 
-        _resolved_from = d.pop("resolvedFrom", UNSET)
-        resolved_from: ListMeasuresResponse200DataItemResolvedFrom | Unset
-        if isinstance(_resolved_from, Unset):
-            resolved_from = UNSET
-        else:
-            resolved_from = ListMeasuresResponse200DataItemResolvedFrom.from_dict(
-                _resolved_from
-            )
-
         _uncertainty = d.pop("uncertainty", UNSET)
         uncertainty: ListMeasuresResponse200DataItemUncertainty | Unset
         if isinstance(_uncertainty, Unset):
@@ -430,7 +407,6 @@ class ListMeasuresResponse200DataItem:
             elsewhere=elsewhere,
             matched_members=matched_members,
             notes=notes,
-            resolved_from=resolved_from,
             uncertainty=uncertainty,
             unit_definition=unit_definition,
         )

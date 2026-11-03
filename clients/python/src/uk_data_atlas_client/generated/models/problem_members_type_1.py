@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Self, TypeVar
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="GetMeasureResponse200DataResolvedFromDimensions")
+T = TypeVar("T", bound="ProblemMembersType1")
 
 
 @_attrs_define
-class GetMeasureResponse200DataResolvedFromDimensions:
+class ProblemMembersType1:
     additional_properties: dict[str, str] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -21,12 +21,12 @@ class GetMeasureResponse200DataResolvedFromDimensions:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        get_measure_response_200_data_resolved_from_dimensions = cls()
+        problem_members_type_1 = cls()
 
-        get_measure_response_200_data_resolved_from_dimensions.additional_properties = d
-        return get_measure_response_200_data_resolved_from_dimensions
+        problem_members_type_1.additional_properties = d
+        return problem_members_type_1
 
     @property
     def additional_keys(self) -> list[str]:

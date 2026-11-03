@@ -45,12 +45,12 @@ export const measureExportMetadata = {
 			content: {
 				"application/vnd.apache.parquet": {
 					"x-example-request":
-						"/v1/data/crime-burglary/export?format=parquet",
+						"/v1/data/recorded-crimes/export?format=parquet",
 					schema: { type: "string", format: "binary" },
 				},
 				"text/csv": {
 					"x-example-request":
-						"/v1/data/crime-burglary/export?format=csv",
+						"/v1/data/recorded-crimes/export?format=csv",
 					schema: { type: "string", format: "binary" },
 				},
 			},

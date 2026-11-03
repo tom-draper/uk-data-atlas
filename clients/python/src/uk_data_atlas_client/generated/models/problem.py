@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from ..models.problem_candidates_item import ProblemCandidatesItem
     from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
     from ..models.problem_links import ProblemLinks
+    from ..models.problem_members_type_1 import ProblemMembersType1
     from ..models.problem_present_in_item import ProblemPresentInItem
     from ..models.problem_rejected_item import ProblemRejectedItem
 
@@ -65,10 +66,9 @@ class Problem:
                 does not serve, `invalid_cursor` for a cursor this API did not issue or that belongs to another query, and
                 `unknown_query_parameter` when the operation does not declare a supplied parameter. From a release resolution:
                 `no_release_for_date` and `ambiguous_release`. From a measure's dimension filters: `unknown_dimension` and
-                `unknown_dimension_member` (400) for a dimension or member the measure does not have,
-                `conflicting_dimension_filter` (400) when a deprecated alias fixes a different member, `no_matching_series`
-                (404) when no series has the members asked for, and `ambiguous_dimension` (409) when the request leaves several
-                series and the operation answers one.
+                `unknown_dimension_member` (400) for a dimension or member the measure does not have, `retired_measure_id` (404)
+                when a path names a retired series id, `no_matching_series` (404) when no series has the members asked for, and
+                `ambiguous_dimension` (409) when the request leaves several series and the operation answers one.
             dimension (str | Unset): On an `unknown_dimension_member` problem, the dimension the filter named.
             dimensions (list[str] | Unset): On an `unknown_dimension` problem, the dimensions the measure has.
             geometry_source (GeometrySource | Unset): Where the served WGS84 geometry came from. `transformation` is present
@@ -76,7 +76,9 @@ class Problem:
                 direct source reads omit it.
             links (ProblemLinks | Unset): With `unknown-geography`, the geography list; with `release-not-compiled`, the
                 boundary release.
-            members (list[str] | Unset): On an `unknown_dimension_member` problem, the members that dimension has.
+            measure (str | Unset): On a `retired_measure_id` problem, the canonical measure.
+            members (list[str] | ProblemMembersType1 | Unset): Available members for an unknown member, or the retired id's
+                dimension members.
             parameter (str | Unset): The query parameter the operation does not declare.
             present_in (list[ProblemPresentInItem] | Unset): With `area_not_in_release`: the compiled releases that do hold
                 the code, with the name it carries in each.
@@ -100,7 +102,8 @@ class Problem:
     dimensions: list[str] | Unset = UNSET
     geometry_source: GeometrySource | Unset = UNSET
     links: ProblemLinks | Unset = UNSET
-    members: list[str] | Unset = UNSET
+    measure: str | Unset = UNSET
+    members: list[str] | ProblemMembersType1 | Unset = UNSET
     parameter: str | Unset = UNSET
     present_in: list[ProblemPresentInItem] | Unset = UNSET
     rejected: list[ProblemRejectedItem] | Unset = UNSET
@@ -109,7 +112,9 @@ class Problem:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
+        from ..models.problem_choices_item_type_0 import (
+            ProblemChoicesItemType0,  # noqa: PLC0415
+        )
 
         detail = self.detail
 
@@ -172,9 +177,16 @@ class Problem:
         if not isinstance(self.links, Unset):
             links = self.links.to_dict()
 
-        members: list[str] | Unset = UNSET
-        if not isinstance(self.members, Unset):
+        measure = self.measure
+
+        members: dict[str, Any] | list[str] | Unset
+        if isinstance(self.members, Unset):
+            members = UNSET
+        elif isinstance(self.members, list):
             members = self.members
+
+        else:
+            members = self.members.to_dict()
 
         parameter = self.parameter
 
@@ -228,6 +240,8 @@ class Problem:
             field_dict["geometrySource"] = geometry_source
         if links is not UNSET:
             field_dict["links"] = links
+        if measure is not UNSET:
+            field_dict["measure"] = measure
         if members is not UNSET:
             field_dict["members"] = members
         if parameter is not UNSET:
@@ -244,16 +258,23 @@ class Problem:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.geometry_source import GeometrySource
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.geometry_source import GeometrySource  # noqa: PLC0415
         from ..models.problem_available_releases_item import (
-            ProblemAvailableReleasesItem,
+            ProblemAvailableReleasesItem,  # noqa: PLC0415
         )
-        from ..models.problem_candidates_item import ProblemCandidatesItem
-        from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
-        from ..models.problem_links import ProblemLinks
-        from ..models.problem_present_in_item import ProblemPresentInItem
-        from ..models.problem_rejected_item import ProblemRejectedItem
+        from ..models.problem_candidates_item import (
+            ProblemCandidatesItem,  # noqa: PLC0415
+        )
+        from ..models.problem_choices_item_type_0 import (
+            ProblemChoicesItemType0,  # noqa: PLC0415
+        )
+        from ..models.problem_links import ProblemLinks  # noqa: PLC0415
+        from ..models.problem_members_type_1 import ProblemMembersType1  # noqa: PLC0415
+        from ..models.problem_present_in_item import (
+            ProblemPresentInItem,  # noqa: PLC0415
+        )
+        from ..models.problem_rejected_item import ProblemRejectedItem  # noqa: PLC0415
 
         d = dict(src_dict)
         detail = d.pop("detail")
@@ -341,7 +362,26 @@ class Problem:
         else:
             links = ProblemLinks.from_dict(_links)
 
-        members = cast(list[str], d.pop("members", UNSET))
+        measure = d.pop("measure", UNSET)
+
+        def _parse_members(data: object) -> list[str] | ProblemMembersType1 | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                members_type_0 = cast(list[str], data)
+
+                return members_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            members_type_1 = ProblemMembersType1.from_dict(data)
+
+            return members_type_1
+
+        members = _parse_members(d.pop("members", UNSET))
 
         parameter = d.pop("parameter", UNSET)
 
@@ -383,6 +423,7 @@ class Problem:
             dimensions=dimensions,
             geometry_source=geometry_source,
             links=links,
+            measure=measure,
             members=members,
             parameter=parameter,
             present_in=present_in,

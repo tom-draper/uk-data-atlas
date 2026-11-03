@@ -390,12 +390,12 @@ paths:
           description: The whole measure as a file.
           content:
             application/vnd.apache.parquet:
-              x-example-request: /v1/data/crime-burglary/export?format=parquet
+              x-example-request: /v1/data/recorded-crimes/export?format=parquet
               schema:
                 type: string
                 format: binary
             text/csv:
-              x-example-request: /v1/data/crime-burglary/export?format=csv
+              x-example-request: /v1/data/recorded-crimes/export?format=csv
               schema:
                 type: string
                 format: binary
@@ -3152,10 +3152,9 @@ paths:
         part of a measure id; they are `geography`, `codeYear` and `period`.
 
 
-        `series` lists each combination of members published, with the request that reads it, its
-        sources and the deprecated alias it was published under before, where it had one, such as
-        `crime-burglary`. `sources`, `aggregation`, `unit` and `links` stay at the top level for the
-        measure as a whole.
+        `series` lists each combination of members published, with the request that reads it and its
+        sources. `sources`, `aggregation`, `unit` and `links` stay at the top level for the measure as
+        a whole.
 
 
         Each measure retains its source-facing `unit` label and adds an API-owned `unitDefinition`.
@@ -3427,8 +3426,6 @@ paths:
                                 type: string
                               unit:
                                 type: string
-                              deprecatedAlias:
-                                type: string
                               href:
                                 type: string
                               sources:
@@ -3619,29 +3616,6 @@ paths:
                               - label
                               - href
                             additionalProperties: {}
-                        resolvedFrom:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            measure:
-                              type: string
-                            dimensions:
-                              type: object
-                              propertyNames:
-                                type: string
-                              additionalProperties:
-                                type: string
-                            datasetId:
-                              type: string
-                            deprecated:
-                              type: boolean
-                          required:
-                            - id
-                            - measure
-                            - dimensions
-                            - deprecated
-                          additionalProperties: {}
                       required:
                         - id
                         - label
@@ -3683,11 +3657,6 @@ paths:
         combination of members, with national coverage.
 
 
-        An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it
-        answers with its measure's definition, `resolvedFrom` says which members it stood for, and the
-        response carries a `Deprecation` header. It has no sunset date.
-
-
         `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical
         code, scale and (where applicable) denominator for safe unit-aware calculations; it never
         changes the source artifact or an observation value.
@@ -3713,7 +3682,7 @@ paths:
           description: The measure definition.
           content:
             application/json:
-              x-example-request: /v1/measures/crime-burglary
+              x-example-request: /v1/measures/recorded-crimes
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -3747,7 +3716,6 @@ paths:
                     - dimensions:
                         offence: burglary
                       label: Burglary
-                      deprecatedAlias: crime-burglary
                       href: /v1/data/recorded-crimes?offence=burglary
                       sources:
                         - datasetId: crime
@@ -3788,12 +3756,6 @@ paths:
                     aggregation: true
                   links:
                     data: /v1/data/recorded-crimes
-                  resolvedFrom:
-                    id: crime-burglary
-                    measure: recorded-crimes
-                    dimensions:
-                      offence: burglary
-                    deprecated: true
                 meta:
                   nextCursor: null
               schema:
@@ -3973,8 +3935,6 @@ paths:
                             label:
                               type: string
                             unit:
-                              type: string
-                            deprecatedAlias:
                               type: string
                             href:
                               type: string
@@ -4166,29 +4126,6 @@ paths:
                             - label
                             - href
                           additionalProperties: {}
-                      resolvedFrom:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                          measure:
-                            type: string
-                          dimensions:
-                            type: object
-                            propertyNames:
-                              type: string
-                            additionalProperties:
-                              type: string
-                          datasetId:
-                            type: string
-                          deprecated:
-                            type: boolean
-                        required:
-                          - id
-                          - measure
-                          - dimensions
-                          - deprecated
-                        additionalProperties: {}
                     required:
                       - id
                       - label
@@ -5646,9 +5583,8 @@ paths:
         `data.breakdown` holds one entry per series, each with its
         `dimensions` and the answer (`data`) or refusal (`problem`) that series
         gives, so `GET /v1/data/recorded-crimes/value?place=Leeds&offence=*` is
-        every crime type for Leeds. A deprecated alias such as `crime-burglary`
-        answers as its measure with its members fixed, and says so in
-        `resolvedFrom`.
+        every crime type for Leeds. Retired path ids such as `crime-burglary`
+        return a 404 with the canonical measure and members.
 
 
         Give `postcode` instead of `place` to answer for where a unit postcode
@@ -10311,12 +10247,9 @@ components:
         spaces and punctuation are set aside, so `House Prices` is
         `house-prices`. A measure's breakdowns are chosen with dimension
         filters, not with the id: `recorded-crimes` with `offence=burglary`,
-        not `crime-burglary`. The older ids that carried a breakdown, such as
-        `crime-burglary`, `ethnicity-african` or
-        `general-election-lab-vote-share`, are deprecated aliases (see
-        `DeprecatedMeasureAlias`). Each still works and is read as its measure
-        with its members fixed; the response names it in `resolvedFrom` and
-        carries a `Deprecation` header. They have no sunset date.
+        not `crime-burglary`. Retired path ids return a 404 with the canonical
+        measure and members. Some `measure` query parameters still accept old
+        series ids and do not accept dimension filters.
     Dimensions:
       name: dimensions
       in: query
@@ -10685,7 +10618,7 @@ components:
             - ambiguous_release
             - unknown_dimension
             - unknown_dimension_member
-            - conflicting_dimension_filter
+            - retired_measure_id
             - no_matching_series
             - ambiguous_dimension
           description: >
@@ -10712,8 +10645,8 @@ components:
             `no_release_for_date` and `ambiguous_release`. From a measure's
             dimension filters: `unknown_dimension` and `unknown_dimension_member`
             (400) for a dimension or member the measure does not have,
-            `conflicting_dimension_filter` (400) when a deprecated alias fixes a
-            different member, `no_matching_series` (404) when no series has the
+            `retired_measure_id` (404) when a path names a retired series id,
+            `no_matching_series` (404) when no series has the
             members asked for, and `ambiguous_dimension` (409) when the request
             leaves several series and the operation answers one.
         absence:
@@ -10785,10 +10718,16 @@ components:
         dimension:
           type: string
           description: On an `unknown_dimension_member` problem, the dimension the filter named.
+        measure:
+          type: string
+          description: On a `retired_measure_id` problem, the canonical measure.
         members:
-          type: array
-          items: { type: string }
-          description: On an `unknown_dimension_member` problem, the members that dimension has.
+          description: Available members for an unknown member, or the retired id's dimension members.
+          oneOf:
+            - type: array
+              items: { type: string }
+            - type: object
+              additionalProperties: { type: string }
         links:
           type: object
           additionalProperties: { type: string }
@@ -11167,27 +11106,23 @@ components:
             - total
             - burglary
 
-    ConflictingDimensionFilterProblem:
-      description:
-        A deprecated alias fixes a member, and a filter asks for a different member
-        of the same dimension.
+    RetiredMeasureIdProblem:
+      description: The measure id is retired. Use the canonical measure and members.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
-          required: [code]
+          required: [code, measure, members]
           properties:
-            status: { enum: [400] }
-            code:
-              const: conflicting_dimension_filter
+            status: { enum: [404] }
+            code: { const: retired_measure_id }
       examples:
-        - type: https://api.ukdataatlas.com/problems/invalid-query
-          title: Invalid Query
-          status: 400
-          detail:
-            crime-burglary is recorded-crimes with offence=burglary, so it cannot also
-            be filtered to offence=robbery. Use /v1/data/recorded-crimes to choose
-            members.
-          code: conflicting_dimension_filter
+        - type: https://api.ukdataatlas.com/problems/not-found
+          title: Not Found
+          status: 404
+          detail: crime-burglary is no longer accepted. Use /v1/data/recorded-crimes with offence=burglary.
+          code: retired_measure_id
+          measure: recorded-crimes
+          members: { offence: burglary }
 
     NoMatchingSeriesProblem:
       description: The measure publishes no series for that combination of members.
@@ -11246,1065 +11181,6 @@ components:
               datasetId: local-election
               label: Local election votes for Labour
               href: /v1/data/party-votes?party=lab&datasetId=local-election
-
-    DeprecatedMeasureAlias:
-      description:
-        An older measure id that named a breakdown, and sometimes a dataset, as part of the id.
-        Each is still accepted wherever a measure id is, and is read as the measure and members
-        `x-resolves-to` gives; the response names it in `resolvedFrom` and carries a `Deprecation`
-        header. Name the measure and filter on its dimensions instead. No sunset date is set.
-      type: string
-      deprecated: true
-      enum:
-        - adult-social-care-activity
-        - adult-social-care-outcomes
-        - age-0-to-4
-        - age-10-to-14
-        - age-15-to-19
-        - age-20-to-24
-        - age-25-to-29
-        - age-30-to-34
-        - age-35-to-39
-        - age-40-to-44
-        - age-45-to-49
-        - age-5-to-9
-        - age-50-to-54
-        - age-55-to-59
-        - age-60-to-64
-        - age-65-to-69
-        - age-70-to-74
-        - age-75-to-79
-        - age-80-to-84
-        - age-85-plus
-        - broadband-full-fibre-availability
-        - broadband-gigabit-availability
-        - broadband-superfast-availability
-        - broadband-ultrafast-availability
-        - business-activity
-        - car-availability-none
-        - car-availability-one
-        - car-availability-three-or-more
-        - car-availability-total
-        - car-availability-two
-        - claimant-count
-        - claimant-count-16-to-24
-        - council-tax
-        - crime-bicycle-theft
-        - crime-burglary
-        - crime-criminal-damage-and-arson
-        - crime-death-or-serious-injury-by-illegal-driving
-        - crime-drug-offences
-        - crime-homicide
-        - crime-miscellaneous-crimes-against-society
-        - crime-non-residential-burglary
-        - crime-other-theft
-        - crime-possession-of-weapons
-        - crime-public-order-offences
-        - crime-residential-burglary
-        - crime-robbery
-        - crime-sexual-offences
-        - crime-shoplifting
-        - crime-stalking-and-harassment
-        - crime-theft-from-the-person
-        - crime-theft-offences
-        - crime-total
-        - crime-vehicle-offences
-        - crime-violence-against-the-person
-        - crime-violence-with-injury
-        - crime-violence-without-injury
-        - economic-activity-employed
-        - economic-activity-inactive-long-term-sick
-        - economic-activity-inactive-looking-after-home
-        - economic-activity-inactive-other
-        - economic-activity-inactive-retired
-        - economic-activity-inactive-student
-        - economic-activity-student-employed
-        - economic-activity-student-unemployed
-        - economic-activity-total
-        - economic-activity-unemployed
-        - electric-vehicle-chargers
-        - electricity-consumption-domestic
-        - electricity-consumption-non-domestic
-        - ethnicity-african
-        - ethnicity-any-other
-        - ethnicity-arab
-        - ethnicity-bangladeshi
-        - ethnicity-caribbean
-        - ethnicity-chinese
-        - ethnicity-gypsy-or-irish-traveller
-        - ethnicity-indian
-        - ethnicity-irish
-        - ethnicity-other-asian
-        - ethnicity-other-black
-        - ethnicity-other-mixed
-        - ethnicity-other-white
-        - ethnicity-pakistani
-        - ethnicity-roma
-        - ethnicity-white-and-asian
-        - ethnicity-white-and-black-african
-        - ethnicity-white-and-black-caribbean
-        - ethnicity-white-british
-        - gas-consumption-domestic
-        - gas-consumption-non-domestic
-        - general-election-apni-vote-share
-        - general-election-apni-votes
-        - general-election-brx-vote-share
-        - general-election-brx-votes
-        - general-election-con-vote-share
-        - general-election-con-votes
-        - general-election-dup-vote-share
-        - general-election-dup-votes
-        - general-election-green-vote-share
-        - general-election-green-votes
-        - general-election-lab-vote-share
-        - general-election-lab-votes
-        - general-election-ld-vote-share
-        - general-election-ld-votes
-        - general-election-other-vote-share
-        - general-election-other-votes
-        - general-election-pc-vote-share
-        - general-election-pc-votes
-        - general-election-ruk-vote-share
-        - general-election-ruk-votes
-        - general-election-sdlp-vote-share
-        - general-election-sdlp-votes
-        - general-election-sf-vote-share
-        - general-election-sf-votes
-        - general-election-snp-vote-share
-        - general-election-snp-votes
-        - general-election-turnout
-        - general-election-ukip-vote-share
-        - general-election-ukip-votes
-        - general-election-uup-vote-share
-        - general-election-uup-votes
-        - general-election-valid-votes
-        - general-election-winning-party
-        - general-health-bad
-        - general-health-fair
-        - general-health-good
-        - general-health-total
-        - general-health-very-bad
-        - general-health-very-good
-        - household-composition-cohabiting-dependent-children
-        - household-composition-cohabiting-no-children
-        - household-composition-cohabiting-non-dependent-children
-        - household-composition-family-all-66-plus
-        - household-composition-lone-parent-dependent-children
-        - household-composition-lone-parent-non-dependent-children
-        - household-composition-married-dependent-children
-        - household-composition-married-no-children
-        - household-composition-married-non-dependent-children
-        - household-composition-one-person-66-plus
-        - household-composition-one-person-other
-        - household-composition-other
-        - household-composition-other-family
-        - household-composition-other-with-dependent-children
-        - household-composition-total
-        - life-expectancy-female
-        - life-expectancy-male
-        - local-election-con-votes
-        - local-election-effective-votes
-        - local-election-green-votes
-        - local-election-ind-votes
-        - local-election-lab-votes
-        - local-election-ld-votes
-        - local-election-other-votes
-        - local-election-pc-votes
-        - local-election-ref-votes
-        - local-election-turnout
-        - local-election-ukip-votes
-        - local-election-winning-party
-        - local-government-finance
-        - median-annual-pay
-        - median-hourly-pay
-        - median-workplace-annual-pay
-        - median-workplace-hourly-pay
-        - mobile-4g-coverage
-        - mobile-5g-coverage
-        - no2-background-mean
-        - pm10-background-mean
-        - pm25-background-mean
-        - qualification-apprenticeship
-        - qualification-level-1
-        - qualification-level-2
-        - qualification-level-3
-        - qualification-level-4-plus
-        - qualification-none
-        - qualification-other
-        - qualification-total
-        - road-collisions-fatal
-        - road-collisions-serious
-        - road-collisions-slight
-        - temporary-accommodation-children
-        - temporary-accommodation-households
-        - temporary-accommodation-households-with-children
-        - tenure-owned-outright
-        - tenure-owned-with-mortgage
-        - tenure-private-rented-landlord
-        - tenure-private-rented-other
-        - tenure-rent-free
-        - tenure-shared-ownership
-        - tenure-social-rented-council
-        - tenure-social-rented-other
-        - tenure-total
-        - travel-to-work-bicycle
-        - travel-to-work-car
-        - travel-to-work-home
-        - travel-to-work-motorcycle
-        - travel-to-work-on-foot
-        - travel-to-work-other
-        - travel-to-work-public-transport
-        - travel-to-work-taxi
-        - travel-to-work-total
-        - unemployment-level
-        - usual-residents-in-communal-establishments
-        - usual-residents-in-households
-        - usual-residents-total
-        - waste
-      x-resolves-to:
-        adult-social-care-activity:
-          measure: long-term-support-clients
-        adult-social-care-outcomes:
-          measure: social-care-quality-of-life
-        age-0-to-4:
-          measure: usual-residents
-          dimensions:
-            age-band: 0-to-4
-        age-10-to-14:
-          measure: usual-residents
-          dimensions:
-            age-band: 10-to-14
-        age-15-to-19:
-          measure: usual-residents
-          dimensions:
-            age-band: 15-to-19
-        age-20-to-24:
-          measure: usual-residents
-          dimensions:
-            age-band: 20-to-24
-        age-25-to-29:
-          measure: usual-residents
-          dimensions:
-            age-band: 25-to-29
-        age-30-to-34:
-          measure: usual-residents
-          dimensions:
-            age-band: 30-to-34
-        age-35-to-39:
-          measure: usual-residents
-          dimensions:
-            age-band: 35-to-39
-        age-40-to-44:
-          measure: usual-residents
-          dimensions:
-            age-band: 40-to-44
-        age-45-to-49:
-          measure: usual-residents
-          dimensions:
-            age-band: 45-to-49
-        age-5-to-9:
-          measure: usual-residents
-          dimensions:
-            age-band: 5-to-9
-        age-50-to-54:
-          measure: usual-residents
-          dimensions:
-            age-band: 50-to-54
-        age-55-to-59:
-          measure: usual-residents
-          dimensions:
-            age-band: 55-to-59
-        age-60-to-64:
-          measure: usual-residents
-          dimensions:
-            age-band: 60-to-64
-        age-65-to-69:
-          measure: usual-residents
-          dimensions:
-            age-band: 65-to-69
-        age-70-to-74:
-          measure: usual-residents
-          dimensions:
-            age-band: 70-to-74
-        age-75-to-79:
-          measure: usual-residents
-          dimensions:
-            age-band: 75-to-79
-        age-80-to-84:
-          measure: usual-residents
-          dimensions:
-            age-band: 80-to-84
-        age-85-plus:
-          measure: usual-residents
-          dimensions:
-            age-band: 85-plus
-        broadband-full-fibre-availability:
-          measure: broadband-availability
-          dimensions:
-            broadband-speed: full-fibre
-        broadband-gigabit-availability:
-          measure: broadband-availability
-          dimensions:
-            broadband-speed: gigabit
-        broadband-superfast-availability:
-          measure: broadband-availability
-          dimensions:
-            broadband-speed: superfast
-        broadband-ultrafast-availability:
-          measure: broadband-availability
-          dimensions:
-            broadband-speed: ultrafast
-        business-activity:
-          measure: enterprises
-        car-availability-none:
-          measure: households
-          dimensions:
-            cars-or-vans: none
-        car-availability-one:
-          measure: households
-          dimensions:
-            cars-or-vans: one
-        car-availability-three-or-more:
-          measure: households
-          dimensions:
-            cars-or-vans: three-or-more
-        car-availability-total:
-          measure: households
-          dimensions:
-            cars-or-vans: total
-        car-availability-two:
-          measure: households
-          dimensions:
-            cars-or-vans: two
-        claimant-count:
-          measure: claimants
-          dimensions:
-            age-group: 16-plus
-        claimant-count-16-to-24:
-          measure: claimants
-          dimensions:
-            age-group: 16-to-24
-        council-tax:
-          measure: band-d-council-tax
-        crime-bicycle-theft:
-          measure: recorded-crimes
-          dimensions:
-            offence: bicycle-theft
-        crime-burglary:
-          measure: recorded-crimes
-          dimensions:
-            offence: burglary
-        crime-criminal-damage-and-arson:
-          measure: recorded-crimes
-          dimensions:
-            offence: criminal-damage-and-arson
-        crime-death-or-serious-injury-by-illegal-driving:
-          measure: recorded-crimes
-          dimensions:
-            offence: death-or-serious-injury-by-unlawful-driving
-        crime-drug-offences:
-          measure: recorded-crimes
-          dimensions:
-            offence: drug-offences
-        crime-homicide:
-          measure: recorded-crimes
-          dimensions:
-            offence: homicide
-        crime-miscellaneous-crimes-against-society:
-          measure: recorded-crimes
-          dimensions:
-            offence: miscellaneous-crimes-against-society
-        crime-non-residential-burglary:
-          measure: recorded-crimes
-          dimensions:
-            offence: non-residential-burglary
-        crime-other-theft:
-          measure: recorded-crimes
-          dimensions:
-            offence: other-theft
-        crime-possession-of-weapons:
-          measure: recorded-crimes
-          dimensions:
-            offence: possession-of-weapons
-        crime-public-order-offences:
-          measure: recorded-crimes
-          dimensions:
-            offence: public-order-offences
-        crime-residential-burglary:
-          measure: recorded-crimes
-          dimensions:
-            offence: residential-burglary
-        crime-robbery:
-          measure: recorded-crimes
-          dimensions:
-            offence: robbery
-        crime-sexual-offences:
-          measure: recorded-crimes
-          dimensions:
-            offence: sexual-offences
-        crime-shoplifting:
-          measure: recorded-crimes
-          dimensions:
-            offence: shoplifting
-        crime-stalking-and-harassment:
-          measure: recorded-crimes
-          dimensions:
-            offence: stalking-and-harassment
-        crime-theft-from-the-person:
-          measure: recorded-crimes
-          dimensions:
-            offence: theft-from-the-person
-        crime-theft-offences:
-          measure: recorded-crimes
-          dimensions:
-            offence: theft
-        crime-total:
-          measure: recorded-crimes
-          dimensions:
-            offence: total
-        crime-vehicle-offences:
-          measure: recorded-crimes
-          dimensions:
-            offence: vehicle-offences
-        crime-violence-against-the-person:
-          measure: recorded-crimes
-          dimensions:
-            offence: violence-against-the-person
-        crime-violence-with-injury:
-          measure: recorded-crimes
-          dimensions:
-            offence: violence-with-injury
-        crime-violence-without-injury:
-          measure: recorded-crimes
-          dimensions:
-            offence: violence-without-injury
-        economic-activity-employed:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: employed
-        economic-activity-inactive-long-term-sick:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: inactive-long-term-sick
-        economic-activity-inactive-looking-after-home:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: inactive-looking-after-home
-        economic-activity-inactive-other:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: inactive-other
-        economic-activity-inactive-retired:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: inactive-retired
-        economic-activity-inactive-student:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: inactive-student
-        economic-activity-student-employed:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: student-employed
-        economic-activity-student-unemployed:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: student-unemployed
-        economic-activity-total:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: total
-        economic-activity-unemployed:
-          measure: usual-residents-16-plus
-          dimensions:
-            economic-activity: unemployed
-        electric-vehicle-chargers:
-          measure: public-ev-chargers
-        electricity-consumption-domestic:
-          measure: electricity-consumption
-          dimensions:
-            meter-type: domestic
-        electricity-consumption-non-domestic:
-          measure: electricity-consumption
-          dimensions:
-            meter-type: non-domestic
-        ethnicity-african:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: african
-        ethnicity-any-other:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: any-other-ethnic-group
-        ethnicity-arab:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: arab
-        ethnicity-bangladeshi:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: bangladeshi
-        ethnicity-caribbean:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: caribbean
-        ethnicity-chinese:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: chinese
-        ethnicity-gypsy-or-irish-traveller:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: gypsy-or-irish-traveller
-        ethnicity-indian:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: indian
-        ethnicity-irish:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: irish
-        ethnicity-other-asian:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: other-asian
-        ethnicity-other-black:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: other-black
-        ethnicity-other-mixed:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: other-mixed-or-multiple-ethnic-groups
-        ethnicity-other-white:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: other-white
-        ethnicity-pakistani:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: pakistani
-        ethnicity-roma:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: roma
-        ethnicity-white-and-asian:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: white-and-asian
-        ethnicity-white-and-black-african:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: white-and-black-african
-        ethnicity-white-and-black-caribbean:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: white-and-black-caribbean
-        ethnicity-white-british:
-          measure: usual-residents
-          dimensions:
-            ethnic-group: english-welsh-scottish-northern-irish-or-british
-        gas-consumption-domestic:
-          measure: gas-consumption
-          dimensions:
-            meter-type: domestic
-        gas-consumption-non-domestic:
-          measure: gas-consumption
-          dimensions:
-            meter-type: non-domestic
-        general-election-apni-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: apni
-          datasetId: general-election
-        general-election-apni-votes:
-          measure: party-votes
-          dimensions:
-            party: apni
-          datasetId: general-election
-        general-election-brx-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: brx
-          datasetId: general-election
-        general-election-brx-votes:
-          measure: party-votes
-          dimensions:
-            party: brx
-          datasetId: general-election
-        general-election-con-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: con
-          datasetId: general-election
-        general-election-con-votes:
-          measure: party-votes
-          dimensions:
-            party: con
-          datasetId: general-election
-        general-election-dup-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: dup
-          datasetId: general-election
-        general-election-dup-votes:
-          measure: party-votes
-          dimensions:
-            party: dup
-          datasetId: general-election
-        general-election-green-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: green
-          datasetId: general-election
-        general-election-green-votes:
-          measure: party-votes
-          dimensions:
-            party: green
-          datasetId: general-election
-        general-election-lab-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: lab
-          datasetId: general-election
-        general-election-lab-votes:
-          measure: party-votes
-          dimensions:
-            party: lab
-          datasetId: general-election
-        general-election-ld-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: ld
-          datasetId: general-election
-        general-election-ld-votes:
-          measure: party-votes
-          dimensions:
-            party: ld
-          datasetId: general-election
-        general-election-other-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: other
-          datasetId: general-election
-        general-election-other-votes:
-          measure: party-votes
-          dimensions:
-            party: other
-          datasetId: general-election
-        general-election-pc-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: pc
-          datasetId: general-election
-        general-election-pc-votes:
-          measure: party-votes
-          dimensions:
-            party: pc
-          datasetId: general-election
-        general-election-ruk-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: ruk
-          datasetId: general-election
-        general-election-ruk-votes:
-          measure: party-votes
-          dimensions:
-            party: ruk
-          datasetId: general-election
-        general-election-sdlp-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: sdlp
-          datasetId: general-election
-        general-election-sdlp-votes:
-          measure: party-votes
-          dimensions:
-            party: sdlp
-          datasetId: general-election
-        general-election-sf-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: sf
-          datasetId: general-election
-        general-election-sf-votes:
-          measure: party-votes
-          dimensions:
-            party: sf
-          datasetId: general-election
-        general-election-snp-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: snp
-          datasetId: general-election
-        general-election-snp-votes:
-          measure: party-votes
-          dimensions:
-            party: snp
-          datasetId: general-election
-        general-election-turnout:
-          measure: turnout
-          datasetId: general-election
-        general-election-ukip-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: ukip
-          datasetId: general-election
-        general-election-ukip-votes:
-          measure: party-votes
-          dimensions:
-            party: ukip
-          datasetId: general-election
-        general-election-uup-vote-share:
-          measure: party-vote-share
-          dimensions:
-            party: uup
-          datasetId: general-election
-        general-election-uup-votes:
-          measure: party-votes
-          dimensions:
-            party: uup
-          datasetId: general-election
-        general-election-valid-votes:
-          measure: valid-votes
-          datasetId: general-election
-        general-election-winning-party:
-          measure: winning-party
-          datasetId: general-election
-        general-health-bad:
-          measure: usual-residents
-          dimensions:
-            general-health: bad
-        general-health-fair:
-          measure: usual-residents
-          dimensions:
-            general-health: fair
-        general-health-good:
-          measure: usual-residents
-          dimensions:
-            general-health: good
-        general-health-total:
-          measure: usual-residents
-          dimensions:
-            general-health: total
-        general-health-very-bad:
-          measure: usual-residents
-          dimensions:
-            general-health: very-bad
-        general-health-very-good:
-          measure: usual-residents
-          dimensions:
-            general-health: very-good
-        household-composition-cohabiting-dependent-children:
-          measure: households
-          dimensions:
-            household-composition: cohabiting-dependent-children
-        household-composition-cohabiting-no-children:
-          measure: households
-          dimensions:
-            household-composition: cohabiting-no-children
-        household-composition-cohabiting-non-dependent-children:
-          measure: households
-          dimensions:
-            household-composition: cohabiting-non-dependent-children
-        household-composition-family-all-66-plus:
-          measure: households
-          dimensions:
-            household-composition: family-all-66-plus
-        household-composition-lone-parent-dependent-children:
-          measure: households
-          dimensions:
-            household-composition: lone-parent-dependent-children
-        household-composition-lone-parent-non-dependent-children:
-          measure: households
-          dimensions:
-            household-composition: lone-parent-non-dependent-children
-        household-composition-married-dependent-children:
-          measure: households
-          dimensions:
-            household-composition: married-dependent-children
-        household-composition-married-no-children:
-          measure: households
-          dimensions:
-            household-composition: married-no-children
-        household-composition-married-non-dependent-children:
-          measure: households
-          dimensions:
-            household-composition: married-non-dependent-children
-        household-composition-one-person-66-plus:
-          measure: households
-          dimensions:
-            household-composition: one-person-66-plus
-        household-composition-one-person-other:
-          measure: households
-          dimensions:
-            household-composition: one-person-other
-        household-composition-other:
-          measure: households
-          dimensions:
-            household-composition: other
-        household-composition-other-family:
-          measure: households
-          dimensions:
-            household-composition: other-family
-        household-composition-other-with-dependent-children:
-          measure: households
-          dimensions:
-            household-composition: other-with-dependent-children
-        household-composition-total:
-          measure: households
-          dimensions:
-            household-composition: total
-        life-expectancy-female:
-          measure: life-expectancy
-          dimensions:
-            sex: female
-        life-expectancy-male:
-          measure: life-expectancy
-          dimensions:
-            sex: male
-        local-election-con-votes:
-          measure: party-votes
-          dimensions:
-            party: con
-          datasetId: local-election
-        local-election-effective-votes:
-          measure: effective-votes
-          datasetId: local-election
-        local-election-green-votes:
-          measure: party-votes
-          dimensions:
-            party: green
-          datasetId: local-election
-        local-election-ind-votes:
-          measure: party-votes
-          dimensions:
-            party: ind
-          datasetId: local-election
-        local-election-lab-votes:
-          measure: party-votes
-          dimensions:
-            party: lab
-          datasetId: local-election
-        local-election-ld-votes:
-          measure: party-votes
-          dimensions:
-            party: ld
-          datasetId: local-election
-        local-election-other-votes:
-          measure: party-votes
-          dimensions:
-            party: other
-          datasetId: local-election
-        local-election-pc-votes:
-          measure: party-votes
-          dimensions:
-            party: pc
-          datasetId: local-election
-        local-election-ref-votes:
-          measure: party-votes
-          dimensions:
-            party: ref
-          datasetId: local-election
-        local-election-turnout:
-          measure: turnout
-          datasetId: local-election
-        local-election-ukip-votes:
-          measure: party-votes
-          dimensions:
-            party: ukip
-          datasetId: local-election
-        local-election-winning-party:
-          measure: winning-party
-          datasetId: local-election
-        local-government-finance:
-          measure: education-services-budget
-        median-annual-pay:
-          measure: gross-annual-pay
-          dimensions:
-            pay-statistic: median
-            earnings-place: residence
-        median-hourly-pay:
-          measure: gross-hourly-pay
-          dimensions:
-            pay-statistic: median
-            earnings-place: residence
-        median-workplace-annual-pay:
-          measure: gross-annual-pay
-          dimensions:
-            pay-statistic: median
-            earnings-place: workplace
-        median-workplace-hourly-pay:
-          measure: gross-hourly-pay
-          dimensions:
-            pay-statistic: median
-            earnings-place: workplace
-        mobile-4g-coverage:
-          measure: mobile-premises-coverage
-          dimensions:
-            mobile-technology: 4g
-            coverage-location: indoor
-            mobile-operators: all
-        mobile-5g-coverage:
-          measure: mobile-premises-coverage
-          dimensions:
-            mobile-technology: 5g
-            coverage-location: outdoor
-            mobile-operators: all
-        no2-background-mean:
-          measure: background-concentration
-          dimensions:
-            pollutant: no2
-        pm10-background-mean:
-          measure: background-concentration
-          dimensions:
-            pollutant: pm10
-        pm25-background-mean:
-          measure: background-concentration
-          dimensions:
-            pollutant: pm25
-        qualification-apprenticeship:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: apprenticeship
-        qualification-level-1:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: level-1
-        qualification-level-2:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: level-2
-        qualification-level-3:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: level-3
-        qualification-level-4-plus:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: level-4-plus
-        qualification-none:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: none
-        qualification-other:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: other
-        qualification-total:
-          measure: usual-residents-16-plus
-          dimensions:
-            highest-qualification: total
-        road-collisions-fatal:
-          measure: road-collisions
-          dimensions:
-            collision-severity: fatal
-        road-collisions-serious:
-          measure: road-collisions
-          dimensions:
-            collision-severity: serious
-        road-collisions-slight:
-          measure: road-collisions
-          dimensions:
-            collision-severity: slight
-        temporary-accommodation-children:
-          measure: children-in-temporary-accommodation
-        temporary-accommodation-households:
-          measure: households-in-temporary-accommodation
-          dimensions:
-            household-type: all
-        temporary-accommodation-households-with-children:
-          measure: households-in-temporary-accommodation
-          dimensions:
-            household-type: with-children
-        tenure-owned-outright:
-          measure: households
-          dimensions:
-            tenure: owned-outright
-        tenure-owned-with-mortgage:
-          measure: households
-          dimensions:
-            tenure: owned-with-mortgage
-        tenure-private-rented-landlord:
-          measure: households
-          dimensions:
-            tenure: private-rented-landlord
-        tenure-private-rented-other:
-          measure: households
-          dimensions:
-            tenure: private-rented-other
-        tenure-rent-free:
-          measure: households
-          dimensions:
-            tenure: rent-free
-        tenure-shared-ownership:
-          measure: households
-          dimensions:
-            tenure: shared-ownership
-        tenure-social-rented-council:
-          measure: households
-          dimensions:
-            tenure: social-rented-council
-        tenure-social-rented-other:
-          measure: households
-          dimensions:
-            tenure: social-rented-other
-        tenure-total:
-          measure: households
-          dimensions:
-            tenure: total
-        travel-to-work-bicycle:
-          measure: people-in-employment
-          dimensions:
-            travel-method: bicycle
-        travel-to-work-car:
-          measure: people-in-employment
-          dimensions:
-            travel-method: car
-        travel-to-work-home:
-          measure: people-in-employment
-          dimensions:
-            travel-method: home
-        travel-to-work-motorcycle:
-          measure: people-in-employment
-          dimensions:
-            travel-method: motorcycle
-        travel-to-work-on-foot:
-          measure: people-in-employment
-          dimensions:
-            travel-method: on-foot
-        travel-to-work-other:
-          measure: people-in-employment
-          dimensions:
-            travel-method: other
-        travel-to-work-public-transport:
-          measure: people-in-employment
-          dimensions:
-            travel-method: public-transport
-        travel-to-work-taxi:
-          measure: people-in-employment
-          dimensions:
-            travel-method: taxi
-        travel-to-work-total:
-          measure: people-in-employment
-          dimensions:
-            travel-method: total
-        unemployment-level:
-          measure: unemployed-people
-        usual-residents-in-communal-establishments:
-          measure: usual-residents
-          dimensions:
-            residence-type: communal-establishment
-        usual-residents-in-households:
-          measure: usual-residents
-          dimensions:
-            residence-type: household
-        usual-residents-total:
-          measure: usual-residents
-          dimensions:
-            residence-type: total
-        waste:
-          measure: collected-waste
 
     AmbiguousPlaceProblem:
       description: >

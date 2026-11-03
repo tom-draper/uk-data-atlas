@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -99,18 +99,18 @@ class GetDatasetResponse200Data:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.get_dataset_response_200_data_compiled import (
-            GetDatasetResponse200DataCompiled,
+            GetDatasetResponse200DataCompiled,  # noqa: PLC0415
         )
         from ..models.get_dataset_response_200_data_inputs_item import (
-            GetDatasetResponse200DataInputsItem,
+            GetDatasetResponse200DataInputsItem,  # noqa: PLC0415
         )
         from ..models.get_dataset_response_200_data_licence import (
-            GetDatasetResponse200DataLicence,
+            GetDatasetResponse200DataLicence,  # noqa: PLC0415
         )
         from ..models.get_dataset_response_200_data_summary import (
-            GetDatasetResponse200DataSummary,
+            GetDatasetResponse200DataSummary,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

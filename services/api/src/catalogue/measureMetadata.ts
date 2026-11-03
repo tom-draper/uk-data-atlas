@@ -8,7 +8,7 @@ export const measureMetadata = {
 		"x-example-request": "/v1/measures/deprivation",
 	},
 	description:
-		"A measure's definition: what it measures, the unit, whether it may be summed or averaged, its dimensions and their members, and the series and source partitions published for each combination of members, with national coverage.\n\nAn older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers with its measure's definition, `resolvedFrom` says which members it stood for, and the response carries a `Deprecation` header. It has no sunset date.\n\n`unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code, scale and (where applicable) denominator for safe unit-aware calculations; it never changes the source artifact or an observation value.\n\nWhere another nation publishes its own answer to the same question, the measure carries `concept` and `elsewhere`. Each entry in `elsewhere` names that measure, the countries it covers, and whether the two are `comparable`. For the four national deprivation indices they are not: each ranks its own nation's areas from 1 against its own domains and weights, so they cannot be put on one scale. The reason travels with the link rather than living in documentation, because the numbers themselves give no sign of it.\n",
+		"A measure's definition: what it measures, the unit, whether it may be summed or averaged, its dimensions and their members, and the series and source partitions published for each combination of members, with national coverage.\n\n`unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code, scale and (where applicable) denominator for safe unit-aware calculations; it never changes the source artifact or an observation value.\n\nWhere another nation publishes its own answer to the same question, the measure carries `concept` and `elsewhere`. Each entry in `elsewhere` names that measure, the countries it covers, and whether the two are `comparable`. For the four national deprivation indices they are not: each ranks its own nation's areas from 1 against its own domains and weights, so they cannot be put on one scale. The reason travels with the link rather than living in documentation, because the numbers themselves give no sign of it.\n",
 	parameters: [
 		{
 			$ref: "#/components/parameters/MeasureId",
@@ -19,7 +19,7 @@ export const measureMetadata = {
 			description: "The measure definition.",
 			content: {
 				"application/json": {
-					"x-example-request": "/v1/measures/crime-burglary",
+					"x-example-request": "/v1/measures/recorded-crimes",
 					example: {
 						apiVersion: "v1",
 						atlasRelease:
@@ -68,7 +68,6 @@ export const measureMetadata = {
 										offence: "burglary",
 									},
 									label: "Burglary",
-									deprecatedAlias: "crime-burglary",
 									href: "/v1/data/recorded-crimes?offence=burglary",
 									sources: [
 										{
@@ -111,14 +110,6 @@ export const measureMetadata = {
 							},
 							links: {
 								data: "/v1/data/recorded-crimes",
-							},
-							resolvedFrom: {
-								id: "crime-burglary",
-								measure: "recorded-crimes",
-								dimensions: {
-									offence: "burglary",
-								},
-								deprecated: true,
 							},
 						},
 						meta: {

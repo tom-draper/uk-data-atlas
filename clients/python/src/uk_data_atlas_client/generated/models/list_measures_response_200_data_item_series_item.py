@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -35,7 +35,6 @@ class ListMeasuresResponse200DataItemSeriesItem:
         label (str):
         sources (list[ListMeasuresResponse200DataItemSeriesItemSourcesItem]):
         dataset_id (str | Unset):
-        deprecated_alias (str | Unset):
         documents (ListMeasuresResponse200DataItemSeriesItemDocuments | Unset):
         notes (list[str] | Unset):
         uncertainty (ListMeasuresResponse200DataItemSeriesItemUncertainty | Unset):
@@ -47,7 +46,6 @@ class ListMeasuresResponse200DataItemSeriesItem:
     label: str
     sources: list[ListMeasuresResponse200DataItemSeriesItemSourcesItem]
     dataset_id: str | Unset = UNSET
-    deprecated_alias: str | Unset = UNSET
     documents: ListMeasuresResponse200DataItemSeriesItemDocuments | Unset = UNSET
     notes: list[str] | Unset = UNSET
     uncertainty: ListMeasuresResponse200DataItemSeriesItemUncertainty | Unset = UNSET
@@ -67,8 +65,6 @@ class ListMeasuresResponse200DataItemSeriesItem:
             sources.append(sources_item)
 
         dataset_id = self.dataset_id
-
-        deprecated_alias = self.deprecated_alias
 
         documents: dict[str, Any] | Unset = UNSET
         if not isinstance(self.documents, Unset):
@@ -96,8 +92,6 @@ class ListMeasuresResponse200DataItemSeriesItem:
         )
         if dataset_id is not UNSET:
             field_dict["datasetId"] = dataset_id
-        if deprecated_alias is not UNSET:
-            field_dict["deprecatedAlias"] = deprecated_alias
         if documents is not UNSET:
             field_dict["documents"] = documents
         if notes is not UNSET:
@@ -110,18 +104,18 @@ class ListMeasuresResponse200DataItemSeriesItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.list_measures_response_200_data_item_series_item_dimensions import (
-            ListMeasuresResponse200DataItemSeriesItemDimensions,
+            ListMeasuresResponse200DataItemSeriesItemDimensions,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_series_item_documents import (
-            ListMeasuresResponse200DataItemSeriesItemDocuments,
+            ListMeasuresResponse200DataItemSeriesItemDocuments,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_series_item_sources_item import (
-            ListMeasuresResponse200DataItemSeriesItemSourcesItem,
+            ListMeasuresResponse200DataItemSeriesItemSourcesItem,  # noqa: PLC0415
         )
         from ..models.list_measures_response_200_data_item_series_item_uncertainty import (
-            ListMeasuresResponse200DataItemSeriesItemUncertainty,
+            ListMeasuresResponse200DataItemSeriesItemUncertainty,  # noqa: PLC0415
         )
 
         d = dict(src_dict)
@@ -145,8 +139,6 @@ class ListMeasuresResponse200DataItemSeriesItem:
             sources.append(sources_item)
 
         dataset_id = d.pop("datasetId", UNSET)
-
-        deprecated_alias = d.pop("deprecatedAlias", UNSET)
 
         _documents = d.pop("documents", UNSET)
         documents: ListMeasuresResponse200DataItemSeriesItemDocuments | Unset
@@ -178,7 +170,6 @@ class ListMeasuresResponse200DataItemSeriesItem:
             label=label,
             sources=sources,
             dataset_id=dataset_id,
-            deprecated_alias=deprecated_alias,
             documents=documents,
             notes=notes,
             uncertainty=uncertainty,

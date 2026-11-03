@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -61,10 +61,10 @@ class SuppliedCountConversionEnvelope:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.envelope_meta import EnvelopeMeta
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.envelope_meta import EnvelopeMeta  # noqa: PLC0415
         from ..models.supplied_count_conversion_envelope_data import (
-            SuppliedCountConversionEnvelopeData,
+            SuppliedCountConversionEnvelopeData,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

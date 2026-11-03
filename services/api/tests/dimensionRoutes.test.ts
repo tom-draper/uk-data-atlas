@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import Fastify from "fastify";
+import { measureExportRoutes } from "../src/data/measureExportRoutes";
+import { catalogueFastifyRoutes } from "../src/catalogue/catalogueFastifyRoutes";
 import type {
 	DataCatalog,
 	Measure,
@@ -83,7 +86,10 @@ const catalog: DataCatalog = {
 	measures: [
 		...dataCatalog.measures,
 		wardMeasure("crime-total", "Total recorded crime", "crime"),
-		wardMeasure("crime-burglary", "Burglary", "crime"),
+		{
+			...wardMeasure("crime-burglary", "Burglary", "crime"),
+			aliases: ["burglary-reports"],
+		},
 		wardMeasure("crime-robbery", "Robbery", "crime"),
 		wardMeasure(
 			"local-election-lab-votes",
@@ -252,22 +258,62 @@ test("uses a dimension's total when the request names no member, and says so", (
 	);
 });
 
-test("reads an old encoded id as its measure and members, and marks it deprecated", () => {
-	const response = get("/v1/data/crime-burglary/value?place=ward/E05000001");
-	assert.equal(response.status, 200);
-	const body = data(response);
-	assert.equal((body.answer as { value: number }).value, 5);
-	assert.deepEqual(body.resolvedFrom, {
-		id: "crime-burglary",
+test("retired path ids return a replacement and reviewed aliases still work", () => {
+	for (const path of [
+		"/v1/data/crime-burglary/value?place=ward/E05000001",
+		"/v1/measures/crime-burglary",
+		"/v1/map-resources/ward/latest/join/crime-burglary",
+	]) {
+		const response = get(path);
+		assert.equal(response.status, 404);
+		assert.deepEqual(response.body, {
+			type: "https://api.ukdataatlas.com/problems/not-found",
+			title: "Not Found",
+			status: 404,
+			detail: "crime-burglary is no longer accepted. Use /v1/data/recorded-crimes with offence=burglary.",
+			code: "retired_measure_id",
+			measure: "recorded-crimes",
+			members: { offence: "burglary" },
+		});
+	}
+	const alias = get("/v1/data/burglary-reports/value?place=ward/E05000001");
+	assert.equal(alias.status, 200);
+	assert.equal((data(alias).answer as { value: number }).value, 5);
+	assert.equal(alias.headers?.deprecation, undefined);
+	assert.deepEqual(data(alias).resolvedFrom, {
+		id: "burglary-reports",
 		measure: "recorded-crimes",
 		dimensions: { offence: "burglary" },
-		deprecated: true,
 	});
-	assert.equal(response.headers?.deprecation, "true");
-	assert.equal(
-		response.headers?.["content-location"],
-		"/v1/data/recorded-crimes/value?place=ward%2FE05000001&offence=burglary",
-	);
+	assert.equal(get("/v1/measures/burglary-reports").status, 200);
+});
+
+test("registered export and catalogue routes reject retired ids", async () => {
+	const app = Fastify();
+	await app.register(measureExportRoutes, { prefix: "/v1", context });
+	await app.register(catalogueFastifyRoutes, { prefix: "/v1", context });
+	try {
+		for (const url of [
+			"/v1/data/crime-burglary/export",
+			"/v1/measures/crime-burglary",
+			"/v1/measures/Crime%20Burglary",
+		]) {
+			const response = await app.inject({ method: "GET", url });
+			assert.equal(response.statusCode, 404, url);
+			assert.equal(response.json().code, "retired_measure_id");
+		}
+		assert.equal(
+			(
+				await app.inject({
+					method: "GET",
+					url: "/v1/measures/burglary-reports",
+				})
+			).statusCode,
+			200,
+		);
+	} finally {
+		await app.close();
+	}
 });
 
 test("answers every member at once for *", () => {
@@ -318,17 +364,6 @@ test("refuses a member or dimension the measure does not have", () => {
 	);
 });
 
-test("refuses a filter that contradicts an old id's member", () => {
-	const response = get(
-		"/v1/data/crime-burglary/value?place=ward/E05000001&offence=robbery",
-	);
-	assert.equal(response.status, 400);
-	assert.equal(
-		(response.body as { code?: string }).code,
-		"conflicting_dimension_filter",
-	);
-});
-
 test("an operation that answers one series refuses a breakdown with choices", () => {
 	const response = get("/v1/data/recorded-crimes?offence=*");
 	assert.equal(response.status, 409);
@@ -364,7 +399,7 @@ test("lists measures with their dimensions and the series each member has", () =
 	const measures = data(response) as unknown as Array<{
 		id: string;
 		dimensions: Array<{ id: string; total?: string; members: unknown[] }>;
-		series: Array<{ deprecatedAlias?: string; href: string }>;
+		series: Array<{ href: string }>;
 	}>;
 	const crime = measures.find((measure) => measure.id === "recorded-crimes")!;
 	assert.deepEqual(crime.dimensions, [
@@ -380,11 +415,11 @@ test("lists measures with their dimensions and the series each member has", () =
 		},
 	]);
 	assert.deepEqual(
-		crime.series.map((series) => [series.deprecatedAlias, series.href]),
+		crime.series.map((series) => series.href),
 		[
-			["crime-total", "/v1/data/recorded-crimes?offence=total"],
-			["crime-burglary", "/v1/data/recorded-crimes?offence=burglary"],
-			["crime-robbery", "/v1/data/recorded-crimes?offence=robbery"],
+			"/v1/data/recorded-crimes?offence=total",
+			"/v1/data/recorded-crimes?offence=burglary",
+			"/v1/data/recorded-crimes?offence=robbery",
 		],
 	);
 	assert.ok(!measures.some((measure) => measure.id === "crime-burglary"));
@@ -409,17 +444,4 @@ test("finds a measure by a member's name and says which member to filter on", ()
 			href: "/v1/data/recorded-crimes?offence=burglary",
 		},
 	]);
-});
-
-test("describes an old id's measure and says what it resolved from", () => {
-	const response = get("/v1/measures/crime-robbery");
-	assert.equal(response.status, 200);
-	const body = data(response);
-	assert.equal(body.id, "recorded-crimes");
-	assert.deepEqual(body.resolvedFrom, {
-		id: "crime-robbery",
-		measure: "recorded-crimes",
-		dimensions: { offence: "robbery" },
-		deprecated: true,
-	});
 });
