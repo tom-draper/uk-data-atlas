@@ -15,7 +15,7 @@ import { repositoryRootOf } from "../storage/dataLayout";
 
 export const readAtlasRelease = (apiRoot: string): AtlasRelease =>
 	readPublicManifest<AtlasRelease>(
-		apiRoot,
+		repositoryRootOf(apiRoot),
 		"atlas-release.json",
 		"artifacts",
 		"atlas release manifest",
@@ -23,14 +23,14 @@ export const readAtlasRelease = (apiRoot: string): AtlasRelease =>
 
 export const readValidationReport = (apiRoot: string): ValidationReport =>
 	readPublicManifest<ValidationReport>(
-		apiRoot,
+		repositoryRootOf(apiRoot),
 		"validation-report.json",
 		"resources",
 		"validation report",
 	);
 
 export const readDataCatalog = (apiRoot: string): DataCatalog => {
-	const path = publicPath(apiRoot, "data-catalog.json");
+	const path = publicPath(repositoryRootOf(apiRoot), "data-catalog.json");
 	const catalog = JSON.parse(readFileSync(path, "utf8")) as DataCatalog;
 	if (
 		catalog.schemaVersion !== 1 ||
@@ -44,7 +44,7 @@ export const readDataCatalog = (apiRoot: string): DataCatalog => {
 
 export const readExportManifest = (apiRoot: string): ExportManifest =>
 	readPublicManifest<ExportManifest>(
-		apiRoot,
+		repositoryRootOf(apiRoot),
 		"export-manifest.json",
 		"exports",
 		"export manifest",
@@ -52,7 +52,7 @@ export const readExportManifest = (apiRoot: string): ExportManifest =>
 
 export const readLookupManifest = (apiRoot: string): LookupManifest =>
 	readPublicManifest<LookupManifest>(
-		apiRoot,
+		repositoryRootOf(apiRoot),
 		"lookup-manifest.json",
 		"lookups",
 		"lookup manifest",
@@ -62,7 +62,7 @@ export const readMeasureCompatibility = (
 	apiRoot: string,
 ): MeasureCompatibilityInventory =>
 	readPublicManifest<MeasureCompatibilityInventory>(
-		apiRoot,
+		repositoryRootOf(apiRoot),
 		"measure-compatibility.json",
 		"measures",
 		"measure compatibility inventory",

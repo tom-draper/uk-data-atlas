@@ -249,7 +249,7 @@ export const buildPostcodeAreas = async (
 		const chosen = postcodeAreaReleases(
 			resolver,
 			readPublicManifest<MeasureCompatibilityInventory>(
-				apiRoot,
+				repositoryRoot,
 				"measure-compatibility.json",
 				"measures",
 				"measure compatibility inventory",
