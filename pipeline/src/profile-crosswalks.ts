@@ -1,6 +1,6 @@
 /** Force selected compiles into a temporary directory and check existing hashes. */
 import {
-	apiRootOf,
+	configDirectory,
 	artifactDirectory,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -19,7 +19,6 @@ import {
 } from "./crosswalk-workers";
 
 const root = resolve(import.meta.dirname, "../..");
-const apiRoot = apiRootOf(root);
 const args = process.argv.slice(2);
 const workerFlag = args.find((arg) => arg.startsWith("--workers="));
 const workers = crosswalkWorkerCount(
@@ -31,7 +30,7 @@ if (!ids.length)
 		"Usage: pnpm exec tsx pipeline/src/profile-crosswalks.ts [--workers=1] <crosswalk-id> [...]",
 	);
 const adapters = readCrosswalkAdapters(
-	join(apiRoot, "config/crosswalk-adapters.json"),
+	join(configDirectory(root), "crosswalk-adapters.json"),
 );
 const byId = new Map(adapters.map((adapter) => [adapter.id, adapter]));
 const selected = new Set<string>();
