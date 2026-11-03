@@ -155,6 +155,14 @@ export type DeclaredPayload = {
 	) => { key: string; header: DeclaredHeader; optional?: true }[];
 	/** The record field holding the area's code. */
 	code?: string;
+	/**
+	 * Header fields computed from the generated records, such as a count or
+	 * average over the areas inside each area they name.
+	 */
+	summary?: (
+		records: { [code: string]: Json },
+		header: DeclaredHeader,
+	) => { [field: string]: Json };
 	/** Dot-separated paths of containers that are arrays. */
 	arrays?: string[];
 	/**
