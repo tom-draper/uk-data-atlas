@@ -147,6 +147,11 @@ export type DeclaredPayload = {
 	code?: string;
 	/** Dot-separated paths of containers that are arrays. */
 	arrays?: string[];
+	/**
+	 * Field path prefixes whose value, with no observation, is left out of the
+	 * record instead of being null.
+	 */
+	omitMissing?: string[];
 };
 
 type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
