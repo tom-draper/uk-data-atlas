@@ -3,6 +3,8 @@ import {
 	type DeclaredDimension,
 	type DeclaredField,
 	type DeclaredParent,
+	type DeclaredPayload,
+	type Json,
 	type DeclaredHeader,
 	periods,
 } from "../declaredStatistics";
@@ -294,6 +296,104 @@ const deprivation = (
 	],
 });
 
+type Rows = Record<string, Json>[];
+
+/**
+ * The payload of a deprivation index: its one part, with a summary of the
+ * areas inside each area its records name as their parent, computed from the
+ * records. `population` and `weighted` make the summary population weighted.
+ */
+const deprivationPayload = (options: {
+	type: string;
+	key: string;
+	boundaryType: string;
+	boundaryYear: number;
+	metadata: { source: string; notes: string[] };
+	code: string;
+	parent: string;
+	summaryField: string;
+	/** Whether a record is among the most deprived. */
+	mostDeprived: (record: Record<string, Json>) => boolean;
+	/** The record fields to average by population, `score` first. */
+	weighted?: { score: string; domains?: string[] };
+}): DeclaredPayload => ({
+	parts: () => [
+		{
+			key: options.key,
+			header: {
+				id: `${options.type}${options.key}`,
+				year: Number(options.key),
+				type: options.type,
+				boundaryType: options.boundaryType,
+				boundaryYear: options.boundaryYear,
+				metadata: options.metadata,
+			},
+		},
+	],
+	code: options.code,
+	summary: (records) => {
+		const groups = new Map<string, Rows>();
+		for (const found of Object.values(records)) {
+			const record = found as Record<string, Json>;
+			const parent = String(record[options.parent]);
+			const rows = groups.get(parent) ?? [];
+			rows.push(record);
+			groups.set(parent, rows);
+		}
+		const weighted = options.weighted;
+		const average = (rows: Rows, field: string, population: number) =>
+			rows.reduce(
+				(sum, row) =>
+					sum + (row[field] as number) * (row.population as number),
+				0,
+			) / population;
+		return {
+			[options.summaryField]: Object.fromEntries(
+				[...groups].map(([parent, rows]) => {
+					const population = weighted
+						? rows.reduce(
+								(sum, row) => sum + (row.population as number),
+								0,
+							)
+						: 0;
+					return [
+						parent,
+						{
+							areaCount: rows.length,
+							mostDeprivedCount: rows.filter(options.mostDeprived)
+								.length,
+							...(weighted
+								? {
+										population,
+										averageScore: average(
+											rows,
+											weighted.score,
+											population,
+										),
+									}
+								: {}),
+							...(weighted?.domains
+								? {
+										domainScores: Object.fromEntries(
+											weighted.domains.map((field) => [
+												field,
+												average(
+													rows,
+													field,
+													population,
+												),
+											]),
+										),
+									}
+								: {}),
+						},
+					];
+				}),
+			),
+		};
+	},
+});
+
 const IMD_DOMAINS: DeclaredDimension = {
 	slug: "deprivation-domain",
 	label: "Deprivation domain",
@@ -337,6 +437,32 @@ const districtParent = (code: string, name: string): DeclaredParent[] => [
 
 export const IMD: DeclaredDataset = {
 	...imd,
+	payload: deprivationPayload({
+		type: "imd",
+		key: "2025",
+		boundaryType: "lsoa",
+		boundaryYear: 2021,
+		metadata: {
+			source: "Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2025.",
+			notes: ["England only. Decile 1 = most deprived 10% of LSOAs."],
+		},
+		code: "lsoaCode",
+		parent: "ladCode",
+		summaryField: "ladStats",
+		mostDeprived: (record) => record.imdDecile === 1,
+		weighted: {
+			score: "imdScore",
+			domains: [
+				"incomeScore",
+				"employmentScore",
+				"educationScore",
+				"healthScore",
+				"crimeScore",
+				"housingScore",
+				"livingEnvironmentScore",
+			],
+		},
+	}),
 	name: "lsoaName",
 	parents: districtParent("ladCode", "ladName"),
 	rebuild: {},
@@ -366,6 +492,21 @@ export const WIMD: DeclaredDataset = {
 		"LSOAs in Wales",
 		{ score: true, decile: true, population: true },
 	),
+	payload: deprivationPayload({
+		type: "wimd",
+		key: "2019",
+		boundaryType: "lsoa",
+		boundaryYear: 2011,
+		metadata: {
+			source: "Welsh Government. Welsh Index of Multiple Deprivation 2019.",
+			notes: ["Wales only. Decile 1 = most deprived 10% of LSOAs."],
+		},
+		code: "lsoaCode",
+		parent: "ladCode",
+		summaryField: "ladStats",
+		mostDeprived: (record) => record.wimdDecile === 1,
+		weighted: { score: "wimdScore" },
+	}),
 	name: "lsoaName",
 	parents: districtParent("ladCode", "ladName"),
 	rebuild: {},
@@ -379,6 +520,22 @@ export const SIMD: DeclaredDataset = {
 		"data zones in Scotland",
 		{ quintile: true, decile: true },
 	),
+	payload: deprivationPayload({
+		type: "simd",
+		key: "2020",
+		boundaryType: "dataZone",
+		boundaryYear: 2011,
+		metadata: {
+			source: "Scottish Government. Scottish Index of Multiple Deprivation 2020v2.",
+			notes: [
+				"Scotland only. Quintile 1 = most deprived 20% of data zones.",
+			],
+		},
+		code: "dzCode",
+		parent: "councilAreaCode",
+		summaryField: "councilStats",
+		mostDeprived: (record) => record.simdDecile === 1,
+	}),
 	name: "dzName",
 	parents: districtParent("councilAreaCode", "councilAreaName"),
 	rebuild: {},
@@ -392,6 +549,23 @@ export const NIMDM: DeclaredDataset = {
 		"super output areas in Northern Ireland",
 		{},
 	),
+	payload: deprivationPayload({
+		type: "nimdm",
+		key: "2017",
+		boundaryType: "superOutputArea",
+		boundaryYear: 2011,
+		metadata: {
+			source: "Northern Ireland Statistics and Research Agency. Northern Ireland Multiple Deprivation Measure 2017.",
+			notes: [
+				"Northern Ireland only. NISRA publishes ranks, not deciles, for Super Output Areas; rank 1 is the most deprived.",
+			],
+		},
+		code: "soaCode",
+		parent: "lgdCode",
+		summaryField: "lgdStats",
+		/** The most deprived tenth of the 890 areas. */
+		mostDeprived: (record) => (record.nimdmRank as number) <= 89,
+	}),
 	name: "soaName",
 	parents: districtParent("lgdCode", "lgdName"),
 	rebuild: {},
