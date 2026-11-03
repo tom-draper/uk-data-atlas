@@ -4177,8 +4177,10 @@ export interface components {
         Release: string;
         /** @description A crosswalk id, e.g. `constituency-2010-to-2024-official-lookup-v2`. */
         CrosswalkId: string;
-        /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+        /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
         MeasureId: string;
+        /** @description With a `measure` query parameter, chooses between datasets that publish the same measure and members, such as `general-election` and `local-election` turnout. It applies to each listed measure that the dataset publishes. */
+        MeasureDataset: string;
         /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
         Dimensions: {
             [key: string]: string;
@@ -4233,7 +4235,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -4565,7 +4567,7 @@ export interface operations {
                 geography: components["parameters"]["Geography"];
                 /** @description A boundary release id, e.g. `2024-07-uk-bgc`, or `latest` for the geography's newest release: the one `/boundary-releases:resolve` chooses for the furthest date. A response to `latest` names the release it read in `Content-Location`. A geography whose newest month holds several releases that differ in more than coverage, or that has a release whose id and registry metadata supply no date, is refused with `409` and the releases that could be newest. */
                 release: components["parameters"]["Release"];
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -6294,7 +6296,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -6597,7 +6599,12 @@ export interface operations {
     listAnalysisGeographies: {
         parameters: {
             query?: {
+                /** @description A measure id from `GET /v1/measures`, or one of its aliases, with optional dimension filters such as `offence=burglary`. An old series id such as `crime-burglary` returns a 404 naming the measure and members that replace it. */
                 measure?: string;
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
+                /** @description With a `measure` query parameter, chooses between datasets that publish the same measure and members, such as `general-election` and `local-election` turnout. It applies to each listed measure that the dataset publishes. */
+                datasetId?: components["parameters"]["MeasureDataset"];
             };
             header?: never;
             path?: never;
@@ -6620,7 +6627,12 @@ export interface operations {
     planAnalysis: {
         parameters: {
             query: {
+                /** @description A measure id from `GET /v1/measures`, or one of its aliases, with optional dimension filters such as `offence=burglary`. An old series id returns a 404 naming the measure and members that replace it. */
                 measure: string;
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
+                /** @description With a `measure` query parameter, chooses between datasets that publish the same measure and members, such as `general-election` and `local-election` turnout. It applies to each listed measure that the dataset publishes. */
+                datasetId?: components["parameters"]["MeasureDataset"];
                 period: string;
                 to: string;
                 geography: string;
@@ -6845,7 +6857,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7030,7 +7042,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7199,7 +7211,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7765,7 +7777,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7895,7 +7907,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -7992,7 +8004,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired path ids return a 404 with the canonical measure and members. Some `measure` query parameters still accept old series ids and do not accept dimension filters. */
+                /** @description A measure id from `GET /v1/measures`, such as `population` or `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An alias is read as the id it names, and the response's `Content-Location` header gives the request it was read as. Case, spaces and punctuation are set aside, so `House Prices` is `house-prices`. A measure's breakdowns are chosen with dimension filters, not with the id: `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired ids return a 404 with the canonical measure and members, in a path or in a `measure` query parameter. */
                 "measure-id": components["parameters"]["MeasureId"];
             };
             cookie?: never;
@@ -8870,8 +8882,12 @@ export interface operations {
             query?: {
                 /** @description Optional comma-separated expansions. `dossier` adds boundary evidence, availability and verified-resource links without repeating the area identity; `capabilities`, `citation` and `metrics` are described above. */
                 include?: ("dossier" | "capabilities" | "citation" | "metrics")[];
-                /** @description With `include=citation`, a measure id from `GET /measures`, or one of its aliases, to cite. Repeatable. */
+                /** @description With `include=citation`, a measure id from `GET /v1/measures`, or one of its aliases, to cite. Repeatable. Dimension filters such as `offence=burglary` apply to each listed measure that has the dimension; an old series id such as `crime-burglary` returns a 404 naming the measure and members that replace it. */
                 measure?: string[];
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
+                /** @description With a `measure` query parameter, chooses between datasets that publish the same measure and members, such as `general-election` and `local-election` turnout. It applies to each listed measure that the dataset publishes. */
+                datasetId?: components["parameters"]["MeasureDataset"];
                 /** @description With `include=citation`, a crosswalk id from `GET /crosswalks` to cite. Repeatable. */
                 crosswalk?: string[];
             };
@@ -9663,8 +9679,12 @@ export interface operations {
                 purpose?: "identity" | "membership" | "apportion";
                 /** @description Select the best published path for this intended conversion operation. */
                 operation?: "identity-join" | "code-translation" | "containment-aggregation" | "membership-join" | "weighted-allocation";
-                /** @description Preflight this measure against an exact conversion's relationship purpose. */
+                /** @description Preflight this measure against an exact conversion's relationship purpose. A measure id from `GET /v1/measures`, or one of its aliases, with optional dimension filters such as `offence=burglary`; an old series id returns a 404 naming the measure and members that replace it. */
                 measure?: string;
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
+                /** @description With a `measure` query parameter, chooses between datasets that publish the same measure and members, such as `general-election` and `local-election` turnout. It applies to each listed measure that the dataset publishes. */
+                datasetId?: components["parameters"]["MeasureDataset"];
                 geography?: string;
                 release?: string;
                 relation?: "within" | "contains" | "successor" | "predecessor" | "split-from" | "merged-from" | "equivalent-to" | "overlaps";
@@ -10438,8 +10458,12 @@ export interface operations {
             query?: {
                 /** @description A dataset id from `GET /datasets`. Repeatable. */
                 dataset?: string[];
-                /** @description A measure id from `GET /measures`, or one of its aliases. Repeatable. */
+                /** @description A measure id from `GET /v1/measures`, or one of its aliases. Repeatable. Dimension filters such as `offence=burglary` apply to each listed measure that has the dimension; an old series id such as `crime-burglary` returns a 404 naming the measure and members that replace it. */
                 measure?: string[];
+                /** @description Dimension filters, by dimension id: `dimensions[offence]=burglary`. Each dimension is also its own query parameter, so `offence=burglary` is the same filter. `GET /v1/measures/{measure-id}` lists a measure's dimensions and their members. A filter takes one member, several separated by commas (`party=lab,con`), or `*` for every member. A dimension left out takes its total where the measure publishes one, such as `offence=total`, and the response states the member chosen in `defaults` and `dimensions`. Where no total is published, or the filter asks for several members, `/value` and `/series` answer every matching series at once, one `breakdown` entry each; an operation that answers one series refuses with `ambiguous_dimension` and lists a request for each in `choices`. Where two datasets publish the same measure and members, such as general and local election votes, the place's geography or `datasetId` chooses between them. */
+                dimensions?: components["parameters"]["Dimensions"];
+                /** @description With a `measure` query parameter, chooses between datasets that publish the same measure and members, such as `general-election` and `local-election` turnout. It applies to each listed measure that the dataset publishes. */
+                datasetId?: components["parameters"]["MeasureDataset"];
                 /** @description A `{geography}/{release}` identity, such as `localAuthority/2025-05-uk-bgc-v2`. Repeatable. */
                 boundaryRelease?: string[];
                 /** @description A crosswalk id from `GET /crosswalks`. Repeatable. */

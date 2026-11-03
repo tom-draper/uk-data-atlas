@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    Self,
     TypeVar,
     cast,
 )
@@ -59,13 +60,9 @@ class GetMeasureResponse200:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.get_measure_response_200_data import (
-            GetMeasureResponse200Data,  # noqa: PLC0415
-        )
-        from ..models.get_measure_response_200_meta import (
-            GetMeasureResponse200Meta,  # noqa: PLC0415
-        )
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.get_measure_response_200_data import GetMeasureResponse200Data
+        from ..models.get_measure_response_200_meta import GetMeasureResponse200Meta
 
         d = dict(src_dict)
         api_version = cast(Literal["v1"], d.pop("apiVersion"))

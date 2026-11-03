@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -53,7 +53,7 @@ class AreaWithRelationships:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.area_with_relationships_child_selection_type_0 import (
-            AreaWithRelationshipsChildSelectionType0,  # noqa: PLC0415
+            AreaWithRelationshipsChildSelectionType0,
         )
 
         boundary_release = self.boundary_release
@@ -103,13 +103,13 @@ class AreaWithRelationships:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.area_relationship import AreaRelationship  # noqa: PLC0415
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.area_relationship import AreaRelationship
         from ..models.area_with_relationships_child_selection_type_0 import (
-            AreaWithRelationshipsChildSelectionType0,  # noqa: PLC0415
+            AreaWithRelationshipsChildSelectionType0,
         )
         from ..models.area_with_relationships_child_selection_type_1 import (
-            AreaWithRelationshipsChildSelectionType1,  # noqa: PLC0415
+            AreaWithRelationshipsChildSelectionType1,
         )
 
         d = dict(src_dict)

@@ -5,13 +5,16 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.plan_analysis_dimensions import PlanAnalysisDimensions
 from ...models.problem import Problem
-from ...types import UNSET, Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
     measure: str,
+    dimensions: PlanAnalysisDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     period: str,
     to: str,
     geography: str,
@@ -21,6 +24,14 @@ def _get_kwargs(
     params: dict[str, Any] = {}
 
     params["measure"] = measure
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
+
+    params["datasetId"] = dataset_id
 
     params["period"] = period
 
@@ -79,6 +90,8 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     measure: str,
+    dimensions: PlanAnalysisDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     period: str,
     to: str,
     geography: str,
@@ -95,6 +108,8 @@ def sync_detailed(
 
     Args:
         measure (str):
+        dimensions (PlanAnalysisDimensions | Unset):
+        dataset_id (str | Unset):
         period (str):
         to (str):
         geography (str):
@@ -110,6 +125,8 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         period=period,
         to=to,
         geography=geography,
@@ -127,6 +144,8 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     measure: str,
+    dimensions: PlanAnalysisDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     period: str,
     to: str,
     geography: str,
@@ -143,6 +162,8 @@ def sync(
 
     Args:
         measure (str):
+        dimensions (PlanAnalysisDimensions | Unset):
+        dataset_id (str | Unset):
         period (str):
         to (str):
         geography (str):
@@ -159,6 +180,8 @@ def sync(
     return sync_detailed(
         client=client,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         period=period,
         to=to,
         geography=geography,
@@ -170,6 +193,8 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     measure: str,
+    dimensions: PlanAnalysisDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     period: str,
     to: str,
     geography: str,
@@ -186,6 +211,8 @@ async def asyncio_detailed(
 
     Args:
         measure (str):
+        dimensions (PlanAnalysisDimensions | Unset):
+        dataset_id (str | Unset):
         period (str):
         to (str):
         geography (str):
@@ -201,6 +228,8 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         period=period,
         to=to,
         geography=geography,
@@ -216,6 +245,8 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     measure: str,
+    dimensions: PlanAnalysisDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     period: str,
     to: str,
     geography: str,
@@ -232,6 +263,8 @@ async def asyncio(
 
     Args:
         measure (str):
+        dimensions (PlanAnalysisDimensions | Unset):
+        dataset_id (str | Unset):
         period (str):
         to (str):
         geography (str):
@@ -249,6 +282,8 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             measure=measure,
+            dimensions=dimensions,
+            dataset_id=dataset_id,
             period=period,
             to=to,
             geography=geography,

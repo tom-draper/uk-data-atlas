@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -67,7 +67,7 @@ class CompareBoundaryReleasesResponse200Data:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.compare_boundary_releases_response_200_data_continuity_type_0 import (
-            CompareBoundaryReleasesResponse200DataContinuityType0,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataContinuityType0,
         )
 
         codes = self.codes.to_dict()
@@ -116,27 +116,27 @@ class CompareBoundaryReleasesResponse200Data:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.compare_boundary_releases_response_200_data_codes import (
-            CompareBoundaryReleasesResponse200DataCodes,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataCodes,
         )
         from ..models.compare_boundary_releases_response_200_data_continuity_type_0 import (
-            CompareBoundaryReleasesResponse200DataContinuityType0,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataContinuityType0,
         )
         from ..models.compare_boundary_releases_response_200_data_continuity_type_1 import (
-            CompareBoundaryReleasesResponse200DataContinuityType1,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataContinuityType1,
         )
         from ..models.compare_boundary_releases_response_200_data_from import (
-            CompareBoundaryReleasesResponse200DataFrom,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataFrom,
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItem,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItem,
         )
         from ..models.compare_boundary_releases_response_200_data_summary import (
-            CompareBoundaryReleasesResponse200DataSummary,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataSummary,
         )
         from ..models.compare_boundary_releases_response_200_data_to import (
-            CompareBoundaryReleasesResponse200DataTo,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataTo,
         )
 
         d = dict(src_dict)

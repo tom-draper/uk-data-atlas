@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -62,12 +62,12 @@ class CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemMappingExa
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_mapping_examples_many_to_one_item import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemMappingExamplesManyToOneItem,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemMappingExamplesManyToOneItem,
         )
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_mapping_examples_one_to_many_item import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemMappingExamplesOneToManyItem,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemMappingExamplesOneToManyItem,
         )
 
         d = dict(src_dict)

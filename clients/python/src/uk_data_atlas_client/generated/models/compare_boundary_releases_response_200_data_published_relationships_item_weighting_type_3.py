@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    Self,
     TypeVar,
     cast,
 )
@@ -73,9 +74,9 @@ class CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingT
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.compare_boundary_releases_response_200_data_published_relationships_item_weighting_type_3_blocks import (
-            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType3Blocks,  # noqa: PLC0415
+            CompareBoundaryReleasesResponse200DataPublishedRelationshipsItemWeightingType3Blocks,
         )
 
         d = dict(src_dict)

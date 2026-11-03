@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -51,7 +51,7 @@ class CompactPostcodeLookup:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.compact_postcode_lookup_point_type_1 import (
-            CompactPostcodeLookupPointType1,  # noqa: PLC0415
+            CompactPostcodeLookupPointType1,
         )
 
         country = self.country
@@ -105,16 +105,12 @@ class CompactPostcodeLookup:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.compact_point_lookup_result import (
-            CompactPointLookupResult,  # noqa: PLC0415
-        )
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.compact_point_lookup_result import CompactPointLookupResult
         from ..models.compact_postcode_lookup_point_type_1 import (
-            CompactPostcodeLookupPointType1,  # noqa: PLC0415
+            CompactPostcodeLookupPointType1,
         )
-        from ..models.compact_postcode_source import (
-            CompactPostcodeSource,  # noqa: PLC0415
-        )
+        from ..models.compact_postcode_source import CompactPostcodeSource
 
         d = dict(src_dict)
         country = d.pop("country")

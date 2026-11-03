@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -76,14 +76,10 @@ class ExportManifest:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.bulk_export import BulkExport  # noqa: PLC0415
-        from ..models.export_manifest_datasets import (
-            ExportManifestDatasets,  # noqa: PLC0415
-        )
-        from ..models.export_manifest_fields import (
-            ExportManifestFields,  # noqa: PLC0415
-        )
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+        from ..models.bulk_export import BulkExport
+        from ..models.export_manifest_datasets import ExportManifestDatasets
+        from ..models.export_manifest_fields import ExportManifestFields
 
         d = dict(src_dict)
         content_hash = d.pop("contentHash")

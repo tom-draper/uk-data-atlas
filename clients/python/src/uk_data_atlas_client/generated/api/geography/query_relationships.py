@@ -6,6 +6,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem import Problem
+from ...models.query_relationships_dimensions import QueryRelationshipsDimensions
 from ...models.query_relationships_operation import QueryRelationshipsOperation
 from ...models.query_relationships_purpose import QueryRelationshipsPurpose
 from ...models.query_relationships_relation import QueryRelationshipsRelation
@@ -20,6 +21,8 @@ def _get_kwargs(
     purpose: QueryRelationshipsPurpose | Unset = QueryRelationshipsPurpose.MEMBERSHIP,
     operation: QueryRelationshipsOperation | Unset = UNSET,
     measure: str | Unset = UNSET,
+    dimensions: QueryRelationshipsDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     geography: str | Unset = UNSET,
     release: str | Unset = UNSET,
     relation: QueryRelationshipsRelation | Unset = UNSET,
@@ -45,6 +48,14 @@ def _get_kwargs(
     params["operation"] = json_operation
 
     params["measure"] = measure
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
+
+    params["datasetId"] = dataset_id
 
     params["geography"] = geography
 
@@ -112,6 +123,8 @@ def sync_detailed(
     purpose: QueryRelationshipsPurpose | Unset = QueryRelationshipsPurpose.MEMBERSHIP,
     operation: QueryRelationshipsOperation | Unset = UNSET,
     measure: str | Unset = UNSET,
+    dimensions: QueryRelationshipsDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     geography: str | Unset = UNSET,
     release: str | Unset = UNSET,
     relation: QueryRelationshipsRelation | Unset = UNSET,
@@ -137,6 +150,8 @@ def sync_detailed(
             QueryRelationshipsPurpose.MEMBERSHIP.
         operation (QueryRelationshipsOperation | Unset):
         measure (str | Unset):
+        dimensions (QueryRelationshipsDimensions | Unset):
+        dataset_id (str | Unset):
         geography (str | Unset):
         release (str | Unset):
         relation (QueryRelationshipsRelation | Unset):
@@ -156,6 +171,8 @@ def sync_detailed(
         purpose=purpose,
         operation=operation,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         geography=geography,
         release=release,
         relation=relation,
@@ -177,6 +194,8 @@ def sync(
     purpose: QueryRelationshipsPurpose | Unset = QueryRelationshipsPurpose.MEMBERSHIP,
     operation: QueryRelationshipsOperation | Unset = UNSET,
     measure: str | Unset = UNSET,
+    dimensions: QueryRelationshipsDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     geography: str | Unset = UNSET,
     release: str | Unset = UNSET,
     relation: QueryRelationshipsRelation | Unset = UNSET,
@@ -202,6 +221,8 @@ def sync(
             QueryRelationshipsPurpose.MEMBERSHIP.
         operation (QueryRelationshipsOperation | Unset):
         measure (str | Unset):
+        dimensions (QueryRelationshipsDimensions | Unset):
+        dataset_id (str | Unset):
         geography (str | Unset):
         release (str | Unset):
         relation (QueryRelationshipsRelation | Unset):
@@ -222,6 +243,8 @@ def sync(
         purpose=purpose,
         operation=operation,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         geography=geography,
         release=release,
         relation=relation,
@@ -237,6 +260,8 @@ async def asyncio_detailed(
     purpose: QueryRelationshipsPurpose | Unset = QueryRelationshipsPurpose.MEMBERSHIP,
     operation: QueryRelationshipsOperation | Unset = UNSET,
     measure: str | Unset = UNSET,
+    dimensions: QueryRelationshipsDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     geography: str | Unset = UNSET,
     release: str | Unset = UNSET,
     relation: QueryRelationshipsRelation | Unset = UNSET,
@@ -262,6 +287,8 @@ async def asyncio_detailed(
             QueryRelationshipsPurpose.MEMBERSHIP.
         operation (QueryRelationshipsOperation | Unset):
         measure (str | Unset):
+        dimensions (QueryRelationshipsDimensions | Unset):
+        dataset_id (str | Unset):
         geography (str | Unset):
         release (str | Unset):
         relation (QueryRelationshipsRelation | Unset):
@@ -281,6 +308,8 @@ async def asyncio_detailed(
         purpose=purpose,
         operation=operation,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         geography=geography,
         release=release,
         relation=relation,
@@ -300,6 +329,8 @@ async def asyncio(
     purpose: QueryRelationshipsPurpose | Unset = QueryRelationshipsPurpose.MEMBERSHIP,
     operation: QueryRelationshipsOperation | Unset = UNSET,
     measure: str | Unset = UNSET,
+    dimensions: QueryRelationshipsDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     geography: str | Unset = UNSET,
     release: str | Unset = UNSET,
     relation: QueryRelationshipsRelation | Unset = UNSET,
@@ -325,6 +356,8 @@ async def asyncio(
             QueryRelationshipsPurpose.MEMBERSHIP.
         operation (QueryRelationshipsOperation | Unset):
         measure (str | Unset):
+        dimensions (QueryRelationshipsDimensions | Unset):
+        dataset_id (str | Unset):
         geography (str | Unset):
         release (str | Unset):
         relation (QueryRelationshipsRelation | Unset):
@@ -346,6 +379,8 @@ async def asyncio(
             purpose=purpose,
             operation=operation,
             measure=measure,
+            dimensions=dimensions,
+            dataset_id=dataset_id,
             geography=geography,
             release=release,
             relation=relation,

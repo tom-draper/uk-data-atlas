@@ -472,12 +472,14 @@ from .geometry_validity_type_1_status import GeometryValidityType1Status
 from .geometry_validity_type_2 import GeometryValidityType2
 from .geometry_validity_type_2_status import GeometryValidityType2Status
 from .get_area_children_geometry_tier import GetAreaChildrenGeometryTier
+from .get_area_dimensions import GetAreaDimensions
 from .get_area_geometry_tier import GetAreaGeometryTier
 from .get_area_history_response_200 import GetAreaHistoryResponse200
 from .get_area_include_item import GetAreaIncludeItem
 from .get_area_neighbours_touches import GetAreaNeighboursTouches
 from .get_atlas_lookup_response_200 import GetAtlasLookupResponse200
 from .get_atlas_page_response_200 import GetAtlasPageResponse200
+from .get_attribution_dimensions import GetAttributionDimensions
 from .get_boundary_release_response_200 import GetBoundaryReleaseResponse200
 from .get_boundary_release_response_200_data import GetBoundaryReleaseResponse200Data
 from .get_boundary_release_response_200_data_coverage import (
@@ -653,6 +655,7 @@ from .join_rows_to_boundary_release_response_200 import (
     JoinRowsToBoundaryReleaseResponse200,
 )
 from .join_rows_to_boundary_release_tier import JoinRowsToBoundaryReleaseTier
+from .list_analysis_geographies_dimensions import ListAnalysisGeographiesDimensions
 from .list_boundaries_response_200 import ListBoundariesResponse200
 from .list_boundaries_response_200_data_item import ListBoundariesResponse200DataItem
 from .list_boundaries_response_200_meta import ListBoundariesResponse200Meta
@@ -853,6 +856,7 @@ from .partial_coverage_problem_status import PartialCoverageProblemStatus
 from .place_not_served_problem import PlaceNotServedProblem
 from .place_not_served_problem_code import PlaceNotServedProblemCode
 from .place_not_served_problem_status import PlaceNotServedProblemStatus
+from .plan_analysis_dimensions import PlanAnalysisDimensions
 from .point_containment import PointContainment
 from .point_containment_batch import PointContainmentBatch
 from .point_containment_batch_boundary_rule import PointContainmentBatchBoundaryRule
@@ -929,6 +933,7 @@ from .problem_members_type_1 import ProblemMembersType1
 from .problem_present_in_item import ProblemPresentInItem
 from .problem_rejected_item import ProblemRejectedItem
 from .problem_rejected_item_validation import ProblemRejectedItemValidation
+from .query_relationships_dimensions import QueryRelationshipsDimensions
 from .query_relationships_operation import QueryRelationshipsOperation
 from .query_relationships_purpose import QueryRelationshipsPurpose
 from .query_relationships_relation import QueryRelationshipsRelation
@@ -1375,6 +1380,7 @@ __all__ = (
     "Generalisation",
     "GeneralisationMethod",
     "GeneralisationTier",
+    "GeoJsonGeometry",
     "GeographyInventory",
     "GeographyInventoryEnvelope",
     "GeographyInventoryGeographiesItem",
@@ -1388,7 +1394,6 @@ __all__ = (
     "GeographyReleaseInventory",
     "GeographySummary",
     "GeographySummaryListEnvelope",
-    "GeoJsonGeometry",
     "GeometrySource",
     "GeometrySourceCorrectionsItem",
     "GeometrySourceTransformation",
@@ -1399,12 +1404,14 @@ __all__ = (
     "GeometryValidityType2",
     "GeometryValidityType2Status",
     "GetAreaChildrenGeometryTier",
+    "GetAreaDimensions",
     "GetAreaGeometryTier",
     "GetAreaHistoryResponse200",
     "GetAreaIncludeItem",
     "GetAreaNeighboursTouches",
     "GetAtlasLookupResponse200",
     "GetAtlasPageResponse200",
+    "GetAttributionDimensions",
     "GetBoundaryReleaseResponse200",
     "GetBoundaryReleaseResponse200Data",
     "GetBoundaryReleaseResponse200DataCoverage",
@@ -1494,6 +1501,7 @@ __all__ = (
     "JoinRowsToBoundaryReleaseJsonBodyRowsItem",
     "JoinRowsToBoundaryReleaseResponse200",
     "JoinRowsToBoundaryReleaseTier",
+    "ListAnalysisGeographiesDimensions",
     "ListBoundariesResponse200",
     "ListBoundariesResponse200DataItem",
     "ListBoundariesResponse200Meta",
@@ -1610,6 +1618,7 @@ __all__ = (
     "PlaceNotServedProblem",
     "PlaceNotServedProblemCode",
     "PlaceNotServedProblemStatus",
+    "PlanAnalysisDimensions",
     "PointContainment",
     "PointContainmentBatch",
     "PointContainmentBatchBoundaryRule",
@@ -1674,6 +1683,7 @@ __all__ = (
     "ProblemPresentInItem",
     "ProblemRejectedItem",
     "ProblemRejectedItemValidation",
+    "QueryRelationshipsDimensions",
     "QueryRelationshipsOperation",
     "QueryRelationshipsPurpose",
     "QueryRelationshipsRelation",
@@ -1710,9 +1720,9 @@ __all__ = (
     "ResolveBoundaryReleaseForDateResponse200DataSetAsideItemDeprecation",
     "ResolveBoundaryReleaseForDateResponse200Meta",
     "ResolvePlacesCountry",
+    "ResolvePostcodeView",
     "ResolvePostcodesBody",
     "ResolvePostcodesView",
-    "ResolvePostcodeView",
     "RetiredMeasureIdProblem",
     "RetiredMeasureIdProblemCode",
     "RetiredMeasureIdProblemStatus",

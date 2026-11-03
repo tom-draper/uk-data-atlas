@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -58,11 +58,11 @@ class AreaChildGeometryFeature:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.area_child_geometry_feature_properties import (
-            AreaChildGeometryFeatureProperties,  # noqa: PLC0415
+            AreaChildGeometryFeatureProperties,
         )
-        from ..models.geo_json_geometry import GeoJsonGeometry  # noqa: PLC0415
+        from ..models.geo_json_geometry import GeoJsonGeometry
 
         d = dict(src_dict)
         geometry = GeoJsonGeometry.from_dict(d.pop("geometry"))
