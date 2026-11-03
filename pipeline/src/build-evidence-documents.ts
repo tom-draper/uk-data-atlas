@@ -59,7 +59,7 @@ const inputsHash = (context: ReturnType<typeof readAtlasCatalogues>) =>
 	evidenceInputsHash(directory, context);
 
 const main = () => {
-	const context = readAtlasCatalogues(apiRoot, {
+	const context = readAtlasCatalogues(repositoryRoot, {
 		loadEvidenceDocuments: false,
 	});
 	const documents = [

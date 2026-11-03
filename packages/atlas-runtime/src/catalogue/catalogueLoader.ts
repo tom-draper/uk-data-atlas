@@ -55,7 +55,7 @@ import {
 import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
-import { artifactRoot, repositoryRootOf } from "../storage/dataLayout";
+import { artifactDirectory } from "../storage/dataLayout";
 import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations";
 
 const EVIDENCE_DOCUMENTS = [
@@ -67,7 +67,7 @@ const EVIDENCE_DOCUMENTS = [
 ] as const;
 
 const readEvidenceDocuments = (
-	apiRoot: string,
+	repositoryRoot: string,
 	atlasRelease: AtlasRelease | undefined,
 	dataCatalogHash: string,
 ) => {
@@ -82,7 +82,7 @@ const readEvidenceDocuments = (
 				id === "geography-inventory" ||
 				id === "analysis-geography-validation"
 			) {
-				const body = readAtlasPayload(repositoryRootOf(apiRoot), id);
+				const body = readAtlasPayload(repositoryRoot, id);
 				return [[id, { body, contentHash: sha256(body) }]];
 			}
 			const path = `${id}.json`;
@@ -90,7 +90,7 @@ const readEvidenceDocuments = (
 				(candidate) => candidate.id === id,
 			);
 			if (!artifact) return [];
-			const file = join(artifactRoot(apiRoot), path);
+			const file = join(artifactDirectory(repositoryRoot), path);
 			return [
 				[
 					id,
@@ -103,7 +103,10 @@ const readEvidenceDocuments = (
 			];
 		}),
 	);
-	const indexPath = join(artifactRoot(apiRoot), "evidence-documents.json");
+	const indexPath = join(
+		artifactDirectory(repositoryRoot),
+		"evidence-documents.json",
+	);
 	if (existsSync(indexPath)) {
 		const manifest: EvidenceManifest = JSON.parse(
 			readFileSync(indexPath, "utf8"),
@@ -122,7 +125,10 @@ const readEvidenceDocuments = (
 				entry.artifact !== `documents/${entry.id}.json`
 			)
 				throw new Error("Invalid evidence document path");
-			const path = join(artifactRoot(apiRoot), entry.artifact);
+			const path = join(
+				artifactDirectory(repositoryRoot),
+				entry.artifact,
+			);
 			if (statSync(path).size !== entry.bytes)
 				throw new Error(`Evidence document size mismatch at ${path}`);
 			documents.set(entry.id, {
@@ -167,7 +173,7 @@ export type CatalogueOptions = {
 };
 
 export const readAtlasCatalogues = (
-	apiRoot: string,
+	repositoryRoot: string,
 	options: CatalogueOptions = {},
 ) => {
 	const stage = <T>(name: string, read: () => T): T => {
@@ -178,49 +184,49 @@ export const readAtlasCatalogues = (
 		return value;
 	};
 	const boundaryRegistry = stage("boundary-registry", () =>
-		readBoundaryRegistry(repositoryRootOf(apiRoot)),
+		readBoundaryRegistry(repositoryRoot),
 	);
 	const geographyInventory = stage("geography-inventory", () =>
-		readGeographyInventory(repositoryRootOf(apiRoot)),
+		readGeographyInventory(repositoryRoot),
 	);
 	const areaInventory = stage("area-inventory", () =>
-		readAreaInventory(repositoryRootOf(apiRoot)),
+		readAreaInventory(repositoryRoot),
 	);
 	const areaLookup = stage("area-lookup", () =>
-		readAreaLookup(repositoryRootOf(apiRoot), areaInventory),
+		readAreaLookup(repositoryRoot, areaInventory),
 	);
 	const namedLocationInventory = stage("named-location-inventory", () =>
-		readNamedLocationInventory(repositoryRootOf(apiRoot)),
+		readNamedLocationInventory(repositoryRoot),
 	);
 	const crosswalkInventory = stage("crosswalk-inventory", () =>
-		readCrosswalkInventory(repositoryRootOf(apiRoot)),
+		readCrosswalkInventory(repositoryRoot),
 	);
 	const dataCatalog = stage("data-catalog", () =>
-		readDataCatalog(repositoryRootOf(apiRoot)),
+		readDataCatalog(repositoryRoot),
 	);
 	const terrainCatalogue = stage("terrain-catalogue", () =>
-		readTerrainCatalogue(repositoryRootOf(apiRoot)),
+		readTerrainCatalogue(repositoryRoot),
 	);
 	const atlasRelease = stage("atlas-release", () =>
-		readAtlasRelease(repositoryRootOf(apiRoot)),
+		readAtlasRelease(repositoryRoot),
 	);
 	const documents = stage("evidence-documents", () =>
 		options.loadEvidenceDocuments === false
 			? new Map<string, StoredFile>()
 			: readEvidenceDocuments(
-					apiRoot,
+					repositoryRoot,
 					atlasRelease,
 					dataCatalog.contentHash,
 				),
 	);
 	const atlasPages = stage("atlas-pages", () =>
-		readAtlasPages(repositoryRootOf(apiRoot)),
+		readAtlasPages(repositoryRoot),
 	);
 	const atlasLookups = stage("atlas-lookups", () =>
-		readAtlasLookups(repositoryRootOf(apiRoot)),
+		readAtlasLookups(repositoryRoot),
 	);
 	const exportManifest = stage("export-manifest", () =>
-		readExportManifest(repositoryRootOf(apiRoot)),
+		readExportManifest(repositoryRoot),
 	);
 	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
 		throw new Error(
@@ -229,17 +235,17 @@ export const readAtlasCatalogues = (
 	}
 	const mapResources = stage("map-resources", () =>
 		readMapResources(
-			repositoryRootOf(apiRoot),
+			repositoryRoot,
 			options.mapAssetBaseUrl,
 			options.mapTileBaseUrl,
 		),
 	);
 	const mapAssets = stage("map-assets", () =>
-		readMapAssets(repositoryRootOf(apiRoot), mapResources),
+		readMapAssets(repositoryRoot, mapResources),
 	);
 	const crosswalkLookup = stage("crosswalk-lookup", () =>
 		readCrosswalkLookup(
-			repositoryRootOf(apiRoot),
+			repositoryRoot,
 			crosswalkInventory,
 			options.crosswalkCacheBytes,
 		),
@@ -248,7 +254,7 @@ export const readAtlasCatalogues = (
 		"analysis-geography-inventory",
 		() =>
 			readAnalysisGeographyInventory(
-				repositoryRootOf(apiRoot),
+				repositoryRoot,
 				dataCatalog,
 				crosswalkInventory,
 			),
@@ -257,21 +263,18 @@ export const readAtlasCatalogues = (
 		"analysis-geography-validation-inventory",
 		() =>
 			readAnalysisGeographyValidationInventory(
-				repositoryRootOf(apiRoot),
+				repositoryRoot,
 				analysisGeographyInventory,
 				dataCatalog,
 				crosswalkInventory,
 			),
 	);
 	const relationshipPathInventory = stage("relationship-path-inventory", () =>
-		readRelationshipPathInventory(
-			repositoryRootOf(apiRoot),
-			crosswalkInventory,
-		),
+		readRelationshipPathInventory(repositoryRoot, crosswalkInventory),
 	);
 	const relationshipCandidateInventory = stage(
 		"relationship-candidate-inventory",
-		() => readRelationshipCandidateInventory(repositoryRootOf(apiRoot)),
+		() => readRelationshipCandidateInventory(repositoryRoot),
 	);
 	const namedLocationLookup = stage("named-location-lookup", () =>
 		createNamedLocations(namedLocationInventory),
@@ -280,41 +283,37 @@ export const readAtlasCatalogues = (
 		"location-projection-inventory",
 		() =>
 			readLocationProjectionInventory(
-				repositoryRootOf(apiRoot),
+				repositoryRoot,
 				namedLocationInventory,
 				crosswalkInventory,
 			),
 	);
 	const locationProjectionStore = stage("location-projection-store", () =>
 		createLocationProjectionStore(
-			repositoryRootOf(apiRoot),
+			repositoryRoot,
 			locationProjectionInventory,
 		),
 	);
 	const postcodeIndex = stage("postcode-index", () =>
-		readPostcodeIndex(repositoryRootOf(apiRoot)),
+		readPostcodeIndex(repositoryRoot),
 	);
 	const geometrySources = stage("geometry-sources", () =>
-		readGeometrySources(repositoryRootOf(apiRoot)),
+		readGeometrySources(repositoryRoot),
 	);
 	const postcodeAreaIndex = stage("postcode-area-index", () =>
 		readPostcodeAreaIndex(
-			repositoryRootOf(apiRoot),
+			repositoryRoot,
 			postcodeIndex,
 			areaInventory,
 			geometrySources,
 		),
 	);
 	const postcodeCountsIndex = stage("postcode-counts", () =>
-		readPostcodeCounts(
-			repositoryRootOf(apiRoot),
-			postcodeIndex,
-			postcodeAreaIndex,
-		),
+		readPostcodeCounts(repositoryRoot, postcodeIndex, postcodeAreaIndex),
 	);
 	const areaGeometryCache = stage("area-geometry-cache", () =>
 		createAreaGeometryCache(
-			repositoryRootOf(apiRoot),
+			repositoryRoot,
 			options.geometryCacheReleases,
 			options.onStaleCompiledGeometry,
 		),
@@ -322,7 +321,7 @@ export const readAtlasCatalogues = (
 	const placeIndex = lazyValue(() =>
 		stage("place-index", () =>
 			readPlaceIndex(
-				repositoryRootOf(apiRoot),
+				repositoryRoot,
 				areaInventory,
 				namedLocationInventory,
 			),
@@ -330,7 +329,7 @@ export const readAtlasCatalogues = (
 	);
 	const areaSearchIndex = lazyValue(() =>
 		stage("area-search-index", () =>
-			readAreaSearchIndex(repositoryRootOf(apiRoot), areaInventory),
+			readAreaSearchIndex(repositoryRoot, areaInventory),
 		),
 	);
 	const relationshipPathIndex = stage("relationship-path-index", () =>
@@ -366,24 +365,24 @@ export const readAtlasCatalogues = (
 		createGeographyResolver(geographyInputs, geographyServices),
 	);
 	const validationReport = stage("validation-report", () =>
-		readValidationReport(repositoryRootOf(apiRoot)),
+		readValidationReport(repositoryRoot),
 	);
 	const terrainAsyncProvider = stage("terrain-async-provider", () =>
 		createTerrainAsyncProvider(options),
 	);
 	const lookupManifest = stage("lookup-manifest", () =>
-		readLookupManifest(repositoryRootOf(apiRoot)),
+		readLookupManifest(repositoryRoot),
 	);
 	const measureObservations = stage("measure-observations", () =>
 		readMeasureObservations(
-			repositoryRootOf(apiRoot),
+			repositoryRoot,
 			dataCatalog,
 			options.observationCacheBytes,
 			options.statisticsReadPath,
 		),
 	);
 	const measureCompatibilityInventory = stage("measure-compatibility", () =>
-		readMeasureCompatibility(repositoryRootOf(apiRoot)),
+		readMeasureCompatibility(repositoryRoot),
 	);
 	return {
 		boundaryRegistry,
@@ -420,7 +419,7 @@ export const readAtlasCatalogues = (
 							format.artifact,
 							{
 								path: join(
-									artifactRoot(apiRoot),
+									artifactDirectory(repositoryRoot),
 									format.artifact,
 								),
 								bytes: format.bytes,

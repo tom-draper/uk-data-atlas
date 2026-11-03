@@ -64,7 +64,9 @@ test("loads evidence build inputs when the previous document manifest is stale",
 		/Evidence documents were not built from this data catalogue/,
 	);
 	unlinkSync(join(root, "openapi.yaml"));
-	const inputs = readAtlasCatalogues(root, { loadEvidenceDocuments: false });
+	const inputs = readAtlasCatalogues(repository, {
+		loadEvidenceDocuments: false,
+	});
 	assert.throws(
 		() => readApiCatalogues(root, { loadEvidenceDocuments: false }),
 		/openapi.yaml/,
