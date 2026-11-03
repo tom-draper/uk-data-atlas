@@ -3333,10 +3333,8 @@ second inventory to maintain:
 
 <!-- route-index:end -->
 
-Typed TypeScript and Python clients generated from `openapi.yaml` live in
-[`clients/`](../../clients/README.md). Regenerate them with
-`pnpm clients:generate`. The generated code is not committed, and
-`pnpm typecheck` writes the TypeScript types before it checks them.
+Generate a client in your preferred language from the published
+[OpenAPI contract](./openapi.yaml).
 The walkthroughs below keep their own small `examples/client.ts`: they read
 response headers and request arbitrary paths, which a typed client hides.
 

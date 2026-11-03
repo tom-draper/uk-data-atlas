@@ -4,10 +4,6 @@
 /services/api/public/
 /pnpm-lock.yaml
 
-# Written by pnpm clients:generate, never by hand.
-/clients/typescript/src/generated/
-/clients/python/src/uk_data_atlas_client/generated/
-
 # Restored raw source data and transient data-release workspaces.
 /data/*
 !/data/build/
@@ -21,6 +17,5 @@
 /.codeq/
 /.codex/
 
-# Local Python tool state under the generated clients.
 .pytest_cache/
 .ruff_cache/

@@ -299,19 +299,6 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(@types/node@26.6.2)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
-  clients/typescript:
-    dependencies:
-      openapi-fetch:
-        specifier: 0.17.0
-        version: 0.17.0
-    devDependencies:
-      openapi-typescript:
-        specifier: 7.13.0
-        version: 7.13.0(typescript@5.9.3)
-      typescript:
-        specifier: 5.9.3
-        version: 5.9.3
-
   packages/areas:
     dependencies:
       '@uk-data-atlas/geography':
