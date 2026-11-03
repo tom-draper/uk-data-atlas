@@ -23,7 +23,7 @@ import {
 	compileRelationshipPaths,
 	crosswalkShape,
 	type CrosswalkShape,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "../pipeline/src/relationships/relationshipPaths";
 import { readApprovedRelationshipPaths } from "../pipeline/src/relationships/relationshipPathAdapters";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../services/api/src/routes";
