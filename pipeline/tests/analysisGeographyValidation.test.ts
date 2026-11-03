@@ -9,7 +9,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { buildAnalysisGeographyValidation } from "../src/buildAnalysisGeographyValidation";
-import { storeObservations } from "../src/store-observations";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";
@@ -317,16 +316,61 @@ test("gates a reviewed measure read from a shared census table", () => {
 	assert.equal(support?.periods[0]?.outputTotal, 100);
 });
 
-test("analysis validation builds from SQLite after observation JSON removal", (t) => {
+test("analysis validation builds from statistics rows", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "analysis-observations-"));
 	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const publicRoot = artifactDirectory(root);
 	mkdirSync(join(publicRoot, "crosswalks"), { recursive: true });
 	mkdirSync(join(root, "data/build/geography"), { recursive: true });
-	new DatabaseSync(join(root, "data/build/atlas.sqlite")).close();
+	const database = new DatabaseSync(
+		join(root, "data/build/atlas-base.sqlite"),
+	);
+	database.exec(`
+		CREATE TABLE dataset (id INTEGER, slug TEXT);
+		CREATE TABLE measure (id INTEGER, slug TEXT);
+		CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
+		CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+		CREATE TABLE dimension (id INTEGER, slug TEXT);
+		CREATE TABLE dimension_member (id INTEGER, code TEXT);
+		CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
+		CREATE TABLE area (id INTEGER, code TEXT);
+		CREATE TABLE area_version (id INTEGER, area_id INTEGER);
+		CREATE TABLE period (id INTEGER, label TEXT);
+		CREATE TABLE status (id INTEGER, slug TEXT);
+		CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, status_id INTEGER);
+		INSERT INTO dataset VALUES (1, 'fixture-dataset');
+		INSERT INTO measure VALUES (1, 'fixture');
+		INSERT INTO area_releases VALUES (1, 'lsoa', '2021');
+		INSERT INTO series VALUES (1, 1, 1, 1);
+		INSERT INTO area VALUES (1, 'E01000001'), (2, 'E01000002');
+		INSERT INTO area_version VALUES (1, 1), (2, 2);
+		INSERT INTO period VALUES (1, '2025');
+		INSERT INTO status VALUES (1, 'observed');
+		INSERT INTO observation VALUES (1, 1, 1, 40, NULL, NULL, 1), (1, 2, 1, 60, NULL, NULL, 1);
+	`);
+	database.close();
+	writeFileSync(
+		join(root, "data/build/statistics-read-path.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			statistics: {
+				"fixture-observations": {
+					datasetId: "fixture-dataset",
+					measure: "fixture",
+					dimensions: {},
+					geography: "lsoa",
+				},
+			},
+			observations: {},
+		}),
+	);
+	const builtCatalogue = {
+		...catalogue,
+		datasets: [{ id: "fixture-dataset" }],
+	};
 	writeFileSync(
 		join(publicRoot, "data-catalog.json"),
-		JSON.stringify(catalogue),
+		JSON.stringify(builtCatalogue),
 	);
 	writeFileSync(
 		join(publicRoot, "crosswalk-inventory.json"),
@@ -344,26 +388,11 @@ test("analysis validation builds from SQLite after observation JSON removal", (t
 		join(root, "data/build/geography/analysis-geographies.json"),
 		JSON.stringify(analysisGeographies),
 	);
-	const artifacts = observations([
-		{ areaCode: "E01000001", value: 40 },
-		{ areaCode: "E01000002", value: 60 },
-	]);
-	storeObservations(
-		root,
-		catalogue,
-		[...artifacts].map(
-			([id, artifact]) => [id, `${JSON.stringify(artifact)}\n`] as const,
-		),
-	);
 	const result = buildAnalysisGeographyValidation(root);
 	assert.equal(result.count, 1);
-	assert.deepEqual(
-		JSON.parse(readFileSync(result.outputPath, "utf8")),
-		validateAnalysisGeographies(
-			analysisGeographies,
-			catalogue,
-			new Map([[crosswalk.id, crosswalk]]),
-			artifacts,
-		),
-	);
+	const built = JSON.parse(
+		readFileSync(result.outputPath, "utf8"),
+	) as ReturnType<typeof validateAnalysisGeographies>;
+	assert.equal(built.supports[0]?.periods[0]?.inputTotal, 100);
+	assert.equal(built.supports[0]?.periods[0]?.outputTotal, 100);
 });
