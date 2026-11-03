@@ -19,16 +19,19 @@ import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { namedLocationMembersTable } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);
 const digest = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const before: NamedLocationInventory = JSON.parse(
-	readFileSync(join(artifactRoot(apiRoot), "named-locations.json"), "utf8"),
+	readFileSync(join(artifactDirectory(root), "named-locations.json"), "utf8"),
 );
-const after = readNamedLocationInventory(apiRoot);
+const after = readNamedLocationInventory(root);
 assert.ok(before.locations.length > 0);
 const packed: Omit<NamedLocationInventory, "locations"> & {
 	locations: Array<
@@ -38,7 +41,7 @@ const packed: Omit<NamedLocationInventory, "locations"> & {
 	>;
 } = JSON.parse(
 	readFileSync(
-		join(artifactRoot(apiRoot), "named-locations-metadata.json"),
+		join(artifactDirectory(root), "named-locations-metadata.json"),
 		"utf8",
 	),
 );
@@ -67,8 +70,8 @@ for (const [
 }
 
 assert.equal(digest(after), digest(before));
-const areas = readAreaInventory(apiRoot);
-const areaLookup = readAreaLookup(apiRoot, areas);
+const areas = readAreaInventory(root);
+const areaLookup = readAreaLookup(root, areas);
 assert.equal(
 	digest(compilePlaceIndex(areaLookup, after, areas.contentHash)),
 	digest(compilePlaceIndex(areaLookup, before, areas.contentHash)),
@@ -77,8 +80,8 @@ assert.equal(
 	digest(namedLocationMembersTable(after, "named-locations.json")),
 	digest(namedLocationMembersTable(before, "named-locations.json")),
 );
-const crosswalkInventory = readCrosswalkInventory(apiRoot);
-const crosswalks = readCrosswalkLookup(apiRoot, crosswalkInventory, 0);
+const crosswalkInventory = readCrosswalkInventory(root);
+const crosswalks = readCrosswalkLookup(root, crosswalkInventory, 0);
 let projections = 0;
 for (const entry of crosswalkInventory.crosswalks) {
 	const inventory = { ...crosswalkInventory, crosswalks: [entry] };

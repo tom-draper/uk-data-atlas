@@ -35,10 +35,10 @@ const apiRoot = apiRootOf(root);
 const before: CrosswalkInventory = JSON.parse(
 	readFileSync(join(apiRoot, "public/crosswalk-inventory.json"), "utf8"),
 );
-const after = readCrosswalkInventory(apiRoot);
+const after = readCrosswalkInventory(root);
 assert.ok(before.crosswalks.length > 0);
 assert.equal(JSON.stringify(after), JSON.stringify(before));
-const sqlite = readCrosswalkLookup(apiRoot, after);
+const sqlite = readCrosswalkLookup(root, after);
 const shapes = [
 	new Map<string, CrosswalkShape>(),
 	new Map<string, CrosswalkShape>(),
@@ -152,11 +152,11 @@ const jsonLookup: CrosswalkLookup = {
 			.map((entry) => readJson(entry.id)!);
 	},
 };
-const areaInventory = readAreaInventory(apiRoot);
+const areaInventory = readAreaInventory(root);
 function lookupSnapshot(crosswalkLookup: CrosswalkLookup) {
 	const resolver = createGeographyResolver({
 		areaInventory,
-		areaLookup: readAreaLookup(apiRoot, areaInventory),
+		areaLookup: readAreaLookup(root, areaInventory),
 		crosswalkInventory: before,
 		crosswalkLookup,
 		relationshipPathIndex: createRelationshipPathIndex(paths),
