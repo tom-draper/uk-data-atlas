@@ -2,10 +2,10 @@ import { join } from "path";
 import {
 	outputMatches as outputMatchesIn,
 	loadReuseContext as loadReuseContextIn,
-} from "../../pipeline/src/precompile/cache.mts";
-import { out as outIn } from "../../pipeline/src/precompile/output.mts";
-import { ROOT } from "../../pipeline/src/precompile/paths.mts";
-import type { CompiledOutput } from "../../pipeline/src/precompile/types.mts";
+} from "./cache.mts";
+import { out as outIn } from "./output.mts";
+import { ROOT } from "./paths.mts";
+import type { CompiledOutput } from "./types.mts";
 
 // Browser-ready output is built where Next serves it from.
 export const PUBLIC_DATA = join(ROOT, "public", "data");

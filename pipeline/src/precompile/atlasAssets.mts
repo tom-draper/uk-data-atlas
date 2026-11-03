@@ -5,18 +5,18 @@ import {
 	parseParishLadMappings,
 } from "@uk-data-atlas/geography";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
-import { loadMatchIndex } from "../../lib/data/gazetteer/matchIndex";
+import { loadMatchIndex } from "../../../lib/data/gazetteer/matchIndex";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileSnapshots,
 	sameFileSnapshots,
 	snapshotFileContents,
-} from "../../pipeline/src/precompile/cache.mts";
+} from "./cache.mts";
 import { OUT_DIR, out, outputMatches } from "./websiteOutput.mts";
-import { readAtlasLookup } from "../atlas-lookups";
-import { BOUNDARY_DATA, ROOT } from "../../pipeline/src/precompile/paths.mts";
-import { readBoundaryAsset } from "../../pipeline/src/precompile/sources/read.mts";
-import type { ReuseContext } from "../../pipeline/src/precompile/types.mts";
+import { readAtlasLookup } from "../../../scripts/atlas-lookups";
+import { BOUNDARY_DATA, ROOT } from "./paths.mts";
+import { readBoundaryAsset } from "./sources/read.mts";
+import type { ReuseContext } from "./types.mts";
 
 /**
  * Compiles the gazetteer core and the upload match index from the boundary

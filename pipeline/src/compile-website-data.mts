@@ -1,7 +1,7 @@
-import { assembleAtlas } from "../pipeline/src/assemble-atlas";
-import { buildAtlasAssets } from "../pipeline/src/build-atlas-assets";
-import { buildAtlasSqlite } from "../pipeline/src/atlas/buildAtlasSqlite";
-import { buildDataCatalog } from "../pipeline/src/build-data-catalog";
+import { assembleAtlas } from "./assemble-atlas";
+import { buildAtlasAssets } from "./build-atlas-assets";
+import { buildAtlasSqlite } from "./atlas/buildAtlasSqlite";
+import { buildDataCatalog } from "./build-data-catalog";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
  * chunks, using the catalogue intermediates in data/build/datasets.
@@ -23,29 +23,37 @@ import { join } from "path";
 import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
-import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
+import {
+	discoverDatasets,
+	type DiscoveredDataset,
+} from "../../scripts/dataset-discovery";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
-import { compileCatalogueDatasets } from "../pipeline/src/compile-datasets.mts";
+import { compileCatalogueDatasets } from "./compile-datasets.mts";
 import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
-} from "../pipeline/src/precompile/selection";
+} from "./precompile/selection";
 import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
-import { fileSnapshots } from "../pipeline/src/precompile/cache.mts";
+import { fileSnapshots } from "./precompile/cache.mts";
 import { OUT_DIR, loadReuseContext, out } from "./precompile/websiteOutput.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
-import { chunksResult } from "../pipeline/src/precompile/output.mts";
-import { readAtlasLookup } from "./atlas-lookups";
-import { ROOT, SOURCE_DATA } from "../pipeline/src/precompile/paths.mts";
+import { chunksResult } from "./precompile/output.mts";
+import { readAtlasLookup } from "../../scripts/atlas-lookups";
+import { ROOT, SOURCE_DATA } from "./precompile/paths.mts";
 import {
 	compileRegionChunks,
 	regionChunkLookupFingerprints,
 } from "./precompile/regionChunks.mts";
-import { precompileFingerprints } from "../pipeline/src/precompile/fingerprint.mjs";
+import { precompileFingerprints } from "./precompile/fingerprint.mjs";
 import { compileRoadSafety } from "./precompile/roadSafety.mts";
-import type { CompiledDatasets } from "../pipeline/src/precompile/types.mts";
-import { buildLog, elapsedSince, formatCount, msSince } from "./timing.mts";
+import type { CompiledDatasets } from "./precompile/types.mts";
+import {
+	buildLog,
+	elapsedSince,
+	formatCount,
+	msSince,
+} from "../../scripts/timing.mts";
 
 /** Checks that every file a meta.json promises is actually present. */
 async function verifyDescribedFiles(

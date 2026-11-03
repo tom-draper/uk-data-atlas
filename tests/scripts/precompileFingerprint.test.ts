@@ -32,10 +32,10 @@ const createRepository = async () => {
 		"packages/atlas-runtime/src/storage/buildTiming.ts",
 		"pipeline/src/compile-boundary-tiles.mts",
 		"scripts/dataset-discovery.ts",
-		"scripts/dataset-region-chunks.mts",
+		"pipeline/src/dataset-region-chunks.mts",
 		"scripts/generate-dataset-registry.ts",
 		"pipeline/src/build-catalogue-registry.ts",
-		"scripts/compile-website-data.mts",
+		"pipeline/src/compile-website-data.mts",
 		"pipeline/src/precompile/fingerprint.mjs",
 		"pipeline/src/precompile/duckdbPublicHealth.mts",
 		"pipeline/src/precompile/duckdbRoadCollisions.mts",
@@ -53,7 +53,7 @@ const createRepository = async () => {
 		'import { helper } from "../../../lib/helpers/shared";\nimport { validate } from "../../../packages/datasets/src/data/catalog";\n',
 	);
 	await write("pipeline/src/precompile/cache.mts", "// cache");
-	await write("scripts/precompile/roadSafety.mts", "// road safety");
+	await write("pipeline/src/precompile/roadSafety.mts", "// road safety");
 	await write(
 		"packages/geography/package.json",
 		JSON.stringify({ exports: { ".": "./src/index.ts" } }),
@@ -135,7 +135,7 @@ describe("precompile fingerprints", () => {
 
 	it("ignores generated output reached through compiler imports", async () => {
 		await write(
-			"scripts/compile-website-data.mts",
+			"pipeline/src/compile-website-data.mts",
 			'import core from "../public/data/datasets/gazetteer.core.json";',
 		);
 		const before = await precompileFingerprints(root);

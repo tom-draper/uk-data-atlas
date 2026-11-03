@@ -44,7 +44,7 @@ export type ExistingManifestDataset = {
 	inputs: SourceArtifact[];
 	summary: unknown;
 	compiled: CompiledOutput;
-	/** What the dataset was compiled by; see scripts/precompile-fingerprint.mjs. */
+	/** What the dataset was compiled by; see pipeline/src/precompile/fingerprint.mjs. */
 	fingerprint?: string;
 };
 
