@@ -11,14 +11,14 @@ import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
-import { compileFlatDownloads } from "./atlas/flatDownloads";
+import { compileFlatDownloads } from "../atlas/flatDownloads";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
-import { roundKeepingValidity } from "./maps/compileGeometryValidity";
+import { roundKeepingValidity } from "./compileGeometryValidity";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-} from "./maps/compileMapResource";
+} from "./compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import {
 	artifactDirectory,
@@ -41,7 +41,7 @@ import {
 const sourceFiles = (directory: string) =>
 	readdirSync(
 		resolve(
-			resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
+			resolve(dirname(fileURLToPath(import.meta.url)), "../../.."),
 			directory,
 		),
 	)
@@ -59,7 +59,7 @@ const COMPILER_SOURCES = [
 	"packages/artifacts/src/parquet.ts",
 	"pipeline/src/atlas/flatDownloads.ts",
 	"pipeline/src/maps/compileMapResource.ts",
-	"pipeline/src/buildMapResource.ts",
+	"pipeline/src/maps/buildMapResources.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
 	"pipeline/src/maps/compileGeometryValidity.ts",

@@ -15,7 +15,7 @@ const root = resolve(process.argv[2] ?? ".");
 const id = process.argv[3];
 assert.ok(
 	id,
-	"Usage: tsx pipeline/src/verify-map-downloads.ts <baseline-repository> <geography/release>",
+	"Usage: tsx pipeline/tools/verify-map-downloads.ts <baseline-repository> <geography/release>",
 );
 const state: Record<string, { descriptor?: MapResourceDescriptor }> =
 	JSON.parse(

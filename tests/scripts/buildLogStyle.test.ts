@@ -39,7 +39,7 @@ const AWAITING_OBSERVATION_TABLES_PR = [
  * for a person at a terminal, so they keep their own output.
  */
 const STANDALONE_TOOLS = [
-	"pipeline/src/verify-map-downloads.ts",
+	"pipeline/tools/verify-map-downloads.ts",
 	"scripts/boundaries.js",
 	"scripts/gazetteer-phase0.ts",
 	"scripts/reproject-datazone-boundary.mts",
