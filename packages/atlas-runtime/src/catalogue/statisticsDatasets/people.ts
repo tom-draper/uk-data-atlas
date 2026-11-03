@@ -6,6 +6,7 @@ import {
 	type DeclaredHeader,
 	periods,
 } from "../declaredStatistics";
+import { yearParts } from "../declaredPayload";
 import {
 	ELECTORATE,
 	LIFE_EXPECTANCY,
@@ -60,6 +61,10 @@ export const POPULATION_UK: DeclaredDataset = {
 	type: "populationUk",
 	name: "ladName",
 	rebuild: {},
+	payload: {
+		parts: yearParts("populationUk", "localAuthority", 2023),
+		arrays: ["total", "males", "females"],
+	},
 	measures: [POPULATION],
 	dimensions: [SEX, AGE],
 	fields: byAge,
@@ -69,6 +74,12 @@ export const POPULATION_CONSTITUENCY: DeclaredDataset = {
 	type: "populationConstituency",
 	name: "constituencyName",
 	rebuild: {},
+	payload: {
+		parts: yearParts("populationConstituency", "constituency", 2024, {
+			coverageCountries: ["GB-ENG", "GB-WLS"],
+		}),
+		code: "constituencyCode",
+	},
 	measures: [POPULATION],
 	fields: [{ path: "total", measure: "population" }],
 };
