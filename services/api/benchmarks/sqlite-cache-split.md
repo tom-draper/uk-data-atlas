@@ -22,9 +22,9 @@ timer reported 127,416.66 ms. This is a rebuild cost, excluded from API startup.
 Docker performs it before starting workers; direct API startup reports the rebuild
 command when a required component is missing or stale.
 
-`sqlite-cache-split-before.json` records `SELECT name, sum(pgsize) FROM dbstat GROUP BY name`
-and all baseline table definitions. `sqlite-cache-split-audit.json` classifies
-every table with table/index allocation, writer, reader and rationale. The codeq
+The baseline `dbstat` sizes (`SELECT name, sum(pgsize) FROM dbstat GROUP BY name`),
+the baseline table definitions and the per-table audit of allocation, writer, reader
+and rationale were recorded in raw files that are not kept. The codeq
 symbol inventory is in `sqlite-cache-table-code-index.txt`. Application cache tables
 account for 97,820,672 bytes before the split. Their metadata payloads move too.
 SQLite's own indexes and statistics remain with the B-trees they describe.

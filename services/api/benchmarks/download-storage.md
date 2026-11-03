@@ -45,8 +45,8 @@ published SHA-256 and byte counts, and identical gzip bytes for GeoJSON. It must
 compare all five simplified variants per release or exit nonzero.
 
 The checked releases cover combined authorities, local authorities, wards,
-LSOAs and output areas. Per-variant hashes, byte counts and elapsed seconds are
-in [download-storage-comparisons.json](download-storage-comparisons.json).
+LSOAs and output areas. Per-variant hashes, byte counts and elapsed seconds were recorded in the raw
+comparison output, which is not kept in the repository.
 Each release runs in a separate process. Every variant is generated without a
 download-cache hit, but later variants can reuse the release's loaded geometry.
 These timings do not represent fully cold HTTP latency.
