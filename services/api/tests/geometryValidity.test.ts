@@ -12,11 +12,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { parse } from "yaml";
-import { buildGeometryStore } from "../../../pipeline/src/buildGeometryStore";
+import { buildGeometryStore } from "./pipelineFixtures";
 import {
 	compileGeometryValidity,
 	roundKeepingValidity,
-} from "../../../pipeline/src/compileGeometryValidity";
+} from "./pipelineFixtures";
 import {
 	compiledGeometryFile,
 	type GeometrySource,

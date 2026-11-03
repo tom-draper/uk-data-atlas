@@ -15,20 +15,20 @@ import test, { type TestContext } from "node:test";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
-import { storePostcodeIndex as writePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
-import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";
+import { assembleAtlas } from "./pipelineFixtures";
 import {
 	writeEmptyObservationComponent,
 	writeEmptyPostcodeAreas,
 	writeEmptyWebsiteComponent,
 } from "./atlasComponentFixtures";
-import { buildPostcodeIndex } from "../../../pipeline/src/build-postcode-index";
+import { buildPostcodeIndex } from "./pipelineFixtures";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../src/routes";
 import { parsePostcode } from "@uk-data-atlas/geography";
-import type { PostcodeSourceRow } from "../../../pipeline/src/postcodeIndex";
+import type { PostcodeSourceRow } from "./pipelineFixtures";
 import {
 	postcodeIndexFor,
 	postcodeRow,

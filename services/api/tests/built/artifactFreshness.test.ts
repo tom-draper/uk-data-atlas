@@ -15,10 +15,7 @@ import { fileURLToPath } from "node:url";
 import { observationPartitionKey } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { openapiDocumentHash } from "@uk-data-atlas/atlas-runtime/api";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
-import {
-	readMeasureTotals,
-	readValidationWaivers,
-} from "../../../../pipeline/src/validation/inputs";
+import { readMeasureTotals, readValidationWaivers } from "../pipelineFixtures";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
