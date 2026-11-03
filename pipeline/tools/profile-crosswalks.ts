@@ -10,16 +10,16 @@ import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationship
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
-} from "./relationships/crosswalkCompiler";
+} from "../src/relationships/crosswalkCompiler";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readCompiledAreaLookup } from "./relationships/crosswalkBuildInputs";
-import { writeCrosswalkArtifact } from "./relationships/crosswalkArtifact";
+import { readCompiledAreaLookup } from "../src/relationships/crosswalkBuildInputs";
+import { writeCrosswalkArtifact } from "../src/relationships/crosswalkArtifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "./relationships/crosswalkWorkers";
+} from "../src/relationships/crosswalkWorkers";
 
 const root = resolve(import.meta.dirname, "../..");
 const args = process.argv.slice(2);
@@ -30,7 +30,7 @@ const workers = crosswalkWorkerCount(
 const ids = args.filter((arg) => arg !== workerFlag);
 if (!ids.length)
 	throw new Error(
-		"Usage: pnpm exec tsx pipeline/src/profile-crosswalks.ts [--workers=1] <crosswalk-id> [...]",
+		"Usage: pnpm exec tsx pipeline/tools/profile-crosswalks.ts [--workers=1] <crosswalk-id> [...]",
 	);
 const adapters = readCrosswalkAdapters(
 	join(configDirectory(root), "crosswalk-adapters.json"),

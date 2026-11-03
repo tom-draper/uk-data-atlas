@@ -11,7 +11,7 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "vitest";
-import { buildMapResources } from "../src/buildMapResource";
+import { buildMapResources } from "../src/maps/buildMapResources";
 
 test("map builds retain tiles, remove obsolete variants and reuse completed releases", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-map-build-"));
