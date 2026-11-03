@@ -1,7 +1,3 @@
-import {
-	assertObservationCatalogue,
-	readObservationText,
-} from "@uk-data-atlas/atlas-runtime/storage";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -17,7 +13,7 @@ import type {
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { observationBuildPath } from "./statistics/observationBuildPath";
+import { openStatisticsArtifactReader } from "./statisticsArtifacts";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);
@@ -54,34 +50,40 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 			return [entry.id, artifact] as const;
 		}),
 	);
-	const databasePath = observationBuildPath(repositoryRoot);
-	assertObservationCatalogue(databasePath, dataCatalog);
-	const names = new Set(
-		dataCatalog.measures.flatMap((measure) =>
-			measure.sources.map((source) =>
-				observationArtifactName(measure.id, source),
-			),
-		),
-	);
-	// Shared tables remain whole so validation can read each measure's column.
-	const observations = new Map(
-		[...names].map((id) => [
-			id,
-			JSON.parse(readObservationText(databasePath, id)) as
-				AnyMeasureObservationArtifact | MeasureTableArtifact,
-		]),
-	);
-	const inventory = validateAnalysisGeographies(
-		analysisGeographies,
-		dataCatalog,
-		crosswalkLookup,
-		observations,
-	);
-	const outputPath = buildArtifactPath(
+	const { database, readArtifact } = openStatisticsArtifactReader(
 		repositoryRoot,
-		"analysis-geography-validation.json",
+		dataCatalog,
 	);
-	mkdirSync(dirname(outputPath), { recursive: true });
-	writeFileSync(outputPath, `${JSON.stringify(inventory, null, "\t")}\n`);
-	return { outputPath, count: inventory.supports.length };
+	try {
+		const observations = new Map<
+			string,
+			AnyMeasureObservationArtifact | MeasureTableArtifact
+		>();
+		for (const measure of dataCatalog.measures)
+			for (const source of measure.sources) {
+				const name = observationArtifactName(measure.id, source);
+				if (!observations.has(name))
+					observations.set(
+						name,
+						JSON.parse(readArtifact(measure.id, source)) as
+							| AnyMeasureObservationArtifact
+							| MeasureTableArtifact,
+					);
+			}
+		const inventory = validateAnalysisGeographies(
+			analysisGeographies,
+			dataCatalog,
+			crosswalkLookup,
+			observations,
+		);
+		const outputPath = buildArtifactPath(
+			repositoryRoot,
+			"analysis-geography-validation.json",
+		);
+		mkdirSync(dirname(outputPath), { recursive: true });
+		writeFileSync(outputPath, `${JSON.stringify(inventory, null, "\t")}\n`);
+		return { outputPath, count: inventory.supports.length };
+	} finally {
+		database.close();
+	}
 };
