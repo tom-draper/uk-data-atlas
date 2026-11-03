@@ -12,7 +12,7 @@ export const readApiCatalogues = (
 	apiRoot: string,
 	options: CatalogueOptions = {},
 ) => {
-	const catalogues = readAtlasCatalogues(apiRoot, options);
+	const catalogues = readAtlasCatalogues(repositoryRootOf(apiRoot), options);
 	const stage = <T>(name: string, read: () => T): T => {
 		if (!options.onStage) return read();
 		const started = performance.now();
