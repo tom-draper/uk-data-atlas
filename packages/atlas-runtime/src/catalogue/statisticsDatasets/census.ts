@@ -1,4 +1,5 @@
 import { type DeclaredDataset, periods } from "../declaredStatistics";
+import { yearParts } from "../declaredPayload";
 import { HOUSEHOLDS, USUAL_RESIDENTS, measure } from "./measures";
 
 /** Census 2021 tables. Each breakdown column is a dimension member. */
@@ -296,6 +297,18 @@ export const ETHNICITY: DeclaredDataset = {
 
 export const GENERAL_HEALTH: DeclaredDataset = {
 	type: "generalHealth",
+	payload: {
+		parts: yearParts(
+			"generalHealth",
+			"lsoa",
+			2021,
+			{
+				coverageCountries: ["GB-ENG", "GB-WLS"],
+			},
+			["2021"],
+		),
+		code: "code",
+	},
 	period: census2021,
 	name: "name",
 	measures: [USUAL_RESIDENTS],
@@ -359,6 +372,18 @@ export const GENERAL_HEALTH: DeclaredDataset = {
 
 export const HOUSING_TENURE: DeclaredDataset = {
 	type: "housingTenure",
+	payload: {
+		parts: yearParts(
+			"housingTenure",
+			"lsoa",
+			2021,
+			{
+				coverageCountries: ["GB-ENG", "GB-WLS"],
+			},
+			["2021"],
+		),
+		code: "code",
+	},
 	period: census2021,
 	name: "name",
 	measures: [HOUSEHOLDS],
