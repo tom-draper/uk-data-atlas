@@ -309,6 +309,12 @@ export function rebuildFromDeclaration(
 					}
 				}
 			}
+			if (
+				spec.omitMissing?.some((prefix) =>
+					field.path.startsWith(prefix),
+				)
+			)
+				continue;
 			for (const own of tuples.values())
 				for (const segments of [segments_, lower, upper, status])
 					if (segments) nulls.push(fill(segments, own));
