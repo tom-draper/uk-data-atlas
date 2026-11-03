@@ -401,7 +401,7 @@ test("the API factory validates the store and serves without raw boundary files"
 		}),
 	);
 	assert.throws(
-		() => createAreaGeometryCache(apiRoot),
+		() => createAreaGeometryCache(root),
 		/Cannot use compiled geometry.*data:build --only geometry-store/,
 	);
 	const file = join(store, compiledGeometryFile("ward", "2025-05-uk-bgc"));
@@ -416,7 +416,7 @@ test("the API factory validates the store and serves without raw boundary files"
 		),
 	);
 	rmSync(join(root, "data/source", source.input));
-	const cache = createAreaGeometryCache(apiRoot);
+	const cache = createAreaGeometryCache(root);
 	assert.deepEqual(cache.stats().loadedReleases, []);
 	assert.ok(cache.get("ward", "2025-05-uk-bgc", "E05000001"));
 	assert.equal(cache.stats().compiledLoads, 1);

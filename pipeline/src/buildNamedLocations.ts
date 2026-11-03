@@ -124,7 +124,7 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 				: [],
 		),
 	);
-	const cache = createAreaGeometryCache(apiRootOf(repositoryRoot), 1);
+	const cache = createAreaGeometryCache(repositoryRoot, 1);
 	const counties = readCeremonialCounties(repositoryRoot);
 	const authorityReleases = areaInventory.releases
 		.filter(

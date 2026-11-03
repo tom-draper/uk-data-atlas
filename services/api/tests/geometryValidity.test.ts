@@ -296,7 +296,7 @@ test("compiles deterministic reports and serves them with metrics and provenance
 			coordinate: [2, 52],
 		});
 	rmSync(sourcePath);
-	const cache = createAreaGeometryCache(apiRoot);
+	const cache = createAreaGeometryCache(root);
 	const areaLookup = createAreaLookup([
 		{
 			schemaVersion: 1,

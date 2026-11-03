@@ -52,7 +52,7 @@ const areaInventory = JSON.parse(
 ) as {
 	releases: Array<{ geography: string; id: string; artifact?: string }>;
 };
-const geometry = createAreaGeometryCache(apiRoot);
+const geometry = createAreaGeometryCache(resolve(apiRoot, "../.."));
 
 /**
  * A tier's download as a client receives it: the stored file, or, for the
