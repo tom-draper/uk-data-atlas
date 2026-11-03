@@ -1,11 +1,14 @@
 /**
- * Regenerates the TypeScript and Python clients from services/api/openapi.yaml
- * and records what it wrote in clients/generated.lock.json.
+ * Writes the TypeScript and Python clients from services/api/openapi.yaml.
+ * The generated code is not committed: it is written into
+ * typescript/src/generated/ and python/src/uk_data_atlas_client/generated/,
+ * both ignored by Git.
  *
- *   pnpm --dir services/api generate:clients           write the clients
- *   pnpm --dir services/api generate:clients --check   fail if they are stale
+ *   pnpm clients:generate               both clients
+ *   pnpm clients:generate:typescript    the TypeScript types only
  *
- * Neither needs a running API or any data. Python tooling lives in
+ * Neither needs a running API or any data. The TypeScript types need only
+ * node_modules, and typecheck runs them. Python tooling lives in
  * clients/python/.venv, which this creates and fills from the pinned
  * requirements-generate.txt on first use.
  */
@@ -16,20 +19,15 @@ import {
 	mkdirSync,
 	mkdtempSync,
 	rmSync,
-	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
 	CLIENTS,
-	LOCK,
 	PYTHON_GENERATED,
 	SPEC,
 	TYPESCRIPT_GENERATED,
-	computeLock,
-	hashTree,
-	readLock,
-} from "./lock.mjs";
+} from "./paths.mjs";
 
 const run = (command: string, args: string[], cwd: string) => {
 	const result = spawnSync(command, args, { cwd, encoding: "utf8" });
@@ -134,43 +132,11 @@ const generatePython = (out: string) => {
 	}
 };
 
-const writeLock = () => {
-	writeFileSync(LOCK, `${JSON.stringify(computeLock(), null, "\t")}\n`);
-};
-
-const check = () => {
-	const scratch = mkdtempSync(join(tmpdir(), "atlas-clients-check-"));
-	try {
-		const typescript = join(scratch, "typescript");
-		const python = join(scratch, "python");
-		generateTypescript(typescript);
-		generatePython(python);
-		const stale = [
-			hashTree(TYPESCRIPT_GENERATED) !== hashTree(typescript) &&
-				"the TypeScript client",
-			hashTree(PYTHON_GENERATED) !== hashTree(python) &&
-				"the Python client",
-			JSON.stringify(readLock()) !== JSON.stringify(computeLock()) &&
-				"clients/generated.lock.json",
-		].filter(Boolean);
-		if (stale.length > 0) {
-			console.error(
-				`Stale: ${stale.join(", ")}.\nRun: pnpm --dir services/api generate:clients`,
-			);
-			process.exit(1);
-		}
-		console.log("Generated clients are up to date.");
-	} finally {
-		rmSync(scratch, { recursive: true, force: true });
-	}
-};
-
-if (process.argv.includes("--check")) {
-	check();
+rmSync(TYPESCRIPT_GENERATED, { recursive: true, force: true });
+generateTypescript(TYPESCRIPT_GENERATED);
+if (process.argv.includes("--typescript")) {
+	console.log("Wrote clients/typescript generated types.");
 } else {
-	rmSync(TYPESCRIPT_GENERATED, { recursive: true, force: true });
-	generateTypescript(TYPESCRIPT_GENERATED);
 	generatePython(PYTHON_GENERATED);
-	writeLock();
 	console.log("Wrote clients/typescript and clients/python generated code.");
 }
