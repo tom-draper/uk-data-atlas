@@ -26,7 +26,7 @@ export const buildDuckdbPlaceIndex = async (repositoryRoot: string) => {
 	const areaInventory = readAreaInventory(repositoryRoot);
 	const index = await compileDuckdbPlaceIndex(
 		readAreaLookup(repositoryRoot, areaInventory),
-		readNamedLocationInventory(apiRoot),
+		readNamedLocationInventory(repositoryRoot),
 		areaInventory.contentHash,
 		readBoundaryRegistry(apiRoot),
 	);
