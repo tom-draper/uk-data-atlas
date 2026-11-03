@@ -758,6 +758,7 @@ export const SCHOOL_PERFORMANCE: DeclaredDataset = {
 		),
 		code: "ladCode",
 		periodKeys: schoolYears,
+		sparsePeriods: true,
 		nullPaths: [
 			"avgP8score",
 			"series.2020.avgP8score",
@@ -787,6 +788,7 @@ export const SCHOOL_PERFORMANCE_CONSTITUENCY: DeclaredDataset = {
 		),
 		code: "pconCode",
 		periodKeys: schoolYears,
+		sparsePeriods: true,
 		nullPaths: ["avgP8score", "series.2025.avgP8score"],
 	},
 	name: "pconName",
@@ -857,6 +859,7 @@ export const SCHOOL_PERFORMANCE_DISADVANTAGE: DeclaredDataset = {
 		),
 		code: "ladCode",
 		periodKeys: schoolYears,
+		sparsePeriods: true,
 	},
 	name: "ladName",
 	...schools,

@@ -300,6 +300,58 @@ describe("declared statistics", () => {
 		}
 	});
 
+	it("fills periods a record lacks with null unless declared sparse", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			measures: [CRIMES],
+			fields: [{ path: "by.{period}", measure: "crimes" }],
+			payload: {
+				parts: yearParts("example", "localAuthority", 2024, {}, [
+					"2024",
+				]),
+				code: "code",
+				without: (relations) => (relations.size ? [] : ["secret"]),
+			},
+		};
+		const record = (code: string, name: string, by: object) => ({
+			code,
+			name,
+			by,
+		});
+		const expected = JSON.parse(
+			file({
+				E06000001: record("E06000001", "Hartlepool", {
+					2023: 1,
+					2024: 2,
+				}),
+				E06000002: record("E06000002", "Middlesbrough", {
+					2023: null,
+					2024: 3,
+				}),
+			}),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			const generate = (payload: DeclaredDataset["payload"]) =>
+				JSON.parse(
+					rebuildFromDeclaration(
+						database,
+						{ ...config, payload },
+						"example",
+					),
+				);
+			expect(generate(config.payload)).toEqual(expected);
+			const sparse = generate({
+				...config.payload!,
+				sparsePeriods: true,
+			});
+			expect(sparse["2024"].data.E06000002.by).toEqual({ 2024: 3 });
+		} finally {
+			database.close();
+		}
+	});
+
 	it("generates parent areas and header summaries from rows", () => {
 		const config: DeclaredDataset = {
 			type: "example",

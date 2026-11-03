@@ -396,7 +396,9 @@ export function rebuildFromDeclaration(
 				if (
 					!has(target, path) &&
 					(!parent || has(target, path.slice(0, -1))) &&
-					(period === undefined || observedIn.get(code)?.has(period))
+					(period === undefined ||
+						!spec.sparsePeriods ||
+						observedIn.get(code)?.has(period))
 				)
 					place(target, path, null, arrays);
 		// Related areas: a record's n-th parent field of a kind takes its n-th area.
@@ -426,6 +428,26 @@ export function rebuildFromDeclaration(
 					place(target, parent.name.split("."), found.name, arrays);
 			}
 		}
+		if (spec.without)
+			for (const [code, target] of records)
+				for (const path of spec.without(
+					new Set(related.get(code)?.keys() ?? []),
+				)) {
+					const keys = path.split(".");
+					const parent = keys
+						.slice(0, -1)
+						.reduce<Json | undefined>(
+							(node, key) =>
+								node !== null && typeof node === "object"
+									? (node as Record<string, Json>)[key]
+									: undefined,
+							target,
+						);
+					if (parent !== null && typeof parent === "object")
+						delete (parent as Record<string, Json>)[
+							keys[keys.length - 1]
+						];
+				}
 		// Derived numbers, from each record's stored values, in rule order.
 		for (const [rule, compute] of Object.entries(
 			config.rebuild?.derived ?? {},
