@@ -32,13 +32,9 @@ import {
 	type PlaceIndex,
 	type TimelineEvent,
 } from "@uk-data-atlas/catalogue/place-profile";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const ROOT = resolve(import.meta.dirname, "../..");
-const API_ROOT = apiRootOf(ROOT);
 const readDataset = (output: string) =>
 	readFileSync(join(ROOT, "data/build/datasets", `${output}.json`), "utf8");
 const BOUNDARIES = join(artifactDirectory(ROOT), "source-data", "boundaries");
@@ -76,7 +72,7 @@ const REDRAWN_SHARE = 0.02;
 const REDRAWN_KM2 = 0.05;
 
 const resolver = readPlaceResolver(
-	API_ROOT,
+	ROOT,
 	join(ROOT, "data/build/atlas-base.sqlite"),
 );
 

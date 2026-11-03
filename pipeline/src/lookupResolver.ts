@@ -1,4 +1,5 @@
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
+import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	buildArtifactPath,
 	readAreaLookup,
@@ -40,10 +41,10 @@ export const createLookupResolver = (
 };
 
 export const readLookupResolver = (
-	apiRoot: string,
 	repositoryRoot: string,
 	databasePath: string,
 ) => {
+	const apiRoot = apiRootOf(repositoryRoot);
 	const inventory = readSqliteAreaInventory(apiRoot, databasePath);
 	const areaLookup = readAreaLookup(
 		apiRoot,
