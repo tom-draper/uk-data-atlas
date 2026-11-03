@@ -45,9 +45,6 @@ export type TerrainRaster = TerrainSourceMetadata & {
 	values: readonly (number | null)[];
 };
 
-export type TerrainDerivativeKind =
-	"slope" | "aspect" | "hillshade" | "contours";
-
 export type TerrainRasterValidation = {
 	valid: boolean;
 	errors: string[];
