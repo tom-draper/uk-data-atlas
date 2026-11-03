@@ -132,11 +132,12 @@ export function rebuildFromDeclaration(
 
 	// The areas a publisher relates each record to, by record key.
 	type Related = { code: string; name: string; geography: string };
+	const relatedNames = new Map<string, string>();
 	const related = new Map<string, Map<string, Related[]>>();
 	if (config.parents?.length)
 		for (const row of database
 			.prepare(
-				`SELECT r.relation, coalesce(k.key, ca.code) AS child, pa.code AS code,
+				`SELECT r.relation, coalesce(k.key, ca.code) AS child, coalesce(cn.name, cv.name) AS child_name, pa.code AS code,
 					coalesce(n.name, pv.name) AS name, pr.geography AS geography
 				FROM area_relationship r
 				JOIN area_version cv ON cv.id = r.child_version_id
@@ -146,9 +147,11 @@ export function rebuildFromDeclaration(
 				JOIN area pa ON pa.id = pv.area_id
 				JOIN area_releases pr ON pr.position = pv.release_id
 				LEFT JOIN dataset_area_name n ON n.dataset_id = r.dataset_id AND n.area_version_id = pv.id
+				LEFT JOIN dataset_area_name cn ON cn.dataset_id = r.dataset_id AND cn.area_version_id = cv.id
 				WHERE r.dataset_id = ? ORDER BY pa.code`,
 			)
 			.all(dataset)) {
+			relatedNames.set(String(row.child), String(row.child_name));
 			const byRelation = related.get(String(row.child)) ?? new Map();
 			related.set(String(row.child), byRelation);
 			const list = byRelation.get(String(row.relation)) ?? [];
@@ -401,6 +404,12 @@ export function rebuildFromDeclaration(
 						observedIn.get(code)?.has(period))
 				)
 					place(target, path, null, arrays);
+		if (spec.relatedRecords)
+			for (const [code, name] of relatedNames) record(code, name);
+		for (const path of spec.emptyArrays ?? [])
+			for (const target of records.values())
+				if (!has(target, path.split(".")))
+					place(target, path.split("."), [], arrays);
 		// Related areas: a record's n-th parent field of a kind takes its n-th area.
 		const kinds = new Map<string, number>();
 		const geographies = (
