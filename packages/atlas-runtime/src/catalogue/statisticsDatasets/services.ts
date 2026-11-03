@@ -7,6 +7,8 @@ import {
 	type DerivedRule,
 	periods,
 } from "../declaredStatistics";
+import { yearParts } from "../declaredPayload";
+import type { DeclaredPayload } from "../declaredStatistics";
 import { ICB_ODS_TO_GSS } from "@uk-data-atlas/datasets/data/nhs-waiting/icbToGss";
 import { measure } from "./measures";
 
@@ -290,9 +292,11 @@ const single = (
 	type: string,
 	period: ReturnType<typeof periods.year>,
 	declared: StatisticsMeasure,
+	payload: DeclaredPayload,
 ): DeclaredDataset => ({
 	type,
 	rebuild: {},
+	payload,
 	name: "name",
 	period: () => period,
 	measures: [declared],
@@ -310,6 +314,16 @@ export const ADULT_SOCIAL_CARE_ACTIVITY = single(
 		"sum",
 		"Adult social care clients receiving long-term support during the year.",
 	),
+	{
+		parts: yearParts(
+			"adultSocialCareActivity",
+			"localAuthority",
+			2025,
+			{ coverageCountries: ["GB-ENG"] },
+			["2025"],
+		),
+		code: "code",
+	},
 );
 
 export const ADULT_SOCIAL_CARE_OUTCOMES = single(
@@ -323,6 +337,16 @@ export const ADULT_SOCIAL_CARE_OUTCOMES = single(
 		"none",
 		"Average social care-related quality of life score of service users (ASCOF 1A).",
 	),
+	{
+		parts: yearParts(
+			"adultSocialCareOutcomes",
+			"localAuthority",
+			2025,
+			{ coverageCountries: ["GB-ENG"] },
+			["2025"],
+		),
+		code: "code",
+	},
 );
 
 export const NET_ADDITIONAL_DWELLINGS = single(
@@ -336,11 +360,27 @@ export const NET_ADDITIONAL_DWELLINGS = single(
 		"sum",
 		"New dwellings and conversions less demolitions over the year.",
 	),
+	{
+		parts: yearParts(
+			"netAdditionalDwellings",
+			"localAuthority",
+			2025,
+			{ coverageCountries: ["GB-ENG"] },
+			["2025"],
+		),
+		code: "code",
+	},
 );
 
 export const PLANNING_APPLICATIONS: DeclaredDataset = {
 	type: "planningApplications",
 	rebuild: {},
+	payload: {
+		parts: yearParts("planningApplications", "localAuthority", 2025, {
+			coverageCountries: ["GB-ENG"],
+		}),
+		code: "code",
+	},
 	name: "name",
 	period: () => periods.quarter(2026, 1),
 	measures: [
