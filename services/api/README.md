@@ -3952,8 +3952,9 @@ simplified delivery the full proposal describes for map rendering at scale.
 
 ## Retired measure ids
 
-Data and measure paths accept canonical measure slugs and reviewed human aliases.
-Use dimension filters for breakdowns, for example `recorded-crimes` with
-`offence=burglary`. Retired path ids return a 404 with the replacement. Some
-`measure` query parameters still accept old series ids and do not yet support
-dimension filters.
+Data and measure paths, and `measure` query parameters, accept canonical
+measure slugs and reviewed human aliases. Use dimension filters for
+breakdowns, for example `recorded-crimes` with `offence=burglary`, as
+`?measure=recorded-crimes&offence=burglary`. With several `measure` values a
+filter applies to each measure that has the dimension. Retired ids return a 404
+with the replacement.

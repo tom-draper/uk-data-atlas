@@ -150,7 +150,7 @@ export default function ConstituencyGuidePage() {
 						Commons Library. Get the attribution for what you quote:
 					</P>
 					<Request
-						url={`${API}/attribution?measure=general-election-turnout&measure=population`}
+						url={`${API}/attribution?measure=turnout&datasetId=general-election&measure=population`}
 						operationId="getAttribution"
 					/>
 				</Step>
