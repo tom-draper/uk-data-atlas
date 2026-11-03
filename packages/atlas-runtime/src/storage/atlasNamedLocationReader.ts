@@ -5,11 +5,11 @@ import type {
 	NamedLocationInventory,
 } from "@uk-data-atlas/places";
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath, repositoryRootOf } from "./dataLayout";
 
 export const readSqliteNamedLocationInventory = (
 	apiRoot: string,
-	databasePath = atlasDatabasePath(apiRoot),
+	databasePath = atlasDatabasePath(repositoryRootOf(apiRoot)),
 ): NamedLocationInventory => {
 	const path = databasePath;
 	const database = new DatabaseSync(path, { readOnly: true });

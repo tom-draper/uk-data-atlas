@@ -11,7 +11,7 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	artifactDirectory,
-	repositoryAtlasDatabasePath,
+	atlasDatabasePath,
 	statisticsReadPathPath,
 	statisticsVocabularyPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -45,10 +45,7 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 		};
 	};
 	const artifacts = [
-		artifactReference(
-			"atlas-sqlite",
-			repositoryAtlasDatabasePath(repositoryRoot),
-		),
+		artifactReference("atlas-sqlite", atlasDatabasePath(repositoryRoot)),
 		artifactReference(
 			"statistics-read-path",
 			statisticsReadPathPath(repositoryRoot),

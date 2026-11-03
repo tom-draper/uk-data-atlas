@@ -31,7 +31,7 @@ it("rebuilds every crosswalk artifact byte for byte from edge rows", () => {
 			mismatches.push(entry.id);
 	}
 	expect(mismatches).toEqual([]);
-	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
+	const database = new DatabaseSync(atlasDatabasePath(root), {
 		readOnly: true,
 	});
 	try {

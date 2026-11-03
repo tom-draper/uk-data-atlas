@@ -8,7 +8,7 @@ import {
 	type SQLOutputValue,
 } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath, repositoryRootOf } from "./dataLayout";
 import {
 	rebuildStatisticsObservationText,
 	type StatisticsArtifact,
@@ -17,7 +17,7 @@ import {
 } from "./atlasStatisticsObservations";
 
 export const observationDatabasePath = (apiRoot: string) =>
-	atlasDatabasePath(apiRoot);
+	atlasDatabasePath(repositoryRootOf(apiRoot));
 
 /** Read the small inventory without loading observation rows. */
 export function readObservationInventory(path: string) {

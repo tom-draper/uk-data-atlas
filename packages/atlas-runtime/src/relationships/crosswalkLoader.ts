@@ -88,7 +88,7 @@ export const readRelationshipPathInventory = (
 	apiRoot: string,
 	crosswalks: CrosswalkInventory,
 ): RelationshipPathInventory => {
-	const path = atlasDatabasePath(apiRoot);
+	const path = atlasDatabasePath(repositoryRootOf(apiRoot));
 	const inventory = JSON.parse(
 		readAtlasPayload(repositoryRootOf(apiRoot), "relationship-paths"),
 	) as RelationshipPathInventory;
