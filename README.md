@@ -129,8 +129,10 @@ A commercial licence is available for organisations that want to use, host or
 embed the UK Data Atlas without the AGPL's obligations. Contact
 [@tom-draper](https://github.com/tom-draper) for details.
 
-The datasets and boundary files retain their own source licences; see
-[DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution and attribution.
+The datasets and boundary files retain their own source licences. The
+curated database is offered as a paid download with regular updates. See
+[DATA-LICENCES.md](./DATA-LICENCES.md) for redistribution, attribution and the
+terms of the curated database.
 
 #
 

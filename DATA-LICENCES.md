@@ -20,11 +20,6 @@ listed in the [dataset catalogue in the README](./README.md) and in the
 generated API catalogues. Boundary releases carry the same information in
 their release metadata.
 
-Redistributed copies must preserve the applicable source licence, attribution,
-source URL and any required notices. Where the project has cleaned, repaired,
-standardised, derived or reformatted a source, the published copy should say so
-and link back to the original source.
-
 The main licence terms are:
 
 - [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/)
@@ -36,38 +31,67 @@ The main licence terms are:
 - [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/legalcode)
   permits adaptation and redistribution, but adapted material must retain
   compatible ShareAlike terms, preserve the required notices and identify
-  changes.
+  changes. No further restrictions may be placed on it.
 
 These licences do not automatically cover personal data, third-party rights,
 logos, trade marks, or other material that the original provider was not
 authorised to license. A source-specific licence or notice takes precedence
 over this summary.
 
-## Project transformations
+Nothing in this project limits what a source licence allows. Anyone may
+download the sources and build the data themselves with the code in this
+repository.
 
-Cleaned, repaired, standardised, combined and derived datasets and boundary
-files are released under the same licence as the source they come from: data
-derived from Open Government Licence sources is released under the Open
-Government Licence v3.0, data derived from Open Parliament Licence sources under
-the Open Parliament Licence, and data derived from CC BY-SA 3.0 sources under
-CC BY-SA 3.0. Where a release combines sources, each source's terms apply to the
-parts derived from it. Any rights the project holds in its selection,
-arrangement or transformations of the data are licensed on the same terms, so
-the published data stays as open as its sources.
+## The curated database
 
-The API's provenance and attribution metadata should travel with generated
-exports so users can identify both the original source and the Atlas
-transformation.
+The project compiles the sources into a curated database: cleaned, repaired,
+standardised and joined to the correct boundary releases, with provenance on
+every series. The project offers this database, and regular updates to it, as
+a paid product. A purchase is a licence to use the database files, under the
+customer terms supplied with the purchase. It is not a transfer of rights in
+the source data.
+
+- **What customers pay for.** Access to the compiled files, the topic modules
+  chosen, the updates published during the subscription, and support. Files
+  downloaded during a subscription may be used after it ends.
+- **Sharing.** The customer terms ask customers not to redistribute the
+  database files as delivered, in whole or in substantial part, outside their
+  organisation. This is a contractual term, not a technical restriction.
+- **What stays open.** The terms do not restrict any use that a source
+  licence permits for the source data itself, including extracting, reusing
+  and publishing individual values with the attribution the source requires.
+- **CC BY-SA material.** Material derived from CC BY-SA sources is exempt from
+  the sharing term and stays under CC BY-SA, as that licence requires.
+- **Licence record.** Each delivered file contains a `licence` table naming
+  the customer, the order, the release and a summary of these terms.
+- **Attribution.** Each delivered file carries the source, publisher, licence
+  and method of every series, so customers can meet the attribution terms of
+  the sources.
+
+Any rights the project holds in the selection, arrangement and verification
+of the curated database, including database right, are reserved and licensed
+to customers under the customer terms. Copies of project data obtained before
+this policy took effect keep the terms they were released under.
+
+## Website and API
+
+Values shown on the website, and data returned by the free API, may be reused
+under the licence of their source, with attribution to both the source and the
+UK Data Atlas. Bulk access, higher API quotas and other paid features are
+governed by separate service terms.
 
 ## Private or paid datasets
 
 Datasets whose terms do not permit public redistribution must not be committed
 to this public repository or included in public build artifacts. They should be
-stored privately and ingested under a separate commercial agreement. Any paid
-API or hosted feature must identify its own service terms without claiming
-rights over source data that the source licence leaves open for downstream
-reuse.
+stored privately and ingested under a separate commercial agreement. A dataset
+whose terms restrict commercial use or redistribution, such as some Northern
+Ireland postcode data, must not be included in a paid database without a
+licence that permits it.
 
-The API and website code are AGPL-3.0 licensed, while hosted access, paid
-features, quotas, support and service levels are governed by separate service
-terms. This file is a project policy and licence summary, not legal advice.
+## Code
+
+The API and website code are AGPL-3.0 licensed. A commercial licence for the
+code is available separately; see the [README](./README.md#licence).
+
+This file is a project policy and licence summary, not legal advice.
