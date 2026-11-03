@@ -508,6 +508,16 @@ export const PUBLIC_HEALTH: DeclaredDataset = {
 
 export const PUPIL_ABSENCE: DeclaredDataset = {
 	type: "pupilAbsence",
+	payload: {
+		parts: yearParts(
+			"pupilAbsence",
+			"countyAndUnitaryAuthority",
+			2025,
+			{ coverageCountries: ["GB-ENG"] },
+			["2025"],
+		),
+		code: "code",
+	},
 	name: "name",
 	...countiesAndUnitaries,
 	period: () => periods.academicYear(2024),
