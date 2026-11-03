@@ -4,7 +4,7 @@
 /services/api/public/
 /pnpm-lock.yaml
 
-# Written by pnpm --dir services/api generate:clients, never by hand.
+# Written by pnpm clients:generate, never by hand.
 /clients/typescript/src/generated/
 /clients/python/src/uk_data_atlas_client/generated/
 
