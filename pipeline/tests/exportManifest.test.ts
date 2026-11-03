@@ -14,10 +14,26 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { test } from "vitest";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { compileExportManifest } from "../src/atlas/exportManifest";
+import {
+	observationArtifactName,
+	type DataCatalog,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readObservationText } from "@uk-data-atlas/atlas-runtime/storage";
+import { compileExportManifest as compileManifest } from "../src/atlas/exportManifest";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readParquet } from "./parquetFixtures";
+
+const compileExportManifest = (
+	directory: string,
+	dataCatalog: DataCatalog,
+	databasePath: string,
+) =>
+	compileManifest(directory, dataCatalog, (measureId, source) =>
+		readObservationText(
+			databasePath,
+			observationArtifactName(measureId, source),
+		),
+	);
 
 const dataset = (id: string) => ({
 	id,

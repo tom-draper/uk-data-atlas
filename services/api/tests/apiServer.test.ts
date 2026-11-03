@@ -13,6 +13,7 @@ import { connect, type AddressInfo } from "node:net";
 import { test, type TestContext } from "vitest";
 import { compileExportManifest } from "./pipelineFixtures";
 import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
@@ -1007,7 +1008,11 @@ test(
 		const manifest = compileExportManifest(
 			directory,
 			catalog,
-			fixtureObservationDatabase(directory),
+			(measureId, source) =>
+				readObservationText(
+					fixtureObservationDatabase(directory),
+					observationArtifactName(measureId, source),
+				),
 		);
 		const files = manifest.exports[0].formats!;
 		const exportFiles = new Map<string, StoredFile>(

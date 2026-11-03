@@ -1,4 +1,3 @@
-import { readObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	type DataCatalog,
 	type MeasureSource,
@@ -144,13 +143,13 @@ const exportDataset = (dataCatalog: DataCatalog, id: string): ExportDataset => {
 export const compileExportManifest = (
 	publicDirectory: string,
 	dataCatalog: DataCatalog,
-	databasePath: string,
+	readArtifact: (measureId: string, source: MeasureSource) => string,
 ): ExportManifest => {
 	const exports = dataCatalog.measures
 		.flatMap((measure) =>
 			measure.sources.map((source): BulkExport => {
 				const artifact = observationArtifactName(measure.id, source);
-				const content = readObservationText(databasePath, artifact);
+				const content = readArtifact(measure.id, source);
 				const table = JSON.parse(content) as unknown;
 				// A table is several measures' artifact, so each of them
 				// exports the whole table under an id of its own.
