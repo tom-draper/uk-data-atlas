@@ -18,7 +18,6 @@ import {
 	censusTableRecords,
 	type CensusTable,
 } from "./catalog/censusSmallArea";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * The census small-area tables as statistics rows: one dataset per table,
@@ -293,7 +292,7 @@ export function censusSmallAreaStatistics(
 	tables: readonly CensusTable[] = CENSUS_SMALL_AREA_TABLES,
 ): StatisticsInput[] {
 	if (tables.length === 0) return [];
-	const config = readMeasureDimensionsMapping(apiRootOf(repositoryRoot));
+	const config = readMeasureDimensionsMapping(repositoryRoot);
 	const stored = declared();
 	const period = census2021();
 	return tables.map((table) => (areas: AreaIndex): StatisticsDataset => {

@@ -1,6 +1,5 @@
 import {
 	assertObservationCatalogue,
-	apiRootOf,
 	statisticsReadPathPath,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -43,9 +42,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 	const readPath = JSON.parse(
 		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 	) as StatisticsReadPath;
-	const { ids } = readMeasureDimensionsConfig(
-		apiRootOf(repositoryRoot),
-	).config;
+	const { ids } = readMeasureDimensionsConfig(repositoryRoot).config;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),
 		{ readOnly: true },
