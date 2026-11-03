@@ -8,11 +8,9 @@ import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { SQLInputValue } from "node:sqlite";
 import {
-	packPositions,
 	SqliteIndex,
 	text,
 	unpackPositions,
-	type SqliteTable,
 	type Row,
 } from "../storage/sqliteIndex";
 
@@ -300,32 +298,6 @@ const headerMismatch = (
  * the kind when it is an area. Most places are output areas named by their
  * codes, so most rows are a geography, a code and a release.
  */
-const placeColumns = (
-	place: CompiledPlace,
-	geographies: Map<string, number>,
-) => {
-	const {
-		place: reference,
-		kind,
-		geography,
-		code,
-		name,
-		boundaryReleases,
-		...rest
-	} = place;
-	const extra: Record<string, unknown> = { ...rest };
-	if (kind !== "area") extra.kind = kind;
-	if (reference !== placeReference(kind, geography, code))
-		extra.place = reference;
-	return [
-		geographies.get(geography)!,
-		code,
-		name === code ? null : name,
-		boundaryReleases.join(","),
-		Object.keys(extra).length > 0 ? JSON.stringify(extra) : null,
-	];
-};
-
 const placeFromColumns =
 	(geographies: string[]) =>
 	(row: Row): CompiledPlace => {
@@ -355,13 +327,6 @@ const placeFromColumns =
  * A name's labels: positions packed as u32s, twice the place's position plus
  * 1 when reached by setting a title aside, or JSON where a label has text.
  */
-const packLabels = (labels: CompiledPlaceLabel[]) =>
-	labels.every((label) => label.length === 2)
-		? packPositions(
-				labels.map(([position, viaTitle]) => position * 2 + viaTitle),
-			)
-		: JSON.stringify(labels);
-
 const unpackLabels = (value: SQLInputValue): CompiledPlaceLabel[] =>
 	typeof value === "string"
 		? (JSON.parse(value) as CompiledPlaceLabel[])
@@ -369,59 +334,6 @@ const unpackLabels = (value: SQLInputValue): CompiledPlaceLabel[] =>
 				packed >>> 1,
 				(packed & 1) as 0 | 1,
 			]);
-
-export const placeIndexTables = (
-	index: PlaceIndexArtifact,
-): Record<string, SqliteTable> => {
-	const geographies = [
-		...new Set(index.places.map((place) => place.geography)),
-	].sort(compareCodeUnits);
-	const geographyAt = new Map(
-		geographies.map((geography, at) => [geography, at]),
-	);
-	const meta = {
-		schemaVersion: String(index.schemaVersion),
-		contentHash: index.contentHash,
-		nameNormalisation: index.nameNormalisation,
-		areaInventoryHash: index.areaInventoryHash,
-		namedLocationInventoryHash: JSON.stringify(
-			index.namedLocationInventoryHash,
-		),
-		releases: JSON.stringify(index.releases),
-		geographies: JSON.stringify(geographies),
-	};
-	return {
-		place_index_meta: {
-			columns: ["key TEXT NOT NULL", "value TEXT NOT NULL"],
-			key: ["key"],
-			rows: Object.entries(meta),
-		},
-		place_index_places: {
-			columns: [
-				"geography INTEGER",
-				"code TEXT",
-				"name TEXT",
-				"releases TEXT",
-				"extra TEXT",
-			],
-			rows: index.places.map((place) => placeColumns(place, geographyAt)),
-		},
-		place_index_names: {
-			columns: ["name TEXT", "labels"],
-			rows: index.names.map((name, at) => [
-				name,
-				packLabels(index.labels[at]!),
-			]),
-		},
-		place_index_codes: {
-			columns: ["code TEXT", "places BLOB"],
-			rows: index.codes.map((code, at) => [
-				code,
-				packPositions(index.codePlaces[at]!),
-			]),
-		},
-	};
-};
 
 /**
  * The index stored in the shared atlas database, refused unless built from

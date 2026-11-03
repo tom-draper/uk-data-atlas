@@ -560,6 +560,9 @@ importers:
       '@streamparser/json':
         specifier: 0.0.26
         version: 0.0.26
+      '@uk-data-atlas/areas':
+        specifier: workspace:*
+        version: link:../packages/areas
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../packages/artifacts

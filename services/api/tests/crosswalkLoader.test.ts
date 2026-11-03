@@ -1,9 +1,9 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { areaTables } from "./pipelineFixtures";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import { DatabaseSync } from "node:sqlite";
-import { crosswalkTables } from "@uk-data-atlas/atlas-runtime/storage";
-import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
+import { crosswalkTables } from "./pipelineFixtures";
+import { writeSqliteIndex } from "./pipelineFixtures";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

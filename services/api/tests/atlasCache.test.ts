@@ -13,9 +13,9 @@ import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
 import {
 	atlasCachePath,
-	publishCacheTables,
 	requireAtlasCache,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { publishCacheTables } from "./pipelineFixtures";
 
 function fixture(t: { onTestFinished: (fn: () => void) => void }) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-"));

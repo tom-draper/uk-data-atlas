@@ -19,6 +19,7 @@
 		"@duckdb/node-api": "1.4.5-r.1",
 		"@streamparser/json": "0.0.26",
 		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/areas": "workspace:*",
 		"@uk-data-atlas/atlas-runtime": "workspace:*",
 		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/datasets": "workspace:*",

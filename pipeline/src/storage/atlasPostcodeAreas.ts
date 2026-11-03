@@ -1,11 +1,14 @@
 import {
 	postcodeAreaColumns,
 	readPostcodeAreaShard,
-} from "./atlasPostcodeAreaShard";
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas";
-import { postcodeDistrictWhere, postcodeFields } from "./atlasPostcodeShard";
+import {
+	postcodeDistrictWhere,
+	postcodeFields,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	NONE,
 	SEVERAL,

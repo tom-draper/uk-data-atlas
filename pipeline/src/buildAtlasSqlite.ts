@@ -1,35 +1,25 @@
-import {
-	statisticsTables,
-	type StatisticsInput,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type StatisticsInput } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { statisticsTables } from "./storage/index";
 import { declaredStatistics } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { fuelPovertyStatistics } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { publishAtlasCache } from "@uk-data-atlas/atlas-runtime/storage";
+import { publishAtlasCache } from "./storage/index";
+import { servedFromRows } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { publishDatasetPayloads } from "./storage/index";
+import { writeSqliteIndex, writeSqliteTables } from "./storage/index";
 import {
-	publishDatasetPayloads,
-	servedFromRows,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import {
-	writeSqliteIndex,
-	writeSqliteTables,
-} from "@uk-data-atlas/atlas-runtime/storage";
-import {
-	locationProjectionTables,
 	type LocationProjectionInventory,
 	type LocationProjectionArtifact,
 	type LocationParentProjectionArtifact,
 } from "@uk-data-atlas/atlas-runtime/places";
+import { locationProjectionTables } from "./storage/index";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { namedLocationTables } from "@uk-data-atlas/atlas-runtime/storage";
-import { crosswalkTables } from "@uk-data-atlas/atlas-runtime/storage";
-import {
-	AREA_GEOGRAPHY_MISMATCH,
-	areaTables,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { namedLocationTables } from "./storage/index";
+import { crosswalkTables } from "./storage/index";
+import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "./storage/index";
 import { DatabaseSync } from "node:sqlite";
 import { censusSmallAreaStatistics } from "./censusSmallAreaStatistics";
 import {

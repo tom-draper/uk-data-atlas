@@ -4,10 +4,8 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import {
-	statisticsTables,
-	type StatisticsDataset,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type StatisticsDataset } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
 	fuelPovertyStatistics,
 	rebuildFuelPoverty,
@@ -16,10 +14,10 @@ import {
 	writeSqliteIndex,
 	writeSqliteTables,
 	type SqliteTable,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "../../pipeline/src/storage/index";
 import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
-import { publishDatasetPayloads } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { publishDatasetPayloads } from "../../pipeline/src/storage/index";
 
 const entry = {
 	fingerprint: "sha256:fixture",

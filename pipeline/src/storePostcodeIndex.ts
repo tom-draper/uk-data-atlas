@@ -1,7 +1,7 @@
 import { renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { postcodeTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { postcodeTables } from "./storage/index";
 import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";

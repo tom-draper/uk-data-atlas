@@ -3,8 +3,6 @@ import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { packPositions } from "@uk-data-atlas/search-index";
-import type { SqliteTable } from "@uk-data-atlas/artifacts";
 
 /**
  * The compiled area search index: every area identity, one per release and
@@ -119,46 +117,3 @@ export const compileAreaSearchIndex = (
 	};
 	return { ...body, contentHash: sha256(JSON.stringify(body)) };
 };
-
-/** Codes in position order and term postings packed as u32s. */
-export const areaSearchIndexTables = (
-	index: AreaSearchIndexArtifact,
-): Record<string, SqliteTable> => ({
-	area_search_meta: {
-		columns: ["key TEXT NOT NULL", "value TEXT NOT NULL"],
-		key: ["key"],
-		rows: Object.entries({
-			schemaVersion: String(index.schemaVersion),
-			contentHash: index.contentHash,
-			nameNormalisation: index.nameNormalisation,
-			areaInventoryHash: index.areaInventoryHash,
-			releases: JSON.stringify(
-				index.releases.map(({ geography, boundaryRelease, codes }) => ({
-					geography,
-					boundaryRelease,
-					length: codes.length,
-				})),
-			),
-		}),
-	},
-	area_search_codes: {
-		columns: ["code TEXT"],
-		rows: index.releases.flatMap((release) =>
-			release.codes.map((code) => [code]),
-		),
-	},
-	area_search_terms: {
-		columns: ["term TEXT", "areas BLOB"],
-		rows: index.terms.map((term, at) => [
-			term,
-			packPositions(index.termAreas[at]!),
-		]),
-	},
-	area_search_title_terms: {
-		columns: ["term TEXT", "areas BLOB"],
-		rows: index.titleTerms.map((term, at) => [
-			term,
-			packPositions(index.titleTermAreas[at]!),
-		]),
-	},
-});

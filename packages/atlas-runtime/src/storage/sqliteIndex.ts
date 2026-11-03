@@ -1,5 +1,4 @@
-import { renameSync, rmSync } from "node:fs";
-import { deflateRawSync, inflateRawSync } from "node:zlib";
+import { inflateRawSync } from "node:zlib";
 import {
 	DatabaseSync,
 	type SQLInputValue,
@@ -15,41 +14,6 @@ import type { Indexed } from "@uk-data-atlas/search-index";
  * half a second to load on the first search. Here each array is a table
  * keyed by position, so the same searches read only the rows they touch.
  */
-
-import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
-export { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
-
-/**
- * Write tables, each keyed by `position`, and a key-value `meta` table. The
- * file is written beside its path and moved into place once complete.
- */
-export const writeSqliteIndex = (
-	path: string,
-	meta: Record<string, string>,
-	tables: Record<string, SqliteTable>,
-	/** Smaller pages waste less on values that overflow them. */
-	pageSize = 4096,
-) => {
-	const temporary = `${path}.tmp`;
-	rmSync(temporary, { force: true });
-	const database = new DatabaseSync(temporary);
-	try {
-		database.exec(
-			`PRAGMA foreign_keys = ON; PRAGMA page_size = ${pageSize}; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;`,
-		);
-		database.exec(
-			"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
-		);
-		const insertMeta = database.prepare("INSERT INTO meta VALUES (?, ?)");
-		for (const [key, value] of Object.entries(meta))
-			insertMeta.run(key, value);
-		writeSqliteTables(database, tables);
-		database.exec("COMMIT; VACUUM;");
-	} finally {
-		database.close();
-	}
-	renameSync(temporary, path);
-};
 
 /** An index opened for reading. */
 export class SqliteIndex {
@@ -195,8 +159,6 @@ export const json =
 	(value: SQLInputValue) =>
 		JSON.parse(value as string) as T;
 
-export { packPositions } from "@uk-data-atlas/search-index";
-
 export const unpackPositions = (value: SQLInputValue): number[] => {
 	const bytes = value as Uint8Array;
 	const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -206,17 +168,6 @@ export const unpackPositions = (value: SQLInputValue): number[] => {
 	return positions;
 };
 
-/**
- * A value as JSON, deflated against a dictionary of text like it. Values read
- * one at a time are too small to compress well alone; a dictionary drawn from
- * their neighbours supplies the repetition a whole file would have.
- */
-export const packJson = (value: unknown, dictionary?: Uint8Array) =>
-	deflateRawSync(JSON.stringify(value), {
-		level: 9,
-		...(dictionary ? { dictionary } : {}),
-	});
-
 export const unpackJson = <T>(value: SQLInputValue, dictionary?: Uint8Array) =>
 	JSON.parse(
 		inflateRawSync(
@@ -224,19 +175,3 @@ export const unpackJson = <T>(value: SQLInputValue, dictionary?: Uint8Array) =>
 			dictionary ? { dictionary } : {},
 		).toString("utf8"),
 	) as T;
-
-/** The most a deflate dictionary can use. */
-const DICTIONARY_BYTES = 32 * 1024;
-
-/** A dictionary for values like these: the JSON of the first, to 32 KB. */
-export const jsonDictionary = (values: Iterable<unknown>) => {
-	const parts: Buffer[] = [];
-	let length = 0;
-	for (const value of values) {
-		if (length >= DICTIONARY_BYTES) break;
-		const part = Buffer.from(JSON.stringify(value));
-		parts.push(part);
-		length += part.length;
-	}
-	return Buffer.concat(parts).subarray(0, DICTIONARY_BYTES);
-};

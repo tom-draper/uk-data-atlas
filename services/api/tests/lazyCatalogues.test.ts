@@ -1,6 +1,6 @@
 import { DatabaseSync } from "node:sqlite";
-import { areaTables } from "@uk-data-atlas/atlas-runtime/storage";
-import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
+import { areaTables } from "./pipelineFixtures";
+import { writeSqliteIndex } from "./pipelineFixtures";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -9,7 +9,7 @@ import { test } from "vitest";
 import { validateBatch } from "@uk-data-atlas/atlas-runtime/areas";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
-import { namedLocationTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { namedLocationTables } from "./pipelineFixtures";
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";

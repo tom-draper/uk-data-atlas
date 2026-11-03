@@ -20,13 +20,7 @@ import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 import type { SQLInputValue } from "node:sqlite";
-import {
-	jsonDictionary,
-	packJson,
-	SqliteIndex,
-	unpackJson,
-	type SqliteTable,
-} from "../storage/sqliteIndex";
+import { SqliteIndex, unpackJson } from "../storage/sqliteIndex";
 
 export type LocationProjection = {
 	locationId: string;
@@ -593,88 +587,6 @@ export class LocationProjectionStore extends LocationProjections {
 		);
 	}
 }
-
-/**
- * Write every member and parent projection to one database, each found by
- * its crosswalk and location, and deflated against a dictionary drawn from
- * its shard. A request then reads the one projection it needs rather than
- * parsing its whole shard.
- */
-export const locationProjectionTables = ({
-	artifacts,
-	parentArtifacts,
-}: Pick<
-	ReturnType<typeof compileLocationProjections>,
-	"artifacts" | "parentArtifacts"
->) => {
-	const shards = [
-		...artifacts.map((artifact) => ({
-			table: "members",
-			crosswalkId: artifact.crosswalkId,
-			projections: artifact.projections,
-			key: (projection: LocationProjection) =>
-				locationProjectionKey(
-					projection.locationId,
-					projection.geography,
-					projection.boundaryRelease,
-					projection.via.id,
-				),
-		})),
-		...parentArtifacts.map((artifact) => ({
-			table: "parents",
-			crosswalkId: artifact.crosswalkId,
-			projections: artifact.parentProjections,
-			key: (projection: LocationParentProjection) =>
-				projection.locationId,
-		})),
-	].map((shard) => ({
-		...shard,
-		dictionary: jsonDictionary(shard.projections),
-	}));
-	const rows = (table: string) =>
-		shards
-			.filter((shard) => shard.table === table)
-			.flatMap(({ crosswalkId, projections, key, dictionary }) =>
-				projections.map((projection) => [
-					crosswalkId,
-					(key as (projection: unknown) => string)(projection),
-					packJson(projection, dictionary),
-				]),
-			);
-	return {
-		location_projection_dictionaries: {
-			columns: [
-				"kind TEXT NOT NULL",
-				"crosswalkId TEXT NOT NULL",
-				"dictionary BLOB NOT NULL",
-			],
-			key: ["kind", "crosswalkId"],
-			rows: shards.map(({ table, crosswalkId, dictionary }) => [
-				table,
-				crosswalkId,
-				dictionary,
-			]),
-		},
-		location_projection_members: {
-			columns: [
-				"crosswalkId TEXT NOT NULL",
-				"key TEXT NOT NULL",
-				"value BLOB NOT NULL",
-			],
-			key: ["crosswalkId", "key"],
-			rows: rows("members"),
-		},
-		location_projection_parents: {
-			columns: [
-				"crosswalkId TEXT NOT NULL",
-				"key TEXT NOT NULL",
-				"value BLOB NOT NULL",
-			],
-			key: ["crosswalkId", "key"],
-			rows: rows("parents"),
-		},
-	} satisfies Record<string, SqliteTable>;
-};
 
 /** Projections read a row at a time from their database. */
 export class LocationProjectionDatabase extends LocationProjections {
