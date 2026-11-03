@@ -1,7 +1,7 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import test from "node:test";
+import { test } from "vitest";
 import { gunzipSync } from "node:zlib";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import {

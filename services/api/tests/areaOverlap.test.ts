@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import test from "node:test";
+import { test } from "vitest";
 import type { Polygon } from "polygon-clipping";
 import { compileAreaOverlapCrosswalk } from "./pipelineFixtures";
 import { measurePairOverlap } from "../src/pairOverlap";

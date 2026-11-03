@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { reconciliationEvidence } from "../src/evidence/measureReports";
-import test from "node:test";
+import { test } from "vitest";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,

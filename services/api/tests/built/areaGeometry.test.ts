@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,

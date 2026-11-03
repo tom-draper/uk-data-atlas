@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
@@ -319,7 +319,7 @@ test("does not materialise geometry beyond the requested box-result limit", () =
 
 test("pages through every area a box meets", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const directory = join(
 		root,
 		"data/source",

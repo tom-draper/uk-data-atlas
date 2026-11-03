@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { routeWithData } from "./routeFixtures";
 
 test("ranks one source-exact partition with stable cursors", () => {

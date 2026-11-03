@@ -159,7 +159,7 @@ there is no build step.
 Pipeline unit tests and shared pipeline test fixtures live under
 `pipeline/tests/`. API tests may import pipeline code only through the fixture
 modules explicitly listed in `tests/packages/packageImports.test.ts`. The
-pipeline and API suites use `node:test`; `pnpm check` runs each unbuilt suite
+pipeline and API suites also use Vitest; `pnpm check` runs each unbuilt suite
 once. Pipeline tests that require built data live in `pipeline/tests/built/` and
 run through `pnpm check:full`.
 

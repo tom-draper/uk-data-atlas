@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	AreaSearch,
@@ -166,7 +166,9 @@ test("pages a listing the same however it is sliced", () => {
 
 test("answers from its SQLite tables exactly as from the artifact", (context) => {
 	const directory = mkdtempSync(join(tmpdir(), "area-search-"));
-	context.after(() => rmSync(directory, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(directory, { recursive: true, force: true }),
+	);
 	const path = join(directory, "atlas.sqlite");
 	writeSqliteIndex(
 		path,

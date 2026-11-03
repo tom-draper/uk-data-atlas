@@ -14,7 +14,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { AREAS_VIEW } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
@@ -54,7 +54,7 @@ const storePostcodeAreas: typeof writePostcodeAreas = (
 
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-postcode-derived-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	mkdirSync(

@@ -9,6 +9,7 @@ const FIXTURE_DATASETS = fileURLToPath(
 );
 
 export default defineConfig({
+	root: fileURLToPath(new URL(".", import.meta.url)),
 	resolve: {
 		tsconfigPaths: true,
 	},
@@ -16,6 +17,34 @@ export default defineConfig({
 		globals: true,
 		environment: "node",
 		projects: [
+			...[
+				{ name: "pipeline", include: ["pipeline/tests/*.test.ts"] },
+				{
+					name: "pipeline-built",
+					include: ["pipeline/tests/built/*.test.ts"],
+				},
+				{ name: "api", include: ["services/api/tests/*.test.ts"] },
+				{
+					name: "api-built",
+					include: ["services/api/tests/built/*.test.ts"],
+				},
+				{ name: "mcp", include: ["services/mcp/tests/*.test.ts"] },
+				{
+					name: "duckdb-fixtures",
+					include: ["tests/duckdb-fixtures/*.test.mts"],
+				},
+			].map(({ name, include }) => ({
+				extends: true as const,
+				test: {
+					name,
+					include,
+					maxWorkers: 2,
+					testTimeout: 0,
+					hookTimeout: 0,
+					restoreMocks: true,
+					sequence: { hooks: "list" as const },
+				},
+			})),
 			{
 				extends: true,
 				// Unit tests need no generated data, so they run in CI. Imports

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { PlaceCandidate } from "@uk-data-atlas/atlas-runtime/places";
 import { valueForPlace, type Dispatch } from "../src/placeValue";

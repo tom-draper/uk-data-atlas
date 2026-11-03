@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { routeWithData } from "./routeFixtures";
 
 test("declares a coverage share as intensive, so it is never summed", () => {

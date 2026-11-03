@@ -3,13 +3,15 @@ import { createHash } from "node:crypto";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { createAtlasRelease } from "../src/atlasRelease";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const fixture = (context: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-current-build-"));
-	context.after(() => rmSync(root, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(root, { recursive: true, force: true }),
+	);
 	const directory = artifactDirectory(root);
 	mkdirSync(directory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });

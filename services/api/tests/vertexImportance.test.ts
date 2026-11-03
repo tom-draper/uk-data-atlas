@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { unprojectEqualArea } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import { vertexImportance } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 

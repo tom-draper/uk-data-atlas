@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { acceptsGzip, httpResponse } from "../src/httpResponse";
 import { envelope } from "@uk-data-atlas/atlas-runtime/api";
 

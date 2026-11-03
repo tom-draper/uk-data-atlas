@@ -7,14 +7,14 @@ import { Agent, createServer, request } from "node:http";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test, { before, after, type TestContext } from "node:test";
+import { test, beforeAll, afterAll, type TestContext } from "vitest";
 import { setTimeout as delay } from "node:timers/promises";
 import { build } from "esbuild";
 
 const directory = mkdtempSync(join(tmpdir(), "atlas-cluster-metrics-"));
 const executable = join(directory, "serve.mjs");
 
-before(async () => {
+beforeAll(async () => {
 	const data = join(directory, "data/build");
 	mkdirSync(data, { recursive: true });
 	const canonicalPath = join(data, "atlas.sqlite");
@@ -58,7 +58,7 @@ before(async () => {
 	});
 });
 
-after(() => rmSync(directory, { recursive: true, force: true }));
+afterAll(() => rmSync(directory, { recursive: true, force: true }));
 
 const waitFor = async (condition: () => boolean, diagnostic: () => string) => {
 	const deadline = Date.now() + 15_000;
@@ -95,7 +95,7 @@ const launch = async (t: TestContext, overrides: NodeJS.ProcessEnv = {}) => {
 	let output = "";
 	child.stdout.on("data", (chunk) => (output += String(chunk)));
 	child.stderr.on("data", (chunk) => (output += String(chunk)));
-	t.after(async () => {
+	t.onTestFinished(async () => {
 		if (child.exitCode === null && child.signalCode === null) {
 			const exited = once(child, "exit");
 			if (child.pid) process.kill(-child.pid, "SIGKILL");
@@ -282,7 +282,7 @@ test(
 		const { get, pid: primaryPid } = await launch(t);
 		assert.ok(primaryPid);
 		const agent = new Agent({ keepAlive: true, maxSockets: 1 });
-		t.after(() => agent.destroy());
+		t.onTestFinished(() => agent.destroy());
 		const connection = await get("/healthz", { agent });
 		const survivor = Number(connection.headers["x-fixture-worker"]);
 		let victim: Awaited<ReturnType<typeof get>> | undefined;
@@ -297,7 +297,7 @@ test(
 		const pid = Number(victim.headers["x-fixture-pid"]);
 		const lost = Number(victim.headers["x-fixture-worker"]);
 		process.kill(pid, "SIGSTOP");
-		t.after(() => {
+		t.onTestFinished(() => {
 			try {
 				process.kill(pid, "SIGCONT");
 			} catch {}

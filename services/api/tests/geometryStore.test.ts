@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import {
 	AreaGeometryCache,
 	compiledGeometryFile,
@@ -34,7 +34,7 @@ const square = (west: number, south: number, size: number) => [
 
 test("compiles repeated codes and ignores non-object features, keeping seven decimal places", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-geometry-source-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/source"), { recursive: true });
 	writeFileSync(
 		join(root, "data/source", "source.geojson"),
@@ -57,7 +57,7 @@ test("compiles repeated codes and ignores non-object features, keeping seven dec
 		),
 	);
 	const stored = readGeometryStore(path, source)!;
-	t.after(() => stored.close());
+	t.onTestFinished(() => stored.close());
 	assert.deepEqual(stored.codes, ["A"]);
 	assert.deepEqual(unpackGeometry(stored.get("A")!), {
 		type: "GeometryCollection",
@@ -75,7 +75,7 @@ test("compiles repeated codes and ignores non-object features, keeping seven dec
 
 test("reads back every kind of packed area exactly as it was written", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-geometry-store-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const areas: Array<[string, GeoJsonGeometry]> = [
 		["A", { type: "Polygon", coordinates: square(-1.5, 53.25, 0.125) }],
 		[
@@ -147,7 +147,7 @@ test("reads back every kind of packed area exactly as it was written", (t) => {
 		),
 	);
 	const stored = readGeometryStore(path, source)!;
-	t.after(() => stored.close());
+	t.onTestFinished(() => stored.close());
 	assert.deepEqual(stored.codes, ["A", "B", "C", "D", "E", "F", "G", "H"]);
 	for (const [code, geometry] of areas)
 		assert.deepEqual(unpackGeometry(stored.get(code)!), geometry, code);
@@ -171,7 +171,7 @@ test("reads back every kind of packed area exactly as it was written", (t) => {
 /** A British National Grid release, so reading it means reprojecting it. */
 const gridRelease = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-geometry-store-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const directory = join(root, "data/source", "boundaries", "ward");
 	mkdirSync(directory, { recursive: true });
 	const metres = (east: number, north: number) => square(east, north, 1000);

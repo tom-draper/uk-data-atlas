@@ -4,12 +4,14 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { test } from "node:test";
+import { test } from "vitest";
 import { validateCacheRelease } from "../src/cacheRelease";
 
 test("validates the cache against the canonical database", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-release-"));
-	context.after(() => rmSync(root, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(root, { recursive: true, force: true }),
+	);
 	const directory = join(root, "data/build");
 	mkdirSync(directory, { recursive: true });
 	const canonical = new DatabaseSync(join(directory, "atlas.sqlite"));

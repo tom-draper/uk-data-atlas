@@ -11,7 +11,7 @@ import { DatabaseSync } from "node:sqlite";
 import { buildAnalysisGeographyValidation } from "../src/buildAnalysisGeographyValidation";
 import { storeObservations } from "../src/store-observations";
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
@@ -319,7 +319,7 @@ test("gates a reviewed measure read from a shared census table", () => {
 
 test("analysis validation builds from SQLite after observation JSON removal", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "analysis-observations-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const publicRoot = artifactDirectory(root);
 	mkdirSync(join(publicRoot, "crosswalks"), { recursive: true });
 	mkdirSync(join(root, "data/build/geography"), { recursive: true });

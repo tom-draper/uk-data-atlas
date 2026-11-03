@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import test from "node:test";
+import { test } from "vitest";
 import { parse } from "yaml";
 import { route } from "../src/routes";
 import { indexResponse } from "../src/indexRoutes";

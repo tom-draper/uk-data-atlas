@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 import { buildUrl, createClient, DEFAULT_BASE_URL } from "../src/client.ts";
 import { MAX_CHARS, success } from "../src/result.ts";
 import { BASE, envelope, mockApi } from "./helpers.ts";

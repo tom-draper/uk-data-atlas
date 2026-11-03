@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import test from "node:test";
+import { test } from "vitest";
 import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 
 const containment = {

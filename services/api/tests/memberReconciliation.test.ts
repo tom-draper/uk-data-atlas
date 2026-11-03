@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import { reconcileMembers } from "@uk-data-atlas/relationships";
 

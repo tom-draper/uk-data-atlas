@@ -1,6 +1,6 @@
 import { compilePostcodeIndex } from "../src/postcodeIndex";
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	NORTHERN_IRELAND_EXCLUSION,
 	parsePostcode,

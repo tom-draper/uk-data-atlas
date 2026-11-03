@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { gzipSync } from "node:zlib";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { readPostedRows } from "../src/requestRows";
@@ -232,7 +232,7 @@ test("answers a join only as a POST, and only for a release it holds", () => {
 
 test("returns the joined areas as GeoJSON from the stored tier", (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-join-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const path = join(directory, "ward-low.geojson.gz");
 	const feature = (id: number, code: string) => ({
 		type: "Feature",

@@ -2,7 +2,7 @@ import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
 import { dirname, resolve } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { runSmoke } from "../../scripts/smoke";
 import { createApiServer, readApiCatalogues } from "../../src/server";
@@ -23,7 +23,7 @@ test("passes the deployment smoke suite against a local server", async (t) => {
 		},
 	);
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
-	t.after(() => {
+	t.onTestFinished(() => {
 		server.close();
 	});
 	const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -52,5 +52,4 @@ test("fails a deployment that is not serving the contract", async (t) => {
 	});
 	assert.ok(results.every((result) => result.outcome === "fail"));
 	assert.match(results[0]!.detail, /answered 502/);
-	t.diagnostic(`${results.length} checks failed as expected`);
 });

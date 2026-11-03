@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { withAliases } from "./pipelineFixtures";
 import { measureSlug } from "@uk-data-atlas/catalogue";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";

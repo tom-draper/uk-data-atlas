@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
@@ -11,7 +11,7 @@ type Fixture = { schemaVersion: 1; entries: string[] };
 
 const apiRootWith = (t: TestContext, manifest: unknown) => {
 	const root = mkdtempSync(join(tmpdir(), "public-manifest-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
 	mkdirSync(artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")), {
 		recursive: true,

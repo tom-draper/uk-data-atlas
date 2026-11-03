@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import {
 	parseGeoJsonFeatures,
 	readGeoJsonFeatures,
@@ -10,7 +10,7 @@ import {
 
 const read = (t: TestContext, text: string) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-geojson-features-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const path = join(directory, "source.geojson");
 	writeFileSync(path, text);
 	const result = readGeoJsonFeatures(path);

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { gzipSync, gunzipSync } from "node:zlib";
 import Fastify from "fastify";
 import { envelope } from "@uk-data-atlas/atlas-runtime/api";
@@ -11,7 +11,7 @@ import { httpResponse } from "../src/httpResponse";
 
 test("Fastify streams stored files, ranges and stored gzip representations", async (t) => {
 	const dir = mkdtempSync(join(tmpdir(), "atlas-fastify-response-"));
-	t.after(() => rmSync(dir, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(dir, { recursive: true, force: true }));
 	const bytes = Buffer.from("0123456789");
 	const compressed = gzipSync(bytes);
 	const path = join(dir, "plain");
@@ -45,7 +45,7 @@ test("Fastify streams stored files, ranges and stored gzip representations", asy
 			),
 		);
 	}
-	t.after(() => app.close());
+	t.onTestFinished(() => app.close());
 	const full = await app.inject("/plain");
 	assert.equal(full.statusCode, 200);
 	assert.deepEqual(full.rawPayload, bytes);

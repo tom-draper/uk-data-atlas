@@ -1,6 +1,6 @@
 import { validateContractResponse } from "../src/contract/validateResponse";
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import Fastify from "fastify";
 import { z } from "zod";
 import { envelope } from "@uk-data-atlas/atlas-runtime/api";

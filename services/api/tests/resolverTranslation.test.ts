@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";

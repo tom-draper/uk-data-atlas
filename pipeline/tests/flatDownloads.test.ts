@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { compileFlatDownloads } from "../src/flatDownloads";
@@ -21,7 +21,7 @@ const square = (west: number, south: number) => [
 
 test("publishes a release that cannot be tiled whole, at full detail, built on request", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-flat-downloads-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const directory = join(root, "data/source", "boundaries", "ward");
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(
@@ -159,7 +159,7 @@ test("publishes a release that cannot be tiled whole, at full detail, built on r
 
 test("builds a full-detail download off the main thread, once for callers asking together", async (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-full-detail-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/source"), { recursive: true });
 	writeFileSync(
 		join(root, "data/source", "wards.geojson"),
@@ -225,7 +225,7 @@ test("builds a full-detail download off the main thread, once for callers asking
 test("simplified downloads match published hashes, coalesce, cache and reject stale bytes", async (t) => {
 	const { compileMapResource } = await import("../src/compileMapResource");
 	const root = mkdtempSync(join(tmpdir(), "atlas-simplified-"));
-	t.after(() => rmSync(root, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/source"), { recursive: true });
 	writeFileSync(
 		join(root, "data/source/areas.geojson"),

@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { connect, type AddressInfo } from "node:net";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { compileExportManifest } from "./pipelineFixtures";
 import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readParquet } from "./parquetFixtures";
@@ -65,7 +65,7 @@ const serve = async (
 		...options,
 	});
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
-	t.after(() => {
+	t.onTestFinished(() => {
 		server.close();
 	});
 	const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -79,7 +79,7 @@ const serve = async (
 
 test("streams whole-measure downloads with hash-pinned caching", async (t) => {
 	const directory = mkdtempSync(join(tmpdir(), "measure-http-"));
-	t.after(() => rmSync(directory, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
 	const csv = Buffer.from("area_code,value\r\nE01,7\r\n");
 	const parquet = Buffer.from("PAR1fixturePAR1");
 	const gzip = gzipSync(csv);
@@ -530,7 +530,9 @@ test(
 	{ timeout: 10_000 },
 	async (t) => {
 		const directory = mkdtempSync(join(tmpdir(), "atlas-send-file-"));
-		t.after(() => rmSync(directory, { recursive: true, force: true }));
+		t.onTestFinished(() =>
+			rmSync(directory, { recursive: true, force: true }),
+		);
 		const path = join(directory, "large.bin");
 		// Far more than a socket buffers, so the stream is still reading when the
 		// client leaves.
@@ -544,7 +546,9 @@ test(
 		await new Promise<void>((ready) =>
 			server.listen(0, "127.0.0.1", ready),
 		);
-		t.after(() => server.close());
+		t.onTestFinished(() => {
+			server.close();
+		});
 		const { port } = server.address() as AddressInfo;
 
 		await new Promise<void>((received) => {
@@ -750,7 +754,9 @@ test("bounds active body reads without queuing and keeps probes available", asyn
 		headers: { "content-type": "application/json" },
 	});
 	held.on("error", () => {});
-	t.after(() => held.destroy());
+	t.onTestFinished(() => {
+		held.destroy();
+	});
 	held.flushHeaders();
 	await accepted;
 	const refused = await get("/v1/boundaries", {
@@ -803,7 +809,9 @@ test("releases admission after a client abandons an unfinished body", async (t) 
 		method: "POST",
 	});
 	held.on("error", () => {});
-	t.after(() => held.destroy());
+	t.onTestFinished(() => {
+		held.destroy();
+	});
 	held.flushHeaders();
 	await accepted;
 	assert.equal((await get("/v1/boundaries")).status, 503);
@@ -841,7 +849,9 @@ test(
 			headers: { "accept-encoding": "identity" },
 		});
 		download.on("error", () => {});
-		t.after(() => download.destroy());
+		t.onTestFinished(() => {
+			download.destroy();
+		});
 		await new Promise<void>((resolve) =>
 			download
 				.once("response", (response) => {
@@ -878,7 +888,9 @@ const holdSlot = async (
 		headers: { "content-type": "application/json" },
 	});
 	held.on("error", () => {});
-	t.after(() => held.destroy());
+	t.onTestFinished(() => {
+		held.destroy();
+	});
 	held.flushHeaders();
 	await accepted;
 	return () =>
@@ -970,7 +982,9 @@ test(
 		const directory = mkdtempSync(
 			join(tmpdir(), "atlas-observation-downloads-"),
 		);
-		t.after(() => rmSync(directory, { recursive: true, force: true }));
+		t.onTestFinished(() =>
+			rmSync(directory, { recursive: true, force: true }),
+		);
 		const measure = dataCatalog.measures.find(
 			(item) => item.id === "small-area-fixture",
 		)!;
@@ -1092,7 +1106,9 @@ test(
 			headers: { "x-request-id": "interrupted-export" },
 		});
 		download.on("error", () => {});
-		t.after(() => download.destroy());
+		t.onTestFinished(() => {
+			download.destroy();
+		});
 		await new Promise<void>((resolve) => {
 			download.once("response", (response) => {
 				response.pause();

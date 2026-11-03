@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test from "node:test";
+import { test } from "vitest";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { route as routeRequest } from "../src/routes";
 import {

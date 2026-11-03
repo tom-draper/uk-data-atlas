@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { routeWithData } from "./routeFixtures";
 
 const dataOf = (response: ReturnType<typeof routeWithData>) => {

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import type { UsageEvent } from "../src/usageLabels";
 import { UsageRecorder } from "../src/usageRecorder";
 import { usageReport } from "../src/usageReport";
@@ -10,7 +10,7 @@ import { UsageStore, type UsageRow } from "../src/usageStore";
 
 const directory = (t: TestContext) => {
 	const path = mkdtempSync(join(tmpdir(), "usage-"));
-	t.after(() => rmSync(path, { recursive: true, force: true }));
+	t.onTestFinished(() => rmSync(path, { recursive: true, force: true }));
 	return path;
 };
 
@@ -38,7 +38,7 @@ test("writes nothing to disk until a flush", (t) => {
 	});
 	for (let index = 0; index < 500; index++) recorder.record(event());
 	const reader = UsageStore.openReadOnly(path);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.deepEqual(requests(reader), []);
 	recorder.flush();
 	assert.deepEqual(requests(reader), [
@@ -60,7 +60,7 @@ test("sums what several workers write to the same file", (t) => {
 	// Flush in an order unrelated to the order the requests arrived.
 	[2, 0, 1].forEach((index) => workers[index]!.flush());
 	const reader = UsageStore.openReadOnly(path);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.deepEqual(requests(reader), [
 		{ measure: "population", requests: 6, failed: 0 },
 		{ measure: "unknown", requests: 3, failed: 3 },
@@ -84,7 +84,7 @@ test("keeps counts across a restart and adds to them", (t) => {
 	second.close();
 
 	const reader = UsageStore.openReadOnly(path);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.deepEqual(requests(reader), [
 		{ measure: "population", requests: 3, failed: 0 },
 	]);
@@ -103,7 +103,7 @@ test("keeps each UTC day apart and reads a window of days", (t) => {
 	recorder.close();
 
 	const reader = UsageStore.openReadOnly(path);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.equal(requests(reader, "2026-10-01")[0]!.requests, 3);
 	assert.equal(requests(reader, "2026-10-02")[0]!.requests, 2);
 	assert.deepEqual(requests(reader, "2026-10-03"), []);
@@ -132,7 +132,7 @@ test("keeps counts whose write failed for the next flush", (t) => {
 	recorder.close();
 	assert.equal(errors.length, 1);
 	const reader = UsageStore.openReadOnly(path);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.equal(requests(reader)[0]!.requests, 2);
 });
 
@@ -148,7 +148,7 @@ test("bounds the buffer and counts what it had to drop", (t) => {
 	assert.equal(recorder.dropped, 2);
 	recorder.close();
 	const reader = UsageStore.openReadOnly(path);
-	t.after(() => reader.close());
+	t.onTestFinished(() => reader.close());
 	assert.deepEqual(
 		requests(reader).map(({ measure, requests }) => [measure, requests]),
 		[
@@ -161,7 +161,7 @@ test("bounds the buffer and counts what it had to drop", (t) => {
 test("stores a label that is not an id or template as other", (t) => {
 	const path = directory(t);
 	const store = UsageStore.open(path);
-	t.after(() => store.close());
+	t.onTestFinished(() => store.close());
 	store.add([
 		{
 			...event({ measure: "SW1A 1AA", geography: "10 Downing Street" }),
@@ -177,7 +177,7 @@ test("stores a label that is not an id or template as other", (t) => {
 test("forgets days before the retention window", (t) => {
 	const path = directory(t);
 	const store = UsageStore.open(path);
-	t.after(() => store.close());
+	t.onTestFinished(() => store.close());
 	const row = { ...event(), requests: 1 };
 	store.add([
 		{ ...row, day: "2026-09-01" },
@@ -190,7 +190,7 @@ test("forgets days before the retention window", (t) => {
 test("reports the top routes, measures, areas and not-found requests", (t) => {
 	const path = directory(t);
 	const store = UsageStore.open(path);
-	t.after(() => store.close());
+	t.onTestFinished(() => store.close());
 	const rows = (
 		overrides: Partial<UsageEvent>,
 		requests: number,
@@ -265,7 +265,7 @@ test("reports the top routes, measures, areas and not-found requests", (t) => {
 
 test("says so when nothing has been recorded", (t) => {
 	const store = UsageStore.open(directory(t));
-	t.after(() => store.close());
+	t.onTestFinished(() => store.close());
 	const text = usageReport(store, { days: 7, limit: 5, now: DAY_ONE });
 	assert.match(text, /0 requests, 0 failed/);
 	assert.equal(text.match(/\n {2}none/g)?.length, 4);

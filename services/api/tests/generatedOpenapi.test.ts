@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import test from "node:test";
+import { test } from "vitest";
 import { parse } from "yaml";
 import { schemaViolations } from "./openapiSchema";
 import { generatedPaths } from "../src/contract/generatedRoutes";

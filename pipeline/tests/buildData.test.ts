@@ -9,7 +9,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { delimiter, join, resolve } from "node:path";
-import test, { type TestContext } from "node:test";
+import { test, type TestContext } from "vitest";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
@@ -17,7 +17,9 @@ const runner = join(root, "scripts/build-data.mjs");
 
 function fixture(context: TestContext) {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-build-data-"));
-	context.after(() => rmSync(directory, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(directory, { recursive: true, force: true }),
+	);
 	const trace = join(directory, "trace.jsonl");
 	const executable = join(directory, "pnpm");
 	writeFileSync(

@@ -103,7 +103,7 @@ to a publication or download archive.
 ## Checks
 
 - `pnpm install` completed in this worktree, without linking `node_modules`.
-- API unit suite uses `npx tsx --test --test-concurrency=2 tests/*.test.ts`.
+- The API unit suite ran with `npx tsx --test --test-concurrency=2 tests/*.test.ts` at the time. The current command is `pnpm --dir services/api test:unbuilt` from the repository root.
   The final run has 952 passes, eight failures and one skip, 961 tests total.
   The eight `buildData.test.ts` failures also occur on main.
 - Focused SQLite/comparator/publication tests passed. The built artifact-freshness

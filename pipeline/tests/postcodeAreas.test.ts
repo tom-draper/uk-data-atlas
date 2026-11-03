@@ -4,7 +4,7 @@ import {
 	placePoints,
 } from "../src/postcodeAreaCompiler";
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	boundaryDistanceFinder,
 	distanceToBoundaryM,

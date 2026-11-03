@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import {

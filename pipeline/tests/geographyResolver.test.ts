@@ -1,6 +1,6 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,

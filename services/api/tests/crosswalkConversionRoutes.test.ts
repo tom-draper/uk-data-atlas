@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { once } from "node:events";
-import test from "node:test";
+import { test } from "vitest";
 import { parse } from "yaml";
 import { createApiServer } from "../src/apiServer";
 import type {
@@ -448,7 +448,9 @@ test("refuses best-fit assignments instead of calling approximate membership exa
 
 test("serves different POST bodies over HTTP without caching their answers", async (t) => {
 	const server = createApiServer(contextFor(), { log: () => {} });
-	t.after(() => server.close());
+	t.onTestFinished(() => {
+		server.close();
+	});
 	server.listen(0, "127.0.0.1");
 	await once(server, "listening");
 	const address = server.address();

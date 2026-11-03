@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import Fastify from "fastify";
 import { measureExportRoutes } from "../src/data/measureExportRoutes";
 import { catalogueFastifyRoutes } from "../src/catalogue/catalogueFastifyRoutes";

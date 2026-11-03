@@ -13,7 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
-import test from "node:test";
+import { test } from "vitest";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileExportManifest } from "../src/exportManifest";
 import { sha256 } from "@uk-data-atlas/artifacts";

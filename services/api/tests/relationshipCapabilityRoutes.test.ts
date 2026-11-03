@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { compileRelationshipPaths } from "./pipelineFixtures";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";

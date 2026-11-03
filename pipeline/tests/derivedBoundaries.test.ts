@@ -9,7 +9,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import test from "node:test";
+import { test } from "vitest";
 import { buildDerivedBoundaries } from "../src/build-derived-boundaries";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
