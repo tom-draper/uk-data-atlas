@@ -738,8 +738,32 @@ const schools = {
 	],
 };
 
+/** Keys of a school year's results: the year it ends. */
+const schoolYears = Array.from({ length: 12 }, (_, index) =>
+	String(2015 + index),
+);
+
 export const SCHOOL_PERFORMANCE: DeclaredDataset = {
 	type: "schoolPerformance",
+	payload: {
+		parts: yearParts(
+			"schoolPerformance",
+			"localAuthority",
+			2024,
+			{
+				coverageCountries: ["GB-ENG"],
+			},
+			["2025"],
+		),
+		code: "ladCode",
+		periodKeys: schoolYears,
+		nullPaths: [
+			"avgP8score",
+			"series.2020.avgP8score",
+			"series.2021.avgP8score",
+			"series.2025.avgP8score",
+		],
+	},
 	name: "ladName",
 	...schools,
 	measures: SCHOOL_MEASURES,
@@ -750,6 +774,20 @@ export const SCHOOL_PERFORMANCE: DeclaredDataset = {
 
 export const SCHOOL_PERFORMANCE_CONSTITUENCY: DeclaredDataset = {
 	type: "schoolPerformanceConstituency",
+	payload: {
+		parts: yearParts(
+			"schoolPerformanceConstituency",
+			"constituency",
+			2024,
+			{
+				coverageCountries: ["GB-ENG"],
+			},
+			["2025"],
+		),
+		code: "pconCode",
+		periodKeys: schoolYears,
+		nullPaths: ["avgP8score", "series.2025.avgP8score"],
+	},
 	name: "pconName",
 	period: schoolYear,
 	measures: SCHOOL_MEASURES,
@@ -806,6 +844,19 @@ const GAP_MINIMUM_PUPILS = 6;
 
 export const SCHOOL_PERFORMANCE_DISADVANTAGE: DeclaredDataset = {
 	type: "schoolPerformanceGap",
+	payload: {
+		parts: yearParts(
+			"schoolPerformanceGap",
+			"localAuthority",
+			2024,
+			{
+				coverageCountries: ["GB-ENG"],
+			},
+			["2025"],
+		),
+		code: "ladCode",
+		periodKeys: schoolYears,
+	},
 	name: "ladName",
 	...schools,
 	measures: [
