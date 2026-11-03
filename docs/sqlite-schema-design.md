@@ -871,9 +871,8 @@ members, rather than one id per breakdown.
   and series, but they are not series of their own. The census tables'
   dimensions (`age-band`, `economic-activity`, `household-composition`,
   `residence-type`) and finer `tenure` members are declared with the census
-  tables in the pipeline, and stay in the mapping only until the vocabulary
-  is regenerated from a build that stores them; the mapping check then
-  refuses them there.
+  tables in the pipeline and reach the vocabulary from a build, so the
+  mapping does not declare them.
 - **Read path.** An API observation artifact is read from `observation` rows
   only when they rebuild it byte for byte, so values, statuses, intervals,
   periods and areas are unchanged. `services/api/config/statistics-read-path.json`
@@ -891,13 +890,13 @@ members, rather than one id per breakdown.
   contest's stored winner is a category (`contest`); a ratio can take its
   denominator from another dataset in one period, as population density
   takes land area; and a census table is rebuilt from one series per
-  column (a `measure-table` selector). On the 2026-10-31 build 270 of 322
-  artifacts moved. The other 52 move once a build stores what they need:
-  recorded crime by community safety partnership (a second record set of
-  the crime dataset), air-quality area means with the `derived` status the
-  compiler gives them, each contest's winner, and the census small-area
-  tables, read from the Nomis files under `data/source`. Until then the
-  `observation_*` tables and their writer stay.
+  column (a `measure-table` selector). On the 2026-11-02 build all 322
+  artifacts moved, including recorded crime by community safety partnership
+  (a second record set of the crime dataset), air-quality area means with
+  the `derived` status the compiler gives them, each contest's winner, and
+  the census small-area tables, read from the Nomis files under
+  `data/source`. The `observation_*` tables and their writer stay until
+  that is verified, then retire.
 - **Periods.** A catalogue period reads the statistics period with the same
   label, or the one label that extends it: `2021` is `2021-census`, an
   election year is its polling day.
