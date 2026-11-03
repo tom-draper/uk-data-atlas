@@ -15,6 +15,20 @@ export function statisticsTables(
 	inputs: readonly StatisticsInput[],
 ): Record<string, SqliteTable> {
 	const { releasePosition, area, areaIndex } = createStatisticsAreaLookup();
+	const periodId = (
+		database: DatabaseSync,
+		dataset: string,
+		label: string,
+	) => {
+		const row = database
+			.prepare("SELECT id FROM period WHERE label = ?")
+			.get(label);
+		if (!row)
+			throw new Error(
+				`Dataset ${dataset} relates areas for period ${label}, which it has no observation in`,
+			);
+		return Number(row.id);
+	};
 
 	let prepared: ReturnType<typeof registerStatistics> | undefined;
 	/** Datasets and their registries, built once the area tables exist. */
@@ -331,12 +345,14 @@ export function statisticsTables(
 			columns: [
 				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
 				`relation TEXT NOT NULL CHECK (relation IN (${AREA_RELATIONSHIPS.map((name) => `'${name}'`).join(",")}))`,
+				"period_id INTEGER NOT NULL REFERENCES period(id)",
 				"child_version_id INTEGER NOT NULL REFERENCES area_version(id)",
 				"parent_version_id INTEGER NOT NULL REFERENCES area_version(id)",
 			],
 			key: [
 				"dataset_id",
 				"relation",
+				"period_id",
 				"child_version_id",
 				"parent_version_id",
 			],
@@ -344,12 +360,14 @@ export function statisticsTables(
 				for (const [index, dataset] of datasets.entries())
 					for (const {
 						relation,
+						period,
 						child,
 						parent,
 					} of dataset.relationships?.() ?? [])
 						yield [
 							index + 1,
 							relation,
+							periodId(database, dataset.slug, period),
 							area(
 								database,
 								dataset.slug,

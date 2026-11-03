@@ -149,6 +149,8 @@ export type StatisticsDataset = {
 	/** Areas a publisher relates to other areas, such as the one containing them. */
 	relationships?: () => Iterable<{
 		relation: AreaRelationship;
+		/** The label of the period the publisher states it for. */
+		period: string;
 		child: { release: AreaRelease; code: string };
 		parent: { release: AreaRelease; code: string };
 	}>;

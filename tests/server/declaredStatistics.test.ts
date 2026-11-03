@@ -482,6 +482,77 @@ describe("declared statistics", () => {
 		}
 	});
 
+	it("generates election text, winners and derived turnout from rows", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			period: () => periods.date("2024-07-04"),
+			measures: [CRIMES],
+			dimensions: [{ slug: "party", label: "Party" }],
+			fields: [{ path: "votes.{party}", measure: "crimes" }],
+			election: {
+				kind: "general",
+				date: () => "2024-07-04",
+				results: "results",
+				contest: { result: "result" },
+				elected: { given_name: "first" },
+			},
+			derived: { total: "The sum of the votes." },
+			rebuild: {
+				derived: {
+					total: (record) =>
+						Object.values(
+							record.votes as Record<string, number>,
+						).reduce((sum, votes) => sum + votes, 0),
+				},
+			},
+			payload: {
+				parts: () => [
+					{
+						key: "2024",
+						header: {
+							id: "example2024",
+							type: "example",
+							year: 2024,
+							boundaryType: "localAuthority",
+							boundaryYear: 2024,
+						},
+					},
+				],
+				omitMissing: ["votes."],
+			},
+		};
+		const expected = JSON.parse(
+			file(
+				{
+					E06000001: {
+						name: "Hartlepool",
+						result: "Lab gain",
+						first: "Jo",
+						votes: { LAB: 3, CON: 2 },
+						total: 5,
+					},
+					E06000002: {
+						name: "Middlesbrough",
+						result: null,
+						first: null,
+						votes: { LAB: 4 },
+						total: 4,
+					},
+				},
+				{ results: { E06000001: "LAB", E06000002: "LAB" } },
+			),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			expect(
+				JSON.parse(rebuildFromDeclaration(database, config, "example")),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("generates parent areas and header summaries from rows", () => {
 		const config: DeclaredDataset = {
 			type: "example",
