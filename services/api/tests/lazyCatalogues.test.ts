@@ -239,15 +239,15 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 		const path = join(compiled, "atlas.sqlite");
 		writeSqliteIndex(path, {}, namedLocationTables(directory));
 		rmSync(join(directory, "named-locations.json"));
-		const loaded = readNamedLocationInventory(root);
+		const loaded = readNamedLocationInventory(join(root, "../.."));
 		assert.equal(JSON.stringify(loaded), JSON.stringify(inventory));
 		assert.equal(loaded.locations[0]?.label, "Test");
 		assert.deepEqual(
 			loaded.locations[0]?.geometry,
 			inventory.locations[0]?.geometry,
 		);
-		const cold = readNamedLocationInventory(root);
-		const stale = readNamedLocationInventory(root);
+		const cold = readNamedLocationInventory(join(root, "../.."));
+		const stale = readNamedLocationInventory(join(root, "../.."));
 		const database = new DatabaseSync(path);
 		assert.deepEqual(
 			database.prepare("PRAGMA foreign_key_check").all(),

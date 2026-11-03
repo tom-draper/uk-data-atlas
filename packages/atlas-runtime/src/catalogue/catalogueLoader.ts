@@ -190,7 +190,7 @@ export const readAtlasCatalogues = (
 		readAreaLookup(repositoryRootOf(apiRoot), areaInventory),
 	);
 	const namedLocationInventory = stage("named-location-inventory", () =>
-		readNamedLocationInventory(apiRoot),
+		readNamedLocationInventory(repositoryRootOf(apiRoot)),
 	);
 	const crosswalkInventory = stage("crosswalk-inventory", () =>
 		readCrosswalkInventory(repositoryRootOf(apiRoot)),
