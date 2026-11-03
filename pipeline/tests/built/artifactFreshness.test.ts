@@ -15,7 +15,10 @@ import { fileURLToPath } from "node:url";
 import { observationPartitionKey } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { openapiDocumentHash } from "@uk-data-atlas/atlas-runtime/api";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
-import { readMeasureTotals, readValidationWaivers } from "../pipelineFixtures";
+import {
+	readMeasureTotals,
+	readValidationWaivers,
+} from "../../src/validation/inputs";
 import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
@@ -25,7 +28,10 @@ import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
  * newly published crosswalk still reads as passing. The Atlas release hashes
  * whatever files are present, so it cannot see this; these tests can.
  */
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const apiRoot = resolve(
+	dirname(fileURLToPath(import.meta.url)),
+	"../../../services/api",
+);
 const publicRoot = artifactRoot(apiRoot);
 const read = (path: string) => {
 	if (path === "place-index.json" || path === "area-search-index.json") {
@@ -194,7 +200,7 @@ test("builds the validation report from the current catalogue and config", () =>
 	assert.deepEqual(
 		Object.keys(inputs).filter((key) => inputs[key] !== expected[key]),
 		[],
-		"rebuild the validation report: pnpm --dir ../.. data:build --only validation-report",
+		"rebuild the validation report: pnpm --dir .. data:build --only validation-report",
 	);
 });
 
@@ -232,7 +238,7 @@ test("builds measure compatibility from the current observations and areas", () 
 	assert.deepEqual(
 		stale,
 		[],
-		"rebuild measure compatibility: pnpm --dir ../.. data:build --only measure-compatibility",
+		"rebuild measure compatibility: pnpm --dir .. data:build --only measure-compatibility",
 	);
 });
 
@@ -242,6 +248,6 @@ test("compiles the operations from the current OpenAPI document", () => {
 		openapiDocumentHash(
 			readFileSync(join(apiRoot, "openapi.yaml"), "utf8"),
 		),
-		"rebuild the operations: pnpm --dir ../.. data:build --only operations",
+		"rebuild the operations: pnpm --dir .. data:build --only operations",
 	);
 });
