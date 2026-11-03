@@ -1,5 +1,4 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import {
 	mkdtempSync,

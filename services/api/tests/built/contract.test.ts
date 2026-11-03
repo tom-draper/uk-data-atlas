@@ -1,5 +1,4 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
