@@ -1,25 +1,26 @@
 ## Summary
 
-<!-- Briefly describe what this PR changes and why. -->
+<!-- What changes and why. -->
 
 ## Changes
 
-<!-- List the main changes made in this PR. -->
-
--
--
 -
 
 ## Testing
 
-<!-- Describe how this was tested. -->
+<!-- Tick what you ran. Say why anything relevant was skipped. -->
 
-- [ ] Tests pass
-- [ ] Lint/type checks pass
-- [ ] Manually tested where applicable
+- [ ] `pnpm check`
+- [ ] `pnpm --dir services/api generate:openapi --check`
+- [ ] Built tests (`pnpm check:full`, or the files run) against a data build from: <!-- date or commit -->
+- [ ] Manually checked in the website or API
 
 ## Notes
 
-<!-- Optional: breaking changes, migrations, deployment notes, follow-up work, or anything reviewers should know. -->
+<!-- Delete the lines that don't apply. -->
 
-None.
+- Data rebuild needed: <!-- e.g. `pnpm data:build --from datasets` -->
+- API change: <!-- added, changed or removed routes or fields; breaking? -->
+- Database schema change: <!-- tables or columns; affects the paid database and its changelog -->
+- New or changed data sources: <!-- licence recorded in the catalogue and DATA-LICENCES.md -->
+- Follow-up work:
