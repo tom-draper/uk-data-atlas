@@ -6,11 +6,7 @@ import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResource
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
-import {
-	artifactRoot,
-	buildDirectory,
-	repositoryRootOf,
-} from "../storage/dataLayout";
+import { artifactDirectory, buildDirectory } from "../storage/dataLayout";
 
 /** Every whole-release download the build wrote, tiled or not. */
 const allFeatures = (mapResources: MapResources) => [
@@ -89,11 +85,11 @@ const byTier = (features: MapResourceDescriptor["features"], format: string) =>
 
 /** The published map resources, when the optional map build is present. */
 export const readMapResources = (
-	apiRoot: string,
+	repositoryRoot: string,
 	assetBaseUrl?: string,
 	tileBaseUrl?: string,
 ): MapResources => {
-	const path = join(artifactRoot(apiRoot), "map-resources.json");
+	const path = join(artifactDirectory(repositoryRoot), "map-resources.json");
 	if (!existsSync(path)) return { resources: [] };
 	const resources: MapResources = JSON.parse(readFileSync(path, "utf8"));
 	if (!assetBaseUrl) return resources;
@@ -131,7 +127,7 @@ export const readMapResources = (
  * streamed from its file.
  */
 export const readMapAssets = (
-	apiRoot: string,
+	repositoryRoot: string,
 	mapResources: MapResources,
 ): {
 	mapArchives: Map<string, MapArchive>;
@@ -143,7 +139,7 @@ export const readMapAssets = (
 				resource.id,
 				openArchive(
 					join(
-						buildDirectory(repositoryRootOf(apiRoot)),
+						buildDirectory(repositoryRoot),
 						resource.tiles.artifact,
 					),
 				),
@@ -158,10 +154,7 @@ export const readMapAssets = (
 			.map((entry) => [
 				entry.artifact,
 				{
-					path: join(
-						buildDirectory(repositoryRootOf(apiRoot)),
-						entry.artifact,
-					),
+					path: join(buildDirectory(repositoryRoot), entry.artifact),
 					bytes: entry.bytes,
 					contentHash: entry.contentHash,
 					...(entry.gzipBytes === undefined

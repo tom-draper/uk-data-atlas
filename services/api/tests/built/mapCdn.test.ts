@@ -27,9 +27,9 @@ test("CDN mode needs only the map manifest, with no local archives", () => {
 			join(artifactRoot(apiRoot), "map-resources.json"),
 			join(artifactRoot(root), "map-resources.json"),
 		);
-		const resources = readMapResources(root, assetBase, tileBase);
+		const resources = readMapResources(repository, assetBase, tileBase);
 		assert.ok(resources.resources.length > 0);
-		assert.equal(readMapAssets(root, resources).mapArchives.size, 0);
+		assert.equal(readMapAssets(repository, resources).mapArchives.size, 0);
 		for (const resource of resources.resources)
 			assert.equal(
 				resource.tiles.href,
