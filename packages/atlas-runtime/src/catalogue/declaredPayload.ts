@@ -142,14 +142,20 @@ export function rebuildFromDeclaration(
 
 	// The areas a publisher relates each record to, by record key.
 	type Related = { code: string; name: string; geography: string };
-	const relatedNames = new Map<string, string>();
-	const related = new Map<string, Map<string, Related[]>>();
+	const relatedByPeriod = new Map<
+		string,
+		{
+			related: Map<string, Map<string, Related[]>>;
+			names: Map<string, string>;
+		}
+	>();
 	if (config.parents?.length)
 		for (const row of database
 			.prepare(
-				`SELECT r.relation, coalesce(k.key, ca.code) AS child, coalesce(cn.name, cv.name) AS child_name, pa.code AS code,
+				`SELECT r.relation, p.label AS period, coalesce(k.key, ca.code) AS child, coalesce(cn.name, cv.name) AS child_name, pa.code AS code,
 					coalesce(n.name, pv.name) AS name, pr.geography AS geography
 				FROM area_relationship r
+				JOIN period p ON p.id = r.period_id
 				JOIN area_version cv ON cv.id = r.child_version_id
 				JOIN area ca ON ca.id = cv.area_id
 				LEFT JOIN dataset_area_key k ON k.dataset_id = r.dataset_id AND k.area_version_id = cv.id
@@ -161,9 +167,16 @@ export function rebuildFromDeclaration(
 				WHERE r.dataset_id = ? ORDER BY pa.code`,
 			)
 			.all(dataset)) {
-			relatedNames.set(String(row.child), String(row.child_name));
-			const byRelation = related.get(String(row.child)) ?? new Map();
-			related.set(String(row.child), byRelation);
+			let period = relatedByPeriod.get(String(row.period));
+			if (!period)
+				relatedByPeriod.set(
+					String(row.period),
+					(period = { related: new Map(), names: new Map() }),
+				);
+			period.names.set(String(row.child), String(row.child_name));
+			const byRelation =
+				period.related.get(String(row.child)) ?? new Map();
+			period.related.set(String(row.child), byRelation);
 			const list = byRelation.get(String(row.relation)) ?? [];
 			byRelation.set(String(row.relation), list);
 			list.push({
@@ -265,8 +278,15 @@ export function rebuildFromDeclaration(
 			typeof config.fields === "function"
 				? config.fields(key, full)
 				: config.fields;
+		const related =
+			relatedByPeriod.get(top)?.related ??
+			new Map<string, Map<string, Related[]>>();
+		const relatedNames =
+			relatedByPeriod.get(top)?.names ?? new Map<string, string>();
 		const sets = config.records ?? [{ from: "data" }];
 		const sections: Record<string, Json> = {};
+		/** The party the publisher declares won each contest, by record key. */
+		const winners: Record<string, Json> = {};
 		for (const [setIndex, set] of sets.entries()) {
 			/** The geographies a record set's areas are on, when there are several sets. */
 			const setGeographies = (() => {
@@ -471,8 +491,52 @@ export function rebuildFromDeclaration(
 							observedIn.get(code)?.has(period))
 					)
 						place(target, path, null, arrays);
+			if (config.election && setIndex === 0) {
+				const wanted = config.election;
+				for (const row of database
+					.prepare(
+						`SELECT coalesce(k.key, a.code) AS code, c.*,
+						d.given_name AS candidacy_given_name, d.family_name AS candidacy_family_name, d.gender AS candidacy_gender
+					FROM election e
+					JOIN contest c ON c.election_id = e.id
+					JOIN area_version v ON v.id = c.area_version_id
+					JOIN area a ON a.id = v.area_id
+					LEFT JOIN dataset_area_key k ON k.dataset_id = e.dataset_id AND k.area_version_id = v.id
+					LEFT JOIN candidacy d ON d.contest_id = c.id AND d.elected = 1
+					WHERE e.dataset_id = ? AND e.date = ?`,
+					)
+					.all(dataset, wanted.date(key, full))) {
+					const target = records.get(String(row.code));
+					if (!target) continue;
+					for (const [column, path] of Object.entries(
+						wanted.contest ?? {},
+					))
+						place(
+							target,
+							path.split("."),
+							(row[column] as string | null) ?? null,
+							arrays,
+						);
+					for (const [column, path] of Object.entries(
+						wanted.elected ?? {},
+					))
+						place(
+							target,
+							path.split("."),
+							(row[`candidacy_${column}`] as string | null) ??
+								null,
+							arrays,
+						);
+					if (row.winner !== null)
+						winners[String(row.code)] = String(row.winner);
+				}
+			}
 			if (spec.relatedRecords)
 				for (const [code, name] of relatedNames) record(code, name);
+			for (const path of spec.emptyObjects ?? [])
+				for (const target of records.values())
+					if (!has(target, path.split(".")))
+						place(target, path.split("."), {}, arrays);
 			for (const path of spec.emptyArrays ?? [])
 				for (const target of records.values())
 					if (!has(target, path.split(".")))
@@ -540,6 +604,8 @@ export function rebuildFromDeclaration(
 				const segments = parse(rule);
 				for (const [code, target] of records)
 					for (const path of expand(target, segments)) {
+						// A number the record's fields already hold is not derived.
+						if (has(target, path)) continue;
 						const value = compute(target, path, {
 							code,
 							header: full,
@@ -565,6 +631,7 @@ export function rebuildFromDeclaration(
 				.prepare(
 					`SELECT ca.code AS child, coalesce(k.key, pa.code) AS parent
 					FROM area_relationship r
+					JOIN period p ON p.id = r.period_id
 					JOIN area_version cv ON cv.id = r.child_version_id
 					JOIN area ca ON ca.id = cv.area_id
 					JOIN area_releases cr ON cr.position = cv.release_id
@@ -572,12 +639,13 @@ export function rebuildFromDeclaration(
 					JOIN area pa ON pa.id = pv.area_id
 					JOIN area_releases pr ON pr.position = pv.release_id
 					LEFT JOIN dataset_area_key k ON k.dataset_id = r.dataset_id AND k.area_version_id = pv.id
-					WHERE r.dataset_id = ? AND r.relation = ? AND cr.geography = ? AND pr.geography = ?
+					WHERE r.dataset_id = ? AND r.relation = ? AND p.label = ? AND cr.geography = ? AND pr.geography = ?
 					ORDER BY ca.code`,
 				)
 				.all(
 					dataset,
 					link.relation ?? "parent",
+					top,
 					link.child.geography,
 					link.parent.geography,
 				))
@@ -587,6 +655,9 @@ export function rebuildFromDeclaration(
 		result[key] = {
 			...header,
 			...linked,
+			...(config.election?.results
+				? { [config.election.results]: winners }
+				: {}),
 			...(spec.summary ? spec.summary(data, full) : {}),
 			...sections,
 		} as Json;

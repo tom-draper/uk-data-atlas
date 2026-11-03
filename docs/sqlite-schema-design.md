@@ -22,8 +22,9 @@ accounted for and validates the stored row counts.
 `area_relationship` records how a publisher relates one area to another, for
 a dataset: `parent` is the area that contains it, `predecessor` an area it was
 formed from, and `published-as` the area under whose code the publisher listed
-it. Each row names its dataset, so the source and licence are known, and its
-two area versions, so the releases are known. It is separate from the
+it. Each row names its dataset, so the source and licence are known, the
+period the publisher states it for, and its two area versions, so the releases
+are known. It is separate from the
 crosswalks, which are computed from boundaries and weights.
 
 `election`, `contest` and `candidacy` hold what election results carry beyond

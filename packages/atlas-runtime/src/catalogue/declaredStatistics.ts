@@ -210,6 +210,8 @@ export type DeclaredPayload = {
 	relatedRecords?: true;
 	/** Dot-separated paths of arrays that every record has, empty if need be. */
 	emptyArrays?: string[];
+	/** Dot-separated paths of objects that every record has, empty if need be. */
+	emptyObjects?: string[];
 	/**
 	 * Adds to a record the fixed text it carries, such as a label or a code the
 	 * publisher gives each category. Runs once the record's values are placed.
@@ -790,6 +792,7 @@ export function declaredStatistics(
 			onKey?: (release: AreaRelease, code: string, key: string) => void,
 			onRelation?: (relation: {
 				relation: AreaRelationship;
+				period: string;
 				child: { release: AreaRelease; code: string };
 				parent: { release: AreaRelease; code: string };
 			}) => void,
@@ -932,6 +935,7 @@ export function declaredStatistics(
 									relation:
 										config.parents![index].relation ??
 										"parent",
+									period: topPeriod.label,
 									child: { release, code },
 									parent: found,
 								});
@@ -1113,6 +1117,7 @@ export function declaredStatistics(
 								: (config.keys?.[parentKey] ?? parentKey);
 						onRelation?.({
 							relation: link.relation ?? "parent",
+							period: topPeriod.label,
 							child: { release: childRelease, code: child },
 							parent: { release: parentRelease, code: parent },
 						});
@@ -1172,6 +1177,7 @@ export function declaredStatistics(
 			string,
 			{
 				relation: AreaRelationship;
+				period: string;
 				child: { release: AreaRelease; code: string };
 				parent: { release: AreaRelease; code: string };
 			}
@@ -1303,6 +1309,7 @@ export function declaredStatistics(
 			(relation) => {
 				const key = JSON.stringify([
 					relation.relation,
+					relation.period,
 					relation.child.release.id,
 					relation.child.code,
 					relation.parent.release.id,
