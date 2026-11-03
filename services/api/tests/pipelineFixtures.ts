@@ -18,5 +18,3 @@ export { compileRelationshipPaths } from "../../../pipeline/src/relationshipPath
 export { storeObservations } from "../../../pipeline/src/store-observations";
 export { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
 export { createTerrainCatalogue } from "../../../pipeline/src/terrainCatalogue";
-export { readMeasureTotals } from "../../../pipeline/src/validation/inputs";
-export { readValidationWaivers } from "../../../pipeline/src/validation/inputs";
