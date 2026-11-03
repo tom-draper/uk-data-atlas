@@ -77,7 +77,7 @@ export async function compileAtlasAssets({
 				),
 				compiled: cachedAtlasAssets.outputs.gazetteerCore,
 			})
-		: loadGazetteerCore(readBoundaryOnce).then(async (data) => {
+		: loadGazetteerCore(readBoundaryOnce, buildLog).then(async (data) => {
 				const compiled = await out("gazetteer.core", data);
 				buildLog.artifact("gazetteer", "gazetteer.core.json", {
 					status: "compiled",
