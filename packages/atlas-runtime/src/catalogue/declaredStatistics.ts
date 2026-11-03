@@ -178,6 +178,17 @@ export type DeclaredPayload = {
 	periodKeys?: string[];
 	/** Dot-separated paths that are null in every record with no value. */
 	nullPaths?: string[];
+	/**
+	 * Leave out the periods a record has no observation in, instead of giving
+	 * them null values. For a record that began later than the others, which
+	 * has no earlier periods.
+	 */
+	sparsePeriods?: true;
+	/**
+	 * Dot-separated paths a record does not have, given the kinds of
+	 * relationship the publisher states for it.
+	 */
+	without?: (relations: ReadonlySet<string>) => string[];
 };
 
 type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
