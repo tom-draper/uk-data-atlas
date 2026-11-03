@@ -37,15 +37,9 @@ export const repositoryAtlasDatabasePath = (repositoryRoot: string) =>
 export const configDirectory = (repositoryRoot: string) =>
 	join(apiRootOf(repositoryRoot), "config");
 
-/** Generated statistics metadata, given the API project directory. */
-export const statisticsVocabularyPath = (apiRoot: string) =>
-	repositoryStatisticsVocabularyPath(repositoryRootOf(apiRoot));
-
-export const repositoryStatisticsVocabularyPath = (repositoryRoot: string) =>
+/** Generated statistics metadata, given the repository root. */
+export const statisticsVocabularyPath = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "statistics-vocabulary.json");
 
-export const statisticsReadPathPath = (apiRoot: string) =>
-	repositoryStatisticsReadPathPath(repositoryRootOf(apiRoot));
-
-export const repositoryStatisticsReadPathPath = (repositoryRoot: string) =>
+export const statisticsReadPathPath = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "statistics-read-path.json");

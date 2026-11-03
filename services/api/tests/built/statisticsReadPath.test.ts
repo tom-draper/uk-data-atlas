@@ -31,7 +31,7 @@ const databasePath = atlasDatabasePath(apiRoot);
 const catalogues = readApiCatalogues(apiRoot);
 const catalog = catalogues.dataCatalog;
 const readPath = JSON.parse(
-	readFileSync(statisticsReadPathPath(apiRoot), "utf8"),
+	readFileSync(statisticsReadPathPath(resolve(apiRoot, "../..")), "utf8"),
 ) as StatisticsReadPath;
 
 test("names every catalogue artifact once, as statistics or observations", () => {

@@ -12,8 +12,8 @@ import type {
 import {
 	artifactDirectory,
 	repositoryAtlasDatabasePath,
-	repositoryStatisticsReadPathPath,
-	repositoryStatisticsVocabularyPath,
+	statisticsReadPathPath,
+	statisticsVocabularyPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 // Catalogues that still have runtime JSON readers. Migrated data is covered by atlas.sqlite.
@@ -51,11 +51,11 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 		),
 		artifactReference(
 			"statistics-read-path",
-			repositoryStatisticsReadPathPath(repositoryRoot),
+			statisticsReadPathPath(repositoryRoot),
 		),
 		artifactReference(
 			"statistics-vocabulary",
-			repositoryStatisticsVocabularyPath(repositoryRoot),
+			statisticsVocabularyPath(repositoryRoot),
 		),
 		...JSON_ARTIFACTS.map((id) =>
 			artifactReference(id, join(publicDirectory, `${id}.json`)),
