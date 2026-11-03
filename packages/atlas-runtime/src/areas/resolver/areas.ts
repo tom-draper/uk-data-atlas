@@ -48,11 +48,6 @@ export type ResolvedCodeRelease = AreaRecord & {
 	boundaryRelease: string;
 };
 
-export type ResolvedAreaCandidate = {
-	area: AreaRecord & AreaIdentity;
-	matches: Array<"code-exact" | Exclude<NameMatch, "prefix">>;
-};
-
 export type AreasResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
 	areaInventory?: AreaInventory;
