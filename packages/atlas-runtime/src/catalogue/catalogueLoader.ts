@@ -285,7 +285,7 @@ export const readAtlasCatalogues = (
 		readPostcodeIndex(apiRoot),
 	);
 	const geometrySources = stage("geometry-sources", () =>
-		readGeometrySources(apiRoot),
+		readGeometrySources(repositoryRootOf(apiRoot)),
 	);
 	const postcodeAreaIndex = stage("postcode-area-index", () =>
 		readPostcodeAreaIndex(
@@ -300,7 +300,7 @@ export const readAtlasCatalogues = (
 	);
 	const areaGeometryCache = stage("area-geometry-cache", () =>
 		createAreaGeometryCache(
-			apiRoot,
+			repositoryRootOf(apiRoot),
 			options.geometryCacheReleases,
 			options.onStaleCompiledGeometry,
 		),

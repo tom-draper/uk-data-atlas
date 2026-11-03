@@ -64,7 +64,7 @@ import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
  */
 
 type Job = {
-	apiRoot: string;
+	repositoryRoot: string;
 	geography: string;
 	boundaryRelease: string;
 	longitudes: SharedArrayBuffer;
@@ -93,7 +93,7 @@ const placeRelease = (job: Job): JobResult => {
 	const started = performance.now();
 	const longitudes = new Float64Array(job.longitudes);
 	const latitudes = new Float64Array(job.latitudes);
-	const cache = createAreaGeometryCache(job.apiRoot, 1);
+	const cache = createAreaGeometryCache(job.repositoryRoot, 1);
 	const { geography, boundaryRelease } = job;
 	const placements = placePoints(
 		longitudes,
@@ -346,7 +346,7 @@ export const buildPostcodeAreas = async (
 			for (let next = queue.shift(); next; next = queue.shift()) {
 				const key = releaseKey(next.geography, next.boundaryRelease);
 				const result = await runJob({
-					apiRoot,
+					repositoryRoot,
 					geography: next.geography,
 					boundaryRelease: next.boundaryRelease,
 					longitudes,

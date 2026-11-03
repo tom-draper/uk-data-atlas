@@ -66,7 +66,7 @@ export const readPlaceResolver = (apiRoot: string, databasePath: string) => {
 			undefined,
 			databasePath,
 		),
-		areaGeometryCache: createAreaGeometryCache(apiRoot),
+		areaGeometryCache: createAreaGeometryCache(repositoryRootOf(apiRoot)),
 		namedLocationInventory: readNamedLocationInventory(
 			apiRoot,
 			databasePath,
