@@ -223,6 +223,23 @@ export const ROAD_COLLISIONS: DeclaredDataset = {
 
 export const HOMELESSNESS: DeclaredDataset = {
 	type: "homelessness",
+	payload: {
+		parts: () => [
+			{
+				key: "2026",
+				header: {
+					id: "homelessness2026q1",
+					type: "homelessness",
+					year: 2026,
+					quarter: "Jan-Mar 2026",
+					boundaryType: "localAuthority",
+					boundaryYear: 2025,
+					coverageCountries: ["GB-ENG"],
+				},
+			},
+		],
+		code: "ladCode",
+	},
 	rebuild: {},
 	name: "ladName",
 	period: () => periods.quarter(2026, 1),
