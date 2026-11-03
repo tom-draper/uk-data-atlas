@@ -7,7 +7,10 @@ import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 
 const adapters = readCrosswalkAdapters(
-	new URL("../config/crosswalk-adapters.json", import.meta.url).pathname,
+	new URL(
+		"../../services/api/config/crosswalk-adapters.json",
+		import.meta.url,
+	).pathname,
 );
 const nhsId =
 	"nhs-england-region-2022-07-en-bgc-to-nhs-england-region-2024-01-en-bgc-area-overlap";
