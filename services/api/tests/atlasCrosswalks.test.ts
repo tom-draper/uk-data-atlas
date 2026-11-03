@@ -152,7 +152,7 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 			),
 			JSON.stringify(value),
 		);
-	assert.deepEqual(readSqliteAreas(apiRoot, areaInventory.releases[0]), [
+	assert.deepEqual(readSqliteAreas(root, areaInventory.releases[0]), [
 		{ code: "B", name: "B", aliases: ["Bee"] },
 	]);
 	const database = new DatabaseSync(path);

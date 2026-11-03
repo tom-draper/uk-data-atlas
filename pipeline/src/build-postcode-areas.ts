@@ -235,12 +235,12 @@ export const buildPostcodeAreas = async (
 			repositoryRoot,
 			"data/build/atlas-base.sqlite",
 		);
-		const areaInventory = readAreaInventory(apiRoot, databasePath);
+		const areaInventory = readAreaInventory(repositoryRoot, databasePath);
 		const resolver = new AreasResolver({
 			boundaryRegistry: readBuildBoundaryRegistry(repositoryRoot),
 			areaInventory,
 			areaLookup: readAreaLookup(
-				apiRoot,
+				repositoryRoot,
 				areaInventory,
 				undefined,
 				databasePath,

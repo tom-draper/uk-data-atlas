@@ -54,12 +54,12 @@ export const readPlaceResolver = (
 	databasePath: string,
 ) => {
 	const apiRoot = apiRootOf(repositoryRoot);
-	const areaInventory = readSqliteAreaInventory(apiRoot, databasePath);
+	const areaInventory = readSqliteAreaInventory(repositoryRoot, databasePath);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot, databasePath);
 	return createPlaceResolver({
 		areaInventory,
 		areaLookup: readAreaLookup(
-			apiRoot,
+			repositoryRoot,
 			areaInventory,
 			undefined,
 			databasePath,

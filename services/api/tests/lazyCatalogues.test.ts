@@ -66,7 +66,7 @@ test("area release keys are available before any records are parsed", () =>
 				}),
 			);
 		storeAreas(root, directory, inventory);
-		const lookup = readAreaLookup(root, inventory);
+		const lookup = readAreaLookup(join(root, "../.."), inventory);
 		assert.deepEqual([...lookup.keys()], ["ward/2023", "ward/2024"]);
 		rmSync(join(directory, "2023.json"));
 		assert.deepEqual(lookup.get("ward/2024")?.get("E00000001"), {
@@ -108,7 +108,7 @@ test("area releases stay parsed until their records exceed the budget", () =>
 				}),
 			);
 		storeAreas(root, directory, inventory);
-		const lookup = readAreaLookup(root, inventory, 4);
+		const lookup = readAreaLookup(join(root, "../.."), inventory, 4);
 		lookup.get("ward/2022");
 		lookup.get("ward/2023");
 		lookup.get("ward/2022");
@@ -165,7 +165,7 @@ test("matching names in one geography never parses another's releases", () =>
 				}),
 			);
 		storeAreas(root, directory, inventory);
-		const lookup = readAreaLookup(root, inventory);
+		const lookup = readAreaLookup(join(root, "../.."), inventory);
 		rmSync(join(directory, "parish-2024.json"));
 		const [result] = validateBatch(lookup, "ward", "2024", ["Old Ward"]);
 		assert.equal(result?.status, "unmatched");

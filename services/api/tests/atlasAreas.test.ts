@@ -64,11 +64,11 @@ test("relational areas preserve inventory order, aliases and record order withou
 	writeSqliteIndex(path, {}, areaTables(directory));
 	rmSync(directory, { recursive: true });
 	assert.equal(
-		JSON.stringify(readAreaInventory(apiRoot)),
+		JSON.stringify(readAreaInventory(root)),
 		JSON.stringify(inventory),
 	);
 	assert.equal(
-		JSON.stringify([...readAreaLookup(apiRoot).get("ward/2024")!.values()]),
+		JSON.stringify([...readAreaLookup(root).get("ward/2024")!.values()]),
 		JSON.stringify(areas),
 	);
 	const database = new DatabaseSync(path);
@@ -106,12 +106,12 @@ test("relational areas preserve inventory order, aliases and record order withou
 			.prepare("UPDATE area_releases SET contentHash = 'stale'")
 			.run();
 		assert.throws(
-			() => readAreaLookup(apiRoot, inventory).get("ward/2024"),
+			() => readAreaLookup(root, inventory).get("ward/2024"),
 			/Invalid area release/,
 		);
 		database.prepare("DELETE FROM area_inventory").run();
 		assert.throws(
-			() => readAreaInventory(apiRoot),
+			() => readAreaInventory(root),
 			/Invalid SQLite area inventory/,
 		);
 	} finally {
