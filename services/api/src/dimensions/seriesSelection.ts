@@ -53,12 +53,6 @@ export const readFilters = (
 	return { filters, names };
 };
 
-/** The query parameters a measure's dimension filters take. */
-export const isDimensionParameter = (
-	name: string,
-	dimensionIds: ReadonlySet<string>,
-) => dimensionIds.has(name) || /^dimensions\[[^\]]+\]$/.test(name);
-
 /** The choices a refusal lists, each the request that reads one series. */
 export const describeChoices = (
 	measure: DimensionalMeasure,
