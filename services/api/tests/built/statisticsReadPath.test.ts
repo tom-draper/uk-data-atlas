@@ -121,7 +121,7 @@ test("serves the same answers from statistics rows as from observation tables", 
 	const legacy = {
 		...catalogues,
 		measureObservations: readMeasureObservations(
-			apiRoot,
+			resolve(apiRoot, "../.."),
 			catalog,
 			undefined,
 			OBSERVATION_TABLES_ONLY,

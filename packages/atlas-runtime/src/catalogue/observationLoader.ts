@@ -24,12 +24,12 @@ export const OBSERVATION_TABLES_ONLY: StatisticsReadPath = {
  * from SQLite when first used.
  */
 export const readMeasureObservations = (
-	apiRoot: string,
+	repositoryRoot: string,
 	dataCatalog: DataCatalog,
 	maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES,
 	readPath: StatisticsReadPath = OBSERVATION_TABLES_ONLY,
 ): AnyMeasureObservationArtifact[] => {
-	const databasePath = observationDatabasePath(apiRoot);
+	const databasePath = observationDatabasePath(repositoryRoot);
 	const tables = new ObservationCache(maxBytes);
 	tables.bindCatalogue(databasePath, dataCatalog, readPath);
 	return dataCatalog.measures.flatMap((measure) =>
