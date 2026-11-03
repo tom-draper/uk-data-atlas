@@ -6,6 +6,8 @@ import {
 	type DeclaredField,
 	periods,
 } from "../declaredStatistics";
+import { yearParts } from "../declaredPayload";
+import type { DeclaredPayload } from "../declaredStatistics";
 import { measure, per100k } from "./measures";
 
 /** Pay, jobs, output, prices and the labour market. */
@@ -132,6 +134,12 @@ export const INCOME: DeclaredDataset = {
 	type: "income",
 	name: "ladName",
 	rebuild: {},
+	payload: {
+		parts: yearParts("income", "localAuthority", 2025, {
+			coverageCountries: ["GB-ENG"],
+		}),
+		code: "ladCode",
+	},
 	...payAreas,
 	measures: PAY_MEASURES,
 	dimensions: [PAY_STATISTICS, PAY_PERIOD, EARNINGS_PLACE],
@@ -142,6 +150,12 @@ export const WORKPLACE_INCOME: DeclaredDataset = {
 	type: "workplaceIncome",
 	name: "ladName",
 	rebuild: {},
+	payload: {
+		parts: yearParts("workplaceIncome", "localAuthority", 2025, {
+			coverageCountries: ["GB-ENG"],
+		}),
+		code: "ladCode",
+	},
 	...payAreas,
 	measures: PAY_MEASURES,
 	dimensions: [PAY_STATISTICS, PAY_PERIOD, EARNINGS_PLACE],
@@ -358,10 +372,16 @@ export const CHILD_POVERTY: DeclaredDataset = {
 	},
 };
 
-const regionalGdp = (type: string): DeclaredDataset => ({
+const regionalGdp = (type: string, boundaryType: string): DeclaredDataset => ({
 	type,
 	name: "itlName",
 	rebuild: {},
+	payload: {
+		parts: yearParts(type, boundaryType, 2025, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+		}),
+		code: "itlCode",
+	},
 	measures: [
 		measure(
 			"gva",
@@ -385,17 +405,19 @@ const regionalGdp = (type: string): DeclaredDataset => ({
 		{ path: "gdpMillionGbp", measure: "gdp" },
 	],
 });
-export const REGIONAL_GDP_ITL1 = regionalGdp("regionalGdpItl1");
-export const REGIONAL_GDP_ITL2 = regionalGdp("regionalGdpItl2");
-export const REGIONAL_GDP_ITL3 = regionalGdp("regionalGdpItl3");
+export const REGIONAL_GDP_ITL1 = regionalGdp("regionalGdpItl1", "itl1");
+export const REGIONAL_GDP_ITL2 = regionalGdp("regionalGdpItl2", "itl2");
+export const REGIONAL_GDP_ITL3 = regionalGdp("regionalGdpItl3", "itl3");
 
 const single = (
 	type: string,
 	period: () => StatisticsPeriod,
+	payload: DeclaredPayload,
 	...declared: Parameters<typeof measure>
 ): DeclaredDataset => ({
 	type,
 	rebuild: {},
+	payload,
 	name: "name",
 	period,
 	measures: [measure(...declared)],
@@ -405,6 +427,16 @@ const single = (
 export const COUNCIL_TAX = single(
 	"councilTax",
 	() => periods.financialYear(2026),
+	{
+		parts: yearParts(
+			"councilTax",
+			"localAuthority",
+			2026,
+			{ coverageCountries: ["GB-ENG"] },
+			["2026"],
+		),
+		code: "code",
+	},
 	"band-d-council-tax",
 	"Average Band D council tax",
 	"gbp",
@@ -416,6 +448,16 @@ export const COUNCIL_TAX = single(
 export const LOCAL_GOVERNMENT_FINANCE = single(
 	"localGovernmentFinance",
 	() => periods.financialYear(2026),
+	{
+		parts: yearParts(
+			"localGovernmentFinance",
+			"localAuthority",
+			2026,
+			{ coverageCountries: ["GB-ENG"] },
+			["2026"],
+		),
+		code: "code",
+	},
 	"education-services-budget",
 	"Education services revenue budget",
 	"gbp thousand",
@@ -427,6 +469,16 @@ export const LOCAL_GOVERNMENT_FINANCE = single(
 export const HOUSING_AFFORDABILITY = single(
 	"housingAffordability",
 	() => periods.year(2025),
+	{
+		parts: yearParts(
+			"housingAffordability",
+			"localAuthority",
+			2025,
+			{ coverageCountries: ["GB-ENG", "GB-WLS"] },
+			["2025"],
+		),
+		code: "code",
+	},
 	"house-price-to-earnings-ratio",
 	"House price to earnings ratio",
 	"ratio",
