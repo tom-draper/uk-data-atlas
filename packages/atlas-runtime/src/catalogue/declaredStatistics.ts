@@ -192,6 +192,11 @@ export type DeclaredPayload = {
 	/** Dot-separated paths of arrays that every record has, empty if need be. */
 	emptyArrays?: string[];
 	/**
+	 * Adds to a record the fixed text it carries, such as a label or a code the
+	 * publisher gives each category. Runs once the record's values are placed.
+	 */
+	fill?: (record: { [key: string]: Json }, code: string) => void;
+	/**
 	 * Dot-separated paths a record does not have, given the kinds of
 	 * relationship the publisher states for it.
 	 */

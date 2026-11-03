@@ -24,14 +24,25 @@ const parse = (path: string): Placeholder[] =>
 		return match ? { binding: match[1] } : { literal: part };
 	});
 
-const fill = (segments: readonly Placeholder[], bound: Map<string, string>) =>
-	segments.map((segment) => {
+/**
+ * A dimension named twice in a path binds its parent member first and the
+ * member second; the later binding of a name is keyed `name#1`, and so on.
+ */
+const bindingKey = (name: string, occurrence: number) =>
+	occurrence === 0 ? name : `${name}#${occurrence}`;
+
+const fill = (segments: readonly Placeholder[], bound: Map<string, string>) => {
+	const seen = new Map<string, number>();
+	return segments.map((segment) => {
 		if ("literal" in segment) return segment.literal;
-		const value = bound.get(segment.binding);
+		const occurrence = seen.get(segment.binding) ?? 0;
+		seen.set(segment.binding, occurrence + 1);
+		const value = bound.get(bindingKey(segment.binding, occurrence));
 		if (value === undefined)
 			throw new Error(`${segment.binding} is not bound`);
 		return value;
 	});
+};
 
 const bindings = (segments: readonly Placeholder[]) =>
 	segments.flatMap((segment) =>
@@ -73,7 +84,7 @@ type Observation = {
 type Series = {
 	id: number;
 	measure: string;
-	members: Map<string, { code: string; label: string }>;
+	members: Map<string, { code: string; label: string; parent?: string }>;
 };
 
 /**
@@ -182,16 +193,23 @@ export function rebuildFromDeclaration(
 		`SELECT s.id, m.slug AS measure FROM series s JOIN measure m ON m.id = s.measure_id WHERE s.dataset_id = ? ORDER BY s.id`,
 	);
 	const memberQuery = database.prepare(
-		`SELECT d.slug AS dimension, dm.code, dm.label
+		`SELECT d.slug AS dimension, dm.code, dm.label, pm.label AS parent
 		FROM series_member sm JOIN dimension d ON d.id = sm.dimension_id
-		JOIN dimension_member dm ON dm.id = sm.member_id WHERE sm.series_id = ?`,
+		JOIN dimension_member dm ON dm.id = sm.member_id
+		LEFT JOIN dimension_member pm ON pm.id = dm.parent_id WHERE sm.series_id = ?`,
 	);
 	for (const row of seriesQuery.all(dataset)) {
-		const members = new Map<string, { code: string; label: string }>();
+		const members = new Map<
+			string,
+			{ code: string; label: string; parent?: string }
+		>();
 		for (const member of memberQuery.all(Number(row.id)))
 			members.set(String(member.dimension), {
 				code: String(member.code),
 				label: String(member.label),
+				...(member.parent === null
+					? {}
+					: { parent: String(member.parent) }),
 			});
 		series.push({
 			id: Number(row.id),
@@ -260,9 +278,13 @@ export function rebuildFromDeclaration(
 		};
 		const matching = (field: DeclaredField, one: Series) => {
 			const fixed = Object.keys(field.members ?? {});
-			const wanted = bindings(parse(field.path)).filter(
-				(name) => name !== "period",
-			);
+			const wanted = [
+				...new Set(
+					bindings(parse(field.path)).filter(
+						(name) => name !== "period",
+					),
+				),
+			];
 			return (
 				one.measure === field.measure &&
 				one.members.size === fixed.length + wanted.length &&
@@ -300,7 +322,9 @@ export function rebuildFromDeclaration(
 			const segments_ = parse(field.path);
 			const segments = segments_;
 			const names = bindings(segments);
-			const wanted = names.filter((name) => name !== "period");
+			const wanted = [
+				...new Set(names.filter((name) => name !== "period")),
+			];
 			const periodBound = names.includes("period");
 			const lower = field.lower ? parse(field.lower) : undefined;
 			const upper = field.upper ? parse(field.upper) : undefined;
@@ -311,10 +335,22 @@ export function rebuildFromDeclaration(
 				const bound = new Map<string, string>();
 				for (const name of wanted) {
 					const member = one.members.get(name)!;
-					bound.set(
-						name,
-						keyOf.get(name)?.get(member.code) ?? member.label,
-					);
+					const own =
+						keyOf.get(name)?.get(member.code) ?? member.label;
+					// Named twice, the first binding is the member's parent.
+					const times = names.filter((each) => each === name).length;
+					if (times > 2)
+						throw new Error(
+							`${context}: ${name} is nested too deep`,
+						);
+					if (times === 2) {
+						if (member.parent === undefined)
+							throw new Error(
+								`${context}: ${member.label} has no parent for ${field.path}`,
+							);
+						bound.set(name, member.parent);
+						bound.set(bindingKey(name, 1), own);
+					} else bound.set(name, own);
 				}
 				tuples.set(JSON.stringify([...bound]), new Map(bound));
 				for (const row of observed.get(one.id) ?? []) {
@@ -437,6 +473,8 @@ export function rebuildFromDeclaration(
 					place(target, parent.name.split("."), found.name, arrays);
 			}
 		}
+		if (spec.fill)
+			for (const [code, target] of records) spec.fill(target, code);
 		if (spec.without)
 			for (const [code, target] of records)
 				for (const path of spec.without(

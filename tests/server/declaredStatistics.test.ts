@@ -352,6 +352,45 @@ describe("declared statistics", () => {
 		}
 	});
 
+	it("generates nested bindings and fixed text per record", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			measures: [CRIMES],
+			dimensions: [{ slug: "group", label: "Group" }],
+			fields: [{ path: "{group}.{group}.n", measure: "crimes" }],
+			payload: {
+				parts: yearParts("example", "localAuthority", 2024),
+				fill: (record) => {
+					for (const group of Object.values(record))
+						if (typeof group === "object" && group !== null)
+							for (const entry of Object.values(group))
+								(entry as Record<string, unknown>).tag = "x";
+				},
+			},
+		};
+		const expected = JSON.parse(
+			file({
+				E06000001: {
+					name: "Hartlepool",
+					Big: {
+						One: { n: 1, tag: "x" },
+						Two: { n: 2, tag: "x" },
+					},
+					Small: { Three: { n: 3, tag: "x" } },
+				},
+			}),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			expect(
+				JSON.parse(rebuildFromDeclaration(database, config, "example")),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("generates parent areas and header summaries from rows", () => {
 		const config: DeclaredDataset = {
 			type: "example",
