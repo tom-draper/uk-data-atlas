@@ -11,9 +11,12 @@ It is not published to PyPI. Install it from this checkout.
 
 ## Install from source
 
-Needs Python 3.11 or newer. From the repository root:
+Needs Python 3.11 or newer. The generated code is not committed, so write it
+first. From the repository root:
 
 ```sh
+pnpm install
+pnpm clients:generate
 python3 -m venv .venv
 .venv/bin/pip install ./clients/python
 ```
@@ -108,12 +111,8 @@ the URLs the API links, and send those requests as JSON.
 
 ## Develop
 
-The generated code and `../generated.lock.json` are regenerated together for
-both clients, from the repository root:
-
-```sh
-pnpm --dir services/api generate:clients
-```
+The generated code is not committed. `pnpm clients:generate`, from the
+repository root, writes it for both clients, and the tests below need it.
 
 The tests run offline against a mocked transport:
 

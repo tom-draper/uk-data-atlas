@@ -15,33 +15,42 @@ reachable through the generated code.
 
 Neither package is published. The website and the API do not depend on them.
 
-## Regenerate
+## Generate
+
+The generated code is not committed. Both directories are ignored by Git:
+`typescript/src/generated/` and `python/src/uk_data_atlas_client/generated/`.
 
 ```sh
-pnpm --dir services/api generate:clients
+pnpm clients:generate              # both clients
+pnpm clients:generate:typescript   # the TypeScript types only, about a second
 ```
 
-This rewrites `typescript/src/generated/`, `python/src/uk_data_atlas_client/generated/`
-and `generated.lock.json`. Never edit generated files by hand. The generator
-versions are pinned in `typescript/package.json` and
-`python/requirements-generate.txt`. The Python generator runs in a virtualenv
-at `python/.venv`, which the command creates.
+`pnpm typecheck` runs the TypeScript step first, so CI and `pnpm check` need no
+other setup. The Python step needs `python3` and network access the first time:
+it creates a virtualenv at `python/.venv` and installs the pinned generator
+from `python/requirements-generate.txt`. Neither step needs the API or its
+data. The generator versions are pinned in `typescript/package.json` and
+`python/requirements-generate.txt`. Never edit generated files; they are
+overwritten.
 
 `openapi-python-client` cannot read a few constructs the spec uses (string
 `const`, an untitled inline enum, inline download maps), so
 `python/prepare_spec.py` derives a Python-friendly copy of the spec first.
 `openapi.yaml` is not changed.
 
-## Generated code is committed
+## What is committed
 
-Reviewers see what a spec change does to callers, and users can install from a
-checkout without running a generator. The cost is that the code can go stale.
-Two checks prevent that:
+Only the hand-written parts: the READMEs, `typescript/src/index.ts`,
+`python/src/uk_data_atlas_client/client.py`, the package metadata, the Python
+generator's `config.yaml` and `prepare_spec.py`, the pinned requirements, the
+Python tests, and `scripts/`. A change to `openapi.yaml` therefore changes no
+file under `clients/`, and the generated code cannot go stale in the
+repository.
 
-- `pnpm --dir services/api generate:clients --check` regenerates both clients
-  in a scratch directory and compares them with the committed ones.
-- `tests/clients/generatedClients.test.ts` runs in `pnpm check`. It needs
-  neither the API, its data nor Python. `generated.lock.json` records digests
-  of the spec, the generation tooling and each generated tree, and the test
-  fails when any of them moves without a regeneration. It also re-runs
-  `openapi-typescript` and compares the types.
+## Release
+
+The manual [`Release API clients`](../.github/workflows/clients-release.yml)
+workflow generates both clients from the commit it runs on, typechecks and
+tests them, and attaches an npm tarball and a Python wheel and sdist to the
+run. Publishing to npm and PyPI is left as a commented TODO in the workflow,
+because both packages are still private.
