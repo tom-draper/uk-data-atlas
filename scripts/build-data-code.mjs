@@ -27,7 +27,9 @@ const runtimeConfig = {
 		"area-source-adapters.json",
 		"area-property-adapters.json",
 	],
-	"pipeline/src/buildCrosswalkInventory.ts": ["crosswalk-adapters.json"],
+	"pipeline/src/relationships/buildCrosswalkInventory.ts": [
+		"crosswalk-adapters.json",
+	],
 	"pipeline/src/build-relationship-candidates.ts": [
 		"crosswalk-adapters.json",
 	],

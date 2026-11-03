@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
-import { buildAtlasSqlite } from "@/pipeline/src/buildAtlasSqlite";
+import { buildAtlasSqlite } from "@/pipeline/src/atlas/buildAtlasSqlite";
 import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/storage";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 

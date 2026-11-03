@@ -2,7 +2,7 @@ import {
 	compilePostcodeAreas,
 	placementsFromShards,
 	placePoints,
-} from "../src/postcodeAreaCompiler";
+} from "../src/postcodes/postcodeAreaCompiler";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {

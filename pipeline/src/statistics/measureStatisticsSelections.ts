@@ -3,7 +3,7 @@ import {
 	STATISTICS_DATASETS,
 	type Measure,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { CompiledMeasure } from "./catalog/manifest";
+import type { CompiledMeasure } from "../catalog/manifest";
 import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { bindCensusStatistics } from "./bindCensusStatistics";

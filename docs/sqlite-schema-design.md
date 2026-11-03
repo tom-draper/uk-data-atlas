@@ -1004,7 +1004,7 @@ cannot describe) writes a mapper instead, a function that returns a
 7. **Rebuild the old output** from rows in a reader beside the mapper, and
    call it from `verify` so the build refuses to publish different bytes. Add
    the dataset to the list passed to `statisticsTables` in
-   `pipeline/src/buildAtlasSqlite.ts`, and point its reader at the rebuild.
+   `pipeline/src/atlas/buildAtlasSqlite.ts`, and point its reader at the rebuild.
 8. **Test** with a small fixture in `tests/server/` and the real data in
    `tests/built/`, as `atlasStatistics.test.ts` does.
 

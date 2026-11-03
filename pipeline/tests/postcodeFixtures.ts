@@ -2,9 +2,9 @@ import {
 	compilePostcodeAreas,
 	placePoints,
 	releaseCounts,
-} from "../src/postcodeAreaCompiler";
-import { compilePostcodeIndex } from "../src/postcodeIndex";
-import type { PostcodeSourceRow } from "../src/postcodeIndex";
+} from "../src/postcodes/postcodeAreaCompiler";
+import { compilePostcodeIndex } from "../src/postcodes/postcodeIndex";
+import type { PostcodeSourceRow } from "../src/postcodes/postcodeIndex";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import { parsePostcode } from "@uk-data-atlas/geography";

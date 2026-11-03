@@ -15,8 +15,8 @@ import {
 	postcodeRow,
 	postcodeSource,
 } from "../../services/api/tests/postcodeFixtures";
-import { compilePostcodeIndex } from "../../pipeline/src/postcodeIndex";
-import { buildDuckdbPostcodeIndex } from "../../pipeline/src/duckdbPostcodeIndex";
+import { compilePostcodeIndex } from "../../pipeline/src/postcodes/postcodeIndex";
+import { buildDuckdbPostcodeIndex } from "../../pipeline/src/postcodes/duckdbPostcodeIndex";
 
 const header = "pcds,dointr,doterm,usrtypind,east1m,north1m,gridind,ctry24cd";
 const csv = (rows: ReturnType<typeof postcodeRow>[]) =>

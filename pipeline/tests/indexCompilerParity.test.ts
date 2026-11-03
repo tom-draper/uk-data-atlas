@@ -6,8 +6,8 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
-import { compileDuckdbAreaSearchIndex } from "../src/duckdbAreaSearch";
-import { compileDuckdbPlaceIndex } from "../src/duckdbPlaceIndex";
+import { compileDuckdbAreaSearchIndex } from "../src/places/duckdbAreaSearch";
+import { compileDuckdbPlaceIndex } from "../src/places/duckdbPlaceIndex";
 
 const release = (
 	geography: string,

@@ -15,7 +15,7 @@ import { test } from "vitest";
 import { fetchOnsBoundary } from "../src/sources/fetch-ons-boundaries";
 import type { OnsBoundarySource } from "../src/sources/onsBoundarySources";
 import { createBoundaryRegistry } from "../src/build-boundary-registry";
-import { compileAreas } from "../src/areaInventory";
+import { compileAreas } from "../src/geographies/areaInventory";
 
 const source: OnsBoundarySource = {
 	geography: "seneddConstituency",

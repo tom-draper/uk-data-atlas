@@ -4,7 +4,7 @@ import { gzipSync } from "node:zlib";
 import { join, resolve } from "node:path";
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
-import { readLookupResolver } from "./lookupResolver";
+import { readLookupResolver } from "./atlas/lookupResolver";
 import { buildDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	ATLAS_LOOKUPS_DIRECTORY,

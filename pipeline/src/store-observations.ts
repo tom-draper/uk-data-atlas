@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { replaceObservationTables } from "./atlasObservationTables";
-import { observationBuildPath } from "./observation-build-path";
+import { replaceObservationTables } from "./statistics/atlasObservationTables";
+import { observationBuildPath } from "./statistics/observation-build-path";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationArtifactName,

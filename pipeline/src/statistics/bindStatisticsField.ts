@@ -3,7 +3,7 @@ import {
 	memberCode,
 	type DeclaredDataset,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { CompiledMeasure } from "./catalog/manifest";
+import type { CompiledMeasure } from "../catalog/manifest";
 import {
 	hashStatisticsSelection,
 	type StatisticsSelection,

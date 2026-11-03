@@ -273,30 +273,30 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("map-resource")!
-			.includes("pipeline/src/compileGeometryValidity.ts"),
+			.includes("pipeline/src/maps/compileGeometryValidity.ts"),
 	);
 	for (const path of [
 		"pipeline/src/buildMapResource.ts",
-		"pipeline/src/compileMapResource.ts",
-		"pipeline/src/flatDownloads.ts",
+		"pipeline/src/maps/compileMapResource.ts",
+		"pipeline/src/atlas/flatDownloads.ts",
 	]) {
 		assert.ok(inputs.get("map-resource")!.includes(path), path);
 	}
 	assert.ok(
 		inputs
 			.get("crosswalk-inventory")!
-			.includes("pipeline/src/crosswalk-worker.ts"),
+			.includes("pipeline/src/relationships/crosswalk-worker.ts"),
 	);
 	assert.ok(
 		inputs
 			.get("crosswalk-inventory")!
-			.includes("pipeline/src/crosswalkCompiler.ts"),
+			.includes("pipeline/src/relationships/crosswalkCompiler.ts"),
 	);
 	for (const name of [
-		"areaOverlap",
-		"populationOverlap",
-		"geometricContainment",
-		"extentContinuity",
+		"geographies/areaOverlap",
+		"relationships/populationOverlap",
+		"relationships/geometricContainment",
+		"relationships/extentContinuity",
 	]) {
 		assert.ok(
 			inputs
@@ -351,7 +351,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-derived-boundaries.ts",
 		"packages/atlas-runtime/src/areas/areaSourceAdapters.ts",
-		"pipeline/src/boundarySourcePaths.ts",
+		"pipeline/src/geographies/boundarySourcePaths.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -359,8 +359,8 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const [stage, compiler] of [
 		["boundary-registry", "build-boundary-registry"],
-		["area-inventory", "areaInventory"],
-		["geography-inventory", "geographyInventory"],
+		["area-inventory", "geographies/areaInventory"],
+		["geography-inventory", "geographies/geographyInventory"],
 	]) {
 		for (const path of [
 			`pipeline/src/build-${stage}.ts`,
@@ -374,7 +374,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"packages/shapefile/src/dbf.ts",
 		"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
-		"pipeline/src/boundarySourcePaths.ts",
+		"pipeline/src/geographies/boundarySourcePaths.ts",
 		"packages/atlas-runtime/src/areas/areaAdapters.ts",
 		"packages/atlas-runtime/src/areas/areaSourceAdapters.ts",
 	]) {
@@ -382,7 +382,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-operations.ts",
-		"pipeline/src/operationTemplates.ts",
+		"pipeline/src/atlas/operationTemplates.ts",
 		"packages/atlas-runtime/src/api/operations.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
@@ -396,7 +396,7 @@ test("production builders resolve without UI code and include declared workers a
 	);
 	for (const path of [
 		"pipeline/src/build-geometry-source-registry.ts",
-		"pipeline/src/geometrySourceRegistry.ts",
+		"pipeline/src/geographies/geometrySourceRegistry.ts",
 		"pipeline/src/fileHashCache.ts",
 		"packages/artifacts/src/contentHash.ts",
 		"pipeline/package.json",
@@ -414,7 +414,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-relationship-candidates.ts",
-		"pipeline/src/relationshipCandidates.ts",
+		"pipeline/src/relationships/relationshipCandidates.ts",
 		"packages/relationships/src/crosswalkAdapters.ts",
 		"packages/geography/src/geographyKinds.ts",
 		"pipeline/package.json",
@@ -424,8 +424,8 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-relationship-paths.ts",
-		"pipeline/src/relationshipPaths.ts",
-		"pipeline/src/relationshipPathAdapters.ts",
+		"pipeline/src/relationships/relationshipPaths.ts",
+		"pipeline/src/relationships/relationshipPathAdapters.ts",
 		"packages/relationships/src/relationshipPaths.ts",
 		"packages/artifacts/src/storedText.ts",
 		"pipeline/package.json",
@@ -435,7 +435,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-analysis-geographies.ts",
-		"pipeline/src/analysisGeographies.ts",
+		"pipeline/src/geographies/analysisGeographies.ts",
 		"packages/geography/src/geographyKinds.ts",
 		"packages/atlas-runtime/src/areas/geographyBuildPath.ts",
 		"pipeline/package.json",
@@ -454,7 +454,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const stage of ["atlas-release-initial", "atlas-release"]) {
 		for (const path of [
 			"pipeline/src/build-atlas-release.ts",
-			"pipeline/src/atlasRelease.ts",
+			"pipeline/src/atlas/atlasRelease.ts",
 			"packages/atlas-runtime/src/storage/atlasAssets.ts",
 			"pipeline/src/fileHashCache.ts",
 			"pipeline/package.json",
@@ -467,7 +467,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-data-catalog.ts",
 		"pipeline/src/catalog/compileDataCatalog.ts",
 		"pipeline/src/store-observations.ts",
-		"pipeline/src/atlasObservationTables.ts",
+		"pipeline/src/statistics/atlasObservationTables.ts",
 		"packages/measures/src/dataCatalog.ts",
 		"packages/atlas-runtime/src/storage/atlasObservations.ts",
 		"packages/artifacts/src/sqliteTables.ts",
@@ -478,7 +478,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-measure-compatibility.ts",
-		"pipeline/src/measureCompatibility.ts",
+		"pipeline/src/statistics/measureCompatibility.ts",
 		"packages/measures/src/measureCompatibility.ts",
 		"packages/atlas-runtime/src/catalogue/observationTables.ts",
 		"pipeline/package.json",
@@ -496,8 +496,8 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-export-manifest.ts",
-		"pipeline/src/exportManifest.ts",
-		"pipeline/src/observationDownloads.ts",
+		"pipeline/src/atlas/exportManifest.ts",
+		"pipeline/src/statistics/observationDownloads.ts",
 		"packages/artifacts/src/parquet.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",

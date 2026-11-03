@@ -1,7 +1,7 @@
 import { RawGeometryCache } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { compileAreaOverlapCrosswalk } from "./areaOverlap";
+import { compileAreaOverlapCrosswalk } from "../geographies/areaOverlap";
 import type { ReleaseCoverage } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	compileBestFitCrosswalk,

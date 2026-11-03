@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { test } from "vitest";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { compileExportManifest } from "../src/exportManifest";
+import { compileExportManifest } from "../src/atlas/exportManifest";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readParquet } from "./parquetFixtures";
 

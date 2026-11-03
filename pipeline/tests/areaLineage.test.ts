@@ -6,7 +6,7 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
-import { compileRelationshipPaths } from "../src/relationshipPaths";
+import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 import {
 	compileAreaLineage,
 	followLineage,

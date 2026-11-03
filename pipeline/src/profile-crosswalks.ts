@@ -7,16 +7,19 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
-import { compileCrosswalks, type CrosswalkArtifact } from "./crosswalkCompiler";
+import {
+	compileCrosswalks,
+	type CrosswalkArtifact,
+} from "./relationships/crosswalkCompiler";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
-import { writeCrosswalkArtifact } from "./crosswalk-artifact";
+import { readCompiledAreaLookup } from "./relationships/crosswalk-build-inputs";
+import { writeCrosswalkArtifact } from "./relationships/crosswalk-artifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "./crosswalk-workers";
+} from "./relationships/crosswalk-workers";
 
 const root = resolve(import.meta.dirname, "../..");
 const args = process.argv.slice(2);

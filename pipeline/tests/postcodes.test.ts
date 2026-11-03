@@ -1,4 +1,4 @@
-import { compilePostcodeIndex } from "../src/postcodeIndex";
+import { compilePostcodeIndex } from "../src/postcodes/postcodeIndex";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {

@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { readAreaAdapters } from "@uk-data-atlas/atlas-runtime/areas";
-import { compileAreas } from "../../src/areaInventory";
+import { compileAreas } from "../../src/geographies/areaInventory";
 import { createBoundaryRegistry } from "../../src/build-boundary-registry";
 
 const repositoryRoot = resolve(

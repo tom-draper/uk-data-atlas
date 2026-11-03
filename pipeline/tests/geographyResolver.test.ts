@@ -16,7 +16,7 @@ import {
 	LocationProjectionStore,
 } from "@uk-data-atlas/atlas-runtime/places";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
-import { compileRelationshipPaths } from "../src/relationshipPaths";
+import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 import {
 	areaLookup,
 	containmentCrosswalk,

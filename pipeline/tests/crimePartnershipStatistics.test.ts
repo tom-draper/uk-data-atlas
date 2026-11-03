@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { crimePartnershipStatistics } from "../src/crimePartnershipStatistics";
+import { crimePartnershipStatistics } from "../src/statistics/crimePartnershipStatistics";
 import type {
 	AreaIndex,
 	DeclaredDataset,

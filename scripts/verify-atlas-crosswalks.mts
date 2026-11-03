@@ -24,7 +24,7 @@ import {
 	crosswalkShape,
 	type CrosswalkShape,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import { readApprovedRelationshipPaths } from "../pipeline/src/relationshipPathAdapters";
+import { readApprovedRelationshipPaths } from "../pipeline/src/relationships/relationshipPathAdapters";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";

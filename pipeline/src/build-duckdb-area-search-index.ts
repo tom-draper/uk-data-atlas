@@ -5,7 +5,7 @@ import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { publishCacheTables } from "./storage/index";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { compileDuckdbAreaSearchIndex } from "./duckdbAreaSearch";
+import { compileDuckdbAreaSearchIndex } from "./places/duckdbAreaSearch";
 
 export async function buildDuckdbAreaSearchIndex(root: string) {
 	const inventory = readSqliteAreaInventory(root);
