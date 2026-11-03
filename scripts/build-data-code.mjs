@@ -48,10 +48,7 @@ export function stageCodeFiles(root, stage, files) {
 	);
 	if (!script)
 		throw new Error(`No script entry point for cached stage ${stage.name}`);
-	const directory = stage.args.includes("--dir")
-		? root
-		: join(root, "services/api");
-	const entry = resolve(directory, script);
+	const entry = resolve(root, script);
 	// Resolve workspace exports before treating third-party packages as external.
 	const tsconfig = JSON.parse(
 		readFileSync(join(root, "tsconfig.json"), "utf8"),
