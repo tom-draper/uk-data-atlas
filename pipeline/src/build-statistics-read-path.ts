@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 import {
 	isMeasureTable,
 	observationArtifactName,
@@ -33,7 +34,7 @@ import {
  * statistics tables or the observation tables, and write the decision to
  * `data/build/statistics-read-path.json`.
  *
- * An artifact moves only when the statistics rows rebuild it byte for byte,
+ * An artifact moves only when the statistics rows rebuild its parsed values,
  * so every number, status, interval, period and area is unchanged. Any other
  * artifact stays where it is, and the reason says what differs, so that a
  * difference is reported rather than hidden.
@@ -273,7 +274,7 @@ const difference = (stored: Artifact, rebuilt: Artifact) => {
 		} else if (record.value !== held.value) {
 			values++;
 			example ??= `${key} is ${String(record.value)}, rebuilt as ${String(held.value)}`;
-		} else if (JSON.stringify(record) !== JSON.stringify(held)) {
+		} else if (!isDeepStrictEqual(record, held)) {
 			other++;
 			example ??= `${key} is ${JSON.stringify(record)}, rebuilt as ${JSON.stringify(held)}`;
 		}
@@ -319,16 +320,21 @@ for (const measure of catalog.measures)
 			};
 			try {
 				if (
-					rebuildStatisticsObservationText(database, table, {
-						measureId: measure.id,
-						sourceGeography: source.sourceGeography,
-						periods: source.periods,
-					}) === storedText
+					isDeepStrictEqual(
+						JSON.parse(
+							rebuildStatisticsObservationText(database, table, {
+								measureId: measure.id,
+								sourceGeography: source.sourceGeography,
+								periods: source.periods,
+							}),
+						),
+						stored,
+					)
 				)
 					plan.statistics[name] = table;
 				else
 					plan.observations[name] =
-						"The statistics rows do not rebuild this census table byte for byte.";
+						"The statistics rows do not rebuild this census table by value.";
 			} catch (error) {
 				plan.observations[name] = (error as Error).message;
 			}
@@ -366,14 +372,18 @@ for (const measure of catalog.measures)
 				source.sourceGeography.boundaryYear,
 			),
 		};
-		if (rebuiltText !== storedText && narrowed.areasIn.length > 0) {
+		if (
+			!isDeepStrictEqual(JSON.parse(rebuiltText), stored) &&
+			narrowed.areasIn.length > 0
+		) {
 			const narrowedText = rebuild(narrowed);
-			if (narrowedText === storedText) {
+			if (isDeepStrictEqual(JSON.parse(narrowedText), stored)) {
 				plan.statistics[name] = narrowed;
 				continue;
 			}
 		}
-		if (rebuiltText === storedText) plan.statistics[name] = selector;
+		if (isDeepStrictEqual(JSON.parse(rebuiltText), stored))
+			plan.statistics[name] = selector;
 		else
 			plan.observations[name] = difference(
 				stored,
