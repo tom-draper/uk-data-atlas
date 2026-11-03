@@ -26,7 +26,6 @@ export * from "./validationReport";
 export * from "@uk-data-atlas/measures";
 export * from "./atlasStatistics";
 export * from "./fuelPovertyStatistics";
-export * from "./datasetLayout";
 export * from "./datasetPayloads";
 export * from "./declaredPayload";
 export * from "./payloadComparison";

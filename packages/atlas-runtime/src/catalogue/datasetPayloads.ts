@@ -3,11 +3,9 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { atlasCachePath } from "../storage/atlasCache";
-import { rebuildFromLayout } from "./datasetLayout";
 import { rebuildFromDeclaration } from "./declaredPayload";
 import type { Json } from "./declaredStatistics";
 import { rebuildFuelPoverty } from "./fuelPovertyStatistics";
-import { rebuildAirQuality } from "./airQualityPayload";
 import { STATISTICS_DATASETS } from "./statisticsDatasets";
 
 const declared = new Map(
@@ -16,7 +14,7 @@ const declared = new Map(
 
 /** Whether a manifest type's JSON is rebuilt from rows instead of stored. */
 export const servedFromRows = (type: string) =>
-	type === "fuelPoverty" || declared.get(type)?.rebuild !== undefined;
+	type === "fuelPoverty" || declared.get(type)?.payload !== undefined;
 
 /** Datasets that derived rules have read, once per database. */
 const others = new WeakMap<
@@ -25,8 +23,7 @@ const others = new WeakMap<
 >();
 
 /** Whether a dataset's JSON is generated from rows, with no layout tables. */
-export const generatedFromRows = (type: string, output: string) =>
-	(type === "airQuality" && output === "air-quality") ||
+export const generatedFromRows = (type: string) =>
 	declared.get(type)?.payload !== undefined;
 
 /**
@@ -57,8 +54,6 @@ export function rebuildDatasetPayload(
 	output: string,
 ): string {
 	if (type === "fuelPoverty") return rebuildFuelPoverty(database);
-	if (type === "airQuality" && output === "air-quality")
-		return rebuildAirQuality(database);
 	const config = declared.get(type);
 	if (config?.payload)
 		return rebuildFromDeclaration(database, config, output, (other) => {
@@ -80,9 +75,7 @@ export function rebuildDatasetPayload(
 			}
 			return found!;
 		});
-	const rebuild = config?.rebuild;
-	if (!rebuild) throw new Error(`Dataset ${output} is not served from rows`);
-	return rebuildFromLayout(database, output, rebuild.derived);
+	throw new Error(`Dataset ${output} is not served from rows`);
 }
 
 const digest = (text: string) =>

@@ -45,7 +45,6 @@ export const CAR_AVAILABILITY: DeclaredDataset = {
 		],
 		code: "ladCode",
 	},
-	rebuild: {},
 	...districts2021,
 	period: census2021,
 	measures: [HOUSEHOLDS],
@@ -109,7 +108,6 @@ export const QUALIFICATION: DeclaredDataset = {
 		],
 		code: "ladCode",
 	},
-	rebuild: {},
 	...districts2021,
 	period: census2021,
 	measures: [
@@ -210,7 +208,6 @@ export const TRAVEL_TO_WORK: DeclaredDataset = {
 		],
 		code: "ladCode",
 	},
-	rebuild: {},
 	...districts2021,
 	period: census2021,
 	measures: [
@@ -311,7 +308,6 @@ const ETHNICITY_CODES: Readonly<Record<string, string>> = Object.fromEntries(
 
 export const ETHNICITY: DeclaredDataset = {
 	type: "ethnicity",
-	rebuild: {},
 	payload: {
 		parts: yearParts(
 			"ethnicity",
@@ -426,16 +422,14 @@ export const GENERAL_HEALTH: DeclaredDataset = {
 		"metrics.goodHealth": "Very good plus good health.",
 		value: "Good health as a percentage of all usual residents.",
 	},
-	rebuild: {
-		derived: {
-			"metrics.goodHealth": (record) => {
-				const metrics = record.metrics as Record<string, number>;
-				return metrics.veryGood + metrics.good;
-			},
-			value: (record) => {
-				const metrics = record.metrics as Record<string, number>;
-				return (metrics.goodHealth / metrics.total) * 100;
-			},
+	computed: {
+		"metrics.goodHealth": (record) => {
+			const metrics = record.metrics as Record<string, number>;
+			return metrics.veryGood + metrics.good;
+		},
+		value: (record) => {
+			const metrics = record.metrics as Record<string, number>;
+			return (metrics.goodHealth / metrics.total) * 100;
 		},
 	},
 };
@@ -510,12 +504,10 @@ export const HOUSING_TENURE: DeclaredDataset = {
 	],
 	fields: [{ path: "metrics.{tenure}", measure: "households" }],
 	derived: { value: "Owned households as a percentage of all households." },
-	rebuild: {
-		derived: {
-			value: (record) => {
-				const metrics = record.metrics as Record<string, number>;
-				return (metrics.owned / metrics.total) * 100;
-			},
+	computed: {
+		value: (record) => {
+			const metrics = record.metrics as Record<string, number>;
+			return (metrics.owned / metrics.total) * 100;
 		},
 	},
 };

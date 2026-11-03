@@ -483,172 +483,6 @@ LEFT JOIN dimension_member c ON c.id = o.category_id
 LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.id`,
 			},
 		},
-		dataset_part: {
-			strict: true,
-			columns: [
-				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
-				"position INTEGER NOT NULL",
-				"key TEXT NOT NULL",
-				"header TEXT NOT NULL",
-			],
-			key: ["dataset_id", "position"],
-			constraints: ["UNIQUE (dataset_id, key)"],
-			rows: rows(function* ({ datasets }) {
-				for (const [index, dataset] of datasets.entries())
-					for (const [position, layout] of [
-						...(dataset.layouts?.() ?? []),
-					].entries())
-						yield [index + 1, position, layout.key, layout.header];
-			}),
-		},
-		dataset_leaf: {
-			strict: true,
-			columns: [
-				"dataset_id INTEGER NOT NULL",
-				"part INTEGER NOT NULL",
-				"records TEXT NOT NULL",
-				"position INTEGER NOT NULL",
-				"path TEXT NOT NULL",
-				"kind TEXT NOT NULL CHECK (kind IN ('value','lower','upper','code','name','parent_code','parent_name','derived','literal','status','contest','candidacy'))",
-				"series_id INTEGER REFERENCES series(id)",
-				"period_id INTEGER REFERENCES period(id)",
-				"rule TEXT",
-				"literal TEXT",
-				"parent INTEGER",
-				"field TEXT",
-			],
-			key: ["dataset_id", "part", "records", "position"],
-			constraints: [
-				"FOREIGN KEY (dataset_id, part) REFERENCES dataset_part(dataset_id, position)",
-				"CHECK ((kind IN ('value','lower','upper','status')) = (series_id IS NOT NULL AND period_id IS NOT NULL))",
-				"CHECK ((kind = 'derived') = (rule IS NOT NULL))",
-				"CHECK ((kind IN ('literal','status')) = (literal IS NOT NULL))",
-				"CHECK ((kind IN ('parent_code','parent_name')) = (parent IS NOT NULL))",
-				"CHECK ((kind IN ('contest','candidacy')) = (field IS NOT NULL))",
-			],
-			rows: rows(function* ({ datasets, seriesIds, periods }, database) {
-				for (const [index, dataset] of datasets.entries()) {
-					const ids = seriesIds[index];
-					for (const [part, layout] of [
-						...(dataset.layouts?.() ?? []),
-					].entries())
-						for (const { from, leaves } of layout.records)
-							for (const [position, leaf] of leaves.entries()) {
-								const value =
-									leaf.kind === "value" ||
-									leaf.kind === "lower" ||
-									leaf.kind === "upper" ||
-									leaf.kind === "status";
-								if (value && ids[leaf.series] === undefined)
-									throw new Error(
-										`Unknown series ${leaf.series} in ${dataset.slug} layout`,
-									);
-								yield [
-									index + 1,
-									part,
-									from,
-									position,
-									JSON.stringify(leaf.path),
-									leaf.kind,
-									value ? ids[leaf.series] : null,
-									value
-										? periods.id(leaf.period, dataset.slug)
-										: null,
-									leaf.kind === "derived" ? leaf.rule : null,
-									leaf.kind === "literal"
-										? leaf.value
-										: leaf.kind === "status"
-											? leaf.statuses
-											: null,
-									leaf.kind === "parent_code" ||
-									leaf.kind === "parent_name"
-										? leaf.parent
-										: null,
-									leaf.kind === "contest" ||
-									leaf.kind === "candidacy"
-										? leaf.column
-										: null,
-								];
-							}
-				}
-			}),
-		},
-		dataset_record: {
-			strict: true,
-			columns: [
-				"dataset_id INTEGER NOT NULL",
-				"part INTEGER NOT NULL",
-				"records TEXT NOT NULL",
-				"position INTEGER NOT NULL",
-				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
-			],
-			key: ["dataset_id", "part", "records", "position"],
-			constraints: [
-				"FOREIGN KEY (dataset_id, part) REFERENCES dataset_part(dataset_id, position)",
-			],
-			rows: rows(function* ({ datasets }, database) {
-				for (const [index, dataset] of datasets.entries())
-					for (const [part, layout] of [
-						...(dataset.layouts?.() ?? []),
-					].entries())
-						for (const { from, areas } of layout.records)
-							for (const [
-								position,
-								{ release, code },
-							] of areas.entries())
-								yield [
-									index + 1,
-									part,
-									from,
-									position,
-									area(database, dataset.slug, release, code)
-										.id,
-								];
-			}),
-		},
-		dataset_record_parent: {
-			strict: true,
-			columns: [
-				"dataset_id INTEGER NOT NULL",
-				"part INTEGER NOT NULL",
-				"records TEXT NOT NULL",
-				"position INTEGER NOT NULL",
-				"parent INTEGER NOT NULL",
-				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
-			],
-			key: ["dataset_id", "part", "records", "position", "parent"],
-			constraints: [
-				"FOREIGN KEY (dataset_id, part, records, position) REFERENCES dataset_record(dataset_id, part, records, position)",
-			],
-			rows: rows(function* ({ datasets }, database) {
-				for (const [index, dataset] of datasets.entries())
-					for (const [part, layout] of [
-						...(dataset.layouts?.() ?? []),
-					].entries())
-						for (const { from, areas } of layout.records)
-							for (const [
-								position,
-								{ parents },
-							] of areas.entries())
-								for (const [parent, found] of (
-									parents ?? []
-								).entries())
-									if (found)
-										yield [
-											index + 1,
-											part,
-											from,
-											position,
-											parent,
-											area(
-												database,
-												dataset.slug,
-												found.release,
-												found.code,
-											).id,
-										];
-			}),
-		},
 		election: {
 			strict: true,
 			rowid: true,
@@ -717,7 +551,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"elected INTEGER NOT NULL CHECK (elected IN (0,1))",
 			],
 			key: ["contest_id", "position"],
-			rows: rows(function* ({ datasets }) {
+			rows: rows(function* ({ datasets }, database) {
 				let id = 0;
 				for (const dataset of datasets)
 					for (const { contests } of dataset.elections?.() ?? [])
@@ -733,41 +567,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 									1,
 								];
 						}
-			}),
-		},
-		dataset_record_absent: {
-			strict: true,
-			columns: [
-				"dataset_id INTEGER NOT NULL",
-				"part INTEGER NOT NULL",
-				"records TEXT NOT NULL",
-				"position INTEGER NOT NULL",
-				"leaf INTEGER NOT NULL",
-			],
-			key: ["dataset_id", "part", "records", "position", "leaf"],
-			constraints: [
-				"FOREIGN KEY (dataset_id, part, records, position) REFERENCES dataset_record(dataset_id, part, records, position)",
-				"FOREIGN KEY (dataset_id, part, records, leaf) REFERENCES dataset_leaf(dataset_id, part, records, position)",
-			],
-			rows: rows(function* ({ datasets }, database) {
-				for (const [index, dataset] of datasets.entries())
-					for (const [part, layout] of [
-						...(dataset.layouts?.() ?? []),
-					].entries())
-						for (const { from, areas } of layout.records)
-							for (const [
-								position,
-								{ absent },
-							] of areas.entries())
-								for (const leaf of absent ?? [])
-									yield [
-										index + 1,
-										part,
-										from,
-										position,
-										leaf,
-									];
-				// Last statistics table: every row, layouts included, is written.
+				// The last statistics table: every row is written.
 				for (const dataset of datasets) dataset.verify?.(database);
 			}),
 		},

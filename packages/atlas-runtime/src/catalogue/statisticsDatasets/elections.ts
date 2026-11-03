@@ -147,12 +147,10 @@ export const LOCAL_ELECTION: DeclaredDataset = {
 		electorate: "0 where the source publishes no electorate.",
 		turnoutPercent: "0 where the source publishes no turnout.",
 	},
-	rebuild: {
-		derived: {
-			totalVotes: sumPartyVotes,
-			electorate: () => 0,
-			turnoutPercent: () => 0,
-		},
+	computed: {
+		totalVotes: sumPartyVotes,
+		electorate: () => 0,
+		turnoutPercent: () => 0,
 	},
 };
 
@@ -239,15 +237,13 @@ export const GENERAL_ELECTION: DeclaredDataset = {
 		turnoutPercent:
 			"Valid and rejected ballots as a percentage of the electorate.",
 	},
-	rebuild: {
-		derived: {
-			turnoutPercent: (record) =>
-				calculateTurnout(
-					record.validVotes as number,
-					record.invalidVotes as number,
-					record.electorate as number,
-				) ?? 0,
-		},
+	computed: {
+		turnoutPercent: (record) =>
+			calculateTurnout(
+				record.validVotes as number,
+				record.invalidVotes as number,
+				record.electorate as number,
+			) ?? 0,
 	},
 };
 
@@ -409,5 +405,4 @@ export const HISTORICAL_GENERAL_ELECTION: DeclaredDataset = {
 		{ path: "totalVotes", measure: "valid-votes" },
 		{ path: "turnoutPercent", measure: "turnout" },
 	],
-	rebuild: {},
 };

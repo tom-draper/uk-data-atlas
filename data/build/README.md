@@ -150,28 +150,23 @@ be reconstructed. These compiler outputs are build inputs, not API storage.
 
 All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/catalogue/atlasStatistics.ts`.
 
-| Table                   | Key                                                                      | Meaning                                                                                                                                                             |
-| ----------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `source`                | `id`                                                                     | Publisher, URL and licence.                                                                                                                                         |
-| `dataset`               | `id`, `slug` unique                                                      | Title, description, `source_id`, compiler `fingerprint`. `slug` is the compiled output name.                                                                        |
-| `measure`               | `id`, `slug` unique                                                      | Shared across datasets. Unit, `value_kind`, `aggregation`, and numerator/denominator measures.                                                                      |
-| `dimension`             | `id`, `slug` unique                                                      | A breakdown such as `tenure` or `crime-type`.                                                                                                                       |
-| `dimension_member`      | `id`, unique `(dimension_id, code)`                                      | Member label, optional parent, publisher `position`.                                                                                                                |
-| `period`                | `id`, `label` unique                                                     | `kind`, `start_date`, `end_date`.                                                                                                                                   |
-| `status`                | `id`, `slug` unique                                                      | `observed` (1), `estimated`, `provisional`, `suppressed`, `not_applicable`.                                                                                         |
-| `series`                | `id`, `key` unique                                                       | One dataset, measure, release (`area_releases.position`) and set of members, plus `method`.                                                                         |
-| `series_member`         | `(series_id, dimension_id)`                                              | The members fixing a series. Indexed by `(member_id, series_id)`.                                                                                                   |
-| `observation`           | `(series_id, area_version_id, period_id)`                                | `value`, `status_id`, optional `lower`, `upper`, `category_id`. `WITHOUT ROWID`.                                                                                    |
-| `dataset_area_name`     | `(dataset_id, area_version_id)`                                          | A publisher's area name, stored only where it differs from `area_version.name`.                                                                                     |
-| `area_relationship`     | `(dataset_id, relation, period_id, child_version_id, parent_version_id)` | A publisher's statement, for a period, that one area contains (`parent`), was formed from (`predecessor`) or was listed under the code of (`published-as`) another. |
-| `election`              | `id`; unique `(dataset_id, label)`, `(dataset_id, date)`                 | An election a dataset holds: the publisher's label, kind (`general` or `local`), polling day and area release.                                                      |
-| `contest`               | `id`; unique `(election_id, area_version_id)`                            | One area's contest at an election, with the publisher's text for it and the party declared the winner.                                                              |
-| `candidacy`             | `(contest_id, position)`                                                 | The candidate a contest elected: given name, family name and gender.                                                                                                |
-| `dataset_part`          | `(dataset_id, position)`                                                 | A top-level key of a dataset served from rows, and its header JSON with record sets as null.                                                                        |
-| `dataset_leaf`          | `(dataset_id, part, records, position)`                                  | One leaf of every record in a part's record set, in key order: a series value or bound, the code, the name, a derived rule or a literal.                            |
-| `dataset_record`        | `(dataset_id, part, records, position)`                                  | The area version of each record in a part's record set, in the file's order.                                                                                        |
-| `dataset_record_parent` | `(dataset_id, part, records, position, parent)`                          | The parent area a record names (by index into the config's `parents`), as an area version.                                                                          |
-| `dataset_record_absent` | `(dataset_id, part, records, position, leaf)`                            | A leaf a record leaves out of its JSON.                                                                                                                             |
+| Table               | Key                                                                      | Meaning                                                                                                                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`            | `id`                                                                     | Publisher, URL and licence.                                                                                                                                                                                 |
+| `dataset`           | `id`, `slug` unique                                                      | Title, description, `source_id`, compiler `fingerprint`. `slug` is the compiled output name.                                                                                                                |
+| `measure`           | `id`, `slug` unique                                                      | Shared across datasets. Unit, `value_kind`, `aggregation`, and numerator/denominator measures.                                                                                                              |
+| `dimension`         | `id`, `slug` unique                                                      | A breakdown such as `tenure` or `crime-type`.                                                                                                                                                               |
+| `dimension_member`  | `id`, unique `(dimension_id, code)`                                      | Member label, optional parent, publisher `position`.                                                                                                                                                        |
+| `period`            | `id`, `label` unique                                                     | `kind`, `start_date`, `end_date`.                                                                                                                                                                           |
+| `status`            | `id`, `slug` unique                                                      | `observed` (1), `estimated`, `provisional`, `suppressed`, `not_applicable`.                                                                                                                                 |
+| `series`            | `id`, `key` unique                                                       | One dataset, measure, release (`area_releases.position`) and set of members, plus `method`.                                                                                                                 |
+| `series_member`     | `(series_id, dimension_id)`                                              | The members fixing a series. Indexed by `(member_id, series_id)`.                                                                                                                                           |
+| `observation`       | `(series_id, area_version_id, period_id)`                                | `value`, `status_id`, optional `lower`, `upper`, `category_id`. `WITHOUT ROWID`.                                                                                                                            |
+| `dataset_area_name` | `(dataset_id, area_version_id)`                                          | A publisher's area name, stored only where it differs from `area_version.name`.                                                                                                                             |
+| `area_relationship` | `(dataset_id, relation, period_id, child_version_id, parent_version_id)` | A publisher's statement, for a period, that one area contains (`parent`), was formed from (`predecessor`) was listed under the code of (`published-as`), or has the same extent as (`coterminous`) another. |
+| `election`          | `id`; unique `(dataset_id, label)`, `(dataset_id, date)`                 | An election a dataset holds: the publisher's label, kind (`general` or `local`), polling day and area release.                                                                                              |
+| `contest`           | `id`; unique `(election_id, area_version_id)`                            | One area's contest at an election, with the publisher's text for it and the party declared the winner.                                                                                                      |
+| `candidacy`         | `(contest_id, position)`                                                 | The candidate a contest elected: given name, family name and gender.                                                                                                                                        |
 
 `observation.area_version_id` references `area_version(id)`, one row per
 release and code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
@@ -188,7 +183,7 @@ measure (`households`, `fuel-poor-households`, `fuel-poverty-rate`) on the 2021
 LSOA release. Record order is area code order and is not stored; the mapper
 refuses unordered input. The period header (`id`, `year`, `boundaryType`,
 `boundaryYear`) is derived from the period and release. It is served from rows:
-the build refuses to publish if the rebuilt bytes differ from the compiled JSON,
+the build refuses to publish if the rebuilt values differ from the compiled JSON,
 and stores no payload.
 
 The other datasets are configuration in `packages/atlas-runtime/src/catalogue/statisticsDatasets/`, read by
@@ -200,23 +195,28 @@ build checks the stored row count. Codes are placed on the header's release,
 then on each `alsoIn` release in turn; a code in none of them fails the build
 unless an `exclude` pattern gives a reason.
 
-A config with `rebuild` is served from rows. The build infers its layout from
-the first record of each part (`dataset_part`, `dataset_leaf`), rebuilds the
-JSON from rows (`packages/atlas-runtime/src/catalogue/datasetLayout.ts`), and refuses to publish unless the
-bytes equal the compiled file, reporting where they first differ. Records are
-laid out in the file's order (`dataset_record`). Record fields naming a parent
-area (a config's `parents`, such as an LSOA's district) are stored as that
-area's version (`dataset_record_parent`), with any differing publisher name in
-`dataset_area_name`. The layout is inferred from every record of a part: leaves in a key
-order all records agree with, each value leaf on the series of the first record
-with a value there. A value with no observation is written as null, and leaves
-a record leaves out are listed in `dataset_record_absent`. A leaf names the first record's series; records
-on an `alsoIn` release read the series with the same measure and members.
-Derived numbers are recomputed by the config's `rebuild.derived` rules. The
-compiled JSON is then not stored in `payloads`. The `atlas-sqlite` stage
-rebuilds it into `atlas-cache.sqlite`. The cache records the compiler hash to
-identify its source and the generated payload hash for the website URL.
-Every configured dataset sets `rebuild`, so none keeps a payload.
+A config with `payload` has its JSON generated from rows, not stored.
+`packages/atlas-runtime/src/catalogue/declaredPayload.ts` places each series'
+values at the config's field paths in every record, and fills a value with no
+observation as null. Names and keys come from `dataset_area_name` and
+`dataset_area_key`, parent and other related areas from `area_relationship`,
+contest text and winners from `contest` and `candidacy`, and numbers the
+compiler computes from the config's `computed` rules. The config's `payload`
+supplies what rows cannot say: each part's header, the record field holding
+the area code, which containers are arrays, and header summaries computed from
+the records (such as a deprivation index's figures for each district). A part
+with no records fails the build unless declared optional, and a series that two
+fields fit fails it unless one field `wins`. `payload.dropped` names header
+fields of the compiled dataset that nothing in the rows can say, such as a
+count of collisions with no area; the comparison ignores them.
+
+The `atlas-sqlite` stage compares every generated payload with its compiled
+dataset by value (numbers equal to within a relative 1e-9, nulls and absent
+keys exact) and refuses to publish on a difference. The payload is not stored in
+`payloads`; the stage generates it into `atlas-cache.sqlite`, whose entry
+records the compiler hash to identify its source and the generated payload hash
+for the website URL. Every configured dataset has a `payload`, so none keeps a
+stored payload.
 
 Run `pnpm exec vitest run --project built tests/built/datasetPayloads.test.ts`
 to compare each rebuilt dataset with the compiled values and check its cache

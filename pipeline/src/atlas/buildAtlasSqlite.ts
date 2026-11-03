@@ -264,7 +264,7 @@ export const buildAtlasSqlite = (
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)
 			throw new Error("Area versions on another geography's release");
 		for (const entry of manifest.datasets) {
-			if (!generatedFromRows(entry.type, entry.output)) continue;
+			if (!generatedFromRows(entry.type)) continue;
 			const compiled = readFileSync(
 				join(directory, "datasets", `${entry.output}.json`),
 				"utf8",

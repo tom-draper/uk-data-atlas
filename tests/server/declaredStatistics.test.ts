@@ -7,7 +7,6 @@ import {
 	type DeclaredDataset,
 	type DeclaredField,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { rebuildFromLayout } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	rebuildFromDeclaration,
@@ -243,7 +242,7 @@ describe("declared statistics", () => {
 		}
 	});
 
-	it("generates air quality from observations without layout tables", () => {
+	it("generates air quality from observations, with null where one area lacks a value", () => {
 		const config = STATISTICS_DATASETS.find(
 			(dataset) => dataset.type === "airQuality",
 		);
@@ -267,6 +266,16 @@ describe("declared statistics", () => {
 						pm25PopulationWeighted: 7,
 						pm25PopulationWeightedAnthropogenic: 3,
 					},
+					E06000002: {
+						ladCode: "E06000002",
+						ladName: "Middlesbrough",
+						no2Mean: 13,
+						pm25Mean: 6,
+						pm10Mean: 9,
+						gridCells: 5,
+						pm25PopulationWeighted: 8,
+						pm25PopulationWeightedAnthropogenic: 4,
+					},
 				},
 			},
 		};
@@ -281,11 +290,6 @@ describe("declared statistics", () => {
 					}),
 				]),
 			});
-			expect(
-				database
-					.prepare("SELECT count(*) AS count FROM dataset_part")
-					.get()?.count,
-			).toBe(0);
 			expect(
 				JSON.parse(
 					rebuildDatasetPayload(
@@ -498,13 +502,11 @@ describe("declared statistics", () => {
 				elected: { given_name: "first" },
 			},
 			derived: { total: "The sum of the votes." },
-			rebuild: {
-				derived: {
-					total: (record) =>
-						Object.values(
-							record.votes as Record<string, number>,
-						).reduce((sum, votes) => sum + votes, 0),
-				},
+			computed: {
+				total: (record) =>
+					Object.values(
+						record.votes as Record<string, number>,
+					).reduce((sum, votes) => sum + votes, 0),
 			},
 			payload: {
 				parts: () => [
@@ -998,304 +1000,22 @@ describe("declared statistics", () => {
 		});
 	});
 
-	describe("served from rows", () => {
-		const config: DeclaredDataset = {
-			type: "example",
-			name: "name",
-			alsoIn: [{ geography: "localAuthority", year: 2022 }],
-			measures: [CRIMES, RATE],
-			dimensions: [
-				{
-					slug: "offence",
-					label: "Offence",
-					members: [
-						{ key: "total", code: "all" },
-						{ key: "theft", parent: "total" },
-					],
-				},
-			],
-			fields: [
-				{ path: "counts.{offence}", measure: "crimes" },
-				{
-					path: "rate.value",
-					lower: "rate.lower",
-					upper: "rate.upper",
-					measure: "rate",
-				},
-			],
-			derived: {
-				share: "Theft as a percentage of all offences.",
-				"counts.other": "All offences less theft.",
-			},
-			rebuild: {
-				derived: {
-					"counts.other": (record) => {
-						const counts = record.counts as Record<string, number>;
-						return counts.total - counts.theft;
-					},
-					share: (record) => {
-						const counts = record.counts as Record<string, number>;
-						return (counts.theft / counts.total) * 100;
-					},
-				},
-			},
-		};
-		const record = (code: string, name: string, total: number) => ({
-			code,
-			name,
-			kind: "district",
-			share: (3 / total) * 100,
-			counts: { total, theft: 3, other: total - 3 },
-			rate: { value: 1.5, lower: 1.25, upper: 2 },
-		});
-		const text = JSON.stringify({
-			2023: {
-				id: "example2023",
-				year: 2023,
-				boundaryType: "localAuthority",
-				boundaryYear: 2024,
-				data: {
-					E06000001: record("E06000001", "Hartlepool", 7),
-					E07000026: record("E07000026", "Allerdale (old)", 9),
-				},
-				notes: { source: "Example" },
-			},
-			2024: {
-				id: "example2024",
-				year: 2024,
-				boundaryType: "localAuthority",
-				boundaryYear: 2024,
-				data: {
-					E06000002: record("E06000002", "Middlesbrough", 11),
-				},
-				notes: { source: "Example" },
-			},
-		});
-
-		it("rebuilds the compiled JSON byte for byte from rows and layout", () => {
+	describe("generated payloads", () => {
+		const generated = (config: DeclaredDataset, text: string) => {
 			const database = write(config, text);
-			expect(
-				rebuildFromLayout(database, "example", config.rebuild!.derived),
-			).toBe(text);
-			expect(
-				database
-					.prepare(
-						"SELECT position, key, header FROM dataset_part ORDER BY position",
-					)
-					.all()
-					.map((row) => ({ ...row })),
-			).toEqual([
-				{
-					position: 0,
-					key: "2023",
-					header: '{"id":"example2023","year":2023,"boundaryType":"localAuthority","boundaryYear":2024,"data":null,"notes":{"source":"Example"}}',
-				},
-				{
-					position: 1,
-					key: "2024",
-					header: '{"id":"example2024","year":2024,"boundaryType":"localAuthority","boundaryYear":2024,"data":null,"notes":{"source":"Example"}}',
-				},
-			]);
-			expect(
-				database
-					.prepare(
-						"SELECT path, kind, rule, literal FROM dataset_leaf WHERE part = 0 ORDER BY position",
-					)
-					.all()
-					.map((row) => Object.values(row)),
-			).toEqual([
-				['["code"]', "code", null, null],
-				['["name"]', "name", null, null],
-				['["kind"]', "literal", null, '"district"'],
-				['["share"]', "derived", "share", null],
-				['["counts","total"]', "value", null, null],
-				['["counts","theft"]', "value", null, null],
-				['["counts","other"]', "derived", "counts.other", null],
-				['["rate","value"]', "value", null, null],
-				['["rate","lower"]', "lower", null, null],
-				['["rate","upper"]', "upper", null, null],
-			]);
-			expect(database.prepare("PRAGMA foreign_key_check").all()).toEqual(
-				[],
-			);
-		});
+			try {
+				return JSON.parse(
+					rebuildFromDeclaration(database, config, "example"),
+				);
+			} finally {
+				database.close();
+			}
+		};
+		const payload = {
+			parts: yearParts("example", "localAuthority", 2024, {}, ["2024"]),
+		};
 
-		it("keeps the file's record order", () => {
-			const unsorted = text.replace(
-				/"E06000001":(\{.*?\}\}),"E07000026":(\{.*?\}\})/,
-				'"E07000026":$2,"E06000001":$1',
-			);
-			expect(unsorted).not.toBe(text);
-			const database = write(config, unsorted);
-			expect(
-				rebuildFromLayout(database, "example", config.rebuild!.derived),
-			).toBe(unsorted);
-		});
-
-		it("refuses rows that do not rebuild the compiled JSON", () => {
-			const second = text.indexOf(
-				'"district"',
-				text.indexOf('"E07000026"'),
-			);
-			const changed = `${text.slice(0, second)}"unitary"${text.slice(second + '"district"'.length)}`;
-			expect(() => write(config, changed)).toThrow(
-				"example: rows do not match the compiled dataset values",
-			);
-		});
-
-		it("accepts compiled JSON with different whitespace", () => {
-			const formatted = JSON.stringify(JSON.parse(text), null, 2);
-			const database = write(config, formatted);
-			expect(
-				JSON.parse(
-					rebuildFromLayout(
-						database,
-						"example",
-						config.rebuild!.derived,
-					),
-				),
-			).toEqual(JSON.parse(formatted));
-		});
-
-		it("stores each record's parent area and rebuilds its code and name", () => {
-			const parented: DeclaredDataset = {
-				type: "example",
-				name: "name",
-				alsoIn: [{ geography: "localAuthority", year: 2022 }],
-				measures: [CRIMES],
-				fields: [{ path: "total", measure: "crimes" }],
-				parents: [
-					{
-						code: "regionCode",
-						name: "regionName",
-						release: { geography: "region", year: 2025 },
-					},
-				],
-				rebuild: {},
-			};
-			const text = file({
-				E06000002: {
-					name: "Middlesbrough",
-					regionCode: "E12000001",
-					regionName: "North East England",
-					total: 4,
-				},
-				E06000001: {
-					name: "Hartlepool",
-					regionCode: "E12000001",
-					regionName: "North East England",
-					total: 3,
-				},
-			});
-			const database = write(parented, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare(
-						"SELECT position, parent, area_version_id FROM dataset_record_parent ORDER BY position",
-					)
-					.all()
-					.map((row) => Object.values(row)),
-			).toEqual([
-				[0, 0, 4],
-				[1, 0, 4],
-			]);
-			expect(
-				database
-					.prepare(
-						"SELECT relation, child_version_id, parent_version_id FROM area_relationship ORDER BY child_version_id",
-					)
-					.all()
-					.map((row) => Object.values(row)),
-			).toEqual([
-				["parent", 1, 4],
-				["parent", 2, 4],
-			]);
-			expect(
-				database
-					.prepare(
-						"SELECT area_version_id, name FROM dataset_area_name WHERE area_version_id = 4",
-					)
-					.all()
-					.map((row) => Object.values(row)),
-			).toEqual([[4, "North East England"]]);
-			expect(() =>
-				write(parented, text.replace(/E12000001/g, "E12000009")),
-			).toThrow("regionCode E12000009 is in no listed release");
-		});
-
-		it("rebuilds null values and keys some records lack", () => {
-			const gappy: DeclaredDataset = {
-				type: "example",
-				name: "name",
-				alsoIn: [{ geography: "localAuthority", year: 2022 }],
-				measures: [CRIMES, RATE],
-				fields: [
-					{ path: "total", measure: "crimes" },
-					{ path: "rate", measure: "rate" },
-				],
-				parents: [
-					{
-						code: "regionCode",
-						name: "regionName",
-						release: { geography: "region", year: 2025 },
-					},
-				],
-				rebuild: {},
-			};
-			const text = file({
-				E06000001: {
-					name: "Hartlepool",
-					regionCode: "E12000001",
-					regionName: "North East",
-					total: null,
-					rate: 1.5,
-				},
-				E06000002: {
-					name: "Middlesbrough",
-					total: 4,
-					note: "merged",
-					rate: 2,
-				},
-				E07000026: {
-					name: "Allerdale",
-					regionCode: "E12000001",
-					regionName: "North East",
-					total: 5,
-				},
-			});
-			const database = write(gappy, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare("SELECT path FROM dataset_leaf ORDER BY position")
-					.all()
-					.map((row) => row.path),
-			).toEqual([
-				'["name"]',
-				'["regionCode"]',
-				'["regionName"]',
-				'["total"]',
-				'["note"]',
-				'["rate"]',
-			]);
-			expect(
-				database
-					.prepare(
-						"SELECT position, leaf FROM dataset_record_absent ORDER BY position, leaf",
-					)
-					.all()
-					.map((row) => Object.values(row)),
-			).toEqual([
-				[0, 4],
-				[1, 1],
-				[1, 2],
-				[2, 4],
-				[2, 5],
-			]);
-		});
-
-		it("rebuilds values in arrays, keyed by index", () => {
+		it("generates values in arrays, keyed by index", () => {
 			const listed: DeclaredDataset = {
 				type: "example",
 				name: "name",
@@ -1308,63 +1028,26 @@ describe("declared statistics", () => {
 						period: (index) => periods.year(2020 + Number(index)),
 					},
 				],
-				rebuild: {},
-			};
-			const text = file({
-				E06000001: { name: "Hartlepool", counts: [3, null, 5] },
-				E06000002: { name: "Middlesbrough", counts: [4, 6] },
-				E07000026: { name: "Allerdale", counts: [] },
-			});
-			const database = write(listed, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare("SELECT path FROM dataset_leaf ORDER BY position")
-					.all()
-					.map((row) => row.path),
-			).toEqual([
-				'["name"]',
-				'["counts",0]',
-				'["counts",1]',
-				'["counts",2]',
-				// The empty array is a literal; records with values lack it.
-				'["counts"]',
-			]);
-		});
-
-		it("rebuilds a parent named by code only", () => {
-			const linked: DeclaredDataset = {
-				type: "example",
-				name: "name",
-				alsoIn: [{ geography: "localAuthority", year: 2022 }],
-				measures: [CRIMES],
-				fields: [{ path: "total", measure: "crimes" }],
-				parents: [
-					{
-						code: "regionCode",
-						release: { geography: "region", year: 2025 },
-					},
-				],
-				rebuild: {},
-			};
-			const text = file({
-				E06000001: { name: "Hartlepool", total: 3 },
-				E06000002: {
-					name: "Middlesbrough",
-					regionCode: "E12000001",
-					total: 4,
+				payload: {
+					...payload,
+					arrays: ["counts"],
+					periodKeys: ["0", "1", "2"],
+					sparsePeriods: true,
+					emptyArrays: ["counts"],
 				},
-			});
-			const database = write(linked, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare("SELECT count(*) AS n FROM dataset_area_name")
-					.get()?.n,
-			).toBe(0);
+			};
+			const expected = JSON.parse(
+				file({
+					E06000001: { name: "Hartlepool", counts: [3, null, 5] },
+					E06000002: { name: "Middlesbrough", counts: [4, 6] },
+				}),
+			);
+			expect(generated(listed, JSON.stringify(expected))).toEqual(
+				expected,
+			);
 		});
 
-		it("rebuilds a status field from the observation's status", () => {
+		it("generates a status field from the observation's status", () => {
 			const flagged: DeclaredDataset = {
 				type: "example",
 				measures: [RATE],
@@ -1378,180 +1061,54 @@ describe("declared statistics", () => {
 						},
 					},
 				],
-				rebuild: {},
+				payload,
 			};
-			const text = file({
-				E06000001: { value: 1, known: true },
-				E06000002: { value: 2, known: false },
-			});
-			const database = write(flagged, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
+			const expected = JSON.parse(
+				file({
+					E06000001: { value: 1, known: true },
+					E06000002: { value: 2, known: false },
+				}),
+			);
+			expect(generated(flagged, JSON.stringify(expected))).toEqual(
+				expected,
+			);
 		});
 
-		it("rebuilds parents listed in an array", () => {
-			const merged: DeclaredDataset = {
-				type: "example",
-				alsoIn: [{ geography: "localAuthority", year: 2022 }],
-				measures: [CRIMES],
-				fields: [{ path: "total", measure: "crimes" }],
-				parents: [0, 1].map((index) => ({
-					code: `from.${index}`,
-					release: { geography: "localAuthority", year: 2022 },
-				})),
-				rebuild: {},
-			};
-			const text = file({
-				E06000001: { total: 3, from: ["E07000026"] },
-				E06000002: { total: 4 },
-			});
-			const database = write(merged, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare("SELECT count(*) AS n FROM dataset_record_parent")
-					.get()?.n,
-			).toBe(1);
-		});
-
-		it("rebuilds records keyed by something other than their code", () => {
+		it("generates records keyed by something other than their code", () => {
 			const keyed: DeclaredDataset = {
 				type: "example",
 				name: "name",
 				keys: { QHM: "E06000001" },
 				measures: [CRIMES],
 				fields: [{ path: "total", measure: "crimes" }],
-				rebuild: {},
+				payload: { ...payload, code: "code" },
 			};
-			const text = file({
-				QHM: { code: "QHM", name: "HARTLEPOOL", total: 3 },
-				E06000002: {
-					code: "E06000002",
-					name: "Middlesbrough",
-					total: 4,
-				},
-			});
-			const database = write(keyed, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare(
-						"SELECT area_code FROM v_observation ORDER BY area_code",
-					)
-					.all()
-					.map((row) => row.area_code),
-			).toEqual(["E06000001", "E06000002"]);
-			expect(
-				database.prepare("SELECT key FROM dataset_area_key").all(),
-			).toEqual([{ key: "QHM" }]);
+			const expected = JSON.parse(
+				file({
+					QHM: { code: "QHM", name: "HARTLEPOOL", total: 3 },
+					E06000002: {
+						code: "E06000002",
+						name: "Middlesbrough",
+						total: 4,
+					},
+				}),
+			);
+			const database = write(keyed, JSON.stringify(expected));
+			try {
+				expect(
+					JSON.parse(
+						rebuildFromDeclaration(database, keyed, "example"),
+					),
+				).toEqual(expected);
+				expect(
+					database.prepare("SELECT key FROM dataset_area_key").all(),
+				).toEqual([{ key: "QHM" }]);
+			} finally {
+				database.close();
+			}
 		});
 
-		it("stores election text in contests and rebuilds it", () => {
-			const election: DeclaredDataset = {
-				type: "example",
-				name: "name",
-				period: () => periods.date("2024-07-04"),
-				measures: [CRIMES],
-				fields: [{ path: "votes.{party}", measure: "crimes" }],
-				dimensions: [{ slug: "party", label: "Party" }],
-				election: {
-					kind: "general",
-					date: () => "2024-07-04",
-					contest: { result: "result", authority_code: "ladCode" },
-					elected: { given_name: "first", family_name: "last" },
-				},
-				rebuild: {},
-			};
-			const text = file({
-				E06000001: {
-					name: "Hartlepool",
-					result: "Lab gain",
-					first: "Jo",
-					last: "Example",
-					votes: { LAB: 3, CON: 2 },
-				},
-				E06000002: {
-					name: "Middlesbrough",
-					result: null,
-					ladCode: "Unknown",
-					votes: { LAB: 4 },
-				},
-			});
-			const database = write(election, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare(
-						"SELECT e.label, e.kind, e.date, c.result, c.authority_code, k.given_name, k.family_name FROM contest c JOIN election e ON e.id = c.election_id LEFT JOIN candidacy k ON k.contest_id = c.id ORDER BY c.id",
-					)
-					.all()
-					.map((row) => ({ ...row })),
-			).toEqual([
-				{
-					label: "2024",
-					kind: "general",
-					date: "2024-07-04",
-					result: "Lab gain",
-					authority_code: null,
-					given_name: "Jo",
-					family_name: "Example",
-				},
-				{
-					label: "2024",
-					kind: "general",
-					date: "2024-07-04",
-					result: null,
-					authority_code: "Unknown",
-					given_name: null,
-					family_name: null,
-				},
-			]);
-		});
-
-		it("maps record keys to codes by part", () => {
-			const parts: DeclaredDataset = {
-				type: "example",
-				keys: (key, header) =>
-					(
-						({
-							"2024:1": "E06000001",
-							"2025:1": "E06000002",
-						}) as Record<string, string>
-					)[`${header.year}:${key}`],
-				measures: [CRIMES],
-				fields: [{ path: "total", measure: "crimes" }],
-				rebuild: {},
-			};
-			// The same publisher key stands for a different area in each part.
-			const text = JSON.stringify({
-				2024: {
-					year: 2024,
-					boundaryType: "localAuthority",
-					boundaryYear: 2024,
-					data: { 1: { id: "1", total: 3 } },
-				},
-				2025: {
-					year: 2025,
-					boundaryType: "localAuthority",
-					boundaryYear: 2024,
-					data: { 1: { id: "1", total: 4 } },
-				},
-			});
-			const database = write(parts, text);
-			expect(rebuildFromLayout(database, "example")).toBe(text);
-			expect(
-				database
-					.prepare(
-						"SELECT area_code, value FROM v_observation ORDER BY area_code",
-					)
-					.all()
-					.map((row) => ({ ...row })),
-			).toEqual([
-				{ area_code: "E06000001", value: 3 },
-				{ area_code: "E06000002", value: 4 },
-			]);
-		});
-
-		it("rebuilds a derived number from another dataset's rows", () => {
+		it("computes a derived number from another dataset's rows", () => {
 			const people: DeclaredDataset = {
 				type: "people",
 				name: "name",
@@ -1566,7 +1123,9 @@ describe("declared statistics", () => {
 					),
 				],
 				fields: [{ path: "total", measure: "residents" }],
-				rebuild: {},
+				payload: {
+					parts: yearParts("people", "localAuthority", 2024),
+				},
 			};
 			const rated: DeclaredDataset = {
 				type: "example",
@@ -1574,112 +1133,62 @@ describe("declared statistics", () => {
 				measures: [CRIMES],
 				fields: [{ path: "total", measure: "crimes" }],
 				derived: { perResident: "Crimes over the area's residents." },
-				rebuild: {
-					derived: {
-						perResident: (
-							record,
-							_path,
-							{ code, header, dataset },
-						) => {
-							const part = dataset("people")[
-								String(header.year)
-							] as {
-								data: Record<string, { total: number }>;
-							};
-							return (
-								(record.total as number) /
-								part.data[code]!.total
-							);
-						},
+				computed: {
+					perResident: (record, _path, { code, header, dataset }) => {
+						const part = dataset("people")[String(header.year)] as {
+							data: Record<string, { total: number }>;
+						};
+						return (
+							(record.total as number) / part.data[code]!.total
+						);
 					},
 				},
+				payload,
 			};
 			const peopleText = file({
 				E06000001: { name: "Hartlepool", total: 90 },
 				E06000002: { name: "Middlesbrough", total: 140 },
 			});
-			const text = file({
-				E06000001: {
-					name: "Hartlepool",
-					total: 3,
-					perResident: 3 / 90,
-				},
-				E06000002: {
-					name: "Middlesbrough",
-					total: 7,
-					perResident: 7 / 140,
-				},
-			});
-			const database = new DatabaseSync(":memory:");
-			// Verifying the example rebuilds it, reading people from its rows.
-			writeSqliteTables(database, {
-				...areas(),
-				...statisticsTables([
-					declaredStatistics(people, () => peopleText, {
-						...entry,
-						output: "people",
-					}),
-					declaredStatistics(rated, () => text, entry),
-				]),
-			});
-			expect(
-				rebuildFromLayout(database, "example", rated.rebuild!.derived),
-			).toBe(text);
-		});
-
-		it("merges key orders records show only in part", () => {
-			const parties: DeclaredDataset = {
-				type: "example",
-				name: "name",
-				alsoIn: [{ geography: "localAuthority", year: 2022 }],
-				measures: [CRIMES],
-				dimensions: [{ slug: "party", label: "Party" }],
-				fields: [{ path: "votes.{party}", measure: "crimes" }],
-				rebuild: {},
-			};
-			// No record shows all three; together they order a, b, c.
-			const text = file({
-				E06000001: { name: "Hartlepool", votes: { a: 1, c: 2 } },
-				E06000002: { name: "Middlesbrough", votes: { b: 3 } },
-				E07000026: { name: "Allerdale", votes: { a: 4, b: 5 } },
-			});
-			expect(rebuildFromLayout(write(parties, text), "example")).toBe(
-				text,
+			const expected = JSON.parse(
+				file({
+					E06000001: {
+						name: "Hartlepool",
+						total: 3,
+						perResident: 3 / 90,
+					},
+					E06000002: {
+						name: "Middlesbrough",
+						total: 7,
+						perResident: 7 / 140,
+					},
+				}),
 			);
-		});
-
-		it("refuses records that order their keys differently", () => {
-			expect(() =>
-				write(
-					{
-						...config,
-						rebuild: {},
-						derived: undefined,
-						fields: [
-							{ path: "a", measure: "crimes" },
-							{ path: "b", measure: "rate" },
-						],
-					},
-					file({
-						E06000001: { name: "Hartlepool", a: 1, b: 2 },
-						E06000002: { name: "Middlesbrough", b: 3, a: 4 },
-					}),
-				),
-			).toThrow("E06000002 orders a differently from earlier records");
-		});
-
-		it("refuses a derived number without a rebuild rule", () => {
-			expect(() =>
-				write(
-					{
-						...config,
-						rebuild: {
-							derived: { share: config.rebuild!.derived!.share },
-						},
-					},
-					text,
-				),
-			).toThrow("example: derived counts.other has no rebuild rule");
+			const database = new DatabaseSync(":memory:");
+			try {
+				writeSqliteTables(database, {
+					...areas(),
+					...statisticsTables([
+						declaredStatistics(people, () => peopleText, {
+							...entry,
+							output: "people",
+						}),
+						declaredStatistics(
+							rated,
+							() => JSON.stringify(expected),
+							entry,
+						),
+					]),
+				});
+				expect(
+					JSON.parse(
+						rebuildFromDeclaration(database, rated, "example", () =>
+							JSON.parse(peopleText),
+						),
+					),
+				).toEqual(expected);
+			} finally {
+				database.close();
+			}
 		});
 	});
 });

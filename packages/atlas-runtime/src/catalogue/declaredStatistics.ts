@@ -1,6 +1,4 @@
 import type { DatabaseSync } from "node:sqlite";
-import { isDeepStrictEqual } from "node:util";
-import { rebuildFromLayout } from "./datasetLayout";
 import { seriesKey as canonicalSeriesKey } from "./atlasStatistics";
 import type {
 	AreaIndex,
@@ -9,8 +7,6 @@ import type {
 	ContestColumn,
 	StatisticsDataset,
 	StatisticsElection,
-	StatisticsLayout,
-	StatisticsLayoutLeaf,
 	AreaRelationship,
 	StatisticsDimension,
 	StatisticsMeasure,
@@ -27,8 +23,9 @@ import type {
  * by a field (as a value or an interval bound) or named as derived, so a new
  * field in the compiler output fails the build instead of going missing.
  *
- * The compiled JSON stays the bytes the website and API serve. These rows are
- * the same values, checked by count once written.
+ * The rows hold the same values, checked by count once written. The payload
+ * the website reads is generated back from them (`declaredPayload.ts`) and the
+ * build checks it against the compiled JSON by value.
  */
 
 export type Json =
@@ -147,16 +144,14 @@ export type DeclaredDataset = {
 	/** Store each part as an election, with its records' text in contests. */
 	election?: DeclaredElection;
 	/**
-	 * Serve the compiled JSON from rows instead of a stored payload. The build
-	 * refuses a dataset whose rows do not rebuild it byte for byte. Each
-	 * `derived` pattern needs a rule here, computed from the rebuilt record
-	 * in the order listed, exactly as its compiler computes it.
+	 * Rules computing each `derived` pattern's number for a generated payload,
+	 * from the rebuilt record, in the order listed.
 	 */
-	rebuild?: { derived?: Record<string, DerivedRule> };
+	computed?: Record<string, DerivedRule>;
 	/**
-	 * Generate the JSON from rows and this declaration alone, with no layout
-	 * tables. Only for datasets whose records hold the area's name and code
-	 * and values the fields map.
+	 * How the payload the website reads is generated from the rows and this
+	 * declaration: each part's header, the field holding the area's code, and
+	 * the other facts the rows cannot say.
 	 */
 	payload?: DeclaredPayload;
 };
@@ -231,8 +226,6 @@ export type DeclaredPayload = {
 	 */
 	without?: (relations: ReadonlySet<string>) => string[];
 };
-
-type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
 
 /** A part per election, a record per contest. */
 export type DeclaredElection = {
@@ -457,12 +450,6 @@ const sameShape = (pattern: readonly Segment[], path: readonly string[]) =>
 			"binding" in segment || segment.literal === path[index],
 	);
 
-/** A leaf path as laid out: a key into an array is its index, a number. */
-const laidOutPath = (path: readonly string[], arrays: ReadonlySet<string>) =>
-	path.map((key, index) =>
-		arrays.has(path.slice(0, index).join("\0")) ? Number(key) : key,
-	);
-
 function* numbers(
 	node: Json,
 	path: string[] = [],
@@ -494,129 +481,6 @@ type Raw = {
 	statuses?: Partial<Record<StatusSlug, Json>>;
 };
 
-/**
- * Every record of one record set, reduced to what its layout needs: the leaf
- * paths in a key order all records agree with, a sample of each leaf (the
- * first non-null), the first value claimed at each path, and each record's
- * set of leaves, so leaves a record lacks are known.
- */
-class RecordSample {
-	/** Leaf keys in the order first seen, and the keys each must precede. */
-	private readonly seen: string[] = [];
-	private readonly after = new Map<string, Set<string>>();
-	private merged: string[] | undefined;
-	readonly paths = new Map<string, string[]>();
-	readonly nodes = new Map<string, { node: Json; code: string }>();
-	readonly claims = new Map<
-		string,
-		{ kind: "value" | "lower" | "upper" | "status"; raw: Raw }
-	>();
-	readonly shapes = new Map<string, Set<string>>();
-	/** Paths, joined by NUL, of the nodes that are arrays. */
-	readonly arrays = new Set<string>();
-	/** Each record's shape, in the file's order. */
-	readonly recordShapes: string[] = [];
-
-	constructor(private readonly context: string) {}
-
-	add(code: string, record: { [key: string]: Json }) {
-		const present: string[] = [];
-		const visit = (node: Json, path: string[]) => {
-			if (
-				node !== null &&
-				typeof node === "object" &&
-				Object.keys(node).length > 0
-			) {
-				if (Array.isArray(node)) this.arrays.add(path.join("\0"));
-				for (const [child, value] of Object.entries(node))
-					visit(value, [...path, child]);
-				return;
-			}
-			const key = path.join("\0");
-			present.push(key);
-			if (!this.paths.has(key)) this.paths.set(key, path);
-			const known = this.nodes.get(key);
-			if (!known || (known.node === null && node !== null))
-				this.nodes.set(key, { node, code });
-		};
-		visit(record, []);
-		const shape = present.join("\u0001");
-		this.recordShapes.push(shape);
-		if (this.shapes.has(shape)) return;
-		this.shapes.set(shape, new Set(present));
-		this.merged = undefined;
-		for (const [index, key] of present.entries()) {
-			if (!this.after.has(key)) {
-				this.after.set(key, new Set());
-				this.seen.push(key);
-			}
-			if (index === 0) continue;
-			const previous = this.after.get(present[index - 1])!;
-			if (previous.has(key)) continue;
-			if (this.reaches(key, present[index - 1]))
-				throw new Error(
-					`${this.context}: ${code} orders ${key.replaceAll("\0", ".")} differently from earlier records`,
-				);
-			previous.add(key);
-		}
-	}
-
-	/** Whether `to` must come after `from` by what records have shown. */
-	private reaches(from: string, to: string) {
-		const stack = [from];
-		const visited = new Set<string>();
-		while (stack.length) {
-			const key = stack.pop()!;
-			if (key === to) return true;
-			if (visited.has(key)) continue;
-			visited.add(key);
-			stack.push(...this.after.get(key)!);
-		}
-		return false;
-	}
-
-	/**
-	 * Every leaf key, in an order each record's keys follow: a topological
-	 * order of what the records show, taking the first seen when free.
-	 */
-	get order() {
-		if (this.merged) return this.merged;
-		const before = new Map(this.seen.map((key) => [key, 0]));
-		for (const keys of this.after.values())
-			for (const key of keys) before.set(key, before.get(key)! + 1);
-		const order: string[] = [];
-		const ready = new Set(this.seen.filter((key) => !before.get(key)));
-		while (ready.size) {
-			const key = this.seen.find((candidate) => ready.has(candidate))!;
-			ready.delete(key);
-			order.push(key);
-			for (const next of this.after.get(key)!) {
-				const left = before.get(next)! - 1;
-				before.set(next, left);
-				if (left === 0) ready.add(next);
-			}
-		}
-		return (this.merged = order);
-	}
-
-	claim(raw: Raw) {
-		for (const kind of ["value", "lower", "upper", "status"] as const) {
-			const path = raw.paths[kind];
-			if (!path) continue;
-			const key = path.join("\0");
-			if (!this.claims.has(key)) this.claims.set(key, { kind, raw });
-		}
-	}
-
-	/** Leaf positions a shape lacks. */
-	absent(shape: string) {
-		const present = this.shapes.get(shape)!;
-		return this.order.flatMap((key, index) =>
-			present.has(key) ? [] : [index],
-		);
-	}
-}
-
 const sourceText = (
 	source: unknown,
 	key: string,
@@ -643,10 +507,6 @@ export function declaredStatistics(
 	entry: DeclaredManifestEntry,
 ): (areas: AreaIndex) => StatisticsDataset {
 	const type = config.type;
-	const useLayout =
-		config.rebuild !== undefined &&
-		config.payload === undefined &&
-		!(type === "airQuality" && entry.output === "air-quality");
 	const nameOf = (from: string) =>
 		typeof config.name === "string" ? config.name : config.name?.[from];
 	const recordSets: DeclaredRecords[] = config.records ?? [
@@ -742,32 +602,6 @@ export function declaredStatistics(
 			...(elected ? { elected } : {}),
 		};
 	};
-	/** Record paths of election text, to the leaf that rebuilds them. */
-	const electionLeaves = new Map<string, StatisticsLayoutLeaf>([
-		...Object.entries(config.election?.contest ?? {}).map(
-			([column, path]) =>
-				[
-					path,
-					{
-						path: [],
-						kind: "contest",
-						column,
-					} as StatisticsLayoutLeaf,
-				] as const,
-		),
-		...Object.entries(config.election?.elected ?? {}).map(
-			([column, path]) =>
-				[
-					path,
-					{
-						path: [],
-						kind: "candidacy",
-						column,
-					} as StatisticsLayoutLeaf,
-				] as const,
-		),
-	]);
-
 	return (areas) => {
 		/**
 		 * The listed releases the atlas holds, in order. A year it holds no
@@ -825,14 +659,6 @@ export function declaredStatistics(
 					elected?: Partial<Record<CandidacyColumn, string | null>>;
 				}[];
 			}) => void,
-			onPart?: (part: {
-				key: string;
-				header: DeclaredHeader;
-				/** Each record set's records, reduced for laying out. */
-				samples: Map<string, RecordSample>;
-				/** Each record set's areas, in the file's order. */
-				areas: Map<string, LaidOutArea[]>;
-			}) => void,
 		): Generator<Raw> {
 			const file: Record<string, DeclaredHeader> = JSON.parse(read());
 			for (const [key, header] of Object.entries(file)) {
@@ -860,8 +686,10 @@ export function declaredStatistics(
 							? undefined
 							: parsePath(field.status.path),
 				}));
-				const samples = new Map<string, RecordSample>();
-				const areaLists = new Map<string, LaidOutArea[]>();
+				const areaLists = new Map<
+					string,
+					StatisticsElection["contests"]
+				>();
 				for (const set of recordSets) {
 					const records = header[set.from];
 					if (
@@ -873,8 +701,8 @@ export function declaredStatistics(
 							`${context} has no ${set.from} records`,
 						);
 					const candidates = held(listed(set, header), context);
-					const order: LaidOutArea[] = [];
-					if (onPart || onElection) areaLists.set(set.from, order);
+					const order: StatisticsElection["contests"] = [];
+					if (onElection) areaLists.set(set.from, order);
 					for (const [recordKey, record] of Object.entries(records)) {
 						const code =
 							typeof config.keys === "function"
@@ -968,11 +796,10 @@ export function declaredStatistics(
 								});
 						if (recordKey !== code)
 							onKey?.(release, code, recordKey);
-						if (onPart || onElection)
+						if (onElection)
 							order.push({
 								release,
 								code,
-								parents,
 								...electionText(
 									record,
 									context,
@@ -981,16 +808,6 @@ export function declaredStatistics(
 									recordKey,
 								),
 							});
-						let sample: RecordSample | undefined;
-						if (onPart) {
-							sample = samples.get(set.from);
-							if (!sample)
-								samples.set(
-									set.from,
-									(sample = new RecordSample(context)),
-								);
-							sample.add(recordKey, record);
-						}
 						const claimed = new Set<string>();
 						for (const field of fields) {
 							for (const { node, path, bound } of expand(
@@ -1109,7 +926,6 @@ export function declaredStatistics(
 									),
 									...statusOf(),
 								};
-								sample?.claim(raw);
 								yield raw;
 							}
 						}
@@ -1160,21 +976,8 @@ export function declaredStatistics(
 						contests: areaLists.get(first.from)!,
 					});
 				}
-				onPart?.({ key, header, samples, areas: areaLists });
 			}
 		}
-
-		const parentFields = new Map<
-			string,
-			{ kind: "parent_code" | "parent_name"; parent: number }
-		>(
-			(config.parents ?? []).flatMap(({ code, name }, parent) => [
-				[code, { kind: "parent_code", parent }],
-				...(name === undefined
-					? []
-					: [[name, { kind: "parent_name", parent }] as const]),
-			]),
-		);
 
 		const seriesKey = (raw: Raw) =>
 			JSON.stringify([
@@ -1211,97 +1014,6 @@ export function declaredStatistics(
 		>();
 		const seen = new Set<string>();
 		let count = 0;
-		const layouts: StatisticsLayout[] = [];
-		const layOut: Parameters<typeof walk>[5] = ({
-			key,
-			header,
-			samples,
-			areas: orders,
-		}) => {
-			const context = `${type} ${key}`;
-			const sets = new Set(recordSets.map((set) => set.from));
-			const records = recordSets.map(({ from }) => {
-				const sample = samples.get(from);
-				if (!sample)
-					throw new Error(
-						`${context}: no ${from} records to lay out`,
-					);
-				const leaves = sample.order.map(
-					(leafKey): StatisticsLayoutLeaf => {
-						const path = sample.paths.get(leafKey)!;
-						const placed = laidOutPath(path, sample.arrays);
-						const text = electionLeaves.get(path.join("."));
-						if (text) return { ...text, path: placed };
-						const claim = sample.claims.get(leafKey);
-						if (claim?.kind === "status")
-							return {
-								path: placed,
-								kind: "status",
-								series: seriesIndex.get(seriesKey(claim.raw))!,
-								period: claim.raw.period.label,
-								statuses: JSON.stringify(claim.raw.statuses),
-							};
-						if (claim)
-							return {
-								path: placed,
-								kind: claim.kind,
-								series: seriesIndex.get(seriesKey(claim.raw))!,
-								period: claim.raw.period.label,
-							};
-						const { node, code } = sample.nodes.get(leafKey)!;
-						if (
-							path.length === 1 &&
-							path[0] === nameOf(recordSets[0].from) &&
-							typeof node === "string"
-						)
-							return { path: placed, kind: "name" };
-						const parent = parentFields.get(path.join("."));
-						if (parent && typeof node === "string")
-							return { path: placed, ...parent };
-						if (node === code)
-							return { path: placed, kind: "code" };
-						if (typeof node === "number") {
-							const index = derived.findIndex((pattern) =>
-								sameShape(pattern, path),
-							);
-							const rule = derivedPatterns[index];
-							if (!config.rebuild?.derived?.[rule])
-								throw new Error(
-									`${type}: derived ${rule} has no rebuild rule`,
-								);
-							return { path: placed, kind: "derived", rule };
-						}
-						return {
-							path: placed,
-							kind: "literal",
-							value: JSON.stringify(node),
-						};
-					},
-				);
-				const absent = new Map<string, number[]>();
-				const areas = orders.get(from)!.map((area, index) => {
-					const shape = sample.recordShapes[index];
-					let lacking = absent.get(shape);
-					if (!lacking)
-						absent.set(shape, (lacking = sample.absent(shape)));
-					return lacking.length ? { ...area, absent: lacking } : area;
-				});
-				return { from, leaves, areas };
-			});
-			const first = recordSets[0];
-			layouts.push({
-				key,
-				header: JSON.stringify(
-					Object.fromEntries(
-						Object.entries(header).map(([field, value]) => [
-							field,
-							sets.has(field) ? null : value,
-						]),
-					),
-				),
-				records,
-			});
-		};
 		for (const raw of walk(
 			(dimension, key, parent) => {
 				let members = discovered.get(dimension);
@@ -1345,7 +1057,6 @@ export function declaredStatistics(
 				if (!related.has(key)) related.set(key, relation);
 			},
 			(election) => elections.push(election),
-			useLayout ? layOut : undefined,
 		)) {
 			const key = seriesKey(raw);
 			let index = seriesIndex.get(key);
@@ -1447,7 +1158,6 @@ export function declaredStatistics(
 			areaKeys: () => keys.values(),
 			relationships: () => related.values(),
 			elections: () => elections,
-			layouts: () => layouts,
 			verify(database: DatabaseSync) {
 				const row = database
 					.prepare(
@@ -1464,24 +1174,6 @@ export function declaredStatistics(
 					throw new Error(
 						`${type}: ${Number(row?.n)} observation rows for ${count} values`,
 					);
-				if (useLayout && config.rebuild) {
-					const rebuilt = rebuildFromLayout(
-						database,
-						entry.output,
-						config.rebuild.derived,
-					);
-					const text = read();
-					if (
-						!isDeepStrictEqual(
-							JSON.parse(rebuilt),
-							JSON.parse(text),
-						)
-					) {
-						throw new Error(
-							`${type}: rows do not match the compiled dataset values`,
-						);
-					}
-				}
 			},
 		};
 	};

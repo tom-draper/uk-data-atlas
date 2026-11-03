@@ -21,8 +21,10 @@ accounted for and validates the stored row counts.
 
 `area_relationship` records how a publisher relates one area to another, for
 a dataset: `parent` is the area that contains it, `predecessor` an area it was
-formed from, and `published-as` the area under whose code the publisher listed
-it. Each row names its dataset, so the source and licence are known, the
+formed from, `published-as` the area under whose code the publisher listed it,
+and `coterminous` an area the publisher says has the same extent. A
+publisher's mapping of one kind of area to another, such as local authorities
+to NHS boards, is stored the same way. Each row names its dataset, so the source and licence are known, the
 period the publisher states it for, and its two area versions, so the releases
 are known. It is separate from the
 crosswalks, which are computed from boundaries and weights.
@@ -35,11 +37,6 @@ the publisher's text: area name, region, country, constituency type, result,
 the two leading parties and the party declared the winner. `candidacy` holds the
 candidate a contest elected. Votes, electorates and turnout are observations
 dated on the polling day.
-
-The `dataset_part`, `dataset_leaf`, `dataset_record`,
-`dataset_record_parent` and `dataset_record_absent` tables describe the
-website's dataset payload layouts. The cache holds rebuilt payloads with their
-own hashes, and the build compares their values with the compiled datasets.
 
 ## API measures and dimensions
 
@@ -61,32 +58,26 @@ those artifacts with reconstructed statistics by value, including statuses,
 bounds, periods and area codes. The build fails if any artifact cannot be
 reconstructed. The compiled artifacts are build inputs, not a runtime fallback.
 
-## Plan for dataset payloads
+## Dataset payloads
 
-Replace layout-based reconstruction with dataset-specific generators over
-statistics, geography and election rows. Use the existing dataset declarations
-to select measures, dimensions and periods, and define the payload fields and
-derived calculations that `lib/datasets/` and
-`lib/helpers/datasetAggregation/` need. Preserve meaningful ordering and
-missing-value semantics, but do not preserve JSON property order or bytes.
+The website still reads a JSON payload per dataset. It is generated from the
+rows by `packages/atlas-runtime/src/catalogue/declaredPayload.ts`, using each
+dataset's declaration: its field paths place series values in records, its
+`payload` gives each part's header and the field holding the area code, and its
+`computed` rules supply numbers the compiler calculates. The build compares
+every generated payload with its independent compiled dataset by value,
+including area identities, periods, values, statuses, bounds and derived fields,
+and fails on any difference. The cache holds the generated payloads with their
+hashes, so the website's immutable URLs identify the content they serve.
 
-Compare each generated payload with its independent compiled dataset by value,
-including area identities, periods, values, statuses, bounds and derived
-fields. Exercise the website loaders and aggregation with the generated payloads.
-Generate cache entries and manifest hashes from the new payload bytes so the
-website's immutable URLs still identify the content they serve. Once all
-datasets pass these checks, remove `dataset_part`, `dataset_leaf`,
-`dataset_record`, `dataset_record_parent`, `dataset_record_absent` and their
-layout writer and reader.
-
-Elections need particular care: local and general election payloads combine
-observations with contests, candidates and party results, and use several
-boundary releases. Historical elections also use constituency identifiers
-scoped to a boundary set. NHS waiting times use NHS organisation keys rather
-than area codes. Unemployment includes predecessor lists and derived rates,
-while population and house prices contain arrays indexed by age or year.
-Check that the existing rows retain every field each consumer needs before
-removing the layout tables; add domain data where a required fact is missing.
+Facts that are not observations have a home in the tables above. A publisher's
+parent areas and crosswalks are `area_relationship` rows; election text and
+winners are `contest` and `candidacy` rows; names and keys are
+`dataset_area_name` and `dataset_area_key`. Figures that are aggregates of
+observations, such as a referendum's winning answer, a district's deprivation
+summary or an area's largest ethnic group, are computed when the payload is
+generated and stored nowhere. Fixed text, such as a table's source note, sits
+in the dataset's declaration.
 
 ## Dataset declarations
 
@@ -95,5 +86,5 @@ To add a dataset, declare its fields and dimensions in
 must map to a series value or bound, or be documented as derived. Use the
 dataset's own periods and geography, and declare alternate releases when
 records contain areas from more than one release. Add unit tests for the
-declaration and run the built statistics and dataset payload tests after a data
-build.
+declaration, and give it a `payload`. Run the built statistics and dataset
+payload tests after a data build.
