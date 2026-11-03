@@ -956,6 +956,31 @@ const headerMonth = (_key: string, header: DeclaredHeader) => {
 
 export const NHS_WAITING: DeclaredDataset = {
 	type: "nhsWaiting",
+	payload: {
+		parts: () => [
+			{
+				key: "2026",
+				header: {
+					id: "nhsWaiting2026",
+					type: "nhsWaiting",
+					year: 2026,
+					month: "March 2026",
+					boundaryType: "localAuthority",
+					boundaryYear: 2024,
+					coverageCountries: ["GB-ENG"],
+				},
+			},
+		],
+		code: "icbCode",
+	},
+	/** The board each local authority belongs to, by its NHS organisation code. */
+	headerRelationships: [
+		{
+			field: "ladToIcb",
+			child: { geography: "localAuthority", year: 2024 },
+			parent: { geography: "integratedCareBoard", year: 2023 },
+		},
+	],
 	name: "icbName",
 	/** Keyed by NHS organisation code, on the boards in force to March 2026. */
 	keys: ICB_ODS_TO_GSS,
