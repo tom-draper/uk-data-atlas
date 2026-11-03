@@ -1,17 +1,16 @@
 import { openapiDocumentHash, type OperationsArtifact } from "./operations";
 import { publicPath, readPublicManifest } from "../storage/publicManifest";
-import { repositoryRootOf } from "../storage/dataLayout";
 
 /**
  * The operations compiled from `openapiDocument`. One compiled from an older
  * document is refused: it would answer a newly declared parameter with 400.
  */
 export const readOperations = (
-	apiRoot: string,
+	repositoryRoot: string,
 	openapiDocument: string,
 ): OperationsArtifact => {
 	const artifact = readPublicManifest<OperationsArtifact>(
-		repositoryRootOf(apiRoot),
+		repositoryRoot,
 		"operations.json",
 		"operations",
 		"operations artifact",
@@ -21,7 +20,7 @@ export const readOperations = (
 		openapiDocumentHash(openapiDocument)
 	) {
 		throw new Error(
-			`${publicPath(repositoryRootOf(apiRoot), "operations.json")} was compiled from another openapi.yaml; run pnpm --dir ../.. data:build --only operations.`,
+			`${publicPath(repositoryRoot, "operations.json")} was compiled from another openapi.yaml; run pnpm --dir ../.. data:build --only operations.`,
 		);
 	}
 	return artifact;

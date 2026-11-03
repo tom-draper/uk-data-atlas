@@ -6,6 +6,7 @@ import {
 } from "../catalogue/catalogueLoader";
 import { createOperationMatcher } from "./operationTemplates";
 import { readOperations } from "./operationsLoader";
+import { repositoryRootOf } from "../storage/dataLayout";
 
 export const readApiCatalogues = (
 	apiRoot: string,
@@ -24,7 +25,8 @@ export const readApiCatalogues = (
 	);
 	const operationMatcher = stage("openapi-operation-matcher", () =>
 		createOperationMatcher(
-			readOperations(apiRoot, openapiDocument).operations,
+			readOperations(repositoryRootOf(apiRoot), openapiDocument)
+				.operations,
 		),
 	);
 	return { ...catalogues, openapiDocument, operationMatcher };
