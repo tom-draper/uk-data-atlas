@@ -201,24 +201,21 @@ export function ApiRequests({ requests }: { requests: PlaceRequest[] }) {
 		<Card className="overflow-hidden">
 			<ul className="divide-y divide-slate-900/[0.06]">
 				{requests.map((request) => (
-					<li key={request.path} className="px-4 py-3">
-						<div className="flex flex-wrap items-baseline justify-between gap-x-4">
+					<li key={request.path}>
+						<Link
+							href={PLACE_OPERATIONS[request.operationId]}
+							className="block px-4 py-3 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50"
+						>
 							<span className="text-[14px] font-medium text-slate-800">
 								{request.label}
 							</span>
-							<Link
-								href={PLACE_OPERATIONS[request.operationId]}
-								className="text-[13px] text-slate-500 hover:text-slate-900"
-							>
-								Docs
-							</Link>
-						</div>
-						<code className="mt-1 block overflow-x-auto font-mono text-[12.5px] whitespace-nowrap text-slate-600">
-							<span className="mr-2 font-semibold text-emerald-700">
-								GET
-							</span>
-							{request.path}
-						</code>
+							<code className="mt-1 block overflow-x-auto font-mono text-[12.5px] whitespace-nowrap text-slate-600">
+								<span className="mr-2 font-semibold text-emerald-700">
+									GET
+								</span>
+								{request.path}
+							</code>
+						</Link>
 					</li>
 				))}
 			</ul>
