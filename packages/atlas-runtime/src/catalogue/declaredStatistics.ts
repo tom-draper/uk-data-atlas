@@ -185,6 +185,13 @@ export type DeclaredPayload = {
 	 */
 	sparsePeriods?: true;
 	/**
+	 * Also make a record of every area the publisher relates to another, even
+	 * with no observation in the part. For a dataset of a single part.
+	 */
+	relatedRecords?: true;
+	/** Dot-separated paths of arrays that every record has, empty if need be. */
+	emptyArrays?: string[];
+	/**
 	 * Dot-separated paths a record does not have, given the kinds of
 	 * relationship the publisher states for it.
 	 */
