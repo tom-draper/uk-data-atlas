@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { reconciliationEvidence } from "../../../pipeline/src/evidence/measureReports";
+import { reconciliationEvidence } from "../src/evidence/measureReports";
 import test from "node:test";
 import type {
 	CrosswalkInventory,
@@ -25,7 +25,7 @@ import {
 	dataCatalog,
 	registry,
 	testContext,
-} from "./routeFixtures";
+} from "./contextFixtures";
 
 // A measure of its own, so the figures are chosen rather than inherited:
 // two wards of 100 and 180 in a district published as 280. Adding the wards

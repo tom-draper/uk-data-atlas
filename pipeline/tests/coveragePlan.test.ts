@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import { coveragePlanEvidence } from "../../../pipeline/src/evidence/measureReports";
+import { coveragePlanEvidence } from "../src/evidence/measureReports";
 import { coveragePlan } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type {
 	CrosswalkInventory,
@@ -16,7 +16,7 @@ import {
 	populationObservations,
 	registry,
 	testContext,
-} from "./routeFixtures";
+} from "./contextFixtures";
 
 // The ward population source holds one English and one Welsh ward. The
 // release it is published on adds a Scottish ward no source reaches, which is
