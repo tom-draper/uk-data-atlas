@@ -7,17 +7,17 @@ import { DatabaseSync } from "node:sqlite";
 import type { PostcodeCountsArtifact } from "@uk-data-atlas/postcodes";
 
 export function readSqlitePostcodeCounts(
-	apiRoot: string,
+	repositoryRoot: string,
 ): PostcodeCountsArtifact {
 	const metadata: Omit<PostcodeCountsArtifact, "releases"> & {
 		releases: Array<
 			Omit<PostcodeCountsArtifact["releases"][number], "areas">
 		>;
 	} = JSON.parse(
-		readCachePayload(apiRoot, "postcode-counts", "postcode-counts"),
+		readCachePayload(repositoryRoot, "postcode-counts", "postcode-counts"),
 	);
 	const database = new DatabaseSync(
-		requireAtlasCache(apiRoot, "postcode-counts"),
+		requireAtlasCache(repositoryRoot, "postcode-counts"),
 		{ readOnly: true },
 	);
 	try {

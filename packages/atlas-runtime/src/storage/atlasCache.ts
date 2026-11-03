@@ -4,7 +4,6 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
-import { repositoryRootOf } from "./dataLayout";
 
 export type CacheComponent =
 	| "area-search"
@@ -124,10 +123,9 @@ export function publishCacheTables(
 }
 
 export function requireAtlasCache(
-	apiRoot: string,
+	root: string,
 	component: CacheComponent,
 ): string {
-	const root = repositoryRootOf(apiRoot);
 	const path = atlasCachePath(root);
 	try {
 		const database = new DatabaseSync(path, { readOnly: true });
@@ -152,11 +150,11 @@ export function requireAtlasCache(
 }
 
 export function readCachePayload(
-	apiRoot: string,
+	root: string,
 	component: CacheComponent,
 	id: string,
 ): string {
-	const database = new DatabaseSync(requireAtlasCache(apiRoot, component), {
+	const database = new DatabaseSync(requireAtlasCache(root, component), {
 		readOnly: true,
 	});
 	try {

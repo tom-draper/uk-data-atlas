@@ -343,12 +343,12 @@ test("split atlas serves projection routes from the local cache without projecti
 	// Runtime must use only the shared database, including its inventory.
 	rmSync(directory, { recursive: true });
 	const inventory = readLocationProjectionInventory(
-		apiRoot,
+		root,
 		namedLocationInventory,
 		crosswalkInventory,
 	);
 	assert.equal(JSON.stringify(inventory), JSON.stringify(compiled.inventory));
-	const store = createLocationProjectionStore(apiRoot, inventory);
+	const store = createLocationProjectionStore(root, inventory);
 	const before = new LocationProjectionStore(compiled.inventory, (shard) => {
 		const artifact = compiled.artifacts.find(
 			(artifact) => artifact.crosswalkId === shard.crosswalkId,
@@ -387,7 +387,7 @@ test("split atlas serves projection routes from the local cache without projecti
 	assert.throws(
 		() =>
 			readLocationProjectionInventory(
-				apiRoot,
+				root,
 				{ ...namedLocationInventory, contentHash: "stale" },
 				crosswalkInventory,
 			),
@@ -430,7 +430,7 @@ test("projection compilation writes build intermediates and removes old public c
 	buildAtlasSqlite(root, { censusTables: [] });
 	assert.deepEqual(
 		readLocationProjectionInventory(
-			apiRoot,
+			root,
 			{ ...namedLocationInventory, contentHash: "locations" },
 			{ ...crosswalkInventory, contentHash: "crosswalks" },
 		).shards,

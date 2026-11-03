@@ -13,14 +13,14 @@ import {
 export const readNamedLocationInventory = readSqliteNamedLocationInventory;
 
 export const readLocationProjectionInventory = (
-	apiRoot: string,
+	repositoryRoot: string,
 	namedLocations: NamedLocationInventory,
 	crosswalkInventory: CrosswalkInventory,
 ): LocationProjectionInventory => {
-	const path = requireAtlasCache(apiRoot, "projections");
+	const path = requireAtlasCache(repositoryRoot, "projections");
 	const inventory = JSON.parse(
 		readCachePayload(
-			apiRoot,
+			repositoryRoot,
 			"projections",
 			"location-projection-inventory",
 		),
@@ -38,10 +38,10 @@ export const readLocationProjectionInventory = (
 };
 
 export const createLocationProjectionStore = (
-	apiRoot: string,
+	repositoryRoot: string,
 	inventory: LocationProjectionInventory,
 ) => {
-	const path = requireAtlasCache(apiRoot, "projections");
+	const path = requireAtlasCache(repositoryRoot, "projections");
 	return new LocationProjectionDatabase(path, inventory);
 };
 

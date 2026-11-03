@@ -41,7 +41,7 @@ const read = (path: string) => {
 				: "area_search_meta";
 		const database = new DatabaseSync(
 			requireAtlasCache(
-				apiRoot,
+				resolve(apiRoot, "../.."),
 				path === "place-index.json" ? "place-index" : "area-search",
 			),
 			{ readOnly: true },
@@ -65,7 +65,7 @@ const read = (path: string) => {
 	if (path === "location-projection-inventory.json")
 		return JSON.parse(
 			readCachePayload(
-				apiRoot,
+				resolve(apiRoot, "../.."),
 				"projections",
 				"location-projection-inventory",
 			),

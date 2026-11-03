@@ -35,28 +35,22 @@ const tables = { area_search_codes: { columns: ["code TEXT"], rows: [["A"]] } };
 test("cache publication leaves canonical bytes unchanged and detects missing and stale generations", (t) => {
 	const { root, canonical, apiRoot } = fixture(t);
 	assert.throws(
-		() => requireAtlasCache(apiRoot, "area-search"),
+		() => requireAtlasCache(root, "area-search"),
 		/matching atlas data release/,
 	);
 	const before = readFileSync(canonical);
 	publishCacheTables(root, "area-search", tables);
-	assert.equal(
-		requireAtlasCache(apiRoot, "area-search"),
-		atlasCachePath(root),
-	);
+	assert.equal(requireAtlasCache(root, "area-search"), atlasCachePath(root));
 	assert.deepEqual(readFileSync(canonical), before);
 	const database = new DatabaseSync(canonical);
 	database.exec("UPDATE area_inventory SET contentHash = 'second'");
 	database.close();
 	assert.throws(
-		() => requireAtlasCache(apiRoot, "area-search"),
+		() => requireAtlasCache(root, "area-search"),
 		/stale.*area-search|area-search.*matching atlas data release/,
 	);
 	publishCacheTables(root, "area-search", tables);
-	assert.equal(
-		requireAtlasCache(apiRoot, "area-search"),
-		atlasCachePath(root),
-	);
+	assert.equal(requireAtlasCache(root, "area-search"), atlasCachePath(root));
 });
 
 test("a failed cache replacement preserves the published component", (t) => {
@@ -74,10 +68,7 @@ test("a failed cache replacement preserves the published component", (t) => {
 		/NOT NULL/,
 	);
 	assert.deepEqual(readFileSync(atlasCachePath(root)), before);
-	assert.equal(
-		requireAtlasCache(apiRoot, "area-search"),
-		atlasCachePath(root),
-	);
+	assert.equal(requireAtlasCache(root, "area-search"), atlasCachePath(root));
 });
 
 test("the split comparison checks actual table contents and fails on a changed value", (t) => {

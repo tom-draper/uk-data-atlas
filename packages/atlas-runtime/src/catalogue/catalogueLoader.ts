@@ -273,13 +273,16 @@ export const readAtlasCatalogues = (
 		"location-projection-inventory",
 		() =>
 			readLocationProjectionInventory(
-				apiRoot,
+				repositoryRootOf(apiRoot),
 				namedLocationInventory,
 				crosswalkInventory,
 			),
 	);
 	const locationProjectionStore = stage("location-projection-store", () =>
-		createLocationProjectionStore(apiRoot, locationProjectionInventory),
+		createLocationProjectionStore(
+			repositoryRootOf(apiRoot),
+			locationProjectionInventory,
+		),
 	);
 	const postcodeIndex = stage("postcode-index", () =>
 		readPostcodeIndex(repositoryRootOf(apiRoot)),
