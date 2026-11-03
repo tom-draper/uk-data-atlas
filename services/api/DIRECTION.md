@@ -205,8 +205,8 @@ The current contract has 71 paths after aggregation and evidence routes were fol
 | Table of values                                 | `GET /data/{measure}`                                                                                |
 | Over time                                       | `GET /data/{measure}/series`                                                                         |
 
-Typed [TypeScript and Python clients](../../clients/README.md) wrap these
-routes, generated from `openapi.yaml`.
+Generate a client in your preferred language from the published
+[OpenAPI contract](./openapi.yaml).
 
 ### Merge
 
@@ -414,7 +414,6 @@ cost:
 
 ### Making it easy to reach
 
-- Generated TypeScript and Python clients from `openapi.yaml`.
 - An MCP server over the front-door routes, so AI assistants can answer UK
   place questions with the API's answers rather than guesses. Built as
   `services/mcp` (stdio, eight read-only tools); not yet published.

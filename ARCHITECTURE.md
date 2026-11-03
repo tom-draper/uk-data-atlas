@@ -142,11 +142,6 @@ services/api ───────┘
   `tests/packages/packageImports.test.ts` checks this.
 - The website reads `services/api/openapi.yaml` for its API reference. Pages
   and lookups come from the shared release, without reading API build output.
-- `clients/` reads `services/api/openapi.yaml` to generate typed API clients.
-  Nothing depends on them, and they import no project code. The generated code
-  is not committed: `pnpm clients:generate` writes it, `pnpm typecheck` writes
-  the TypeScript types first, and the manual `Release API clients` workflow
-  builds both packages.
 - Other generated API files remain under `data/build/artifacts/` for now. They
   sit beside `atlas.sqlite` so the pipeline writes only under `data/build/`, and
   `packages/atlas-runtime/src/storage/dataLayout.ts` is the one place that knows the location.

@@ -2,7 +2,6 @@ packages:
   - pipeline
   - services/api
   - services/mcp
-  - clients/typescript
   - packages/*
 minimumReleaseAge: 10080
 trustPolicy: no-downgrade
