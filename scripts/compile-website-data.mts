@@ -35,7 +35,7 @@ import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
 import { fileSnapshots } from "../pipeline/src/precompile/cache.mts";
 import { OUT_DIR, loadReuseContext, out } from "./precompile/websiteOutput.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
-import { chunksSize } from "../pipeline/src/precompile/output.mts";
+import { chunksResult } from "../pipeline/src/precompile/output.mts";
 import { readAtlasLookup } from "./atlas-lookups";
 import { ROOT, SOURCE_DATA } from "../pipeline/src/precompile/paths.mts";
 import {
@@ -45,7 +45,7 @@ import {
 import { precompileFingerprints } from "../pipeline/src/precompile/fingerprint.mjs";
 import { compileRoadSafety } from "./precompile/roadSafety.mts";
 import type { CompiledDatasets } from "../pipeline/src/precompile/types.mts";
-import { elapsedSince, logArtifact } from "./timing.mts";
+import { buildLog, elapsedSince, formatCount, msSince } from "./timing.mts";
 
 /** Checks that every file a meta.json promises is actually present. */
 async function verifyDescribedFiles(
@@ -76,8 +76,8 @@ async function verifyDescribedFiles(
 async function compileSelected(names: readonly string[]) {
 	const startedAt = performance.now();
 	const selected = selectDefinitions(CATALOGUE_DATASET_DEFINITIONS, names);
-	console.log(
-		`Pre-compiling ${selected.map((definition) => definition.type).join(", ")}...`,
+	buildLog.info(
+		`Compiling ${selected.map((definition) => definition.type).join(", ")}`,
 	);
 	const manifestPath = join(OUT_DIR, "dataset-manifest.json");
 	let manifest: { datasets: { type: string }[] };
@@ -122,11 +122,15 @@ async function compileSelected(names: readonly string[]) {
 				),
 			},
 		});
-		logArtifact("chunks", "chunks/", [
-			"compiled",
-			chunksSize(await fileSnapshots(join(OUT_DIR, "chunks"))),
-			elapsedSince(chunksStartedAt),
-		]);
+		buildLog.artifact(
+			"chunks",
+			"chunks/",
+			chunksResult(
+				"compiled",
+				await fileSnapshots(join(OUT_DIR, "chunks")),
+				msSince(chunksStartedAt),
+			),
+		);
 	}
 
 	await out("dataset-manifest", {
@@ -141,7 +145,7 @@ async function compileSelected(names: readonly string[]) {
 	// everything is current. Only some datasets were rebuilt here, so keep the
 	// manifest's old timestamp and leave that judgement as a full run left it.
 	await utimes(manifestPath, manifestTimes.atime, manifestTimes.mtime);
-	console.log(`Precompile complete (${elapsedSince(startedAt)}).`);
+	buildLog.info(`Compiled website data in ${elapsedSince(startedAt)}`);
 }
 
 async function main() {
@@ -161,17 +165,17 @@ async function main() {
 	const lookups = described.filter(
 		(dataset) => dataset.meta.kind === "lookup",
 	);
-	console.log(
-		`Publishing ${described.length - boundaries.length - lookups.length} datasets ` +
-			`(data/ also holds ${boundaries.length} boundary releases and ${lookups.length} lookup tables)...`,
+	buildLog.info(
+		`Publishing ${formatCount(described.length - boundaries.length - lookups.length)} datasets ` +
+			`(data/ also holds ${formatCount(boundaries.length)} boundary releases and ${formatCount(lookups.length)} lookup tables)`,
 	);
 	await verifyDescribedFiles(described);
 
 	const compiledDatasets: CompiledDatasets = new Map();
 	const { compilerFingerprint, ...reuse } = await loadReuseContext();
 	if (!reuse.canReuse)
-		console.log(
-			"Pipeline inputs changed; rebuilding the gazetteer, road safety and region chunks.",
+		buildLog.info(
+			"Pipeline inputs changed, rebuilding the gazetteer, road safety and region chunks",
 		);
 
 	// The gazetteer is built while the compiled datasets are registered.
@@ -251,7 +255,7 @@ async function main() {
 		datasets: chartResults,
 	});
 
-	console.log(`Precompile complete (${elapsedSince(startedAt)}).`);
+	buildLog.info(`Compiled website data in ${elapsedSince(startedAt)}`);
 }
 
 await main();

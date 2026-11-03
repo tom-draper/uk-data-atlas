@@ -1,7 +1,10 @@
 import { createHash } from "crypto";
 import { rename, stat, writeFile } from "fs/promises";
 import { join } from "path";
-import { formatKb } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	formatCount,
+	type ArtifactResult,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import type { CompiledOutput, FileSnapshot } from "./types.mts";
 
 const writeAtomically = async (path: string, contents: string) => {
@@ -28,8 +31,13 @@ export const out = async (
 	};
 };
 
-/** How many region chunk files there are, and their total size. */
-export const chunksSize = (snapshots: readonly FileSnapshot[]) =>
-	`${snapshots.length} files, ${formatKb(
-		snapshots.reduce((total, snapshot) => total + snapshot.bytes, 0),
-	)}`;
+/** The artifact result for the region chunk files: how many, and their total size. */
+export const chunksResult = (
+	status: string,
+	snapshots: readonly FileSnapshot[],
+	ms: number,
+): ArtifactResult => ({
+	status: `${status}, ${formatCount(snapshots.length)} files`,
+	bytes: snapshots.reduce((total, snapshot) => total + snapshot.bytes, 0),
+	ms,
+});

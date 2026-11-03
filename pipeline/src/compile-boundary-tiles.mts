@@ -30,9 +30,10 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { correctedSource, releaseSources } from "./compile-boundaries.mts";
 import {
+	buildLog,
 	elapsedSince,
-	formatKb,
-	logArtifact,
+	formatCount,
+	msSince,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 const COMPILED_POLYGON_RELEASES: Readonly<Record<string, number>> = {
@@ -202,7 +203,10 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 				)?.size === entry.bytes
 			) {
 				manifest.releases[label] = entry;
-				logArtifact("tiles", label, ["cached", elapsedSince(started)]);
+				buildLog.artifact("tiles", label, {
+					status: "cached",
+					ms: msSince(started),
+				});
 				continue;
 			}
 		}
@@ -330,19 +334,19 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 		}
 		await writeAtomically(descriptorPath, JSON.stringify(entry));
 		manifest.releases[label] = entry;
-		logArtifact("tiles", label, [
-			entry.method,
-			formatKb(entry.bytes),
-			elapsedSince(started),
-		]);
+		buildLog.artifact("tiles", label, {
+			status: entry.method,
+			bytes: entry.bytes,
+			ms: msSince(started),
+		});
 	}
 	assertCompleteBoundaryResources(manifest);
 	await writeAtomically(
 		manifestPath,
 		JSON.stringify(manifest, null, "\t") + "\n",
 	);
-	console.log(
-		`Boundary map resources complete (${elapsedSince(startedAt)}).`,
+	buildLog.info(
+		`Compiled ${formatCount(Object.keys(manifest.releases).length)} boundary map resources in ${elapsedSince(startedAt)}`,
 	);
 	return manifest;
 }

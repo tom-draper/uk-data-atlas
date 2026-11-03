@@ -3,10 +3,7 @@ import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { writeDatasetRegionChunks } from "../dataset-region-chunks.mts";
-import {
-	elapsedSince,
-	logArtifact,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileSnapshots,
 	fileSnapshotsOrEmpty,
@@ -15,7 +12,7 @@ import {
 	sameFileSnapshots,
 	snapshotFileContents,
 } from "../../pipeline/src/precompile/cache.mts";
-import { chunksSize } from "../../pipeline/src/precompile/output.mts";
+import { chunksResult } from "../../pipeline/src/precompile/output.mts";
 import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlas-lookups";
 import { ROOT } from "../../pipeline/src/precompile/paths.mts";
 import { OUT_DIR } from "./websiteOutput.mts";
@@ -120,11 +117,11 @@ export async function compileRegionChunks(
 			...snapshot,
 			sha256: cachedRegionChunks.outputs[index]!.sha256,
 		}));
-		logArtifact("chunks", "chunks/", [
-			"cached",
-			chunksSize(recorded),
-			elapsedSince(startedAt),
-		]);
+		buildLog.artifact(
+			"chunks",
+			"chunks/",
+			chunksResult("cached", recorded, msSince(startedAt)),
+		);
 		return recorded;
 	}
 	await writeDatasetRegionChunks({
@@ -137,10 +134,10 @@ export async function compileRegionChunks(
 		await fileSnapshots(chunkDirectory),
 		chunkDirectory,
 	);
-	logArtifact("chunks", "chunks/", [
-		"compiled",
-		chunksSize(recorded),
-		elapsedSince(startedAt),
-	]);
+	buildLog.artifact(
+		"chunks",
+		"chunks/",
+		chunksResult("compiled", recorded, msSince(startedAt)),
+	);
 	return recorded;
 }
