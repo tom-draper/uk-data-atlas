@@ -48,7 +48,6 @@ import {
 	type PostcodeAreasShard,
 } from "@uk-data-atlas/geography/postcode-area-types";
 import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compile postcode placements into a component: the areas each postcode's centroid lies in,
@@ -190,7 +189,6 @@ export const buildPostcodeAreas = async (
 	repositoryRoot: string,
 	options: { workers?: number; verifyEvery?: number; rebuild?: boolean } = {},
 ) => {
-	const apiRoot = apiRootOf(repositoryRoot);
 	const { postcodeArtifact, lng, lat, longitudes, latitudes } = (() => {
 		const databasePath = join(
 			repositoryRoot,
