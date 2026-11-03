@@ -199,7 +199,7 @@ export const readAtlasCatalogues = (
 		readDataCatalog(repositoryRootOf(apiRoot)),
 	);
 	const terrainCatalogue = stage("terrain-catalogue", () =>
-		readTerrainCatalogue(apiRoot),
+		readTerrainCatalogue(repositoryRootOf(apiRoot)),
 	);
 	const atlasRelease = stage("atlas-release", () =>
 		readAtlasRelease(repositoryRootOf(apiRoot)),
@@ -294,14 +294,18 @@ export const readAtlasCatalogues = (
 	);
 	const postcodeAreaIndex = stage("postcode-area-index", () =>
 		readPostcodeAreaIndex(
-			apiRoot,
+			repositoryRootOf(apiRoot),
 			postcodeIndex,
 			areaInventory,
 			geometrySources,
 		),
 	);
 	const postcodeCountsIndex = stage("postcode-counts", () =>
-		readPostcodeCounts(apiRoot, postcodeIndex, postcodeAreaIndex),
+		readPostcodeCounts(
+			repositoryRootOf(apiRoot),
+			postcodeIndex,
+			postcodeAreaIndex,
+		),
 	);
 	const areaGeometryCache = stage("area-geometry-cache", () =>
 		createAreaGeometryCache(
@@ -312,12 +316,16 @@ export const readAtlasCatalogues = (
 	);
 	const placeIndex = lazyValue(() =>
 		stage("place-index", () =>
-			readPlaceIndex(apiRoot, areaInventory, namedLocationInventory),
+			readPlaceIndex(
+				repositoryRootOf(apiRoot),
+				areaInventory,
+				namedLocationInventory,
+			),
 		),
 	);
 	const areaSearchIndex = lazyValue(() =>
 		stage("area-search-index", () =>
-			readAreaSearchIndex(apiRoot, areaInventory),
+			readAreaSearchIndex(repositoryRootOf(apiRoot), areaInventory),
 		),
 	);
 	const relationshipPathIndex = stage("relationship-path-index", () =>

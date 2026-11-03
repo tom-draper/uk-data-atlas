@@ -10,14 +10,12 @@ import {
 	compileAreaSearchIndex,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { atEach, type Indexed } from "@uk-data-atlas/search-index";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = apiRootOf(root);
-const inventory = readAreaInventory(apiRoot);
-const lookup = readAreaLookup(apiRoot, inventory);
+const inventory = readAreaInventory(root);
+const lookup = readAreaLookup(root, inventory);
 const expected = compileAreaSearchIndex(lookup, inventory.contentHash);
-const actual = readAreaSearchIndex(apiRoot, inventory);
+const actual = readAreaSearchIndex(root, inventory);
 function compare<T>(name: string, wanted: T[], stored: Indexed<T>) {
 	assert.equal(stored.length, wanted.length, name);
 	for (let start = 0; start < wanted.length; start += 512) {

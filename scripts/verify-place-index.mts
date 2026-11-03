@@ -10,19 +10,17 @@ import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places"
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { resolvePlaces } from "@uk-data-atlas/atlas-runtime/places";
 import { atEach, type Indexed } from "@uk-data-atlas/search-index";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = apiRootOf(root);
-const areas = readAreaInventory(apiRoot);
-const locations = readNamedLocationInventory(apiRoot);
+const areas = readAreaInventory(root);
+const locations = readNamedLocationInventory(root);
 const expected = compilePlaceIndex(
-	readAreaLookup(apiRoot, areas),
+	readAreaLookup(root, areas),
 	locations,
 	areas.contentHash,
-	readBoundaryRegistry(apiRoot),
+	readBoundaryRegistry(root),
 );
-const actual = readPlaceIndex(apiRoot, areas, locations);
+const actual = readPlaceIndex(root, areas, locations);
 assert.deepEqual(actual.releases, expected.releases);
 function compare<T>(name: string, wanted: T[], stored: Indexed<T>) {
 	assert.equal(stored.length, wanted.length, name);
