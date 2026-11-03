@@ -72,6 +72,10 @@ CLAUDE.md
 /data/build/*
 !/data/build/README.md
 
+# Generated API clients, written by pnpm clients:generate
+/clients/typescript/src/generated/
+/clients/python/src/uk_data_atlas_client/generated/
+
 # Python tooling for the generated API clients
 /clients/python/.venv*/
 __pycache__/
