@@ -1,7 +1,12 @@
-import { readDatasetPayload } from "../catalogue/datasetPayloads";
+import {
+	readDatasetPayload,
+	readDatasetPayloadWithHash,
+} from "../catalogue/datasetPayloads";
 import { gunzipSync } from "node:zlib";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { atlasCachePath } from "./atlasCache";
 
 /** Server-only access to the shared compiled release. Connections close before atomic replacements. */
 export function readAtlasPayload(
@@ -35,14 +40,45 @@ export function readAtlasDatasetUrls(
 		{ readOnly: true },
 	);
 	try {
+		const cached = new Map<string, { source: string; hash: string }>();
+		const cachePath = atlasCachePath(repositoryRoot);
+		if (existsSync(cachePath)) {
+			const cache = new DatabaseSync(cachePath, { readOnly: true });
+			try {
+				for (const row of cache
+					.prepare(
+						"SELECT output, source_sha256, sha256 FROM dataset_payloads",
+					)
+					.all())
+					cached.set(String(row.output), {
+						source: String(row.source_sha256),
+						hash: String(row.sha256),
+					});
+			} catch {
+				// Rebuild from rows if the dataset cache is absent or outdated.
+			} finally {
+				cache.close();
+			}
+		}
 		return Object.fromEntries(
 			database
-				.prepare("SELECT output, sha256 FROM datasets")
+				.prepare("SELECT output, sha256, payloadId FROM datasets")
 				.all()
-				.map((row) => [
-					String(row.output),
-					`/data/catalogue/${row.sha256}/${row.output}.json`,
-				]),
+				.map((row) => {
+					const output = String(row.output);
+					const found = cached.get(output);
+					const hash =
+						row.payloadId !== null
+							? String(row.sha256)
+							: found?.source === row.sha256
+								? found.hash
+								: readDatasetPayloadWithHash(
+										repositoryRoot,
+										output,
+									)?.sha256;
+					if (!hash) throw new Error(`Missing dataset ${output}`);
+					return [output, `/data/catalogue/${hash}/${output}.json`];
+				}),
 		);
 	} finally {
 		database.close();

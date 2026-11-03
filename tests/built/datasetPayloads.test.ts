@@ -37,7 +37,7 @@ it("serves datasets from rows with the compiled values", () => {
 		);
 		expect(fromRows.length).toBeGreaterThan(0);
 		const cached = cache.prepare(
-			"SELECT sha256, payload FROM dataset_payloads WHERE output = ?",
+			"SELECT source_sha256, sha256, payload FROM dataset_payloads WHERE output = ?",
 		);
 		for (const row of fromRows) {
 			const output = String(row.output);
@@ -51,10 +51,9 @@ it("serves datasets from rows with the compiled values", () => {
 				"utf8",
 			);
 			expect(JSON.parse(rebuilt), output).toEqual(JSON.parse(compiled));
-			expect(digest(rebuilt), output).toBe(row.sha256);
-			expect(Buffer.byteLength(rebuilt), output).toBe(row.bytes);
 			const entry = cached.get(output);
-			expect(entry?.sha256, output).toBe(row.sha256);
+			expect(entry?.source_sha256, output).toBe(row.sha256);
+			expect(entry?.sha256, output).toBe(digest(rebuilt));
 			expect(entry?.payload === rebuilt, output).toBe(true);
 			expect(
 				database

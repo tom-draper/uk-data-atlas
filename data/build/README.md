@@ -114,8 +114,8 @@ Gazetteer core and boundary assets remain API build intermediates under
 responses remain unchanged for byte compatibility.
 
 The Next.js atlas pages pass a map of output names to hash-versioned URLs into
-the client. `GET /data/catalogue/<sha256>/<output>.json` matches both output and
-hash in `datasets`, then returns the exact JSON with
+the client. `GET /data/catalogue/<sha256>/<output>.json` matches the output and
+the hash of the served JSON, then returns it with
 `Content-Type: application/json; charset=utf-8` and
 `Cache-Control: public, max-age=31536000, immutable`: the stored payload, or for
 a dataset served from rows the prebuilt cached payload. `readAtlasPayload("dataset:<output>")`
@@ -210,12 +210,13 @@ a record leaves out are listed in `dataset_record_absent`. A leaf names the firs
 on an `alsoIn` release read the series with the same measure and members.
 Derived numbers are recomputed by the config's `rebuild.derived` rules. The
 compiled JSON is then not stored in `payloads`. The `atlas-sqlite` stage
-rebuilds it into `atlas-cache.sqlite`, checking the manifest hash.
+rebuilds it into `atlas-cache.sqlite`. The cache records the compiler hash to
+identify its source and the generated payload hash for the website URL.
 Every configured dataset sets `rebuild`, so none keeps a payload.
 
 Run `pnpm exec vitest run --project built tests/built/datasetPayloads.test.ts`
-to check every dataset served from rows rebuilds to its manifest hash, has no
-payload and is in the cache.
+to compare each rebuilt dataset with the compiled values and check its cache
+entry and generated payload hash.
 
 Run `pnpm exec vitest run --project built tests/built/statisticsDatasets.test.ts`
 after a full build to check every configured dataset has rows and write
