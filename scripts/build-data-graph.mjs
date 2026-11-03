@@ -276,7 +276,7 @@ const apiStages = [
 		],
 		{
 			codeInputs: [
-				"pipeline/src/crosswalk-worker.ts",
+				"pipeline/src/relationships/crosswalk-worker.ts",
 				"pipeline/package.json",
 				"pipeline/tsconfig.json",
 			],
@@ -357,7 +357,7 @@ const apiStages = [
 			outputs: ["data/build/map-resources"],
 			codeInputs: [
 				"packages/atlas-runtime/src/maps/mapResource",
-				"pipeline/src/compileGeometryValidity.ts",
+				"pipeline/src/maps/compileGeometryValidity.ts",
 			],
 		},
 	),

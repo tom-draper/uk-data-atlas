@@ -16,9 +16,9 @@ import {
 	type DataCatalog,
 	observationArtifactName,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { compileMeasureCompatibility } from "./measureCompatibility";
+import { compileMeasureCompatibility } from "./statistics/measureCompatibility";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { observationBuildPath } from "./observation-build-path";
+import { observationBuildPath } from "./statistics/observation-build-path";
 
 const read = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;

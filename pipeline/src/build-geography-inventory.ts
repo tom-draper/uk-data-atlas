@@ -9,8 +9,8 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry";
-import { createGeographyInventory } from "./geographyInventory";
-import { createSourceInventory } from "./sourceInventory";
+import { createGeographyInventory } from "./geographies/geographyInventory";
+import { createSourceInventory } from "./geographies/sourceInventory";
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {

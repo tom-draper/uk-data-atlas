@@ -6,7 +6,7 @@ import type {
 	AreaReleaseArtifact,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { createFileHashCache } from "./fileHashCache";
-import { createGeometrySourceRegistry } from "./geometrySourceRegistry";
+import { createGeometrySourceRegistry } from "./geographies/geometrySourceRegistry";
 import {
 	artifactDirectory,
 	buildLog,

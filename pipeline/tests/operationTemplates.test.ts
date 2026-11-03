@@ -1,4 +1,4 @@
-import { compileOperationTemplates } from "../src/operationTemplates";
+import { compileOperationTemplates } from "../src/atlas/operationTemplates";
 import assert from "node:assert/strict";
 import {
 	mkdirSync,

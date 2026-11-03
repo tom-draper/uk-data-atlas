@@ -41,8 +41,8 @@ import {
 
 /** The code a compiled release depends on: a change to any rebuilds them all. */
 const COMPILER_SOURCES = [
-	"pipeline/src/buildGeometryStore.ts",
-	"pipeline/src/compileGeometryValidity.ts",
+	"pipeline/src/maps/buildGeometryStore.ts",
+	"pipeline/src/maps/compileGeometryValidity.ts",
 	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
 	"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
 	"packages/atlas-runtime/src/geometry/geometryStore.ts",

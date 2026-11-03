@@ -10,7 +10,7 @@ import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,
 	storePostcodeAreas,
-} from "./storePostcodeAreas";
+} from "./postcodes/storePostcodeAreas";
 import { existsSync, readFileSync } from "node:fs";
 
 import { availableParallelism } from "node:os";
@@ -44,7 +44,7 @@ import {
 	releaseCounts,
 	toCentimetres,
 	type ReleasePlacements,
-} from "./postcodeAreaCompiler";
+} from "./postcodes/postcodeAreaCompiler";
 import {
 	NONE,
 	SEVERAL,

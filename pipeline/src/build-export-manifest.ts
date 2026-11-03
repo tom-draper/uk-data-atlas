@@ -8,13 +8,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import { compileExportManifest } from "./exportManifest";
+import { compileExportManifest } from "./atlas/exportManifest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { observationBuildPath } from "./observation-build-path";
+import { observationBuildPath } from "./statistics/observation-build-path";
 import { DatabaseSync } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { measureStatisticsSelections } from "./measureStatisticsSelections";
-import { compileMeasureDownloads } from "./measureDownloads";
+import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections";
+import { compileMeasureDownloads } from "./statistics/measureDownloads";
 import type { CompiledMeasure } from "./catalog/manifest";
 
 export const buildExportManifest = async (repositoryRoot: string) => {

@@ -7,8 +7,8 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
-import { crosswalkShape } from "../src/relationshipPaths";
-import { compileRelationshipPaths } from "../src/relationshipPaths";
+import { crosswalkShape } from "../src/relationships/relationshipPaths";
+import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 
 // Wards W1 to W3 nest in authority A of release 1. Authority A keeps its code
 // into release 2, as does B, which no ward reaches. Only W1 and W2 keep their

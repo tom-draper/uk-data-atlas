@@ -14,12 +14,12 @@ import {
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
-import { crosswalkShape } from "../src/relationshipPaths";
-import { compileRelationshipPaths } from "../src/relationshipPaths";
+import { crosswalkShape } from "../src/relationships/relationshipPaths";
+import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 import {
 	compileExtentContinuityCrosswalk,
 	MINIMUM_NOISE_SAMPLE,
-} from "../src/extentContinuity";
+} from "../src/relationships/extentContinuity";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;

@@ -11,14 +11,14 @@ import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
-import { compileFlatDownloads } from "./flatDownloads";
+import { compileFlatDownloads } from "./atlas/flatDownloads";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
-import { roundKeepingValidity } from "./compileGeometryValidity";
+import { roundKeepingValidity } from "./maps/compileGeometryValidity";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-} from "./compileMapResource";
+} from "./maps/compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import {
 	artifactDirectory,
@@ -57,12 +57,12 @@ const COMPILER_SOURCES = [
 	// The tiler, shared with the website's precompile.
 	...sourceFiles("packages/map-tiles/src"),
 	"packages/artifacts/src/parquet.ts",
-	"pipeline/src/flatDownloads.ts",
-	"pipeline/src/compileMapResource.ts",
+	"pipeline/src/atlas/flatDownloads.ts",
+	"pipeline/src/maps/compileMapResource.ts",
 	"pipeline/src/buildMapResource.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
-	"pipeline/src/compileGeometryValidity.ts",
+	"pipeline/src/maps/compileGeometryValidity.ts",
 	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
 	"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
 	"packages/atlas-runtime/src/geometry/geometrySubstitution.ts",

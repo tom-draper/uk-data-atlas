@@ -6,14 +6,14 @@ import {
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readPlaceResolver } from "./placeResolver";
+import { readPlaceResolver } from "./places/placeResolver";
 import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import {
 	inBox,
 	pointInGeom,
 } from "@uk-data-atlas/datasets/data/gazetteer/geometry";
 import { buildDocsCatalogue } from "./buildDocsCatalogue";
-import { writeAtlasPages } from "./writeAtlasPages";
+import { writeAtlasPages } from "./atlas/writeAtlasPages";
 import {
 	PLACE_GEOGRAPHIES,
 	encodeOutline,

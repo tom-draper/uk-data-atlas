@@ -1,5 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { compilePostcodeAreas } from "../src/postcodeAreaCompiler";
+import { compilePostcodeAreas } from "../src/postcodes/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import {
@@ -20,14 +20,14 @@ import { AREAS_VIEW } from "../src/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
-import { storePostcodeIndex } from "../src/storePostcodeIndex";
+import { storePostcodeIndex } from "../src/postcodes/storePostcodeIndex";
 import { assembleAtlas } from "../src/assemble-atlas";
 import {
 	writeEmptyObservationComponent,
 	writeEmptyPostcodeAreas,
 	writeEmptyWebsiteComponent,
 } from "./atlasComponentFixtures";
-import { storePostcodeAreas as writePostcodeAreas } from "../src/storePostcodeAreas";
+import { storePostcodeAreas as writePostcodeAreas } from "../src/postcodes/storePostcodeAreas";
 import { buildDuckdbPostcodeCounts } from "../src/postcode-counts/buildDuckdbPostcodeCounts";
 import { validateShards } from "../src/postcode-counts/validatePostcodeCountInputs";
 import {

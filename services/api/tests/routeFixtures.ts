@@ -1,4 +1,4 @@
-import { compileOperationTemplates } from "../../../pipeline/src/operationTemplates";
+import { compileOperationTemplates } from "../../../pipeline/src/atlas/operationTemplates";
 import { reportRequest } from "./evidenceFixtures";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";

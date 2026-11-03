@@ -1,6 +1,6 @@
 import { assembleAtlas } from "../pipeline/src/assemble-atlas";
 import { buildAtlasAssets } from "../pipeline/src/build-atlas-assets";
-import { buildAtlasSqlite } from "../pipeline/src/buildAtlasSqlite";
+import { buildAtlasSqlite } from "../pipeline/src/atlas/buildAtlasSqlite";
 import { buildDataCatalog } from "../pipeline/src/build-data-catalog";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
 import { dataCatalog } from "./contextFixtures";
-import { replaceObservationTables } from "../src/atlasObservationTables";
+import { replaceObservationTables } from "../src/statistics/atlasObservationTables";
 import { rebuildObservationText } from "@uk-data-atlas/atlas-runtime/storage";
 
 const geography = { type: "ward", boundaryYear: 2024 };

@@ -1,6 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { CENSUS_BREAKDOWNS } from "./catalog/census";
+import { CENSUS_BREAKDOWNS } from "../catalog/census";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,

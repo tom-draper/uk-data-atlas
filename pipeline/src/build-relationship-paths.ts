@@ -4,8 +4,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import { compileRelationshipPaths, crosswalkShape } from "./relationshipPaths";
-import { readApprovedRelationshipPaths } from "./relationshipPathAdapters";
+import {
+	compileRelationshipPaths,
+	crosswalkShape,
+} from "./relationships/relationshipPaths";
+import { readApprovedRelationshipPaths } from "./relationships/relationshipPathAdapters";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import {
 	artifactDirectory,

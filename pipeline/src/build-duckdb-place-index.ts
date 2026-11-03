@@ -1,4 +1,4 @@
-import { compileDuckdbPlaceIndex } from "./duckdbPlaceIndex";
+import { compileDuckdbPlaceIndex } from "./places/duckdbPlaceIndex";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { publishCacheTables } from "./storage/index";
