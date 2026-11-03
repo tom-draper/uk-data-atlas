@@ -892,10 +892,10 @@ members, rather than one id per breakdown.
   takes land area; and a census table is rebuilt from one series per
   column (a `measure-table` selector). On the 2026-11-02 build all 322
   artifacts moved, including recorded crime by community safety partnership
-  (a second record set of the crime dataset), air-quality area means with
-  the `derived` status the compiler gives them, each contest's winner, and
-  the census small-area tables, read from the Nomis files under
-  `data/source`. The `observation_*` tables and their writer stay until
+  (series the crime dataset adds from its partnership records), air-quality
+  area means with the `derived` status the compiler gives them, each
+  contest's winner, and the census small-area tables, read from the Nomis
+  files under `data/source`. The `observation_*` tables and their writer stay until
   that is verified, then retire.
 - **Periods.** A catalogue period reads the statistics period with the same
   label, or the one label that extends it: `2021` is `2021-census`, an
