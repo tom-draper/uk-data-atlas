@@ -10,6 +10,7 @@ import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
 import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseKey } from "@uk-data-atlas/geography";
+import { publicSeries } from "../dimensions/dimensionCatalogue";
 
 /**
  * A citation for one area, as `include=citation` expands it: the artifacts
@@ -154,10 +155,18 @@ export const areaCitation = (
 					]
 				: [];
 		});
+		const named = publicSeries(
+			dataCatalog,
+			context.measureDimensions,
+			measure.id,
+		);
 		return {
-			id: measure.id,
+			id: named.id,
+			...(Object.keys(named.dimensions).length > 0
+				? { dimensions: named.dimensions }
+				: {}),
 			label: measure.label,
-			href: `/v1/measures/${measure.id}`,
+			href: `/v1/measures/${named.id}`,
 			sources,
 		};
 	});
@@ -169,7 +178,21 @@ export const areaCitation = (
 			problem(
 				422,
 				"Not Applicable To Area",
-				`${uncitedMeasures.map((measure) => `measure=${measure.id}`).join(", ")} publishes no observation for ${releaseIdentity}/${code} in a source assessed against this boundary release.`,
+				`${uncitedMeasures
+					.map(
+						(measure) =>
+							`measure=${measure.id}${Object.entries(
+								measure.dimensions ?? {},
+							)
+								.map(
+									([dimension, member]) =>
+										`&${dimension}=${member}`,
+								)
+								.join("")}`,
+					)
+					.join(
+						", ",
+					)} publishes no observation for ${releaseIdentity}/${code} in a source assessed against this boundary release.`,
 			),
 		);
 	}
