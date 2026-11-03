@@ -6,9 +6,9 @@ import {
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
-import { writeCrosswalkArtifact } from "./crosswalk-artifact";
-import type { CrosswalkWork, CrosswalkWorkerResult } from "./crosswalk-workers";
+import { readCompiledAreaLookup } from "./crosswalkBuildInputs";
+import { writeCrosswalkArtifact } from "./crosswalkArtifact";
+import type { CrosswalkWork, CrosswalkWorkerResult } from "./crosswalkWorkers";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const [root, outputDirectory] = process.argv.slice(2);

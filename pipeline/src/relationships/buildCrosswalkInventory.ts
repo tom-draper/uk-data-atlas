@@ -1,9 +1,9 @@
-import { writeCrosswalkArtifact } from "./crosswalk-artifact";
+import { writeCrosswalkArtifact } from "./crosswalkArtifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "./crosswalk-workers";
-import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
+} from "./crosswalkWorkers";
+import { readCompiledAreaLookup } from "./crosswalkBuildInputs";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {

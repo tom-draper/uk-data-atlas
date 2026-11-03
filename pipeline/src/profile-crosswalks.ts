@@ -14,12 +14,12 @@ import {
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readCompiledAreaLookup } from "./relationships/crosswalk-build-inputs";
-import { writeCrosswalkArtifact } from "./relationships/crosswalk-artifact";
+import { readCompiledAreaLookup } from "./relationships/crosswalkBuildInputs";
+import { writeCrosswalkArtifact } from "./relationships/crosswalkArtifact";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "./relationships/crosswalk-workers";
+} from "./relationships/crosswalkWorkers";
 
 const root = resolve(import.meta.dirname, "../..");
 const args = process.argv.slice(2);
