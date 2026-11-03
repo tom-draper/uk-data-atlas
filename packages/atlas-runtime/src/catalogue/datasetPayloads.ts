@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { atlasCachePath } from "../storage/atlasCache";
 import { rebuildFromLayout } from "./datasetLayout";
+import { rebuildFromDeclaration } from "./declaredPayload";
 import { rebuildFuelPoverty } from "./fuelPovertyStatistics";
 import { rebuildAirQuality } from "./airQualityPayload";
 import { STATISTICS_DATASETS } from "./statisticsDatasets";
@@ -16,6 +17,11 @@ const declared = new Map(
 export const servedFromRows = (type: string) =>
 	type === "fuelPoverty" || declared.get(type)?.rebuild !== undefined;
 
+/** Whether a dataset's JSON is generated from rows, with no layout tables. */
+export const generatedFromRows = (type: string, output: string) =>
+	(type === "airQuality" && output === "air-quality") ||
+	declared.get(type)?.payload !== undefined;
+
 /** A dataset's compiled JSON, rebuilt from the canonical rows. */
 export function rebuildDatasetPayload(
 	database: DatabaseSync,
@@ -25,7 +31,10 @@ export function rebuildDatasetPayload(
 	if (type === "fuelPoverty") return rebuildFuelPoverty(database);
 	if (type === "airQuality" && output === "air-quality")
 		return rebuildAirQuality(database);
-	const rebuild = declared.get(type)?.rebuild;
+	const config = declared.get(type);
+	if (config?.payload)
+		return rebuildFromDeclaration(database, config, output);
+	const rebuild = config?.rebuild;
 	if (!rebuild) throw new Error(`Dataset ${output} is not served from rows`);
 	return rebuildFromLayout(database, output, rebuild.derived);
 }

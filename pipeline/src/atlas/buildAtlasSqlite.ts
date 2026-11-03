@@ -8,6 +8,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishAtlasCache } from "../storage/index";
 import {
+	generatedFromRows,
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -276,8 +277,7 @@ export const buildAtlasSqlite = (
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)
 			throw new Error("Area versions on another geography's release");
 		for (const entry of manifest.datasets) {
-			if (entry.type !== "airQuality" || entry.output !== "air-quality")
-				continue;
+			if (!generatedFromRows(entry.type, entry.output)) continue;
 			const compiled = readFileSync(
 				join(directory, "datasets", `${entry.output}.json`),
 				"utf8",
