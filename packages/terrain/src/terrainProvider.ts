@@ -48,18 +48,6 @@ export type TerrainRaster = TerrainSourceMetadata & {
 export type TerrainDerivativeKind =
 	"slope" | "aspect" | "hillshade" | "contours";
 
-export type TerrainDerivativeVersion = {
-	id: string;
-	version: string;
-	kind: TerrainDerivativeKind;
-	inputSourceId: string;
-	inputSourceVersion: string;
-	inputTileHash: string;
-	method: string;
-	parameters: Record<string, number | string | boolean>;
-	contentHash: string;
-};
-
 export type TerrainRasterValidation = {
 	valid: boolean;
 	errors: string[];
