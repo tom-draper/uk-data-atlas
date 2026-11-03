@@ -10,6 +10,7 @@ import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
 import {
 	breakdownResponse,
+	restatedResponse,
 	seriesResponse,
 } from "./dimensions/dimensionResponses";
 
@@ -106,6 +107,23 @@ const routeSeriesAsync = async (
 };
 
 /**
+ * The response with the request it was read as, in measure-and-filter form. A
+ * path the route itself canonicalised, such as `latest`, is kept.
+ */
+const withLocation = (response: ApiResponse, location: string): ApiResponse => {
+	const target = new URL(location, "http://localhost");
+	const routed = response.headers?.["content-location"];
+	if (routed) target.pathname = new URL(routed, "http://localhost").pathname;
+	return {
+		...response,
+		headers: {
+			...response.headers,
+			"content-location": target.pathname + target.search,
+		},
+	};
+};
+
+/**
  * Route a request against named, independently-built catalogues. Keeping the
  * dependencies in one object prevents a newly added artifact from silently
  * shifting a long positional argument list at every call site.
@@ -125,6 +143,14 @@ export const route = (
 			return routeSeries(method, url, context, body);
 		case "problem":
 			return resolved.response;
+		case "rewritten":
+			return withLocation(
+				restatedResponse(
+					routeSeries(method, resolved.url, context, body),
+					resolved.read,
+				),
+				resolved.location,
+			);
 		case "series":
 			return seriesResponse(
 				routeSeries(method, resolved.url, context, body),
@@ -154,6 +180,14 @@ export const routeAsync = async (
 			return routeSeriesAsync(method, url, context, body);
 		case "problem":
 			return resolved.response;
+		case "rewritten":
+			return withLocation(
+				restatedResponse(
+					await routeSeriesAsync(method, resolved.url, context, body),
+					resolved.read,
+				),
+				resolved.location,
+			);
 		case "series":
 			return seriesResponse(
 				await routeSeriesAsync(method, resolved.url, context, body),

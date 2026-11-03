@@ -8,8 +8,8 @@ import {
 	type DimensionalMeasure,
 	type Series,
 } from "./dimensionCatalogue";
+import { resolveMeasureQuery } from "./measureQuery";
 import {
-	ALL,
 	describeChoices,
 	fixAliasMembers,
 	pathChoiceHref,
@@ -70,6 +70,13 @@ export type DimensionResolution =
 	| { kind: "unchanged" }
 	| { kind: "problem"; response: ApiResponse }
 	| {
+			/** A `measure` query parameter read as series; see measureQuery. */
+			kind: "rewritten";
+			url: string;
+			location: string;
+			read: Array<{ series: Series; measure: DimensionalMeasure }>;
+	  }
+	| {
 			kind: "series";
 			url: string;
 			series: Series;
@@ -87,7 +94,6 @@ export const resolveDimensionRequest = (
 	context: DimensionContext,
 ): DimensionResolution => {
 	const { dataCatalog, measureDimensions } = context;
-	if (!dataCatalog || !measureDimensions) return { kind: "unchanged" };
 	const parsed = new URL(url, "http://localhost");
 	let segments: string[];
 	try {
@@ -99,7 +105,8 @@ export const resolveDimensionRequest = (
 		return { kind: "unchanged" };
 	}
 	const position = measurePosition(segments);
-	if (!position) return { kind: "unchanged" };
+	if (!position) return resolveMeasureQuery(parsed, context);
+	if (!dataCatalog || !measureDimensions) return { kind: "unchanged" };
 	const catalogue = dimensionCatalogue(dataCatalog, measureDimensions);
 	const term = segments[position.index]!;
 	const read = readMeasureTerm(dataCatalog, catalogue, term);

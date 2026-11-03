@@ -81,8 +81,18 @@ const observations = (
 	],
 });
 
+const dataset = dataCatalog.datasets[0]!;
+
 const catalog: DataCatalog = {
 	...dataCatalog,
+	datasets: [
+		...dataCatalog.datasets,
+		...["crime", "local", "general", "population-uk"]
+			.filter(
+				(id) => !dataCatalog.datasets.some((held) => held.id === id),
+			)
+			.map((id) => ({ ...dataset, id })),
+	],
 	measures: [
 		...dataCatalog.measures,
 		wardMeasure("crime-total", "Total recorded crime", "crime"),
@@ -208,6 +218,9 @@ const context = testContext({
 });
 
 const get = (url: string) => route("GET", url, context);
+/** The datasets an attribution response credits. */
+const resourceIds = (response: ReturnType<typeof get>) =>
+	(data(response).resources as Array<{ id: string }>).map(({ id }) => id);
 const data = (response: ReturnType<typeof get>) =>
 	(response.body as { data: Record<string, unknown> }).data;
 
@@ -444,4 +457,109 @@ test("finds a measure by a member's name and says which member to filter on", ()
 			href: "/v1/data/recorded-crimes?offence=burglary",
 		},
 	]);
+});
+
+test("reads a measure in a query parameter with dimension filters as one series", () => {
+	for (const query of [
+		"measure=recorded-crimes&offence=burglary",
+		"measure=recorded-crimes&dimensions%5Boffence%5D=burglary",
+	]) {
+		const response = get(`/v1/attribution?${query}`);
+		assert.equal(response.status, 200, query);
+		assert.equal(
+			response.headers?.["content-location"],
+			"/v1/attribution?measure=recorded-crimes&offence=burglary",
+		);
+		assert.deepEqual(resourceIds(response), ["crime"]);
+	}
+	// A dimension left out takes its total, as in a path.
+	const total = get("/v1/attribution?measure=recorded-crimes");
+	assert.equal(total.status, 200);
+	assert.equal(
+		total.headers?.["content-location"],
+		"/v1/attribution?measure=recorded-crimes",
+	);
+});
+
+test("applies a filter to each listed measure that has the dimension", () => {
+	const response = get(
+		"/v1/attribution?measure=recorded-crimes&measure=population&offence=burglary",
+	);
+	assert.equal(response.status, 200);
+	assert.equal(
+		response.headers?.["content-location"],
+		"/v1/attribution?measure=recorded-crimes&measure=population&offence=burglary",
+	);
+	const ids = resourceIds(response);
+	assert.ok(ids.includes("crime"));
+	assert.ok(ids.length > 1);
+	// A dimension none of them has is still refused.
+	const none = get(
+		"/v1/attribution?measure=population&measure=recorded-crimes&party=lab",
+	);
+	assert.equal(none.status, 400);
+	assert.equal((none.body as { code?: string }).code, "unknown_dimension");
+});
+
+test("accepts a reviewed alias in a query parameter", () => {
+	const response = get("/v1/attribution?measure=burglary-reports");
+	assert.equal(response.status, 200);
+	assert.equal(
+		response.headers?.["content-location"],
+		"/v1/attribution?measure=recorded-crimes&offence=burglary",
+	);
+	assert.deepEqual(resourceIds(response), ["crime"]);
+	const conflict = get(
+		"/v1/attribution?measure=burglary-reports&offence=robbery",
+	);
+	assert.equal(conflict.status, 400);
+});
+
+test("rejects a retired measure id in a query parameter with a hint", () => {
+	for (const [url, term] of [
+		["/v1/attribution?measure=crime-burglary", "crime-burglary"],
+		[
+			"/v1/attribution?measure=recorded-crimes&measure=Crime%20Burglary",
+			"Crime Burglary",
+		],
+		[
+			"/v1/relationships?from=ward/2023-05-uk-bgc&to=ward/2025-01-en-ward&measure=crime-burglary",
+			"crime-burglary",
+		],
+	] as const) {
+		const response = get(url);
+		assert.equal(response.status, 404, url);
+		assert.deepEqual(response.body, {
+			type: "https://api.ukdataatlas.com/problems/not-found",
+			title: "Not Found",
+			status: 404,
+			detail: `${term} is no longer accepted. Use /v1/data/recorded-crimes with offence=burglary.`,
+			code: "retired_measure_id",
+			measure: "recorded-crimes",
+			members: { offence: "burglary" },
+		});
+	}
+});
+
+test("refuses an unknown dimension or member in a measure query parameter", () => {
+	const member = get("/v1/attribution?measure=recorded-crimes&offence=arson");
+	assert.equal(member.status, 400);
+	assert.equal(
+		(member.body as { code?: string }).code,
+		"unknown_dimension_member",
+	);
+	assert.deepEqual((member.body as { members?: string[] }).members, [
+		"total",
+		"burglary",
+		"robbery",
+	]);
+	const dimension = get("/v1/attribution?measure=population&offence=theft");
+	assert.equal(dimension.status, 400);
+	assert.equal(
+		(dimension.body as { code?: string }).code,
+		"unknown_dimension",
+	);
+	const many = get("/v1/attribution?measure=recorded-crimes&offence=*");
+	assert.equal(many.status, 409);
+	assert.equal((many.body as { code?: string }).code, "ambiguous_dimension");
 });

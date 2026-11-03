@@ -1496,11 +1496,9 @@ test("Fastify catalogue listings preserve measure alias canonicalization without
 	const context = testContext({ atlasRelease, dataCatalog: catalog });
 	context.operationMatcher = undefined;
 	const { get } = await serve(t, {}, context);
-	for (const path of [
-		"/v1/datasets?measure=residents",
-		"/v1/measures?q=population&measure=residents",
-		"/v1/measures/residents?measure=residents",
-	]) {
+	// Only a measure in the path is canonicalised here: these routes declare no
+	// `measure` query parameter, which is read where one is accepted.
+	for (const path of ["/v1/measures/residents"]) {
 		const expected = route("GET", path, context);
 		const response = await get(path);
 		assert.equal(response.status, expected.status, path);
@@ -1516,7 +1514,7 @@ test("Fastify catalogue listings preserve measure alias canonicalization without
 		);
 		assert.match(
 			response.headers.get("content-location")!,
-			/measure=population/,
+			/^\/v1\/measures\/population$/,
 		);
 	}
 });
