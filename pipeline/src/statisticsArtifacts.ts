@@ -1,4 +1,6 @@
-import type { DatabaseSync } from "node:sqlite";
+import { DatabaseSync } from "node:sqlite";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
 	observationArtifactName,
 	type DataCatalog,
@@ -6,6 +8,8 @@ import {
 } from "@uk-data-atlas/measures";
 import {
 	rebuildStatisticsObservationText,
+	apiRootOf,
+	statisticsReadPathPath,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
@@ -44,4 +48,26 @@ export const statisticsArtifactReader = (
 			periods: source.periods,
 		});
 	};
+};
+
+export const openStatisticsArtifactReader = (
+	repositoryRoot: string,
+	catalog: DataCatalog,
+) => {
+	const readPath = JSON.parse(
+		readFileSync(statisticsReadPathPath(apiRootOf(repositoryRoot)), "utf8"),
+	) as StatisticsReadPath;
+	const database = new DatabaseSync(
+		join(repositoryRoot, "data/build/atlas-base.sqlite"),
+		{ readOnly: true },
+	);
+	try {
+		return {
+			database,
+			readArtifact: statisticsArtifactReader(database, catalog, readPath),
+		};
+	} catch (error) {
+		database.close();
+		throw error;
+	}
 };
