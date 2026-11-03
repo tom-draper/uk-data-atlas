@@ -23,9 +23,24 @@ const offence = (
 
 export const CRIME: DeclaredDataset = {
 	type: "crime",
-	name: "ladName",
+	name: {
+		data: "ladName",
+		partnerships: "communitySafetyPartnershipName",
+	},
+	/** The local authorities, then the community safety partnerships they sit in. */
+	records: [
+		{ from: "data", alsoIn: [{ geography: "localAuthority", year: 2022 }] },
+		{
+			from: "partnerships",
+			release: () => ({
+				geography: "communitySafetyPartnership",
+				year: 2023,
+			}),
+		},
+	],
 	parents: [
 		{
+			sets: ["data", "partnerships"],
 			code: "policeForceAreaCode",
 			name: "policeForceAreaName",
 			release: { geography: "policeForceArea", year: 2023 },
@@ -35,10 +50,59 @@ export const CRIME: DeclaredDataset = {
 			name: "communitySafetyPartnershipName",
 			release: { geography: "communitySafetyPartnership", year: 2023 },
 		},
+		/** A partnership that is one authority names it; one of several names none. */
+		{
+			sets: ["partnerships"],
+			relation: "coterminous",
+			nullable: true,
+			code: "localAuthorityCode",
+			release: { geography: "localAuthority", year: 2026 },
+			alsoIn: [{ geography: "localAuthority", year: 2022 }],
+		},
 	],
+	payload: {
+		parts: () => [
+			{
+				key: "2026",
+				header: {
+					id: "crime2026",
+					year: 2026,
+					type: "crime",
+					boundaryType: "localAuthority",
+					boundaryYear: 2026,
+					dataDate: "year ending March 2026",
+					jurisdiction: "England and Wales",
+					metadata: {
+						source: "Police recorded crime from the Home Office",
+						notes: [
+							"Police recorded crime statistics are published as official statistics, not accredited official statistics",
+							"Published by community safety partnership. An authority split between several partnerships is their sum; an authority inside a partnership covering several authorities has no value of its own.",
+							"No figures for Dartford and Gravesham, Maidstone, Medway, Tonbridge and Malling, Tunbridge Wells: the police recorded their crime under the force's unassigned total, so the published counts are only a remnant.",
+						],
+					},
+					coverageCountries: ["GB-ENG", "GB-WLS"],
+				},
+			},
+		],
+		code: {
+			data: "ladCode",
+			partnerships: "communitySafetyPartnershipCode",
+		},
+		/** A partnership that is one authority takes that authority's name, where it has one. */
+		fill: (record, _code, earlier) => {
+			if (!("localAuthorityCode" in record)) return;
+			const authority = record.localAuthorityCode
+				? (earlier.data as Record<string, { ladName?: string }>)[
+						String(record.localAuthorityCode)
+					]?.ladName
+				: undefined;
+			record.localAuthorityName = record.localAuthorityCode
+				? authority || record.communitySafetyPartnershipName
+				: null;
+		},
+	},
 	rebuild: {},
 	period: () => periods.yearEnding(2026, 3),
-	alsoIn: [{ geography: "localAuthority", year: 2022 }],
 	measures: [
 		measure(
 			"recorded-crimes",

@@ -44,7 +44,6 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { crimePartnershipStatistics } from "../statistics/crimePartnershipStatistics";
 import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics";
 
 const declared = new Map(
@@ -86,20 +85,7 @@ const statisticsInputs = (
 							join(directory, `datasets/${entry.output}.json`),
 						),
 				];
-			return entry.type === "crime"
-				? [
-						(areas) =>
-							crimePartnershipStatistics(
-								statistics(areas),
-								areas,
-								config,
-								join(
-									directory,
-									`datasets/${entry.output}.json`,
-								),
-							),
-					]
-				: [statistics];
+			return [statistics];
 		}
 		if (entry.type in unstored) return [];
 		throw new Error(
