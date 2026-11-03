@@ -186,6 +186,12 @@ const METER_TYPE = {
 
 const consumption = (type: string, fuel: "electricity" | "gas") => ({
 	type,
+	payload: {
+		parts: yearParts(type, "localAuthority", 2025, {
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
+		}),
+		code: "ladCode",
+	},
 	name: "ladName",
 	measures: [
 		measure(
