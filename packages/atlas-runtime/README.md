@@ -5,7 +5,7 @@ Node modules used by the API, data pipeline and website server to read and build
 - `@uk-data-atlas/atlas-runtime/areas` for area inventories, lookups and searches.
 - `@uk-data-atlas/atlas-runtime/geometry` for geometry sources and storage.
 - `@uk-data-atlas/atlas-runtime/places` for place index compilation, SQLite readers and location projections.
-- `@uk-data-atlas/atlas-runtime/postcodes` for postcode release selection and publishing.
+- `@uk-data-atlas/atlas-runtime/postcodes` for postcode release selection.
 - `@uk-data-atlas/atlas-runtime/relationships` for crosswalks and conversions.
 - `@uk-data-atlas/atlas-runtime/catalogue` for catalogue loading, observation storage and evidence.
 - `@uk-data-atlas/atlas-runtime/maps` for map resources.

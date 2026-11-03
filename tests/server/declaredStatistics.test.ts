@@ -1,6 +1,6 @@
 import { DatabaseSync } from "node:sqlite";
 import { describe, expect, it } from "vitest";
-import { statisticsTables } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
 	declaredStatistics,
 	periods,
@@ -11,7 +11,7 @@ import { measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	writeSqliteTables,
 	type SqliteTable,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "../../pipeline/src/storage/index";
 
 const areas = (): Record<string, SqliteTable> => ({
 	area_releases: {

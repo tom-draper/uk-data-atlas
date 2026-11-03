@@ -1,4 +1,4 @@
-import { packNamedLocations } from "@uk-data-atlas/atlas-runtime/places";
+import { packNamedLocations } from "./storage/index";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";

@@ -9,13 +9,13 @@ import {
 	AREA_GEOGRAPHY_MISMATCH,
 	addAreaVersion,
 	areaTables,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "./pipelineFixtures";
 import {
 	readAreaInventory,
 	readAreaLookup,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
-import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
+import { writeSqliteIndex } from "./pipelineFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("relational areas preserve inventory order, aliases and record order without JSON", (context) => {

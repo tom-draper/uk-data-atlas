@@ -1,9 +1,9 @@
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { areaSearchIndexTables } from "@uk-data-atlas/atlas-runtime/areas";
+import { areaSearchIndexTables } from "./storage/index";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
-import { publishCacheTables } from "@uk-data-atlas/atlas-runtime/storage";
+import { publishCacheTables } from "./storage/index";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { compileDuckdbAreaSearchIndex } from "./duckdbAreaSearch";
 

@@ -16,7 +16,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { AREAS_VIEW } from "@uk-data-atlas/atlas-runtime/storage";
+import { AREAS_VIEW } from "../src/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";

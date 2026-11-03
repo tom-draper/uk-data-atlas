@@ -521,13 +521,11 @@ checks the inventory hash when it reads them.
 The area search pipeline stage runs `pipeline/src/build-area-search-index.ts`
 and uses DuckDB to build postings in the deployed cache.
 
-The postcode counts compiler, cache publisher and SQLite postcode and area shard
-readers live in `packages/atlas-runtime/`. Postcode types live in
-`@uk-data-atlas/geography`, and code-unit ordering lives in
-`@uk-data-atlas/search-index`.
-The pipeline stage builds postcode counts with DuckDB and the shared cache
-publisher. The postcode
-index SQLite table conversion and publisher also live in `packages/atlas-runtime/`.
+The pipeline builds postcode counts with DuckDB and publishes them with the
+cache writer in `pipeline/src/storage/`. The postcode index and area SQLite
+writers also live there. SQLite postcode and area shard readers remain in
+`packages/atlas-runtime/`. Postcode types live in `@uk-data-atlas/geography`,
+and code-unit ordering lives in `@uk-data-atlas/search-index`.
 
 The evidence documents stage now runs `pipeline/src/build-evidence-documents.ts`.
 The evidence report compilers, catalogue and observation loaders, route
@@ -626,7 +624,7 @@ The lookup manifest build runs in `pipeline/src/build-lookup-manifest.ts`.
 The API and builder share lookup table rendering and manifest types in
 `packages/atlas-runtime/src/areas/lookupExports.ts`.
 
-The cache publisher lives in `packages/atlas-runtime/src/storage/atlasCache.ts`. Place-name normalisation lives
+The cache publisher lives in `pipeline/src/storage/atlasCacheWriter.ts`. Place-name normalisation lives
 in `@uk-data-atlas/geography`, and its index compatibility fingerprint is exported
 by `@uk-data-atlas/search-index/node`.
 
@@ -636,8 +634,8 @@ boundary release ordering are shared with the API. The API reads the deployed ca
 
 The graph now runs geometry storage, map resources, crosswalks, named locations,
 location projections, analysis geography validation, validation reports, and
-SQLite assembly through pipeline entry points. Their shared builders and SQLite
-writers remain available to the API where runtime cache construction needs them.
+SQLite assembly through pipeline entry points. The atlas cache and assembly
+table writers live in `pipeline/src/storage/`, while the API uses the runtime readers.
 
 The postcode area, atlas page, atlas lookup, and API dataset builders also run
 from `pipeline/src/`. Their resolver and coordinate helpers are shared with the

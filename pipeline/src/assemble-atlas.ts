@@ -10,10 +10,8 @@ import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { observationBuildPath } from "./observation-build-path";
-import {
-	artifactDirectory,
-	writePostcodeAreas,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { writePostcodeAreas } from "./storage/index";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
 	postcodeAreasDirectory,

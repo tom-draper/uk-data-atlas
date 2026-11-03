@@ -1,7 +1,6 @@
 import type { AreaSearchIndexArtifact } from "./areaSearchCompiler";
 export {
 	compileAreaSearchIndex,
-	areaSearchIndexTables,
 	type AreaSearchIndexArtifact,
 } from "./areaSearchCompiler";
 import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";

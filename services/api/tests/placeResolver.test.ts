@@ -1,4 +1,4 @@
-import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
+import { writeSqliteIndex } from "./pipelineFixtures";
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -11,8 +11,8 @@ import {
 	compilePlaceIndex,
 	openPlaceIndexDatabase,
 	placeIndexMismatch,
-	placeIndexTables,
 } from "@uk-data-atlas/atlas-runtime/places";
+import { placeIndexTables } from "./pipelineFixtures";
 import { parsePlaceReference, resolvePlaces } from "@uk-data-atlas/places";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
