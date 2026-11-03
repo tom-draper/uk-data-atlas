@@ -22,6 +22,11 @@ import {
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
+import {
+	buildLog,
+	formatBytes,
+	formatCount,
+} from "../packages/atlas-runtime/src/storage/buildTiming.ts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATA = join(ROOT, "data/source");
@@ -185,17 +190,16 @@ async function createArchives(tag) {
 					? `${tag}.tar.gz`
 					: `${tag}.${String(index + 1).padStart(digits, "0")}.tar.gz`;
 			const path = join(output, name);
-			console.log(
-				`Creating ${name} from ${shard.length} files (${(
-					shard.reduce((total, file) => total + file.bytes, 0) /
-					1024 ** 3
-				).toFixed(2)} GiB before compression)...`,
+			buildLog.info(
+				`Creating ${name} from ${formatCount(shard.length)} files (${formatBytes(
+					shard.reduce((total, file) => total + file.bytes, 0),
+				)} before compression)`,
 			);
 			const reusable = Boolean(
 				capture(tar, ["--list", "--gzip", "--file", path]),
 			);
 			if (reusable) {
-				console.log(`  reusing verified ${name}`);
+				buildLog.info(`Reusing verified ${name}`);
 			} else {
 				await rm(path, { force: true });
 				run(tar, [
@@ -217,10 +221,10 @@ async function createArchives(tag) {
 			if (bytes >= MAX_UPLOAD_BYTES) {
 				if (shards.length > 1)
 					fail(
-						`${name} is ${(bytes / 1024 ** 3).toFixed(2)} GiB; split its source files further before publishing.`,
+						`${name} is ${formatBytes(bytes)}; split its source files further before publishing.`,
 					);
-				console.log(
-					`${name} exceeds GitHub's 2 GiB limit after compression; splitting it into fallback shards.`,
+				buildLog.warn(
+					`${name} exceeds GitHub's 2 GiB limit after compression, splitting it into fallback shards`,
 				);
 				await rm(path, { force: true });
 				shards = shardFiles(files);
@@ -290,8 +294,8 @@ async function publish(tag, targetRef = "HEAD") {
 		);
 
 	const assets = await createArchives(tag);
-	console.log(
-		`Uploading ${assets.length} data assets to ${repository}@${tag}...`,
+	buildLog.info(
+		`Uploading ${formatCount(assets.length)} data assets to ${repository}@${tag}`,
 	);
 	run("gh", [
 		"release",
@@ -322,8 +326,8 @@ async function publish(tag, targetRef = "HEAD") {
 	for (const { path } of await filesUnder(DATA))
 		files[path] = await sha256(join(DATA, path));
 	await writeMarker(tag, repository, files);
-	console.log(
-		`Wrote ${relative(ROOT, CONFIG)}. Commit it with public/data/.`,
+	buildLog.info(
+		`Wrote ${relative(ROOT, CONFIG)}, commit it with public/data/`,
 	);
 }
 
@@ -426,14 +430,14 @@ async function mergeSources(staging, base) {
 
 	const report = (label, paths) => {
 		if (paths.length === 0) return;
-		console.log(`${label} (${paths.length}):`);
-		for (const path of paths.sort()) console.log(`  ${path}`);
+		buildLog.info(`${label}: ${formatCount(paths.length)} files`);
+		for (const path of paths.sort()) buildLog.detail(`  ${path}`);
 	};
 	report("Added from the release", added);
 	report("Updated to the release version", updated);
 	report("Removed because the release dropped them", removed);
 	report(
-		"Kept local version that differs from the release (edited or added locally)",
+		"Kept the local version, which differs from the release (edited or added locally)",
 		kept,
 	);
 	return release;
@@ -490,8 +494,8 @@ async function download(mode) {
 	const config = await readConfig();
 	if (!config) {
 		if (await hasLocalSources()) {
-			console.log(
-				"No data-release.json yet; using the local source data.",
+			buildLog.info(
+				"No data-release.json yet, using the local source data",
 			);
 			return;
 		}
@@ -504,47 +508,43 @@ async function download(mode) {
 		marker = JSON.parse(await readFile(LOCAL_MARKER, "utf8"));
 	} catch (error) {
 		if (error?.code !== "ENOENT")
-			console.log(
-				"Raw data marker is unreadable; merging the pinned release.",
+			buildLog.warn(
+				"Raw data marker is unreadable, merging the pinned release",
 			);
 	}
 	if (!mode && marker?.tag === config.tag && (await hasLocalSources())) {
 		if (await markerStampsMatch(marker)) {
-			console.log(
-				`Raw data ${config.tag} is already present; verified file stamps match; skipping checksum scan.`,
+			buildLog.info(
+				`Raw data ${config.tag} is already present and its file stamps match`,
 			);
 			return;
 		}
 		// A stamp mismatch can be an edit or a benign timestamp change. Hash every
 		// file before trusting it, then refresh the stamps if the release is intact.
 		const { missing, changed } = await driftFrom(marker);
-		const list = (paths) =>
-			paths
-				.slice(0, 20)
-				.map((path) => `  ${path}`)
-				.concat(
-					paths.length > 20
-						? [`  and ${paths.length - 20} more`]
-						: [],
-				)
-				.join("\n");
-		if (changed.length > 0)
-			console.warn(
-				`${changed.length} raw data files differ from ${config.tag} and are kept as local edits:\n${list(changed)}\nRun pnpm data:download --replace to restore the release exactly.`,
+		const list = (paths) => {
+			for (const path of paths) buildLog.detail(`  ${path}`);
+		};
+		if (changed.length > 0) {
+			buildLog.warn(
+				`${formatCount(changed.length)} raw data files differ from ${config.tag} and are kept as local edits. Run pnpm data:download --replace to restore the release exactly`,
 			);
+			list(changed);
+		}
 		if (missing.length === 0) {
 			if (changed.length === 0)
 				await writeMarker(config.tag, config.repository, marker.files);
-			console.log(
-				`Raw data ${config.tag} is already present; skipping download.`,
+			buildLog.info(
+				`Raw data ${config.tag} is already present, skipping download`,
 			);
 			return;
 		}
-		console.log(
-			`${missing.length} raw data files of ${config.tag} are missing:\n${list(missing)}`,
+		buildLog.info(
+			`${formatCount(missing.length)} raw data files of ${config.tag} are missing`,
 		);
+		list(missing);
 	}
-	console.log(`Synchronizing raw data from ${config.tag}...`);
+	buildLog.info(`Synchronizing raw data from ${config.tag}`);
 
 	const workspace = join(STAGING, `download-${config.tag}`);
 	await rm(workspace, { recursive: true, force: true });
@@ -553,7 +553,9 @@ async function download(mode) {
 		for (const asset of config.assets) {
 			const path = join(workspace, asset.name);
 			const url = `https://github.com/${config.repository}/releases/download/${encodeURIComponent(config.tag)}/${encodeURIComponent(asset.name)}`;
-			console.log(`Downloading ${asset.name}...`);
+			buildLog.info(
+				`Downloading ${asset.name} (${formatBytes(asset.bytes)})`,
+			);
 			await downloadFile(url, path);
 			if (
 				(await fileSize(path)) !== asset.bytes ||
@@ -586,8 +588,8 @@ async function download(mode) {
 			);
 		}
 		await writeMarker(config.tag, config.repository, files);
-		console.log(
-			`${mode === "--replace" ? "Restored" : "Merged"} raw data release ${config.tag}.`,
+		buildLog.info(
+			`${mode === "--replace" ? "Restored" : "Merged"} raw data release ${config.tag}`,
 		);
 	} finally {
 		await rm(workspace, { recursive: true, force: true });
@@ -603,7 +605,7 @@ async function main() {
 			fail(`Unknown download option ${option}.`);
 		await download(option);
 	} else {
-		console.log(
+		buildLog.info(
 			"Usage: node scripts/data-release.mjs <publish [data-YYYY-MM-DD] [target-commitish]|download [--force|--replace]>",
 		);
 	}
