@@ -391,6 +391,51 @@ describe("declared statistics", () => {
 		}
 	});
 
+	it("generates several record sets, each on its own release", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			measures: [CRIMES],
+			fields: [{ path: "total", measure: "crimes" }],
+			records: [
+				{ from: "data" },
+				{
+					from: "regions",
+					release: () => ({ geography: "region", year: 2025 }),
+				},
+			],
+			payload: {
+				parts: yearParts("example", "localAuthority", 2024),
+				code: { data: "code", regions: "regionCode" },
+				dropped: ["note"],
+			},
+		};
+		const expected = JSON.parse(
+			file(
+				{
+					E06000001: {
+						name: "Hartlepool",
+						code: "E06000001",
+						total: 3,
+					},
+				},
+				{
+					regions: {
+						E12000001: { regionCode: "E12000001", total: 9, name: "North East" },
+					},
+				},
+			),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			expect(
+				JSON.parse(rebuildFromDeclaration(database, config, "example")),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("generates parent areas and header summaries from rows", () => {
 		const config: DeclaredDataset = {
 			type: "example",

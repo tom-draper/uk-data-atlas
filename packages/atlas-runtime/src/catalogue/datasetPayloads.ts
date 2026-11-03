@@ -29,6 +29,27 @@ export const generatedFromRows = (type: string, output: string) =>
 	(type === "airQuality" && output === "air-quality") ||
 	declared.get(type)?.payload !== undefined;
 
+/**
+ * A compiled dataset's parts without the header fields its declaration says
+ * the generated payload drops, so the two compare by what rows can say.
+ */
+export function comparableCompiled(type: string, compiled: unknown): unknown {
+	const dropped = declared.get(type)?.payload?.dropped ?? [];
+	if (!dropped.length) return compiled;
+	return Object.fromEntries(
+		Object.entries(compiled as Record<string, Record<string, unknown>>).map(
+			([key, part]) => [
+				key,
+				Object.fromEntries(
+					Object.entries(part).filter(
+						([field]) => !dropped.includes(field),
+					),
+				),
+			],
+		),
+	);
+}
+
 /** A dataset's compiled JSON, rebuilt from the canonical rows. */
 export function rebuildDatasetPayload(
 	database: DatabaseSync,
