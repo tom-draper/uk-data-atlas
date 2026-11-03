@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -18,7 +19,7 @@ import { decodeTile } from "../vectorTileFixtures";
  */
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const catalogues = readApiCatalogues(apiRoot);
+const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."));
 const RESOURCE = "localAuthority/2023-05-uk-bgc-v2";
 
 const get = (url: string) =>

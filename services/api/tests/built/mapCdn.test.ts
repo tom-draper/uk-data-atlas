@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { createServer } from "node:http";
 import { createApiServer } from "../../src/apiServer";
 import { readFileSync } from "node:fs";
@@ -41,10 +42,13 @@ test("CDN mode needs only the map manifest, with no local archives", () => {
 });
 
 test("redirects archive, feature and tile requests and advertises the tile CDN", () => {
-	const catalogues = readApiCatalogues(apiRoot, {
-		mapAssetBaseUrl: assetBase,
-		mapTileBaseUrl: tileBase,
-	});
+	const catalogues = readApiCatalogues(
+		resolveRepositoryRoot(apiRoot, "../.."),
+		{
+			mapAssetBaseUrl: assetBase,
+			mapTileBaseUrl: tileBase,
+		},
+	);
 	const resource = catalogues.mapResources.resources[0]!;
 	const archive = route(
 		"GET",
@@ -116,9 +120,12 @@ test("joins GeoJSON fetched from object storage through the real HTTP server", a
 	});
 	const address = assets.address();
 	assert.ok(address && typeof address !== "string");
-	const catalogues = readApiCatalogues(apiRoot, {
-		mapAssetBaseUrl: `http://127.0.0.1:${address.port}/maps`,
-	});
+	const catalogues = readApiCatalogues(
+		resolveRepositoryRoot(apiRoot, "../.."),
+		{
+			mapAssetBaseUrl: `http://127.0.0.1:${address.port}/maps`,
+		},
+	);
 	catalogues.mapFeatures.clear();
 	const api = createApiServer(catalogues);
 	await new Promise<void>((ready) => api.listen(0, "127.0.0.1", ready));

@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import {
 	observationDatabasePath,
 	readObservationText,
@@ -22,7 +23,7 @@ import { readApiCatalogues } from "../../src/server";
  */
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const catalogues = readApiCatalogues(apiRoot);
+const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."));
 
 type Provenance = {
 	atlasRelease: { id: string; href: string };

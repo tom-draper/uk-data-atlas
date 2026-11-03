@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
 import { dirname, resolve } from "node:path";
@@ -14,10 +15,13 @@ import { createApiServer, readApiCatalogues } from "../../src/server";
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 test("passes the deployment smoke suite against a local server", async (t) => {
-	const server = createApiServer(readApiCatalogues(apiRoot), {
-		rateLimit: { capacity: 1000, refillPerSecond: 100 },
-		metrics: { token: "smoke" },
-	});
+	const server = createApiServer(
+		readApiCatalogues(resolveRepositoryRoot(apiRoot, "../..")),
+		{
+			rateLimit: { capacity: 1000, refillPerSecond: 100 },
+			metrics: { token: "smoke" },
+		},
+	);
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
 	t.after(() => {
 		server.close();

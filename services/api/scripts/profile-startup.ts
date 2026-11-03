@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { performance } from "node:perf_hooks";
 import { resolve } from "node:path";
 import { tmpdir } from "node:os";
@@ -13,7 +14,7 @@ const stages: Array<{
 	milliseconds: number;
 	memory: NodeJS.MemoryUsage;
 }> = [];
-const catalogues = readApiCatalogues(apiRoot, {
+const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."), {
 	onStage: (stage, milliseconds) => {
 		stages.push({ stage, milliseconds, memory: process.memoryUsage() });
 	},

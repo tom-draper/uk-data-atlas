@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseDocument } from "yaml";
@@ -9,7 +10,7 @@ import { route } from "../src/routes";
 const root = resolve(import.meta.dirname, "..");
 const path = resolve(root, "openapi.yaml");
 const document = parseDocument(readFileSync(path, "utf8"));
-const context = readApiCatalogues(root);
+const context = readApiCatalogues(resolveRepositoryRoot(root, "../.."));
 for (const [code, definition] of Object.entries(PROBLEM_CODES)) {
 	const schema =
 		code

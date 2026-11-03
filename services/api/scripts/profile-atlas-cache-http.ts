@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { createHash } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -11,7 +12,7 @@ const { readApiCatalogues, createApiServer } = await import(
 	pathToFileURL(resolve(source, "services/api/src/server.ts")).href
 );
 const start = performance.now();
-const context = readApiCatalogues(resolve(apiRoot), {
+const context = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."), {
 	loadEvidenceDocuments: false,
 });
 const server = createApiServer(context);

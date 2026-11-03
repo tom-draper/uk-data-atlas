@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import {
 	mkdtempSync,
@@ -60,7 +61,7 @@ test("loads evidence build inputs when the previous document manifest is stale",
 		JSON.stringify({ ...manifest, dataCatalogHash: "previous-catalogue" }),
 	);
 	assert.throws(
-		() => readApiCatalogues(root),
+		() => readApiCatalogues(resolveRepositoryRoot(root, "../..")),
 		/Evidence documents were not built from this data catalogue/,
 	);
 	unlinkSync(join(root, "openapi.yaml"));
@@ -68,7 +69,10 @@ test("loads evidence build inputs when the previous document manifest is stale",
 		loadEvidenceDocuments: false,
 	});
 	assert.throws(
-		() => readApiCatalogues(root, { loadEvidenceDocuments: false }),
+		() =>
+			readApiCatalogues(resolveRepositoryRoot(root, "../.."), {
+				loadEvidenceDocuments: false,
+			}),
 		/openapi.yaml/,
 	);
 	assert.equal(inputs.documents.size, 0);
@@ -79,7 +83,9 @@ test("loads evidence build inputs when the previous document manifest is stale",
 });
 
 test("links measures to immutable reports and retires evidence query endpoints", async (t) => {
-	const catalogues = readApiCatalogues(apiRoot);
+	const catalogues = readApiCatalogues(
+		resolveRepositoryRoot(apiRoot, "../.."),
+	);
 	const server = createApiServer(catalogues);
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
 	t.after(() => {
@@ -154,7 +160,9 @@ test("links measures to immutable reports and retires evidence query endpoints",
 test("serves geography evidence from SQLite with exact bytes and conditional ETags", async (t) => {
 	const { readAtlasPayload } =
 		await import("@uk-data-atlas/atlas-runtime/storage");
-	const server = createApiServer(readApiCatalogues(apiRoot));
+	const server = createApiServer(
+		readApiCatalogues(resolveRepositoryRoot(apiRoot, "../..")),
+	);
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
 	t.after(() => {
 		server.closeAllConnections();
