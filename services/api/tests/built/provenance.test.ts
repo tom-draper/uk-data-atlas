@@ -1,10 +1,14 @@
-import { resolve as resolveRepositoryRoot } from "node:path";
 import {
-	observationDatabasePath,
-	readObservationText,
+	compiledObservationPath,
+	atlasDatabasePath,
+	observationValuesEqual,
+	readStatisticsObservationText,
+	statisticsReadPathPath,
+	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
@@ -23,7 +27,11 @@ import { readApiCatalogues } from "../../src/server";
  */
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."));
+const repositoryRoot = resolve(apiRoot, "../..");
+const catalogues = readApiCatalogues(repositoryRoot);
+const readPath = JSON.parse(
+	readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
+) as StatisticsReadPath;
 
 type Provenance = {
 	atlasRelease: { id: string; href: string };
@@ -72,6 +80,7 @@ const partitions = (catalogues.dataCatalog?.measures ?? []).flatMap((measure) =>
 						measure: measure.id,
 						datasetId: source.datasetId,
 						geography: source.sourceGeography,
+						periods: source.periods,
 						url: `/v1/data/${mapping.measure}?${query}`,
 					},
 				]
@@ -93,12 +102,31 @@ test("names an artifact that exists and hashes to what it says", () => {
 		if (recomputed === undefined) {
 			// The same rule the validation report applies at build time: the
 			// artifact without its hash must hash to its hash.
-			const { contentHash, ...content } = JSON.parse(
-				readObservationText(
-					observationDatabasePath(resolve(apiRoot, "../..")),
-					observations.artifact,
-				),
-			) as { contentHash: string };
+			const compiled = readFileSync(
+				compiledObservationPath(repositoryRoot, observations.artifact),
+				"utf8",
+			);
+			const selector = readPath.statistics[observations.artifact];
+			assert.ok(
+				selector,
+				`Missing selector for ${observations.artifact}`,
+			);
+			const rebuilt = readStatisticsObservationText(
+				atlasDatabasePath(repositoryRoot),
+				selector,
+				{
+					measureId: partition.measure,
+					sourceGeography: partition.geography,
+					periods: partition.periods,
+				},
+			);
+			assert.ok(
+				observationValuesEqual(compiled, rebuilt),
+				`${observations.artifact} differs from its compiled values`,
+			);
+			const { contentHash, ...content } = JSON.parse(rebuilt) as {
+				contentHash: string;
+			};
 			recomputed = sha256(JSON.stringify(content));
 			if (recomputed !== contentHash)
 				wrong.push(

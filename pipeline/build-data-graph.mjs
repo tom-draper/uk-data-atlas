@@ -187,6 +187,7 @@ const apiStages = [
 		{
 			requiredOutputs: [
 				"data/build/observations.sqlite",
+				"data/build/compiled-observations",
 				"data/build/measure-statistics-fields.json",
 			],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],

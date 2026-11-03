@@ -22,7 +22,8 @@ import {
 	artifactDirectory,
 	statisticsReadPathPath,
 	buildDirectory,
-	readObservationText,
+	compiledObservationPath,
+	observationValuesEqual,
 	rebuildStatisticsObservationText,
 	type StatisticsReadPath,
 	type StatisticsSelector,
@@ -44,10 +45,6 @@ const repositoryRoot = resolve(
 	"../..",
 );
 const databasePath = join(buildDirectory(repositoryRoot), "atlas-base.sqlite");
-const observationsPath = join(
-	buildDirectory(repositoryRoot),
-	"observations.sqlite",
-);
 const catalog = JSON.parse(
 	readFileSync(
 		join(artifactDirectory(repositoryRoot), "data-catalog.json"),
@@ -300,7 +297,10 @@ const plan: StatisticsReadPath = {
 for (const measure of catalog.measures)
 	for (const source of measure.sources) {
 		const name = observationArtifactName(measure.id, source);
-		const storedText = readObservationText(observationsPath, name);
+		const storedText = readFileSync(
+			compiledObservationPath(repositoryRoot, name),
+			"utf8",
+		);
 		const stored = JSON.parse(storedText) as Artifact;
 		if (isMeasureTable(stored)) {
 			// One table serves several measures; plan it once.
@@ -320,15 +320,13 @@ for (const measure of catalog.measures)
 			};
 			try {
 				if (
-					isDeepStrictEqual(
-						JSON.parse(
-							rebuildStatisticsObservationText(database, table, {
-								measureId: measure.id,
-								sourceGeography: source.sourceGeography,
-								periods: source.periods,
-							}),
-						),
-						stored,
+					observationValuesEqual(
+						rebuildStatisticsObservationText(database, table, {
+							measureId: measure.id,
+							sourceGeography: source.sourceGeography,
+							periods: source.periods,
+						}),
+						storedText,
 					)
 				)
 					plan.statistics[name] = table;
@@ -373,16 +371,16 @@ for (const measure of catalog.measures)
 			),
 		};
 		if (
-			!isDeepStrictEqual(JSON.parse(rebuiltText), stored) &&
+			!observationValuesEqual(rebuiltText, storedText) &&
 			narrowed.areasIn.length > 0
 		) {
 			const narrowedText = rebuild(narrowed);
-			if (isDeepStrictEqual(JSON.parse(narrowedText), stored)) {
+			if (observationValuesEqual(narrowedText, storedText)) {
 				plan.statistics[name] = narrowed;
 				continue;
 			}
 		}
-		if (isDeepStrictEqual(JSON.parse(rebuiltText), stored))
+		if (observationValuesEqual(rebuiltText, storedText))
 			plan.statistics[name] = selector;
 		else
 			plan.observations[name] = difference(

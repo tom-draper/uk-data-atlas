@@ -16,6 +16,7 @@ export * from "./atlasRelease";
 export * from "./atlasSqlite";
 export * from "./buildTiming";
 export * from "./dataLayout";
+export * from "./observationComparison";
 export * from "./exportManifest";
 export * from "./lazyValue";
 export * from "./publicJson";
