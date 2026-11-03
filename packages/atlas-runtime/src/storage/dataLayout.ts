@@ -1,8 +1,8 @@
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 
 /**
  * Where build output and inputs sit on disk. Builders and readers take the
- * repository root or the API root and ask here for a path, so moving an
+ * repository root and ask here for a path, so moving an
  * output tree is a change to this file rather than to every stage.
  */
 
@@ -10,16 +10,9 @@ import { join, resolve } from "node:path";
 export const apiRootOf = (repositoryRoot: string) =>
 	join(repositoryRoot, "services", "api");
 
-/** The repository root, given the API project directory. */
-export const repositoryRootOf = (apiRoot: string) => resolve(apiRoot, "../..");
-
 /** The directory the build writes its generated artifacts to. */
 export const artifactDirectory = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "artifacts");
-
-/** The generated artifact directory, given the API project directory. */
-export const artifactRoot = (apiRoot: string) =>
-	artifactDirectory(repositoryRootOf(apiRoot));
 
 /** The shared release the pipeline builds under `data/build`. */
 export const buildDirectory = (repositoryRoot: string) =>
