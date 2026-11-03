@@ -106,6 +106,7 @@ const payFields = (place: "residence" | "workplace"): DeclaredField[] =>
 					path: `${period}.${statistic}`,
 					measure: pay,
 					members: { ...fixed, "pay-statistic": statistic },
+					wins: true as const,
 				},
 				{
 					path: `${period}.${statistic}PercentageChange`,

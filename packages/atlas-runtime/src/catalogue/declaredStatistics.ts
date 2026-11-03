@@ -48,6 +48,12 @@ export type DeclaredField = {
 	/** Paths to interval bounds, with the same bindings as `path`. */
 	lower?: string;
 	upper?: string;
+	/**
+	 * Wins a series that this field and another both fit when generating a
+	 * payload. A series fitting several fields must fit exactly one that says
+	 * this, or the build fails.
+	 */
+	wins?: true;
 	/** The period for a `{period}` key. Defaults to the key as a calendar year. */
 	period?: (key: string, header: DeclaredHeader) => StatisticsPeriod;
 	/** A fixed period for this field, when it differs from the record's. */
@@ -144,7 +150,9 @@ export type DeclaredDataset = {
 
 export type DeclaredPayload = {
 	/** The parts of the file for the periods the rows hold, in order. */
-	parts: (labels: string[]) => { key: string; header: DeclaredHeader }[];
+	parts: (
+		labels: string[],
+	) => { key: string; header: DeclaredHeader; optional?: true }[];
 	/** The record field holding the area's code. */
 	code?: string;
 	/** Dot-separated paths of containers that are arrays. */
@@ -210,7 +218,9 @@ export type DerivedContext = {
 /**
  * A derived number, from the record with every stored value filled in, the
  * path of the leaf it fills (a pattern can match a leaf in every period), and
- * the record's context. `undefined` leaves the leaf out of the record.
+ * the record's context. `null` is a leaf whose value is missing. `undefined`
+ * is a leaf that does not exist in the record, which differs from missing: the
+ * record has no such key.
  */
 export type DerivedRule = (
 	record: { [key: string]: Json },

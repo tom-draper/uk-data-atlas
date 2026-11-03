@@ -5,6 +5,7 @@ import {
 	declaredStatistics,
 	periods,
 	type DeclaredDataset,
+	type DeclaredField,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { rebuildFromLayout } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { measure } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -150,6 +151,7 @@ describe("declared statistics", () => {
 					path: "headline",
 					measure: "crimes",
 					members: { offence: "all" },
+					wins: true,
 				},
 				{ path: "byOffence.{offence}", measure: "crimes" },
 				{
@@ -191,6 +193,51 @@ describe("declared statistics", () => {
 			expect(
 				JSON.parse(rebuildFromDeclaration(database, config, "example")),
 			).toEqual(expected);
+			// A series two fields fit needs exactly one to win.
+			const ambiguous: DeclaredDataset = {
+				...config,
+				fields: (config.fields as DeclaredField[]).map(
+					({ wins: _wins, ...field }) => field,
+				),
+			};
+			expect(() =>
+				rebuildFromDeclaration(database, ambiguous, "example"),
+			).toThrow("mark exactly one `wins`");
+			// A part with no rows fails unless it is declared optional.
+			const parts = (labels: string[]) => [
+				...yearParts("example", "localAuthority", 2024)(labels),
+				{ key: "2030", header: { id: "example2030" } },
+			];
+			expect(() =>
+				rebuildFromDeclaration(
+					database,
+					{ ...config, payload: { ...config.payload!, parts } },
+					"example",
+				),
+			).toThrow("declare the part optional");
+			const optional = (labels: string[]) =>
+				parts(labels).map((part) =>
+					part.key === "2030"
+						? { ...part, optional: true as const }
+						: part,
+				);
+			expect(
+				Object.keys(
+					JSON.parse(
+						rebuildFromDeclaration(
+							database,
+							{
+								...config,
+								payload: {
+									...config.payload!,
+									parts: optional,
+								},
+							},
+							"example",
+						),
+					),
+				),
+			).toEqual(["2024"]);
 		} finally {
 			database.close();
 		}
