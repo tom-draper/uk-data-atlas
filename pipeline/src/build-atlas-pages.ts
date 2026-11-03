@@ -33,13 +33,16 @@ import {
 	type PlaceIndex,
 	type TimelineEvent,
 } from "@uk-data-atlas/catalogue/place-profile";
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const API_ROOT = apiRootOf(ROOT);
 const readDataset = (output: string) =>
 	readFileSync(join(ROOT, "data/build/datasets", `${output}.json`), "utf8");
-const BOUNDARIES = join(artifactRoot(API_ROOT), "source-data", "boundaries");
+const BOUNDARIES = join(artifactDirectory(ROOT), "source-data", "boundaries");
 
 /**
  * Children listed by name rather than counted, up to this many. Parishes are
@@ -346,7 +349,7 @@ const mapsSlugByCode = new Map<string, string>();
 const mapsSlugByName = new Map<string, string>();
 const core = JSON.parse(
 	readFileSync(
-		join(artifactRoot(API_ROOT), "source-data", "gazetteer.core.json"),
+		join(artifactDirectory(ROOT), "source-data", "gazetteer.core.json"),
 		"utf8",
 	),
 ) as {
