@@ -2,6 +2,7 @@ import type { DatabaseSync, SQLInputValue } from "node:sqlite";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 
 import {
+	AREA_RELATIONSHIPS,
 	STATUSES,
 	CONTEST_COLUMNS,
 	CANDIDACY_COLUMNS,
@@ -322,6 +323,45 @@ export function statisticsTables(
 							index + 1,
 							area(database, dataset.slug, release, code).id,
 							key,
+						];
+			}),
+		},
+		area_relationship: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
+				`relation TEXT NOT NULL CHECK (relation IN (${AREA_RELATIONSHIPS.map((name) => `'${name}'`).join(",")}))`,
+				"child_version_id INTEGER NOT NULL REFERENCES area_version(id)",
+				"parent_version_id INTEGER NOT NULL REFERENCES area_version(id)",
+			],
+			key: [
+				"dataset_id",
+				"relation",
+				"child_version_id",
+				"parent_version_id",
+			],
+			rows: rows(function* ({ datasets }, database) {
+				for (const [index, dataset] of datasets.entries())
+					for (const {
+						relation,
+						child,
+						parent,
+					} of dataset.relationships?.() ?? [])
+						yield [
+							index + 1,
+							relation,
+							area(
+								database,
+								dataset.slug,
+								child.release,
+								child.code,
+							).id,
+							area(
+								database,
+								dataset.slug,
+								parent.release,
+								parent.code,
+							).id,
 						];
 			}),
 		},

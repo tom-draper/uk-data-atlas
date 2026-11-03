@@ -298,6 +298,7 @@ export const UNEMPLOYMENT: DeclaredDataset = {
 	],
 	/** The districts a 2023 unitary's figures were built from, one per index. */
 	parents: Array.from({ length: MOST_PREDECESSORS }, (_, index) => ({
+		relation: "predecessor",
 		code: `derivedFromPredecessors.${index}`,
 		release: { geography: "localAuthority", year: 2021 },
 	})),
@@ -533,6 +534,7 @@ export const HOUSE_PRICE: DeclaredDataset = {
 		// Salford's wards, moved onto their 2021 codes, keep the code they
 		// were published under.
 		{
+			relation: "published-as",
 			code: "sourceWardCode",
 			release: { geography: "ward", year: 2020 },
 		},
