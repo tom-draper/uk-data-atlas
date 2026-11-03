@@ -150,7 +150,8 @@ function records(
 			.prepare(
 				`SELECT r.position, c.*, k.given_name AS candidacy_given_name, k.family_name AS candidacy_family_name, k.gender AS candidacy_gender
 				FROM dataset_record r
-				JOIN election e ON e.dataset_id = r.dataset_id AND e.part = r.part
+				JOIN dataset_part p ON p.dataset_id = r.dataset_id AND p.position = r.part
+				JOIN election e ON e.dataset_id = p.dataset_id AND e.label = p.key
 				JOIN contest c ON c.election_id = e.id AND c.area_version_id = r.area_version_id
 				LEFT JOIN candidacy k ON k.contest_id = c.id AND k.elected = 1
 				WHERE r.dataset_id = ? AND r.part = ? AND r.records = ?`,

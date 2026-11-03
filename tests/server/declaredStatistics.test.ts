@@ -1071,12 +1071,13 @@ describe("declared statistics", () => {
 			expect(
 				database
 					.prepare(
-						"SELECT e.kind, e.date, c.result, c.authority_code, k.given_name, k.family_name FROM contest c JOIN election e ON e.id = c.election_id LEFT JOIN candidacy k ON k.contest_id = c.id ORDER BY c.id",
+						"SELECT e.label, e.kind, e.date, c.result, c.authority_code, k.given_name, k.family_name FROM contest c JOIN election e ON e.id = c.election_id LEFT JOIN candidacy k ON k.contest_id = c.id ORDER BY c.id",
 					)
 					.all()
 					.map((row) => ({ ...row })),
 			).toEqual([
 				{
+					label: "2024",
 					kind: "general",
 					date: "2024-07-04",
 					result: "Lab gain",
@@ -1085,6 +1086,7 @@ describe("declared statistics", () => {
 					family_name: "Example",
 				},
 				{
+					label: "2024",
 					kind: "general",
 					date: "2024-07-04",
 					result: null,

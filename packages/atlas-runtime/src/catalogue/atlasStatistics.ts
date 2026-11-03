@@ -144,6 +144,8 @@ export type StatisticsDataset = {
 		code: string;
 		key: string;
 	}>;
+	/** The elections the dataset holds, each with a contest per area. */
+	elections?: () => Iterable<StatisticsElection>;
 	/** Areas a publisher relates to other areas, such as the one containing them. */
 	relationships?: () => Iterable<{
 		relation: AreaRelationship;
@@ -217,17 +219,32 @@ export type StatisticsLayoutLeaf = {
 	| { kind: "candidacy"; column: CandidacyColumn }
 );
 
+/**
+ * An election a dataset holds: its polling day and kind, with a contest for
+ * each area. `label` is the publisher's name for the election, such as `2024`
+ * or `1974O`.
+ */
+export type StatisticsElection = {
+	label: string;
+	kind: "general" | "local";
+	/** The polling day, as `YYYY-MM-DD`. */
+	date: string;
+	/** The release the contests' areas are on. */
+	release: AreaRelease;
+	contests: {
+		release: AreaRelease;
+		code: string;
+		contest?: Partial<Record<ContestColumn, string | null>>;
+		/** The candidate the contest elected, when the publisher names one. */
+		elected?: Partial<Record<CandidacyColumn, string | null>>;
+	}[];
+};
+
 /** A top-level key of a compiled dataset: its header and record layouts. */
 export type StatisticsLayout = {
 	key: string;
 	/** The header as JSON, with each record set's field set to null. */
 	header: string;
-	/** The election a part holds, one contest per record. */
-	election?: {
-		kind: "general" | "local";
-		date: string;
-		release: AreaRelease;
-	};
 	records: {
 		from: string;
 		leaves: StatisticsLayoutLeaf[];

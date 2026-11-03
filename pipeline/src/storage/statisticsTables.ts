@@ -636,32 +636,29 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 			rowid: true,
 			columns: [
 				"id INTEGER NOT NULL",
-				"dataset_id INTEGER NOT NULL",
-				"part INTEGER NOT NULL",
+				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
+				"label TEXT NOT NULL",
 				"kind TEXT NOT NULL CHECK (kind IN ('general','local'))",
 				"date TEXT NOT NULL",
 				"release_id INTEGER NOT NULL REFERENCES area_releases(position)",
 			],
 			key: ["id"],
 			constraints: [
-				"UNIQUE (dataset_id, part)",
-				"FOREIGN KEY (dataset_id, part) REFERENCES dataset_part(dataset_id, position)",
+				"UNIQUE (dataset_id, label)",
+				"UNIQUE (dataset_id, date)",
 			],
 			rows: rows(function* ({ datasets }, database) {
 				let id = 0;
 				for (const [index, dataset] of datasets.entries())
-					for (const [part, { election }] of [
-						...(dataset.layouts?.() ?? []),
-					].entries())
-						if (election)
-							yield [
-								++id,
-								index + 1,
-								part,
-								election.kind,
-								election.date,
-								releasePosition(database, election.release),
-							];
+					for (const election of dataset.elections?.() ?? [])
+						yield [
+							++id,
+							index + 1,
+							election.label,
+							election.kind,
+							election.date,
+							releasePosition(database, election.release),
+						];
 			}),
 		},
 		contest: {
@@ -678,21 +675,18 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 			rows: rows(function* ({ datasets }, database) {
 				let election = 0;
 				let id = 0;
-				for (const [index, dataset] of datasets.entries())
-					for (const layout of dataset.layouts?.() ?? []) {
-						if (!layout.election) continue;
+				for (const dataset of datasets)
+					for (const { contests } of dataset.elections?.() ?? []) {
 						election++;
-						for (const { areas } of layout.records)
-							for (const { release, code, contest } of areas)
-								yield [
-									++id,
-									election,
-									area(database, dataset.slug, release, code)
-										.id,
-									...CONTEST_COLUMNS.map(
-										(column) => contest?.[column] ?? null,
-									),
-								];
+						for (const { release, code, contest } of contests)
+							yield [
+								++id,
+								election,
+								area(database, dataset.slug, release, code).id,
+								...CONTEST_COLUMNS.map(
+									(column) => contest?.[column] ?? null,
+								),
+							];
 					}
 			}),
 		},
@@ -708,22 +702,19 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 			rows: rows(function* ({ datasets }) {
 				let id = 0;
 				for (const dataset of datasets)
-					for (const layout of dataset.layouts?.() ?? []) {
-						if (!layout.election) continue;
-						for (const { areas } of layout.records)
-							for (const { elected } of areas) {
-								id++;
-								if (elected)
-									yield [
-										id,
-										1,
-										...CANDIDACY_COLUMNS.map(
-											(column) => elected[column] ?? null,
-										),
-										1,
-									];
-							}
-					}
+					for (const { contests } of dataset.elections?.() ?? [])
+						for (const { elected } of contests) {
+							id++;
+							if (elected)
+								yield [
+									id,
+									1,
+									...CANDIDACY_COLUMNS.map(
+										(column) => elected[column] ?? null,
+									),
+									1,
+								];
+						}
 			}),
 		},
 		dataset_record_absent: {
