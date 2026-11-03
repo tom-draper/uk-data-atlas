@@ -18,7 +18,7 @@ import {
 } from "@uk-data-atlas/datasets/data/house-price/wardCodes";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
-	artifactRoot,
+	artifactDirectory,
 	apiRootOf,
 	statisticsReadPathPath,
 	buildDirectory,
@@ -52,7 +52,10 @@ const observationsPath = join(
 	"observations.sqlite",
 );
 const catalog = JSON.parse(
-	readFileSync(join(artifactRoot(apiRoot), "data-catalog.json"), "utf8"),
+	readFileSync(
+		join(artifactDirectory(repositoryRoot), "data-catalog.json"),
+		"utf8",
+	),
 ) as DataCatalog;
 const { config, vocabulary } = readMeasureDimensionsConfig(apiRoot);
 const database = new DatabaseSync(databasePath, { readOnly: true });

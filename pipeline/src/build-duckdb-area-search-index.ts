@@ -4,7 +4,10 @@ import { areaSearchIndexTables } from "@uk-data-atlas/atlas-runtime/areas";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { publishCacheTables } from "@uk-data-atlas/atlas-runtime/storage";
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { compileDuckdbAreaSearchIndex } from "./duckdbAreaSearch";
 
 export async function buildDuckdbAreaSearchIndex(root: string) {
@@ -24,7 +27,7 @@ export async function buildDuckdbAreaSearchIndex(root: string) {
 		"area-search-index.json",
 		"area-search-index.json.gz",
 	])
-		rmSync(join(artifactRoot(apiRoot), name), { force: true });
+		rmSync(join(artifactDirectory(root), name), { force: true });
 	return {
 		outputPath,
 		areas: index.releases.reduce(
