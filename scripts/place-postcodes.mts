@@ -22,7 +22,6 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const PLACE_POSTCODES_PATH = join(
 	process.cwd(),
@@ -85,7 +84,6 @@ function compileNeighbourhoods(root: string) {
  */
 export function serialisePlacePostcodes() {
 	const root = process.cwd();
-	const apiRoot = apiRootOf(root);
 	const index: PostcodeIndexArtifact = JSON.parse(
 		readAtlasPayload(root, "postcode-index"),
 	);
@@ -122,7 +120,7 @@ export function serialisePlacePostcodes() {
 			const path = areaShards.get(district);
 			if (!path) continue;
 			const shard: PostcodeAreasShard = JSON.parse(
-				readSqlitePostcodeAreaShard(apiRoot, path),
+				readSqlitePostcodeAreaShard(root, path),
 			);
 			const rows = select.all(
 				district,
