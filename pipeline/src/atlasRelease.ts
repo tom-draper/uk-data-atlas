@@ -12,6 +12,7 @@ import type {
 import {
 	apiRootOf,
 	artifactDirectory,
+	repositoryAtlasDatabasePath,
 	statisticsReadPathPath,
 	statisticsVocabularyPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -47,7 +48,7 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 	const artifacts = [
 		artifactReference(
 			"atlas-sqlite",
-			join(repositoryRoot, "data/build/atlas.sqlite"),
+			repositoryAtlasDatabasePath(repositoryRoot),
 		),
 		artifactReference(
 			"statistics-read-path",
