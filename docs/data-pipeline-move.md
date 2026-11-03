@@ -7,6 +7,13 @@ The postcode index builder and compiler now live in
 `pipeline/src/build-postcode-index.ts` and `pipeline/src/postcodeIndex.ts`.
 The API and compiler share postcode rules in `packages/geography/src/postcodeRules.ts`.
 
+Pipeline-only tests now live under `pipeline/tests/`. Shared fixtures live there
+too, with API fixture modules re-exporting the ones both suites need. Mixed API
+tests use `services/api/tests/pipelineFixtures.ts` for pipeline builders. The
+package import test checks the explicit API fixture allowlist. Built pipeline
+tests live under `pipeline/tests/built/` and run in `pnpm check:full`, not CI's
+unbuilt check.
+
 ## Inventory
 
 Classification uses codeq import edges for every script and src module on the
