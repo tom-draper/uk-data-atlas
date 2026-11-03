@@ -44,6 +44,33 @@ those artifacts with reconstructed statistics by value, including statuses,
 bounds, periods and area codes. The build fails if any artifact cannot be
 reconstructed. The compiled artifacts are build inputs, not a runtime fallback.
 
+## Plan for dataset payloads
+
+Replace layout-based reconstruction with dataset-specific generators over
+statistics, geography and election rows. Use the existing dataset declarations
+to select measures, dimensions and periods, and define the payload fields and
+derived calculations that `lib/datasets/` and
+`lib/helpers/datasetAggregation/` need. Preserve meaningful ordering and
+missing-value semantics, but do not preserve JSON property order or bytes.
+
+Compare each generated payload with its independent compiled dataset by value,
+including area identities, periods, values, statuses, bounds and derived
+fields. Exercise the website loaders and aggregation with the generated payloads.
+Generate cache entries and manifest hashes from the new payload bytes so the
+website's immutable URLs still identify the content they serve. Once all
+datasets pass these checks, remove `dataset_part`, `dataset_leaf`,
+`dataset_record`, `dataset_record_parent`, `dataset_record_absent` and their
+layout writer and reader.
+
+Elections need particular care: local and general election payloads combine
+observations with contests, candidates and party results, and use several
+boundary releases. Historical elections also use constituency identifiers
+scoped to a boundary set. NHS waiting times use NHS organisation keys rather
+than area codes. Unemployment includes predecessor lists and derived rates,
+while population and house prices contain arrays indexed by age or year.
+Check that the existing rows retain every field each consumer needs before
+removing the layout tables; add domain data where a required fact is missing.
+
 ## Dataset declarations
 
 To add a dataset, declare its fields and dimensions in
