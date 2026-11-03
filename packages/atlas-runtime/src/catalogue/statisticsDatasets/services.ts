@@ -186,6 +186,28 @@ export const CRIME: DeclaredDataset = {
 export const ROAD_COLLISIONS: DeclaredDataset = {
 	type: "roadCollisions",
 	rebuild: {},
+	payload: {
+		parts: (labels) =>
+			labels
+				.filter((label) => /^\d{4}$/.test(label))
+				.sort()
+				.map((key) => ({
+					key,
+					header: {
+						id: `roadCollisions${key}`,
+						type: "roadCollisions",
+						year: Number(key),
+						period: `January to December ${key}`,
+						boundaryType: "localAuthority",
+						boundaryYear: Number(key),
+						lsoaBoundaryYear: 2021,
+						coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
+					},
+				})),
+		code: { data: "ladCode", lsoas: "lsoaCode" },
+		/** Collisions with no area to sit on: the excluded Heathrow code and those with no LSOA. */
+		dropped: ["excluded", "withoutLsoa"],
+	},
 	measures: [
 		measure(
 			"road-collisions",
