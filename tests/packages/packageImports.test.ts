@@ -228,6 +228,70 @@ describe("atlas domain boundaries", () => {
 });
 
 describe("pipeline boundaries", () => {
+	it("limits API test imports of pipeline code to shared fixtures", () => {
+		const apiTests = join(ROOT, "services/api/tests");
+		const allowed = new Map([
+			[
+				"atlasComponentFixtures.ts",
+				"Shares empty atlas components with pipeline tests.",
+			],
+			[
+				"geographyFixtures.ts",
+				"Shares geography fixtures with pipeline tests.",
+			],
+			[
+				"helpers/compileCrosswalks.ts",
+				"Shares the crosswalk compiler fixture.",
+			],
+			["observationFixtures.ts", "Shares observation database fixtures."],
+			["parquetFixtures.ts", "Shares the Parquet reader fixture."],
+			[
+				"pipelineFixtures.ts",
+				"Provides builders for mixed API test fixtures.",
+			],
+			[
+				"postcodeFixtures.ts",
+				"Shares postcode fixtures with pipeline tests.",
+			],
+			[
+				"routeFixtures.ts",
+				"Shares context data and compiles operation templates.",
+			],
+		]);
+		const importsPipeline = (file: string, specifier: string) =>
+			specifier.startsWith(".") &&
+			["src", "tests"].some((directory) =>
+				inside(
+					join(PIPELINE, directory),
+					resolve(dirname(file), specifier),
+				),
+			);
+		const imports = sourceFiles(apiTests).flatMap((file) =>
+			specifiers(readFileSync(file, "utf8"))
+				.filter((specifier) => importsPipeline(file, specifier))
+				.map((specifier) => ({
+					file: relative(apiTests, file),
+					specifier,
+				})),
+		);
+		expect(imports.filter(({ file }) => !allowed.has(file))).toEqual([]);
+		expect([...new Set(imports.map(({ file }) => file))].sort()).toEqual(
+			[...allowed.keys()].sort(),
+		);
+		expect(
+			importsPipeline(
+				join(apiTests, "example.test.ts"),
+				"../../../pipeline/src/example",
+			),
+		).toBe(true);
+		expect(
+			importsPipeline(
+				join(apiTests, "built/example.test.ts"),
+				"../../../../pipeline/tests/example",
+			),
+		).toBe(true);
+	});
+
 	it("does not retain the former shared directory", () => {
 		expect(existsSync(join(ROOT, "shared"))).toBe(false);
 	});
