@@ -10,7 +10,7 @@ import type {
 	CrosswalkHeader,
 	CrosswalkLookup,
 } from "@uk-data-atlas/relationships";
-import { atlasDatabasePath, repositoryRootOf } from "../storage/dataLayout";
+import { atlasDatabasePath } from "../storage/dataLayout";
 
 export const readCrosswalkInventory = readSqliteCrosswalkInventory;
 
@@ -85,12 +85,12 @@ export const readCrosswalkLookup = (
 	new LazyCrosswalkLookup(repositoryRoot, inventory, maxBytes, databasePath);
 
 export const readRelationshipPathInventory = (
-	apiRoot: string,
+	repositoryRoot: string,
 	crosswalks: CrosswalkInventory,
 ): RelationshipPathInventory => {
-	const path = atlasDatabasePath(repositoryRootOf(apiRoot));
+	const path = atlasDatabasePath(repositoryRoot);
 	const inventory = JSON.parse(
-		readAtlasPayload(repositoryRootOf(apiRoot), "relationship-paths"),
+		readAtlasPayload(repositoryRoot, "relationship-paths"),
 	) as RelationshipPathInventory;
 	if (
 		inventory.schemaVersion !== 1 ||
