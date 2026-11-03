@@ -1,14 +1,11 @@
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
@@ -39,7 +36,7 @@ const areas: { areas: Array<{ code: string; name: string }> } = JSON.parse(
 const names = new Map(areas.areas.map((area) => [area.code, area.name]));
 const cache = new AreaGeometryCache(
 	root,
-	readGeometrySourceLookup(apiRootOf(root)),
+	readRepositoryGeometrySourceLookup(root),
 );
 const cpuStarted = process.cpuUsage();
 const started = performance.now();

@@ -3,16 +3,13 @@ import {
 	createCrosswalkCompiler,
 	type CrosswalkArtifact,
 } from "./crosswalkCompiler";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readCompiledAreaLookup } from "./crosswalk-build-inputs";
 import { writeCrosswalkArtifact } from "./crosswalk-artifact";
 import type { CrosswalkWork, CrosswalkWorkerResult } from "./crosswalk-workers";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const [root, outputDirectory] = process.argv.slice(2);
 if (!root || !outputDirectory || !process.send)
@@ -25,7 +22,7 @@ const { areaLookup } = readCompiledAreaLookup(artifactDirectory(root));
 const compile = createCrosswalkCompiler(
 	root,
 	areaLookup,
-	readGeometrySourceLookup(apiRootOf(root)),
+	readRepositoryGeometrySourceLookup(root),
 );
 process.on("message", (work: CrosswalkWork) => {
 	const started = performance.now();

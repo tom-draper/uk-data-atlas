@@ -29,7 +29,7 @@ import { parsePostcode } from "@uk-data-atlas/geography";
 import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import {
 	createAreaGeometryCache,
-	readGeometrySources,
+	readRepositoryGeometrySourceLookup,
 } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	compilePostcodeAreas,
@@ -229,7 +229,7 @@ export const buildPostcodeAreas = async (
 			);
 		return { postcodeArtifact, lng, lat, longitudes, latitudes };
 	})();
-	const geometrySources = readGeometrySources(apiRoot);
+	const geometrySources = readRepositoryGeometrySourceLookup(repositoryRoot);
 	const { areaInventory, chosen } = (() => {
 		const databasePath = join(
 			repositoryRoot,
