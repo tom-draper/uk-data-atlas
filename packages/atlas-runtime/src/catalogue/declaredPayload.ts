@@ -618,7 +618,7 @@ export function rebuildFromDeclaration(
 					}
 			// Derived numbers, from each record's stored values, in rule order.
 			for (const [rule, compute] of Object.entries(
-				config.rebuild?.derived ?? {},
+				config.computed ?? {},
 			)) {
 				const segments = parse(rule);
 				for (const [code, target] of records)

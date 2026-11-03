@@ -6,8 +6,11 @@ import { PREMISES, measure, per100k } from "./measures";
 
 export const AIR_QUALITY: DeclaredDataset = {
 	type: "airQuality",
+	payload: {
+		parts: yearParts("airQuality", "localAuthority", 2024),
+		code: "ladCode",
+	},
 	name: "ladName",
-	rebuild: {},
 	measures: [
 		measure(
 			"background-concentration",
@@ -151,15 +154,13 @@ export const GHG_EMISSIONS: DeclaredDataset = {
 		perPersonTCO2e:
 			"Total emissions divided by the publisher's population.",
 	},
-	rebuild: {
-		derived: {
-			// kt over thousands of people is tonnes per person.
-			perPersonTCO2e: (record) => {
-				const population = record.populationThousands as number;
-				return population > 0
-					? (record.totalKtCO2e as number) / population
-					: 0;
-			},
+	computed: {
+		// kt over thousands of people is tonnes per person.
+		perPersonTCO2e: (record) => {
+			const population = record.populationThousands as number;
+			return population > 0
+				? (record.totalKtCO2e as number) / population
+				: 0;
 		},
 	},
 };
@@ -338,16 +339,13 @@ export const LAND_AREA: DeclaredDataset = {
 	],
 	fields: [{ path: "{surface}", measure: "area" }],
 	derived: { landSquareKm: "Land hectares in square kilometres." },
-	rebuild: {
-		derived: {
-			landSquareKm: (record) => (record.landHectares as number) / 100,
-		},
+	computed: {
+		landSquareKm: (record) => (record.landHectares as number) / 100,
 	},
 };
 
 export const BROADBAND: DeclaredDataset = {
 	type: "broadband",
-	rebuild: {},
 	payload: {
 		parts: yearParts("broadband", "localAuthority", 2024),
 		code: "ladCode",
@@ -401,7 +399,6 @@ export const BROADBAND: DeclaredDataset = {
 
 export const MOBILE_COVERAGE: DeclaredDataset = {
 	type: "mobileCoverage",
-	rebuild: {},
 	payload: {
 		parts: yearParts("mobileCoverage", "localAuthority", 2024, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],

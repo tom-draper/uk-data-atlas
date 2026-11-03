@@ -81,28 +81,25 @@ type Records = { readonly [key: string]: Json };
 export const per100k = (
 	value: (record: Records) => Json,
 	year?: number,
-): Pick<DeclaredDataset, "derived" | "rebuild"> => ({
+): Pick<DeclaredDataset, "derived" | "computed"> => ({
 	derived: {
 		"metrics.per100kPopulation":
 			"Computed by the compiler from the mid-year population estimate.",
 	},
-	rebuild: {
-		derived: {
-			"metrics.per100kPopulation": (record, _path, context) => {
-				const part = context.dataset("population-uk")[
-					String(year ?? context.header.year)
-				] as Records | undefined;
-				const area = (part?.data as Records | undefined)?.[
-					context.code
-				] as Records | undefined;
-				if (!area) return undefined;
-				const total = Object.values(
-					(area?.total ?? {}) as Records,
-				).reduce<number>((sum, count) => sum + (count as number), 0);
-				return total > 0
-					? ((value(record) as number) / total) * 100_000
-					: null;
-			},
+	computed: {
+		"metrics.per100kPopulation": (record, _path, context) => {
+			const part = context.dataset("population-uk")[
+				String(year ?? context.header.year)
+			] as Records | undefined;
+			const area = (part?.data as Records | undefined)?.[context.code] as
+				Records | undefined;
+			if (!area) return undefined;
+			const total = Object.values(
+				(area?.total ?? {}) as Records,
+			).reduce<number>((sum, count) => sum + (count as number), 0);
+			return total > 0
+				? ((value(record) as number) / total) * 100_000
+				: null;
 		},
 	},
 });

@@ -135,7 +135,6 @@ const payAreas = {
 export const INCOME: DeclaredDataset = {
 	type: "income",
 	name: "ladName",
-	rebuild: {},
 	payload: {
 		parts: yearParts("income", "localAuthority", 2025, {
 			coverageCountries: ["GB-ENG"],
@@ -151,7 +150,6 @@ export const INCOME: DeclaredDataset = {
 export const WORKPLACE_INCOME: DeclaredDataset = {
 	type: "workplaceIncome",
 	name: "ladName",
-	rebuild: {},
 	payload: {
 		parts: yearParts("workplaceIncome", "localAuthority", 2025, {
 			coverageCountries: ["GB-ENG"],
@@ -265,14 +263,12 @@ export const CLAIMANT_COUNT: DeclaredDataset = {
 	derived: {
 		youthRate: "Derived from the youth share of claimants.",
 	},
-	rebuild: {
-		derived: {
-			youthRate: (record) => {
-				const total = record.totalCount as number;
-				const youth = record.youthCount as number;
-				const rate = record.totalRate as number;
-				return total > 0 ? (youth / total) * rate : 0;
-			},
+	computed: {
+		youthRate: (record) => {
+			const total = record.totalCount as number;
+			const youth = record.youthCount as number;
+			const rate = record.totalRate as number;
+			return total > 0 ? (youth / total) * rate : 0;
 		},
 	},
 };
@@ -400,7 +396,6 @@ export const UNEMPLOYMENT: DeclaredDataset = {
 		measure,
 		period: unemploymentPeriod,
 	})),
-	rebuild: {},
 };
 
 export const CHILD_POVERTY: DeclaredDataset = {
@@ -448,19 +443,16 @@ export const CHILD_POVERTY: DeclaredDataset = {
 	derived: {
 		childrenPopulation: "Computed by the compiler from the count and rate.",
 	},
-	rebuild: {
-		derived: {
-			childrenPopulation: (record) =>
-				(record.childCount as number) /
-				((record.childPovertyRate as number) / 100),
-		},
+	computed: {
+		childrenPopulation: (record) =>
+			(record.childCount as number) /
+			((record.childPovertyRate as number) / 100),
 	},
 };
 
 const regionalGdp = (type: string, boundaryType: string): DeclaredDataset => ({
 	type,
 	name: "itlName",
-	rebuild: {},
 	payload: {
 		parts: yearParts(type, boundaryType, 2025, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
@@ -501,7 +493,6 @@ const single = (
 	...declared: Parameters<typeof measure>
 ): DeclaredDataset => ({
 	type,
-	rebuild: {},
 	payload,
 	name: "name",
 	period,
@@ -609,7 +600,6 @@ export const HOUSE_PRICE: DeclaredDataset = {
 			release: { geography: "ward", year: 2020 },
 		},
 	],
-	rebuild: {},
 	alsoIn: [2019, 2020, 2022, 2023, 2024, 2018, 2017, 2016, 2015].map(
 		(year) => ({ geography: "ward", year }),
 	),

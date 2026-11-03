@@ -156,11 +156,6 @@ export type StatisticsDataset = {
 		child: { release: AreaRelease; code: string };
 		parent: { release: AreaRelease; code: string };
 	}>;
-	/**
-	 * How to lay the rows back out as the compiled JSON, for datasets served
-	 * from rows. One layout per top-level key of the file.
-	 */
-	layouts?: () => Iterable<StatisticsLayout>;
 	/** Runs once every row is written, before the database is published. */
 	verify?: (database: DatabaseSync) => void;
 };
@@ -191,39 +186,6 @@ export const CANDIDACY_COLUMNS = [
 export type CandidacyColumn = (typeof CANDIDACY_COLUMNS)[number];
 
 /**
- * One leaf of a record, in the record's key order. Every record of a part has
- * the same leaves; only the area and its values change.
- */
-export type StatisticsLayoutLeaf = {
-	/** Keys from the record down; a key into an array is its index. */
-	path: (string | number)[];
-} & (
-	| {
-			kind: "value" | "lower" | "upper";
-			/** Index into the dataset's `series`. */
-			series: number;
-			period: string;
-	  }
-	/** The JSON written for the value's status, keyed by status slug. */
-	| {
-			kind: "status";
-			series: number;
-			period: string;
-			statuses: string;
-	  }
-	| { kind: "code" | "name" }
-	/** The code or name of the record's parent area, by index into its `parents`. */
-	| { kind: "parent_code" | "parent_name"; parent: number }
-	/** A number computed from the record's other values, by a named rule. */
-	| { kind: "derived"; rule: string }
-	/** The same JSON in every record. */
-	| { kind: "literal"; value: string }
-	/** A column of the record's contest, or of the candidate it elected. */
-	| { kind: "contest"; column: ContestColumn }
-	| { kind: "candidacy"; column: CandidacyColumn }
-);
-
-/**
  * An election a dataset holds: its polling day and kind, with a contest for
  * each area. `label` is the publisher's name for the election, such as `2024`
  * or `1974O`.
@@ -241,29 +203,6 @@ export type StatisticsElection = {
 		contest?: Partial<Record<ContestColumn, string | null>>;
 		/** The candidate the contest elected, when the publisher names one. */
 		elected?: Partial<Record<CandidacyColumn, string | null>>;
-	}[];
-};
-
-/** A top-level key of a compiled dataset: its header and record layouts. */
-export type StatisticsLayout = {
-	key: string;
-	/** The header as JSON, with each record set's field set to null. */
-	header: string;
-	records: {
-		from: string;
-		leaves: StatisticsLayoutLeaf[];
-		/** The records' areas, in the file's order, with their parent areas. */
-		areas: {
-			release: AreaRelease;
-			code: string;
-			/** Parent areas, in the dataset's order of parent fields; a record may lack one. */
-			parents?: ({ release: AreaRelease; code: string } | undefined)[];
-			/** Leaf positions this record lacks. */
-			absent?: number[];
-			contest?: Partial<Record<ContestColumn, string | null>>;
-			/** The candidate the contest elected, when the record names one. */
-			elected?: Partial<Record<CandidacyColumn, string | null>>;
-		}[];
 	}[];
 };
 

@@ -101,7 +101,6 @@ export const CRIME: DeclaredDataset = {
 				: null;
 		},
 	},
-	rebuild: {},
 	period: () => periods.yearEnding(2026, 3),
 	measures: [
 		measure(
@@ -249,7 +248,6 @@ export const CRIME: DeclaredDataset = {
 
 export const ROAD_COLLISIONS: DeclaredDataset = {
 	type: "roadCollisions",
-	rebuild: {},
 	payload: {
 		parts: (labels) =>
 			labels
@@ -326,7 +324,6 @@ export const HOMELESSNESS: DeclaredDataset = {
 		],
 		code: "ladCode",
 	},
-	rebuild: {},
 	name: "ladName",
 	period: () => periods.quarter(2026, 1),
 	measures: [
@@ -398,7 +395,6 @@ const single = (
 	payload: DeclaredPayload,
 ): DeclaredDataset => ({
 	type,
-	rebuild: {},
 	payload,
 	name: "name",
 	period: () => period,
@@ -477,7 +473,6 @@ export const NET_ADDITIONAL_DWELLINGS = single(
 
 export const PLANNING_APPLICATIONS: DeclaredDataset = {
 	type: "planningApplications",
-	rebuild: {},
 	payload: {
 		parts: yearParts("planningApplications", "localAuthority", 2025, {
 			coverageCountries: ["GB-ENG"],
@@ -528,7 +523,6 @@ const countiesAndUnitaries = {
 
 export const PUBLIC_HEALTH: DeclaredDataset = {
 	type: "publicHealth",
-	rebuild: {},
 	payload: {
 		parts: () => [
 			{
@@ -719,12 +713,10 @@ export const PUPIL_ABSENCE: DeclaredDataset = {
 		{ path: "metrics.{absence-level}", measure: "pupil-enrolments" },
 	],
 	derived: { value: "Sessions missed as a percentage of possible sessions." },
-	rebuild: {
-		derived: {
-			value: (record) => {
-				const metrics = record.metrics as Record<string, number>;
-				return (metrics.overall / metrics.sessions) * 100;
-			},
+	computed: {
+		value: (record) => {
+			const metrics = record.metrics as Record<string, number>;
+			return (metrics.overall / metrics.sessions) * 100;
 		},
 	},
 };
@@ -857,7 +849,7 @@ export const SCHOOL_PERFORMANCE: DeclaredDataset = {
 	measures: SCHOOL_MEASURES,
 	fields: schoolFields("series.{period}."),
 	derived: latestCopies(SCHOOL_COPIES),
-	rebuild: { derived: latestCopyRules(SCHOOL_COPIES) },
+	computed: latestCopyRules(SCHOOL_COPIES),
 };
 
 export const SCHOOL_PERFORMANCE_CONSTITUENCY: DeclaredDataset = {
@@ -882,7 +874,7 @@ export const SCHOOL_PERFORMANCE_CONSTITUENCY: DeclaredDataset = {
 	measures: SCHOOL_MEASURES,
 	fields: schoolFields("series.{period}."),
 	derived: latestCopies(SCHOOL_COPIES),
-	rebuild: { derived: latestCopyRules(SCHOOL_COPIES) },
+	computed: latestCopyRules(SCHOOL_COPIES),
 };
 
 const DISADVANTAGE: DeclaredDimension = {
@@ -967,30 +959,28 @@ export const SCHOOL_PERFORMANCE_DISADVANTAGE: DeclaredDataset = {
 		"series.{period}.att8Gap":
 			"Other pupils' Attainment 8 less disadvantaged pupils'.",
 	},
-	rebuild: {
-		derived: {
-			// The yearly gaps first, so the copies read them.
-			"series.{period}.att8Gap": (record, path) => {
-				const series = record.series as Record<
-					string,
-					Record<string, number | null>
-				>;
-				const year = series[path[1]];
-				const ahead = year.att8NotDisadvantaged;
-				const behind = year.att8Disadvantaged;
-				const aheadPupils = year.notDisadvantagedPupils;
-				const behindPupils = year.disadvantagedPupils;
-				if (ahead === null || behind === null) return null;
-				if (aheadPupils === null || behindPupils === null) return null;
-				if (
-					aheadPupils < GAP_MINIMUM_PUPILS ||
-					behindPupils < GAP_MINIMUM_PUPILS
-				)
-					return null;
-				return Number((ahead - behind).toFixed(1));
-			},
-			...latestCopyRules(GAP_COPIES),
+	computed: {
+		// The yearly gaps first, so the copies read them.
+		"series.{period}.att8Gap": (record, path) => {
+			const series = record.series as Record<
+				string,
+				Record<string, number | null>
+			>;
+			const year = series[path[1]];
+			const ahead = year.att8NotDisadvantaged;
+			const behind = year.att8Disadvantaged;
+			const aheadPupils = year.notDisadvantagedPupils;
+			const behindPupils = year.disadvantagedPupils;
+			if (ahead === null || behind === null) return null;
+			if (aheadPupils === null || behindPupils === null) return null;
+			if (
+				aheadPupils < GAP_MINIMUM_PUPILS ||
+				behindPupils < GAP_MINIMUM_PUPILS
+			)
+				return null;
+			return Number((ahead - behind).toFixed(1));
 		},
+		...latestCopyRules(GAP_COPIES),
 	},
 };
 
@@ -1078,11 +1068,8 @@ export const NHS_WAITING: DeclaredDataset = {
 	derived: {
 		pctOver18Weeks: "The share of pathways waiting over 18 weeks.",
 	},
-	rebuild: {
-		derived: {
-			pctOver18Weeks: (record) =>
-				((record.over18Weeks as number) / (record.total as number)) *
-				100,
-		},
+	computed: {
+		pctOver18Weeks: (record) =>
+			((record.over18Weeks as number) / (record.total as number)) * 100,
 	},
 };

@@ -59,7 +59,6 @@ export const POPULATION_WARDS: DeclaredDataset = {
 			release: { geography: "localAuthority", year: 2023 },
 		},
 	],
-	rebuild: {},
 	measures: [POPULATION],
 	dimensions: [SEX, AGE],
 	fields: byAge,
@@ -68,7 +67,6 @@ export const POPULATION_WARDS: DeclaredDataset = {
 export const POPULATION_UK: DeclaredDataset = {
 	type: "populationUk",
 	name: "ladName",
-	rebuild: {},
 	payload: {
 		parts: yearParts("populationUk", "localAuthority", 2023),
 		arrays: ["total", "males", "females"],
@@ -81,7 +79,6 @@ export const POPULATION_UK: DeclaredDataset = {
 export const POPULATION_CONSTITUENCY: DeclaredDataset = {
 	type: "populationConstituency",
 	name: "constituencyName",
-	rebuild: {},
 	payload: {
 		parts: yearParts("populationConstituency", "constituency", 2024, {
 			coverageCountries: ["GB-ENG", "GB-WLS"],
@@ -130,7 +127,6 @@ export const LIFE_EXPECTANCY_SERIES: DeclaredDataset = {
 		code: "ladCode",
 	},
 	name: "ladName",
-	rebuild: {},
 	period: (_key, header: DeclaredHeader) => yearRange(header.period),
 	measures: [LIFE_EXPECTANCY],
 	dimensions: [SEX],
@@ -199,7 +195,6 @@ export const LIFE_EXPECTANCY_LATEST: DeclaredDataset = {
 		code: "ladCode",
 	},
 	name: "ladName",
-	rebuild: {},
 	period: (_key, header) => yearRange(header.dataPeriod),
 	alsoIn: [
 		{ geography: "countyAndUnitaryAuthority", year: 2025 },
@@ -471,7 +466,6 @@ export const IMD: DeclaredDataset = {
 	}),
 	name: "lsoaName",
 	parents: districtParent("ladCode", "ladName"),
-	rebuild: {},
 	measures: [
 		...imd.measures,
 		measure(
@@ -515,7 +509,6 @@ export const WIMD: DeclaredDataset = {
 	}),
 	name: "lsoaName",
 	parents: districtParent("ladCode", "ladName"),
-	rebuild: {},
 };
 
 export const SIMD: DeclaredDataset = {
@@ -544,7 +537,6 @@ export const SIMD: DeclaredDataset = {
 	}),
 	name: "dzName",
 	parents: districtParent("councilAreaCode", "councilAreaName"),
-	rebuild: {},
 };
 
 export const NIMDM: DeclaredDataset = {
@@ -574,7 +566,6 @@ export const NIMDM: DeclaredDataset = {
 	}),
 	name: "soaName",
 	parents: districtParent("lgdCode", "lgdName"),
-	rebuild: {},
 };
 
 const REFERENDUM = [
@@ -644,7 +635,6 @@ export const BREXIT: DeclaredDataset = {
 			alsoIn: [{ geography: "country", year: 2025 }],
 		},
 	],
-	rebuild: {},
 	period: referendumDay,
 	alsoIn: [{ geography: "country", year: 2020 }],
 	measures: REFERENDUM,
@@ -712,5 +702,4 @@ export const BREXIT_CONSTITUENCY: DeclaredDataset = {
 			},
 		},
 	],
-	rebuild: {},
 };
