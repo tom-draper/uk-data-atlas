@@ -39,9 +39,6 @@ yarn-error.log*
 # lookups fetched from the API for the precompile
 /.cache/
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
