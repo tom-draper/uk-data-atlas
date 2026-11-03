@@ -123,8 +123,11 @@ export type DeclaredDataset = {
 		| ((key: string, header: DeclaredHeader) => string);
 	/** Codes in no listed release that are left out, with why. */
 	exclude?: { codes: RegExp; reason: string }[];
-	/** Record field holding the publisher's area name. */
-	name?: string;
+	/**
+	 * Record field holding the publisher's area name, or for a dataset with
+	 * several record sets, the field of each set's records.
+	 */
+	name?: string | Record<string, string>;
 	/**
 	 * Record fields naming another area, by code and name, with the release
 	 * the codes are on: one each record lies in, or the area its publisher
@@ -216,7 +219,12 @@ export type DeclaredPayload = {
 	 * Adds to a record the fixed text it carries, such as a label or a code the
 	 * publisher gives each category. Runs once the record's values are placed.
 	 */
-	fill?: (record: { [key: string]: Json }, code: string) => void;
+	fill?: (
+		record: { [key: string]: Json },
+		code: string,
+		/** The records of the sets generated before this one, by set. */
+		earlier: { [set: string]: Json },
+	) => void;
 	/**
 	 * Dot-separated paths a record does not have, given the kinds of
 	 * relationship the publisher states for it.
@@ -243,6 +251,13 @@ export type DeclaredElection = {
 };
 
 export type DeclaredParent = {
+	/** The record sets whose records name this area. Defaults to the first. */
+	sets?: string[];
+	/**
+	 * A record that has the field with a null code and name has no such area,
+	 * which the payload writes back as null.
+	 */
+	nullable?: true;
 	/**
 	 * How the area relates to the one the record names. Defaults to `parent`,
 	 * the area the publisher says contains this one.
@@ -632,6 +647,8 @@ export function declaredStatistics(
 		config.rebuild !== undefined &&
 		config.payload === undefined &&
 		!(type === "airQuality" && entry.output === "air-quality");
+	const nameOf = (from: string) =>
+		typeof config.name === "string" ? config.name : config.name?.[from];
 	const recordSets: DeclaredRecords[] = config.records ?? [
 		{ from: "data", release: config.release, alsoIn: config.alsoIn },
 	];
@@ -885,15 +902,22 @@ export function declaredStatistics(
 							throw new Error(
 								`${context}: record ${code} is not an object`,
 							);
-						if (config.name !== undefined && onName) {
-							const name = record[config.name];
+						const nameField = nameOf(set.from);
+						if (nameField !== undefined && onName) {
+							const name = record[nameField];
 							if (typeof name !== "string")
 								throw new Error(
-									`${context}: record ${code} has no ${config.name}`,
+									`${context}: record ${code} has no ${nameField}`,
 								);
 							onName(release, code, name);
 						}
 						const parents = (config.parents ?? []).map((parent) => {
+							if (
+								!(parent.sets ?? [recordSets[0].from]).includes(
+									set.from,
+								)
+							)
+								return undefined;
 							const parentCode = follow(
 								record,
 								parent.code.split("."),
@@ -903,8 +927,11 @@ export function declaredStatistics(
 									? undefined
 									: follow(record, parent.name.split("."));
 							if (
-								parentCode === undefined &&
-								parentName === undefined
+								(parentCode === undefined &&
+									parentName === undefined) ||
+								(parent.nullable &&
+									parentCode === null &&
+									(parentName ?? null) === null)
 							)
 								return undefined;
 							if (
@@ -1224,7 +1251,7 @@ export function declaredStatistics(
 						const { node, code } = sample.nodes.get(leafKey)!;
 						if (
 							path.length === 1 &&
-							path[0] === config.name &&
+							path[0] === nameOf(recordSets[0].from) &&
 							typeof node === "string"
 						)
 							return { path: placed, kind: "name" };

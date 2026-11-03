@@ -95,12 +95,14 @@ export type StatisticsSeries = {
 /**
  * How a publisher relates one area to another: `parent` is the area that
  * contains it, `predecessor` an area it was formed from, and `published-as`
- * the area under whose code the publisher listed it.
+ * the area under whose code the publisher listed it, and `coterminous` an area
+ * the publisher says has the same extent.
  */
 export const AREA_RELATIONSHIPS = [
 	"parent",
 	"predecessor",
 	"published-as",
+	"coterminous",
 ] as const;
 export type AreaRelationship = (typeof AREA_RELATIONSHIPS)[number];
 
