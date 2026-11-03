@@ -3,11 +3,11 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { tmpdir } from "node:os";
-import { createBoundaryRegistry } from "../../../../pipeline/src/build-boundary-registry";
-import { createGeographyInventory } from "../../../../pipeline/src/geographyInventory";
-import { createSourceInventory } from "../../../../pipeline/src/sourceInventory";
+import { createBoundaryRegistry } from "../../src/build-boundary-registry";
+import { createGeographyInventory } from "../../src/geographyInventory";
+import { createSourceInventory } from "../../src/sourceInventory";
 
-const repositoryRoot = new URL("../../../..", import.meta.url).pathname;
+const repositoryRoot = new URL("../../..", import.meta.url).pathname;
 
 test("discovers source metadata and reports boundary compiler coverage", () => {
 	const sourceInventory = createSourceInventory(repositoryRoot);
