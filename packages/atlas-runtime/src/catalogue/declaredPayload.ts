@@ -200,7 +200,7 @@ export function rebuildFromDeclaration(
 		...new Set([...observed.values()].flat().map((row) => row.period)),
 	];
 	const result: Record<string, Json> = {};
-	for (const { key, header } of spec.parts(labels)) {
+	for (const { key, header, optional } of spec.parts(labels)) {
 		const context = `${slug} ${key}`;
 		const full = { ...header, data: null } as DeclaredHeader;
 		const top = config.period
@@ -240,19 +240,21 @@ export function rebuildFromDeclaration(
 				wanted.every((slug) => one.members.has(slug))
 			);
 		};
-		/** A series goes to the matching field that fixes the most members. */
+		/** A series goes to the one field that fits it, or fits it and `wins`. */
 		const owner = new Map<number, DeclaredField>();
-		for (const one of series)
-			for (const field of fields) {
-				if (!matching(field, one)) continue;
-				const held = owner.get(one.id);
-				if (
-					!held ||
-					Object.keys(field.members ?? {}).length >
-						Object.keys(held.members ?? {}).length
-				)
-					owner.set(one.id, field);
-			}
+		for (const one of series) {
+			const fitting = fields.filter((field) => matching(field, one));
+			if (fitting.length === 0) continue;
+			const winners =
+				fitting.length === 1
+					? fitting
+					: fitting.filter((field) => field.wins);
+			if (winners.length !== 1)
+				throw new Error(
+					`${context}: series ${one.measure} fits ${fitting.map((field) => field.path).join(", ")}; mark exactly one \`wins\``,
+				);
+			owner.set(one.id, winners[0]);
+		}
 		const nulls: { path: string[]; period?: string; parent?: boolean }[] =
 			[];
 		const periodic: {
@@ -382,7 +384,12 @@ export function rebuildFromDeclaration(
 					if (value !== undefined) place(target, path, value, arrays);
 				}
 		}
-		if (records.size === 0) continue;
+		if (records.size === 0) {
+			if (optional) continue;
+			throw new Error(
+				`${context}: no records; declare the part optional`,
+			);
+		}
 		result[key] = {
 			...header,
 			data: Object.fromEntries(records),

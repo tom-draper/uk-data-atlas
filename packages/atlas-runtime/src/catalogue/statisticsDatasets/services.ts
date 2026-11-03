@@ -426,6 +426,7 @@ export const PLANNING_APPLICATIONS: DeclaredDataset = {
 			path: "value",
 			measure: "planning-applications",
 			members: { "application-stage": "received" },
+			wins: true,
 		},
 		{
 			path: "metrics.{application-stage}",
