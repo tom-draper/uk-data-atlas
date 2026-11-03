@@ -9,8 +9,6 @@ import { USAGE_FILE, UsageStore } from "../src/usageStore";
  * when `ATLAS_USAGE_DIR` is set. Run it on the host that holds the directory:
  *
  *   pnpm --dir services/api usage:report --days 30
- *
- * In the container image the same report is `node dist/usage-report.mjs`.
  */
 const { values } = parseArgs({
 	options: {

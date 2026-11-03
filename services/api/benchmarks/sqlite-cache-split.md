@@ -114,7 +114,5 @@ to a publication or download archive.
 - `npx tsc --noEmit` in `services/api` passed.
 - `pnpm --dir services/api build` passed, including the bundled cache command.
 - Build-cache and release-path suites: 15 tests passed.
-- `docker compose -f services/api/compose.yaml config --quiet` passed. A Docker image
-  was not built or run.
 
 No full precompile, website test suite or unrelated formatting fix ran.
