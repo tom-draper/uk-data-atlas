@@ -84,6 +84,28 @@ const sumPartyVotes = (record: Record<string, unknown>) =>
 
 export const LOCAL_ELECTION: DeclaredDataset = {
 	type: "localElection",
+	payload: {
+		parts: () =>
+			Object.keys(LOCAL_POLLING_DAYS).map((key) => ({
+				key,
+				header: {
+					id: `localElection${key}`,
+					type: "localElection",
+					year: Number(key),
+					boundaryYear: Number(key),
+					boundaryType: "ward",
+					// Only 2023's results name their wards, not code them.
+					wardCodes: key === "2023" ? "name-matched" : "published",
+					partyInfo: PARTY_INFO.map((party) => ({ ...party })),
+					coverageCountries: ["GB-ENG", "GB-WLS"],
+				},
+			})),
+		code: "wardCode",
+		/** A party that did not stand has no entry. */
+		omitMissing: ["partyVotes."],
+		/** Wards the source lists that the atlas could not place. */
+		dropped: ["excludedWards"],
+	},
 	period: (key) => periods.date(pollingDay(LOCAL_POLLING_DAYS)(key)),
 	alsoIn: (header) => [
 		...nearest(DIVISION_YEARS, Number(header.year)).map(division),
@@ -154,6 +176,24 @@ const MAJORITY = measure(
 
 export const GENERAL_ELECTION: DeclaredDataset = {
 	type: "generalElection",
+	payload: {
+		parts: () =>
+			Object.keys(GENERAL_POLLING_DAYS).map((key) => ({
+				key,
+				header: {
+					id: `generalElection-${key}`,
+					type: "generalElection",
+					year: Number(key),
+					// Results to 2019 sit on the 2019 constituencies.
+					boundaryYear: Number(key) === 2024 ? 2024 : 2019,
+					boundaryType: "constituency",
+					partyInfo: PARTY_INFO.map((party) => ({ ...party })),
+				},
+			})),
+		code: "onsId",
+		/** A party that did not stand has no entry. */
+		omitMissing: ["partyVotes."],
+	},
 	period: (key) => periods.date(pollingDay(GENERAL_POLLING_DAYS)(key)),
 	/** The election's own year; the header names the last year of a boundary set. */
 	release: (header) => ({
@@ -279,8 +319,62 @@ const PARTY_VOTE_SHARE = measure(
 const onOnsCodes = (header: DeclaredHeader) =>
 	String(header.boundarySet).startsWith("2010");
 
+/** The set of constituency boundaries each election was held on. */
+const BOUNDARY_SETS: Readonly<Record<string, string>> = {
+	"1918": "1918-1935",
+	"1922": "1918-1935",
+	"1923": "1918-1935",
+	"1924": "1918-1935",
+	"1929": "1918-1935",
+	"1931": "1918-1935",
+	"1935": "1918-1935",
+	"1945": "1945",
+	"1950": "1950-1951",
+	"1951": "1950-1951",
+	"1955": "1955-1970",
+	"1959": "1955-1970",
+	"1964": "1955-1970",
+	"1966": "1955-1970",
+	"1970": "1955-1970",
+	"1974F": "1974-1979",
+	"1974O": "1974-1979",
+	"1979": "1974-1979",
+	"1983": "1983-1992",
+	"1987": "1983-1992",
+	"1992": "1983-1992",
+	"1997": "1997-2001",
+	"2001": "1997-2001",
+	"2005": "2005",
+	"2010": "2010-2017",
+	"2015": "2010-2017",
+	"2017": "2010-2019",
+	"2019": "2010-2019",
+};
+
 export const HISTORICAL_GENERAL_ELECTION: DeclaredDataset = {
 	type: "historicalGeneralElection",
+	payload: {
+		parts: () =>
+			Object.keys(HISTORICAL_POLLING_DAYS)
+				// The 2024 election is in the general election dataset.
+				.filter((key) => key !== "2024")
+				.map((key) => ({
+					key,
+					header: {
+						id: `historicalGeneralElection-${key}`,
+						type: "historicalGeneralElection",
+						election: key,
+						year: Number(key.slice(0, 4)),
+						boundaryType: "constituency",
+						boundaryYear: Number(key.slice(0, 4)),
+						boundarySet: BOUNDARY_SETS[key],
+					},
+				})),
+		code: "constituencyId",
+		/** A party group with no votes has no entry. */
+		omitMissing: ["votes.", "voteShare."],
+		emptyObjects: ["votes", "voteShare"],
+	},
 	period: (key) => periods.date(pollingDay(HISTORICAL_POLLING_DAYS)(key)),
 	release: (header) =>
 		onOnsCodes(header)
