@@ -98,8 +98,8 @@ retaining all payloads in memory. Incremental row updates would require copying
 the database before mutation to retain atomic publication, so they are deferred.
 The stage cache skips the whole write when inputs are unchanged.
 
-`readTerrainCatalogue(apiRoot)` opens `../../data/build/atlas.sqlite` relative to
-the API root in read-only mode, reads the `terrain-catalogue` row, validates its
+`readTerrainCatalogue(repositoryRoot)` opens `data/build/atlas.sqlite` relative
+to the repository root in read-only mode, reads the `terrain-catalogue` row, validates its
 schema version and products array, then closes the connection. It does not fall
 back to JSON. Keep `data/build/atlas.sqlite` under the repository root when
 deploying the API.
