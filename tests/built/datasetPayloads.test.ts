@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { expect, it } from "vitest";
 
@@ -13,10 +14,10 @@ const digest = (text: string) =>
 
 /**
  * Reads the built `data/build/atlas.sqlite` and `atlas-cache.sqlite`. Every
- * dataset served from rows has no stored payload, rebuilds from rows to its
- * manifest hash, and is in the cache with the same bytes.
+ * dataset served from rows has no stored payload, matches the compiled values,
+ * and is in the cache with the same bytes.
  */
-it("serves datasets from rows that rebuild to their manifest hash", () => {
+it("serves datasets from rows with the compiled values", () => {
 	const root = process.cwd();
 	const database = new DatabaseSync("data/build/atlas.sqlite", {
 		readOnly: true,
@@ -45,6 +46,11 @@ it("serves datasets from rows that rebuild to their manifest hash", () => {
 				String(row.type),
 				output,
 			);
+			const compiled = readFileSync(
+				`data/build/datasets/${output}.json`,
+				"utf8",
+			);
+			expect(JSON.parse(rebuilt), output).toEqual(JSON.parse(compiled));
 			expect(digest(rebuilt), output).toBe(row.sha256);
 			expect(Buffer.byteLength(rebuilt), output).toBe(row.bytes);
 			const entry = cached.get(output);
