@@ -25,7 +25,7 @@ test("validates the cache against the canonical database", (context) => {
 	);
 	const cache = new DatabaseSync(join(directory, "atlas-cache.sqlite"));
 	cache.exec(
-		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE dataset_payloads (output TEXT, sha256 TEXT, payload TEXT)",
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE dataset_payloads (output TEXT, source_sha256 TEXT, sha256 TEXT, payload TEXT)",
 	);
 	cache.prepare("INSERT INTO meta VALUES (?, ?)").run(
 		"atlas-sqlite-content-hash",
@@ -34,7 +34,7 @@ test("validates the cache against the canonical database", (context) => {
 			.digest("hex")}`,
 	);
 	cache.exec(
-		"INSERT INTO dataset_payloads VALUES ('test', 'hash', 'payload')",
+		"INSERT INTO dataset_payloads VALUES ('test', 'hash', 'generated-hash', 'payload')",
 	);
 	cache.close();
 	assert.doesNotThrow(() => validateCacheRelease(root));

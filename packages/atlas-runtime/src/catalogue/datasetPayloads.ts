@@ -37,10 +37,13 @@ const readCached = (root: string, output: string, sha256: string) => {
 	try {
 		const row = cache
 			.prepare(
-				"SELECT payload FROM dataset_payloads WHERE output = ? AND sha256 = ?",
+				"SELECT sha256, payload FROM dataset_payloads WHERE output = ? AND source_sha256 = ?",
 			)
 			.get(output, sha256);
-		return typeof row?.payload === "string" ? row.payload : undefined;
+		return typeof row?.payload === "string" &&
+			typeof row.sha256 === "string"
+			? { payload: row.payload, sha256: row.sha256 }
+			: undefined;
 	} catch {
 		// A cache from before dataset payloads moved has no table yet.
 		return undefined;
@@ -59,6 +62,16 @@ export function readDatasetPayload(
 	output: string,
 	sha256?: string,
 ): string | undefined {
+	const result = readDatasetPayloadWithHash(root, output);
+	return result && (sha256 === undefined || sha256 === result.sha256)
+		? result.payload
+		: undefined;
+}
+
+export function readDatasetPayloadWithHash(
+	root: string,
+	output: string,
+): { payload: string; sha256: string } | undefined {
 	const path = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
@@ -67,15 +80,14 @@ export function readDatasetPayload(
 				"SELECT type, sha256, payloadId FROM datasets WHERE output = ?",
 			)
 			.get(output);
-		if (!row || (sha256 !== undefined && row.sha256 !== sha256))
-			return undefined;
+		if (!row) return undefined;
 		if (typeof row.payloadId === "string") {
 			const stored = database
 				.prepare("SELECT payload FROM payloads WHERE id = ?")
 				.get(row.payloadId)?.payload;
 			if (typeof stored !== "string")
 				throw new Error(`Missing payload ${row.payloadId} at ${path}`);
-			return stored;
+			return { payload: stored, sha256: String(row.sha256) };
 		}
 		const current = String(row.sha256);
 		const cached = readCached(root, output, current);
@@ -85,11 +97,7 @@ export function readDatasetPayload(
 			String(row.type),
 			output,
 		);
-		if (digest(rebuilt) !== current)
-			throw new Error(
-				`Rows for ${output} do not match its manifest hash`,
-			);
-		return rebuilt;
+		return { payload: rebuilt, sha256: digest(rebuilt) };
 	} finally {
 		database.close();
 	}

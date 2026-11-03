@@ -21,8 +21,8 @@ accounted for and validates the stored row counts.
 
 The `dataset_part`, `dataset_leaf`, `dataset_record`,
 `dataset_record_parent` and `dataset_record_absent` tables describe the
-website's dataset payload layouts. The cache holds rebuilt payloads, and the
-build checks their hashes against the dataset manifest.
+website's dataset payload layouts. The cache holds rebuilt payloads with their
+own hashes, and the build compares their values with the compiled datasets.
 
 ## API measures and dimensions
 

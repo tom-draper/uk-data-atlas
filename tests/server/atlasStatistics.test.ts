@@ -16,6 +16,7 @@ import {
 	type SqliteTable,
 } from "../../pipeline/src/storage/index";
 import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/storage";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import { publishDatasetPayloads } from "../../pipeline/src/storage/index";
 
@@ -134,7 +135,7 @@ describe("fuel poverty on the statistics model", () => {
 		database.close();
 	});
 
-	it("rebuilds the payload byte for byte and serves it from rows through the cache", () => {
+	it("serves generated payloads at URLs hashed from their bytes", () => {
 		const root = mkdtempSync(join(tmpdir(), "statistics-rows-"));
 		const path = join(root, "data/build/atlas.sqlite");
 		mkdirSync(join(root, "data/build"), { recursive: true });
@@ -147,6 +148,8 @@ describe("fuel poverty on the statistics model", () => {
 			E01000002: record("E01000002", "Publisher name"),
 		});
 		const hash = createHash("sha256").update(text).digest("hex");
+		const compiled = JSON.stringify(JSON.parse(text), null, 2);
+		const sourceHash = createHash("sha256").update(compiled).digest("hex");
 		try {
 			writeSqliteIndex(
 				path,
@@ -171,13 +174,15 @@ describe("fuel poverty on the statistics model", () => {
 							[
 								"fuelPoverty",
 								"fuel-poverty",
-								hash,
-								Buffer.byteLength(text),
+								sourceHash,
+								Buffer.byteLength(compiled),
 								null,
 							],
 						],
 					},
-					...statisticsTables([fuelPovertyStatistics(text, entry)]),
+					...statisticsTables([
+						fuelPovertyStatistics(compiled, entry),
+					]),
 				},
 			);
 			const database = new DatabaseSync(path);
@@ -254,16 +259,30 @@ describe("fuel poverty on the statistics model", () => {
 				database.close();
 			}
 			// No cache yet: rebuilt from rows.
+			expect(readAtlasDatasetUrls(root)).toEqual({
+				"fuel-poverty": `/data/catalogue/${hash}/fuel-poverty.json`,
+			});
+			expect(
+				readVersionedAtlasDataset(root, "fuel-poverty", sourceHash),
+			).toBeUndefined();
 			expect(readVersionedAtlasDataset(root, "fuel-poverty", hash)).toBe(
 				text,
 			);
 			publishDatasetPayloads(root);
+			expect(readAtlasDatasetUrls(root)).toEqual({
+				"fuel-poverty": `/data/catalogue/${hash}/fuel-poverty.json`,
+			});
 			const cache = new DatabaseSync(atlasCachePath(root));
 			try {
 				expect(
 					cache.prepare("SELECT * FROM dataset_payloads").all(),
 				).toEqual([
-					{ output: "fuel-poverty", sha256: hash, payload: text },
+					{
+						output: "fuel-poverty",
+						source_sha256: sourceHash,
+						sha256: hash,
+						payload: text,
+					},
 				]);
 				cache.exec("UPDATE dataset_payloads SET payload = 'cached'");
 			} finally {

@@ -26,7 +26,7 @@ beforeAll(async () => {
 	const hash = `sha256:${createHash("sha256").update(readFileSync(canonicalPath)).digest("hex")}`;
 	const cache = new DatabaseSync(join(data, "atlas-cache.sqlite"));
 	cache.exec(
-		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT); CREATE TABLE dataset_payloads (output TEXT, sha256 TEXT)",
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT); CREATE TABLE dataset_payloads (output TEXT, source_sha256 TEXT, sha256 TEXT)",
 	);
 	cache
 		.prepare("INSERT INTO meta VALUES (?, ?)")
