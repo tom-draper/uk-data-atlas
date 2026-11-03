@@ -93,6 +93,34 @@ const yearRange = (text: unknown) => {
 
 export const LIFE_EXPECTANCY_SERIES: DeclaredDataset = {
 	type: "lifeExpectancySeries",
+	payload: {
+		parts: (labels) =>
+			labels.flatMap((label) => {
+				const years = /^(\d{4})-(\d{4})$/.exec(label);
+				return years
+					? [
+							{
+								key: years[2],
+								header: {
+									id: `lifeExpectancySeries${years[2]}`,
+									type: "lifeExpectancySeries",
+									year: Number(years[2]),
+									period: label,
+									boundaryType: "localAuthority",
+									boundaryYear: 2025,
+									coverageCountries: [
+										"GB-ENG",
+										"GB-SCT",
+										"GB-WLS",
+										"GB-NIR",
+									],
+								},
+							},
+						]
+					: [];
+			}),
+		code: "ladCode",
+	},
 	name: "ladName",
 	rebuild: {},
 	period: (_key, header: DeclaredHeader) => yearRange(header.period),
