@@ -24,13 +24,9 @@ import {
 	cachedEvidenceMeasure,
 } from "./evidence/evidenceDocumentStore";
 import { availableReconciliations } from "@uk-data-atlas/atlas-runtime/catalogue";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
-const apiRoot = apiRootOf(repositoryRoot);
 const directory = artifactDirectory(repositoryRoot);
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
@@ -39,7 +35,7 @@ const write = (id: string, data: unknown) =>
 	writeEvidenceDocument(directory, id, data);
 
 const graph = await build({
-	absWorkingDir: apiRoot,
+	absWorkingDir: repositoryRoot,
 	entryPoints: [fileURLToPath(import.meta.url)],
 	bundle: true,
 	write: false,
@@ -51,7 +47,7 @@ const graph = await build({
 const compilerHash = sha256(
 	Object.keys(graph.metafile.inputs)
 		.sort()
-		.map((path) => readFileSync(resolve(apiRoot, path), "utf8"))
+		.map((path) => readFileSync(resolve(repositoryRoot, path), "utf8"))
 		.join("\n"),
 );
 
