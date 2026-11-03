@@ -165,7 +165,7 @@ run through `pnpm check:full`.
 
 ## One data build
 
-`scripts/build-data-graph.mjs` lists every data build stage for both
+`pipeline/build-data-graph.mjs` lists every data build stage for both
 products, with its dependencies. `pnpm data:build` builds all API and website
 data in dependency order, including SQLite and PMTiles. Product targets
 are no longer supported. Stages run from the repository root.
@@ -241,11 +241,11 @@ cutoff). If it instead restores a shared file that a downstream stage had
 changed, such as `atlas.sqlite`, that downstream stage is invalidated and
 rebuilds.
 
-`scripts/build-data-code.mjs` uses esbuild's dependency metadata to trace local
+`pipeline/build-data-code.mjs` uses esbuild's dependency metadata to trace local
 imports, including workspace package sources, without executing builders.
 TypeScript configuration, the pinned data release, build scripts and the
 lockfile remain common inputs. API runtime configuration is assigned to the
-builders that read each file in `scripts/build-data-code.mjs`. The lockfile conservatively
+builders that read each file in `pipeline/build-data-code.mjs`. The lockfile conservatively
 covers transitive dependencies, peer variants and dynamically loaded workers.
 Package manifests, API documentation and unimported shared code are excluded.
 Ordinary UI files are excluded unless a builder imports them.
@@ -257,7 +257,7 @@ local imports fail the check rather than reuse a stale result.
 
 Download, catalogue registry generation, source documentation and website
 registry generation always run. Their generated code is inspected again before
-later stage keys are computed. `scripts/build-data-cache.mjs` stores the cache in
+later stage keys are computed. `pipeline/build-data-cache.mjs` stores the cache in
 `.cache/data-build/`. The scoped key format and the content-hash record format
 each invalidate old entries once.
 `--from` and `--no-cache` rerun the stages they select regardless.

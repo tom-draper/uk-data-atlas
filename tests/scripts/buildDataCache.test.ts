@@ -13,9 +13,9 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, relative } from "node:path";
 import { onTestFinished, test, vi } from "vitest";
-import { createStageCache } from "@/scripts/build-data-cache.mjs";
-import { runBuild } from "@/scripts/build-data.mjs";
-import { buildDataStages } from "@/scripts/build-data-graph.mjs";
+import { createStageCache } from "@/pipeline/build-data-cache.mjs";
+import { runBuild } from "@/pipeline/build-data.mjs";
+import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 
 const sha256 = (path: string) =>
 	createHash("sha256").update(readFileSync(path)).digest("hex");

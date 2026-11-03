@@ -3,7 +3,7 @@
  * orchestrator can group it under the stage line. Stdout stays on stdout and
  * stderr on stderr. The exit status, or the signal, is the command's own.
  *
- * Usage: node scripts/build-data-relay.mjs <command> [args...]
+ * Usage: node pipeline/build-data-relay.mjs <command> [args...]
  */
 import { spawn } from "node:child_process";
 import { createLinePrefixer } from "./build-data-output.mjs";

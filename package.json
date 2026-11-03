@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"data:verify": "tsx scripts/verify-data.mts",
-		"data:build": "node scripts/build-data.mjs",
+		"data:build": "node pipeline/build-data.mjs",
 		"docs:sources": "tsx scripts/generate-sources-readme.mts",
 		"data:download": "node scripts/data-release.mjs download",
 		"data:publish": "node scripts/data-release.mjs publish",

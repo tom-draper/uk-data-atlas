@@ -13,7 +13,7 @@ import { test, type TestContext } from "vitest";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
-const runner = join(root, "scripts/build-data.mjs");
+const runner = join(root, "pipeline/build-data.mjs");
 
 function fixture(context: TestContext) {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-build-data-"));
