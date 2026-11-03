@@ -113,6 +113,15 @@ The data-catalog stage remains necessary: it compiles the measure catalogue and
 observation contracts, then stores the observations in SQLite. It no longer
 publishes separate observation JSON files. Compatibility and export stages also
 remain necessary because they compile distinct derived metadata and downloads.
+The `statistics-vocabulary` stage reads `atlas-base.sqlite` and writes
+`data/build/statistics-vocabulary.json`. The `statistics-read-path` stage
+compares statistics rows in that database with the independently compiled
+observation tables and writes `data/build/statistics-read-path.json`. The API
+reads both generated files, so deploy them with `atlas.sqlite`. The separate
+committed vocabulary remains an unbuilt check of the reviewed dimension mapping.
+A built test compares that copy with the generated vocabulary. After reviewing
+a vocabulary change, copy the generated file to
+`services/api/config/statistics-vocabulary.json` and commit it.
 
 To deploy this migration, run `pnpm data:build` before starting the servers.
 A code build alone does not populate the new observation tables.
