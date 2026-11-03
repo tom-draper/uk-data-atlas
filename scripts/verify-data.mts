@@ -3,6 +3,7 @@ import {
 	parseBoundaryResources,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import {
+	buildLog,
 	readAtlasAssetText,
 	readAtlasPayload,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -132,4 +133,6 @@ const publicFiles = await readdir(join(root, "public/data/boundaries"), {
 });
 if (publicFiles.some((file) => /\.topojson(?:\.gz)?$/.test(file)))
 	fail("Legacy public boundary topology remains.");
-console.log("Local precompiled data matches its manifest and compiler inputs.");
+buildLog.info(
+	"Local precompiled data matches its manifest and compiler inputs",
+);

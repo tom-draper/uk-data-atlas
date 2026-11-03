@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -27,6 +32,6 @@ writeFileSync(
 execFileSync("pnpm", ["exec", "prettier", "--write", outputPath], {
 	stdio: "ignore",
 });
-console.log(
-	`Wrote query rules for ${Object.keys(rules).length} operations to ${outputPath}`,
+buildLog.info(
+	`Wrote query rules for ${formatCount(Object.keys(rules).length)} operations to ${repoPath(outputPath)}`,
 );

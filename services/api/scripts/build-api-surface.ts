@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { surfaceFingerprint } from "@uk-data-atlas/catalogue/surface-fingerprint";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -49,11 +54,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 		: [];
 	const beforeLaunch = process.argv.includes("--before-launch");
 	if (breaks.length > 0 && beforeLaunch)
-		console.warn(
+		buildLog.warn(
 			`Locking breaking changes to v1 before launch:\n${breaks.map((line) => `- ${line}`).join("\n")}`,
 		);
 	else if (breaks.length > 0) {
-		console.error(
+		buildLog.error(
 			`Refusing to lock a breaking change to v1:\n${breaks.map((line) => `- ${line}`).join("\n")}\nBefore launch, a deliberate break is locked with --before-launch.`,
 		);
 		process.exit(1);
@@ -61,11 +66,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 	const rendered = renderSurface(current);
 	const changed = !locked || renderSurface(locked) !== rendered;
 	writeFileSync(surfacePath, rendered);
-	console.log(
-		`Locked ${Object.keys(current.operations).length} v1 operations in ${surfacePath}`,
+	buildLog.info(
+		`Locked ${formatCount(Object.keys(current.operations).length)} v1 operations in ${repoPath(surfacePath)}`,
 	);
 	if (changed)
-		console.log(
+		buildLog.info(
 			`The surface changed. Add an entry to lib/docs/content/changelog.ts with surface: "${surfaceFingerprint(rendered)}".`,
 		);
 }

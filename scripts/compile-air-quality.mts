@@ -9,6 +9,7 @@
  *
  * Run via: npx tsx scripts/compile-air-quality.mts
  */
+import { buildLog, formatCount } from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
@@ -154,6 +155,6 @@ writeFileSync(join(DIRECTORY, OUTPUT), `${lines.join("\n")}\n`);
 
 const unassigned = assigned.filter((code) => !code).length;
 const empty = [...names.keys()].filter((code) => !totals.has(code));
-console.log(
-	`Wrote ${totals.size} of ${names.size} authorities from ${gridcodes.length - unassigned} of ${gridcodes.length} cells; ${unassigned} cell centres fell in no authority${empty.length ? `; no cell centre in ${empty.join(", ")}` : ""}.`,
+buildLog.info(
+	`Wrote ${formatCount(totals.size)} of ${formatCount(names.size)} authorities from ${formatCount(gridcodes.length - unassigned)} of ${formatCount(gridcodes.length)} cells, ${formatCount(unassigned)} cell centres fell in no authority${empty.length ? `, no cell centre in ${empty.join(", ")}` : ""}`,
 );
