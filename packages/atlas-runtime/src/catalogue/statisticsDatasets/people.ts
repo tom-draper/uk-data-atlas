@@ -45,6 +45,12 @@ const byAge = [
 
 export const POPULATION_WARDS: DeclaredDataset = {
 	type: "population",
+	payload: {
+		parts: yearParts("population", "ward", 2023, {
+			coverageCountries: ["GB-ENG", "GB-WLS"],
+		}),
+		arrays: ["total", "males", "females"],
+	},
 	name: "wardName",
 	parents: [
 		{
