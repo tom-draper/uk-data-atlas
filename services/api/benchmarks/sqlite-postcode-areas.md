@@ -2,8 +2,8 @@
 
 Measured on 2026-10-25 with Node 26.12.1, on the same machine and filesystem,
 with one heavy process at a time and `NODE_OPTIONS=--max-old-space-size=2560`.
-The [raw results](sqlite-postcode-areas.json) include `dbstat` bytes for every
-SQLite table and index, plus all timing samples.
+The raw results, with `dbstat` bytes for every SQLite table and index and all
+timing samples, are not kept in the repository.
 
 The main checkout's database still used the schema before PR #388. The baseline
 therefore copies that database and precompiled files with `cp --reflink=auto`,
