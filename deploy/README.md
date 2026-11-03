@@ -1,8 +1,8 @@
 # Server deployment
 
-The current host runs both applications as root from `/root/uk-data-atlas`,
-using Node 24 in `/opt/node24/bin`, pnpm 12.5.1, systemd, Nginx and Certbot.
-This documents the current root deployment requested for this server.
+Both applications run as the `uk-data-atlas` system user from
+`/srv/uk-data-atlas`, using Node 24 in `/opt/node24/bin`, pnpm 12.5.1,
+systemd, Nginx and Certbot.
 
 | Hostname                             | Upstream                 |
 | ------------------------------------ | ------------------------ |
@@ -11,13 +11,19 @@ This documents the current root deployment requested for this server.
 
 ## Build
 
-Clone the repository into `/root/uk-data-atlas` and install Node and pnpm at
-those locations before installing the units. The host needs enough disk and
+Create the service account, clone the repository into `/srv/uk-data-atlas`,
+and install Node and pnpm before installing the units. Build as an operator
+with write access, not as the service user. The checkout and data release must
+be readable by the service user and must not be writable by it.
+
+````sh
+useradd --system --user-group --home-dir /nonexistent --shell /usr/sbin/nologin uk-data-atlas
+``` The host needs enough disk and
 memory for the data download and geometry builds; these can take hours.
 
 ```sh
 export PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
-cd /root/uk-data-atlas
+cd /srv/uk-data-atlas
 pnpm install --frozen-lockfile
 umask 022
 pnpm data:build
@@ -25,7 +31,7 @@ pnpm --dir services/api build
 pnpm build
 install -d -m 0755 /var/www/uk-data-atlas
 node --import tsx scripts/link-boundary-tiles.ts /var/www/uk-data-atlas
-```
+````
 
 The data build downloads raw inputs and builds all API and website data.
 Then build the API runtime and Next.js app from the same checkout.
@@ -96,9 +102,22 @@ Next.js builds only read SQLite, so website deployment needs neither API build
 output nor a running API. Other files under `data/build/artifacts/` remain in
 place while the compiler groups move out of the API.
 
+## Migrating a root install
+
+Stop both services, create the system account as above, and copy the built tree
+with `rsync -aH /root/uk-data-atlas/ /srv/uk-data-atlas/`. Preserve the existing
+`/var/www/uk-data-atlas/boundaries/` archive generations. The checkout and that
+export must be on the same filesystem for future hard links. Make the checkout
+owned by root or a separate build account, remove service-user write access, and
+ensure directories are traversable and files readable by the service user.
+Rebuild or republish boundary links from the new checkout if needed. Install the
+updated units below, reload systemd, and start both services. `StateDirectory=`
+creates and assigns the API usage directory to the service account. Verify both
+services and the public endpoints before removing the old checkout.
+
 ## systemd
 
-The checked-in units mirror the host. Adjust paths if Node or the repository
+The checked-in units define the deployment. Adjust paths if Node or the repository
 moves. Both listeners bind to loopback. The API trusts one proxy hop (Nginx).
 
 ```sh

@@ -5,11 +5,11 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=root
-Group=root
-WorkingDirectory=/root/uk-data-atlas
+User=uk-data-atlas
+Group=uk-data-atlas
+WorkingDirectory=/srv/uk-data-atlas
 Environment=NODE_ENV=production
-Environment=ATLAS_API_ROOT=/root/uk-data-atlas/services/api
+Environment=ATLAS_API_ROOT=/srv/uk-data-atlas/services/api
 Environment=HOST=127.0.0.1
 Environment=PORT=3001
 Environment=ATLAS_WORKERS=2
@@ -22,7 +22,8 @@ RestartSec=5s
 TimeoutStopSec=20s
 NoNewPrivileges=true
 PrivateTmp=true
-ProtectSystem=full
+ProtectSystem=strict
+ProtectHome=true
 StateDirectory=uk-data-atlas/usage
 
 [Install]
