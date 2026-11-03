@@ -612,6 +612,29 @@ const referendumDay = () => periods.date("2016-06-23");
 
 export const BREXIT: DeclaredDataset = {
 	type: "brexit",
+	payload: {
+		parts: yearParts("brexit", "localAuthority", 2016, {}, ["2016"]),
+		code: "ladCode",
+		/** The answer with more votes in each area. */
+		summary: (records) => ({
+			results: Object.fromEntries(
+				Object.entries(records).map(([code, record]) => {
+					const { leave, remain } = record as {
+						leave: number;
+						remain: number;
+					};
+					return [
+						code,
+						leave > remain
+							? "leave"
+							: remain > leave
+								? "remain"
+								: null,
+					];
+				}),
+			),
+		}),
+	},
 	name: "ladName",
 	parents: [
 		{
@@ -648,6 +671,32 @@ export const BREXIT: DeclaredDataset = {
 
 export const BREXIT_CONSTITUENCY: DeclaredDataset = {
 	type: "brexitConstituency",
+	payload: {
+		parts: yearParts(
+			"brexitConstituency",
+			"constituency",
+			2015,
+			{ coverageCountries: ["GB-ENG"] },
+			["2016"],
+		),
+		code: "constituencyCode",
+		/** Leave where more than half voted to leave. */
+		summary: (records) => ({
+			results: Object.fromEntries(
+				Object.entries(records).map(([code, record]) => {
+					const { pctLeave } = record as { pctLeave: number };
+					return [
+						code,
+						pctLeave > 50
+							? "leave"
+							: pctLeave < 50
+								? "remain"
+								: null,
+					];
+				}),
+			),
+		}),
+	},
 	name: "constituencyName",
 	period: referendumDay,
 	measures: REFERENDUM,
