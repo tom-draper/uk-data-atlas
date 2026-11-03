@@ -117,23 +117,12 @@ export const createBuildLog = ({
 
 export const buildLog: BuildLog = createBuildLog();
 
-/** @deprecated Use `formatBytes`. Removed once every stage has moved. */
-export const formatKb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
-
-/** @deprecated Use `buildLog.artifact`. Removed once every stage has moved. */
-export const logArtifact = (
-	kind: ArtifactKind,
-	name: string,
-	details: readonly (string | undefined)[],
-) =>
-	console.log(
-		`  ${kind}: ${name} (${details.filter((detail) => detail !== undefined).join("; ")})`,
-	);
-
 const REPOSITORY_ROOT = decodeURIComponent(
 	new URL("../../../../", import.meta.url).pathname,
 );
 
 /** A path relative to the repository root, as build logs print them. */
 export const repoPath = (path: string) =>
-	path.startsWith(REPOSITORY_ROOT) ? path.slice(REPOSITORY_ROOT.length) : path;
+	path.startsWith(REPOSITORY_ROOT)
+		? path.slice(REPOSITORY_ROOT.length)
+		: path;
