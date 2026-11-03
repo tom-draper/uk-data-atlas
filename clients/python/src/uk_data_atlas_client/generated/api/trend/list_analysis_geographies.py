@@ -6,6 +6,9 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.analysis_geography_list_envelope import AnalysisGeographyListEnvelope
+from ...models.list_analysis_geographies_dimensions import (
+    ListAnalysisGeographiesDimensions,
+)
 from ...models.problem import Problem
 from ...types import UNSET, Response, Unset
 
@@ -13,11 +16,21 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     measure: str | Unset = UNSET,
+    dimensions: ListAnalysisGeographiesDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
 
     params["measure"] = measure
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
+
+    params["datasetId"] = dataset_id
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -64,6 +77,8 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     measure: str | Unset = UNSET,
+    dimensions: ListAnalysisGeographiesDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
 ) -> Response[AnalysisGeographyListEnvelope | Problem]:
     """List reviewed analysis geography conversions
 
@@ -74,6 +89,8 @@ def sync_detailed(
 
     Args:
         measure (str | Unset):
+        dimensions (ListAnalysisGeographiesDimensions | Unset):
+        dataset_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -85,6 +102,8 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
     )
 
     response = client.get_httpx_client().request(
@@ -98,6 +117,8 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     measure: str | Unset = UNSET,
+    dimensions: ListAnalysisGeographiesDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
 ) -> AnalysisGeographyListEnvelope | Problem | None:
     """List reviewed analysis geography conversions
 
@@ -108,6 +129,8 @@ def sync(
 
     Args:
         measure (str | Unset):
+        dimensions (ListAnalysisGeographiesDimensions | Unset):
+        dataset_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -120,6 +143,8 @@ def sync(
     return sync_detailed(
         client=client,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
     ).parsed
 
 
@@ -127,6 +152,8 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     measure: str | Unset = UNSET,
+    dimensions: ListAnalysisGeographiesDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
 ) -> Response[AnalysisGeographyListEnvelope | Problem]:
     """List reviewed analysis geography conversions
 
@@ -137,6 +164,8 @@ async def asyncio_detailed(
 
     Args:
         measure (str | Unset):
+        dimensions (ListAnalysisGeographiesDimensions | Unset):
+        dataset_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -148,6 +177,8 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -159,6 +190,8 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     measure: str | Unset = UNSET,
+    dimensions: ListAnalysisGeographiesDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
 ) -> AnalysisGeographyListEnvelope | Problem | None:
     """List reviewed analysis geography conversions
 
@@ -169,6 +202,8 @@ async def asyncio(
 
     Args:
         measure (str | Unset):
+        dimensions (ListAnalysisGeographiesDimensions | Unset):
+        dataset_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -182,5 +217,7 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             measure=measure,
+            dimensions=dimensions,
+            dataset_id=dataset_id,
         )
     ).parsed

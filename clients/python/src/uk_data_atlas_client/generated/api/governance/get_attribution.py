@@ -6,6 +6,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.envelope import Envelope
+from ...models.get_attribution_dimensions import GetAttributionDimensions
 from ...models.problem import Problem
 from ...types import UNSET, Response, Unset
 
@@ -14,6 +15,8 @@ def _get_kwargs(
     *,
     dataset: list[str] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAttributionDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     boundary_release: list[str] | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> dict[str, Any]:
@@ -31,6 +34,14 @@ def _get_kwargs(
         json_measure = measure
 
     params["measure"] = json_measure
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
+
+    params["datasetId"] = dataset_id
 
     json_boundary_release: list[str] | Unset = UNSET
     if not isinstance(boundary_release, Unset):
@@ -100,6 +111,8 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     dataset: list[str] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAttributionDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     boundary_release: list[str] | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> Response[Envelope | Problem]:
@@ -119,6 +132,8 @@ def sync_detailed(
     Args:
         dataset (list[str] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAttributionDimensions | Unset):
+        dataset_id (str | Unset):
         boundary_release (list[str] | Unset):
         crosswalk (list[str] | Unset):
 
@@ -133,6 +148,8 @@ def sync_detailed(
     kwargs = _get_kwargs(
         dataset=dataset,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         boundary_release=boundary_release,
         crosswalk=crosswalk,
     )
@@ -149,6 +166,8 @@ def sync(
     client: AuthenticatedClient | Client,
     dataset: list[str] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAttributionDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     boundary_release: list[str] | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> Envelope | Problem | None:
@@ -168,6 +187,8 @@ def sync(
     Args:
         dataset (list[str] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAttributionDimensions | Unset):
+        dataset_id (str | Unset):
         boundary_release (list[str] | Unset):
         crosswalk (list[str] | Unset):
 
@@ -183,6 +204,8 @@ def sync(
         client=client,
         dataset=dataset,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         boundary_release=boundary_release,
         crosswalk=crosswalk,
     ).parsed
@@ -193,6 +216,8 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     dataset: list[str] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAttributionDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     boundary_release: list[str] | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> Response[Envelope | Problem]:
@@ -212,6 +237,8 @@ async def asyncio_detailed(
     Args:
         dataset (list[str] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAttributionDimensions | Unset):
+        dataset_id (str | Unset):
         boundary_release (list[str] | Unset):
         crosswalk (list[str] | Unset):
 
@@ -226,6 +253,8 @@ async def asyncio_detailed(
     kwargs = _get_kwargs(
         dataset=dataset,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         boundary_release=boundary_release,
         crosswalk=crosswalk,
     )
@@ -240,6 +269,8 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     dataset: list[str] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAttributionDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     boundary_release: list[str] | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> Envelope | Problem | None:
@@ -259,6 +290,8 @@ async def asyncio(
     Args:
         dataset (list[str] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAttributionDimensions | Unset):
+        dataset_id (str | Unset):
         boundary_release (list[str] | Unset):
         crosswalk (list[str] | Unset):
 
@@ -275,6 +308,8 @@ async def asyncio(
             client=client,
             dataset=dataset,
             measure=measure,
+            dimensions=dimensions,
+            dataset_id=dataset_id,
             boundary_release=boundary_release,
             crosswalk=crosswalk,
         )

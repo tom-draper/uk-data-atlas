@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    Self,
     TypeVar,
     cast,
 )
@@ -71,10 +72,10 @@ class ResolveBoundaryReleaseForDateResponse200Data:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.resolve_boundary_release_for_date_response_200_data_next_type_0 import (
-            ResolveBoundaryReleaseForDateResponse200DataNextType0,  # noqa: PLC0415
+            ResolveBoundaryReleaseForDateResponse200DataNextType0,
         )
         from ..models.resolve_boundary_release_for_date_response_200_data_previous_type_0 import (
-            ResolveBoundaryReleaseForDateResponse200DataPreviousType0,  # noqa: PLC0415
+            ResolveBoundaryReleaseForDateResponse200DataPreviousType0,
         )
 
         basis = self.basis
@@ -148,21 +149,21 @@ class ResolveBoundaryReleaseForDateResponse200Data:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.resolve_boundary_release_for_date_response_200_data_next_type_0 import (
-            ResolveBoundaryReleaseForDateResponse200DataNextType0,  # noqa: PLC0415
+            ResolveBoundaryReleaseForDateResponse200DataNextType0,
         )
         from ..models.resolve_boundary_release_for_date_response_200_data_not_covering_item import (
-            ResolveBoundaryReleaseForDateResponse200DataNotCoveringItem,  # noqa: PLC0415
+            ResolveBoundaryReleaseForDateResponse200DataNotCoveringItem,
         )
         from ..models.resolve_boundary_release_for_date_response_200_data_previous_type_0 import (
-            ResolveBoundaryReleaseForDateResponse200DataPreviousType0,  # noqa: PLC0415
+            ResolveBoundaryReleaseForDateResponse200DataPreviousType0,
         )
         from ..models.resolve_boundary_release_for_date_response_200_data_selected import (
-            ResolveBoundaryReleaseForDateResponse200DataSelected,  # noqa: PLC0415
+            ResolveBoundaryReleaseForDateResponse200DataSelected,
         )
         from ..models.resolve_boundary_release_for_date_response_200_data_set_aside_item import (
-            ResolveBoundaryReleaseForDateResponse200DataSetAsideItem,  # noqa: PLC0415
+            ResolveBoundaryReleaseForDateResponse200DataSetAsideItem,
         )
 
         d = dict(src_dict)

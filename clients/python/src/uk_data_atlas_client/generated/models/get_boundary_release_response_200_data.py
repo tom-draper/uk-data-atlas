@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -76,10 +76,10 @@ class GetBoundaryReleaseResponse200Data:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.get_boundary_release_response_200_data_downloads_type_0 import (
-            GetBoundaryReleaseResponse200DataDownloadsType0,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDownloadsType0,
         )
         from ..models.get_boundary_release_response_200_data_downloads_type_1 import (
-            GetBoundaryReleaseResponse200DataDownloadsType1,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDownloadsType1,
         )
 
         coverage = self.coverage.to_dict()
@@ -87,9 +87,9 @@ class GetBoundaryReleaseResponse200Data:
         documents = self.documents.to_dict()
 
         downloads: dict[str, Any]
-        if isinstance(self.downloads, GetBoundaryReleaseResponse200DataDownloadsType0):
-            downloads = self.downloads.to_dict()
-        elif isinstance(
+        if isinstance(
+            self.downloads, GetBoundaryReleaseResponse200DataDownloadsType0
+        ) or isinstance(
             self.downloads, GetBoundaryReleaseResponse200DataDownloadsType1
         ):
             downloads = self.downloads.to_dict()
@@ -138,27 +138,27 @@ class GetBoundaryReleaseResponse200Data:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.get_boundary_release_response_200_data_coverage import (
-            GetBoundaryReleaseResponse200DataCoverage,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataCoverage,
         )
         from ..models.get_boundary_release_response_200_data_deprecation import (
-            GetBoundaryReleaseResponse200DataDeprecation,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDeprecation,
         )
         from ..models.get_boundary_release_response_200_data_documents import (
-            GetBoundaryReleaseResponse200DataDocuments,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDocuments,
         )
         from ..models.get_boundary_release_response_200_data_downloads_type_0 import (
-            GetBoundaryReleaseResponse200DataDownloadsType0,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDownloadsType0,
         )
         from ..models.get_boundary_release_response_200_data_downloads_type_1 import (
-            GetBoundaryReleaseResponse200DataDownloadsType1,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDownloadsType1,
         )
         from ..models.get_boundary_release_response_200_data_downloads_type_2 import (
-            GetBoundaryReleaseResponse200DataDownloadsType2,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataDownloadsType2,
         )
         from ..models.get_boundary_release_response_200_data_source import (
-            GetBoundaryReleaseResponse200DataSource,  # noqa: PLC0415
+            GetBoundaryReleaseResponse200DataSource,
         )
 
         d = dict(src_dict)

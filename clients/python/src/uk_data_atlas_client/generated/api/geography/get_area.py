@@ -7,6 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.area_envelope import AreaEnvelope
+from ...models.get_area_dimensions import GetAreaDimensions
 from ...models.get_area_include_item import GetAreaIncludeItem
 from ...models.problem import Problem
 from ...types import UNSET, Response, Unset
@@ -19,6 +20,8 @@ def _get_kwargs(
     *,
     include: list[GetAreaIncludeItem] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAreaDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> dict[str, Any]:
 
@@ -38,6 +41,14 @@ def _get_kwargs(
         json_measure = measure
 
     params["measure"] = json_measure
+
+    json_dimensions: dict[str, Any] | Unset = UNSET
+    if not isinstance(dimensions, Unset):
+        json_dimensions = dimensions.to_dict()
+    if not isinstance(json_dimensions, Unset):
+        params.update(json_dimensions)
+
+    params["datasetId"] = dataset_id
 
     json_crosswalk: list[str] | Unset = UNSET
     if not isinstance(crosswalk, Unset):
@@ -108,6 +119,8 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     include: list[GetAreaIncludeItem] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAreaDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> Response[AreaEnvelope | Problem]:
     """Get one compiled area by its full identity
@@ -176,6 +189,8 @@ def sync_detailed(
         code (str):
         include (list[GetAreaIncludeItem] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAreaDimensions | Unset):
+        dataset_id (str | Unset):
         crosswalk (list[str] | Unset):
 
     Raises:
@@ -192,6 +207,8 @@ def sync_detailed(
         code=code,
         include=include,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         crosswalk=crosswalk,
     )
 
@@ -210,6 +227,8 @@ def sync(
     client: AuthenticatedClient | Client,
     include: list[GetAreaIncludeItem] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAreaDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> AreaEnvelope | Problem | None:
     """Get one compiled area by its full identity
@@ -278,6 +297,8 @@ def sync(
         code (str):
         include (list[GetAreaIncludeItem] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAreaDimensions | Unset):
+        dataset_id (str | Unset):
         crosswalk (list[str] | Unset):
 
     Raises:
@@ -295,6 +316,8 @@ def sync(
         client=client,
         include=include,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         crosswalk=crosswalk,
     ).parsed
 
@@ -307,6 +330,8 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     include: list[GetAreaIncludeItem] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAreaDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> Response[AreaEnvelope | Problem]:
     """Get one compiled area by its full identity
@@ -375,6 +400,8 @@ async def asyncio_detailed(
         code (str):
         include (list[GetAreaIncludeItem] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAreaDimensions | Unset):
+        dataset_id (str | Unset):
         crosswalk (list[str] | Unset):
 
     Raises:
@@ -391,6 +418,8 @@ async def asyncio_detailed(
         code=code,
         include=include,
         measure=measure,
+        dimensions=dimensions,
+        dataset_id=dataset_id,
         crosswalk=crosswalk,
     )
 
@@ -407,6 +436,8 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     include: list[GetAreaIncludeItem] | Unset = UNSET,
     measure: list[str] | Unset = UNSET,
+    dimensions: GetAreaDimensions | Unset = UNSET,
+    dataset_id: str | Unset = UNSET,
     crosswalk: list[str] | Unset = UNSET,
 ) -> AreaEnvelope | Problem | None:
     """Get one compiled area by its full identity
@@ -475,6 +506,8 @@ async def asyncio(
         code (str):
         include (list[GetAreaIncludeItem] | Unset):
         measure (list[str] | Unset):
+        dimensions (GetAreaDimensions | Unset):
+        dataset_id (str | Unset):
         crosswalk (list[str] | Unset):
 
     Raises:
@@ -493,6 +526,8 @@ async def asyncio(
             client=client,
             include=include,
             measure=measure,
+            dimensions=dimensions,
+            dataset_id=dataset_id,
             crosswalk=crosswalk,
         )
     ).parsed

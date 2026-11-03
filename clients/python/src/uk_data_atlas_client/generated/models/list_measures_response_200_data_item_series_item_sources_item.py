@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -67,12 +67,12 @@ class ListMeasuresResponse200DataItemSeriesItemSourcesItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.list_measures_response_200_data_item_series_item_sources_item_coverage import (
-            ListMeasuresResponse200DataItemSeriesItemSourcesItemCoverage,  # noqa: PLC0415
+            ListMeasuresResponse200DataItemSeriesItemSourcesItemCoverage,
         )
         from ..models.list_measures_response_200_data_item_series_item_sources_item_source_geography import (
-            ListMeasuresResponse200DataItemSeriesItemSourcesItemSourceGeography,  # noqa: PLC0415
+            ListMeasuresResponse200DataItemSeriesItemSourcesItemSourceGeography,
         )
 
         d = dict(src_dict)

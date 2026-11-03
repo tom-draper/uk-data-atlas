@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    Self,
     TypeVar,
     cast,
 )
@@ -63,12 +64,12 @@ class FindSimilarAreasResponse200:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.find_similar_areas_response_200_data import (
-            FindSimilarAreasResponse200Data,  # noqa: PLC0415
+            FindSimilarAreasResponse200Data,
         )
         from ..models.find_similar_areas_response_200_meta import (
-            FindSimilarAreasResponse200Meta,  # noqa: PLC0415
+            FindSimilarAreasResponse200Meta,
         )
 
         d = dict(src_dict)

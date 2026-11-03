@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -80,15 +80,15 @@ class LookupManifestLookupsItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
         from ..models.lookup_manifest_lookups_item_columns_item import (
-            LookupManifestLookupsItemColumnsItem,  # noqa: PLC0415
+            LookupManifestLookupsItemColumnsItem,
         )
         from ..models.lookup_manifest_lookups_item_formats import (
-            LookupManifestLookupsItemFormats,  # noqa: PLC0415
+            LookupManifestLookupsItemFormats,
         )
         from ..models.lookup_manifest_lookups_item_source import (
-            LookupManifestLookupsItemSource,  # noqa: PLC0415
+            LookupManifestLookupsItemSource,
         )
 
         d = dict(src_dict)
