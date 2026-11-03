@@ -47,11 +47,6 @@ const measurePosition = (segments: string[]) => {
 /** Operations that answer several series at once, one entry per series. */
 const BREAKDOWN_OPERATIONS = new Set(["value", "series"]);
 
-export type ResolvedMembers = Record<
-	string,
-	{ member: string; label: string; defaulted?: true }
->;
-
 /** What a resolved request says about how it was read. */
 export type DimensionReading = {
 	measure: DimensionalMeasure;
