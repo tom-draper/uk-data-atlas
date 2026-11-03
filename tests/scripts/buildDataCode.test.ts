@@ -253,6 +253,21 @@ test("production builders resolve without UI code and include declared workers a
 		);
 		inputs.set(stage.name, code);
 	}
+	for (const name of [
+		"buildPlaceProfiles",
+		"placeProfileTimeline",
+		"namedPlaceProfiles",
+		"placeProfileRefs",
+		"placeProfileDatasets",
+		"placeProfileGeometry",
+	]) {
+		assert.ok(
+			inputs
+				.get("atlas-pages")!
+				.includes(`pipeline/src/places/${name}.ts`),
+			name,
+		);
+	}
 	for (const stage of [
 		"api-datasets",
 		"documents",
@@ -297,6 +312,8 @@ test("production builders resolve without UI code and include declared workers a
 		"relationships/populationOverlap",
 		"relationships/geometricContainment",
 		"relationships/extentContinuity",
+		"relationships/propertyCrosswalk",
+		"relationships/crosswalkInventory",
 	]) {
 		assert.ok(
 			inputs
@@ -315,6 +332,18 @@ test("production builders resolve without UI code and include declared workers a
 			.get("website-datasets")!
 			.includes("pipeline/src/compile-boundaries.mts"),
 	);
+	for (const name of [
+		"boundaryReleaseSources",
+		"boundaryBuildFiles",
+		"correctBoundarySource",
+	]) {
+		assert.ok(
+			inputs
+				.get("website-datasets")!
+				.includes(`pipeline/src/geographies/${name}.ts`),
+			name,
+		);
+	}
 	assert.ok(
 		!inputs
 			.get("website-datasets")!
