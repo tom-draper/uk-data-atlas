@@ -119,6 +119,49 @@ const HEALTHY_LIFE_EXPECTANCY = measure(
 
 export const LIFE_EXPECTANCY_LATEST: DeclaredDataset = {
 	type: "lifeExpectancy",
+	payload: {
+		parts: () => [
+			{
+				key: "le",
+				header: {
+					id: "le",
+					year: 2024,
+					type: "lifeExpectancy",
+					boundaryType: "localAuthority",
+					boundaryYear: 2023,
+					dataPeriod: "2022–2024",
+					label: "Life Expectancy",
+					coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
+					metadata: {
+						source: "Office for National Statistics. Life expectancy for local areas of the UK: 2022 to 2024.",
+						notes: [
+							"Life expectancy at birth. UK local authorities.",
+						],
+					},
+				},
+			},
+			{
+				key: "hle",
+				header: {
+					id: "hle",
+					year: 2024,
+					type: "lifeExpectancy",
+					boundaryType: "localAuthority",
+					boundaryYear: 2023,
+					dataPeriod: "2022–2024",
+					label: "Healthy Life Expectancy",
+					coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
+					metadata: {
+						source: "Office for National Statistics. Healthy life expectancy, UK: 2022 to 2024.",
+						notes: [
+							"Healthy life expectancy at birth. UK local authorities.",
+						],
+					},
+				},
+			},
+		],
+		code: "ladCode",
+	},
 	name: "ladName",
 	rebuild: {},
 	period: (_key, header) => yearRange(header.dataPeriod),
