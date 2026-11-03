@@ -1,7 +1,7 @@
 import {
 	assertObservationCatalogue,
 	apiRootOf,
-	configDirectory,
+	statisticsReadPathPath,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -41,10 +41,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		field: NonNullable<CompiledMeasure["statisticsField"]>;
 	}>;
 	const readPath = JSON.parse(
-		readFileSync(
-			join(configDirectory(repositoryRoot), "statistics-read-path.json"),
-			"utf8",
-		),
+		readFileSync(statisticsReadPathPath(apiRootOf(repositoryRoot)), "utf8"),
 	) as StatisticsReadPath;
 	const { ids } = readMeasureDimensionsConfig(
 		apiRootOf(repositoryRoot),

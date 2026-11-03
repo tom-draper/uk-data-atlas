@@ -32,3 +32,16 @@ export const atlasDatabasePath = (apiRoot: string) =>
 /** The reviewed configuration the compilers read, kept with the API project. */
 export const configDirectory = (repositoryRoot: string) =>
 	join(apiRootOf(repositoryRoot), "config");
+
+/** Generated statistics metadata, given the API project directory. */
+export const statisticsVocabularyPath = (apiRoot: string) =>
+	join(
+		buildDirectory(repositoryRootOf(apiRoot)),
+		"statistics-vocabulary.json",
+	);
+
+export const statisticsReadPathPath = (apiRoot: string) =>
+	join(
+		buildDirectory(repositoryRootOf(apiRoot)),
+		"statistics-read-path.json",
+	);

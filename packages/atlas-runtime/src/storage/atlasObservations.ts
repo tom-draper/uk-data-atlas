@@ -296,7 +296,7 @@ export function readObservationText(
 				.get(id)?.payloadHash;
 			if (typeof stored === "string" && sha256(text) !== stored)
 				throw new Error(
-					`Statistics rows no longer rebuild ${id}. Run pnpm --dir services/api generate:statistics-read-path.`,
+					`Statistics rows no longer rebuild ${id}. Run pnpm data:build --only statistics-read-path.`,
 				);
 			return text;
 		}

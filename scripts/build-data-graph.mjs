@@ -232,8 +232,23 @@ const apiStages = [
 		},
 	),
 	stage(
+		"statistics-vocabulary",
+		["atlas-sqlite"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-statistics-vocabulary.ts",
+		],
+		{
+			requiredOutputs: ["data/build/statistics-vocabulary.json"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
+	stage(
 		"data-catalog",
-		["datasets"],
+		["datasets", "statistics-vocabulary"],
 		["--dir", "../..", "exec", "tsx", "pipeline/src/build-data-catalog.ts"],
 		{
 			requiredOutputs: [
@@ -272,8 +287,27 @@ const apiStages = [
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
 	stage(
+		"statistics-read-path",
+		["atlas-sqlite", "data-catalog", "statistics-vocabulary"],
+		[
+			"--dir",
+			"../..",
+			"exec",
+			"tsx",
+			"pipeline/src/build-statistics-read-path.ts",
+		],
+		{
+			requiredOutputs: ["data/build/statistics-read-path.json"],
+			codeInputs: [
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+				"services/api/config/measure-dimensions.json",
+			],
+		},
+	),
+	stage(
 		"export-manifest",
-		["data-catalog", "atlas-sqlite"],
+		["data-catalog", "atlas-sqlite", "statistics-read-path"],
 		[
 			"--dir",
 			"../..",
@@ -282,11 +316,7 @@ const apiStages = [
 			"pipeline/src/build-export-manifest.ts",
 		],
 		{
-			codeInputs: [
-				"pipeline/package.json",
-				"pipeline/tsconfig.json",
-				"services/api/config/statistics-read-path.json",
-			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(

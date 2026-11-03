@@ -31,7 +31,7 @@ export type DimensionDefinition = {
 
 /**
  * The measures and dimensions the statistics tables hold, written by
- * `pnpm --dir services/api generate:statistics-vocabulary` from `atlas.sqlite`.
+ * `pnpm data:build --only statistics-vocabulary` from `atlas.sqlite`.
  */
 export type StatisticsVocabulary = {
 	schemaVersion: 1;

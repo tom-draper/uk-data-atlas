@@ -191,7 +191,22 @@ test("atlas assembly depends on each declared component output", () => {
 			"data/build/atlas-base.sqlite",
 		),
 	);
-	assert.deepEqual(stage("data-catalog").dependencies, ["datasets"]);
+	assert.deepEqual(stage("data-catalog").dependencies, [
+		"datasets",
+		"statistics-vocabulary",
+	]);
+	assert.ok(
+		stage("statistics-vocabulary").dependencies.includes("atlas-sqlite"),
+	);
+	assert.ok(
+		stage("statistics-read-path").dependencies.includes("data-catalog"),
+	);
+	assert.ok(
+		stage("statistics-read-path").dependencies.includes("atlas-sqlite"),
+	);
+	assert.ok(
+		stage("export-manifest").dependencies.includes("statistics-read-path"),
+	);
 	assert.deepEqual(stage("postcode-index").dependencies, ["sources"]);
 	assert.ok(
 		!stage("geography-catalogues").dependencies.includes("atlas-sqlite"),

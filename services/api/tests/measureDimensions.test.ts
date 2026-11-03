@@ -8,7 +8,9 @@ import {
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
 } from "@uk-data-atlas/measures";
-import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -218,8 +220,13 @@ test("names the one member every other is part of as the total", () => {
 });
 
 test("the checked-in mapping is consistent with the checked-in vocabulary", () => {
-	const { config: mapping, vocabulary: held } =
-		readMeasureDimensionsConfig(apiRoot);
+	const mapping = readMeasureDimensionsMapping(apiRoot);
+	const held = JSON.parse(
+		readFileSync(
+			join(apiRoot, "config/statistics-vocabulary.json"),
+			"utf8",
+		),
+	) as StatisticsVocabulary;
 	const ids = Object.fromEntries(
 		Object.entries(mapping.ids).map(([id, entry]) => [
 			id,
