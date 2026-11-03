@@ -6,6 +6,20 @@ import {
 	type StatisticsSelection,
 } from "./statisticsExport";
 
+/**
+ * The selector options this binder follows. A selector using any other
+ * (a ratio, zeros for absent rows, served codes) serves values its series
+ * do not hold as they are, so it is not bound here.
+ */
+const PLAIN_SELECTOR = new Set([
+	"datasetId",
+	"measure",
+	"dimensions",
+	"geography",
+	"areasIn",
+	"sum",
+]);
+
 /** Use the reviewed exact read path for newly migrated catalogue partitions. */
 export function bindReviewedStatistics(
 	database: DatabaseSync,
@@ -18,6 +32,7 @@ export function bindReviewedStatistics(
 			reviewed.statistics[observationArtifactName(measure.id, source)];
 		if (
 			!selector ||
+			Object.keys(selector).some((key) => !PLAIN_SELECTOR.has(key)) ||
 			selector.datasetId !== source.datasetId ||
 			(selector.sum?.length && measure.id !== "population")
 		)

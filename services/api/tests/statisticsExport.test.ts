@@ -112,6 +112,17 @@ test("uses reviewed source mappings only when each requested period exists", () 
 		} as unknown as Measure;
 		const reviewed = statisticsReadPath as StatisticsReadPath;
 		assert.equal(bindReviewedStatistics(db, measure, reviewed)?.length, 1);
+		// A selector that serves values its series do not hold as they are.
+		const zeroed = {
+			...reviewed,
+			statistics: Object.fromEntries(
+				Object.entries(reviewed.statistics).map(([name, selector]) => [
+					name,
+					{ ...selector, absentAsZero: true },
+				]),
+			),
+		} as StatisticsReadPath;
+		assert.equal(bindReviewedStatistics(db, measure, zeroed), undefined);
 		measure.sources[0]!.periods.push("2022");
 		assert.equal(bindReviewedStatistics(db, measure, reviewed), undefined);
 	} finally {
