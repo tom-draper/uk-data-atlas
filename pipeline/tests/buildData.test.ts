@@ -72,7 +72,9 @@ function stages(result: ReturnType<ReturnType<typeof fixture>["run"]>) {
 	return result.stdout
 		.trim()
 		.split("\n")
-		.filter((line) => /^[a-z][a-z-]*: /.test(line))
+		.filter((line) =>
+			/^[a-z][a-z-]*: (running|would run|unchanged)/.test(line),
+		)
 		.map((line) => line.split(":")[0]);
 }
 
@@ -246,7 +248,7 @@ test("a plan selects the same stages without executing commands", (context) => {
 	]);
 	assert.match(
 		result.stdout,
-		/documents: .*\[depends on: atlas-sqlite, atlas-release-initial, operations, geometry-store\]/,
+		/documents: would run\n.*\n {2}Depends on: atlas-sqlite, atlas-release-initial, operations, geometry-store\n/,
 	);
 	assert.deepEqual(build.commands(), []);
 	assert.deepEqual(stages(build.run(args)), [
@@ -283,9 +285,10 @@ test("the first failing stage returns its exit code and stops the build", (conte
 	);
 	assert.equal(result.status, 23);
 	assert.match(
-		result.stdout,
-		/Stage relationship-paths failed with exit code 23/,
+		result.stderr,
+		/^Error: relationship-paths failed with exit code 23 after \S+\. Build stopped$/m,
 	);
+	assert.match(result.stdout, /^Data build failed after /m);
 	assert.equal(build.commands().length, 5);
 	assert.deepEqual(build.commands().at(-1), [
 		"exec",
