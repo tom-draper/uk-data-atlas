@@ -196,7 +196,7 @@ export const buildPostcodeAreas = async (
 			repositoryRoot,
 			"data/build/postcode-index.sqlite",
 		);
-		const postcodeIndex = readPostcodeIndex(apiRoot, databasePath);
+		const postcodeIndex = readPostcodeIndex(repositoryRoot, databasePath);
 		const postcodeArtifact = postcodeIndex.artifact;
 		const count = postcodeArtifact.counts.postcodes;
 		const longitudes = new SharedArrayBuffer(count * 8);
@@ -206,7 +206,7 @@ export const buildPostcodeAreas = async (
 		let at = 0;
 		for (const entry of postcodeArtifact.shards) {
 			const shard = JSON.parse(
-				readSqlitePostcodeShard(apiRoot, entry, databasePath),
+				readSqlitePostcodeShard(repositoryRoot, entry, databasePath),
 			) as PostcodeShard;
 			for (const postcode of shard.postcodes) {
 				const found = postcodeIndex.lookup(

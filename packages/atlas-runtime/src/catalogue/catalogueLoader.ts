@@ -282,7 +282,7 @@ export const readAtlasCatalogues = (
 		createLocationProjectionStore(apiRoot, locationProjectionInventory),
 	);
 	const postcodeIndex = stage("postcode-index", () =>
-		readPostcodeIndex(apiRoot),
+		readPostcodeIndex(repositoryRootOf(apiRoot)),
 	);
 	const geometrySources = stage("geometry-sources", () =>
 		readGeometrySources(repositoryRootOf(apiRoot)),

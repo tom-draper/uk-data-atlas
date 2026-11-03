@@ -97,11 +97,11 @@ test("SQLite retains every postcode field, exact shard bytes, positions and rout
 		existsSync(join(artifactRoot(apiRoot), "postcode-index.json")),
 		false,
 	);
-	const after = readPostcodeIndex(apiRoot);
+	const after = readPostcodeIndex(root);
 	assert.deepEqual(after.artifact, before.artifact);
 	for (const shard of before.artifact.shards)
 		assert.equal(
-			readSqlitePostcodeShard(apiRoot, shard),
+			readSqlitePostcodeShard(root, shard),
 			before.texts.get(shard.path),
 		);
 	for (const query of [
@@ -156,8 +156,8 @@ test("replacement removes old rows and corrupt shards preserve published data an
 	storePostcodeIndex(root, replacement.artifact, (path) =>
 		replacement.texts.get(path)!,
 	);
-	assert.equal(readPostcodeIndex(apiRoot).position("M11AE"), undefined);
-	assert.deepEqual(readPostcodeIndex(apiRoot).position("B11AA"), {
+	assert.equal(readPostcodeIndex(root).position("M11AE"), undefined);
+	assert.deepEqual(readPostcodeIndex(root).position("B11AA"), {
 		district: "B1",
 		at: 0,
 	});
@@ -191,7 +191,7 @@ test("corrupt stored records are refused and missing SQLite never falls back to 
 	database.exec("UPDATE postcodes SET introduced = 199901");
 	database.close();
 	assert.throws(
-		() => readSqlitePostcodeShard(apiRoot, before.artifact.shards[0]!),
+		() => readSqlitePostcodeShard(root, before.artifact.shards[0]!),
 		/Invalid SQLite postcode district/,
 	);
 	writeFileSync(
@@ -199,7 +199,7 @@ test("corrupt stored records are refused and missing SQLite never falls back to 
 		JSON.stringify(before.artifact),
 	);
 	rmSync(path);
-	assert.throws(() => readPostcodeIndex(apiRoot));
+	assert.throws(() => readPostcodeIndex(root));
 });
 
 test("reassembling an unchanged component repairs corrupt postcode fields", (t) => {
@@ -213,7 +213,7 @@ test("reassembling an unchanged component repairs corrupt postcode fields", (t) 
 	database.close();
 	assembleAtlas(root);
 	assert.equal(
-		readSqlitePostcodeShard(apiRoot, before.artifact.shards[0]!),
+		readSqlitePostcodeShard(root, before.artifact.shards[0]!),
 		before.texts.get(before.artifact.shards[0]!.path),
 	);
 });
@@ -256,7 +256,7 @@ test("the source builder reads filtered gzip rows into the postcode component", 
 	assembleAtlas(root);
 	assert.equal(result.artifact.counts.postcodes, 6);
 	assert.equal(
-		readPostcodeIndex(apiRoot).artifact.contentHash,
+		readPostcodeIndex(root).artifact.contentHash,
 		result.artifact.contentHash,
 	);
 	assert.equal(existsSync(join(artifactRoot(apiRoot), "postcodes")), false);

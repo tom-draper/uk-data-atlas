@@ -97,7 +97,7 @@ try {
 		};
 		const old = `${JSON.stringify(shard)}\n`;
 		assert.equal(sha256(old), entry.contentHash);
-		if (old !== readSqlitePostcodeShard(apiRoot, entry))
+		if (old !== readSqlitePostcodeShard(resolve(apiRoot, "../.."), entry))
 			postcodeMismatches++;
 	}
 	const largest = index.shards.reduce((a, b) =>

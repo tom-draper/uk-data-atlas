@@ -13,7 +13,7 @@ import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-type
 
 export function validateShards(root: string) {
 	const api = apiRootOf(root);
-	const index = readSqlitePostcodeIndexArtifact(api);
+	const index = readSqlitePostcodeIndexArtifact(root);
 	const areas = readSqlitePostcodeAreas(api);
 	if (
 		areas.postcodeIndex !== index.contentHash ||
@@ -25,7 +25,7 @@ export function validateShards(root: string) {
 		if (!areaEntry || areaEntry.district !== entry.district)
 			throw new Error(`Shard order differs at ${entry.district}`);
 		const shard = JSON.parse(
-			readSqlitePostcodeShard(api, entry),
+			readSqlitePostcodeShard(root, entry),
 		) as PostcodeShard;
 		const areaShard = JSON.parse(
 			readSqlitePostcodeAreaShard(api, areaEntry.path),
