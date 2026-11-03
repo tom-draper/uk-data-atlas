@@ -75,7 +75,7 @@ export const readPlaceIndex = (
 	areaInventory: AreaInventory,
 	namedLocations: NamedLocationInventory,
 ): PlaceIndex => {
-	const path = requireAtlasCache(apiRoot, "place-index");
+	const path = requireAtlasCache(repositoryRootOf(apiRoot), "place-index");
 	try {
 		return openPlaceIndexDatabase(
 			path,
@@ -136,7 +136,7 @@ export const readPostcodeCounts = (
 	postcodeAreas: PostcodeAreaIndex,
 ): PostcodeCountsIndex => {
 	const path = atlasDatabasePath(repositoryRootOf(apiRoot));
-	const artifact = readSqlitePostcodeCounts(apiRoot);
+	const artifact = readSqlitePostcodeCounts(repositoryRootOf(apiRoot));
 	const mismatch = postcodeCountsMismatch(
 		artifact,
 		postcodeIndex.artifact,
@@ -160,7 +160,7 @@ export const readAreaSearchIndex = (
 	apiRoot: string,
 	areaInventory: AreaInventory,
 ): AreaSearchIndex => {
-	const path = requireAtlasCache(apiRoot, "area-search");
+	const path = requireAtlasCache(repositoryRootOf(apiRoot), "area-search");
 	try {
 		return openAreaSearchIndexDatabase(path, areaInventory.contentHash);
 	} catch (error) {

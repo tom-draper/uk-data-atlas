@@ -303,7 +303,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 	);
 	const built = await buildDuckdbPostcodeCounts(root);
 	assert.equal(built.countedAreas, 2);
-	assert.deepEqual(readSqlitePostcodeCounts(apiRoot), built.artifact);
+	assert.deepEqual(readSqlitePostcodeCounts(root), built.artifact);
 	assert.equal(
 		existsSync(join(artifactRoot(apiRoot), "postcode-counts.json")),
 		false,
