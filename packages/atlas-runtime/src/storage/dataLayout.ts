@@ -27,7 +27,11 @@ export const buildDirectory = (repositoryRoot: string) =>
 
 /** The release SQLite database, given the API project directory. */
 export const atlasDatabasePath = (apiRoot: string) =>
-	join(buildDirectory(repositoryRootOf(apiRoot)), "atlas.sqlite");
+	repositoryAtlasDatabasePath(repositoryRootOf(apiRoot));
+
+/** The release SQLite database, given the repository root. */
+export const repositoryAtlasDatabasePath = (repositoryRoot: string) =>
+	join(buildDirectory(repositoryRoot), "atlas.sqlite");
 
 /** The reviewed configuration the compilers read, kept with the API project. */
 export const configDirectory = (repositoryRoot: string) =>
