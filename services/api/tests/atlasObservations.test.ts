@@ -27,6 +27,7 @@ import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue"
 import {
 	readSourceObservations,
 	observationTableOf,
+	observationArtifactName,
 	type MeasureTableArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileExportManifest } from "./pipelineFixtures";
@@ -235,7 +236,15 @@ test("compatibility and exports consume SQLite with unchanged hashes, bytes and 
 			eager,
 		),
 	);
-	const exports = compileExportManifest(publicDirectory, catalog, path);
+	const exports = compileExportManifest(
+		publicDirectory,
+		catalog,
+		(measureId, source) =>
+			readObservationText(
+				path,
+				observationArtifactName(measureId, source),
+			),
+	);
 	for (const entry of exports.exports) {
 		const text = entries().find(([id]) => id === entry.artifact)![1];
 		assert.equal(entry.bytes, Buffer.byteLength(text));
@@ -328,7 +337,16 @@ test("rejects stale catalogues, missing SQLite rows and corrupted bytes without 
 		/Corrupt SQLite measure observations/,
 	);
 	assert.throws(
-		() => compileExportManifest(publicDirectory, catalog, path),
+		() =>
+			compileExportManifest(
+				publicDirectory,
+				catalog,
+				(measureId, source) =>
+					readObservationText(
+						path,
+						observationArtifactName(measureId, source),
+					),
+			),
 		/Corrupt SQLite measure observations/,
 	);
 	mutate(
@@ -363,7 +381,15 @@ test("live lazy views reject a newly published generation after cache eviction",
 test("JSON downloads return the stored bytes and refuse mismatched manifest bytes", (t) => {
 	const { root, apiRoot, publicDirectory, path } = fixture(t);
 	storeObservations(root, catalog, entries());
-	const manifest = compileExportManifest(publicDirectory, catalog, path);
+	const manifest = compileExportManifest(
+		publicDirectory,
+		catalog,
+		(measureId, source) =>
+			readObservationText(
+				path,
+				observationArtifactName(measureId, source),
+			),
+	);
 	const observations = readMeasureObservations(root, catalog);
 	const context = testContext({
 		dataCatalog: catalog,
