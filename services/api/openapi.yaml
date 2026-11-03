@@ -4171,6 +4171,13 @@ paths:
           in: query
           required: false
           schema: { type: string }
+          description: >
+            A measure id from `GET /v1/measures`, or one of its aliases, with
+            optional dimension filters such as `offence=burglary`. An old
+            series id such as `crime-burglary` returns a 404 naming the
+            measure and members that replace it.
+        - $ref: "#/components/parameters/Dimensions"
+        - $ref: "#/components/parameters/MeasureDataset"
       responses:
         "200":
           description: Reviewed analysis geography support.
@@ -4203,7 +4210,17 @@ paths:
         can keep the publisher's partition when conversion is unnecessary. It
         does not fetch or transform observations.
       parameters:
-        - { name: measure, in: query, required: true, schema: { type: string } }
+        - name: measure
+          in: query
+          required: true
+          schema: { type: string }
+          description: >
+            A measure id from `GET /v1/measures`, or one of its aliases, with
+            optional dimension filters such as `offence=burglary`. An old
+            series id returns a 404 naming the measure and members that replace
+            it.
+        - $ref: "#/components/parameters/Dimensions"
+        - $ref: "#/components/parameters/MeasureDataset"
         - { name: period, in: query, required: true, schema: { type: string } }
         - { name: to, in: query, required: true, schema: { type: string } }
         - {
@@ -7102,8 +7119,13 @@ paths:
             type: array
             items: { type: string }
           description: >
-            With `include=citation`, a measure id from `GET /measures`, or one
-            of its aliases, to cite. Repeatable.
+            With `include=citation`, a measure id from `GET /v1/measures`, or
+            one of its aliases, to cite. Repeatable. Dimension filters such as
+            `offence=burglary` apply to each listed measure that has the
+            dimension; an old series id such as `crime-burglary` returns a 404
+            naming the measure and members that replace it.
+        - $ref: "#/components/parameters/Dimensions"
+        - $ref: "#/components/parameters/MeasureDataset"
         - name: crosswalk
           in: query
           required: false
@@ -8058,7 +8080,12 @@ paths:
           schema: { type: string }
           description:
             Preflight this measure against an exact conversion's relationship
-            purpose.
+            purpose. A measure id from `GET /v1/measures`, or one of its
+            aliases, with optional dimension filters such as
+            `offence=burglary`; an old series id returns a 404 naming the
+            measure and members that replace it.
+        - $ref: "#/components/parameters/Dimensions"
+        - $ref: "#/components/parameters/MeasureDataset"
         - {
             name: geography,
             in: query,
@@ -9266,7 +9293,14 @@ paths:
           schema:
             type: array
             items: { type: string }
-          description: A measure id from `GET /measures`, or one of its aliases. Repeatable.
+          description: >
+            A measure id from `GET /v1/measures`, or one of its aliases.
+            Repeatable. Dimension filters such as `offence=burglary` apply to
+            each listed measure that has the dimension; an old series id such
+            as `crime-burglary` returns a 404 naming the measure and members
+            that replace it.
+        - $ref: "#/components/parameters/Dimensions"
+        - $ref: "#/components/parameters/MeasureDataset"
         - name: boundaryRelease
           in: query
           required: false
@@ -10247,9 +10281,19 @@ components:
         spaces and punctuation are set aside, so `House Prices` is
         `house-prices`. A measure's breakdowns are chosen with dimension
         filters, not with the id: `recorded-crimes` with `offence=burglary`,
-        not `crime-burglary`. Retired path ids return a 404 with the canonical
-        measure and members. Some `measure` query parameters still accept old
-        series ids and do not accept dimension filters.
+        not `crime-burglary`. Retired ids return a 404 with the canonical
+        measure and members, in a path or in a `measure` query parameter.
+    MeasureDataset:
+      name: datasetId
+      in: query
+      required: false
+      schema:
+        type: string
+      description: >
+        With a `measure` query parameter, chooses between datasets that publish
+        the same measure and members, such as `general-election` and
+        `local-election` turnout. It applies to each listed measure that the
+        dataset publishes.
     Dimensions:
       name: dimensions
       in: query
