@@ -39,13 +39,13 @@ export const configDirectory = (repositoryRoot: string) =>
 
 /** Generated statistics metadata, given the API project directory. */
 export const statisticsVocabularyPath = (apiRoot: string) =>
-	join(
-		buildDirectory(repositoryRootOf(apiRoot)),
-		"statistics-vocabulary.json",
-	);
+	repositoryStatisticsVocabularyPath(repositoryRootOf(apiRoot));
+
+export const repositoryStatisticsVocabularyPath = (repositoryRoot: string) =>
+	join(buildDirectory(repositoryRoot), "statistics-vocabulary.json");
 
 export const statisticsReadPathPath = (apiRoot: string) =>
-	join(
-		buildDirectory(repositoryRootOf(apiRoot)),
-		"statistics-read-path.json",
-	);
+	repositoryStatisticsReadPathPath(repositoryRootOf(apiRoot));
+
+export const repositoryStatisticsReadPathPath = (repositoryRoot: string) =>
+	join(buildDirectory(repositoryRoot), "statistics-read-path.json");
