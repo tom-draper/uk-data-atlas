@@ -13,7 +13,7 @@ import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 test("serves an exhaustive canonical definition beside every existing display unit", () => {
-	const catalog = readDataCatalog(apiRoot);
+	const catalog = readDataCatalog(resolve(apiRoot, "../.."));
 	assert.ok(catalog.measures.length > 0);
 	for (const measure of catalog.measures) {
 		assert.ok(

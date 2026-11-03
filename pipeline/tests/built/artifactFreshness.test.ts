@@ -207,12 +207,13 @@ test("builds the validation report from the current catalogue and config", () =>
 test("builds measure compatibility from the current observations and areas", () => {
 	const { inputs } = read("measure-compatibility.json");
 	const observationHashes = new Map(
-		readMeasureObservations(apiRoot, readDataCatalog(apiRoot)).map(
-			(artifact) => [
-				observationPartitionKey(artifact),
-				artifact.contentHash,
-			],
-		),
+		readMeasureObservations(
+			apiRoot,
+			readDataCatalog(resolve(apiRoot, "../..")),
+		).map((artifact) => [
+			observationPartitionKey(artifact),
+			artifact.contentHash,
+		]),
 	);
 	const areaHashes = new Map(
 		(read("area-inventory.json").releases as any[]).flatMap((release) =>

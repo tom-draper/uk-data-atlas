@@ -136,7 +136,7 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 	});
 	assert.deepEqual(paths, JSON.parse(expected.get("relationship-paths")!));
 	const analysis = readAnalysisGeographyInventory(
-		apiRoot,
+		root,
 		{ ...catalogue, datasets: [], measures: [] },
 		{ ...crosswalks, crosswalks: [] },
 	);
@@ -146,7 +146,7 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 	);
 	assert.deepEqual(
 		readAnalysisGeographyValidationInventory(
-			apiRoot,
+			root,
 			analysis,
 			{ ...catalogue, datasets: [], measures: [] },
 			{ ...crosswalks, crosswalks: [] },

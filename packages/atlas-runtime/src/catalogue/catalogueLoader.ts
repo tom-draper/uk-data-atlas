@@ -195,12 +195,14 @@ export const readAtlasCatalogues = (
 	const crosswalkInventory = stage("crosswalk-inventory", () =>
 		readCrosswalkInventory(repositoryRootOf(apiRoot)),
 	);
-	const dataCatalog = stage("data-catalog", () => readDataCatalog(apiRoot));
+	const dataCatalog = stage("data-catalog", () =>
+		readDataCatalog(repositoryRootOf(apiRoot)),
+	);
 	const terrainCatalogue = stage("terrain-catalogue", () =>
 		readTerrainCatalogue(apiRoot),
 	);
 	const atlasRelease = stage("atlas-release", () =>
-		readAtlasRelease(apiRoot),
+		readAtlasRelease(repositoryRootOf(apiRoot)),
 	);
 	const documents = stage("evidence-documents", () =>
 		options.loadEvidenceDocuments === false
@@ -216,7 +218,7 @@ export const readAtlasCatalogues = (
 		readAtlasLookups(apiRoot),
 	);
 	const exportManifest = stage("export-manifest", () =>
-		readExportManifest(apiRoot),
+		readExportManifest(repositoryRootOf(apiRoot)),
 	);
 	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
 		throw new Error(
@@ -244,7 +246,7 @@ export const readAtlasCatalogues = (
 		"analysis-geography-inventory",
 		() =>
 			readAnalysisGeographyInventory(
-				apiRoot,
+				repositoryRootOf(apiRoot),
 				dataCatalog,
 				crosswalkInventory,
 			),
@@ -253,7 +255,7 @@ export const readAtlasCatalogues = (
 		"analysis-geography-validation-inventory",
 		() =>
 			readAnalysisGeographyValidationInventory(
-				apiRoot,
+				repositoryRootOf(apiRoot),
 				analysisGeographyInventory,
 				dataCatalog,
 				crosswalkInventory,
@@ -351,13 +353,13 @@ export const readAtlasCatalogues = (
 		createGeographyResolver(geographyInputs, geographyServices),
 	);
 	const validationReport = stage("validation-report", () =>
-		readValidationReport(apiRoot),
+		readValidationReport(repositoryRootOf(apiRoot)),
 	);
 	const terrainAsyncProvider = stage("terrain-async-provider", () =>
 		createTerrainAsyncProvider(options),
 	);
 	const lookupManifest = stage("lookup-manifest", () =>
-		readLookupManifest(apiRoot),
+		readLookupManifest(repositoryRootOf(apiRoot)),
 	);
 	const measureObservations = stage("measure-observations", () =>
 		readMeasureObservations(
@@ -368,7 +370,7 @@ export const readAtlasCatalogues = (
 		),
 	);
 	const measureCompatibilityInventory = stage("measure-compatibility", () =>
-		readMeasureCompatibility(apiRoot),
+		readMeasureCompatibility(repositoryRootOf(apiRoot)),
 	);
 	return {
 		boundaryRegistry,
