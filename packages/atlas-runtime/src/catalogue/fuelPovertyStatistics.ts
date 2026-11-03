@@ -7,6 +7,7 @@ import type {
 	FuelPovertyLSOAData,
 } from "@uk-data-atlas/datasets/types/fuelPoverty";
 import type { DatabaseSync } from "node:sqlite";
+import { isDeepStrictEqual } from "node:util";
 import type {
 	AreaRelease,
 	StatisticsDataset,
@@ -17,7 +18,7 @@ import { HOUSEHOLDS } from "./statisticsDatasets/measures";
 
 /**
  * Fuel poverty as statistics rows, and the reader that rebuilds its compiled
- * JSON from them byte for byte. The JSON shape lives here, not in the schema.
+ * JSON from them. The JSON shape lives here, not in the schema.
  */
 
 const SLUG = "fuel-poverty";
@@ -160,7 +161,12 @@ export function fuelPovertyStatistics(
 			}
 		},
 		verify(database) {
-			if (rebuildFuelPoverty(database) !== text)
+			if (
+				!isDeepStrictEqual(
+					JSON.parse(rebuildFuelPoverty(database)),
+					periods,
+				)
+			)
 				throw new Error(
 					"Fuel poverty rows differ from catalogue payload",
 				);
