@@ -538,6 +538,9 @@ from the repository root. Document bytes, cache keys, and the
 Data stages now run from the repository root. Their changed commands invalidate
 existing stage keys once, without changing the cache format. Use
 `pnpm data:build --adopt` only for complete outputs known to be current.
+Atlas page, lookup and postcode area builders pass component database paths
+directly to their readers rather than creating a temporary symlinked root.
+Some shared readers still accept an API root; their migration remains incomplete.
 
 Pipeline and shared code no longer spell out `services/api`. They ask
 `packages/atlas-runtime/src/storage/dataLayout.ts` for the API project, its generated artifact directory,

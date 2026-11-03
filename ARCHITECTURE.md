@@ -167,6 +167,8 @@ run through `pnpm check:full`.
 products, with its dependencies. `pnpm data:build` builds all API and website
 data in dependency order, including SQLite and PMTiles. Product targets
 are no longer supported. Stages run from the repository root.
+Stages that read an intermediate SQLite component pass its database path to
+the shared readers directly, without constructing a temporary API directory.
 
 `--plan` lists the stages without running them. `--only <stage>` builds one
 stage and its prerequisites, reusing cached results where valid. `--from <stage>` rebuilds
