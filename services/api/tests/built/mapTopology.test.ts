@@ -166,7 +166,7 @@ const RELEASE = { geography: "localAuthority", id: "2023-05-uk-bgc-v2" };
 const release = (() => {
 	const cache = new AreaGeometryCache(
 		resolve(apiRoot, "../.."),
-		readGeometrySourceLookup(apiRoot),
+		readGeometrySourceLookup(resolve(apiRoot, "../..")),
 	);
 	const codes = cache.codes(RELEASE.geography, RELEASE.id);
 	return new Map(

@@ -43,7 +43,7 @@ test(
 			repositoryRoot,
 			adapters.filter(({ id }) => id === nhsId || id === niId),
 			readAreaLookup(apiRoot),
-			readGeometrySourceLookup(apiRoot),
+			readGeometrySourceLookup(repositoryRoot),
 		);
 		const nhs = artifacts.find(({ id }) => id === nhsId);
 		assert.ok(nhs?.method === "area-overlap");

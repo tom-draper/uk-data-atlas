@@ -49,7 +49,7 @@ const UNITED_KINGDOM: TileBox = [-8.7, 49.8, 1.9, 61.0];
 const release = (() => {
 	const cache = new AreaGeometryCache(
 		resolve(apiRoot, "../.."),
-		readGeometrySourceLookup(apiRoot),
+		readGeometrySourceLookup(resolve(apiRoot, "../..")),
 	);
 	return new Map(
 		cache.codes(RELEASE.geography, RELEASE.id).flatMap((code) => {

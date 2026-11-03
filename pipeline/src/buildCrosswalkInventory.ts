@@ -36,7 +36,7 @@ import {
 	releaseCoverageOf,
 	type RelatedCodesByRelease,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { BOUNDED_CLIPPING_VERSION } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
@@ -62,7 +62,7 @@ type CleanContainmentAdapter = PropertyCrosswalkAdapter & {
 const reusableGeometryCrosswalk = (
 	outputDirectory: string,
 	adapter: GeometryCrosswalkAdapter,
-	geometrySources: ReturnType<typeof readRepositoryGeometrySourceLookup>,
+	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
 ):
 	| AreaOverlapCrosswalkArtifact
 	| ExtentContinuityCrosswalkArtifact
@@ -178,7 +178,7 @@ const reusablePopulationOverlap = (
 	repositoryRoot: string,
 	outputDirectory: string,
 	adapter: PopulationOverlapCrosswalkAdapter,
-	geometrySources: ReturnType<typeof readRepositoryGeometrySourceLookup>,
+	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
 	pairs: CrosswalkArtifact | undefined,
 ): CrosswalkArtifact | undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
@@ -249,7 +249,7 @@ const reusableCleanContainment = (
 	repositoryRoot: string,
 	outputDirectory: string,
 	adapter: CleanContainmentAdapter,
-	geometrySources: ReturnType<typeof readRepositoryGeometrySourceLookup>,
+	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
 ): PropertyCrosswalkArtifact | undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
 	if (!storedTextExists(path)) return undefined;
@@ -320,7 +320,7 @@ export const buildCrosswalkInventory = async (repositoryRoot: string) => {
 	const adapters = readCrosswalkAdapters(
 		join(configDirectory(repositoryRoot), "crosswalk-adapters.json"),
 	);
-	const geometrySources = readRepositoryGeometrySourceLookup(repositoryRoot);
+	const geometrySources = readGeometrySourceLookup(repositoryRoot);
 	// Only a population overlap's pairs are needed whole after they are
 	// checked: it reweights them. Every other artifact is reduced to its
 	// inventory entry, so the build never holds all of them at once.
