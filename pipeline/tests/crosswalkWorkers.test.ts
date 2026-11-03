@@ -5,13 +5,13 @@ import test from "node:test";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "../../../pipeline/src/crosswalk-workers";
+} from "../src/crosswalk-workers";
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
-} from "../../../pipeline/src/crosswalkCompiler";
+} from "../src/crosswalkCompiler";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { writeCrosswalkArtifact } from "../../../pipeline/src/crosswalk-artifact";
+import { writeCrosswalkArtifact } from "../src/crosswalk-artifact";
 import { crosswalkWorkerFixture } from "./helpers/crosswalkWorkerFixture";
 
 const GIB = 1024 ** 3;

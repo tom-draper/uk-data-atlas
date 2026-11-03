@@ -1,5 +1,5 @@
-import { withComponentApiRoot } from "../../../pipeline/src/componentApiRoot";
-import { compilePostcodeAreas } from "../../../pipeline/src/postcodeAreaCompiler";
+import { withComponentApiRoot } from "../src/componentApiRoot";
+import { compilePostcodeAreas } from "../src/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import {
@@ -20,16 +20,16 @@ import { AREAS_VIEW } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
-import { storePostcodeIndex } from "../../../pipeline/src/storePostcodeIndex";
-import { assembleAtlas } from "../../../pipeline/src/assemble-atlas";
+import { storePostcodeIndex } from "../src/storePostcodeIndex";
+import { assembleAtlas } from "../src/assemble-atlas";
 import {
 	writeEmptyObservationComponent,
 	writeEmptyPostcodeAreas,
 	writeEmptyWebsiteComponent,
 } from "./atlasComponentFixtures";
-import { storePostcodeAreas as writePostcodeAreas } from "../../../pipeline/src/storePostcodeAreas";
-import { buildDuckdbPostcodeCounts } from "../../../pipeline/src/postcode-counts/buildDuckdbPostcodeCounts";
-import { validateShards } from "../../../pipeline/src/postcode-counts/validatePostcodeCountInputs";
+import { storePostcodeAreas as writePostcodeAreas } from "../src/storePostcodeAreas";
+import { buildDuckdbPostcodeCounts } from "../src/postcode-counts/buildDuckdbPostcodeCounts";
+import { validateShards } from "../src/postcode-counts/validatePostcodeCountInputs";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,

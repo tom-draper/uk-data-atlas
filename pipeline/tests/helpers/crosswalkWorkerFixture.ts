@@ -5,7 +5,7 @@ import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import { readCompiledAreaLookup } from "../../../../pipeline/src/crosswalk-build-inputs";
+import { readCompiledAreaLookup } from "../../src/crosswalk-build-inputs";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 

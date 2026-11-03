@@ -12,7 +12,7 @@ import type {
 	GeometricContainmentCrosswalkAdapter,
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
-import { measureContainment } from "../../../pipeline/src/geometricContainment";
+import { measureContainment } from "../src/geometricContainment";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;

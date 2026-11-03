@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { compileFlatDownloads } from "../../../pipeline/src/flatDownloads";
+import { compileFlatDownloads } from "../src/flatDownloads";
 import { FullDetailDownloads } from "@uk-data-atlas/atlas-runtime/areas";
 import { readParquet } from "./parquetFixtures";
 
@@ -223,8 +223,7 @@ test("builds a full-detail download off the main thread, once for callers asking
 });
 
 test("simplified downloads match published hashes, coalesce, cache and reject stale bytes", async (t) => {
-	const { compileMapResource } =
-		await import("../../../pipeline/src/compileMapResource");
+	const { compileMapResource } = await import("../src/compileMapResource");
 	const root = mkdtempSync(join(tmpdir(), "atlas-simplified-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/source"), { recursive: true });
