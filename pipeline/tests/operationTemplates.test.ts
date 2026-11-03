@@ -182,7 +182,7 @@ test("writes the operations into an API root with no artifacts directory yet", (
 	mkdirSync(apiRoot, { recursive: true });
 	writeFileSync(join(apiRoot, "openapi.yaml"), "openapi: 3.1.0\npaths: {}\n");
 
-	const { outputPath } = buildOperations(apiRoot);
+	const { outputPath } = buildOperations(root);
 
 	assert.equal(JSON.parse(readFileSync(outputPath, "utf8")).schemaVersion, 1);
 });

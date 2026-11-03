@@ -7,7 +7,10 @@ import {
 	openapiDocumentHash,
 	type OperationsArtifact,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compiles the operations the server matches requests against from
@@ -22,11 +25,14 @@ export const compileOperations = (
 	operations: compileOperationTemplates(parse(openapiDocument)),
 });
 
-export const buildOperations = (apiRoot: string) => {
+export const buildOperations = (repositoryRoot: string) => {
 	const artifact = compileOperations(
-		readFileSync(join(apiRoot, "openapi.yaml"), "utf8"),
+		readFileSync(join(apiRootOf(repositoryRoot), "openapi.yaml"), "utf8"),
 	);
-	const outputPath = join(artifactRoot(apiRoot), "operations.json");
+	const outputPath = join(
+		artifactDirectory(repositoryRoot),
+		"operations.json",
+	);
 	// This is the first build step, and a fresh checkout has no `public`.
 	mkdirSync(dirname(outputPath), { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
@@ -36,7 +42,7 @@ export const buildOperations = (apiRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { outputPath, operationCount } = buildOperations(
-		apiRootOf(resolve(dirname(scriptPath), "../..")),
+		resolve(dirname(scriptPath), "../.."),
 	);
 	console.log(`Wrote ${operationCount} operation paths to ${outputPath}`);
 }
