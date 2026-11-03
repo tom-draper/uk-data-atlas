@@ -18,6 +18,12 @@ export const artifactDirectory = (repositoryRoot: string) =>
 export const buildDirectory = (repositoryRoot: string) =>
 	join(repositoryRoot, "data", "build");
 
+export const compiledObservationDirectory = (repositoryRoot: string) =>
+	join(buildDirectory(repositoryRoot), "compiled-observations");
+
+export const compiledObservationPath = (repositoryRoot: string, name: string) =>
+	join(compiledObservationDirectory(repositoryRoot), `${name}.json`);
+
 /** The release SQLite database, given the repository root. */
 export const atlasDatabasePath = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "atlas.sqlite");

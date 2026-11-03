@@ -1,16 +1,17 @@
-import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import {
 	observationArtifactName,
-	readMeasureObservations,
-	OBSERVATION_TABLES_ONLY,
+	isMeasureTable,
+	tableMeasureObservations,
+	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	atlasDatabasePath,
-	readObservationText,
+	compiledObservationPath,
+	observationValuesEqual,
 	readStatisticsObservationText,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { route } from "../../src/routes";
@@ -28,11 +29,12 @@ import {
  * are compared too, old read path against new, for a sample of places.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const databasePath = atlasDatabasePath(resolve(apiRoot, "../.."));
-const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."));
+const repositoryRoot = resolve(apiRoot, "../..");
+const databasePath = atlasDatabasePath(repositoryRoot);
+const catalogues = readApiCatalogues(repositoryRoot);
 const catalog = catalogues.dataCatalog;
 const readPath = JSON.parse(
-	readFileSync(statisticsReadPathPath(resolve(apiRoot, "../..")), "utf8"),
+	readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 ) as StatisticsReadPath;
 
 test("names every catalogue artifact once, as statistics or observations", () => {
@@ -57,15 +59,18 @@ test("rebuilds every moved artifact by value from statistics rows", () => {
 			const name = observationArtifactName(measure.id, source);
 			const selector = readPath.statistics[name];
 			if (!selector) continue;
-			assert.deepEqual(
-				JSON.parse(
+			assert.ok(
+				observationValuesEqual(
 					readStatisticsObservationText(databasePath, selector, {
 						measureId: measure.id,
 						sourceGeography: source.sourceGeography,
 						periods: source.periods,
 					}),
+					readFileSync(
+						compiledObservationPath(repositoryRoot, name),
+						"utf8",
+					),
 				),
-				JSON.parse(readObservationText(databasePath, name)),
 				`${name} rebuilt from statistics rows differs from the stored artifact`,
 			);
 		}
@@ -120,14 +125,24 @@ const samples = () => {
 	return picked;
 };
 
-test("serves the same answers from statistics rows as from observation tables", () => {
+test("serves the same answers from statistics rows as from compiled artifacts", () => {
 	const legacy = {
 		...catalogues,
-		measureObservations: readMeasureObservations(
-			resolve(apiRoot, "../.."),
-			catalog,
-			undefined,
-			OBSERVATION_TABLES_ONLY,
+		measureObservations: catalog.measures.flatMap((measure) =>
+			measure.sources.map((source) => {
+				const artifact: unknown = JSON.parse(
+					readFileSync(
+						compiledObservationPath(
+							repositoryRoot,
+							observationArtifactName(measure.id, source),
+						),
+						"utf8",
+					),
+				);
+				return isMeasureTable(artifact)
+					? tableMeasureObservations(artifact, measure.id)
+					: (artifact as AnyMeasureObservationArtifact);
+			}),
 		),
 	};
 	const checked = samples();
@@ -137,7 +152,13 @@ test("serves the same answers from statistics rows as from observation tables", 
 		const before = route("GET", url, legacy);
 		const after = route("GET", url, catalogues);
 		assert.equal(after.status, before.status, url);
-		assert.deepEqual(after.body, before.body, url);
+		assert.ok(
+			observationValuesEqual(
+				JSON.stringify(after.body),
+				JSON.stringify(before.body),
+			),
+			url,
+		);
 		if (after.status === 200) answered++;
 	}
 	// A pair of matching refusals proves little, so most samples must answer.

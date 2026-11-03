@@ -1,5 +1,5 @@
 import { AtlasDatasetInput } from "./catalog/input";
-import { writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -11,7 +11,11 @@ import {
 	assertMeasureDimensions,
 	observationArtifactName,
 } from "@uk-data-atlas/measures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	compiledObservationDirectory,
+	compiledObservationPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 export const datasetCatalogInputs = (
@@ -95,6 +99,9 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
 	assertMeasureDimensions(catalog, config, vocabulary);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
+	const compiledDirectory = compiledObservationDirectory(repositoryRoot);
+	rmSync(compiledDirectory, { recursive: true, force: true });
+	mkdirSync(compiledDirectory, { recursive: true });
 	const observationArtifacts = [
 		ghgEmissionsObservations,
 		...populationObservations,
@@ -128,13 +135,22 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 					`No catalogue source matches ${observations.measureId} on ${observations.sourceGeography.type} ${observations.sourceGeography.boundaryYear}.`,
 				);
 			}
-			yield [
-				observationArtifactName(observations.measureId, source),
-				`${JSON.stringify(observations)}\n`,
-			] as const;
+			const name = observationArtifactName(
+				observations.measureId,
+				source,
+			);
+			const text = `${JSON.stringify(observations)}\n`;
+			writeFileSync(compiledObservationPath(repositoryRoot, name), text);
+			yield [name, text] as const;
 		}
-		for (const table of censusTables)
-			yield [table.id, `${JSON.stringify(table)}\n`];
+		for (const table of censusTables) {
+			const text = `${JSON.stringify(table)}\n`;
+			writeFileSync(
+				compiledObservationPath(repositoryRoot, table.id),
+				text,
+			);
+			yield [table.id, text];
+		}
 	}
 	const databasePath = storeObservations(
 		repositoryRoot,
