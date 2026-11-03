@@ -32,7 +32,7 @@ try {
 				.get()!.payload,
 		),
 	);
-	const artifact = readSqlitePostcodeAreas(apiRoot);
+	const artifact = readSqlitePostcodeAreas(resolve(apiRoot, "../.."));
 	assert.ok(
 		index.shards.length > 0 && artifact.shards.length > 0,
 		"No shards compared",
@@ -71,7 +71,10 @@ try {
 	for (const entry of artifact.shards) {
 		const old = oldArea(entry.path);
 		assert.equal(sha256(old), entry.contentHash);
-		if (old !== readSqlitePostcodeAreaShard(apiRoot, entry.path))
+		if (
+			old !==
+			readSqlitePostcodeAreaShard(resolve(apiRoot, "../.."), entry.path)
+		)
 			areaMismatches++;
 	}
 	let postcodeMismatches = 0;
@@ -143,7 +146,10 @@ try {
 			areaShard: {
 				before: timing(() => oldArea(area.path)),
 				after: timing(() =>
-					readSqlitePostcodeAreaShard(apiRoot, area.path),
+					readSqlitePostcodeAreaShard(
+						resolve(apiRoot, "../.."),
+						area.path,
+					),
 				),
 			},
 			postcodeLookup: {

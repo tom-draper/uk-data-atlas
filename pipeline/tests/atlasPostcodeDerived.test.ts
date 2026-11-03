@@ -183,7 +183,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 		existsSync(join(artifactRoot(apiRoot), "postcode-areas")),
 		false,
 	);
-	assert.deepEqual(readSqlitePostcodeAreas(apiRoot), compiled.artifact);
+	assert.deepEqual(readSqlitePostcodeAreas(root), compiled.artifact);
 	const db = new DatabaseSync(path);
 	assert.deepEqual(
 		{
@@ -225,10 +225,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), []);
 	db.close();
 	for (const file of compiled.files)
-		assert.equal(
-			readSqlitePostcodeAreaShard(apiRoot, file.path),
-			file.text,
-		);
+		assert.equal(readSqlitePostcodeAreaShard(root, file.path), file.text);
 	const inventory = {
 		schemaVersion: 1 as const,
 		contentHash: "inventory",
@@ -313,7 +310,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 	);
 	const postcodes = readPostcodeIndex(root);
 	const areas = new PostcodeAreaIndex(compiled.artifact, postcodes, (path) =>
-		readSqlitePostcodeAreaShard(apiRoot, path),
+		readSqlitePostcodeAreaShard(root, path),
 	);
 	const counts = readPostcodeCounts(apiRoot, postcodes, areas);
 	assert.deepEqual(counts.forArea("ward", "2026", "A"), {
@@ -371,7 +368,7 @@ test("failed mapping replacements preserve the published database and old files;
 		true,
 	);
 	rmSync(path);
-	assert.throws(() => readSqlitePostcodeAreas(apiRoot));
+	assert.throws(() => readSqlitePostcodeAreas(root));
 });
 
 test("stored area corruption fails the shard hash check", (t) => {
@@ -385,7 +382,7 @@ test("stored area corruption fails the shard hash check", (t) => {
 	assert.throws(
 		() =>
 			readSqlitePostcodeAreaShard(
-				apiRoot,
+				root,
 				compiled.artifact.shards[0]!.path,
 			),
 		/Invalid SQLite postcode area shard/,
@@ -420,7 +417,7 @@ test("repeated geographies use exact releases and preserve shard release order",
 	storePostcodeAreas(root, artifact, (path) => files.get(path)!);
 	for (const entry of artifact.shards)
 		assert.equal(
-			readSqlitePostcodeAreaShard(apiRoot, entry.path),
+			readSqlitePostcodeAreaShard(root, entry.path),
 			files.get(entry.path),
 		);
 	const after = new DatabaseSync(path);

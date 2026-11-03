@@ -1,4 +1,3 @@
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 import { readSqlitePostcodeIndexArtifact } from "@uk-data-atlas/atlas-runtime/storage";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import {
@@ -12,9 +11,8 @@ import {
 import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
 
 export function validateShards(root: string) {
-	const api = apiRootOf(root);
 	const index = readSqlitePostcodeIndexArtifact(root);
-	const areas = readSqlitePostcodeAreas(api);
+	const areas = readSqlitePostcodeAreas(root);
 	if (
 		areas.postcodeIndex !== index.contentHash ||
 		areas.shards.length !== index.shards.length
@@ -28,7 +26,7 @@ export function validateShards(root: string) {
 			readSqlitePostcodeShard(root, entry),
 		) as PostcodeShard;
 		const areaShard = JSON.parse(
-			readSqlitePostcodeAreaShard(api, areaEntry.path),
+			readSqlitePostcodeAreaShard(root, areaEntry.path),
 		) as PostcodeAreasShard;
 		if (
 			areaShard.postcodeShard !== entry.contentHash ||
