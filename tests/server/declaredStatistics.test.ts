@@ -598,8 +598,22 @@ describe("declared statistics", () => {
 			);
 			const changed = `${text.slice(0, second)}"unitary"${text.slice(second + '"district"'.length)}`;
 			expect(() => write(config, changed)).toThrow(
-				/example: rows do not rebuild the compiled JSON byte for byte\. At \d+, compiled .*unitary.*, rebuilt .*district/,
+				"example: rows do not match the compiled dataset values",
 			);
+		});
+
+		it("accepts compiled JSON with different whitespace", () => {
+			const formatted = JSON.stringify(JSON.parse(text), null, 2);
+			const database = write(config, formatted);
+			expect(
+				JSON.parse(
+					rebuildFromLayout(
+						database,
+						"example",
+						config.rebuild!.derived,
+					),
+				),
+			).toEqual(JSON.parse(formatted));
 		});
 
 		it("stores each record's parent area and rebuilds its code and name", () => {

@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import { isDeepStrictEqual } from "node:util";
 import { rebuildFromLayout } from "./datasetLayout";
 import { seriesKey as canonicalSeriesKey } from "./atlasStatistics";
 import type {
@@ -1269,15 +1270,14 @@ export function declaredStatistics(
 						config.rebuild.derived,
 					);
 					const text = read();
-					if (rebuilt !== text) {
-						let at = 0;
-						while (rebuilt[at] === text[at]) at++;
-						const near = (value: string) =>
-							JSON.stringify(
-								value.slice(Math.max(0, at - 60), at + 60),
-							);
+					if (
+						!isDeepStrictEqual(
+							JSON.parse(rebuilt),
+							JSON.parse(text),
+						)
+					) {
 						throw new Error(
-							`${type}: rows do not rebuild the compiled JSON byte for byte. At ${at}, compiled ${near(text)}, rebuilt ${near(rebuilt)}`,
+							`${type}: rows do not match the compiled dataset values`,
 						);
 					}
 				}
