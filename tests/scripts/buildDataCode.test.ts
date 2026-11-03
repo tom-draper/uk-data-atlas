@@ -47,18 +47,18 @@ function fixture() {
 		{
 			name: "alpha",
 			dependencies: [],
-			args: ["--dir", "../..", "exec", "tsx", "scripts/alpha.ts"],
+			args: ["exec", "tsx", "scripts/alpha.ts"],
 			codeInputs: ["scripts/templates"],
 		},
 		{
 			name: "beta",
 			dependencies: [],
-			args: ["--dir", "../..", "exec", "tsx", "scripts/beta.ts"],
+			args: ["exec", "tsx", "scripts/beta.ts"],
 		},
 		{
 			name: "report",
 			dependencies: ["alpha"],
-			args: ["--dir", "../..", "exec", "tsx", "scripts/report.ts"],
+			args: ["exec", "tsx", "scripts/report.ts"],
 		},
 	];
 	let writes = 0;
@@ -523,7 +523,7 @@ test("moved pipeline builders trace imports and invalidate their own manifests",
 	write("pipeline/src/compiler.ts", "export const value = 1;");
 	write("pipeline/package.json", "{}");
 	write("pipeline/tsconfig.json", "{}");
-	stages[0].args = ["--dir", "../..", "exec", "tsx", "pipeline/src/build.ts"];
+	stages[0].args = ["exec", "tsx", "pipeline/src/build.ts"];
 	stages[0].codeInputs = ["pipeline/package.json", "pipeline/tsconfig.json"];
 	assert.deepEqual(run(), ["alpha", "beta", "report"]);
 	assert.deepEqual(run(), []);

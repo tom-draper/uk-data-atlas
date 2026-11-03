@@ -4,9 +4,7 @@ import { fileURLToPath } from "node:url";
 import { createStageCache } from "./build-data-cache.mjs";
 import { buildDataStages } from "./build-data-graph.mjs";
 
-const apiDirectory = fileURLToPath(
-	new URL("../services/api/", import.meta.url),
-);
+const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 /**
  * The stages to run, in dependency order. `roots` limits the build to those
@@ -234,7 +232,7 @@ export function runBuild({
 
 function executeStage(stage) {
 	const result = spawnSync("pnpm", stage.args, {
-		cwd: apiDirectory,
+		cwd: repositoryRoot,
 		stdio: "inherit",
 	});
 	if (result.error)

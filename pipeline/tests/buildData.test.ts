@@ -51,7 +51,7 @@ process.exit(process.argv.at(-1) === process.env.BUILD_FAIL ? 23 : 0);
 					.split("\n")
 					.map((line) => {
 						const entry = JSON.parse(line);
-						assert.equal(entry.cwd, resolve(root, "services/api"));
+						assert.equal(entry.cwd, resolve(root));
 						return entry.args;
 					});
 			} catch (error) {
@@ -151,8 +151,6 @@ test("rebuilding atlas pages imports SQLite assets before sealing the release an
 		"website-registry",
 	]);
 	assert.deepEqual(build.commands().at(-1), [
-		"--dir",
-		"../..",
 		"exec",
 		"tsx",
 		"scripts/generate-dataset-registry.ts",
@@ -228,20 +226,12 @@ test("documents rebuild pins the final manifest without rebuilding the initial m
 	]);
 	assert.deepEqual(build.commands(), [
 		[
-			"--dir",
-			"../..",
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
 			"pipeline/src/build-evidence-documents.ts",
 		],
-		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"pipeline/src/build-atlas-release.ts",
-		],
+		["exec", "tsx", "pipeline/src/build-atlas-release.ts"],
 	]);
 });
 
@@ -274,17 +264,9 @@ test("--only builds a stage and its prerequisites without unrelated or downstrea
 		"boundary-tiles",
 	]);
 	assert.deepEqual(build.commands(), [
-		["--dir", "../..", "data:download"],
+		["data:download"],
+		["exec", "tsx", "pipeline/src/compile-boundaries.mts"],
 		[
-			"--dir",
-			"../..",
-			"exec",
-			"tsx",
-			"pipeline/src/compile-boundaries.mts",
-		],
-		[
-			"--dir",
-			"../..",
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
@@ -306,8 +288,6 @@ test("the first failing stage returns its exit code and stops the build", (conte
 	);
 	assert.equal(build.commands().length, 5);
 	assert.deepEqual(build.commands().at(-1), [
-		"--dir",
-		"../..",
 		"exec",
 		"tsx",
 		"pipeline/src/build-relationship-paths.ts",

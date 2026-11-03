@@ -19,10 +19,7 @@ test("data stages invoke existing scripts without public command aliases", () =>
 			/\.(ts|mts)$/.test(argument),
 		);
 		expect(script, stage.name).toBeDefined();
-		const directory = stage.args.includes("--dir") ? "." : "services/api";
-		expect(existsSync(resolve(directory, script ?? "")), stage.name).toBe(
-			true,
-		);
+		expect(existsSync(resolve(script ?? "")), stage.name).toBe(true);
 	}
 });
 
