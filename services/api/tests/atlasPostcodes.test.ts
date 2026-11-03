@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import {
 	copyFileSync,
@@ -12,7 +13,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";
@@ -55,9 +56,15 @@ function fixture(t: TestContext) {
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
 	mkdirSync(join(root, "data/build"), { recursive: true });
-	mkdirSync(join(artifactRoot(apiRoot), "postcodes/obsolete"), {
-		recursive: true,
-	});
+	mkdirSync(
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcodes/obsolete",
+		),
+		{
+			recursive: true,
+		},
+	);
 	const path = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(path);
 	database.exec(
@@ -72,11 +79,17 @@ function fixture(t: TestContext) {
 	writeEmptyWebsiteComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcode-index.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-index.json",
+		),
 		"obsolete",
 	);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcodes/obsolete/old.json.gz"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcodes/obsolete/old.json.gz",
+		),
 		"obsolete",
 	);
 	return { root, apiRoot, path };
@@ -92,9 +105,22 @@ test("SQLite retains every postcode field, exact shard bytes, positions and rout
 		before.texts.get(path)!,
 	);
 	assert.equal(readAtlasPayload(root, "dataset:existing"), "retained");
-	assert.equal(existsSync(join(artifactRoot(apiRoot), "postcodes")), false);
 	assert.equal(
-		existsSync(join(artifactRoot(apiRoot), "postcode-index.json")),
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcodes",
+			),
+		),
+		false,
+	);
+	assert.equal(
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcode-index.json",
+			),
+		),
 		false,
 	);
 	const after = readPostcodeIndex(root);
@@ -163,7 +189,10 @@ test("replacement removes old rows and corrupt shards preserve published data an
 	});
 	const before = readFileSync(path);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcode-index.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-index.json",
+		),
 		"retained on failure",
 	);
 	assert.throws(
@@ -173,7 +202,10 @@ test("replacement removes old rows and corrupt shards preserve published data an
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(
 		readFileSync(
-			join(artifactRoot(apiRoot), "postcode-index.json"),
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcode-index.json",
+			),
 			"utf8",
 		),
 		"retained on failure",
@@ -195,7 +227,10 @@ test("corrupt stored records are refused and missing SQLite never falls back to 
 		/Invalid SQLite postcode district/,
 	);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcode-index.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-index.json",
+		),
 		JSON.stringify(before.artifact),
 	);
 	rmSync(path);
@@ -259,5 +294,13 @@ test("the source builder reads filtered gzip rows into the postcode component", 
 		readPostcodeIndex(root).artifact.contentHash,
 		result.artifact.contentHash,
 	);
-	assert.equal(existsSync(join(artifactRoot(apiRoot), "postcodes")), false);
+	assert.equal(
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcodes",
+			),
+		),
+		false,
+	);
 });

@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import {
 	copyFileSync,
@@ -40,7 +41,7 @@ import { route } from "../src/routes";
 import fixtures from "./fixtures/geometry-validity.json";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";
 import { registry, testContext } from "./routeFixtures";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const spec: SchemaDocument = parse(
 	readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
@@ -221,7 +222,9 @@ test("compiles deterministic reports and serves them with metrics and provenance
 	const root = mkdtempSync(join(tmpdir(), "atlas-validity-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services", "api");
-	const publicRoot = artifactRoot(apiRoot);
+	const publicRoot = artifactDirectory(
+		resolveRepositoryRoot(apiRoot, "../.."),
+	);
 	mkdirSync(publicRoot, { recursive: true });
 	mkdirSync(apiRoot, { recursive: true });
 	mkdirSync(join(root, "data/source", "boundaries"), { recursive: true });

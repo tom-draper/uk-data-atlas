@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -7,7 +8,7 @@ import { gzipSync } from "node:zlib";
 import { readAtlasLookups } from "@uk-data-atlas/atlas-runtime/storage";
 import { route as routeRequest } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const lookup = {
 	path: "/nowhere",
@@ -55,9 +56,14 @@ test("reads the lookup manifest and checks each stored file", () => {
 	const apiRoot = join(root, "services/api");
 	const directory = join(root, "data/build/atlas-assets");
 	try {
-		mkdirSync(artifactRoot(apiRoot), { recursive: true });
+		mkdirSync(artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")), {
+			recursive: true,
+		});
 		writeFileSync(
-			join(artifactRoot(apiRoot), "atlas-lookups.json"),
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"atlas-lookups.json",
+			),
 			"obsolete invalid manifest",
 		);
 		assert.equal(readAtlasLookups(root).size, 0);

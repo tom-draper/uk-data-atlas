@@ -1,4 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import {
 	mkdtempSync,
@@ -17,9 +18,8 @@ import { createApiServer } from "../../src/apiServer";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
-	artifactRoot,
+	artifactDirectory,
 	buildDirectory,
-	repositoryRootOf,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
@@ -38,21 +38,29 @@ test("loads evidence build inputs when the previous document manifest is stale",
 				symlinkSync(join(from, entry), join(to, entry));
 	};
 	link(apiRoot, root);
-	const realBuild = buildDirectory(repositoryRootOf(apiRoot));
+	const realBuild = buildDirectory(resolveRepositoryRoot(apiRoot, "../.."));
 	link(dirname(realBuild), join(repository, "data"), "build");
 	link(realBuild, join(repository, "data", "build"), "artifacts");
-	const directory = artifactRoot(root);
+	const directory = artifactDirectory(resolveRepositoryRoot(root, "../.."));
 	mkdirSync(directory);
-	for (const entry of readdirSync(artifactRoot(apiRoot))) {
+	for (const entry of readdirSync(
+		artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+	)) {
 		if (entry !== "evidence-documents.json")
 			symlinkSync(
-				join(artifactRoot(apiRoot), entry),
+				join(
+					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+					entry,
+				),
 				join(directory, entry),
 			);
 	}
 	const manifest = JSON.parse(
 		readFileSync(
-			join(artifactRoot(apiRoot), "evidence-documents.json"),
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"evidence-documents.json",
+			),
 			"utf8",
 		),
 	);

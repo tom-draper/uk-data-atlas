@@ -1,4 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -26,7 +27,7 @@ import {
 	type Schema,
 	type SchemaDocument,
 } from "../openapiSchema";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * The API index, the OpenAPI paths and the README's endpoint list are three
@@ -878,7 +879,15 @@ test("names build artifacts the resolution contract can actually read", () => {
 	assert.notEqual(artifacts.length, 0);
 	assert.deepEqual(
 		artifacts.filter(
-			(name) => !existsSync(join(artifactRoot(apiRoot), name)),
+			(name) =>
+				!existsSync(
+					join(
+						artifactDirectory(
+							resolveRepositoryRoot(apiRoot, "../.."),
+						),
+						name,
+					),
+				),
 		),
 		[],
 		"the resolution contract reads a build artifact that is not published",

@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import {
 	areaTables,
 	readSqliteAreas,
@@ -22,13 +23,16 @@ import {
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { writeSqliteIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("crosswalk edges rebuild artifacts with zero weights, labels and empty targets", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-crosswalks-"));
 	context.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
-	const directory = join(artifactRoot(apiRoot), "crosswalks");
+	const directory = join(
+		artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+		"crosswalks",
+	);
 	mkdirSync(directory, { recursive: true });
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const weighting = {
@@ -97,7 +101,10 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		})),
 	};
 	writeFileSync(
-		join(artifactRoot(apiRoot), "crosswalk-inventory.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"crosswalk-inventory.json",
+		),
 		JSON.stringify(inventory),
 	);
 	const input = join(directory, `${artifact.id}.json`);
@@ -106,9 +113,12 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 			join(directory, `${value.id}.json`),
 			JSON.stringify(value),
 		);
-	emptyCrosswalkAreas(artifactRoot(apiRoot), inventory);
+	emptyCrosswalkAreas(
+		artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+		inventory,
+	);
 	const areaInventoryPath = join(
-		artifactRoot(apiRoot),
+		artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
 		"area-inventory.json",
 	);
 	const areaInventory = JSON.parse(readFileSync(areaInventoryPath, "utf8"));
@@ -123,7 +133,10 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 	};
 	writeFileSync(areaInventoryPath, JSON.stringify(areaInventory));
 	writeFileSync(
-		join(artifactRoot(apiRoot), "source-areas.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"source-areas.json",
+		),
 		JSON.stringify({
 			schemaVersion: 1,
 			contentHash: "source-areas",
@@ -136,8 +149,12 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 			path,
 			{},
 			{
-				...areaTables(artifactRoot(apiRoot)),
-				...crosswalkTables(artifactRoot(apiRoot)),
+				...areaTables(
+					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				),
+				...crosswalkTables(
+					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				),
 			},
 		);
 	rebuild();
@@ -365,7 +382,9 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 	assert.throws(rebuild, /Missing crosswalk area release/);
 	writeFileSync(areaInventoryPath, JSON.stringify(areaInventory));
 	refuse({ ...artifact, contentHash: "stale" }, /Invalid crosswalk artifact/);
-	rmSync(artifactRoot(apiRoot), { recursive: true });
+	rmSync(artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")), {
+		recursive: true,
+	});
 	assert.equal(
 		JSON.stringify(readCrosswalkLookup(root, inventory).get(artifact.id)),
 		JSON.stringify(artifact),

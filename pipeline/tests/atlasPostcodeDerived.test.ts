@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { compilePostcodeAreas } from "../src/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
@@ -14,7 +15,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test, { type TestContext } from "node:test";
-import { artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { AREAS_VIEW } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
@@ -56,9 +57,15 @@ function fixture(t: TestContext) {
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	const apiRoot = join(root, "services/api");
 	mkdirSync(join(root, "data/build"), { recursive: true });
-	mkdirSync(join(artifactRoot(apiRoot), "postcode-areas"), {
-		recursive: true,
-	});
+	mkdirSync(
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-areas",
+		),
+		{
+			recursive: true,
+		},
+	);
 	const path = join(root, "data/build/atlas.sqlite");
 	const db = new DatabaseSync(path);
 	db.exec(
@@ -160,15 +167,27 @@ test("a corrupt postcode area component does not replace the published database"
 
 test("SQLite mappings retain exact bytes, boundary matches, distances and empty placements without JSON", (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
-	mkdirSync(join(artifactRoot(apiRoot), "postcode-areas"), {
-		recursive: true,
-	});
+	mkdirSync(
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-areas",
+		),
+		{
+			recursive: true,
+		},
+	);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcode-areas.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-areas.json",
+		),
 		"obsolete",
 	);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcode-areas/obsolete.json.gz"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-areas/obsolete.json.gz",
+		),
 		"obsolete",
 	);
 	for (let run = 0; run < 2; run++)
@@ -176,11 +195,21 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	assembleAtlas(root);
 	assert.equal(readAtlasPayload(root, "existing"), "retained");
 	assert.equal(
-		existsSync(join(artifactRoot(apiRoot), "postcode-areas.json")),
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcode-areas.json",
+			),
+		),
 		false,
 	);
 	assert.equal(
-		existsSync(join(artifactRoot(apiRoot), "postcode-areas")),
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcode-areas",
+			),
+		),
 		false,
 	);
 	assert.deepEqual(readSqlitePostcodeAreas(root), compiled.artifact);
@@ -293,14 +322,22 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
 	assert.deepEqual(validateShards(root).areas, compiled.artifact);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcode-counts.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-counts.json",
+		),
 		"obsolete",
 	);
 	const built = await buildDuckdbPostcodeCounts(root);
 	assert.equal(built.countedAreas, 2);
 	assert.deepEqual(readSqlitePostcodeCounts(root), built.artifact);
 	assert.equal(
-		existsSync(join(artifactRoot(apiRoot), "postcode-counts.json")),
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcode-counts.json",
+			),
+		),
 		false,
 	);
 	const postcodes = readPostcodeIndex(root);
@@ -350,7 +387,10 @@ test("failed mapping replacements preserve the published database and old files;
 	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
 	const before = readFileSync(path);
 	writeFileSync(
-		join(artifactRoot(apiRoot), "postcode-areas.json"),
+		join(
+			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+			"postcode-areas.json",
+		),
 		JSON.stringify(compiled.artifact),
 	);
 	assert.throws(
@@ -359,7 +399,12 @@ test("failed mapping replacements preserve the published database and old files;
 	);
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(
-		existsSync(join(artifactRoot(apiRoot), "postcode-areas.json")),
+		existsSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"postcode-areas.json",
+			),
+		),
 		true,
 	);
 	rmSync(path);

@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -7,7 +8,7 @@ import { measureDimensionProblems } from "@uk-data-atlas/measures";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
-	artifactRoot,
+	artifactDirectory,
 	atlasDatabasePath,
 	readStatisticsVocabulary,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -40,7 +41,13 @@ test("the committed vocabulary for the unbuilt mapping check matches the generat
 
 test("every built catalogue measure id is mapped to a measure and its members", () => {
 	const catalog = JSON.parse(
-		readFileSync(join(artifactRoot(apiRoot), "data-catalog.json"), "utf8"),
+		readFileSync(
+			join(
+				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+				"data-catalog.json",
+			),
+			"utf8",
+		),
 	) as DataCatalog;
 	const { config, vocabulary } = readMeasureDimensionsConfig(
 		resolve(apiRoot, "../.."),
