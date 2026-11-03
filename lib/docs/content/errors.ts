@@ -103,7 +103,8 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 	},
 	retired_measure_id: {
 		status: 404,
-		meaning: "The measure id in the path has been retired.",
+		meaning:
+			"The measure id in the path or `measure` query parameter has been retired.",
 		fix: "Use the canonical measure and members named in the response.",
 	},
 	no_matching_series: {

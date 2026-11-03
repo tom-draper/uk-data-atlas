@@ -3954,6 +3954,12 @@
 			"parameters": {
 				"query:measure": {
 					"required": false
+				},
+				"query:dimensions": {
+					"required": false
+				},
+				"query:datasetId": {
+					"required": false
 				}
 			},
 			"responses": {
@@ -4048,6 +4054,12 @@
 			"parameters": {
 				"query:measure": {
 					"required": true
+				},
+				"query:dimensions": {
+					"required": false
+				},
+				"query:datasetId": {
+					"required": false
 				},
 				"query:period": {
 					"required": true
@@ -9449,6 +9461,12 @@
 				"query:measure": {
 					"required": false
 				},
+				"query:dimensions": {
+					"required": false
+				},
+				"query:datasetId": {
+					"required": false
+				},
 				"query:crosswalk": {
 					"required": false
 				}
@@ -11383,6 +11401,12 @@
 				"query:measure": {
 					"required": false
 				},
+				"query:dimensions": {
+					"required": false
+				},
+				"query:datasetId": {
+					"required": false
+				},
 				"query:geography": {
 					"required": false
 				},
@@ -13198,6 +13222,12 @@
 					"required": false
 				},
 				"query:measure": {
+					"required": false
+				},
+				"query:dimensions": {
+					"required": false
+				},
+				"query:datasetId": {
 					"required": false
 				},
 				"query:boundaryRelease": {

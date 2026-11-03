@@ -30,6 +30,17 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-03",
+		title: "Measure query parameters take dimension filters",
+		surface: "8a0221254f75",
+		breaking: true,
+		changes: [
+			"A `measure` query parameter on `/v1/attribution`, `/v1/relationships`, `/v1/analysis-geographies`, the analysis plan and `include=citation` on an area now names a measure and takes dimension filters, as the data paths do: `measure=recorded-crimes&offence=burglary`, or `dimensions[offence]=burglary`. With several `measure` values a filter applies to each measure that has the dimension. A dimension left out takes its total, `datasetId` chooses between datasets that publish the same members, such as general and local election turnout, and `Content-Location` gives the request as it was read.",
+			"Retired encoded ids in a `measure` query parameter, such as `crime-burglary`, return the same 404 as in a path, naming the canonical measure and members. Reviewed human aliases continue to work. Unknown dimensions and members return the same 400 problems as in a path.",
+			"Area citations name a measure by its id and `dimensions` rather than by an encoded series id.",
+		],
+	},
+	{
+		date: "2026-11-03",
 		title: "Retire encoded measure ids in paths",
 		surface: "96887961f469",
 		breaking: true,
