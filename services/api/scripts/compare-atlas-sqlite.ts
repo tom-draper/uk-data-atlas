@@ -72,7 +72,9 @@ export const compareAtlasSqlite = (
 				database.close();
 			}
 		};
-		const inventory = readSqliteCrosswalkInventory(afterApiRoot);
+		const inventory = readSqliteCrosswalkInventory(
+			resolve(afterApiRoot, "../.."),
+		);
 		const entries = new Map(
 			inventory.crosswalks.map((entry) => [entry.id, entry]),
 		);
@@ -91,7 +93,7 @@ export const compareAtlasSqlite = (
 				hash(readBefore(header.id as string)) !==
 				hash(
 					readSqliteCrosswalk(
-						afterApiRoot,
+						resolve(afterApiRoot, "../.."),
 						entries.get(header.id as string)!,
 					),
 				)
@@ -123,7 +125,7 @@ export const compareAtlasSqlite = (
 			);
 		let areaMismatches = 0;
 		const afterReleases = new Map(
-			readSqliteAreaInventory(afterApiRoot)
+			readSqliteAreaInventory(resolve(afterApiRoot, "../.."))
 				.releases.filter((release) => release.status === "available")
 				.map((release) => [
 					`${release.geography}/${release.id}`,
@@ -156,7 +158,7 @@ export const compareAtlasSqlite = (
 				hash(areas(release)) !==
 				hash(
 					readSqliteAreas(
-						afterApiRoot,
+						resolve(afterApiRoot, "../.."),
 						afterReleases.get(
 							`${release.geography}/${release.id}`,
 						)!,
@@ -203,7 +205,7 @@ export const compareAtlasSqlite = (
 				before: timing(() => readBefore(largest.id as string)),
 				after: timing(() =>
 					readSqliteCrosswalk(
-						afterApiRoot,
+						resolve(afterApiRoot, "../.."),
 						entries.get(largest.id as string)!,
 					),
 				),

@@ -4,16 +4,14 @@ import { DatabaseSync } from "node:sqlite";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = apiRootOf(root);
-const index = readPostcodeIndex(apiRoot);
+const index = readPostcodeIndex(root);
 let postcodes = 0;
 for (const entry of index.artifact.shards) {
 	// The reader verifies the exact reconstructed bytes against the original hash.
 	const shard: PostcodeShard = JSON.parse(
-		readSqlitePostcodeShard(apiRoot, entry),
+		readSqlitePostcodeShard(root, entry),
 	);
 	postcodes += shard.postcodes.length;
 	for (const at of new Set([0, shard.postcodes.length - 1])) {

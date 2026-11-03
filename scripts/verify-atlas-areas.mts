@@ -24,7 +24,7 @@ const apiRoot = apiRootOf(root);
 const before: AreaInventory = JSON.parse(
 	readFileSync(join(apiRoot, "public/area-inventory.json"), "utf8"),
 );
-const after = readAreaInventory(apiRoot);
+const after = readAreaInventory(root);
 assert.ok(before.releases.length > 0);
 assert.equal(JSON.stringify(after), JSON.stringify(before));
 const artifacts = before.releases.flatMap((release) =>
@@ -40,7 +40,7 @@ const artifacts = before.releases.flatMap((release) =>
 		: [],
 );
 const json = createAreaLookup(artifacts);
-const sqlite = readAreaLookup(apiRoot, after);
+const sqlite = readAreaLookup(root, after);
 let records = 0;
 for (const [key, areas] of json) {
 	assert.equal(
@@ -53,7 +53,7 @@ for (const [key, areas] of json) {
 assert.ok(records > 0);
 const digest = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");
-const registry = readBoundaryRegistry(apiRoot);
+const registry = readBoundaryRegistry(root);
 for (const compile of [
 	compileAreaSearchIndex,
 	(lookup: typeof json, hash: string) =>
