@@ -39,11 +39,25 @@ export const createLookupResolver = (
 	};
 };
 
-export const readLookupResolver = (apiRoot: string, repositoryRoot: string) => {
-	const inventory = readSqliteAreaInventory(apiRoot);
-	const areaLookup = readAreaLookup(apiRoot, inventory);
-	const crosswalkInventory = readCrosswalkInventory(apiRoot);
-	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
+export const readLookupResolver = (
+	apiRoot: string,
+	repositoryRoot: string,
+	databasePath: string,
+) => {
+	const inventory = readSqliteAreaInventory(apiRoot, databasePath);
+	const areaLookup = readAreaLookup(
+		apiRoot,
+		inventory,
+		undefined,
+		databasePath,
+	);
+	const crosswalkInventory = readCrosswalkInventory(apiRoot, databasePath);
+	const crosswalkLookup = readCrosswalkLookup(
+		apiRoot,
+		crosswalkInventory,
+		undefined,
+		databasePath,
+	);
 	const path = buildArtifactPath(repositoryRoot, "relationship-paths.json");
 	const paths = JSON.parse(
 		readFileSync(path, "utf8"),

@@ -1,4 +1,3 @@
-import { withComponentApiRoot } from "../src/componentApiRoot";
 import { compilePostcodeAreas } from "../src/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
@@ -124,13 +123,12 @@ function fixture(t: TestContext) {
 }
 
 test("postcode index readers work from the component without an atlas database", (t) => {
-	const { root, path } = fixture(t);
+	const { root, apiRoot, path } = fixture(t);
 	rmSync(path);
-	const count = withComponentApiRoot(
-		root,
-		"postcode-index.sqlite",
-		(apiRoot) => readPostcodeIndex(apiRoot).artifact.counts.postcodes,
-	);
+	const count = readPostcodeIndex(
+		apiRoot,
+		join(root, "data/build/postcode-index.sqlite"),
+	).artifact.counts.postcodes;
 	assert.equal(count, 3);
 });
 
