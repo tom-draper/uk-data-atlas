@@ -3,7 +3,11 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Build boundary assets and gazetteer core from raw data. */
 export async function buildDatasets(repositoryRoot: string) {
@@ -32,7 +36,7 @@ if (
 	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
 	const result = await buildDatasets(resolve(import.meta.dirname, "../.."));
-	console.log(
-		`Wrote boundary assets and gazetteer core to ${result.directory}`,
+	buildLog.info(
+		`Wrote boundary assets and gazetteer core to ${repoPath(result.directory)}`,
 	);
 }

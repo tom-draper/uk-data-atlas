@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -190,6 +195,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	) as LookupSource[];
 	for (const source of sources) {
 		const { path, rows } = await fetchOnsLookup(repositoryRoot, source);
-		console.log(`Wrote ${rows} rows to ${path}`);
+		buildLog.info(`Wrote ${formatCount(rows)} rows to ${repoPath(path)}`);
 	}
 }

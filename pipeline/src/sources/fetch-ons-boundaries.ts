@@ -1,4 +1,9 @@
 import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
+import {
 	chmodSync,
 	closeSync,
 	existsSync,
@@ -295,8 +300,8 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 		requested.includes(key(source)),
 	)) {
 		const result = await fetchOnsBoundary({ repositoryRoot, source });
-		console.log(
-			`Wrote ${result.count} areas to ${result.path} (${result.contentHash})`,
+		buildLog.info(
+			`Wrote ${formatCount(result.count)} areas to ${repoPath(result.path)} (${result.contentHash})`,
 		);
 	}
 }

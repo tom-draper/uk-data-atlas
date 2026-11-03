@@ -24,6 +24,8 @@ import {
 import {
 	apiRootOf,
 	artifactDirectory,
+	formatBytes,
+	formatDuration,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
@@ -147,7 +149,7 @@ export const buildGeometryStore = (
 		saveState();
 		compiled += 1;
 		log(
-			`${identity}: ${(body.length / 1048576).toFixed(1)}MB in ${((performance.now() - started) / 1000).toFixed(1)}s`,
+			`${identity}: ${formatBytes(body.length)} in ${formatDuration(performance.now() - started)}`,
 		);
 	}
 	for (const name of readdirSync(directory))

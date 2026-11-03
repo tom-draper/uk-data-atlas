@@ -129,3 +129,11 @@ export const logArtifact = (
 	console.log(
 		`  ${kind}: ${name} (${details.filter((detail) => detail !== undefined).join("; ")})`,
 	);
+
+const REPOSITORY_ROOT = decodeURIComponent(
+	new URL("../../../../", import.meta.url).pathname,
+);
+
+/** A path relative to the repository root, as build logs print them. */
+export const repoPath = (path: string) =>
+	path.startsWith(REPOSITORY_ROOT) ? path.slice(REPOSITORY_ROOT.length) : path;

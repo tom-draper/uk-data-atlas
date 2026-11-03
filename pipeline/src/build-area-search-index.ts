@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDuckdbAreaSearchIndex } from "./build-duckdb-area-search-index";
@@ -7,7 +12,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = await buildDuckdbAreaSearchIndex(
 		resolve(dirname(scriptPath), "../.."),
 	);
-	console.log(
-		`Wrote ${result.areas} area identities under ${result.terms} terms to ${result.outputPath}`,
+	buildLog.info(
+		`Wrote ${formatCount(result.areas)} area identities under ${formatCount(result.terms)} terms to ${repoPath(result.outputPath)}`,
 	);
 }

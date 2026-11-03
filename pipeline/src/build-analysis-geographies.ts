@@ -12,6 +12,9 @@ import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/rel
 import {
 	artifactDirectory,
 	configDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildAnalysisGeographies = (repositoryRoot: string) => {
@@ -55,7 +58,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = buildAnalysisGeographies(
 		resolve(dirname(scriptPath), "../.."),
 	);
-	console.log(
-		`Wrote ${result.count} analysis geography support entries to ${result.outputPath}`,
+	buildLog.info(
+		`Wrote ${formatCount(result.count)} analysis geography support entries to ${repoPath(result.outputPath)}`,
 	);
 }

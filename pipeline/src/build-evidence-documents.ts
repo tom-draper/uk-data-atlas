@@ -24,7 +24,12 @@ import {
 	cachedEvidenceMeasure,
 } from "./evidence/evidenceDocumentStore";
 import { availableReconciliations } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 const directory = artifactDirectory(repositoryRoot);
@@ -139,7 +144,7 @@ const main = () => {
 					inputsHash,
 				}),
 		);
-		process.stderr.write(`Built evidence for ${measure.id}\n`);
+		buildLog.detail(`Built evidence for ${measure.id}`);
 	}
 	const manifest = {
 		schemaVersion: 1,
@@ -149,6 +154,9 @@ const main = () => {
 	writeFileSync(
 		join(directory, "evidence-documents.json"),
 		`${JSON.stringify({ ...manifest, contentHash: sha256(JSON.stringify(manifest)) })}\n`,
+	);
+	buildLog.info(
+		`Wrote evidence documents for ${formatCount(documents.length)} measures to ${repoPath(directory)}`,
 	);
 };
 

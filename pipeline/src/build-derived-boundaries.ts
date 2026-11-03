@@ -15,6 +15,8 @@ import { sourceGeoJsonPath } from "./boundarySourcePaths";
 import {
 	artifactDirectory,
 	configDirectory,
+	buildLog,
+	formatCount,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 type FeatureCollection = {
@@ -98,5 +100,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 			join(configDirectory(repositoryRoot), "area-source-adapters.json"),
 		),
 	);
-	console.log(`Wrote ${result.releaseCount} derived boundary releases`);
+	buildLog.info(
+		`Wrote ${formatCount(result.releaseCount)} derived boundary releases`,
+	);
 }

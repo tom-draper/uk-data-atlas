@@ -10,6 +10,9 @@ import {
 import {
 	apiRootOf,
 	artifactDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
@@ -44,5 +47,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { outputPath, operationCount } = buildOperations(
 		resolve(dirname(scriptPath), "../.."),
 	);
-	console.log(`Wrote ${operationCount} operation paths to ${outputPath}`);
+	buildLog.info(
+		`Wrote ${formatCount(operationCount)} operation paths to ${repoPath(outputPath)}`,
+	);
 }

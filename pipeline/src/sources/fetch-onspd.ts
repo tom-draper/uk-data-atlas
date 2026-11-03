@@ -1,3 +1,4 @@
+import { buildLog, repoPath } from "@uk-data-atlas/atlas-runtime/storage";
 import { createHash } from "node:crypto";
 import {
 	createReadStream,
@@ -252,5 +253,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { directory, edition } = await fetchOnspd(
 		resolve(dirname(scriptPath), "../../.."),
 	);
-	console.log(`ONS Postcode Directory ${edition} is in ${directory}`);
+	buildLog.info(
+		`Fetched ONS Postcode Directory ${edition} into ${repoPath(directory)}`,
+	);
 }
