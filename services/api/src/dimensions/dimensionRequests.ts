@@ -2,16 +2,23 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-	type RouteDispatchContext,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { retiredMeasure } from "./retiredMeasure";
-import { measureSlug } from "@uk-data-atlas/catalogue";
-import { canonicalMeasureId } from "../catalogue/measureTerms";
 import {
 	dimensionCatalogue,
 	type DimensionalMeasure,
 	type Series,
 } from "./dimensionCatalogue";
+import {
+	ALL,
+	describeChoices,
+	fixAliasMembers,
+	pathChoiceHref,
+	readFilters,
+	readMeasureTerm,
+	sameShape,
+	selectSeries,
+	type DimensionContext,
+} from "./seriesSelection";
 
 /**
  * A request that names a measure and dimension filters, read as a request
@@ -39,8 +46,6 @@ const measurePosition = (segments: string[]) => {
 
 /** Operations that answer several series at once, one entry per series. */
 const BREAKDOWN_OPERATIONS = new Set(["value", "series"]);
-
-const ALL = "*";
 
 export type ResolvedMembers = Record<
 	string,
@@ -76,116 +81,6 @@ export type DimensionResolution =
 			reading: DimensionReading;
 	  };
 
-/** The dimension filters a query carries, by dimension id. */
-const readFilters = (
-	searchParams: URLSearchParams,
-	dimensionIds: ReadonlySet<string>,
-) => {
-	const filters = new Map<string, string[]>();
-	const names: string[] = [];
-	for (const [name, value] of searchParams) {
-		const nested = /^dimensions\[([^\]]+)\]$/.exec(name)?.[1];
-		const dimension = nested ?? (dimensionIds.has(name) ? name : undefined);
-		if (!dimension) continue;
-		names.push(name);
-		const codes = value
-			.split(",")
-			.map((code) => code.trim())
-			.filter(Boolean);
-		filters.set(dimension, [...(filters.get(dimension) ?? []), ...codes]);
-	}
-	return { filters, names };
-};
-
-/** The query parameters a measure's dimension filters take. */
-export const isDimensionParameter = (
-	name: string,
-	dimensionIds: ReadonlySet<string>,
-) => dimensionIds.has(name) || /^dimensions\[[^\]]+\]$/.test(name);
-
-const describeChoices = (
-	measure: DimensionalMeasure,
-	candidates: Series[],
-	url: URL,
-	index: number,
-) =>
-	candidates.map((series) => {
-		const query = new URLSearchParams(url.search);
-		for (const [dimension, code] of Object.entries(series.dimensions))
-			query.set(dimension, code);
-		if (series.datasetId) query.set("datasetId", series.datasetId);
-		const segments = url.pathname.split("/");
-		segments[index + 1] = measure.id;
-		return {
-			dimensions: series.dimensions,
-			...(series.datasetId ? { datasetId: series.datasetId } : {}),
-			label: series.catalogueMeasure.label,
-			href: `${segments.join("/")}?${query}`,
-		};
-	});
-
-/** The dataset a series is read from, where it has only one. */
-const seriesDatasets = (series: Series) =>
-	series.datasetId
-		? [series.datasetId]
-		: [...new Set(series.catalogueMeasure.sources.map((s) => s.datasetId))];
-
-const seriesGeographies = (series: Series) =>
-	new Set(
-		series.catalogueMeasure.sources.map(
-			(source) => source.sourceGeography.type,
-		),
-	);
-
-const sameShape = (left: Series, right: Series) =>
-	Object.keys(left.dimensions).sort().join() ===
-		Object.keys(right.dimensions).sort().join() &&
-	(left.datasetId ?? "") === (right.datasetId ?? "");
-
-/**
- * Narrow series that differ only by dataset to those published on the
- * geography asked for, or on one the place could be.
- */
-type DimensionContext = Pick<
-	RouteDispatchContext,
-	"dataCatalog" | "measureDimensions"
-> & {
-	geographyResolver?: Pick<
-		RouteDispatchContext["geographyResolver"],
-		"places"
-	>;
-};
-
-const narrowByGeography = (
-	candidates: Series[],
-	url: URL,
-	context: DimensionContext,
-) => {
-	if (new Set(candidates.flatMap(seriesDatasets)).size <= 1)
-		return candidates;
-	const geography = url.searchParams.get("geography");
-	const place = url.searchParams.get("place")?.trim();
-	const geographies = geography
-		? new Set([geography])
-		: place && context.geographyResolver?.places
-			? new Set(
-					context.geographyResolver
-						.places(place, 12)
-						.map((candidate) => candidate.geography)
-						.concat(
-							/^[a-zA-Z]+\//.test(place)
-								? [place.split("/")[0]!]
-								: [],
-						),
-				)
-			: undefined;
-	if (!geographies) return candidates;
-	const narrowed = candidates.filter((series) =>
-		[...seriesGeographies(series)].some((type) => geographies.has(type)),
-	);
-	return narrowed.length > 0 ? narrowed : candidates;
-};
-
 /** Read a request's measure and filters, or leave it as it is. */
 export const resolveDimensionRequest = (
 	url: string,
@@ -207,21 +102,11 @@ export const resolveDimensionRequest = (
 	if (!position) return { kind: "unchanged" };
 	const catalogue = dimensionCatalogue(dataCatalog, measureDimensions);
 	const term = segments[position.index]!;
-	const catalogueId = canonicalMeasureId(dataCatalog, term);
-	const named = catalogue.measure(term);
-	const aliased =
-		!named && catalogueId ? catalogue.series(catalogueId) : undefined;
-	const measure = named ?? aliased?.measure;
-	if (!measure) return { kind: "unchanged" };
-	if (
-		aliased &&
-		(catalogueId === term || measureSlug(term) === catalogueId) &&
-		aliased.series.id !== measure.id
-	)
-		return {
-			kind: "problem",
-			response: retiredMeasure(term, measure, aliased.series),
-		};
+	const read = readMeasureTerm(dataCatalog, catalogue, term);
+	if (read.kind === "unknown") return { kind: "unchanged" };
+	if (read.kind === "problem")
+		return { kind: "problem", response: read.response };
+	const { measure, aliased } = read;
 	const { filters, names } = readFilters(
 		parsed.searchParams,
 		catalogue.dimensionIds,
@@ -236,114 +121,22 @@ export const resolveDimensionRequest = (
 					),
 				}
 			: { kind: "unchanged" };
-	// A reviewed alias may name a series; a filter cannot change its members.
-	const fixed = aliased?.series.dimensions ?? {};
-	for (const [dimension, code] of Object.entries(fixed)) {
-		const asked = filters.get(dimension);
-		if (asked && !(asked.length === 1 && asked[0] === code))
-			return {
-				kind: "problem",
-				response: invalidQuery(
-					`${term} is ${measure.id} with ${dimension}=${code}, so it cannot also be filtered to ${dimension}=${asked.join(",")}. Use /v1/data/${measure.id} to choose members.`,
-				),
-			};
-		filters.set(dimension, [code]);
-	}
-	for (const [dimension, codes] of filters) {
-		const held = measure.dimensions.find(
-			(candidate) => candidate.id === dimension,
-		);
-		if (!held)
-			return {
-				kind: "problem",
-				response: invalidQuery(
-					measure.dimensions.length === 0
-						? `${measure.id} has no dimensions, so it takes no ${dimension} filter.`
-						: `${measure.id} has no ${dimension} dimension. Its dimensions are ${measure.dimensions.map((candidate) => candidate.id).join(", ")}.`,
-					{
-						code: "unknown_dimension",
-						dimensions: measure.dimensions.map(
-							(candidate) => candidate.id,
-						),
-					},
-				),
-			};
-		const unknown = codes.filter(
-			(code) =>
-				code !== ALL &&
-				!held.members.some((member) => member.code === code),
-		);
-		if (unknown.length > 0)
-			return {
-				kind: "problem",
-				response: invalidQuery(
-					`${unknown.join(", ")} ${unknown.length === 1 ? "is not a member" : "are not members"} of ${dimension} for ${measure.id}. GET /v1/measures/${measure.id} lists them.`,
-					{
-						code: "unknown_dimension_member",
-						dimension,
-						members: held.members.map((member) => member.code),
-					},
-				),
-			};
-	}
+	const conflict = fixAliasMembers(term, measure, aliased, filters);
+	if (conflict) return { kind: "problem", response: conflict };
 	const datasetId = parsed.searchParams.get("datasetId") ?? undefined;
-	let candidates = measure.series.filter(
-		(series) =>
-			[...filters].every(([dimension, codes]) => {
-				const code = series.dimensions[dimension];
-				return (
-					code !== undefined &&
-					(codes.includes(ALL) || codes.includes(code))
-				);
-			}) &&
-			(datasetId === undefined ||
-				seriesDatasets(series).includes(datasetId)),
-	);
-	// A dimension left out takes its total, where some series has it.
+	const hrefFor = pathChoiceHref(measure, parsed, position.index);
+	const selected = selectSeries({
+		measure,
+		filters,
+		datasetId,
+		url: parsed,
+		context,
+		hrefFor,
+	});
+	if ("problem" in selected)
+		return { kind: "problem", response: selected.problem };
+	const { candidates } = selected;
 	const defaulted: Record<string, string> = {};
-	for (const dimension of measure.dimensions) {
-		if (filters.has(dimension.id) || !dimension.total) continue;
-		const totals = candidates.filter(
-			(series) =>
-				series.dimensions[dimension.id] === undefined ||
-				series.dimensions[dimension.id] === dimension.total,
-		);
-		if (totals.length > 0 && totals.length < candidates.length)
-			candidates = totals;
-	}
-	candidates = narrowByGeography(candidates, parsed, context);
-	const shapes = candidates.filter((series) =>
-		sameShape(series, candidates[0]!),
-	);
-	if (candidates.length > 1 && shapes.length < candidates.length) {
-		// Series of different breakdowns, such as households by tenure and by
-		// car availability: the measure's reviewed default chooses, if any.
-		const preferred = candidates.filter((series) =>
-			Object.entries(measure.defaults).every(
-				([dimension, code]) => series.dimensions[dimension] === code,
-			),
-		);
-		if (Object.keys(measure.defaults).length > 0 && preferred.length > 0)
-			candidates = preferred;
-	}
-	if (candidates.length === 0)
-		return {
-			kind: "problem",
-			response: problem(
-				404,
-				"Not Found",
-				`${measure.id} is not published for that combination of members${datasetId ? ` from ${datasetId}` : ""}. GET /v1/measures/${measure.id} lists the series it has.`,
-				{
-					code: "no_matching_series",
-					choices: describeChoices(
-						measure,
-						measure.series,
-						parsed,
-						position.index,
-					),
-				},
-			),
-		};
 	const breakdown =
 		candidates.length > 1 &&
 		candidates.every((series) => sameShape(series, candidates[0]!));
@@ -361,12 +154,7 @@ export const resolveDimensionRequest = (
 					: `${measure.id} has ${candidates.length} series for that request that are not parts of one breakdown. Choose one; each request is listed in choices.`,
 				{
 					code: "ambiguous_dimension",
-					choices: describeChoices(
-						measure,
-						candidates,
-						parsed,
-						position.index,
-					),
+					choices: describeChoices(measure, candidates, hrefFor),
 				},
 			),
 		};
