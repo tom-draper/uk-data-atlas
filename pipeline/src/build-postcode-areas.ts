@@ -1,4 +1,3 @@
-import { withComponentApiRoot } from "./componentApiRoot";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import {
@@ -192,74 +191,76 @@ export const buildPostcodeAreas = async (
 	options: { workers?: number; verifyEvery?: number; rebuild?: boolean } = {},
 ) => {
 	const apiRoot = apiRootOf(repositoryRoot);
-	const { postcodeArtifact, lng, lat, longitudes, latitudes } =
-		withComponentApiRoot(
+	const { postcodeArtifact, lng, lat, longitudes, latitudes } = (() => {
+		const databasePath = join(
 			repositoryRoot,
-			"postcode-index.sqlite",
-			(postcodeApiRoot) => {
-				const postcodeIndex = readPostcodeIndex(postcodeApiRoot);
-				const postcodeArtifact = postcodeIndex.artifact;
-				const count = postcodeArtifact.counts.postcodes;
-				const longitudes = new SharedArrayBuffer(count * 8);
-				const latitudes = new SharedArrayBuffer(count * 8);
-				const lng = new Float64Array(longitudes).fill(Number.NaN);
-				const lat = new Float64Array(latitudes).fill(Number.NaN);
-				let at = 0;
-				for (const entry of postcodeArtifact.shards) {
-					const shard = JSON.parse(
-						readSqlitePostcodeShard(postcodeApiRoot, entry),
-					) as PostcodeShard;
-					for (const postcode of shard.postcodes) {
-						const found = postcodeIndex.lookup(
-							parsePostcode(postcode) as Extract<
-								ReturnType<typeof parsePostcode>,
-								{ kind: "unit" }
-							>,
-						);
-						if (found.status === "found" && found.record.centroid) {
-							const point = postcodeLookupPoint(
-								found.record.centroid,
-							);
-							lng[at] = point.lng;
-							lat[at] = point.lat;
-						}
-						at += 1;
-					}
-				}
-				if (at !== count)
-					throw new Error(
-						`The postcode index counts ${count} postcodes but holds ${at}.`,
-					);
-				return { postcodeArtifact, lng, lat, longitudes, latitudes };
-			},
+			"data/build/postcode-index.sqlite",
 		);
-	const geometrySources = readGeometrySources(apiRoot);
-	const { areaInventory, chosen } = withComponentApiRoot(
-		repositoryRoot,
-		"atlas-base.sqlite",
-		(baseApiRoot) => {
-			const areaInventory = readAreaInventory(baseApiRoot);
-			const resolver = new AreasResolver({
-				boundaryRegistry: readBuildBoundaryRegistry(repositoryRoot),
-				areaInventory,
-				areaLookup: readAreaLookup(baseApiRoot, areaInventory),
-			});
-			const chosen = postcodeAreaReleases(
-				resolver,
-				readPublicManifest<MeasureCompatibilityInventory>(
-					apiRoot,
-					"measure-compatibility.json",
-					"measures",
-					"measure compatibility inventory",
-				),
-				postcodeArtifact.source.edition,
-				(geography, boundaryRelease) =>
-					geometrySources.get(releaseKey(geography, boundaryRelease))
-						?.inputHash !== undefined,
+		const postcodeIndex = readPostcodeIndex(apiRoot, databasePath);
+		const postcodeArtifact = postcodeIndex.artifact;
+		const count = postcodeArtifact.counts.postcodes;
+		const longitudes = new SharedArrayBuffer(count * 8);
+		const latitudes = new SharedArrayBuffer(count * 8);
+		const lng = new Float64Array(longitudes).fill(Number.NaN);
+		const lat = new Float64Array(latitudes).fill(Number.NaN);
+		let at = 0;
+		for (const entry of postcodeArtifact.shards) {
+			const shard = JSON.parse(
+				readSqlitePostcodeShard(apiRoot, entry, databasePath),
+			) as PostcodeShard;
+			for (const postcode of shard.postcodes) {
+				const found = postcodeIndex.lookup(
+					parsePostcode(postcode) as Extract<
+						ReturnType<typeof parsePostcode>,
+						{ kind: "unit" }
+					>,
+				);
+				if (found.status === "found" && found.record.centroid) {
+					const point = postcodeLookupPoint(found.record.centroid);
+					lng[at] = point.lng;
+					lat[at] = point.lat;
+				}
+				at += 1;
+			}
+		}
+		if (at !== count)
+			throw new Error(
+				`The postcode index counts ${count} postcodes but holds ${at}.`,
 			);
-			return { areaInventory, chosen };
-		},
-	);
+		return { postcodeArtifact, lng, lat, longitudes, latitudes };
+	})();
+	const geometrySources = readGeometrySources(apiRoot);
+	const { areaInventory, chosen } = (() => {
+		const databasePath = join(
+			repositoryRoot,
+			"data/build/atlas-base.sqlite",
+		);
+		const areaInventory = readAreaInventory(apiRoot, databasePath);
+		const resolver = new AreasResolver({
+			boundaryRegistry: readBuildBoundaryRegistry(repositoryRoot),
+			areaInventory,
+			areaLookup: readAreaLookup(
+				apiRoot,
+				areaInventory,
+				undefined,
+				databasePath,
+			),
+		});
+		const chosen = postcodeAreaReleases(
+			resolver,
+			readPublicManifest<MeasureCompatibilityInventory>(
+				apiRoot,
+				"measure-compatibility.json",
+				"measures",
+				"measure compatibility inventory",
+			),
+			postcodeArtifact.source.edition,
+			(geography, boundaryRelease) =>
+				geometrySources.get(releaseKey(geography, boundaryRelease))
+					?.inputHash !== undefined,
+		);
+		return { areaInventory, chosen };
+	})();
 	const inputsOf = (geography: string, boundaryRelease: string) => {
 		const release = areaInventory.releases.find(
 			(entry) =>

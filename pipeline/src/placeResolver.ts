@@ -49,15 +49,28 @@ export const createPlaceResolver = (
 	};
 };
 
-export const readPlaceResolver = (apiRoot: string, databaseRoot: string) => {
-	const areaInventory = readSqliteAreaInventory(databaseRoot);
-	const crosswalkInventory = readCrosswalkInventory(databaseRoot);
+export const readPlaceResolver = (apiRoot: string, databasePath: string) => {
+	const areaInventory = readSqliteAreaInventory(apiRoot, databasePath);
+	const crosswalkInventory = readCrosswalkInventory(apiRoot, databasePath);
 	return createPlaceResolver({
 		areaInventory,
-		areaLookup: readAreaLookup(databaseRoot, areaInventory),
-		crosswalkLookup: readCrosswalkLookup(databaseRoot, crosswalkInventory),
+		areaLookup: readAreaLookup(
+			apiRoot,
+			areaInventory,
+			undefined,
+			databasePath,
+		),
+		crosswalkLookup: readCrosswalkLookup(
+			apiRoot,
+			crosswalkInventory,
+			undefined,
+			databasePath,
+		),
 		areaGeometryCache: createAreaGeometryCache(apiRoot),
-		namedLocationInventory: readNamedLocationInventory(databaseRoot),
+		namedLocationInventory: readNamedLocationInventory(
+			apiRoot,
+			databasePath,
+		),
 		boundaryRegistry: readBuildBoundaryRegistry(repositoryRootOf(apiRoot)),
 	});
 };
