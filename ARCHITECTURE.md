@@ -166,7 +166,7 @@ run through `pnpm check:full`.
 `scripts/build-data-graph.mjs` lists every data build stage for both
 products, with its dependencies. `pnpm data:build` builds all API and website
 data in dependency order, including SQLite and PMTiles. Product targets
-are no longer supported.
+are no longer supported. Stages run from the repository root.
 
 `--plan` lists the stages without running them. `--only <stage>` builds one
 stage and its prerequisites, reusing cached results where valid. `--from <stage>` rebuilds
@@ -257,8 +257,11 @@ later stage keys are computed. `scripts/build-data-cache.mjs` stores the cache i
 `.cache/data-build/`. The scoped key format and the content-hash record format
 each invalidate old entries once.
 `--from` and `--no-cache` rerun the stages they select regardless.
+Moving stage commands to the repository root also invalidates cached stages
+once because the command is part of each key. The cache format remains at
+version 4.
 
-After a cache format bump, `pnpm data:build --adopt` records existing outputs
+After a cache format bump or command change, `pnpm data:build --adopt` records existing outputs
 against current keys without running any stage, hashing every adopted file once.
 Use `--only <stage>` to select a stage and its prerequisites, or add `--plan` to
 validate and preview adoption.
