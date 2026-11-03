@@ -1,5 +1,8 @@
 /** Force selected compiles into a temporary directory and check existing hashes. */
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -46,7 +49,7 @@ let completed = 0;
 const started = performance.now();
 const report = (artifact: CrosswalkArtifact, seconds: number) => {
 	const stored = join(
-		artifactRoot(apiRoot),
+		artifactDirectory(root),
 		"crosswalks",
 		`${artifact.id}.json`,
 	);
@@ -77,7 +80,7 @@ const report = (artifact: CrosswalkArtifact, seconds: number) => {
 };
 try {
 	if (workers === 1) {
-		const { areaLookup } = readCompiledAreaLookup(artifactRoot(apiRoot));
+		const { areaLookup } = readCompiledAreaLookup(artifactDirectory(root));
 		let taskStarted = performance.now();
 		for (const artifact of compileCrosswalks(
 			root,

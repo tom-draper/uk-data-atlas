@@ -12,23 +12,18 @@ import {
 	ATLAS_LOOKUPS_MANIFEST,
 	type AtlasLookupManifest,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import {
-	apiRootOf,
-	repositoryRootOf,
-} from "@uk-data-atlas/atlas-runtime/storage";
-
-const apiRoot = apiRootOf(resolve(import.meta.dirname, "../.."));
-const publicDirectory = atlasAssetsDirectory(repositoryRootOf(apiRoot));
+const repositoryRoot = resolve(import.meta.dirname, "../..");
+const publicDirectory = atlasAssetsDirectory(repositoryRoot);
 const directory = join(publicDirectory, ATLAS_LOOKUPS_DIRECTORY);
 
 rmSync(join(publicDirectory, ATLAS_LOOKUPS_MANIFEST), { force: true });
 rmSync(directory, { recursive: true, force: true });
 const lookups = withComponentApiRoot(
-	repositoryRootOf(apiRoot),
+	repositoryRoot,
 	"atlas-base.sqlite",
 	(databaseRoot) =>
 		compileAtlasLookups(
-			readLookupResolver(databaseRoot, repositoryRootOf(apiRoot)),
+			readLookupResolver(databaseRoot, repositoryRoot),
 			ATLAS_BOUNDARY_VINTAGES,
 		),
 );

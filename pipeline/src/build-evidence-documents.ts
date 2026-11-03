@@ -24,10 +24,14 @@ import {
 	cachedEvidenceMeasure,
 } from "./evidence/evidenceDocumentStore";
 import { availableReconciliations } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
-const apiRoot = apiRootOf(resolve(import.meta.dirname, "../.."));
-const directory = artifactRoot(apiRoot);
+const repositoryRoot = resolve(import.meta.dirname, "../..");
+const apiRoot = apiRootOf(repositoryRoot);
+const directory = artifactDirectory(repositoryRoot);
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
