@@ -394,15 +394,11 @@ cost:
 - **Observations as rows.** Store each observation as a row in
   `atlas.sqlite` (dataset, measure, area, release, period, value) instead of
   one JSON payload per dataset, so most new datasets become configuration
-  rather than compiler code. Started with one pilot dataset. The API now
-  reads 112 of its 322 observation artifacts from the statistics rows, each
-  only because the rows rebuild it byte for byte
-  (`config/statistics-read-path.json`, which also says why each other
-  artifact stays on the observation tables). Crime (community safety
-  partnerships), election results, census LSOA and MSOA tables, unemployment
-  intervals, air-quality area means, house prices and population density are
-  still read from the observation tables, so those tables and their writer
-  stay until the statistics rows hold them.
+  rather than compiler code. The API reads all 322 observation artifacts from
+  statistics rows, each after a byte-for-byte comparison with the observation
+  tables. The pipeline writes the selectors to `data/build/statistics-read-path.json`.
+  The observation tables and their writer still support build validation and
+  the independent comparison.
 - **The data build outside the API.** Build code runs in `pipeline/` and
   shared packages. The API reads the deployed SQLite cache without building it,
   and the website reads shared release assets. See [the move plan](../../docs/data-pipeline-move.md).

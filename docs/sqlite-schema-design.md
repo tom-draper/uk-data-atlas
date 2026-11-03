@@ -861,9 +861,10 @@ members, rather than one id per breakdown.
   ids become 51 measures; 205 of them are now deprecated aliases.
 - **Vocabulary from these tables.** Labels, parents and order come from
   `measure`, `dimension` and `dimension_member`, copied to
-  `services/api/config/statistics-vocabulary.json` by
-  `pnpm --dir services/api generate:statistics-vocabulary`; a built test
-  fails while the copy and the tables differ. A dimension's total is the one
+  `data/build/statistics-vocabulary.json` by the `statistics-vocabulary`
+  pipeline stage. The committed `services/api/config/statistics-vocabulary.json`
+  supports the unbuilt mapping check, and a built test compares it with the
+  generated vocabulary. A dimension's total is the one
   member every other is part of (`offence=total`, `sex=all`).
 - **What the API holds that these tables do not.** Three measures
   (`winning-party`, `effective-votes`, `population-density`) are declared in
@@ -875,7 +876,7 @@ members, rather than one id per breakdown.
   mapping does not declare them.
 - **Read path.** An API observation artifact is read from `observation` rows
   only when they rebuild it byte for byte, so values, statuses, intervals,
-  periods and areas are unchanged. `services/api/config/statistics-read-path.json`
+  periods and areas are unchanged. `data/build/statistics-read-path.json`
   names each artifact's series (dataset, measure, members, geography, and
   any dimension summed over, such as `age` for population) and why each
   other artifact stays on `observations`. A selector can also read what the
@@ -895,8 +896,8 @@ members, rather than one id per breakdown.
   (series the crime dataset adds from its partnership records), air-quality
   area means with the `derived` status the compiler gives them, each
   contest's winner, and the census small-area tables, read from the Nomis
-  files under `data/source`. The `observation_*` tables and their writer stay until
-  that is verified, then retire.
+  files under `data/source`. The `observation_*` tables and their writer remain
+  necessary for build validation and the independent byte comparison.
 - **Periods.** A catalogue period reads the statistics period with the same
   label, or the one label that extends it: `2021` is `2021-census`, an
   election year is its polling day.

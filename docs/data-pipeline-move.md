@@ -650,3 +650,15 @@ registry and type map under `packages/datasets`. The website's
 `lib/datasets`, reading the catalogue definitions through the pipeline module,
 and no longer rewrites the catalogue files. Dataset discovery stays with the
 website stages, which are its only users.
+
+## Statistics generators
+
+The pipeline generates the statistics vocabulary from `atlas-base.sqlite`
+into `data/build/statistics-vocabulary.json`. The data catalogue then writes
+`observations.sqlite`. The read-path stage compares those observation bytes
+with statistics rows and writes `data/build/statistics-read-path.json` before
+export manifest compilation. The API reads the generated files through the
+shared data layout. Keeping them as separate JSON outputs avoids changing the
+SQLite component and makes each stage's output explicit. The committed
+vocabulary remains for the unbuilt dimension mapping check. A built test checks
+that it matches the generated vocabulary.

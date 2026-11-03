@@ -247,6 +247,8 @@ stop the API before `pnpm data:build`.
 
 API PMTiles and map feature downloads live in `data/build/map-resources/`.
 Include this directory alongside `data/build/atlas.sqlite` in API deployments.
+Also deploy `data/build/statistics-vocabulary.json` and
+`data/build/statistics-read-path.json` from the same build.
 For an asset CDN, upload it under the `map-resources/` prefix. Website builds
 hard-link `data/build/boundaries/` archives into `public/data/boundaries/` for static
 serving. Every website boundary release is served as PMTiles with a properties sidecar.
