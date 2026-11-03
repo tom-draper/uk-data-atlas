@@ -4,6 +4,7 @@ import {
 	type DeclaredDataset,
 	type DeclaredDimension,
 	type DeclaredField,
+	type Json,
 	periods,
 } from "../declaredStatistics";
 import { yearParts } from "../declaredPayload";
@@ -289,8 +290,60 @@ const MOST_PREDECESSORS = Math.max(
 	),
 );
 
+const periodText = (year: number) =>
+	year <= 2003
+		? `April ${year} to March ${year + 1}`
+		: `January to December ${year}`;
+
 export const UNEMPLOYMENT: DeclaredDataset = {
 	type: "unemployment",
+	payload: {
+		parts: () => [
+			{
+				key: "2021",
+				header: {
+					id: "unemployment",
+					type: "unemployment",
+					year: 2021,
+					boundaryType: "localAuthority",
+					boundaryYear: 2024,
+					latestYear: 2021,
+					coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS"],
+				},
+			},
+		],
+		code: "ladCode",
+		arrays: ["derivedFromPredecessors"],
+		/** The compiler publishes no intervals for figures built from predecessors. */
+		without: (relations) =>
+			relations.has("predecessor")
+				? ["rateIntervals", "levelIntervals"]
+				: [],
+		periodKeys: Array.from({ length: 26 }, (_, index) =>
+			String(1996 + index),
+		),
+		/** The years any area has a rate for, with how each is described. */
+		summary: (records) => {
+			const years = [
+				...new Set(
+					Object.values(records).flatMap((record) =>
+						Object.keys(
+							(record as { rates?: Record<string, Json> })
+								.rates ?? {},
+						),
+					),
+				),
+			]
+				.map(Number)
+				.sort((a, b) => a - b);
+			return {
+				years,
+				periodLabels: Object.fromEntries(
+					years.map((year) => [year, periodText(year)]),
+				),
+			};
+		},
+	},
 	name: "ladName",
 	period: () => periods.year(2021),
 	alsoIn: [
