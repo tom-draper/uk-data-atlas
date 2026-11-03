@@ -20,7 +20,7 @@ import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalo
 import {
 	artifactDirectory,
 	apiRootOf,
-	statisticsReadPathPath,
+	repositoryStatisticsReadPathPath,
 	buildDirectory,
 	readObservationText,
 	rebuildStatisticsObservationText,
@@ -392,7 +392,7 @@ const sorted = <T>(entries: { [key: string]: T }) =>
 			left.localeCompare(right),
 		),
 	);
-const file = statisticsReadPathPath(apiRoot);
+const file = repositoryStatisticsReadPathPath(repositoryRoot);
 writeFileSync(
 	file,
 	`${JSON.stringify(
