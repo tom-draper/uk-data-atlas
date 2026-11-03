@@ -150,7 +150,7 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 		database.close();
 	}
 	rmSync(join(artifactRoot(apiRoot), "terrain-catalogue.json"));
-	const after = readTerrainCatalogue(apiRoot);
+	const after = readTerrainCatalogue(root);
 	assert.equal(JSON.stringify(after), JSON.stringify(before));
 	for (const url of [
 		"/v1/terrain",
@@ -170,9 +170,9 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 });
 
 test("terrain loader refuses a missing database even when JSON exists", (context) => {
-	const { apiRoot } = fixture(context);
+	const { root } = fixture(context);
 	assert.throws(
-		() => readTerrainCatalogue(apiRoot),
+		() => readTerrainCatalogue(root),
 		/unable to open database file/,
 	);
 });
@@ -194,7 +194,7 @@ test("terrain loader refuses missing and invalid SQLite payloads", (context) => 
 	try {
 		database.prepare("DELETE FROM payloads").run();
 		assert.throws(
-			() => readTerrainCatalogue(apiRoot),
+			() => readTerrainCatalogue(root),
 			/Missing terrain catalogue/,
 		);
 		for (const payload of [
@@ -205,7 +205,7 @@ test("terrain loader refuses missing and invalid SQLite payloads", (context) => 
 			database
 				.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
 				.run("terrain-catalogue", payload);
-			assert.throws(() => readTerrainCatalogue(apiRoot));
+			assert.throws(() => readTerrainCatalogue(root));
 		}
 	} finally {
 		database.close();
@@ -219,7 +219,7 @@ test("rebuilding SQLite replaces the payload and a missing input preserves the l
 	database.prepare("UPDATE payloads SET payload = '{}'").run();
 	database.close();
 	buildAtlasSqlite(root, { censusTables: [] });
-	assert.equal(readTerrainCatalogue(apiRoot).products.length, 6);
+	assert.equal(readTerrainCatalogue(root).products.length, 6);
 	const before = readFileSync(path);
 	rmSync(join(artifactRoot(apiRoot), "terrain-catalogue.json"));
 	assert.throws(() => buildAtlasSqlite(root, { censusTables: [] }), /ENOENT/);

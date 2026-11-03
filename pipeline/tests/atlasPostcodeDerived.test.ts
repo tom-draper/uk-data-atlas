@@ -255,16 +255,11 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 		],
 	]);
 	const postcodes = readPostcodeIndex(root);
-	const index = readPostcodeAreaIndex(
-		apiRoot,
-		postcodes,
-		inventory,
-		geometry,
-	);
+	const index = readPostcodeAreaIndex(root, postcodes, inventory, geometry);
 	assert.throws(
 		() =>
 			readPostcodeAreaIndex(
-				apiRoot,
+				root,
 				postcodes,
 				{
 					...inventory,
@@ -278,7 +273,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 		/current areas/,
 	);
 	assert.throws(
-		() => readPostcodeAreaIndex(apiRoot, postcodes, inventory, new Map()),
+		() => readPostcodeAreaIndex(root, postcodes, inventory, new Map()),
 		/current geometry/,
 	);
 	assert.deepEqual(index.containing("M11AA", "ward", "2026"), [
@@ -312,7 +307,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 	const areas = new PostcodeAreaIndex(compiled.artifact, postcodes, (path) =>
 		readSqlitePostcodeAreaShard(root, path),
 	);
-	const counts = readPostcodeCounts(apiRoot, postcodes, areas);
+	const counts = readPostcodeCounts(root, postcodes, areas);
 	assert.deepEqual(counts.forArea("ward", "2026", "A"), {
 		live: 1,
 		terminated: 1,
@@ -338,14 +333,14 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 		() => "",
 	);
 	assert.throws(
-		() => readPostcodeCounts(apiRoot, postcodes, stale),
+		() => readPostcodeCounts(root, postcodes, stale),
 		/current postcode area index/,
 	);
 	const db = new DatabaseSync(atlasCachePath(root));
 	db.exec("UPDATE postcode_counts SET live = 99");
 	db.close();
 	assert.throws(
-		() => readPostcodeCounts(apiRoot, postcodes, areas),
+		() => readPostcodeCounts(root, postcodes, areas),
 		/content hash/,
 	);
 });

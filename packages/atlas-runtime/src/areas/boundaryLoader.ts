@@ -29,7 +29,7 @@ import {
 import type { GeometrySourceLookup } from "../geometry/areaGeometry";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { publicPath } from "../storage/publicManifest";
-import { atlasDatabasePath, repositoryRootOf } from "../storage/dataLayout";
+import { atlasDatabasePath } from "../storage/dataLayout";
 
 export { readBoundaryRegistry } from "../catalogue/boundaryCatalogue";
 
@@ -43,8 +43,10 @@ export const readGeographyInventory = (
 		"geography inventory",
 	);
 
-export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
-	const path = atlasDatabasePath(repositoryRootOf(apiRoot));
+export const readTerrainCatalogue = (
+	repositoryRoot: string,
+): TerrainCatalogue => {
+	const path = atlasDatabasePath(repositoryRoot);
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
 		const row = database
@@ -73,11 +75,11 @@ export { DEFAULT_AREA_CACHE_RECORDS, readAreaLookup } from "./areaLookup";
  * from these very inputs.
  */
 export const readPlaceIndex = (
-	apiRoot: string,
+	repositoryRoot: string,
 	areaInventory: AreaInventory,
 	namedLocations: NamedLocationInventory,
 ): PlaceIndex => {
-	const path = requireAtlasCache(repositoryRootOf(apiRoot), "place-index");
+	const path = requireAtlasCache(repositoryRoot, "place-index");
 	try {
 		return openPlaceIndexDatabase(
 			path,
@@ -100,13 +102,13 @@ export const readPostcodeIndex = readSqlitePostcodeIndex;
  * index and the current areas and geometry of every release it holds.
  */
 export const readPostcodeAreaIndex = (
-	apiRoot: string,
+	repositoryRoot: string,
 	postcodeIndex: PostcodeIndex,
 	areaInventory: AreaInventory,
 	geometrySources: GeometrySourceLookup,
 ): PostcodeAreaIndex => {
-	const path = atlasDatabasePath(repositoryRootOf(apiRoot));
-	const artifact = readSqlitePostcodeAreas(repositoryRootOf(apiRoot));
+	const path = atlasDatabasePath(repositoryRoot);
+	const artifact = readSqlitePostcodeAreas(repositoryRoot);
 	const mismatch = postcodeAreasMismatch(artifact, postcodeIndex.artifact, {
 		areaRelease: (geography, boundaryRelease) => {
 			const release = areaInventory.releases.find(
@@ -127,18 +129,18 @@ export const readPostcodeAreaIndex = (
 		);
 	}
 	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
-		readSqlitePostcodeAreaShard(repositoryRootOf(apiRoot), shard),
+		readSqlitePostcodeAreaShard(repositoryRoot, shard),
 	);
 };
 
 /** The per-area postcode counts, refused unless built from these indexes. */
 export const readPostcodeCounts = (
-	apiRoot: string,
+	repositoryRoot: string,
 	postcodeIndex: PostcodeIndex,
 	postcodeAreas: PostcodeAreaIndex,
 ): PostcodeCountsIndex => {
-	const path = atlasDatabasePath(repositoryRootOf(apiRoot));
-	const artifact = readSqlitePostcodeCounts(repositoryRootOf(apiRoot));
+	const path = atlasDatabasePath(repositoryRoot);
+	const artifact = readSqlitePostcodeCounts(repositoryRoot);
 	const mismatch = postcodeCountsMismatch(
 		artifact,
 		postcodeIndex.artifact,
@@ -159,10 +161,10 @@ export const readPostcodeCounts = (
  * built from this inventory.
  */
 export const readAreaSearchIndex = (
-	apiRoot: string,
+	repositoryRoot: string,
 	areaInventory: AreaInventory,
 ): AreaSearchIndex => {
-	const path = requireAtlasCache(repositoryRootOf(apiRoot), "area-search");
+	const path = requireAtlasCache(repositoryRoot, "area-search");
 	try {
 		return openAreaSearchIndexDatabase(path, areaInventory.contentHash);
 	} catch (error) {
