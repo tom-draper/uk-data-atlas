@@ -7,7 +7,10 @@ import {
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishAtlasCache } from "../storage/index";
-import { servedFromRows } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	rebuildDatasetPayload,
+	servedFromRows,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishDatasetPayloads } from "../storage/index";
 import { writeSqliteIndex, writeSqliteTables } from "../storage/index";
 import {
@@ -27,6 +30,7 @@ import {
 	type CensusTable,
 } from "../catalog/censusSmallArea";
 import { createHash } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
 import {
 	existsSync,
 	mkdirSync,
@@ -271,6 +275,23 @@ export const buildAtlasSqlite = (
 	try {
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)
 			throw new Error("Area versions on another geography's release");
+		for (const entry of manifest.datasets) {
+			if (entry.type !== "airQuality" || entry.output !== "air-quality")
+				continue;
+			const compiled = readFileSync(
+				join(directory, "datasets", `${entry.output}.json`),
+				"utf8",
+			);
+			const generated = rebuildDatasetPayload(
+				written,
+				entry.type,
+				entry.output,
+			);
+			if (!isDeepStrictEqual(JSON.parse(generated), JSON.parse(compiled)))
+				throw new Error(
+					`${entry.type}: statistics rows do not match compiled dataset values`,
+				);
+		}
 	} finally {
 		written.close();
 	}
