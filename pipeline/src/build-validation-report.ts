@@ -23,7 +23,7 @@ import {
 	artifactDirectory,
 	configDirectory,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { observationBuildPath } from "./statistics/observation-build-path";
+import { observationBuildPath } from "./statistics/observationBuildPath";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

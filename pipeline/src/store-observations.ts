@@ -3,7 +3,7 @@ import { readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { replaceObservationTables } from "./statistics/atlasObservationTables";
-import { observationBuildPath } from "./statistics/observation-build-path";
+import { observationBuildPath } from "./statistics/observationBuildPath";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationArtifactName,

@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import { compileExportManifest } from "./atlas/exportManifest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { observationBuildPath } from "./statistics/observation-build-path";
+import { observationBuildPath } from "./statistics/observationBuildPath";
 import { DatabaseSync } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections";
