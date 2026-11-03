@@ -421,13 +421,59 @@ describe("declared statistics", () => {
 				},
 				{
 					regions: {
-						E12000001: { regionCode: "E12000001", total: 9, name: "North East" },
+						E12000001: {
+							regionCode: "E12000001",
+							total: 9,
+							name: "North East",
+						},
 					},
 				},
 			),
 		);
 		const database = write(config, JSON.stringify(expected));
 		try {
+			expect(
+				JSON.parse(rebuildFromDeclaration(database, config, "example")),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
+	it("stores header links as relationships and generates them back", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			measures: [CRIMES],
+			fields: [{ path: "total", measure: "crimes" }],
+			headerRelationships: [
+				{
+					field: "links",
+					child: { geography: "localAuthority", year: 2024 },
+					parent: { geography: "region", year: 2025 },
+				},
+			],
+			payload: { parts: yearParts("example", "localAuthority", 2024) },
+		};
+		const expected = JSON.parse(
+			file(
+				{ E06000001: { name: "Hartlepool", total: 3 } },
+				{ links: { E06000001: "E12000001", E06000002: "E12000001" } },
+			),
+		);
+		const database = write(config, JSON.stringify(expected));
+		try {
+			expect(
+				database
+					.prepare(
+						"SELECT relation, child_version_id, parent_version_id FROM area_relationship ORDER BY child_version_id",
+					)
+					.all()
+					.map((row) => Object.values(row)),
+			).toEqual([
+				["parent", 1, 4],
+				["parent", 2, 4],
+			]);
 			expect(
 				JSON.parse(rebuildFromDeclaration(database, config, "example")),
 			).toEqual(expected);

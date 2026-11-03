@@ -558,8 +558,35 @@ export function rebuildFromDeclaration(
 				`${context}: no records; declare the part optional`,
 			);
 		}
+		const linked: Record<string, Json> = {};
+		for (const link of config.headerRelationships ?? []) {
+			const found: Record<string, Json> = {};
+			for (const row of database
+				.prepare(
+					`SELECT ca.code AS child, coalesce(k.key, pa.code) AS parent
+					FROM area_relationship r
+					JOIN area_version cv ON cv.id = r.child_version_id
+					JOIN area ca ON ca.id = cv.area_id
+					JOIN area_releases cr ON cr.position = cv.release_id
+					JOIN area_version pv ON pv.id = r.parent_version_id
+					JOIN area pa ON pa.id = pv.area_id
+					JOIN area_releases pr ON pr.position = pv.release_id
+					LEFT JOIN dataset_area_key k ON k.dataset_id = r.dataset_id AND k.area_version_id = pv.id
+					WHERE r.dataset_id = ? AND r.relation = ? AND cr.geography = ? AND pr.geography = ?
+					ORDER BY ca.code`,
+				)
+				.all(
+					dataset,
+					link.relation ?? "parent",
+					link.child.geography,
+					link.parent.geography,
+				))
+				found[String(row.child)] = String(row.parent);
+			linked[link.field] = found;
+		}
 		result[key] = {
 			...header,
+			...linked,
 			...(spec.summary ? spec.summary(data, full) : {}),
 			...sections,
 		} as Json;

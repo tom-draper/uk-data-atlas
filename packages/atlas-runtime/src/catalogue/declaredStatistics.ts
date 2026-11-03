@@ -131,6 +131,16 @@ export type DeclaredDataset = {
 	 * used. Stored for datasets served from rows.
 	 */
 	parents?: DeclaredParent[];
+	/**
+	 * Header fields mapping the code of one kind of area to the key of another,
+	 * such as each local authority's NHS board. Stored as relationships.
+	 */
+	headerRelationships?: {
+		field: string;
+		relation?: AreaRelationship;
+		child: DeclaredRelease;
+		parent: DeclaredRelease;
+	}[];
 	/** Store each part as an election, with its records' text in contests. */
 	election?: DeclaredElection;
 	/**
@@ -1084,6 +1094,28 @@ export function declaredStatistics(
 								`${context}: ${path.join(".")} in ${code} is not mapped or declared derived`,
 							);
 						}
+					}
+				}
+				for (const link of config.headerRelationships ?? []) {
+					const links = header[link.field];
+					if (links === null || typeof links !== "object")
+						throw new Error(`${context} has no ${link.field}`);
+					const [childRelease] = held([link.child], context);
+					const [parentRelease] = held([link.parent], context);
+					for (const [child, parentKey] of Object.entries(links)) {
+						if (typeof parentKey !== "string")
+							throw new Error(
+								`${context}: ${link.field}.${child} is not a key`,
+							);
+						const parent =
+							typeof config.keys === "function"
+								? config.keys(parentKey, header)
+								: (config.keys?.[parentKey] ?? parentKey);
+						onRelation?.({
+							relation: link.relation ?? "parent",
+							child: { release: childRelease, code: child },
+							parent: { release: parentRelease, code: parent },
+						});
 					}
 				}
 				if (onElection && config.election) {
