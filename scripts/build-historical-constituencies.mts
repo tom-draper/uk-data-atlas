@@ -9,7 +9,8 @@
  * year and the Library's id (`1918-1`), unique across sets. A few 1918 Irish
  * rows have no id; the compiler keys those by name, and so does the code.
  *
- * Usage: node --import tsx scripts/build-historical-constituencies.mts [out]
+ * Usage: node --import { buildLog, formatCount } from "@uk-data-atlas/atlas-runtime/storage";
+import tsx scripts/build-historical-constituencies.mts [out]
  * `out` defaults to data/source/boundaries/historical-constituency.
  */
 import { createHash } from "node:crypto";
@@ -101,5 +102,7 @@ for (const [set, names] of sets) {
 			"\t",
 		)}\n`,
 	);
-	console.log(`${release}: ${names.size} constituencies (${set})`);
+	buildLog.info(
+		`Wrote ${formatCount(names.size)} constituencies for ${release} (${set})`,
+	);
 }

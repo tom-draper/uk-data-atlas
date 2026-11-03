@@ -1,3 +1,4 @@
+import { buildLog, repoPath } from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -65,9 +66,9 @@ const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const apiRoot = resolve(dirname(scriptPath), "..");
 	const { readmePath, changed } = buildReadmeIndex(apiRoot);
-	console.log(
+	buildLog.info(
 		changed
-			? `Wrote the route index to ${readmePath}`
-			: `The route index in ${readmePath} was already current`,
+			? `Wrote the route index to ${repoPath(readmePath)}`
+			: `The route index in ${repoPath(readmePath)} was already current`,
 	);
 }
