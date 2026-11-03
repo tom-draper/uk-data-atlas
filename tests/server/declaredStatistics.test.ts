@@ -793,6 +793,17 @@ describe("declared statistics", () => {
 			expect(
 				database
 					.prepare(
+						"SELECT relation, child_version_id, parent_version_id FROM area_relationship ORDER BY child_version_id",
+					)
+					.all()
+					.map((row) => Object.values(row)),
+			).toEqual([
+				["parent", 1, 4],
+				["parent", 2, 4],
+			]);
+			expect(
+				database
+					.prepare(
 						"SELECT area_version_id, name FROM dataset_area_name WHERE area_version_id = 4",
 					)
 					.all()

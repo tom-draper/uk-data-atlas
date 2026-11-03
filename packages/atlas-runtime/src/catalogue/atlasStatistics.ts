@@ -92,6 +92,18 @@ export type StatisticsSeries = {
 	derivedFrom?: number;
 };
 
+/**
+ * How a publisher relates one area to another: `parent` is the area that
+ * contains it, `predecessor` an area it was formed from, and `published-as`
+ * the area under whose code the publisher listed it.
+ */
+export const AREA_RELATIONSHIPS = [
+	"parent",
+	"predecessor",
+	"published-as",
+] as const;
+export type AreaRelationship = (typeof AREA_RELATIONSHIPS)[number];
+
 export type StatisticsObservation = {
 	/** Index into the dataset's `series`. */
 	series: number;
@@ -131,6 +143,12 @@ export type StatisticsDataset = {
 		release: AreaRelease;
 		code: string;
 		key: string;
+	}>;
+	/** Areas a publisher relates to other areas, such as the one containing them. */
+	relationships?: () => Iterable<{
+		relation: AreaRelationship;
+		child: { release: AreaRelease; code: string };
+		parent: { release: AreaRelease; code: string };
 	}>;
 	/**
 	 * How to lay the rows back out as the compiled JSON, for datasets served

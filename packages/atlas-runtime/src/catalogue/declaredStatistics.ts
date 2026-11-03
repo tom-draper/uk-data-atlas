@@ -10,6 +10,7 @@ import type {
 	StatisticsDataset,
 	StatisticsLayout,
 	StatisticsLayoutLeaf,
+	AreaRelationship,
 	StatisticsDimension,
 	StatisticsMeasure,
 	StatisticsObservation,
@@ -181,6 +182,11 @@ export type DeclaredElection = {
 };
 
 export type DeclaredParent = {
+	/**
+	 * How the area relates to the one the record names. Defaults to `parent`,
+	 * the area the publisher says contains this one.
+	 */
+	relation?: AreaRelationship;
 	/** Dot-separated path to the code; an array index is a key. */
 	code: string;
 	/** Absent when the record names the area by code only. */
@@ -721,6 +727,11 @@ export function declaredStatistics(
 			) => void,
 			onName?: (release: AreaRelease, code: string, name: string) => void,
 			onKey?: (release: AreaRelease, code: string, key: string) => void,
+			onRelation?: (relation: {
+				relation: AreaRelationship;
+				child: { release: AreaRelease; code: string };
+				parent: { release: AreaRelease; code: string };
+			}) => void,
 			onPart?: (part: {
 				key: string;
 				header: DeclaredHeader;
@@ -842,6 +853,15 @@ export function declaredStatistics(
 								onName?.(parentRelease, parentCode, parentName);
 							return { release: parentRelease, code: parentCode };
 						});
+						for (const [index, found] of parents.entries())
+							if (found)
+								onRelation?.({
+									relation:
+										config.parents![index].relation ??
+										"parent",
+									child: { release, code },
+									parent: found,
+								});
 						if (recordKey !== code)
 							onKey?.(release, code, recordKey);
 						if (onPart)
@@ -1042,10 +1062,18 @@ export function declaredStatistics(
 			string,
 			{ release: AreaRelease; code: string; key: string }
 		>();
+		const related = new Map<
+			string,
+			{
+				relation: AreaRelationship;
+				child: { release: AreaRelease; code: string };
+				parent: { release: AreaRelease; code: string };
+			}
+		>();
 		const seen = new Set<string>();
 		let count = 0;
 		const layouts: StatisticsLayout[] = [];
-		const layOut: Parameters<typeof walk>[3] = ({
+		const layOut: Parameters<typeof walk>[4] = ({
 			key,
 			header,
 			samples,
@@ -1178,6 +1206,16 @@ export function declaredStatistics(
 						`${type}: ${code} is keyed ${known.key} and ${key}`,
 					);
 			},
+			(relation) => {
+				const key = JSON.stringify([
+					relation.relation,
+					relation.child.release.id,
+					relation.child.code,
+					relation.parent.release.id,
+					relation.parent.code,
+				]);
+				if (!related.has(key)) related.set(key, relation);
+			},
 			useLayout ? layOut : undefined,
 		)) {
 			const key = seriesKey(raw);
@@ -1278,6 +1316,7 @@ export function declaredStatistics(
 			},
 			areaNames: () => names.values(),
 			areaKeys: () => keys.values(),
+			relationships: () => related.values(),
 			layouts: () => layouts,
 			verify(database: DatabaseSync) {
 				const row = database

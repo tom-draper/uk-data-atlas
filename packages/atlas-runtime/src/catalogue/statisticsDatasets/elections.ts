@@ -92,6 +92,7 @@ export const LOCAL_ELECTION: DeclaredDataset = {
 	/** The code a ward was published under, where it is not the ward's own. */
 	parents: [
 		{
+			relation: "published-as",
 			code: "sourceWardCode",
 			release: ward(2022),
 			alsoIn: nearest(WARD_YEARS, 2022).map(ward),
