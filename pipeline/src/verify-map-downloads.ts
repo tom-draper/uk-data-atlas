@@ -1,6 +1,5 @@
 /** Local-only byte comparison against a pre-change map-resource archive. */
 import assert from "node:assert/strict";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
@@ -8,7 +7,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import {
 	AreaGeometryCache,
-	readGeometrySourceLookup,
+	readRepositoryGeometrySourceLookup,
 } from "@uk-data-atlas/atlas-runtime/geometry";
 import { buildSimplifiedDownload } from "../../packages/atlas-runtime/src/maps/mapResource/simplifiedDownload";
 
@@ -46,7 +45,7 @@ const names = new Map(areas.areas.map((area) => [area.code, area.name]));
 // Use the deployed geometry store, as the server does, rather than source geometry.
 const cache = new AreaGeometryCache(
 	root,
-	readGeometrySourceLookup(apiRootOf(root)),
+	readRepositoryGeometrySourceLookup(root),
 	1,
 	join(root, "data/build/artifacts/geometry-store"),
 );

@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { compileFlatDownloads } from "./flatDownloads";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { roundKeepingValidity } from "./compileGeometryValidity";
 import {
 	compileMapResource,
@@ -109,7 +109,7 @@ export const buildMapResources = (
 			artifact: string;
 		}>;
 	};
-	const geometrySources = readGeometrySourceLookup(apiRootOf(root));
+	const geometrySources = readRepositoryGeometrySourceLookup(root);
 	// Releases are compiled one at a time, so only the current one is held.
 	// Keeping two of the output area releases at once runs out of heap.
 	const cache = new AreaGeometryCache(

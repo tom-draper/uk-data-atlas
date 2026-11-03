@@ -14,7 +14,7 @@ import {
 	compiledGeometryFile,
 } from "@uk-data-atlas/atlas-runtime/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readRepositoryGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { geometrySubstitution } from "@uk-data-atlas/atlas-runtime/geometry";
 import { encodeGeometryStore } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
@@ -71,7 +71,7 @@ export const buildGeometryStore = (
 	log: (line: string) => void = () => {},
 ) => {
 	const apiRoot = apiRootOf(root);
-	const sources = readGeometrySourceLookup(apiRoot);
+	const sources = readRepositoryGeometrySourceLookup(root);
 	const directory = join(artifactDirectory(root), "geometry-store");
 	mkdirSync(directory, { recursive: true });
 	const compiler = sha256(
