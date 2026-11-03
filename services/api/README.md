@@ -22,7 +22,7 @@ The source release contains raw data only. After `pnpm data:download`, run
 `pnpm data:build` to build both SQLite files, and deploy them together from the
 same build. The pipeline builds separate base, observation, geography,
 postcode and website-asset components, then `assemble-atlas` publishes the
-canonical database. Compose mounts both read-only. At
+canonical database. The API only reads both files. At
 startup the API verifies the stamp and required dataset payloads; a missing or
 mismatched cache fails readiness. The API does not build the cache.
 
@@ -2560,35 +2560,16 @@ rather than falling back to the default.
 | `ATLAS_TERRAIN_REMOTE_TIMEOUT_MS`    | `5000`      | Maximum time for one remote terrain request.                                                  |
 | `ATLAS_TERRAIN_REMOTE_CONCURRENCY`   | `4`         | Maximum concurrent remote terrain requests.                                                   |
 
-### Container image
+### Running on a host
 
-`services/api/Dockerfile` builds the server without a release. Build it from
-the repository root, since the server depends on the workspace packages:
+The server runs under systemd. See [DEPLOYMENT.md](DEPLOYMENT.md) and
+[deploy/README.md](../../deploy/README.md). Every variable in the table above
+applies; behind a proxy, set `ATLAS_TRUSTED_PROXY_HOPS`.
 
-```sh
-docker build -f services/api/Dockerfile -t uk-data-atlas-api .
-docker run --rm -p 3001:3001 \
-  -v "$PWD/data/build/artifacts:/app/data/build/artifacts:ro" \
-  -v "$PWD/data/build/atlas-cache.sqlite:/app/data/build/atlas-cache.sqlite:ro" \
-  -v "$PWD/data/build/atlas.sqlite:/app/data/build/atlas.sqlite:ro" \
-  -v "$PWD/data/build/atlas-assets:/app/data/build/atlas-assets:ro" \
-  -v "$PWD/data/build/map-resources:/app/data/build/map-resources:ro" \
-  uk-data-atlas-api
-```
-
-The image holds the server's source and its production dependencies, about
-20 MB over its Node base. The Atlas release, `data/build/artifacts`, is some
-gigabytes and changes on its own schedule, so it is mounted rather than built
-in. It must be built from the same commit as the image: the server refuses to
-start with an `operations.json` compiled from another `openapi.yaml`.
-
-In the container the server listens on `0.0.0.0:3001`, runs as the `node`
-user, reports health from `/readyz`, and drains open requests on `SIGTERM`.
-Every variable in the table above applies; behind a proxy, set
-`ATLAS_TRUSTED_PROXY_HOPS`.
-
-`pnpm --filter @uk-data-atlas/api deploy --prod <directory>` writes the same
-files to a directory, for a host that runs Node without a container.
+`pnpm --filter @uk-data-atlas/api deploy --prod <directory>` writes the server
+and its production dependencies to a directory. The server refuses to start
+with an `operations.json` compiled from another `openapi.yaml`, so build that
+directory from the same commit as the release.
 
 ### Deployment smoke test
 

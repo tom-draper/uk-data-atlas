@@ -545,7 +545,7 @@ API's own readers and deployment.
 That move is done. The generated artifacts, formerly `services/api/public`, now
 live in `data/build/artifacts/` beside `atlas.sqlite`, so pipeline stages write
 only under `data/build/` and `public/data/`. File names and bytes are
-unchanged. Compose mounts the directory read-only, and the stage cache bumped
+unchanged. The API only reads the directory, and the stage cache bumped
 its version so old entries do not point at the removed path. Entries below that
 name `services/api/public` describe the earlier layout.
 

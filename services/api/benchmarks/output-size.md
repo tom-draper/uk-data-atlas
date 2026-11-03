@@ -32,8 +32,8 @@ stores full-precision float64 WKB, which compresses poorly. GeoJSON rounds to
    with `bytes` and `contentHash` for each in `map-resources.json`, and serves
    them with Range support. Building GeoJSON on request is possible but costly
    for large releases: gzip of the 123 MB output-area GeoJSON alone takes 2.2 s.
-   It would also need a writable cache, and `compose.yaml` mounts `public/`
-   read-only.
+   It would also need a writable cache, and the service reads `public/`
+   without writing to it.
 2. **Exports.** CSVs are streamed uncompressed even to gzip clients (the 22 MB
    house-price CSV goes out as 22 MB). The server already serves "stored
    gzipped" files (`StoredFile.gzipBytes`, used by map GeoJSON), decoding for
@@ -80,8 +80,8 @@ Larger, to agree first:
   About -0.8 GB and less cold-start I/O. Adds a small decompress per area.
 - **E. Map-resource downloads.** Pick one:
     - E1: generate full-tier downloads from the geometry store on first
-      request into a writable cache volume. About -1.47 GB; first download of
-      a big release takes seconds; needs a new volume in `compose.yaml`.
+      request into a writable cache directory. About -1.47 GB; first download of
+      a big release takes seconds; needs a new writable directory for the service.
     - E2: drop one tier as a documented contract change. `high` costs 1.16 GB
       and is 78% of `full`'s size.
     - E3: leave as is.

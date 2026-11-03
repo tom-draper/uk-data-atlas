@@ -7,21 +7,22 @@ pnpm data:build
 pnpm --dir services/api build
 ```
 
-The container compiles the server to a JavaScript bundle. Production runs with
-Node and needs no TypeScript loader or dependency installation. Build from the
-repository root:
+Production runs the compiled server with Node under the `uk-data-atlas-api`
+systemd unit, which needs no TypeScript loader or dependency installation.
+Install and start the unit as described in
+[deploy/README.md](../../deploy/README.md). After deploying a new build, restart
+it and check readiness:
 
 ```sh
-docker build -f services/api/Dockerfile -t uk-data-atlas-api .
-docker compose -f services/api/compose.yaml up -d
+systemctl restart uk-data-atlas-api
 curl --fail http://127.0.0.1:3001/readyz
 ```
 
-Compose mounts `data/build/artifacts/`, `data/build/atlas.sqlite`,
+The service reads `data/build/artifacts/`, `data/build/atlas.sqlite`,
 `data/build/atlas-cache.sqlite`, `data/build/atlas-assets/`, and
-`data/build/map-resources/` read-only. Deploy
-these matching release outputs with the code, then replace the container. The data build is separate from the image build. API public
-files contain the geometry store and manifests; SQLite contains observation
+`data/build/map-resources/` from the checkout. Deploy these matching release
+outputs with the code, then restart the service. The data build is separate from
+the code build. API public files contain the geometry store and manifests; SQLite contains observation
 tables and indexes. Raw sources are not required for a
 current geometry store. Serving never falls back to raw source files. Startup
 validates compiled metadata for every release in the geometry source registry
@@ -38,15 +39,18 @@ Deploy the rebuilt store with its matching `geometry-sources.json` registry and
 restart the worker. Validation compares registered source metadata. It does not
 rehash raw boundary files or decode every geometry during startup.
 
-Put a TLS reverse proxy in front of port 3001. The compose configuration binds
-the host port to localhost. Configure the proxy's request-body limit to 8 MB,
+Put a TLS reverse proxy in front of port 3001. The unit binds the API to
+`127.0.0.1`. Configure the proxy's request-body limit to 8 MB,
 matching the API. `/healthz` reports liveness and `/readyz` reports readiness.
-SIGTERM drains requests for ten seconds, and compose allows fifteen seconds.
+SIGTERM drains requests for ten seconds, and the unit allows twenty seconds
+before it kills the process.
 
-When one reverse proxy connects directly to the API, set the trusted hop count:
+When one reverse proxy connects directly to the API, set the trusted hop count.
+The checked-in unit already sets `ATLAS_TRUSTED_PROXY_HOPS=1` for Nginx. To change
+it, add the variable with a systemd override (`systemctl edit uk-data-atlas-api`) and restart the unit:
 
 ```sh
-ATLAS_TRUSTED_PROXY_HOPS=1 docker compose -f services/api/compose.yaml up -d
+systemctl restart uk-data-atlas-api
 ```
 
 Set `ATLAS_TRUSTED_PROXY_HOPS` to the actual number of trusted proxies between
@@ -129,10 +133,9 @@ snapshot. Set `ATLAS_HEAP_SNAPSHOT_PATH` to a disk with room, or set
 The API can keep daily counts of what it is asked, to show which datasets and
 archives to fill first. Set `ATLAS_USAGE_DIR` to a writable directory and each
 worker adds its counts to `usage.sqlite` there. Unset, nothing is written and
-`/metrics` is the only record. Compose and the systemd unit set it to a path
-outside the release and the caches (the `atlas-usage` volume, and
-`/var/lib/uk-data-atlas/usage`), so a deploy neither replaces nor invalidates
-it.
+`/metrics` is the only record. The systemd unit sets it to a path
+outside the release and the caches (`/var/lib/uk-data-atlas/usage`), so a
+deploy neither replaces nor invalidates it.
 
 A row is a count for one UTC day and one combination of route template,
 outcome (`2xx`, `4xx`, `5xx`), problem code, measure id, geography, release
@@ -149,8 +152,7 @@ Read the counts on the host that holds the directory. There is no HTTP route
 for them:
 
 ```sh
-pnpm --dir services/api usage:report --days 30            # from a checkout
-docker compose -f services/api/compose.yaml exec api node dist/usage-report.mjs --days 30
+pnpm --dir services/api usage:report --days 30 --dir /var/lib/uk-data-atlas/usage
 ```
 
 It prints the top routes, measures, geographies with releases, and not-found

@@ -19,7 +19,7 @@ stamps the cache with the SHA-256 hash of the final canonical database.
 
 The source release contains raw data only. After `pnpm data:download`, run
 `pnpm data:build` to build both SQLite files, and deploy them together from the
-same build. Compose mounts both read-only. At
+same build. The API only reads both files. At
 startup the API verifies the stamp and required dataset payloads; a missing or
 mismatched cache fails readiness. The API does not build the cache.
 
