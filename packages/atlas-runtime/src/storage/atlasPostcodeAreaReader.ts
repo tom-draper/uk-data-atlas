@@ -16,9 +16,12 @@ export function readSqlitePostcodeAreaShard(
 	apiRoot: string,
 	path: string,
 ): string {
-	const database = new DatabaseSync(atlasDatabasePath(apiRoot), {
-		readOnly: true,
-	});
+	const database = new DatabaseSync(
+		atlasDatabasePath(repositoryRootOf(apiRoot)),
+		{
+			readOnly: true,
+		},
+	);
 	try {
 		const artifact: PostcodeAreasArtifact = JSON.parse(
 			String(

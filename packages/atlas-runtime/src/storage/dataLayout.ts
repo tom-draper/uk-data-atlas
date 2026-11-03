@@ -25,12 +25,8 @@ export const artifactRoot = (apiRoot: string) =>
 export const buildDirectory = (repositoryRoot: string) =>
 	join(repositoryRoot, "data", "build");
 
-/** The release SQLite database, given the API project directory. */
-export const atlasDatabasePath = (apiRoot: string) =>
-	repositoryAtlasDatabasePath(repositoryRootOf(apiRoot));
-
 /** The release SQLite database, given the repository root. */
-export const repositoryAtlasDatabasePath = (repositoryRoot: string) =>
+export const atlasDatabasePath = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "atlas.sqlite");
 
 /** The reviewed configuration the compilers read, kept with the API project. */

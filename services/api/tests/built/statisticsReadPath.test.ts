@@ -27,7 +27,7 @@ import {
  * are compared too, old read path against new, for a sample of places.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const databasePath = atlasDatabasePath(apiRoot);
+const databasePath = atlasDatabasePath(resolve(apiRoot, "../.."));
 const catalogues = readApiCatalogues(apiRoot);
 const catalog = catalogues.dataCatalog;
 const readPath = JSON.parse(

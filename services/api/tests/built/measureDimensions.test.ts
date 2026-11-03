@@ -17,7 +17,7 @@ const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 test("the generated vocabulary is what the statistics tables hold", () => {
 	const { vocabulary } = readMeasureDimensionsConfig(apiRoot);
 	assert.deepEqual(
-		readStatisticsVocabulary(atlasDatabasePath(apiRoot)),
+		readStatisticsVocabulary(atlasDatabasePath(resolve(apiRoot, "../.."))),
 		vocabulary,
 		"Run pnpm data:build --only statistics-vocabulary.",
 	);

@@ -9,7 +9,7 @@ import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "./sqliteIndex";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath, repositoryRootOf } from "./dataLayout";
 import { addAreaVersion } from "./atlasAreas";
 
 /**
@@ -545,7 +545,7 @@ LEFT JOIN crosswalk_weight w ON w.crosswalk_id = e.crosswalk_id AND w.from_versi
 
 export const readSqliteCrosswalkInventory = (
 	apiRoot: string,
-	databasePath = atlasDatabasePath(apiRoot),
+	databasePath = atlasDatabasePath(repositoryRootOf(apiRoot)),
 ): CrosswalkInventory => {
 	const database = new DatabaseSync(databasePath, {
 		readOnly: true,
@@ -628,7 +628,7 @@ const endpointOf = (
 export const readSqliteCrosswalk = (
 	apiRoot: string,
 	expected: CrosswalkInventory["crosswalks"][number],
-	databasePath = atlasDatabasePath(apiRoot),
+	databasePath = atlasDatabasePath(repositoryRootOf(apiRoot)),
 ) => {
 	const database = new DatabaseSync(databasePath, {
 		readOnly: true,

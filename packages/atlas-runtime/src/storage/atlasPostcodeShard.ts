@@ -4,7 +4,7 @@ import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
 } from "@uk-data-atlas/geography/postcode-index-types";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath, repositoryRootOf } from "./dataLayout";
 
 export const postcodeFields = [
 	"postcode",
@@ -23,7 +23,7 @@ export const postcodeDistrictWhere =
 export const readSqlitePostcodeShard = (
 	apiRoot: string,
 	entry: PostcodeIndexArtifact["shards"][number],
-	databasePath = atlasDatabasePath(apiRoot),
+	databasePath = atlasDatabasePath(repositoryRootOf(apiRoot)),
 ): string => {
 	const database = new DatabaseSync(databasePath, {
 		readOnly: true,
