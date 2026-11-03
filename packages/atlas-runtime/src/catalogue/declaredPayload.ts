@@ -5,6 +5,7 @@ import {
 	type DeclaredField,
 	type DeclaredHeader,
 	type DeclaredPayload,
+	type DerivedContext,
 	type Json,
 } from "./declaredStatistics";
 
@@ -114,6 +115,10 @@ export function rebuildFromDeclaration(
 	database: DatabaseSync,
 	config: DeclaredDataset,
 	slug: string,
+	/** Another dataset's JSON, for derived rules that read one. */
+	readDataset: DerivedContext["dataset"] = (other) => {
+		throw new Error(`${slug} reads ${other}`);
+	},
 ): string {
 	const spec = config.payload;
 	if (!spec) throw new Error(`${slug} declares no payload`);
@@ -312,6 +317,22 @@ export function rebuildFromDeclaration(
 		for (const path of nulls)
 			for (const target of records.values())
 				if (!has(target, path)) place(target, path, null, arrays);
+		// Derived numbers, from each record's stored values, in rule order.
+		for (const [rule, compute] of Object.entries(
+			config.rebuild?.derived ?? {},
+		)) {
+			const segments = parse(rule);
+			for (const [code, target] of records)
+				for (const path of expand(target, segments)) {
+					const value = compute(target, path, {
+						code,
+						header: full,
+						dataset: readDataset,
+					});
+					if (value !== undefined) place(target, path, value, arrays);
+				}
+		}
+		if (records.size === 0) continue;
 		result[key] = {
 			...header,
 			data: Object.fromEntries(records),
@@ -320,6 +341,22 @@ export function rebuildFromDeclaration(
 	if (Object.keys(result).length === 0)
 		throw new Error(`${slug} has no rows`);
 	return JSON.stringify(result);
+}
+
+/** The paths a pattern reaches: a binding takes each key already there. */
+function expand(
+	node: Json,
+	segments: readonly Placeholder[],
+	path: string[] = [],
+): string[][] {
+	if (path.length === segments.length) return [path];
+	const segment = segments[path.length];
+	if ("literal" in segment)
+		return expand(node, segments, [...path, segment.literal]);
+	if (node === null || typeof node !== "object") return [];
+	return Object.keys(node).flatMap((key) =>
+		expand((node as Record<string, Json>)[key], segments, [...path, key]),
+	);
 }
 
 const has = (node: Json, path: readonly string[]) => {

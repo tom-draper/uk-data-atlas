@@ -190,13 +190,13 @@ export type DerivedContext = {
 /**
  * A derived number, from the record with every stored value filled in, the
  * path of the leaf it fills (a pattern can match a leaf in every period), and
- * the record's context.
+ * the record's context. `undefined` leaves the leaf out of the record.
  */
 export type DerivedRule = (
 	record: { [key: string]: Json },
 	path: readonly string[],
 	context: DerivedContext,
-) => number | null;
+) => number | null | undefined;
 
 export type DeclaredManifestEntry = {
 	output: string;

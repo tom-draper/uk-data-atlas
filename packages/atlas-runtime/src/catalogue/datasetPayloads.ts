@@ -5,6 +5,7 @@ import { DatabaseSync } from "node:sqlite";
 import { atlasCachePath } from "../storage/atlasCache";
 import { rebuildFromLayout } from "./datasetLayout";
 import { rebuildFromDeclaration } from "./declaredPayload";
+import type { Json } from "./declaredStatistics";
 import { rebuildFuelPoverty } from "./fuelPovertyStatistics";
 import { rebuildAirQuality } from "./airQualityPayload";
 import { STATISTICS_DATASETS } from "./statisticsDatasets";
@@ -16,6 +17,12 @@ const declared = new Map(
 /** Whether a manifest type's JSON is rebuilt from rows instead of stored. */
 export const servedFromRows = (type: string) =>
 	type === "fuelPoverty" || declared.get(type)?.rebuild !== undefined;
+
+/** Datasets that derived rules have read, once per database. */
+const others = new WeakMap<
+	DatabaseSync,
+	Map<string, { readonly [key: string]: Json }>
+>();
 
 /** Whether a dataset's JSON is generated from rows, with no layout tables. */
 export const generatedFromRows = (type: string, output: string) =>
@@ -33,7 +40,25 @@ export function rebuildDatasetPayload(
 		return rebuildAirQuality(database);
 	const config = declared.get(type);
 	if (config?.payload)
-		return rebuildFromDeclaration(database, config, output);
+		return rebuildFromDeclaration(database, config, output, (other) => {
+			let read = others.get(database);
+			if (!read) others.set(database, (read = new Map()));
+			let found = read.get(other);
+			if (!found) {
+				const type = database
+					.prepare("SELECT type FROM datasets WHERE output = ?")
+					.get(other)?.type;
+				if (typeof type !== "string")
+					throw new Error(`Unknown dataset ${other}`);
+				read.set(
+					other,
+					(found = JSON.parse(
+						rebuildDatasetPayload(database, type, other),
+					)),
+				);
+			}
+			return found!;
+		});
 	const rebuild = config?.rebuild;
 	if (!rebuild) throw new Error(`Dataset ${output} is not served from rows`);
 	return rebuildFromLayout(database, output, rebuild.derived);
