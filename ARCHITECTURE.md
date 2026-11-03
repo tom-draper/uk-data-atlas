@@ -9,9 +9,9 @@ may depend. What the API is for, and what to build next, is in
 The repository holds two products:
 
 - **The atlas**, the Next.js website at the root. It is the priority, and it
-  deploys to Vercel.
-- **The API**, a Node service in `services/api`. It deploys to its own
-  server, which also builds its data.
+  runs on the VPS under systemd, behind Nginx.
+- **The API**, a Node service in `services/api`. It runs on the same VPS, and
+  that server also builds its data. See [deploy/README.md](deploy/README.md).
 
 Both answer geography questions. The API resolves relationships and compiles
 place profiles, the docs catalogue, and containment and lineage lookups.
