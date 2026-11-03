@@ -9,10 +9,8 @@ import type {
 	LocationParentProjectionArtifact,
 } from "@uk-data-atlas/atlas-runtime/places";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = apiRootOf(root);
 const projectionDirectory = join(root, "data/build/location-projections");
 const text = readFileSync(
 	join(projectionDirectory, "location-projection-inventory.json"),
@@ -20,16 +18,12 @@ const text = readFileSync(
 );
 assert.deepEqual(
 	JSON.parse(
-		readCachePayload(
-			apiRoot,
-			"projections",
-			"location-projection-inventory",
-		),
+		readCachePayload(root, "projections", "location-projection-inventory"),
 	),
 	JSON.parse(text),
 );
 const inventory: LocationProjectionInventory = JSON.parse(text);
-const database = createLocationProjectionStore(apiRoot, inventory);
+const database = createLocationProjectionStore(root, inventory);
 let members = 0;
 let parents = 0;
 for (const shard of inventory.shards) {
