@@ -13,11 +13,12 @@ It is not published to npm. Install it from this checkout.
 
 ## Install from source
 
-Needs Node 20 or newer. Build the package and install the tarball into your
-project:
+Needs Node 20 or newer. The generated types are not committed, so write them
+first. Then build the package and install the tarball into your project:
 
 ```sh
 pnpm install
+pnpm clients:generate:typescript
 pnpm --dir clients/typescript build
 pnpm --dir clients/typescript pack --pack-destination /tmp
 npm install /tmp/uk-data-atlas-client-0.1.0.tgz   # in your project
@@ -127,12 +128,7 @@ The types are also exported as `paths`, `components` and `operations`.
 
 ## Develop
 
-`src/generated/` and `../generated.lock.json` are regenerated together with the
-Python client, from the repository root:
-
-```sh
-pnpm --dir services/api generate:clients
-```
-
-`pnpm typecheck` checks this package with the rest of the repository. Its
-tests are in [`tests/clients`](../../tests/clients).
+`src/generated/` is not committed. `pnpm clients:generate:typescript`, from
+the repository root, writes it in about a second, and `pnpm typecheck` runs
+that first. `pnpm clients:generate` writes the Python client too. Its tests are
+in [`tests/clients`](../../tests/clients).
