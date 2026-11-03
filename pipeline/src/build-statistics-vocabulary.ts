@@ -2,7 +2,7 @@ import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-	repositoryStatisticsVocabularyPath,
+	statisticsVocabularyPath,
 	buildDirectory,
 	readStatisticsVocabulary,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -15,7 +15,7 @@ const repositoryRoot = resolve(
 const vocabulary = readStatisticsVocabulary(
 	join(buildDirectory(repositoryRoot), "atlas-base.sqlite"),
 );
-const file = repositoryStatisticsVocabularyPath(repositoryRoot);
+const file = statisticsVocabularyPath(repositoryRoot);
 writeFileSync(file, `${JSON.stringify(vocabulary, null, "\t")}\n`);
 console.log(
 	`Wrote ${Object.keys(vocabulary.measures).length} measures and ${Object.keys(vocabulary.dimensions).length} dimensions to ${file}`,

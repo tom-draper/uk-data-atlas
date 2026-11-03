@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { statisticsVocabularyPath } from "../storage/dataLayout";
+import {
+	repositoryRootOf,
+	statisticsVocabularyPath,
+} from "../storage/dataLayout";
 import {
 	assertMeasureDimensions,
 	type DataCatalog,
@@ -28,7 +31,7 @@ export const readMeasureDimensionsConfig = (
 	apiRoot: string,
 ): MeasureDimensions => ({
 	config: readMeasureDimensionsMapping(apiRoot),
-	vocabulary: readJson(statisticsVocabularyPath(apiRoot)),
+	vocabulary: readJson(statisticsVocabularyPath(repositoryRootOf(apiRoot))),
 });
 
 /** Read the mapping and refuse it unless it maps every catalogue measure id. */
