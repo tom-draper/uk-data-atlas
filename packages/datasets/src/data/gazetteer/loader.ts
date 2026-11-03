@@ -128,6 +128,7 @@ async function loadPlaceMembers(
 function reportPlaceChanges(
 	places: Record<string, ResolvedPlace>,
 	currentCodes: ReadonlySet<string>,
+	report?: GazetteerReport,
 ) {
 	for (const [name, place] of Object.entries(places)) {
 		if (!place.source) continue;
@@ -140,10 +141,10 @@ function reportPlaceChanges(
 		const added = sourced.filter((c) => !curated.has(c));
 		const removed = [...curated].filter((c) => !sourced.includes(c));
 		if (added.length || removed.length)
-			console.log(
-				`  gazetteer: ${name} (from ${place.source.lookup}` +
-					(added.length ? `; adds ${added.join(" ")}` : "") +
-					(removed.length ? `; drops ${removed.join(" ")}` : "") +
+			report?.detail(
+				`Gazetteer place ${name} (from ${place.source.lookup}` +
+					(added.length ? `, adds ${added.join(" ")}` : "") +
+					(removed.length ? `, drops ${removed.join(" ")}` : "") +
 					")",
 			);
 	}
@@ -162,8 +163,15 @@ async function loadFeatures(
 	return features as Feat[];
 }
 
+/** Where the loader reports what it found. It prints nothing without one. */
+export type GazetteerReport = {
+	detail(message: string): void;
+	warn(message: string): void;
+};
+
 export async function loadGazetteerCore(
 	read: (path: string) => Promise<string>,
+	report?: GazetteerReport,
 ): Promise<GazetteerCore> {
 	// Every LAD vintage with GSS codes (2011 on), oldest first, so a code any
 	// shipped release uses resolves, including those LOCATIONS keeps for
@@ -231,15 +239,15 @@ export async function loadGazetteerCore(
 		placeMembers,
 		lookupCodes,
 	);
-	reportPlaceChanges(places, lookupCodes);
+	reportPlaceChanges(places, lookupCodes, report);
 	const core = buildCore(sources, places, GAZETTEER_VERSION);
 
 	linkLadsToRegions(core, ladByVintage.flat(), regions, currentCodes);
 
 	const { errors, warnings } = validateCore(core, places, currentCodes);
 	if (warnings.length > 0)
-		console.warn(
-			`  gazetteer: ${warnings.length} warning(s) (LOCATIONS codes to check), e.g. ${warnings[0]}`,
+		report?.warn(
+			`Gazetteer has ${warnings.length} LOCATIONS codes to check, for example ${warnings[0]}`,
 		);
 	if (errors.length > 0) {
 		throw new Error(

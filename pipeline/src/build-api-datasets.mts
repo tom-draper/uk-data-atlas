@@ -14,16 +14,18 @@ export async function buildDatasets(repositoryRoot: string) {
 	const directory = join(artifactDirectory(repositoryRoot), "source-data");
 	await mkdir(directory, { recursive: true });
 	await compileBoundaryAssets(directory);
-	const core = await loadGazetteerCore((path) =>
-		readFile(
-			join(
-				path.startsWith("boundaries/")
-					? directory
-					: join(repositoryRoot, "data/source"),
-				path,
+	const core = await loadGazetteerCore(
+		(path) =>
+			readFile(
+				join(
+					path.startsWith("boundaries/")
+						? directory
+						: join(repositoryRoot, "data/source"),
+					path,
+				),
+				"utf8",
 			),
-			"utf8",
-		),
+		buildLog,
 	);
 	const path = join(directory, "gazetteer.core.json");
 	await writeFile(`${path}.tmp`, JSON.stringify(core));
