@@ -442,6 +442,31 @@ const countiesAndUnitaries = {
 export const PUBLIC_HEALTH: DeclaredDataset = {
 	type: "publicHealth",
 	rebuild: {},
+	payload: {
+		parts: () => [
+			{
+				key: "2025",
+				header: {
+					id: "publicHealth2025",
+					type: "publicHealth",
+					year: 2025,
+					boundaryType: "countyAndUnitaryAuthority",
+					boundaryYear: 2025,
+					periods: {
+						receptionExcessWeight: "2024/25",
+						year6ExcessWeight: "2024/25",
+						adultExcessWeight: "2024/25",
+						activity: "2024/25",
+						smoking: "2024",
+						preventableMortality: "2024",
+					},
+					coverageCountries: ["GB-ENG"],
+				},
+			},
+		],
+		code: "code",
+		omitMissing: ["metrics."],
+	},
 	name: "name",
 	...countiesAndUnitaries,
 	period: () => periods.financialYear(2024),
