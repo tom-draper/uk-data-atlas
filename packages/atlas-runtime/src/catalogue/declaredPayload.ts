@@ -253,7 +253,14 @@ export function rebuildFromDeclaration(
 				)
 					owner.set(one.id, field);
 			}
-		const nulls: string[][] = [];
+		const nulls: { path: string[]; period?: string; parent?: boolean }[] =
+			[];
+		const periodic: {
+			segments: Placeholder[];
+			dimensions: Map<string, string>;
+		}[] = [];
+		/** The period keys each record has an observation in. */
+		const observedIn = new Map<string, Set<string>>();
 		for (const field of fields) {
 			const segments_ = parse(field.path);
 			const segments = segments_;
@@ -274,23 +281,35 @@ export function rebuildFromDeclaration(
 						keyOf.get(name)?.get(member.code) ?? member.label,
 					);
 				}
+				tuples.set(JSON.stringify([...bound]), new Map(bound));
 				for (const row of observed.get(one.id) ?? []) {
 					const own = new Map(bound);
 					let period = field.at?.label ?? top;
 					if (periodBound) {
-						const periodKey = row.period;
-						if (
-							field.period &&
-							field.period(periodKey, full).label !== row.period
-						)
-							throw new Error(
-								`${context}: period ${row.period} has no key`,
+						let periodKey = row.period;
+						if (field.period) {
+							const found = (spec.periodKeys ?? []).find(
+								(candidate) =>
+									field.period!(candidate, full).label ===
+									row.period,
 							);
+							if (found === undefined)
+								throw new Error(
+									`${context}: period ${row.period} has no key`,
+								);
+							periodKey = found;
+						}
 						own.set("period", periodKey);
 						period = row.period;
 					}
 					if (row.period !== period) continue;
 					const target = record(row.code, row.name);
+					if (periodBound) {
+						let known = observedIn.get(row.code);
+						if (!known)
+							observedIn.set(row.code, (known = new Set()));
+						known.add(own.get("period")!);
+					}
 					const tuple = JSON.stringify([...own]);
 					tuples.set(tuple, own);
 					place(target, fill(segments, own), row.value, arrays);
@@ -315,14 +334,39 @@ export function rebuildFromDeclaration(
 				)
 			)
 				continue;
-			for (const own of tuples.values())
+			for (const own of tuples.values()) {
+				const dimensions = new Map(own);
+				dimensions.delete("period");
 				for (const segments of [segments_, lower, upper, status])
-					if (segments) nulls.push(fill(segments, own));
+					if (segments) periodic.push({ segments, dimensions });
+			}
 		}
+		// Every period a record has a value in gives each period-bound field a place.
+		const everyPeriod = new Set(
+			[...observedIn.values()].flatMap((set) => [...set]),
+		);
+		for (const { segments, dimensions } of periodic)
+			if (bindings(segments).includes("period"))
+				for (const period of everyPeriod)
+					nulls.push({
+						path: fill(
+							segments,
+							new Map(dimensions).set("period", period),
+						),
+						period,
+					});
+			else nulls.push({ path: fill(segments, dimensions) });
+		for (const path of spec.nullPaths ?? [])
+			nulls.push({ path: path.split("."), parent: true });
 		// A value with no observation is null.
-		for (const path of nulls)
-			for (const target of records.values())
-				if (!has(target, path)) place(target, path, null, arrays);
+		for (const { path, period, parent } of nulls)
+			for (const [code, target] of records)
+				if (
+					!has(target, path) &&
+					(!parent || has(target, path.slice(0, -1))) &&
+					(period === undefined || observedIn.get(code)?.has(period))
+				)
+					place(target, path, null, arrays);
 		// Derived numbers, from each record's stored values, in rule order.
 		for (const [rule, compute] of Object.entries(
 			config.rebuild?.derived ?? {},
@@ -351,15 +395,22 @@ export function rebuildFromDeclaration(
 
 /** The paths a pattern reaches: a binding takes each key already there. */
 function expand(
-	node: Json,
+	node: Json | undefined,
 	segments: readonly Placeholder[],
 	path: string[] = [],
 ): string[][] {
 	if (path.length === segments.length) return [path];
 	const segment = segments[path.length];
 	if ("literal" in segment)
-		return expand(node, segments, [...path, segment.literal]);
-	if (node === null || typeof node !== "object") return [];
+		return expand(
+			node !== null && typeof node === "object"
+				? (node as Record<string, Json>)[segment.literal]
+				: undefined,
+			segments,
+			[...path, segment.literal],
+		);
+	if (node === null || node === undefined || typeof node !== "object")
+		return [];
 	return Object.keys(node).flatMap((key) =>
 		expand((node as Record<string, Json>)[key], segments, [...path, key]),
 	);

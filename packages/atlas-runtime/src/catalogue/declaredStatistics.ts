@@ -152,6 +152,14 @@ export type DeclaredPayload = {
 	 * record instead of being null.
 	 */
 	omitMissing?: string[];
+	/**
+	 * The keys a field's `{period}` binding can take, when the field maps a
+	 * key to a period: rows hold the period, so its key is found by trying
+	 * these.
+	 */
+	periodKeys?: string[];
+	/** Dot-separated paths that are null in every record with no value. */
+	nullPaths?: string[];
 };
 
 type LaidOutArea = StatisticsLayout["records"][number]["areas"][number];
