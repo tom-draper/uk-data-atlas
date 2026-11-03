@@ -60,7 +60,7 @@ test("reads the page manifest and checks each stored file", () => {
 			join(artifactRoot(apiRoot), "atlas-pages.json"),
 			"obsolete invalid manifest",
 		);
-		assert.equal(readAtlasPages(apiRoot).size, 0);
+		assert.equal(readAtlasPages(root).size, 0);
 		const json = '{"a":1}';
 		const gzipped = gzipSync(json);
 		mkdirSync(join(directory, "atlas-pages"), {
@@ -83,16 +83,16 @@ test("reads the page manifest and checks each stored file", () => {
 				JSON.stringify({ schemaVersion: 1, pages }),
 			);
 		writeManifest([entry]);
-		assert.deepEqual(readAtlasPages(apiRoot).get("places-area-E050001"), {
+		assert.deepEqual(readAtlasPages(root).get("places-area-E050001"), {
 			path: join(directory, "atlas-pages", "places-area-E050001.json.gz"),
 			bytes: json.length,
 			gzipBytes: gzipped.length,
 			contentHash: "sha256:00",
 		});
 		writeManifest([{ ...entry, gzipBytes: gzipped.length + 1 }]);
-		assert.throws(() => readAtlasPages(apiRoot), /size mismatch/);
+		assert.throws(() => readAtlasPages(root), /size mismatch/);
 		writeManifest([{ ...entry, artifact: "../secrets.json.gz" }]);
-		assert.throws(() => readAtlasPages(apiRoot), /Invalid atlas page/);
+		assert.throws(() => readAtlasPages(root), /Invalid atlas page/);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}

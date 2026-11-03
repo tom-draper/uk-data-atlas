@@ -7,11 +7,12 @@ import {
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
-import { repositoryRootOf } from "./dataLayout";
 
 /** The built lookups by id, or none where they have not been built. */
-export const readAtlasLookups = (apiRoot: string): Map<string, StoredFile> => {
-	const directory = atlasAssetsDirectory(repositoryRootOf(apiRoot));
+export const readAtlasLookups = (
+	repositoryRoot: string,
+): Map<string, StoredFile> => {
+	const directory = atlasAssetsDirectory(repositoryRoot);
 	const manifestPath = resolve(directory, ATLAS_LOOKUPS_MANIFEST);
 	if (!existsSync(manifestPath)) return new Map();
 	const manifest: AtlasLookupManifest = JSON.parse(

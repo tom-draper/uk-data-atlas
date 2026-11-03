@@ -60,7 +60,7 @@ test("reads the lookup manifest and checks each stored file", () => {
 			join(artifactRoot(apiRoot), "atlas-lookups.json"),
 			"obsolete invalid manifest",
 		);
-		assert.equal(readAtlasLookups(apiRoot).size, 0);
+		assert.equal(readAtlasLookups(root).size, 0);
 		const json = '{"a":1}';
 		const gzipped = gzipSync(json);
 		mkdirSync(join(directory, "atlas-lookups"), {
@@ -83,16 +83,16 @@ test("reads the lookup manifest and checks each stored file", () => {
 				JSON.stringify({ schemaVersion: 1, lookups }),
 			);
 		writeManifest([entry]);
-		assert.deepEqual(readAtlasLookups(apiRoot).get("area-lineage"), {
+		assert.deepEqual(readAtlasLookups(root).get("area-lineage"), {
 			path: join(directory, "atlas-lookups", "area-lineage.json.gz"),
 			bytes: json.length,
 			gzipBytes: gzipped.length,
 			contentHash: "sha256:00",
 		});
 		writeManifest([{ ...entry, gzipBytes: gzipped.length + 1 }]);
-		assert.throws(() => readAtlasLookups(apiRoot), /size mismatch/);
+		assert.throws(() => readAtlasLookups(root), /size mismatch/);
 		writeManifest([{ ...entry, artifact: "../secrets.json.gz" }]);
-		assert.throws(() => readAtlasLookups(apiRoot), /Invalid atlas lookup/);
+		assert.throws(() => readAtlasLookups(root), /Invalid atlas lookup/);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}

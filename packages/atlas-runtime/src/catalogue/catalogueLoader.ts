@@ -213,9 +213,11 @@ export const readAtlasCatalogues = (
 					dataCatalog.contentHash,
 				),
 	);
-	const atlasPages = stage("atlas-pages", () => readAtlasPages(apiRoot));
+	const atlasPages = stage("atlas-pages", () =>
+		readAtlasPages(repositoryRootOf(apiRoot)),
+	);
 	const atlasLookups = stage("atlas-lookups", () =>
-		readAtlasLookups(apiRoot),
+		readAtlasLookups(repositoryRootOf(apiRoot)),
 	);
 	const exportManifest = stage("export-manifest", () =>
 		readExportManifest(repositoryRootOf(apiRoot)),
