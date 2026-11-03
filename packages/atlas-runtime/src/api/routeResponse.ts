@@ -50,7 +50,9 @@ export type Problem = {
 	/** The dimension a filter named, where it named an unknown member. */
 	dimension?: string;
 	/** A dimension's members, where a filter named one it does not publish. */
-	members?: string[];
+	members?: string[] | Record<string, string>;
+	/** Canonical measure suggested for a retired id. */
+	measure?: string;
 	/** Quoted on a failure the server did not expect, to find it in the logs. */
 	requestId?: string;
 };

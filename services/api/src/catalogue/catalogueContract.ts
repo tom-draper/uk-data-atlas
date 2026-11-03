@@ -117,7 +117,6 @@ const measure = z.looseObject({
 			datasetId: z.string().optional(),
 			label: z.string(),
 			unit: z.string().optional(),
-			deprecatedAlias: z.string().optional(),
 			href: z.string(),
 			sources: z.array(measureSource),
 			notes: z.array(z.string()).optional(),
@@ -142,15 +141,6 @@ const measure = z.looseObject({
 				href: z.string(),
 			}),
 		)
-		.optional(),
-	resolvedFrom: z
-		.looseObject({
-			id: z.string(),
-			measure: z.string(),
-			dimensions: members,
-			datasetId: z.string().optional(),
-			deprecated: z.boolean(),
-		})
 		.optional(),
 });
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -44,18 +44,18 @@ class LookupPointPrecision:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.lookup_point_precision_decimal_places_type_0 import (
-            LookupPointPrecisionDecimalPlacesType0,
+            LookupPointPrecisionDecimalPlacesType0,  # noqa: PLC0415
         )
         from ..models.lookup_point_precision_decimal_places_type_1 import (
-            LookupPointPrecisionDecimalPlacesType1,
+            LookupPointPrecisionDecimalPlacesType1,  # noqa: PLC0415
         )
 
         basis = self.basis.value
 
         decimal_places: dict[str, Any]
-        if isinstance(
-            self.decimal_places, LookupPointPrecisionDecimalPlacesType0
-        ) or isinstance(self.decimal_places, LookupPointPrecisionDecimalPlacesType1):
+        if isinstance(self.decimal_places, LookupPointPrecisionDecimalPlacesType0):
+            decimal_places = self.decimal_places.to_dict()
+        elif isinstance(self.decimal_places, LookupPointPrecisionDecimalPlacesType1):
             decimal_places = self.decimal_places.to_dict()
         else:
             decimal_places = self.decimal_places.to_dict()
@@ -75,15 +75,15 @@ class LookupPointPrecision:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.lookup_point_precision_decimal_places_type_0 import (
-            LookupPointPrecisionDecimalPlacesType0,
+            LookupPointPrecisionDecimalPlacesType0,  # noqa: PLC0415
         )
         from ..models.lookup_point_precision_decimal_places_type_1 import (
-            LookupPointPrecisionDecimalPlacesType1,
+            LookupPointPrecisionDecimalPlacesType1,  # noqa: PLC0415
         )
         from ..models.lookup_point_precision_decimal_places_type_2 import (
-            LookupPointPrecisionDecimalPlacesType2,
+            LookupPointPrecisionDecimalPlacesType2,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

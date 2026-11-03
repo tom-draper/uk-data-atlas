@@ -95,8 +95,7 @@ export const getValue = defineTool({
 		"any defaulting when you quote the number. If the name is ambiguous the call fails with the choices; " +
 		"do not guess between them. A measure with dimensions (find_measures lists them) takes `dimensions`, " +
 		"such as `{ party: 'lab' }` for Labour's vote share; several members or `*` return `data.breakdown`, one " +
-		"entry per member, so 'every crime type in Leeds' is one call. A reply with `resolvedFrom` was asked " +
-		"with an older id; use the measure and dimensions it names next time.",
+		"entry per member, so 'every crime type in Leeds' is one call.",
 	inputSchema: {
 		measure: z
 			.string()

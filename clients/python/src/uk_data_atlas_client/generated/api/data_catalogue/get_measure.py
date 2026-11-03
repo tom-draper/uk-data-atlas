@@ -71,10 +71,6 @@ def sync_detailed(
     dimensions and their members, and the series and source partitions published for each combination of
     members, with national coverage.
 
-    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
-    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
-    carries a `Deprecation` header. It has no sunset date.
-
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the
     source artifact or an observation value.
@@ -119,10 +115,6 @@ def sync(
     dimensions and their members, and the series and source partitions published for each combination of
     members, with national coverage.
 
-    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
-    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
-    carries a `Deprecation` header. It has no sunset date.
-
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the
     source artifact or an observation value.
@@ -161,10 +153,6 @@ async def asyncio_detailed(
      A measure's definition: what it measures, the unit, whether it may be summed or averaged, its
     dimensions and their members, and the series and source partitions published for each combination of
     members, with national coverage.
-
-    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
-    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
-    carries a `Deprecation` header. It has no sunset date.
 
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the
@@ -207,10 +195,6 @@ async def asyncio(
      A measure's definition: what it measures, the unit, whether it may be summed or averaged, its
     dimensions and their members, and the series and source partitions published for each combination of
     members, with national coverage.
-
-    An older id that carried a breakdown, such as `crime-burglary`, is a deprecated alias: it answers
-    with its measure's definition, `resolvedFrom` says which members it stood for, and the response
-    carries a `Deprecation` header. It has no sunset date.
 
     `unit` remains the published display label. `unitDefinition` supplies an API-owned canonical code,
     scale and (where applicable) denominator for safe unit-aware calculations; it never changes the

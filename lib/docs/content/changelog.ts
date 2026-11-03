@@ -29,15 +29,25 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-03",
+		title: "Retire encoded measure ids in paths",
+		surface: "96887961f469",
+		breaking: true,
+		changes: [
+			"Retired encoded ids in data, measure and map join paths return a 404 with the canonical measure and members. Reviewed human aliases continue to work.",
+			"Some measure query parameters still accept internal series ids and do not support dimension filters.",
+		],
+	},
+	{
 		date: "2026-11-02",
 		title: "Measures with dimension filters",
 		surface: "9958d13497e9",
 		breaking: true,
 		changes: [
 			"A measure is now the thing measured, and its breakdowns are dimensions: `recorded-crimes` with `offence=burglary` rather than `crime-burglary`, `party-vote-share` with `party=lab` rather than `general-election-lab-vote-share`. The data routes and a map join take each dimension as a query parameter, or as `dimensions[offence]=burglary`, with one member, several separated by commas, or `*` for all. A dimension left out takes its total where one is published, and the response says which member it used in `defaults` and `dimensions`.",
-			"`/value` and `/series` answer several members at once as `data.breakdown`, one entry per series, so every crime type for a place, or every ethnic group in an LSOA, is one request. Other operations answer one series and refuse several with the new `ambiguous_dimension` problem and a request for each in `choices`. New 400 problems `unknown_dimension`, `unknown_dimension_member` and `conflicting_dimension_filter`, and a 404 `no_matching_series`, say what was wrong and what to ask instead.",
-			"`GET /v1/measures` lists 51 measures instead of 228 ids. Each lists its `dimensions` and their members, with labels, and its `series`, one per combination of members, with sources and the old id it replaces. `?q=` searches member names too, so `burglary` and `Labour vote share` find their measure and say which member to filter on in `matchedMembers`. Some measures' labels change to the statistics tables' names, such as `Population` for `population`; the old label stays in `seriesLabel`.",
-			"Every old id still works wherever a measure id is accepted. It is read as its measure with its members fixed, the response names it in `resolvedFrom`, and it carries a `Deprecation` header. The old ids are listed, with what each resolves to, as `DeprecatedMeasureAlias` in the OpenAPI document. They have no sunset date.",
+			"`/value` and `/series` answer several members at once as `data.breakdown`, one entry per series, so every crime type for a place, or every ethnic group in an LSOA, is one request. Other operations answer one series and refuse several with the new `ambiguous_dimension` problem and a request for each in `choices`. New 400 problems `unknown_dimension`, `unknown_dimension_member`, and a 404 `no_matching_series`, say what was wrong and what to ask instead.",
+			"`GET /v1/measures` lists 51 measures instead of 228 ids. Each lists its `dimensions` and their members, with labels, and its `series`, one per combination of members, with sources. `?q=` searches member names too, so `burglary` and `Labour vote share` find their measure and say which member to filter on in `matchedMembers`. Some measures' labels change to the statistics tables' names, such as `Population` for `population`; the old label stays in `seriesLabel`.",
+			"Retired series ids in paths return a 404 naming the canonical measure and members. Some measure query parameters still accept series ids and do not support dimension filters.",
 		],
 	},
 	{

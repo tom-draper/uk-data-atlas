@@ -858,7 +858,7 @@ members, rather than one id per breakdown.
   with a `datasetId` where two datasets publish the same measure and members
   (general and local election votes). It plays the part `measure_alias` was
   meant to; the data catalogue build refuses an id with no mapping. The 228
-  ids become 51 measures; 205 of them are now deprecated aliases.
+  ids become 51 measures; the older ids remain internal series keys. Retired path ids return a 404 with the canonical measure and members.
 - **Vocabulary from these tables.** Labels, parents and order come from
   `measure`, `dimension` and `dimension_member`, copied to
   `data/build/statistics-vocabulary.json` by the `statistics-vocabulary`

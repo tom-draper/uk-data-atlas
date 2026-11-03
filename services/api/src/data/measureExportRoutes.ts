@@ -1,6 +1,8 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { handleMeasureExport } from "../bulkRoutes";
+import { resolveDimensionRequest } from "../dimensions/dimensionRequests";
+import { seriesResponse } from "../dimensions/dimensionResponses";
 import { canonicalMeasureRequest } from "../canonicalRequests";
 import {
 	registerGetRoute,
@@ -17,7 +19,11 @@ export const measureExportRoutes: FastifyPluginAsync<{
 		context,
 		measureExport,
 		(request) => {
-			const parsedUrl = new URL(request.url, "http://localhost");
+			const resolution = resolveDimensionRequest(request.url, context);
+			if (resolution.kind === "problem") return resolution.response;
+			const url =
+				resolution.kind === "series" ? resolution.url : request.url;
+			const parsedUrl = new URL(url, "http://localhost");
 			const routeRequest = {
 				context,
 				releaseId:
@@ -34,7 +40,7 @@ export const measureExportRoutes: FastifyPluginAsync<{
 			};
 			const canonical = canonicalMeasureRequest(routeRequest);
 			const answer = handleMeasureExport(canonical ?? routeRequest);
-			return canonical
+			const response = canonical
 				? {
 						...answer,
 						headers: {
@@ -45,6 +51,13 @@ export const measureExportRoutes: FastifyPluginAsync<{
 						},
 					}
 				: answer;
+			return resolution.kind === "series"
+				? seriesResponse(
+						response,
+						resolution.series,
+						resolution.reading,
+					)
+				: response;
 		},
 		dispatch,
 	);

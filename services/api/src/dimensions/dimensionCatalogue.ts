@@ -30,7 +30,7 @@ export type Dimension = {
 };
 
 export type Series = {
-	/** The catalogue measure id, accepted as a deprecated alias. */
+	/** The internal catalogue series id. */
 	id: string;
 	catalogueMeasure: Measure;
 	dimensions: Record<string, string>;

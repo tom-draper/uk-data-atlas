@@ -1,18 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.conflicting_dimension_filter_problem_code import (
-    ConflictingDimensionFilterProblemCode,
-)
-from ..models.conflicting_dimension_filter_problem_status import (
-    ConflictingDimensionFilterProblemStatus,
-)
 from ..models.problem_absence import ProblemAbsence
+from ..models.retired_measure_id_problem_code import RetiredMeasureIdProblemCode
+from ..models.retired_measure_id_problem_status import RetiredMeasureIdProblemStatus
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -21,39 +17,42 @@ if TYPE_CHECKING:
     from ..models.problem_candidates_item import ProblemCandidatesItem
     from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
     from ..models.problem_links import ProblemLinks
+    from ..models.problem_members_type_1 import ProblemMembersType1
     from ..models.problem_present_in_item import ProblemPresentInItem
     from ..models.problem_rejected_item import ProblemRejectedItem
 
 
-T = TypeVar("T", bound="ConflictingDimensionFilterProblem")
+T = TypeVar("T", bound="RetiredMeasureIdProblem")
 
 
 @_attrs_define
-class ConflictingDimensionFilterProblem:
-    """A deprecated alias fixes a member, and a filter asks for a different member of the same dimension.
+class RetiredMeasureIdProblem:
+    """The measure id is retired. Use the canonical measure and members.
 
     Attributes:
         detail (str):
-        status (ConflictingDimensionFilterProblemStatus):
+        status (RetiredMeasureIdProblemStatus):
         title (str):
         type_ (str):
-        code (ConflictingDimensionFilterProblemCode): On a 404 from an area or boundary release route:
-            `unsupported_geography` when the geography is not published or the release's area identities are not compiled,
-            `unknown_release` when the geography has no release with that id, and `area_not_in_release` when the release
-            does not hold the code. On a 422 from an aggregate or a conversion: `aggregation_not_supported` when the
-            measure's values do not add over areas or its weights cannot be used, `conversion_not_available` when the named
-            crosswalk or source release cannot carry the partition without dropping, splitting or assuming values, and
-            `partial_coverage` when a named location or a weight partition leaves out areas the sum would need. A partial
-            country or region total is not refused; it is a 200 whose coverage says so. From a value request for a place:
-            `ambiguous_place` when the name means several places the measure answers differently. From an observation
-            request: `incompatible_geometry` when the chosen boundary release does not hold every source code. On a 400:
-            `invalid_format` for a `format` the route does not serve, `invalid_cursor` for a cursor this API did not issue
-            or that belongs to another query, and `unknown_query_parameter` when the operation does not declare a supplied
-            parameter. From a release resolution: `no_release_for_date` and `ambiguous_release`. From a measure's dimension
-            filters: `unknown_dimension` and `unknown_dimension_member` (400) for a dimension or member the measure does not
-            have, `conflicting_dimension_filter` (400) when a deprecated alias fixes a different member,
-            `no_matching_series` (404) when no series has the members asked for, and `ambiguous_dimension` (409) when the
-            request leaves several series and the operation answers one.
+        code (RetiredMeasureIdProblemCode): On a 404 from an area or boundary release route: `unsupported_geography`
+            when the geography is not published or the release's area identities are not compiled, `unknown_release` when
+            the geography has no release with that id, and `area_not_in_release` when the release does not hold the code. On
+            a 422 from an aggregate or a conversion: `aggregation_not_supported` when the measure's values do not add over
+            areas or its weights cannot be used, `conversion_not_available` when the named crosswalk or source release
+            cannot carry the partition without dropping, splitting or assuming values, and `partial_coverage` when a named
+            location or a weight partition leaves out areas the sum would need. A partial country or region total is not
+            refused; it is a 200 whose coverage says so. From a value request for a place: `ambiguous_place` when the name
+            means several places the measure answers differently. From an observation request: `incompatible_geometry` when
+            the chosen boundary release does not hold every source code. On a 400: `invalid_format` for a `format` the route
+            does not serve, `invalid_cursor` for a cursor this API did not issue or that belongs to another query, and
+            `unknown_query_parameter` when the operation does not declare a supplied parameter. From a release resolution:
+            `no_release_for_date` and `ambiguous_release`. From a measure's dimension filters: `unknown_dimension` and
+            `unknown_dimension_member` (400) for a dimension or member the measure does not have, `retired_measure_id` (404)
+            when a path names a retired series id, `no_matching_series` (404) when no series has the members asked for, and
+            `ambiguous_dimension` (409) when the request leaves several series and the operation answers one.
+        measure (str): On a `retired_measure_id` problem, the canonical measure.
+        members (list[str] | ProblemMembersType1): Available members for an unknown member, or the retired id's
+            dimension members.
         absence (ProblemAbsence | Unset): Which absence left the area or conversion unresolved. For a conversion, the
             crosswalk starts at another geography, does not map some source areas, or splits some across targets with no
             published weight. For an area, a code is `superseded` when only older releases of the geography hold it, `not-
@@ -79,7 +78,6 @@ class ConflictingDimensionFilterProblem:
             direct source reads omit it.
         links (ProblemLinks | Unset): With `unknown-geography`, the geography list; with `release-not-compiled`, the
             boundary release.
-        members (list[str] | Unset): On an `unknown_dimension_member` problem, the members that dimension has.
         parameter (str | Unset): The query parameter the operation does not declare.
         present_in (list[ProblemPresentInItem] | Unset): With `area_not_in_release`: the compiled releases that do hold
             the code, with the name it carries in each.
@@ -89,10 +87,12 @@ class ConflictingDimensionFilterProblem:
     """
 
     detail: str
-    status: ConflictingDimensionFilterProblemStatus
+    status: RetiredMeasureIdProblemStatus
     title: str
     type_: str
-    code: ConflictingDimensionFilterProblemCode
+    code: RetiredMeasureIdProblemCode
+    measure: str
+    members: list[str] | ProblemMembersType1
     absence: ProblemAbsence | Unset = UNSET
     area_count: int | Unset = UNSET
     area_sample: list[str] | Unset = UNSET
@@ -103,7 +103,6 @@ class ConflictingDimensionFilterProblem:
     dimensions: list[str] | Unset = UNSET
     geometry_source: GeometrySource | Unset = UNSET
     links: ProblemLinks | Unset = UNSET
-    members: list[str] | Unset = UNSET
     parameter: str | Unset = UNSET
     present_in: list[ProblemPresentInItem] | Unset = UNSET
     rejected: list[ProblemRejectedItem] | Unset = UNSET
@@ -112,7 +111,9 @@ class ConflictingDimensionFilterProblem:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
+        from ..models.problem_choices_item_type_0 import (
+            ProblemChoicesItemType0,  # noqa: PLC0415
+        )
 
         detail = self.detail
 
@@ -123,6 +124,15 @@ class ConflictingDimensionFilterProblem:
         type_ = self.type_
 
         code = self.code.value
+
+        measure = self.measure
+
+        members: dict[str, Any] | list[str]
+        if isinstance(self.members, list):
+            members = self.members
+
+        else:
+            members = self.members.to_dict()
 
         absence: str | Unset = UNSET
         if not isinstance(self.absence, Unset):
@@ -173,10 +183,6 @@ class ConflictingDimensionFilterProblem:
         if not isinstance(self.links, Unset):
             links = self.links.to_dict()
 
-        members: list[str] | Unset = UNSET
-        if not isinstance(self.members, Unset):
-            members = self.members
-
         parameter = self.parameter
 
         present_in: list[dict[str, Any]] | Unset = UNSET
@@ -206,6 +212,8 @@ class ConflictingDimensionFilterProblem:
                 "title": title,
                 "type": type_,
                 "code": code,
+                "measure": measure,
+                "members": members,
             }
         )
         if absence is not UNSET:
@@ -228,8 +236,6 @@ class ConflictingDimensionFilterProblem:
             field_dict["geometrySource"] = geometry_source
         if links is not UNSET:
             field_dict["links"] = links
-        if members is not UNSET:
-            field_dict["members"] = members
         if parameter is not UNSET:
             field_dict["parameter"] = parameter
         if present_in is not UNSET:
@@ -244,27 +250,53 @@ class ConflictingDimensionFilterProblem:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.geometry_source import GeometrySource
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.geometry_source import GeometrySource  # noqa: PLC0415
         from ..models.problem_available_releases_item import (
-            ProblemAvailableReleasesItem,
+            ProblemAvailableReleasesItem,  # noqa: PLC0415
         )
-        from ..models.problem_candidates_item import ProblemCandidatesItem
-        from ..models.problem_choices_item_type_0 import ProblemChoicesItemType0
-        from ..models.problem_links import ProblemLinks
-        from ..models.problem_present_in_item import ProblemPresentInItem
-        from ..models.problem_rejected_item import ProblemRejectedItem
+        from ..models.problem_candidates_item import (
+            ProblemCandidatesItem,  # noqa: PLC0415
+        )
+        from ..models.problem_choices_item_type_0 import (
+            ProblemChoicesItemType0,  # noqa: PLC0415
+        )
+        from ..models.problem_links import ProblemLinks  # noqa: PLC0415
+        from ..models.problem_members_type_1 import ProblemMembersType1  # noqa: PLC0415
+        from ..models.problem_present_in_item import (
+            ProblemPresentInItem,  # noqa: PLC0415
+        )
+        from ..models.problem_rejected_item import ProblemRejectedItem  # noqa: PLC0415
 
         d = dict(src_dict)
         detail = d.pop("detail")
 
-        status = ConflictingDimensionFilterProblemStatus(d.pop("status"))
+        status = RetiredMeasureIdProblemStatus(d.pop("status"))
 
         title = d.pop("title")
 
         type_ = d.pop("type")
 
-        code = ConflictingDimensionFilterProblemCode(d.pop("code"))
+        code = RetiredMeasureIdProblemCode(d.pop("code"))
+
+        measure = d.pop("measure")
+
+        def _parse_members(data: object) -> list[str] | ProblemMembersType1:
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                members_type_0 = cast(list[str], data)
+
+                return members_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            members_type_1 = ProblemMembersType1.from_dict(data)
+
+            return members_type_1
+
+        members = _parse_members(d.pop("members"))
 
         _absence = d.pop("absence", UNSET)
         absence: ProblemAbsence | Unset
@@ -336,8 +368,6 @@ class ConflictingDimensionFilterProblem:
         else:
             links = ProblemLinks.from_dict(_links)
 
-        members = cast(list[str], d.pop("members", UNSET))
-
         parameter = d.pop("parameter", UNSET)
 
         _present_in = d.pop("presentIn", UNSET)
@@ -362,12 +392,14 @@ class ConflictingDimensionFilterProblem:
 
         suggestion = d.pop("suggestion", UNSET)
 
-        conflicting_dimension_filter_problem = cls(
+        retired_measure_id_problem = cls(
             detail=detail,
             status=status,
             title=title,
             type_=type_,
             code=code,
+            measure=measure,
+            members=members,
             absence=absence,
             area_count=area_count,
             area_sample=area_sample,
@@ -378,7 +410,6 @@ class ConflictingDimensionFilterProblem:
             dimensions=dimensions,
             geometry_source=geometry_source,
             links=links,
-            members=members,
             parameter=parameter,
             present_in=present_in,
             rejected=rejected,
@@ -386,8 +417,8 @@ class ConflictingDimensionFilterProblem:
             suggestion=suggestion,
         )
 
-        conflicting_dimension_filter_problem.additional_properties = d
-        return conflicting_dimension_filter_problem
+        retired_measure_id_problem.additional_properties = d
+        return retired_measure_id_problem
 
     @property
     def additional_keys(self) -> list[str]:

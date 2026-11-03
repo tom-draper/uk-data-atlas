@@ -4,6 +4,7 @@ import type {
 	RouteRequest,
 	RouteRequestFor,
 } from "@uk-data-atlas/atlas-runtime/api";
+import { measureSlug } from "@uk-data-atlas/catalogue";
 import { canonicalMeasureId } from "./catalogue/measureTerms";
 import { dimensionCatalogue } from "./dimensions/dimensionCatalogue";
 import { canonicalGeography } from "@uk-data-atlas/geography";
@@ -33,8 +34,19 @@ export const canonicalMeasureRequest = <T extends RouteRequestFor<never>>(
 		canonicalMeasureId(catalog, term) ?? term;
 	const segments = [...request.segments];
 	const position = measureSegment(segments);
-	if (position !== undefined && segments[position] !== undefined)
-		segments[position] = canonical(segments[position]!);
+	if (position !== undefined && segments[position] !== undefined) {
+		const term = segments[position]!;
+		const id = canonical(term);
+		const dimensions = request.context.measureDimensions;
+		const series =
+			dimensions &&
+			term !== id &&
+			measureSlug(term) !== id &&
+			segments[1] === "measures"
+				? dimensionCatalogue(catalog, dimensions).series(id)
+				: undefined;
+		segments[position] = series?.measure.id ?? id;
+	}
 	const url = new URL(request.parsedUrl);
 	// A `measure` parameter names one series. A measure id names its only
 	// series, or the one with every dimension at its total.

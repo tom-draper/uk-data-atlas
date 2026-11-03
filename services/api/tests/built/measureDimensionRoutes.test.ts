@@ -60,11 +60,6 @@ test("Labour's vote share in a constituency, by measure and party", () => {
 		party: { member: "lab", label: "Labour" },
 	});
 	assert.equal((data.measure as { id: string }).id, "party-vote-share");
-	// The same series as the old id it replaces.
-	const old = get(
-		"/v1/data/general-election-lab-vote-share/value?place=constituency/E14001290&period=2024",
-	).data;
-	assert.equal(data.answer?.value, old.answer?.value);
 	assert.equal(typeof data.answer?.value, "number");
 });
 
@@ -132,32 +127,33 @@ test("An ethnicity breakdown for an LSOA", () => {
 	);
 	assert.equal(
 		african?.data?.answer.value,
-		get("/v1/data/ethnicity-african/value?place=lsoa/E01000001").data.answer
-			?.value,
+		get(
+			"/v1/data/usual-residents/value?place=lsoa/E01000001&ethnic-group=african",
+		).data.answer?.value,
 	);
 });
 
-test("An old encoded id still answers, through its measure and members", () => {
-	const old = get("/v1/data/crime-burglary/value?place=Manchester");
-	const current = get(
-		"/v1/data/recorded-crimes/value?place=Manchester&offence=burglary",
+test("Retired series ids return their canonical measure and members", () => {
+	const response = route(
+		"GET",
+		"/v1/data/crime-burglary/value?place=Manchester",
+		catalogues,
 	);
-	assert.deepEqual(old.data.resolvedFrom, {
-		id: "crime-burglary",
-		measure: "recorded-crimes",
-		dimensions: { offence: "burglary" },
-		deprecated: true,
+	assert.equal(response.status, 404);
+	assert.equal(
+		(response.body as { code?: string }).code,
+		"retired_measure_id",
+	);
+	assert.deepEqual((response.body as { members?: unknown }).members, {
+		offence: "burglary",
 	});
-	assert.equal(old.response.headers?.deprecation, "true");
-	assert.equal(old.data.answer?.value, current.data.answer?.value);
-	const { resolvedFrom: _old, ...oldRest } = old.data;
-	assert.deepEqual(oldRest, current.data);
 });
 
-test("Every old encoded id answers its measure definition", () => {
+test("Retired ids do not answer measure definitions", () => {
 	const { config } = catalogues.measureDimensions;
 	for (const [id, mapping] of Object.entries(config.ids)) {
-		const { data } = get(`/v1/measures/${id}`);
-		assert.equal(data.id, mapping.measure, id);
+		if (id === mapping.measure) continue;
+		const response = route("GET", `/v1/measures/${id}`, catalogues);
+		assert.equal(response.status, 404, id);
 	}
 });

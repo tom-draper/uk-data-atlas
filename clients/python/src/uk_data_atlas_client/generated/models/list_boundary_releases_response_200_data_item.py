@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -94,15 +94,15 @@ class ListBoundaryReleasesResponse200DataItem:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.list_boundary_releases_response_200_data_item_coverage import (
-            ListBoundaryReleasesResponse200DataItemCoverage,
+            ListBoundaryReleasesResponse200DataItemCoverage,  # noqa: PLC0415
         )
         from ..models.list_boundary_releases_response_200_data_item_deprecation import (
-            ListBoundaryReleasesResponse200DataItemDeprecation,
+            ListBoundaryReleasesResponse200DataItemDeprecation,  # noqa: PLC0415
         )
         from ..models.list_boundary_releases_response_200_data_item_source import (
-            ListBoundaryReleasesResponse200DataItemSource,
+            ListBoundaryReleasesResponse200DataItemSource,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

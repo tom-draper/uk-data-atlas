@@ -170,9 +170,8 @@ def sync_detailed(
     is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
     answer every matching series at once: `data.breakdown` holds one entry per series, each with its
     `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
-    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
-    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
-    `resolvedFrom`.
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. Retired path
+    ids such as `crime-burglary` return a 404 with the canonical measure and members.
 
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published
@@ -277,9 +276,8 @@ def sync(
     is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
     answer every matching series at once: `data.breakdown` holds one entry per series, each with its
     `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
-    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
-    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
-    `resolvedFrom`.
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. Retired path
+    ids such as `crime-burglary` return a 404 with the canonical measure and members.
 
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published
@@ -379,9 +377,8 @@ async def asyncio_detailed(
     is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
     answer every matching series at once: `data.breakdown` holds one entry per series, each with its
     `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
-    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
-    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
-    `resolvedFrom`.
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. Retired path
+    ids such as `crime-burglary` return a 404 with the canonical measure and members.
 
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published
@@ -484,9 +481,8 @@ async def asyncio(
     is published, and `defaults` and `dimensions` say which member was used. Several members, or `*`,
     answer every matching series at once: `data.breakdown` holds one entry per series, each with its
     `dimensions` and the answer (`data`) or refusal (`problem`) that series gives, so `GET
-    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. A deprecated
-    alias such as `crime-burglary` answers as its measure with its members fixed, and says so in
-    `resolvedFrom`.
+    /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime type for Leeds. Retired path
+    ids such as `crime-burglary` return a 404 with the canonical measure and members.
 
     Give `postcode` instead of `place` to answer for where a unit postcode is: `GET /v1/data/imd-
     decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the data was published

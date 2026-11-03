@@ -80,9 +80,6 @@ export const describeMeasure = (
 				...(catalogued.unit !== first.unit
 					? { unit: catalogued.unit }
 					: {}),
-				...(series.id !== measure.id
-					? { deprecatedAlias: series.id }
-					: {}),
 				href: seriesHref(measure, series),
 				sources: catalogued.sources,
 				...(!single && catalogued.notes
@@ -148,10 +145,9 @@ const indexOf = (catalog: DataCatalog, catalogue: DimensionCatalogue) => {
 	const built = catalogue.measures.map((measure): Indexed => {
 		const identities = new Set([
 			measure.id,
-			...measure.series.flatMap((series) => [
-				series.id,
-				...(series.catalogueMeasure.aliases ?? []),
-			]),
+			...measure.series.flatMap(
+				(series) => series.catalogueMeasure.aliases ?? [],
+			),
 		]);
 		const label = new Set(words(measure.label));
 		const identity = new Set([...identities].flatMap(words));
@@ -233,12 +229,10 @@ const score = (entry: Indexed, query: string[], slug: string) => {
 		: { score: 0, members: [] };
 };
 
-/** The members an old encoded id fixes, where the query is one. */
-const oldIdMembers = (entry: Indexed, slug: string) => {
-	const series = entry.measure.series.find(
-		(candidate) =>
-			candidate.id === slug ||
-			candidate.catalogueMeasure.aliases?.includes(slug),
+/** The members a reviewed human alias names, where the query is one. */
+const aliasMembers = (entry: Indexed, slug: string) => {
+	const series = entry.measure.series.find((candidate) =>
+		candidate.catalogueMeasure.aliases?.includes(slug),
 	);
 	if (!series || Object.keys(series.dimensions).length === 0)
 		return undefined;
@@ -267,7 +261,7 @@ export const searchDimensionalMeasures = (
 		)
 		.map(({ entry, members }) => ({
 			measure: entry.measure,
-			members: (oldIdMembers(entry, slug) ?? members).map((member) => ({
+			members: (aliasMembers(entry, slug) ?? members).map((member) => ({
 				dimension: member.dimension.id,
 				member: member.code,
 				label: member.label,

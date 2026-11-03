@@ -48,7 +48,7 @@ const answered = (url: string) => {
 	assert.equal(response.status, 200, url);
 	return response.body as {
 		atlasRelease: string;
-		data: { provenance: Provenance; resolvedFrom?: { id: string } };
+		data: { provenance: Provenance };
 	};
 };
 
@@ -56,13 +56,22 @@ const answered = (url: string) => {
 const partitions = (catalogues.dataCatalog?.measures ?? []).flatMap((measure) =>
 	measure.sources.flatMap((source) => {
 		const period = source.periods[0];
+		const mapping = catalogues.measureDimensions.config.ids[measure.id]!;
+		const query = new URLSearchParams({
+			period: period ?? "",
+			geography: source.sourceGeography.type,
+			codeYear: String(source.sourceGeography.boundaryYear),
+			limit: "1",
+			...mapping.dimensions,
+			...(mapping.datasetId ? { datasetId: mapping.datasetId } : {}),
+		});
 		return period
 			? [
 					{
 						measure: measure.id,
 						datasetId: source.datasetId,
 						geography: source.sourceGeography,
-						url: `/v1/data/${measure.id}?period=${period}&geography=${source.sourceGeography.type}&codeYear=${source.sourceGeography.boundaryYear}&limit=1`,
+						url: `/v1/data/${mapping.measure}?${query}`,
 					},
 				]
 			: [];
@@ -112,19 +121,10 @@ test("agrees with its own envelope and with the partition asked for", () => {
 		const { provenance } = body.data;
 		if (provenance.atlasRelease.id !== body.atlasRelease)
 			wrong.push(`${partition.url}: provenance names another release`);
-		// A catalogue id that encoded a breakdown is read as its measure, and
-		// the response names the id it was read from.
 		const mapped =
 			catalogues.measureDimensions.config.ids[partition.measure]!.measure;
 		if (provenance.measure.id !== mapped)
 			wrong.push(`${partition.url}: provenance names another measure`);
-		if (
-			mapped !== partition.measure &&
-			body.data.resolvedFrom?.id !== partition.measure
-		)
-			wrong.push(
-				`${partition.url}: no resolvedFrom names the id asked for`,
-			);
 		if (provenance.source.dataset.id !== partition.datasetId)
 			wrong.push(`${partition.url}: provenance names another dataset`);
 		if (

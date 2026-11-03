@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -132,15 +132,21 @@ class PointLookupRelease:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.geometry_source import GeometrySource
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.geometry_source import GeometrySource  # noqa: PLC0415
         from ..models.point_lookup_release_boundary_resolution import (
-            PointLookupReleaseBoundaryResolution,
+            PointLookupReleaseBoundaryResolution,  # noqa: PLC0415
         )
-        from ..models.point_lookup_release_coverage import PointLookupReleaseCoverage
-        from ..models.point_lookup_release_selection import PointLookupReleaseSelection
-        from ..models.point_lookup_release_source import PointLookupReleaseSource
-        from ..models.release_reference import ReleaseReference
+        from ..models.point_lookup_release_coverage import (
+            PointLookupReleaseCoverage,  # noqa: PLC0415
+        )
+        from ..models.point_lookup_release_selection import (
+            PointLookupReleaseSelection,  # noqa: PLC0415
+        )
+        from ..models.point_lookup_release_source import (
+            PointLookupReleaseSource,  # noqa: PLC0415
+        )
+        from ..models.release_reference import ReleaseReference  # noqa: PLC0415
 
         d = dict(src_dict)
         geography = d.pop("geography")
