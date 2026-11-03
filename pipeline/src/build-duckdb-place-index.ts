@@ -8,7 +8,10 @@ import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "
 import { readGeographyCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { placeIndexTables } from "@uk-data-atlas/atlas-runtime/places";
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const readBoundaryRegistry = (apiRoot: string) =>
 	readGeographyCatalogue<BoundaryRegistry>(
@@ -37,7 +40,9 @@ export const buildDuckdbPlaceIndex = async (repositoryRoot: string) => {
 		"place-index.json",
 		"place-index.json.gz",
 	])
-		rmSync(join(artifactRoot(apiRoot), filename), { force: true });
+		rmSync(join(artifactDirectory(repositoryRoot), filename), {
+			force: true,
+		});
 
 	return {
 		outputPath,

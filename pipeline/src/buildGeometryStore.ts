@@ -21,7 +21,10 @@ import {
 	compileGeometryValidity,
 	roundKeepingValidity,
 } from "./compileGeometryValidity";
-import { apiRootOf, artifactRoot } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	apiRootOf,
+	artifactDirectory,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -69,7 +72,7 @@ export const buildGeometryStore = (
 ) => {
 	const apiRoot = apiRootOf(root);
 	const sources = readGeometrySourceLookup(apiRoot);
-	const directory = join(artifactRoot(apiRoot), "geometry-store");
+	const directory = join(artifactDirectory(root), "geometry-store");
 	mkdirSync(directory, { recursive: true });
 	const compiler = sha256(
 		COMPILER_SOURCES.map((path) =>

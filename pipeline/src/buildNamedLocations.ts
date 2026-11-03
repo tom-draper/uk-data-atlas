@@ -28,7 +28,6 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	apiRootOf,
 	artifactDirectory,
-	artifactRoot,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
@@ -114,7 +113,10 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 				? [
 						JSON.parse(
 							readFileSync(
-								join(artifactRoot(apiRoot), release.artifact),
+								join(
+									artifactDirectory(repositoryRoot),
+									release.artifact,
+								),
 								"utf8",
 							),
 						) as AreaReleaseArtifact,
