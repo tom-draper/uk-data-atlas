@@ -574,6 +574,22 @@ export const HOUSING_AFFORDABILITY = single(
 
 export const HOUSE_PRICE: DeclaredDataset = {
 	type: "housePrice",
+	payload: {
+		parts: yearParts(
+			"housePrice",
+			"ward",
+			2021,
+			{ coverageCountries: ["GB-ENG", "GB-WLS"], priceYearsFrom: 1995 },
+			["2023"],
+		),
+		code: "wardCode",
+		arrays: ["prices", "meanPrices"],
+		emptyArrays: ["prices", "meanPrices"],
+		relatedRecords: true,
+		sparsePeriods: true,
+		/** A price's key is its index from `priceYearsFrom`. */
+		periodKeys: Array.from({ length: 80 }, (_, index) => String(index)),
+	},
 	name: "wardName",
 	parents: [
 		{
