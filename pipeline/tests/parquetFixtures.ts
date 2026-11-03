@@ -23,19 +23,19 @@ class CompactReader {
 	}
 
 	varint(): bigint {
-		let result = 0n;
-		let shift = 0n;
+		let result = BigInt(0);
+		let shift = BigInt(0);
 		for (;;) {
 			const byte = this.byte();
 			result |= BigInt(byte & 0x7f) << shift;
 			if ((byte & 0x80) === 0) return result;
-			shift += 7n;
+			shift += BigInt(7);
 		}
 	}
 
 	zigzag(): bigint {
 		const raw = this.varint();
-		return (raw >> 1n) ^ -(raw & 1n);
+		return (raw >> BigInt(1)) ^ -(raw & BigInt(1));
 	}
 
 	value(type: number): ThriftValue {
