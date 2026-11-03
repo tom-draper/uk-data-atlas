@@ -556,7 +556,7 @@ const websiteStages = [
 			"exec",
 			"tsx",
 			"--max-old-space-size=3072",
-			"scripts/compile-website-data.mts",
+			"pipeline/src/compile-website-data.mts",
 		],
 		{
 			outputs: ["public/data/datasets"],
@@ -564,7 +564,7 @@ const websiteStages = [
 				"package.json",
 				"packages/geography",
 				"packages/map-tiles",
-				"scripts/precompile",
+				"pipeline/src/precompile",
 				"pipeline/src/compile-boundaries.mts",
 				"pipeline/src/geographies/boundaryReleaseSources.ts",
 				"pipeline/src/geographies/boundaryBuildFiles.ts",

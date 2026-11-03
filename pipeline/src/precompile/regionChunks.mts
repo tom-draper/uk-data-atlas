@@ -11,17 +11,20 @@ import {
 	sameCompiledOutputs,
 	sameFileSnapshots,
 	snapshotFileContents,
-} from "../../pipeline/src/precompile/cache.mts";
-import { chunksResult } from "../../pipeline/src/precompile/output.mts";
-import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlas-lookups";
-import { ROOT } from "../../pipeline/src/precompile/paths.mts";
+} from "./cache.mts";
+import { chunksResult } from "./output.mts";
+import {
+	ATLAS_LOOKUP_NAMES,
+	readAtlasLookup,
+} from "../../../scripts/atlas-lookups";
+import { ROOT } from "./paths.mts";
 import { OUT_DIR } from "./websiteOutput.mts";
 import type {
 	CompiledDatasets,
 	CompiledOutput,
 	FileSnapshot,
 	ReuseContext,
-} from "../../pipeline/src/precompile/types.mts";
+} from "./types.mts";
 
 type RegionChunkInputs = {
 	/** Compiled output of each regional dataset, by output file. */

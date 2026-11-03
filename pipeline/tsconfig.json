@@ -9,7 +9,11 @@
 		"types": ["node"],
 		"resolveJsonModule": true,
 		"allowImportingTsExtensions": true,
-		"allowJs": true
+		"allowJs": true,
+		"paths": {
+			"@/*": ["../*"],
+			"@lib/*": ["../lib/*"]
+		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.mts"]
 }
