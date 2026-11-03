@@ -143,7 +143,7 @@ export default function PostcodeProfileGuidePage() {
 						profile, and `licences` lists the licence terms.
 					</P>
 					<Request
-						url={`${API}/attribution?measure=imd-decile&measure=council-tax&measure=broadband-full-fibre-availability&measure=crime-total`}
+						url={`${API}/attribution?measure=imd-decile&measure=band-d-council-tax&measure=broadband-availability&broadband-speed=full-fibre&measure=recorded-crimes`}
 						operationId="getAttribution"
 					/>
 				</Step>

@@ -134,7 +134,7 @@ identified below; they do not represent a fresh run of every original question.
 | What is Labour's vote share in Holborn and St Pancras? | ✅ one request | `/data/party-vote-share/value?place=constituency/E14001290&party=lab`. `/measures?q=Labour vote share` finds the measure and names `party=lab` in `matchedMembers`.                                                |
 | Every crime type for a place                           | ✅ one request | `/data/recorded-crimes/value?place=...&offence=*` answers all 23 offence groups as `breakdown`; with no `offence`, the total, stated in `defaults`.                                                                |
 | Ethnic groups in an LSOA                               | ✅ one request | `/data/usual-residents/value?place=lsoa/E01000001&ethnic-group=*`. Census tables are perturbed separately, so the groups need not add to the published total exactly.                                              |
-| Does `crime-burglary` still work?                      | ❌             | Retired path ids return a 404 naming the canonical measure and members. Some `measure` query parameters still accept old series ids.                                                                               |
+| Does `crime-burglary` still work?                      | ❌             | Retired ids, in a path or a `measure` query parameter, return a 404 naming the canonical measure and members.                                                                               |
 | What were the boundaries of X in 2005?                 | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                                       |
 
 ## UX rules
@@ -164,8 +164,8 @@ identified below; they do not represent a fresh run of every original question.
    measure id. A dimension left out takes its total where one is published,
    stated in `defaults`; `*` or a list answers several members as
    `breakdown`. Retired path ids such as `crime-burglary` return a 404 with
-   the canonical measure and members. Some `measure` query parameters still
-   accept internal series ids and do not support dimension filters.
+   the canonical measure and members, and so does a `measure` query
+   parameter, which also takes dimension filters (`measure=recorded-crimes&offence=burglary`).
    `services/api/config/measure-dimensions.json` maps every catalogue id, and
    the data build refuses an unmapped one.
 5. **Accept what people have.** Wherever an area is expected, accept a code,

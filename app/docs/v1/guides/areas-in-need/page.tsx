@@ -207,7 +207,7 @@ export default function AreasInNeedGuidePage() {
 						Print the attribution beside your map:
 					</P>
 					<Request
-						url={`${API}/attribution?measure=imd-decile&measure=usual-residents-total`}
+						url={`${API}/attribution?measure=imd-decile&measure=usual-residents`}
 						operationId="getAttribution"
 					/>
 				</Step>
