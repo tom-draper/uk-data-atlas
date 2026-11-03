@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
 import { dirname, resolve } from "node:path";
@@ -27,7 +28,9 @@ import { createApiServer, readApiCatalogues } from "../../src/server";
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 test("walks the golden paths against a running server", async (t) => {
-	const server = createApiServer(readApiCatalogues(apiRoot));
+	const server = createApiServer(
+		readApiCatalogues(resolveRepositoryRoot(apiRoot, "../..")),
+	);
 	await new Promise<void>((ready) => {
 		server.listen(0, "127.0.0.1", ready);
 	});
@@ -79,7 +82,9 @@ test("walks the golden paths against a running server", async (t) => {
 });
 
 test("builds a map the tutorial page can actually draw", async (t) => {
-	const server = createApiServer(readApiCatalogues(apiRoot));
+	const server = createApiServer(
+		readApiCatalogues(resolveRepositoryRoot(apiRoot, "../..")),
+	);
 	await new Promise<void>((ready) => {
 		server.listen(0, "127.0.0.1", ready);
 	});

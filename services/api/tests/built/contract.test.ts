@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -53,7 +54,7 @@ const route = (
 };
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const catalogues = readApiCatalogues(apiRoot);
+const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."));
 
 // The router's answer when no route matches a path at all. Any other
 // response, a resource-specific 404 or a 400 included, shows a route exists.

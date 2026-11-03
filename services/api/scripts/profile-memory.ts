@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import { fork } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -24,11 +25,14 @@ const worker = async () => {
 		process.env.ATLAS_API_ROOT ?? resolve(import.meta.dirname, ".."),
 	);
 	const beforeStartup = memory();
-	const catalogues = readApiCatalogues(apiRoot, {
-		geometryCacheReleases: config.geometryCacheReleases,
-		crosswalkCacheBytes: config.crosswalkCacheBytes,
-		observationCacheBytes: config.observationCacheBytes,
-	});
+	const catalogues = readApiCatalogues(
+		resolveRepositoryRoot(apiRoot, "../.."),
+		{
+			geometryCacheReleases: config.geometryCacheReleases,
+			crosswalkCacheBytes: config.crosswalkCacheBytes,
+			observationCacheBytes: config.observationCacheBytes,
+		},
+	);
 	catalogues.areaGeometryCache?.warm(
 		DEFAULT_POSTCODE_GEOGRAPHIES.flatMap((geography) => {
 			const release = catalogues.geographyResolver.selectReleaseForDate(

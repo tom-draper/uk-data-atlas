@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
@@ -28,7 +29,7 @@ import {
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const databasePath = atlasDatabasePath(resolve(apiRoot, "../.."));
-const catalogues = readApiCatalogues(apiRoot);
+const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."));
 const catalog = catalogues.dataCatalog;
 const readPath = JSON.parse(
 	readFileSync(statisticsReadPathPath(resolve(apiRoot, "../..")), "utf8"),

@@ -6,13 +6,13 @@ import {
 } from "../catalogue/catalogueLoader";
 import { createOperationMatcher } from "./operationTemplates";
 import { readOperations } from "./operationsLoader";
-import { repositoryRootOf } from "../storage/dataLayout";
+import { apiRootOf } from "../storage/dataLayout";
 
 export const readApiCatalogues = (
-	apiRoot: string,
+	repositoryRoot: string,
 	options: CatalogueOptions = {},
 ) => {
-	const catalogues = readAtlasCatalogues(repositoryRootOf(apiRoot), options);
+	const catalogues = readAtlasCatalogues(repositoryRoot, options);
 	const stage = <T>(name: string, read: () => T): T => {
 		if (!options.onStage) return read();
 		const started = performance.now();
@@ -21,12 +21,14 @@ export const readApiCatalogues = (
 		return value;
 	};
 	const openapiDocument = stage("openapi-document", () =>
-		readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
+		readFileSync(
+			resolve(apiRootOf(repositoryRoot), "openapi.yaml"),
+			"utf8",
+		),
 	);
 	const operationMatcher = stage("openapi-operation-matcher", () =>
 		createOperationMatcher(
-			readOperations(repositoryRootOf(apiRoot), openapiDocument)
-				.operations,
+			readOperations(repositoryRoot, openapiDocument).operations,
 		),
 	);
 	return { ...catalogues, openapiDocument, operationMatcher };

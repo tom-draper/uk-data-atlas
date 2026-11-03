@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import cluster from "node:cluster";
 import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
@@ -109,25 +110,28 @@ function startWorker() {
 	});
 
 	const loading = performance.now();
-	const catalogues = readApiCatalogues(apiRoot, {
-		mapAssetBaseUrl: configuration.mapAssetBaseUrl,
-		mapTileBaseUrl: configuration.mapTileBaseUrl,
-		geometryCacheReleases: configuration.geometryCacheReleases,
-		crosswalkCacheBytes: configuration.crosswalkCacheBytes,
-		observationCacheBytes: configuration.observationCacheBytes,
-		onStaleCompiledGeometry: (release, path) =>
-			log({
-				level: "error",
-				event: "geometry.store_stale",
-				release,
-				path,
-				fix: "pnpm data:build --only geometry-store",
-			}),
-		terrainRemoteEndpoint: configuration.terrainRemoteEndpoint,
-		terrainCoverageEndpoint: configuration.terrainCoverageEndpoint,
-		terrainRemoteTimeoutMs: configuration.terrainRemoteTimeoutMs,
-		terrainRemoteConcurrency: configuration.terrainRemoteConcurrency,
-	});
+	const catalogues = readApiCatalogues(
+		resolveRepositoryRoot(apiRoot, "../.."),
+		{
+			mapAssetBaseUrl: configuration.mapAssetBaseUrl,
+			mapTileBaseUrl: configuration.mapTileBaseUrl,
+			geometryCacheReleases: configuration.geometryCacheReleases,
+			crosswalkCacheBytes: configuration.crosswalkCacheBytes,
+			observationCacheBytes: configuration.observationCacheBytes,
+			onStaleCompiledGeometry: (release, path) =>
+				log({
+					level: "error",
+					event: "geometry.store_stale",
+					release,
+					path,
+					fix: "pnpm data:build --only geometry-store",
+				}),
+			terrainRemoteEndpoint: configuration.terrainRemoteEndpoint,
+			terrainCoverageEndpoint: configuration.terrainCoverageEndpoint,
+			terrainRemoteTimeoutMs: configuration.terrainRemoteTimeoutMs,
+			terrainRemoteConcurrency: configuration.terrainRemoteConcurrency,
+		},
+	);
 	// A postcode lookup without an explicit geography reads these three releases.
 	// Warm their compact store metadata and prebuilt spatial indexes before this
 	// process starts listening, so readiness never advertises a cold first lookup.

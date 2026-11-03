@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
@@ -11,7 +12,7 @@ import { readApiCatalogues } from "../../src/server";
  * dimension filters exist to answer in one request.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const catalogues = readApiCatalogues(apiRoot);
+const catalogues = readApiCatalogues(resolveRepositoryRoot(apiRoot, "../.."));
 
 type Data = Record<string, unknown> & {
 	answer?: { value: number; period: string };

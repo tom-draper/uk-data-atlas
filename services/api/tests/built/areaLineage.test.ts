@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
@@ -16,7 +17,9 @@ const apiRoot = new URL("../..", import.meta.url).pathname;
 const SAMPLE_EVERY = 37;
 
 test("the area lineage served to the atlas answers as the resolver does", () => {
-	const { geographyResolver, atlasLookups } = readApiCatalogues(apiRoot);
+	const { geographyResolver, atlasLookups } = readApiCatalogues(
+		resolveRepositoryRoot(apiRoot, "../.."),
+	);
 	const lineage = atlasLookups.get("area-lineage");
 	assert.ok(
 		lineage,

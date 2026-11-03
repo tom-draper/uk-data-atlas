@@ -8,7 +8,6 @@ import {
 import {
 	statisticsReadPathPath,
 	statisticsVocabularyPath,
-	repositoryRootOf,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync } from "node:fs";
@@ -29,25 +28,19 @@ export const measureDimensions = {
  * maps every catalogue measure id.
  */
 export const readApiCatalogues = (
-	apiRoot: string,
+	repositoryRoot: string,
 	options: CatalogueOptions = {},
 ) => {
-	const catalogues = readRuntimeApiCatalogues(apiRoot, {
+	const catalogues = readRuntimeApiCatalogues(repositoryRoot, {
 		statisticsReadPath: JSON.parse(
-			readFileSync(
-				statisticsReadPathPath(repositoryRootOf(apiRoot)),
-				"utf8",
-			),
+			readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 		) as StatisticsReadPath,
 		...options,
 	});
 	const dimensions = {
 		...measureDimensions,
 		vocabulary: JSON.parse(
-			readFileSync(
-				statisticsVocabularyPath(repositoryRootOf(apiRoot)),
-				"utf8",
-			),
+			readFileSync(statisticsVocabularyPath(repositoryRoot), "utf8"),
 		) as StatisticsVocabulary,
 	};
 	assertMeasureDimensions(

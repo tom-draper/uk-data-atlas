@@ -1,3 +1,4 @@
+import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
@@ -120,7 +121,10 @@ test("answers a failed tabular request with a JSON problem", () => {
 	// A caller asking for CSV still gets the problem as JSON: an error is not
 	// a representation of the resource it failed to serve.
 	const catalogues = readApiCatalogues(
-		resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
+		resolveRepositoryRoot(
+			dirname(fileURLToPath(import.meta.url)),
+			"../../../..",
+		),
 	);
 	const response = httpResponse({ method: "GET", headers: {} }, (method) =>
 		route(
