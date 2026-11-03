@@ -14,13 +14,24 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
-test("the checked-in vocabulary is what the statistics tables hold", () => {
+test("the generated vocabulary is what the statistics tables hold", () => {
 	const { vocabulary } = readMeasureDimensionsConfig(apiRoot);
 	assert.deepEqual(
 		readStatisticsVocabulary(atlasDatabasePath(apiRoot)),
 		vocabulary,
-		"Run pnpm --dir services/api generate:statistics-vocabulary.",
+		"Run pnpm data:build --only statistics-vocabulary.",
 	);
+});
+
+test("the committed vocabulary for the unbuilt mapping check matches the generated vocabulary", () => {
+	const { vocabulary } = readMeasureDimensionsConfig(apiRoot);
+	const held = JSON.parse(
+		readFileSync(
+			join(apiRoot, "config/statistics-vocabulary.json"),
+			"utf8",
+		),
+	);
+	assert.deepEqual(held, vocabulary);
 });
 
 test("every built catalogue measure id is mapped to a measure and its members", () => {

@@ -109,7 +109,7 @@ export type StatisticsTableSelector = {
 /**
  * Which artifacts are read from the statistics tables, and why each other
  * artifact is still read from the observation tables. Written by
- * `pnpm --dir services/api generate:statistics-read-path`, which moves an
+ * `pnpm data:build --only statistics-read-path`, which moves an
  * artifact only when its rebuilt bytes are identical to the stored ones.
  */
 export type StatisticsReadPath = {

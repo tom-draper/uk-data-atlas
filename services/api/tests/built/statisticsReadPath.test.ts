@@ -14,7 +14,11 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
-import { apiStatisticsReadPath } from "../../src/catalogueLoader";
+import { readFileSync } from "node:fs";
+import {
+	statisticsReadPathPath,
+	type StatisticsReadPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * The statistics read path. An artifact is read from the statistics tables
@@ -26,7 +30,9 @@ const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const databasePath = atlasDatabasePath(apiRoot);
 const catalogues = readApiCatalogues(apiRoot);
 const catalog = catalogues.dataCatalog;
-const readPath = apiStatisticsReadPath;
+const readPath = JSON.parse(
+	readFileSync(statisticsReadPathPath(apiRoot), "utf8"),
+) as StatisticsReadPath;
 
 test("names every catalogue artifact once, as statistics or observations", () => {
 	const names = new Set(

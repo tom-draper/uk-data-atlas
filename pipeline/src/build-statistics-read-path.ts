@@ -19,7 +19,9 @@ import {
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactRoot,
-	atlasDatabasePath,
+	apiRootOf,
+	statisticsReadPathPath,
+	buildDirectory,
 	readObservationText,
 	rebuildStatisticsObservationText,
 	type StatisticsReadPath,
@@ -30,15 +32,25 @@ import {
 /**
  * Decide, artifact by artifact, whether the API reads observations from the
  * statistics tables or the observation tables, and write the decision to
- * `config/statistics-read-path.json`.
+ * `data/build/statistics-read-path.json`.
  *
  * An artifact moves only when the statistics rows rebuild it byte for byte,
  * so every number, status, interval, period and area is unchanged. Any other
  * artifact stays where it is, and the reason says what differs, so that a
  * difference is reported rather than hidden.
  */
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const databasePath = atlasDatabasePath(apiRoot);
+const apiRoot = apiRootOf(
+	resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
+);
+const repositoryRoot = resolve(
+	dirname(fileURLToPath(import.meta.url)),
+	"../..",
+);
+const databasePath = join(buildDirectory(repositoryRoot), "atlas-base.sqlite");
+const observationsPath = join(
+	buildDirectory(repositoryRoot),
+	"observations.sqlite",
+);
 const catalog = JSON.parse(
 	readFileSync(join(artifactRoot(apiRoot), "data-catalog.json"), "utf8"),
 ) as DataCatalog;
@@ -288,7 +300,7 @@ const plan: StatisticsReadPath = {
 for (const measure of catalog.measures)
 	for (const source of measure.sources) {
 		const name = observationArtifactName(measure.id, source);
-		const storedText = readObservationText(databasePath, name);
+		const storedText = readObservationText(observationsPath, name);
 		const stored = JSON.parse(storedText) as Artifact;
 		if (isMeasureTable(stored)) {
 			// One table serves several measures; plan it once.
@@ -377,7 +389,7 @@ const sorted = <T>(entries: { [key: string]: T }) =>
 			left.localeCompare(right),
 		),
 	);
-const file = join(apiRoot, "config", "statistics-read-path.json");
+const file = statisticsReadPathPath(apiRoot);
 writeFileSync(
 	file,
 	`${JSON.stringify(

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	STATISTICS_DATASETS,
-	readMeasureDimensionsConfig,
+	readMeasureDimensionsMapping,
 	type AreaIndex,
 	type StatisticsDataset,
 	type StatisticsDimension,
@@ -293,7 +293,7 @@ export function censusSmallAreaStatistics(
 	tables: readonly CensusTable[] = CENSUS_SMALL_AREA_TABLES,
 ): StatisticsInput[] {
 	if (tables.length === 0) return [];
-	const { config } = readMeasureDimensionsConfig(apiRootOf(repositoryRoot));
+	const config = readMeasureDimensionsMapping(apiRootOf(repositoryRoot));
 	const stored = declared();
 	const period = census2021();
 	return tables.map((table) => (areas: AreaIndex): StatisticsDataset => {
