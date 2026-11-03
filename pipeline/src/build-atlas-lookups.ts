@@ -11,6 +11,8 @@ import {
 	atlasAssetsDirectory,
 	ATLAS_LOOKUPS_MANIFEST,
 	type AtlasLookupManifest,
+	buildLog,
+	formatCount,
 } from "@uk-data-atlas/atlas-runtime/storage";
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 const publicDirectory = atlasAssetsDirectory(repositoryRoot);
@@ -42,9 +44,12 @@ for (const [name, json] of [...lookups].sort(([a], [b]) =>
 		gzipBytes: gzipped.length,
 		contentHash: `sha256:${createHash("sha256").update(json).digest("hex")}`,
 	});
-	console.log(`Wrote ${ATLAS_LOOKUPS_DIRECTORY}/${id}.json.gz`);
+	buildLog.detail(`Wrote ${ATLAS_LOOKUPS_DIRECTORY}/${id}.json.gz`);
 }
 writeFileSync(
 	join(publicDirectory, ATLAS_LOOKUPS_MANIFEST),
 	`${JSON.stringify(manifest, null, "\t")}\n`,
+);
+buildLog.info(
+	`Wrote ${formatCount(manifest.lookups.length)} atlas lookups to ${ATLAS_LOOKUPS_DIRECTORY}`,
 );

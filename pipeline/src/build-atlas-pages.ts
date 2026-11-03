@@ -32,7 +32,11 @@ import {
 	type PlaceIndex,
 	type TimelineEvent,
 } from "@uk-data-atlas/catalogue/place-profile";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	formatCount,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const readDataset = (output: string) =>
@@ -823,7 +827,9 @@ for (const geography of PLACE_GEOGRAPHIES) {
 	for (const code of [...codes].sort()) {
 		const profile = areaProfile(geography, code, releases, areas);
 		if (++done % 2000 === 0)
-			console.log(`${geography}: ${done} of ${codes.size}`);
+			buildLog.detail(
+				`Built ${geography} profiles: ${formatCount(done)} of ${formatCount(codes.size)}`,
+			);
 		if (!profile) continue;
 		const shard = shards.get(placeShard(code)) ?? {};
 		shards.set(placeShard(code), shard);
@@ -849,8 +855,8 @@ for (const geography of PLACE_GEOGRAPHIES) {
 			Object.assign(profiles, JSON.parse(outputs.get(name)!));
 		outputs.set(name, JSON.stringify(profiles));
 	}
-	console.log(
-		`${geography}: ${codes.size} codes in ${releases.length} releases`,
+	buildLog.info(
+		`Built ${geography} profiles for ${formatCount(codes.size)} codes in ${formatCount(releases.length)} releases`,
 	);
 }
 
@@ -1029,4 +1035,4 @@ for (const [name, json] of outputs) {
 }
 pages.set("ward-areas", JSON.stringify(wardAreas));
 writeAtlasPages(ROOT, pages);
-console.log(`Wrote ${pages.size} atlas page artifacts`);
+buildLog.info(`Wrote ${formatCount(pages.size)} atlas page artifacts`);

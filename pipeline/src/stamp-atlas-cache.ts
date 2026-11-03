@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath, buildLog } from "@uk-data-atlas/atlas-runtime/storage";
 import { hashFile } from "./fileHashCache";
 
 export function stampAtlasCache(root: string) {
@@ -23,7 +23,7 @@ if (
 	process.argv[1] &&
 	resolve(process.argv[1]) === resolve(import.meta.filename)
 ) {
-	console.log(
-		`Stamped cache for ${stampAtlasCache(resolve(import.meta.dirname, "../.."))}`,
+	buildLog.info(
+		`Stamped the atlas cache with content hash ${stampAtlasCache(resolve(import.meta.dirname, "../.."))}`,
 	);
 }

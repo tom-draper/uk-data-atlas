@@ -17,7 +17,12 @@ import type {
 	LookupNamedLocations,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildLookupManifest = (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);
@@ -65,7 +70,7 @@ export const buildLookupManifest = (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = buildLookupManifest(resolve(dirname(scriptPath), "../.."));
-	console.log(
-		`Wrote ${result.lookupCount} bulk lookups to ${result.outputPath}`,
+	buildLog.info(
+		`Wrote ${formatCount(result.lookupCount)} bulk lookups to ${repoPath(result.outputPath)}`,
 	);
 }

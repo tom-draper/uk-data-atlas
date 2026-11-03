@@ -2,7 +2,12 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createTerrainCatalogue } from "./terrainCatalogue";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildTerrainCatalogue = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);
@@ -21,7 +26,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildTerrainCatalogue(repositoryRoot);
-	console.log(
-		`Wrote ${result.productCount} terrain products to ${result.cataloguePath}`,
+	buildLog.info(
+		`Wrote ${formatCount(result.productCount)} terrain products to ${repoPath(result.cataloguePath)}`,
 	);
 }

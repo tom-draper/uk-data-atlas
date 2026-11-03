@@ -43,6 +43,9 @@ import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
 	artifactDirectory,
 	configDirectory,
+	buildLog,
+	formatCount,
+	formatDuration,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 type GeometryCrosswalkAdapter =
@@ -378,8 +381,8 @@ export const buildCrosswalkInventory = async (repositoryRoot: string) => {
 		if (artifact) keep(artifact, true);
 	}
 	const pending = adapters.filter((adapter) => !entries.has(adapter.id));
-	console.log(
-		`Reusing ${entries.size} validated crosswalks; compiling ${pending.length} changed or uncached crosswalks.`,
+	buildLog.info(
+		`Reusing ${formatCount(entries.size)} validated crosswalks and compiling ${formatCount(pending.length)} changed or uncached crosswalks`,
 	);
 
 	// Geometry crosswalks take minutes each, so each is written as it compiles:
@@ -390,12 +393,12 @@ export const buildCrosswalkInventory = async (repositoryRoot: string) => {
 		readCompiledAreaLookup(outputDirectory);
 	const report = (artifact: CrosswalkArtifact, seconds: number) => {
 		keep(artifact);
-		console.log(
-			`Compiled ${artifact.id} (${artifact.method}) in ${seconds.toFixed(2)}s.`,
+		buildLog.info(
+			`Compiled ${artifact.id} (${artifact.method}) in ${formatDuration(seconds * 1000)}`,
 		);
 	};
-	console.log(
-		`Compiling with ${workers} crosswalk worker${workers === 1 ? "" : "s"}.`,
+	buildLog.info(
+		`Compiling with ${formatCount(workers)} crosswalk worker${workers === 1 ? "" : "s"}`,
 	);
 	if (workers === 1) {
 		let started = performance.now();

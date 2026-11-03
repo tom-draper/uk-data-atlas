@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDuckdbPostcodeCounts } from "./postcode-counts/buildDuckdbPostcodeCounts";
@@ -7,7 +12,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = await buildDuckdbPostcodeCounts(
 		resolve(dirname(scriptPath), "../.."),
 	);
-	console.log(
-		`Wrote postcode counts for ${result.countedAreas} area-release entries to ${result.outputPath}`,
+	buildLog.info(
+		`Wrote postcode counts for ${formatCount(result.countedAreas)} area-release entries to ${repoPath(result.outputPath)}`,
 	);
 }

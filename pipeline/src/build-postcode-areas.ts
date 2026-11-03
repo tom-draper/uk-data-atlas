@@ -1,5 +1,11 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readSqlitePostcodeShard,
+	buildLog,
+	formatCount,
+	formatDuration,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,
@@ -323,7 +329,7 @@ export const buildPostcodeAreas = async (
 		);
 		for (const [key, placements] of reused) {
 			placed.set(key, placements);
-			console.log(`Reused ${key}`);
+			buildLog.detail(`Reused ${key}`);
 		}
 	}
 
@@ -357,8 +363,8 @@ export const buildPostcodeAreas = async (
 					distanceCm: result.distanceCm,
 					several: new Map(result.several),
 				});
-				console.log(
-					`Placed ${key} in ${result.seconds.toFixed(0)}s, matching a live lookup for ${result.verified} postcodes`,
+				buildLog.detail(
+					`Placed ${key} in ${formatDuration(result.seconds * 1000)}, matching a live lookup for ${formatCount(result.verified)} postcodes`,
 				);
 			}
 		}),
@@ -410,7 +416,7 @@ if (
 				: { workers: Number(process.argv[workers + 1]) }),
 		},
 	);
-	console.log(
-		`Wrote the areas of every postcode in ${artifact.releases.length} releases, over ${artifact.shards.length} districts, to ${outputPath}`,
+	buildLog.info(
+		`Wrote the areas of every postcode in ${formatCount(artifact.releases.length)} releases, over ${formatCount(artifact.shards.length)} districts, to ${repoPath(outputPath)}`,
 	);
 }

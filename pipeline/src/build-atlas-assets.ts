@@ -6,6 +6,7 @@ import { gunzipSync } from "node:zlib";
 import {
 	ATLAS_LOOKUP_NAMES,
 	atlasAssetsDirectory,
+	buildLog,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
 
@@ -110,7 +111,7 @@ if (
 	resolve(process.argv[1]) === resolve(import.meta.filename)
 ) {
 	buildAtlasAssets(resolve(import.meta.dirname, "../.."));
-	console.log(
-		"Website pages and lookups are staged in website-assets.sqlite.",
+	buildLog.info(
+		"Staged website pages and lookups in data/build/website-assets.sqlite",
 	);
 }

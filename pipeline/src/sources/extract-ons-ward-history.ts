@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -121,5 +126,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 		);
 	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
 	const result = extractOnsWardHistory(repositoryRoot, archive);
-	console.log(`Wrote ${result.rows} rows to ${result.path}`);
+	buildLog.info(
+		`Wrote ${formatCount(result.rows)} rows to ${repoPath(result.path)}`,
+	);
 }

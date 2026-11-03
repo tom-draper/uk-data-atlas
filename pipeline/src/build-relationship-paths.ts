@@ -10,6 +10,9 @@ import { readStoredText } from "@uk-data-atlas/artifacts";
 import {
 	artifactDirectory,
 	configDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 // Long enough to rebase a local authority across a decade of releases, which
@@ -52,7 +55,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const result = buildRelationshipPaths(
 		resolve(dirname(scriptPath), "../.."),
 	);
-	console.log(
-		`Wrote ${result.count} relationship paths to ${result.outputPath}`,
+	buildLog.info(
+		`Wrote ${formatCount(result.count)} relationship paths to ${repoPath(result.outputPath)}`,
 	);
 }

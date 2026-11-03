@@ -7,7 +7,12 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { createFileHashCache } from "./fileHashCache";
 import { createGeometrySourceRegistry } from "./geometrySourceRegistry";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 export const buildGeometrySourceRegistry = (root: string) => {
 	const out = artifactDirectory(root);
 	if (!existsSync(out))
@@ -46,7 +51,7 @@ export const buildGeometrySourceRegistry = (root: string) => {
 const path = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === path) {
 	const result = buildGeometrySourceRegistry(resolve(dirname(path), "../.."));
-	console.log(
-		"Wrote " + result.count + " geometry sources to " + result.path,
+	buildLog.info(
+		`Wrote ${formatCount(result.count)} geometry sources to ${repoPath(result.path)}`,
 	);
 }

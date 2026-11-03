@@ -17,7 +17,12 @@ import {
 	boundaryReleaseDeprecations,
 	sourceMetadataCorrections,
 } from "@uk-data-atlas/catalogue";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 type BoundaryMetadata = {
 	id?: unknown;
@@ -201,5 +206,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const { outputPath, releaseCount } = buildBoundaryRegistry(repositoryRoot);
-	console.log(`Wrote ${releaseCount} releases to ${outputPath}`);
+	buildLog.info(
+		`Wrote ${formatCount(releaseCount)} releases to ${repoPath(outputPath)}`,
+	);
 }

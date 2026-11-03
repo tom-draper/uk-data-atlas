@@ -1,3 +1,4 @@
+import { buildLog, repoPath } from "@uk-data-atlas/atlas-runtime/storage";
 import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,6 +29,6 @@ export const buildGeographyCatalogues = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath)
-	console.log(
-		`Stored geography catalogues in ${buildGeographyCatalogues(resolve(dirname(scriptPath), "../.."))}`,
+	buildLog.info(
+		`Stored geography catalogues in ${repoPath(buildGeographyCatalogues(resolve(dirname(scriptPath), "../..")))}`,
 	);

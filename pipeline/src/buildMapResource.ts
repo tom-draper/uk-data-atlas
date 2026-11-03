@@ -20,7 +20,12 @@ import {
 	type BoundaryReleaseSummary,
 } from "./compileMapResource";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	formatBytes,
+	formatCount,
+	formatDuration,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * Compile every boundary release into a map resource: its tiles and the hashes and
@@ -220,7 +225,7 @@ export const buildMapResources = (
 			state[id] = { key, unavailable: entry };
 			saveState();
 			log(
-				`${id}: not tiled. ${reason}${flat ? ` Downloads at full detail: ${flat.features.map((feature) => `${feature.format} ${((feature.gzipBytes ?? feature.bytes) / 1048576).toFixed(1)}MB`).join(", ")}.` : ""}`,
+				`${id}: not tiled, ${reason}${flat ? `. Downloads at full detail: ${flat.features.map((feature) => `${feature.format} ${formatBytes(feature.gzipBytes ?? feature.bytes)}`).join(", ")}` : ""}`,
 			);
 			continue;
 		}
@@ -231,7 +236,7 @@ export const buildMapResources = (
 		state[id] = { key, descriptor };
 		saveState();
 		log(
-			`${descriptor.id}: ${descriptor.areaCount} areas, ${descriptor.tiles.tileCount} tiles, ${(descriptor.tiles.bytes / 1048576).toFixed(1)}MB; features ${descriptor.features.map((entry) => `${entry.tier} ${entry.format} ${((entry.gzipBytes ?? entry.bytes) / 1048576).toFixed(1)}MB`).join(", ")}; ${((performance.now() - started) / 1000).toFixed(1)}s`,
+			`${descriptor.id}: ${formatCount(descriptor.areaCount)} areas, ${formatCount(descriptor.tiles.tileCount)} tiles, ${formatBytes(descriptor.tiles.bytes)}; features ${descriptor.features.map((entry) => `${entry.tier} ${entry.format} ${formatBytes(entry.gzipBytes ?? entry.bytes)}`).join(", ")}; ${formatDuration(performance.now() - started)}`,
 		);
 	}
 

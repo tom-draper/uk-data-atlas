@@ -8,6 +8,9 @@ import { createBoundaryRegistry } from "./build-boundary-registry";
 import {
 	artifactDirectory,
 	configDirectory,
+	buildLog,
+	formatCount,
+	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildAreaInventory = (repositoryRoot: string) => {
@@ -47,7 +50,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildAreaInventory(repositoryRoot);
-	console.log(
-		`Wrote ${result.artifactCount} compiled area releases to ${result.inventoryPath}`,
+	buildLog.info(
+		`Wrote ${formatCount(result.artifactCount)} compiled area releases to ${repoPath(result.inventoryPath)}`,
 	);
 }

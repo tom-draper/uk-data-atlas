@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import type { PostcodeSource } from "@uk-data-atlas/geography/postcode-index-types";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -58,7 +63,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { outputPath, artifact } = await buildPostcodeIndex(
 		resolve(dirname(scriptPath), "../.."),
 	);
-	console.log(
-		`Wrote ${artifact.counts.postcodes} postcodes (${artifact.counts.live} live) in ${artifact.shards.length} districts to ${outputPath}${artifact.excluded.length ? `, leaving out ${artifact.excluded.map((entry) => `${entry.area} (${entry.postcodes})`).join(", ")}` : ""}`,
+	buildLog.info(
+		`Wrote ${formatCount(artifact.counts.postcodes)} postcodes (${formatCount(artifact.counts.live)} live) in ${formatCount(artifact.shards.length)} districts to ${repoPath(outputPath)}${artifact.excluded.length ? `, leaving out ${artifact.excluded.map((entry) => `${entry.area} (${entry.postcodes})`).join(", ")}` : ""}`,
 	);
 }

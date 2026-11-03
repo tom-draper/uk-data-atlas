@@ -13,7 +13,11 @@ import { createGeographyInventory } from "./geographyInventory";
 import { createSourceInventory } from "./sourceInventory";
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	buildLog,
+	formatCount,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);
@@ -63,7 +67,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildGeographyInventory(repositoryRoot);
-	console.log(
-		`Wrote ${result.sourceCount} sources and ${result.releaseCount} geography releases`,
+	buildLog.info(
+		`Wrote ${formatCount(result.sourceCount)} sources and ${formatCount(result.releaseCount)} geography releases`,
 	);
 }

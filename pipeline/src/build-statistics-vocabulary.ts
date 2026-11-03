@@ -5,6 +5,9 @@ import {
 	statisticsVocabularyPath,
 	buildDirectory,
 	readStatisticsVocabulary,
+	buildLog,
+	formatCount,
+	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Generate the vocabulary from the statistics database for the data build. */
@@ -17,6 +20,6 @@ const vocabulary = readStatisticsVocabulary(
 );
 const file = statisticsVocabularyPath(repositoryRoot);
 writeFileSync(file, `${JSON.stringify(vocabulary, null, "\t")}\n`);
-console.log(
-	`Wrote ${Object.keys(vocabulary.measures).length} measures and ${Object.keys(vocabulary.dimensions).length} dimensions to ${file}`,
+buildLog.info(
+	`Wrote ${formatCount(Object.keys(vocabulary.measures).length)} measures and ${formatCount(Object.keys(vocabulary.dimensions).length)} dimensions to ${repoPath(file)}`,
 );

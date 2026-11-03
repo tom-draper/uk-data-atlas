@@ -1,3 +1,8 @@
+import {
+	buildLog,
+	formatCount,
+	repoPath,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildGeometryStore } from "./buildGeometryStore";
@@ -5,9 +10,9 @@ import { buildGeometryStore } from "./buildGeometryStore";
 const path = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === path) {
 	const result = buildGeometryStore(resolve(dirname(path), "../.."), (line) =>
-		console.log(line),
+		buildLog.detail(line),
 	);
-	console.log(
-		`Geometry store holds ${result.releases} releases in ${result.directory}; ${result.compiled} compiled.`,
+	buildLog.info(
+		`Geometry store holds ${formatCount(result.releases)} releases in ${repoPath(result.directory)}, ${formatCount(result.compiled)} compiled`,
 	);
 }
