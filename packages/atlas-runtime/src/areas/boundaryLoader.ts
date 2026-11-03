@@ -104,7 +104,7 @@ export const readPostcodeAreaIndex = (
 	geometrySources: GeometrySourceLookup,
 ): PostcodeAreaIndex => {
 	const path = atlasDatabasePath(repositoryRootOf(apiRoot));
-	const artifact = readSqlitePostcodeAreas(apiRoot);
+	const artifact = readSqlitePostcodeAreas(repositoryRootOf(apiRoot));
 	const mismatch = postcodeAreasMismatch(artifact, postcodeIndex.artifact, {
 		areaRelease: (geography, boundaryRelease) => {
 			const release = areaInventory.releases.find(
@@ -125,7 +125,7 @@ export const readPostcodeAreaIndex = (
 		);
 	}
 	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
-		readSqlitePostcodeAreaShard(apiRoot, shard),
+		readSqlitePostcodeAreaShard(repositoryRootOf(apiRoot), shard),
 	);
 };
 
