@@ -43,9 +43,11 @@ import { applyReversedGridOffset } from "@uk-data-atlas/geography/reverse-grid-o
 import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
 import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
 import {
+	buildLog,
 	elapsedSince,
-	formatKb,
-	logArtifact,
+	formatBytes,
+	formatCount,
+	msSince,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -590,7 +592,9 @@ export async function compileBoundaryAssets(
 ): Promise<void> {
 	const startedAt = performance.now();
 	const sources = releaseSources(outputDirectory);
-	console.log(`Preparing ${sources.length} TopoJSON boundary assets...`);
+	buildLog.info(
+		`Preparing ${formatCount(sources.length)} TopoJSON boundary assets`,
+	);
 	for (const {
 		type,
 		label,
@@ -609,10 +613,10 @@ export async function compileBoundaryAssets(
 		const boundaryStartedAt = performance.now();
 		if (sourcePath === null) {
 			if (!(await exists(topologySourcePath))) {
-				logArtifact("boundary", label, [
-					"skipped, no local GeoJSON or TopoJSON source",
-					elapsedSince(boundaryStartedAt),
-				]);
+				buildLog.artifact("boundary", label, {
+					status: "skipped, no local GeoJSON or TopoJSON source",
+					ms: msSince(boundaryStartedAt),
+				});
 				continue;
 			}
 			const topologyChanged = await shouldCompile(
@@ -630,11 +634,11 @@ export async function compileBoundaryAssets(
 				propertiesPath,
 			);
 			if (!topologyChanged && !propertiesChanged) {
-				logArtifact("boundary", label, [
-					"cached",
-					formatKb((await stat(outputPath)).size),
-					elapsedSince(boundaryStartedAt),
-				]);
+				buildLog.artifact("boundary", label, {
+					status: "cached",
+					bytes: (await stat(outputPath)).size,
+					ms: msSince(boundaryStartedAt),
+				});
 				continue;
 			}
 			if (topologyChanged) {
@@ -651,23 +655,22 @@ export async function compileBoundaryAssets(
 					topologyData,
 				);
 				await writeAtomically(propertiesPath, properties);
-				const propertiesKb = Math.round(
-					Buffer.byteLength(properties, "utf8") / 1024,
+				buildLog.artifact("boundary", label, {
+					status: "compiled properties from TopoJSON source",
+					ms: msSince(boundaryStartedAt),
+				});
+				buildLog.detail(
+					`Boundary ${label}: ${formatBytes(Buffer.byteLength(properties, "utf8"))} properties`,
 				);
-				logArtifact("boundary", label, [
-					"compiled properties from TopoJSON source",
-					`${propertiesKb} KB properties`,
-					elapsedSince(boundaryStartedAt),
-				]);
 			}
 			continue;
 		}
 
 		if (!(await exists(sourcePath))) {
-			logArtifact("boundary", label, [
-				"skipped, local GeoJSON source missing",
-				elapsedSince(boundaryStartedAt),
-			]);
+			buildLog.artifact("boundary", label, {
+				status: "skipped, local GeoJSON source missing",
+				ms: msSince(boundaryStartedAt),
+			});
 			continue;
 		}
 
@@ -683,11 +686,11 @@ export async function compileBoundaryAssets(
 				propertiesPath,
 			))
 		) {
-			logArtifact("boundary", label, [
-				"cached",
-				formatKb((await stat(outputPath)).size),
-				elapsedSince(boundaryStartedAt),
-			]);
+			buildLog.artifact("boundary", label, {
+				status: "cached",
+				bytes: (await stat(outputPath)).size,
+				ms: msSince(boundaryStartedAt),
+			});
 			continue;
 		}
 
@@ -709,23 +712,23 @@ export async function compileBoundaryAssets(
 		);
 		await writeAtomically(outputPath, output);
 		await writeAtomically(propertiesPath, properties);
-		const sourceKb = Math.round(Buffer.byteLength(raw, "utf8") / 1024);
-		const outputKb = Math.round(Buffer.byteLength(output, "utf8") / 1024);
-		const propertiesKb = Math.round(
-			Buffer.byteLength(properties, "utf8") / 1024,
-		);
+		const outputBytes = Buffer.byteLength(output, "utf8");
 		const hash = createHash("sha256")
 			.update(output)
 			.digest("hex")
 			.slice(0, 12);
-		logArtifact("boundary", label, [
-			"compiled",
-			`${outputKb} KB from ${sourceKb} KB source, ${propertiesKb} KB properties`,
-			hash,
-			elapsedSince(boundaryStartedAt),
-		]);
+		buildLog.artifact("boundary", label, {
+			status: "compiled",
+			bytes: outputBytes,
+			ms: msSince(boundaryStartedAt),
+		});
+		buildLog.detail(
+			`Boundary ${label}: ${formatBytes(Buffer.byteLength(raw, "utf8"))} source, ${formatBytes(Buffer.byteLength(properties, "utf8"))} properties, hash ${hash}`,
+		);
 	}
-	console.log(`Boundary assets complete (${elapsedSince(startedAt)}).`);
+	buildLog.info(
+		`Compiled ${formatCount(sources.length)} boundary assets in ${elapsedSince(startedAt)}`,
+	);
 }
 
 if (process.argv[1]?.endsWith("compile-boundaries.mts")) {

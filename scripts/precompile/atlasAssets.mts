@@ -6,11 +6,7 @@ import {
 } from "@uk-data-atlas/geography";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { loadMatchIndex } from "../../lib/data/gazetteer/matchIndex";
-import {
-	elapsedSince,
-	formatKb,
-	logArtifact,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileSnapshots,
 	sameFileSnapshots,
@@ -83,11 +79,11 @@ export async function compileAtlasAssets({
 			})
 		: loadGazetteerCore(readBoundaryOnce).then(async (data) => {
 				const compiled = await out("gazetteer.core", data);
-				logArtifact("gazetteer", "gazetteer.core.json", [
-					"compiled",
-					formatKb(compiled.bytes),
-					elapsedSince(startedAt),
-				]);
+				buildLog.artifact("gazetteer", "gazetteer.core.json", {
+					status: "compiled",
+					bytes: compiled.bytes,
+					ms: msSince(startedAt),
+				});
 				return { data, compiled };
 			});
 	// Ward and parish containment come from the API's geography resolver,
@@ -113,11 +109,15 @@ export async function compileAtlasAssets({
 							parishParents,
 						),
 					);
-					logArtifact("gazetteer", "gazetteer.matchindex.json", [
-						"compiled",
-						formatKb(compiled.bytes),
-						elapsedSince(startedAt),
-					]);
+					buildLog.artifact(
+						"gazetteer",
+						"gazetteer.matchindex.json",
+						{
+							status: "compiled",
+							bytes: compiled.bytes,
+							ms: msSince(startedAt),
+						},
+					);
 					return compiled;
 				},
 			);
@@ -126,11 +126,11 @@ export async function compileAtlasAssets({
 			["gazetteer.core.json", cachedAtlasAssets.outputs.gazetteerCore],
 			["gazetteer.matchindex.json", cachedAtlasAssets.outputs.matchIndex],
 		] as const)
-			logArtifact("gazetteer", name, [
-				"cached",
-				formatKb(output.bytes),
-				elapsedSince(startedAt),
-			]);
+			buildLog.artifact("gazetteer", name, {
+				status: "cached",
+				bytes: output.bytes,
+				ms: msSince(startedAt),
+			});
 	const recordedBoundaryInputs = canReuseAtlasAssets
 		? boundaryInputs.map((snapshot, index) => ({
 				...snapshot,

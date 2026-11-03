@@ -9,7 +9,7 @@
  * type or output file, and keeps the rest of the manifest as it was.
  */
 import { mkdir, readFile } from "fs/promises";
-import { join, resolve } from "path";
+import { join, relative, resolve } from "path";
 import { fileURLToPath } from "url";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import {
@@ -21,9 +21,13 @@ import { loadDatasetReuseContext, NO_REUSE } from "./precompile/cache.mts";
 import { compileDataset } from "./precompile/compileDataset.mts";
 import { compileDatasets } from "./precompile/datasetPool.mts";
 import { out } from "./precompile/output.mts";
-import { COMPILED_DATASETS } from "./precompile/paths.mts";
+import { COMPILED_DATASETS, ROOT } from "./precompile/paths.mts";
 import type { CompiledDatasets } from "./precompile/types.mts";
-import { elapsedSince } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	buildLog,
+	elapsedSince,
+	formatCount,
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 export const COMPILED_MANIFEST = join(
 	COMPILED_DATASETS,
@@ -80,8 +84,8 @@ export async function compileCatalogueDatasets(
 		);
 	}
 	await out("dataset-manifest", { version: 1, datasets }, COMPILED_DATASETS);
-	console.log(
-		`Compiled ${datasets.length} datasets into ${COMPILED_DATASETS} (${elapsedSince(startedAt)}).`,
+	buildLog.info(
+		`Compiled ${formatCount(datasets.length)} datasets into ${relative(ROOT, COMPILED_DATASETS)} in ${elapsedSince(startedAt)}`,
 	);
 	return datasets;
 }

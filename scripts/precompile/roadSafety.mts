@@ -2,11 +2,7 @@ import { join } from "path";
 import { Gazetteer } from "../../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { loadRoadSafety } from "../../lib/data/road-safety/loader";
-import {
-	elapsedSince,
-	formatKb,
-	logArtifact,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileStamp,
 	isReleasedSource,
@@ -29,11 +25,11 @@ const logRoadSafety = (
 		["road-safety.json", outputs.dataset],
 		["road-safety-points.json", outputs.points],
 	] as const)
-		logArtifact("dataset", name, [
+		buildLog.artifact("dataset", name, {
 			status,
-			formatKb(output.bytes),
-			elapsedSince(startedAt),
-		]);
+			bytes: output.bytes,
+			ms: msSince(startedAt),
+		});
 };
 
 /**

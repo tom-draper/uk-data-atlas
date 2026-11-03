@@ -7,11 +7,7 @@ import {
 	encodeCompactPayload,
 } from "@uk-data-atlas/catalogue/compactPayload";
 import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
-import {
-	elapsedSince,
-	formatKb,
-	logArtifact,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";
@@ -80,11 +76,11 @@ export async function reuseDataset(
 	);
 	if (!cached || !existing) return undefined;
 	readCompiledFromDisk(definition, compiledDatasets);
-	logArtifact("dataset", `${definition.precompiledFile}.json`, [
-		"cached",
-		formatKb(cached.bytes),
-		elapsedSince(startedAt),
-	]);
+	buildLog.artifact("dataset", `${definition.precompiledFile}.json`, {
+		status: "cached",
+		bytes: cached.bytes,
+		ms: msSince(startedAt),
+	});
 	return { ...existing, compiled: cached };
 }
 
@@ -262,11 +258,11 @@ export async function compileStaleDataset(
 	}
 	const summary = validatePrecompiledDataset(definition, data);
 	if (preserved) {
-		logArtifact("dataset", `${definition.precompiledFile}.json`, [
-			"preserved, raw source unavailable",
-			formatKb(preserved.compiled.bytes),
-			elapsedSince(startedAt),
-		]);
+		buildLog.artifact("dataset", `${definition.precompiledFile}.json`, {
+			status: "preserved, raw source unavailable",
+			bytes: preserved.compiled.bytes,
+			ms: msSince(startedAt),
+		});
 		return { ...preserved, fingerprint };
 	}
 	const output = await out(
@@ -274,11 +270,11 @@ export async function compileStaleDataset(
 		encodeCompactPayload(data),
 		COMPILED_DATASETS,
 	);
-	logArtifact("dataset", `${definition.precompiledFile}.json`, [
-		"compiled",
-		formatKb(output.bytes),
-		elapsedSince(startedAt),
-	]);
+	buildLog.artifact("dataset", `${definition.precompiledFile}.json`, {
+		status: "compiled",
+		bytes: output.bytes,
+		ms: msSince(startedAt),
+	});
 	return {
 		type: definition.type,
 		output: definition.precompiledFile,

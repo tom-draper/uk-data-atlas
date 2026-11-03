@@ -24,8 +24,11 @@ export const formatDuration = (milliseconds: number) => {
 	return `${Math.floor(seconds / 3600)}h ${pad(Math.floor((seconds % 3600) / 60))}m`;
 };
 
+/** Milliseconds since a `performance.now()` reading. */
+export const msSince = (startedAt: number) => performance.now() - startedAt;
+
 export const elapsedSince = (startedAt: number) =>
-	formatDuration(performance.now() - startedAt);
+	formatDuration(msSince(startedAt));
 
 const BYTE_UNITS = ["B", "KB", "MB", "GB"] as const;
 
