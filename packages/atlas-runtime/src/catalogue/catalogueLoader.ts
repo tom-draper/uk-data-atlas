@@ -229,13 +229,13 @@ export const readAtlasCatalogues = (
 	}
 	const mapResources = stage("map-resources", () =>
 		readMapResources(
-			apiRoot,
+			repositoryRootOf(apiRoot),
 			options.mapAssetBaseUrl,
 			options.mapTileBaseUrl,
 		),
 	);
 	const mapAssets = stage("map-assets", () =>
-		readMapAssets(apiRoot, mapResources),
+		readMapAssets(repositoryRootOf(apiRoot), mapResources),
 	);
 	const crosswalkLookup = stage("crosswalk-lookup", () =>
 		readCrosswalkLookup(
