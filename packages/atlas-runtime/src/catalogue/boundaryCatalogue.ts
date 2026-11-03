@@ -1,9 +1,11 @@
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { readGeographyCatalogue } from "./geographyCatalogue";
 
-export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry =>
+export const readBoundaryRegistry = (
+	repositoryRoot: string,
+): BoundaryRegistry =>
 	readGeographyCatalogue<BoundaryRegistry>(
-		apiRoot,
+		repositoryRoot,
 		"boundary-releases",
 		"releases",
 		"boundary registry",

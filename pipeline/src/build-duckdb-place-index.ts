@@ -8,27 +8,23 @@ import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "
 import { readGeographyCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { placeIndexTables } from "@uk-data-atlas/atlas-runtime/places";
-import {
-	apiRootOf,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
-const readBoundaryRegistry = (apiRoot: string) =>
+const readBoundaryRegistry = (repositoryRoot: string) =>
 	readGeographyCatalogue<BoundaryRegistry>(
-		apiRoot,
+		repositoryRoot,
 		"boundary-releases",
 		"releases",
 		"boundary registry",
 	);
 
 export const buildDuckdbPlaceIndex = async (repositoryRoot: string) => {
-	const apiRoot = apiRootOf(repositoryRoot);
 	const areaInventory = readAreaInventory(repositoryRoot);
 	const index = await compileDuckdbPlaceIndex(
 		readAreaLookup(repositoryRoot, areaInventory),
 		readNamedLocationInventory(repositoryRoot),
 		areaInventory.contentHash,
-		readBoundaryRegistry(apiRoot),
+		readBoundaryRegistry(repositoryRoot),
 	);
 	const outputPath = publishCacheTables(
 		repositoryRoot,
