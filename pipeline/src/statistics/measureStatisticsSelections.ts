@@ -1,13 +1,11 @@
 import type { DatabaseSync } from "node:sqlite";
-import {
-	STATISTICS_DATASETS,
-	type Measure,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { CompiledMeasure } from "../catalog/manifest";
 import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { bindCensusStatistics } from "./bindCensusStatistics";
 import { bindStatisticsField } from "./bindStatisticsField";
+import type { DatasetLookup } from "./declaredFieldSeries";
 import { bindCompiledFields } from "./bindCompiledFields";
 import { bindReviewedStatistics } from "./bindReviewedStatistics";
 import { electionStatisticsExport } from "./electionStatisticsExport";
@@ -26,6 +24,7 @@ export function measureStatisticsSelections(
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
 	ids?: MeasureDimensionsConfig["ids"],
+	lookup?: DatasetLookup,
 ): StatisticsSelection[] | undefined {
 	if (
 		measure.id === "general-election-winning-party" ||
@@ -108,10 +107,11 @@ export function measureStatisticsSelections(
 		const anchor = measure.id.startsWith("general-")
 			? "general-election-valid-votes"
 			: "local-election-effective-votes";
-		const selection = bindCompiledFields(database, {
-			...measure,
-			id: anchor,
-		});
+		const selection = bindCompiledFields(
+			database,
+			{ ...measure, id: anchor },
+			lookup,
+		);
 		if (
 			!selection ||
 			measure.sources.some((source) =>
@@ -141,15 +141,16 @@ export function measureStatisticsSelections(
 		);
 		if (!remainingSources.length)
 			return expandStatisticsSelection(database, census);
-		const remaining = bindCompiledFields(database, {
-			...measure,
-			sources: remainingSources,
-		});
+		const remaining = bindCompiledFields(
+			database,
+			{ ...measure, sources: remainingSources },
+			lookup,
+		);
 		return remaining
 			? [...expandStatisticsSelection(database, census), ...remaining]
 			: undefined;
 	}
-	const compiled = bindCompiledFields(database, measure);
+	const compiled = bindCompiledFields(database, measure, lookup);
 	if (compiled) return compiled;
 	const reviewed =
 		readPath && bindReviewedStatistics(database, measure, readPath);
@@ -169,18 +170,11 @@ export function measureStatisticsSelections(
 			);
 			if (matches.length !== 1) return undefined;
 			const field = matches[0]!.field;
-			const config = STATISTICS_DATASETS.find(
-				({ type }) =>
-					type.replace(
-						/[A-Z]/g,
-						(letter) => `-${letter.toLowerCase()}`,
-					) === field.dataset,
-			);
 			const selection = bindStatisticsField(
 				database,
 				field,
 				measure.unit,
-				config,
+				lookup,
 			);
 			if (!selection) return undefined;
 			result.push(...selection);

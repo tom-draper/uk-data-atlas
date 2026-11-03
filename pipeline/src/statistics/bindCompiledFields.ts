@@ -1,13 +1,14 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { CENSUS_BREAKDOWNS } from "../catalog/census";
+import { declaredFieldSeries, type DatasetLookup } from "./declaredFieldSeries";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
 } from "./statisticsExport";
 
-// These are the source fields used by the catalogue compilers. The canonical
-// dataset layout records the series for each field, including its dimensions.
+// These are the source fields used by the catalogue compilers. Each dataset's
+// declaration maps a field to its series and period.
 const fields: Record<string, Array<readonly [string, string]>> = {
 	...Object.fromEntries(
 		CENSUS_BREAKDOWNS.flatMap((breakdown) =>
@@ -77,6 +78,7 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 export function bindCompiledFields(
 	database: DatabaseSync,
 	measure: Measure,
+	datasets?: DatasetLookup,
 ): StatisticsSelection[] | undefined {
 	const specs = fields[measure.id];
 	if (!specs) return undefined;
@@ -90,23 +92,44 @@ export function bindCompiledFields(
 		return undefined;
 	const lookup =
 		database.prepare(`SELECT DISTINCT r.geography, r.id AS release, p.label AS period
-		FROM dataset_leaf leaf JOIN dataset d ON d.id = leaf.dataset_id
-		JOIN series s ON s.id = leaf.series_id JOIN area_releases r ON r.position = s.release_id
-		JOIN period p ON p.id = leaf.period_id
-		WHERE d.slug = ? AND leaf.path = ? AND leaf.kind = 'value' ORDER BY r.geography, r.id, p.label`);
+		FROM dataset d JOIN series s ON s.dataset_id = d.id JOIN measure m ON m.id = s.measure_id
+		JOIN area_releases r ON r.position = s.release_id
+		JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id
+		WHERE d.slug = ? AND m.slug = ? AND p.label = ?
+		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
+		AND NOT EXISTS (SELECT 1 FROM json_each(?) expected WHERE NOT EXISTS (
+			SELECT 1 FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
+			JOIN dimension_member dm ON dm.id = sm.member_id
+			WHERE sm.series_id = s.id AND dim.slug = expected.key AND dm.code = expected.value
+		)) ORDER BY r.geography, r.id, p.label`);
 	const selected: StatisticsSelection[] = [];
 	for (const [dataset, field] of specs) {
-		const path = field.split(".");
-		const rows = lookup.all(dataset, JSON.stringify(path));
-		if (!rows.length) return undefined;
-		for (const row of rows)
-			selected.push({
+		const found = declaredFieldSeries(
+			database,
+			dataset,
+			field.split("."),
+			undefined,
+			datasets,
+		);
+		const before = selected.length;
+		for (const { measure: slug, members, period } of found)
+			for (const row of lookup.all(
 				dataset,
-				path,
-				geography: String(row.geography),
-				release: String(row.release),
-				periods: [String(row.period)],
-			});
+				slug,
+				period,
+				Object.keys(members).length,
+				JSON.stringify(members),
+			))
+				selected.push({
+					dataset,
+					measure: slug,
+					members,
+					exact: true,
+					geography: String(row.geography),
+					release: String(row.release),
+					periods: [String(row.period)],
+				});
+		if (selected.length === before) return undefined;
 	}
 	const expanded = expandStatisticsSelection(database, selected);
 	return expanded.length ? expanded : undefined;

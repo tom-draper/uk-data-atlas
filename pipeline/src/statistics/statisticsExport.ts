@@ -29,30 +29,15 @@ type StatisticsSourceSelection = {
 	periods: string[];
 };
 
-/** A compiled field or dimension member and its canonical source partition. */
+/** A measure's series, by dimension members, and its canonical source partition. */
 export type StatisticsSelection = StatisticsSourceSelection &
 	(
-		| { path: string[] }
 		| { measure: string; dimension: string; member: string }
 		| { measure: string; members: Record<string, string>; exact?: true }
 	);
 
 const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
-	SELECT leaf.series_id, leaf.period_id FROM dataset_leaf leaf
-	JOIN dataset selected_dataset ON selected_dataset.id = leaf.dataset_id
-	JOIN series selected_series ON selected_series.id = leaf.series_id
-	JOIN area_releases selected_release ON selected_release.position = selected_series.release_id
-	JOIN period selected_label ON selected_label.id = leaf.period_id
-	JOIN selections selection
-	WHERE leaf.kind = 'value'
-	AND selected_dataset.slug = json_extract(selection.value, '$.dataset')
-	AND json(leaf.path) = json_extract(selection.value, '$.path')
-	AND selected_release.geography = json_extract(selection.value, '$.geography')
-	AND selected_release.id = json_extract(selection.value, '$.release')
-	AND EXISTS (SELECT 1 FROM json_each(selection.value, '$.periods') selected_period
-		WHERE selected_period.value = selected_label.label)
-	UNION
-	SELECT selected_series.id, selected_label.id FROM series selected_series
+	SELECT DISTINCT selected_series.id AS series_id, selected_label.id AS period_id FROM series selected_series
 	JOIN dataset selected_dataset ON selected_dataset.id = selected_series.dataset_id
 	JOIN measure selected_measure ON selected_measure.id = selected_series.measure_id
 	JOIN area_releases selected_release ON selected_release.position = selected_series.release_id
@@ -258,10 +243,9 @@ export function exportStatisticsMeasure(
 			: `o.value, ${lower}, ${upper}, c.code, st.slug`;
 	const houseJoin = housePrice
 		? `LEFT JOIN (
-		SELECT dr.area_version_id, parent_area.code FROM dataset_record dr
-		JOIN dataset_record_parent dp ON dp.dataset_id=dr.dataset_id AND dp.part=dr.part AND dp.records=dr.records AND dp.position=dr.position AND dp.parent=1
-		JOIN area_version parent_version ON parent_version.id=dp.area_version_id JOIN area parent_area ON parent_area.id=parent_version.area_id
-		WHERE dr.dataset_id=(SELECT id FROM dataset WHERE slug='house-price')
+		SELECT DISTINCT r.child_version_id AS area_version_id, parent_area.code FROM area_relationship r
+		JOIN area_version parent_version ON parent_version.id=r.parent_version_id JOIN area parent_area ON parent_area.id=parent_version.area_id
+		WHERE r.relation='published-as' AND r.dataset_id=(SELECT id FROM dataset WHERE slug='house-price')
 	) house_parent ON house_parent.area_version_id=o.area_version_id`
 		: "";
 	const areaCode = housePrice

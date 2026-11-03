@@ -20,7 +20,10 @@ import { bindCompiledFields } from "../src/statistics/bindCompiledFields";
 import { compileMeasureDownloads } from "../src/statistics/measureDownloads";
 import { gunzipSync } from "node:zlib";
 import { measureStatisticsSelections } from "../src/statistics/measureStatisticsSelections";
-import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type {
+	DeclaredDataset,
+	Measure,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 test("binds a census measure only when every source partition is complete", () => {
 	const db = new DatabaseSync(":memory:");
@@ -75,7 +78,7 @@ test("binds a census measure only when every source partition is complete", () =
 			dataset: "census-2021-ts007a",
 			measure: "usual-residents",
 			members: { "age-band": "0-to-4" },
-			exact: true,
+			exact: true as const,
 			geography: "lsoa",
 			release: "lsoa-2021",
 			periods: ["2021-census"],
@@ -107,7 +110,6 @@ test("uses reviewed source mappings only when each requested period exists", () 
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
 			CREATE TABLE observation (series_id INTEGER, period_id INTEGER);
 			CREATE TABLE period (id INTEGER, label TEXT);
-			CREATE TABLE dataset_leaf (series_id INTEGER, period_id INTEGER, dataset_id INTEGER, kind TEXT, path TEXT);
 			INSERT INTO dataset VALUES (1, 'population');
 			INSERT INTO measure VALUES (1, 'population');
 			INSERT INTO series VALUES (1, 1, 1, 1);
@@ -175,9 +177,7 @@ test("exports house prices under the publisher's ward code and release", () => {
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
 			CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, category_id INTEGER, status_id INTEGER);
-			CREATE TABLE dataset_leaf (series_id INTEGER, period_id INTEGER, dataset_id INTEGER, kind TEXT, path TEXT);
-			CREATE TABLE dataset_record (dataset_id INTEGER, part INTEGER, records TEXT, position INTEGER, area_version_id INTEGER);
-			CREATE TABLE dataset_record_parent (dataset_id INTEGER, part INTEGER, records TEXT, position INTEGER, parent INTEGER, area_version_id INTEGER);
+			CREATE TABLE area_relationship (dataset_id INTEGER, relation TEXT, period_id INTEGER, child_version_id INTEGER, parent_version_id INTEGER);
 			INSERT INTO dataset VALUES (1, 'house-price');
 			INSERT INTO measure VALUES (1, 'house-price-median', 'gbp');
 			INSERT INTO area_releases VALUES (1, 'ward', '2021-12-uk-bgc'), (2, 'ward', '2020-12-uk-bgc');
@@ -187,8 +187,7 @@ test("exports house prices under the publisher's ward code and release", () => {
 			INSERT INTO period VALUES (1, '2022');
 			INSERT INTO status VALUES (1, 'observed');
 			INSERT INTO observation VALUES (1, 1, 1, 150000, NULL, NULL, NULL, 1);
-			INSERT INTO dataset_record VALUES (1, 0, 'data', 1, 1);
-			INSERT INTO dataset_record_parent VALUES (1, 0, 'data', 1, 1, 2);`);
+			INSERT INTO area_relationship VALUES (1, 'published-as', 1, 1, 2);`);
 		const paths = {
 			csv: join(directory, "rows.csv"),
 			parquet: join(directory, "rows.parquet"),
@@ -230,8 +229,6 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
-			CREATE TABLE dataset_part (dataset_id INTEGER, position INTEGER, key TEXT);
-			CREATE TABLE dataset_leaf (dataset_id INTEGER, part INTEGER, records TEXT, path TEXT, kind TEXT, series_id INTEGER, period_id INTEGER);
 			CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, category_id INTEGER, status_id INTEGER);
 			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER);
@@ -248,8 +245,6 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO area VALUES (1, 'E01'), (2, 'E02');
 			INSERT INTO area_version VALUES (1, 1), (2, 2);
 			INSERT INTO period VALUES (1, '2021');
-			INSERT INTO dataset_part VALUES (1, 0, '2021');
-			INSERT INTO dataset_leaf VALUES (1, 0, 'data', '["rented"]', 'value', 1, 1), (1, 0, 'data', '["owned"]', 'value', 2, 1);
 			INSERT INTO status VALUES (1, 'observed'), (2, 'suppressed');
 			INSERT INTO observation VALUES (1, 2, 1, 10, 9, 11, NULL, 1), (2, 1, 1, NULL, NULL, NULL, 100, 2);
 		`);
@@ -447,7 +442,9 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			exportStatisticsMeasure(db, "rented-homes", paths, [
 				{
 					dataset: "census",
-					path: ["rented"],
+					measure: "households",
+					members: { tenure: "rented" },
+					exact: true as const,
 					geography: "ward",
 					release: "2021",
 					periods: ["2021"],
@@ -477,7 +474,9 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			hashStatisticsSelection(db, [
 				{
 					dataset: "census",
-					path: ["rented"],
+					measure: "households",
+					members: { tenure: "rented" },
+					exact: true as const,
 					geography: "ward",
 					release: "2021",
 					periods: ["2021"],
@@ -501,10 +500,33 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			recordHash:
 				"7f04a3fba5d12c0f87f083ad56ec21c97ee75877ef5e83d9a8e4eb2888ea7e2b",
 		};
-		assert.deepEqual(bindStatisticsField(db, field, "households"), [
+		const censusConfig: DeclaredDataset = {
+			type: "census",
+			measures: [],
+			fields: [
+				{
+					path: "rented",
+					measure: "households",
+					members: { tenure: "rented" },
+				},
+			],
+			dimensions: [
+				{
+					slug: "tenure",
+					label: "Tenure",
+					members: [{ key: "rented", code: "rented" }],
+				},
+			],
+			payload: { parts: () => [{ key: "2021", header: {} }] },
+		};
+		const lookup = (slug: string) =>
+			slug === "census" ? censusConfig : undefined;
+		assert.deepEqual(bindStatisticsField(db, field, "households", lookup), [
 			{
 				dataset: "census",
-				path: ["rented"],
+				measure: "households",
+				members: { tenure: "rented" },
+				exact: true as const,
 				geography: "ward",
 				release: "2021",
 				periods: ["2021"],
@@ -523,28 +545,50 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		} as unknown as Measure;
 		const bindings = [{ measureId: "rented-homes", field }];
 		assert.equal(
-			measureStatisticsSelections(db, catalogueMeasure, bindings)?.length,
+			measureStatisticsSelections(
+				db,
+				catalogueMeasure,
+				bindings,
+				undefined,
+				undefined,
+				lookup,
+			)?.length,
 			1,
 		);
 		catalogueMeasure.sources[0]!.periods.push("2022");
 		assert.equal(
-			measureStatisticsSelections(db, catalogueMeasure, bindings),
+			measureStatisticsSelections(
+				db,
+				catalogueMeasure,
+				bindings,
+				undefined,
+				undefined,
+				lookup,
+			),
 			undefined,
 		);
 		assert.equal(
-			bindStatisticsField(db, { ...field, recordCount: 2 }, "households"),
+			bindStatisticsField(
+				db,
+				{ ...field, recordCount: 2 },
+				"households",
+				lookup,
+			),
 			undefined,
 		);
-		assert.equal(bindStatisticsField(db, field, "people"), undefined);
+		assert.equal(
+			bindStatisticsField(db, field, "people", lookup),
+			undefined,
+		);
 		db.exec("UPDATE measure SET unit = 'percent of premises'");
-		assert.ok(bindStatisticsField(db, field, "% of premises"));
+		assert.ok(bindStatisticsField(db, field, "% of premises", lookup));
 		db.exec("UPDATE measure SET unit = 'households'");
 		assert.deepEqual(
 			bindStatisticsField(
 				db,
 				{ ...field, records: "partnerships" },
 				"households",
-				{
+				() => ({
 					type: "census",
 					measures: [],
 					fields: [{ path: "{tenure}", measure: "households" }],
@@ -555,13 +599,14 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 							members: [{ key: "rented", code: "rented" }],
 						},
 					],
-				},
+				}),
 			),
 			[
 				{
 					dataset: "census",
 					measure: "households",
 					members: { tenure: "rented" },
+					exact: true,
 					geography: "ward",
 					release: "2021",
 					periods: ["2021"],
@@ -602,13 +647,14 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				db,
 				{ ...field, records: "partnerships" },
 				"households",
-				config,
+				() => config,
 			),
 			[
 				{
 					dataset: "census",
 					measure: "households",
 					members: { place: "residence", tenure: "rented" },
+					exact: true,
 					geography: "ward",
 					release: "2021",
 					periods: ["2021"],
@@ -621,7 +667,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				db,
 				{ ...field, records: "partnerships" },
 				"households",
-				config,
+				() => config,
 			),
 			undefined,
 		);
@@ -638,7 +684,9 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				},
 				{
 					dataset: "census",
-					path: ["rented"],
+					measure: "households",
+					members: { tenure: "rented", place: "residence" },
+					exact: true as const,
 					geography: "ward",
 					release: "2021",
 					periods: ["2021"],
@@ -650,7 +698,9 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			exportStatisticsMeasure(db, "rented-homes", paths, [
 				{
 					dataset: "census",
-					path: ["rented"],
+					measure: "households",
+					members: { tenure: "rented", place: "residence" },
+					exact: true as const,
 					geography: "ward",
 					release: "2021",
 					periods: ["2020"],
@@ -686,7 +736,9 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		const chosen = [
 			{
 				dataset: "census",
-				path: ["rented"],
+				measure: "households",
+				members: { tenure: "rented", place: "residence" },
+				exact: true as const,
 				geography: "ward",
 				release: "2021",
 				periods: ["2021"],
@@ -758,7 +810,10 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			),
 		);
 		db.exec(`UPDATE dataset SET slug = 'jobs';
-			UPDATE dataset_leaf SET path = '["totalJobs"]' WHERE path = '["rented"]'`);
+			UPDATE measure SET slug = 'total-jobs';
+			DELETE FROM observation WHERE series_id = 2;
+			DELETE FROM series WHERE id = 2;
+			DELETE FROM series_member`);
 		const jobs = {
 			id: "total-jobs",
 			sources: [{ datasetId: "jobs" }],
