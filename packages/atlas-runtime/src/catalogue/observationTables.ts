@@ -9,6 +9,7 @@ import type {
 	StatisticsSelector,
 	StatisticsTableSelector,
 } from "../storage/atlasStatisticsObservations";
+import { readStatisticsObservationText } from "../storage/atlasStatisticsObservations";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import type {
 	DataCatalog,
@@ -135,6 +136,7 @@ export class ObservationCache {
 		string,
 		ReturnType<typeof readObservationInventory>
 	>();
+	private readonly statisticsCatalogues = new Set<string>();
 
 	/** Artifacts read from the statistics tables, with what the catalogue says of each. */
 	private readonly statistics = new Map<
@@ -157,25 +159,38 @@ export class ObservationCache {
 		catalog: DataCatalog,
 		readPath?: StatisticsReadPath,
 	) {
-		this.inventories.set(
-			databasePath,
-			assertObservationCatalogue(databasePath, catalog),
-		);
-		if (!readPath) return;
+		if (!readPath || Object.keys(readPath.statistics).length === 0) {
+			this.inventories.set(
+				databasePath,
+				assertObservationCatalogue(databasePath, catalog),
+			);
+			return;
+		}
+		if (Object.keys(readPath.observations).length)
+			throw new Error(
+				"The statistics read path contains unsupported observation artifacts.",
+			);
+		const names = new Set<string>();
 		for (const measure of catalog.measures)
 			for (const source of measure.sources) {
 				const name = observationArtifactName(measure.id, source);
 				const selector = readPath.statistics[name];
-				if (selector)
-					this.statistics.set(`${databasePath}:${name}`, {
-						selector,
-						artifact: {
-							measureId: measure.id,
-							sourceGeography: source.sourceGeography,
-							periods: source.periods,
-						},
-					});
+				if (!selector)
+					throw new Error(`Missing statistics selector for ${name}.`);
+				names.add(name);
+				this.statistics.set(`${databasePath}:${name}`, {
+					selector,
+					artifact: {
+						measureId: measure.id,
+						sourceGeography: source.sourceGeography,
+						periods: source.periods,
+					},
+				});
 			}
+		for (const name of Object.keys(readPath.statistics))
+			if (!names.has(name))
+				throw new Error(`Unexpected statistics selector: ${name}.`);
+		this.statisticsCatalogues.add(databasePath);
 	}
 
 	/** Whether an artifact is read from the statistics tables. */
@@ -193,6 +208,8 @@ export class ObservationCache {
 	}
 
 	has(databasePath: string, artifactName: string): boolean {
+		if (this.statisticsCatalogues.has(databasePath))
+			return this.statistics.has(`${databasePath}:${artifactName}`);
 		return this.inventory(databasePath).names.has(artifactName);
 	}
 
@@ -210,12 +227,18 @@ export class ObservationCache {
 			this.entries.delete(path);
 			this.entries.set(path, entry);
 		} else {
-			const text = readObservationText(
-				databasePath,
-				artifactName,
-				this.inventory(databasePath).generationHash,
-				this.statistics.get(path),
-			);
+			const statistics = this.statistics.get(path);
+			const text = statistics
+				? readStatisticsObservationText(
+						databasePath,
+						statistics.selector,
+						statistics.artifact,
+					)
+				: readObservationText(
+						databasePath,
+						artifactName,
+						this.inventory(databasePath).generationHash,
+					);
 			entry = {
 				text,
 				views: new Map(),
