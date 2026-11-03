@@ -5,6 +5,7 @@ import { DatabaseSync } from "node:sqlite";
 import { atlasCachePath } from "../storage/atlasCache";
 import { rebuildFromLayout } from "./datasetLayout";
 import { rebuildFuelPoverty } from "./fuelPovertyStatistics";
+import { rebuildAirQuality } from "./airQualityPayload";
 import { STATISTICS_DATASETS } from "./statisticsDatasets";
 
 const declared = new Map(
@@ -22,6 +23,8 @@ export function rebuildDatasetPayload(
 	output: string,
 ): string {
 	if (type === "fuelPoverty") return rebuildFuelPoverty(database);
+	if (type === "airQuality" && output === "air-quality")
+		return rebuildAirQuality(database);
 	const rebuild = declared.get(type)?.rebuild;
 	if (!rebuild) throw new Error(`Dataset ${output} is not served from rows`);
 	return rebuildFromLayout(database, output, rebuild.derived);

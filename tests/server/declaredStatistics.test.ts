@@ -9,6 +9,10 @@ import {
 import { rebuildFromLayout } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
+	rebuildDatasetPayload,
+	STATISTICS_DATASETS,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
 	writeSqliteTables,
 	type SqliteTable,
 } from "../../pipeline/src/storage/index";
@@ -122,6 +126,63 @@ const RATE = measure(
 );
 
 describe("declared statistics", () => {
+	it("generates air quality from observations without layout tables", () => {
+		const config = STATISTICS_DATASETS.find(
+			(dataset) => dataset.type === "airQuality",
+		);
+		expect(config).toBeDefined();
+		if (!config) throw new Error("Missing air quality declaration");
+		const expected = {
+			"2024": {
+				id: "airQuality2024",
+				year: 2024,
+				type: "airQuality",
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				data: {
+					E06000001: {
+						ladCode: "E06000001",
+						ladName: "Publisher name",
+						no2Mean: 12,
+						pm25Mean: null,
+						pm10Mean: 8,
+						gridCells: 4,
+						pm25PopulationWeighted: 7,
+						pm25PopulationWeightedAnthropogenic: 3,
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		try {
+			writeSqliteTables(database, {
+				...areas(),
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(expected), {
+						...entry,
+						output: "air-quality",
+					}),
+				]),
+			});
+			expect(
+				database
+					.prepare("SELECT count(*) AS count FROM dataset_part")
+					.get()?.count,
+			).toBe(0);
+			expect(
+				JSON.parse(
+					rebuildDatasetPayload(
+						database,
+						"airQuality",
+						"air-quality",
+					),
+				),
+			).toEqual(expected);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("maps fields, members, periods, intervals and releases from configuration", () => {
 		const config: DeclaredDataset = {
 			type: "example",

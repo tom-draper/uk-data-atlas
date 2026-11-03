@@ -531,6 +531,9 @@ export function declaredStatistics(
 	entry: DeclaredManifestEntry,
 ): (areas: AreaIndex) => StatisticsDataset {
 	const type = config.type;
+	const useLayout =
+		config.rebuild !== undefined &&
+		!(type === "airQuality" && entry.output === "air-quality");
 	const recordSets: DeclaredRecords[] = config.records ?? [
 		{ from: "data", release: config.release, alsoIn: config.alsoIn },
 	];
@@ -1146,7 +1149,7 @@ export function declaredStatistics(
 						`${type}: ${code} is keyed ${known.key} and ${key}`,
 					);
 			},
-			config.rebuild ? layOut : undefined,
+			useLayout ? layOut : undefined,
 		)) {
 			const key = seriesKey(raw);
 			let index = seriesIndex.get(key);
@@ -1263,7 +1266,7 @@ export function declaredStatistics(
 					throw new Error(
 						`${type}: ${Number(row?.n)} observation rows for ${count} values`,
 					);
-				if (config.rebuild) {
+				if (useLayout && config.rebuild) {
 					const rebuilt = rebuildFromLayout(
 						database,
 						entry.output,
