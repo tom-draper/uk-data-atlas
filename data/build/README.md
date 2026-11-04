@@ -67,6 +67,39 @@ After restoring source data with `pnpm data:download`, run `pnpm data:build`
 to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).
 
+## Read-only connections
+
+Readers share one read-only `DatabaseSync` per database file per process, with
+prepared statements kept per SQL string
+(`packages/atlas-runtime/src/storage/readOnlyDatabase.ts`). Opening a
+connection costs far more than a point query, mostly in opening the file and
+parsing the schema. A reader leases the connection with
+`openReadOnlyDatabase(path)` and calls `release()` in a `finally`.
+
+The pipeline replaces `atlas.sqlite` and `atlas-cache.sqlite` by renaming a
+temporary file over them, and a connection keeps reading the old inode. So
+before a lease is handed out the file's `dev`, `ino`, `size` and `mtime` are
+compared with those recorded at open (one `stat`, under a microsecond). A
+changed file closes the connection, drops its statements and opens the new
+file under a new generation. The check runs at most once per second, set with
+`ATLAS_SQLITE_RECHECK_MS` (`0` checks every read). A connection replaced while
+leased is closed when its last lease is released.
+
+What derives from a file's contents is tied to its generation:
+`requireAtlasCache` checks the cache's stored generation against
+`atlas.sqlite` again after either file is replaced, `ObservationCache` drops
+the artifacts it read, and the postcode page reader drops the releases and
+layout it read. `memoByGeneration` and `onDatabaseReplaced` do the same for new
+caches. A `SqliteIndex` keeps its lease for its life, so it stays on the
+release it was validated against. The API reads catalogues once at start, so a
+replaced file is logged as `database.replaced` and the worker should be
+restarted.
+
+A build stage that replaces a database it may have read calls
+`closeReadOnlyDatabase(path)` just before the rename, or
+`closeAllReadOnlyDatabases()`. Tests that rebuild fixtures do the same through
+the pipeline writers. Writers open their own connections.
+
 ## atlas.sqlite
 
 The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, `crosswalk-inventory`, `named-locations`, and `location-projections` and writes this database
@@ -113,7 +146,7 @@ The stage cache skips the whole write when inputs are unchanged.
 
 `readTerrainCatalogue(repositoryRoot)` opens `data/build/atlas.sqlite` relative
 to the repository root in read-only mode, reads the `terrain-catalogue` row, validates its
-schema version and products array, then closes the connection. It does not fall
+schema version and products array. It does not fall
 back to JSON. Keep `data/build/atlas.sqlite` under the repository root when
 deploying the API.
 The `documents` stage depends on `atlas-sqlite` because it loads API catalogues.
@@ -280,8 +313,8 @@ shares `area_id`. The `(code, geography_id)` index serves lookups by code.
 columns (`id`, `releasePosition`, `code`, `inInventory`, `name`, `aliases`,
 `areaM2`, `population`), kept for existing readers. Write to the tables.
 
-The API inventory and bounded lazy area lookup read these tables in read-only
-connections that close after each read. They refuse stale hashes and incomplete
+The API inventory and bounded lazy area lookup read these tables over the
+shared read-only connection (see Read-only connections). They refuse stale hashes and incomplete
 releases and never fall back to JSON. SQLite runs before the
 place-index, area-search-index, postcode-area, and atlas-lookup consumers.
 
@@ -342,8 +375,8 @@ be told apart from a missing one. Missing weights stay null, distinct from zero.
 keeps the original JSON byte count for the API cache budget. `v_crosswalk_edge`
 shows each edge with codes, names and its weight.
 
-The API crosswalk inventory and bounded lazy artifact loader read SQLite and
-close each connection after a read. JSON inventories and compressed crosswalk
+The API crosswalk inventory and bounded lazy artifact loader read SQLite over
+the shared read-only connection. JSON inventories and compressed crosswalk
 artifacts remain inputs to relationship paths, analysis geographies and their
 validation, location projections, relationship candidates, geography inventory,
 lookup manifests, validation reports, proposals.
@@ -386,8 +419,8 @@ to `area`, because assertions can describe historical codes across releases.
 `named_locations.id`, non-null `boundaryRelease TEXT`, real `minX`, `minY`,
 `maxX`, `maxY`, and `geometry TEXT`. The last column contains GeoJSON. Geometry
 is optional, one row per location with a compiled union. Its release belongs to
-the parent's `memberGeography`. The API loads geometry on first access and
-closes every SQLite connection after reading. Inventory and membership reads do
+the parent's `memberGeography`. The API loads geometry on first access over
+the shared read-only connection. Inventory and membership reads do
 not parse geometry.
 
 The named-location compiler reads area JSON intermediates before SQLite is
