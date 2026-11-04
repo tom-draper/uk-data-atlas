@@ -1,9 +1,9 @@
 import { inflateRawSync } from "node:zlib";
+import type { SQLInputValue, StatementSync } from "node:sqlite";
 import {
-	DatabaseSync,
-	type SQLInputValue,
-	type StatementSync,
-} from "node:sqlite";
+	openReadOnlyDatabase,
+	type ReadOnlyDatabase,
+} from "./readOnlyDatabase.ts";
 import type { Indexed } from "@uk-data-atlas/search-index";
 
 /**
@@ -15,9 +15,13 @@ import type { Indexed } from "@uk-data-atlas/search-index";
  * keyed by position, so the same searches read only the rows they touch.
  */
 
-/** An index opened for reading. */
+/**
+ * An index opened for reading. It keeps its lease on the shared connection
+ * for its lifetime, so replacing the file leaves it on the release it was
+ * checked against when it was built, and the new file goes to new indexes.
+ */
 export class SqliteIndex {
-	private readonly database: DatabaseSync;
+	private readonly database: ReadOnlyDatabase;
 	readonly meta: Map<string, string>;
 
 	readonly path: string;
@@ -26,14 +30,19 @@ export class SqliteIndex {
 		this.path = path;
 		this.prefix = prefix;
 
-		this.database = new DatabaseSync(path, { readOnly: true });
-		this.meta = new Map(
-			(
-				this.database
-					.prepare(`SELECT key, value FROM ${prefix}meta`)
-					.all() as Array<{ key: string; value: string }>
-			).map(({ key, value }) => [key, value]),
-		);
+		this.database = openReadOnlyDatabase(path);
+		try {
+			this.meta = new Map(
+				(
+					this.database
+						.prepare(`SELECT key, value FROM ${prefix}meta`)
+						.all() as Array<{ key: string; value: string }>
+				).map(({ key, value }) => [key, value]),
+			);
+		} catch (error) {
+			this.database.release();
+			throw error;
+		}
 	}
 
 	/**
