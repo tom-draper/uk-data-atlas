@@ -8,6 +8,7 @@ import {
 	CANDIDACY_COLUMNS,
 	type StatisticsInput,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { DATASET_MODULES } from "@uk-data-atlas/datasets/declaration/modules";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
@@ -102,6 +103,7 @@ export function statisticsTables(
 			columns: [
 				"id INTEGER NOT NULL",
 				"slug TEXT NOT NULL UNIQUE",
+				`module TEXT NOT NULL CHECK (module IN (${DATASET_MODULES.map((module) => `'${module}'`).join(",")}))`,
 				"title TEXT NOT NULL",
 				"description TEXT NOT NULL",
 				"source_id INTEGER NOT NULL REFERENCES source(id)",
@@ -113,6 +115,7 @@ export function statisticsTables(
 				datasets.map((dataset, index) => [
 					index + 1,
 					dataset.slug,
+					dataset.module,
 					dataset.title,
 					dataset.description,
 					sources.id(sourceKey(dataset.source), dataset.slug),
