@@ -263,7 +263,12 @@ each invalidate old entries once.
 `--from` and `--no-cache` rerun the stages they select regardless.
 Moving stage commands to the repository root also invalidates cached stages
 once because the command is part of each key. The cache format remains at
-version 4.
+version 4. Each stage record also keeps its latest command and total duration and
+finish time, including failed runs. Skips preserve the previous timing.
+`last-build.json` in the same directory records the latest build's start, finish,
+and stage outcomes and durations. `--plan` shows available previous durations
+and estimates the total for stages expected to run. The estimate can be partial
+and actual stages may differ if rebuilt outputs are unchanged.
 
 After a cache format bump or command change, `pnpm data:build --adopt` records existing outputs
 against current keys without running any stage, hashing every adopted file once.
