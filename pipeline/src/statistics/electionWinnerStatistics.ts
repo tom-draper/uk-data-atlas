@@ -186,6 +186,23 @@ export function electionWinnerStatistics(
 				throw new Error(
 					`${base.slug}: ${Number(actual?.n)} winning party rows for ${expected} results`,
 				);
+			// The contests carry the same winners, from the same results.
+			const differing = database
+				.prepare(
+					`SELECT count(*) AS n FROM observation o
+					JOIN series s ON s.id = o.series_id
+					JOIN dimension_member dm ON dm.id = o.category_id
+					JOIN period p ON p.id = o.period_id
+					LEFT JOIN election e ON e.dataset_id = s.dataset_id AND e.date = p.label
+					LEFT JOIN contest c ON c.election_id = e.id AND c.area_version_id = o.area_version_id
+					LEFT JOIN party w ON w.id = c.winner_party_id
+					WHERE s.key IN (SELECT value FROM json_each(?)) AND w.key IS NOT dm.code`,
+				)
+				.get(JSON.stringify(keys));
+			if (Number(differing?.n) !== 0)
+				throw new Error(
+					`${base.slug}: ${Number(differing?.n)} winning party rows differ from the contests' winners`,
+				);
 		},
 	};
 }

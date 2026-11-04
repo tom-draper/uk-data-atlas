@@ -43,7 +43,8 @@ does not name has its code as its name. `result` is kept as published (`Lab
 gain from Con`) and not parsed, because nothing reads a part of it. `v_contest`
 reads a contest back with the party codes and winner key. `candidacy` holds the
 candidate a contest elected. Votes, electorates and turnout are observations
-dated on the polling day.
+dated on the polling day. The build refuses to publish if a contest's winner
+differs from its `source-winning-party` observation.
 
 ## API measures and dimensions
 
