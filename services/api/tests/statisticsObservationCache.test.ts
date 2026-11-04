@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import test from "node:test";
+import { test } from "vitest";
 import {
 	readMeasureObservations,
 	type DataCatalog,
@@ -12,7 +12,9 @@ import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("reads catalogue observations from statistics without legacy tables", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "statistics-observation-cache-"));
-	context.after(() => rmSync(root, { recursive: true, force: true }));
+	context.onTestFinished(() =>
+		rmSync(root, { recursive: true, force: true }),
+	);
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
 	database.exec(`

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { observationValuesEqual } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("compares observations by content rather than serialized hashes", () => {

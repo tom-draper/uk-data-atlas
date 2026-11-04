@@ -15,7 +15,6 @@ export { compileExportManifest } from "../../../pipeline/src/atlas/exportManifes
 export { compileMeasureCompatibility } from "../../../pipeline/src/statistics/measureCompatibility";
 export type { PostcodeSourceRow } from "../../../pipeline/src/postcodes/postcodeIndex";
 export { compileRelationshipPaths } from "../../../pipeline/src/relationships/relationshipPaths";
-export { storeObservations } from "../../../pipeline/src/store-observations";
 export { storePostcodeIndex } from "../../../pipeline/src/postcodes/storePostcodeIndex";
 export { createTerrainCatalogue } from "../../../pipeline/src/terrainCatalogue";
 
