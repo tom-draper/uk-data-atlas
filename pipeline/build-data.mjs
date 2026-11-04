@@ -5,6 +5,7 @@ import { createStageCache } from "./build-data-cache.mjs";
 import { buildDataStages } from "./build-data-graph.mjs";
 import {
 	DEFAULT_STAGE_WEIGHT_MS,
+	planWaves,
 	priorityOrder,
 	resolveLimits,
 	runSchedule,
@@ -278,6 +279,12 @@ export async function runBuild({
 		let knownEstimates = 0;
 		let failureStatus = null;
 		const startedAtOf = new Map();
+		// A stage's expected duration: its last run, if it has to run at all.
+		const weightOf = (stage) =>
+			toRun.has(stage.name)
+				? (cache?.lastTiming(stage.name)?.totalMs ??
+					DEFAULT_STAGE_WEIGHT_MS)
+				: 0;
 		// Handles a stage that needs no command: adopted, unchanged or only
 		// planned. Returns true when the stage has to run.
 		const settle = (stage) => {
@@ -390,11 +397,6 @@ export async function runBuild({
 		};
 		if (adopt || plan) for (const stage of selected) settle(stage);
 		else {
-			const weightOf = (stage) =>
-				toRun.has(stage.name)
-					? (cache?.lastTiming(stage.name)?.totalMs ??
-						DEFAULT_STAGE_WEIGHT_MS)
-					: 0;
 			await runSchedule({
 				stages: selected,
 				settle,
@@ -409,6 +411,19 @@ export async function runBuild({
 			log(
 				`Estimated total: ${formatDuration(estimated)} for ${knownEstimates} of ${toRun.size} stages to run`,
 			);
+		if (plan && !adopt && toRun.size > 0) {
+			const schedule = planWaves(selected, { runs: toRun, weightOf });
+			log("");
+			log(
+				`Parallel schedule (stages in a wave can run together; up to ${formatCount(jobs)} at once within ${formatCount(Math.round(limits.memoryMb))} MB):`,
+			);
+			schedule.waves.forEach((names, index) =>
+				log(`  ${index + 1}. ${names.join(", ")}`),
+			);
+			log(
+				`Critical path: ${schedule.criticalPath.join(" > ")}${knownEstimates === toRun.size ? ` (${formatDuration(schedule.criticalMs)} of ${formatDuration(schedule.totalMs)} in all)` : ""}`,
+			);
+		}
 		return 0;
 	} catch (error) {
 		failed = true;
