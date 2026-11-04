@@ -54,6 +54,29 @@ function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
 	return stamps;
 }
 
+/** Size and mtime of a file, or of every file under a folder, by repo path. */
+function stampPath(root, path, stamps = new Map()) {
+	const stats = statSync(join(root, path), { throwIfNoEntry: false });
+	if (stats?.isFile())
+		stamps.set(path, { size: stats.size, mtimeMs: stats.mtimeMs });
+	else if (stats?.isDirectory()) stampFiles(root, path, stamps);
+	return stamps;
+}
+
+/**
+ * The paths a stage may change: its declared `writes`, `outputs` and
+ * `requiredOutputs`. A stage that declares none is tracked across all of
+ * OUTPUT_ROOTS, so it must run alone.
+ */
+export function stageScope(stage) {
+	const paths = [
+		...(stage.writes ?? []),
+		...(stage.outputs ?? []),
+		...(stage.requiredOutputs ?? []),
+	];
+	return paths.length ? [...new Set(paths)] : null;
+}
+
 /**
  * The repo's code and config files: everything git tracks or would track,
  * less tests and docs. Stage-specific code inputs are selected from this list.
@@ -275,6 +298,20 @@ export function createStageCache({
 		return snapshot;
 	};
 
+	// What each running stage's scope held when it began.
+	const begun = new Map();
+	const scopedSnapshot = (scope) => {
+		const stamps = new Map();
+		for (const path of scope) stampPath(root, path, stamps);
+		return stamps;
+	};
+	const fileStamp = (path) => {
+		const stats = statSync(join(root, path), { throwIfNoEntry: false });
+		return stats?.isFile()
+			? { size: stats.size, mtimeMs: stats.mtimeMs }
+			: undefined;
+	};
+
 	const keyFor = (stage, dependencyDigests) =>
 		sha256(
 			JSON.stringify({
@@ -414,22 +451,28 @@ export function createStageCache({
 			const record = state.stages[stage.name];
 			if (!record || record.key !== keyFor(stage, dependencyDigests))
 				return null;
-			const files = currentSnapshot();
 			// A later stage can own the current bytes of a shared output. Its
 			// original builder must still recreate it when the file is missing.
-			if (stage.requiredOutputs?.some((path) => !files.has(path)))
+			if (stage.requiredOutputs?.some((path) => !fileStamp(path)))
 				return null;
 			for (const [path, entry] of Object.entries(record.outputs))
-				if (!sameStamp(files.get(path), entry)) return null;
+				if (!sameStamp(fileStamp(path), entry)) return null;
 			return record.digest;
 		},
 
 		/**
 		 * Call before a stage runs. Notes the files already there, and
-		 * invalidates the stage's record so a failed run is never reused.
+		 * invalidates the stage's record so a failed run is never reused. A stage
+		 * with a declared scope is tracked within it, so others can run beside
+		 * it. Pass the stage; a bare name tracks the whole output tree.
 		 */
-		begin(name) {
-			currentSnapshot();
+		begin(stage) {
+			const name = typeof stage === "string" ? stage : stage.name;
+			const scope = typeof stage === "string" ? null : stageScope(stage);
+			begun.set(name, {
+				scope,
+				before: scope ? scopedSnapshot(scope) : currentSnapshot(),
+			});
 			const record = state.stages[name];
 			if (!record || record.key === null) return;
 			record.key = null;
@@ -442,9 +485,16 @@ export function createStageCache({
 		 * its effects reach later stages through their inputs instead.
 		 */
 		record(stage, dependencyDigests, { cacheable = true } = {}) {
-			const before = currentSnapshot();
+			const { scope, before } = begun.get(stage.name) ?? {
+				scope: null,
+				before: currentSnapshot(),
+			};
+			begun.delete(stage.name);
 			snapshot = null;
-			const after = currentSnapshot();
+			const after = scope ? scopedSnapshot(scope) : currentSnapshot();
+			// A scoped stage can keep earlier files outside its scope.
+			const afterStamp = (path) =>
+				after.get(path) ?? (scope ? fileStamp(path) : undefined);
 			if (!cacheable) {
 				let changed = false;
 				for (const [path, stamp] of after) {
@@ -487,8 +537,8 @@ export function createStageCache({
 			const previous = state.stages[stage.name]?.outputs ?? {};
 			// Files from an earlier run that this run left untouched.
 			for (const [path, entry] of Object.entries(previous))
-				if (sameStamp(after.get(path), entry))
-					outputs.set(path, after.get(path));
+				if (sameStamp(afterStamp(path), entry))
+					outputs.set(path, afterStamp(path));
 			// A stage that reuses its own earlier files declares the folders it
 			// owns, and claims every file in them no other stage wrote.
 			if (stage.outputs?.length) {

@@ -316,7 +316,7 @@ export async function runBuild({
 				`${stage.name}: running (${formatCount(started)} of ${formatCount(toRun.size)})`,
 			);
 			if (verbose) logCommand(stage);
-			cache?.begin(stage.name);
+			cache?.begin(stage);
 			const commandStartedAt = performance.now();
 			let status;
 			try {
