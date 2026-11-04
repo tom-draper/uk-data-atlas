@@ -247,6 +247,7 @@ async function main() {
 		artifacts: {
 			atlasAssets: {
 				inputs: atlasAssets.recordedBoundaryInputs,
+				lookupInputs: atlasAssets.recordedLookupInputs,
 				outputs: {
 					gazetteerCore: (await gazetteerCore).compiled,
 					matchIndex: await matchIndex,

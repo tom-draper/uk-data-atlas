@@ -27,6 +27,7 @@ import {
 	formatBytes,
 	formatDuration,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { hashFile } from "../fileHashCache";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -113,6 +114,15 @@ export const buildGeometryStore = (
 
 	const written = new Set<string>();
 	let compiled = 0;
+	const attributeHash = (input: string | undefined) => {
+		if (!input || !/\.shp$/i.test(input)) return undefined;
+		const path = join(
+			root,
+			"data/source",
+			input.replace(/\.shp$/i, ".dbf"),
+		);
+		return existsSync(path) ? hashFile(path) : null;
+	};
 	for (const [identity, source] of sources) {
 		const [geography, boundaryRelease] = identity.split("/") as [
 			string,
@@ -129,7 +139,16 @@ export const buildGeometryStore = (
 			);
 		});
 		const key = sha256(
-			JSON.stringify({ compiler, offsets, source, donors }),
+			JSON.stringify({
+				compiler,
+				offsets,
+				source,
+				donors,
+				attributes: attributeHash(source.input),
+				donorAttributes: donors.map((donor) =>
+					attributeHash(donor?.input),
+				),
+			}),
 		);
 		if (previous[identity] === key && existsSync(join(directory, file))) {
 			state[identity] = key;

@@ -140,6 +140,823 @@ test("changed data or code reruns every cached stage", () => {
 	assert.deepEqual(runs(), ["download"]);
 });
 
+test("stages with declared raw inputs ignore unrelated source changes", () => {
+	const { root, write } = fixture();
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	const boundary = { name: "boundary", args: [], rawInputs: ["boundaries"] };
+	write("data/source/boundaries/meta.json", "first");
+	let current = cache();
+	current.begin(boundary.name);
+	current.record(boundary, []);
+	write("data/source/input.csv", "unrelated change");
+	current = cache();
+	assert.notEqual(current.lookup(boundary, []), null);
+	write("data/source/boundaries/meta.json", "changed boundary");
+	current = cache();
+	assert.equal(current.lookup(boundary, []), null);
+});
+
+test("a declared raw file invalidates its stage when changed or removed", () => {
+	const { root, write } = fixture();
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	const source = { name: "source", args: [], rawInputs: ["input.csv"] };
+	let current = cache();
+	current.begin(source.name);
+	current.record(source, []);
+	write("data/source/input.csv", "changed input");
+	current = cache();
+	assert.equal(current.lookup(source, []), null);
+	current.begin(source.name);
+	current.record(source, []);
+	unlinkSync(join(root, "data/source/input.csv"));
+	current = cache();
+	assert.equal(current.lookup(source, []), null);
+});
+
+test("crosswalk inputs follow the adapter configuration", () => {
+	const { root, write } = fixture();
+	write(
+		"services/api/config/crosswalk-adapters.json",
+		JSON.stringify({
+			crosswalks: [
+				{ input: "lookups/a.csv" },
+				{ population: { input: "demographics/population.csv" } },
+			],
+		}),
+	);
+	write("data/source/lookups/a.csv", "lookup");
+	write("data/source/demographics/population.csv", "population");
+	const stage = buildDataStages.find(
+		(entry) => entry.name === "crosswalk-inventory",
+	)!;
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/input.csv", "unrelated dataset");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write("data/source/demographics/population.csv", "changed population");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("geography inventory tracks metadata additions, changes and removals", () => {
+	const { root, write } = fixture();
+	const stage = buildDataStages.find(
+		(entry) => entry.name === "geography-inventory",
+	)!;
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	write("data/source/example/meta.json", "first metadata");
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/input.csv", "changed data file");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write("data/source/new/meta.json", "new metadata");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/example/meta.json", "changed metadata");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	unlinkSync(join(root, "data/source/new/meta.json"));
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("boundary registry ignores boundary geometry but tracks release metadata", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "boundary-registry",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write("data/source/boundaries/ward/2024/meta.json", "metadata");
+	write("data/source/boundaries/ward/2024/geometry.geojson", "geometry");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/boundaries/ward/2024/geometry.geojson",
+		"changed geometry",
+	);
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write("data/source/boundaries/ward/2025/meta.json", "new metadata");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/boundaries/ward/2024/meta.json", "changed metadata");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("derived boundaries track only the configured source release", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "derived-boundaries",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write(
+		"services/api/config/area-source-adapters.json",
+		JSON.stringify({
+			releases: {
+				"ward/example": {
+					source: { geography: "ward", boundaryRelease: "current" },
+				},
+			},
+		}),
+	);
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({
+			files: [{ role: "source", path: "geometry.geojson" }],
+		}),
+	);
+	write("data/source/boundaries/ward/current/geometry.geojson", "geometry");
+	write(
+		"data/source/boundaries/ward/other/geometry.geojson",
+		"other geometry",
+	);
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/boundaries/ward/other/geometry.geojson",
+		"changed other geometry",
+	);
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write(
+		"data/source/boundaries/ward/current/geometry.geojson",
+		"changed geometry",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("area inventory tracks declared attributes, not unrelated boundary files", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "area-inventory",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({ files: [{ role: "source", path: "geometry.shp" }] }),
+	);
+	write("data/source/boundaries/ward/current/geometry.dbf", "attributes");
+	write("data/source/boundaries/ward/current/geometry.shp", "geometry");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/boundaries/ward/current/geometry.shp",
+		"changed geometry",
+	);
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write(
+		"data/source/boundaries/ward/current/geometry.dbf",
+		"changed attributes",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("relationship candidates track declared attributes, not shapefile geometry", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "relationship-candidates",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({ files: [{ role: "source", path: "geometry.shp" }] }),
+	);
+	write("data/source/boundaries/ward/current/geometry.shp", "geometry");
+	write("data/source/boundaries/ward/current/geometry.dbf", "attributes");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/boundaries/ward/current/geometry.shp",
+		"changed geometry",
+	);
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write(
+		"data/source/boundaries/ward/current/geometry.dbf",
+		"changed attributes",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("documents and atlas pages track boundary offsets, not raw geometry", () => {
+	const { root, write } = fixture();
+	const stages = buildDataStages
+		.filter((stage) => ["documents", "atlas-pages"].includes(stage.name))
+		.map((stage) => ({ ...stage, outputs: [], requiredOutputs: [] }));
+	assert.equal(stages.length, 2);
+	write("data/source/boundaries/ward/current/geometry.geojson", "geometry");
+	write("data/source/boundaries/offset.json", "offset");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	for (const stage of stages) {
+		current.begin(stage.name);
+		current.record(stage, []);
+	}
+	write(
+		"data/source/boundaries/ward/current/geometry.geojson",
+		"changed geometry",
+	);
+	current = cache();
+	for (const stage of stages)
+		assert.notEqual(current.lookup(stage, []), null);
+	write("data/source/boundaries/offset.json", "changed offset");
+	current = cache();
+	for (const stage of stages) assert.equal(current.lookup(stage, []), null);
+});
+
+test("census stages ignore unrelated files within census tables", () => {
+	const { root, write } = fixture();
+	const stages = buildDataStages
+		.filter((stage) =>
+			["atlas-sqlite", "data-catalog"].includes(stage.name),
+		)
+		.map((stage) => ({ ...stage, outputs: [], requiredOutputs: [] }));
+	assert.equal(stages.length, 2);
+	const directory = "data/source/demographics/census-2021-small-area/ts001";
+	write(`${directory}/meta.json`, "metadata");
+	write(`${directory}/census2021-ts001-lsoa.csv`, "census");
+	write(`${directory}/notes.txt`, "notes");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	for (const stage of stages) {
+		current.begin(stage.name);
+		current.record(stage, []);
+	}
+	write(`${directory}/notes.txt`, "changed notes");
+	current = cache();
+	for (const stage of stages)
+		assert.notEqual(current.lookup(stage, []), null);
+	write(`${directory}/census2021-ts001-msoa.csv`, "new census");
+	current = cache();
+	for (const stage of stages) assert.equal(current.lookup(stage, []), null);
+});
+
+test("named locations track county shapes and their attributes", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "named-locations",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	const base =
+		"data/source/geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region";
+	write(`${base}.shp`, "shape");
+	write(`${base}.dbf`, "attributes");
+	write(`${base}.prj`, "projection");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(`${base}.prj`, "changed projection");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write(`${base}.dbf`, "changed attributes");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("website boundary stages track geometry, topology and offsets, not archives", () => {
+	const { root, write } = fixture();
+	const stages = buildDataStages
+		.filter((stage) =>
+			["boundaries", "boundary-tiles"].includes(stage.name),
+		)
+		.map((stage) => ({ ...stage, outputs: [], requiredOutputs: [] }));
+	assert.equal(stages.length, 2);
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({
+			files: [{ role: "derived", path: "geometry.geojson" }],
+		}),
+	);
+	write("data/source/boundaries/ward/current/geometry.geojson", "geometry");
+	write("data/source/boundaries/ward/current/archive.zip", "archive");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	for (const stage of stages) {
+		current.begin(stage.name);
+		current.record(stage, []);
+	}
+	const stale = () => {
+		current = cache();
+		return stages.filter((stage) => current.lookup(stage, []) === null)
+			.length;
+	};
+	write("data/source/boundaries/ward/current/archive.zip", "changed archive");
+	assert.equal(stale(), 0);
+	write(
+		"data/source/boundaries/ward/current/geometry.geojson",
+		"changed geometry",
+	);
+	assert.equal(stale(), 2);
+	for (const stage of stages) {
+		current.begin(stage.name);
+		current.record(stage, []);
+	}
+	write(
+		"data/source/boundaries/ward/current/boundaries.topojson",
+		"topology",
+	);
+	assert.equal(stale(), 2);
+	for (const stage of stages) {
+		current.begin(stage.name);
+		current.record(stage, []);
+	}
+	write("data/source/boundaries/offset.json", "offset");
+	assert.equal(stale(), 2);
+});
+
+test("postcode areas and validation report rely on compiled dependencies", () => {
+	const { root, write } = fixture();
+	const stages = buildDataStages
+		.filter((stage) =>
+			["postcode-areas", "validation-report"].includes(stage.name),
+		)
+		.map((stage) => ({ ...stage, outputs: [], requiredOutputs: [] }));
+	assert.equal(stages.length, 2);
+	write("data/source/boundaries/ward/current/meta.json", "boundary metadata");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	for (const stage of stages) {
+		current.begin(stage.name);
+		current.record(stage, []);
+	}
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		"changed boundary metadata",
+	);
+	current = cache();
+	for (const stage of stages)
+		assert.notEqual(current.lookup(stage, []), null);
+});
+
+test("geometry store tracks registered geometry, attributes and offsets", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "geometry-store",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write(
+		"data/build/artifacts/geometry-sources.json",
+		JSON.stringify({
+			schemaVersion: 1,
+			releases: [
+				{
+					status: "available",
+					input: "boundaries/ward/current/geometry.shp",
+				},
+			],
+		}),
+	);
+	write("data/source/boundaries/ward/current/geometry.shp", "geometry");
+	write("data/source/boundaries/ward/current/geometry.dbf", "attributes");
+	write("data/source/boundaries/other/archive.zip", "archive");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/boundaries/other/archive.zip", "changed archive");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write(
+		"data/source/boundaries/ward/current/geometry.dbf",
+		"changed attributes",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/boundaries/offset.json", "offset");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("geometry source registry tracks declared geometry and projections", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "geometry-source-registry",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({ files: [{ role: "source", path: "geometry.shp" }] }),
+	);
+	write("data/source/boundaries/ward/current/geometry.shp", "geometry");
+	write("data/source/boundaries/ward/current/geometry.dbf", "attributes");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/boundaries/ward/current/geometry.dbf",
+		"changed attributes",
+	);
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write("data/source/boundaries/ward/current/geometry.prj", "projection");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/boundaries/ward/current/geometry.shp",
+		"changed geometry",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("postcode index tracks the selected edition, not older editions", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "postcode-index",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	const metadata = JSON.stringify({
+		files: [{ role: "source", path: "source.csv" }],
+	});
+	write("data/source/postcodes/onspd/2024/meta.json", metadata);
+	write("data/source/postcodes/onspd/2024/source.csv", "old");
+	write("data/source/postcodes/onspd/2025/meta.json", metadata);
+	write("data/source/postcodes/onspd/2025/source.csv", "current");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/postcodes/onspd/2024/source.csv", "changed old edition");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write("data/source/postcodes/onspd/2026/meta.json", metadata);
+	write("data/source/postcodes/onspd/2026/source.csv", "new edition");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/postcodes/onspd/2026/source.csv",
+		"updated current source",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	unlinkSync(join(root, "data/source/postcodes/onspd/2026/meta.json"));
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("dataset stage keys only tracked sources and missing inputs", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find((stage) => stage.name === "datasets")!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write("data/source/survey/workbook.xlsx", "workbook");
+	write(
+		"data/build/datasets/dataset-manifest.json",
+		JSON.stringify({
+			datasets: [
+				{
+					inputTrackingVersion: 1,
+					inputs: [
+						{
+							kind: "xlsxSheet",
+							path: "survey/workbook.xlsx#Sheet1",
+						},
+					],
+					missingSource: "survey/missing.csv",
+				},
+			],
+		}),
+	);
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/input.csv", "unrelated dataset input");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write("data/source/survey/missing.csv", "restored");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/survey/workbook.xlsx", "changed workbook");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("dataset stage conservatively keys all sources for legacy manifests", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find((stage) => stage.name === "datasets")!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write(
+		"data/build/datasets/dataset-manifest.json",
+		JSON.stringify({ datasets: [{ inputs: [] }] }),
+	);
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/input.csv", "changed before migration");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("website dataset key tracks declared file presence without hashing its contents", () => {
+	const { root, write } = fixture();
+	const entry = buildDataStages.find(
+		(stage) => stage.name === "website-datasets",
+	)!;
+	const stage = { ...entry, outputs: [], requiredOutputs: [] };
+	write(
+		"data/source/survey/meta.json",
+		JSON.stringify({ files: [{ path: "survey.csv" }] }),
+	);
+	write("data/source/survey/survey.csv", "survey data");
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/survey/survey.csv", "changed survey data");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	unlinkSync(join(root, "data/source/survey/survey.csv"));
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/survey/survey.csv", "restored");
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write(
+		"data/source/transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
+		"road safety",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+	current.begin(stage.name);
+	current.record(stage, []);
+	write("data/source/lookups/places/source.csv", "new lookup");
+	current = cache();
+	assert.notEqual(current.lookup(stage, []), null);
+	write(
+		"data/source/lookups/local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson",
+		"gazetteer lookup",
+	);
+	current = cache();
+	assert.equal(current.lookup(stage, []), null);
+});
+
+test("dataset updates leave boundary tiles and postcodes cached", () => {
+	const { root, write } = fixture();
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({ files: [] }),
+	);
+	write("data/source/postcodes/onspd/latest/meta.json", "postcode");
+	const names = [
+		"boundaries",
+		"boundary-tiles",
+		"website-tiles",
+		"postcode-index",
+	];
+	const selected = buildDataStages
+		.filter((entry) => names.includes(entry.name))
+		.map((entry) => ({
+			...entry,
+			dependencies: entry.dependencies.filter((name: string) =>
+				names.includes(name),
+			),
+			outputs: [],
+			requiredOutputs: [],
+		}));
+	const run = () => {
+		const ran: string[] = [];
+		assert.equal(
+			runBuild({
+				stages: selected,
+				log: () => {},
+				logError: () => {},
+				createCache: () =>
+					createStageCache({
+						root,
+						codeFiles: () => ["code.ts"],
+						environment: {},
+					}),
+				execute: (entry: Stage) => {
+					ran.push(entry.name);
+					write(
+						`data/build/${entry.name}.json`,
+						`${entry.name} ${(writes += 1)}`,
+					);
+					return 0;
+				},
+			}),
+			0,
+		);
+		return ran;
+	};
+	assert.deepEqual(run(), [
+		"postcode-index",
+		"boundaries",
+		"boundary-tiles",
+		"website-tiles",
+	]);
+	write("data/source/input.csv", "updated dataset");
+	assert.deepEqual(run(), []);
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({ files: [], updated: true }),
+	);
+	assert.deepEqual(run(), ["boundaries", "boundary-tiles", "website-tiles"]);
+	write("data/source/postcodes/onspd/latest/meta.json", "updated postcode");
+	assert.deepEqual(run(), ["postcode-index"]);
+});
+
+test("area, map and atlas stages track their own raw sources", () => {
+	const { root, write } = fixture();
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({ files: [] }),
+	);
+	write(
+		"data/source/lookups/local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson",
+		"lookup",
+	);
+	write(
+		"data/source/demographics/census-2021-small-area/ts001/census2021-ts001-lsoa.csv",
+		"census",
+	);
+	const stages = buildDataStages
+		.filter((entry) =>
+			[
+				"area-inventory",
+				"map-resource",
+				"atlas-sqlite",
+				"api-datasets",
+			].includes(entry.name),
+		)
+		.map((entry) => ({ ...entry, outputs: [], requiredOutputs: [] }));
+	const cache = () =>
+		createStageCache({
+			root,
+			codeFiles: () => ["code.ts"],
+			environment: {},
+		});
+	let current = cache();
+	for (const entry of stages) {
+		current.begin(entry.name);
+		current.record(entry, []);
+	}
+	const stale = () => {
+		current = cache();
+		return stages
+			.filter((entry) => current.lookup(entry, []) === null)
+			.map((entry) => entry.name);
+	};
+	write("data/source/input.csv", "different dataset");
+	assert.deepEqual(stale(), []);
+	write(
+		"data/source/demographics/census-2021-small-area/ts001/census2021-ts001-lsoa.csv",
+		"updated census",
+	);
+	assert.deepEqual(stale(), ["atlas-sqlite"]);
+	write(
+		"data/source/lookups/local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson",
+		"updated lookup",
+	);
+	assert.deepEqual(stale(), ["atlas-sqlite", "api-datasets"]);
+	write(
+		"data/source/boundaries/ward/current/meta.json",
+		JSON.stringify({ files: [], updated: true }),
+	);
+	assert.deepEqual(stale(), [
+		"atlas-sqlite",
+		"api-datasets",
+		"area-inventory",
+		"map-resource",
+	]);
+});
+
 test("a missing or edited output reruns its stage and the stages that read it", () => {
 	const { runs, root, write, outputs } = fixture();
 	runs();

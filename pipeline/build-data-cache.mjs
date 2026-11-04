@@ -29,6 +29,12 @@ const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 /** Size and mtime of every file under `directory`, keyed by repo path. */
 function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
 	if (excluded.has(directory)) return stamps;
+	const target = statSync(join(root, directory), { throwIfNoEntry: false });
+	if (!target) return stamps;
+	if (target.isFile()) {
+		stamps.set(directory, { size: target.size, mtimeMs: target.mtimeMs });
+		return stamps;
+	}
 	let entries;
 	try {
 		entries = readdirSync(join(root, directory), { withFileTypes: true });
@@ -137,7 +143,8 @@ function readOutputs(outputs) {
  * skipped when nothing it reads has changed and what it wrote is still there.
  *
  * A stage's key hashes its command, local imports and shared config, raw-file
- * sizes and mtimes in data/source/, the relevant environment, and dependencies'
+ * sizes and mtimes in its declared raw inputs (or all of data/source/ when
+ * none are declared), the relevant environment, and dependencies'
  * outputs. Its outputs are the files under OUTPUT_ROOTS it created or
  * changed, plus any in the folders it declares as `outputs`. Each is recorded
  * with its size, mtime and SHA-256, and the stage's output digest hashes the
@@ -195,28 +202,49 @@ export function createStageCache({
 		),
 	};
 
-	let inputs = null;
+	const inputs = new Map();
 	let files = null;
 	const stageInputs = new Map();
-	const currentInputs = () => {
-		if (inputs) return inputs;
-		const data = stampFiles(
-			root,
-			dataDirectory,
-			new Map(),
-			new Set(outputRoots),
-		);
+	const currentInputs = (stage) => {
+		const selected =
+			typeof stage.rawInputs === "function"
+				? stage.rawInputs(root)
+				: (stage.rawInputs ?? [""]);
+		const paths = Array.isArray(selected) ? selected : selected.paths;
+		const presence = Array.isArray(selected) ? [] : selected.presence;
+		const key = JSON.stringify([paths, presence]);
+		if (inputs.has(key)) return inputs.get(key);
+		const data = new Map();
+		for (const path of paths)
+			stampFiles(
+				root,
+				join(dataDirectory, path),
+				data,
+				new Set(outputRoots),
+			);
 		data.delete(join(dataDirectory, ".source-release.json"));
-		inputs = sha256(
+		const existing = presence
+			.map((path) => {
+				try {
+					statSync(join(root, dataDirectory, path));
+					return [path, true];
+				} catch {
+					return [path, false];
+				}
+			})
+			.sort(([left], [right]) => left.localeCompare(right));
+		const digest = sha256(
 			JSON.stringify({
 				data: hashStamps(data),
+				existing,
 				environment: ENVIRONMENT.map(
 					(name) => environment[name] ?? null,
 				),
 				node: process.versions.node,
 			}),
 		);
-		return inputs;
+		inputs.set(key, digest);
+		return digest;
 	};
 
 	const codeFor = (stage) => {
@@ -252,7 +280,7 @@ export function createStageCache({
 			JSON.stringify({
 				version: keyVersion,
 				args: stage.args,
-				inputs: currentInputs(),
+				inputs: currentInputs(stage),
 				code: codeFor(stage),
 				dependencies: dependencyDigests,
 			}),
@@ -429,7 +457,7 @@ export function createStageCache({
 					}
 				}
 				if (changed) save();
-				inputs = null;
+				inputs.clear();
 				files = null;
 				stageInputs.clear();
 				return null;
