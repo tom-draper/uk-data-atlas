@@ -1,4 +1,4 @@
-import type { DatabaseSync } from "node:sqlite";
+import type { SqlReader } from "../storage/readOnlyDatabase.ts";
 import {
 	memberCode,
 	type DeclaredDataset,
@@ -124,7 +124,7 @@ export const yearParts =
 			}));
 
 export function rebuildFromDeclaration(
-	database: DatabaseSync,
+	database: SqlReader,
 	config: DeclaredDataset,
 	slug: string,
 	/** Another dataset's JSON, for derived rules that read one. */

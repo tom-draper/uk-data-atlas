@@ -6,7 +6,7 @@ import type {
 	FuelPovertyDataset,
 	FuelPovertyLSOAData,
 } from "@uk-data-atlas/datasets/types/fuelPoverty";
-import type { DatabaseSync } from "node:sqlite";
+import type { SqlReader } from "../storage/readOnlyDatabase.ts";
 import { isDeepStrictEqual } from "node:util";
 import type {
 	AreaRelease,
@@ -175,7 +175,7 @@ export function fuelPovertyStatistics(
 }
 
 /** The compiled fuel poverty JSON, rebuilt from statistics rows. */
-export function rebuildFuelPoverty(database: DatabaseSync): string {
+export function rebuildFuelPoverty(database: SqlReader): string {
 	const periods = database
 		.prepare(
 			`
