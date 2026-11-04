@@ -163,6 +163,23 @@ test("a corrupt postcode area component does not replace the published database"
 	assert.deepEqual(readFileSync(path), before);
 });
 
+test("readers refuse a database built before postcode area sets", (t) => {
+	const { root, path, compiled, texts } = fixture(t);
+	storePostcodeAreas(root, compiled.artifact, (name) => texts.get(name)!);
+	const file = compiled.files[0]!.path;
+	assert.equal(
+		readSqlitePostcodeAreaShard(root, file),
+		compiled.files[0]!.text,
+	);
+	const db = new DatabaseSync(path);
+	db.exec("DELETE FROM meta WHERE key = 'postcodeAreaLayout'");
+	db.close();
+	assert.throws(
+		() => readSqlitePostcodeAreaShard(root, file),
+		/postcode area layout 1 but this code needs 2/,
+	);
+});
+
 test("SQLite mappings retain exact bytes, boundary matches, distances and empty placements without JSON", (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
 	mkdirSync(

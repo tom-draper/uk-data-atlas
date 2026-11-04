@@ -11,6 +11,26 @@ import {
 } from "@uk-data-atlas/geography/postcode-area-types";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 
+/** The `meta` key and value that mark the postcode area table layout. */
+export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";
+export const POSTCODE_AREA_LAYOUT = "2";
+
+/** Refuse a database built before postcodes pointed at shared area sets. */
+export function requirePostcodeAreaLayout(database: DatabaseSync) {
+	let found: unknown;
+	try {
+		found = database
+			.prepare("SELECT value FROM meta WHERE key = ?")
+			.get(POSTCODE_AREA_LAYOUT_KEY)?.value;
+	} catch {
+		// A database without a meta table predates the marker.
+	}
+	if (found !== POSTCODE_AREA_LAYOUT)
+		throw new Error(
+			`atlas.sqlite has postcode area layout ${String(found ?? "1")} but this code needs ${POSTCODE_AREA_LAYOUT}. Rebuild it with pnpm data:build.`,
+		);
+}
+
 export const postcodeAreaColumns = (artifact: PostcodeAreasArtifact) =>
 	artifact.releases.map((release) => {
 		const repeated =

@@ -1,4 +1,6 @@
 import {
+	POSTCODE_AREA_LAYOUT,
+	POSTCODE_AREA_LAYOUT_KEY,
 	postcodeAreaColumns,
 	readPostcodeAreaShard,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -58,6 +60,12 @@ export function writePostcodeAreas(
 		CREATE TABLE postcode_area_matches (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), postcodePosition INTEGER NOT NULL, position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES area_version(id), containment TEXT NOT NULL, distanceCm INTEGER NOT NULL, PRIMARY KEY(district, releasePosition, postcodePosition, position)) WITHOUT ROWID;
 		CREATE TABLE postcode_area_set (id INTEGER PRIMARY KEY${columns.map((c) => `, ${quote(c.area)} INTEGER REFERENCES area_version(id)`).join("")}) STRICT;
 		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL, area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)${columns.map((c) => `, ${quote(c.distance)} INTEGER NOT NULL`).join("")}) WITHOUT ROWID;`);
+	database.exec(
+		"CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
+	);
+	database
+		.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")
+		.run(POSTCODE_AREA_LAYOUT_KEY, POSTCODE_AREA_LAYOUT);
 	const addRelease = database.prepare(
 		"INSERT INTO postcode_area_releases VALUES (?, ?, ?, ?, ?)",
 	);

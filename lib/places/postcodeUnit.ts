@@ -8,7 +8,10 @@
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import proj4 from "proj4";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readAtlasPayload,
+	requirePostcodeAreaLayout,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	DEPRIVATION_INDICES,
 	POSTCODE_GEOGRAPHIES,
@@ -161,6 +164,7 @@ export function readPostcodeUnit(
 }
 
 let releases: ReturnType<typeof postcodeReleases> | undefined;
+let layoutChecked = false;
 
 const databasePath = () => join(process.cwd(), "data/build/atlas.sqlite");
 
@@ -180,6 +184,10 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 	const district = compact.slice(0, -3);
 	const database = new DatabaseSync(databasePath(), { readOnly: true });
 	try {
+		if (!layoutChecked) {
+			requirePostcodeAreaLayout(database);
+			layoutChecked = true;
+		}
 		const rows = database
 			.prepare(DISTRICT_ROWS)
 			.all(...districtRange(district))
