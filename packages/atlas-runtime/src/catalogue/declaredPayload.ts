@@ -499,15 +499,12 @@ export function rebuildFromDeclaration(
 				const wanted = config.election;
 				for (const row of database
 					.prepare(
-						`SELECT coalesce(k.key, a.code) AS code, c.*,
+						`SELECT coalesce(k.key, c.area_code) AS code, c.*,
 						d.given_name AS candidacy_given_name, d.family_name AS candidacy_family_name, d.gender AS candidacy_gender
-					FROM election e
-					JOIN contest c ON c.election_id = e.id
-					JOIN area_version v ON v.id = c.area_version_id
-					JOIN area a ON a.id = v.area_id
-					LEFT JOIN dataset_area_key k ON k.dataset_id = e.dataset_id AND k.area_version_id = v.id
-					LEFT JOIN candidacy d ON d.contest_id = c.id AND d.elected = 1
-					WHERE e.dataset_id = ? AND e.date = ?`,
+					FROM v_contest c
+					LEFT JOIN dataset_area_key k ON k.dataset_id = c.dataset_id AND k.area_version_id = c.area_version_id
+					LEFT JOIN candidacy d ON d.contest_id = c.contest_id AND d.elected = 1
+					WHERE c.dataset_id = ? AND c.polling_day = ?`,
 					)
 					.all(dataset, wanted.date(key, full))) {
 					const target = records.get(String(row.code));
