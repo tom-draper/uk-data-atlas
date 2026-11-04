@@ -53,9 +53,16 @@ again. `pnpm data:build --only datasets` builds this stage and its prerequisites
 
 The pipeline builds this cache alongside `atlas.sqlite`.
 It contains search indexes, location projections, postcode counts and
-`dataset_payloads` for datasets served from rows. The cache is stamped with the
+`dataset_payloads` for datasets served from rows. Each `dataset_payloads` row
+is keyed by `output` and holds `source_sha256` (the `datasets.sha256` it was
+built for), `sha256` and `bytes` (the hash and size of the JSON, which form the
+website URL) and `gzip`, the JSON compressed at level 9 with a zero mtime and no
+file name, so one build always stores the same bytes. Brotli is not stored: it
+saved 30% over gzip only at quality 11, which took minutes per build. Readers
+that need the text, such as the API, gunzip the row. The cache is stamped with the
 SHA-256 hash of the final canonical database. The API opens both files read-only
-and fails readiness if the cache is missing, stale, or lacks required payloads.
+and fails readiness if the cache is missing, stale, lacks required payloads or
+predates the gzip column.
 After restoring source data with `pnpm data:download`, run `pnpm data:build`
 to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).
@@ -85,7 +92,7 @@ The database contains these tables:
 | `datasets` | `contract`    | `TEXT NOT NULL`        | JSON dataset contract.                                                                                         |
 | `datasets` | `summary`     | `TEXT NOT NULL`        | JSON compilation summary.                                                                                      |
 | `datasets` | `fingerprint` | `TEXT NOT NULL`        | Dataset compiler and input fingerprint.                                                                        |
-| `datasets` | `sha256`      | `TEXT NOT NULL`        | SHA-256 of the exact uncompressed payload bytes.                                                               |
+| `datasets` | `sha256`      | `TEXT NOT NULL`        | SHA-256 of the exact uncompressed payload bytes. For a dataset served from rows, the compiled input's hash.    |
 | `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                                                             |
 | `datasets` | `payloadId`   | `TEXT`                 | Foreign key to `payloads.id`, `dataset:<output>`. Null for datasets served from rows.                          |
 
@@ -94,7 +101,10 @@ The database contains these tables:
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
-SQLite enforces the payload foreign key during the build.
+SQLite enforces the payload foreign key during the build. `payloads` stays
+plain text: it is 9.5 MB, and its readers, generation hashes and ETags need the
+exact bytes. Dataset payloads served from rows are the large ones, and the cache
+stores them gzipped (see `atlas-cache.sqlite`).
 
 The atomic writer rebuilds all tables, reading one dataset at a time. It avoids
 retaining all payloads in memory. Incremental row updates would require copying
@@ -122,8 +132,12 @@ the hash of the served JSON, then returns it with
 `Content-Type: application/json; charset=utf-8` and
 `Cache-Control: public, max-age=31536000, immutable`: the stored payload, or for
 a dataset served from rows the prebuilt cached payload. `readAtlasPayload("dataset:<output>")`
-reads the same way. The route supplies gzip
-compression when the client accepts it, with `Vary: Accept-Encoding`. Missing outputs and stale or invalid
+reads the same way. A cached payload is stored gzipped, and the route sends
+those bytes as they are, with `Content-Encoding: gzip`, when the client accepts
+gzip. It decompresses them for a client that does not. The `ETag` is
+`W/"<sha256>"` of the JSON in either case, and every response has
+`Vary: Accept-Encoding`. A payload that is not cached goes out as plain JSON,
+which `next start` compresses. Missing outputs and stale or invalid
 hashes return 404 with `Cache-Control: no-store`, never a different payload at
 an old URL. A database deployment can therefore invalidate uncached old URLs;
 pages and the compiled release must deploy together.
@@ -218,7 +232,7 @@ dataset by value (numbers equal to within a relative 1e-9, nulls and absent
 keys exact) and refuses to publish on a difference. The payload is not stored in
 `payloads`; the stage generates it into `atlas-cache.sqlite`, whose entry
 records the compiler hash to identify its source and the generated payload hash
-for the website URL. Every configured dataset has a `payload`, so none keeps a
+for the website URL. The entry stores the JSON gzipped. Every configured dataset has a `payload`, so none keeps a
 stored payload.
 
 Run `pnpm exec vitest run --project built tests/built/datasetPayloads.test.ts`
