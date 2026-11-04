@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { DatabaseSync } from "node:sqlite";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
 export type CacheComponent =
 	| "area-search"
@@ -31,14 +31,18 @@ const dependencies: Record<CacheComponent, string[]> = {
 export const atlasCachePath = (root: string) =>
 	join(root, "data/build/atlas-cache.sqlite");
 
-/** The semantic generation of the canonical inputs used by one compiler. */
+/**
+ * The semantic generation of the canonical inputs used by one compiler. Always
+ * reads the file as it is now, so a writer can tell whether it changed.
+ */
 export function cacheGeneration(
 	root: string,
 	component: CacheComponent,
 ): string {
-	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"), {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(
+		join(root, "data/build/atlas.sqlite"),
+		{ fresh: true },
+	);
 	try {
 		const inputs = dependencies[component].map((dependency) => {
 			if (dependency.startsWith("query:"))
@@ -68,9 +72,16 @@ export function cacheGeneration(
 			)
 			.digest("hex");
 	} finally {
-		database.close();
+		database.release();
 	}
 }
+
+/**
+ * Components whose stored generation matched the canonical inputs, with the
+ * generations of the two files it was checked against. Replacing either file
+ * changes the stamp, so the next read checks again before serving.
+ */
+const verified = new Map<string, string>();
 
 export function requireAtlasCache(
 	root: string,
@@ -78,17 +89,27 @@ export function requireAtlasCache(
 ): string {
 	const path = atlasCachePath(root);
 	try {
-		const database = new DatabaseSync(path, { readOnly: true });
+		const canonical = openReadOnlyDatabase(
+			join(root, "data/build/atlas.sqlite"),
+		);
+		const database = openReadOnlyDatabase(path);
 		try {
-			const stored = database
-				.prepare(
-					"SELECT generation FROM cache_generations WHERE component = ?",
-				)
-				.get(component)?.generation;
-			if (stored !== cacheGeneration(root, component))
-				throw new Error(`Stale ${component} generation`);
+			const key = `${path}:${component}`;
+			const stamp = `${canonical.generation}:${database.generation}`;
+			if (verified.get(key) !== stamp) {
+				verified.delete(key);
+				const stored = database
+					.prepare(
+						"SELECT generation FROM cache_generations WHERE component = ?",
+					)
+					.get(component)?.generation;
+				if (stored !== cacheGeneration(root, component))
+					throw new Error(`Stale ${component} generation`);
+				verified.set(key, stamp);
+			}
 		} finally {
-			database.close();
+			database.release();
+			canonical.release();
 		}
 	} catch (cause) {
 		throw new Error(
@@ -104,9 +125,7 @@ export function readCachePayload(
 	component: CacheComponent,
 	id: string,
 ): string {
-	const database = new DatabaseSync(requireAtlasCache(root, component), {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(requireAtlasCache(root, component));
 	try {
 		const row = database
 			.prepare("SELECT payload FROM payloads WHERE id = ?")
@@ -117,6 +136,6 @@ export function readCachePayload(
 			);
 		return row.payload;
 	} finally {
-		database.close();
+		database.release();
 	}
 }
