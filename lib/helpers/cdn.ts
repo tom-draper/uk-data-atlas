@@ -1,4 +1,4 @@
-import packageJson from "../../package.json";
+import packageJson from "../../package.json" with { type: "json" };
 
 const PACKAGE_DATA_VERSION = `v${packageJson.version}`;
 
