@@ -183,6 +183,26 @@ pnpm data:build --only atlas-sqlite --plan
 pnpm data:build --from datasets
 ```
 
+Independent stages run in parallel. A stage starts once its dependencies have
+finished, with at most `--jobs <n>` running (default `DATA_BUILD_JOBS`, else the
+CPU count) and their memory within a budget (`DATA_BUILD_MEMORY_MB`, else the
+free memory, capped at three quarters of the total). A stage costs its
+`--max-old-space-size` value, or 1 GB without one. `--jobs 1` runs one stage at
+a time in plan order. With several jobs, each output line is prefixed with
+`[stage]`, and `--plan` ends with the waves of stages that can run together and
+the critical path.
+
+Each graph stage lists the paths it changes in `stageWrites` (in
+`pipeline/build-data-graph.mjs`), beyond its `outputs` and `requiredOutputs`.
+Stages that share a path, such as the writers of `atlas-cache.sqlite`, never
+overlap and run in plan order. A stage with no declared paths (`sources` and the two registries, which
+rewrite `data/source` or checked-in code) runs alone. Add the paths of any new
+stage, or it will run alone.
+
+When a stage fails, no new stage starts. Stages already running finish, so
+their outputs are complete and recorded in the cache, and the build exits with
+the first failing status.
+
 The dataset compiler uses DuckDB to read and filter public health source CSVs.
 It hashes the source files for cache tracking and passes the selected rows to
 the shared Node loader.
@@ -229,7 +249,9 @@ The build skips a stage when its inputs and outputs are unchanged. Its key
 includes its command, local imports, declared `codeInputs`, shared configuration,
 the size and mtime of raw files in `data/source/`, and upstream output digests.
 The files it wrote under `data/build/` and `public/data/` must also be
-unchanged.
+unchanged. A stage's outputs are the files that changed within its declared
+paths while it ran, so stages with separate paths can run at once. A stage
+without declared paths is tracked across both trees and runs alone.
 
 A stage's output digest hashes the contents of its output files, not their
 mtimes. Each recorded file stores `{size, mtimeMs, sha256}`. A file is hashed,

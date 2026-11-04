@@ -4,7 +4,8 @@ Data compiled once from the raw sources in `data/source/`, for both the website 
 API. Raw-source downloads restore `data/source/` and leave this folder intact. Everything here is generated, and only this README is tracked. Rebuild it
 with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
 The stage cache in `.cache/data-build/` records recent stage timings and the latest
-build summary. Run `pnpm data:build --plan` to see available timing estimates.
+build summary. Run `pnpm data:build --plan` to see available timing estimates and
+which stages can run in parallel.
 
 ```text
 data/source/          raw sources, restored from the pinned data release
