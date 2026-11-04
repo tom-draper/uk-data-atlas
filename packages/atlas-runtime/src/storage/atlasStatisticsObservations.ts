@@ -208,7 +208,7 @@ const contestRows = (
 	const byPeriod = new Map<string, Map<string, Row>>();
 	for (const row of database
 		.prepare(
-			`SELECT a.code, e.date, c.${column} AS category FROM contest c JOIN election e ON e.id = c.election_id JOIN dataset d ON d.id = e.dataset_id JOIN area_version v ON v.id = c.area_version_id JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE d.slug = ? AND r.geography = ? AND c.${column} IS NOT NULL`,
+			`SELECT area_code AS code, polling_day AS date, ${column} AS category FROM v_contest WHERE dataset = ? AND geography = ? AND ${column} IS NOT NULL`,
 		)
 		.all(selector.datasetId, selector.geography)) {
 		const period = String(row.date);

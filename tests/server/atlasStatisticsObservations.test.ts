@@ -24,10 +24,8 @@ const election = () => {
 		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER);
 		CREATE TABLE period (id INTEGER PRIMARY KEY, label TEXT);
 		CREATE TABLE status (id INTEGER PRIMARY KEY, slug TEXT);
-		CREATE TABLE election (id INTEGER PRIMARY KEY, dataset_id INTEGER, date TEXT);
-		CREATE TABLE contest (id INTEGER PRIMARY KEY, election_id INTEGER, area_version_id INTEGER, winner TEXT);
-		INSERT INTO election VALUES (1, 1, '2019-05-02');
-		INSERT INTO contest VALUES (1, 1, 1, 'LAB'), (2, 1, 2, 'GREEN'), (3, 1, 3, NULL);
+		CREATE TABLE v_contest (dataset TEXT, geography TEXT, polling_day TEXT, area_code TEXT, winner TEXT);
+		INSERT INTO v_contest VALUES ('local-election', 'ward', '2019-05-02', 'E05000001', 'LAB'), ('local-election', 'ward', '2019-05-02', 'E05000002', 'GREEN'), ('local-election', 'ward', '2019-05-02', 'E05099999', NULL);
 		CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, status_id INTEGER);
 		INSERT INTO dataset VALUES (1, 'local-election');
 		INSERT INTO measure VALUES (1, 'party-votes'), (2, 'valid-votes');

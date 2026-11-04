@@ -498,7 +498,12 @@ describe("declared statistics", () => {
 				kind: "general",
 				date: () => "2024-07-04",
 				results: "results",
-				contest: { result: "result" },
+				parties: [{ key: "LAB", name: "Labour", colour: "#e91d0e" }],
+				contest: {
+					result: "result",
+					first_party: "firstParty",
+					second_party: "secondParty",
+				},
 				elected: { given_name: "first" },
 			},
 			derived: { total: "The sum of the votes." },
@@ -530,6 +535,8 @@ describe("declared statistics", () => {
 					E06000001: {
 						name: "Hartlepool",
 						result: "Lab gain",
+						firstParty: "Lab",
+						secondParty: "Xyz",
 						first: "Jo",
 						votes: { LAB: 3, CON: 2 },
 						total: 5,
@@ -537,6 +544,8 @@ describe("declared statistics", () => {
 					E06000002: {
 						name: "Middlesbrough",
 						result: null,
+						firstParty: null,
+						secondParty: null,
 						first: null,
 						votes: { LAB: 4 },
 						total: 4,
@@ -550,6 +559,39 @@ describe("declared statistics", () => {
 			expect(
 				JSON.parse(rebuildFromDeclaration(database, config, "example")),
 			).toEqual(expected);
+			// A party is one row whichever way the publisher spells it.
+			expect(
+				database
+					.prepare(
+						"SELECT code, key, name, colour FROM party ORDER BY code",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{ code: "Lab", key: "LAB", name: "Labour", colour: "#e91d0e" },
+				{ code: "Xyz", key: "XYZ", name: "Xyz", colour: null },
+			]);
+			expect(
+				database
+					.prepare(
+						"SELECT area_code, first_party, second_party, winner FROM v_contest ORDER BY area_code",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{
+					area_code: "E06000001",
+					first_party: "Lab",
+					second_party: "Xyz",
+					winner: "LAB",
+				},
+				{
+					area_code: "E06000002",
+					first_party: null,
+					second_party: null,
+					winner: "LAB",
+				},
+			]);
 		} finally {
 			database.close();
 		}

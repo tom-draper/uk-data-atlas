@@ -33,8 +33,15 @@ crosswalks, which are computed from boundaries and weights.
 their observations. An `election` names its dataset, the publisher's label for
 it (`2024`, `1974O`), its kind (`general` or `local`), its polling day and the
 release its areas are on. A `contest` is one area's contest at an election, with
-the publisher's text: area name, region, country, constituency type, result,
-the two leading parties and the party declared the winner. `candidacy` holds the
+the publisher's text: area name, region, country, constituency type and result.
+Its two leading parties and the party declared the winner are `party` ids. A
+`party` is one row whichever way it is written: `code` is the publisher's
+abbreviation (`Lab`) and `key` the atlas's key for it (`LAB`, the abbreviation
+in upper case). A winner with no abbreviation, such as `OTHER`, is stored under
+its key. `name` and `colour` come from the dataset's declaration; a party it
+does not name has its code as its name. `result` is kept as published (`Lab
+gain from Con`) and not parsed, because nothing reads a part of it. `v_contest`
+reads a contest back with the party codes and winner key. `candidacy` holds the
 candidate a contest elected. Votes, electorates and turnout are observations
 dated on the polling day.
 

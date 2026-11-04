@@ -9,7 +9,16 @@ import {
 	type StatisticsInput,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
+import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
+
+/** The contest columns stored as the publisher's text. */
+const CONTEST_TEXT_COLUMNS = CONTEST_COLUMNS.filter(
+	(column) =>
+		column !== "first_party" &&
+		column !== "second_party" &&
+		column !== "winner",
+);
 
 export function statisticsTables(
 	inputs: readonly StatisticsInput[],
@@ -43,6 +52,9 @@ export function statisticsTables(
 		}
 		return prepared;
 	};
+	let collected: ReturnType<typeof collectParties> | undefined;
+	const parties = (database: DatabaseSync) =>
+		(collected ??= collectParties(prepare(database).datasets));
 	const statusIds = new Map<string, number>(
 		STATUSES.map(([slug], index) => [slug, index + 1]),
 	);
@@ -513,6 +525,26 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 						];
 			}),
 		},
+		party: {
+			strict: true,
+			rowid: true,
+			columns: [
+				"id INTEGER NOT NULL",
+				"code TEXT NOT NULL UNIQUE",
+				"key TEXT NOT NULL UNIQUE",
+				"name TEXT NOT NULL",
+				"colour TEXT",
+			],
+			key: ["id"],
+			rows: (database) =>
+				parties(database).rows.map((party) => [
+					party.id,
+					party.code,
+					party.key,
+					party.name,
+					party.colour,
+				]),
+		},
 		contest: {
 			strict: true,
 			rowid: true,
@@ -520,11 +552,15 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"id INTEGER NOT NULL",
 				"election_id INTEGER NOT NULL REFERENCES election(id)",
 				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
-				...CONTEST_COLUMNS.map((column) => `${column} TEXT`),
+				...CONTEST_TEXT_COLUMNS.map((column) => `${column} TEXT`),
+				"first_party_id INTEGER REFERENCES party(id)",
+				"second_party_id INTEGER REFERENCES party(id)",
+				"winner_party_id INTEGER REFERENCES party(id)",
 			],
 			key: ["id"],
 			constraints: ["UNIQUE (election_id, area_version_id)"],
 			rows: rows(function* ({ datasets }, database) {
+				const { idOfCode, idOfKey } = parties(database);
 				let election = 0;
 				let id = 0;
 				for (const dataset of datasets)
@@ -535,12 +571,38 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 								++id,
 								election,
 								area(database, dataset.slug, release, code).id,
-								...CONTEST_COLUMNS.map(
+								...CONTEST_TEXT_COLUMNS.map(
 									(column) => contest?.[column] ?? null,
 								),
+								contest?.first_party
+									? idOfCode(contest.first_party)
+									: null,
+								contest?.second_party
+									? idOfCode(contest.second_party)
+									: null,
+								contest?.winner
+									? idOfKey(contest.winner)
+									: null,
 							];
 					}
 			}),
+			views: {
+				v_contest: `
+SELECT c.id AS contest_id, d.slug AS dataset, e.label AS election, e.kind, e.date AS polling_day,
+  a.code AS area_code, c.area_name, r.geography, r.id AS release,
+  c.authority_code, c.authority_name, c.region, c.country, c.constituency_type, c.result,
+  fp.code AS first_party, sp.code AS second_party, wp.key AS winner,
+  e.dataset_id, c.area_version_id
+FROM contest c
+JOIN election e ON e.id = c.election_id
+JOIN dataset d ON d.id = e.dataset_id
+JOIN area_version v ON v.id = c.area_version_id
+JOIN area a ON a.id = v.area_id
+JOIN area_releases r ON r.position = v.release_id
+LEFT JOIN party fp ON fp.id = c.first_party_id
+LEFT JOIN party sp ON sp.id = c.second_party_id
+LEFT JOIN party wp ON wp.id = c.winner_party_id`,
+			},
 		},
 		candidacy: {
 			strict: true,
