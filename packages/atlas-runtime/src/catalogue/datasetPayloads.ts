@@ -1,9 +1,12 @@
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { DatabaseSync } from "node:sqlite";
 import { gunzipSync } from "node:zlib";
 import { atlasCachePath } from "../storage/atlasCache.ts";
+import {
+	openReadOnlyDatabase,
+	type SqlReader,
+} from "../storage/readOnlyDatabase.ts";
 import { rebuildFromDeclaration } from "./declaredPayload.ts";
 import type { Json } from "./declaredStatistics.ts";
 import { rebuildFuelPoverty } from "./fuelPovertyStatistics.ts";
@@ -19,7 +22,7 @@ export const servedFromRows = (type: string) =>
 
 /** Datasets that derived rules have read, once per database. */
 const others = new WeakMap<
-	DatabaseSync,
+	SqlReader,
 	Map<string, { readonly [key: string]: Json }>
 >();
 
@@ -50,7 +53,7 @@ export function comparableCompiled(type: string, compiled: unknown): unknown {
 
 /** A dataset's compiled JSON, rebuilt from the canonical rows. */
 export function rebuildDatasetPayload(
-	database: DatabaseSync,
+	database: SqlReader,
 	type: string,
 	output: string,
 ): string {
@@ -98,7 +101,7 @@ const readCached = (
 ): StoredDatasetPayload | undefined => {
 	const path = atlasCachePath(root);
 	if (!existsSync(path)) return undefined;
-	const cache = new DatabaseSync(path, { readOnly: true });
+	const cache = openReadOnlyDatabase(path);
 	try {
 		const row = cache
 			.prepare(
@@ -114,7 +117,7 @@ const readCached = (
 		// A cache from before payloads were stored gzipped has no such column.
 		return undefined;
 	} finally {
-		cache.close();
+		cache.release();
 	}
 };
 
@@ -127,9 +130,9 @@ export function readStoredDatasetPayload(
 	output: string,
 	sha256: string,
 ): StoredDatasetPayload | undefined {
-	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"), {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(
+		join(root, "data/build/atlas.sqlite"),
+	);
 	try {
 		const row = database
 			.prepare("SELECT sha256, payloadId FROM datasets WHERE output = ?")
@@ -138,7 +141,7 @@ export function readStoredDatasetPayload(
 		const cached = readCached(root, output, String(row.sha256));
 		return cached?.sha256 === sha256 ? cached : undefined;
 	} finally {
-		database.close();
+		database.release();
 	}
 }
 
@@ -163,7 +166,7 @@ export function readDatasetPayloadWithHash(
 	output: string,
 ): { payload: string; sha256: string } | undefined {
 	const path = join(root, "data/build/atlas.sqlite");
-	const database = new DatabaseSync(path, { readOnly: true });
+	const database = openReadOnlyDatabase(path);
 	try {
 		const row = database
 			.prepare(
@@ -193,6 +196,6 @@ export function readDatasetPayloadWithHash(
 		);
 		return { payload: rebuilt, sha256: digest(rebuilt) };
 	} finally {
-		database.close();
+		database.release();
 	}
 }

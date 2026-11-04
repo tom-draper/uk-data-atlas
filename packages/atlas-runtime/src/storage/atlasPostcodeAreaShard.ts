@@ -1,4 +1,4 @@
-import { type DatabaseSync } from "node:sqlite";
+import type { SqlReader } from "./readOnlyDatabase.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { postcodeDistrictWhere } from "./atlasPostcodeShard.ts";
 import {
@@ -16,7 +16,7 @@ export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";
 export const POSTCODE_AREA_LAYOUT = "3";
 
 /** Refuse a database built before distances could fall back to another release. */
-export function requirePostcodeAreaLayout(database: DatabaseSync) {
+export function requirePostcodeAreaLayout(database: SqlReader) {
 	let found: unknown;
 	try {
 		found = database
@@ -53,7 +53,7 @@ export const postcodeAreaColumns = (artifact: PostcodeAreasArtifact) =>
  * for a column that always holds its own value. Fallbacks point at earlier
  * positions, so one pass in order resolves every chain.
  */
-export function distanceFallbacks(database: DatabaseSync) {
+export function distanceFallbacks(database: SqlReader) {
 	return new Map(
 		database
 			.prepare(
@@ -70,7 +70,7 @@ export function distanceFallbacks(database: DatabaseSync) {
 }
 
 export function readPostcodeAreaShard(
-	database: DatabaseSync,
+	database: SqlReader,
 	artifact: PostcodeAreasArtifact,
 	path: string,
 	table = "postcodes",
