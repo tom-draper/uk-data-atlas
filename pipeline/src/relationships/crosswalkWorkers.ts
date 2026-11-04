@@ -142,11 +142,7 @@ export const compileCrosswalksInWorkers = async ({
 					),
 					[repositoryRoot, outputDirectory],
 					{
-						execArgv: [
-							"--max-old-space-size=4096",
-							"--import",
-							"tsx",
-						],
+						execArgv: ["--max-old-space-size=4096"],
 						stdio: ["ignore", "inherit", "inherit", "ipc"],
 					},
 				);

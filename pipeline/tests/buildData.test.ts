@@ -1,16 +1,11 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import {
-	chmodSync,
-	mkdtempSync,
-	readFileSync,
-	rmSync,
-	writeFileSync,
-} from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { delimiter, join, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { test, type TestContext } from "vitest";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { runBuild } from "../build-data.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const runner = join(root, "pipeline/build-data.mjs");
@@ -21,25 +16,30 @@ function fixture(context: TestContext) {
 		rmSync(directory, { recursive: true, force: true }),
 	);
 	const trace = join(directory, "trace.jsonl");
-	const executable = join(directory, "pnpm");
+	const fixtureRunner = join(directory, "runner.mjs");
 	writeFileSync(
-		executable,
-		`#!/usr/bin/env node
-const { appendFileSync } = require("node:fs");
-appendFileSync(process.env.BUILD_TRACE, JSON.stringify({ args: process.argv.slice(2), cwd: process.cwd() }) + "\\n");
-process.exit(process.argv.at(-1) === process.env.BUILD_FAIL ? 23 : 0);
+		fixtureRunner,
+		`import { appendFileSync } from "node:fs";
+import { runBuild } from ${JSON.stringify(pathToFileURL(runner).href)};
+try {
+  process.exitCode = runBuild({
+    argv: process.argv.slice(2),
+    execute(stage) {
+      appendFileSync(process.env.BUILD_TRACE, JSON.stringify({ args: stage.args }) + "\\n");
+      return stage.args.at(-1) === process.env.BUILD_FAIL ? 23 : 0;
+    },
+  });
+} catch (error) { console.error("Error: " + error.message); process.exitCode = 1; }
 `,
 	);
-	chmodSync(executable, 0o755);
 	return {
 		directory,
-		run(argv: string[], fail = "", script = runner) {
+		run(argv: string[], fail = "", script = fixtureRunner) {
 			return spawnSync(process.execPath, [script, ...argv], {
 				cwd: directory,
 				encoding: "utf8",
 				env: {
 					...process.env,
-					PATH: `${directory}${delimiter}${process.env.PATH}`,
 					BUILD_TRACE: trace,
 					BUILD_FAIL: fail,
 					DATA_BUILD_CACHE_DIR: join(directory, "cache"),
@@ -53,7 +53,6 @@ process.exit(process.argv.at(-1) === process.env.BUILD_FAIL ? 23 : 0);
 					.split("\n")
 					.map((line) => {
 						const entry = JSON.parse(line);
-						assert.equal(entry.cwd, resolve(root));
 						return entry.args;
 					});
 			} catch (error) {
@@ -155,10 +154,71 @@ test("rebuilding atlas pages imports SQLite assets before sealing the release an
 		"website-registry",
 	]);
 	assert.deepEqual(build.commands().at(-1), [
-		"exec",
-		"tsx",
 		"scripts/generate-dataset-registry.ts",
 	]);
+});
+
+test("runs TypeScript stages with Node and forwards arguments", (context) => {
+	const directory = mkdtempSync(join(tmpdir(), "atlas-node-stage-"));
+	context.onTestFinished(() =>
+		rmSync(directory, { recursive: true, force: true }),
+	);
+	const dependency = join(directory, "dependency.ts");
+	const script = join(directory, "stage.ts");
+	const output = join(directory, "result.json");
+	writeFileSync(dependency, "export const value: number = 42;");
+	writeFileSync(
+		script,
+		`import { writeFileSync } from "node:fs";
+import { value } from "./dependency.ts";
+writeFileSync(process.argv[2], JSON.stringify({ value, cwd: process.cwd(), flag: process.argv[3], execArgv: process.execArgv }));`,
+	);
+	const status = runBuild({
+		stages: [
+			{
+				name: "fixture",
+				dependencies: [],
+				args: [script, output, "--example"],
+			},
+		],
+		argv: ["--no-cache"],
+		log: () => {},
+	});
+	assert.equal(status, 0);
+	assert.deepEqual(JSON.parse(readFileSync(output, "utf8")), {
+		value: 42,
+		cwd: resolve(root),
+		flag: "--example",
+		execArgv: [],
+	});
+});
+
+test("starts dataset workers with Node's TypeScript support", () => {
+	const worker = pathToFileURL(
+		join(root, "pipeline/src/precompile/datasetWorker.mts"),
+	).href;
+	const result = spawnSync(
+		process.execPath,
+		[
+			"--input-type=module",
+			"--eval",
+			`
+		import { Worker } from "node:worker_threads";
+		const worker = new Worker(new URL(${JSON.stringify(worker)}), { execArgv: [] });
+		worker.on("message", ({ index, error }) => {
+			console.log(JSON.stringify({ index, message: error.message }));
+			worker.terminate();
+		});
+		worker.postMessage({ index: 3, type: "missing-dataset" });
+	`,
+		],
+		{ encoding: "utf8", timeout: 15000 },
+	);
+	assert.equal(result.status, 0, result.stderr);
+	assert.deepEqual(JSON.parse(result.stdout), {
+		index: 3,
+		message: "Unknown dataset missing-dataset.",
+	});
 });
 
 test("dataset rebuild refreshes consumers using existing upstream artifacts", (context) => {
@@ -230,12 +290,10 @@ test("documents rebuild pins the final manifest without rebuilding the initial m
 	]);
 	assert.deepEqual(build.commands(), [
 		[
-			"exec",
-			"tsx",
 			"--max-old-space-size=3072",
 			"pipeline/src/build-evidence-documents.ts",
 		],
-		["exec", "tsx", "pipeline/src/build-atlas-release.ts"],
+		["pipeline/src/build-atlas-release.ts"],
 	]);
 });
 
@@ -269,10 +327,8 @@ test("--only builds a stage and its prerequisites without unrelated or downstrea
 	]);
 	assert.deepEqual(build.commands(), [
 		["data:download"],
-		["exec", "tsx", "pipeline/src/compile-boundaries.mts"],
+		["pipeline/src/compile-boundaries.mts"],
 		[
-			"exec",
-			"tsx",
 			"--max-old-space-size=3072",
 			"pipeline/src/compile-boundary-tiles.mts",
 		],
@@ -293,8 +349,6 @@ test("the first failing stage returns its exit code and stops the build", (conte
 	assert.match(result.stdout, /^Data build failed after /m);
 	assert.equal(build.commands().length, 5);
 	assert.deepEqual(build.commands().at(-1), [
-		"exec",
-		"tsx",
 		"pipeline/src/build-relationship-paths.ts",
 	]);
 });
@@ -348,8 +402,12 @@ test("fixture graphs sort dependencies, select downstream branches, and reject i
 	) => {
 		writeFileSync(
 			script,
-			`import { runBuild } from ${JSON.stringify(pathToFileURL(runner).href)};
-process.exitCode = runBuild({ argv: process.argv.slice(2), stages: ${JSON.stringify(stages)} });`,
+			`import { appendFileSync } from "node:fs";
+import { runBuild } from ${JSON.stringify(pathToFileURL(runner).href)};
+process.exitCode = runBuild({ argv: process.argv.slice(2), stages: ${JSON.stringify(stages)}, execute(stage) {
+  appendFileSync(process.env.BUILD_TRACE, JSON.stringify({ args: stage.args }) + "\\n");
+  return 0;
+} });`,
 		);
 		return build.run(argv, "", script);
 	};

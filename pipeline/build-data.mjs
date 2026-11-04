@@ -375,7 +375,11 @@ const relayScript = fileURLToPath(
 function executeStage(stage, { verbose = false } = {}) {
 	const result = spawnSync(
 		process.execPath,
-		[relayScript, "pnpm", ...stage.args],
+		[
+			relayScript,
+			stage.name === "sources" ? "pnpm" : process.execPath,
+			...stage.args,
+		],
 		{
 			cwd: repositoryRoot,
 			stdio: "inherit",
