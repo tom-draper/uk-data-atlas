@@ -1,20 +1,20 @@
 import { createHash } from "node:crypto";
 import { closeSync, openSync, readSync } from "node:fs";
 import { join } from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-runtime/storage";
 
 export function validateCacheRelease(root: string): void {
 	const canonical = join(root, "data/build/atlas.sqlite");
 	const cachePath = join(root, "data/build/atlas-cache.sqlite");
 	try {
-		const cache = new DatabaseSync(cachePath, { readOnly: true });
+		const cache = openReadOnlyDatabase(cachePath, { fresh: true });
 		let stamped: unknown;
 		try {
 			stamped = cache
 				.prepare("SELECT value FROM meta WHERE key = ?")
 				.get("atlas-sqlite-content-hash")?.value;
 		} finally {
-			cache.close();
+			cache.release();
 		}
 		const hash = createHash("sha256");
 		const buffer = Buffer.allocUnsafe(1024 * 1024);
@@ -33,10 +33,10 @@ export function validateCacheRelease(root: string): void {
 			throw new Error(
 				`release mismatch: cache references ${String(stamped)}, atlas.sqlite is ${actual}`,
 			);
-		const canonicalDatabase = new DatabaseSync(canonical, {
-			readOnly: true,
+		const canonicalDatabase = openReadOnlyDatabase(canonical, {
+			fresh: true,
 		});
-		const cacheDatabase = new DatabaseSync(cachePath, { readOnly: true });
+		const cacheDatabase = openReadOnlyDatabase(cachePath, { fresh: true });
 		try {
 			const payload = cacheDatabase.prepare(
 				"SELECT 1 FROM dataset_payloads WHERE output = ? AND source_sha256 = ? AND gzip IS NOT NULL",
@@ -52,8 +52,8 @@ export function validateCacheRelease(root: string): void {
 					);
 			}
 		} finally {
-			cacheDatabase.close();
-			canonicalDatabase.close();
+			cacheDatabase.release();
+			canonicalDatabase.release();
 		}
 	} catch (cause) {
 		throw new Error(
