@@ -7,7 +7,6 @@ import {
 import { readGeographyCatalogue } from "../catalogue/geographyCatalogue.ts";
 import { readSqliteAreaInventory } from "../storage/atlasAreaReader.ts";
 import { existsSync, readFileSync } from "node:fs";
-import { DatabaseSync } from "node:sqlite";
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { GeographyInventory } from "./geographyInventory.ts";
 import type { NamedLocationInventory } from "../places/namedLocations.ts";
@@ -33,6 +32,7 @@ import type { GeometrySourceLookup } from "../geometry/areaGeometry.ts";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { publicPath } from "../storage/publicManifest.ts";
 import { atlasDatabasePath } from "../storage/dataLayout.ts";
+import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
 
 export { readBoundaryRegistry } from "../catalogue/boundaryCatalogue.ts";
 
@@ -50,7 +50,7 @@ export const readTerrainCatalogue = (
 	repositoryRoot: string,
 ): TerrainCatalogue => {
 	const path = atlasDatabasePath(repositoryRoot);
-	const database = new DatabaseSync(path, { readOnly: true });
+	const database = openReadOnlyDatabase(path);
 	try {
 		const row = database
 			.prepare("SELECT payload FROM payloads WHERE id = ?")
@@ -65,7 +65,7 @@ export const readTerrainCatalogue = (
 		}
 		return catalogue;
 	} finally {
-		database.close();
+		database.release();
 	}
 };
 
