@@ -52,9 +52,28 @@ its key. `name` and `colour` come from the dataset's declaration; a party it
 does not name has its code as its name. `result` is kept as published (`Lab
 gain from Con`) and not parsed, because nothing reads a part of it. `v_contest`
 reads a contest back with the party codes and winner key. `candidacy` holds the
-candidate a contest elected. Votes, electorates and turnout are observations
-dated on the polling day. The build refuses to publish if a contest's winner
-differs from its `source-winning-party` observation.
+candidate a contest elected, and has no votes, party or share of its own.
+Votes, electorates and turnout are observations dated on the polling day, and
+are the only place they are stored:
+
+| Dataset                       | Measure                     | Members                     | Areas            |
+| ----------------------------- | --------------------------- | --------------------------- | ---------------- |
+| `general-election`            | `party-votes`               | `party` = key in lower case | constituency     |
+| `general-election`            | `valid-votes`, `electorate` |                             | constituency     |
+| `local-election`              | `party-votes`               | `party` = key in lower case | ward or division |
+| `historical-general-election` | `party-votes`               | `party-group` = a group     | constituency     |
+| `historical-general-election` | `party-vote-share`          | `party-group` = a group     | constituency     |
+
+Only the historical elections publish a share. `v_candidacy` joins each
+candidacy to its party and that party's `party-votes` observation in the
+contest, and gives the share as `100 * party_votes / valid_votes`, computed and
+not stored. These are party figures: where a party stands one candidate, as in
+the general elections, they are the candidate's. A party with no `party-votes`
+series has null votes and share: in the built data, independents, the Speaker
+and the TUV (15 of 3,250 candidacies).
+
+The build refuses to publish if a contest's winner differs from its
+`source-winning-party` observation.
 
 ## API measures and dimensions
 

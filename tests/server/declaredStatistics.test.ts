@@ -619,6 +619,94 @@ describe("declared statistics", () => {
 		}
 	});
 
+	it("reads a candidate's party votes and share from the observations", () => {
+		const config: DeclaredDataset = {
+			type: "example",
+			name: "name",
+			period: () => periods.date("2024-07-04"),
+			measures: [
+				measure(
+					"party-votes",
+					"Party votes",
+					"votes",
+					"count",
+					"sum",
+					"Votes.",
+				),
+				measure(
+					"valid-votes",
+					"Valid votes",
+					"votes",
+					"count",
+					"sum",
+					"Valid.",
+				),
+			],
+			dimensions: [{ slug: "party", label: "Party" }],
+			fields: [
+				{ path: "votes.{party}", measure: "party-votes" },
+				{ path: "validVotes", measure: "valid-votes" },
+			],
+			election: {
+				kind: "general",
+				date: () => "2024-07-04",
+				contest: { first_party: "firstParty" },
+				elected: { family_name: "family" },
+			},
+			payload: {
+				parts: () => [
+					{
+						key: "2024",
+						header: {
+							id: "example2024",
+							type: "example",
+							year: 2024,
+							boundaryType: "localAuthority",
+							boundaryYear: 2024,
+						},
+					},
+				],
+			},
+		};
+		const text = file({
+			E06000001: {
+				name: "Hartlepool",
+				firstParty: "Lab",
+				family: "Smith",
+				votes: { LAB: 30, CON: 10 },
+				validVotes: 40,
+			},
+			E06000002: {
+				name: "Middlesbrough",
+				firstParty: null,
+				votes: { LAB: 4 },
+				validVotes: 4,
+			},
+		});
+		const database = write(config, text);
+		try {
+			expect(
+				database
+					.prepare(
+						"SELECT area_code, family_name, party, party_votes, valid_votes, party_vote_share FROM v_candidacy",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{
+					area_code: "E06000001",
+					family_name: "Smith",
+					party: "Lab",
+					party_votes: 30,
+					valid_votes: 40,
+					party_vote_share: 75,
+				},
+			]);
+		} finally {
+			database.close();
+		}
+	});
+
 	it("generates parents per record set, with null where a record has none", () => {
 		const config: DeclaredDataset = {
 			type: "example",
