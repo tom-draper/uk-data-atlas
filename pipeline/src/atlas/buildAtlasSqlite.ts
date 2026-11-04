@@ -10,7 +10,7 @@ import { publishAtlasCache } from "../storage/index";
 import {
 	comparableCompiled,
 	generatedFromRows,
-	payloadValuesEqual,
+	payloadDifference,
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -274,11 +274,13 @@ export const buildAtlasSqlite = (
 				entry.type,
 				entry.output,
 			);
-			if (
-				!payloadValuesEqual(JSON.parse(generated), JSON.parse(compiled))
-			)
+			const difference = payloadDifference(
+				JSON.parse(generated),
+				comparableCompiled(entry.type, JSON.parse(compiled)),
+			);
+			if (difference)
 				throw new Error(
-					`${entry.type}: statistics rows do not match compiled dataset values`,
+					`${entry.type}: statistics rows do not match compiled dataset values at ${difference}`,
 				);
 		}
 	} finally {
