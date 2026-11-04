@@ -1,4 +1,3 @@
-import { DatabaseSync } from "node:sqlite";
 import { lazyValue } from "./lazyValue.ts";
 import type {
 	NamedLocation,
@@ -6,13 +5,14 @@ import type {
 } from "@uk-data-atlas/places";
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
 import { atlasDatabasePath } from "./dataLayout.ts";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
 export const readSqliteNamedLocationInventory = (
 	repositoryRoot: string,
 	databasePath = atlasDatabasePath(repositoryRoot),
 ): NamedLocationInventory => {
 	const path = databasePath;
-	const database = new DatabaseSync(path, { readOnly: true });
+	const database = openReadOnlyDatabase(path);
 	try {
 		const header = database
 			.prepare("SELECT * FROM named_location_inventory")
@@ -69,9 +69,7 @@ export const readSqliteNamedLocationInventory = (
 				);
 				if (fields.includes("geometry")) {
 					const geometry = lazyValue((): NamedLocationGeometry => {
-						const connection = new DatabaseSync(path, {
-							readOnly: true,
-						});
+						const connection = openReadOnlyDatabase(path);
 						try {
 							const shape = connection
 								.prepare(
@@ -94,7 +92,7 @@ export const readSqliteNamedLocationInventory = (
 								geometry: JSON.parse(shape.geometry as string),
 							};
 						} finally {
-							connection.close();
+							connection.release();
 						}
 					});
 					Object.defineProperty(location, "geometry", {
@@ -115,6 +113,6 @@ export const readSqliteNamedLocationInventory = (
 			locations,
 		};
 	} finally {
-		database.close();
+		database.release();
 	}
 };
