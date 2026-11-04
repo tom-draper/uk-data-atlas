@@ -243,11 +243,15 @@ rebuilds.
 
 `pipeline/build-data-code.mjs` uses esbuild's dependency metadata to trace local
 imports, including workspace package sources, without executing builders.
-TypeScript configuration, the pinned data release, build scripts and the
-lockfile remain common inputs. API runtime configuration is assigned to the
-builders that read each file in `pipeline/build-data-code.mjs`. The lockfile conservatively
-covers transitive dependencies, peer variants and dynamically loaded workers.
-Package manifests, API documentation and unimported shared code are excluded.
+Keys include runtime-affecting root TypeScript compiler options and the versions
+of directly imported external packages resolved from installed manifests. Local
+import resolution tracks path mappings. Transitive package versions and dynamic
+imports that esbuild cannot see are not tracked, so declare additional files in
+`codeInputs` when needed. Runner changes require a key version bump when they
+change key semantics or output meaning. API runtime configuration is assigned to
+the builders that read each file in `pipeline/build-data-code.mjs`. The source
+release is tracked for precompile fingerprinting and when imported or declared. Package manifests, API
+documentation and unimported shared code are excluded unless declared.
 Ordinary UI files are excluded unless a builder imports them.
 Builders that read code or templates directly from disk declare those paths in
 `codeInputs` in the build graph. Include worker entry points there too. Added and

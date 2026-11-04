@@ -1,23 +1,12 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { createRequire } from "node:module";
-import { join, relative, resolve } from "node:path";
+import { builtinModules, createRequire } from "node:module";
+import { dirname, join, relative, resolve } from "node:path";
 
 const require = createRequire(
 	new URL("../services/api/package.json", import.meta.url),
 );
 const { buildSync } = require("esbuild");
 
-const commonFiles = new Set([
-	"pnpm-lock.yaml",
-	"pnpm-workspace.yaml",
-	"tsconfig.json",
-	"data-release.json",
-	"services/api/tsconfig.json",
-	"pipeline/build-data.mjs",
-	"pipeline/build-data-graph.mjs",
-	"pipeline/build-data-cache.mjs",
-	"pipeline/build-data-code.mjs",
-]);
 const runtimeConfig = {
 	"pipeline/src/build-atlas-sqlite.ts": ["measure-dimensions.json"],
 	"pipeline/src/build-data-catalog.ts": ["measure-dimensions.json"],
@@ -44,7 +33,7 @@ const under = (path, directory) =>
 	path === directory || path.startsWith(`${directory}/`);
 
 /** Resolve local imports without executing builders or reading generated data. */
-export function stageCodeFiles(root, stage, files) {
+export function stageCodeInputs(root, stage, files) {
 	const script = stage.args.find((argument) =>
 		/\.(?:[cm]?[jt]sx?)$/.test(argument),
 	);
@@ -113,17 +102,87 @@ export function stageCodeFiles(root, stage, files) {
 	for (const input of inputs)
 		for (const config of runtimeConfig[input] ?? [])
 			runtimeInputs.push(`services/api/config/${config}`);
-	return [
-		...new Set([
-			...runtimeInputs,
-			...inputs,
-			...files.filter(
-				(path) =>
-					commonFiles.has(path) ||
+	if (inputs.includes("pipeline/src/precompile/fingerprint.mjs"))
+		runtimeInputs.push("data-release.json");
+	const externalImports = new Set(
+		Object.values(metafile.outputs).flatMap((output) =>
+			output.imports
+				.filter((item) => item.external)
+				.map((item) => item.path),
+		),
+	);
+	const packages = new Map();
+	for (const [input, metadata] of Object.entries(metafile.inputs)) {
+		for (const imported of metadata.imports) {
+			if (
+				!imported.external ||
+				!externalImports.has(imported.path) ||
+				imported.path.startsWith("@/") ||
+				imported.path.startsWith("node:") ||
+				builtinModules.includes(imported.path) ||
+				imported.path.startsWith(".") ||
+				imported.path.startsWith("/")
+			)
+				continue;
+			const name = imported.path.startsWith("@")
+				? imported.path.split("/").slice(0, 2).join("/")
+				: imported.path.split("/")[0];
+			const localRequire = createRequire(resolve(root, input));
+			let directory = dirname(localRequire.resolve(imported.path));
+			while (true) {
+				try {
+					const manifest = JSON.parse(
+						readFileSync(join(directory, "package.json"), "utf8"),
+					);
+					if (manifest.name === name) {
+						packages.set(`${name}@${manifest.version}`, true);
+						break;
+					}
+				} catch (error) {
+					if (error.code !== "ENOENT") throw error;
+				}
+				const parent = dirname(directory);
+				if (parent === directory)
+					throw new Error(
+						`Cannot find package manifest for ${imported.path}`,
+					);
+				directory = parent;
+			}
+		}
+	}
+	const options = tsconfig.compilerOptions ?? {};
+	const runtimeOptions = Object.fromEntries(
+		[
+			"target",
+			"jsx",
+			"jsxFactory",
+			"jsxFragmentFactory",
+			"jsxImportSource",
+			"experimentalDecorators",
+			"emitDecoratorMetadata",
+			"useDefineForClassFields",
+			"verbatimModuleSyntax",
+		]
+			.filter((key) => key in options)
+			.map((key) => [key, options[key]]),
+	);
+	return {
+		packages: [...packages.keys()].sort(),
+		runtimeOptions,
+		files: [
+			...new Set([
+				...runtimeInputs,
+				...inputs,
+				...files.filter((path) =>
 					(stage.codeInputs ?? []).some((directory) =>
 						under(path, directory),
 					),
-			),
-		]),
-	];
+				),
+			]),
+		],
+	};
+}
+
+export function stageCodeFiles(root, stage, files) {
+	return stageCodeInputs(root, stage, files).files;
 }

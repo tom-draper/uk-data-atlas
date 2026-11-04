@@ -68,7 +68,7 @@ function fixture() {
 			.map((file) =>
 				join(file.parentPath, file.name).slice(root.length + 1),
 			);
-	const run = () => {
+	const run = (keyVersion?: number) => {
 		const executed: string[] = [];
 		const status = runBuild({
 			stages,
@@ -78,6 +78,7 @@ function fixture() {
 					root,
 					stateFile: join(root, ".cache/stages.json"),
 					environment: {},
+					keyVersion,
 				}),
 			execute: (stage: { name: string }) => {
 				executed.push(stage.name);
@@ -117,11 +118,58 @@ test("declared runtime configuration invalidates only its stage and dependants",
 	assert.deepEqual(run(), ["alpha", "report"]);
 });
 
-test("lockfile changes invalidate data stages", () => {
+test("package versions, runner edits and lockfile changes affect only relevant keys", () => {
+	const { write, run } = fixture();
+	write(
+		"node_modules/example/package.json",
+		'{"name":"example","version":"1.0.0","main":"index.js"}',
+	);
+	write("node_modules/example/index.js", "module.exports = 1;");
+	write(
+		"scripts/alpha.ts",
+		'import value from "example"; console.log(value);',
+	);
+	assert.deepEqual(run(), ["alpha", "beta", "report"]);
+	write("pnpm-lock.yaml", "unrelated package changed");
+	write("pipeline/build-data-cache.mjs", "runner changed");
+	assert.deepEqual(run(), []);
+	write(
+		"node_modules/example/package.json",
+		'{"name":"example","version":"2.0.0","main":"index.js"}',
+	);
+	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(run(999), ["alpha", "beta", "report"]);
+});
+
+test("runtime compiler options affect keys while type checking options do not", () => {
 	const { write, run } = fixture();
 	run();
-	write("pnpm-lock.yaml", "changed");
+	write(
+		"tsconfig.json",
+		JSON.stringify({
+			compilerOptions: { paths: { "@/*": ["./*"] }, strict: true },
+		}),
+	);
+	write("services/api/tsconfig.json", '{"compilerOptions":{"strict":true}}');
+	assert.deepEqual(run(), []);
+	write(
+		"tsconfig.json",
+		JSON.stringify({
+			compilerOptions: { paths: { "@/*": ["./*"] }, target: "ES2022" },
+		}),
+	);
 	assert.deepEqual(run(), ["alpha", "beta", "report"]);
+	write("lib/other.ts", "export const value = 3;");
+	write(
+		"tsconfig.json",
+		JSON.stringify({
+			compilerOptions: {
+				paths: { "@/lib/alpha": ["./lib/other"], "@/*": ["./*"] },
+				target: "ES2022",
+			},
+		}),
+	);
+	assert.deepEqual(run(), ["alpha", "report"]);
 });
 
 test("explicit file inputs include additions and deletions without rebuilding unrelated stages", () => {
