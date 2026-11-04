@@ -14,7 +14,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections";
 import { compileMeasureDownloads } from "./statistics/measureDownloads";
 import type { CompiledMeasure } from "./catalog/manifest";
-import { statisticsArtifactReader } from "./statisticsArtifacts";
+import { statisticsArtifactReader } from "./statistics/statisticsArtifacts";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);
