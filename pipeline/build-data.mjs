@@ -142,6 +142,7 @@ export function runBuild({
 		only === undefined ? undefined : [only],
 	);
 	const startedAt = performance.now();
+	const buildStartedAt = new Date().toISOString();
 	const timings = [];
 	const recordTiming = (name, startedAt, command = 0, skipped = false) => {
 		const total = performance.now() - startedAt;
@@ -156,13 +157,27 @@ export function runBuild({
 	};
 	const reportSummary = (failed) => {
 		if (plan) return;
+		cache?.writeBuildSummary({
+			startedAt: buildStartedAt,
+			finishedAt: new Date().toISOString(),
+			totalMs: performance.now() - startedAt,
+			failed,
+			stages: timings.map(
+				({ name, total, command, skipped, failed }) => ({
+					name,
+					status: failed ? "failed" : skipped ? "skipped" : "ran",
+					totalMs: total,
+					commandMs: command,
+				}),
+			),
+		});
 		const ran = timings.filter((timing) => !timing.skipped);
 		const unchanged = timings.length - ran.length;
 		const elapsed = formatDuration(performance.now() - startedAt);
 		log("");
 		log(
 			failed
-				? `Data build failed after ${elapsed} (${formatCount(ran.length - 1)} ran, 1 failed, ${formatCount(unchanged)} unchanged)`
+				? `Data build failed after ${elapsed} (${formatCount(Math.max(0, ran.length - 1))} ran, 1 failed, ${formatCount(unchanged)} unchanged)`
 				: `Data build done in ${elapsed} (${formatCount(ran.length)} ran, ${formatCount(unchanged)} unchanged)`,
 		);
 		const slowest = [...ran].sort((a, b) => b.total - a.total).slice(0, 5);
@@ -179,120 +194,174 @@ export function runBuild({
 		log(`  Depends on: ${stage.dependencies.join(", ") || "none"}`);
 	};
 	const cache = createCache();
-	if (adopt) {
-		if (!cache) throw new Error("--adopt requires a stage cache.");
-		cache.validateAdoption(
-			selected.filter((stage) => stage.cacheable !== false),
-		);
-	}
-	// --from and --no-cache rerun every stage they select, and record them.
-	const reuse = cache !== null && useCache && from === undefined;
-	// Each stage's output digest this build, or null once a stage has to run
-	// (in a plan, its outputs are not known until it does).
-	const alwaysRunning = () =>
-		new Map(
-			stages
-				.filter((stage) => stage.cacheable === false)
-				.map((stage) => [stage.name, ALWAYS_RUNS]),
-		);
-	const digests = alwaysRunning();
-	const dependencyDigests = (stage, known = digests) =>
-		stage.dependencies.map((name) =>
-			known.has(name)
-				? known.get(name)
-				: (cache?.outputDigest(name) ?? null),
-		);
-	const reusableDigest = (stage, dependencies) =>
-		reuse && stage.cacheable !== false && !dependencies.includes(null)
-			? cache.lookup(stage, dependencies)
-			: null;
-	// The stages that will run if nothing a stage rewrites turns out to be
-	// unchanged. A stage that runs can leave its outputs as they were, so
-	// the build may run fewer.
-	const stagesToRun = () => {
-		const toRun = new Set();
-		const known = alwaysRunning();
-		for (const stage of selected) {
-			const reused = reusableDigest(
-				stage,
-				dependencyDigests(stage, known),
-			);
-			if (reused !== null) known.set(stage.name, reused);
-			else {
-				toRun.add(stage.name);
-				if (stage.cacheable !== false) known.set(stage.name, null);
-			}
-		}
-		return toRun;
-	};
-	const toRun = adopt ? new Set() : stagesToRun();
-	log(
-		adopt
-			? `Data build: adopting existing outputs for ${plural(selected.length, "stage")}`
-			: `Data build${plan ? " plan" : ""}: ${plural(selected.length, "stage")}, ${formatCount(toRun.size)} to run, ${formatCount(selected.length - toRun.size)} unchanged`,
-	);
-	log("");
-	let started = 0;
-	for (const stage of selected) {
-		const stageStartedAt = performance.now();
-		const dependencies = dependencyDigests(stage);
+	let failed = false;
+	try {
 		if (adopt) {
-			if (stage.cacheable === false) {
-				log(`${stage.name}: not cacheable, skipped`);
+			if (!cache) throw new Error("--adopt requires a stage cache.");
+			cache.validateAdoption(
+				selected.filter((stage) => stage.cacheable !== false),
+			);
+		}
+		// --from and --no-cache rerun every stage they select, and record them.
+		const reuse = cache !== null && useCache && from === undefined;
+		// Each stage's output digest this build, or null once a stage has to run
+		// (in a plan, its outputs are not known until it does).
+		const alwaysRunning = () =>
+			new Map(
+				stages
+					.filter((stage) => stage.cacheable === false)
+					.map((stage) => [stage.name, ALWAYS_RUNS]),
+			);
+		const digests = alwaysRunning();
+		const dependencyDigests = (stage, known = digests) =>
+			stage.dependencies.map((name) =>
+				known.has(name)
+					? known.get(name)
+					: (cache?.outputDigest(name) ?? null),
+			);
+		const reusableDigest = (stage, dependencies) =>
+			reuse && stage.cacheable !== false && !dependencies.includes(null)
+				? cache.lookup(stage, dependencies)
+				: null;
+		// The stages that will run if nothing a stage rewrites turns out to be
+		// unchanged. A stage that runs can leave its outputs as they were, so
+		// the build may run fewer.
+		const stagesToRun = () => {
+			const toRun = new Set();
+			const known = alwaysRunning();
+			for (const stage of selected) {
+				const reused = reusableDigest(
+					stage,
+					dependencyDigests(stage, known),
+				);
+				if (reused !== null) known.set(stage.name, reused);
+				else {
+					toRun.add(stage.name);
+					if (stage.cacheable !== false) known.set(stage.name, null);
+				}
+			}
+			return toRun;
+		};
+		const toRun = adopt ? new Set() : stagesToRun();
+		log(
+			adopt
+				? `Data build: adopting existing outputs for ${plural(selected.length, "stage")}`
+				: `Data build${plan ? " plan" : ""}: ${plural(selected.length, "stage")}, ${formatCount(toRun.size)} to run, ${formatCount(selected.length - toRun.size)} unchanged`,
+		);
+		log("");
+		let started = 0;
+		let estimated = 0;
+		let knownEstimates = 0;
+		for (const stage of selected) {
+			const stageStartedAt = performance.now();
+			const dependencies = dependencyDigests(stage);
+			if (adopt) {
+				if (stage.cacheable === false) {
+					log(`${stage.name}: not cacheable, skipped`);
+					if (!plan)
+						recordTiming(stage.name, stageStartedAt, 0, true);
+					continue;
+				}
+				if (plan) {
+					log(`${stage.name}: would adopt existing outputs`);
+					continue;
+				}
+				const adopted = cache.adopt(stage, dependencies);
+				digests.set(stage.name, adopted.digest);
+				log(
+					`${stage.name}: adopted ${plural(adopted.files.length, "output file")}`,
+				);
+				if (verbose) for (const path of adopted.files) log(`  ${path}`);
+				recordTiming(stage.name, stageStartedAt, 0, true);
+				continue;
+			}
+			const reused = reusableDigest(stage, dependencies);
+			if (reused !== null) {
+				const last = cache?.lastTiming(stage.name);
+				log(
+					`${stage.name}: unchanged, ${plan ? `would skip${last ? ` (last run ${formatDuration(last.totalMs)})` : ""}` : "skipped"}`,
+				);
+				if (plan || verbose) logCommand(stage);
+				digests.set(stage.name, reused);
+				recordTiming(stage.name, stageStartedAt, 0, true);
 				continue;
 			}
 			if (plan) {
-				log(`${stage.name}: would adopt existing outputs`);
+				const last = cache?.lastTiming(stage.name);
+				if (last) {
+					estimated += last.totalMs;
+					knownEstimates += 1;
+				}
+				log(
+					`${stage.name}: would run${last ? ` (last run ${formatDuration(last.totalMs)})` : ""}`,
+				);
+				logCommand(stage);
+				if (stage.cacheable !== false) digests.set(stage.name, null);
 				continue;
 			}
-			const adopted = cache.adopt(stage, dependencies);
-			digests.set(stage.name, adopted.digest);
+			started += 1;
 			log(
-				`${stage.name}: adopted ${plural(adopted.files.length, "output file")}`,
+				`${stage.name}: running (${formatCount(started)} of ${formatCount(toRun.size)})`,
 			);
-			if (verbose) for (const path of adopted.files) log(`  ${path}`);
-			continue;
+			if (verbose) logCommand(stage);
+			cache?.begin(stage.name);
+			const commandStartedAt = performance.now();
+			let status;
+			try {
+				status = execute(stage, { verbose });
+			} catch (error) {
+				const command = performance.now() - commandStartedAt;
+				const total = recordTiming(stage.name, stageStartedAt, command);
+				timings.at(-1).failed = true;
+				cache?.recordTiming(stage.name, {
+					commandMs: command,
+					totalMs: total,
+					finishedAt: new Date().toISOString(),
+					failed: true,
+				});
+				throw error;
+			}
+			const command = performance.now() - commandStartedAt;
+			if (status !== 0) {
+				logError(
+					`${stage.name} failed with exit code ${status} after ${formatDuration(command)}. Build stopped`,
+				);
+				const total = recordTiming(stage.name, stageStartedAt, command);
+				timings.at(-1).failed = true;
+				cache?.recordTiming(stage.name, {
+					commandMs: command,
+					totalMs: total,
+					finishedAt: new Date().toISOString(),
+					failed: true,
+				});
+				failed = true;
+				return status;
+			}
+			const digest = cache?.record(stage, dependencies, {
+				cacheable: stage.cacheable !== false,
+			});
+			if (stage.cacheable !== false)
+				digests.set(stage.name, digest ?? null);
+			const total = recordTiming(stage.name, stageStartedAt, command);
+			cache?.recordTiming(stage.name, {
+				commandMs: command,
+				totalMs: total,
+				finishedAt: new Date().toISOString(),
+				failed: false,
+			});
+			log(`${stage.name}: done in ${formatDuration(total)}`);
 		}
-		const reused = reusableDigest(stage, dependencies);
-		if (reused !== null) {
-			log(`${stage.name}: unchanged, ${plan ? "would skip" : "skipped"}`);
-			if (plan || verbose) logCommand(stage);
-			digests.set(stage.name, reused);
-			recordTiming(stage.name, stageStartedAt, 0, true);
-			continue;
-		}
-		if (plan) {
-			log(`${stage.name}: would run`);
-			logCommand(stage);
-			if (stage.cacheable !== false) digests.set(stage.name, null);
-			continue;
-		}
-		started += 1;
-		log(
-			`${stage.name}: running (${formatCount(started)} of ${formatCount(toRun.size)})`,
-		);
-		if (verbose) logCommand(stage);
-		cache?.begin(stage.name);
-		const commandStartedAt = performance.now();
-		const status = execute(stage, { verbose });
-		const command = performance.now() - commandStartedAt;
-		if (status !== 0) {
-			logError(
-				`${stage.name} failed with exit code ${status} after ${formatDuration(command)}. Build stopped`,
+		if (plan && knownEstimates)
+			log(
+				`Estimated total: ${formatDuration(estimated)} for ${knownEstimates} of ${toRun.size} stages to run`,
 			);
-			recordTiming(stage.name, stageStartedAt, command);
-			reportSummary(true);
-			return status;
-		}
-		const digest = cache?.record(stage, dependencies, {
-			cacheable: stage.cacheable !== false,
-		});
-		if (stage.cacheable !== false) digests.set(stage.name, digest ?? null);
-		const total = recordTiming(stage.name, stageStartedAt, command);
-		log(`${stage.name}: done in ${formatDuration(total)}`);
+		return 0;
+	} catch (error) {
+		failed = true;
+		throw error;
+	} finally {
+		reportSummary(failed);
 	}
-	reportSummary(false);
-	return 0;
 }
 
 const relayScript = fileURLToPath(

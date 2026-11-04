@@ -190,7 +190,9 @@ test("a plan marks the stages it would skip", () => {
 	assert.deepEqual(
 		log
 			.filter((line) => /^[a-z]/.test(line) && !line.startsWith("Data"))
-			.map((line) => line.split(": ")),
+			.map((line) =>
+				line.replace(/ \(last run [^)]+\)$/, "").split(": "),
+			),
 		[
 			["download", "would run"],
 			["compile", "would run"],
@@ -199,6 +201,7 @@ test("a plan marks the stages it would skip", () => {
 		],
 	);
 	assert.ok(log.includes("  Depends on: compile"));
+	assert.ok(log.some((line) => line.startsWith("Estimated total:")));
 	assert.equal(existsSync(join(root, outputs.compile)), false);
 });
 
@@ -686,4 +689,126 @@ test("adopt records content digests and a normal build then skips", () => {
 	hashed.length = 0;
 	assert.deepEqual(runs(), ["download"]);
 	assert.equal(hashed.length, 0);
+});
+
+test("timings persist across skips and plans read legacy records", () => {
+	const { runs, root, build, write } = fixture();
+	runs();
+	const statePath = join(root, ".cache/stages.json");
+	const summaryPath = join(root, ".cache/last-build.json");
+	const state = JSON.parse(readFileSync(statePath, "utf8"));
+	const timing = state.stages.compile.timing;
+	assert.ok(timing.commandMs >= 0);
+	assert.ok(timing.totalMs >= timing.commandMs);
+	assert.ok(!Number.isNaN(Date.parse(timing.finishedAt)));
+	assert.equal(timing.failed, false);
+	const firstSummary = JSON.parse(readFileSync(summaryPath, "utf8"));
+	assert.ok(!Number.isNaN(Date.parse(firstSummary.startedAt)));
+	assert.ok(!Number.isNaN(Date.parse(firstSummary.finishedAt)));
+	assert.ok(firstSummary.totalMs >= 0);
+	assert.equal(
+		firstSummary.stages.find(
+			(entry: { name: string }) => entry.name === "compile",
+		).status,
+		"ran",
+	);
+	runs();
+	assert.deepEqual(
+		JSON.parse(readFileSync(statePath, "utf8")).stages.compile.timing,
+		timing,
+	);
+	const summary = readFileSync(summaryPath, "utf8");
+	assert.equal(
+		JSON.parse(summary).stages.find(
+			(entry: { name: string }) => entry.name === "compile",
+		).status,
+		"skipped",
+	);
+	const planned = build(["--plan"]);
+	assert.ok(
+		planned.log.some((line) =>
+			line.startsWith("compile: unchanged, would skip (last run "),
+		),
+	);
+	assert.equal(readFileSync(summaryPath, "utf8"), summary);
+	const legacy = JSON.parse(readFileSync(statePath, "utf8"));
+	for (const entry of Object.values<{ timing?: unknown }>(legacy.stages))
+		delete entry.timing;
+	write(".cache/stages.json", JSON.stringify(legacy));
+	assert.ok(build(["--plan"]).log.includes("compile: unchanged, would skip"));
+	assert.deepEqual(runs(), ["download"]);
+});
+
+test("a failed run saves timing and a failed summary without caching the stage", () => {
+	const { root, runs, build, failing } = fixture();
+	runs();
+	failing.add("compile");
+	assert.equal(build(["--from", "compile"]).status, 1);
+	const state = JSON.parse(
+		readFileSync(join(root, ".cache/stages.json"), "utf8"),
+	);
+	assert.equal(state.stages.compile.key, null);
+	assert.equal(state.stages.compile.timing.failed, true);
+	assert.ok(
+		state.stages.compile.timing.totalMs >=
+			state.stages.compile.timing.commandMs,
+	);
+	const summary = JSON.parse(
+		readFileSync(join(root, ".cache/last-build.json"), "utf8"),
+	);
+	assert.equal(summary.failed, true);
+	assert.equal(summary.stages[0].status, "failed");
+	assert.equal(summary.stages[0].name, "compile");
+	failing.clear();
+	assert.ok(runs().includes("compile"));
+});
+
+test("plan totals known durations for stages that would run", () => {
+	let now = 0;
+	const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
+	onTestFinished(() => clock.mockRestore());
+	const { build, root } = fixture();
+	build();
+	const path = join(root, ".cache/stages.json");
+	const state = JSON.parse(readFileSync(path, "utf8"));
+	state.stages.download.timing.totalMs = 2000;
+	state.stages.compile.timing.totalMs = 3000;
+	delete state.stages.report.timing;
+	writeFileSync(path, JSON.stringify(state));
+	const { log } = build(["--plan", "--no-cache"]);
+	assert.ok(log.includes("download: would run (last run 2.0s)"));
+	assert.ok(log.includes("compile: would run (last run 3.0s)"));
+	assert.ok(log.includes("report: would run"));
+	assert.ok(log.includes("Estimated total: 5.0s for 3 of 4 stages to run"));
+});
+
+test("an execution error records a failed run", () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-build-error-"));
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+	assert.throws(
+		() =>
+			runBuild({
+				stages: [stage("broken")],
+				createCache: () =>
+					createStageCache({
+						root,
+						codeFiles: () => [],
+						environment: {},
+					}),
+				log: () => {},
+				execute: () => {
+					throw new Error("cannot start");
+				},
+			}),
+		/cannot start/,
+	);
+	const state = JSON.parse(
+		readFileSync(join(root, ".cache/data-build/stages.json"), "utf8"),
+	);
+	assert.equal(state.stages.broken.key, null);
+	assert.equal(state.stages.broken.timing.failed, true);
+	const summary = JSON.parse(
+		readFileSync(join(root, ".cache/data-build/last-build.json"), "utf8"),
+	);
+	assert.equal(summary.stages[0].status, "failed");
 });
