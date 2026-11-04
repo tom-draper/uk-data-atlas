@@ -43,7 +43,10 @@ import {
 	symlinkSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	closeAllReadOnlyDatabases,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics.ts";
 
 const declared = new Map(
@@ -311,8 +314,11 @@ export const buildAtlasSqlite = (
 				);
 		});
 		publishDatasetPayloads(cacheRoot);
+		// Nothing in this process may hold the files about to be replaced or removed.
+		closeAllReadOnlyDatabases();
 		renameSync(componentCache, cachePath);
 	} finally {
+		closeAllReadOnlyDatabases();
 		rmSync(cacheRoot, { recursive: true, force: true });
 	}
 

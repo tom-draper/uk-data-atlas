@@ -5,6 +5,7 @@ import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
 import {
 	atlasCachePath,
 	cacheGeneration,
+	closeReadOnlyDatabase,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
@@ -38,6 +39,8 @@ export function publishAtlasCache(
 			throw new Error(
 				"Canonical cache inputs changed during compilation. Retry the cache build.",
 			);
+		// Readers in this process must not keep the file about to be replaced.
+		closeReadOnlyDatabase(path);
 		renameSync(temporary, path);
 	} finally {
 		rmSync(temporary, { force: true });
