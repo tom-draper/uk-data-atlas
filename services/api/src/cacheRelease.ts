@@ -39,7 +39,7 @@ export function validateCacheRelease(root: string): void {
 		const cacheDatabase = new DatabaseSync(cachePath, { readOnly: true });
 		try {
 			const payload = cacheDatabase.prepare(
-				"SELECT 1 FROM dataset_payloads WHERE output = ? AND source_sha256 = ?",
+				"SELECT 1 FROM dataset_payloads WHERE output = ? AND source_sha256 = ? AND gzip IS NOT NULL",
 			);
 			for (const dataset of canonicalDatabase
 				.prepare(

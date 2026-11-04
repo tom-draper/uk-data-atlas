@@ -25,7 +25,7 @@ test("validates the cache against the canonical database", (context) => {
 	);
 	const cache = new DatabaseSync(join(directory, "atlas-cache.sqlite"));
 	cache.exec(
-		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE dataset_payloads (output TEXT, source_sha256 TEXT, sha256 TEXT, payload TEXT)",
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE dataset_payloads (output TEXT, source_sha256 TEXT, sha256 TEXT, bytes INTEGER, gzip BLOB)",
 	);
 	cache.prepare("INSERT INTO meta VALUES (?, ?)").run(
 		"atlas-sqlite-content-hash",
@@ -34,7 +34,7 @@ test("validates the cache against the canonical database", (context) => {
 			.digest("hex")}`,
 	);
 	cache.exec(
-		"INSERT INTO dataset_payloads VALUES ('test', 'hash', 'generated-hash', 'payload')",
+		"INSERT INTO dataset_payloads VALUES ('test', 'hash', 'generated-hash', 7, x'1f8b')",
 	);
 	cache.close();
 	assert.doesNotThrow(() => validateCacheRelease(root));
@@ -45,6 +45,15 @@ test("validates the cache against the canonical database", (context) => {
 		() => validateCacheRelease(root),
 		(error: Error) =>
 			String(error.cause).includes("Missing cached dataset payload test"),
+	);
+	const legacy = new DatabaseSync(join(directory, "atlas-cache.sqlite"));
+	legacy.exec(
+		"DROP TABLE dataset_payloads; CREATE TABLE dataset_payloads (output TEXT, source_sha256 TEXT, sha256 TEXT, payload TEXT); INSERT INTO dataset_payloads VALUES ('test', 'hash', 'generated-hash', 'payload')",
+	);
+	legacy.close();
+	assert.throws(
+		() => validateCacheRelease(root),
+		(error: Error) => String(error.cause).includes("no such column: gzip"),
 	);
 	const changed = new DatabaseSync(join(directory, "atlas.sqlite"));
 	changed.exec("INSERT INTO datasets VALUES ('other', 'hash', NULL)");
