@@ -105,6 +105,7 @@ export async function runBuild({
 } = {}) {
 	let jobs = limits.jobs;
 	let jobsFlag = false;
+	let checkWrites = false;
 	let from;
 	let only;
 	let plan = false;
@@ -121,6 +122,8 @@ export async function runBuild({
 			verbose = true;
 		} else if (argument === "--no-cache" && useCache) {
 			useCache = false;
+		} else if (argument === "--check-writes" && !checkWrites) {
+			checkWrites = true;
 		} else if (argument === "--jobs" && !jobsFlag) {
 			if (!/^[1-9]\d*$/.test(argv[index + 1] ?? ""))
 				throw new Error("--jobs requires a positive whole number.");
@@ -139,10 +142,15 @@ export async function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--jobs <n>] [--no-cache | --adopt]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--jobs <n> | --check-writes] [--no-cache | --adopt]`,
 			);
 		}
 	}
+	if (checkWrites && (jobsFlag || adopt || plan))
+		throw new Error(
+			"--check-writes runs one stage at a time and cannot be combined with --jobs, --adopt or --plan.",
+		);
+	if (checkWrites) jobs = 1;
 	if (adopt && (!useCache || from !== undefined))
 		throw new Error(
 			"--adopt cannot be combined with --no-cache or --from.",
@@ -278,6 +286,7 @@ export async function runBuild({
 		let estimated = 0;
 		let knownEstimates = 0;
 		let failureStatus = null;
+		const undeclaredStages = [];
 		const startedAtOf = new Map();
 		// A stage's expected duration: its last run, if it has to run at all.
 		const weightOf = (stage) =>
@@ -346,7 +355,7 @@ export async function runBuild({
 				`${stage.name}: running (${formatCount(started)} of ${formatCount(toRun.size)})`,
 			);
 			if (verbose) logCommand(stage);
-			cache?.begin(stage);
+			cache?.begin(stage, { audit: checkWrites });
 			const commandStartedAt = performance.now();
 			let status;
 			try {
@@ -380,6 +389,18 @@ export async function runBuild({
 				failureStatus ??= status;
 				return false;
 			}
+			const undeclared = checkWrites
+				? (cache?.undeclaredChanges(stage) ?? [])
+				: [];
+			if (undeclared.length) {
+				undeclaredStages.push(stage.name);
+				log(
+					`${stage.name}: changed ${plural(undeclared.length, "file")} outside its declared writes`,
+				);
+				for (const path of undeclared.slice(0, 10)) log(`  ${path}`);
+				if (undeclared.length > 10)
+					log(`  and ${formatCount(undeclared.length - 10)} more`);
+			}
 			const digest = cache?.record(stage, dependencies, {
 				cacheable: stage.cacheable !== false,
 			});
@@ -406,6 +427,10 @@ export async function runBuild({
 				order: jobs > 1 ? priorityOrder(selected, weightOf) : selected,
 			});
 		}
+		if (undeclaredStages.length)
+			log(
+				`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Add their paths to stageWrites in pipeline/build-data-graph.mjs.`,
+			);
 		if (failureStatus !== null) return failureStatus;
 		if (plan && knownEstimates)
 			log(

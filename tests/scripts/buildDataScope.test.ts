@@ -155,3 +155,23 @@ test("a directory listed as a required output never counts as present", () => {
 	first.record(catalog, []);
 	assert.equal(cache().lookup(catalog, []), null);
 });
+
+test("an audited stage reports files it changed outside its scope", () => {
+	const { write, cache } = fixture();
+	const current = cache();
+	current.begin(alpha, { audit: true });
+	write("data/build/a/one.json", "inside");
+	write("data/build/stray.json", "outside");
+	write("public/data/other/two.json", "outside too");
+	assert.deepEqual(current.undeclaredChanges(alpha), [
+		"data/build/stray.json",
+		"public/data/other/two.json",
+	]);
+	// Without an audit, or without a scope, there is nothing to report.
+	current.begin(beta);
+	write("data/build/stray.json", "changed again");
+	assert.deepEqual(current.undeclaredChanges(beta), []);
+	const unscoped: Stage = { name: "unscoped", args: [] };
+	current.begin(unscoped, { audit: true });
+	assert.deepEqual(current.undeclaredChanges(unscoped), []);
+});

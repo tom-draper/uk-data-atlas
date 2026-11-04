@@ -300,6 +300,14 @@ export function createStageCache({
 
 	// What each running stage's scope held when it began.
 	const begun = new Map();
+	// The whole output tree when an audited stage began.
+	const audited = new Map();
+	const fullScan = () => {
+		const stamps = new Map();
+		for (const directory of outputRoots)
+			stampFiles(root, directory, stamps);
+		return stamps;
+	};
 	const scopedSnapshot = (scope) => {
 		const stamps = new Map();
 		for (const path of scope) stampPath(root, path, stamps);
@@ -464,11 +472,14 @@ export function createStageCache({
 		 * Call before a stage runs. Notes the files already there, and
 		 * invalidates the stage's record so a failed run is never reused. A stage
 		 * with a declared scope is tracked within it, so others can run beside
-		 * it. Pass the stage; a bare name tracks the whole output tree.
+		 * it. Pass the stage; a bare name tracks the whole output tree. `audit`
+		 * also notes the whole tree, for `undeclaredChanges`; only one stage may
+		 * run then.
 		 */
-		begin(stage) {
+		begin(stage, { audit = false } = {}) {
 			const name = typeof stage === "string" ? stage : stage.name;
 			const scope = typeof stage === "string" ? null : stageScope(stage);
+			if (audit && scope) audited.set(name, fullScan());
 			begun.set(name, {
 				scope,
 				before: scope ? scopedSnapshot(scope) : currentSnapshot(),
@@ -477,6 +488,26 @@ export function createStageCache({
 			if (!record || record.key === null) return;
 			record.key = null;
 			save();
+		},
+
+		/**
+		 * After a stage that began with `audit`: the files it changed outside its
+		 * declared scope, which its record would otherwise miss.
+		 */
+		undeclaredChanges(stage) {
+			const before = audited.get(stage.name);
+			audited.delete(stage.name);
+			const scope = stageScope(stage);
+			if (!before || !scope) return [];
+			const inScope = (path) =>
+				scope.some((own) => path === own || path.startsWith(`${own}/`));
+			return [...fullScan()]
+				.filter(
+					([path, stamp]) =>
+						!inScope(path) && !sameStamp(before.get(path), stamp),
+				)
+				.map(([path]) => path)
+				.sort();
 		},
 
 		/**

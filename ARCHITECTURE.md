@@ -198,6 +198,8 @@ Stages that share a path, such as the writers of `atlas-cache.sqlite`, never
 overlap and run in plan order. A stage with no declared paths (`sources` and the two registries, which
 rewrite `data/source` or checked-in code) runs alone. Add the paths of any new
 stage, or it will run alone.
+`pnpm data:build --check-writes` runs one stage at a time and names any file a
+stage changed outside its declared paths. Run it after adding or changing a stage.
 
 When a stage fails, no new stage starts. Stages already running finish, so
 their outputs are complete and recorded in the cache, and the build exits with
