@@ -655,6 +655,31 @@ LEFT JOIN party wp ON wp.id = c.winner_party_id`,
 				"elected INTEGER NOT NULL CHECK (elected IN (0,1))",
 			],
 			key: ["contest_id", "position"],
+			views: {
+				// A candidate's party votes are the party's observation in the contest.
+				v_candidacy: `
+SELECT *, 100.0 * party_votes / valid_votes AS party_vote_share FROM (
+  SELECT k.contest_id, k.position, k.given_name, k.family_name, k.gender, k.elected,
+    c.dataset, c.election, c.polling_day, c.area_code, c.area_name,
+    p.code AS party, p.name AS party_name,
+    (SELECT o.value FROM observation o
+     JOIN series s ON s.id = o.series_id
+     JOIN measure m ON m.id = s.measure_id AND m.slug = 'party-votes'
+     JOIN series_member sm ON sm.series_id = s.id
+     JOIN dimension dim ON dim.id = sm.dimension_id AND dim.slug = 'party'
+     JOIN dimension_member dm ON dm.id = sm.member_id AND dm.code = lower(p.key)
+     WHERE s.dataset_id = c.dataset_id AND o.area_version_id = c.area_version_id
+       AND o.period_id = (SELECT id FROM period WHERE label = c.polling_day)) AS party_votes,
+    (SELECT o.value FROM observation o
+     JOIN series s ON s.id = o.series_id
+     JOIN measure m ON m.id = s.measure_id AND m.slug = 'valid-votes'
+     WHERE s.dataset_id = c.dataset_id AND o.area_version_id = c.area_version_id
+       AND o.period_id = (SELECT id FROM period WHERE label = c.polling_day)) AS valid_votes
+  FROM candidacy k
+  JOIN v_contest c ON c.contest_id = k.contest_id
+  JOIN contest ct ON ct.id = k.contest_id
+  LEFT JOIN party p ON p.id = coalesce(ct.first_party_id, ct.winner_party_id))`,
+			},
 			rows: rows(function* ({ datasets }, database) {
 				let id = 0;
 				for (const dataset of datasets)
