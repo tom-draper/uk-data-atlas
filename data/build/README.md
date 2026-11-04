@@ -498,23 +498,34 @@ Rebuild with `pnpm data:build --only postcode-index`. Run
 `node --import tsx scripts/verify-postcode-index.mts` to verify every postcode,
 district hash and row count, and sample district positions. A full `pnpm data:build`
 refreshes downstream postcode-area and count outputs too. Running only the
-postcode-index stage removes the area columns, so rebuild postcode-areas afterward,
+postcode-index stage removes the area sets and distances, so rebuild postcode-areas afterward,
 even when the postcode content hash is unchanged. No new source release is needed.
 
 ### Postcode areas
 
-The `postcode-areas` stage stores integer area references on `postcodes`. Each compiled release has an
-`AreaId` column referencing `area_version(id)` and a `DistanceCm` column. A geography
-with one release uses names such as `countryAreaId`. Multiple releases use
-release-qualified names such as `"localAuthority_2026-05-uk-bgcAreaId"`.
-`postcode_area_releases` lists each geography, boundary release and column name.
+The `postcode-areas` stage stores area references once per distinct combination of
+areas. `postcode_area_set` has an `id` and one `AreaId` column per compiled release,
+each referencing `area_version(id)`, and is `STRICT`. `postcodes` keeps one
+`area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)` and a `DistanceCm`
+column per release. A geography with one release uses names such as `countryAreaId`.
+Multiple releases use release-qualified names such as
+`"localAuthority_2026-05-uk-bgcAreaId"`. `postcode_area_releases` lists each
+geography, boundary release and column name. `areaColumn` names a column of
+`postcode_area_set` and `distanceColumn` a column of `postcodes`.
 All IDs refer to that exact boundary release. Missing inventory areas are added
 as `area_version` rows with `in_inventory = 0` and an empty name, since shard inputs contain codes
 but no labels.
 
+Set IDs count up from 1 in first-seen postcode order, so builds are reproducible.
+The writer deduplicates with an in-memory map rather than a unique index, which
+would cost another copy of the table and would not treat null areas as equal.
+Distances differ for almost every postcode, so they stay on `postcodes`.
+
 ```sql
 SELECT p.postcode, a.code, a.name
-FROM postcodes p JOIN areas a ON a.id = p.countryAreaId
+FROM postcodes p
+JOIN postcode_area_set s ON s.id = p.area_set_id
+JOIN areas a ON a.id = s.countryAreaId
 WHERE p.postcode = 'SW1A1AA';
 
 SELECT postcode, countryCode FROM postcodes_decoded
@@ -523,6 +534,9 @@ WHERE postcode = 'SW1A1AA';
 SELECT geography, boundaryRelease, areaColumn, distanceColumn
 FROM postcode_area_releases;
 ```
+
+`postcodes_decoded` joins through the set table and returns the same columns as
+before: the postcode fields, each `AreaId` and `DistanceCm` pair, then each `Code`.
 
 A null area ID means no single interior match. `postcode_area_matches` holds
 multiple or boundary matches, with their containment, distance and original order.
@@ -541,7 +555,10 @@ before returning it. Postcode and area content hashes and API ETags are unchange
 Build this schema through the normal atlas and postcode build stages. The
 postcode-area writer checks every reconstructed area shard before publishing its
 temporary database atomically. Rebuild older databases with the current builders;
-the runtime supports only the normalized schema.
+the runtime supports only the current schema. The writer records `postcodeAreaLayout`
+(currently `"2"`) in `meta`. Postcode area readers throw, naming the rebuild, when
+it is missing or different, as it is for a database that stores `AreaId` columns
+on `postcodes`.
 
 Compare an old database with the rebuilt database using
 `NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/compare-postcode-sqlite.ts BEFORE.sqlite services/api services/api/benchmarks/sqlite-postcode-areas.json`.

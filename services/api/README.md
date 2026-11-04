@@ -1086,7 +1086,8 @@ fetch the postcode directory from ONS.
       placed live. The build takes about
       20 minutes with three workers, reuses any release whose postcodes, areas
       and geometry are unchanged. SQLite stores the placements as release-specific
-      integer area IDs and distances on `postcodes`, plus relational rows for
+      integer area IDs once per distinct combination in `postcode_area_set`, with
+      one set reference and the distances on `postcodes`, plus relational rows for
       multiple matches. It reconstructs and hash-checks district shards on read.
       `postcodes_decoded` exposes codes, and `postcode_area_releases` lists the
       columns and their exact boundary releases. See
