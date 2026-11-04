@@ -141,8 +141,8 @@ test("a stage without a scope tracks the whole tree after scoped stages ran", ()
 	assert.deepEqual(outputsOf(root, "alpha"), ["data/build/a/one.json"]);
 });
 
-test("a directory listed as a required output never counts as present", () => {
-	const { write, cache } = fixture();
+test("a folder listed as a required output counts as present while it holds files", () => {
+	const { root, write, cache } = fixture();
 	const catalog: Stage = {
 		name: "catalog",
 		args: [],
@@ -152,8 +152,32 @@ test("a directory listed as a required output never counts as present", () => {
 	const first = cache();
 	first.begin(catalog);
 	write("data/build/observations/one.json", "1");
-	first.record(catalog, []);
+	const digest = first.record(catalog, []);
+	assert.equal(cache().lookup(catalog, []), digest);
+	// A removed file reruns the stage, and so does a removed folder.
+	rmSync(join(root, "data/build/observations/one.json"));
 	assert.equal(cache().lookup(catalog, []), null);
+	write("data/build/observations/one.json", "1");
+	assert.equal(cache().lookup(catalog, []), null);
+	rmSync(join(root, "data/build/observations"), { recursive: true });
+	assert.equal(cache().lookup(catalog, []), null);
+});
+
+test("adoption takes the files in a required folder, and refuses an empty one", () => {
+	const { root, write, cache } = fixture();
+	const catalog: Stage = {
+		name: "catalog",
+		args: [],
+		requiredOutputs: ["data/build/observations"],
+	};
+	mkdirSync(join(root, "data/build/observations"), { recursive: true });
+	assert.throws(
+		() => cache().adopt(catalog, []),
+		/missing output data\/build\/observations/,
+	);
+	write("data/build/observations/one.json", "1");
+	const adopted = cache().adopt(catalog, []);
+	assert.deepEqual(adopted.files, ["data/build/observations/one.json"]);
 });
 
 test("an audited stage reports files it changed outside its scope", () => {
