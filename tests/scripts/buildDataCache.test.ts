@@ -863,6 +863,7 @@ test("dataset updates leave boundary tiles and postcodes cached", async () => {
 			),
 			outputs: [],
 			requiredOutputs: [],
+			writes: [],
 		}));
 	const run = async () => {
 		const ran: string[] = [];
