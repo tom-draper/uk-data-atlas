@@ -16,6 +16,8 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: "node",
+		// Tests replace and delete database files and read straight after.
+		env: { ATLAS_SQLITE_RECHECK_MS: "0" },
 		projects: [
 			...[
 				{ name: "pipeline", include: ["pipeline/tests/*.test.ts"] },
