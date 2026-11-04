@@ -68,6 +68,57 @@ export function createStatisticsAreaLookup() {
 			);
 		return found;
 	};
+	const releasesOf = new Map<string, { position: number; year: number }[]>();
+	const byName = new Map<number, Map<string, number | null>>();
+	/**
+	 * The area a name is exactly, in the available release of a geography
+	 * nearest the year (the later one on a tie). Nothing when the geography
+	 * has no release, the name is not in it, or two areas share it.
+	 */
+	const namedArea = (
+		database: DatabaseSync,
+		geography: string,
+		year: number,
+		name: string,
+	) => {
+		let releases = releasesOf.get(geography);
+		if (!releases) {
+			releases = database
+				.prepare(
+					"SELECT position, id FROM area_releases WHERE geography = ? AND status = 'available'",
+				)
+				.all(geography)
+				.map((row) => ({
+					position: Number(row.position),
+					year: Number.parseInt(String(row.id), 10),
+				}));
+			releasesOf.set(geography, releases);
+		}
+		const nearest = releases.reduce<(typeof releases)[number] | undefined>(
+			(best, release) => {
+				if (!best) return release;
+				const gap = Math.abs(release.year - year);
+				const bestGap = Math.abs(best.year - year);
+				return gap < bestGap ||
+					(gap === bestGap && release.year > best.year)
+					? release
+					: best;
+			},
+			undefined,
+		);
+		if (!nearest) return undefined;
+		let names = byName.get(nearest.position);
+		if (!names) {
+			names = new Map();
+			for (const { id, name: label } of areaLookup(
+				database,
+				nearest.position,
+			).values())
+				names.set(label, names.has(label) ? null : id);
+			byName.set(nearest.position, names);
+		}
+		return names.get(name) ?? undefined;
+	};
 	const areaIndex = (database: DatabaseSync): AreaIndex => {
 		const available = database
 			.prepare(
@@ -114,5 +165,5 @@ export function createStatisticsAreaLookup() {
 		};
 	};
 
-	return { releasePosition, area, areaIndex };
+	return { releasePosition, area, areaIndex, namedArea };
 }

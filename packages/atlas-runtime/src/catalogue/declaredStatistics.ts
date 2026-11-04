@@ -244,6 +244,8 @@ export type DeclaredElection = {
 	results?: string;
 	/** Names and colours of the parties the contests mention. */
 	parties?: readonly StatisticsParty[];
+	/** The geography each of these contest columns names an area of. */
+	areas?: Partial<Record<"region" | "country", string>>;
 };
 
 export type DeclaredParent = {
@@ -1163,6 +1165,9 @@ export function declaredStatistics(
 			elections: () => elections,
 			...(config.election?.parties
 				? { parties: config.election.parties }
+				: {}),
+			...(config.election?.areas
+				? { contestAreas: config.election.areas }
 				: {}),
 			verify(database: DatabaseSync) {
 				const row = database

@@ -499,7 +499,9 @@ describe("declared statistics", () => {
 				date: () => "2024-07-04",
 				results: "results",
 				parties: [{ key: "LAB", name: "Labour", colour: "#e91d0e" }],
+				areas: { region: "region" },
 				contest: {
+					region: "regionName",
 					result: "result",
 					first_party: "firstParty",
 					second_party: "secondParty",
@@ -534,6 +536,7 @@ describe("declared statistics", () => {
 				{
 					E06000001: {
 						name: "Hartlepool",
+						regionName: "North East",
 						result: "Lab gain",
 						firstParty: "Lab",
 						secondParty: "Xyz",
@@ -543,6 +546,7 @@ describe("declared statistics", () => {
 					},
 					E06000002: {
 						name: "Middlesbrough",
+						regionName: "Scotland",
 						result: null,
 						firstParty: null,
 						secondParty: null,
@@ -559,6 +563,24 @@ describe("declared statistics", () => {
 			expect(
 				JSON.parse(rebuildFromDeclaration(database, config, "example")),
 			).toEqual(expected);
+			// A region that is a held area is stored as that area, else as text.
+			expect(
+				database
+					.prepare(
+						"SELECT a.code AS code, region_area_version_id AS area, region_text AS text FROM contest c JOIN area_version v ON v.id = c.area_version_id JOIN area a ON a.id = v.area_id ORDER BY a.code",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{ code: "E06000001", area: 4, text: null },
+				{ code: "E06000002", area: null, text: "Scotland" },
+			]);
+			expect(
+				database
+					.prepare("SELECT region FROM v_contest ORDER BY area_code")
+					.all()
+					.map((row) => row.region),
+			).toEqual(["North East", "Scotland"]);
 			// A party is one row whichever way the publisher spells it.
 			expect(
 				database
