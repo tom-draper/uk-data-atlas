@@ -35,7 +35,7 @@ export async function aggregateCounts(path: string, threads?: number) {
 		for (const [position, , , column] of releases) {
 			const quoted = `"${column.replaceAll('"', '""')}"`;
 			await connection.run(
-				`INSERT INTO counts SELECT ${position}, a.code, count(*) FILTER (WHERE p.terminated = 0), count(*) FILTER (WHERE p.terminated <> 0), count(*) FILTER (WHERE p.terminated = 0 AND p.largeUser = '1') FROM atlas.postcodes p JOIN atlas.areas a ON p.${quoted} = a.id GROUP BY a.code`,
+				`INSERT INTO counts SELECT ${position}, a.code, count(*) FILTER (WHERE p.terminated = 0), count(*) FILTER (WHERE p.terminated <> 0), count(*) FILTER (WHERE p.terminated = 0 AND p.largeUser = '1') FROM atlas.postcodes p JOIN atlas.postcode_area_set s ON s.id = p.area_set_id JOIN atlas.areas a ON s.${quoted} = a.id GROUP BY a.code`,
 			);
 		}
 		await connection.run(

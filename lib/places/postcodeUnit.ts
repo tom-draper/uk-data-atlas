@@ -216,7 +216,7 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 			if (!found) return undefined;
 			const placed = database
 				.prepare(
-					`SELECT a.code FROM postcodes p JOIN areas a ON a.id = p.${quote(found.column)} WHERE p.postcode = ?`,
+					`SELECT a.code FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN areas a ON a.id = s.${quote(found.column)} WHERE p.postcode = ?`,
 				)
 				.get(compact);
 			const edge = placed
