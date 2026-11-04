@@ -8,8 +8,8 @@ import {
 	CANDIDACY_COLUMNS,
 	type StatisticsInput,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { createStatisticsAreaLookup } from "./statisticsAreaLookup";
-import { registerStatistics, sourceKey } from "./statisticsRegistry";
+import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
+import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
 
 export function statisticsTables(
 	inputs: readonly StatisticsInput[],

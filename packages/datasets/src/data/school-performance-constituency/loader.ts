@@ -1,9 +1,9 @@
 import {
-	SchoolPerformanceConstituencyData,
-	SchoolPerformanceConstituencyDataset,
-} from "../../types/schoolPerformance";
-import { parseCsv } from "../../helpers/parseCsv";
-import { endYear, measureSeries, readMeasures } from "../education/ks4";
+	type SchoolPerformanceConstituencyData,
+	type SchoolPerformanceConstituencyDataset,
+} from "../../types/schoolPerformance.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { endYear, measureSeries, readMeasures } from "../education/ks4.ts";
 
 /**
  * The release spans 2018/19 onwards, but the constituencies were redrawn for

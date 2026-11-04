@@ -1,21 +1,21 @@
-import { compilePropertyCrosswalk } from "./propertyCrosswalk";
+import { compilePropertyCrosswalk } from "./propertyCrosswalk.ts";
 export {
 	crosswalkInventoryEntry,
 	createCrosswalkInventory,
 	crosswalkInventoryFromEntries,
-} from "./crosswalkInventory";
+} from "./crosswalkInventory.ts";
 export type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	RawGeometryCache,
 	type AreaLookup,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import { compileAreaOverlapCrosswalk } from "../geographies/areaOverlap";
+import { compileAreaOverlapCrosswalk } from "../geographies/areaOverlap.ts";
 import {
 	compileBestFitCrosswalk,
 	compileGeometricContainmentCrosswalk,
-} from "./geometricContainment";
-import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
-import { compileExtentContinuityCrosswalk } from "./extentContinuity";
+} from "./geometricContainment.ts";
+import { compilePopulationOverlapCrosswalk } from "./populationOverlap.ts";
+import { compileExtentContinuityCrosswalk } from "./extentContinuity.ts";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,

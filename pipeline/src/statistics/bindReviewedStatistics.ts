@@ -4,7 +4,7 @@ import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
-} from "./statisticsExport";
+} from "./statisticsExport.ts";
 
 /**
  * The selector options this binder follows. A selector using any other

@@ -2,9 +2,9 @@ import type {
 	ElectricityConsumptionDataset,
 	EnergyConsumptionLADData,
 	GasConsumptionDataset,
-} from "../../types/energyConsumption";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNum } from "../../helpers/parseNumber";
+} from "../../types/energyConsumption.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNum } from "../../helpers/parseNumber.ts";
 
 /**
  * DESNZ restates the series on current boundaries, so every year published

@@ -3,7 +3,7 @@ import {
 	atlasAssetsDirectory,
 	ATLAS_PAGES_MANIFEST,
 	type AtlasPageManifest,
-} from "./atlasAssets";
+} from "./atlasAssets.ts";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import type { StoredFile } from "@uk-data-atlas/artifacts";

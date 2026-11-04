@@ -1,2 +1,2 @@
-export * from "./lookupCoordinates";
-export * from "./reprojection";
+export * from "./lookupCoordinates.ts";
+export * from "./reprojection.ts";

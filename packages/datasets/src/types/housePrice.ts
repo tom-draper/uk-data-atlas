@@ -1,5 +1,5 @@
 // lib/types/housePrice.ts
-import { WardYear } from "../data/boundaries/years";
+import { type WardYear } from "../data/boundaries/years.ts";
 
 export interface HousePriceWardData {
 	ladCode: string;

@@ -1,11 +1,11 @@
 import {
-	ClaimantCountDataset,
-	ClaimantCountLADData,
-} from "../../types/claimantCount";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNumOrZero } from "../../helpers/parseNumber";
-import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
-import { loadPopulationUk } from "../population/ukLoader";
+	type ClaimantCountDataset,
+	type ClaimantCountLADData,
+} from "../../types/claimantCount.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNumOrZero } from "../../helpers/parseNumber.ts";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
+import { loadPopulationUk } from "../population/ukLoader.ts";
 
 const COL_TOTAL_COUNT =
 	"Benefit: Total (all UC and JSA claimants); Gender: Total; Age: All categories: Age 16+; measure: Claimant count; measures: Value";

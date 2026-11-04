@@ -10,12 +10,12 @@ import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { writePostcodeAreas } from "./storage/index";
+import { writePostcodeAreas } from "./storage/index.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,
-} from "./postcodes/storePostcodeAreas";
+} from "./postcodes/storePostcodeAreas.ts";
 import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
 
 export function assembleAtlas(root: string) {

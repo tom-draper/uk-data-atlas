@@ -1,7 +1,10 @@
-import { EthnicityCategory, EthnicityDataset } from "../../types/ethnicity";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNullableInt } from "../../helpers/parseNumber";
-import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
+import {
+	type EthnicityCategory,
+	type EthnicityDataset,
+} from "../../types/ethnicity.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNullableInt } from "../../helpers/parseNumber.ts";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
 
 type EthnicityData = Record<string, Record<string, EthnicityCategory>>;
 

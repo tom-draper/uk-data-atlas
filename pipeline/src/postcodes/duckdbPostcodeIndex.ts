@@ -6,8 +6,11 @@ import type {
 	PostcodeIndexArtifact,
 	PostcodeSource,
 } from "@uk-data-atlas/geography/postcode-index-types";
-import { compilePostcodeIndex, type PostcodeSourceRow } from "./postcodeIndex";
-import { storePostcodeIndex } from "./storePostcodeIndex";
+import {
+	compilePostcodeIndex,
+	type PostcodeSourceRow,
+} from "./postcodeIndex.ts";
+import { storePostcodeIndex } from "./storePostcodeIndex.ts";
 
 const columns = [
 	"pcds",

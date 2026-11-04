@@ -1,9 +1,9 @@
-import { loadGasConsumption } from "../../energy-consumption/loader";
-import { GAS_CONSUMPTION_SOURCE } from "../../energy-consumption/source";
-import type { GasConsumptionDataset } from "../../../types/energyConsumption";
-import type { DatasetDefinition } from "../types";
-import { loadPopulationUk } from "../../population/ukLoader";
-import { addPopulationMetrics } from "../../population/metrics";
+import { loadGasConsumption } from "../../energy-consumption/loader.ts";
+import { GAS_CONSUMPTION_SOURCE } from "../../energy-consumption/source.ts";
+import type { GasConsumptionDataset } from "../../../types/energyConsumption.ts";
+import type { DatasetDefinition } from "../types.ts";
+import { loadPopulationUk } from "../../population/ukLoader.ts";
+import { addPopulationMetrics } from "../../population/metrics.ts";
 
 export const gasConsumptionDatasetDefinition: DatasetDefinition<GasConsumptionDataset> =
 	{

@@ -7,14 +7,14 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import { compileExportManifest } from "./atlas/exportManifest";
+import { compileExportManifest } from "./atlas/exportManifest.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { DatabaseSync } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections";
-import { compileMeasureDownloads } from "./statistics/measureDownloads";
-import type { CompiledMeasure } from "./catalog/manifest";
-import { statisticsArtifactReader } from "./statistics/statisticsArtifacts";
+import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections.ts";
+import { compileMeasureDownloads } from "./statistics/measureDownloads.ts";
+import type { CompiledMeasure } from "./catalog/manifest.ts";
+import { statisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);

@@ -1,4 +1,4 @@
-import type { BoundaryReleaseDeprecation } from "./boundaryReleaseDeprecations";
+import type { BoundaryReleaseDeprecation } from "./boundaryReleaseDeprecations.ts";
 
 export type BoundarySource = {
 	publisher: string;

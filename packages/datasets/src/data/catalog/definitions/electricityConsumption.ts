@@ -1,9 +1,9 @@
-import { loadElectricityConsumption } from "../../energy-consumption/loader";
-import { ELECTRICITY_CONSUMPTION_SOURCE } from "../../energy-consumption/source";
-import type { ElectricityConsumptionDataset } from "../../../types/energyConsumption";
-import type { DatasetDefinition } from "../types";
-import { loadPopulationUk } from "../../population/ukLoader";
-import { addPopulationMetrics } from "../../population/metrics";
+import { loadElectricityConsumption } from "../../energy-consumption/loader.ts";
+import { ELECTRICITY_CONSUMPTION_SOURCE } from "../../energy-consumption/source.ts";
+import type { ElectricityConsumptionDataset } from "../../../types/energyConsumption.ts";
+import type { DatasetDefinition } from "../types.ts";
+import { loadPopulationUk } from "../../population/ukLoader.ts";
+import { addPopulationMetrics } from "../../population/metrics.ts";
 
 export const electricityConsumptionDatasetDefinition: DatasetDefinition<ElectricityConsumptionDataset> =
 	{

@@ -1,12 +1,12 @@
-import type { Coordinate } from "./types";
+import type { Coordinate } from "./types.ts";
 import {
 	GEOMETRY_TIERS,
 	isGeometryTier,
 	vertexImportance,
 	type GeometryTier,
-} from "./simplifyGeometry";
-import { rebuildAreas, rebuildRing, type Topology } from "./arcs";
-import type { GeoJsonGeometry } from "./types";
+} from "./simplifyGeometry.ts";
+import { rebuildAreas, rebuildRing, type Topology } from "./arcs.ts";
+import type { GeoJsonGeometry } from "./types.ts";
 
 /**
  * Generalise a decomposed release one arc at a time.

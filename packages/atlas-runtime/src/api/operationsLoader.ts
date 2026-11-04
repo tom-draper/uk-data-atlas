@@ -1,5 +1,5 @@
-import { openapiDocumentHash, type OperationsArtifact } from "./operations";
-import { publicPath, readPublicManifest } from "../storage/publicManifest";
+import { openapiDocumentHash, type OperationsArtifact } from "./operations.ts";
+import { publicPath, readPublicManifest } from "../storage/publicManifest.ts";
 
 /**
  * The operations compiled from `openapiDocument`. One compiled from an older

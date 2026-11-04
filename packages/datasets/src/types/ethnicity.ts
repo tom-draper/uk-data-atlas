@@ -1,4 +1,4 @@
-import { BoundaryType } from "./boundaries";
+import { type BoundaryType } from "./boundaries.ts";
 
 export interface Ethnicity {
 	ethnicity: string;

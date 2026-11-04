@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
 	compileAnalysisGeographies,
 	readAnalysisGeographySupport,
-} from "./geographies/analysisGeographies";
+} from "./geographies/analysisGeographies.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";

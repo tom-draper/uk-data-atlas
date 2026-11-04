@@ -1,11 +1,11 @@
 import { DatabaseSync } from "node:sqlite";
-import { lazyValue } from "./lazyValue";
+import { lazyValue } from "./lazyValue.ts";
 import type {
 	NamedLocation,
 	NamedLocationInventory,
 } from "@uk-data-atlas/places";
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath } from "./dataLayout.ts";
 
 export const readSqliteNamedLocationInventory = (
 	repositoryRoot: string,

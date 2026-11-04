@@ -10,7 +10,7 @@ import {
 	boundsIntersect,
 	roundedMultiPolygon,
 } from "@uk-data-atlas/geography/area-geometry-pieces";
-import { labelsFor, round } from "../geographies/areaOverlap";
+import { labelsFor, round } from "../geographies/areaOverlap.ts";
 import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
 import { readGeometries } from "@uk-data-atlas/atlas-runtime/areas";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";

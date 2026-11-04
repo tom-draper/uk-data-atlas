@@ -1,12 +1,12 @@
-import { countryForCode } from "../areas/catalog/countries";
+import { countryForCode } from "../areas/catalog/countries.ts";
 import type { Country, DataCatalog } from "@uk-data-atlas/measures";
 import {
 	conversionCoverageOnto,
 	type MeasureConversionPath,
-} from "./measureCapability";
+} from "./measureCapability.ts";
 import { measureCoverage } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
-import type { MeasureContext } from "./measureContext";
+import type { MeasureContext } from "./measureContext.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 type Measure = DataCatalog["measures"][number];

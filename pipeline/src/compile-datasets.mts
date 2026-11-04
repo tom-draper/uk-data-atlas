@@ -16,7 +16,7 @@ import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
-} from "./precompile/selection";
+} from "./precompile/selection.ts";
 import { loadDatasetReuseContext, NO_REUSE } from "./precompile/cache.mts";
 import { compileDataset } from "./precompile/compileDataset.mts";
 import { compileDatasets } from "./precompile/datasetPool.mts";

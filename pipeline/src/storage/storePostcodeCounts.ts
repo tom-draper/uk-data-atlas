@@ -1,6 +1,6 @@
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { publishAtlasCache } from "./atlasCacheWriter";
+import { publishAtlasCache } from "./atlasCacheWriter.ts";
 import type { PostcodeCountsArtifact } from "@uk-data-atlas/geography/postcode-count-types";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 

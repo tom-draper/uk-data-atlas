@@ -3,7 +3,7 @@ import { join } from "node:path";
 import {
 	configDirectory,
 	statisticsVocabularyPath,
-} from "../storage/dataLayout";
+} from "../storage/dataLayout.ts";
 import {
 	assertMeasureDimensions,
 	type DataCatalog,

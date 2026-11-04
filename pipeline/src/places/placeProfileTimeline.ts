@@ -3,14 +3,14 @@ import type {
 	PlaceGeography,
 	TimelineEvent,
 } from "@uk-data-atlas/catalogue/place-profile";
-import type { readPlaceResolver } from "./placeResolver";
+import type { readPlaceResolver } from "./placeResolver.ts";
 import {
 	contemporary,
 	namedRef,
 	ref,
 	uniqueRefs,
 	type Relationship,
-} from "./placeProfileRefs";
+} from "./placeProfileRefs.ts";
 
 const REDRAWN_SHARE = 0.02;
 const REDRAWN_KM2 = 0.05;

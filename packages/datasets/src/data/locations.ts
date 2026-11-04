@@ -1,5 +1,5 @@
 // lib/data/locations.ts
-import { LocationBounds } from "../types/geometry";
+import { type LocationBounds } from "../types/geometry.ts";
 
 export const LOCATIONS: Record<string, LocationBounds> = {
 	England: {

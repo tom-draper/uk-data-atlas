@@ -1,9 +1,9 @@
 import type {
 	GhgEmissionsDataset,
 	GhgEmissionsLADData,
-} from "../../types/ghgEmissions";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNum } from "../../helpers/parseNumber";
+} from "../../types/ghgEmissions.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNum } from "../../helpers/parseNumber.ts";
 
 /**
  * The published series is restated on current boundaries with every release,

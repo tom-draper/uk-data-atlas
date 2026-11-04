@@ -29,23 +29,23 @@ import {
 import {
 	PROPERTIES_FILENAME,
 	releaseSources,
-} from "./geographies/boundaryReleaseSources";
+} from "./geographies/boundaryReleaseSources.ts";
 import {
 	correctedSource,
 	type SourceCorrection,
-} from "./geographies/correctBoundarySource";
+} from "./geographies/correctBoundarySource.ts";
 import {
 	exists,
 	shouldCompile,
 	writeAtomically,
-} from "./geographies/boundaryBuildFiles";
+} from "./geographies/boundaryBuildFiles.ts";
 export {
 	PROPERTIES_FILENAME,
 	releaseSources,
-} from "./geographies/boundaryReleaseSources";
-export type { SubstitutionSource } from "./geographies/boundaryReleaseSources";
-export { correctedSource } from "./geographies/correctBoundarySource";
-export type { SourceCorrection } from "./geographies/correctBoundarySource";
+} from "./geographies/boundaryReleaseSources.ts";
+export type { SubstitutionSource } from "./geographies/boundaryReleaseSources.ts";
+export { correctedSource } from "./geographies/correctBoundarySource.ts";
+export type { SourceCorrection } from "./geographies/correctBoundarySource.ts";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 

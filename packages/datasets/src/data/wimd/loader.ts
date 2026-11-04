@@ -1,11 +1,11 @@
-import { WIMDDataset, WIMDLSOAData } from "../../types/wimd";
+import { type WIMDDataset, type WIMDLSOAData } from "../../types/wimd.ts";
 import {
 	summariseDeprivationBy,
 	summariseWIMD,
-} from "../../helpers/datasetAggregation/deprivation";
-import { findHeaderLine, parseCsv } from "../../helpers/parseCsv";
-import { parseNum } from "../../helpers/parseNumber";
-import { odsTableRows } from "../spreadsheet/ods";
+} from "../../helpers/datasetAggregation/deprivation.ts";
+import { findHeaderLine, parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNum } from "../../helpers/parseNumber.ts";
+import { odsTableRows } from "../spreadsheet/ods.ts";
 
 const LOCAL_AUTHORITY_CODES: Record<string, string> = {
 	"Isle of Anglesey": "W06000001",

@@ -5,7 +5,7 @@ import {
 	ParquetFileWriter,
 	type ParquetColumn,
 } from "@uk-data-atlas/artifacts";
-import { electionStatisticsExport } from "./electionStatisticsExport";
+import { electionStatisticsExport } from "./electionStatisticsExport.ts";
 
 const baseColumns = [
 	["dataset", "string"],

@@ -1,4 +1,4 @@
-import { AgeGroups } from "@uk-data-atlas/datasets/types/population";
+import { type AgeGroups } from "@uk-data-atlas/datasets/types/population";
 
 export const calculateAgeGroups = (ageData: {
 	[age: string]: number;

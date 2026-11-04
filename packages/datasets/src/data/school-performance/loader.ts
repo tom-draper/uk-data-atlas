@@ -1,9 +1,9 @@
 import {
-	SchoolPerformanceDataset,
-	SchoolPerformanceLADData,
-} from "../../types/schoolPerformance";
-import { parseCsv } from "../../helpers/parseCsv";
-import { endYear, measureSeries, readMeasures } from "../education/ks4";
+	type SchoolPerformanceDataset,
+	type SchoolPerformanceLADData,
+} from "../../types/schoolPerformance.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { endYear, measureSeries, readMeasures } from "../education/ks4.ts";
 
 export async function loadSchoolPerformance(
 	read: (path: string) => Promise<string>,

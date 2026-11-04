@@ -2,7 +2,7 @@ import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 	MeasureSource,
-} from "./dataCatalog";
+} from "./dataCatalog.ts";
 
 /**
  * How a source partition's codes stand against a boundary release. Only the

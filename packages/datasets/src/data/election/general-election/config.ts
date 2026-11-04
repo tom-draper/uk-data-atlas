@@ -1,7 +1,7 @@
 // lib/data/generalElectionConfig.ts
 
-import { ConstituencyYear } from "../../boundaries/years";
-import type { GeneralElectionYear } from "../../../types/elections";
+import { type ConstituencyYear } from "../../boundaries/years.ts";
+import type { GeneralElectionYear } from "../../../types/elections.ts";
 
 export type GeneralElectionSourceConfig = {
 	year: GeneralElectionYear;

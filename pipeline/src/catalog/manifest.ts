@@ -1,10 +1,10 @@
-import { type DatasetInput } from "./input";
+import { type DatasetInput } from "./input.ts";
 import type {
 	DatasetCatalogueEntry,
 	Measure,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { string, number, object } from "./values";
+import { string, number, object } from "./values.ts";
 
 /** The compiled manifest each dataset is checked against. */
 export type CatalogManifest = {

@@ -1,5 +1,5 @@
-import { AgeData } from "../../types/common";
-import { PopulationDataset } from "../../types/population";
+import { type AgeData } from "../../types/common.ts";
+import { type PopulationDataset } from "../../types/population.ts";
 
 type XlsxSheetRowReader = (
 	path: string,

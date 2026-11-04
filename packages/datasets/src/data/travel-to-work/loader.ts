@@ -1,10 +1,10 @@
 import type {
 	TravelToWorkBreakdown,
 	TravelToWorkDataset,
-} from "../../types/travelToWork";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNullableInt } from "../../helpers/parseNumber";
-import { addMergedCountAuthorities } from "../localAuthority/reorganisations";
+} from "../../types/travelToWork.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNullableInt } from "../../helpers/parseNumber.ts";
+import { addMergedCountAuthorities } from "../localAuthority/reorganisations.ts";
 
 /**
  * Census category code to the field it contributes to. Several codes fold into

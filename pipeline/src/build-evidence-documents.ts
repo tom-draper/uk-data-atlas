@@ -13,16 +13,16 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { evidenceInputsHash } from "./evidence/evidenceInputsHash";
-import { buildEvidenceMeasure } from "./evidence/buildEvidenceMeasure";
+import { evidenceInputsHash } from "./evidence/evidenceInputsHash.ts";
+import { buildEvidenceMeasure } from "./evidence/buildEvidenceMeasure.ts";
 import {
 	coveragePlanEvidence,
 	reconciliationEvidence,
-} from "./evidence/measureReports";
+} from "./evidence/measureReports.ts";
 import {
 	writeEvidenceDocument,
 	cachedEvidenceMeasure,
-} from "./evidence/evidenceDocumentStore";
+} from "./evidence/evidenceDocumentStore.ts";
 import { availableReconciliations } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactDirectory,

@@ -2,10 +2,10 @@ import { join } from "node:path";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { DuckDBInstance } from "@duckdb/node-api";
-import { PUBLIC_HEALTH_MEASURES } from "../../../packages/datasets/src/data/public-health/loader";
+import { PUBLIC_HEALTH_MEASURES } from "../../../packages/datasets/src/data/public-health/loader.ts";
 import { trackDuckdbSource } from "./duckdbSource.mts";
 import { SOURCE_DATA } from "./paths.mts";
-import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types";
+import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types.ts";
 
 const quote = (value: string) => `'${value.replaceAll("'", "''")}'`;
 

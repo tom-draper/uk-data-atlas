@@ -5,5 +5,5 @@ export {
 	findSorted,
 	lowerBound,
 	type Indexed,
-} from "./sortedIndex";
-export { packPositions } from "./packedPositions";
+} from "./sortedIndex.ts";
+export { packPositions } from "./packedPositions.ts";

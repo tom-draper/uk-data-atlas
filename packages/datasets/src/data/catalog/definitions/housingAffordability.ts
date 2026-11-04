@@ -1,6 +1,6 @@
-import { loadHousingAffordability } from "../../new-datasets/loader";
-import type { IndicatorDataset } from "../../../types/indicator";
-import type { DatasetDefinition } from "../types";
+import { loadHousingAffordability } from "../../new-datasets/loader.ts";
+import type { IndicatorDataset } from "../../../types/indicator.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const housingAffordabilityDatasetDefinition: DatasetDefinition<
 	IndicatorDataset<"housingAffordability">

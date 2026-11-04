@@ -1,6 +1,6 @@
-import { type DatasetInput } from "./input";
-import { type Indicator, publishIndicators } from "./indicators";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
+import { type DatasetInput } from "./input.ts";
+import { type Indicator, publishIndicators } from "./indicators.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 
 /** Households and children in temporary accommodation, by English authority. */
 export const compileHomelessness = (

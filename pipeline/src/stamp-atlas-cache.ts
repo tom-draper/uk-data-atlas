@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { atlasCachePath, buildLog } from "@uk-data-atlas/atlas-runtime/storage";
-import { hashFile } from "./fileHashCache";
+import { hashFile } from "./fileHashCache.ts";
 
 export function stampAtlasCache(root: string) {
 	const canonical = resolve(root, "data/build/atlas.sqlite");

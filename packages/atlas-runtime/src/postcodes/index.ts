@@ -1,1 +1,1 @@
-export * from "./postcodeAreaReleases";
+export * from "./postcodeAreaReleases.ts";

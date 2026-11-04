@@ -1,6 +1,6 @@
-import { loadHomelessness } from "../../homelessness/loader";
-import type { HomelessnessDataset } from "../../../types/homelessness";
-import type { DatasetDefinition } from "../types";
+import { loadHomelessness } from "../../homelessness/loader.ts";
+import type { HomelessnessDataset } from "../../../types/homelessness.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const homelessnessDatasetDefinition: DatasetDefinition<HomelessnessDataset> =
 	{

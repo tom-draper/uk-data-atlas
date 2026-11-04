@@ -1,4 +1,4 @@
-import type { DatasetDefinition, DatasetReader } from "./data/catalog/types";
+import type { DatasetDefinition, DatasetReader } from "./data/catalog/types.ts";
 
 /** Compile raw source contents and attach the declared country coverage. */
 export async function compileDatasetContents(

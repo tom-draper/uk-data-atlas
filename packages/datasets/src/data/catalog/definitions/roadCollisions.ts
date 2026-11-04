@@ -1,6 +1,6 @@
-import { loadRoadCollisionsByAuthority } from "../../road-safety/authorityLoader";
-import type { RoadCollisionsDataset } from "../../../types/roadCollisions";
-import type { DatasetDefinition } from "../types";
+import { loadRoadCollisionsByAuthority } from "../../road-safety/authorityLoader.ts";
+import type { RoadCollisionsDataset } from "../../../types/roadCollisions.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const roadCollisionsDatasetDefinition: DatasetDefinition<RoadCollisionsDataset> =
 	{

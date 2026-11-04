@@ -1,10 +1,10 @@
-import type { GeoJsonGeometry } from "./geometryTypes";
+import type { GeoJsonGeometry } from "./geometryTypes.ts";
 import {
 	containPoint,
 	ringsOf,
 	type Coordinate,
 	type GeometryBounds,
-} from "./geometryPointContainment";
+} from "./geometryPointContainment.ts";
 
 // WGS 84 ellipsoid.
 const A = 6378137;

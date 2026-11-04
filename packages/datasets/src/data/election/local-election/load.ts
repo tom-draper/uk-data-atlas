@@ -4,13 +4,13 @@ import type {
 	LocalElectionDataset,
 	LocalElectionExcludedWard,
 	LocalElectionWardData,
-} from "../../../types/elections";
-import { PARTY_INFO } from "../parties";
+} from "../../../types/elections.ts";
+import { PARTY_INFO } from "../parties.ts";
 import {
 	type ElectionTableSourceConfig,
 	type LeapElectionSourceConfig,
 	ELECTION_SOURCES,
-} from "./config";
+} from "./config.ts";
 
 /**
  * The party each source label is counted under. The House of Commons Library

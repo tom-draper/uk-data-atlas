@@ -1,6 +1,6 @@
-import { loadIMD } from "../../imd/loader";
-import type { IMDDataset } from "../../../types/imd";
-import type { DatasetDefinition } from "../types";
+import { loadIMD } from "../../imd/loader.ts";
+import type { IMDDataset } from "../../../types/imd.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const imdDatasetDefinition: DatasetDefinition<IMDDataset> = {
 	type: "imd",

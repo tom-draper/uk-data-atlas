@@ -67,7 +67,10 @@ export class BoundedClipper {
 	private readonly registered = new Map<string, MultiPolygon>();
 	private nextRequestId = 0;
 
-	constructor(private readonly timeoutMs: number) {}
+	private readonly timeoutMs: number;
+	constructor(timeoutMs: number) {
+		this.timeoutMs = timeoutMs;
+	}
 
 	/** Keep a geometry in the worker, to be named by `id` in later clips. */
 	register(id: string, geometry: MultiPolygon) {

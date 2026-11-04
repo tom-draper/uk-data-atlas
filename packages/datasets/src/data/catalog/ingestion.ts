@@ -1,4 +1,4 @@
-import type { DatasetDefinition, DatasetReader } from "./types";
+import type { DatasetDefinition, DatasetReader } from "./types.ts";
 
 export interface SourceArtifactInput {
 	bytes: number;

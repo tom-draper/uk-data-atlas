@@ -6,8 +6,8 @@ import {
 	type Coordinate,
 	type GeometryBounds,
 } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "../geometry/areaGeometry";
-import { idFor, type NamedLocation } from "./namedLocations";
+import type { GeoJsonGeometry } from "../geometry/areaGeometry.ts";
+import { idFor, type NamedLocation } from "./namedLocations.ts";
 
 /**
  * Ceremonial counties as places: the counties of England and the preserved

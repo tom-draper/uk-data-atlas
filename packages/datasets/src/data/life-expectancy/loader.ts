@@ -1,9 +1,9 @@
 import type {
 	LifeExpectancyDataset,
 	LifeExpectancyLADData,
-} from "../../types/lifeExpectancy";
-import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
-import type { DatasetReader } from "../catalog/types";
+} from "../../types/lifeExpectancy.ts";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
+import type { DatasetReader } from "../catalog/types.ts";
 
 const COMMON_COLUMNS = [
 	[0, "Period"],

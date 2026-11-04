@@ -6,7 +6,7 @@ import {
 	type GeometrySubstitution,
 	type ReversedGridOffset,
 } from "@uk-data-atlas/geography";
-import type { GeoJsonGeometry, GeometrySourceLookup } from "./areaGeometry";
+import type { GeoJsonGeometry, GeometrySourceLookup } from "./areaGeometry.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	appliesTo,
@@ -14,7 +14,7 @@ import {
 	readGridOffset,
 	reverseOffsetGeometry,
 	type GridOffset,
-} from "./gridOffset";
+} from "./gridOffset.ts";
 import {
 	fromWgs84Geometry,
 	toWgs84Geometry,

@@ -1,5 +1,5 @@
-import type { BoundaryType } from "../boundaries/catalog";
-import type { DatasetCountry } from "../../types/coverage";
+import type { BoundaryType } from "../boundaries/catalog.ts";
+import type { DatasetCountry } from "../../types/coverage.ts";
 
 /**
  * Framework-neutral dataset contracts.

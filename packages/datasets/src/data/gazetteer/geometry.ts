@@ -1,5 +1,5 @@
 // Geometry helpers for building the gazetteer at build time.
-import { ringsAreaSqKm } from "../../helpers/population";
+import { ringsAreaSqKm } from "../../helpers/population.ts";
 
 type Geom = GeoJSON.Geometry;
 

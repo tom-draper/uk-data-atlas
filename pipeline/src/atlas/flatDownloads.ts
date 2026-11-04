@@ -1,6 +1,6 @@
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { BoundaryReleaseSummary } from "../maps/compileMapResource";
+import type { BoundaryReleaseSummary } from "../maps/compileMapResource.ts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { buildFullDetailParquet } from "@uk-data-atlas/atlas-runtime/maps";
 

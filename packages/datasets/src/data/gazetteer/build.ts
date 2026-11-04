@@ -1,13 +1,13 @@
 // Pure build functions: geometry features -> gazetteer artifacts.
-import { getProp } from "../boundaries/properties";
-import { areaM2, bboxOf } from "./geometry";
-import { SOURCED_DEFINITION_REVISION, type ResolvedPlace } from "./places";
+import { getProp } from "../boundaries/properties.ts";
+import { areaM2, bboxOf } from "./geometry.ts";
+import { SOURCED_DEFINITION_REVISION, type ResolvedPlace } from "./places.ts";
 import type {
 	GazetteerCore,
 	GazetteerEntry,
 	Level,
 	NamedLocation,
-} from "./types";
+} from "./types.ts";
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
 

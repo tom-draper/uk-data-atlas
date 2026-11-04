@@ -2,7 +2,7 @@ import {
 	SERVED_LOCAL_ELECTION_WARD_CODES,
 	SERVED_WARD_CODES_UNTIL,
 } from "@uk-data-atlas/datasets/data/election/local-election/servedWardCodes";
-import { type DatasetInput, readDatasetInput } from "./input";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	SourceGeography,
 	MeasureAggregation,
@@ -10,9 +10,15 @@ import type {
 	PopulationObservation,
 	CategoricalObservation,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type PrecompiledFile, sha256, string, number, object } from "./values";
+import {
+	type PrecompiledFile,
+	sha256,
+	string,
+	number,
+	object,
+} from "./values.ts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { CatalogManifest } from "./manifest";
+import type { CatalogManifest } from "./manifest.ts";
 
 type ElectionMeasureField =
 	| { kind: "field"; field: string }

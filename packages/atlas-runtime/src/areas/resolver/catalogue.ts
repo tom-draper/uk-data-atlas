@@ -1,6 +1,6 @@
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { NamedLocationInventory } from "../../places/namedLocations";
+import type { NamedLocationInventory } from "../../places/namedLocations.ts";
 
 export type CatalogueResolverInputs = {
 	areaInventory?: AreaInventory;
@@ -27,7 +27,10 @@ export class CatalogueResolver {
 		AreaInventory["releases"][number]
 	>();
 
-	constructor(private readonly inputs: CatalogueResolverInputs) {
+	private readonly inputs: CatalogueResolverInputs;
+	constructor(inputs: CatalogueResolverInputs) {
+		this.inputs = inputs;
+
 		for (const crosswalk of inputs.crosswalkInventory?.crosswalks ?? []) {
 			if (!this.crosswalksById.has(crosswalk.id))
 				this.crosswalksById.set(crosswalk.id, crosswalk);

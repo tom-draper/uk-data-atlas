@@ -20,10 +20,12 @@ export class SqliteIndex {
 	private readonly database: DatabaseSync;
 	readonly meta: Map<string, string>;
 
-	constructor(
-		readonly path: string,
-		private readonly prefix = "",
-	) {
+	readonly path: string;
+	private readonly prefix: string;
+	constructor(path: string, prefix = "") {
+		this.path = path;
+		this.prefix = prefix;
+
 		this.database = new DatabaseSync(path, { readOnly: true });
 		this.meta = new Map(
 			(
@@ -80,12 +82,21 @@ export class SqliteRows {
 	private rows: Row[] = [];
 	private last = -2;
 
+	private readonly one: StatementSync;
+	private readonly block: StatementSync;
+	private readonly many: StatementSync;
+	readonly length: number;
 	constructor(
-		private readonly one: StatementSync,
-		private readonly block: StatementSync,
-		private readonly many: StatementSync,
-		readonly length: number,
-	) {}
+		one: StatementSync,
+		block: StatementSync,
+		many: StatementSync,
+		length: number,
+	) {
+		this.one = one;
+		this.block = block;
+		this.many = many;
+		this.length = length;
+	}
 
 	/** Rows at several positions, read in one query. */
 	getEach(positions: readonly number[]): Array<Row | undefined> {

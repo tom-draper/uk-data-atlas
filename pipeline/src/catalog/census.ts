@@ -1,10 +1,10 @@
-import { type DatasetInput } from "./input";
+import { type DatasetInput } from "./input.ts";
 import type { Measure } from "@uk-data-atlas/measures";
-import { onApril2023Authorities } from "./authorityChanges";
+import { onApril2023Authorities } from "./authorityChanges.ts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields";
-import type { CatalogManifest } from "./manifest";
-import { sha256 } from "./values";
+import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
+import type { CatalogManifest } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 
 export const CENSUS_BREAKDOWNS = [
 	{

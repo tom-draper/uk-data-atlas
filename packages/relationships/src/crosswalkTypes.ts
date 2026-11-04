@@ -7,8 +7,8 @@ import type {
 	PopulationOverlapWeighting,
 	PropertyCrosswalkAdapter,
 	ExtentContinuityCrosswalkAdapter,
-} from "./crosswalkAdapters";
-import type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation";
+} from "./crosswalkAdapters.ts";
+import type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation.ts";
 import type { GeometryContainmentValidation } from "@uk-data-atlas/geography";
 import type { GeometryProvenance } from "@uk-data-atlas/geography";
 

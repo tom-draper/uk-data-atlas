@@ -5,7 +5,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildDuckdbPlaceIndex } from "./buildDuckdbPlaceIndex";
+import { buildDuckdbPlaceIndex } from "./buildDuckdbPlaceIndex.ts";
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {

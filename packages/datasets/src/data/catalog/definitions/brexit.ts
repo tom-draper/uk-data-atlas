@@ -1,6 +1,6 @@
-import { loadBrexit } from "../../brexit/loader";
-import type { BrexitLADDataset } from "../../../types/referendum";
-import type { DatasetDefinition } from "../types";
+import { loadBrexit } from "../../brexit/loader.ts";
+import type { BrexitLADDataset } from "../../../types/referendum.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const brexitDatasetDefinition: DatasetDefinition<BrexitLADDataset> = {
 	type: "brexit",

@@ -1,10 +1,10 @@
-import { readSqlitePostcodeShard } from "./atlasPostcodeShard";
+import { readSqlitePostcodeShard } from "./atlasPostcodeShard.ts";
 export {
 	postcodeFields,
 	postcodeDistrictWhere,
 	readSqlitePostcodeShard,
-} from "./atlasPostcodeShard";
-import { readSqlitePostcodeIndexArtifact } from "./atlasPostcodeIndexReader";
+} from "./atlasPostcodeShard.ts";
+import { readSqlitePostcodeIndexArtifact } from "./atlasPostcodeIndexReader.ts";
 import { PostcodeIndex } from "@uk-data-atlas/postcodes";
 
 export const readSqlitePostcodeIndex = (

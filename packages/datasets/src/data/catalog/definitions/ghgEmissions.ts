@@ -1,6 +1,6 @@
-import { loadGhgEmissions } from "../../ghg-emissions/loader";
-import type { GhgEmissionsDataset } from "../../../types/ghgEmissions";
-import type { DatasetDefinition } from "../types";
+import { loadGhgEmissions } from "../../ghg-emissions/loader.ts";
+import type { GhgEmissionsDataset } from "../../../types/ghgEmissions.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const ghgEmissionsDatasetDefinition: DatasetDefinition<GhgEmissionsDataset> =
 	{

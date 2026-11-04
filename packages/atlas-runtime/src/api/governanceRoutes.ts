@@ -1,13 +1,13 @@
-import { requireGeography } from "./routeResponse";
-import { attributionFor, attributionText } from "../catalogue/attribution";
-import { correctionsReport } from "../catalogue/correctionsReport";
+import { requireGeography } from "./routeResponse.ts";
+import { attributionFor, attributionText } from "../catalogue/attribution.ts";
+import { correctionsReport } from "../catalogue/correctionsReport.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteRequest } from "./routing";
+} from "./routeResponse.ts";
+import type { RouteRequest } from "./routing.ts";
 
 /** Governance and evidence endpoints, separate from the data they describe. */
 export const handleGovernanceRoutes = ({

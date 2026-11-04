@@ -1,7 +1,7 @@
 import {
 	createRemoteTerrainProvider,
 	type AsyncTerrainProvider,
-} from "./terrainProvider";
+} from "./terrainProvider.ts";
 
 export type TerrainLoaderOptions = {
 	terrainRemoteEndpoint?: string;

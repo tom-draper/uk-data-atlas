@@ -1,7 +1,7 @@
 import type { Pair, Polygon } from "polygon-clipping";
-import { polygonAreaM2, projectEqualArea } from "./equalAreaProjection";
-import type { GeoJsonGeometry } from "./types";
-import { MinHeap } from "./minHeap";
+import { polygonAreaM2, projectEqualArea } from "./equalAreaProjection.ts";
+import type { GeoJsonGeometry } from "./types.ts";
+import { MinHeap } from "./minHeap.ts";
 
 /**
  * Named generalisation tiers, each the side in metres of the smallest square

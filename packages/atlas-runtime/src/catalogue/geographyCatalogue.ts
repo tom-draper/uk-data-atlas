@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "../storage/atlasSqlite";
+import { readAtlasPayload } from "../storage/atlasSqlite.ts";
 
 export const readGeographyCatalogue = <T extends { schemaVersion: number }>(
 	repositoryRoot: string,

@@ -17,7 +17,7 @@ import {
 	CENSUS_SMALL_AREA_TABLES,
 	censusTableRecords,
 	type CensusTable,
-} from "../catalog/censusSmallArea";
+} from "../catalog/censusSmallArea.ts";
 
 /**
  * The census small-area tables as statistics rows: one dataset per table,

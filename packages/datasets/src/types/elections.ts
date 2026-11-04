@@ -1,6 +1,9 @@
 // lib/types/elections.ts
-import { ConstituencyYear, WardYear } from "../data/boundaries/years";
-import { PartyVotes, Party } from "./common";
+import {
+	type ConstituencyYear,
+	type WardYear,
+} from "../data/boundaries/years.ts";
+import { type PartyVotes, type Party } from "./common.ts";
 
 export interface LocalElectionWardData {
 	ladCode: string;

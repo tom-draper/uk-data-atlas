@@ -1,4 +1,4 @@
-import type { BoundaryType } from "./catalog";
+import type { BoundaryType } from "./catalog.ts";
 
 /**
  * How a boundary family is reduced to a named location. These are behaviours,

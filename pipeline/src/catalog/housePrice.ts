@@ -1,12 +1,12 @@
 import { HOUSE_PRICE_SERVED_WARD_CODES } from "@uk-data-atlas/datasets/data/house-price/wardCodes";
-import { type DatasetInput, readDatasetInput } from "./input";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type PrecompiledFile, sha256, number, object } from "./values";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
+import { type PrecompiledFile, sha256, number, object } from "./values.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /**

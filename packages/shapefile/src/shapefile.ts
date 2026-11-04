@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { readDbfRows } from "./dbf";
+import { readDbfRows } from "./dbf.ts";
 
 type Position = [number, number];
 type Ring = Position[];

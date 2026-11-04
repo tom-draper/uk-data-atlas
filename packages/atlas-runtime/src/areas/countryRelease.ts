@@ -1,5 +1,5 @@
-import { releaseMonth, supersededAt } from "./releaseForDate";
-import type { AreasResolver } from "./resolver/areas";
+import { releaseMonth, supersededAt } from "./releaseForDate.ts";
+import type { AreasResolver } from "./resolver/areas.ts";
 
 /** The country release to place a point with: for the date, else the latest. */
 export const countryRelease = (

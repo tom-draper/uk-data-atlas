@@ -10,7 +10,7 @@ import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,
 	storePostcodeAreas,
-} from "./postcodes/storePostcodeAreas";
+} from "./postcodes/storePostcodeAreas.ts";
 import { existsSync, readFileSync } from "node:fs";
 
 import { availableParallelism } from "node:os";
@@ -25,7 +25,7 @@ import {
 import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry";
+import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry.ts";
 import { readSqlitePostcodeIndex as readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
@@ -44,7 +44,7 @@ import {
 	releaseCounts,
 	toCentimetres,
 	type ReleasePlacements,
-} from "./postcodes/postcodeAreaCompiler";
+} from "./postcodes/postcodeAreaCompiler.ts";
 import {
 	NONE,
 	SEVERAL,

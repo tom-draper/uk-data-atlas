@@ -1,11 +1,11 @@
-import { loadRegionalGdpItl2 } from "../../regional-gdp/loader";
-import type { RegionalGdpItl2Dataset } from "../../../types/regionalGdp";
-import type { DatasetDefinition } from "../types";
+import { loadRegionalGdpItl2 } from "../../regional-gdp/loader.ts";
+import type { RegionalGdpItl2Dataset } from "../../../types/regionalGdp.ts";
+import type { DatasetDefinition } from "../types.ts";
 import {
 	REGIONAL_GDP_SOURCE,
 	regionalGdpDescription,
 	regionalGdpName,
-} from "../../regional-gdp/source";
+} from "../../regional-gdp/source.ts";
 
 export const regionalGdpItl2DatasetDefinition: DatasetDefinition<RegionalGdpItl2Dataset> =
 	{

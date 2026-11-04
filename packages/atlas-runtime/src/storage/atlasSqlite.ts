@@ -1,12 +1,12 @@
 import {
 	readDatasetPayload,
 	readDatasetPayloadWithHash,
-} from "../catalogue/datasetPayloads";
+} from "../catalogue/datasetPayloads.ts";
 import { gunzipSync } from "node:zlib";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { atlasCachePath } from "./atlasCache";
+import { atlasCachePath } from "./atlasCache.ts";
 
 /** Server-only access to the shared compiled release. Connections close before atomic replacements. */
 export function readAtlasPayload(

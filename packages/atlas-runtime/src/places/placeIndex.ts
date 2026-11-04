@@ -12,7 +12,7 @@ import {
 	text,
 	unpackPositions,
 	type Row,
-} from "../storage/sqliteIndex";
+} from "../storage/sqliteIndex.ts";
 
 /**
  * The compiled place index: every area and named location, and every name

@@ -1,6 +1,6 @@
-import { loadLocalElection } from "../../election/local-election/load";
-import type { LocalElectionDataset } from "../../../types/elections";
-import type { DatasetDefinition } from "../types";
+import { loadLocalElection } from "../../election/local-election/load.ts";
+import type { LocalElectionDataset } from "../../../types/elections.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const localElectionDatasetDefinition: DatasetDefinition<LocalElectionDataset> =
 	{

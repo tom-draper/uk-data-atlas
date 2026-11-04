@@ -1,11 +1,11 @@
-import { AtlasDatasetInput } from "./catalog/input";
+import { AtlasDatasetInput } from "./catalog/input.ts";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
-} from "./catalog/compileDataCatalog";
+} from "./catalog/compileDataCatalog.ts";
 import {
 	assertMeasureDimensions,
 	observationArtifactName,

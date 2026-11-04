@@ -3,8 +3,8 @@ import type {
 	RoadCollisionsDataset,
 	RoadCollisionsLADData,
 	RoadCollisionsLSOAData,
-} from "../../types/roadCollisions";
-import { parseCsv } from "../../helpers/parseCsv";
+} from "../../types/roadCollisions.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
 
 export const ROAD_COLLISION_SOURCES = [
 	"transport/road-safety/dft-road-casualty-statistics-collision-2024.csv",

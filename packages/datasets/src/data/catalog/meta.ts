@@ -7,7 +7,7 @@
  * This module is the schema and its validator. It touches no filesystem, so the
  * precompiler, the tests and a future API can all share it.
  */
-import type { BoundaryType } from "../boundaries/catalog";
+import type { BoundaryType } from "../boundaries/catalog.ts";
 
 /** One file inside a dataset folder. */
 export interface DatasetMetaFile {

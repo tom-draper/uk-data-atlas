@@ -3,7 +3,7 @@ import type {
 	HistoricalElectionConstituencyResult,
 	HistoricalGeneralElectionDataset,
 	HistoricalPartyGroup,
-} from "../../types/historicalGeneralElection";
+} from "../../types/historicalGeneralElection.ts";
 
 const SOURCE_PATH =
 	"politics/elections/general-elections/1918-2019/1918-2019election_results.csv";

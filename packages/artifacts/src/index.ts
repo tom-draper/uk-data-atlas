@@ -1,6 +1,6 @@
-export * from "./contentHash";
-export * from "./storedText";
-export * from "./sqliteTables";
-export * from "./parquet";
-export { csvFields, csvRecords } from "./csv";
-export type { StoredFile } from "./storedFile";
+export * from "./contentHash.ts";
+export * from "./storedText.ts";
+export * from "./sqliteTables.ts";
+export * from "./parquet.ts";
+export { csvFields, csvRecords } from "./csv.ts";
+export type { StoredFile } from "./storedFile.ts";

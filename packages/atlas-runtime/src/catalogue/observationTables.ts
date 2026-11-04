@@ -4,8 +4,8 @@ import type {
 	StatisticsReadPath,
 	StatisticsSelector,
 	StatisticsTableSelector,
-} from "../storage/atlasStatisticsObservations";
-import { readStatisticsObservationText } from "../storage/atlasStatisticsObservations";
+} from "../storage/atlasStatisticsObservations.ts";
+import { readStatisticsObservationText } from "../storage/atlasStatisticsObservations.ts";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import type {
 	DataCatalog,
@@ -138,7 +138,10 @@ export class ObservationCache {
 		}
 	>();
 
-	constructor(private readonly maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES) {
+	private readonly maxBytes: typeof DEFAULT_OBSERVATION_CACHE_BYTES;
+	constructor(maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES) {
+		this.maxBytes = maxBytes;
+
 		if (!Number.isSafeInteger(maxBytes) || maxBytes < 0)
 			throw new Error(
 				"Observation cache bytes must be a non-negative safe integer",

@@ -1,6 +1,6 @@
-import { loadTravelToWork } from "../../travel-to-work/loader";
-import type { TravelToWorkDataset } from "../../../types/travelToWork";
-import type { DatasetDefinition } from "../types";
+import { loadTravelToWork } from "../../travel-to-work/loader.ts";
+import type { TravelToWorkDataset } from "../../../types/travelToWork.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const travelToWorkDatasetDefinition: DatasetDefinition<TravelToWorkDataset> =
 	{

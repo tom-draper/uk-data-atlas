@@ -1,6 +1,6 @@
-import { loadWIMD } from "../../wimd/loader";
-import type { WIMDDataset } from "../../../types/wimd";
-import type { DatasetDefinition } from "../types";
+import { loadWIMD } from "../../wimd/loader.ts";
+import type { WIMDDataset } from "../../../types/wimd.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const wimdDatasetDefinition: DatasetDefinition<WIMDDataset> = {
 	type: "wimd",

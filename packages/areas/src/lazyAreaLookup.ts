@@ -1,21 +1,31 @@
-import type { AreaInventory, AreaRecord } from "./areaInventory";
+import type { AreaInventory, AreaRecord } from "./areaInventory.ts";
 
 export class LazyAreaLookup extends Map<string, Map<string, AreaRecord>> {
 	private readonly loaded = new Map<string, Map<string, AreaRecord>>();
 	private readonly releases: Map<string, AreaInventory["releases"][number]>;
 	private loadedRecords = 0;
 
+	private readonly readAreas: (
+		release: Extract<
+			AreaInventory["releases"][number],
+			{ status: "available" }
+		>,
+	) => AreaRecord[];
+	private readonly maxRecords: number;
 	constructor(
-		private readonly readAreas: (
+		readAreas: (
 			release: Extract<
 				AreaInventory["releases"][number],
 				{ status: "available" }
 			>,
 		) => AreaRecord[],
 		inventory: AreaInventory,
-		private readonly maxRecords: number,
+		maxRecords: number,
 	) {
 		super();
+		this.readAreas = readAreas;
+		this.maxRecords = maxRecords;
+
 		this.releases = new Map(
 			inventory.releases.flatMap((release) => {
 				if (release.status !== "available") return [];

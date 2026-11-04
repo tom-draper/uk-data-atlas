@@ -1,6 +1,6 @@
-import { loadQualification } from "../../qualification/loader";
-import type { QualificationDataset } from "../../../types/qualification";
-import type { DatasetDefinition } from "../types";
+import { loadQualification } from "../../qualification/loader.ts";
+import type { QualificationDataset } from "../../../types/qualification.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const qualificationDatasetDefinition: DatasetDefinition<QualificationDataset> =
 	{

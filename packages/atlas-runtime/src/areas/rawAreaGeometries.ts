@@ -7,7 +7,7 @@ import {
 	toPolygons,
 	type AreaGeometry,
 } from "@uk-data-atlas/geography/area-geometry-pieces";
-import type { GeometrySourceLookup } from "../geometry/areaGeometry";
+import type { GeometrySourceLookup } from "../geometry/areaGeometry.ts";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
@@ -15,13 +15,13 @@ import {
 	appliesTo,
 	offsetGeometry,
 	readGridOffset,
-} from "../geometry/gridOffset";
+} from "../geometry/gridOffset.ts";
 import {
 	applyReversedOffsets,
 	loadSubstitutions,
 	reversedOffsetProvenance,
 	substitutionProvenance,
-} from "../geometry/geometrySubstitution";
+} from "../geometry/geometrySubstitution.ts";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
@@ -32,7 +32,7 @@ import {
 	parseGeoJsonFeatures,
 	parseGeoJsonProperties,
 	type GeoJsonFeatures,
-} from "./geoJsonProperties";
+} from "./geoJsonProperties.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 /** Each feature's properties, without decoding GeoJSON geometry. */
@@ -217,10 +217,12 @@ export class RawGeometryCache {
 	private hits = 0;
 	private loads = 0;
 
-	constructor(
-		private readonly maxReleases = 2,
-		private readonly maxVertices = 1_000_000,
-	) {
+	private readonly maxReleases: number;
+	private readonly maxVertices: number;
+	constructor(maxReleases = 2, maxVertices = 1_000_000) {
+		this.maxReleases = maxReleases;
+		this.maxVertices = maxVertices;
+
 		if (
 			!Number.isSafeInteger(maxReleases) ||
 			maxReleases < 0 ||

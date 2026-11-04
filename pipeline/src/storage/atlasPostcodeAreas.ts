@@ -4,7 +4,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { addAreaVersion } from "./atlasAreas";
+import { addAreaVersion } from "./atlasAreas.ts";
 import {
 	postcodeDistrictWhere,
 	postcodeFields,

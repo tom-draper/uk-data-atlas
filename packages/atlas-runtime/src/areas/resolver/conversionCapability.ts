@@ -1,5 +1,5 @@
 import type { AreaInventory, AreaLookup } from "@uk-data-atlas/areas";
-import type { CapabilityStatus } from "../capability";
+import type { CapabilityStatus } from "../capability.ts";
 import type {
 	RelationshipPath,
 	RelationshipPurpose,
@@ -345,10 +345,15 @@ export class ConversionCapabilities {
 	>();
 	private readonly pathsBySource = new Map<string, RelationshipPath[]>();
 
+	private readonly inputs: ConversionCapabilityInputs;
+	private readonly translator: CrosswalkTranslator;
 	constructor(
-		private readonly inputs: ConversionCapabilityInputs,
-		private readonly translator: CrosswalkTranslator,
+		inputs: ConversionCapabilityInputs,
+		translator: CrosswalkTranslator,
 	) {
+		this.inputs = inputs;
+		this.translator = translator;
+
 		for (const release of inputs.areaInventory?.releases ?? []) {
 			const key = releaseKey(release.geography, release.id);
 			if (!this.areaReleasesByEndpoint.has(key))

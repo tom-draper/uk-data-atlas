@@ -1,4 +1,4 @@
-import type { BoundaryType } from "../data/boundaries/catalog";
+import type { BoundaryType } from "../data/boundaries/catalog.ts";
 
 /** A compact, consistently shaped local-area indicator used by newer sources. */
 export interface IndicatorRecord {

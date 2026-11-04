@@ -7,7 +7,7 @@ import {
 	type DeclaredPayload,
 	type DerivedContext,
 	type Json,
-} from "./declaredStatistics";
+} from "./declaredStatistics.ts";
 
 /**
  * A dataset's JSON, generated from its statistics rows and declaration alone.

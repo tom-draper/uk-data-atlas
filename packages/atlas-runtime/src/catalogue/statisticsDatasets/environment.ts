@@ -1,6 +1,6 @@
-import { type DeclaredDataset, periods } from "../declaredStatistics";
-import { yearParts } from "../declaredPayload";
-import { PREMISES, measure, per100k } from "./measures";
+import { type DeclaredDataset, periods } from "../declaredStatistics.ts";
+import { yearParts } from "../declaredPayload.ts";
+import { PREMISES, measure, per100k } from "./measures.ts";
 
 /** Energy, emissions, air, land, waste and connectivity. */
 

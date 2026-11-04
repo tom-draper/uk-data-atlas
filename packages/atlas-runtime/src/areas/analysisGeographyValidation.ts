@@ -14,12 +14,12 @@ import {
 	isMeasureTable,
 	tableMeasureObservations,
 	type MeasureTableArtifact,
-} from "../catalogue/observationTables";
+} from "../catalogue/observationTables.ts";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type {
 	AnalysisGeographyInventory,
 	AnalysisGeographySupport,
-} from "./analysisGeographies";
+} from "./analysisGeographies.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 export type AnalysisGeographyValidationInventory = {

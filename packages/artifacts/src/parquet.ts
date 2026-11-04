@@ -602,10 +602,10 @@ export class ParquetFileWriter {
 	private readonly rowGroups: Field[][] = [];
 	private readonly schema: string;
 
-	constructor(
-		path: string,
-		private readonly table: ParquetTable,
-	) {
+	private readonly table: ParquetTable;
+	constructor(path: string, table: ParquetTable) {
+		this.table = table;
+
 		this.schema = JSON.stringify(
 			table.columns.map(({ name, type, optional }) => ({
 				name,

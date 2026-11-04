@@ -1,8 +1,8 @@
 import {
-	ChildPovertyDataset,
-	ChildPovertyLADData,
-} from "../../types/childPoverty";
-import type { OdsTableOptions } from "../spreadsheet/ods";
+	type ChildPovertyDataset,
+	type ChildPovertyLADData,
+} from "../../types/childPoverty.ts";
+import type { OdsTableOptions } from "../spreadsheet/ods.ts";
 
 const TABLE_NAME = "7_BHC_Relative_LA";
 const YEARS = [2022, 2023, 2024, 2025] as const;

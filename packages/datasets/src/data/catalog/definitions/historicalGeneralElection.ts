@@ -1,6 +1,6 @@
-import { loadHistoricalGeneralElection } from "../../historical-general-election/loader";
-import type { HistoricalGeneralElectionDataset } from "../../../types/historicalGeneralElection";
-import type { DatasetDefinition } from "../types";
+import { loadHistoricalGeneralElection } from "../../historical-general-election/loader.ts";
+import type { HistoricalGeneralElectionDataset } from "../../../types/historicalGeneralElection.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 /**
  * Precompiled for downstream use, but deliberately not registered as a chart

@@ -2,15 +2,15 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	buildSimplifiedDownload,
 	type SimplifiedDownload,
-} from "../maps/mapResource/simplifiedDownload";
-import type { AreaGeometryCache } from "../geometry/areaGeometry";
-import type { GeographyResolver } from "./geographyResolver";
+} from "../maps/mapResource/simplifiedDownload.ts";
+import type { AreaGeometryCache } from "../geometry/areaGeometry.ts";
+import type { GeographyResolver } from "./geographyResolver.ts";
 import {
 	buildFullDetailParquet,
 	buildFullDetailParquetAsync,
 	type FullDetailDownload,
 	type FullDetailRelease,
-} from "../maps/mapResource/fullDetail";
+} from "../maps/mapResource/fullDetail.ts";
 
 /** Bytes of built downloads kept for the next request. */
 export const DEFAULT_FULL_DETAIL_CACHE_BYTES = 64 * 1024 * 1024;
@@ -52,14 +52,21 @@ export class FullDetailDownloads implements FullDetailSource {
 	private bytes = 0;
 	private queue: Promise<void> = Promise.resolve();
 
+	private readonly cache: AreaGeometryCache;
+	private readonly resolver: Pick<
+		GeographyResolver,
+		"releaseAreas" | "boundaryRelease"
+	>;
+	private readonly maxBytes: typeof DEFAULT_FULL_DETAIL_CACHE_BYTES;
 	constructor(
-		private readonly cache: AreaGeometryCache,
-		private readonly resolver: Pick<
-			GeographyResolver,
-			"releaseAreas" | "boundaryRelease"
-		>,
-		private readonly maxBytes = DEFAULT_FULL_DETAIL_CACHE_BYTES,
-	) {}
+		cache: AreaGeometryCache,
+		resolver: Pick<GeographyResolver, "releaseAreas" | "boundaryRelease">,
+		maxBytes = DEFAULT_FULL_DETAIL_CACHE_BYTES,
+	) {
+		this.cache = cache;
+		this.resolver = resolver;
+		this.maxBytes = maxBytes;
+	}
 
 	/** A download already built, if it is still held. */
 	held(...[geography, boundaryRelease, , contentHash]: Request) {

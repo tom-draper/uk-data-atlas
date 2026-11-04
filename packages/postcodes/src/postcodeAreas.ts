@@ -1,4 +1,4 @@
-import type { PostcodeIndex } from "./postcodeIndex";
+import type { PostcodeIndex } from "./postcodeIndex.ts";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import type { PointContainment } from "@uk-data-atlas/geography/geometry-point-containment";
 import { findSorted } from "@uk-data-atlas/search-index";
@@ -37,17 +37,26 @@ export class PostcodeAreaIndex {
 	private readonly releases: Set<string>;
 	private readonly verified = new Set<string>();
 
+	readonly artifact: PostcodeAreasArtifact;
+	private readonly postcodes: PostcodeIndex;
+	private readonly readShard: (path: string) => string;
+	private readonly capacity: number;
 	constructor(
-		readonly artifact: PostcodeAreasArtifact,
-		private readonly postcodes: PostcodeIndex,
+		artifact: PostcodeAreasArtifact,
+		postcodes: PostcodeIndex,
 		/** The text of a shard at its path in the manifest. */
-		private readonly readShard: (path: string) => string,
+		readShard: (path: string) => string,
 		/**
 		 * How many districts stay in memory. A district's shard holds every
 		 * compiled release, some tens of kilobytes parsed.
 		 */
-		private readonly capacity = 256,
+		capacity = 256,
 	) {
+		this.artifact = artifact;
+		this.postcodes = postcodes;
+		this.readShard = readShard;
+		this.capacity = capacity;
+
 		this.districts = artifact.shards.map((shard) => shard.district);
 		this.releases = new Set(
 			artifact.releases.map((release) =>

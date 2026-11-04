@@ -2,10 +2,10 @@ import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
 import { compileTiers } from "@uk-data-atlas/map-tiles/topologyTiers";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import type { AreaGeometryCache } from "../../geometry/areaGeometry";
-import { buildGeoJsonBody } from "./geoJson";
-import { buildGeoParquet } from "./geoParquet";
-import type { FullDetailRelease } from "./fullDetail";
+import type { AreaGeometryCache } from "../../geometry/areaGeometry.ts";
+import { buildGeoJsonBody } from "./geoJson.ts";
+import { buildGeoParquet } from "./geoParquet.ts";
+import type { FullDetailRelease } from "./fullDetail.ts";
 
 export type SimplifiedDownload = {
 	tier: Exclude<GeometryTier, "full">;

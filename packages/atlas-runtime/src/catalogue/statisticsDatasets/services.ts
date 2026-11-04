@@ -1,4 +1,4 @@
-import type { StatisticsMeasure } from "../atlasStatistics";
+import type { StatisticsMeasure } from "../atlasStatistics.ts";
 import {
 	type DeclaredDataset,
 	type DeclaredHeader,
@@ -6,11 +6,11 @@ import {
 	type DeclaredField,
 	type DerivedRule,
 	periods,
-} from "../declaredStatistics";
-import { yearParts } from "../declaredPayload";
-import type { DeclaredPayload } from "../declaredStatistics";
+} from "../declaredStatistics.ts";
+import { yearParts } from "../declaredPayload.ts";
+import type { DeclaredPayload } from "../declaredStatistics.ts";
 import { ICB_ODS_TO_GSS } from "@uk-data-atlas/datasets/data/nhs-waiting/icbToGss";
-import { measure } from "./measures";
+import { measure } from "./measures.ts";
 
 /** Crime, safety, housing need, care, planning, health and schools. */
 

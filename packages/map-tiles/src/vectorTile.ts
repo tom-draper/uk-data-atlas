@@ -1,4 +1,4 @@
-import { varint } from "./varint";
+import { varint } from "./varint.ts";
 
 /**
  * A Mapbox Vector Tile writer, enough of it to publish a boundary release.

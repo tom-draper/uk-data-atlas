@@ -1,5 +1,5 @@
-import { decodeAgeArrays, encodeAgeArrays } from "./ageArrays";
-import { decodeYearArrays, encodeYearArrays } from "./yearArrays";
+import { decodeAgeArrays, encodeAgeArrays } from "./ageArrays.ts";
+import { decodeYearArrays, encodeYearArrays } from "./yearArrays.ts";
 
 /**
  * Compiled datasets are written to disk with their dense number maps as arrays,

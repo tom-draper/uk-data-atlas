@@ -5,11 +5,11 @@ import {
 	loadModule,
 	readCatalogueDefinitions,
 	writeGenerated,
-} from "../pipeline/src/build-catalogue-registry";
+} from "../pipeline/src/build-catalogue-registry.ts";
 import {
 	chartDefinitionFiles,
 	chartMetadata,
-} from "./dataset-registry-metadata";
+} from "./dataset-registry-metadata.ts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATASETS_DIR = join(ROOT, "lib", "datasets");

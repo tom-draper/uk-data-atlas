@@ -1,5 +1,5 @@
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { readGeographyCatalogue } from "./geographyCatalogue";
+import { readGeographyCatalogue } from "./geographyCatalogue.ts";
 
 export const readBoundaryRegistry = (
 	repositoryRoot: string,

@@ -1,6 +1,6 @@
-import { type DatasetInput, readDatasetInput } from "./input";
-import { type Indicator, publishIndicators } from "./indicators";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
+import { type Indicator, publishIndicators } from "./indicators.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 
 /**
  * Recorded crime, on the geography it is published for. Table C2 counts

@@ -8,14 +8,14 @@ import {
 	type DeclaredHeader,
 	type DeclaredRelease,
 	periods,
-} from "../declaredStatistics";
+} from "../declaredStatistics.ts";
 import {
 	ELECTORATE,
 	REJECTED_BALLOTS,
 	TURNOUT,
 	VALID_VOTES,
 	measure,
-} from "./measures";
+} from "./measures.ts";
 
 /** Election results, one part per election and one contest per record. */
 

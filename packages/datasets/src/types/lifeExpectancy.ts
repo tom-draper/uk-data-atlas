@@ -1,4 +1,4 @@
-import type { DatasetCoverage } from "./coverage";
+import type { DatasetCoverage } from "./coverage.ts";
 
 export interface LifeExpectancyLADData {
 	ladCode: string;

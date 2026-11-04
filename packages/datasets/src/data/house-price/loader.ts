@@ -1,6 +1,9 @@
-import { HousePriceDataset, HousePriceWardData } from "../../types/housePrice";
-import { parseNullableNum } from "../../helpers/parseNumber";
-import { SALFORD_WARD_CODE_REMAP } from "./wardCodes";
+import {
+	type HousePriceDataset,
+	type HousePriceWardData,
+} from "../../types/housePrice.ts";
+import { parseNullableNum } from "../../helpers/parseNumber.ts";
+import { SALFORD_WARD_CODE_REMAP } from "./wardCodes.ts";
 
 const MEDIAN_PRICE_PATH =
 	"economics/housing/median-price-by-ward/hpssadataset37medianpricepaidbyward.zip";

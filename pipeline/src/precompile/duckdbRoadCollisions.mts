@@ -3,12 +3,12 @@ import { DuckDBInstance } from "@duckdb/node-api";
 import {
 	ROAD_COLLISION_SOURCES,
 	ROAD_COLLISION_MONTHS,
-} from "../../../packages/datasets/src/data/road-safety/authorityLoader";
+} from "../../../packages/datasets/src/data/road-safety/authorityLoader.ts";
 import type {
 	RoadCollisionsDataset,
 	RoadCollisionsLADData,
 	RoadCollisionsLSOAData,
-} from "../../../packages/datasets/src/types/roadCollisions";
+} from "../../../packages/datasets/src/types/roadCollisions.ts";
 import { trackDuckdbSource } from "./duckdbSource.mts";
 import { SOURCE_DATA } from "./paths.mts";
 

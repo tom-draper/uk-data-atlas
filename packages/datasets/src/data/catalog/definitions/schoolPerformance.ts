@@ -1,6 +1,6 @@
-import { loadSchoolPerformance } from "../../school-performance/loader";
-import type { SchoolPerformanceDataset } from "../../../types/schoolPerformance";
-import type { DatasetDefinition } from "../types";
+import { loadSchoolPerformance } from "../../school-performance/loader.ts";
+import type { SchoolPerformanceDataset } from "../../../types/schoolPerformance.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const schoolPerformanceDatasetDefinition: DatasetDefinition<SchoolPerformanceDataset> =
 	{

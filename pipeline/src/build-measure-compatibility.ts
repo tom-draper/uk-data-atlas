@@ -13,9 +13,9 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { compileMeasureCompatibility } from "./statistics/measureCompatibility";
+import { compileMeasureCompatibility } from "./statistics/measureCompatibility.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts";
+import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 const read = <T>(path: string): T =>
 	JSON.parse(readFileSync(path, "utf8")) as T;

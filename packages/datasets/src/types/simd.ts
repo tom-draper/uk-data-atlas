@@ -1,4 +1,4 @@
-import type { DeprivationSummary } from "./deprivation";
+import type { DeprivationSummary } from "./deprivation.ts";
 
 export interface SIMDDataZoneData {
 	dzCode: string;

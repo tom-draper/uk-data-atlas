@@ -1,7 +1,11 @@
 import type { Measure } from "@uk-data-atlas/measures";
-import { type Finding, listed, check } from "./findings";
-import type { ValidationInputs } from "./inputs";
-import { sameGeography, describeGeography, exportFor } from "./sourceGeography";
+import { type Finding, listed, check } from "./findings.ts";
+import type { ValidationInputs } from "./inputs.ts";
+import {
+	sameGeography,
+	describeGeography,
+	exportFor,
+} from "./sourceGeography.ts";
 
 export const measureFindings = (
 	inputs: ValidationInputs,

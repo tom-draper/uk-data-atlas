@@ -1,7 +1,7 @@
 import { join } from "path";
-import { Gazetteer } from "../../../lib/data/gazetteer/gazetteer";
+import { Gazetteer } from "../../../lib/data/gazetteer/gazetteer.ts";
 import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
-import { loadRoadSafety } from "../../../lib/data/road-safety/loader";
+import { loadRoadSafety } from "../../../lib/data/road-safety/loader.ts";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import { fileStamp, isReleasedSource, sameFileStamp } from "./cache.mts";
 import { out, outputMatches } from "./websiteOutput.mts";

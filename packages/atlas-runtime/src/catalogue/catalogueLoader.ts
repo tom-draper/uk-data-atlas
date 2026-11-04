@@ -1,19 +1,19 @@
-import { readAtlasPayload } from "../storage/atlasSqlite";
+import { readAtlasPayload } from "../storage/atlasSqlite.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { FullDetailDownloads } from "../areas/fullDetailDownloads";
-import type { EvidenceManifest } from "./evidenceDocuments";
-import { lazyValue } from "../storage/lazyValue";
-import { readAtlasPages } from "../storage/atlasPages";
-import { readAtlasLookups } from "../storage/atlasLookups";
+import { FullDetailDownloads } from "../areas/fullDetailDownloads.ts";
+import type { EvidenceManifest } from "./evidenceDocuments.ts";
+import { lazyValue } from "../storage/lazyValue.ts";
+import { readAtlasPages } from "../storage/atlasPages.ts";
+import { readAtlasLookups } from "../storage/atlasLookups.ts";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readMeasureObservations } from "./observationLoader";
+import { readMeasureObservations } from "./observationLoader.ts";
 import {
 	createGeographyResolver,
 	createGeographyServices,
-} from "../areas/geographyResolver";
+} from "../areas/geographyResolver.ts";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
-import type { AtlasRelease } from "../storage/atlasRelease";
+import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import {
 	readAreaInventory,
 	readAreaLookup,
@@ -25,18 +25,18 @@ import {
 	readGeographyInventory,
 	readPlaceIndex,
 	readTerrainCatalogue,
-} from "../areas/boundaryLoader";
+} from "../areas/boundaryLoader.ts";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
 	readRelationshipPathInventory,
-} from "../relationships/crosswalkLoader";
+} from "../relationships/crosswalkLoader.ts";
 import {
 	createLocationProjectionStore,
 	createNamedLocations,
 	readLocationProjectionInventory,
 	readNamedLocationInventory,
-} from "../places/locationLoader";
+} from "../places/locationLoader.ts";
 import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
@@ -46,17 +46,17 @@ import {
 	readLookupManifest,
 	readMeasureCompatibility,
 	readValidationReport,
-} from "./catalogueManifestLoader";
-import { readMapAssets, readMapResources } from "../maps/mapResourceLoader";
+} from "./catalogueManifestLoader.ts";
+import { readMapAssets, readMapResources } from "../maps/mapResourceLoader.ts";
 import {
 	createAreaGeometryCache,
 	readGeometrySources,
-} from "../geometry/geometryLoader";
+} from "../geometry/geometryLoader.ts";
 import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
-import { readRelationshipCandidateInventory } from "./governanceLoader";
+import { readRelationshipCandidateInventory } from "./governanceLoader.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
-import { artifactDirectory } from "../storage/dataLayout";
-import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations";
+import { artifactDirectory } from "../storage/dataLayout.ts";
+import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations.ts";
 
 const EVIDENCE_DOCUMENTS = [
 	"analysis-geography-validation",

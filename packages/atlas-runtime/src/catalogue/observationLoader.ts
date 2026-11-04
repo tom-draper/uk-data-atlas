@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import {
 	atlasDatabasePath,
 	statisticsReadPathPath,
-} from "../storage/dataLayout";
-import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations";
+} from "../storage/dataLayout.ts";
+import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,
@@ -13,7 +13,7 @@ import {
 	lazySourceObservations,
 	ObservationCache,
 	DEFAULT_OBSERVATION_CACHE_BYTES,
-} from "./observationTables";
+} from "./observationTables.ts";
 
 /**
  * Every measure's observations. Driven by the catalogue rather than a

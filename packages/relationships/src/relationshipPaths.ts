@@ -1,4 +1,7 @@
-import type { CrosswalkInventory, CrosswalkMethod } from "./crosswalkInventory";
+import type {
+	CrosswalkInventory,
+	CrosswalkMethod,
+} from "./crosswalkInventory.ts";
 
 export type RelationshipPurpose = "identity" | "membership" | "apportion";
 

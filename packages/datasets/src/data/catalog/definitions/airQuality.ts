@@ -1,6 +1,6 @@
-import { loadAirQuality } from "../../air-quality/loader";
-import type { AirQualityDataset } from "../../../types/airQuality";
-import type { DatasetDefinition } from "../types";
+import { loadAirQuality } from "../../air-quality/loader.ts";
+import type { AirQualityDataset } from "../../../types/airQuality.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const airQualityDatasetDefinition: DatasetDefinition<AirQualityDataset> =
 	{

@@ -13,7 +13,7 @@ import {
 	type PointContainment,
 } from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
-import { borderIndex, sharedBorderWith, type Neighbour } from "./borders";
+import { borderIndex, sharedBorderWith, type Neighbour } from "./borders.ts";
 
 export type GeometryRelease = {
 	candidates(bounds: GeometryBounds): Iterable<string>;
@@ -33,7 +33,10 @@ export type IntersectingArea = {
 };
 
 export class SpatialQueries {
-	constructor(private readonly release: GeometryRelease) {}
+	private readonly release: GeometryRelease;
+	constructor(release: GeometryRelease) {
+		this.release = release;
+	}
 
 	findContaining(point: Coordinate): ContainingArea[] {
 		const matches: ContainingArea[] = [];

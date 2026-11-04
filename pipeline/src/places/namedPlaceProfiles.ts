@@ -4,9 +4,9 @@ import {
 	type Outline,
 	type PlaceIndex,
 } from "@uk-data-atlas/catalogue/place-profile";
-import type { readPlaceResolver } from "./placeResolver";
-import { boundsOf } from "./placeProfileGeometry";
-import { namedRef } from "./placeProfileRefs";
+import type { readPlaceResolver } from "./placeResolver.ts";
+import { boundsOf } from "./placeProfileGeometry.ts";
+import { namedRef } from "./placeProfileRefs.ts";
 
 export function buildNamedPlaceProfiles({
 	resolver,

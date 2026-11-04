@@ -1,11 +1,11 @@
 import {
-	SchoolPerformanceGapData,
-	SchoolPerformanceGapDataset,
-	SchoolPerformanceGapMeasures,
-} from "../../types/schoolPerformance";
-import { parseCsv } from "../../helpers/parseCsv";
-import { endYear } from "../education/ks4";
-import { parseNullableNum } from "../../helpers/parseNumber";
+	type SchoolPerformanceGapData,
+	type SchoolPerformanceGapDataset,
+	type SchoolPerformanceGapMeasures,
+} from "../../types/schoolPerformance.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { endYear } from "../education/ks4.ts";
+import { parseNullableNum } from "../../helpers/parseNumber.ts";
 
 /**
  * Both groups must reach this many pupils before a gap is reported. The

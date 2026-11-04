@@ -10,7 +10,7 @@ import type {
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { csvFields } from "@uk-data-atlas/artifacts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { sha256 } from "./values";
+import { sha256 } from "./values.ts";
 
 /**
  * Census 2021 tables for England and Wales at the two statistical small-area

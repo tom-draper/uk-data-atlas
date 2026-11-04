@@ -1,6 +1,9 @@
-import type { DatasetReader } from "../catalog/types";
-import type { IndicatorDataset, IndicatorRecord } from "../../types/indicator";
-import { parseNullableNum } from "../../helpers/parseNumber";
+import type { DatasetReader } from "../catalog/types.ts";
+import type {
+	IndicatorDataset,
+	IndicatorRecord,
+} from "../../types/indicator.ts";
+import { parseNullableNum } from "../../helpers/parseNumber.ts";
 export async function loadHousingTenure(
 	read: DatasetReader["csvRows"],
 ): Promise<Record<string, IndicatorDataset<"housingTenure">>> {

@@ -1,4 +1,4 @@
-import type { DataCatalog } from "./dataCatalog";
+import type { DataCatalog } from "./dataCatalog.ts";
 
 /**
  * Measures and their dimensions, and how each catalogue measure id maps onto

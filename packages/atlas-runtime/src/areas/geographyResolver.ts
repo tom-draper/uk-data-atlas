@@ -6,41 +6,41 @@ import type {
 } from "@uk-data-atlas/areas";
 
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { GeographyInventory } from "./geographyInventory";
-import type { AreaGeometryCache } from "../geometry/areaGeometry";
+import type { GeographyInventory } from "./geographyInventory.ts";
+import type { AreaGeometryCache } from "../geometry/areaGeometry.ts";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { LocationProjections } from "../places/locationProjections";
+import type { LocationProjections } from "../places/locationProjections.ts";
 import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
-} from "../places/namedLocations";
-import type { AreaSearchIndex } from "./areaSearch";
-import type { PlaceIndex } from "../places/placeIndex";
+} from "../places/namedLocations.ts";
+import type { AreaSearchIndex } from "./areaSearch.ts";
+import type { PlaceIndex } from "../places/placeIndex.ts";
 import type { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeCountsIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
-import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
+import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates.ts";
 import {
 	AreasResolver,
 	type AreaIdentity,
 	type GeographyEndpoint,
-} from "./resolver/areas";
-import { AreaValidation } from "./resolver/areaValidation";
-import { CatalogueResolver } from "./resolver/catalogue";
-import { CapabilityResolver } from "./resolver/capability";
-import { LineageResolver } from "./resolver/lineage";
+} from "./resolver/areas.ts";
+import { AreaValidation } from "./resolver/areaValidation.ts";
+import { CatalogueResolver } from "./resolver/catalogue.ts";
+import { CapabilityResolver } from "./resolver/capability.ts";
+import { LineageResolver } from "./resolver/lineage.ts";
 import {
 	compareBoundaryReleases,
 	type BoundaryReleaseComparison,
-} from "./resolver/releaseComparison";
-import { LocationsResolver } from "./resolver/locations";
-import { PostcodeResolver } from "./resolver/postcodes";
+} from "./resolver/releaseComparison.ts";
+import { LocationsResolver } from "./resolver/locations.ts";
+import { PostcodeResolver } from "./resolver/postcodes.ts";
 import {
 	SpatialResolver,
 	type ResolvedContainingArea,
-} from "./resolver/spatial";
+} from "./resolver/spatial.ts";
 import {
 	CrosswalkTranslator,
 	type CrosswalkLookup,
@@ -67,17 +67,17 @@ export {
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "./resolver/capability";
+} from "./resolver/capability.ts";
 export type {
 	BoundaryExtentChange,
 	BoundaryReleaseComparison,
 	PublishedRelationshipMapping,
-} from "./resolver/releaseComparison";
+} from "./resolver/releaseComparison.ts";
 export type {
 	AreaIdentity,
 	GeographyEndpoint,
 	ResolvedSameCodeArea,
-} from "./resolver/areas";
+} from "./resolver/areas.ts";
 export type {
 	CrosswalkLookup,
 	ResolvedAreaTranslation,
@@ -92,17 +92,17 @@ export type {
 	ResolvedIntersectingAreas,
 	ResolvedAreaNeighbour,
 	ResolvedAreaNeighbours,
-} from "./resolver/spatial";
+} from "./resolver/spatial.ts";
 export type {
 	TraversedRelationship,
 	ResolvedAreaHistory,
 	ResolvedAreaRelationshipSummary,
-} from "./resolver/lineage";
+} from "./resolver/lineage.ts";
 export type {
 	ResolvedRelationshipCoverage,
 	GeographyHealth,
 	RelationshipRepair,
-} from "./resolver/capability";
+} from "./resolver/capability.ts";
 
 export type GeographyResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
@@ -176,10 +176,13 @@ export class GeographyResolver {
 	private readonly translator: CrosswalkTranslator;
 	private readonly capability: CapabilityResolver;
 
+	private readonly inputs: GeographyResolverInputs;
 	constructor(
-		private readonly inputs: GeographyResolverInputs,
+		inputs: GeographyResolverInputs,
 		services = createGeographyServices(inputs),
 	) {
+		this.inputs = inputs;
+
 		this.areas = services.areas;
 		this.catalogue = services.catalogue;
 		this.locations = services.locations;

@@ -1,6 +1,6 @@
-import { loadLE } from "../../life-expectancy/loader";
-import type { LifeExpectancyDataset } from "../../../types/lifeExpectancy";
-import type { DatasetDefinition } from "../types";
+import { loadLE } from "../../life-expectancy/loader.ts";
+import type { LifeExpectancyDataset } from "../../../types/lifeExpectancy.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const lifeExpectancyDatasetDefinition: DatasetDefinition<LifeExpectancyDataset> =
 	{

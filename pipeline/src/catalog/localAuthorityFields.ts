@@ -1,10 +1,10 @@
-import { type DatasetInput, readDatasetInput } from "./input";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	SourceGeography,
 	PopulationObservation,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type PrecompiledFile, object } from "./values";
+import { type PrecompiledFile, object } from "./values.ts";
 import { isPublishedAreaCode } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /**

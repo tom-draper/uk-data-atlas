@@ -6,7 +6,7 @@ import {
 import {
 	readSqliteAreaInventory,
 	readSqliteAreas,
-} from "../storage/atlasAreaReader";
+} from "../storage/atlasAreaReader.ts";
 
 /**
  * Area records kept parsed at once, about 125 bytes each. Every release

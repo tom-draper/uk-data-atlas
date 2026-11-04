@@ -1,6 +1,9 @@
 // lib/types/population.ts
-import { LocalAuthorityYear, WardYear } from "../data/boundaries/years";
-import { AgeData } from "./common";
+import {
+	type LocalAuthorityYear,
+	type WardYear,
+} from "../data/boundaries/years.ts";
+import { type AgeData } from "./common.ts";
 
 /**
  * The age-by-sex counts every population record carries, whatever geography

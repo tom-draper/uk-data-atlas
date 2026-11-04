@@ -2,7 +2,7 @@ import polygonClipping, { type MultiPolygon } from "polygon-clipping";
 import type {
 	AreaGeometryCache,
 	GeoJsonGeometry,
-} from "../geometry/areaGeometry";
+} from "../geometry/areaGeometry.ts";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";

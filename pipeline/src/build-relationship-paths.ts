@@ -7,8 +7,8 @@ import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationsh
 import {
 	compileRelationshipPaths,
 	crosswalkShape,
-} from "./relationships/relationshipPaths";
-import { readApprovedRelationshipPaths } from "./relationships/relationshipPathAdapters";
+} from "./relationships/relationshipPaths.ts";
+import { readApprovedRelationshipPaths } from "./relationships/relationshipPathAdapters.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import {
 	artifactDirectory,

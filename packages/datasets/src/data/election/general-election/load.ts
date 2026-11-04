@@ -1,15 +1,15 @@
 // lib/utils/generalElectionUtils.ts
 import Papa from "papaparse";
 import {
-	GeneralElectionConstituencyData,
-	GeneralElectionDataset,
-} from "../../../types/elections";
+	type GeneralElectionConstituencyData,
+	type GeneralElectionDataset,
+} from "../../../types/elections.ts";
 import {
-	GeneralElectionSourceConfig,
+	type GeneralElectionSourceConfig,
 	GENERAL_ELECTION_SOURCES,
-} from "./config";
-import { PARTY_INFO } from "../parties";
-import { calculateTurnout } from "../../../helpers/turnout";
+} from "./config.ts";
+import { PARTY_INFO } from "../parties.ts";
+import { calculateTurnout } from "../../../helpers/turnout.ts";
 
 // Utility to parse vote counts efficiently
 const parseVotes = (value: unknown): number => {

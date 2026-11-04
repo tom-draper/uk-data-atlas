@@ -9,7 +9,7 @@ import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { addAreaVersion } from "./atlasAreas";
+import { addAreaVersion } from "./atlasAreas.ts";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of

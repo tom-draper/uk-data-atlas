@@ -1,5 +1,8 @@
-import { AirQualityDataset, AirQualityLADData } from "../../types/airQuality";
-import { parseCsv, findHeaderLine } from "../../helpers/parseCsv";
+import {
+	type AirQualityDataset,
+	type AirQualityLADData,
+} from "../../types/airQuality.ts";
+import { parseCsv, findHeaderLine } from "../../helpers/parseCsv.ts";
 
 const YEAR = 2024;
 // The area means are joined to December 2024 authorities and Defra's table is

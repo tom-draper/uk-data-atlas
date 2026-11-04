@@ -1,4 +1,4 @@
-import { varint } from "./varint";
+import { varint } from "./varint.ts";
 
 /**
  * A PMTiles v3 archive: one file holding a whole tile pyramid.

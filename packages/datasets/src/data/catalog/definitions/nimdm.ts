@@ -1,6 +1,6 @@
-import { loadNIMDM } from "../../nimdm/loader";
-import type { NIMDMDataset } from "../../../types/nimdm";
-import type { DatasetDefinition } from "../types";
+import { loadNIMDM } from "../../nimdm/loader.ts";
+import type { NIMDMDataset } from "../../../types/nimdm.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const nimdmDatasetDefinition: DatasetDefinition<NIMDMDataset> = {
 	type: "nimdm",

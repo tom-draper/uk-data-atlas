@@ -3,11 +3,18 @@ import { join } from "node:path";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 
 export class AtlasDatasetInput {
+	readonly repositoryRoot: string;
+	readonly output: string;
+	readonly source: "datasets" | "atlas";
 	constructor(
-		readonly repositoryRoot: string,
-		readonly output: string,
-		readonly source: "datasets" | "atlas" = "datasets",
-	) {}
+		repositoryRoot: string,
+		output: string,
+		source: "datasets" | "atlas" = "datasets",
+	) {
+		this.repositoryRoot = repositoryRoot;
+		this.output = output;
+		this.source = source;
+	}
 	read() {
 		if (this.source === "atlas")
 			return readAtlasPayload(

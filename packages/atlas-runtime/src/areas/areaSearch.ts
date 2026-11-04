@@ -1,8 +1,8 @@
-import type { AreaSearchIndexArtifact } from "./areaSearchCompiler";
+import type { AreaSearchIndexArtifact } from "./areaSearchCompiler.ts";
 export {
 	compileAreaSearchIndex,
 	type AreaSearchIndexArtifact,
-} from "./areaSearchCompiler";
+} from "./areaSearchCompiler.ts";
 import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
@@ -14,7 +14,7 @@ import {
 	lowerBound,
 	type Indexed,
 } from "@uk-data-atlas/search-index";
-import { SqliteIndex, text, unpackPositions } from "../storage/sqliteIndex";
+import { SqliteIndex, text, unpackPositions } from "../storage/sqliteIndex.ts";
 
 /**
  * What a search reads from the index: the artifact itself, or its tables in
@@ -102,10 +102,12 @@ export class AreaSearch {
 	private readonly offsets: number[];
 	private readonly prefixes: string[];
 
-	constructor(
-		private readonly index: AreaSearchIndex,
-		private readonly areaLookup: AreaLookup,
-	) {
+	private readonly index: AreaSearchIndex;
+	private readonly areaLookup: AreaLookup;
+	constructor(index: AreaSearchIndex, areaLookup: AreaLookup) {
+		this.index = index;
+		this.areaLookup = areaLookup;
+
 		this.offsets = [0];
 		for (const release of index.releases)
 			this.offsets.push(this.offsets.at(-1)! + release.codes.length);

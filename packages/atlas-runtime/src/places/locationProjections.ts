@@ -20,7 +20,7 @@ import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 import type { SQLInputValue } from "node:sqlite";
-import { SqliteIndex, unpackJson } from "../storage/sqliteIndex";
+import { SqliteIndex, unpackJson } from "../storage/sqliteIndex.ts";
 
 export type LocationProjection = {
 	locationId: string;
@@ -494,12 +494,19 @@ export class LocationProjectionStore extends LocationProjections {
 		loadSeconds: 0,
 	};
 
+	private readonly load: (
+		shard: LocationProjectionInventory["shards"][number],
+	) => LocationProjectionArtifact;
+	private readonly loadParents?: (
+		shard: LocationProjectionInventory["parentShards"][number],
+	) => LocationParentProjectionArtifact;
+	private readonly capacity: number;
 	constructor(
 		inventory: LocationProjectionInventory,
-		private readonly load: (
+		load: (
 			shard: LocationProjectionInventory["shards"][number],
 		) => LocationProjectionArtifact,
-		private readonly loadParents?: (
+		loadParents?: (
 			shard: LocationProjectionInventory["parentShards"][number],
 		) => LocationParentProjectionArtifact,
 		/**
@@ -509,9 +516,12 @@ export class LocationProjectionStore extends LocationProjections {
 		 * Parent shards are a few megabytes in all and are kept without a
 		 * limit.
 		 */
-		private readonly capacity = 8,
+		capacity = 8,
 	) {
 		super(inventory);
+		this.load = load;
+		this.loadParents = loadParents;
+		this.capacity = capacity;
 	}
 
 	stats(): LocationProjectionCacheStats {

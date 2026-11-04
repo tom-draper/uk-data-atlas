@@ -1,6 +1,6 @@
-import type { Coordinate } from "./types";
-import type { GeoJsonGeometry } from "./types";
-import type { GeometryTier } from "./simplifyGeometry";
+import type { Coordinate } from "./types.ts";
+import type { GeoJsonGeometry } from "./types.ts";
+import type { GeometryTier } from "./simplifyGeometry.ts";
 import {
 	clipWorldRing,
 	toWorldRing,
@@ -9,8 +9,8 @@ import {
 	type TileAddress,
 	type TileBox,
 	type WorldRing,
-} from "./tileGrid";
-import { encodeTile, type TileFeature } from "./vectorTile";
+} from "./tileGrid.ts";
+import { encodeTile, type TileFeature } from "./vectorTile.ts";
 
 /**
  * Which generalisation a zoom level is drawn from, and the tiles themselves.

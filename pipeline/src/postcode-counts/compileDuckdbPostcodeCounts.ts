@@ -1,7 +1,7 @@
 import { releaseKey } from "@uk-data-atlas/geography/postcode-area-types";
 import type { PostcodeCountsArtifact } from "@uk-data-atlas/geography/postcode-count-types";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { aggregateCounts } from "./duckdbPostcodeCounts";
+import { aggregateCounts } from "./duckdbPostcodeCounts.ts";
 import type { readSqlitePostcodeIndexArtifact } from "@uk-data-atlas/atlas-runtime/storage";
 import type { readSqlitePostcodeAreas } from "@uk-data-atlas/atlas-runtime/storage";
 

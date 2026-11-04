@@ -5,7 +5,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildMapResources } from "./buildMapResource";
+import { buildMapResources } from "./buildMapResource.ts";
 
 const path = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === path) {

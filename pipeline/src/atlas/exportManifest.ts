@@ -9,7 +9,7 @@ import {
 	type MeasureTableArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { compileObservationDownloads } from "../statistics/observationDownloads";
+import { compileObservationDownloads } from "../statistics/observationDownloads.ts";
 
 import type {
 	ExportField,

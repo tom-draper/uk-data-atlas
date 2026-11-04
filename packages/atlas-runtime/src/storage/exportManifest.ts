@@ -1,4 +1,4 @@
-import type { ObservationDownload } from "../catalogue/observationDownloads";
+import type { ObservationDownload } from "../catalogue/observationDownloads.ts";
 
 export type ExportField = {
 	name: string;

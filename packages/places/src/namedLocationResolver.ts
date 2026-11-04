@@ -1,12 +1,12 @@
 import type {
 	NamedLocation,
 	NamedLocationInventory,
-} from "./namedLocationTypes";
+} from "./namedLocationTypes.ts";
 import {
 	membersAt,
 	selectNamedLocationAt,
 	type NamedLocationLookup,
-} from "./namedLocations";
+} from "./namedLocations.ts";
 
 const memberAreaKey = (geography: string, code: string) =>
 	`${geography}/${code}`;
@@ -14,10 +14,15 @@ const memberAreaKey = (geography: string, code: string) =>
 export class NamedLocationResolver {
 	private readonly locationsByMemberArea = new Map<string, NamedLocation[]>();
 
+	private readonly inventory?: NamedLocationInventory;
+	private readonly lookup?: NamedLocationLookup;
 	constructor(
-		private readonly inventory?: NamedLocationInventory,
-		private readonly lookup?: NamedLocationLookup,
+		inventory?: NamedLocationInventory,
+		lookup?: NamedLocationLookup,
 	) {
+		this.inventory = inventory;
+		this.lookup = lookup;
+
 		for (const location of inventory?.locations ?? [])
 			for (const code of location.memberCodes) {
 				const key = memberAreaKey(location.memberGeography, code);

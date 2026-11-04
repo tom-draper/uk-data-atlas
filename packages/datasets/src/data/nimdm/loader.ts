@@ -1,11 +1,11 @@
-import { NIMDMDataset, NIMDMLSOAData } from "../../types/nimdm";
+import { type NIMDMDataset, type NIMDMLSOAData } from "../../types/nimdm.ts";
 import {
 	isMostDeprivedNIMDM,
 	summariseDeprivation,
 	summariseDeprivationBy,
-} from "../../helpers/datasetAggregation/deprivation";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNumInt } from "../../helpers/parseNumber";
+} from "../../helpers/datasetAggregation/deprivation.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNumInt } from "../../helpers/parseNumber.ts";
 
 const LGD_CODES: Record<string, string> = {
 	"Antrim and Newtownabbey": "N09000001",

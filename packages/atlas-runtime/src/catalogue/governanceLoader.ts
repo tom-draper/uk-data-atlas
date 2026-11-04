@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
-import { artifactDirectory } from "../storage/dataLayout";
+import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates.ts";
+import { artifactDirectory } from "../storage/dataLayout.ts";
 
 export const readRelationshipCandidateInventory = (
 	repositoryRoot: string,

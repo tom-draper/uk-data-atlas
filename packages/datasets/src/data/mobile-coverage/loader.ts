@@ -1,8 +1,8 @@
 import type {
 	MobileCoverageDataset,
 	MobileCoverageLADData,
-} from "../../types/mobileCoverage";
-import { parseCsv } from "../../helpers/parseCsv";
+} from "../../types/mobileCoverage.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
 
 const YEAR = 2025;
 const BOUNDARY_YEAR = 2024;

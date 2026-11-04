@@ -1,5 +1,5 @@
 import { normalisePlaceName, type NameMatch } from "@uk-data-atlas/geography";
-import { memberCodesAt } from "./namedLocations";
+import { memberCodesAt } from "./namedLocations.ts";
 import { atEach, findSorted, lowerBound } from "@uk-data-atlas/search-index";
 import {
 	AREA_CODE,
@@ -7,7 +7,7 @@ import {
 	type CompiledPlace,
 	type CompiledPlaceLabel,
 	type PlaceIndex,
-} from "./placeIndex";
+} from "./placeIndex.ts";
 
 /**
  * Turning a name someone typed into the places it could mean.

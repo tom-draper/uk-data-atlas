@@ -11,18 +11,18 @@ import {
 	compileParishLadContainment,
 	type ContainmentCrosswalk,
 	type OverlapCrosswalk,
-} from "./areaContainment";
+} from "./areaContainment.ts";
 import {
 	compileAreaLineage,
 	type AreaLineage,
 	type LineageAnswer,
-} from "./areaLineage";
-import { encodeBoundaryMappings, encodeParishLadMappings } from "./mappings";
+} from "./areaLineage.ts";
+import { encodeBoundaryMappings, encodeParishLadMappings } from "./mappings.ts";
 
 import type {
 	AreaIdentity,
 	GeographyEndpoint as Endpoint,
-} from "./areaIdentity";
+} from "./areaIdentity.ts";
 
 /** The parts of the API's geography resolver the lookups are compiled from. */
 export type LookupResolver = {

@@ -1,7 +1,7 @@
-import { loadJobs } from "../../jobs/loader";
-import { loadPopulationUk } from "../../population/ukLoader";
-import type { JobsDataset } from "../../../types/jobs";
-import type { DatasetDefinition } from "../types";
+import { loadJobs } from "../../jobs/loader.ts";
+import { loadPopulationUk } from "../../population/ukLoader.ts";
+import type { JobsDataset } from "../../../types/jobs.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const jobsDatasetDefinition: DatasetDefinition<JobsDataset> = {
 	type: "jobs",

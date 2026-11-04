@@ -1,7 +1,7 @@
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { SourceInventory } from "./sourceInventory";
+import type { SourceInventory } from "./sourceInventory.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 

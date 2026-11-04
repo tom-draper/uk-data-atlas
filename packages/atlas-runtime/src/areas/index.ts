@@ -1,8 +1,8 @@
-export * from "./analysisGeographies";
-export * from "./analysisGeographyValidation";
-export * from "./areaAbsence";
-export * from "./areaAdapters";
-export * from "./areaLookup";
+export * from "./analysisGeographies.ts";
+export * from "./analysisGeographyValidation.ts";
+export * from "./areaAbsence.ts";
+export * from "./areaAdapters.ts";
+export * from "./areaLookup.ts";
 export {
 	borderIndex,
 	sharedBorder,
@@ -11,25 +11,25 @@ export {
 	type Neighbour,
 	type Touch,
 } from "@uk-data-atlas/geometry";
-export * from "./areaResources";
-export * from "./areaSearch";
-export * from "./areaSearchCompiler";
-export * from "./areaSourceAdapters";
-export * from "./batchValidation";
-export * from "./boundaryLoader";
-export * from "./boundaryResources";
-export * from "./capability";
-export * from "./catalog/countries";
-export * from "./countryRelease";
+export * from "./areaResources.ts";
+export * from "./areaSearch.ts";
+export * from "./areaSearchCompiler.ts";
+export * from "./areaSourceAdapters.ts";
+export * from "./batchValidation.ts";
+export * from "./boundaryLoader.ts";
+export * from "./boundaryResources.ts";
+export * from "./capability.ts";
+export * from "./catalog/countries.ts";
+export * from "./countryRelease.ts";
 export * from "@uk-data-atlas/areas";
-export * from "./fullDetailDownloads";
-export * from "./geoJsonProperties";
-export * from "./geographyBuildPath";
-export * from "./geographyInventory";
-export * from "./geographyResolver";
-export * from "./lookupExports";
-export * from "./rankCompatibilityReleases";
-export * from "./rawAreaGeometries";
+export * from "./fullDetailDownloads.ts";
+export * from "./geoJsonProperties.ts";
+export * from "./geographyBuildPath.ts";
+export * from "./geographyInventory.ts";
+export * from "./geographyResolver.ts";
+export * from "./lookupExports.ts";
+export * from "./rankCompatibilityReleases.ts";
+export * from "./rawAreaGeometries.ts";
 export {
 	relatedCodesOf,
 	addRelatedCodes,
@@ -37,22 +37,22 @@ export {
 	type RelatedCodesByRelease,
 	type ReleaseCoverage,
 } from "@uk-data-atlas/relationships";
-export * from "./releaseForDate";
+export * from "./releaseForDate.ts";
 export type { CrosswalkLookup } from "@uk-data-atlas/relationships";
-export * from "./sourceExactProvenance";
-export * from "./resolver/areas";
-export * from "./resolver/capability";
-export * from "./resolver/catalogue";
-export * from "./resolver/conversionCapability";
-export * from "./resolver/lineage";
-export * from "./resolver/locations";
-export { compareBoundaryReleases as compareReleaseEvidence } from "./resolver/releaseComparison";
+export * from "./sourceExactProvenance.ts";
+export * from "./resolver/areas.ts";
+export * from "./resolver/capability.ts";
+export * from "./resolver/catalogue.ts";
+export * from "./resolver/conversionCapability.ts";
+export * from "./resolver/lineage.ts";
+export * from "./resolver/locations.ts";
+export { compareBoundaryReleases as compareReleaseEvidence } from "./resolver/releaseComparison.ts";
 export type {
 	BoundaryExtentChange,
 	RecodedArea,
 	PublishedRelationshipMapping,
 	BoundaryReleaseComparison,
 	ReleaseComparisonSources,
-} from "./resolver/releaseComparison";
-export * from "./resolver/spatial";
-export * from "./resolver/postcodes";
+} from "./resolver/releaseComparison.ts";
+export * from "./resolver/spatial.ts";
+export * from "./resolver/postcodes.ts";

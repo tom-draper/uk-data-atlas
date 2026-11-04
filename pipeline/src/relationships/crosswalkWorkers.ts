@@ -3,7 +3,7 @@ import { availableParallelism } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { CrosswalkArtifact } from "./crosswalkCompiler";
+import type { CrosswalkArtifact } from "./crosswalkCompiler.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 
 export type CrosswalkDependency = { path: string; contentHash: string };

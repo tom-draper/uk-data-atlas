@@ -1,9 +1,9 @@
-import { writeCrosswalkArtifact } from "./crosswalkArtifact";
+import { writeCrosswalkArtifact } from "./crosswalkArtifact.ts";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "./crosswalkWorkers";
-import { readCompiledAreaLookup } from "./crosswalkBuildInputs";
+} from "./crosswalkWorkers.ts";
+import { readCompiledAreaLookup } from "./crosswalkBuildInputs.ts";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -25,12 +25,12 @@ import {
 	type GeometricContainmentCrosswalkArtifact,
 	type PropertyCrosswalkArtifact,
 	type ExtentContinuityCrosswalkArtifact,
-} from "./crosswalkCompiler";
+} from "./crosswalkCompiler.ts";
 import {
 	CONTAINMENT_TOLERANCE_M,
 	geometryContainmentInputs,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import { DIFFERENCE_RULE, REALIGNED_SHARE } from "./extentContinuity";
+import { DIFFERENCE_RULE, REALIGNED_SHARE } from "./extentContinuity.ts";
 import {
 	addRelatedCodes,
 	releaseCoverageOf,

@@ -1,9 +1,9 @@
-import type { DeclaredDataset } from "../declaredStatistics";
+import type { DeclaredDataset } from "../declaredStatistics.ts";
 import {
 	GENERAL_ELECTION,
 	HISTORICAL_GENERAL_ELECTION,
 	LOCAL_ELECTION,
-} from "./elections";
+} from "./elections.ts";
 import {
 	CAR_AVAILABILITY,
 	ETHNICITY,
@@ -11,7 +11,7 @@ import {
 	HOUSING_TENURE,
 	QUALIFICATION,
 	TRAVEL_TO_WORK,
-} from "./census";
+} from "./census.ts";
 import {
 	BUSINESS_ACTIVITY,
 	CHILD_POVERTY,
@@ -27,7 +27,7 @@ import {
 	REGIONAL_GDP_ITL3,
 	UNEMPLOYMENT,
 	WORKPLACE_INCOME,
-} from "./economy";
+} from "./economy.ts";
 import {
 	AIR_QUALITY,
 	BROADBAND,
@@ -38,7 +38,7 @@ import {
 	LAND_AREA,
 	MOBILE_COVERAGE,
 	WASTE,
-} from "./environment";
+} from "./environment.ts";
 import {
 	ADULT_SOCIAL_CARE_ACTIVITY,
 	ADULT_SOCIAL_CARE_OUTCOMES,
@@ -53,7 +53,7 @@ import {
 	SCHOOL_PERFORMANCE,
 	SCHOOL_PERFORMANCE_CONSTITUENCY,
 	SCHOOL_PERFORMANCE_DISADVANTAGE,
-} from "./services";
+} from "./services.ts";
 import {
 	BREXIT,
 	BREXIT_CONSTITUENCY,
@@ -66,7 +66,7 @@ import {
 	POPULATION_WARDS,
 	SIMD,
 	WIMD,
-} from "./people";
+} from "./people.ts";
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */
 export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [

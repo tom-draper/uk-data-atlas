@@ -1,13 +1,13 @@
 import type { AreaLookup } from "@uk-data-atlas/areas";
-import type { CrosswalkArtifact } from "./crosswalkTypes";
-import type { CrosswalkInventory } from "./crosswalkInventory";
+import type { CrosswalkArtifact } from "./crosswalkTypes.ts";
+import type { CrosswalkInventory } from "./crosswalkInventory.ts";
 import type { AreaIdentity, GeographyEndpoint } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	relationshipPurposeFor,
 	type RelationshipPath,
 	type RelationshipPurpose,
-} from "./relationshipPaths";
+} from "./relationshipPaths.ts";
 
 /** What the inventory records of a crosswalk before its artifact is read. */
 export type CrosswalkHeader = Pick<
@@ -366,7 +366,10 @@ export class CrosswalkTranslator {
 	private readonly pathReachCache = new Map<string, number>();
 	private pathsById?: Map<string, RelationshipPath>;
 
-	constructor(private readonly inputs: CrosswalkTranslatorInputs) {}
+	private readonly inputs: CrosswalkTranslatorInputs;
+	constructor(inputs: CrosswalkTranslatorInputs) {
+		this.inputs = inputs;
+	}
 
 	hasCrosswalks() {
 		return this.inputs.crosswalkLookup !== undefined;

@@ -1,11 +1,11 @@
-import { type DatasetInput, readDatasetInput } from "./input";
-import type { CatalogManifest } from "./manifest";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
+import type { CatalogManifest } from "./manifest.ts";
 import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type PrecompiledFile, sha256, number, object } from "./values";
+import { type PrecompiledFile, sha256, number, object } from "./values.ts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const recordsFromData = (

@@ -1,7 +1,7 @@
 // lib/data/electionConfig.ts
 
-import type { WardYear } from "../../boundaries/years";
-import type { LocalElectionYear } from "../../../types/elections";
+import type { WardYear } from "../../boundaries/years.ts";
+import type { LocalElectionYear } from "../../../types/elections.ts";
 
 interface ElectionSourceBase {
 	year: LocalElectionYear;

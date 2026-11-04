@@ -5,8 +5,11 @@ import type {
 	RelationshipPath,
 	RelationshipPurpose,
 } from "@uk-data-atlas/relationships";
-import type { AnyMeasureObservationArtifact, DataCatalog } from "./dataCatalog";
-import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import type {
+	AnyMeasureObservationArtifact,
+	DataCatalog,
+} from "./dataCatalog.ts";
+import type { MeasureCompatibilityInventory } from "./measureCompatibility.ts";
 
 type Endpoint = { geography: string; boundaryRelease: string };
 type CrosswalkSummary = CrosswalkInventory["crosswalks"][number];

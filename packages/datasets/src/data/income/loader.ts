@@ -1,11 +1,11 @@
 import {
-	IncomeDataset,
-	IncomeLADData,
-	IncomePayData,
-	WorkplaceIncomeDataset,
-} from "../../types/income";
-import { parseCsv, findHeaderLine } from "../../helpers/parseCsv";
-import { parseNullableNum as parseNumber } from "../../helpers/parseNumber";
+	type IncomeDataset,
+	type IncomeLADData,
+	type IncomePayData,
+	type WorkplaceIncomeDataset,
+} from "../../types/income.ts";
+import { parseCsv, findHeaderLine } from "../../helpers/parseCsv.ts";
+import { parseNullableNum as parseNumber } from "../../helpers/parseNumber.ts";
 
 async function parsePayData(text: string): Promise<{
 	data: Record<string, IncomePayData>;

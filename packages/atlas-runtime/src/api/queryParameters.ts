@@ -1,4 +1,4 @@
-import type { ChoiceRule, WholeNumberRule } from "./queryRuleCompiler";
+import type { ChoiceRule, WholeNumberRule } from "./queryRuleCompiler.ts";
 
 /** A finite decimal query value, or undefined when absent or invalid. */
 export const readFiniteNumber = (value: string | null) => {

@@ -1,14 +1,14 @@
-import { readSqliteNamedLocationInventory } from "../storage/atlasNamedLocationReader";
-import { readCachePayload, requireAtlasCache } from "../storage/atlasCache";
+import { readSqliteNamedLocationInventory } from "../storage/atlasNamedLocationReader.ts";
+import { readCachePayload, requireAtlasCache } from "../storage/atlasCache.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
 	LocationProjectionDatabase,
 	type LocationProjectionInventory,
-} from "./locationProjections";
+} from "./locationProjections.ts";
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
-} from "./namedLocations";
+} from "./namedLocations.ts";
 
 export const readNamedLocationInventory = readSqliteNamedLocationInventory;
 

@@ -1,6 +1,6 @@
-import { loadGeneralElection } from "../../election/general-election/load";
-import type { GeneralElectionDataset } from "../../../types/elections";
-import type { DatasetDefinition } from "../types";
+import { loadGeneralElection } from "../../election/general-election/load.ts";
+import type { GeneralElectionDataset } from "../../../types/elections.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const generalElectionDatasetDefinition: DatasetDefinition<GeneralElectionDataset> =
 	{

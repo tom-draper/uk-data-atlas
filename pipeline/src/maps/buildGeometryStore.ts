@@ -20,7 +20,7 @@ import { encodeGeometryStore } from "@uk-data-atlas/atlas-runtime/geometry";
 import {
 	compileGeometryValidity,
 	roundKeepingValidity,
-} from "./compileGeometryValidity";
+} from "./compileGeometryValidity.ts";
 import {
 	apiRootOf,
 	artifactDirectory,

@@ -1,5 +1,5 @@
-import { boundsIntersect, type Bounds } from "./areaGeometryPieces";
-import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
+import { boundsIntersect, type Bounds } from "./areaGeometryPieces.ts";
+import { spatialCellKey, spatialCells } from "./geometrySpatialIndex.ts";
 
 /** Bounding-box candidates in the input order, including touching edges. */
 export class CrosswalkSpatialIndex<T> {

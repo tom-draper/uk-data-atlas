@@ -16,7 +16,7 @@ import type { ObservationDownload } from "@uk-data-atlas/atlas-runtime/catalogue
 import {
 	exportStatisticsMeasure,
 	type StatisticsSelection,
-} from "./statisticsExport";
+} from "./statisticsExport.ts";
 
 async function fileHash(path: string): Promise<string> {
 	const hash = createHash("sha256");
