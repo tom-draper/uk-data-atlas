@@ -1,4 +1,5 @@
-import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
+import type { SQLOutputValue } from "node:sqlite";
+import { openReadOnlyDatabase, type SqlReader } from "./readOnlyDatabase.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { SourceGeography } from "@uk-data-atlas/measures";
 
@@ -140,7 +141,7 @@ type Row = {
 
 /** The ids of the series a selector names. */
 const selectedSeries = (
-	database: DatabaseSync,
+	database: SqlReader,
 	selector: Pick<
 		StatisticsSelector,
 		"datasetId" | "measure" | "dimensions" | "geography" | "sum"
@@ -171,7 +172,7 @@ const selectedSeries = (
 	});
 };
 
-const rowsOf = (database: DatabaseSync, seriesId: number): Row[] =>
+const rowsOf = (database: SqlReader, seriesId: number): Row[] =>
 	database
 		.prepare(
 			"SELECT a.code, p.label AS period, o.value, o.lower, o.upper, st.slug AS status FROM observation o JOIN area_version v ON v.id = o.area_version_id JOIN area a ON a.id = v.area_id JOIN period p ON p.id = o.period_id JOIN status st ON st.id = o.status_id WHERE o.series_id = ?",
@@ -201,7 +202,7 @@ export const statisticsPeriod = (period: string, held: Set<string>) => {
 
 /** A contest column of a dataset's elections, by polling day and area code. */
 const contestRows = (
-	database: DatabaseSync,
+	database: SqlReader,
 	selector: StatisticsSelector,
 	column: "winner",
 ) => {
@@ -233,7 +234,7 @@ const contestRows = (
  * keeps one row per area, for the set of areas the measure covers.
  */
 const periodRows = (
-	database: DatabaseSync,
+	database: SqlReader,
 	selector: Pick<
 		StatisticsSelector,
 		"datasetId" | "measure" | "dimensions" | "geography" | "sum"
@@ -283,7 +284,7 @@ const periodRows = (
  * records in area code order, and the content hash of the rest.
  */
 export function rebuildStatisticsObservationText(
-	database: DatabaseSync,
+	database: SqlReader,
 	selector: StatisticsSelector | StatisticsTableSelector,
 	artifact: StatisticsArtifact,
 ): string {
@@ -464,7 +465,7 @@ export function rebuildStatisticsObservationText(
  * and the content hash of the rest.
  */
 function rebuildTableText(
-	database: DatabaseSync,
+	database: SqlReader,
 	selector: StatisticsTableSelector,
 ): string {
 	const artifact = {
@@ -520,10 +521,10 @@ export function readStatisticsObservationText(
 	selector: StatisticsSelector | StatisticsTableSelector,
 	artifact: StatisticsArtifact,
 ): string {
-	const database = new DatabaseSync(path, { readOnly: true });
+	const database = openReadOnlyDatabase(path);
 	try {
 		return rebuildStatisticsObservationText(database, selector, artifact);
 	} finally {
-		database.close();
+		database.release();
 	}
 }
