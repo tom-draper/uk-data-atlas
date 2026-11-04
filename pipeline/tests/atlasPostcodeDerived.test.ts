@@ -216,7 +216,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 		{
 			...db
 				.prepare(
-					"SELECT p.postcode, a.code, a.name FROM postcodes p JOIN areas a ON a.id = p.wardAreaId",
+					"SELECT p.postcode, a.code, a.name FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN areas a ON a.id = s.wardAreaId",
 				)
 				.get(),
 		},
@@ -234,6 +234,67 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 			)
 			.get()!.wardCode,
 		"A",
+	);
+	// Postcodes with the same areas share one numbered set, first seen first.
+	assert.deepEqual(
+		db
+			.prepare("SELECT id, wardAreaId FROM postcode_area_set ORDER BY id")
+			.all()
+			.map((row) => ({ ...row })),
+		[
+			{ id: 1, wardAreaId: 1 },
+			{ id: 2, wardAreaId: null },
+		],
+	);
+	assert.deepEqual(
+		db
+			.prepare(
+				"SELECT postcode, area_set_id FROM postcodes ORDER BY postcode",
+			)
+			.all()
+			.map((row) => ({ ...row })),
+		[
+			{ postcode: "M11AA", area_set_id: 1 },
+			{ postcode: "M11AB", area_set_id: 2 },
+			{ postcode: "SW1A1AA", area_set_id: 2 },
+		],
+	);
+	assert.equal(
+		db
+			.prepare(
+				"SELECT strict FROM pragma_table_list WHERE name = 'postcode_area_set'",
+			)
+			.get()!.strict,
+		1,
+	);
+	assert.deepEqual(
+		db
+			.prepare("SELECT name FROM pragma_table_info('postcodes_decoded')")
+			.all()
+			.map((row) => row.name),
+		[
+			"postcode",
+			"easting",
+			"northing",
+			"quality",
+			"country",
+			"introduced",
+			"terminated",
+			"largeUser",
+			"wardAreaId",
+			"wardDistanceCm",
+			"wardCode",
+		],
+	);
+	assert.deepEqual(
+		{
+			...db
+				.prepare(
+					"SELECT wardAreaId, wardDistanceCm FROM postcodes_decoded WHERE postcode = 'M11AA'",
+				)
+				.get(),
+		},
+		{ wardAreaId: 1, wardDistanceCm: 1234 },
 	);
 	assert.equal(
 		db
@@ -462,7 +523,7 @@ test("repeated geographies use exact releases and preserve shard release order",
 	assert.equal(
 		after
 			.prepare(
-				'SELECT "ward_2025AreaId" AS old, "ward_2026AreaId" AS current FROM postcodes WHERE postcode = ?',
+				'SELECT s."ward_2025AreaId" AS old, s."ward_2026AreaId" AS current FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE p.postcode = ?',
 			)
 			.get("M11AA")!.old,
 		3,
@@ -470,7 +531,7 @@ test("repeated geographies use exact releases and preserve shard release order",
 	assert.equal(
 		after
 			.prepare(
-				'SELECT "ward_2025AreaId" AS old, "ward_2026AreaId" AS current FROM postcodes WHERE postcode = ?',
+				'SELECT s."ward_2025AreaId" AS old, s."ward_2026AreaId" AS current FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE p.postcode = ?',
 			)
 			.get("M11AA")!.current,
 		1,

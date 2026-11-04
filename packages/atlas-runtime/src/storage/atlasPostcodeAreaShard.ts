@@ -47,7 +47,7 @@ export function readPostcodeAreaShard(
 	);
 	const rows = database
 		.prepare(
-			`SELECT * FROM ${table} WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
+			`SELECT p.*, s.* FROM ${table} p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE ${postcodeDistrictWhere} ORDER BY p.postcode`,
 		)
 		.all(
 			entry.district,
