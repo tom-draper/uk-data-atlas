@@ -9,7 +9,7 @@ import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry"
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-} from "./maps/compileMapResource";
+} from "./maps/compileMapResource.ts";
 
 // Run from the repository root. Each process compiles one real release without
 // consulting the map-resource build cache or overwriting published artifacts.
