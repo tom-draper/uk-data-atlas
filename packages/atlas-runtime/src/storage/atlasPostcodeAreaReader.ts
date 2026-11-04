@@ -1,6 +1,9 @@
 import { DatabaseSync } from "node:sqlite";
 import { readAtlasPayload } from "./atlasSqlite.ts";
-import { readPostcodeAreaShard } from "./atlasPostcodeAreaShard.ts";
+import {
+	readPostcodeAreaShard,
+	requirePostcodeAreaLayout,
+} from "./atlasPostcodeAreaShard.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import { atlasDatabasePath } from "./dataLayout.ts";
 
@@ -18,6 +21,7 @@ export function readSqlitePostcodeAreaShard(
 		readOnly: true,
 	});
 	try {
+		requirePostcodeAreaLayout(database);
 		const artifact: PostcodeAreasArtifact = JSON.parse(
 			String(
 				database
