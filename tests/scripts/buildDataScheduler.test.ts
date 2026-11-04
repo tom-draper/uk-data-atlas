@@ -519,3 +519,40 @@ test("a plan lists the waves of stages that can run together and the critical pa
 		"Critical path: root > left > deep > join",
 	]);
 });
+
+test("the real graph runs with overlap but never breaks a dependency or a shared path", async () => {
+	const stages = buildDataStages as Stage[];
+	const started = new Map<string, number>();
+	const ended = new Map<string, number>();
+	let tick = 0;
+	let peak = 0;
+	let active = 0;
+	const { status } = await build(stages, {
+		limits: { jobs: 8, memoryMb: Infinity },
+		execute: async (current) => {
+			started.set(current.name, (tick += 1));
+			active += 1;
+			peak = Math.max(peak, active);
+			await sleep(2);
+			active -= 1;
+			ended.set(current.name, (tick += 1));
+			return 0;
+		},
+	});
+	assert.equal(status, 0);
+	assert.ok(peak > 1, "some stages overlap");
+	assert.equal(ended.size, stages.length);
+	for (const current of stages)
+		for (const dependency of current.dependencies)
+			assert.ok(
+				ended.get(dependency)! < started.get(current.name)!,
+				`${current.name} started before ${dependency} finished`,
+			);
+	for (const [index, first] of stages.entries())
+		for (const second of stages.slice(index + 1))
+			if (conflicts(first, second))
+				assert.ok(
+					ended.get(first.name)! < started.get(second.name)!,
+					`${first.name} and ${second.name} overlapped`,
+				);
+});
