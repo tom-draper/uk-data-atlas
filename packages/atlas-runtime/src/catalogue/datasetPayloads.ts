@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { gunzipSync } from "node:zlib";
 import { atlasCachePath } from "../storage/atlasCache.ts";
 import { rebuildFromDeclaration } from "./declaredPayload.ts";
 import type { Json } from "./declaredStatistics.ts";
@@ -81,27 +82,65 @@ export function rebuildDatasetPayload(
 const digest = (text: string) =>
 	createHash("sha256").update(text).digest("hex");
 
-const readCached = (root: string, output: string, sha256: string) => {
+/** A cached payload as stored: gzipped JSON, with the generated hash. */
+export type StoredDatasetPayload = {
+	/** The hash of the JSON, once decompressed. */
+	sha256: string;
+	/** The size of the JSON, once decompressed. */
+	bytes: number;
+	gzip: Uint8Array;
+};
+
+const readCached = (
+	root: string,
+	output: string,
+	sourceSha256: string,
+): StoredDatasetPayload | undefined => {
 	const path = atlasCachePath(root);
 	if (!existsSync(path)) return undefined;
 	const cache = new DatabaseSync(path, { readOnly: true });
 	try {
 		const row = cache
 			.prepare(
-				"SELECT sha256, payload FROM dataset_payloads WHERE output = ? AND source_sha256 = ?",
+				"SELECT sha256, bytes, gzip FROM dataset_payloads WHERE output = ? AND source_sha256 = ?",
 			)
-			.get(output, sha256);
-		return typeof row?.payload === "string" &&
-			typeof row.sha256 === "string"
-			? { payload: row.payload, sha256: row.sha256 }
+			.get(output, sourceSha256);
+		return typeof row?.sha256 === "string" &&
+			typeof row.bytes === "number" &&
+			row.gzip instanceof Uint8Array
+			? { sha256: row.sha256, bytes: row.bytes, gzip: row.gzip }
 			: undefined;
 	} catch {
-		// A cache from before dataset payloads moved has no table yet.
+		// A cache from before payloads were stored gzipped has no such column.
 		return undefined;
 	} finally {
 		cache.close();
 	}
 };
+
+/**
+ * A dataset's gzipped cache entry for the URL hash `sha256`, for serving as
+ * is. Undefined when the dataset is not cached, or `sha256` is not current.
+ */
+export function readStoredDatasetPayload(
+	root: string,
+	output: string,
+	sha256: string,
+): StoredDatasetPayload | undefined {
+	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"), {
+		readOnly: true,
+	});
+	try {
+		const row = database
+			.prepare("SELECT sha256, payloadId FROM datasets WHERE output = ?")
+			.get(output);
+		if (!row || typeof row.payloadId === "string") return undefined;
+		const cached = readCached(root, output, String(row.sha256));
+		return cached?.sha256 === sha256 ? cached : undefined;
+	} finally {
+		database.close();
+	}
+}
 
 /**
  * A compiled dataset by output name: the stored payload, or for datasets
@@ -142,7 +181,11 @@ export function readDatasetPayloadWithHash(
 		}
 		const current = String(row.sha256);
 		const cached = readCached(root, output, current);
-		if (cached !== undefined) return cached;
+		if (cached !== undefined)
+			return {
+				payload: gunzipSync(cached.gzip).toString("utf8"),
+				sha256: cached.sha256,
+			};
 		const rebuilt = rebuildDatasetPayload(
 			database,
 			String(row.type),

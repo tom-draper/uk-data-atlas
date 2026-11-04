@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
+import { gunzipSync } from "node:zlib";
 import { expect, it } from "vitest";
 
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
@@ -37,7 +38,7 @@ it("serves datasets from rows with the compiled values", () => {
 		);
 		expect(fromRows.length).toBeGreaterThan(0);
 		const cached = cache.prepare(
-			"SELECT source_sha256, sha256, payload FROM dataset_payloads WHERE output = ?",
+			"SELECT source_sha256, sha256, bytes, gzip FROM dataset_payloads WHERE output = ?",
 		);
 		for (const row of fromRows) {
 			const output = String(row.output);
@@ -54,7 +55,12 @@ it("serves datasets from rows with the compiled values", () => {
 			const entry = cached.get(output);
 			expect(entry?.source_sha256, output).toBe(row.sha256);
 			expect(entry?.sha256, output).toBe(digest(rebuilt));
-			expect(entry?.payload === rebuilt, output).toBe(true);
+			expect(entry?.bytes, output).toBe(Buffer.byteLength(rebuilt));
+			expect(
+				gunzipSync(entry?.gzip as Uint8Array).toString("utf8") ===
+					rebuilt,
+				output,
+			).toBe(true);
 			expect(
 				database
 					.prepare("SELECT count(*) AS n FROM payloads WHERE id = ?")

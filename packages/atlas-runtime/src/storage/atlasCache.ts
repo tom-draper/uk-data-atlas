@@ -11,7 +11,7 @@ export type CacheComponent =
 	| "postcode-counts"
 	| "datasets";
 
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 const dependencies: Record<CacheComponent, string[]> = {
 	"area-search": ["area_inventory"],
 	"place-index": [

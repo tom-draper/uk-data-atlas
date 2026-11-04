@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import { type StatisticsDataset } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { statisticsTables } from "../../pipeline/src/storage/index";
@@ -272,25 +273,52 @@ describe("fuel poverty on the statistics model", () => {
 			expect(readAtlasDatasetUrls(root)).toEqual({
 				"fuel-poverty": `/data/catalogue/${hash}/fuel-poverty.json`,
 			});
+			let stored: Buffer | undefined;
 			const cache = new DatabaseSync(atlasCachePath(root));
 			try {
-				expect(
-					cache.prepare("SELECT * FROM dataset_payloads").all(),
-				).toEqual([
+				const rows = cache
+					.prepare("SELECT * FROM dataset_payloads")
+					.all();
+				expect(rows).toEqual([
 					{
 						output: "fuel-poverty",
 						source_sha256: sourceHash,
 						sha256: hash,
-						payload: text,
+						bytes: Buffer.byteLength(text),
+						gzip: expect.any(Uint8Array),
 					},
 				]);
-				cache.exec("UPDATE dataset_payloads SET payload = 'cached'");
+				const gzip = rows[0]!.gzip as Uint8Array;
+				expect(gunzipSync(gzip).toString("utf8")).toBe(text);
+				// No filename flag and a zero mtime keep rebuilds identical.
+				expect(gzip[3]).toBe(0);
+				expect([...gzip.subarray(4, 8)]).toEqual([0, 0, 0, 0]);
+				stored = Buffer.from(gzip);
+				cache
+					.prepare("UPDATE dataset_payloads SET gzip = ?")
+					.run(gzipSync("cached"));
 			} finally {
 				cache.close();
 			}
 			expect(readVersionedAtlasDataset(root, "fuel-poverty", hash)).toBe(
 				"cached",
 			);
+			// Rebuilding the same data stores the same bytes.
+			publishDatasetPayloads(root);
+			const rebuilt = new DatabaseSync(atlasCachePath(root), {
+				readOnly: true,
+			});
+			try {
+				expect(
+					Buffer.from(
+						rebuilt
+							.prepare("SELECT gzip FROM dataset_payloads")
+							.get()!.gzip as Uint8Array,
+					).equals(stored!),
+				).toBe(true);
+			} finally {
+				rebuilt.close();
+			}
 			expect(
 				readVersionedAtlasDataset(root, "fuel-poverty", "stale"),
 			).toBeUndefined();
