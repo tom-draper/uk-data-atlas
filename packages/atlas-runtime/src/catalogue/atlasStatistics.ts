@@ -148,6 +148,8 @@ export type StatisticsDataset = {
 	}>;
 	/** The elections the dataset holds, each with a contest per area. */
 	elections?: () => Iterable<StatisticsElection>;
+	/** Names and colours for the parties its elections mention. */
+	parties?: readonly StatisticsParty[];
 	/** Areas a publisher relates to other areas, such as the one containing them. */
 	relationships?: () => Iterable<{
 		relation: AreaRelationship;
@@ -158,6 +160,13 @@ export type StatisticsDataset = {
 	}>;
 	/** Runs once every row is written, before the database is published. */
 	verify?: (database: DatabaseSync) => void;
+};
+
+/** A party's name and colour, by the key the atlas's payloads use for it. */
+export type StatisticsParty = {
+	key: string;
+	name: string;
+	colour?: string;
 };
 
 /** Text a publisher gives about a contest, beside its votes. */

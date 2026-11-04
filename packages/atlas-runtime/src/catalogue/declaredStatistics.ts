@@ -11,6 +11,7 @@ import type {
 	StatisticsDimension,
 	StatisticsMeasure,
 	StatisticsObservation,
+	StatisticsParty,
 	StatisticsPeriod,
 	StatisticsSeries,
 	StatusSlug,
@@ -241,6 +242,8 @@ export type DeclaredElection = {
 	 * records are, stored as the contest's `winner`.
 	 */
 	results?: string;
+	/** Names and colours of the parties the contests mention. */
+	parties?: readonly StatisticsParty[];
 };
 
 export type DeclaredParent = {
@@ -1158,6 +1161,9 @@ export function declaredStatistics(
 			areaKeys: () => keys.values(),
 			relationships: () => related.values(),
 			elections: () => elections,
+			...(config.election?.parties
+				? { parties: config.election.parties }
+				: {}),
 			verify(database: DatabaseSync) {
 				const row = database
 					.prepare(

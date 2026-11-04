@@ -1,4 +1,7 @@
-import { PARTY_INFO } from "@uk-data-atlas/datasets/data/election/parties";
+import {
+	PARTIES,
+	PARTY_INFO,
+} from "@uk-data-atlas/datasets/data/election/parties";
 import { historicalConstituencyCode } from "@uk-data-atlas/datasets/data/historical-general-election/constituencies";
 import { calculateTurnout } from "@uk-data-atlas/datasets/helpers/turnout";
 import {
@@ -9,6 +12,7 @@ import {
 	type DeclaredRelease,
 	periods,
 } from "../declaredStatistics.ts";
+import type { StatisticsParty } from "../atlasStatistics.ts";
 import {
 	ELECTORATE,
 	REJECTED_BALLOTS,
@@ -24,6 +28,14 @@ const PARTY: DeclaredDimension = {
 	label: "Party",
 	members: PARTY_INFO.map(({ key, name }) => ({ key, label: name })),
 };
+
+/** The parties the atlas names, with the colour it draws each in. */
+const PARTY_REFERENCE: StatisticsParty[] = PARTY_INFO.map(({ key, name }) => ({
+	key,
+	name,
+	colour: (PARTIES as Record<string, { color: string } | undefined>)[key]
+		?.color,
+}));
 
 const PARTY_VOTES = measure(
 	"party-votes",
@@ -124,6 +136,7 @@ export const LOCAL_ELECTION: DeclaredDataset = {
 		kind: "local",
 		date: pollingDay(LOCAL_POLLING_DAYS),
 		results: "results",
+		parties: PARTY_REFERENCE,
 		contest: {
 			area_name: "wardName",
 			authority_code: "ladCode",
@@ -202,6 +215,7 @@ export const GENERAL_ELECTION: DeclaredDataset = {
 		kind: "general",
 		date: pollingDay(GENERAL_POLLING_DAYS),
 		results: "results",
+		parties: PARTY_REFERENCE,
 		contest: {
 			area_name: "constituencyName",
 			region: "regionName",
