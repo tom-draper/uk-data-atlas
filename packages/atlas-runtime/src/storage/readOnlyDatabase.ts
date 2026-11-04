@@ -17,6 +17,11 @@ import { DatabaseSync, type StatementSync } from "node:sqlite";
  * replaced during a lease is retired, and closed once its last lease is
  * released, so a read in flight never loses its connection.
  *
+ * Each connection is tuned when it opens, in `applyPragmas` and nowhere else.
+ * The values come from `connectionPragmas`: a default per file, overridden by
+ * environment variables, and read back so a clamped or ignored value shows in
+ * `readOnlyDatabaseStats` instead of failing silently.
+ *
  * State lives on `globalThis`, so bundlers that load this module more than
  * once (Next.js route bundles, hot reload) still share one set of connections.
  */
@@ -25,6 +30,113 @@ import { DatabaseSync, type StatementSync } from "node:sqlite";
 const DEFAULT_RECHECK_MS = 1000;
 /** Prepared statements kept per connection, least recently used out first. */
 const MAX_STATEMENTS = 256;
+
+/** What a connection is tuned to. `cacheKiB` and `mmapBytes` are per connection. */
+export type ConnectionPragmas = {
+	/** Refuse every write, as a guard on top of the read-only open. */
+	queryOnly: boolean;
+	/** Where temporary tables and sort spills go. */
+	tempStore: "default" | "file" | "memory";
+	/** The page cache, in KiB. Mapped pages do not use it. */
+	cacheKiB: number;
+	/** How much of the file is read through `mmap`. 0 turns it off. */
+	mmapBytes: number;
+};
+
+/**
+ * What a connection gets without overrides. Only the guard is on. On
+ * `atlas.sqlite` and `atlas-cache.sqlite` alike, a bigger page cache, mapped
+ * reads and in-memory temporary storage made no steady-state difference to
+ * latency and cost memory per worker, and mapping slowed cold bulk reads (see
+ * `services/api/benchmarks/sqlite-pragmas.md`). So the cache is SQLite's own
+ * 2000 KiB, set explicitly so it reads back, and mapping is off.
+ */
+const DEFAULT_PRAGMAS: ConnectionPragmas = {
+	queryOnly: true,
+	tempStore: "default",
+	cacheKiB: 2000,
+	mmapBytes: 0,
+};
+
+const integerFromEnvironment = (name: string, minimum: number) => {
+	const text = process.env[name]?.trim();
+	if (!text || !/^\d+$/.test(text)) return undefined;
+	const value = Number(text);
+	return Number.isSafeInteger(value) && value >= minimum ? value : undefined;
+};
+
+/**
+ * The pragmas for a connection: the defaults, then `ATLAS_SQLITE_CACHE_KIB`,
+ * `ATLAS_SQLITE_MMAP_BYTES`, `ATLAS_SQLITE_TEMP_STORE` (`default`, `file` or
+ * `memory`) and `ATLAS_SQLITE_QUERY_ONLY` (`0` to allow writes) for every
+ * file. Unusable values are ignored. Read at each open.
+ */
+export function connectionPragmas(): ConnectionPragmas {
+	const base = DEFAULT_PRAGMAS;
+	const tempStore = process.env.ATLAS_SQLITE_TEMP_STORE?.trim().toLowerCase();
+	return {
+		queryOnly:
+			process.env.ATLAS_SQLITE_QUERY_ONLY?.trim() === "0"
+				? false
+				: base.queryOnly,
+		tempStore:
+			tempStore === "default" ||
+			tempStore === "file" ||
+			tempStore === "memory"
+				? tempStore
+				: base.tempStore,
+		cacheKiB:
+			integerFromEnvironment("ATLAS_SQLITE_CACHE_KIB", 1) ??
+			base.cacheKiB,
+		mmapBytes:
+			integerFromEnvironment("ATLAS_SQLITE_MMAP_BYTES", 0) ??
+			base.mmapBytes,
+	};
+}
+
+const TEMP_STORE_CODES = { default: 0, file: 1, memory: 2 } as const;
+
+/** The values SQLite reports for a connection, as `PRAGMA` reads them back. */
+export type AppliedPragmas = {
+	queryOnly: boolean;
+	tempStore: ConnectionPragmas["tempStore"];
+	/** Negative is KiB, positive is pages. */
+	cacheSize: number;
+	/** SQLite clamps this to its compile-time maximum, and to 0 if mmap is off. */
+	mmapSize: number;
+};
+
+const pragmaValue = (database: DatabaseSync, name: string) =>
+	Number(
+		Object.values(database.prepare(`PRAGMA ${name}`).get() ?? {})[0] ?? 0,
+	);
+
+/** Set the pragmas on a fresh connection and read back what took effect. */
+function applyPragmas(
+	database: DatabaseSync,
+	pragmas: ConnectionPragmas,
+): AppliedPragmas {
+	database.exec(
+		[
+			`PRAGMA query_only = ${pragmas.queryOnly ? 1 : 0}`,
+			`PRAGMA temp_store = ${TEMP_STORE_CODES[pragmas.tempStore]}`,
+			`PRAGMA cache_size = -${pragmas.cacheKiB}`,
+			`PRAGMA mmap_size = ${pragmas.mmapBytes}`,
+		].join(";"),
+	);
+	const tempStore = pragmaValue(database, "temp_store");
+	return {
+		queryOnly: pragmaValue(database, "query_only") === 1,
+		tempStore:
+			(
+				Object.keys(
+					TEMP_STORE_CODES,
+				) as (keyof typeof TEMP_STORE_CODES)[]
+			).find((name) => TEMP_STORE_CODES[name] === tempStore) ?? "default",
+		cacheSize: pragmaValue(database, "cache_size"),
+		mmapSize: pragmaValue(database, "mmap_size"),
+	};
+}
 
 type Identity = {
 	dev: bigint;
@@ -38,6 +150,7 @@ type Entry = {
 	readonly generation: number;
 	readonly database: DatabaseSync;
 	readonly statements: Map<string, StatementSync>;
+	readonly pragmas: AppliedPragmas;
 	identity: Identity;
 	checkedAt: number;
 	leases: number;
@@ -136,17 +249,24 @@ function open(state: Registry, path: string): Entry {
 	// Record the identity before opening: a file replaced in between is then
 	// found on the next check and reopened, never served as the old one.
 	const identity = identityOf(path);
-	// Connection pragmas, if any are wanted, belong here and nowhere else.
 	const database = new DatabaseSync(path, { readOnly: true });
 	if (!identity) {
 		database.close();
 		throw new Error(`Cannot read the identity of ${path}`);
+	}
+	let pragmas: AppliedPragmas;
+	try {
+		pragmas = applyPragmas(database, connectionPragmas());
+	} catch (error) {
+		database.close();
+		throw error;
 	}
 	const entry: Entry = {
 		path,
 		generation: state.nextGeneration++,
 		database,
 		statements: new Map(),
+		pragmas,
 		identity,
 		checkedAt: state.now(),
 		leases: 0,
@@ -318,6 +438,11 @@ export function readOnlyDatabaseStats() {
 	return {
 		open: state.entries.size,
 		retired: state.retired.size,
+		connections: [...state.entries.values()].map((entry) => ({
+			path: entry.path,
+			generation: entry.generation,
+			pragmas: entry.pragmas,
+		})),
 		statements: [...state.entries.values()].reduce(
 			(total, entry) => total + entry.statements.size,
 			0,
