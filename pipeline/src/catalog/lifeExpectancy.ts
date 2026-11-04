@@ -1,10 +1,10 @@
-import { type DatasetInput, readDatasetInput } from "./input";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type { Measure } from "@uk-data-atlas/measures";
 import {
 	isPublishedAreaCode,
 	countriesFor,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type PrecompiledFile, sha256, number, object } from "./values";
+import { type PrecompiledFile, sha256, number, object } from "./values.ts";
 
 /**
  * Life expectancy at birth, as ONS publishes it for local areas: every

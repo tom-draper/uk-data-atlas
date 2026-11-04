@@ -2,12 +2,12 @@ import type {
 	Aggregation,
 	StatisticsMeasure,
 	ValueKind,
-} from "../atlasStatistics";
+} from "../atlasStatistics.ts";
 import type {
 	DeclaredDataset,
 	DeclaredDimension,
 	Json,
-} from "../declaredStatistics";
+} from "../declaredStatistics.ts";
 
 /**
  * Measures shared by several datasets. A slug means one thing everywhere, and

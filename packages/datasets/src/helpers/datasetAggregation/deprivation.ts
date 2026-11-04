@@ -1,13 +1,13 @@
-import type { Features, PropertyKeys } from "../../types/geometry";
-import { getFeatureProp } from "../../types/geometry";
+import type { Features, PropertyKeys } from "../../types/geometry.ts";
+import { getFeatureProp } from "../../types/geometry.ts";
 import type {
 	DeprivationSummary,
 	ScoredDeprivationSummary,
-} from "../../types/deprivation";
-import type { IMDDataset, IMDLSOAData } from "../../types/imd";
-import type { NIMDMDataset, NIMDMLSOAData } from "../../types/nimdm";
-import type { SIMDDataset, SIMDDataZoneData } from "../../types/simd";
-import type { WIMDDataset, WIMDLSOAData } from "../../types/wimd";
+} from "../../types/deprivation.ts";
+import type { IMDDataset, IMDLSOAData } from "../../types/imd.ts";
+import type { NIMDMDataset, NIMDMLSOAData } from "../../types/nimdm.ts";
+import type { SIMDDataset, SIMDDataZoneData } from "../../types/simd.ts";
+import type { WIMDDataset, WIMDLSOAData } from "../../types/wimd.ts";
 
 /**
  * Whether an area is in its nation's most deprived tenth. Where the publisher

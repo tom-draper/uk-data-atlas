@@ -1,6 +1,6 @@
-import { loadNHSWaiting } from "../../nhs-waiting/loader";
-import type { NHSWaitingDataset } from "../../../types/nhsWaiting";
-import type { DatasetDefinition } from "../types";
+import { loadNHSWaiting } from "../../nhs-waiting/loader.ts";
+import type { NHSWaitingDataset } from "../../../types/nhsWaiting.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const nhsWaitingDatasetDefinition: DatasetDefinition<NHSWaitingDataset> =
 	{

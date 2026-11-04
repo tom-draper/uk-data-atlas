@@ -1,11 +1,14 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { CENSUS_BREAKDOWNS } from "../catalog/census";
-import { declaredFieldSeries, type DatasetLookup } from "./declaredFieldSeries";
+import { CENSUS_BREAKDOWNS } from "../catalog/census.ts";
+import {
+	declaredFieldSeries,
+	type DatasetLookup,
+} from "./declaredFieldSeries.ts";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
-} from "./statisticsExport";
+} from "./statisticsExport.ts";
 
 // These are the source fields used by the catalogue compilers. Each dataset's
 // declaration maps a field to its series and period.

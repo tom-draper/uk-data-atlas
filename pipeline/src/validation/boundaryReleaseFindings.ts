@@ -3,8 +3,8 @@ import {
 	canServeAsWgs84,
 	geometryProvenance,
 } from "@uk-data-atlas/geography/coordinates";
-import { type Finding, listed, check } from "./findings";
-import type { ValidationInputs } from "./inputs";
+import { type Finding, listed, check } from "./findings.ts";
+import type { ValidationInputs } from "./inputs.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { knownDisplacementsFor } from "@uk-data-atlas/geography";
 

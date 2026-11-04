@@ -1,5 +1,5 @@
-import type { Coordinate } from "./types";
-import type { GeoJsonGeometry } from "./types";
+import type { Coordinate } from "./types.ts";
+import type { GeoJsonGeometry } from "./types.ts";
 
 /**
  * A boundary release decomposed into shared arcs, so a border between two

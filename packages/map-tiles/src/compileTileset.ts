@@ -1,21 +1,25 @@
-import { featureIds } from "./featureIds";
-import { decomposeArcs } from "./arcs";
-import { compileArchive, type ArchiveOptions } from "./compileArchive";
-import type { GeometryTier } from "./simplifyGeometry";
-import type { TileBox } from "./tileGrid";
-import { ZOOM_TIERS } from "./tileset";
-import { compileTiers } from "./topologyTiers";
-import type { GeoJsonGeometry } from "./types";
-export { LAYER_NAME } from "./compileArchive";
+import { featureIds } from "./featureIds.ts";
+import { decomposeArcs } from "./arcs.ts";
+import { compileArchive, type ArchiveOptions } from "./compileArchive.ts";
+import type { GeometryTier } from "./simplifyGeometry.ts";
+import type { TileBox } from "./tileGrid.ts";
+import { ZOOM_TIERS } from "./tileset.ts";
+import { compileTiers } from "./topologyTiers.ts";
+import type { GeoJsonGeometry } from "./types.ts";
+export { LAYER_NAME } from "./compileArchive.ts";
 export type TilesetOptions = ArchiveOptions;
 
 export class NonCoverageError extends Error {
+	readonly edgeCount: number;
+	readonly areaCodes: readonly string[];
 	constructor(
 		message: string,
-		readonly edgeCount: number,
-		readonly areaCodes: readonly string[],
+		edgeCount: number,
+		areaCodes: readonly string[],
 	) {
 		super(message);
+		this.edgeCount = edgeCount;
+		this.areaCodes = areaCodes;
 	}
 }
 

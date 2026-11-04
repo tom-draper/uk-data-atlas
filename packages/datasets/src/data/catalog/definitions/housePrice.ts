@@ -1,6 +1,6 @@
-import { loadHousePrice } from "../../house-price/loader";
-import type { HousePriceDataset } from "../../../types/housePrice";
-import type { DatasetDefinition } from "../types";
+import { loadHousePrice } from "../../house-price/loader.ts";
+import type { HousePriceDataset } from "../../../types/housePrice.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const housePriceDatasetDefinition: DatasetDefinition<HousePriceDataset> =
 	{

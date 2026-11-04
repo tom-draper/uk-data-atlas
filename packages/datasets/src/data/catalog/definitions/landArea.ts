@@ -1,6 +1,6 @@
-import { loadLandArea } from "../../land-area/loader";
-import type { LandAreaDataset } from "../../../types/landArea";
-import type { DatasetDefinition } from "../types";
+import { loadLandArea } from "../../land-area/loader.ts";
+import type { LandAreaDataset } from "../../../types/landArea.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const landAreaDatasetDefinition: DatasetDefinition<LandAreaDataset> = {
 	type: "landArea",

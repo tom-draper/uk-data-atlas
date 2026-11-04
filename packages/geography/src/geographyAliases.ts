@@ -1,4 +1,4 @@
-import { GEOGRAPHY_KINDS, type GeographyKind } from "./geographyKinds";
+import { GEOGRAPHY_KINDS, type GeographyKind } from "./geographyKinds.ts";
 
 /**
  * Familiar ONS/GSS abbreviations accepted at the API boundary. Responses and

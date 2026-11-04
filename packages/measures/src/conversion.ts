@@ -1,5 +1,5 @@
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
-import type { PopulationObservation } from "./dataCatalog";
+import type { PopulationObservation } from "./dataCatalog.ts";
 import {
 	buildTranslationSteps,
 	type IndexedPathStep,

@@ -1,10 +1,10 @@
-import { IMDDataset, IMDLSOAData } from "../../types/imd";
+import { type IMDDataset, type IMDLSOAData } from "../../types/imd.ts";
 import {
 	summariseDeprivationBy,
 	summariseIMD,
-} from "../../helpers/datasetAggregation/deprivation";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNum, parseNumInt } from "../../helpers/parseNumber";
+} from "../../helpers/datasetAggregation/deprivation.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNum, parseNumInt } from "../../helpers/parseNumber.ts";
 
 export async function loadIMD(
 	read: (path: string) => Promise<string>,

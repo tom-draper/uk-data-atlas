@@ -6,9 +6,9 @@ import {
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { buildDocsCatalogue } from "./buildDocsCatalogue";
-import { writeAtlasPages } from "./atlas/writeAtlasPages";
-import { buildPlaceProfiles } from "./places/buildPlaceProfiles";
+import { buildDocsCatalogue } from "./buildDocsCatalogue.ts";
+import { writeAtlasPages } from "./atlas/writeAtlasPages.ts";
+import { buildPlaceProfiles } from "./places/buildPlaceProfiles.ts";
 import type {
 	AreaProfile,
 	PlaceIndex,

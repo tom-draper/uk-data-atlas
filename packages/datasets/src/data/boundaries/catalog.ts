@@ -1,4 +1,4 @@
-import type { PropertyKeys } from "../../types/geometry";
+import type { PropertyKeys } from "../../types/geometry.ts";
 
 /** The countries a release draws. */
 export type BoundaryExtent = "uk" | "gb" | "ew" | "en" | "w" | "sc" | "ni";

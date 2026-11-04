@@ -2,7 +2,7 @@ import type {
 	DataCatalog,
 	Measure,
 	PopulationObservation,
-} from "./dataCatalog";
+} from "./dataCatalog.ts";
 
 import type { UnitDefinition } from "@uk-data-atlas/catalogue/unit-registry";
 export type { UnitDefinition } from "@uk-data-atlas/catalogue/unit-registry";

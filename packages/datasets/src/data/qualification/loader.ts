@@ -1,10 +1,10 @@
 import {
-	QualificationDataset,
-	QualificationBreakdown,
-} from "../../types/qualification";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNullableInt } from "../../helpers/parseNumber";
-import { addMergedCountAuthorities } from "../localAuthority/reorganisations";
+	type QualificationDataset,
+	type QualificationBreakdown,
+} from "../../types/qualification.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNullableInt } from "../../helpers/parseNumber.ts";
+import { addMergedCountAuthorities } from "../localAuthority/reorganisations.ts";
 
 const CATEGORY_MAP: Record<string, keyof QualificationBreakdown> = {
 	"0": "noQualifications",

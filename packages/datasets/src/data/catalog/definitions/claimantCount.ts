@@ -1,6 +1,6 @@
-import { loadClaimantCount } from "../../claimant-count/loader";
-import type { ClaimantCountDataset } from "../../../types/claimantCount";
-import type { DatasetDefinition } from "../types";
+import { loadClaimantCount } from "../../claimant-count/loader.ts";
+import type { ClaimantCountDataset } from "../../../types/claimantCount.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const claimantCountDatasetDefinition: DatasetDefinition<ClaimantCountDataset> =
 	{

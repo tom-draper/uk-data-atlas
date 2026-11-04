@@ -1,4 +1,4 @@
-import type { ObservationArtifact, ValidationInputs } from "./inputs";
+import type { ObservationArtifact, ValidationInputs } from "./inputs.ts";
 
 type Geography = { type: string; boundaryYear: number };
 

@@ -1,8 +1,8 @@
 // lib/types/areas.ts
 import {
-	LocalElectionWardData,
-	GeneralElectionConstituencyData,
-	LocalAuthorityData,
+	type LocalElectionWardData,
+	type GeneralElectionConstituencyData,
+	type LocalAuthorityData,
 } from "@uk-data-atlas/datasets/types/elections";
 
 type LsoaAreaData = {

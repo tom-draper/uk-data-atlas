@@ -1,5 +1,5 @@
-import { metresPerDegree } from "../areaDistance";
-import { toWgs84Point, type GeometryTransformation } from "./reprojection";
+import { metresPerDegree } from "../areaDistance.ts";
+import { toWgs84Point, type GeometryTransformation } from "./reprojection.ts";
 
 export type LookupPoint = {
 	lng: number;

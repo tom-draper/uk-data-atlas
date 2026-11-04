@@ -1,5 +1,5 @@
-export * from "./data/catalog/types";
-export * from "./data/catalog/ingestion";
-export * from "./data/catalog/registry";
-export * from "./data/catalog/generated";
-export { compileDatasetContents } from "./compileDataset";
+export * from "./data/catalog/types.ts";
+export * from "./data/catalog/ingestion.ts";
+export * from "./data/catalog/registry.ts";
+export * from "./data/catalog/generated.ts";
+export { compileDatasetContents } from "./compileDataset.ts";

@@ -1,9 +1,9 @@
 import {
 	loadPopulationConstituencyYear,
 	POPULATION_CONSTITUENCY_SHEETS,
-} from "../../population-constituency/loader";
-import type { PopulationConstituencyDataset } from "../../../types/populationConstituency";
-import type { DatasetDefinition } from "../types";
+} from "../../population-constituency/loader.ts";
+import type { PopulationConstituencyDataset } from "../../../types/populationConstituency.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 const WORKBOOK =
 	"demographics/population/small-area-estimates/population-constituency-estimates/sapepconstablefinal.xlsx";

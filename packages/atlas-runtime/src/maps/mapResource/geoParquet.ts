@@ -1,5 +1,5 @@
 import type { Coordinate } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "../../geometry/areaGeometry";
+import type { GeoJsonGeometry } from "../../geometry/areaGeometry.ts";
 import type { PackedGeometry } from "@uk-data-atlas/geography/packed-geometry";
 import { writeParquet, type ParquetTable } from "@uk-data-atlas/artifacts";
 import type { TileBox } from "@uk-data-atlas/map-tiles/tileGrid";

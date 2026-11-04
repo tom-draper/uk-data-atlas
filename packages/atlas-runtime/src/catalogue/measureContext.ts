@@ -1,5 +1,5 @@
 import type { ReconciliationContext } from "@uk-data-atlas/measures";
-import type { GeographyResolver } from "../areas/geographyResolver";
+import type { GeographyResolver } from "../areas/geographyResolver.ts";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,

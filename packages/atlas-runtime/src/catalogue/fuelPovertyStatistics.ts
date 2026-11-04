@@ -13,8 +13,8 @@ import type {
 	StatisticsDataset,
 	StatisticsMeasure,
 	StatisticsObservation,
-} from "./atlasStatistics";
-import { HOUSEHOLDS } from "./statisticsDatasets/measures";
+} from "./atlasStatistics.ts";
+import { HOUSEHOLDS } from "./statisticsDatasets/measures.ts";
 
 /**
  * Fuel poverty as statistics rows, and the reader that rebuilds its compiled

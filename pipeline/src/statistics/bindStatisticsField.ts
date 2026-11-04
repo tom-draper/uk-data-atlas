@@ -1,10 +1,13 @@
 import type { DatabaseSync } from "node:sqlite";
-import type { CompiledMeasure } from "../catalog/manifest";
-import { declaredFieldSeries, type DatasetLookup } from "./declaredFieldSeries";
+import type { CompiledMeasure } from "../catalog/manifest.ts";
+import {
+	declaredFieldSeries,
+	type DatasetLookup,
+} from "./declaredFieldSeries.ts";
 import {
 	hashStatisticsSelection,
 	type StatisticsSelection,
-} from "./statisticsExport";
+} from "./statisticsExport.ts";
 
 type Field = NonNullable<CompiledMeasure["statisticsField"]>;
 

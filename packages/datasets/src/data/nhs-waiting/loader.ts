@@ -1,6 +1,9 @@
-import { NHSWaitingDataset, NHSWaitingICBData } from "../../types/nhsWaiting";
-import { LAD_TO_ICB } from "./ladToIcb";
-import { parseNumOrZero } from "../../helpers/parseNumber";
+import {
+	type NHSWaitingDataset,
+	type NHSWaitingICBData,
+} from "../../types/nhsWaiting.ts";
+import { LAD_TO_ICB } from "./ladToIcb.ts";
+import { parseNumOrZero } from "../../helpers/parseNumber.ts";
 
 // Column names for weekly bands ≥18 weeks
 function isOver18WeeksBand(col: string): boolean {

@@ -12,12 +12,12 @@ import {
 	compactMatchIndexLevel,
 	type CompactMatchIndexLevel,
 	type MatchIndex,
-} from "../areaBank";
+} from "../areaBank.ts";
 import {
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 	propertiesAsset,
-} from "../boundaries/catalog";
+} from "../boundaries/catalog.ts";
 import { localDataPath } from "@uk-data-atlas/datasets/data/boundaries/dataPath";
 import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
 

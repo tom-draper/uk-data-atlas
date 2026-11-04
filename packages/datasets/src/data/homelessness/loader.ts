@@ -1,8 +1,8 @@
 import {
-	HomelessnessDataset,
-	HomelessnessLADData,
-} from "../../types/homelessness";
-import type { OdsTableOptions } from "../spreadsheet/ods";
+	type HomelessnessDataset,
+	type HomelessnessLADData,
+} from "../../types/homelessness.ts";
+import type { OdsTableOptions } from "../spreadsheet/ods.ts";
 
 const TABLE_NAME = "TA1";
 const MAX_COLUMNS = 7;

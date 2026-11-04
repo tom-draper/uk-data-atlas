@@ -1,6 +1,6 @@
-import { loadSIMD } from "../../simd/loader";
-import type { SIMDDataset } from "../../../types/simd";
-import type { DatasetDefinition } from "../types";
+import { loadSIMD } from "../../simd/loader.ts";
+import type { SIMDDataset } from "../../../types/simd.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const simdDatasetDefinition: DatasetDefinition<SIMDDataset> = {
 	type: "simd",

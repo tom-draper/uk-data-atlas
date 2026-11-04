@@ -1,4 +1,4 @@
-import type { GeometryValidityReport } from "./geometryValidity";
+import type { GeometryValidityReport } from "./geometryValidity.ts";
 
 export type GeometryTransformation = {
 	name: string;

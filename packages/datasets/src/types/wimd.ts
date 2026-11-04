@@ -1,4 +1,4 @@
-import type { ScoredDeprivationSummary } from "./deprivation";
+import type { ScoredDeprivationSummary } from "./deprivation.ts";
 
 export interface WIMDLSOAData {
 	lsoaCode: string;

@@ -15,7 +15,7 @@ import type {
 	AreaOverlapWeighting,
 	PopulationOverlapWeighting,
 	CrosswalkWeighting,
-} from "./crosswalkInventory";
+} from "./crosswalkInventory.ts";
 export type {
 	CrosswalkMethod,
 	CrosswalkQuality,
@@ -23,7 +23,7 @@ export type {
 	AreaOverlapWeighting,
 	PopulationOverlapWeighting,
 	CrosswalkWeighting,
-} from "./crosswalkInventory";
+} from "./crosswalkInventory.ts";
 
 // Property adapters read an explicit source/target code pair from each
 // feature of one published file.

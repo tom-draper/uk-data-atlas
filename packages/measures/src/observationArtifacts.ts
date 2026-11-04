@@ -4,8 +4,8 @@ import {
 	type AnyMeasureObservationArtifact,
 	type MeasureObservation,
 	type MeasureSource,
-} from "./dataCatalog";
-import { periodRecordLookup } from "./periodRecordLookup";
+} from "./dataCatalog.ts";
+import { periodRecordLookup } from "./periodRecordLookup.ts";
 
 export type ObservationArtifacts = {
 	measureObservations?: AnyMeasureObservationArtifact[];

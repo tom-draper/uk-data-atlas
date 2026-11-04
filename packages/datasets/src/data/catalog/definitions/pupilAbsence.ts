@@ -1,6 +1,6 @@
-import { loadPupilAbsence } from "../../pupil-absence/loader";
-import type { IndicatorDataset } from "../../../types/indicator";
-import type { DatasetDefinition } from "../types";
+import { loadPupilAbsence } from "../../pupil-absence/loader.ts";
+import type { IndicatorDataset } from "../../../types/indicator.ts";
+import type { DatasetDefinition } from "../types.ts";
 export const pupilAbsenceDatasetDefinition: DatasetDefinition<
 	IndicatorDataset<"pupilAbsence">
 > = {

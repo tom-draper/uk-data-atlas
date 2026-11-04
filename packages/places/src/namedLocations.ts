@@ -1,7 +1,7 @@
 import type {
 	NamedLocation,
 	NamedLocationInventory,
-} from "./namedLocationTypes";
+} from "./namedLocationTypes.ts";
 export type NamedLocationLookup = Map<string, NamedLocation>;
 
 export const createNamedLocationLookup = (

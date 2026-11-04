@@ -1,9 +1,9 @@
-import type { JobsDataset, JobsLADData } from "../../types/jobs";
+import type { JobsDataset, JobsLADData } from "../../types/jobs.ts";
 import type {
 	PopulationLocalAuthorityData,
 	PopulationUkDataset,
-} from "../../types/population";
-import { parseCsv } from "../../helpers/parseCsv";
+} from "../../types/population.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
 
 /**
  * ONS restates the whole jobs density series on current district codes with

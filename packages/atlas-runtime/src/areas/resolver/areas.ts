@@ -1,31 +1,31 @@
-import { lazyValue } from "../../storage/lazyValue";
+import { lazyValue } from "../../storage/lazyValue.ts";
 import type {
 	AreaInventory,
 	AreaLookup,
 	AreaRecord,
 } from "@uk-data-atlas/areas";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
-import { explainAreaAbsence, type AreaAbsence } from "../areaAbsence";
+import { explainAreaAbsence, type AreaAbsence } from "../areaAbsence.ts";
 import {
 	summariseBatch,
 	validateBatch,
 	type ValidatedValue,
-} from "../batchValidation";
+} from "../batchValidation.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { resolvePlaces } from "@uk-data-atlas/places";
-import type { PlaceIndex } from "../../places/placeIndex";
+import type { PlaceIndex } from "../../places/placeIndex.ts";
 import {
 	AreaSearch,
 	type AreaMatches,
 	type AreaSearchFilters,
 	type AreaSearchIndex,
-} from "../areaSearch";
+} from "../areaSearch.ts";
 import {
 	compareBoundaryReleases,
 	derivedReleaseSources,
 	selectReleaseForDate,
 	type ReleaseSelection,
-} from "../releaseForDate";
+} from "../releaseForDate.ts";
 import { exactNameMatch, type NameMatch } from "@uk-data-atlas/geography";
 
 import type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";
@@ -67,7 +67,10 @@ export class AreasResolver {
 	>();
 	private readonly derivedSources: Map<string, string>;
 
-	constructor(private readonly inputs: AreasResolverInputs) {
+	private readonly inputs: AreasResolverInputs;
+	constructor(inputs: AreasResolverInputs) {
+		this.inputs = inputs;
+
 		this.derivedSources = derivedReleaseSources(inputs.areaInventory);
 		for (const release of inputs.boundaryRegistry?.releases ?? [])
 			this.boundaryReleases.set(

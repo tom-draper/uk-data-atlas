@@ -1,6 +1,6 @@
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import { type Finding, sha256, listed, check } from "./findings";
-import type { ValidationInputs } from "./inputs";
+import { type Finding, sha256, listed, check } from "./findings.ts";
+import type { ValidationInputs } from "./inputs.ts";
 
 // Weights are published to six decimal places, so a record of n targets can
 // miss 1 by up to n * 5e-7 through rounding alone.

@@ -15,7 +15,10 @@ const same = (a: unknown, b: unknown) =>
 class Registry<T> {
 	readonly items: T[] = [];
 	private readonly ids = new Map<string, number>();
-	constructor(private readonly kind: string) {}
+	private readonly kind: string;
+	constructor(kind: string) {
+		this.kind = kind;
+	}
 	add(key: string, item: T) {
 		const id = this.ids.get(key);
 		if (id !== undefined) {

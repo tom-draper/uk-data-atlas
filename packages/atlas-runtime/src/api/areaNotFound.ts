@@ -1,5 +1,5 @@
-import { problem, type ApiResponse } from "./routeResponse";
-import type { RouteContextFor } from "./routing";
+import { problem, type ApiResponse } from "./routeResponse.ts";
+import type { RouteContextFor } from "./routing.ts";
 
 /**
  * A 404 for an area identity that says why it resolves to nothing: an

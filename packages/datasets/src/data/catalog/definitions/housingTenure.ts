@@ -1,6 +1,6 @@
-import { loadHousingTenure } from "../../housing-tenure/loader";
-import type { IndicatorDataset } from "../../../types/indicator";
-import type { DatasetDefinition } from "../types";
+import { loadHousingTenure } from "../../housing-tenure/loader.ts";
+import type { IndicatorDataset } from "../../../types/indicator.ts";
+import type { DatasetDefinition } from "../types.ts";
 export const housingTenureDatasetDefinition: DatasetDefinition<
 	IndicatorDataset<"housingTenure">
 > = {

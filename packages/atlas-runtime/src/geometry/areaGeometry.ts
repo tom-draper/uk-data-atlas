@@ -2,7 +2,7 @@ import { join } from "node:path";
 import {
 	readGeoJsonFeatures,
 	type GeoJsonFeatures,
-} from "../areas/geoJsonProperties";
+} from "../areas/geoJsonProperties.ts";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
@@ -16,7 +16,7 @@ import {
 	offsetGeometry,
 	readGridOffset,
 	type GridOffset,
-} from "./gridOffset";
+} from "./gridOffset.ts";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import {
 	packedBounds,
@@ -30,8 +30,8 @@ import {
 	loadSubstitutions,
 	reversedOffsetProvenance,
 	substitutionProvenance,
-} from "./geometrySubstitution";
-import { readGeometryStore } from "./geometryStore";
+} from "./geometrySubstitution.ts";
+import { readGeometryStore } from "./geometryStore.ts";
 import type { GeometryValidityReport } from "@uk-data-atlas/geography";
 import {
 	spatialCellKey,
@@ -187,30 +187,38 @@ export class AreaGeometryCache {
 		loadSeconds: 0,
 		spatialIndexBuilds: 0,
 	};
+	private readonly repositoryRoot: string;
+	private readonly sources: GeometrySourceLookup;
+	private readonly maxReleases: number;
+	private readonly storeDirectory?: string;
+	private readonly onStaleCompiled?: (release: string, path: string) => void;
+	private readonly roundSource: (packed: PackedGeometry) => PackedGeometry;
 	constructor(
-		private readonly repositoryRoot: string,
-		private readonly sources: GeometrySourceLookup,
-		private readonly maxReleases = 2,
+		repositoryRoot: string,
+		sources: GeometrySourceLookup,
+		maxReleases = 2,
 		/**
 		 * Where compiled releases are kept (`data:build --only geometry-store`). A release
 		 * must match the registered source. Missing, stale or invalid stores
 		 * are refused; omit the directory only for source-based build tools.
 		 */
-		private readonly storeDirectory?: string,
+		storeDirectory?: string,
 		/** Told before a stale compiled release is rejected. */
-		private readonly onStaleCompiled?: (
-			release: string,
-			path: string,
-		) => void,
+		onStaleCompiled?: (release: string, path: string) => void,
 		/**
 		 * How an area read from a WGS84 source is rounded. Builds that publish
 		 * geometry pass `roundKeepingValidity`, so a few areas keep their
 		 * source precision; it needs a validator the server doesn't ship.
 		 */
-		private readonly roundSource: (
-			packed: PackedGeometry,
-		) => PackedGeometry = roundPacked,
+		roundSource: (packed: PackedGeometry) => PackedGeometry = roundPacked,
 	) {
+		this.repositoryRoot = repositoryRoot;
+		this.sources = sources;
+		this.maxReleases = maxReleases;
+		this.storeDirectory = storeDirectory;
+		this.onStaleCompiled = onStaleCompiled;
+		this.roundSource = roundSource;
+
 		if (!Number.isInteger(maxReleases) || maxReleases < 1)
 			throw new Error(
 				"The geometry cache must hold at least one release.",

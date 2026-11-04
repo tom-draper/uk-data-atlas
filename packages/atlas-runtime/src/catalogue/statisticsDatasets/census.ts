@@ -2,9 +2,9 @@ import {
 	type DeclaredDataset,
 	type Json,
 	periods,
-} from "../declaredStatistics";
-import { yearParts } from "../declaredPayload";
-import { HOUSEHOLDS, USUAL_RESIDENTS, measure } from "./measures";
+} from "../declaredStatistics.ts";
+import { yearParts } from "../declaredPayload.ts";
+import { HOUSEHOLDS, USUAL_RESIDENTS, measure } from "./measures.ts";
 
 /** Census 2021 tables. Each breakdown column is a dimension member. */
 

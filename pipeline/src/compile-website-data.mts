@@ -1,7 +1,7 @@
-import { assembleAtlas } from "./assemble-atlas";
-import { buildAtlasAssets } from "./build-atlas-assets";
-import { buildAtlasSqlite } from "./atlas/buildAtlasSqlite";
-import { buildDataCatalog } from "./build-data-catalog";
+import { assembleAtlas } from "./assemble-atlas.ts";
+import { buildAtlasAssets } from "./build-atlas-assets.ts";
+import { buildAtlasSqlite } from "./atlas/buildAtlasSqlite.ts";
+import { buildDataCatalog } from "./build-data-catalog.ts";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
  * chunks, using the catalogue intermediates in data/build/datasets.
@@ -26,20 +26,20 @@ import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import {
 	discoverDatasets,
 	type DiscoveredDataset,
-} from "../../scripts/dataset-discovery";
+} from "../../scripts/dataset-discovery.ts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import { compileCatalogueDatasets } from "./compile-datasets.mts";
 import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
-} from "./precompile/selection";
+} from "./precompile/selection.ts";
 import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
 import { fileSnapshots } from "./precompile/cache.mts";
 import { OUT_DIR, loadReuseContext, out } from "./precompile/websiteOutput.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
 import { chunksResult } from "./precompile/output.mts";
-import { readAtlasLookup } from "../../scripts/atlas-lookups";
+import { readAtlasLookup } from "../../scripts/atlas-lookups.ts";
 import { ROOT, SOURCE_DATA } from "./precompile/paths.mts";
 import {
 	compileRegionChunks,

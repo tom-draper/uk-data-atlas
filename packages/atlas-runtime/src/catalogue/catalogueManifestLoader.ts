@@ -1,16 +1,16 @@
-import { readAtlasPayload } from "../storage/atlasSqlite";
+import { readAtlasPayload } from "../storage/atlasSqlite.ts";
 import { readFileSync } from "node:fs";
-import type { AnalysisGeographyInventory } from "../areas/analysisGeographies";
-import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation";
-import type { AtlasRelease } from "../storage/atlasRelease";
+import type { AnalysisGeographyInventory } from "../areas/analysisGeographies.ts";
+import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation.ts";
+import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import type { ExportManifest } from "../storage/exportManifest";
-import type { LookupManifest } from "../areas/lookupExports";
+import type { ExportManifest } from "../storage/exportManifest.ts";
+import type { LookupManifest } from "../areas/lookupExports.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import type { ValidationReport } from "./validationReport";
+import type { ValidationReport } from "./validationReport.ts";
 import { withUnitDefinitions } from "@uk-data-atlas/measures";
-import { publicPath, readPublicManifest } from "../storage/publicManifest";
+import { publicPath, readPublicManifest } from "../storage/publicManifest.ts";
 
 export const readAtlasRelease = (repositoryRoot: string): AtlasRelease =>
 	readPublicManifest<AtlasRelease>(

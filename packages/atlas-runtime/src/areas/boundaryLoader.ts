@@ -1,23 +1,26 @@
-import { requireAtlasCache } from "../storage/atlasCache";
+import { requireAtlasCache } from "../storage/atlasCache.ts";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeCounts,
-} from "../storage/atlasPostcodeDerived";
-import { readGeographyCatalogue } from "../catalogue/geographyCatalogue";
-import { readSqliteAreaInventory } from "../storage/atlasAreaReader";
+} from "../storage/atlasPostcodeDerived.ts";
+import { readGeographyCatalogue } from "../catalogue/geographyCatalogue.ts";
+import { readSqliteAreaInventory } from "../storage/atlasAreaReader.ts";
 import { existsSync, readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { GeographyInventory } from "./geographyInventory";
-import type { NamedLocationInventory } from "../places/namedLocations";
-import { openPlaceIndexDatabase, type PlaceIndex } from "../places/placeIndex";
+import type { GeographyInventory } from "./geographyInventory.ts";
+import type { NamedLocationInventory } from "../places/namedLocations.ts";
+import {
+	openPlaceIndexDatabase,
+	type PlaceIndex,
+} from "../places/placeIndex.ts";
 import {
 	openAreaSearchIndexDatabase,
 	type AreaSearchIndex,
-} from "./areaSearch";
+} from "./areaSearch.ts";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
-import { readSqlitePostcodeIndex } from "../storage/atlasPostcodesReader";
+import { readSqlitePostcodeIndex } from "../storage/atlasPostcodesReader.ts";
 import {
 	PostcodeAreaIndex,
 	postcodeAreasMismatch,
@@ -26,12 +29,12 @@ import {
 	PostcodeCountsIndex,
 	postcodeCountsMismatch,
 } from "@uk-data-atlas/postcodes";
-import type { GeometrySourceLookup } from "../geometry/areaGeometry";
+import type { GeometrySourceLookup } from "../geometry/areaGeometry.ts";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
-import { publicPath } from "../storage/publicManifest";
-import { atlasDatabasePath } from "../storage/dataLayout";
+import { publicPath } from "../storage/publicManifest.ts";
+import { atlasDatabasePath } from "../storage/dataLayout.ts";
 
-export { readBoundaryRegistry } from "../catalogue/boundaryCatalogue";
+export { readBoundaryRegistry } from "../catalogue/boundaryCatalogue.ts";
 
 export const readGeographyInventory = (
 	repositoryRoot: string,
@@ -68,7 +71,7 @@ export const readTerrainCatalogue = (
 
 export const readAreaInventory = readSqliteAreaInventory;
 
-export { DEFAULT_AREA_CACHE_RECORDS, readAreaLookup } from "./areaLookup";
+export { DEFAULT_AREA_CACHE_RECORDS, readAreaLookup } from "./areaLookup.ts";
 
 /**
  * The compiled place index, read from its SQLite tables, refused unless built

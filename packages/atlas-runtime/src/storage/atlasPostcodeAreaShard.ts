@@ -1,6 +1,6 @@
 import { type DatabaseSync } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { postcodeDistrictWhere } from "./atlasPostcodeShard";
+import { postcodeDistrictWhere } from "./atlasPostcodeShard.ts";
 import {
 	NONE,
 	SEVERAL,

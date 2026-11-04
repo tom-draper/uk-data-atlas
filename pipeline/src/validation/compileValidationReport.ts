@@ -3,13 +3,13 @@ import type {
 	ValidationResource,
 	ValidationReport,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type Finding, sha256 } from "./findings";
-import type { ValidationWaiver, ValidationInputs } from "./inputs";
-import { atlasFindings } from "./atlasFindings";
-import { boundaryReleaseFindings } from "./boundaryReleaseFindings";
-import { crosswalkFindings } from "./crosswalkFindings";
-import { measureFindings } from "./measureFindings";
-import { measureSourceFindings } from "./measureSourceFindings";
+import { type Finding, sha256 } from "./findings.ts";
+import type { ValidationWaiver, ValidationInputs } from "./inputs.ts";
+import { atlasFindings } from "./atlasFindings.ts";
+import { boundaryReleaseFindings } from "./boundaryReleaseFindings.ts";
+import { crosswalkFindings } from "./crosswalkFindings.ts";
+import { measureFindings } from "./measureFindings.ts";
+import { measureSourceFindings } from "./measureSourceFindings.ts";
 
 /**
  * Check every published resource and apply the recorded waivers. The build is

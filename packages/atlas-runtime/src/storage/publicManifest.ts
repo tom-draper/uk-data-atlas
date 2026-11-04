@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { artifactDirectory } from "./dataLayout";
+import { artifactDirectory } from "./dataLayout.ts";
 
 export const publicPath = (repositoryRoot: string, filename: string) =>
 	join(artifactDirectory(repositoryRoot), filename);

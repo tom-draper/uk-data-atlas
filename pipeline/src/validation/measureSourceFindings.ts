@@ -2,15 +2,15 @@ import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 import type { MeasureSource } from "@uk-data-atlas/measures";
 import { countryForCode } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BulkExport } from "@uk-data-atlas/atlas-runtime/storage";
-import { type Finding, sha256, listed, check } from "./findings";
-import type { MeasureTotal, ValidationInputs } from "./inputs";
+import { type Finding, sha256, listed, check } from "./findings.ts";
+import type { MeasureTotal, ValidationInputs } from "./inputs.ts";
 import { observationTableOf } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	sameGeography,
 	describeGeography,
 	exportFor,
 	periodsOf,
-} from "./sourceGeography";
+} from "./sourceGeography.ts";
 
 const areaCodeSets = new WeakMap<AreaReleaseArtifact, Set<string>>();
 

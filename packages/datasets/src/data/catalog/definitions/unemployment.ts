@@ -1,6 +1,6 @@
-import { loadUnemployment } from "../../unemployment/loader";
-import type { UnemploymentDataset } from "../../../types/unemployment";
-import type { DatasetDefinition } from "../types";
+import { loadUnemployment } from "../../unemployment/loader.ts";
+import type { UnemploymentDataset } from "../../../types/unemployment.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const unemploymentDatasetDefinition: DatasetDefinition<UnemploymentDataset> =
 	{

@@ -16,7 +16,7 @@ import { chunksResult } from "./output.mts";
 import {
 	ATLAS_LOOKUP_NAMES,
 	readAtlasLookup,
-} from "../../../scripts/atlas-lookups";
+} from "../../../scripts/atlas-lookups.ts";
 import { ROOT } from "./paths.mts";
 import { OUT_DIR } from "./websiteOutput.mts";
 import type {

@@ -1,10 +1,10 @@
 import {
-	CrimeCounts,
-	CrimeDataset,
-	CrimeLADData,
-	CrimePartnershipData,
-} from "../../types/crime";
-import { parseCsv, findHeaderLine } from "../../helpers/parseCsv";
+	type CrimeCounts,
+	type CrimeDataset,
+	type CrimeLADData,
+	type CrimePartnershipData,
+} from "../../types/crime.ts";
+import { parseCsv, findHeaderLine } from "../../helpers/parseCsv.ts";
 
 /**
  * The twelve months a table covers, from its title, such as "year ending March

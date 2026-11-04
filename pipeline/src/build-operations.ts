@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { compileOperationTemplates } from "./atlas/operationTemplates";
+import { compileOperationTemplates } from "./atlas/operationTemplates.ts";
 import {
 	openapiDocumentHash,
 	type OperationsArtifact,

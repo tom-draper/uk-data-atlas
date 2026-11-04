@@ -5,7 +5,7 @@ import polygonClipping, {
 	type Polygon,
 	type Ring,
 } from "polygon-clipping";
-import type { Bounds } from "./areaGeometryPieces";
+import type { Bounds } from "./areaGeometryPieces.ts";
 
 export const CLIPPING_VERSION = clippingPackage.version;
 

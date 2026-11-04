@@ -1,8 +1,8 @@
 import {
 	readSqliteCrosswalkInventory,
 	readSqliteCrosswalk,
-} from "../storage/atlasCrosswalks";
-import { readAtlasPayload } from "../storage/atlasSqlite";
+} from "../storage/atlasCrosswalks.ts";
+import { readAtlasPayload } from "../storage/atlasSqlite.ts";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
@@ -10,7 +10,7 @@ import type {
 	CrosswalkHeader,
 	CrosswalkLookup,
 } from "@uk-data-atlas/relationships";
-import { atlasDatabasePath } from "../storage/dataLayout";
+import { atlasDatabasePath } from "../storage/dataLayout.ts";
 
 export const readCrosswalkInventory = readSqliteCrosswalkInventory;
 
@@ -24,12 +24,19 @@ class LazyCrosswalkLookup implements CrosswalkLookup {
 	>();
 	private bytes = 0;
 
+	private readonly repositoryRoot: string;
+	private readonly maxBytes: number;
+	private readonly databasePath?: string;
 	constructor(
-		private readonly repositoryRoot: string,
+		repositoryRoot: string,
 		inventory: CrosswalkInventory,
-		private readonly maxBytes: number,
-		private readonly databasePath?: string,
+		maxBytes: number,
+		databasePath?: string,
 	) {
+		this.repositoryRoot = repositoryRoot;
+		this.maxBytes = maxBytes;
+		this.databasePath = databasePath;
+
 		if (!Number.isSafeInteger(maxBytes) || maxBytes < 0)
 			throw new Error(
 				"Crosswalk cache bytes must be a non-negative safe integer.",

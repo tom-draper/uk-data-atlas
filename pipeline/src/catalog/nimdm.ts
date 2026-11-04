@@ -1,9 +1,9 @@
-import { type DatasetInput } from "./input";
+import { type DatasetInput } from "./input.ts";
 import type { Measure } from "@uk-data-atlas/measures";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
-import { sha256 } from "./values";
+import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 
 /**
  * The Northern Ireland Multiple Deprivation Measure 2017, as its published

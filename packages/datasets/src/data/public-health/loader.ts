@@ -1,5 +1,5 @@
-import type { DatasetReader } from "../catalog/types";
-import { parseNullableNum } from "../../helpers/parseNumber";
+import type { DatasetReader } from "../catalog/types.ts";
+import { parseNullableNum } from "../../helpers/parseNumber.ts";
 export const PUBLIC_HEALTH_MEASURES = [
 	{
 		value: "smoking",

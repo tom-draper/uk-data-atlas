@@ -5,17 +5,23 @@ import {
 } from "@uk-data-atlas/datasets/data/gazetteer/geometry";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { readPlaceResolver } from "./placeResolver";
-import { boundsOf, centreOf } from "./placeProfileGeometry";
+import { readPlaceResolver } from "./placeResolver.ts";
+import { boundsOf, centreOf } from "./placeProfileGeometry.ts";
 import {
 	contemporary,
 	namedRef,
 	ref,
 	type Relationship,
-} from "./placeProfileRefs";
-import { buildAreaTimeline, addNamedPlaceEvents } from "./placeProfileTimeline";
-import { buildNamedPlaceProfiles } from "./namedPlaceProfiles";
-import { readDatasetCoverage, readPopulations } from "./placeProfileDatasets";
+} from "./placeProfileRefs.ts";
+import {
+	buildAreaTimeline,
+	addNamedPlaceEvents,
+} from "./placeProfileTimeline.ts";
+import { buildNamedPlaceProfiles } from "./namedPlaceProfiles.ts";
+import {
+	readDatasetCoverage,
+	readPopulations,
+} from "./placeProfileDatasets.ts";
 import {
 	PLACE_GEOGRAPHIES,
 	encodeOutline,

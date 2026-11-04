@@ -1,2 +1,2 @@
-export * from "./borders";
-export * from "./spatialQueries";
+export * from "./borders.ts";
+export * from "./spatialQueries.ts";

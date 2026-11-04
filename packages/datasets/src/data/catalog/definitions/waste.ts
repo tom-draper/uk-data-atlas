@@ -1,8 +1,8 @@
-import { loadWaste } from "../../new-datasets/loader";
-import type { IndicatorDataset } from "../../../types/indicator";
-import type { DatasetDefinition } from "../types";
-import { loadPopulationUk } from "../../population/ukLoader";
-import { addPopulationMetrics } from "../../population/metrics";
+import { loadWaste } from "../../new-datasets/loader.ts";
+import type { IndicatorDataset } from "../../../types/indicator.ts";
+import type { DatasetDefinition } from "../types.ts";
+import { loadPopulationUk } from "../../population/ukLoader.ts";
+import { addPopulationMetrics } from "../../population/metrics.ts";
 
 export const wasteDatasetDefinition: DatasetDefinition<
 	IndicatorDataset<"waste">

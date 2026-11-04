@@ -1,9 +1,9 @@
-import { parseCsv } from "../../helpers/parseCsv";
-import type { AgeData } from "../../types/common";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import type { AgeData } from "../../types/common.ts";
 import type {
 	PopulationLocalAuthorityData,
 	PopulationUkDataset,
-} from "../../types/population";
+} from "../../types/population.ts";
 
 /** Local authority codes in the MYEB1 sheet, e.g. E06000001. */
 const LA_CODE = /^[ENSW]\d{8}$/;

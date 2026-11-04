@@ -1,5 +1,5 @@
-import { BoundaryGeometry, outerRings } from "../types/geometry";
-import { PopulationAgeSexRecord } from "../types/population";
+import { type BoundaryGeometry, outerRings } from "../types/geometry.ts";
+import { type PopulationAgeSexRecord } from "../types/population.ts";
 
 export const calculateTotal = (ageData: { [age: string]: number }): number => {
 	let sum = 0;

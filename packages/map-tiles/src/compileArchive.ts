@@ -1,7 +1,7 @@
-import { featureIds } from "./featureIds";
-import { buildArchive, type ArchiveTile, type Gzip } from "./pmtiles";
-import type { GeometryTier } from "./simplifyGeometry";
-import { tileBounds, tilesCovering, type TileBox } from "./tileGrid";
+import { featureIds } from "./featureIds.ts";
+import { buildArchive, type ArchiveTile, type Gzip } from "./pmtiles.ts";
+import type { GeometryTier } from "./simplifyGeometry.ts";
+import { tileBounds, tilesCovering, type TileBox } from "./tileGrid.ts";
 import {
 	boundsOf,
 	buildTile,
@@ -10,8 +10,8 @@ import {
 	MIN_ZOOM,
 	ZOOM_TIERS,
 	type MapFeature,
-} from "./tileset";
-import type { GeoJsonGeometry } from "./types";
+} from "./tileset.ts";
+import type { GeoJsonGeometry } from "./types.ts";
 
 export const LAYER_NAME = "boundaries";
 export type ArchiveOptions = {

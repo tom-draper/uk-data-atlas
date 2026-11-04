@@ -1,4 +1,8 @@
-import { CustomDataset, CustomPoint, PointSummary } from "@/lib/types/custom";
+import {
+	type CustomDataset,
+	type CustomPoint,
+	type PointSummary,
+} from "@/lib/types/custom";
 import { parseCsv } from "@uk-data-atlas/datasets/helpers/parseCsv";
 import type { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
 

@@ -1,4 +1,4 @@
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { BoundaryRegistry } from "./boundaryRegistry.ts";
 
 type BoundaryRelease = BoundaryRegistry["releases"][number];
 

@@ -1,1 +1,1 @@
-export { NAME_NORMALISATION } from "./nameFingerprint";
+export { NAME_NORMALISATION } from "./nameFingerprint.ts";

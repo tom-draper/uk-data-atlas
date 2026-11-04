@@ -1,8 +1,8 @@
-import type { GeoJsonGeometry } from "./geometryTypes";
+import type { GeoJsonGeometry } from "./geometryTypes.ts";
 import {
 	geometryBounds,
 	type GeometryBounds,
-} from "./geometryPointContainment";
+} from "./geometryPointContainment.ts";
 
 /**
  * A GeoJSON geometry held as flat typed arrays. Parsed GeoJSON stores every

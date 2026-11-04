@@ -1,5 +1,5 @@
-import { BoundaryGeojson } from "./geometry";
-import type { BoundaryType as CatalogBoundaryType } from "../data/boundaries/catalog";
+import { type BoundaryGeojson } from "./geometry.ts";
+import type { BoundaryType as CatalogBoundaryType } from "../data/boundaries/catalog.ts";
 
 export type BoundaryType = CatalogBoundaryType;
 

@@ -1,8 +1,8 @@
-import { parseCsv } from "../../helpers/parseCsv";
+import { parseCsv } from "../../helpers/parseCsv.ts";
 import type {
 	PopulationConstituencyData,
 	PopulationConstituencyDataset,
-} from "../../types/populationConstituency";
+} from "../../types/populationConstituency.ts";
 
 /** The workbook's mid-years, each on the constituencies in force from July 2024. */
 export const POPULATION_CONSTITUENCY_SHEETS = {

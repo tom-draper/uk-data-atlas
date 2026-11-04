@@ -1,6 +1,6 @@
-import { loadCrime } from "../../crime/loader";
-import type { CrimeDataset } from "../../../types/crime";
-import type { DatasetDefinition } from "../types";
+import { loadCrime } from "../../crime/loader.ts";
+import type { CrimeDataset } from "../../../types/crime.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const crimeDatasetDefinition: DatasetDefinition<CrimeDataset> = {
 	type: "crime",

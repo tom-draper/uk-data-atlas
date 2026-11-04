@@ -1,4 +1,4 @@
-import type { PopulationObservation } from "./dataCatalog";
+import type { PopulationObservation } from "./dataCatalog.ts";
 
 type RecordLookup = (areaCode: string) => PopulationObservation | undefined;
 const lookups = new WeakMap<object, RecordLookup>();

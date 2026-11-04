@@ -1,5 +1,8 @@
-import { BroadbandDataset, BroadbandLADData } from "../../types/broadband";
-import { parseCsv } from "../../helpers/parseCsv";
+import {
+	type BroadbandDataset,
+	type BroadbandLADData,
+} from "../../types/broadband.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
 
 const YEAR = 2025;
 const BOUNDARY_YEAR = 2024;

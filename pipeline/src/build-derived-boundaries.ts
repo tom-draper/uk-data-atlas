@@ -11,7 +11,7 @@ import {
 	readAreaSourceAdapters,
 	type AreaSourceAdapterManifest,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import { sourceGeoJsonPath } from "./geographies/boundarySourcePaths";
+import { sourceGeoJsonPath } from "./geographies/boundarySourcePaths.ts";
 import {
 	artifactDirectory,
 	configDirectory,

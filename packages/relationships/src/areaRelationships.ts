@@ -1,12 +1,12 @@
-import type { CrosswalkArtifact } from "./crosswalkTypes";
+import type { CrosswalkArtifact } from "./crosswalkTypes.ts";
 import type {
 	CrosswalkMethod,
 	CrosswalkQuality,
 	CrosswalkWeighting,
-} from "./crosswalkInventory";
+} from "./crosswalkInventory.ts";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
-import { relatedCodesOf } from "./relatedCodes";
-import { selectCrosswalks, type CrosswalkLookup } from "./translation";
+import { relatedCodesOf } from "./relatedCodes.ts";
+import { selectCrosswalks, type CrosswalkLookup } from "./translation.ts";
 
 export type AreaRelation =
 	| "within"
@@ -366,7 +366,10 @@ export class LazyAreaRelationshipIndex {
 	private readonly areas = new Map<string, AreaRelationship[]>();
 	private readonly followed = new Map<string, AreaRelationship[]>();
 
-	constructor(private readonly lookup: CrosswalkLookup) {}
+	private readonly lookup: CrosswalkLookup;
+	constructor(lookup: CrosswalkLookup) {
+		this.lookup = lookup;
+	}
 
 	/**
 	 * An area's relationships, or with `follow` only those of the relations

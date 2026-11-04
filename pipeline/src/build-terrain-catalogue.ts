@@ -1,7 +1,7 @@
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createTerrainCatalogue } from "./terrainCatalogue";
+import { createTerrainCatalogue } from "./terrainCatalogue.ts";
 import {
 	artifactDirectory,
 	buildLog,

@@ -1,6 +1,6 @@
-import { loadMobileCoverage } from "../../mobile-coverage/loader";
-import type { MobileCoverageDataset } from "../../../types/mobileCoverage";
-import type { DatasetDefinition } from "../types";
+import { loadMobileCoverage } from "../../mobile-coverage/loader.ts";
+import type { MobileCoverageDataset } from "../../../types/mobileCoverage.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const mobileCoverageDatasetDefinition: DatasetDefinition<MobileCoverageDataset> =
 	{

@@ -2,11 +2,11 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { atlasCachePath } from "../storage/atlasCache";
-import { rebuildFromDeclaration } from "./declaredPayload";
-import type { Json } from "./declaredStatistics";
-import { rebuildFuelPoverty } from "./fuelPovertyStatistics";
-import { STATISTICS_DATASETS } from "./statisticsDatasets";
+import { atlasCachePath } from "../storage/atlasCache.ts";
+import { rebuildFromDeclaration } from "./declaredPayload.ts";
+import type { Json } from "./declaredStatistics.ts";
+import { rebuildFuelPoverty } from "./fuelPovertyStatistics.ts";
+import { STATISTICS_DATASETS } from "./statisticsDatasets/index.ts";
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),

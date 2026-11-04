@@ -1,8 +1,8 @@
-import { type DatasetInput, readDatasetInput } from "./input";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
 import { countryForCode } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type Indicator, publishIndicators } from "./indicators";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
-import { sha256 } from "./values";
+import { type Indicator, publishIndicators } from "./indicators.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 
 /** Final annual reported road collisions, by local authority and by LSOA. */
 export const compileRoadCollisions = (

@@ -1,15 +1,15 @@
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
-import type { StatisticsPeriod } from "../atlasStatistics";
+import type { StatisticsPeriod } from "../atlasStatistics.ts";
 import {
 	type DeclaredDataset,
 	type DeclaredDimension,
 	type DeclaredField,
 	type Json,
 	periods,
-} from "../declaredStatistics";
-import { yearParts } from "../declaredPayload";
-import type { DeclaredPayload } from "../declaredStatistics";
-import { measure, per100k } from "./measures";
+} from "../declaredStatistics.ts";
+import { yearParts } from "../declaredPayload.ts";
+import type { DeclaredPayload } from "../declaredStatistics.ts";
+import { measure, per100k } from "./measures.ts";
 
 /** Pay, jobs, output, prices and the labour market. */
 

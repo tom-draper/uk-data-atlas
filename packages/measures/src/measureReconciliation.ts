@@ -3,18 +3,18 @@ import {
 	convertThroughSteps,
 	type ConversionMethod,
 	type ConversionStep,
-} from "./conversion";
+} from "./conversion.ts";
 import {
 	isNumericObservation,
 	type DataCatalog,
 	type MeasureSource,
-} from "./dataCatalog";
-import { measureCoverage } from "./measureCoverage";
-import { observationsFor } from "./observationArtifacts";
+} from "./dataCatalog.ts";
+import { measureCoverage } from "./measureCoverage.ts";
+import { observationsFor } from "./observationArtifacts.ts";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { ReconciliationContext as MeasureContext } from "./reconciliationContext";
+import type { ReconciliationContext as MeasureContext } from "./reconciliationContext.ts";
 
 type Measure = DataCatalog["measures"][number];
 

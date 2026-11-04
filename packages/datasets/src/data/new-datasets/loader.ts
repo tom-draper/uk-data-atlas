@@ -1,9 +1,12 @@
-import { odsTableRows, type OdsTableOptions } from "../spreadsheet/ods";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNullableNum } from "../../helpers/parseNumber";
-import { loadPopulationUk } from "../population/ukLoader";
-import type { IndicatorDataset, IndicatorRecord } from "../../types/indicator";
-import type { BoundaryType } from "../boundaries/catalog";
+import { odsTableRows, type OdsTableOptions } from "../spreadsheet/ods.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNullableNum } from "../../helpers/parseNumber.ts";
+import { loadPopulationUk } from "../population/ukLoader.ts";
+import type {
+	IndicatorDataset,
+	IndicatorRecord,
+} from "../../types/indicator.ts";
+import type { BoundaryType } from "../boundaries/catalog.ts";
 
 type IndicatorType =
 	| "businessActivity"

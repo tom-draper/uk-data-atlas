@@ -19,14 +19,17 @@ import {
 	tableMeasureObservations,
 	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { compileValidationReport } from "./validation/compileValidationReport";
-import { readMeasureTotals, readValidationWaivers } from "./validation/inputs";
+import { compileValidationReport } from "./validation/compileValidationReport.ts";
+import {
+	readMeasureTotals,
+	readValidationWaivers,
+} from "./validation/inputs.ts";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
 	artifactDirectory,
 	configDirectory,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts";
+import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

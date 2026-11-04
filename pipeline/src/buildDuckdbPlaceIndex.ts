@@ -1,13 +1,13 @@
-import { compileDuckdbPlaceIndex } from "./places/duckdbPlaceIndex";
+import { compileDuckdbPlaceIndex } from "./places/duckdbPlaceIndex.ts";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { publishCacheTables } from "./storage/index";
+import { publishCacheTables } from "./storage/index.ts";
 import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { readGeographyCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { placeIndexTables } from "./storage/index";
+import { placeIndexTables } from "./storage/index.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 const readBoundaryRegistry = (repositoryRoot: string) =>

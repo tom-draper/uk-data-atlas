@@ -1,8 +1,8 @@
 import { DatabaseSync } from "node:sqlite";
-import { readAtlasPayload } from "./atlasSqlite";
-import { readPostcodeAreaShard } from "./atlasPostcodeAreaShard";
+import { readAtlasPayload } from "./atlasSqlite.ts";
+import { readPostcodeAreaShard } from "./atlasPostcodeAreaShard.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath } from "./dataLayout.ts";
 
 export function readSqlitePostcodeAreas(
 	repositoryRoot: string,

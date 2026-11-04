@@ -1,10 +1,10 @@
-import { measureCoverage } from "./measureCoverage";
+import { measureCoverage } from "./measureCoverage.ts";
 import {
 	observationsFor,
 	type ObservationArtifacts,
-} from "./observationArtifacts";
-import type { DataCatalog } from "./dataCatalog";
-import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+} from "./observationArtifacts.ts";
+import type { DataCatalog } from "./dataCatalog.ts";
+import type { MeasureCompatibilityInventory } from "./measureCompatibility.ts";
 
 /** Published observation status and boundary-coverage quality for one measure. */
 export const measureQuality = (

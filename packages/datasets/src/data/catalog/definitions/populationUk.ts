@@ -1,6 +1,6 @@
-import { loadPopulationUk } from "../../population/ukLoader";
-import type { PopulationUkDataset } from "../../../types/population";
-import type { DatasetDefinition } from "../types";
+import { loadPopulationUk } from "../../population/ukLoader.ts";
+import type { PopulationUkDataset } from "../../../types/population.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const populationUkDatasetDefinition: DatasetDefinition<PopulationUkDataset> =
 	{

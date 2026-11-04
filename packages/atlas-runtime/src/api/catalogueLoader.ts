@@ -3,10 +3,10 @@ import { resolve } from "node:path";
 import {
 	readAtlasCatalogues,
 	type CatalogueOptions,
-} from "../catalogue/catalogueLoader";
-import { createOperationMatcher } from "./operationTemplates";
-import { readOperations } from "./operationsLoader";
-import { apiRootOf } from "../storage/dataLayout";
+} from "../catalogue/catalogueLoader.ts";
+import { createOperationMatcher } from "./operationTemplates.ts";
+import { readOperations } from "./operationsLoader.ts";
+import { apiRootOf } from "../storage/dataLayout.ts";
 
 export const readApiCatalogues = (
 	repositoryRoot: string,

@@ -1,10 +1,10 @@
-import { SIMDDataset, SIMDDataZoneData } from "../../types/simd";
+import { type SIMDDataset, type SIMDDataZoneData } from "../../types/simd.ts";
 import {
 	isMostDeprivedSIMD,
 	summariseDeprivation,
 	summariseDeprivationBy,
-} from "../../helpers/datasetAggregation/deprivation";
-import { parseCsv } from "../../helpers/parseCsv";
+} from "../../helpers/datasetAggregation/deprivation.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
 
 type PublishedRanks = {
 	rank: number;

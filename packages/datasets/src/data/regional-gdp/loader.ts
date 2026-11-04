@@ -3,9 +3,9 @@ import type {
 	RegionalGdpItl1Dataset,
 	RegionalGdpItl2Dataset,
 	RegionalGdpItl3Dataset,
-} from "../../types/regionalGdp";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNum } from "../../helpers/parseNumber";
+} from "../../types/regionalGdp.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNum } from "../../helpers/parseNumber.ts";
 
 /**
  * ONS restates the whole 1998 series on current ITL codes with every release,

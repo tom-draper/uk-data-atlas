@@ -3,9 +3,9 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse";
-import type { RouteContext, RouteRequest } from "./routing";
-import { choices, readChoice } from "./queryParameters";
+} from "./routeResponse.ts";
+import type { RouteContext, RouteRequest } from "./routing.ts";
+import { choices, readChoice } from "./queryParameters.ts";
 const VALIDATION = {
 	status: { values: ["passed", "waived"] },
 	scope: { values: ["data"] },

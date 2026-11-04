@@ -1,6 +1,6 @@
-import { loadSchoolPerformanceDisadvantage } from "../../school-performance-disadvantage/loader";
-import type { SchoolPerformanceGapDataset } from "../../../types/schoolPerformance";
-import type { DatasetDefinition } from "../types";
+import { loadSchoolPerformanceDisadvantage } from "../../school-performance-disadvantage/loader.ts";
+import type { SchoolPerformanceGapDataset } from "../../../types/schoolPerformance.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const schoolPerformanceDisadvantageDatasetDefinition: DatasetDefinition<SchoolPerformanceGapDataset> =
 	{

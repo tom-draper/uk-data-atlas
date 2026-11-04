@@ -1,4 +1,4 @@
-import type { AreaGeometryCache } from "../../geometry/areaGeometry";
+import type { AreaGeometryCache } from "../../geometry/areaGeometry.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
@@ -12,7 +12,11 @@ import {
 	writeParquetAsync,
 	type ParquetTable,
 } from "@uk-data-atlas/artifacts";
-import { geoParquetTable, packedWkb, type GeoParquetRow } from "./geoParquet";
+import {
+	geoParquetTable,
+	packedWkb,
+	type GeoParquetRow,
+} from "./geoParquet.ts";
 
 /** Positions in a packed geometry. */
 const positionsIn = (packed: PackedGeometry): number =>

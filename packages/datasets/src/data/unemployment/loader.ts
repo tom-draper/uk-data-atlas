@@ -1,11 +1,11 @@
 // Data source: ONS Model-based estimates of unemployment for local and unitary authorities
 // https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current
 import {
-	UnemploymentDataset,
-	UnemploymentLADData,
-} from "../../types/unemployment";
-import { parseCsv } from "../../helpers/parseCsv";
-import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
+	type UnemploymentDataset,
+	type UnemploymentLADData,
+} from "../../types/unemployment.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
 
 const WORKBOOK =
 	"economics/unemployment/model-based/modelbasedunemploymentdataaugust2022.xls";

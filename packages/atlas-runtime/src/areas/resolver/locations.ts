@@ -6,14 +6,14 @@ import {
 import type {
 	LocationProjection,
 	LocationProjections,
-} from "../../places/locationProjections";
+} from "../../places/locationProjections.ts";
 import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
-} from "../../places/namedLocations";
+} from "../../places/namedLocations.ts";
 import { NamedLocationResolver } from "@uk-data-atlas/places";
-import type { CatalogueResolver } from "./catalogue";
-import type { AreaIdentity } from "./areas";
+import type { CatalogueResolver } from "./catalogue.ts";
+import type { AreaIdentity } from "./areas.ts";
 
 export type LocationsResolverInputs = {
 	areaLookup?: AreaLookup;
@@ -26,10 +26,12 @@ export type LocationsResolverInputs = {
 export class LocationsResolver {
 	private readonly named: NamedLocationResolver;
 
-	constructor(
-		private readonly inputs: LocationsResolverInputs,
-		private readonly catalogue: CatalogueResolver,
-	) {
+	private readonly inputs: LocationsResolverInputs;
+	private readonly catalogue: CatalogueResolver;
+	constructor(inputs: LocationsResolverInputs, catalogue: CatalogueResolver) {
+		this.inputs = inputs;
+		this.catalogue = catalogue;
+
 		this.named = new NamedLocationResolver(
 			inputs.namedLocationInventory,
 			inputs.namedLocationLookup,

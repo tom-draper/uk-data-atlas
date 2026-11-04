@@ -4,7 +4,7 @@ import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
 } from "@uk-data-atlas/geography/postcode-index-types";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath } from "./dataLayout.ts";
 
 export const postcodeFields = [
 	"postcode",

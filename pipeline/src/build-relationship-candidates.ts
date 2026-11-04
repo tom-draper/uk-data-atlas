@@ -6,7 +6,7 @@ import type {
 	AreaReleaseArtifact,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import { compileRelationshipCandidates } from "./relationships/relationshipCandidates";
+import { compileRelationshipCandidates } from "./relationships/relationshipCandidates.ts";
 import {
 	readCrosswalkAdapters,
 	type PropertyCrosswalkAdapter,

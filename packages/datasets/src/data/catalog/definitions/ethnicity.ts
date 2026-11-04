@@ -1,6 +1,6 @@
-import { loadEthnicity } from "../../ethnicity/loader";
-import type { EthnicityDataset } from "../../../types/ethnicity";
-import type { DatasetDefinition } from "../types";
+import { loadEthnicity } from "../../ethnicity/loader.ts";
+import type { EthnicityDataset } from "../../../types/ethnicity.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const ethnicityDatasetDefinition: DatasetDefinition<EthnicityDataset> = {
 	type: "ethnicity",

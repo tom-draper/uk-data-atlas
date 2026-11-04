@@ -1,18 +1,18 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { CompiledMeasure } from "../catalog/manifest";
+import type { CompiledMeasure } from "../catalog/manifest.ts";
 import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
-import { bindCensusStatistics } from "./bindCensusStatistics";
-import { bindStatisticsField } from "./bindStatisticsField";
-import type { DatasetLookup } from "./declaredFieldSeries";
-import { bindCompiledFields } from "./bindCompiledFields";
-import { bindReviewedStatistics } from "./bindReviewedStatistics";
-import { electionStatisticsExport } from "./electionStatisticsExport";
+import { bindCensusStatistics } from "./bindCensusStatistics.ts";
+import { bindStatisticsField } from "./bindStatisticsField.ts";
+import type { DatasetLookup } from "./declaredFieldSeries.ts";
+import { bindCompiledFields } from "./bindCompiledFields.ts";
+import { bindReviewedStatistics } from "./bindReviewedStatistics.ts";
+import { electionStatisticsExport } from "./electionStatisticsExport.ts";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,
-} from "./statisticsExport";
+} from "./statisticsExport.ts";
 
 type Field = NonNullable<CompiledMeasure["statisticsField"]>;
 type Binding = { measureId: string; field: Field };

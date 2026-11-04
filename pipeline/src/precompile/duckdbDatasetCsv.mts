@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DuckDBInstance } from "@duckdb/node-api";
-import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types";
+import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types.ts";
 import { trackDuckdbSource } from "./duckdbSource.mts";
 import { SOURCE_DATA } from "./paths.mts";
 

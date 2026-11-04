@@ -1,4 +1,4 @@
-import { type DatasetInput } from "./input";
+import { type DatasetInput } from "./input.ts";
 import type {
 	Measure,
 	MeasureAggregation,
@@ -6,10 +6,10 @@ import type {
 	SourceGeography,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { localAuthorityFieldWithGaps } from "./localAuthorityFields";
-import { onApril2023Authorities } from "./authorityChanges";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
-import { sha256 } from "./values";
+import { localAuthorityFieldWithGaps } from "./localAuthorityFields.ts";
+import { onApril2023Authorities } from "./authorityChanges.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 import { createHash } from "node:crypto";
 
 export type Indicator = {

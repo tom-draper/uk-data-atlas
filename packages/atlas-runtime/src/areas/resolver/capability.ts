@@ -5,23 +5,23 @@ import type {
 } from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { RelationshipCandidateInventory } from "../../relationships/relationshipCandidates";
+import type { RelationshipCandidateInventory } from "../../relationships/relationshipCandidates.ts";
 import type {
 	AreaRelation,
 	AreaRelationship,
 } from "@uk-data-atlas/relationships";
 import type { RelationshipPurpose } from "@uk-data-atlas/relationships";
-import type { AreaIdentity, GeographyEndpoint } from "./areas";
+import type { AreaIdentity, GeographyEndpoint } from "./areas.ts";
 import {
 	ConversionCapabilities,
 	type GeographyReach,
 	type RelationshipOperation,
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
-} from "./conversionCapability";
+} from "./conversionCapability.ts";
 import type { CrosswalkTranslator } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { areaId } from "./areas";
+import { areaId } from "./areas.ts";
 
 export {
 	RELATIONSHIP_OPERATIONS,
@@ -32,7 +32,7 @@ export {
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "./conversionCapability";
+} from "./conversionCapability.ts";
 
 export type ResolvedRelationshipCoverage = {
 	areaCount: number;
@@ -88,16 +88,29 @@ export class CapabilityResolver {
 		Pick<CachedRelationshipCoverage, "areaCount" | "relatedAreaCount">
 	>;
 
+	private readonly relationships: (
+		identity: AreaIdentity,
+		only?: AreaRelation,
+	) => AreaRelationship[];
+	private readonly hasRelationships: () => boolean;
+	private readonly boundaryRelease: (
+		geography: string,
+		release: string,
+	) => BoundaryRegistry["releases"][number] | undefined;
+	private readonly relatedCodes?: (
+		geography: string,
+		release: string,
+	) => Set<string>;
 	constructor(
 		inputs: CapabilityResolverInputs &
 			ConstructorParameters<typeof ConversionCapabilities>[0],
 		translator: CrosswalkTranslator,
-		private readonly relationships: (
+		relationships: (
 			identity: AreaIdentity,
 			only?: AreaRelation,
 		) => AreaRelationship[],
-		private readonly hasRelationships: () => boolean,
-		private readonly boundaryRelease: (
+		hasRelationships: () => boolean,
+		boundaryRelease: (
 			geography: string,
 			release: string,
 		) => BoundaryRegistry["releases"][number] | undefined,
@@ -105,11 +118,13 @@ export class CapabilityResolver {
 		 * The codes of a release that have a relationship, where they can be
 		 * found without building the relationships themselves.
 		 */
-		private readonly relatedCodes?: (
-			geography: string,
-			release: string,
-		) => Set<string>,
+		relatedCodes?: (geography: string, release: string) => Set<string>,
 	) {
+		this.relationships = relationships;
+		this.hasRelationships = hasRelationships;
+		this.boundaryRelease = boundaryRelease;
+		this.relatedCodes = relatedCodes;
+
 		this.inputs = inputs;
 		this.conversions = new ConversionCapabilities(inputs, translator);
 	}

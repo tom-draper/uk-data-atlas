@@ -7,7 +7,7 @@ import type { PostcodeSource } from "@uk-data-atlas/geography/postcode-index-typ
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildDuckdbPostcodeIndex } from "./postcodes/duckdbPostcodeIndex";
+import { buildDuckdbPostcodeIndex } from "./postcodes/duckdbPostcodeIndex.ts";
 
 /**
  * Compile the newest filtered ONS Postcode Directory under

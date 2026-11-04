@@ -1,5 +1,5 @@
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { AtlasRelease } from "../storage/atlasRelease";
+import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
@@ -7,36 +7,36 @@ import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
 } from "@uk-data-atlas/measures";
-import type { ExportManifest } from "../storage/exportManifest";
-import type { GeographyInventory } from "../areas/geographyInventory";
-import type { LookupManifest } from "../areas/lookupExports";
-import type { FullDetailSource } from "../areas/fullDetailDownloads";
-import type { GeographyResolver } from "../areas/geographyResolver";
-import type { PostcodeResolver } from "../areas/resolver/postcodes";
-import type { AreaValidation } from "../areas/resolver/areaValidation";
-import type { AreaGeometryCache } from "../geometry/areaGeometry";
+import type { ExportManifest } from "../storage/exportManifest.ts";
+import type { GeographyInventory } from "../areas/geographyInventory.ts";
+import type { LookupManifest } from "../areas/lookupExports.ts";
+import type { FullDetailSource } from "../areas/fullDetailDownloads.ts";
+import type { GeographyResolver } from "../areas/geographyResolver.ts";
+import type { PostcodeResolver } from "../areas/resolver/postcodes.ts";
+import type { AreaValidation } from "../areas/resolver/areaValidation.ts";
+import type { AreaGeometryCache } from "../geometry/areaGeometry.ts";
 import type {
 	LocationProjectionInventory,
 	LocationProjections,
-} from "../places/locationProjections";
+} from "../places/locationProjections.ts";
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
-import type { MapArchive } from "../maps/mapResource/archiveReader";
+import type { MapArchive } from "../maps/mapResource/archiveReader.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import type { MeasureDimensions } from "../catalogue/measureDimensionsLoader";
-import type { NamedLocationInventory } from "../places/namedLocations";
-import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates";
+import type { MeasureDimensions } from "../catalogue/measureDimensionsLoader.ts";
+import type { NamedLocationInventory } from "../places/namedLocations.ts";
+import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates.ts";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
-import type { ApiResponse } from "./routeResponse";
+import type { ApiResponse } from "./routeResponse.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
-import type { ValidationReport } from "../catalogue/validationReport";
-import type { AnalysisGeographyInventory } from "../areas/analysisGeographies";
-import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation";
+import type { ValidationReport } from "../catalogue/validationReport.ts";
+import type { AnalysisGeographyInventory } from "../areas/analysisGeographies.ts";
+import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation.ts";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import type {
 	AsyncTerrainProvider,
 	TerrainProvider,
 } from "@uk-data-atlas/terrain";
-import type { OperationMatcher } from "./operationTemplates";
+import type { OperationMatcher } from "./operationTemplates.ts";
 
 /** The independently-built resources available to API route handlers. */
 export type RouteContext = {

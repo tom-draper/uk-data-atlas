@@ -2,20 +2,20 @@
 // pipeline/src/compile-website-data.mts. Crosswalk shards are built separately
 // (scripts/gazetteer-crosswalks.ts) since they are expensive and change rarely.
 import { feature } from "topojson-client";
-import { getProp } from "../boundaries/properties";
-import { BOUNDARY_CATALOG } from "../boundaries/catalog";
-import { localDataPath } from "../boundaries/dataPath";
-import { LOCATIONS } from "../locations";
-import { buildCore, type LevelSource } from "./build";
-import { bboxOf, centroidOf, outerRings, pointInGeom } from "./geometry";
-import { validateCore } from "./validate";
+import { getProp } from "../boundaries/properties.ts";
+import { BOUNDARY_CATALOG } from "../boundaries/catalog.ts";
+import { localDataPath } from "../boundaries/dataPath.ts";
+import { LOCATIONS } from "../locations.ts";
+import { buildCore, type LevelSource } from "./build.ts";
+import { bboxOf, centroidOf, outerRings, pointInGeom } from "./geometry.ts";
+import { validateCore } from "./validate.ts";
 import {
 	OFFICIAL_PLACES,
 	PLACE_LOOKUPS,
 	resolvePlaces,
 	type ResolvedPlace,
-} from "./places";
-import type { GazetteerCore } from "./types";
+} from "./places.ts";
+import type { GazetteerCore } from "./types.ts";
 import type { Topology } from "topojson-specification";
 
 export const GAZETTEER_VERSION = 1;

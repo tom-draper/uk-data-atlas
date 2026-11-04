@@ -8,7 +8,7 @@ import type {
 import { getFeatureProp } from "@lib/types";
 import { calculateTotal } from "@uk-data-atlas/datasets/helpers/population";
 import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
-import { calculateAgeGroups } from "../ageDistribution";
+import { calculateAgeGroups } from "../ageDistribution.ts";
 
 // Pre-computed decay weights for age 90+ distribution
 const AGE_90_WEIGHTS = (() => {

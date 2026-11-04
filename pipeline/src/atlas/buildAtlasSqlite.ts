@@ -1,12 +1,12 @@
 import { type StatisticsInput } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { statisticsTables } from "../storage/index";
+import { statisticsTables } from "../storage/index.ts";
 import { declaredStatistics } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { fuelPovertyStatistics } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { publishAtlasCache } from "../storage/index";
+import { publishAtlasCache } from "../storage/index.ts";
 import {
 	comparableCompiled,
 	generatedFromRows,
@@ -14,24 +14,24 @@ import {
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { publishDatasetPayloads } from "../storage/index";
-import { writeSqliteIndex, writeSqliteTables } from "../storage/index";
+import { publishDatasetPayloads } from "../storage/index.ts";
+import { writeSqliteIndex, writeSqliteTables } from "../storage/index.ts";
 import {
 	type LocationProjectionInventory,
 	type LocationProjectionArtifact,
 	type LocationParentProjectionArtifact,
 } from "@uk-data-atlas/atlas-runtime/places";
-import { locationProjectionTables } from "../storage/index";
+import { locationProjectionTables } from "../storage/index.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { namedLocationTables } from "../storage/index";
-import { crosswalkTables } from "../storage/index";
-import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index";
+import { namedLocationTables } from "../storage/index.ts";
+import { crosswalkTables } from "../storage/index.ts";
+import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index.ts";
 import { DatabaseSync } from "node:sqlite";
-import { censusSmallAreaStatistics } from "../statistics/censusSmallAreaStatistics";
+import { censusSmallAreaStatistics } from "../statistics/censusSmallAreaStatistics.ts";
 import {
 	CENSUS_SMALL_AREA_TABLES,
 	type CensusTable,
-} from "../catalog/censusSmallArea";
+} from "../catalog/censusSmallArea.ts";
 import { createHash } from "node:crypto";
 import {
 	existsSync,
@@ -44,7 +44,7 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics";
+import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics.ts";
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),

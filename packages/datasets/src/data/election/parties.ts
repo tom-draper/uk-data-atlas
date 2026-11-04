@@ -1,5 +1,5 @@
 // lib/data/parties.ts
-import { Party } from "../../types/common";
+import { type Party } from "../../types/common.ts";
 
 export const PARTY_INFO: Party[] = [
 	{ key: "LAB", name: "Labour" },

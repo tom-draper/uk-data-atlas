@@ -1,6 +1,6 @@
-import { loadWorkplaceIncome } from "../../income/loader";
-import type { WorkplaceIncomeDataset } from "../../../types/income";
-import type { DatasetDefinition } from "../types";
+import { loadWorkplaceIncome } from "../../income/loader.ts";
+import type { WorkplaceIncomeDataset } from "../../../types/income.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const workplaceIncomeDatasetDefinition: DatasetDefinition<WorkplaceIncomeDataset> =
 	{

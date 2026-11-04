@@ -1,6 +1,6 @@
-import { loadPopulation } from "../../population/loader";
-import type { PopulationDataset } from "../../../types/population";
-import type { DatasetDefinition } from "../types";
+import { loadPopulation } from "../../population/loader.ts";
+import type { PopulationDataset } from "../../../types/population.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> =
 	{

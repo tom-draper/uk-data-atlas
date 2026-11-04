@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { rebuildDatasetPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { publishAtlasCache } from "./atlasCacheWriter";
+import { publishAtlasCache } from "./atlasCacheWriter.ts";
 
 const digest = (text: string) =>
 	createHash("sha256").update(text).digest("hex");

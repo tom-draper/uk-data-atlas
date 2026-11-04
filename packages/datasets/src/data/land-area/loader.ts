@@ -1,6 +1,6 @@
-import type { LandAreaDataset, LandAreaLADData } from "../../types/landArea";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNum } from "../../helpers/parseNumber";
+import type { LandAreaDataset, LandAreaLADData } from "../../types/landArea.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNum } from "../../helpers/parseNumber.ts";
 
 const YEAR = 2024;
 const BOUNDARY_YEAR = 2024;

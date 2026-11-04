@@ -4,8 +4,8 @@
  * constituency, and by disadvantage gap. The columns are identical in each;
  * only the geographic level and the filtering differ.
  */
-import type { SchoolPerformanceMeasures } from "../../types/schoolPerformance";
-import { parseNullableNum } from "../../helpers/parseNumber";
+import type { SchoolPerformanceMeasures } from "../../types/schoolPerformance.ts";
+import { parseNullableNum } from "../../helpers/parseNumber.ts";
 
 /**
  * "202425" is the 2024/25 academic year. The atlas keys these by the year the

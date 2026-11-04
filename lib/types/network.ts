@@ -1,4 +1,4 @@
-import type { MapExpression, PaintValue } from "./mapExpression";
+import type { MapExpression, PaintValue } from "./mapExpression.ts";
 
 /** A map-native vector-tile layer before view-specific visibility is applied. */
 export interface NetworkVectorLayer {

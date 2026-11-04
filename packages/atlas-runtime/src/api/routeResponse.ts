@@ -1,5 +1,5 @@
 import type { StoredFile } from "@uk-data-atlas/artifacts";
-import type { ProblemCode } from "./problemCodes";
+import type { ProblemCode } from "./problemCodes.ts";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
 
 export type Envelope<T> = {

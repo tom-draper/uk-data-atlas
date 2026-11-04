@@ -7,7 +7,7 @@ import {
 	LineageResolver,
 	type GeographyResolverInputs,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import { readBuildBoundaryRegistry } from "../buildBoundaryRegistry";
+import { readBuildBoundaryRegistry } from "../buildBoundaryRegistry.ts";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,

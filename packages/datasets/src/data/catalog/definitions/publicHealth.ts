@@ -1,8 +1,8 @@
 import {
 	loadPublicHealth,
 	type PublicHealthDataset,
-} from "../../public-health/loader";
-import type { DatasetDefinition } from "../types";
+} from "../../public-health/loader.ts";
+import type { DatasetDefinition } from "../types.ts";
 export const publicHealthDatasetDefinition: DatasetDefinition<PublicHealthDataset> =
 	{
 		type: "publicHealth",

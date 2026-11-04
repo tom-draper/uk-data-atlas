@@ -1,6 +1,6 @@
-import { loadChildPoverty } from "../../child-poverty/loader";
-import type { ChildPovertyDataset } from "../../../types/childPoverty";
-import type { DatasetDefinition } from "../types";
+import { loadChildPoverty } from "../../child-poverty/loader.ts";
+import type { ChildPovertyDataset } from "../../../types/childPoverty.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const childPovertyDatasetDefinition: DatasetDefinition<ChildPovertyDataset> =
 	{

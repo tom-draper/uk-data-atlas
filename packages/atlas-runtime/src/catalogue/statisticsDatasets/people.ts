@@ -7,8 +7,8 @@ import {
 	type Json,
 	type DeclaredHeader,
 	periods,
-} from "../declaredStatistics";
-import { yearParts } from "../declaredPayload";
+} from "../declaredStatistics.ts";
+import { yearParts } from "../declaredPayload.ts";
 import {
 	ELECTORATE,
 	LIFE_EXPECTANCY,
@@ -18,7 +18,7 @@ import {
 	TURNOUT,
 	VALID_VOTES,
 	measure,
-} from "./measures";
+} from "./measures.ts";
 
 /** Population, life expectancy, deprivation and the EU referendum. */
 

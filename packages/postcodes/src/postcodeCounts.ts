@@ -1,4 +1,4 @@
-import { type PostcodeAreasArtifact, releaseKey } from "./postcodeAreas";
+import { type PostcodeAreasArtifact, releaseKey } from "./postcodeAreas.ts";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
@@ -35,10 +35,12 @@ export class PostcodeCountsIndex {
 		Map<string, Omit<PostcodeCounts, "edition">>
 	>();
 
-	constructor(
-		readonly artifact: PostcodeCountsArtifact,
-		private readonly edition: string,
-	) {
+	readonly artifact: PostcodeCountsArtifact;
+	private readonly edition: string;
+	constructor(artifact: PostcodeCountsArtifact, edition: string) {
+		this.artifact = artifact;
+		this.edition = edition;
+
 		for (const release of artifact.releases)
 			this.releases.set(
 				releaseKey(release.geography, release.boundaryRelease),

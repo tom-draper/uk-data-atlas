@@ -1,4 +1,4 @@
-import Papa, { ParseConfig } from "papaparse";
+import Papa, { type ParseConfig } from "papaparse";
 
 export interface ParseCsvResult<T> {
 	data: T[];

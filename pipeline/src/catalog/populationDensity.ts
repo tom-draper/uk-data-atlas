@@ -1,12 +1,12 @@
-import { type DatasetInput } from "./input";
+import { type DatasetInput } from "./input.ts";
 import type {
 	Measure,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
-import { sha256 } from "./values";
+import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 
 /**
  * Population density, the first measure derived from two others.

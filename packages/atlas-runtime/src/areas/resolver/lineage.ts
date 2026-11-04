@@ -6,7 +6,11 @@ import {
 	type AreaRelation,
 	type AreaRelationship,
 } from "@uk-data-atlas/relationships";
-import { areaId, type AreaIdentity, type ResolvedSameCodeArea } from "./areas";
+import {
+	areaId,
+	type AreaIdentity,
+	type ResolvedSameCodeArea,
+} from "./areas.ts";
 
 /** A published graph edge, reported once at its shortest distance from origin. */
 export type TraversedRelationship = AreaRelationship & {
@@ -31,15 +35,18 @@ export type ResolvedAreaRelationshipSummary = {
 export class LineageResolver {
 	private readonly index?: LazyAreaRelationshipIndex;
 
+	private readonly area: (identity: AreaIdentity) => AreaRecord | undefined;
+	private readonly sameCode: (
+		identity: AreaIdentity,
+	) => ResolvedSameCodeArea[];
 	constructor(
 		crosswalkLookup: CrosswalkLookup | undefined,
-		private readonly area: (
-			identity: AreaIdentity,
-		) => AreaRecord | undefined,
-		private readonly sameCode: (
-			identity: AreaIdentity,
-		) => ResolvedSameCodeArea[],
+		area: (identity: AreaIdentity) => AreaRecord | undefined,
+		sameCode: (identity: AreaIdentity) => ResolvedSameCodeArea[],
 	) {
+		this.area = area;
+		this.sameCode = sameCode;
+
 		if (crosswalkLookup)
 			this.index = new LazyAreaRelationshipIndex(crosswalkLookup);
 	}

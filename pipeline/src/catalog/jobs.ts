@@ -1,12 +1,12 @@
-import { type DatasetInput } from "./input";
+import { type DatasetInput } from "./input.ts";
 import type { Country, Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	countryForCode,
 	countriesFor,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields";
-import type { CatalogManifest, CompiledMeasure } from "./manifest";
-import { sha256 } from "./values";
+import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
+import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 
 /**
  * Total jobs, counted where the work is.

@@ -1,1 +1,1 @@
-export * from "../../catalogue/catalogCountries";
+export * from "../../catalogue/catalogCountries.ts";

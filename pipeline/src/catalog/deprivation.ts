@@ -1,12 +1,12 @@
-import { type DatasetInput } from "./input";
+import { type DatasetInput } from "./input.ts";
 import type {
 	SourceGeography,
 	Measure,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields";
-import type { CatalogManifest } from "./manifest";
-import { sha256 } from "./values";
+import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
+import type { CatalogManifest } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 
 /**
  * A nation's deprivation index, as its published rank and decile.

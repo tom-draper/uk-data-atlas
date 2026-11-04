@@ -7,7 +7,7 @@ import {
 	type GridOffset,
 } from "@uk-data-atlas/geography";
 import { applyReversedGridOffset } from "@uk-data-atlas/geography/reverse-grid-offset";
-import type { SubstitutionSource } from "./boundaryReleaseSources";
+import type { SubstitutionSource } from "./boundaryReleaseSources.ts";
 
 /**
  * Decodes a published source into WGS84. Grid corrections work in the

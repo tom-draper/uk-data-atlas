@@ -1,6 +1,9 @@
-import { BrexitLADDataset, BrexitLADData } from "../../types/referendum";
-import { parseCsv } from "../../helpers/parseCsv";
-import { parseNum } from "../../helpers/parseNumber";
+import {
+	type BrexitLADDataset,
+	type BrexitLADData,
+} from "../../types/referendum.ts";
+import { parseCsv } from "../../helpers/parseCsv.ts";
+import { parseNum } from "../../helpers/parseNumber.ts";
 
 export async function loadBrexit(
 	read: (path: string) => Promise<string>,

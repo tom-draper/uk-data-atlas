@@ -1,3 +1,3 @@
-export * from "./terrainCatalogue";
-export * from "./terrainLoader";
-export * from "./terrainProvider";
+export * from "./terrainCatalogue.ts";
+export * from "./terrainLoader.ts";
+export * from "./terrainProvider.ts";

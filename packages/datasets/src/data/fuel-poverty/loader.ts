@@ -1,8 +1,8 @@
 import {
-	FuelPovertyDataset,
-	FuelPovertyLSOAData,
-} from "../../types/fuelPoverty";
-import type { OdsTableOptions } from "../spreadsheet/ods";
+	type FuelPovertyDataset,
+	type FuelPovertyLSOAData,
+} from "../../types/fuelPoverty.ts";
+import type { OdsTableOptions } from "../spreadsheet/ods.ts";
 
 const TABLE_NAME = "Table_4";
 

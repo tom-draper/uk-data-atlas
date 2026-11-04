@@ -40,7 +40,7 @@ export type PostcodeRecord = {
 const month = (yyyymm: number) =>
 	`${String(yyyymm).slice(0, 4)}-${String(yyyymm).slice(4, 6)}`;
 
-export { postcodeIndexMismatch } from "./postcodeIndexMismatch";
+export { postcodeIndexMismatch } from "./postcodeIndexMismatch.ts";
 
 export type PostcodeLookup =
 	| { status: "found"; record: PostcodeRecord }
@@ -54,17 +54,24 @@ export class PostcodeIndex {
 	/** Shards already checked against the manifest; a re-read need not be. */
 	private readonly verified = new Set<string>();
 
+	readonly artifact: PostcodeIndexArtifact;
+	private readonly readShard: (path: string) => string;
+	private readonly capacity: number;
 	constructor(
-		readonly artifact: PostcodeIndexArtifact,
+		artifact: PostcodeIndexArtifact,
 		/** The text of a shard at its path in the manifest. */
-		private readonly readShard: (path: string) => string,
+		readShard: (path: string) => string,
 		/**
 		 * How many districts stay in memory. A district averages some 900
 		 * postcodes and the largest holds a few thousand, so this is a few
 		 * tens of megabytes at most.
 		 */
-		private readonly capacity = 512,
+		capacity = 512,
 	) {
+		this.artifact = artifact;
+		this.readShard = readShard;
+		this.capacity = capacity;
+
 		this.districts = artifact.shards.map((shard) => shard.district);
 	}
 

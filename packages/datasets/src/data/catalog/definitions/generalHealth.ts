@@ -1,6 +1,6 @@
-import { loadGeneralHealth } from "../../general-health/loader";
-import type { IndicatorDataset } from "../../../types/indicator";
-import type { DatasetDefinition } from "../types";
+import { loadGeneralHealth } from "../../general-health/loader.ts";
+import type { IndicatorDataset } from "../../../types/indicator.ts";
+import type { DatasetDefinition } from "../types.ts";
 export const generalHealthDatasetDefinition: DatasetDefinition<
 	IndicatorDataset<"generalHealth">
 > = {

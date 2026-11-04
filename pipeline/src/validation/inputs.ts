@@ -20,7 +20,7 @@ import {
 	VALIDATION_CHECKS,
 	type ValidationCheckId,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { sha256 } from "./findings";
+import { sha256 } from "./findings.ts";
 
 export type ValidationWaiver = {
 	check: ValidationCheckId;

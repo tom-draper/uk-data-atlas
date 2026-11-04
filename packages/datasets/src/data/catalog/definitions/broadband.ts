@@ -1,6 +1,6 @@
-import { loadBroadband } from "../../broadband/loader";
-import type { BroadbandDataset } from "../../../types/broadband";
-import type { DatasetDefinition } from "../types";
+import { loadBroadband } from "../../broadband/loader.ts";
+import type { BroadbandDataset } from "../../../types/broadband.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const broadbandDatasetDefinition: DatasetDefinition<BroadbandDataset> = {
 	type: "broadband",

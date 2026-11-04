@@ -27,7 +27,10 @@ const isSpace = (code: number) =>
 
 class Scanner {
 	at = 0;
-	constructor(private readonly text: Buffer) {}
+	private readonly text: Buffer;
+	constructor(text: Buffer) {
+		this.text = text;
+	}
 
 	private fail(expected: string): never {
 		throw new SyntaxError(

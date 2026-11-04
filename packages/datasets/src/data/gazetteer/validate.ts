@@ -1,6 +1,6 @@
 // Build-time invariants (design doc 6.1). Returns a list of violations;
 // an empty list means the artifact is sound.
-import type { GazetteerCore } from "./types";
+import type { GazetteerCore } from "./types.ts";
 
 export interface ValidationResult {
 	errors: string[]; // must be empty to ship

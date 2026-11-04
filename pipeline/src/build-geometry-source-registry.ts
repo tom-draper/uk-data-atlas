@@ -5,8 +5,8 @@ import type {
 	AreaInventory,
 	AreaReleaseArtifact,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import { createFileHashCache } from "./fileHashCache";
-import { createGeometrySourceRegistry } from "./geographies/geometrySourceRegistry";
+import { createFileHashCache } from "./fileHashCache.ts";
+import { createGeometrySourceRegistry } from "./geographies/geometrySourceRegistry.ts";
 import {
 	artifactDirectory,
 	buildLog,

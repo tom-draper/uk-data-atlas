@@ -1,4 +1,4 @@
-import type { BoundaryType } from "./catalog";
+import type { BoundaryType } from "./catalog.ts";
 
 /** Returns the first populated value among a boundary feature's known keys. */
 export const getProp = (

@@ -13,7 +13,7 @@ import type {
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts";
+import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);

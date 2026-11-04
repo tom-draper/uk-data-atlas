@@ -1,6 +1,6 @@
 import { closeSync, fstatSync, openSync, readSync } from "node:fs";
 import type { GeometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry, GeometrySource } from "./areaGeometry";
+import type { GeoJsonGeometry, GeometrySource } from "./areaGeometry.ts";
 import {
 	compareSpatialCells,
 	spatialCells,
@@ -175,11 +175,14 @@ const encodeArea = (
 
 /** Reads one record's arrays, in the order `encodeParts` wrote them. */
 class RecordReader {
-	constructor(
-		private readonly record: Buffer,
-		private cursor: number,
-		private readonly path: string,
-	) {}
+	private readonly record: Buffer;
+	private cursor: number;
+	private readonly path: string;
+	constructor(record: Buffer, cursor: number, path: string) {
+		this.record = record;
+		this.cursor = cursor;
+		this.path = path;
+	}
 
 	private truncated() {
 		return new Error(`${this.path} has a truncated area record.`);

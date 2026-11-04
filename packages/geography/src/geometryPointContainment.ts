@@ -1,8 +1,8 @@
-import type { GeoJsonGeometry } from "./geometryTypes";
+import type { GeoJsonGeometry } from "./geometryTypes.ts";
 
 export type Coordinate = [longitude: number, latitude: number];
-import type { GeometryBounds } from "./geometryTypes";
-export type { GeometryBounds } from "./geometryTypes";
+import type { GeometryBounds } from "./geometryTypes.ts";
+export type { GeometryBounds } from "./geometryTypes.ts";
 export type PointContainment = "interior" | "boundary" | "outside";
 
 const EPSILON = 1e-12;

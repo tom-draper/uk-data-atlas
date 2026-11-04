@@ -1,4 +1,4 @@
-import type { PopulationLocalAuthorityData } from "../../types/population";
+import type { PopulationLocalAuthorityData } from "../../types/population.ts";
 
 export function addPopulationMetrics<
 	T extends { metrics?: Record<string, number> },

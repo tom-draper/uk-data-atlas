@@ -1,6 +1,6 @@
-import { loadCarAvailability } from "../../car-availability/loader";
-import type { CarAvailabilityDataset } from "../../../types/carAvailability";
-import type { DatasetDefinition } from "../types";
+import { loadCarAvailability } from "../../car-availability/loader.ts";
+import type { CarAvailabilityDataset } from "../../../types/carAvailability.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const carAvailabilityDatasetDefinition: DatasetDefinition<CarAvailabilityDataset> =
 	{

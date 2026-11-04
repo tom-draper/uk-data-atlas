@@ -1,8 +1,8 @@
-import type { DataCatalog, MeasureSource } from "./dataCatalog";
+import type { DataCatalog, MeasureSource } from "./dataCatalog.ts";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
-} from "./measureCompatibility";
+} from "./measureCompatibility.ts";
 
 const isEligibleForCodeJoin = (candidate: CompatibilityCandidate) =>
 	(candidate.status === "exact-code-set" ||

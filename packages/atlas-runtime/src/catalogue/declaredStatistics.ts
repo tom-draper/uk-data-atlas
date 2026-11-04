@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import { seriesKey as canonicalSeriesKey } from "./atlasStatistics";
+import { seriesKey as canonicalSeriesKey } from "./atlasStatistics.ts";
 import type {
 	AreaIndex,
 	AreaRelease,
@@ -14,7 +14,7 @@ import type {
 	StatisticsPeriod,
 	StatisticsSeries,
 	StatusSlug,
-} from "./atlasStatistics";
+} from "./atlasStatistics.ts";
 
 /**
  * A compiled dataset JSON described as configuration and read into statistics

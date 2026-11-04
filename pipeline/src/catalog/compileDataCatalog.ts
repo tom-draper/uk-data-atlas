@@ -1,45 +1,45 @@
-import { type DatasetInput, readDatasetInput } from "./input";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,
 	AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { sha256 } from "./values";
+import { sha256 } from "./values.ts";
 import {
 	type CatalogManifest,
 	type CompiledMeasure,
 	type DatasetManifest,
 	compileDataset,
-} from "./manifest";
-import { RECODED_2025 } from "./authorityChanges";
-import { compileElections } from "./elections";
-import { compileNimdm } from "./nimdm";
-import { compileHousePrice } from "./housePrice";
-import { compileLifeExpectancy } from "./lifeExpectancy";
-import { compileDeprivationIndices } from "./deprivation";
-import { compilePopulationDensity } from "./populationDensity";
-import { mergeMeasurePartitions } from "./indicators";
-import { compileBroadband } from "./broadband";
-import { compileClaimantCount } from "./claimantCount";
-import { compileHomelessness } from "./homelessness";
-import { compileRoadCollisions } from "./roadCollisions";
-import { compileIncome } from "./income";
-import { compileCrime } from "./crime";
-import { compileUnemployment } from "./unemployment";
-import { compileAirQuality } from "./airQuality";
-import { compileCensus } from "./census";
-import { compileCensusSmallArea } from "./censusSmallArea";
-import { withAliases } from "./measureAliases";
+} from "./manifest.ts";
+import { RECODED_2025 } from "./authorityChanges.ts";
+import { compileElections } from "./elections.ts";
+import { compileNimdm } from "./nimdm.ts";
+import { compileHousePrice } from "./housePrice.ts";
+import { compileLifeExpectancy } from "./lifeExpectancy.ts";
+import { compileDeprivationIndices } from "./deprivation.ts";
+import { compilePopulationDensity } from "./populationDensity.ts";
+import { mergeMeasurePartitions } from "./indicators.ts";
+import { compileBroadband } from "./broadband.ts";
+import { compileClaimantCount } from "./claimantCount.ts";
+import { compileHomelessness } from "./homelessness.ts";
+import { compileRoadCollisions } from "./roadCollisions.ts";
+import { compileIncome } from "./income.ts";
+import { compileCrime } from "./crime.ts";
+import { compileUnemployment } from "./unemployment.ts";
+import { compileAirQuality } from "./airQuality.ts";
+import { compileCensus } from "./census.ts";
+import { compileCensusSmallArea } from "./censusSmallArea.ts";
+import { withAliases } from "./measureAliases.ts";
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureSource } from "@uk-data-atlas/measures";
-import { compileMobileCoverage } from "./mobileCoverage";
-import { compileJobs } from "./jobs";
-import { compileEmissions } from "./emissions";
-import { compileRegionalGdp } from "./regionalGdp";
-import { compileEnergyConsumption } from "./energyConsumption";
-import { compilePopulation } from "./population";
-import { withNationalVariants } from "./nationalVariants";
-import { compileNewDatasets, NEW_DATASET_MEASURES } from "./newDatasets";
+import { compileMobileCoverage } from "./mobileCoverage.ts";
+import { compileJobs } from "./jobs.ts";
+import { compileEmissions } from "./emissions.ts";
+import { compileRegionalGdp } from "./regionalGdp.ts";
+import { compileEnergyConsumption } from "./energyConsumption.ts";
+import { compilePopulation } from "./population.ts";
+import { withNationalVariants } from "./nationalVariants.ts";
+import { compileNewDatasets, NEW_DATASET_MEASURES } from "./newDatasets.ts";
 
 /**
  * The compiled files the catalogue is built from, by name. Named rather than

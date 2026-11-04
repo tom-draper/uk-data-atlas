@@ -1,4 +1,4 @@
-import { type DatasetInput, readDatasetInput } from "./input";
+import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	MeasureSource,
 	Measure,
@@ -8,10 +8,10 @@ import type {
 import {
 	APRIL_2023_LAD_MERGERS,
 	APRIL_2020_2021_LAD_MERGERS,
-} from "./authorityChanges";
+} from "./authorityChanges.ts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { CatalogManifest } from "./manifest";
-import { sha256 } from "./values";
+import type { CatalogManifest } from "./manifest.ts";
+import { sha256 } from "./values.ts";
 
 /**
  * ONS's final model-based unemployment estimates, in the two code vintages

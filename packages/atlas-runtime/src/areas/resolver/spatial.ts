@@ -3,7 +3,7 @@ import type {
 	AreaGeometryCache,
 	GeoJsonGeometry,
 	IntersectingArea,
-} from "../../geometry/areaGeometry";
+} from "../../geometry/areaGeometry.ts";
 import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import type { Neighbour } from "@uk-data-atlas/geometry";
 import type {
@@ -11,7 +11,7 @@ import type {
 	PointContainment,
 } from "@uk-data-atlas/geography/geometry-point-containment";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
-import { areaId, type AreaIdentity } from "./areas";
+import { areaId, type AreaIdentity } from "./areas.ts";
 
 export type ResolvedContainingArea = AreaRecord & {
 	id: string;
@@ -61,12 +61,15 @@ export type ResolvedAreaNeighbours = {
 
 /** Geometry queries and provenance over a compiled geometry cache. */
 export class SpatialResolver {
+	private readonly cache: AreaGeometryCache | undefined;
+	private readonly area: (identity: AreaIdentity) => AreaRecord | undefined;
 	constructor(
-		private readonly cache: AreaGeometryCache | undefined,
-		private readonly area: (
-			identity: AreaIdentity,
-		) => AreaRecord | undefined,
-	) {}
+		cache: AreaGeometryCache | undefined,
+		area: (identity: AreaIdentity) => AreaRecord | undefined,
+	) {
+		this.cache = cache;
+		this.area = area;
+	}
 
 	hasAreaGeometryCache(): boolean {
 		return this.cache !== undefined;

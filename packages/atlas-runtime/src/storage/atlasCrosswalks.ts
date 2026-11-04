@@ -1,7 +1,7 @@
 import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import { atlasDatabasePath } from "./dataLayout";
+import { atlasDatabasePath } from "./dataLayout.ts";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of

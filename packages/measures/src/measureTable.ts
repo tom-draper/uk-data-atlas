@@ -1,4 +1,4 @@
-import type { SourceGeography } from "./dataCatalog";
+import type { SourceGeography } from "./dataCatalog.ts";
 
 /**
  * Several measures' observations for one source partition and period, stored

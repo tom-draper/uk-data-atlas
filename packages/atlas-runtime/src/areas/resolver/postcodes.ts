@@ -3,8 +3,8 @@ import type {
 	PostcodeCountsIndex,
 	PostcodeIndex,
 } from "@uk-data-atlas/postcodes";
-import type { AreaIdentity } from "./areas";
-import type { SpatialResolver } from "./spatial";
+import type { AreaIdentity } from "./areas.ts";
+import type { SpatialResolver } from "./spatial.ts";
 
 export type PostcodeResolverInputs = {
 	postcodeIndex?: PostcodeIndex;
@@ -14,10 +14,15 @@ export type PostcodeResolverInputs = {
 
 /** Postcode indexes and area placements for a release. */
 export class PostcodeResolver {
+	private readonly inputs: PostcodeResolverInputs;
+	private readonly spatial: Pick<SpatialResolver, "resolvePlacedAreas">;
 	constructor(
-		private readonly inputs: PostcodeResolverInputs,
-		private readonly spatial: Pick<SpatialResolver, "resolvePlacedAreas">,
-	) {}
+		inputs: PostcodeResolverInputs,
+		spatial: Pick<SpatialResolver, "resolvePlacedAreas">,
+	) {
+		this.inputs = inputs;
+		this.spatial = spatial;
+	}
 	postcodeIndex() {
 		return this.inputs.postcodeIndex;
 	}

@@ -1,8 +1,8 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
-import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea";
-import type { StatisticsSelection } from "./statisticsExport";
+import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea.ts";
+import type { StatisticsSelection } from "./statisticsExport.ts";
 
 /**
  * Bind a complete small-area census measure to its canonical series: the

@@ -1,5 +1,5 @@
 export * from "@uk-data-atlas/relationships";
-export * from "./analysisConversion";
+export * from "./analysisConversion.ts";
 export {
 	CONVERSION_METHODS,
 	convertThroughSteps,
@@ -10,7 +10,7 @@ export {
 	type ConversionResult,
 	type ConversionStep,
 } from "@uk-data-atlas/measures";
-export * from "./crosswalkGeometryValidation";
-export * from "./crosswalkLoader";
-export * from "./relationshipCandidates";
-export * from "./crosswalkAdapterReader";
+export * from "./crosswalkGeometryValidation.ts";
+export * from "./crosswalkLoader.ts";
+export * from "./relationshipCandidates.ts";
+export * from "./crosswalkAdapterReader.ts";

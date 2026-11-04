@@ -1,6 +1,6 @@
-import { loadFuelPoverty } from "../../fuel-poverty/loader";
-import type { FuelPovertyDataset } from "../../../types/fuelPoverty";
-import type { DatasetDefinition } from "../types";
+import { loadFuelPoverty } from "../../fuel-poverty/loader.ts";
+import type { FuelPovertyDataset } from "../../../types/fuelPoverty.ts";
+import type { DatasetDefinition } from "../types.ts";
 
 export const fuelPovertyDatasetDefinition: DatasetDefinition<FuelPovertyDataset> =
 	{

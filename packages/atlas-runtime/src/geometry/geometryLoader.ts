@@ -1,7 +1,10 @@
 import { join } from "node:path";
-import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
-import { readGeometrySourceLookup } from "./geometrySources";
-import { artifactDirectory } from "../storage/dataLayout";
+import {
+	AreaGeometryCache,
+	type GeometrySourceLookup,
+} from "./areaGeometry.ts";
+import { readGeometrySourceLookup } from "./geometrySources.ts";
+import { artifactDirectory } from "../storage/dataLayout.ts";
 
 export const readGeometrySources = (
 	repositoryRoot: string,

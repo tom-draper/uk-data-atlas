@@ -1,8 +1,8 @@
 import type { AreaLookup } from "@uk-data-atlas/areas";
 import { releaseKey } from "@uk-data-atlas/geography";
 
-import type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation";
-export type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation";
+import type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation.ts";
+export type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation.ts";
 
 export const validateEndpoint = (
 	crosswalkId: string,

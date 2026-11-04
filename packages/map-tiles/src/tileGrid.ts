@@ -1,5 +1,5 @@
-import type { Coordinate } from "./types";
-import { TILE_EXTENT } from "./vectorTile";
+import type { Coordinate } from "./types.ts";
+import { TILE_EXTENT } from "./vectorTile.ts";
 
 /**
  * Where a boundary falls on the Web Mercator tile grid, and what is left of it

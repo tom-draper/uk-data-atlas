@@ -1,10 +1,10 @@
-import { parseCsv } from "../../helpers/parseCsv";
+import { parseCsv } from "../../helpers/parseCsv.ts";
 import type {
 	LifeExpectancyEstimate,
 	LifeExpectancySeriesDataset,
 	LifeExpectancySeriesLADData,
-} from "../../types/lifeExpectancySeries";
-import type { DatasetReader } from "../catalog/types";
+} from "../../types/lifeExpectancySeries.ts";
+import type { DatasetReader } from "../catalog/types.ts";
 
 const PERIOD = /^(\d{4}) to (\d{4})$/;
 // Unitary authorities, districts, metropolitan and London boroughs, Scottish

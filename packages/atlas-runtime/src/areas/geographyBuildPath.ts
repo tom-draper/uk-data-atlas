@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { artifactDirectory } from "../storage/dataLayout";
+import { artifactDirectory } from "../storage/dataLayout.ts";
 
 export const geographyCatalogues = [
 	"boundary-releases",
