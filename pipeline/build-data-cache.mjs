@@ -315,6 +315,12 @@ export function createStageCache({
 		for (const path of scope) stampPath(root, path, stamps);
 		return stamps;
 	};
+	// A required file exists, or a required folder holds at least one file.
+	const isPresent = (path) => {
+		if (fileStamp(path)) return true;
+		const stats = statSync(join(root, path), { throwIfNoEntry: false });
+		return stats?.isDirectory() ? stampFiles(root, path).size > 0 : false;
+	};
 	const fileStamp = (path) => {
 		const stats = statSync(join(root, path), { throwIfNoEntry: false });
 		return stats?.isFile()
@@ -388,6 +394,16 @@ export function createStageCache({
 			...Object.keys(previous ?? {}),
 			...(stage.requiredOutputs ?? []),
 		]);
+		// A required folder stands for the files in it.
+		for (const folder of stage.requiredOutputs ?? []) {
+			if (after.has(folder)) continue;
+			const inside = [...after.keys()].filter((path) =>
+				path.startsWith(`${folder}/`),
+			);
+			if (!inside.length) continue;
+			paths.delete(folder);
+			for (const path of inside) paths.add(path);
+		}
 		for (const folder of stage.outputs ?? []) {
 			const found = [...after.keys()].filter(
 				(path) => path === folder || path.startsWith(`${folder}/`),
@@ -466,7 +482,7 @@ export function createStageCache({
 				return null;
 			// A later stage can own the current bytes of a shared output. Its
 			// original builder must still recreate it when the file is missing.
-			if (stage.requiredOutputs?.some((path) => !fileStamp(path)))
+			if (stage.requiredOutputs?.some((path) => !isPresent(path)))
 				return null;
 			for (const [path, entry] of Object.entries(record.outputs))
 				if (!sameStamp(fileStamp(path), entry)) return null;
