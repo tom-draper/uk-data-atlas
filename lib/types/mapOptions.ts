@@ -2,7 +2,7 @@
 import { type Datasets } from "./datasets.ts";
 import { type ColorRange } from "@uk-data-atlas/datasets/types/common";
 import type { BaseMapStyle } from "../config/baseMapStyles.ts";
-import type { CatalogueDatasetType } from "@/lib/data/catalog";
+import type { CatalogueDatasetType } from "../data/catalog/index.ts";
 import type { DeclaredDatasetId } from "@uk-data-atlas/datasets/data/declarations";
 
 // Base option types reused across visualizations

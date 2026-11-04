@@ -33,7 +33,7 @@ import {
 import type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
-} from "@/lib/data/catalog";
+} from "../data/catalog/index.ts";
 import type { DatasetCoverage } from "@uk-data-atlas/datasets/types/coverage";
 
 type DatasetValue =

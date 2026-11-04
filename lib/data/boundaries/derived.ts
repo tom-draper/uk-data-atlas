@@ -7,7 +7,7 @@
  * properties alone can still answer for them. Each helper falls back to the
  * geometry, which keeps an uploaded file — compiled by nobody — working.
  */
-import type { Feature } from "@lib/types";
+import type { Feature } from "../../types/index.ts";
 import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
 
 type Extent = [number, number, number, number];

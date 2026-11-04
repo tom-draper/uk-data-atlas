@@ -2,9 +2,9 @@ import {
 	type CustomDataset,
 	type CustomPoint,
 	type PointSummary,
-} from "@/lib/types/custom";
+} from "../../types/custom.ts";
 import { parseCsv } from "@uk-data-atlas/datasets/helpers/parseCsv";
-import type { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
+import type { Gazetteer } from "../gazetteer/gazetteer.ts";
 
 const YEAR = 2025;
 const ID = `roadSafety${YEAR}`;

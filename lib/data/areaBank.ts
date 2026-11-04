@@ -1,4 +1,4 @@
-import { GEOGRAPHIES } from "@/lib/docs/content/geographies";
+import { GEOGRAPHIES } from "../docs/content/geographies.ts";
 
 export interface AreaEntry {
 	label: string;

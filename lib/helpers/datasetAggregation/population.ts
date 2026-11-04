@@ -4,10 +4,10 @@ import type {
 	PopulationAgeSexRecord,
 	PopulationStats,
 	PropertyKeys,
-} from "@lib/types";
-import { getFeatureProp } from "@lib/types";
+} from "../../types/index.ts";
+import { getFeatureProp } from "../../types/index.ts";
 import { calculateTotal } from "@uk-data-atlas/datasets/helpers/population";
-import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
+import { featureAreaSqKm } from "../../data/boundaries/derived.ts";
 import { calculateAgeGroups } from "../ageDistribution.ts";
 
 // Pre-computed decay weights for age 90+ distribution
