@@ -1,11 +1,11 @@
 import type { BoundaryGeojson } from "../../types/geometry.ts";
 import * as topojson from "topojson-client";
 import type { Topology } from "topojson-specification";
-import {
-	type FeatureCollection,
-	type GeoJsonProperties,
-	type Geometry,
-	type Position,
+import type {
+	FeatureCollection,
+	GeoJsonProperties,
+	Geometry,
+	Position,
 } from "geojson";
 
 interface GeoJsonFeatureCollection extends FeatureCollection<
