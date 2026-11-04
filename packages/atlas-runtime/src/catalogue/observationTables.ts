@@ -1,4 +1,3 @@
-import { DatabaseSync } from "node:sqlite";
 import type {
 	StatisticsArtifact,
 	StatisticsReadPath,
@@ -6,6 +5,7 @@ import type {
 	StatisticsTableSelector,
 } from "../storage/atlasStatisticsObservations.ts";
 import { readStatisticsObservationText } from "../storage/atlasStatisticsObservations.ts";
+import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import type {
 	DataCatalog,
@@ -128,7 +128,6 @@ type ObservationCacheEntry = {
 export class ObservationCache {
 	private readonly entries = new Map<string, ObservationCacheEntry>();
 	private bytes = 0;
-
 	/** Artifacts read from the statistics tables, with what the catalogue says of each. */
 	private readonly statistics = new Map<
 		string,
@@ -157,7 +156,7 @@ export class ObservationCache {
 			throw new Error(
 				"Statistics selectors do not match the data catalogue.",
 			);
-		const database = new DatabaseSync(databasePath, { readOnly: true });
+		const database = openReadOnlyDatabase(databasePath);
 		try {
 			const tables = database
 				.prepare(
@@ -167,7 +166,7 @@ export class ObservationCache {
 			if (tables.length !== 2)
 				throw new Error("Missing statistics tables in atlas database.");
 		} finally {
-			database.close();
+			database.release();
 		}
 		if (Object.keys(readPath.observations).length)
 			throw new Error(
