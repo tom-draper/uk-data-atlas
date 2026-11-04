@@ -1,6 +1,7 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import cluster from "node:cluster";
 import { createServer } from "node:http";
+import { onDatabaseReplaced } from "@uk-data-atlas/atlas-runtime/storage";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -109,6 +110,16 @@ function startWorker() {
 		process.exit(1);
 	});
 
+	// Reads follow a replaced database file, but the catalogues were loaded
+	// from the old one. Say so, so the worker gets restarted onto the new release.
+	onDatabaseReplaced((path) =>
+		log({
+			level: "warn",
+			event: "database.replaced",
+			path,
+			fix: "restart the server to load the new release",
+		}),
+	);
 	const loading = performance.now();
 	const catalogues = readApiCatalogues(
 		resolveRepositoryRoot(apiRoot, "../.."),
