@@ -476,6 +476,7 @@ const stage = (
 		requiredOutputs = [],
 		codeInputs = [],
 		rawInputs,
+		writes = [],
 	} = {},
 ) => ({
 	name,
@@ -486,6 +487,7 @@ const stage = (
 	requiredOutputs,
 	codeInputs,
 	rawInputs: rawInputs ?? defaultRawInputs[name],
+	writes,
 });
 
 const apiStages = [
@@ -1029,4 +1031,108 @@ const websiteStages = [
 	),
 ];
 
-export const buildDataStages = [...apiStages, ...websiteStages];
+const artifacts = "data/build/artifacts";
+const atlasAssets = "data/build/atlas-assets";
+const geography = "data/build/geography";
+// A stage in the shared SQLite files is one writer among several.
+const atlasCache = "data/build/atlas-cache.sqlite";
+
+/**
+ * What each stage changes under data/build and public/data, beyond the
+ * `outputs` and `requiredOutputs` it declares. Stages that share a path never
+ * run at once, and each stage's outputs are found within its own paths. A
+ * stage with no paths writes elsewhere or somewhere unknown, so it runs alone:
+ * `sources` and the two registries rewrite data/source or checked-in code.
+ */
+const stageWrites = {
+	operations: [`${artifacts}/operations.json`],
+	"terrain-catalogue": [`${artifacts}/terrain-catalogue.json`],
+	datasets: ["data/build/datasets"],
+	// Creates both databases, then adds the projection and dataset caches.
+	"atlas-sqlite": ["data/build/atlas-base.sqlite", atlasCache],
+	"api-datasets": [`${artifacts}/source-data`],
+	"boundary-registry": [`${geography}/boundary-releases.json`],
+	"derived-boundaries": [`${artifacts}/boundaries`],
+	"area-inventory": [
+		`${artifacts}/areas`,
+		`${artifacts}/area-inventory.json`,
+	],
+	"geometry-source-registry": [`${artifacts}/geometry-sources.json`],
+	"geometry-store": [`${artifacts}/geometry-store`],
+	"named-locations": [
+		`${artifacts}/location-geometries`,
+		`${artifacts}/named-locations.json`,
+		`${artifacts}/named-locations-metadata.json`,
+	],
+	// Each copies the cache, edits the copy and renames it into place.
+	"place-index": [atlasCache],
+	"area-search-index": [atlasCache],
+	"postcode-counts": [atlasCache],
+	"atlas-cache-stamp": [atlasCache],
+	"postcode-index": ["data/build/postcode-index.sqlite"],
+	"statistics-vocabulary": ["data/build/statistics-vocabulary.json"],
+	"data-catalog": [
+		`${artifacts}/data-catalog.json`,
+		"data/build/compiled-observations",
+		"data/build/measure-statistics-fields.json",
+	],
+	"assemble-atlas": ["data/build/atlas.sqlite"],
+	"measure-compatibility": [`${artifacts}/measure-compatibility.json`],
+	"statistics-read-path": ["data/build/statistics-read-path.json"],
+	"export-manifest": [
+		`${artifacts}/exports`,
+		`${artifacts}/export-manifest.json`,
+	],
+	"postcode-areas": ["data/build/postcode-areas-component"],
+	"crosswalk-inventory": [
+		`${artifacts}/crosswalks`,
+		`${artifacts}/crosswalk-inventory.json`,
+	],
+	"relationship-paths": [`${geography}/relationship-paths.json`],
+	"analysis-geographies": [`${geography}/analysis-geographies.json`],
+	"analysis-geography-validation": [
+		`${geography}/analysis-geography-validation.json`,
+	],
+	"geography-catalogues": ["data/build/geography-payloads.json"],
+	"location-projections": ["data/build/location-projections"],
+	"relationship-candidates": [`${artifacts}/relationship-candidates.json`],
+	"geography-inventory": [`${geography}/geography-inventory.json`],
+	"lookup-manifest": [`${artifacts}/lookup-manifest.json`],
+	"map-resource": [
+		"data/build/map-resources",
+		`${artifacts}/map-resources.json`,
+	],
+	"validation-report": [`${artifacts}/validation-report.json`],
+	// Both run the release builder and write the one release file.
+	"atlas-release-initial": [`${artifacts}/atlas-release.json`],
+	"atlas-release": [`${artifacts}/atlas-release.json`],
+	documents: [
+		`${artifacts}/documents`,
+		`${artifacts}/evidence-documents.json`,
+	],
+	"atlas-lookups": [
+		`${atlasAssets}/atlas-lookups`,
+		`${atlasAssets}/atlas-lookups.json`,
+	],
+	"atlas-pages": [
+		`${atlasAssets}/atlas-pages`,
+		`${atlasAssets}/atlas-pages.json`,
+	],
+	boundaries: ["data/build/website-boundaries"],
+	"boundary-tiles": ["data/build/boundaries"],
+	"website-tiles": ["public/data/boundaries"],
+	"website-lookups": ["data/build/website-assets.sqlite"],
+	"website-datasets": ["public/data/datasets"],
+};
+
+const allStages = [...apiStages, ...websiteStages];
+for (const name of Object.keys(stageWrites))
+	if (!allStages.some((stage) => stage.name === name))
+		throw new Error(`Writes declared for an unknown stage: ${name}`);
+
+const withWrites = (stage) => {
+	const writes = stageWrites[stage.name];
+	return writes ? { ...stage, writes } : stage;
+};
+
+export const buildDataStages = allStages.map(withWrites);
