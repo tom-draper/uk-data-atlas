@@ -1,7 +1,8 @@
-import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
+import { type SQLOutputValue } from "node:sqlite";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { atlasDatabasePath } from "./dataLayout.ts";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of
@@ -71,9 +72,7 @@ export const readSqliteCrosswalkInventory = (
 	repositoryRoot: string,
 	databasePath = atlasDatabasePath(repositoryRoot),
 ): CrosswalkInventory => {
-	const database = new DatabaseSync(databasePath, {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(databasePath);
 	try {
 		const header = database
 			.prepare("SELECT * FROM crosswalk_inventory")
@@ -123,7 +122,7 @@ export const readSqliteCrosswalkInventory = (
 					}),
 		} as CrosswalkInventory;
 	} finally {
-		database.close();
+		database.release();
 	}
 };
 
@@ -154,9 +153,7 @@ export const readSqliteCrosswalk = (
 	expected: CrosswalkInventory["crosswalks"][number],
 	databasePath = atlasDatabasePath(repositoryRoot),
 ) => {
-	const database = new DatabaseSync(databasePath, {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(databasePath);
 	try {
 		const row = database
 			.prepare(
@@ -226,6 +223,6 @@ export const readSqliteCrosswalk = (
 			bytes: row.bytes as number,
 		};
 	} finally {
-		database.close();
+		database.release();
 	}
 };
