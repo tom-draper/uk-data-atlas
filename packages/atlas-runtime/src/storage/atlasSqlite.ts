@@ -1,6 +1,7 @@
 import {
 	readDatasetPayload,
 	readDatasetPayloadWithHash,
+	readStoredDatasetPayload,
 } from "../catalogue/datasetPayloads.ts";
 import { gunzipSync } from "node:zlib";
 import { existsSync } from "node:fs";
@@ -92,6 +93,9 @@ export function readVersionedAtlasDataset(
 ): string | undefined {
 	return readDatasetPayload(repositoryRoot, output, sha256);
 }
+
+/** A dataset's gzipped cache entry, for serving as stored. */
+export const readStoredAtlasDataset = readStoredDatasetPayload;
 
 export type AtlasAssetKind = "pages" | "lookups";
 
