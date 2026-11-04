@@ -46,10 +46,13 @@ export type ExistingManifestDataset = {
 	compiled: CompiledOutput;
 	/** What the dataset was compiled by; see pipeline/src/precompile/fingerprint.mjs. */
 	fingerprint?: string;
+	inputTrackingVersion?: 1;
+	missingSource?: string;
 };
 
 export type AtlasAssetsCache = {
 	inputs: FileSnapshot[];
+	lookupInputs?: FileSnapshot[];
 	outputs: {
 		gazetteerCore: CompiledOutput;
 		matchIndex: CompiledOutput;

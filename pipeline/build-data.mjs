@@ -76,7 +76,7 @@ const plural = (count, noun) =>
 	`${formatCount(count)} ${noun}${count === 1 ? "" : "s"}`;
 
 /**
- * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[] }} Stage
+ * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],

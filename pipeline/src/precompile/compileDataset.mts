@@ -1,7 +1,7 @@
 import { compileDatasetContents } from "@uk-data-atlas/datasets";
 import { createHash } from "crypto";
 import { readFile } from "fs/promises";
-import { join } from "path";
+import { join, relative, sep } from "path";
 import {
 	decodeCompactPayload,
 	encodeCompactPayload,
@@ -213,7 +213,9 @@ export async function compileStaleDataset(
 			error.code === "ENOENT" &&
 			"path" in error &&
 			typeof error.path === "string" &&
-			error.path.startsWith(SOURCE_DATA);
+			error.path.startsWith(`${SOURCE_DATA}${sep}`)
+				? error.path
+				: undefined;
 
 		if (!missingRawSource) throw error;
 
@@ -244,7 +246,13 @@ export async function compileStaleDataset(
 				]),
 			);
 		}
-		preserved = existing;
+		preserved = {
+			...existing,
+			inputTrackingVersion: 1,
+			missingSource: relative(SOURCE_DATA, missingRawSource)
+				.split(sep)
+				.join("/"),
+		};
 	}
 	const data = compiled;
 	// Region chunk generation is the sole downstream consumer of a compiled
@@ -276,6 +284,7 @@ export async function compileStaleDataset(
 		ms: msSince(startedAt),
 	});
 	return {
+		inputTrackingVersion: 1 as const,
 		type: definition.type,
 		output: definition.precompiledFile,
 		source: definition.source,

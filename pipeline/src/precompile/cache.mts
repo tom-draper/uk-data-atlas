@@ -243,6 +243,7 @@ export const canReuseDataset = async (
 ) => {
 	if (
 		!existing ||
+		existing.inputTrackingVersion !== 1 ||
 		fingerprint === undefined ||
 		existing.fingerprint !== fingerprint ||
 		existing.type !== definition.type ||
@@ -253,6 +254,20 @@ export const canReuseDataset = async (
 		return undefined;
 
 	try {
+		if (existing.missingSource !== undefined) {
+			try {
+				await stat(join(SOURCE_DATA, existing.missingSource));
+				return undefined;
+			} catch (error) {
+				if (
+					!error ||
+					typeof error !== "object" ||
+					!("code" in error) ||
+					error.code !== "ENOENT"
+				)
+					throw error;
+			}
+		}
 		for (const artifact of existing.inputs) {
 			const path = sourceInputPath(artifact.kind, artifact.path);
 			const input = await fileStamp(path);

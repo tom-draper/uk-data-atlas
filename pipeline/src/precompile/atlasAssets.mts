@@ -1,20 +1,23 @@
+import { existsSync } from "fs";
 import { readFile } from "fs/promises";
-import { join } from "path";
+import { join, relative } from "path";
 import {
 	parseBoundaryWardToLad,
 	parseParishLadMappings,
 } from "@uk-data-atlas/geography";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { loadMatchIndex } from "../../../lib/data/gazetteer/matchIndex.ts";
+import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets/data/gazetteer/places";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	fileSnapshots,
+	fileStamp,
 	sameFileSnapshots,
 	snapshotFileContents,
 } from "./cache.mts";
 import { OUT_DIR, out, outputMatches } from "./websiteOutput.mts";
 import { readAtlasLookup } from "../../../scripts/atlas-lookups.ts";
-import { BOUNDARY_DATA, ROOT } from "./paths.mts";
+import { BOUNDARY_DATA, ROOT, SOURCE_DATA } from "./paths.mts";
 import { readBoundaryAsset } from "./sources/read.mts";
 import type { ReuseContext } from "./types.mts";
 
@@ -31,6 +34,16 @@ export async function compileAtlasAssets({
 }: ReuseContext) {
 	const boundaryDirectory = join(BOUNDARY_DATA, "boundaries");
 	const boundaryInputs = await fileSnapshots(boundaryDirectory);
+	const lookupInputs = await Promise.all(
+		PLACE_LOOKUPS.map(async ({ lookup, file }) => {
+			const input = join("lookups", lookup, file);
+			const compiled = join(BOUNDARY_DATA, input);
+			const path = existsSync(compiled)
+				? compiled
+				: join(SOURCE_DATA, input);
+			return { path: relative(ROOT, path), ...(await fileStamp(path)) };
+		}),
+	);
 	// The gazetteer, mappings and upload index all traverse overlapping boundary
 	// releases. Share each raw asset for this build; each loader still owns its
 	// decoded representation, so their contracts and mutations remain isolated.
@@ -53,6 +66,15 @@ export async function compileAtlasAssets({
 		canReuse &&
 		cachedAtlasAssets &&
 		hasBoundaryContentHashes &&
+		cachedAtlasAssets.lookupInputs !== undefined &&
+		cachedAtlasAssets.lookupInputs.every(
+			(snapshot) => typeof snapshot.sha256 === "string",
+		) &&
+		(await sameFileSnapshots(
+			cachedAtlasAssets.lookupInputs,
+			lookupInputs,
+			ROOT,
+		)) &&
 		(await sameFileSnapshots(
 			cachedAtlasAssets.inputs,
 			boundaryInputs,
@@ -137,12 +159,19 @@ export async function compileAtlasAssets({
 				sha256: cachedAtlasAssets.inputs[index]!.sha256,
 			}))
 		: await snapshotFileContents(boundaryInputs, boundaryDirectory);
+	const recordedLookupInputs = canReuseAtlasAssets
+		? lookupInputs.map((snapshot, index) => ({
+				...snapshot,
+				sha256: cachedAtlasAssets.lookupInputs![index]!.sha256,
+			}))
+		: await snapshotFileContents(lookupInputs, ROOT);
 
 	return {
 		gazetteerCore,
 		boundaryMappings,
 		matchIndex,
 		recordedBoundaryInputs,
+		recordedLookupInputs,
 		/** Drops the shared boundary reads once nothing else will want them. */
 		releaseBoundaryReads: () => boundaryReads.clear(),
 	};
