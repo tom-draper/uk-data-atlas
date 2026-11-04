@@ -9,12 +9,20 @@ import { spawn } from "node:child_process";
 import { createLinePrefixer } from "./build-data-output.mjs";
 
 const [command, ...args] = process.argv.slice(2);
-const child = spawn(command, args, { stdio: ["inherit", "pipe", "pipe"] });
+// Stages that run at once get their name in front of each line.
+const prefix = process.env.DATA_BUILD_RELAY_PREFIX;
+const { DATA_BUILD_RELAY_PREFIX: _prefix, ...env } = process.env;
+const child = spawn(command, args, {
+	stdio: ["inherit", "pipe", "pipe"],
+	env,
+});
 
 const attach = (source, target) => {
 	const prefixer = createLinePrefixer({
+		prefix,
 		write: (text) => target.write(text),
-		overwrite: target.isTTY === true,
+		// Progress updates would overwrite other stages' lines.
+		overwrite: target.isTTY === true && prefix === undefined,
 	});
 	source.on("data", (chunk) => prefixer.push(chunk));
 	source.on("end", () => prefixer.flush());

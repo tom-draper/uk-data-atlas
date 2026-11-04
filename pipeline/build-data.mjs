@@ -1,9 +1,14 @@
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createStageCache } from "./build-data-cache.mjs";
 import { buildDataStages } from "./build-data-graph.mjs";
-import { runSchedule } from "./build-data-scheduler.mjs";
+import {
+	DEFAULT_STAGE_WEIGHT_MS,
+	priorityOrder,
+	resolveLimits,
+	runSchedule,
+} from "./build-data-scheduler.mjs";
 import {
 	buildLog,
 	formatCount,
@@ -81,7 +86,8 @@ const plural = (count, noun) =>
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
- *   execute?: (stage: Stage, options: { verbose: boolean }) => number | Promise<number>,
+ *   execute?: (stage: Stage, options: { verbose: boolean, prefixed: boolean }) => number | Promise<number>,
+ *   limits?: { jobs: number, memoryMb: number },
  *   log?: (line: string) => void,
  *   logError?: (message: string) => void,
  *   createCache?: () => ReturnType<typeof createStageCache> | null,
@@ -94,7 +100,10 @@ export async function runBuild({
 	log = buildLog.info,
 	logError = buildLog.error,
 	createCache = () => null,
+	limits = { jobs: 1, memoryMb: Infinity },
 } = {}) {
+	let jobs = limits.jobs;
+	let jobsFlag = false;
 	let from;
 	let only;
 	let plan = false;
@@ -111,6 +120,12 @@ export async function runBuild({
 			verbose = true;
 		} else if (argument === "--no-cache" && useCache) {
 			useCache = false;
+		} else if (argument === "--jobs" && !jobsFlag) {
+			if (!/^[1-9]\d*$/.test(argv[index + 1] ?? ""))
+				throw new Error("--jobs requires a positive whole number.");
+			jobs = Number(argv[index + 1]);
+			jobsFlag = true;
+			index += 1;
 		} else if (argument === "--only" && only === undefined) {
 			only = argv[index + 1];
 			if (!only || only.startsWith("--"))
@@ -123,7 +138,7 @@ export async function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--no-cache | --adopt]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--jobs <n>] [--no-cache | --adopt]`,
 			);
 		}
 	}
@@ -174,11 +189,15 @@ export async function runBuild({
 		});
 		const ran = timings.filter((timing) => !timing.skipped);
 		const unchanged = timings.length - ran.length;
+		const failures = Math.max(
+			1,
+			timings.filter((timing) => timing.failed).length,
+		);
 		const elapsed = formatDuration(performance.now() - startedAt);
 		log("");
 		log(
 			failed
-				? `Data build failed after ${elapsed} (${formatCount(Math.max(0, ran.length - 1))} ran, 1 failed, ${formatCount(unchanged)} unchanged)`
+				? `Data build failed after ${elapsed} (${formatCount(Math.max(0, ran.length - failures))} ran, ${formatCount(failures)} failed, ${formatCount(unchanged)} unchanged)`
 				: `Data build done in ${elapsed} (${formatCount(ran.length)} ran, ${formatCount(unchanged)} unchanged)`,
 		);
 		const slowest = [...ran].sort((a, b) => b.total - a.total).slice(0, 5);
@@ -249,6 +268,10 @@ export async function runBuild({
 				? `Data build: adopting existing outputs for ${plural(selected.length, "stage")}`
 				: `Data build${plan ? " plan" : ""}: ${plural(selected.length, "stage")}, ${formatCount(toRun.size)} to run, ${formatCount(selected.length - toRun.size)} unchanged`,
 		);
+		if (jobs > 1 && !adopt && !plan)
+			log(
+				`Running up to ${formatCount(jobs)} stages at once within ${formatCount(Math.round(limits.memoryMb))} MB`,
+			);
 		log("");
 		let started = 0;
 		let estimated = 0;
@@ -320,7 +343,7 @@ export async function runBuild({
 			const commandStartedAt = performance.now();
 			let status;
 			try {
-				status = await execute(stage, { verbose });
+				status = await execute(stage, { verbose, prefixed: jobs > 1 });
 			} catch (error) {
 				const command = performance.now() - commandStartedAt;
 				const total = recordTiming(stage.name, stageStartedAt, command);
@@ -366,7 +389,21 @@ export async function runBuild({
 			return true;
 		};
 		if (adopt || plan) for (const stage of selected) settle(stage);
-		else await runSchedule({ stages: selected, settle, run });
+		else {
+			const weightOf = (stage) =>
+				toRun.has(stage.name)
+					? (cache?.lastTiming(stage.name)?.totalMs ??
+						DEFAULT_STAGE_WEIGHT_MS)
+					: 0;
+			await runSchedule({
+				stages: selected,
+				settle,
+				run,
+				jobs,
+				memoryMb: limits.memoryMb,
+				order: jobs > 1 ? priorityOrder(selected, weightOf) : selected,
+			});
+		}
 		if (failureStatus !== null) return failureStatus;
 		if (plan && knownEstimates)
 			log(
@@ -386,34 +423,40 @@ const relayScript = fileURLToPath(
 );
 
 /**
- * Runs the stage's command with its output indented under the stage line.
- * The relay prefixes each line of stdout and stderr as it arrives.
+ * Runs the stage's command with its output indented under the stage line, or
+ * with the stage's name in front of each line when stages run at once. The
+ * relay prefixes each line of stdout and stderr as it arrives.
  */
-function executeStage(stage, { verbose = false } = {}) {
-	const result = spawnSync(
-		process.execPath,
-		[
-			relayScript,
-			stage.name === "sources" ? "pnpm" : process.execPath,
-			...stage.args,
-		],
-		{
-			cwd: repositoryRoot,
-			stdio: "inherit",
-			env: verbose
-				? { ...process.env, DATA_BUILD_VERBOSE: "1" }
-				: process.env,
-		},
-	);
-	if (result.error)
-		throw new Error(
-			`Cannot start stage ${stage.name}: ${result.error.message}`,
+function executeStage(stage, { verbose = false, prefixed = false } = {}) {
+	const env = { ...process.env };
+	delete env.DATA_BUILD_RELAY_PREFIX;
+	if (verbose) env.DATA_BUILD_VERBOSE = "1";
+	if (prefixed) env.DATA_BUILD_RELAY_PREFIX = `  [${stage.name}] `;
+	return new Promise((resolveStatus, reject) => {
+		const child = spawn(
+			process.execPath,
+			[
+				relayScript,
+				stage.name === "sources" ? "pnpm" : process.execPath,
+				...stage.args,
+			],
+			{ cwd: repositoryRoot, stdio: "inherit", env },
 		);
-	if (result.signal)
-		throw new Error(
-			`${stage.name} was terminated by ${result.signal}. Build stopped`,
+		child.once("error", (error) =>
+			reject(
+				new Error(`Cannot start stage ${stage.name}: ${error.message}`),
+			),
 		);
-	return result.status ?? 1;
+		child.once("close", (status, signal) => {
+			if (signal)
+				reject(
+					new Error(
+						`${stage.name} was terminated by ${signal}. Build stopped`,
+					),
+				);
+			else resolveStatus(status ?? 1);
+		});
+	});
 }
 
 if (
@@ -424,6 +467,7 @@ if (
 		process.exitCode = await runBuild({
 			argv: process.argv.slice(2),
 			createCache: createStageCache,
+			limits: resolveLimits(),
 		});
 	} catch (error) {
 		buildLog.error(error.message);
