@@ -168,9 +168,11 @@ test("an audited stage reports files it changed outside its scope", () => {
 		"public/data/other/two.json",
 	]);
 	// Without an audit, or without a scope, there is nothing to report.
+	current.record(alpha, []);
 	current.begin(beta);
 	write("data/build/stray.json", "changed again");
 	assert.deepEqual(current.undeclaredChanges(beta), []);
+	current.record(beta, []);
 	const unscoped: Stage = { name: "unscoped", args: [] };
 	current.begin(unscoped, { audit: true });
 	assert.deepEqual(current.undeclaredChanges(unscoped), []);
@@ -217,4 +219,28 @@ test("a stage with a declared scope does not discard other stages' cached keys",
 	current.record(registry, [], { cacheable: false });
 	current.lookup(alpha, []);
 	assert.equal(codeReads, reads + 1);
+});
+
+test("a stage tracked across the whole tree cannot begin beside another", () => {
+	const { cache } = fixture();
+	const current = cache();
+	current.begin(alpha);
+	// Passing a bare name loses the stage's scope, so it needs the tree alone.
+	assert.throws(
+		() => current.begin("beta"),
+		/Pass the stage, not its name, to begin\(\)/,
+	);
+	assert.throws(
+		() => current.begin({ name: "unscoped", args: [] }),
+		/without a declared scope/,
+	);
+	// Once the running stage is done, even if it failed, it can.
+	current.recordTiming("alpha", {
+		commandMs: 1,
+		totalMs: 1,
+		finishedAt: "now",
+		failed: true,
+	});
+	current.begin("beta");
+	assert.throws(() => current.begin(alpha), /declared scope/);
 });
