@@ -5,7 +5,10 @@ import type {
 	StatisticsTableSelector,
 } from "../storage/atlasStatisticsObservations.ts";
 import { readStatisticsObservationText } from "../storage/atlasStatisticsObservations.ts";
-import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
+import {
+	databaseGeneration,
+	openReadOnlyDatabase,
+} from "../storage/readOnlyDatabase.ts";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import type {
 	DataCatalog,
@@ -128,6 +131,9 @@ type ObservationCacheEntry = {
 export class ObservationCache {
 	private readonly entries = new Map<string, ObservationCacheEntry>();
 	private bytes = 0;
+	/** The generation of each database the entries were read from. */
+	private readonly generations = new Map<string, number>();
+
 	/** Artifacts read from the statistics tables, with what the catalogue says of each. */
 	private readonly statistics = new Map<
 		string,
@@ -212,6 +218,7 @@ export class ObservationCache {
 		artifactName: string,
 	): ObservationCacheEntry {
 		const path = `${databasePath}:${artifactName}`;
+		this.dropReplaced(databasePath);
 		let entry = this.entries.get(path);
 		if (entry) {
 			this.entries.delete(path);
@@ -243,6 +250,18 @@ export class ObservationCache {
 			}
 		}
 		return entry;
+	}
+
+	/** Forget what was read from a database file that has been replaced. */
+	private dropReplaced(databasePath: string) {
+		const generation = databaseGeneration(databasePath);
+		if (this.generations.get(databasePath) === generation) return;
+		this.generations.set(databasePath, generation);
+		for (const [key, entry] of this.entries)
+			if (key.startsWith(`${databasePath}:`)) {
+				this.entries.delete(key);
+				this.bytes -= entry.bytes;
+			}
 	}
 
 	read(
