@@ -579,6 +579,15 @@ describe("statistics model is generic", () => {
 					status: "observed",
 				},
 			]);
+			expect(
+				database
+					.prepare("SELECT slug, module FROM dataset ORDER BY slug")
+					.all(),
+			).toEqual([
+				{ slug: "census-tenure", module: "housing" },
+				{ slug: "crime", module: "crime" },
+				{ slug: "fuel-poverty", module: "deprivation" },
+			]);
 			expect(rebuildFuelPoverty(database)).toContain(
 				"City of London 001A",
 			);
@@ -588,6 +597,19 @@ describe("statistics model is generic", () => {
 		} finally {
 			database.close();
 		}
+	});
+
+	it("refuses a module outside the closed list", () => {
+		expect(() =>
+			memory(
+				statisticsTables([
+					{
+						...crime,
+						module: "retail" as StatisticsDataset["module"],
+					},
+				]),
+			),
+		).toThrow(/CHECK constraint failed/);
 	});
 
 	it("refuses a measure declared differently by two datasets", () => {
