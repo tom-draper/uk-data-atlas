@@ -1,5 +1,5 @@
-import { DatabaseSync } from "node:sqlite";
 import type { StatisticsVocabulary } from "@uk-data-atlas/measures";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
 /**
  * The measures and dimensions the statistics tables hold, in the form the
@@ -7,7 +7,7 @@ import type { StatisticsVocabulary } from "@uk-data-atlas/measures";
  * order (`position`), and a parent is named by its code.
  */
 export function readStatisticsVocabulary(path: string): StatisticsVocabulary {
-	const database = new DatabaseSync(path, { readOnly: true });
+	const database = openReadOnlyDatabase(path);
 	try {
 		const measures: StatisticsVocabulary["measures"] = {};
 		for (const row of database
@@ -42,6 +42,6 @@ export function readStatisticsVocabulary(path: string): StatisticsVocabulary {
 			});
 		return { schemaVersion: 1, measures, dimensions };
 	} finally {
-		database.close();
+		database.release();
 	}
 }
