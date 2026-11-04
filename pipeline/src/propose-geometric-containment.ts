@@ -12,7 +12,7 @@ import type { GeometricContainmentCrosswalkAdapter } from "@uk-data-atlas/atlas-
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { isGeographyKind } from "@uk-data-atlas/geography";
 import type { readGeometries as readGeometriesForCache } from "@uk-data-atlas/atlas-runtime/areas";
-import { measureContainment } from "./relationships/geometricContainment";
+import { measureContainment } from "./relationships/geometricContainment.ts";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 
 // The sliver width the area-overlap crosswalks use, so every method here

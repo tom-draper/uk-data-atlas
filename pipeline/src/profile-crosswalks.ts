@@ -10,16 +10,16 @@ import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationship
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
-} from "./relationships/crosswalkCompiler";
+} from "./relationships/crosswalkCompiler.ts";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readCompiledAreaLookup } from "./relationships/crosswalkBuildInputs";
-import { writeCrosswalkArtifact } from "./relationships/crosswalkArtifact";
+import { readCompiledAreaLookup } from "./relationships/crosswalkBuildInputs.ts";
+import { writeCrosswalkArtifact } from "./relationships/crosswalkArtifact.ts";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "./relationships/crosswalkWorkers";
+} from "./relationships/crosswalkWorkers.ts";
 
 const root = resolve(import.meta.dirname, "../..");
 const args = process.argv.slice(2);

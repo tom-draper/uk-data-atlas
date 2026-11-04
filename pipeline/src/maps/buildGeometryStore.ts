@@ -27,7 +27,7 @@ import {
 	formatBytes,
 	formatDuration,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { hashFile } from "../fileHashCache";
+import { hashFile } from "../fileHashCache.ts";
 
 /**
  * Compile every registered boundary release into the geometry store the

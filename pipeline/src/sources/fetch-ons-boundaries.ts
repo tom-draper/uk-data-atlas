@@ -17,11 +17,11 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { hashFile } from "../fileHashCache";
+import { hashFile } from "../fileHashCache.ts";
 import {
 	ONS_BOUNDARY_SOURCES,
 	type OnsBoundarySource,
-} from "./onsBoundarySources";
+} from "./onsBoundarySources.ts";
 
 const SERVICES =
 	"https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services";
