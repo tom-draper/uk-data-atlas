@@ -14,7 +14,7 @@ import {
 	BOUNDARY_CATALOG as catalogue,
 	BOUNDARY_TYPES,
 } from "@uk-data-atlas/datasets/data/boundaries/catalog";
-import { withCDN } from "@/lib/helpers/cdn";
+import { withCDN } from "../../helpers/cdn.ts";
 const mapAsset = (asset: string) =>
 	withCDN(asset.replace(/\.topojson$/, ".pmtiles"));
 // Catalogue paths identify releases. The manifest selects immutable archive bytes.
