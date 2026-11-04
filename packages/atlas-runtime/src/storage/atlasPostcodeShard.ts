@@ -1,10 +1,10 @@
-import { DatabaseSync } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
 } from "@uk-data-atlas/geography/postcode-index-types";
 import { atlasDatabasePath } from "./dataLayout.ts";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
 export const postcodeFields = [
 	"postcode",
@@ -25,9 +25,7 @@ export const readSqlitePostcodeShard = (
 	entry: PostcodeIndexArtifact["shards"][number],
 	databasePath = atlasDatabasePath(repositoryRoot),
 ): string => {
-	const database = new DatabaseSync(databasePath, {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(databasePath);
 	try {
 		const rows = database
 			.prepare(
@@ -62,6 +60,6 @@ export const readSqlitePostcodeShard = (
 			);
 		return text;
 	} finally {
-		database.close();
+		database.release();
 	}
 };

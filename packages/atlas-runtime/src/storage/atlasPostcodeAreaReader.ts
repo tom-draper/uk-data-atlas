@@ -1,4 +1,3 @@
-import { DatabaseSync } from "node:sqlite";
 import { readAtlasPayload } from "./atlasSqlite.ts";
 import {
 	readPostcodeAreaShard,
@@ -6,6 +5,7 @@ import {
 } from "./atlasPostcodeAreaShard.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import { atlasDatabasePath } from "./dataLayout.ts";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
 export function readSqlitePostcodeAreas(
 	repositoryRoot: string,
@@ -17,9 +17,7 @@ export function readSqlitePostcodeAreaShard(
 	repositoryRoot: string,
 	path: string,
 ): string {
-	const database = new DatabaseSync(atlasDatabasePath(repositoryRoot), {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(atlasDatabasePath(repositoryRoot));
 	try {
 		requirePostcodeAreaLayout(database);
 		const artifact: PostcodeAreasArtifact = JSON.parse(
@@ -33,6 +31,6 @@ export function readSqlitePostcodeAreaShard(
 		);
 		return readPostcodeAreaShard(database, artifact, path);
 	} finally {
-		database.close();
+		database.release();
 	}
 }

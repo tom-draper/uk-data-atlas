@@ -3,8 +3,8 @@ export {
 	readSqlitePostcodeAreaShard,
 } from "./atlasPostcodeAreaReader.ts";
 import { readCachePayload, requireAtlasCache } from "./atlasCache.ts";
-import { DatabaseSync } from "node:sqlite";
 import type { PostcodeCountsArtifact } from "@uk-data-atlas/postcodes";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
 export function readSqlitePostcodeCounts(
 	repositoryRoot: string,
@@ -16,9 +16,8 @@ export function readSqlitePostcodeCounts(
 	} = JSON.parse(
 		readCachePayload(repositoryRoot, "postcode-counts", "postcode-counts"),
 	);
-	const database = new DatabaseSync(
+	const database = openReadOnlyDatabase(
 		requireAtlasCache(repositoryRoot, "postcode-counts"),
-		{ readOnly: true },
 	);
 	try {
 		const select = database.prepare(
@@ -43,6 +42,6 @@ export function readSqlitePostcodeCounts(
 			})),
 		};
 	} finally {
-		database.close();
+		database.release();
 	}
 }
