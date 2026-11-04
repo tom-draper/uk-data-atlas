@@ -1,4 +1,4 @@
-import { gunzipSync } from "node:zlib";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { createHash } from "node:crypto";
 import {
 	mkdirSync,
@@ -9,19 +9,42 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
 import { buildAtlasSqlite } from "@/pipeline/src/atlas/buildAtlasSqlite";
 import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/storage";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 
 let root: string;
+const stored = gzipSync('{"2024":{"value":42}}\n', { level: 9 });
 const payload = '{"2024":{"value":42}}\n';
 const sha256 = createHash("sha256").update(payload).digest("hex");
-const request = (hash = sha256, output = "sample.json") =>
-	GET(new Request("http://localhost/data/catalogue"), {
+const request = (
+	hash = sha256,
+	output = "sample.json",
+	headers: HeadersInit = {},
+) =>
+	GET(new Request("http://localhost/data/catalogue", { headers }), {
 		params: Promise.resolve({ sha256: hash, output }),
 	});
+
+/** Serve the sample from the cache, as a dataset generated from rows is. */
+function cacheSample() {
+	const database = new DatabaseSync(
+		join(root, "data/build/atlas-base.sqlite"),
+	);
+	database.exec(
+		"UPDATE datasets SET sha256 = 'source', payloadId = NULL WHERE output = 'sample'",
+	);
+	database.close();
+	const cache = new DatabaseSync(atlasCachePath(root));
+	cache
+		.prepare("INSERT INTO dataset_payloads VALUES (?, ?, ?, ?, ?)")
+		.run("sample", "source", sha256, Buffer.byteLength(payload), stored);
+	cache.close();
+}
 
 beforeEach(() => {
 	root = mkdtempSync(join(tmpdir(), "dataset-route-"));
@@ -127,23 +150,16 @@ describe("versioned dataset route", () => {
 		);
 		expect(response.headers.get("Vary")).toBe("Accept-Encoding");
 	});
-	it.each(["gzip", "br, gzip;q=0.5", "*"])(
-		"compresses JSON for %s",
-		async (encoding) => {
-			const response = await GET(
-				new Request("http://localhost", {
-					headers: { "Accept-Encoding": encoding },
-				}),
-				{ params: Promise.resolve({ sha256, output: "sample.json" }) },
-			);
-			expect(response.headers.get("Content-Encoding")).toBe("gzip");
-			expect(
-				gunzipSync(
-					Buffer.from(await response.arrayBuffer()),
-				).toString(),
-			).toBe(payload);
-		},
-	);
+	it("leaves compression of uncached JSON to Next.js", async () => {
+		const response = await request(sha256, "sample.json", {
+			"Accept-Encoding": "gzip",
+		});
+		expect(response.headers.get("Content-Encoding")).toBeNull();
+		expect(response.headers.get("Content-Length")).toBe(
+			String(Buffer.byteLength(payload)),
+		);
+		expect(await response.text()).toBe(payload);
+	});
 	it.each(["gzip;q=0", "*;q=1, gzip;q=0", "br"])(
 		"keeps identity JSON for %s",
 		async (encoding) => {
@@ -170,4 +186,59 @@ describe("versioned dataset route", () => {
 			expect(response.headers.get("Cache-Control")).toBe("no-store");
 		},
 	);
+});
+
+describe("versioned dataset route with cached payloads", () => {
+	beforeEach(cacheSample);
+	it.each(["gzip", "br, gzip;q=0.5", "*"])(
+		"sends the stored gzip bytes for %s",
+		async (encoding) => {
+			const response = await request(sha256, "sample.json", {
+				"Accept-Encoding": encoding,
+			});
+			expect(response.status).toBe(200);
+			expect(response.headers.get("Content-Encoding")).toBe("gzip");
+			expect(response.headers.get("Content-Length")).toBe(
+				String(stored.byteLength),
+			);
+			expect(response.headers.get("Vary")).toBe("Accept-Encoding");
+			expect(response.headers.get("Cache-Control")).toBe(
+				"public, max-age=31536000, immutable",
+			);
+			expect(response.headers.get("ETag")).toBe(`W/"${sha256}"`);
+			expect(response.headers.get("Content-Type")).toBe(
+				"application/json; charset=utf-8",
+			);
+			const body = Buffer.from(await response.arrayBuffer());
+			expect(body.equals(stored)).toBe(true);
+			expect(gunzipSync(body).toString()).toBe(payload);
+		},
+	);
+	it.each([undefined, "gzip;q=0", "*;q=1, gzip;q=0", "br"])(
+		"sends identical plain JSON for %s",
+		async (encoding) => {
+			const response = await request(
+				sha256,
+				"sample.json",
+				encoding ? { "Accept-Encoding": encoding } : {},
+			);
+			expect(response.headers.get("Content-Encoding")).toBeNull();
+			expect(response.headers.get("Content-Length")).toBe(
+				String(Buffer.byteLength(payload)),
+			);
+			expect(response.headers.get("Vary")).toBe("Accept-Encoding");
+			expect(response.headers.get("ETag")).toBe(`W/"${sha256}"`);
+			expect(await response.text()).toBe(payload);
+		},
+	);
+	it.each([
+		["0".repeat(64), "sample.json"],
+		[sha256, "missing.json"],
+	])("rejects stale hash %s without caching", async (hash, output) => {
+		const response = await request(hash, output, {
+			"Accept-Encoding": "gzip",
+		});
+		expect(response.status).toBe(404);
+		expect(response.headers.get("Cache-Control")).toBe("no-store");
+	});
 });
