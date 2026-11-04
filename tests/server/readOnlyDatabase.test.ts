@@ -259,6 +259,7 @@ describe("shared read-only connections", () => {
 		expect(readOnlyDatabaseStats()).toEqual({
 			open: 0,
 			retired: 0,
+			connections: [],
 			statements: 0,
 		});
 		expect(() => statement.get()).toThrow();
