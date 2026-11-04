@@ -32,10 +32,14 @@ export async function aggregateCounts(path: string, threads?: number) {
 		await connection.run(
 			"CREATE TEMP TABLE counts (position INTEGER, code VARCHAR, live BIGINT, terminated BIGINT, large_user BIGINT)",
 		);
+		// Count each area set once, then add the sets up per release.
+		await connection.run(
+			"CREATE TEMP TABLE set_counts AS SELECT area_set_id AS id, count(*) FILTER (WHERE terminated = 0) AS live, count(*) FILTER (WHERE terminated <> 0) AS terminated, count(*) FILTER (WHERE terminated = 0 AND largeUser = '1') AS large_user FROM atlas.postcodes GROUP BY area_set_id",
+		);
 		for (const [position, , , column] of releases) {
 			const quoted = `"${column.replaceAll('"', '""')}"`;
 			await connection.run(
-				`INSERT INTO counts SELECT ${position}, a.code, count(*) FILTER (WHERE p.terminated = 0), count(*) FILTER (WHERE p.terminated <> 0), count(*) FILTER (WHERE p.terminated = 0 AND p.largeUser = '1') FROM atlas.postcodes p JOIN atlas.postcode_area_set s ON s.id = p.area_set_id JOIN atlas.areas a ON s.${quoted} = a.id GROUP BY a.code`,
+				`INSERT INTO counts SELECT ${position}, a.code, sum(c.live), sum(c.terminated), sum(c.large_user) FROM set_counts c JOIN atlas.postcode_area_set s ON s.id = c.id JOIN atlas.areas a ON s.${quoted} = a.id GROUP BY a.code`,
 			);
 		}
 		await connection.run(
