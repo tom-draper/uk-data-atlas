@@ -6,9 +6,9 @@
  */
 
 import { join } from "node:path";
-import { DatabaseSync } from "node:sqlite";
 import proj4 from "proj4";
 import {
+	openReadOnlyDatabase,
 	readAtlasPayload,
 	requirePostcodeAreaLayout,
 } from "@uk-data-atlas/atlas-runtime/storage";
@@ -163,8 +163,15 @@ export function readPostcodeUnit(
 	};
 }
 
-let releases: ReturnType<typeof postcodeReleases> | undefined;
-let layoutChecked = false;
+/** What was read from one generation of the database, dropped when it is replaced. */
+let read:
+	| {
+			path: string;
+			generation: number;
+			releases?: ReturnType<typeof postcodeReleases>;
+			layoutChecked: boolean;
+	  }
+	| undefined;
 
 const databasePath = () => join(process.cwd(), "data/build/atlas.sqlite");
 
@@ -178,15 +185,26 @@ const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
 
 /** The postcode, or undefined where the directory has no such postcode. */
 export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
-	releases ??= postcodeReleases(
-		JSON.parse(readAtlasPayload(process.cwd(), "postcode-areas")).releases,
-	);
 	const district = compact.slice(0, -3);
-	const database = new DatabaseSync(databasePath(), { readOnly: true });
+	const database = openReadOnlyDatabase(databasePath());
 	try {
-		if (!layoutChecked) {
+		if (
+			read?.path !== database.path ||
+			read.generation !== database.generation
+		)
+			read = {
+				path: database.path,
+				generation: database.generation,
+				layoutChecked: false,
+			};
+		const state = read;
+		state.releases ??= postcodeReleases(
+			JSON.parse(readAtlasPayload(process.cwd(), "postcode-areas"))
+				.releases,
+		);
+		if (!state.layoutChecked) {
 			requirePostcodeAreaLayout(database);
-			layoutChecked = true;
+			state.layoutChecked = true;
 		}
 		const rows = database
 			.prepare(DISTRICT_ROWS)
@@ -237,16 +255,16 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 			const code = (placed ?? edge)?.code;
 			return code === undefined ? undefined : String(code);
 		};
-		return readPostcodeUnit(district, rows, at, areaCode, releases);
+		return readPostcodeUnit(district, rows, at, areaCode, state.releases);
 	} finally {
-		database.close();
+		database.release();
 	}
 }
 
 /** A sector's live postcodes, as written, in the directory's order. */
 export function sectorPostcodes(sector: string) {
 	const [district, digit] = sector.split(" ");
-	const database = new DatabaseSync(databasePath(), { readOnly: true });
+	const database = openReadOnlyDatabase(databasePath());
 	try {
 		return database
 			.prepare(
@@ -257,6 +275,6 @@ export function sectorPostcodes(sector: string) {
 			.filter((postcode) => postcode[district!.length] === digit)
 			.map(displayPostcode);
 	} finally {
-		database.close();
+		database.release();
 	}
 }
