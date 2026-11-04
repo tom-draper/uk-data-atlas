@@ -12,7 +12,7 @@ import {
 	statSync,
 	writeFileSync,
 } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const VERSION = 4;
@@ -252,12 +252,13 @@ export function createStageCache({
 			}),
 		);
 
-	const save = () => {
-		mkdirSync(join(stateFile, ".."), { recursive: true });
-		const temporary = `${stateFile}.${process.pid}.tmp`;
-		writeFileSync(temporary, `${JSON.stringify(state)}\n`);
-		renameSync(temporary, stateFile);
+	const writeJson = (path, value) => {
+		mkdirSync(dirname(path), { recursive: true });
+		const temporary = `${path}.${process.pid}.tmp`;
+		writeFileSync(temporary, `${JSON.stringify(value)}\n`);
+		renameSync(temporary, path);
 	};
+	const save = () => writeJson(stateFile, state);
 
 	/** Recorded output entries that carry a hash, by path. */
 	const knownHashes = () => {
@@ -331,6 +332,20 @@ export function createStageCache({
 	};
 
 	return {
+		lastTiming(name) {
+			return state.stages[name]?.timing ?? null;
+		},
+
+		recordTiming(name, timing) {
+			state.stages[name] ??= { key: null, digest: null, outputs: {} };
+			state.stages[name].timing = timing;
+			save();
+		},
+
+		writeBuildSummary(summary) {
+			writeJson(join(dirname(stateFile), "last-build.json"), summary);
+		},
+
 		/** Validate every selected stage before writing any adoption records. */
 		validateAdoption(stages) {
 			for (const stage of stages) adoptionOutputs(stage);
@@ -341,6 +356,7 @@ export function createStageCache({
 			const outputs = withHashes(adoptionOutputs(stage));
 			const digest = hashOutputs(outputs);
 			state.stages[stage.name] = {
+				timing: state.stages[stage.name]?.timing,
 				key: keyFor(stage, dependencyDigests),
 				dependencies: stage.dependencies ?? [],
 				digest,
@@ -459,6 +475,7 @@ export function createStageCache({
 			const hashed = withHashes(outputs, known);
 			const digest = hashOutputs(hashed);
 			state.stages[stage.name] = {
+				timing: state.stages[stage.name]?.timing,
 				key: keyFor(stage, dependencyDigests),
 				dependencies: stage.dependencies ?? [],
 				digest,
