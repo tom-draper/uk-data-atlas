@@ -7,6 +7,7 @@ import {
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";
+import { chooseDistanceFallbacks } from "./postcodeDistanceFallbacks.ts";
 import {
 	postcodeDistrictWhere,
 	postcodeFields,
@@ -20,6 +21,22 @@ import {
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 
 const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
+
+/** A release's distance: its own column, else the first earlier one set. */
+function distanceExpression(
+	columns: Array<{ distance: string }>,
+	fallbacks: Array<number | null>,
+	position: number,
+) {
+	const names: string[] = [];
+	for (
+		let at: number | null = position;
+		at !== null;
+		at = fallbacks[at] ?? null
+	)
+		names.push(`p.${quote(columns[at]!.distance)}`);
+	return names.length > 1 ? `COALESCE(${names.join(", ")})` : names[0]!;
+}
 
 export function writePostcodeAreas(
 	database: DatabaseSync,
@@ -46,6 +63,11 @@ export function writePostcodeAreas(
 		);
 	if (index.contentHash !== artifact.postcodeIndex)
 		throw new Error("Postcode area index does not match postcodes");
+	const fallbacks = chooseDistanceFallbacks(
+		columns.map((column) => column.key),
+		artifact,
+		readShard,
+	);
 	database.exec(`DROP VIEW IF EXISTS postcodes_decoded;
 		DROP VIEW IF EXISTS postcode_area_matches_decoded;
 		DROP TABLE IF EXISTS postcode_area_columns;
@@ -54,12 +76,12 @@ export function writePostcodeAreas(
 		DROP TABLE IF EXISTS postcode_area_releases;
 		DROP TABLE IF EXISTS postcodes_next;
 		DROP TABLE IF EXISTS postcode_area_set;
-		CREATE TABLE postcode_area_releases (position INTEGER PRIMARY KEY, geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, areaColumn TEXT NOT NULL UNIQUE, distanceColumn TEXT NOT NULL UNIQUE);
+		CREATE TABLE postcode_area_releases (position INTEGER PRIMARY KEY, geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, areaColumn TEXT NOT NULL UNIQUE, distanceColumn TEXT NOT NULL UNIQUE, distanceFallback INTEGER REFERENCES postcode_area_releases(position));
 		CREATE TABLE postcode_area_columns (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), position INTEGER NOT NULL, hasSeveral INTEGER NOT NULL, PRIMARY KEY(district, releasePosition)) WITHOUT ROWID;
 		CREATE TABLE postcode_area_codes (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES area_version(id), PRIMARY KEY(district, releasePosition, position)) WITHOUT ROWID;
 		CREATE TABLE postcode_area_matches (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), postcodePosition INTEGER NOT NULL, position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES area_version(id), containment TEXT NOT NULL, distanceCm INTEGER NOT NULL, PRIMARY KEY(district, releasePosition, postcodePosition, position)) WITHOUT ROWID;
 		CREATE TABLE postcode_area_set (id INTEGER PRIMARY KEY${columns.map((c) => `, ${quote(c.area)} INTEGER REFERENCES area_version(id)`).join("")}) STRICT;
-		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL, area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)${columns.map((c) => `, ${quote(c.distance)} INTEGER NOT NULL`).join("")}) WITHOUT ROWID;`);
+		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL, area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)${columns.map((c, i) => `, ${quote(c.distance)} INTEGER${fallbacks[i] === null ? " NOT NULL" : ""}`).join("")}) WITHOUT ROWID;`);
 	database.exec(
 		"CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
 	);
@@ -67,7 +89,7 @@ export function writePostcodeAreas(
 		.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")
 		.run(POSTCODE_AREA_LAYOUT_KEY, POSTCODE_AREA_LAYOUT);
 	const addRelease = database.prepare(
-		"INSERT INTO postcode_area_releases VALUES (?, ?, ?, ?, ?)",
+		"INSERT INTO postcode_area_releases VALUES (?, ?, ?, ?, ?, ?)",
 	);
 	const findRelease = database.prepare(
 		"SELECT position FROM area_releases WHERE geography = ? AND id = ?",
@@ -83,6 +105,7 @@ export function writePostcodeAreas(
 			column.boundaryRelease,
 			column.area,
 			column.distance,
+			fallbacks[position]!,
 		);
 		const release = findRelease.get(
 			column.geography,
@@ -178,7 +201,7 @@ export function writePostcodeAreas(
 				(field) => row[field]!,
 			);
 			const areas: Array<number | null> = [];
-			const distances: number[] = [];
+			const distances: Array<number | null> = [];
 			for (const [releasePosition, column] of columns.entries()) {
 				const value = shard.releases[column.key]!;
 				const area = value.area[position]!;
@@ -193,7 +216,19 @@ export function writePostcodeAreas(
 				areas.push(
 					area >= 0 ? localIds[releasePosition]![area]! : null,
 				);
-				distances.push(value.distanceCm[position]!);
+				const distance = value.distanceCm[position]!;
+				const fallback = fallbacks[releasePosition]!;
+				// Null where an earlier release holds the same distance.
+				distances.push(
+					fallback !== null &&
+						distance !== 0 &&
+						distance ===
+							shard.releases[columns[fallback]!.key]!.distanceCm[
+								position
+							]
+						? null
+						: distance,
+				);
 				if (area === SEVERAL) {
 					const matches = value.several?.[position];
 					if (!matches?.length)
@@ -237,6 +272,6 @@ export function writePostcodeAreas(
 			);
 	}
 	database.exec(`DROP TABLE postcodes; ALTER TABLE postcodes_next RENAME TO postcodes;
-		CREATE VIEW postcodes_decoded AS SELECT ${postcodeFields.map((field) => `p.${field}`).join(", ")}${columns.map((c) => `, s.${quote(c.area)}, p.${quote(c.distance)}`).join("")}${columns.map((c, i) => `, a${i}.code AS ${quote(c.area.replace(/AreaId$/, "Code"))}`).join("")} FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id ${columns.map((c, i) => `LEFT JOIN areas a${i} ON a${i}.id = s.${quote(c.area)}`).join(" ")};
+		CREATE VIEW postcodes_decoded AS SELECT ${postcodeFields.map((field) => `p.${field}`).join(", ")}${columns.map((c, i) => `, s.${quote(c.area)}, ${distanceExpression(columns, fallbacks, i)} AS ${quote(c.distance)}`).join("")}${columns.map((c, i) => `, a${i}.code AS ${quote(c.area.replace(/AreaId$/, "Code"))}`).join("")} FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id ${columns.map((c, i) => `LEFT JOIN areas a${i} ON a${i}.id = s.${quote(c.area)}`).join(" ")};
 		CREATE VIEW postcode_area_matches_decoded AS SELECT m.*, r.geography, r.boundaryRelease, a.code, a.name FROM postcode_area_matches m JOIN postcode_area_releases r ON r.position = m.releasePosition JOIN areas a ON a.id = m.areaId;`);
 }
