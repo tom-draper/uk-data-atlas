@@ -22,7 +22,7 @@ function fixture(context: TestContext) {
 		`import { appendFileSync } from "node:fs";
 import { runBuild } from ${JSON.stringify(pathToFileURL(runner).href)};
 try {
-  process.exitCode = runBuild({
+  process.exitCode = await runBuild({
     argv: process.argv.slice(2),
     execute(stage) {
       appendFileSync(process.env.BUILD_TRACE, JSON.stringify({ args: stage.args }) + "\\n");
@@ -158,7 +158,7 @@ test("rebuilding atlas pages imports SQLite assets before sealing the release an
 	]);
 });
 
-test("runs TypeScript stages with Node and forwards arguments", (context) => {
+test("runs TypeScript stages with Node and forwards arguments", async (context) => {
 	const directory = mkdtempSync(join(tmpdir(), "atlas-node-stage-"));
 	context.onTestFinished(() =>
 		rmSync(directory, { recursive: true, force: true }),
@@ -173,7 +173,7 @@ test("runs TypeScript stages with Node and forwards arguments", (context) => {
 import { value } from "./dependency.ts";
 writeFileSync(process.argv[2], JSON.stringify({ value, cwd: process.cwd(), flag: process.argv[3], execArgv: process.execArgv }));`,
 	);
-	const status = runBuild({
+	const status = await runBuild({
 		stages: [
 			{
 				name: "fixture",
@@ -404,7 +404,7 @@ test("fixture graphs sort dependencies, select downstream branches, and reject i
 			script,
 			`import { appendFileSync } from "node:fs";
 import { runBuild } from ${JSON.stringify(pathToFileURL(runner).href)};
-process.exitCode = runBuild({ argv: process.argv.slice(2), stages: ${JSON.stringify(stages)}, execute(stage) {
+process.exitCode = await runBuild({ argv: process.argv.slice(2), stages: ${JSON.stringify(stages)}, execute(stage) {
   appendFileSync(process.env.BUILD_TRACE, JSON.stringify({ args: stage.args }) + "\\n");
   return 0;
 } });`,
