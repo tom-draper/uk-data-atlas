@@ -216,6 +216,7 @@ export const GENERAL_ELECTION: DeclaredDataset = {
 		date: pollingDay(GENERAL_POLLING_DAYS),
 		results: "results",
 		parties: PARTY_REFERENCE,
+		areas: { region: "region", country: "country" },
 		contest: {
 			area_name: "constituencyName",
 			region: "regionName",

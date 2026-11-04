@@ -15,6 +15,8 @@ import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
 /** The contest columns stored as the publisher's text. */
 const CONTEST_TEXT_COLUMNS = CONTEST_COLUMNS.filter(
 	(column) =>
+		column !== "region" &&
+		column !== "country" &&
 		column !== "first_party" &&
 		column !== "second_party" &&
 		column !== "winner",
@@ -23,7 +25,8 @@ const CONTEST_TEXT_COLUMNS = CONTEST_COLUMNS.filter(
 export function statisticsTables(
 	inputs: readonly StatisticsInput[],
 ): Record<string, SqliteTable> {
-	const { releasePosition, area, areaIndex } = createStatisticsAreaLookup();
+	const { releasePosition, area, areaIndex, namedArea } =
+		createStatisticsAreaLookup();
 	const periodId = (
 		database: DatabaseSync,
 		dataset: string,
@@ -553,20 +556,51 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"election_id INTEGER NOT NULL REFERENCES election(id)",
 				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
 				...CONTEST_TEXT_COLUMNS.map((column) => `${column} TEXT`),
+				"region_text TEXT",
+				"country_text TEXT",
+				"region_area_version_id INTEGER REFERENCES area_version(id)",
+				"country_area_version_id INTEGER REFERENCES area_version(id)",
 				"first_party_id INTEGER REFERENCES party(id)",
 				"second_party_id INTEGER REFERENCES party(id)",
 				"winner_party_id INTEGER REFERENCES party(id)",
 			],
 			key: ["id"],
-			constraints: ["UNIQUE (election_id, area_version_id)"],
+			constraints: [
+				"UNIQUE (election_id, area_version_id)",
+				// A name is stored as text only where it names no held area.
+				"CHECK (region_text IS NULL OR region_area_version_id IS NULL)",
+				"CHECK (country_text IS NULL OR country_area_version_id IS NULL)",
+			],
 			rows: rows(function* ({ datasets }, database) {
 				const { idOfCode, idOfKey } = parties(database);
 				let election = 0;
 				let id = 0;
 				for (const dataset of datasets)
-					for (const { contests } of dataset.elections?.() ?? []) {
+					for (const { date, contests } of dataset.elections?.() ??
+						[]) {
 						election++;
-						for (const { release, code, contest } of contests)
+						const year = Number(date.slice(0, 4));
+						for (const { release, code, contest } of contests) {
+							/** The area a name is, else the name as text. */
+							const named = (column: "region" | "country") => {
+								const text = contest?.[column] ?? null;
+								const geography =
+									dataset.contestAreas?.[column];
+								const found =
+									text !== null && geography
+										? namedArea(
+												database,
+												geography,
+												year,
+												text,
+											)
+										: undefined;
+								return found === undefined
+									? { id: null, text }
+									: { id: found, text: null };
+							};
+							const region = named("region");
+							const country = named("country");
 							yield [
 								++id,
 								election,
@@ -574,6 +608,10 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 								...CONTEST_TEXT_COLUMNS.map(
 									(column) => contest?.[column] ?? null,
 								),
+								region.text,
+								country.text,
+								region.id,
+								country.id,
 								contest?.first_party
 									? idOfCode(contest.first_party)
 									: null,
@@ -584,13 +622,15 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 									? idOfKey(contest.winner)
 									: null,
 							];
+						}
 					}
 			}),
 			views: {
 				v_contest: `
 SELECT c.id AS contest_id, d.slug AS dataset, e.label AS election, e.kind, e.date AS polling_day,
   a.code AS area_code, c.area_name, r.geography, r.id AS release,
-  c.authority_code, c.authority_name, c.region, c.country, c.constituency_type, c.result,
+  c.authority_code, c.authority_name, coalesce(rv.name, c.region_text) AS region,
+  coalesce(cv.name, c.country_text) AS country, c.constituency_type, c.result,
   fp.code AS first_party, sp.code AS second_party, wp.key AS winner,
   e.dataset_id, c.area_version_id
 FROM contest c
@@ -599,6 +639,8 @@ JOIN dataset d ON d.id = e.dataset_id
 JOIN area_version v ON v.id = c.area_version_id
 JOIN area a ON a.id = v.area_id
 JOIN area_releases r ON r.position = v.release_id
+LEFT JOIN area_version rv ON rv.id = c.region_area_version_id
+LEFT JOIN area_version cv ON cv.id = c.country_area_version_id
 LEFT JOIN party fp ON fp.id = c.first_party_id
 LEFT JOIN party sp ON sp.id = c.second_party_id
 LEFT JOIN party wp ON wp.id = c.winner_party_id`,

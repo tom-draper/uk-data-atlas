@@ -150,6 +150,11 @@ export type StatisticsDataset = {
 	elections?: () => Iterable<StatisticsElection>;
 	/** Names and colours for the parties its elections mention. */
 	parties?: readonly StatisticsParty[];
+	/**
+	 * Contest columns whose text names an area of a geography. A name that is
+	 * exactly one area's name in the nearest release is stored as that area.
+	 */
+	contestAreas?: Partial<Record<"region" | "country", string>>;
 	/** Areas a publisher relates to other areas, such as the one containing them. */
 	relationships?: () => Iterable<{
 		relation: AreaRelationship;

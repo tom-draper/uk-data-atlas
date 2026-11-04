@@ -33,7 +33,17 @@ crosswalks, which are computed from boundaries and weights.
 their observations. An `election` names its dataset, the publisher's label for
 it (`2024`, `1974O`), its kind (`general` or `local`), its polling day and the
 release its areas are on. A `contest` is one area's contest at an election, with
-the publisher's text: area name, region, country, constituency type and result.
+the publisher's text: area name, constituency type and result. A dataset can
+declare that `region` and `country` name areas. A name that is exactly one
+area's name in the nearest available release of that geography (the later on a
+tie) is stored as that `area_version`, in `region_area_version_id` or
+`country_area_version_id`, and its text is not kept. Any other name is kept as
+the publisher's text in `region_text` or `country_text`, so no published
+spelling is lost: for the general elections these are the Scotland, Wales and
+Northern Ireland labels in the region column (the region release is England
+only) and 2010 and 2015's `East of England ` with a trailing space. The
+historical elections' regions are the House of Commons Library's own and are
+all kept as text. `v_contest` gives `region` and `country` as either.
 Its two leading parties and the party declared the winner are `party` ids. A
 `party` is one row whichever way it is written: `code` is the publisher's
 abbreviation (`Lab`) and `key` the atlas's key for it (`LAB`, the abbreviation
