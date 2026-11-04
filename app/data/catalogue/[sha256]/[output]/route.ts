@@ -1,3 +1,4 @@
+import { acceptsEncoding } from "@/lib/helpers/acceptedEncodings";
 import { promisify } from "node:util";
 import { gzip as gzipCallback } from "node:zlib";
 import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
@@ -25,24 +26,7 @@ export async function GET(request: Request, { params }: Context) {
 			status: 404,
 			headers: { "Cache-Control": "no-store" },
 		});
-	const encodings = new Map(
-		(request.headers.get("Accept-Encoding") ?? "")
-			.split(",")
-			.map((entry) => {
-				const [name, ...parameters] = entry
-					.trim()
-					.toLowerCase()
-					.split(";");
-				const quality = parameters.find((parameter) =>
-					parameter.trim().startsWith("q="),
-				);
-				return [
-					name,
-					quality ? Number(quality.trim().slice(2)) : 1,
-				] as const;
-			}),
-	);
-	const gzip = (encodings.get("gzip") ?? encodings.get("*") ?? 0) > 0;
+	const gzip = acceptsEncoding(request, "gzip");
 	const body = gzip ? new Uint8Array(await compress(payload)) : payload;
 	return new Response(body, {
 		headers: {

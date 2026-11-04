@@ -1,4 +1,5 @@
 import { gunzipSync } from "node:zlib";
+import { acceptsEncoding } from "@/lib/helpers/acceptedEncodings";
 import {
 	readAtlasAsset,
 	type AtlasAssetKind,
@@ -41,24 +42,7 @@ export async function atlasAssetResponse(
 			})
 	)
 		return new Response(null, { status: 304, headers });
-	const encodings = new Map(
-		(request.headers.get("Accept-Encoding") ?? "")
-			.split(",")
-			.map((entry) => {
-				const [name, ...parameters] = entry
-					.trim()
-					.toLowerCase()
-					.split(";");
-				const quality = parameters.find((parameter) =>
-					parameter.trim().startsWith("q="),
-				);
-				return [
-					name,
-					quality ? Number(quality.trim().slice(2)) : 1,
-				] as const;
-			}),
-	);
-	const gzip = (encodings.get("gzip") ?? encodings.get("*") ?? 0) > 0;
+	const gzip = acceptsEncoding(request, "gzip");
 	const body = new Uint8Array(gzip ? asset.gzip : gunzipSync(asset.gzip));
 	if (gzip) headers.set("Content-Encoding", "gzip");
 	headers.set("Content-Length", String(body.byteLength));
