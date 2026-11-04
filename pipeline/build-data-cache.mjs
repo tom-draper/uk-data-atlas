@@ -1,4 +1,4 @@
-import { stageCodeFiles } from "./build-data-code.mjs";
+import { stageCodeInputs } from "./build-data-code.mjs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
@@ -16,6 +16,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const VERSION = 4;
+export const KEY_VERSION = 1;
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 // Where the stages write. A stage's outputs are the files here it changes.
@@ -164,6 +165,7 @@ export function createStageCache({
 	outputRoots = OUTPUT_ROOTS,
 	dataDirectory = "data/source",
 	codeFiles,
+	keyVersion = KEY_VERSION,
 	environment = process.env,
 	hashFile = hashFileContent,
 } = {}) {
@@ -220,13 +222,16 @@ export function createStageCache({
 	const codeFor = (stage) => {
 		if (!stageInputs.has(stage.name)) {
 			if (!codeFiles) files ??= gitCodeFiles(root);
+			const code = codeFiles
+				? { files: codeFiles(stage) }
+				: stageCodeInputs(root, stage, files);
 			stageInputs.set(
 				stage.name,
-				hashCode(
-					root,
-					codeFiles
-						? codeFiles(stage)
-						: stageCodeFiles(root, stage, files),
+				sha256(
+					JSON.stringify({
+						...code,
+						files: hashCode(root, code.files),
+					}),
 				),
 			);
 		}
@@ -245,6 +250,7 @@ export function createStageCache({
 	const keyFor = (stage, dependencyDigests) =>
 		sha256(
 			JSON.stringify({
+				version: keyVersion,
 				args: stage.args,
 				inputs: currentInputs(),
 				code: codeFor(stage),
