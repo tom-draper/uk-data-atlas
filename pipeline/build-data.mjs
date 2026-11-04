@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createStageCache } from "./build-data-cache.mjs";
 import { buildDataStages } from "./build-data-graph.mjs";
+import { runSchedule } from "./build-data-scheduler.mjs";
 import {
 	buildLog,
 	formatCount,
@@ -80,13 +81,13 @@ const plural = (count, noun) =>
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
- *   execute?: (stage: Stage, options: { verbose: boolean }) => number,
+ *   execute?: (stage: Stage, options: { verbose: boolean }) => number | Promise<number>,
  *   log?: (line: string) => void,
  *   logError?: (message: string) => void,
  *   createCache?: () => ReturnType<typeof createStageCache> | null,
  * }} [options]
  */
-export function runBuild({
+export async function runBuild({
 	argv = [],
 	stages = buildDataStages,
 	execute = executeStage,
@@ -252,19 +253,24 @@ export function runBuild({
 		let started = 0;
 		let estimated = 0;
 		let knownEstimates = 0;
-		for (const stage of selected) {
+		let failureStatus = null;
+		const startedAtOf = new Map();
+		// Handles a stage that needs no command: adopted, unchanged or only
+		// planned. Returns true when the stage has to run.
+		const settle = (stage) => {
 			const stageStartedAt = performance.now();
+			startedAtOf.set(stage.name, stageStartedAt);
 			const dependencies = dependencyDigests(stage);
 			if (adopt) {
 				if (stage.cacheable === false) {
 					log(`${stage.name}: not cacheable, skipped`);
 					if (!plan)
 						recordTiming(stage.name, stageStartedAt, 0, true);
-					continue;
+					return false;
 				}
 				if (plan) {
 					log(`${stage.name}: would adopt existing outputs`);
-					continue;
+					return false;
 				}
 				const adopted = cache.adopt(stage, dependencies);
 				digests.set(stage.name, adopted.digest);
@@ -273,7 +279,7 @@ export function runBuild({
 				);
 				if (verbose) for (const path of adopted.files) log(`  ${path}`);
 				recordTiming(stage.name, stageStartedAt, 0, true);
-				continue;
+				return false;
 			}
 			const reused = reusableDigest(stage, dependencies);
 			if (reused !== null) {
@@ -284,7 +290,7 @@ export function runBuild({
 				if (plan || verbose) logCommand(stage);
 				digests.set(stage.name, reused);
 				recordTiming(stage.name, stageStartedAt, 0, true);
-				continue;
+				return false;
 			}
 			if (plan) {
 				const last = cache?.lastTiming(stage.name);
@@ -297,8 +303,14 @@ export function runBuild({
 				);
 				logCommand(stage);
 				if (stage.cacheable !== false) digests.set(stage.name, null);
-				continue;
+				return false;
 			}
+			return true;
+		};
+		// Runs a stage's command and records it. Returns false when it failed.
+		const run = async (stage) => {
+			const stageStartedAt = startedAtOf.get(stage.name);
+			const dependencies = dependencyDigests(stage);
 			started += 1;
 			log(
 				`${stage.name}: running (${formatCount(started)} of ${formatCount(toRun.size)})`,
@@ -308,7 +320,7 @@ export function runBuild({
 			const commandStartedAt = performance.now();
 			let status;
 			try {
-				status = execute(stage, { verbose });
+				status = await execute(stage, { verbose });
 			} catch (error) {
 				const command = performance.now() - commandStartedAt;
 				const total = recordTiming(stage.name, stageStartedAt, command);
@@ -335,7 +347,8 @@ export function runBuild({
 					failed: true,
 				});
 				failed = true;
-				return status;
+				failureStatus ??= status;
+				return false;
 			}
 			const digest = cache?.record(stage, dependencies, {
 				cacheable: stage.cacheable !== false,
@@ -350,7 +363,11 @@ export function runBuild({
 				failed: false,
 			});
 			log(`${stage.name}: done in ${formatDuration(total)}`);
-		}
+			return true;
+		};
+		if (adopt || plan) for (const stage of selected) settle(stage);
+		else await runSchedule({ stages: selected, settle, run });
+		if (failureStatus !== null) return failureStatus;
 		if (plan && knownEstimates)
 			log(
 				`Estimated total: ${formatDuration(estimated)} for ${knownEstimates} of ${toRun.size} stages to run`,
@@ -404,7 +421,7 @@ if (
 	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
 	try {
-		process.exitCode = runBuild({
+		process.exitCode = await runBuild({
 			argv: process.argv.slice(2),
 			createCache: createStageCache,
 		});

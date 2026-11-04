@@ -68,9 +68,9 @@ function fixture() {
 			.map((file) =>
 				join(file.parentPath, file.name).slice(root.length + 1),
 			);
-	const run = (keyVersion?: number) => {
+	const run = async (keyVersion?: number) => {
 		const executed: string[] = [];
-		const status = runBuild({
+		const status = await runBuild({
 			stages,
 			log: () => {},
 			createCache: () =>
@@ -92,33 +92,33 @@ function fixture() {
 	return { root, write, run, files, stages };
 }
 
-test("UI edits reuse data outputs; transitive and dynamic imports rebuild only affected branches", () => {
+test("UI edits reuse data outputs; transitive and dynamic imports rebuild only affected branches", async () => {
 	const { write, run } = fixture();
-	assert.deepEqual(run(), ["alpha", "beta", "report"]);
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), ["alpha", "beta", "report"]);
+	assert.deepEqual(await run(), []);
 	write("app/page.tsx", "export default function Page() { return null; }");
 	write("components/Map.tsx", "export const Map = () => null;");
 	write("styles/globals.css", "body { color: red; }");
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), []);
 	write("lib/transitive.ts", "export const value = 111;");
-	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
 	write("scripts/dynamic.ts", "export const value = 222;");
-	assert.deepEqual(run(), ["beta"]);
+	assert.deepEqual(await run(), ["beta"]);
 	write("scripts/alpha.ts", 'console.log("new entry");');
-	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
 }, 30_000);
 
-test("declared runtime configuration invalidates only its stage and dependants", () => {
+test("declared runtime configuration invalidates only its stage and dependants", async () => {
 	const { write, run, stages } = fixture();
 	stages[0]!.codeInputs!.push("services/api/config/rules.json");
-	run();
+	await run();
 	write("services/api/config/unrelated.json", "changed");
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), []);
 	write("services/api/config/rules.json", "changed");
-	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
 });
 
-test("package versions, runner edits and lockfile changes affect only relevant keys", () => {
+test("package versions, runner edits and lockfile changes affect only relevant keys", async () => {
 	const { write, run } = fixture();
 	write(
 		"node_modules/example/package.json",
@@ -129,21 +129,21 @@ test("package versions, runner edits and lockfile changes affect only relevant k
 		"scripts/alpha.ts",
 		'import value from "example"; console.log(value);',
 	);
-	assert.deepEqual(run(), ["alpha", "beta", "report"]);
+	assert.deepEqual(await run(), ["alpha", "beta", "report"]);
 	write("pnpm-lock.yaml", "unrelated package changed");
 	write("pipeline/build-data-cache.mjs", "runner changed");
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), []);
 	write(
 		"node_modules/example/package.json",
 		'{"name":"example","version":"2.0.0","main":"index.js"}',
 	);
-	assert.deepEqual(run(), ["alpha", "report"]);
-	assert.deepEqual(run(999), ["alpha", "beta", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
+	assert.deepEqual(await run(999), ["alpha", "beta", "report"]);
 });
 
-test("runtime compiler options affect keys while type checking options do not", () => {
+test("runtime compiler options affect keys while type checking options do not", async () => {
 	const { write, run } = fixture();
-	run();
+	await run();
 	write(
 		"tsconfig.json",
 		JSON.stringify({
@@ -151,14 +151,14 @@ test("runtime compiler options affect keys while type checking options do not", 
 		}),
 	);
 	write("services/api/tsconfig.json", '{"compilerOptions":{"strict":true}}');
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), []);
 	write(
 		"tsconfig.json",
 		JSON.stringify({
 			compilerOptions: { paths: { "@/*": ["./*"] }, target: "ES2022" },
 		}),
 	);
-	assert.deepEqual(run(), ["alpha", "beta", "report"]);
+	assert.deepEqual(await run(), ["alpha", "beta", "report"]);
 	write("lib/other.ts", "export const value = 3;");
 	write(
 		"tsconfig.json",
@@ -169,26 +169,26 @@ test("runtime compiler options affect keys while type checking options do not", 
 			},
 		}),
 	);
-	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
 });
 
-test("explicit file inputs include additions and deletions without rebuilding unrelated stages", () => {
+test("explicit file inputs include additions and deletions without rebuilding unrelated stages", async () => {
 	const { root, write, run } = fixture();
-	run();
+	await run();
 	write("scripts/templates/extra.json", "{}");
-	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
 	unlinkSync(join(root, "scripts/templates/extra.json"));
-	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
 });
 
-test("unresolved local imports fail instead of returning a stale cache hit", () => {
+test("unresolved local imports fail instead of returning a stale cache hit", async () => {
 	const { root, run } = fixture();
-	run();
+	await run();
 	unlinkSync(join(root, "lib/transitive.ts"));
-	assert.throws(run, /Could not resolve/);
+	await assert.rejects(run, /Could not resolve/);
 });
 
-test("builder discovery does not execute scripts or include generated JSON", () => {
+test("builder discovery does not execute scripts or include generated JSON", async () => {
 	const { root, write, stages, files } = fixture();
 	write(
 		"scripts/alpha.ts",
@@ -199,7 +199,7 @@ test("builder discovery does not execute scripts or include generated JSON", () 
 	assert.ok(!inputs.some((path: string) => path.startsWith("public/data/")));
 });
 
-test("atlas assembly depends on each declared component output", () => {
+test("atlas assembly depends on each declared component output", async () => {
 	const stage = (name: string) =>
 		buildDataStages.find((entry) => entry.name === name)!;
 	assert.ok(
@@ -281,7 +281,7 @@ test("atlas assembly depends on each declared component output", () => {
 	);
 });
 
-test("production builders resolve without UI code and include declared workers and compiler sources", () => {
+test("production builders resolve without UI code and include declared workers and compiler sources", async () => {
 	const root = resolve(".");
 	const files = execFileSync(
 		"git",
@@ -588,7 +588,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 });
 
-test("moved pipeline builders trace imports and invalidate their own manifests", () => {
+test("moved pipeline builders trace imports and invalidate their own manifests", async () => {
 	const { write, run, stages } = fixture();
 	write(
 		"pipeline/src/build.ts",
@@ -599,8 +599,8 @@ test("moved pipeline builders trace imports and invalidate their own manifests",
 	write("pipeline/tsconfig.json", "{}");
 	stages[0].args = ["exec", "tsx", "pipeline/src/build.ts"];
 	stages[0].codeInputs = ["pipeline/package.json", "pipeline/tsconfig.json"];
-	assert.deepEqual(run(), ["alpha", "beta", "report"]);
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), ["alpha", "beta", "report"]);
+	assert.deepEqual(await run(), []);
 	for (const path of [
 		"pipeline/src/compiler.ts",
 		"pipeline/package.json",
@@ -612,14 +612,14 @@ test("moved pipeline builders trace imports and invalidate their own manifests",
 				? "export const value = 2;"
 				: '{"changed":true}',
 		);
-		assert.deepEqual(run(), ["alpha", "report"], path);
-		assert.deepEqual(run(), []);
+		assert.deepEqual(await run(), ["alpha", "report"], path);
+		assert.deepEqual(await run(), []);
 	}
 });
 
-test("untraced API docs, website files and unrelated scripts preserve stage keys", () => {
+test("untraced API docs, website files and unrelated scripts preserve stage keys", async () => {
 	const { write, run } = fixture();
-	run();
+	await run();
 	for (const path of [
 		"services/api/openapi.yaml",
 		"lib/unrelated-website.ts",
@@ -632,10 +632,10 @@ test("untraced API docs, website files and unrelated scripts preserve stage keys
 				? '{"scripts":{"new":"command"}}'
 				: "changed",
 		);
-		assert.deepEqual(run(), [], path);
+		assert.deepEqual(await run(), [], path);
 	}
 });
-test("workspace imports trace their source without including unrelated package files", () => {
+test("workspace imports trace their source without including unrelated package files", async () => {
 	const { write, run } = fixture();
 	write(
 		"packages/example/package.json",
@@ -649,9 +649,9 @@ test("workspace imports trace their source without including unrelated package f
 		"scripts/alpha.ts",
 		'import { value } from "@uk-data-atlas/example"; console.log(value);',
 	);
-	run();
+	await run();
 	write("packages/example/src/unused.ts", "export const unused = 2;");
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), []);
 	write("packages/example/src/index.ts", "export const value = 222;");
-	assert.deepEqual(run(), ["alpha", "report"]);
+	assert.deepEqual(await run(), ["alpha", "report"]);
 });

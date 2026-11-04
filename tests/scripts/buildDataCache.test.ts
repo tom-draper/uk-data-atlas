@@ -64,10 +64,10 @@ function fixture() {
 	// Stages listed here always write the same bytes.
 	const fixed: Record<string, string> = {};
 	const failing = new Set<string>();
-	const build = (argv: string[] = []) => {
+	const build = async (argv: string[] = []) => {
 		const log: string[] = [];
 		const errors: string[] = [];
-		const status = runBuild({
+		const status = await runBuild({
 			argv,
 			stages,
 			log: (line: string) => log.push(line),
@@ -98,49 +98,64 @@ function fixture() {
 		});
 		return { status, log, errors };
 	};
-	const runs = (argv: string[] = []) => {
+	const runs = async (argv: string[] = []) => {
 		ran.length = 0;
-		const result = build(argv);
+		const result = await build(argv);
 		assert.equal(result.status, 0);
 		return [...ran];
 	};
 	return { root, write, runs, build, ran, hashed, fixed, failing, outputs };
 }
 
-test("a second build reruns only the stages that always run", () => {
+test("a second build reruns only the stages that always run", async () => {
 	const { runs } = fixture();
-	assert.deepEqual(runs(), ["download", "compile", "summary", "report"]);
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), [
+		"download",
+		"compile",
+		"summary",
+		"report",
+	]);
+	assert.deepEqual(await runs(), ["download"]);
 });
 
-test("--only builds prerequisites on a clean run and reuses their cached outputs", () => {
+test("--only builds prerequisites on a clean run and reuses their cached outputs", async () => {
 	const { runs } = fixture();
-	assert.deepEqual(runs(["--only", "report"]), [
+	assert.deepEqual(await runs(["--only", "report"]), [
 		"download",
 		"compile",
 		"report",
 	]);
-	assert.deepEqual(runs(["--only", "report"]), ["download"]);
-	assert.deepEqual(runs(["--only", "report", "--no-cache"]), [
+	assert.deepEqual(await runs(["--only", "report"]), ["download"]);
+	assert.deepEqual(await runs(["--only", "report", "--no-cache"]), [
 		"download",
 		"compile",
 		"report",
 	]);
 });
 
-test("changed data or code reruns every cached stage", () => {
+test("changed data or code reruns every cached stage", async () => {
 	const { runs, write } = fixture();
-	runs();
+	await runs();
 	write("data/source/input.csv", "a,b,c\n");
-	assert.deepEqual(runs(), ["download", "compile", "summary", "report"]);
+	assert.deepEqual(await runs(), [
+		"download",
+		"compile",
+		"summary",
+		"report",
+	]);
 	write("code.ts", "export const changed = true;\n");
-	assert.deepEqual(runs(), ["download", "compile", "summary", "report"]);
+	assert.deepEqual(await runs(), [
+		"download",
+		"compile",
+		"summary",
+		"report",
+	]);
 	// The download marker records the release, not the data itself.
 	write("data/source/.source-release.json", "{}\n");
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download"]);
 });
 
-test("stages with declared raw inputs ignore unrelated source changes", () => {
+test("stages with declared raw inputs ignore unrelated source changes", async () => {
 	const { root, write } = fixture();
 	const cache = () =>
 		createStageCache({
@@ -161,7 +176,7 @@ test("stages with declared raw inputs ignore unrelated source changes", () => {
 	assert.equal(current.lookup(boundary, []), null);
 });
 
-test("a declared raw file invalidates its stage when changed or removed", () => {
+test("a declared raw file invalidates its stage when changed or removed", async () => {
 	const { root, write } = fixture();
 	const cache = () =>
 		createStageCache({
@@ -183,7 +198,7 @@ test("a declared raw file invalidates its stage when changed or removed", () => 
 	assert.equal(current.lookup(source, []), null);
 });
 
-test("crosswalk inputs follow the adapter configuration", () => {
+test("crosswalk inputs follow the adapter configuration", async () => {
 	const { root, write } = fixture();
 	write(
 		"services/api/config/crosswalk-adapters.json",
@@ -216,7 +231,7 @@ test("crosswalk inputs follow the adapter configuration", () => {
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("geography inventory tracks metadata additions, changes and removals", () => {
+test("geography inventory tracks metadata additions, changes and removals", async () => {
 	const { root, write } = fixture();
 	const stage = buildDataStages.find(
 		(entry) => entry.name === "geography-inventory",
@@ -249,7 +264,7 @@ test("geography inventory tracks metadata additions, changes and removals", () =
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("boundary registry ignores boundary geometry but tracks release metadata", () => {
+test("boundary registry ignores boundary geometry but tracks release metadata", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "boundary-registry",
@@ -282,7 +297,7 @@ test("boundary registry ignores boundary geometry but tracks release metadata", 
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("derived boundaries track only the configured source release", () => {
+test("derived boundaries track only the configured source release", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "derived-boundaries",
@@ -332,7 +347,7 @@ test("derived boundaries track only the configured source release", () => {
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("area inventory tracks declared attributes, not unrelated boundary files", () => {
+test("area inventory tracks declared attributes, not unrelated boundary files", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "area-inventory",
@@ -367,7 +382,7 @@ test("area inventory tracks declared attributes, not unrelated boundary files", 
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("relationship candidates track declared attributes, not shapefile geometry", () => {
+test("relationship candidates track declared attributes, not shapefile geometry", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "relationship-candidates",
@@ -402,7 +417,7 @@ test("relationship candidates track declared attributes, not shapefile geometry"
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("documents and atlas pages track boundary offsets, not raw geometry", () => {
+test("documents and atlas pages track boundary offsets, not raw geometry", async () => {
 	const { root, write } = fixture();
 	const stages = buildDataStages
 		.filter((stage) => ["documents", "atlas-pages"].includes(stage.name))
@@ -433,7 +448,7 @@ test("documents and atlas pages track boundary offsets, not raw geometry", () =>
 	for (const stage of stages) assert.equal(current.lookup(stage, []), null);
 });
 
-test("census stages ignore unrelated files within census tables", () => {
+test("census stages ignore unrelated files within census tables", async () => {
 	const { root, write } = fixture();
 	const stages = buildDataStages
 		.filter((stage) =>
@@ -465,7 +480,7 @@ test("census stages ignore unrelated files within census tables", () => {
 	for (const stage of stages) assert.equal(current.lookup(stage, []), null);
 });
 
-test("named locations track county shapes and their attributes", () => {
+test("named locations track county shapes and their attributes", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "named-locations",
@@ -493,7 +508,7 @@ test("named locations track county shapes and their attributes", () => {
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("website boundary stages track geometry, topology and offsets, not archives", () => {
+test("website boundary stages track geometry, topology and offsets, not archives", async () => {
 	const { root, write } = fixture();
 	const stages = buildDataStages
 		.filter((stage) =>
@@ -549,7 +564,7 @@ test("website boundary stages track geometry, topology and offsets, not archives
 	assert.equal(stale(), 2);
 });
 
-test("postcode areas and validation report rely on compiled dependencies", () => {
+test("postcode areas and validation report rely on compiled dependencies", async () => {
 	const { root, write } = fixture();
 	const stages = buildDataStages
 		.filter((stage) =>
@@ -578,7 +593,7 @@ test("postcode areas and validation report rely on compiled dependencies", () =>
 		assert.notEqual(current.lookup(stage, []), null);
 });
 
-test("geometry store tracks registered geometry, attributes and offsets", () => {
+test("geometry store tracks registered geometry, attributes and offsets", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "geometry-store",
@@ -624,7 +639,7 @@ test("geometry store tracks registered geometry, attributes and offsets", () => 
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("geometry source registry tracks declared geometry and projections", () => {
+test("geometry source registry tracks declared geometry and projections", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "geometry-source-registry",
@@ -664,7 +679,7 @@ test("geometry source registry tracks declared geometry and projections", () => 
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("postcode index tracks the selected edition, not older editions", () => {
+test("postcode index tracks the selected edition, not older editions", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "postcode-index",
@@ -708,7 +723,7 @@ test("postcode index tracks the selected edition, not older editions", () => {
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("dataset stage keys only tracked sources and missing inputs", () => {
+test("dataset stage keys only tracked sources and missing inputs", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find((stage) => stage.name === "datasets")!;
 	const stage = { ...entry, outputs: [], requiredOutputs: [] };
@@ -752,7 +767,7 @@ test("dataset stage keys only tracked sources and missing inputs", () => {
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("dataset stage conservatively keys all sources for legacy manifests", () => {
+test("dataset stage conservatively keys all sources for legacy manifests", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find((stage) => stage.name === "datasets")!;
 	const stage = { ...entry, outputs: [], requiredOutputs: [] };
@@ -774,7 +789,7 @@ test("dataset stage conservatively keys all sources for legacy manifests", () =>
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("website dataset key tracks declared file presence without hashing its contents", () => {
+test("website dataset key tracks declared file presence without hashing its contents", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find(
 		(stage) => stage.name === "website-datasets",
@@ -826,7 +841,7 @@ test("website dataset key tracks declared file presence without hashing its cont
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("dataset updates leave boundary tiles and postcodes cached", () => {
+test("dataset updates leave boundary tiles and postcodes cached", async () => {
 	const { root, write } = fixture();
 	write(
 		"data/source/boundaries/ward/current/meta.json",
@@ -849,10 +864,10 @@ test("dataset updates leave boundary tiles and postcodes cached", () => {
 			outputs: [],
 			requiredOutputs: [],
 		}));
-	const run = () => {
+	const run = async () => {
 		const ran: string[] = [];
 		assert.equal(
-			runBuild({
+			await runBuild({
 				stages: selected,
 				log: () => {},
 				logError: () => {},
@@ -875,24 +890,28 @@ test("dataset updates leave boundary tiles and postcodes cached", () => {
 		);
 		return ran;
 	};
-	assert.deepEqual(run(), [
+	assert.deepEqual(await run(), [
 		"postcode-index",
 		"boundaries",
 		"boundary-tiles",
 		"website-tiles",
 	]);
 	write("data/source/input.csv", "updated dataset");
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), []);
 	write(
 		"data/source/boundaries/ward/current/meta.json",
 		JSON.stringify({ files: [], updated: true }),
 	);
-	assert.deepEqual(run(), ["boundaries", "boundary-tiles", "website-tiles"]);
+	assert.deepEqual(await run(), [
+		"boundaries",
+		"boundary-tiles",
+		"website-tiles",
+	]);
 	write("data/source/postcodes/onspd/latest/meta.json", "updated postcode");
-	assert.deepEqual(run(), ["postcode-index"]);
+	assert.deepEqual(await run(), ["postcode-index"]);
 });
 
-test("area, map and atlas stages track their own raw sources", () => {
+test("area, map and atlas stages track their own raw sources", async () => {
 	const { root, write } = fixture();
 	write(
 		"data/source/boundaries/ward/current/meta.json",
@@ -957,47 +976,47 @@ test("area, map and atlas stages track their own raw sources", () => {
 	]);
 });
 
-test("a missing or edited output reruns its stage and the stages that read it", () => {
+test("a missing or edited output reruns its stage and the stages that read it", async () => {
 	const { runs, root, write, outputs } = fixture();
-	runs();
+	await runs();
 	unlinkSync(join(root, outputs.compile));
-	assert.deepEqual(runs(), ["download", "compile", "report"]);
+	assert.deepEqual(await runs(), ["download", "compile", "report"]);
 	write(outputs.report, "edited\n");
-	assert.deepEqual(runs(), ["download", "report"]);
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download", "report"]);
+	assert.deepEqual(await runs(), ["download"]);
 });
 
-test("a failed stage is rebuilt next time even if its outputs look unchanged", () => {
+test("a failed stage is rebuilt next time even if its outputs look unchanged", async () => {
 	const { runs, build, failing, ran } = fixture();
-	runs();
+	await runs();
 	failing.add("compile");
 	ran.length = 0;
-	const result = build(["--from", "compile"]);
+	const result = await build(["--from", "compile"]);
 	assert.equal(result.status, 1);
 	failing.clear();
-	assert.deepEqual(runs(), ["download", "compile", "report"]);
+	assert.deepEqual(await runs(), ["download", "compile", "report"]);
 });
 
-test("--no-cache and --from run every selected stage", () => {
+test("--no-cache and --from run every selected stage", async () => {
 	const { runs } = fixture();
-	runs();
-	assert.deepEqual(runs(["--no-cache"]), [
+	await runs();
+	assert.deepEqual(await runs(["--no-cache"]), [
 		"download",
 		"compile",
 		"summary",
 		"report",
 	]);
-	assert.deepEqual(runs(["--from", "compile"]), ["compile", "report"]);
+	assert.deepEqual(await runs(["--from", "compile"]), ["compile", "report"]);
 	// Both refresh the cache for the next build.
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download"]);
 });
 
-test("a plan marks the stages it would skip", () => {
+test("a plan marks the stages it would skip", async () => {
 	const { runs, root, outputs, build, ran } = fixture();
-	runs();
+	await runs();
 	unlinkSync(join(root, outputs.compile));
 	ran.length = 0;
-	const { log } = build(["--plan"]);
+	const { log } = await build(["--plan"]);
 	assert.deepEqual(ran, []);
 	assert.equal(
 		log.some((line) => line.startsWith("Data build done")),
@@ -1022,16 +1041,16 @@ test("a plan marks the stages it would skip", () => {
 	assert.equal(existsSync(join(root, outputs.compile)), false);
 });
 
-test("a stage owns the files in its declared folders, even ones it kept", () => {
+test("a stage owns the files in its declared folders, even ones it kept", async () => {
 	const { runs, root, write } = fixture();
 	write("data/build/datasets/kept.json", "from an earlier build\n");
-	runs();
+	await runs();
 	// compile does not rewrite kept.json, but it is still compile's.
 	unlinkSync(join(root, "data/build/datasets/kept.json"));
-	assert.deepEqual(runs(), ["download", "compile", "report"]);
+	assert.deepEqual(await runs(), ["download", "compile", "report"]);
 });
 
-test("a later writer can update a shared database while its builder still rebuilds a missing file", () => {
+test("a later writer can update a shared database while its builder still rebuilds a missing file", async () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-shared-build-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
@@ -1045,10 +1064,10 @@ test("a later writer can update a shared database while its builder still rebuil
 		},
 		{ name: "final", dependencies: ["base"], args: [] },
 	];
-	const run = () => {
+	const run = async () => {
 		const executed: string[] = [];
 		assert.equal(
-			runBuild({
+			await runBuild({
 				stages: sharedStages,
 				log: () => {},
 				createCache: () =>
@@ -1068,19 +1087,19 @@ test("a later writer can update a shared database while its builder still rebuil
 		);
 		return executed;
 	};
-	assert.deepEqual(run(), ["base", "final"]);
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), ["base", "final"]);
+	assert.deepEqual(await run(), []);
 	unlinkSync(path);
-	assert.deepEqual(run(), ["base", "final"]);
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), ["base", "final"]);
+	assert.deepEqual(await run(), []);
 });
 
-test("a build prints a line for each stage and ranks the slowest", () => {
+test("a build prints a line for each stage and ranks the slowest", async () => {
 	let now = 0;
 	const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
 	onTestFinished(() => clock.mockRestore());
 	const log: string[] = [];
-	const status = runBuild({
+	const status = await runBuild({
 		stages: Array.from({ length: 6 }, (_, index) =>
 			stage(`stage-${index + 1}`),
 		),
@@ -1120,13 +1139,13 @@ test("a build prints a line for each stage and ranks the slowest", () => {
 	]);
 });
 
-test("a verbose build adds each command and the command and overhead split", () => {
+test("a verbose build adds each command and the command and overhead split", async () => {
 	let now = 0;
 	const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
 	onTestFinished(() => clock.mockRestore());
 	const log: string[] = [];
 	let verbose: boolean | undefined;
-	runBuild({
+	await runBuild({
 		argv: ["--verbose"],
 		stages: [stage("first")],
 		execute: (_stage: Stage, options: { verbose: boolean }) => {
@@ -1148,13 +1167,13 @@ test("a verbose build adds each command and the command and overhead split", () 
 	assert.equal(log.at(-1), "  first  2.5s (command 2.0s, overhead 0.5s)");
 });
 
-test("a failed stage reports its exit status on stderr and still prints the summary", () => {
+test("a failed stage reports its exit status on stderr and still prints the summary", async () => {
 	let now = 0;
 	const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
 	onTestFinished(() => clock.mockRestore());
 	const log: string[] = [];
 	const errors: string[] = [];
-	const status = runBuild({
+	const status = await runBuild({
 		stages: [stage("failing"), stage("unreached")],
 		execute: () => {
 			now += 1250;
@@ -1176,10 +1195,10 @@ test("a failed stage reports its exit status on stderr and still prints the summ
 	]);
 });
 
-test("a rebuild says which stages are unchanged and leaves them out of the ranking", () => {
+test("a rebuild says which stages are unchanged and leaves them out of the ranking", async () => {
 	const { runs, build } = fixture();
-	runs();
-	const { status, log } = build();
+	await runs();
+	const { status, log } = await build();
 	assert.equal(status, 0);
 	assert.equal(log[0], "Data build: 4 stages, 1 to run, 3 unchanged");
 	for (const name of ["compile", "summary", "report"])
@@ -1191,7 +1210,7 @@ test("a rebuild says which stages are unchanged and leaves them out of the ranki
 	assert.match(log.at(-ranking.length - 2)!, /\(1 ran, 3 unchanged\)$/);
 });
 
-test("restoring a deleted shared API cache rebuilds every component", () => {
+test("restoring a deleted shared API cache rebuilds every component", async () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-component-build-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
@@ -1204,10 +1223,10 @@ test("restoring a deleted shared API cache rebuilds every component", () => {
 		assert.ok(original);
 		return { ...original, dependencies: ["base"] };
 	});
-	const run = () => {
+	const run = async () => {
 		const executed: string[] = [];
 		assert.equal(
-			runBuild({
+			await runBuild({
 				stages: [
 					{
 						name: "base",
@@ -1246,15 +1265,15 @@ test("restoring a deleted shared API cache rebuilds every component", () => {
 		]);
 		return executed;
 	};
-	assert.deepEqual(run(), ["base", ...components]);
-	assert.deepEqual(run(), components);
+	assert.deepEqual(await run(), ["base", ...components]);
+	assert.deepEqual(await run(), components);
 	unlinkSync(path);
-	assert.deepEqual(run(), ["base", ...components]);
+	assert.deepEqual(await run(), ["base", ...components]);
 });
 
-test("adopt reuses current outputs after a cache version change without executing stages", () => {
+test("adopt reuses current outputs after a cache version change without executing stages", async () => {
 	const { runs, root, write, build, ran } = fixture();
-	runs();
+	await runs();
 	const statePath = join(root, ".cache/stages.json");
 	const old = JSON.parse(readFileSync(statePath, "utf8"));
 	old.version = -1;
@@ -1262,49 +1281,49 @@ test("adopt reuses current outputs after a cache version change without executin
 	write("code.ts", "export const current = true;");
 	write("data/build/datasets/compiled.json", "trusted existing bytes");
 	ran.length = 0;
-	const { log } = build(["--adopt"]);
+	const { log } = await build(["--adopt"]);
 	assert.deepEqual(ran, []);
 	assert.ok(log.includes("compile: adopted 1 output file"));
 	assert.ok(!log.includes("  data/build/datasets/compiled.json"));
 	assert.ok(
-		build(["--adopt", "--verbose"]).log.includes(
+		(await build(["--adopt", "--verbose"])).log.includes(
 			"  data/build/datasets/compiled.json",
 		),
 	);
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download"]);
 	unlinkSync(join(root, "data/build/datasets/compiled.json"));
-	assert.deepEqual(runs(), ["download", "compile", "report"]);
+	assert.deepEqual(await runs(), ["download", "compile", "report"]);
 });
 
-test("adopt only selects prerequisites and plan does not change the cache", () => {
+test("adopt only selects prerequisites and plan does not change the cache", async () => {
 	const { runs, root, write, build, ran } = fixture();
-	runs();
+	await runs();
 	write("code.ts", "export const current = true;");
 	const statePath = join(root, ".cache/stages.json");
 	const before = readFileSync(statePath, "utf8");
 	ran.length = 0;
-	const planned = build(["--adopt", "--only", "report", "--plan"]);
+	const planned = await build(["--adopt", "--only", "report", "--plan"]);
 	assert.deepEqual(ran, []);
 	assert.ok(planned.log.includes("report: would adopt existing outputs"));
 	assert.equal(readFileSync(statePath, "utf8"), before);
-	assert.deepEqual(runs(["--adopt", "--only", "report"]), []);
-	assert.deepEqual(runs(), ["download", "summary"]);
+	assert.deepEqual(await runs(["--adopt", "--only", "report"]), []);
+	assert.deepEqual(await runs(), ["download", "summary"]);
 });
 
-test("adoption preflights missing inventory files before saving any selected stage", () => {
+test("adoption preflights missing inventory files before saving any selected stage", async () => {
 	const { runs, root, build, outputs } = fixture();
-	runs();
+	await runs();
 	const statePath = join(root, ".cache/stages.json");
 	const before = readFileSync(statePath, "utf8");
 	unlinkSync(join(root, outputs.report));
-	assert.throws(
+	await assert.rejects(
 		() => build(["--adopt"]),
 		/Cannot adopt report: missing output/,
 	);
 	assert.equal(readFileSync(statePath, "utf8"), before);
 });
 
-test("adoption validates required outputs and declared folders without an old cache", () => {
+test("adoption validates required outputs and declared folders without an old cache", async () => {
 	const { root, write } = fixture();
 	const cache = createStageCache({
 		root,
@@ -1346,26 +1365,29 @@ test("adoption validates required outputs and declared folders without an old ca
 	);
 });
 
-test("adoption rejects conflicting execution flags", () => {
+test("adoption rejects conflicting execution flags", async () => {
 	const { build } = fixture();
-	assert.throws(() => build(["--adopt", "--no-cache"]), /cannot be combined/);
-	assert.throws(
+	await assert.rejects(
+		() => build(["--adopt", "--no-cache"]),
+		/cannot be combined/,
+	);
+	await assert.rejects(
 		() => build(["--adopt", "--from", "compile"]),
 		/cannot be combined/,
 	);
 });
 
-test("partial adoption preserves obsolete inventories for a later adoption", () => {
+test("partial adoption preserves obsolete inventories for a later adoption", async () => {
 	const { runs, root, write } = fixture();
-	runs();
+	await runs();
 	const old = JSON.parse(
 		readFileSync(join(root, ".cache/stages.json"), "utf8"),
 	);
 	old.version = -1;
 	write(".cache/stages.json", JSON.stringify(old));
-	assert.deepEqual(runs(["--adopt", "--only", "compile"]), []);
-	assert.deepEqual(runs(["--adopt", "--only", "summary"]), []);
-	assert.deepEqual(runs(), ["download", "report"]);
+	assert.deepEqual(await runs(["--adopt", "--only", "compile"]), []);
+	assert.deepEqual(await runs(["--adopt", "--only", "summary"]), []);
+	assert.deepEqual(await runs(), ["download", "report"]);
 });
 
 // A rewrite with a new mtime but the same bytes, as a rebuild would leave.
@@ -1374,32 +1396,32 @@ const touch = (root: string, path: string) => {
 	utimesSync(join(root, path), later, later);
 };
 
-test("a stage that rewrites identical bytes does not rerun its dependants", () => {
+test("a stage that rewrites identical bytes does not rerun its dependants", async () => {
 	const { runs, root, outputs, fixed } = fixture();
 	fixed.compile = "stable\n";
-	runs();
+	await runs();
 	touch(root, outputs.compile);
-	assert.deepEqual(runs(), ["download", "compile"]);
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download", "compile"]);
+	assert.deepEqual(await runs(), ["download"]);
 	unlinkSync(join(root, outputs.compile));
-	assert.deepEqual(runs(), ["download", "compile"]);
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download", "compile"]);
+	assert.deepEqual(await runs(), ["download"]);
 });
 
-test("a stage that writes different bytes reruns its dependants", () => {
+test("a stage that writes different bytes reruns its dependants", async () => {
 	const { runs, root, outputs, fixed } = fixture();
 	fixed.compile = "stable\n";
-	runs();
+	await runs();
 	fixed.compile = "changed\n";
 	touch(root, outputs.compile);
-	assert.deepEqual(runs(), ["download", "compile", "report"]);
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download", "compile", "report"]);
+	assert.deepEqual(await runs(), ["download"]);
 });
 
-test("files with unchanged size and mtime are not hashed again", () => {
+test("files with unchanged size and mtime are not hashed again", async () => {
 	const { runs, root, write, hashed, outputs } = fixture();
 	write("data/build/datasets/kept.json", "kept\n");
-	runs();
+	await runs();
 	assert.deepEqual(
 		[...hashed].sort(),
 		[
@@ -1410,16 +1432,16 @@ test("files with unchanged size and mtime are not hashed again", () => {
 		].sort(),
 	);
 	hashed.length = 0;
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download"]);
 	assert.equal(hashed.length, 0);
 	// compile reruns, but kept.json still matches its record.
 	touch(root, outputs.compile);
-	runs();
+	await runs();
 	assert.ok(hashed.includes(outputs.compile));
 	assert.ok(!hashed.includes("data/build/datasets/kept.json"));
 });
 
-test("an upstream stage rewriting identical bytes still restores a file a downstream stage changed", () => {
+test("an upstream stage rewriting identical bytes still restores a file a downstream stage changed", async () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-shared-rewrite-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
@@ -1435,9 +1457,9 @@ test("an upstream stage rewriting identical bytes still restores a file a downst
 		{ name: "final", dependencies: ["middle"], args: [] },
 	];
 	const executed: string[] = [];
-	const run = () => {
+	const run = async () => {
 		executed.length = 0;
-		runBuild({
+		await runBuild({
 			stages: chain,
 			log: () => {},
 			createCache: () =>
@@ -1457,18 +1479,18 @@ test("an upstream stage rewriting identical bytes still restores a file a downst
 		});
 		return [...executed];
 	};
-	assert.deepEqual(run(), ["base", "middle", "final"]);
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), ["base", "middle", "final"]);
+	assert.deepEqual(await run(), []);
 	// Recreating base's bytes wipes final's changes, so final must run again.
 	unlinkSync(path);
-	assert.deepEqual(run(), ["base", "final"]);
+	assert.deepEqual(await run(), ["base", "final"]);
 	assert.equal(readFileSync(path, "utf8"), "final");
-	assert.deepEqual(run(), []);
+	assert.deepEqual(await run(), []);
 });
 
-test("adopt records content digests and a normal build then skips", () => {
+test("adopt records content digests and a normal build then skips", async () => {
 	const { runs, root, write, build, ran, hashed, outputs } = fixture();
-	runs();
+	await runs();
 	const statePath = join(root, ".cache/stages.json");
 	const current = JSON.parse(readFileSync(statePath, "utf8"));
 	// An old record: version 2 with size:mtimeMs strings and no hashes.
@@ -1487,7 +1509,7 @@ test("adopt records content digests and a normal build then skips", () => {
 	write(".cache/stages.json", JSON.stringify(legacy));
 	ran.length = 0;
 	hashed.length = 0;
-	build(["--adopt"]);
+	await build(["--adopt"]);
 	assert.deepEqual(ran, []);
 	assert.equal(hashed.length, 3);
 	const adopted = JSON.parse(readFileSync(statePath, "utf8"));
@@ -1504,13 +1526,13 @@ test("adopt records content digests and a normal build then skips", () => {
 		sha256(join(root, outputs.compile)),
 	);
 	hashed.length = 0;
-	assert.deepEqual(runs(), ["download"]);
+	assert.deepEqual(await runs(), ["download"]);
 	assert.equal(hashed.length, 0);
 });
 
-test("timings persist across skips and plans read legacy records", () => {
+test("timings persist across skips and plans read legacy records", async () => {
 	const { runs, root, build, write } = fixture();
-	runs();
+	await runs();
 	const statePath = join(root, ".cache/stages.json");
 	const summaryPath = join(root, ".cache/last-build.json");
 	const state = JSON.parse(readFileSync(statePath, "utf8"));
@@ -1529,7 +1551,7 @@ test("timings persist across skips and plans read legacy records", () => {
 		).status,
 		"ran",
 	);
-	runs();
+	await runs();
 	assert.deepEqual(
 		JSON.parse(readFileSync(statePath, "utf8")).stages.compile.timing,
 		timing,
@@ -1541,7 +1563,7 @@ test("timings persist across skips and plans read legacy records", () => {
 		).status,
 		"skipped",
 	);
-	const planned = build(["--plan"]);
+	const planned = await build(["--plan"]);
 	assert.ok(
 		planned.log.some((line) =>
 			line.startsWith("compile: unchanged, would skip (last run "),
@@ -1552,15 +1574,19 @@ test("timings persist across skips and plans read legacy records", () => {
 	for (const entry of Object.values<{ timing?: unknown }>(legacy.stages))
 		delete entry.timing;
 	write(".cache/stages.json", JSON.stringify(legacy));
-	assert.ok(build(["--plan"]).log.includes("compile: unchanged, would skip"));
-	assert.deepEqual(runs(), ["download"]);
+	assert.ok(
+		(await build(["--plan"])).log.includes(
+			"compile: unchanged, would skip",
+		),
+	);
+	assert.deepEqual(await runs(), ["download"]);
 });
 
-test("a failed run saves timing and a failed summary without caching the stage", () => {
+test("a failed run saves timing and a failed summary without caching the stage", async () => {
 	const { root, runs, build, failing } = fixture();
-	runs();
+	await runs();
 	failing.add("compile");
-	assert.equal(build(["--from", "compile"]).status, 1);
+	assert.equal((await build(["--from", "compile"])).status, 1);
 	const state = JSON.parse(
 		readFileSync(join(root, ".cache/stages.json"), "utf8"),
 	);
@@ -1577,32 +1603,32 @@ test("a failed run saves timing and a failed summary without caching the stage",
 	assert.equal(summary.stages[0].status, "failed");
 	assert.equal(summary.stages[0].name, "compile");
 	failing.clear();
-	assert.ok(runs().includes("compile"));
+	assert.ok((await runs()).includes("compile"));
 });
 
-test("plan totals known durations for stages that would run", () => {
+test("plan totals known durations for stages that would run", async () => {
 	let now = 0;
 	const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
 	onTestFinished(() => clock.mockRestore());
 	const { build, root } = fixture();
-	build();
+	await build();
 	const path = join(root, ".cache/stages.json");
 	const state = JSON.parse(readFileSync(path, "utf8"));
 	state.stages.download.timing.totalMs = 2000;
 	state.stages.compile.timing.totalMs = 3000;
 	delete state.stages.report.timing;
 	writeFileSync(path, JSON.stringify(state));
-	const { log } = build(["--plan", "--no-cache"]);
+	const { log } = await build(["--plan", "--no-cache"]);
 	assert.ok(log.includes("download: would run (last run 2.0s)"));
 	assert.ok(log.includes("compile: would run (last run 3.0s)"));
 	assert.ok(log.includes("report: would run"));
 	assert.ok(log.includes("Estimated total: 5.0s for 3 of 4 stages to run"));
 });
 
-test("an execution error records a failed run", () => {
+test("an execution error records a failed run", async () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-build-error-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
-	assert.throws(
+	await assert.rejects(
 		() =>
 			runBuild({
 				stages: [stage("broken")],
