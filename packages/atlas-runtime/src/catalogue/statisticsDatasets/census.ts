@@ -22,6 +22,7 @@ const districts2021 = {
 
 export const CAR_AVAILABILITY: DeclaredDataset = {
 	type: "carAvailability",
+	module: "transport",
 	payload: {
 		parts: () => [
 			{
@@ -86,6 +87,7 @@ export const CAR_AVAILABILITY: DeclaredDataset = {
 
 export const QUALIFICATION: DeclaredDataset = {
 	type: "qualification",
+	module: "education",
 	payload: {
 		parts: () => [
 			{
@@ -185,6 +187,7 @@ export const QUALIFICATION: DeclaredDataset = {
 
 export const TRAVEL_TO_WORK: DeclaredDataset = {
 	type: "travelToWork",
+	module: "transport",
 	payload: {
 		parts: () => [
 			{
@@ -308,6 +311,7 @@ const ETHNICITY_CODES: Readonly<Record<string, string>> = Object.fromEntries(
 
 export const ETHNICITY: DeclaredDataset = {
 	type: "ethnicity",
+	module: "population",
 	payload: {
 		parts: yearParts(
 			"ethnicity",
@@ -363,6 +367,7 @@ export const ETHNICITY: DeclaredDataset = {
 
 export const GENERAL_HEALTH: DeclaredDataset = {
 	type: "generalHealth",
+	module: "health",
 	payload: {
 		parts: yearParts(
 			"generalHealth",
@@ -436,6 +441,7 @@ export const GENERAL_HEALTH: DeclaredDataset = {
 
 export const HOUSING_TENURE: DeclaredDataset = {
 	type: "housingTenure",
+	module: "housing",
 	payload: {
 		parts: yearParts(
 			"housingTenure",

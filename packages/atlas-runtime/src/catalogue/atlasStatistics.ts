@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
 
 /**
  * The canonical statistics tables (layer 4 of docs/sqlite-schema-design.md):
@@ -122,6 +123,8 @@ export type StatisticsObservation = {
 
 export type StatisticsDataset = {
 	slug: string;
+	/** The topic the dataset belongs to. */
+	module: DatasetModule;
 	title: string;
 	description: string;
 	source: StatisticsSource;

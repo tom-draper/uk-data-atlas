@@ -96,6 +96,7 @@ const sumPartyVotes = (record: Record<string, unknown>) =>
 
 export const LOCAL_ELECTION: DeclaredDataset = {
 	type: "localElection",
+	module: "politics",
 	payload: {
 		parts: () =>
 			Object.keys(LOCAL_POLLING_DAYS).map((key) => ({
@@ -187,6 +188,7 @@ const MAJORITY = measure(
 
 export const GENERAL_ELECTION: DeclaredDataset = {
 	type: "generalElection",
+	module: "politics",
 	payload: {
 		parts: () =>
 			Object.keys(GENERAL_POLLING_DAYS).map((key) => ({
@@ -364,6 +366,7 @@ const BOUNDARY_SETS: Readonly<Record<string, string>> = {
 
 export const HISTORICAL_GENERAL_ELECTION: DeclaredDataset = {
 	type: "historicalGeneralElection",
+	module: "politics",
 	payload: {
 		parts: () =>
 			Object.keys(HISTORICAL_POLLING_DAYS)

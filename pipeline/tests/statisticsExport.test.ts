@@ -502,6 +502,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		};
 		const censusConfig: DeclaredDataset = {
 			type: "census",
+			module: "population",
 			measures: [],
 			fields: [
 				{
@@ -590,6 +591,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				"households",
 				() => ({
 					type: "census",
+					module: "population",
 					measures: [],
 					fields: [{ path: "{tenure}", measure: "households" }],
 					dimensions: [
@@ -618,6 +620,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO series_member VALUES (1, 2, 3)`);
 		const config = {
 			type: "census",
+			module: "population" as const,
 			measures: [],
 			fields: [
 				{

@@ -133,6 +133,7 @@ describe("declared statistics", () => {
 	it("generates a declared payload from rows alone", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "ladName",
 			measures: [CRIMES, RATE],
 			dimensions: [
@@ -307,6 +308,7 @@ describe("declared statistics", () => {
 	it("fills periods a record lacks with null unless declared sparse", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "name",
 			measures: [CRIMES],
 			fields: [{ path: "by.{period}", measure: "crimes" }],
@@ -359,6 +361,7 @@ describe("declared statistics", () => {
 	it("generates nested bindings and fixed text per record", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "name",
 			measures: [CRIMES],
 			dimensions: [{ slug: "group", label: "Group" }],
@@ -398,6 +401,7 @@ describe("declared statistics", () => {
 	it("generates several record sets, each on its own release", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "name",
 			measures: [CRIMES],
 			fields: [{ path: "total", measure: "crimes" }],
@@ -447,6 +451,7 @@ describe("declared statistics", () => {
 	it("stores header links as relationships and generates them back", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "name",
 			measures: [CRIMES],
 			fields: [{ path: "total", measure: "crimes" }],
@@ -489,6 +494,7 @@ describe("declared statistics", () => {
 	it("generates election text, winners and derived turnout from rows", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "name",
 			period: () => periods.date("2024-07-04"),
 			measures: [CRIMES],
@@ -622,6 +628,7 @@ describe("declared statistics", () => {
 	it("reads a candidate's party votes and share from the observations", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "politics",
 			name: "name",
 			period: () => periods.date("2024-07-04"),
 			measures: [
@@ -710,6 +717,7 @@ describe("declared statistics", () => {
 	it("generates parents per record set, with null where a record has none", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: { data: "name", regions: "regionName" },
 			measures: [CRIMES],
 			fields: [{ path: "total", measure: "crimes" }],
@@ -768,6 +776,7 @@ describe("declared statistics", () => {
 	it("generates parent areas and header summaries from rows", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "name",
 			alsoIn: [{ geography: "localAuthority", year: 2022 }],
 			measures: [CRIMES],
@@ -820,6 +829,7 @@ describe("declared statistics", () => {
 	it("maps fields, members, periods, intervals and releases from configuration", () => {
 		const config: DeclaredDataset = {
 			type: "example",
+			module: "economy",
 			name: "name",
 			alsoIn: [
 				{ geography: "localAuthority", year: 2022 },
@@ -961,6 +971,7 @@ describe("declared statistics", () => {
 		const database = write(
 			{
 				type: "example",
+				module: "economy",
 				measures: [CRIMES],
 				dimensions: [{ slug: "group", label: "Group" }],
 				fields: [{ path: "{group}.{group}.count", measure: "crimes" }],
@@ -995,6 +1006,7 @@ describe("declared statistics", () => {
 		const database = write(
 			{
 				type: "example",
+				module: "economy",
 				measures: [RATE],
 				fields: [
 					{
@@ -1030,6 +1042,7 @@ describe("declared statistics", () => {
 			write(
 				{
 					type: "example",
+					module: "economy",
 					measures: [RATE],
 					fields: [
 						{
@@ -1054,6 +1067,7 @@ describe("declared statistics", () => {
 			write(
 				{
 					type: "example",
+					module: "economy",
 					measures: [CRIMES],
 					fields: [{ path: "total", measure: "crimes" }],
 				},
@@ -1069,6 +1083,7 @@ describe("declared statistics", () => {
 			write(
 				{
 					type: "example",
+					module: "economy",
 					measures: [CRIMES],
 					fields: [{ path: "total", measure: "crimes" }],
 				},
@@ -1088,6 +1103,7 @@ describe("declared statistics", () => {
 		const database = write(
 			{
 				type: "example",
+				module: "economy",
 				alsoIn: [{ geography: "localAuthority", year: 2024 }],
 				measures: [CRIMES],
 				fields: [{ path: "total", measure: "crimes" }],
@@ -1104,6 +1120,7 @@ describe("declared statistics", () => {
 			write(
 				{
 					type: "example",
+					module: "economy",
 					measures: [CRIMES],
 					fields: [{ path: "total", measure: "crimes" }],
 				},
@@ -1117,6 +1134,7 @@ describe("declared statistics", () => {
 			write(
 				{
 					type: "example",
+					module: "economy",
 					measures: [CRIMES],
 					dimensions: [
 						{
@@ -1170,6 +1188,7 @@ describe("declared statistics", () => {
 		it("generates values in arrays, keyed by index", () => {
 			const listed: DeclaredDataset = {
 				type: "example",
+				module: "economy",
 				name: "name",
 				alsoIn: [{ geography: "localAuthority", year: 2022 }],
 				measures: [CRIMES],
@@ -1202,6 +1221,7 @@ describe("declared statistics", () => {
 		it("generates a status field from the observation's status", () => {
 			const flagged: DeclaredDataset = {
 				type: "example",
+				module: "economy",
 				measures: [RATE],
 				fields: [
 					{
@@ -1229,6 +1249,7 @@ describe("declared statistics", () => {
 		it("generates records keyed by something other than their code", () => {
 			const keyed: DeclaredDataset = {
 				type: "example",
+				module: "economy",
 				name: "name",
 				keys: { QHM: "E06000001" },
 				measures: [CRIMES],
@@ -1263,6 +1284,7 @@ describe("declared statistics", () => {
 		it("computes a derived number from another dataset's rows", () => {
 			const people: DeclaredDataset = {
 				type: "people",
+				module: "economy",
 				name: "name",
 				measures: [
 					measure(
@@ -1281,6 +1303,7 @@ describe("declared statistics", () => {
 			};
 			const rated: DeclaredDataset = {
 				type: "example",
+				module: "economy",
 				name: "name",
 				measures: [CRIMES],
 				fields: [{ path: "total", measure: "crimes" }],

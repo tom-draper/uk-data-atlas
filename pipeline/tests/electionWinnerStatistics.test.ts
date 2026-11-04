@@ -30,6 +30,7 @@ test("stores source winning party codes against the matching election area and p
 		const release = { geography: "constituency", id: "constituency-2024" };
 		const base = {
 			slug: "general-election",
+			module: "politics",
 			title: "General election",
 			description: "Election results",
 			source: { publisher: "Test", licence: "Test" },
@@ -97,6 +98,7 @@ test("refuses winning party rows that differ from the contests' winners", () => 
 		const release = { geography: "constituency", id: "constituency-2024" };
 		const base = {
 			slug: "general-election",
+			module: "politics",
 			title: "General election",
 			description: "Election results",
 			source: { publisher: "Test", licence: "Test" },

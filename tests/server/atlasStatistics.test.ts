@@ -385,6 +385,7 @@ describe("statistics model is generic", () => {
 	/** A census cube: one measure split by a dimension, as a mapper would write it. */
 	const tenure: StatisticsDataset = {
 		slug: "census-tenure",
+		module: "housing",
 		title: "Tenure",
 		description: "Households by tenure.",
 		source,
@@ -439,6 +440,7 @@ describe("statistics model is generic", () => {
 	/** Crime counts by type, with one suppressed value and a categorical measure. */
 	const crime: StatisticsDataset = {
 		slug: "crime",
+		module: "crime",
 		title: "Crime",
 		description: "Recorded crime.",
 		source: { publisher: "Home Office", licence: "OGL v3.0" },

@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
 import { seriesKey as canonicalSeriesKey } from "./atlasStatistics.ts";
 import type {
 	AreaIndex,
@@ -94,6 +95,8 @@ export type DeclaredRecords = {
 export type DeclaredDataset = {
 	/** The manifest `type` this describes. */
 	type: string;
+	/** The topic the dataset belongs to, stored with it in the database. */
+	module: DatasetModule;
 	measures: StatisticsMeasure[];
 	dimensions?: DeclaredDimension[];
 	fields:
@@ -1128,6 +1131,7 @@ export function declaredStatistics(
 
 		return {
 			slug: entry.output,
+			module: config.module,
 			title: sourceText(entry.source, "name", type)!,
 			description: sourceText(entry.source, "description", type)!,
 			source: {

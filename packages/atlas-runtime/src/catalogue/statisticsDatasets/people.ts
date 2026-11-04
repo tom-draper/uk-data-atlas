@@ -45,6 +45,7 @@ const byAge = [
 
 export const POPULATION_WARDS: DeclaredDataset = {
 	type: "population",
+	module: "population",
 	payload: {
 		parts: yearParts("population", "ward", 2023, {
 			coverageCountries: ["GB-ENG", "GB-WLS"],
@@ -66,6 +67,7 @@ export const POPULATION_WARDS: DeclaredDataset = {
 
 export const POPULATION_UK: DeclaredDataset = {
 	type: "populationUk",
+	module: "population",
 	name: "ladName",
 	payload: {
 		parts: yearParts("populationUk", "localAuthority", 2023),
@@ -78,6 +80,7 @@ export const POPULATION_UK: DeclaredDataset = {
 
 export const POPULATION_CONSTITUENCY: DeclaredDataset = {
 	type: "populationConstituency",
+	module: "population",
 	name: "constituencyName",
 	payload: {
 		parts: yearParts("populationConstituency", "constituency", 2024, {
@@ -98,6 +101,7 @@ const yearRange = (text: unknown) => {
 
 export const LIFE_EXPECTANCY_SERIES: DeclaredDataset = {
 	type: "lifeExpectancySeries",
+	module: "health",
 	payload: {
 		parts: (labels) =>
 			labels.flatMap((label) => {
@@ -151,6 +155,7 @@ const HEALTHY_LIFE_EXPECTANCY = measure(
 
 export const LIFE_EXPECTANCY_LATEST: DeclaredDataset = {
 	type: "lifeExpectancy",
+	module: "health",
 	payload: {
 		parts: () => [
 			{
@@ -233,6 +238,7 @@ const deprivation = (
 	},
 ): DeclaredDataset & { fields: DeclaredField[] } => ({
 	type,
+	module: "deprivation",
 	measures: [
 		...(fields.score
 			? [
@@ -603,6 +609,7 @@ const referendumDay = () => periods.date("2016-06-23");
 
 export const BREXIT: DeclaredDataset = {
 	type: "brexit",
+	module: "politics",
 	payload: {
 		parts: yearParts("brexit", "localAuthority", 2016, {}, ["2016"]),
 		code: "ladCode",
@@ -661,6 +668,7 @@ export const BREXIT: DeclaredDataset = {
 
 export const BREXIT_CONSTITUENCY: DeclaredDataset = {
 	type: "brexitConstituency",
+	module: "politics",
 	payload: {
 		parts: yearParts(
 			"brexitConstituency",
