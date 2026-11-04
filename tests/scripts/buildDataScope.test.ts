@@ -175,3 +175,46 @@ test("an audited stage reports files it changed outside its scope", () => {
 	current.begin(unscoped, { audit: true });
 	assert.deepEqual(current.undeclaredChanges(unscoped), []);
 });
+
+test("an audited stage that changes a raw source file is reported", () => {
+	const { write, cache } = fixture();
+	write("data/source/input.csv", "a\n");
+	const current = cache();
+	current.begin(alpha, { audit: true });
+	write("data/build/a/one.json", "inside");
+	write("data/source/input.csv", "changed by a build stage");
+	assert.deepEqual(current.undeclaredChanges(alpha), [
+		"data/source/input.csv",
+	]);
+});
+
+test("a stage with a declared scope does not discard other stages' cached keys", () => {
+	const { root, write } = fixture();
+	let codeReads = 0;
+	const current = createStageCache({
+		root,
+		stateFile: join(root, ".cache/stages.json"),
+		codeFiles: () => {
+			codeReads += 1;
+			return [];
+		},
+		environment: {},
+	});
+	const quiet: Stage = { name: "quiet", args: [], writes: ["data/build/q"] };
+	const registry: Stage = { name: "registry", args: [] };
+	current.begin(alpha);
+	write("data/build/a/one.json", "a");
+	current.record(alpha, []);
+	current.lookup(alpha, []);
+	const reads = codeReads;
+	// A non-cacheable stage with a scope leaves the code keys alone.
+	current.begin(quiet);
+	current.record(quiet, [], { cacheable: false });
+	current.lookup(alpha, []);
+	assert.equal(codeReads, reads);
+	// One without a scope may have rewritten code or sources, so they reset.
+	current.begin(registry);
+	current.record(registry, [], { cacheable: false });
+	current.lookup(alpha, []);
+	assert.equal(codeReads, reads + 1);
+});
