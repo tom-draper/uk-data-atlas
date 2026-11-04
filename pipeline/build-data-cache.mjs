@@ -300,12 +300,14 @@ export function createStageCache({
 
 	// What each running stage's scope held when it began.
 	const begun = new Map();
-	// The whole output tree when an audited stage began.
+	// The output trees and raw sources when an audited stage began. Only
+	// `sources` may change the latter.
 	const audited = new Map();
 	const fullScan = () => {
 		const stamps = new Map();
 		for (const directory of outputRoots)
 			stampFiles(root, directory, stamps);
+		stampFiles(root, dataDirectory, stamps);
 		return stamps;
 	};
 	const scopedSnapshot = (scope) => {
@@ -492,7 +494,8 @@ export function createStageCache({
 
 		/**
 		 * After a stage that began with `audit`: the files it changed outside its
-		 * declared scope, which its record would otherwise miss.
+		 * declared scope, which its record would otherwise miss. Raw sources
+		 * count: a stage that changes them would stale every stage's key.
 		 */
 		undeclaredChanges(stage) {
 			const before = audited.get(stage.name);
@@ -538,9 +541,13 @@ export function createStageCache({
 					}
 				}
 				if (changed) save();
-				inputs.clear();
-				files = null;
-				stageInputs.clear();
+				// A stage with a declared scope writes only build outputs, so the
+				// raw inputs and code keys of the stages beside it still hold.
+				if (!scope) {
+					inputs.clear();
+					files = null;
+					stageInputs.clear();
+				}
 				return null;
 			}
 			const outputs = new Map();
