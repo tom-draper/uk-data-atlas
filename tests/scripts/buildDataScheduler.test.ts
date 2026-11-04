@@ -489,3 +489,33 @@ test("conflict ordering uses the plan, so skipped stages need no special case", 
 	assert.deepEqual(settled, ["early", "late"]);
 	assert.deepEqual(order, ["late"]);
 });
+
+test("a plan lists the waves of stages that can run together and the critical path", async () => {
+	const stages = [
+		stage("root"),
+		stage("left", ["root"]),
+		stage("right", ["root"]),
+		stage("deep", ["left"]),
+		stage("join", ["deep", "right"]),
+	];
+	const executed: string[] = [];
+	const { status, log } = await build(stages, {
+		argv: ["--plan"],
+		limits: { jobs: 4, memoryMb: 8192 },
+		execute: (current) => {
+			executed.push(current.name);
+			return 0;
+		},
+	});
+	assert.equal(status, 0);
+	assert.deepEqual(executed, []);
+	const start = log.findIndex((line) => line.startsWith("Parallel schedule"));
+	assert.match(log[start]!, /up to 4 at once within 8,192 MB/);
+	assert.deepEqual(log.slice(start + 1), [
+		"  1. root",
+		"  2. left, right",
+		"  3. deep",
+		"  4. join",
+		"Critical path: root > left > deep > join",
+	]);
+});
