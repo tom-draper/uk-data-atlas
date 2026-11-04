@@ -26,7 +26,7 @@ import {
 	artifactDirectory,
 	configDirectory,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { openStatisticsArtifactReader } from "./statisticsArtifacts";
+import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);
