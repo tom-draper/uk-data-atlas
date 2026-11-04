@@ -9,7 +9,10 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	artifactDirectory,
+	closeReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import { writePostcodeAreas } from "./storage/index.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
@@ -90,6 +93,8 @@ export function assembleAtlas(root: string) {
 		} finally {
 			database.close();
 		}
+		// Readers in this process must not keep the file about to be replaced.
+		closeReadOnlyDatabase(path);
 		renameSync(temporary, path);
 	} finally {
 		rmSync(temporary, { force: true });
