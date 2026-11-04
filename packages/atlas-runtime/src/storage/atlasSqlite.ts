@@ -6,23 +6,23 @@ import {
 import { gunzipSync } from "node:zlib";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { DatabaseSync } from "node:sqlite";
 import { atlasCachePath } from "./atlasCache.ts";
+import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 
-/** Server-only access to the shared compiled release. Connections close before atomic replacements. */
+/** Server-only access to the shared compiled release. Connections are shared and reopen when the file is replaced. */
 export function readAtlasPayload(
 	repositoryRoot: string,
 	id: string,
 	path = join(repositoryRoot, "data/build/atlas.sqlite"),
 ): string {
-	const database = new DatabaseSync(path, { readOnly: true });
+	const database = openReadOnlyDatabase(path);
 	let stored: unknown;
 	try {
 		stored = database
 			.prepare("SELECT payload FROM payloads WHERE id = ?")
 			.get(id)?.payload;
 	} finally {
-		database.close();
+		database.release();
 	}
 	if (typeof stored === "string") return stored;
 	// Datasets served from rows have no stored payload.
@@ -36,15 +36,14 @@ export function readAtlasPayload(
 export function readAtlasDatasetUrls(
 	repositoryRoot: string,
 ): Record<string, string> {
-	const database = new DatabaseSync(
+	const database = openReadOnlyDatabase(
 		join(repositoryRoot, "data/build/atlas.sqlite"),
-		{ readOnly: true },
 	);
 	try {
 		const cached = new Map<string, { source: string; hash: string }>();
 		const cachePath = atlasCachePath(repositoryRoot);
 		if (existsSync(cachePath)) {
-			const cache = new DatabaseSync(cachePath, { readOnly: true });
+			const cache = openReadOnlyDatabase(cachePath);
 			try {
 				for (const row of cache
 					.prepare(
@@ -58,7 +57,7 @@ export function readAtlasDatasetUrls(
 			} catch {
 				// Rebuild from rows if the dataset cache is absent or outdated.
 			} finally {
-				cache.close();
+				cache.release();
 			}
 		}
 		return Object.fromEntries(
@@ -82,7 +81,7 @@ export function readAtlasDatasetUrls(
 				}),
 		);
 	} finally {
-		database.close();
+		database.release();
 	}
 }
 
@@ -99,11 +98,11 @@ export const readStoredAtlasDataset = readStoredDatasetPayload;
 
 export type AtlasAssetKind = "pages" | "lookups";
 
-/** Read precompressed website data without keeping a database connection open. */
+/** Read precompressed website data. */
 export function readAtlasAsset(root: string, kind: AtlasAssetKind, id: string) {
-	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"), {
-		readOnly: true,
-	});
+	const database = openReadOnlyDatabase(
+		join(root, "data/build/atlas.sqlite"),
+	);
 	try {
 		const row = database
 			.prepare(
@@ -115,7 +114,7 @@ export function readAtlasAsset(root: string, kind: AtlasAssetKind, id: string) {
 			throw new Error(`Invalid atlas ${kind} asset ${id}`);
 		return { sha256: row.sha256, gzip: row.gzip };
 	} finally {
-		database.close();
+		database.release();
 	}
 }
 
