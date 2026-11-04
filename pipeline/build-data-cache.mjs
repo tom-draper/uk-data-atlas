@@ -418,6 +418,9 @@ export function createStageCache({
 		},
 
 		recordTiming(name, timing) {
+			// A stage with a timing is no longer running, even if it failed.
+			begun.delete(name);
+			audited.delete(name);
 			state.stages[name] ??= { key: null, digest: null, outputs: {} };
 			state.stages[name].timing = timing;
 			save();
@@ -481,6 +484,16 @@ export function createStageCache({
 		begin(stage, { audit = false } = {}) {
 			const name = typeof stage === "string" ? stage : stage.name;
 			const scope = typeof stage === "string" ? null : stageScope(stage);
+			// A stage tracked across the whole tree must have it to itself.
+			if (
+				[...begun].some(
+					([other, entry]) =>
+						other !== name && (!scope || !entry.scope),
+				)
+			)
+				throw new Error(
+					`Cannot begin ${name} beside a running stage without a declared scope. Pass the stage, not its name, to begin().`,
+				);
 			if (audit && scope) audited.set(name, fullScan());
 			begun.set(name, {
 				scope,
