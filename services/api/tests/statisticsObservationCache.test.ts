@@ -82,9 +82,10 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	const update = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
 	update.exec("UPDATE observation SET value = 43");
 	update.close();
+	// A rewritten database drops what the cache read from it.
 	assert.deepEqual(cached?.periods[0]?.records[0], {
 		areaCode: "E1",
-		value: 42,
+		value: 43,
 		status: "observed",
 	});
 	assert.deepEqual(view?.periods[0]?.records[0], {
