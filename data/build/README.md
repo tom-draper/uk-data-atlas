@@ -95,6 +95,41 @@ release it was validated against. The API reads catalogues once at start, so a
 replaced file is logged as `database.replaced` and the worker should be
 restarted.
 
+### Connection pragmas
+
+Each connection is tuned once, when it opens or reopens, in `applyPragmas`
+(`readOnlyDatabase.ts`). Every value is read back after it is set, and
+`readOnlyDatabaseStats().connections` reports what took effect. They work
+through `node:sqlite` on a read-only connection, and the bundled SQLite 3.53
+allows `mmap` (maximum 2,147,418,112 bytes, larger values are clamped).
+
+| Pragma       | Default   | Environment variable                                    |
+| ------------ | --------- | ------------------------------------------------------- |
+| `query_only` | `1`       | `ATLAS_SQLITE_QUERY_ONLY=0` allows writes               |
+| `temp_store` | `DEFAULT` | `ATLAS_SQLITE_TEMP_STORE` = `default`, `file`, `memory` |
+| `cache_size` | `-2000`   | `ATLAS_SQLITE_CACHE_KIB`, a positive number of KiB      |
+| `mmap_size`  | `0`       | `ATLAS_SQLITE_MMAP_BYTES`, `0` turns mapping off        |
+
+The variables apply to every database file, are read at each open, and ignore
+values that are not whole numbers. `query_only` also stops writes to temporary
+tables, so a reader that needs one must turn it off.
+
+The defaults come from `services/api/benchmarks/sqlite-pragmas.md`. On the
+real 1.13 GB `atlas.sqlite`, a larger page cache, `mmap` and in-memory
+temporary storage made no steady-state difference to postcode, area,
+observation, aggregate or view reads. A page cache costs its size in
+anonymous memory per connection, and every API worker has its own. `mmap` made
+cold point lookups much faster (0.45 ms to 0.01 ms) but cold bulk reads slower,
+and its pages count toward each worker's RSS as they are touched, up to the
+mapped size (484 MiB after a postcode run with a 2 GiB limit). They are the
+shared OS page cache, so workers do not hold separate copies, but a memory
+limit that counts file pages still sees them. Raise the cache or `mmap` only
+after measuring a workload that needs it, and budget `workers x cache`.
+
+A mapped file renamed over stays valid for connections that have it open and
+is unmapped when the connection closes, so a replaced file is unmapped when
+its last lease is released (tested in `readOnlyDatabasePragmas.test.ts`).
+
 A build stage that replaces a database it may have read calls
 `closeReadOnlyDatabase(path)` just before the rename, or
 `closeAllReadOnlyDatabases()`. Tests that rebuild fixtures do the same through
