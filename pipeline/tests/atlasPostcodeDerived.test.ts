@@ -176,7 +176,7 @@ test("readers refuse a database built before postcode area sets", (t) => {
 	db.close();
 	assert.throws(
 		() => readSqlitePostcodeAreaShard(root, file),
-		/postcode area layout 1 but this code needs 2/,
+		/postcode area layout 1 but this code needs 3/,
 	);
 });
 
@@ -554,5 +554,95 @@ test("repeated geographies use exact releases and preserve shard release order",
 		1,
 	);
 	assert.deepEqual(after.prepare("PRAGMA foreign_key_check").all(), []);
+	after.close();
+});
+
+test("a release stores null where an earlier release has the same distance", (t) => {
+	const { root, path, compiled } = fixture(t);
+	const db = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
+	db.exec(
+		"INSERT INTO area_releases VALUES (1, 'ward', '2024'), (2, 'ward', '2025'); INSERT INTO area_version VALUES (3, 1, 1, 'Old A', NULL, NULL, NULL, 1), (4, 1, 2, 'Older A', NULL, NULL, NULL, 1)",
+	);
+	db.close();
+	const files = new Map(
+		compiled.files.map((file) => {
+			const shard: PostcodeAreasShard = JSON.parse(file.text);
+			const current = shard.releases["ward/2026"]!;
+			// 2024 differs, 2025 and 2026 match, and the rest is zero.
+			shard.releases["ward/2024"] = {
+				...current,
+				distanceCm: current.distanceCm.map((cm) =>
+					cm === 1234 ? 999 : cm,
+				),
+			};
+			shard.releases["ward/2025"] = current;
+			return [file.path, JSON.stringify(shard) + "\n"];
+		}),
+	);
+	const base = compiled.artifact.releases[0]!;
+	const artifact = {
+		...compiled.artifact,
+		releases: [
+			{ ...base, boundaryRelease: "2024" },
+			{ ...base, boundaryRelease: "2025" },
+			base,
+		],
+		shards: compiled.artifact.shards.map((entry) => ({
+			...entry,
+			contentHash: sha256(files.get(entry.path)!),
+		})),
+	};
+	storePostcodeAreas(root, artifact, (name) => files.get(name)!);
+	for (const entry of artifact.shards)
+		assert.equal(
+			readSqlitePostcodeAreaShard(root, entry.path),
+			files.get(entry.path),
+		);
+	const after = new DatabaseSync(path);
+	assert.deepEqual(
+		after
+			.prepare(
+				"SELECT position, distanceFallback FROM postcode_area_releases ORDER BY position",
+			)
+			.all()
+			.map((row) => ({ ...row })),
+		[
+			{ position: 0, distanceFallback: null },
+			{ position: 1, distanceFallback: null },
+			{ position: 2, distanceFallback: 1 },
+		],
+	);
+	// Stored: only the repeated, nonzero distance is null.
+	assert.deepEqual(
+		{
+			...after
+				.prepare(
+					'SELECT "ward_2024DistanceCm" AS a, "ward_2025DistanceCm" AS b, "ward_2026DistanceCm" AS c FROM postcodes WHERE postcode = ?',
+				)
+				.get("M11AA"),
+		},
+		{ a: 999, b: 1234, c: null },
+	);
+	assert.deepEqual(
+		{
+			...after
+				.prepare(
+					'SELECT "ward_2026DistanceCm" AS c FROM postcodes WHERE postcode = ?',
+				)
+				.get("M11AB"),
+		},
+		{ c: 0 },
+	);
+	// The decoded view still shows every distance.
+	assert.deepEqual(
+		{
+			...after
+				.prepare(
+					'SELECT "ward_2024DistanceCm" AS a, "ward_2025DistanceCm" AS b, "ward_2026DistanceCm" AS c FROM postcodes_decoded WHERE postcode = ?',
+				)
+				.get("M11AA"),
+		},
+		{ a: 999, b: 1234, c: 1234 },
+	);
 	after.close();
 });

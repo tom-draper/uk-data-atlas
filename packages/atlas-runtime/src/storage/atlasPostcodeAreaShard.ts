@@ -13,9 +13,9 @@ import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-in
 
 /** The `meta` key and value that mark the postcode area table layout. */
 export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";
-export const POSTCODE_AREA_LAYOUT = "2";
+export const POSTCODE_AREA_LAYOUT = "3";
 
-/** Refuse a database built before postcodes pointed at shared area sets. */
+/** Refuse a database built before distances could fall back to another release. */
 export function requirePostcodeAreaLayout(database: DatabaseSync) {
 	let found: unknown;
 	try {
@@ -47,6 +47,27 @@ export const postcodeAreaColumns = (artifact: PostcodeAreasArtifact) =>
 			distance: `${stem}DistanceCm`,
 		};
 	});
+
+/**
+ * The release position each distance column falls back to when null, or null
+ * for a column that always holds its own value. Fallbacks point at earlier
+ * positions, so one pass in order resolves every chain.
+ */
+export function distanceFallbacks(database: DatabaseSync) {
+	return new Map(
+		database
+			.prepare(
+				"SELECT position, distanceFallback FROM postcode_area_releases",
+			)
+			.all()
+			.map((row) => [
+				Number(row.position),
+				row.distanceFallback === null
+					? null
+					: Number(row.distanceFallback),
+			]),
+	);
+}
 
 export function readPostcodeAreaShard(
 	database: DatabaseSync,
@@ -80,6 +101,24 @@ export function readPostcodeAreaShard(
 			"SELECT * FROM postcode_area_columns WHERE district = ? ORDER BY position",
 		)
 		.all(entry.district);
+	const fallbacks = distanceFallbacks(database);
+	const resolved = new Map<number, number[]>();
+	const distancesOf = (position: number): number[] => {
+		let distances = resolved.get(position);
+		if (distances) return distances;
+		const column = columns[position]!;
+		const fallback = fallbacks.get(position) ?? null;
+		const base = fallback === null ? undefined : distancesOf(fallback);
+		distances = rows.map((row, at) => {
+			const value = row[column.distance];
+			if (value !== null) return Number(value);
+			if (!base)
+				throw new Error(`Missing postcode distance ${column.key}`);
+			return base[at]!;
+		});
+		resolved.set(position, distances);
+		return distances;
+	};
 	const releases: PostcodeAreasShard["releases"] = {};
 	for (const header of headers) {
 		const position = Number(header.releasePosition);
@@ -114,7 +153,7 @@ export function readPostcodeAreaShard(
 						: NONE
 					: codePositions.get(Number(row[column.area]))!,
 			),
-			distanceCm: rows.map((row) => Number(row[column.distance])),
+			distanceCm: distancesOf(position),
 			...(header.hasSeveral ? { several } : {}),
 		};
 	}
