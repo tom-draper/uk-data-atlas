@@ -6,6 +6,7 @@ import { PREMISES, measure, per100k } from "./measures.ts";
 
 export const AIR_QUALITY: DeclaredDataset = {
 	type: "airQuality",
+	module: "environment",
 	payload: {
 		parts: yearParts("airQuality", "localAuthority", 2024),
 		code: "ladCode",
@@ -81,6 +82,7 @@ export const AIR_QUALITY: DeclaredDataset = {
 
 export const GHG_EMISSIONS: DeclaredDataset = {
 	type: "ghgEmissions",
+	module: "environment",
 	payload: {
 		parts: yearParts("ghgEmissions", "localAuthority", 2025, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
@@ -187,6 +189,7 @@ const METER_TYPE = {
 
 const consumption = (type: string, fuel: "electricity" | "gas") => ({
 	type,
+	module: "environment" as const,
 	payload: {
 		parts: yearParts(type, "localAuthority", 2025, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
@@ -230,6 +233,7 @@ export const GAS_CONSUMPTION: DeclaredDataset = consumption(
 
 export const ELECTRIC_VEHICLE_CHARGERS: DeclaredDataset = {
 	type: "electricVehicleChargers",
+	module: "transport",
 	payload: {
 		parts: yearParts("electricVehicleChargers", "localAuthority", 2026, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
@@ -254,6 +258,7 @@ export const ELECTRIC_VEHICLE_CHARGERS: DeclaredDataset = {
 
 export const WASTE: DeclaredDataset = {
 	type: "waste",
+	module: "environment",
 	payload: {
 		parts: yearParts(
 			"waste",
@@ -295,6 +300,7 @@ export const WASTE: DeclaredDataset = {
 
 export const LAND_AREA: DeclaredDataset = {
 	type: "landArea",
+	module: "environment",
 	payload: {
 		parts: yearParts("landArea", "localAuthority", 2024, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
@@ -346,6 +352,7 @@ export const LAND_AREA: DeclaredDataset = {
 
 export const BROADBAND: DeclaredDataset = {
 	type: "broadband",
+	module: "infrastructure",
 	payload: {
 		parts: yearParts("broadband", "localAuthority", 2024),
 		code: "ladCode",
@@ -399,6 +406,7 @@ export const BROADBAND: DeclaredDataset = {
 
 export const MOBILE_COVERAGE: DeclaredDataset = {
 	type: "mobileCoverage",
+	module: "infrastructure",
 	payload: {
 		parts: yearParts("mobileCoverage", "localAuthority", 2024, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],

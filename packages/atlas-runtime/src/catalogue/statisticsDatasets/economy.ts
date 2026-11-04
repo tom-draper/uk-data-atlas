@@ -1,3 +1,4 @@
+import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
 import type { StatisticsPeriod } from "../atlasStatistics.ts";
 import {
@@ -134,6 +135,7 @@ const payAreas = {
 
 export const INCOME: DeclaredDataset = {
 	type: "income",
+	module: "economy",
 	name: "ladName",
 	payload: {
 		parts: yearParts("income", "localAuthority", 2025, {
@@ -149,6 +151,7 @@ export const INCOME: DeclaredDataset = {
 
 export const WORKPLACE_INCOME: DeclaredDataset = {
 	type: "workplaceIncome",
+	module: "economy",
 	name: "ladName",
 	payload: {
 		parts: yearParts("workplaceIncome", "localAuthority", 2025, {
@@ -164,6 +167,7 @@ export const WORKPLACE_INCOME: DeclaredDataset = {
 
 export const JOBS: DeclaredDataset = {
 	type: "jobs",
+	module: "economy",
 	payload: {
 		parts: yearParts("jobs", "localAuthority", 2023, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
@@ -187,6 +191,7 @@ export const JOBS: DeclaredDataset = {
 
 export const BUSINESS_ACTIVITY: DeclaredDataset = {
 	type: "businessActivity",
+	module: "economy",
 	payload: {
 		parts: yearParts("businessActivity", "localAuthority", 2025, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
@@ -210,6 +215,7 @@ export const BUSINESS_ACTIVITY: DeclaredDataset = {
 
 export const CLAIMANT_COUNT: DeclaredDataset = {
 	type: "claimantCount",
+	module: "economy",
 	payload: {
 		parts: yearParts("claimantCount", "localAuthority", 2024, {
 			month: "Apr 2026",
@@ -293,6 +299,7 @@ const periodText = (year: number) =>
 
 export const UNEMPLOYMENT: DeclaredDataset = {
 	type: "unemployment",
+	module: "economy",
 	payload: {
 		parts: () => [
 			{
@@ -400,6 +407,7 @@ export const UNEMPLOYMENT: DeclaredDataset = {
 
 export const CHILD_POVERTY: DeclaredDataset = {
 	type: "childPoverty",
+	module: "deprivation",
 	payload: {
 		parts: yearParts(
 			"childPoverty",
@@ -452,6 +460,7 @@ export const CHILD_POVERTY: DeclaredDataset = {
 
 const regionalGdp = (type: string, boundaryType: string): DeclaredDataset => ({
 	type,
+	module: "economy",
 	name: "itlName",
 	payload: {
 		parts: yearParts(type, boundaryType, 2025, {
@@ -488,11 +497,13 @@ export const REGIONAL_GDP_ITL3 = regionalGdp("regionalGdpItl3", "itl3");
 
 const single = (
 	type: string,
+	module: DatasetModule,
 	period: () => StatisticsPeriod,
 	payload: DeclaredPayload,
 	...declared: Parameters<typeof measure>
 ): DeclaredDataset => ({
 	type,
+	module,
 	payload,
 	name: "name",
 	period,
@@ -502,6 +513,7 @@ const single = (
 
 export const COUNCIL_TAX = single(
 	"councilTax",
+	"housing",
 	() => periods.financialYear(2026),
 	{
 		parts: yearParts(
@@ -523,6 +535,7 @@ export const COUNCIL_TAX = single(
 
 export const LOCAL_GOVERNMENT_FINANCE = single(
 	"localGovernmentFinance",
+	"economy",
 	() => periods.financialYear(2026),
 	{
 		parts: yearParts(
@@ -544,6 +557,7 @@ export const LOCAL_GOVERNMENT_FINANCE = single(
 
 export const HOUSING_AFFORDABILITY = single(
 	"housingAffordability",
+	"housing",
 	() => periods.year(2025),
 	{
 		parts: yearParts(
@@ -565,6 +579,7 @@ export const HOUSING_AFFORDABILITY = single(
 
 export const HOUSE_PRICE: DeclaredDataset = {
 	type: "housePrice",
+	module: "housing",
 	payload: {
 		parts: yearParts(
 			"housePrice",

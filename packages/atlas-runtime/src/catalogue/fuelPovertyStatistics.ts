@@ -114,6 +114,7 @@ export function fuelPovertyStatistics(
 		releaseIds.indexOf(vintages[boundaryYear]) * FIELDS.length + field;
 	return {
 		slug: SLUG,
+		module: "deprivation",
 		title: sourceText(entry.source, "name")!,
 		description: sourceText(entry.source, "description")!,
 		source: {

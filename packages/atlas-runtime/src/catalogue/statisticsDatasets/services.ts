@@ -1,3 +1,4 @@
+import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
 import type { StatisticsMeasure } from "../atlasStatistics.ts";
 import {
 	type DeclaredDataset,
@@ -23,6 +24,7 @@ const offence = (
 
 export const CRIME: DeclaredDataset = {
 	type: "crime",
+	module: "crime",
 	name: {
 		data: "ladName",
 		partnerships: "communitySafetyPartnershipName",
@@ -248,6 +250,7 @@ export const CRIME: DeclaredDataset = {
 
 export const ROAD_COLLISIONS: DeclaredDataset = {
 	type: "roadCollisions",
+	module: "transport",
 	payload: {
 		parts: (labels) =>
 			labels
@@ -307,6 +310,7 @@ export const ROAD_COLLISIONS: DeclaredDataset = {
 
 export const HOMELESSNESS: DeclaredDataset = {
 	type: "homelessness",
+	module: "housing",
 	payload: {
 		parts: () => [
 			{
@@ -390,11 +394,13 @@ export const HOMELESSNESS: DeclaredDataset = {
 
 const single = (
 	type: string,
+	module: DatasetModule,
 	period: ReturnType<typeof periods.year>,
 	declared: StatisticsMeasure,
 	payload: DeclaredPayload,
 ): DeclaredDataset => ({
 	type,
+	module,
 	payload,
 	name: "name",
 	period: () => period,
@@ -404,6 +410,7 @@ const single = (
 
 export const ADULT_SOCIAL_CARE_ACTIVITY = single(
 	"adultSocialCareActivity",
+	"health",
 	periods.financialYear(2024),
 	measure(
 		"long-term-support-clients",
@@ -427,6 +434,7 @@ export const ADULT_SOCIAL_CARE_ACTIVITY = single(
 
 export const ADULT_SOCIAL_CARE_OUTCOMES = single(
 	"adultSocialCareOutcomes",
+	"health",
 	periods.financialYear(2024),
 	measure(
 		"social-care-quality-of-life",
@@ -450,6 +458,7 @@ export const ADULT_SOCIAL_CARE_OUTCOMES = single(
 
 export const NET_ADDITIONAL_DWELLINGS = single(
 	"netAdditionalDwellings",
+	"housing",
 	periods.financialYear(2024),
 	measure(
 		"net-additional-dwellings",
@@ -473,6 +482,7 @@ export const NET_ADDITIONAL_DWELLINGS = single(
 
 export const PLANNING_APPLICATIONS: DeclaredDataset = {
 	type: "planningApplications",
+	module: "housing",
 	payload: {
 		parts: yearParts("planningApplications", "localAuthority", 2025, {
 			coverageCountries: ["GB-ENG"],
@@ -523,6 +533,7 @@ const countiesAndUnitaries = {
 
 export const PUBLIC_HEALTH: DeclaredDataset = {
 	type: "publicHealth",
+	module: "health",
 	payload: {
 		parts: () => [
 			{
@@ -631,6 +642,7 @@ export const PUBLIC_HEALTH: DeclaredDataset = {
 
 export const PUPIL_ABSENCE: DeclaredDataset = {
 	type: "pupilAbsence",
+	module: "education",
 	payload: {
 		parts: yearParts(
 			"pupilAbsence",
@@ -824,6 +836,7 @@ const schoolYears = Array.from({ length: 12 }, (_, index) =>
 
 export const SCHOOL_PERFORMANCE: DeclaredDataset = {
 	type: "schoolPerformance",
+	module: "education",
 	payload: {
 		parts: yearParts(
 			"schoolPerformance",
@@ -854,6 +867,7 @@ export const SCHOOL_PERFORMANCE: DeclaredDataset = {
 
 export const SCHOOL_PERFORMANCE_CONSTITUENCY: DeclaredDataset = {
 	type: "schoolPerformanceConstituency",
+	module: "education",
 	payload: {
 		parts: yearParts(
 			"schoolPerformanceConstituency",
@@ -925,6 +939,7 @@ const GAP_MINIMUM_PUPILS = 6;
 
 export const SCHOOL_PERFORMANCE_DISADVANTAGE: DeclaredDataset = {
 	type: "schoolPerformanceGap",
+	module: "education",
 	payload: {
 		parts: yearParts(
 			"schoolPerformanceGap",
@@ -1010,6 +1025,7 @@ const headerMonth = (_key: string, header: DeclaredHeader) => {
 
 export const NHS_WAITING: DeclaredDataset = {
 	type: "nhsWaiting",
+	module: "health",
 	payload: {
 		parts: () => [
 			{

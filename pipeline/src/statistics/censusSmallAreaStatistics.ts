@@ -359,6 +359,7 @@ export function censusSmallAreaStatistics(
 		);
 		return {
 			slug,
+			module: table.module,
 			title: meta.title,
 			description: meta.description,
 			source: {

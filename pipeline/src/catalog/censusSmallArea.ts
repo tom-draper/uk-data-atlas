@@ -10,6 +10,7 @@ import type {
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { csvFields } from "@uk-data-atlas/artifacts";
 import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
 import { sha256 } from "./values.ts";
 
 /**
@@ -27,6 +28,8 @@ type Category = readonly [suffix: string, column: string, label: string];
 
 export type CensusTable = {
 	table: string;
+	/** The topic the table's dataset belongs to. */
+	module: DatasetModule;
 	/** The measure id is the prefix and the category suffix. */
 	measurePrefix: string;
 	unit: string;
@@ -51,6 +54,7 @@ const CENSUS_NOTES = [
 export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	{
 		table: "ts001",
+		module: "population",
 		measurePrefix: "usual-residents",
 		unit: "usual residents",
 		universe:
@@ -80,6 +84,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts007a",
+		module: "population",
 		measurePrefix: "age",
 		unit: "usual residents",
 		universe: "All usual residents, by age on Census Day.",
@@ -110,6 +115,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts003",
+		module: "population",
 		measurePrefix: "household-composition",
 		unit: "households",
 		universe: "Households, not people: each household counts once.",
@@ -197,6 +203,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts054",
+		module: "housing",
 		measurePrefix: "tenure",
 		unit: "households",
 		universe: "Households, not people: each household counts once.",
@@ -254,6 +261,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts066",
+		module: "economy",
 		measurePrefix: "economic-activity",
 		unit: "usual residents aged 16 and over",
 		universe:
@@ -320,6 +328,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts021",
+		module: "population",
 		measurePrefix: "ethnicity",
 		unit: "usual residents",
 		universe:
@@ -419,6 +428,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts037",
+		module: "health",
 		measurePrefix: "general-health",
 		unit: "usual residents",
 		universe:
