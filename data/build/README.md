@@ -512,6 +512,7 @@ Multiple releases use release-qualified names such as
 `"localAuthority_2026-05-uk-bgcAreaId"`. `postcode_area_releases` lists each
 geography, boundary release and column name. `areaColumn` names a column of
 `postcode_area_set` and `distanceColumn` a column of `postcodes`.
+`distanceFallback` is null, or the position of an earlier release; see below.
 All IDs refer to that exact boundary release. Missing inventory areas are added
 as `area_version` rows with `in_inventory = 0` and an empty name, since shard inputs contain codes
 but no labels.
@@ -520,6 +521,16 @@ Set IDs count up from 1 in first-seen postcode order, so builds are reproducible
 The writer deduplicates with an in-memory map rather than a unique index, which
 would cost another copy of the table and would not treat null areas as equal.
 Distances differ for almost every postcode, so they stay on `postcodes`.
+
+A `DistanceCm` column is stored as null where the release named by its
+`distanceFallback` holds the same nonzero distance, as when both releases share
+an area's boundary. Read the value as the first non-null along the chain of
+fallbacks, which always point to earlier positions. Columns with no fallback are
+never null, and zero is always stored as zero. The writer picks each fallback
+as the earlier release that matches most often, the earliest on a tie. This is
+lossless: the reader rebuilds the same centimetres and shard bytes, and
+`postcodes_decoded` returns the resolved values. On the 2.67 million postcode build it
+cut `postcodes` by about 105 MB.
 
 ```sql
 SELECT p.postcode, a.code, a.name
@@ -556,9 +567,9 @@ Build this schema through the normal atlas and postcode build stages. The
 postcode-area writer checks every reconstructed area shard before publishing its
 temporary database atomically. Rebuild older databases with the current builders;
 the runtime supports only the current schema. The writer records `postcodeAreaLayout`
-(currently `"2"`) in `meta`. Postcode area readers throw, naming the rebuild, when
+(currently `"3"`) in `meta`. Postcode area readers throw, naming the rebuild, when
 it is missing or different, as it is for a database that stores `AreaId` columns
-on `postcodes`.
+on `postcodes` (layout 1) or has no `distanceFallback` (layout 2).
 
 Compare an old database with the rebuilt database using
 `NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/compare-postcode-sqlite.ts BEFORE.sqlite services/api services/api/benchmarks/sqlite-postcode-areas.json`.
