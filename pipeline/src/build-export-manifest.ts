@@ -2,7 +2,6 @@ import {
 	statisticsReadPathPath,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -34,7 +33,6 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 	const readPath = JSON.parse(
 		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 	) as StatisticsReadPath;
-	const { ids } = readMeasureDimensionsConfig(repositoryRoot).config;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),
 		{ readOnly: true },
@@ -52,7 +50,6 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 				measure,
 				bindings,
 				readPath,
-				ids,
 			);
 			if (!selection) continue;
 			const formats = await compileMeasureDownloads(
