@@ -277,7 +277,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 				"UPDATE named_location_inventory SET contentHash = 'locations'",
 			)
 			.run();
-		database.prepare("DELETE FROM named_location_geometries").run();
+		database.prepare("DELETE FROM named_location_geometry").run();
 		database.close();
 		assert.equal(cold.locations[0]?.label, "Test");
 		assert.throws(

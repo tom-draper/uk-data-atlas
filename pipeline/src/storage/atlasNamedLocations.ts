@@ -1,4 +1,4 @@
-import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW, NAMED_LOCATION_PARTIAL_MEMBERS_VIEW } from "./deprecatedViews.ts";
+import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW, NAMED_LOCATION_PARTIAL_MEMBERS_VIEW, NAMED_LOCATION_GEOMETRIES_VIEW } from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -131,17 +131,18 @@ export const namedLocationTables = (
 				]),
 			),
 		},
-		named_location_geometries: {
+		named_location_geometry: {
+			views: { named_location_geometries: NAMED_LOCATION_GEOMETRIES_VIEW },
 			columns: [
-				"locationId TEXT NOT NULL REFERENCES named_location(id)",
-				"boundaryRelease TEXT NOT NULL",
-				"minX REAL NOT NULL",
-				"minY REAL NOT NULL",
-				"maxX REAL NOT NULL",
-				"maxY REAL NOT NULL",
+				"location_id TEXT NOT NULL REFERENCES named_location(id)",
+				"boundary_release TEXT NOT NULL",
+				"min_x REAL NOT NULL",
+				"min_y REAL NOT NULL",
+				"max_x REAL NOT NULL",
+				"max_y REAL NOT NULL",
 				"geometry BLOB NOT NULL",
 			],
-			key: ["locationId"],
+			key: ["location_id"],
 			// Rounded to about a metre and compressed. The bounds are measured
 			// from the rounded shape so they match what readers return.
 			rows: inventory.locations.flatMap((location) => {

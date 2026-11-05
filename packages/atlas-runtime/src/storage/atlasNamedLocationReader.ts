@@ -74,7 +74,7 @@ export const readSqliteNamedLocationInventory = (
 						try {
 							const shape = connection
 								.prepare(
-									"SELECT g.* FROM named_location_geometries g JOIN named_location_inventory i ON i.contentHash = ? WHERE g.locationId = ?",
+									"SELECT g.boundary_release AS boundaryRelease, g.min_x AS minX, g.min_y AS minY, g.max_x AS maxX, g.max_y AS maxY, g.geometry FROM named_location_geometry g JOIN named_location_inventory i ON i.contentHash = ? WHERE g.location_id = ?",
 								)
 								.get(header.contentHash, row.id);
 							if (!shape)
