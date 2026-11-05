@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import { sourcesMatchRelease } from "../scripts/data-release.mjs";
+import { CACHE_STAGES, STAMP_DIRECTORY } from "./src/storage/stageStamp.ts";
 import { PLACE_LOOKUPS } from "../packages/datasets/src/data/gazetteer/places.ts";
 import {
 	BOUNDARY_CATALOG,
@@ -509,6 +510,11 @@ const chartRegistryFiles = [
 	"lib/datasets/generatedCharts.tsx",
 ];
 
+// The atlas cache is one file with several writers. Each stage after the base
+// build adds tables to it, and tracks them through a stamp of its own.
+const atlasCache = "data/build/atlas-cache.sqlite";
+const stampOf = (stage) => `${STAMP_DIRECTORY}/${stage}.json`;
+
 const apiStages = [
 	// Always runs, as a download can change any raw file and needs the network.
 	// It is skipped when data/source already matches the pinned release.
@@ -637,7 +643,9 @@ const apiStages = [
 		],
 		["pipeline/src/build-place-index.ts"],
 		{
-			cacheable: false,
+			rawInputs: [],
+			shared: [atlasCache],
+			requiredOutputs: [stampOf("place-index")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
@@ -646,7 +654,9 @@ const apiStages = [
 		["assemble-atlas"],
 		["pipeline/src/build-area-search-index.ts"],
 		{
-			cacheable: false,
+			rawInputs: [],
+			shared: [atlasCache],
+			requiredOutputs: [stampOf("area-search-index")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
@@ -758,7 +768,12 @@ const apiStages = [
 		"postcode-counts",
 		["postcode-index", "assemble-atlas"],
 		["pipeline/src/build-postcode-counts.ts"],
-		{ cacheable: false },
+		{
+			rawInputs: [],
+			shared: [atlasCache],
+			requiredOutputs: [stampOf("postcode-counts")],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"crosswalk-inventory",
@@ -1079,8 +1094,6 @@ const websiteStages = [
 const artifacts = "data/build/artifacts";
 const atlasAssets = "data/build/atlas-assets";
 const geography = "data/build/geography";
-// A stage in the shared SQLite files is one writer among several.
-const atlasCache = "data/build/atlas-cache.sqlite";
 
 /**
  * What each stage changes under data/build and public/data, beyond the
@@ -1093,8 +1106,13 @@ const stageWrites = {
 	operations: [`${artifacts}/operations.json`],
 	"terrain-catalogue": [`${artifacts}/terrain-catalogue.json`],
 	datasets: ["data/build/datasets"],
-	// Creates both databases, then adds the projection and dataset caches.
-	"atlas-sqlite": ["data/build/atlas-base.sqlite", atlasCache],
+	// Creates both databases, then adds the projection and dataset caches. It
+	// clears the stamps of the stages that add to the cache after it.
+	"atlas-sqlite": [
+		"data/build/atlas-base.sqlite",
+		atlasCache,
+		...CACHE_STAGES.map(stampOf),
+	],
 	"api-datasets": [`${artifacts}/source-data`],
 	"boundary-registry": [`${geography}/boundary-releases.json`],
 	"derived-boundaries": [`${artifacts}/boundaries`],
@@ -1109,10 +1127,8 @@ const stageWrites = {
 		`${artifacts}/named-locations.json`,
 		`${artifacts}/named-locations-metadata.json`,
 	],
-	// Each copies the cache, edits the copy and renames it into place.
-	"place-index": [atlasCache],
-	"area-search-index": [atlasCache],
-	"postcode-counts": [atlasCache],
+	// The three before it copy the cache, edit the copy and rename it into
+	// place, so they declare it as `shared`. This one edits it where it is.
 	"atlas-cache-stamp": [atlasCache],
 	"postcode-index": ["data/build/postcode-index.sqlite"],
 	"statistics-vocabulary": ["data/build/statistics-vocabulary.json"],
