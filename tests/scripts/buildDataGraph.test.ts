@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { stageScope } from "@/pipeline/build-data-cache.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
+import {
+	CACHE_STAGES,
+	stageStampPath,
+} from "@/pipeline/src/storage/stageStamp";
 
 type Stage = {
 	name: string;
@@ -9,6 +13,7 @@ type Stage = {
 	cacheable?: boolean;
 	exclusive?: boolean;
 	requiredOutputs?: string[];
+	shared?: string[];
 };
 
 const stages = buildDataStages as Stage[];

@@ -1214,7 +1214,7 @@ test("a rebuild says which stages are unchanged and leaves them out of the ranki
 test("restoring a deleted shared API cache rebuilds every component", async () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-component-build-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
-	mkdirSync(join(root, "data/build"), { recursive: true });
+	mkdirSync(join(root, "data/build/.stamps"), { recursive: true });
 	const path = join(root, "data/build/atlas-cache.sqlite");
 	const components = ["place-index", "area-search-index", "postcode-counts"];
 	const selected = components.map((name) => {
@@ -1234,6 +1234,11 @@ test("restoring a deleted shared API cache rebuilds every component", async () =
 						dependencies: [],
 						args: [],
 						requiredOutputs: ["data/build/atlas-cache.sqlite"],
+						writes: [
+							"data/build/.stamps/place-index.json",
+							"data/build/.stamps/area-search-index.json",
+							"data/build/.stamps/postcode-counts.json",
+						],
 					},
 					...selected,
 				],
@@ -1247,27 +1252,37 @@ test("restoring a deleted shared API cache rebuilds every component", async () =
 					}),
 				execute: (current: { name: string }) => {
 					executed.push(current.name);
-					const values =
-						current.name === "base"
-							? []
-							: JSON.parse(readFileSync(path, "utf8"));
+					// The base build starts the cache again and clears the stamps.
+					if (current.name === "base") {
+						writeFileSync(path, "[]");
+						for (const name of components)
+							rmSync(
+								join(root, `data/build/.stamps/${name}.json`),
+								{
+									force: true,
+								},
+							);
+						return 0;
+					}
+					const values = JSON.parse(readFileSync(path, "utf8"));
 					writeFileSync(
 						path,
 						JSON.stringify([...new Set([...values, current.name])]),
+					);
+					writeFileSync(
+						join(root, `data/build/.stamps/${current.name}.json`),
+						current.name,
 					);
 					return 0;
 				},
 			}),
 			0,
 		);
-		assert.deepEqual(JSON.parse(readFileSync(path, "utf8")), [
-			"base",
-			...components,
-		]);
+		assert.deepEqual(JSON.parse(readFileSync(path, "utf8")), components);
 		return executed;
 	};
 	assert.deepEqual(await run(), ["base", ...components]);
-	assert.deepEqual(await run(), components);
+	assert.deepEqual(await run(), []);
 	unlinkSync(path);
 	assert.deepEqual(await run(), ["base", ...components]);
 });
