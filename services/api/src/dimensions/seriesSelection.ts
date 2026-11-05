@@ -20,7 +20,6 @@ import type {
 	DimensionalMeasure,
 	Series,
 } from "@uk-data-atlas/measures";
-import { retiredMeasure } from "./retiredMeasure";
 
 /**
  * How a measure, and the dimension filters that go with it, are read as one
@@ -140,8 +139,7 @@ export type MeasureTerm =
 	  };
 
 /**
- * Read a measure id or alias. An old encoded series id is refused with the
- * measure and members that replace it; a reviewed human alias is accepted.
+ * Read a measure id or reviewed human alias, refusing old encoded series ids.
  */
 export const readMeasureTerm = (
 	dataCatalog: DataCatalog,
@@ -161,7 +159,11 @@ export const readMeasureTerm = (
 	)
 		return {
 			kind: "problem",
-			response: retiredMeasure(term, measure, aliased.series),
+			response: problem(
+				404,
+				"Not Found",
+				"No published measure matches that id.",
+			),
 		};
 	return { kind: "measure", measure, ...(aliased ? { aliased } : {}) };
 };
