@@ -35,10 +35,10 @@ const writeAtlas = (hash: string) =>
 const writeCache = (payload: string) =>
 	replace(atlasCachePath(root), (database) => {
 		database.exec(
-			"CREATE TABLE cache_generations (component TEXT PRIMARY KEY, generation TEXT NOT NULL); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL)",
+			"CREATE TABLE cache_generation (component TEXT PRIMARY KEY, generation TEXT NOT NULL); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL)",
 		);
 		database
-			.prepare("INSERT INTO cache_generations VALUES (?, ?)")
+			.prepare("INSERT INTO cache_generation VALUES (?, ?)")
 			.run("area-search", cacheGeneration(root, "area-search"));
 		database
 			.prepare("INSERT INTO payloads VALUES (?, ?)")
@@ -98,10 +98,10 @@ describe("atlas.sqlite and atlas-cache.sqlite", () => {
 			closeAllReadOnlyDatabases();
 			replace(atlasCachePath(root), (database) => {
 				database.exec(
-					"CREATE TABLE cache_generations (component TEXT PRIMARY KEY, generation TEXT NOT NULL)",
+					"CREATE TABLE cache_generation (component TEXT PRIMARY KEY, generation TEXT NOT NULL)",
 				);
 				database
-					.prepare("INSERT INTO cache_generations VALUES (?, ?)")
+					.prepare("INSERT INTO cache_generation VALUES (?, ?)")
 					.run("area-search", generation);
 			});
 			expect(() => requireAtlasCache(root, "area-search")).toThrow(

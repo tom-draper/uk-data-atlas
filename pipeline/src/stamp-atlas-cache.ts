@@ -27,7 +27,7 @@ export function checkStagedComponents(root: string) {
 		for (const [stage, component] of STAGED_COMPONENTS) {
 			const stored = cache
 				.prepare(
-					"SELECT generation FROM cache_generations WHERE component = ?",
+					"SELECT generation FROM cache_generation WHERE component = ?",
 				)
 				.get(component)?.generation;
 			if (stored !== cacheGeneration(root, component)) {

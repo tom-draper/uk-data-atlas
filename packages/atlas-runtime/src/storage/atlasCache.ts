@@ -105,7 +105,7 @@ export function requireAtlasCache(
 				verified.delete(key);
 				const stored = database
 					.prepare(
-						"SELECT generation FROM cache_generations WHERE component = ?",
+						"SELECT generation FROM cache_generation WHERE component = ?",
 					)
 					.get(component)?.generation;
 				if (stored !== cacheGeneration(root, component))
