@@ -1,4 +1,4 @@
-import { CROSSWALK_INVENTORY_VIEW } from "./deprecatedViews.ts";
+import { CROSSWALK_COVERAGE_VIEW, CROSSWALK_INVENTORY_VIEW } from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -403,15 +403,16 @@ export const crosswalkTables = (
 				],
 			],
 		},
-		crosswalk_coverage: {
+		crosswalk_coverage_entry: {
+			views: { crosswalk_coverage: CROSSWALK_COVERAGE_VIEW },
 			columns: [
 				"geography TEXT NOT NULL",
-				"boundaryRelease TEXT NOT NULL",
+				"boundary_release TEXT NOT NULL",
 				"position INTEGER NOT NULL UNIQUE",
-				"areaCount INTEGER NOT NULL",
-				"relatedAreaCount INTEGER NOT NULL",
+				"area_count INTEGER NOT NULL",
+				"related_area_count INTEGER NOT NULL",
 			],
-			key: ["geography", "boundaryRelease"],
+			key: ["geography", "boundary_release"],
 			rows: (inventory.releaseCoverage?.releases ?? []).map(
 				(row, position) => [
 					row.geography,
