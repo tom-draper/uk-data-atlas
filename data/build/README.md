@@ -57,8 +57,8 @@ again. `pnpm data:build --only datasets` builds this stage and its prerequisites
 
 The pipeline builds this cache alongside `atlas.sqlite`.
 It contains search indexes, location projections, postcode counts and
-`dataset_payloads` for datasets served from rows. Each `dataset_payloads` row
-is keyed by `output` and holds `source_sha256` (the `datasets.sha256` it was
+`dataset_payload` for datasets served from rows. Each `dataset_payload` row
+is keyed by `output` and holds `source_sha256` (the `dataset_catalogue.sha256` it was
 built for), `sha256` and `bytes` (the hash and size of the JSON, which form the
 website URL) and `gzip`, the JSON compressed at level 9 with a zero mtime and no
 file name, so one build always stores the same bytes. Brotli is not stored: it
@@ -161,18 +161,18 @@ The database contains these tables:
 | `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"3"`.                                                                      |
 | `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>` for datasets not served from rows. |
 | `payloads` | `payload`     | `BLOB NOT NULL`        | Brotli-compressed UTF-8 JSON text from its compiled input. It decompresses to the exact bytes and array order. |
-| `datasets` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                                                           |
-| `datasets` | `output`      | `TEXT NOT NULL UNIQUE` | Compiled output name, without `.json`.                                                                         |
-| `datasets` | `source`      | `TEXT NOT NULL`        | JSON source metadata from the manifest.                                                                        |
-| `datasets` | `contract`    | `TEXT NOT NULL`        | JSON dataset contract.                                                                                         |
-| `datasets` | `summary`     | `TEXT NOT NULL`        | JSON compilation summary.                                                                                      |
-| `datasets` | `fingerprint` | `TEXT NOT NULL`        | Dataset compiler and input fingerprint.                                                                        |
-| `datasets` | `sha256`      | `TEXT NOT NULL`        | SHA-256 of the exact uncompressed payload bytes. For a dataset served from rows, the compiled input's hash.    |
-| `datasets` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                                                             |
-| `datasets` | `payloadId`   | `TEXT`                 | Foreign key to `payloads.id`, `dataset:<output>`. Null for datasets served from rows.                          |
+| `dataset_catalogue` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                                                           |
+| `dataset_catalogue` | `output`      | `TEXT NOT NULL UNIQUE` | Compiled output name, without `.json`.                                                                         |
+| `dataset_catalogue` | `source`      | `TEXT NOT NULL`        | JSON source metadata from the manifest.                                                                        |
+| `dataset_catalogue` | `contract`    | `TEXT NOT NULL`        | JSON dataset contract.                                                                                         |
+| `dataset_catalogue` | `summary`     | `TEXT NOT NULL`        | JSON compilation summary.                                                                                      |
+| `dataset_catalogue` | `fingerprint` | `TEXT NOT NULL`        | Dataset compiler and input fingerprint.                                                                        |
+| `dataset_catalogue` | `sha256`      | `TEXT NOT NULL`        | SHA-256 of the exact uncompressed payload bytes. For a dataset served from rows, the compiled input's hash.    |
+| `dataset_catalogue` | `bytes`       | `INTEGER NOT NULL`     | Uncompressed UTF-8 payload length.                                                                             |
+| `dataset_catalogue` | `payload_id`  | `TEXT`                 | Foreign key to `payloads.id`, `dataset:<output>`. Null for datasets served from rows.                          |
 
-`meta`, `payloads`, `datasets`, `area_releases`, `crosswalk_coverage`, `named_locations`, `named_location_members`,
-`named_location_assertions`, `named_location_partial_members`, and `named_location_geometries` use `WITHOUT ROWID`. Each dataset has one payload. The complete
+`meta`, `payloads`, `dataset_catalogue`, `area_releases`, `crosswalk_coverage_entry`, `named_location`, `named_location_member`,
+`named_location_assertion`, `named_location_partial_member`, and `named_location_geometry` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
@@ -337,8 +337,8 @@ index, and bytes per table and index where SQLite has `dbstat`. This measures th
 
 ### Areas
 
-`area_inventory` has one row keyed by integer `position = 0`, with
-`schemaVersion INTEGER`, `contentHash TEXT`, and `boundaryRegistryHash TEXT`, all
+`area_inventory_metadata` has one row keyed by integer `position = 0`, with
+`schema_version INTEGER`, `content_hash TEXT`, and `boundary_registry_hash TEXT`, all
 non-null. `area_releases` has the composite primary key `(geography, id)` and
 unique integer `position` to preserve inventory order. Its non-null text columns
 are `geography`, `id`, and `status`. Available releases have `recordCount INTEGER`,
@@ -395,11 +395,11 @@ release. The archive-backed test checks that every source has one target and
 that every referenced endpoint code exists in its release. The adapter declares
 membership and does not claim geometric containment or provide weights.
 
-`crosswalk_inventory` has one row keyed by integer `position = 0` with non-null
-`schemaVersion INTEGER` and `contentHash TEXT`. Nullable `areaInventoryHash TEXT`
-records whether release coverage is present. `crosswalk_coverage` has primary
-key `(geography, boundaryRelease)`, both non-null text, unique non-null integer
-`position`, and non-null integers `areaCount` and `relatedAreaCount`.
+`crosswalk_inventory_metadata` has one row keyed by integer `position = 0` with non-null
+`schema_version INTEGER` and `content_hash TEXT`. Nullable `area_inventory_hash TEXT`
+records whether release coverage is present. `crosswalk_coverage_entry` has primary
+key `(geography, boundary_release)`, both non-null text, unique non-null integer
+`position`, and non-null integers `area_count` and `related_area_count`.
 Its rows retain coverage order and refer to the inventory hash, without requiring
 all historical crosswalk endpoints to exist in `area_version`.
 
@@ -436,38 +436,38 @@ The website never reads crosswalk JSON directly.
 
 ### Named locations
 
-`named_location_inventory` has one row keyed by integer `position = 0`. Its
-non-null columns are `schemaVersion INTEGER`, `contentHash TEXT`, `artifact TEXT`
-and `gazetteerVersion INTEGER`. The last two describe the source gazetteer.
+`named_location_inventory_metadata` has one row keyed by integer `position = 0`. Its
+non-null columns are `schema_version INTEGER`, `content_hash TEXT`, `artifact TEXT`
+and `gazetteer_version INTEGER`. The last two describe the source gazetteer.
 
-`named_locations` has text primary key `id`, unique integer `position`, text
-`fields`, `label`, `kind`, and `memberGeography`, integer `definitionRevision`,
-and real `minX`, `minY`, `maxX`, `maxY`. These columns are non-null. Nullable text
-`validFrom` and `validTo` retain the definition's half-open validity interval.
+`named_location` has text primary key `id`, unique integer `position`, text
+`fields`, `label`, `kind`, and `member_geography`, integer `definition_revision`,
+and real `min_x`, `min_y`, `max_x`, `max_y`. These columns are non-null. Nullable text
+`valid_from` and `valid_to` retain the definition's half-open validity interval.
 Nullable `source TEXT` contains the publisher-specific provenance object as JSON.
 `fields` is an ordered JSON list of property names. It preserves optional arrays,
 including absent versus empty arrays, and response property order. Indexes on
-`(kind, position)` and `(memberGeography, position)` support filtered inventories.
+`(kind, position)` and `(member_geography, position)` support filtered inventories.
 
 Membership data lives in relational child tables. Each has non-null
-`locationId TEXT`, a foreign key to `named_locations.id`, and non-null
-`position INTEGER`, with composite primary key `(locationId, position)`.
+`location_id TEXT`, a foreign key to `named_location.id`, and non-null
+`position INTEGER`, with composite primary key `(location_id, position)`.
 
-- `named_location_members` has non-null `code TEXT`, preserving declared member order.
-- `named_location_assertions` has non-null `code TEXT` and nullable text
-  `validFrom`, `validTo` for each dated membership assertion. An index on
-  `(locationId, code, validFrom, validTo)` supports dated membership lookups.
-- `named_location_partial_members` has non-null `code TEXT`, `share REAL`, and
-  `memberOf TEXT`. Zero shares remain zero.
+- `named_location_member` has non-null `code TEXT`, preserving declared member order.
+- `named_location_assertion` has non-null `code TEXT` and nullable text
+  `valid_from`, `valid_to` for each dated membership assertion. An index on
+  `(location_id, code, valid_from, valid_to)` supports dated membership lookups.
+- `named_location_partial_member` has non-null `code TEXT`, `share REAL`, and
+  `member_of TEXT`. Zero shares remain zero.
 
-Members and partial members index `(code, locationId)` for reverse membership
-lookups. Codes refer to the parent's `memberGeography`. They have no foreign key
+Members and partial members index `(code, location_id)` for reverse membership
+lookups. Codes refer to the parent's `member_geography`. They have no foreign key
 to `area`, because assertions can describe historical codes across releases.
-`memberOf` is a foreign key to the named location holding that partial member.
+`member_of` is a foreign key to the named location holding that partial member.
 
-`named_location_geometries` has text primary key `locationId`, a foreign key to
-`named_locations.id`, non-null `boundaryRelease TEXT`, real `minX`, `minY`,
-`maxX`, `maxY`, and `geometry BLOB NOT NULL`. The blob is the GeoJSON geometry
+`named_location_geometry` has text primary key `location_id`, a foreign key to
+`named_location.id`, non-null `boundary_release TEXT`, real `min_x`, `min_y`,
+`max_x`, `max_y`, and `geometry BLOB NOT NULL`. The blob is the GeoJSON geometry
 as Brotli-compressed UTF-8 JSON (quality 10), written by `packGeometry` and read
 by `unpackGeometry` in `packages/atlas-runtime/src/storage/storedGeometry.ts`.
 Coordinates are WGS84 longitude and latitude in degrees, rounded to five decimal
@@ -475,7 +475,7 @@ places, about 1.1 m of latitude. Neighbouring points that round together are
 merged, and a ring that collapses below four positions is dropped, though no
 ring did in the current data. The bounds columns are measured from the rounded
 geometry, so they match what the API returns, and differ from the unrounded
-union by at most 0.000005 degrees. `named_locations` keeps its own full
+union by at most 0.000005 degrees. `named_location` keeps its own full
 precision bounding box. Rounding and compression shrink the table from 25.7 MB
 to 4.2 MB for 249 rows. Gzip gave 5.9 MB and Brotli quality 9 gave 6.0 MB.
 Quality 11 gave 3.6 MB for three times the build time of quality 10. Binary
@@ -484,7 +484,7 @@ compete with compressed text, and it would not read as JSON. Only the API's
 `/v1/locations/{id}/geometry` route returns this geometry, and nothing computes
 from it, so rounding changes no other output. `unpackGeometry` also accepts
 plain JSON text. Geometry is optional, one row per location with a compiled
-union. Its release belongs to the parent's `memberGeography`. The API loads
+union. Its release belongs to the parent's `member_geography`. The API loads
 geometry on first access over the shared read-only connection. Inventory and
 membership reads do not parse geometry.
 
@@ -498,10 +498,10 @@ release artifacts that the pipeline stores in `website_asset`.
 
 ### Location projections
 
-`location_projection_members` and `location_projection_parents` have composite
-primary keys `(crosswalkId, key)`, both non-null text, and non-null `value BLOB`.
+`location_projection_member` and `location_projection_parent` have composite
+primary keys `(crosswalk_id, key)`, both non-null text, and non-null `value BLOB`.
 Each row stores one JSON projection compressed with its shard's dictionary.
-`location_projection_dictionaries` has composite primary key `(kind, crosswalkId)`
+`location_projection_dictionary` has composite primary key `(kind, crosswalk_id)`
 and non-null `dictionary BLOB`. All three tables use `WITHOUT ROWID`.
 
 The cache `location-projection-inventory` payload preserves the inventory fields
@@ -555,8 +555,8 @@ transferring a built tree without duplicating the archives. Publish API map asse
 
 ### Place search
 
-`place_index_meta`, `place_index_places`, `place_index_names` and
-`place_index_codes` store the place search index in `atlas-cache.sqlite`. Places,
+`place_index_meta`, `place_index_place`, `place_index_name` and
+`place_index_code` store the place search index in `atlas-cache.sqlite`. Places,
 names and codes retain their sorted integer positions, so the resolver reads
 only the rows touched by its existing binary search. Labels and code references
 retain their packed representation. Metadata records normalization rules and
@@ -574,8 +574,8 @@ search results.
 
 ### Area search
 
-`area_search_meta`, `area_search_codes`, `area_search_terms` and
-`area_search_title_terms` store area search in `atlas-cache.sqlite`. Codes keep their
+`area_search_meta`, `area_search_code`, `area_search_term` and
+`area_search_title_term` store area search in `atlas-cache.sqlite`. Codes keep their
 release order and terms keep their packed postings. Search still reads only the
 rows needed for matching, filters and pagination.
 
@@ -691,5 +691,30 @@ hash mismatch. It reports both shard counts, mismatch counts, database bytes,
 `dbstat` bytes per object, and nine warm timing samples for the largest area
 shard and a direct postcode lookup. Each timed read opens its own connection.
 
-The `website_assets` view is deprecated. It preserves the former table name for
-read-only consumers; use `website_asset` for new queries.
+Deprecated read-only compatibility views preserve the earlier names and column
+spellings. New queries should use the stored tables:
+
+| Deprecated view | Stored table |
+| --- | --- |
+| `datasets` | `dataset_catalogue` |
+| `website_assets` | `website_asset` |
+| `area_inventory` | `area_inventory_metadata` |
+| `crosswalk_inventory` | `crosswalk_inventory_metadata` |
+| `crosswalk_coverage` | `crosswalk_coverage_entry` |
+| `named_locations` | `named_location` |
+| `named_location_inventory` | `named_location_inventory_metadata` |
+| `named_location_members` | `named_location_member` |
+| `named_location_assertions` | `named_location_assertion` |
+| `named_location_partial_members` | `named_location_partial_member` |
+| `named_location_geometries` | `named_location_geometry` |
+| `cache_generations` | `cache_generation` |
+| `dataset_payloads` | `dataset_payload` |
+| `location_projection_members` | `location_projection_member` |
+| `location_projection_parents` | `location_projection_parent` |
+| `location_projection_dictionaries` | `location_projection_dictionary` |
+| `place_index_places` | `place_index_place` |
+| `place_index_names` | `place_index_name` |
+| `place_index_codes` | `place_index_code` |
+| `area_search_codes` | `area_search_code` |
+| `area_search_terms` | `area_search_term` |
+| `area_search_title_terms` | `area_search_title_term` |
