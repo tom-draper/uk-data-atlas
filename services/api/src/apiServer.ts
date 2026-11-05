@@ -56,7 +56,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { routeAsync } from "./routes";
-import { dimensionCatalogue } from "./dimensions/dimensionCatalogue";
+import { dimensionCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	DEFAULT_MAX_URL_LENGTH,

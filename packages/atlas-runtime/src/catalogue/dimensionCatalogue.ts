@@ -3,8 +3,8 @@ import {
 	type DataCatalog,
 	type DimensionMemberDefinition,
 	type Measure,
-	type MeasureDimensions,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/measures";
+import type { MeasureDimensions } from "./measureDimensionsLoader.ts";
 
 /**
  * The API's measures: each catalogue measure id is one series of a measure,

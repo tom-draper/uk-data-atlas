@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { calculateWeightedMean } from "../src/weightedMean";
+import { calculateWeightedMean } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 test("calculates a weighted mean after aligning area codes", () => {
 	assert.deepEqual(
