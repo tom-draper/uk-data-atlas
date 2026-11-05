@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { areaSearchIndexTables } from "./storage/index.ts";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
-import { publishCacheTables } from "./storage/index.ts";
+import { publishCacheTables, stampCacheStage } from "./storage/index.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { compileDuckdbAreaSearchIndex } from "./places/duckdbAreaSearch.ts";
 
@@ -13,11 +13,13 @@ export async function buildDuckdbAreaSearchIndex(root: string) {
 		readAreaLookup(root, inventory),
 		inventory.contentHash,
 	);
-	const outputPath = publishCacheTables(
-		root,
-		"area-search",
-		areaSearchIndexTables(index),
-	);
+	const tables = areaSearchIndexTables(index);
+	const outputPath = publishCacheTables(root, "area-search", tables);
+	stampCacheStage(root, {
+		stage: "area-search-index",
+		component: "area-search",
+		tables: Object.keys(tables),
+	});
 	for (const name of [
 		"area-search-index.sqlite",
 		"area-search-index.json",

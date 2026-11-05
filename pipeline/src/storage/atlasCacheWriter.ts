@@ -8,6 +8,7 @@ import {
 	closeReadOnlyDatabase,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { hashSqliteContent, writeStageStamp } from "./stageStamp.ts";
 
 /** Replace one component without exposing incomplete tables to API readers. */
 export function publishAtlasCache(
@@ -58,4 +59,39 @@ export function publishCacheTables(
 			database.exec(`DROP TABLE IF EXISTS ${name}`);
 		writeSqliteTables(database, tables);
 	});
+}
+
+/**
+ * Records what a stage owns in the shared cache, once it is in place: the
+ * component's generation and a hash of the stage's tables. The data build
+ * tracks this stamp as the stage's output, so its digest follows the tables.
+ */
+export function stampCacheStage(
+	root: string,
+	stamp: {
+		stage: string;
+		component: CacheComponent;
+		tables: readonly string[];
+		payloads?: readonly string[];
+	},
+) {
+	const database = new DatabaseSync(atlasCachePath(root), { readOnly: true });
+	try {
+		const generation = database
+			.prepare(
+				"SELECT generation FROM cache_generations WHERE component = ?",
+			)
+			.get(stamp.component)?.generation;
+		if (typeof generation !== "string")
+			throw new Error(
+				`The atlas cache has no ${stamp.component} generation`,
+			);
+		return writeStageStamp(root, stamp.stage, {
+			component: stamp.component,
+			generation,
+			content: hashSqliteContent(database, stamp.tables, stamp.payloads),
+		});
+	} finally {
+		database.close();
+	}
 }

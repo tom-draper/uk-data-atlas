@@ -1,6 +1,6 @@
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { publishAtlasCache } from "./atlasCacheWriter.ts";
+import { publishAtlasCache, stampCacheStage } from "./atlasCacheWriter.ts";
 import type { PostcodeCountsArtifact } from "@uk-data-atlas/geography/postcode-count-types";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
@@ -32,6 +32,12 @@ export function storePostcodeCounts(
 		database
 			.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
 			.run("postcode-counts", JSON.stringify(metadata));
+	});
+	stampCacheStage(root, {
+		stage: "postcode-counts",
+		component: "postcode-counts",
+		tables: ["postcode_counts"],
+		payloads: ["postcode-counts"],
 	});
 	const publicRoot = artifactDirectory(root);
 	for (const suffix of [".json", ".json.gz"])

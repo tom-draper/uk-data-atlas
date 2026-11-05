@@ -1,10 +1,17 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+	mkdtempSync,
+	mkdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
 import { stampAtlasCache } from "../src/stamp-atlas-cache";
+import { stageStampPath } from "../src/storage";
 
 test("stamps the cache with the canonical database content hash", () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-stamp-"));
@@ -32,6 +39,16 @@ test("stamps the cache with the canonical database content hash", () => {
 			assert.equal(
 				hash,
 				"sha256:0deeb8fa1dbbee4c0dbe7f5e3c9183940139f26d22797ee8ab07c00557a4c2ff",
+			);
+			// The stage's stamp holds the same hash for the data build to track.
+			assert.deepEqual(
+				JSON.parse(
+					readFileSync(
+						stageStampPath(root, "atlas-cache-stamp"),
+						"utf8",
+					),
+				),
+				{ "atlas-sqlite-content-hash": hash },
 			);
 		} finally {
 			stamped.close();
