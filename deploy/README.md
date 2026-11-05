@@ -30,7 +30,7 @@ pnpm data:build
 pnpm --dir services/api build
 pnpm build
 install -d -m 0755 /var/www/uk-data-atlas
-node scripts/link-boundary-tiles.ts /var/www/uk-data-atlas
+node scripts/link-boundary-tiles.mts /var/www/uk-data-atlas
 ````
 
 The data build downloads raw inputs and builds all API and website data.
@@ -189,7 +189,7 @@ Build the intended revision, then refresh the Nginx archive links and restart
 the affected service:
 
 ```sh
-node scripts/link-boundary-tiles.ts /var/www/uk-data-atlas
+node scripts/link-boundary-tiles.mts /var/www/uk-data-atlas
 ```
 
 Nginx reads archives from `/var/www/uk-data-atlas/boundaries/`. The export uses
@@ -278,7 +278,7 @@ Both paths share one file on disk. These directories must be on the same
 filesystem; the build fails rather than falling back to copying archives.
 Deploy from the built checkout. When transferring a built tree, preserve hard links
 with `rsync -aH` or recreate them with
-`node scripts/link-boundary-tiles.ts` on the destination before starting
+`node scripts/link-boundary-tiles.mts` on the destination before starting
 Next.js. Re-run that command after replacing archives independently of an app build. Source release publishing still packages only `data/source/`.
 
 ### Local SQLite cache

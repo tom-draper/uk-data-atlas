@@ -1032,7 +1032,7 @@ const websiteStages = [
 	stage(
 		"website-tiles",
 		["boundary-tiles"],
-		["scripts/link-boundary-tiles.ts"],
+		["scripts/link-boundary-tiles.mts"],
 		{
 			outputs: ["public/data/boundaries"],
 			rawInputs: [],
