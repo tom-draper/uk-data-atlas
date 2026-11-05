@@ -334,7 +334,7 @@ export const openAreaSearchIndexDatabase = (
 	if (mismatch)
 		throw new Error(`The area search index at ${path} ${mismatch}.`);
 	const codes = database.table("code");
-	const terms = database.table("terms");
+	const terms = database.table("term");
 	const titleTerms = database.table("title_terms");
 	let offset = 0;
 	const releases = (

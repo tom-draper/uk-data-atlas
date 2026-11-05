@@ -4,6 +4,7 @@ export const PLACE_INDEX_PLACES_VIEW = "SELECT * FROM place_index_place";
 export const PLACE_INDEX_NAMES_VIEW = "SELECT * FROM place_index_name";
 export const PLACE_INDEX_CODES_VIEW = "SELECT * FROM place_index_code";
 export const AREA_SEARCH_CODES_VIEW = "SELECT * FROM area_search_code";
+export const AREA_SEARCH_TERMS_VIEW = "SELECT * FROM area_search_term";
 export const DATASETS_VIEW = "SELECT type, output, source, contract, summary, fingerprint, sha256, bytes, payload_id AS payloadId FROM dataset_catalogue";
 
 /** Read-only aliases for database consumers using retired names. */
