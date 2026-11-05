@@ -240,7 +240,6 @@ for (const measure of catalog.measures)
 			source.sourceGeography.type,
 			source.sourceGeography.boundaryYear,
 			source.periods[0]!,
-			config.ids,
 		);
 		if (table) {
 			if (source.periods.length !== 1)

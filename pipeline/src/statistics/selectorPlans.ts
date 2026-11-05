@@ -33,10 +33,6 @@ export function censusTableSelector(
 	geography: string,
 	boundaryYear: number,
 	period: string,
-	ids: Record<
-		string,
-		{ measure: string; dimensions?: Record<string, string> }
-	>,
 ): StatisticsTableSelector | undefined {
 	const census = CENSUS_SMALL_AREA_TABLES.find(
 		(table) => datasetId === `census-2021-${table.table}`,
@@ -53,14 +49,9 @@ export function censusTableSelector(
 		boundaryYear,
 		period,
 		measures,
-		columns: measures.map((id) => {
-			const mapping = ids[id];
-			if (!mapping)
-				throw new Error(`Missing statistics mapping for ${id}`);
-			return {
-				measure: mapping.measure,
-				dimensions: mapping.dimensions ?? {},
-			};
-		}),
+		columns: census.categories.map(([suffix, , , member]) => ({
+			measure: census.measure,
+			dimensions: { [census.dimension]: member ?? suffix },
+		})),
 	};
 }
