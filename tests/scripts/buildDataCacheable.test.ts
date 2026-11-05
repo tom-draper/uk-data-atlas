@@ -180,3 +180,189 @@ test("adopting a registry accepts its checked-in outputs", async () => {
 	assert.ok(existsSync(join(root, ".cache/stages.json")));
 	assert.deepEqual((await build()).ran, ["download"]);
 });
+
+const cachePath = "data/build/atlas-cache.sqlite";
+const stampPath = (name: string) => `data/build/.stamps/${name}.json`;
+
+// Several stages add to one shared file. Each leaves a stamp of what it owns,
+// and the last one owns the file itself.
+const sharedStages: Stage[] = [
+	{
+		name: "upstream",
+		dependencies: [],
+		args: ["upstream"],
+		requiredOutputs: ["data/build/upstream.json"],
+	},
+	{
+		name: "base",
+		dependencies: ["upstream"],
+		args: ["base"],
+		requiredOutputs: [cachePath],
+		writes: [stampPath("writer-a"), stampPath("writer-b")],
+	},
+	...["writer-a", "writer-b"].map((name): Stage => ({
+		name,
+		dependencies: ["base"],
+		args: [name],
+		shared: [cachePath],
+		requiredOutputs: [stampPath(name)],
+	})),
+	{
+		name: "final",
+		dependencies: ["writer-a", "writer-b"],
+		args: ["final"],
+		requiredOutputs: [cachePath, stampPath("final")],
+	},
+	{
+		name: "release",
+		dependencies: ["writer-a"],
+		args: ["release"],
+		requiredOutputs: ["data/build/release.json"],
+	},
+];
+
+function sharedFixture() {
+	const current = fixture(sharedStages, {
+		codeFiles: (stage: { name: string }) =>
+			stage.name === "base"
+				? ["base.ts"]
+				: stage.name === "upstream"
+					? ["upstream.ts"]
+					: [],
+		files: { "base.ts": "one\n", "upstream.ts": "u1" },
+	});
+	// What each writer's own tables hold; its stamp is a hash of just that.
+	const tables: Record<string, string> = {
+		"writer-a": "a1",
+		"writer-b": "b1",
+	};
+	const cache = () => JSON.parse(current.read(cachePath));
+	const save = (value: object) =>
+		current.write(cachePath, JSON.stringify(value));
+	current.effects.upstream = () =>
+		current.write("data/build/upstream.json", current.read("upstream.ts"));
+	current.effects.base = () => {
+		save({ base: current.read("data/build/upstream.json") });
+		// A new cache has none of what the writers added.
+		for (const name of ["writer-a", "writer-b"])
+			rmSync(join(current.root, stampPath(name)), { force: true });
+	};
+	for (const name of ["writer-a", "writer-b"])
+		current.effects[name] = () => {
+			save({ ...cache(), [name]: tables[name] });
+			current.write(stampPath(name), `${name} ${tables[name]}\n`);
+		};
+	current.effects.final = () => {
+		save({ ...cache(), final: true });
+		current.write(stampPath("final"), "final\n");
+	};
+	current.effects.release = () =>
+		current.write(
+			"data/build/release.json",
+			current.read(stampPath("writer-a")),
+		);
+	return {
+		...current,
+		cache,
+		save,
+		tables,
+		setUpstream: (value: string) => current.write("upstream.ts", value),
+	};
+}
+
+const everything = [
+	"upstream",
+	"base",
+	"writer-a",
+	"writer-b",
+	"final",
+	"release",
+];
+
+test("stages that add to a shared file skip when nothing changed", async () => {
+	const { build, cache } = sharedFixture();
+	assert.deepEqual((await build()).ran, everything);
+	assert.deepEqual((await build()).ran, []);
+	assert.deepEqual(cache(), {
+		base: "u1",
+		"writer-a": "a1",
+		"writer-b": "b1",
+		final: true,
+	});
+});
+
+test("a writer reruns when its stamp is deleted, and the last stage follows the file it rewrote", async () => {
+	const { build, root } = sharedFixture();
+	await build();
+	rmSync(join(root, stampPath("writer-b")));
+	assert.deepEqual((await build()).ran, ["writer-b", "final"]);
+	assert.deepEqual((await build()).ran, []);
+});
+
+test("a writer reruns when its stamp is edited, but its readers stay cached if its tables are the same", async () => {
+	const { build, write } = sharedFixture();
+	await build();
+	write(stampPath("writer-a"), "tampered\n");
+	// release reads writer-a, whose stamp comes back as it was.
+	assert.deepEqual((await build()).ran, ["writer-a", "final"]);
+	assert.deepEqual((await build()).ran, []);
+});
+
+test("a changed shared file reruns the stage that owns it, and only that one", async () => {
+	const { build, write } = sharedFixture();
+	await build();
+	write(cachePath, "{}");
+	assert.deepEqual((await build()).ran, ["final"]);
+});
+
+test("a deleted shared file is rebuilt, and every writer adds its tables again", async () => {
+	const { build, root, cache } = sharedFixture();
+	await build();
+	unlinkSync(join(root, cachePath));
+	const rebuilt = await build();
+	assert.deepEqual(rebuilt.ran, ["base", "writer-a", "writer-b", "final"]);
+	assert.equal(cache()["writer-a"], "a1");
+	assert.equal(cache()["writer-b"], "b1");
+	assert.deepEqual((await build()).ran, []);
+});
+
+test("a base rebuild with identical output clears the stamps, so writers rerun but their readers stay cached", async () => {
+	const { build, write } = sharedFixture();
+	await build();
+	write("base.ts", "two\n");
+	assert.deepEqual((await build()).ran, [
+		"base",
+		"writer-a",
+		"writer-b",
+		"final",
+	]);
+	assert.deepEqual((await build()).ran, []);
+});
+
+test("an upstream change rebuilds the shared file and reruns every writer after it", async () => {
+	const { build, setUpstream } = sharedFixture();
+	await build();
+	setUpstream("u2");
+	assert.deepEqual((await build()).ran, [
+		"upstream",
+		"base",
+		"writer-a",
+		"writer-b",
+		"final",
+	]);
+});
+
+test("a writer's digest follows its own tables, not the rest of the shared file", async () => {
+	const { build, root, tables, cache } = sharedFixture();
+	await build();
+	// writer-b's tables change. The file changes, but release reads writer-a.
+	tables["writer-b"] = "b2";
+	rmSync(join(root, stampPath("writer-b")));
+	assert.deepEqual((await build()).ran, ["writer-b", "final"]);
+	assert.equal(cache()["writer-b"], "b2");
+	// writer-a's tables change, and its reader reruns.
+	tables["writer-a"] = "a2";
+	rmSync(join(root, stampPath("writer-a")));
+	assert.deepEqual((await build()).ran, ["writer-a", "final", "release"]);
+	assert.deepEqual((await build()).ran, []);
+});
