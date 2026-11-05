@@ -495,6 +495,13 @@ const stage = (
 	writes,
 });
 
+// Checked-in files the registry stages generate. Other stages import them.
+const catalogueRegistry = "packages/datasets/src/data/catalog";
+const catalogueFiles = [
+	`${catalogueRegistry}/definitions/index.ts`,
+	`${catalogueRegistry}/registry.ts`,
+	`${catalogueRegistry}/generated.ts`,
+];
 const apiStages = [
 	// Always runs, as a download can change any raw file and needs the network.
 	// It is skipped when data/source already matches the pinned release.
@@ -513,7 +520,20 @@ const apiStages = [
 		"catalogue-registry",
 		["sources"],
 		["pipeline/src/build-catalogue-registry.ts"],
-		{ cacheable: false },
+		{
+			// Writes files other stages import, so nothing runs beside it.
+			exclusive: true,
+			rawInputs: [],
+			requiredOutputs: catalogueFiles,
+			// The definitions are imported by path, not statically, and the
+			// output is formatted with the repository's Prettier config.
+			codeInputs: [
+				"packages/datasets",
+				".prettierrc",
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+			],
+		},
 	),
 	// Compiled once into data/build/datasets, for the website and the API.
 	stage(
