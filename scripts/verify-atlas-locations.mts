@@ -22,7 +22,9 @@ import { testContext } from "../services/api/tests/routeFixtures";
 import {
 	apiRootOf,
 	artifactDirectory,
+	roundGeometry,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);
@@ -69,7 +71,24 @@ for (const [
 	);
 }
 
-assert.equal(digest(after), digest(before));
+// The database stores each geometry rounded to a metre, with bounds measured
+// from the rounded shape. Everything else must match the JSON byte for byte.
+const stored: NamedLocationInventory = {
+	...before,
+	locations: before.locations.map((location) => {
+		if (!location.geometry) return location;
+		const geometry = roundGeometry(location.geometry.geometry);
+		return {
+			...location,
+			geometry: {
+				boundaryRelease: location.geometry.boundaryRelease,
+				bbox: geometryBounds(geometry)!,
+				geometry,
+			},
+		};
+	}),
+};
+assert.equal(digest(after), digest(stored));
 const areas = readAreaInventory(root);
 const areaLookup = readAreaLookup(root, areas);
 assert.equal(
@@ -107,7 +126,7 @@ for (const entry of crosswalkInventory.crosswalks) {
 	projections += expected.artifacts.length + expected.parentArtifacts.length;
 }
 assert.ok(projections > 0);
-const contexts = [before, after].map((inventory) =>
+const contexts = [stored, after].map((inventory) =>
 	testContext({
 		namedLocationInventory: inventory,
 		areaInventory: areas,
