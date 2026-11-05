@@ -18,6 +18,7 @@ import {
 	SALFORD_WARD_CODE_REMAP,
 } from "@uk-data-atlas/datasets/data/house-price/wardCodes";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { CENSUS_SMALL_AREA_TABLES } from "./catalog/censusSmallArea.ts";
 import {
 	artifactDirectory,
 	statisticsReadPathPath,
@@ -46,6 +47,23 @@ const catalog = JSON.parse(
 	),
 ) as DataCatalog;
 const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
+const censusSeries = new Map<
+	string,
+	{ measure: string; dimensions: Record<string, string> }
+>(
+	CENSUS_SMALL_AREA_TABLES.flatMap((table) =>
+		table.categories.map(
+			([suffix, , , member]) =>
+				[
+					`${table.measurePrefix}-${suffix}`,
+					{
+						measure: table.measure,
+						dimensions: { [table.dimension]: member ?? suffix },
+					},
+				] as const,
+		),
+	),
+);
 const database = new DatabaseSync(databasePath, { readOnly: true });
 
 /** The dimensions each statistics series of a dataset and measure carries. */
@@ -308,10 +326,11 @@ for (const measure of catalog.measures)
 				boundaryYear: stored.sourceGeography.boundaryYear,
 				period: stored.period,
 				measures: stored.measures,
-				columns: stored.measures.map((id) => ({
-					measure: config.ids[id]!.measure,
-					dimensions: config.ids[id]!.dimensions ?? {},
-				})),
+				columns: stored.measures.map((id) => {
+					const series = censusSeries.get(id);
+					if (!series) throw new Error(`No census series for ${id}.`);
+					return series;
+				}),
 			};
 			try {
 				if (
