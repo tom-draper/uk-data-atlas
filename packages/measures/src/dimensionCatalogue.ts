@@ -52,8 +52,12 @@ export type DimensionalMeasure = {
 export type DimensionCatalogue = {
 	measures: DimensionalMeasure[];
 	measure: (id: string) => DimensionalMeasure | undefined;
-	/** The measure and series a catalogue measure id names. */
+	/** The measure and series a canonical series key names. */
 	series: (
+		key: string,
+	) => { measure: DimensionalMeasure; series: Series } | undefined;
+	/** The measure and series a legacy catalogue measure id names. */
+	catalogueSeries: (
 		catalogueId: string,
 	) => { measure: DimensionalMeasure; series: Series } | undefined;
 	/** Every dimension id, which is also its query parameter name. */
@@ -153,6 +157,13 @@ export const dimensionCatalogue = (
 	const seriesIndex = new Map(
 		measures.flatMap((measure) =>
 			measure.series.map(
+				(series) => [series.id, { measure, series }] as const,
+			),
+		),
+	);
+	const catalogueSeriesIndex = new Map(
+		measures.flatMap((measure) =>
+			measure.series.map(
 				(series) =>
 					[series.catalogueMeasure.id, { measure, series }] as const,
 			),
@@ -161,7 +172,8 @@ export const dimensionCatalogue = (
 	const built: DimensionCatalogue = {
 		measures,
 		measure: (id) => measureIndex.get(id),
-		series: (catalogueId) => seriesIndex.get(catalogueId),
+		series: (key) => seriesIndex.get(key),
+		catalogueSeries: (catalogueId) => catalogueSeriesIndex.get(catalogueId),
 		dimensionIds: new Set(
 			measures.flatMap((measure) =>
 				measure.dimensions.map((dimension) => dimension.id),
@@ -242,7 +254,7 @@ export const publicSeries = (
 	const found = dimensionCatalogue(
 		catalog,
 		dimensions ?? identityDimensions(catalog),
-	).series(id);
+	).catalogueSeries(id);
 	return found
 		? { id: found.measure.id, dimensions: found.series.dimensions }
 		: { id, dimensions: {} };
