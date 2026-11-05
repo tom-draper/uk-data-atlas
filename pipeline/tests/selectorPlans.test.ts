@@ -26,17 +26,6 @@ test("code-year partitions restrict only declared datasets", () => {
 });
 
 test("census table selector follows the declared category order", () => {
-	const mappings = {
-		"usual-residents-in-households": {
-			measure: "people",
-			dimensions: { residence: "households" },
-		},
-		"usual-residents-in-communal-establishments": {
-			measure: "people",
-			dimensions: { residence: "communal" },
-		},
-		"usual-residents-total": { measure: "people" },
-	};
 	expect(
 		censusTableSelector(
 			"ts001-lsoa",
@@ -44,7 +33,6 @@ test("census table selector follows the declared category order", () => {
 			"lsoa",
 			2021,
 			"2021",
-			mappings,
 		),
 	).toEqual({
 		kind: "measure-table",
@@ -53,23 +41,13 @@ test("census table selector follows the declared category order", () => {
 		geography: "lsoa",
 		boundaryYear: 2021,
 		period: "2021",
-		measures: Object.keys(mappings),
+		measures: ["usual-residents-in-households", "usual-residents-in-communal-establishments", "usual-residents-total"],
 		columns: [
-			{ measure: "people", dimensions: { residence: "households" } },
-			{ measure: "people", dimensions: { residence: "communal" } },
-			{ measure: "people", dimensions: {} },
+			{ measure: "usual-residents", dimensions: { "residence-type": "household" } },
+			{ measure: "usual-residents", dimensions: { "residence-type": "communal-establishment" } },
+			{ measure: "usual-residents", dimensions: { "residence-type": "total" } },
 		],
 	});
-	expect(() =>
-		censusTableSelector(
-			"ts001-lsoa",
-			"census-2021-ts001",
-			"lsoa",
-			2021,
-			"2021",
-			{},
-		),
-	).toThrow(/Missing statistics mapping/);
 	expect(
 		censusTableSelector(
 			"other",
@@ -77,7 +55,6 @@ test("census table selector follows the declared category order", () => {
 			"localAuthority",
 			2024,
 			"2024",
-			{},
 		),
 	).toBeUndefined();
 });
