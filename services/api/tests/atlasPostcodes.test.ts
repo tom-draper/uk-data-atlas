@@ -18,10 +18,7 @@ import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
-import {
-	writeEmptyPostcodeAreas,
-	writeEmptyWebsiteComponent,
-} from "./atlasComponentFixtures";
+import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
 import { buildPostcodeIndex } from "./pipelineFixtures";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
@@ -74,7 +71,6 @@ function fixture(t: TestContext) {
 		join(root, "data/build/atlas.sqlite"),
 		join(root, "data/build/atlas-base.sqlite"),
 	);
-	writeEmptyWebsiteComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(
 		join(

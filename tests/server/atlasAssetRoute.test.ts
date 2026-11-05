@@ -110,6 +110,29 @@ describe("SQLite website assets", () => {
 			existsSync(join(fixture.root, "data/build/website-assets.sqlite")),
 		).toBe(true);
 	});
+	it("keeps the assets out of atlas.sqlite", () => {
+		const database = new DatabaseSync(
+			join(fixture.root, "data/build/atlas.sqlite"),
+			{ readOnly: true },
+		);
+		try {
+			expect(
+				database
+					.prepare(
+						"SELECT name FROM sqlite_schema WHERE name LIKE 'website_asset%'",
+					)
+					.all(),
+			).toEqual([]);
+		} finally {
+			database.close();
+		}
+	});
+	it("fails with the build command when the assets file is missing", () => {
+		rmSync(join(fixture.root, "data/build/website-assets.sqlite"));
+		expect(() =>
+			readAtlasAssetText(fixture.root, "pages", "places-index"),
+		).toThrow(/Missing website assets database.*website-lookups/);
+	});
 	it("retains the same asset contents on an identical import", () => {
 		const before = readAtlasAssetText(
 			fixture.root,
@@ -135,23 +158,31 @@ describe("SQLite website assets", () => {
 		expect(() =>
 			readAtlasAssetText(fixture.root, "pages", "obsolete"),
 		).toThrow("Missing");
-		const database = new DatabaseSync(
+		const atlas = new DatabaseSync(
 			join(fixture.root, "data/build/atlas.sqlite"),
 			{ readOnly: true },
 		);
+		const assets = new DatabaseSync(
+			join(fixture.root, "data/build/website-assets.sqlite"),
+			{ readOnly: true },
+		);
 		try {
-			expect(database.prepare("SELECT count(*) AS n FROM website_assets").get()).toEqual(
-				database.prepare("SELECT count(*) AS n FROM website_asset").get(),
+			// The retired name still reads the relocated table.
+			expect(
+				assets.prepare("SELECT count(*) AS n FROM website_assets").get(),
+			).toEqual(
+				assets.prepare("SELECT count(*) AS n FROM website_asset").get(),
 			);
 			expect(
-				database
+				atlas
 					.prepare(
 						"SELECT payload FROM payloads WHERE id = 'fixture'",
 					)
 					.get()?.payload,
 			).toBe("preserved");
 		} finally {
-			database.close();
+			atlas.close();
+			assets.close();
 		}
 	});
 	it("validates every input before replacing data or removing old copies", () => {

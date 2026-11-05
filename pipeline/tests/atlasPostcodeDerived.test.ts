@@ -22,10 +22,7 @@ import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { storePostcodeIndex } from "../src/postcodes/storePostcodeIndex";
 import { assembleAtlas } from "../src/assemble-atlas";
-import {
-	writeEmptyPostcodeAreas,
-	writeEmptyWebsiteComponent,
-} from "./atlasComponentFixtures";
+import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
 import { storePostcodeAreas as writePostcodeAreas } from "../src/postcodes/storePostcodeAreas";
 import { buildDuckdbPostcodeCounts } from "../src/postcode-counts/buildDuckdbPostcodeCounts";
 import { validateShards } from "../src/postcode-counts/validatePostcodeCountInputs";
@@ -95,7 +92,6 @@ function fixture(t: TestContext) {
 		postcodes.texts.get(path)!,
 	);
 	writeEmptyPostcodeAreas(root);
-	writeEmptyWebsiteComponent(root);
 	assembleAtlas(root);
 	const compiled = compilePostcodeAreas(postcodes.artifact, [
 		{

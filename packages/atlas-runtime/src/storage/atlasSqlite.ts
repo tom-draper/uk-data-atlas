@@ -7,6 +7,7 @@ import { gunzipSync } from "node:zlib";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { atlasCachePath } from "./atlasCache.ts";
+import { websiteAssetsPath } from "./dataLayout.ts";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 import { unpackText } from "./storedPayload.ts";
 
@@ -101,11 +102,17 @@ export const readStoredAtlasDataset = readStoredDatasetPayload;
 
 export type AtlasAssetKind = "pages" | "lookups";
 
-/** Read precompressed website data. */
+/**
+ * Read precompressed website data from `website-assets.sqlite`, a file of its
+ * own so the shared release carries only what the API serves.
+ */
 export function readAtlasAsset(root: string, kind: AtlasAssetKind, id: string) {
-	const database = openReadOnlyDatabase(
-		join(root, "data/build/atlas.sqlite"),
-	);
+	const path = websiteAssetsPath(root);
+	if (!existsSync(path))
+		throw new Error(
+			`Missing website assets database at ${path}. Run pnpm data:build --only website-lookups.`,
+		);
+	const database = openReadOnlyDatabase(path);
 	try {
 		const row = database
 			.prepare(

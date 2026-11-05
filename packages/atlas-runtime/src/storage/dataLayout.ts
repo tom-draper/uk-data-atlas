@@ -28,6 +28,13 @@ export const compiledObservationPath = (repositoryRoot: string, name: string) =>
 export const atlasDatabasePath = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "atlas.sqlite");
 
+/**
+ * The website's precompressed pages and lookups. Only the Next.js website
+ * reads them, so they stay out of `atlas.sqlite`, which is the API's data.
+ */
+export const websiteAssetsPath = (repositoryRoot: string) =>
+	join(buildDirectory(repositoryRoot), "website-assets.sqlite");
+
 /** The reviewed configuration the compilers read, kept with the API project. */
 export const configDirectory = (repositoryRoot: string) =>
 	join(apiRootOf(repositoryRoot), "config");
