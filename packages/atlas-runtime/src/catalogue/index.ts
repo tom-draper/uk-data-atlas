@@ -33,3 +33,6 @@ export * from "./declaredStatistics.ts";
 export * from "./statisticsDatasets/index.ts";
 export * from "./statisticsDatasets/measures.ts";
 export * from "./measureDimensionsLoader.ts";
+export * from "./dimensionCatalogue.ts";
+export * from "./weightedMean.ts";
+export * from "./seriesMatching.ts";

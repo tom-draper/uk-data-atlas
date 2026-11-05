@@ -8,7 +8,7 @@ import type {
 	DimensionalMeasure,
 	DimensionCatalogue,
 	Series,
-} from "./dimensionCatalogue";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /**
  * Measures as `/v1/measures` lists them: what is measured, its dimensions

@@ -4,7 +4,7 @@ import {
 	identityDimensions,
 	type DimensionalMeasure,
 	type Series,
-} from "./dimensionCatalogue";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	describeChoices,
 	fixAliasMembers,

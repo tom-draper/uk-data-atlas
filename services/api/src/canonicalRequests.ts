@@ -6,7 +6,7 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/api";
 import { measureSlug } from "@uk-data-atlas/catalogue";
 import { canonicalMeasureId } from "./catalogue/measureTerms";
-import { dimensionCatalogue } from "./dimensions/dimensionCatalogue";
+import { dimensionCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { canonicalGeography } from "@uk-data-atlas/geography";
 
 // Where a path carries a measure id: /v1/data/{id}, /v1/measures/{id} and a
