@@ -150,14 +150,6 @@ export const PROBLEM_CODES = {
 			"A dimension filter names a member the measure does not publish; `members` lists the ones it does.",
 		example: "/v1/data/recorded-crimes/value?place=Leeds&offence=arson",
 	},
-	retired_measure_id: {
-		statuses: [404],
-		members: ["measure", "members"],
-		alternatives: ["measure", "members"],
-		meaning:
-			"The measure id is retired; use the canonical measure and members instead.",
-		example: "/v1/data/crime-burglary/value?place=Leeds",
-	},
 	no_matching_series: {
 		statuses: [404],
 		members: ["choices"],

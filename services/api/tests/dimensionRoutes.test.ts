@@ -271,7 +271,7 @@ test("uses a dimension's total when the request names no member, and says so", (
 	);
 });
 
-test("retired path ids return a replacement and reviewed aliases still work", () => {
+test("retired path ids return 404 and reviewed aliases still work", () => {
 	for (const path of [
 		"/v1/data/crime-burglary/value?place=ward/E05000001",
 		"/v1/measures/crime-burglary",
@@ -283,10 +283,7 @@ test("retired path ids return a replacement and reviewed aliases still work", ()
 			type: "https://api.ukdataatlas.com/problems/not-found",
 			title: "Not Found",
 			status: 404,
-			detail: "crime-burglary is no longer accepted. Use /v1/data/recorded-crimes with offence=burglary.",
-			code: "retired_measure_id",
-			measure: "recorded-crimes",
-			members: { offence: "burglary" },
+			detail: "No published measure matches that id.",
 		});
 	}
 	const alias = get("/v1/data/burglary-reports/value?place=ward/E05000001");
@@ -313,7 +310,7 @@ test("registered export and catalogue routes reject retired ids", async () => {
 		]) {
 			const response = await app.inject({ method: "GET", url });
 			assert.equal(response.statusCode, 404, url);
-			assert.equal(response.json().code, "retired_measure_id");
+			assert.equal(response.json().code, undefined);
 		}
 		assert.equal(
 			(
@@ -515,8 +512,8 @@ test("accepts a reviewed alias in a query parameter", () => {
 	assert.equal(conflict.status, 400);
 });
 
-test("rejects a retired measure id in a query parameter with a hint", () => {
-	for (const [url, term] of [
+test("rejects a retired measure id in a query parameter", () => {
+	for (const [url] of [
 		["/v1/attribution?measure=crime-burglary", "crime-burglary"],
 		[
 			"/v1/attribution?measure=recorded-crimes&measure=Crime%20Burglary",
@@ -533,10 +530,7 @@ test("rejects a retired measure id in a query parameter with a hint", () => {
 			type: "https://api.ukdataatlas.com/problems/not-found",
 			title: "Not Found",
 			status: 404,
-			detail: `${term} is no longer accepted. Use /v1/data/recorded-crimes with offence=burglary.`,
-			code: "retired_measure_id",
-			measure: "recorded-crimes",
-			members: { offence: "burglary" },
+			detail: "No published measure matches that id.",
 		});
 	}
 });

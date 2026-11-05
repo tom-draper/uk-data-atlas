@@ -4,7 +4,6 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import { retiredMeasure } from "../dimensions/retiredMeasure";
 import { searchMeasures } from "./measureTerms";
 import {
 	dimensionCatalogue,
@@ -101,7 +100,11 @@ export const handleCatalogueRoutes = ({
 				"No published measure matches that id.",
 			);
 		if (aliased && aliased.series.id !== measure.id)
-			return retiredMeasure(term, measure, aliased.series);
+			return problem(
+				404,
+				"Not Found",
+				"No published measure matches that id.",
+			);
 		return {
 			status: 200,
 			body: envelope(

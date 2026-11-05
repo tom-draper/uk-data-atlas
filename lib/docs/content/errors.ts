@@ -101,12 +101,6 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 			"A dimension filter names a member the measure is not published for.",
 		fix: "Use one of the codes the response lists in `members`, or `*` for all of them.",
 	},
-	retired_measure_id: {
-		status: 404,
-		meaning:
-			"The measure id in the path or `measure` query parameter has been retired.",
-		fix: "Use the canonical measure and members named in the response.",
-	},
 	no_matching_series: {
 		status: 404,
 		meaning:
