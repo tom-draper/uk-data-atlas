@@ -10662,7 +10662,6 @@ components:
             - ambiguous_release
             - unknown_dimension
             - unknown_dimension_member
-            - retired_measure_id
             - no_matching_series
             - ambiguous_dimension
           description: >
@@ -10689,7 +10688,6 @@ components:
             `no_release_for_date` and `ambiguous_release`. From a measure's
             dimension filters: `unknown_dimension` and `unknown_dimension_member`
             (400) for a dimension or member the measure does not have,
-            `retired_measure_id` (404) when a path names a retired series id,
             `no_matching_series` (404) when no series has the
             members asked for, and `ambiguous_dimension` (409) when the request
             leaves several series and the operation answers one.
@@ -10762,16 +10760,10 @@ components:
         dimension:
           type: string
           description: On an `unknown_dimension_member` problem, the dimension the filter named.
-        measure:
-          type: string
-          description: On a `retired_measure_id` problem, the canonical measure.
         members:
-          description: Available members for an unknown member, or the retired id's dimension members.
-          oneOf:
-            - type: array
-              items: { type: string }
-            - type: object
-              additionalProperties: { type: string }
+          description: Available members for an unknown member.
+          type: array
+          items: { type: string }
         links:
           type: object
           additionalProperties: { type: string }
@@ -11149,24 +11141,6 @@ components:
           members:
             - total
             - burglary
-
-    RetiredMeasureIdProblem:
-      description: The measure id is retired. Use the canonical measure and members.
-      allOf:
-        - $ref: "#/components/schemas/Problem"
-        - type: object
-          required: [code, measure, members]
-          properties:
-            status: { enum: [404] }
-            code: { const: retired_measure_id }
-      examples:
-        - type: https://api.ukdataatlas.com/problems/not-found
-          title: Not Found
-          status: 404
-          detail: crime-burglary is no longer accepted. Use /v1/data/recorded-crimes with offence=burglary.
-          code: retired_measure_id
-          measure: recorded-crimes
-          members: { offence: burglary }
 
     NoMatchingSeriesProblem:
       description: The measure publishes no series for that combination of members.
