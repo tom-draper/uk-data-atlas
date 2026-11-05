@@ -78,18 +78,22 @@ exporting a `DatasetDeclaration`. `<id>` is the only identifier: kebab-case,
 used for the API, pipeline, files, SQLite slug and website.
 
 ```ts
-export const claimantCount = declareDataset({
+export const claimantCount = defineDataset<ClaimantCountDataset>({
 	id: "claimant-count",
 	module: "economy",
-	source: { name, publisher, sourceUrl, licence, licenceUrl, description,
-	          attribution, cadence, notes },
+	source: { name, publisher, sourceUrl, licence, licenceUrl, attribution,
+	          description, year, cadence, notes },
 	boundary: { type: "localAuthority", year: 2024 },
-	load: loadClaimantCount, // reads sources, writes the compiled payload
+	load: ({ text, xlsxSheet }) => loadClaimantCount(text, xlsxSheet),
 	statistics: { measures, dimensions, fields, derived, computed, ... },
-	indicators: [/* API catalogue measures: id, label, field, unit, notes */],
-	display: { group, label, year, card, map: { measures, colorRange, legend } },
+	catalogue: { kind: "indicators", period, indicators: [/* API measures */] },
+	display: { group, label, year, card, measures: [/* rate, count */], aggregation },
 });
 ```
+
+`pnpm data:build --only catalogue-registry` finds every
+`data/<id>/dataset.ts` and writes `data/declarations.ts`, the catalogue
+registry and the dataset record types from them.
 
 - It extends the existing `DeclaredDataset` (the statistics declaration) rather
   than replacing it. The declaration types and the `periods`, `measure` and
@@ -101,8 +105,15 @@ export const claimantCount = declareDataset({
   catalogue compiler, the field bindings, the manifest and registry, website
   chart and map options, legend, ranking labels and place figures.
 - Display hints are data. A measure toggle (rate or count) is
-  `map.measures: [{ id, label, field, legend }]`, so the legend panel, default
-  options and URL state are built from it.
+  `display.measures: [{ id, label, field, colorRange, legend, card }]`, so the
+  legend, the toggle panel and the default map options are built from it. A
+  dataset whose chart is more than one headline value names its own component
+  in `display.component`; the website looks it up from the declaration.
+- `catalogue.indicators` is the API catalogue: each indicator names its
+  measure id, the compiled field, the statistics measure and the fixed
+  dimension members. The API's measure-to-dimension mapping and the pipeline's
+  field bindings are read from it, so `measure-dimensions.json` lists only
+  ids no declaration publishes.
 
 ### Modules
 
@@ -150,3 +161,37 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 - React components that are not a value card or choropleth: the election charts
   and result maps, ethnicity, population pyramids, and the house price series.
   The declaration names the component and the website looks it up by id.
+
+## Migration status
+
+Declared: `claimant-count` (economy), `broadband` and `mobile-coverage`
+(infrastructure, a complete module).
+
+Not yet declared, by module (each still has a definition in
+`data/catalog/definitions`, a statistics entry, a pipeline compiler and a
+website chart definition):
+
+- economy: business-activity, income, workplace-income, jobs, unemployment,
+  regional-gdp-itl1, regional-gdp-itl2, regional-gdp-itl3,
+  local-government-finance
+- housing: house-price, housing-affordability, housing-tenure, homelessness,
+  net-additional-dwellings, planning-applications, council-tax
+- education: pupil-absence, school-performance,
+  school-performance-constituency, school-performance-disadvantage,
+  qualification
+- health: general-health, public-health, nhs-waiting, life-expectancy,
+  life-expectancy-series, adult-social-care-activity,
+  adult-social-care-outcomes
+- crime: crime
+- politics: brexit, brexit-constituency, general-election,
+  historical-general-election, local-election
+- environment: air-quality, ghg-emissions, electricity-consumption,
+  gas-consumption, waste, land-area
+- population: population, population-uk, population-constituency, ethnicity
+- deprivation: child-poverty, fuel-poverty, imd, wimd, simd, nimdm
+- transport: car-availability, travel-to-work, road-collisions,
+  electric-vehicle-chargers
+
+A dataset that stays on a camelCase website key (`type`) until it moves is the
+only place an old id survives; all three declared datasets use their kebab-case
+id everywhere.
