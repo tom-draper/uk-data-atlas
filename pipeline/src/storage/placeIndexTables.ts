@@ -1,3 +1,4 @@
+import { PLACE_INDEX_PLACES_VIEW } from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { compareCodeUnits, packPositions } from "@uk-data-atlas/search-index";
 import {
@@ -66,7 +67,8 @@ export const placeIndexTables = (
 			key: ["key"],
 			rows: Object.entries(meta),
 		},
-		place_index_places: {
+		place_index_place: {
+			views: { place_index_places: PLACE_INDEX_PLACES_VIEW },
 			columns: [
 				"geography INTEGER",
 				"code TEXT",
