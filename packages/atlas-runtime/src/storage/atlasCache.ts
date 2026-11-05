@@ -14,14 +14,14 @@ export type CacheComponent =
 
 const CACHE_VERSION = 2;
 const dependencies: Record<CacheComponent, string[]> = {
-	"area-search": ["area_inventory"],
+	"area-search": ["query:SELECT content_hash FROM area_inventory_metadata"],
 	"place-index": [
-		"area_inventory",
+		"query:SELECT content_hash FROM area_inventory_metadata",
 		"query:SELECT content_hash FROM named_location_inventory_metadata",
 		"payload:boundary-releases",
 	],
 	projections: [
-		"area_inventory",
+		"query:SELECT content_hash FROM area_inventory_metadata",
 		"query:SELECT content_hash FROM named_location_inventory_metadata",
 		"query:SELECT content_hash FROM crosswalk_inventory_metadata",
 	],

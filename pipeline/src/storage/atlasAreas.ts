@@ -1,3 +1,4 @@
+import { AREA_INVENTORY_VIEW } from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -91,11 +92,12 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 			];
 	}
 	return {
-		area_inventory: {
+		area_inventory_metadata: {
+			views: { area_inventory: AREA_INVENTORY_VIEW },
 			columns: [
-				"schemaVersion INTEGER NOT NULL",
-				"contentHash TEXT NOT NULL",
-				"boundaryRegistryHash TEXT NOT NULL",
+				"schema_version INTEGER NOT NULL",
+				"content_hash TEXT NOT NULL",
+				"boundary_registry_hash TEXT NOT NULL",
 			],
 			rows: [
 				[

@@ -28,7 +28,7 @@ const replace = (path: string, build: (database: DatabaseSync) => void) => {
 const writeAtlas = (hash: string) =>
 	replace(atlasPath(), (database) =>
 		database.exec(
-			`CREATE TABLE area_inventory (contentHash TEXT); INSERT INTO area_inventory VALUES ('${hash}')`,
+			`CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('${hash}')`,
 		),
 	);
 
@@ -91,7 +91,7 @@ describe("atlas.sqlite and atlas-cache.sqlite", () => {
 				join(other, "data/build/atlas.sqlite"),
 			);
 			stale.exec(
-				"CREATE TABLE area_inventory (contentHash TEXT); INSERT INTO area_inventory VALUES ('z')",
+				"CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('z')",
 			);
 			stale.close();
 			const generation = cacheGeneration(other, "area-search");

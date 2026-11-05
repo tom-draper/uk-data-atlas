@@ -114,7 +114,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 			() => readAreaLookup(root, inventory).get("ward/2024"),
 			/Invalid area release/,
 		);
-		database.prepare("DELETE FROM area_inventory").run();
+		database.prepare("DELETE FROM area_inventory_metadata").run();
 		assert.throws(
 			() => readAreaInventory(root),
 			/Invalid SQLite area inventory/,
