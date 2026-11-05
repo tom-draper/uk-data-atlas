@@ -23,6 +23,15 @@ describe("stored payload text", () => {
 		expect(packText(text).equals(packed)).toBe(true);
 	});
 
+	it("compresses harder at a higher quality and still round-trips", () => {
+		const text = JSON.stringify(
+			Array.from({ length: 5000 }, (_, id) => [id / 1e5, id * 7 + 0.5]),
+		);
+		const high = packText(text, 10);
+		expect(unpackText(high)).toBe(text);
+		expect(high.length).toBeLessThan(packText(text).length);
+	});
+
 	it("reads plain text as it is and rejects other values", () => {
 		expect(unpackText("plain")).toBe("plain");
 		expect(unpackText(undefined)).toBeUndefined();
