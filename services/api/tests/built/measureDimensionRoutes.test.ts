@@ -134,20 +134,14 @@ test("An ethnicity breakdown for an LSOA", () => {
 	);
 });
 
-test("Retired series ids return their canonical measure and members", () => {
+test("Retired series ids return 404", () => {
 	const response = route(
 		"GET",
 		"/v1/data/crime-burglary/value?place=Manchester",
 		catalogues,
 	);
 	assert.equal(response.status, 404);
-	assert.equal(
-		(response.body as { code?: string }).code,
-		"retired_measure_id",
-	);
-	assert.deepEqual((response.body as { members?: unknown }).members, {
-		offence: "burglary",
-	});
+	assert.equal((response.body as { code?: string }).code, undefined);
 });
 
 test("Retired ids do not answer measure definitions", () => {

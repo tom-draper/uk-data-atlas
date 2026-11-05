@@ -158,14 +158,6 @@ export const PROBLEM_CODES = {
 			"A `theme`, `topic` or `module` filter names a value the registry does not hold; `parameter` is the filter and `members` lists the values it accepts.",
 		example: "/v1/datasets?theme=nonsense",
 	},
-	retired_measure_id: {
-		statuses: [404],
-		members: ["measure", "members"],
-		alternatives: ["measure", "members"],
-		meaning:
-			"The measure id is retired; use the canonical measure and members instead.",
-		example: "/v1/data/crime-burglary/value?place=Leeds",
-	},
 	no_matching_series: {
 		statuses: [404],
 		members: ["choices"],
