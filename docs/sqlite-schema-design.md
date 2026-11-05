@@ -116,6 +116,29 @@ summary or an area's largest ethnic group, are computed when the payload is
 generated and stored nowhere. Fixed text, such as a table's source note, sits
 in the dataset's declaration.
 
+## Compressed columns
+
+Two columns hold whole documents rather than relational values, so they are
+stored as Brotli blobs and decompressed on read.
+
+- `payloads.payload` is `BLOB NOT NULL`: the exact UTF-8 JSON text, Brotli
+  quality 9. Write it with `packText` and read it with `unpackText`
+  (`packages/atlas-runtime/src/storage/storedPayload.ts`). Never read the
+  column with `String(value)`, which turns a blob into a list of byte values.
+  `unpackText` returns text unchanged, so older databases and fixtures that
+  store plain text still read. Hashes and ETags are taken over the
+  decompressed text. Only `atlas.sqlite` stores payloads this way. The
+  `payloads` tables of `atlas-cache.sqlite` and the postcode component remain
+  plain text.
+- `named_location_geometries.geometry` is `BLOB NOT NULL`: a GeoJSON geometry
+  in WGS84 degrees rounded to five decimal places (about 1.1 m), Brotli
+  quality 10. Write it with `packGeometry`, which also returns bounds measured
+  from the rounded shape for `minX`, `minY`, `maxX` and `maxY`, and read it with
+  `unpackGeometry` (`storedGeometry.ts`). Rounding is lossy: the stored shape
+  differs from the compiled union by at most 0.000005 degrees per axis. Keep
+  full precision geometry out of this table, and compute from the JSON
+  artifacts, not from this column.
+
 ## Dataset declarations
 
 To add a dataset, declare its fields and dimensions in

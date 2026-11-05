@@ -160,7 +160,7 @@ The database contains these tables:
 | `meta`     | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                                                   |
 | `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"3"`.                                                                      |
 | `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>` for datasets not served from rows. |
-| `payloads` | `payload`     | `TEXT NOT NULL`        | Exact UTF-8 JSON text from its compiled input, preserving bytes and array order.                               |
+| `payloads` | `payload`     | `BLOB NOT NULL`        | Brotli-compressed UTF-8 JSON text from its compiled input. It decompresses to the exact bytes and array order. |
 | `datasets` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                                                           |
 | `datasets` | `output`      | `TEXT NOT NULL UNIQUE` | Compiled output name, without `.json`.                                                                         |
 | `datasets` | `source`      | `TEXT NOT NULL`        | JSON source metadata from the manifest.                                                                        |
@@ -176,9 +176,17 @@ The database contains these tables:
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
-SQLite enforces the payload foreign key during the build. `payloads` stays
-plain text: it is 9.5 MB, and its readers, generation hashes and ETags need the
-exact bytes. Dataset payloads served from rows are the large ones, and the cache
+SQLite enforces the payload foreign key during the build. `payloads` holds each
+payload as a Brotli blob, quality 9, written by `packText` and read by
+`unpackText` in `packages/atlas-runtime/src/storage/storedPayload.ts`. The table
+shrinks from 9.5 MB to 0.4 MB, mostly the 8.5 MB `relationship-paths` payload,
+which becomes 60 KB. Brotli beat gzip level 9 on the same payloads (60 KB
+against 140 KB for `relationship-paths`) and decompressed that payload in 4 ms
+against 9 ms. Quality 9 compresses it in 45 ms. Quality 11 was larger and took
+5 s. Readers decompress transparently, so generation hashes and ETags still see
+the exact text. `unpackText` also returns a text value as it is, so a database
+written before compression, or a fixture that stores plain text, reads the
+same way. Dataset payloads served from rows are the large ones, and the cache
 stores them gzipped (see `atlas-cache.sqlite`).
 
 The atomic writer rebuilds all tables, reading one dataset at a time. It avoids
@@ -459,11 +467,26 @@ to `area`, because assertions can describe historical codes across releases.
 
 `named_location_geometries` has text primary key `locationId`, a foreign key to
 `named_locations.id`, non-null `boundaryRelease TEXT`, real `minX`, `minY`,
-`maxX`, `maxY`, and `geometry TEXT`. The last column contains GeoJSON. Geometry
-is optional, one row per location with a compiled union. Its release belongs to
-the parent's `memberGeography`. The API loads geometry on first access over
-the shared read-only connection. Inventory and membership reads do
-not parse geometry.
+`maxX`, `maxY`, and `geometry BLOB NOT NULL`. The blob is the GeoJSON geometry
+as Brotli-compressed UTF-8 JSON (quality 10), written by `packGeometry` and read
+by `unpackGeometry` in `packages/atlas-runtime/src/storage/storedGeometry.ts`.
+Coordinates are WGS84 longitude and latitude in degrees, rounded to five decimal
+places, about 1.1 m of latitude. Neighbouring points that round together are
+merged, and a ring that collapses below four positions is dropped, though no
+ring did in the current data. The bounds columns are measured from the rounded
+geometry, so they match what the API returns, and differ from the unrounded
+union by at most 0.000005 degrees. `named_locations` keeps its own full
+precision bounding box. Rounding and compression shrink the table from 25.7 MB
+to 4.2 MB for 249 rows. Gzip gave 5.9 MB and Brotli quality 9 gave 6.0 MB.
+Quality 11 gave 3.6 MB for three times the build time of quality 10. Binary
+WKB was not used: its 16 bytes per position would need a separate encoding to
+compete with compressed text, and it would not read as JSON. Only the API's
+`/v1/locations/{id}/geometry` route returns this geometry, and nothing computes
+from it, so rounding changes no other output. `unpackGeometry` also accepts
+plain JSON text. Geometry is optional, one row per location with a compiled
+union. Its release belongs to the parent's `memberGeography`. The API loads
+geometry on first access over the shared read-only connection. Inventory and
+membership reads do not parse geometry.
 
 The named-location compiler reads area JSON intermediates before SQLite is
 built, avoiding a dependency cycle. The API inventory loader and place-index
