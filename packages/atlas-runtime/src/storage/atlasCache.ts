@@ -23,7 +23,7 @@ const dependencies: Record<CacheComponent, string[]> = {
 	projections: [
 		"area_inventory",
 		"query:SELECT content_hash FROM named_location_inventory_metadata",
-		"crosswalk_inventory",
+		"query:SELECT content_hash FROM crosswalk_inventory_metadata",
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
 	datasets: ["query:SELECT output, sha256 FROM dataset_catalogue ORDER BY output"],

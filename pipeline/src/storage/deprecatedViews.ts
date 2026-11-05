@@ -17,6 +17,7 @@ export const NAMED_LOCATION_ASSERTIONS_VIEW = "SELECT location_id AS locationId,
 export const NAMED_LOCATION_PARTIAL_MEMBERS_VIEW = "SELECT location_id AS locationId, position, code, share, member_of AS memberOf FROM named_location_partial_member";
 export const NAMED_LOCATION_GEOMETRIES_VIEW = "SELECT location_id AS locationId, boundary_release AS boundaryRelease, min_x AS minX, min_y AS minY, max_x AS maxX, max_y AS maxY, geometry FROM named_location_geometry";
 export const NAMED_LOCATION_INVENTORY_VIEW = "SELECT position, schema_version AS schemaVersion, content_hash AS contentHash, artifact, gazetteer_version AS gazetteerVersion FROM named_location_inventory_metadata";
+export const CROSSWALK_INVENTORY_VIEW = "SELECT position, schema_version AS schemaVersion, content_hash AS contentHash, area_inventory_hash AS areaInventoryHash FROM crosswalk_inventory_metadata";
 export const DATASETS_VIEW = "SELECT type, output, source, contract, summary, fingerprint, sha256, bytes, payload_id AS payloadId FROM dataset_catalogue";
 
 /** Read-only aliases for database consumers using retired names. */
