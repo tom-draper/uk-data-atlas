@@ -964,8 +964,10 @@ const apiStages = [
 		],
 		["pipeline/src/stamp-atlas-cache.ts"],
 		{
-			cacheable: false,
-			requiredOutputs: ["data/build/atlas-cache.sqlite"],
+			rawInputs: [],
+			// The last writer, so it owns the file and notices any change to it.
+			requiredOutputs: [atlasCache, stampOf("atlas-cache-stamp")],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
