@@ -75,6 +75,17 @@ export type DeclaredStatistics = Omit<
 export type IndicatorValueKind =
 	"count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";
 
+/** A share of something, which combines only as a weighted mean. */
+export type IndicatorWeightedShare = {
+	kind: "weighted-mean";
+	weight: {
+		/** What the weight is and why the published percentages need it. */
+		description: string;
+		/** The compiled dataset's field holding the weight. */
+		datasetField: string;
+	};
+};
+
 /** One API catalogue measure read from a field of the compiled records. */
 export type IndicatorDeclaration = {
 	/** The measure id the API serves. */
@@ -84,8 +95,11 @@ export type IndicatorDeclaration = {
 	field: string;
 	valueKind: IndicatorValueKind;
 	unit: string;
-	/** The aggregation the API offers: a plain sum over areas. */
-	aggregation: "sum";
+	/**
+	 * The aggregation the API offers: a plain sum over areas, or a share that
+	 * needs a mean weighted by another field, which the API does not serve.
+	 */
+	aggregation: "sum" | IndicatorWeightedShare;
 	notes: readonly string[];
 	/** The statistics measure this indicator is a view of. */
 	measure: string;
@@ -99,8 +113,13 @@ export type IndicatorDeclaration = {
  */
 export type IndicatorCatalogue = {
 	kind: "indicators";
-	/** The period the indicators describe, such as `2026-04`. */
-	period: string;
+	/**
+	 * The period the indicators describe, such as `2026-04`, for a file of one
+	 * period. A file of one entry per year sets `yearly` instead and publishes
+	 * every year it holds.
+	 */
+	period?: string;
+	yearly?: true;
 	/**
 	 * Check every record belongs to the authorities of the population
 	 * estimate, and list any authority without a value.

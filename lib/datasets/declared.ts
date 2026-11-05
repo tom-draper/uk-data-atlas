@@ -95,8 +95,13 @@ export const declaredDefaultOptions = (type: string) => {
 const cardFor = (
 	declaration: Displayed,
 	measure: DisplayMeasure,
-): ValueCardConfig => {
+): ValueCardConfig | undefined => {
 	const { card } = declaration.display;
+	if (!card) return undefined;
+	if (!measure.card)
+		throw new Error(
+			`${declaration.id} draws a card but measure ${measure.id} declares none`,
+		);
 	const { secondary } = card;
 	return defineValueCard<
 		{ data: Record<string, Record<string, unknown>> },
@@ -105,9 +110,11 @@ const cardFor = (
 		heading: card.heading,
 		source: card.source,
 		...(card.coverage ? { coverage: card.coverage } : {}),
-		unit: measure.unit,
-		...(measure.digits === undefined ? {} : { digits: measure.digits }),
-		maximum: measure.maximum,
+		unit: measure.card.unit,
+		...(measure.card.digits === undefined
+			? {}
+			: { digits: measure.card.digits }),
+		maximum: measure.card.maximum,
 		value: (record) => read(record, measure.field),
 		...(secondary
 			? {
@@ -147,10 +154,14 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 			key: declaredChartKey(declaration),
 			label: display.label,
 			defaultVisible: display.defaultVisible,
-			componentPath: DECLARED_CHART_COMPONENT,
-			card: cardFor(declaration, first),
-			cardForOptions: (options) =>
-				cardFor(declaration, optionsOf(options)),
+			componentPath: display.component ?? DECLARED_CHART_COMPONENT,
+			...(display.card
+				? {
+						card: cardFor(declaration, first),
+						cardForOptions: (options: MapOptions) =>
+							cardFor(declaration, optionsOf(options))!,
+					}
+				: {}),
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
 				aggregator.aggregate(
 					aggregation,
@@ -171,9 +182,14 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 				`${declaration.id}:${optionsOf(options).id}`,
 			colorRange: first.colorRange,
 			legend: {
+				bounds: (options) => {
+					const { legend } = optionsOf(options);
+					return { min: legend.min, max: legend.max };
+				},
 				min: first.legend.min,
 				max: first.legend.max,
-				format: (value) => formatDisplay(first.legend.format, value),
+				format: (value, options) =>
+					formatDisplay(optionsOf(options).legend.format, value),
 			},
 		},
 	};

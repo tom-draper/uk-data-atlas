@@ -21,6 +21,16 @@ export type DisplayFormat =
 	  }
 	| { kind: "compact" };
 
+/** How a measure's headline value is drawn on the shared chart card. */
+export type DisplayMeasureCard = {
+	/** The unit shown under the headline value. */
+	unit: string;
+	/** Decimal places of the headline value. */
+	digits?: number;
+	/** The value that fills the card's bar. */
+	maximum: number;
+};
+
 /** One way to read the dataset, shown as a choice when there is more than one. */
 export type DisplayMeasure = {
 	/** Stored in the URL and map options; the first measure is the default. */
@@ -29,16 +39,12 @@ export type DisplayMeasure = {
 	label: string;
 	/** Path of the record field holding the value. */
 	field: string;
-	/** The unit shown under the headline value. */
-	unit: string;
-	/** Decimal places of the headline value. */
-	digits?: number;
-	/** The value that fills the card's bar. */
-	maximum: number;
 	/** The colour range the map starts with. */
 	colorRange: { min: number; max: number };
 	/** The legend's full range and the text of its labels. */
 	legend: { min: number; max: number; format: DisplayFormat };
+	/** Needed when the dataset is drawn by the shared chart card. */
+	card?: DisplayMeasureCard;
 };
 
 export type DisplayCard = {
@@ -66,7 +72,16 @@ export type DatasetDisplay = {
 	defaultVisible: boolean;
 	/** The edition shown first. */
 	year: number;
-	card: DisplayCard;
+	/**
+	 * The shared chart card. Absent when `component` draws the chart, which a
+	 * dataset needs only when its chart is more than one headline value.
+	 */
+	card?: DisplayCard;
+	/**
+	 * The website module of a chart component of its own, such as
+	 * `@/components/telecoms/broadband/BroadbandChart`.
+	 */
+	component?: string;
 	/** Never empty; the first is the default. */
 	measures: readonly [DisplayMeasure, ...DisplayMeasure[]];
 	aggregation: DisplayAggregation;

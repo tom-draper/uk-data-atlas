@@ -141,9 +141,7 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 				id: "rate",
 				label: "Rate",
 				field: "totalRate",
-				unit: "% of 16–64",
-				digits: 1,
-				maximum: 10,
+				card: { unit: "% of 16–64", digits: 1, maximum: 10 },
 				colorRange: { min: 1, max: 8 },
 				legend: {
 					min: 0,
@@ -155,8 +153,7 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 				id: "count",
 				label: "Count",
 				field: "totalCount",
-				unit: "claimants",
-				maximum: 14000,
+				card: { unit: "claimants", maximum: 14000 },
 				colorRange: { min: 1000, max: 14000 },
 				legend: {
 					min: 0,
