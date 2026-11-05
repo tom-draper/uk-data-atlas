@@ -5,6 +5,7 @@ import type {
 	NamedLocationInventory,
 } from "@uk-data-atlas/places";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
+import { packGeometry } from "@uk-data-atlas/atlas-runtime/storage";
 
 export const namedLocationTables = (
 	directory: string,
@@ -133,21 +134,25 @@ export const namedLocationTables = (
 				"minY REAL NOT NULL",
 				"maxX REAL NOT NULL",
 				"maxY REAL NOT NULL",
-				"geometry TEXT NOT NULL",
+				"geometry BLOB NOT NULL",
 			],
 			key: ["locationId"],
-			rows: inventory.locations.flatMap((location) =>
-				location.geometry
-					? [
-							[
-								location.id,
-								location.geometry.boundaryRelease,
-								...location.geometry.bbox,
-								JSON.stringify(location.geometry.geometry),
-							],
-						]
-					: [],
-			),
+			// Rounded to about a metre and compressed. The bounds are measured
+			// from the rounded shape so they match what readers return.
+			rows: inventory.locations.flatMap((location) => {
+				if (!location.geometry) return [];
+				const { geometry, bbox } = packGeometry(
+					location.geometry.geometry,
+				);
+				return [
+					[
+						location.id,
+						location.geometry.boundaryRelease,
+						...bbox,
+						geometry,
+					],
+				];
+			}),
 		},
 	};
 };
