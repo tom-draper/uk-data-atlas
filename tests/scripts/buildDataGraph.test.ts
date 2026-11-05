@@ -101,3 +101,36 @@ test("the only stages that share a path are the cache writers and the two releas
 		].sort(),
 	);
 });
+
+test("every cache stage tracks its own stamp, and the base build clears them", () => {
+	const find = (name: string) => {
+		const found = stages.find((stage) => stage.name === name);
+		assert.ok(found, name);
+		return found;
+	};
+	for (const name of CACHE_STAGES) {
+		const stamp = stageStampPath("", name);
+		const stage = find(name);
+		assert.equal(stage.cacheable, true, name);
+		assert.ok(stage.requiredOutputs?.includes(stamp), name);
+		assert.ok(find("atlas-sqlite").writes?.includes(stamp), name);
+	}
+	// The stages that copy the cache share it; the last one owns its bytes.
+	for (const name of ["place-index", "area-search-index", "postcode-counts"])
+		assert.deepEqual(find(name).shared, ["data/build/atlas-cache.sqlite"]);
+	assert.deepEqual(find("atlas-cache-stamp").shared, []);
+	assert.ok(
+		find("atlas-cache-stamp").requiredOutputs?.includes(
+			"data/build/atlas-cache.sqlite",
+		),
+	);
+});
+
+test("no stage is left uncacheable except the sources download", () => {
+	assert.deepEqual(
+		stages
+			.filter((stage) => stage.cacheable === false)
+			.map(({ name }) => name),
+		["sources"],
+	);
+});
