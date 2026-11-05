@@ -75,6 +75,9 @@ test("the shared databases name every stage that writes them", () => {
 		"atlas-cache-stamp",
 	]);
 	assert.deepEqual(writers("data/build/atlas-base.sqlite"), ["atlas-sqlite"]);
+	assert.deepEqual(writers("data/build/website-assets.sqlite"), [
+		"website-lookups",
+	]);
 });
 
 test("the only stages that share a path are the cache writers and the two release builds", () => {

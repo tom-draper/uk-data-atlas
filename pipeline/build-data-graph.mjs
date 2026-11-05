@@ -702,7 +702,6 @@ const apiStages = [
 			"geography-catalogues",
 			"postcode-index",
 			"postcode-areas",
-			"website-lookups",
 		],
 		["pipeline/src/assemble-atlas.ts"],
 		{
@@ -1042,6 +1041,9 @@ const websiteStages = [
 			],
 		},
 	),
+	// The website's pages and lookups, in a file of their own. Nothing in the
+	// API's release (`atlas.sqlite`) is built from it, so the API stages do not
+	// wait for it, and changing it does not invalidate them.
 	stage(
 		"website-lookups",
 		["atlas-lookups", "atlas-pages"],

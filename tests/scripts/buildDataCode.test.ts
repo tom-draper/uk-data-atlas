@@ -233,7 +233,11 @@ test("atlas assembly depends on each declared component output", async () => {
 			"data/build/website-assets.sqlite",
 		),
 	);
-	assert.ok(stage("assemble-atlas").dependencies.includes("website-lookups"));
+	// The website's assets live in their own file, so the API release neither
+	// waits for them nor is rebuilt when they change.
+	assert.ok(
+		!stage("assemble-atlas").dependencies.includes("website-lookups"),
+	);
 	assert.ok(
 		stage("atlas-sqlite").requiredOutputs.includes(
 			"data/build/atlas-base.sqlite",
