@@ -139,9 +139,9 @@ function repositoryFromOrigin() {
 
 const todayTag = () => `data-${new Date().toISOString().slice(0, 10)}`;
 
-async function readConfig() {
+async function readConfig(path = CONFIG) {
 	try {
-		const config = JSON.parse(await readFile(CONFIG, "utf8"));
+		const config = JSON.parse(await readFile(path, "utf8"));
 		if (
 			config.version !== 2 ||
 			typeof config.tag !== "string" ||
@@ -158,9 +158,9 @@ async function readConfig() {
 	}
 }
 
-async function hasLocalSources() {
+async function hasLocalSources(directory = DATA) {
 	try {
-		return (await readdir(DATA)).some(
+		return (await readdir(directory)).some(
 			(name) => name !== ".source-release.json" && name !== ".DS_Store",
 		);
 	} catch (error) {
@@ -461,7 +461,7 @@ async function driftFrom(marker) {
 	return { missing, changed };
 }
 
-async function markerStampsMatch(marker) {
+async function markerStampsMatch(marker, directory = DATA) {
 	if (marker?.version !== 3 || !marker.fileStamps) return false;
 	const paths = Object.keys(marker.files);
 	if (Object.keys(marker.fileStamps).length !== paths.length) return false;
@@ -475,7 +475,7 @@ async function markerStampsMatch(marker) {
 		)
 			return false;
 		try {
-			const actual = await fileStamp(join(DATA, path));
+			const actual = await fileStamp(join(directory, path));
 			if (
 				actual.bytes !== expected.bytes ||
 				actual.modifiedAt !== expected.modifiedAt ||
@@ -488,6 +488,30 @@ async function markerStampsMatch(marker) {
 		}
 	}
 	return true;
+}
+
+/**
+ * True when data/source is the pinned release as it was downloaded: the
+ * marker names the pinned tag and every file still has its recorded stamp.
+ * This is the check `download` makes first, so a build can skip the command.
+ * Anything else, including an unreadable marker or config, is false.
+ */
+export async function sourcesMatchRelease(root = ROOT) {
+	const data = join(root, "data/source");
+	try {
+		const config = await readConfig(join(root, "data-release.json"));
+		if (!config) return false;
+		const marker = JSON.parse(
+			await readFile(join(data, ".source-release.json"), "utf8"),
+		);
+		return (
+			marker?.tag === config.tag &&
+			(await hasLocalSources(data)) &&
+			(await markerStampsMatch(marker, data))
+		);
+	} catch {
+		return false;
+	}
 }
 
 async function download(mode) {
