@@ -357,7 +357,7 @@ export const openPlaceIndexDatabase = (
 	};
 	const mismatch = headerMismatch(header, areaInventoryHash, namedLocations);
 	if (mismatch) throw new Error(`The place index at ${path} ${mismatch}.`);
-	const places = database.table("places");
+	const places = database.table("place");
 	const names = database.table("names");
 	const codes = database.table("codes");
 	return {

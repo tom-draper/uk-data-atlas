@@ -8,6 +8,7 @@ import {
 	closeReadOnlyDatabase,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { removeDeprecatedObject } from "./deprecatedViews.ts";
 import { hashSqliteContent, writeStageStamp } from "./stageStamp.ts";
 
 /** Replace one component without exposing incomplete tables to API readers. */
@@ -55,8 +56,11 @@ export function publishCacheTables(
 	tables: Record<string, SqliteTable>,
 ) {
 	return publishAtlasCache(root, component, (database) => {
-		for (const name of Object.keys(tables))
+		for (const [name, table] of Object.entries(tables)) {
+			for (const oldName of Object.keys(table.views ?? {}))
+				removeDeprecatedObject(database, oldName);
 			database.exec(`DROP TABLE IF EXISTS ${name}`);
+		}
 		writeSqliteTables(database, tables);
 	});
 }
