@@ -375,7 +375,7 @@ map resources, proposals, benchmarks
 still read them. Atlas lookups use the migrated loader. Atlas pages read boundary
 properties for area sizes. Producers write the manifests and gzip files under
 `data/build/atlas-assets/`. The `pipeline/` workspace owns the `website-lookups`
-stage, which validates and stores those release files in the `website_assets`
+stage, which validates and stores those release files in the `website_asset`
 table before the final release
 manifest hashes the database. Its primary key is `(kind, id)`, where `kind` is
 `pages` or `lookups`. Each row stores a SHA-256 hash and the original gzipped
@@ -494,7 +494,7 @@ compiler read named locations from SQLite. Full named-location JSON remains for
 location projections, lookup exports. Packed metadata and
 geometry JSON remain build outputs of the same compiler, although the API no
 longer reads them. Atlas pages use the resolver's migrated loader and write
-release artifacts that the pipeline stores in `website_assets`.
+release artifacts that the pipeline stores in `website_asset`.
 
 ### Location projections
 
@@ -690,3 +690,6 @@ The check requires nonempty shard inventories and exits nonzero on any byte or
 hash mismatch. It reports both shard counts, mismatch counts, database bytes,
 `dbstat` bytes per object, and nine warm timing samples for the largest area
 shard and a direct postcode lookup. Each timed read opens its own connection.
+
+The `website_assets` view is deprecated. It preserves the former table name for
+read-only consumers; use `website_asset` for new queries.

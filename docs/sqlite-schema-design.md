@@ -148,3 +148,8 @@ dataset's own periods and geography, and declare alternate releases when
 records contain areas from more than one release. Add unit tests for the
 declaration, and give it a `payload`. Run the built statistics and dataset
 payload tests after a data build.
+
+## Website assets
+
+`website_asset` stores the website’s compressed release assets. The deprecated
+`website_assets` view preserves the former name for read-only queries.
