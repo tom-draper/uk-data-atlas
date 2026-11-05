@@ -1,5 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
@@ -15,6 +21,29 @@ const tenure = CENSUS_SMALL_AREA_TABLES.find(
 const ethnicity = CENSUS_SMALL_AREA_TABLES.find(
 	(table) => table.table === "ts021",
 )!;
+
+test("declares the same census series as the existing mapping", () => {
+	const config = JSON.parse(
+		readFileSync(
+			new URL(
+				"../../services/api/config/measure-dimensions.json",
+				import.meta.url,
+			),
+			"utf8",
+		),
+	) as {
+		ids: Record<
+			string,
+			{ measure: string; dimensions: Record<string, string> }
+		>;
+	};
+	for (const table of CENSUS_SMALL_AREA_TABLES)
+		for (const [suffix, , , member] of table.categories)
+			assert.deepEqual(config.ids[`${table.measurePrefix}-${suffix}`], {
+				measure: table.measure,
+				dimensions: { [table.dimension]: member ?? suffix },
+			});
+});
 
 type Row = { code: string; values: Record<string, number> };
 
