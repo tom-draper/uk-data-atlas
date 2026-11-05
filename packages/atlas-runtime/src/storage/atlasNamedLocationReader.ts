@@ -16,7 +16,7 @@ export const readSqliteNamedLocationInventory = (
 	const database = openReadOnlyDatabase(path);
 	try {
 		const header = database
-			.prepare("SELECT * FROM named_location_inventory")
+			.prepare("SELECT schema_version AS schemaVersion, content_hash AS contentHash, artifact, gazetteer_version AS gazetteerVersion FROM named_location_inventory_metadata")
 			.get();
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite named location inventory");
@@ -74,7 +74,7 @@ export const readSqliteNamedLocationInventory = (
 						try {
 							const shape = connection
 								.prepare(
-									"SELECT g.boundary_release AS boundaryRelease, g.min_x AS minX, g.min_y AS minY, g.max_x AS maxX, g.max_y AS maxY, g.geometry FROM named_location_geometry g JOIN named_location_inventory i ON i.contentHash = ? WHERE g.location_id = ?",
+									"SELECT g.boundary_release AS boundaryRelease, g.min_x AS minX, g.min_y AS minY, g.max_x AS maxX, g.max_y AS maxY, g.geometry FROM named_location_geometry g JOIN named_location_inventory_metadata i ON i.content_hash = ? WHERE g.location_id = ?",
 								)
 								.get(header.contentHash, row.id);
 							if (!shape)

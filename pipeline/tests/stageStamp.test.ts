@@ -88,8 +88,8 @@ function cacheFixture() {
 		[
 			"CREATE TABLE area_inventory (contentHash TEXT)",
 			"INSERT INTO area_inventory VALUES ('areas-1')",
-			"CREATE TABLE named_location_inventory (contentHash TEXT)",
-			"INSERT INTO named_location_inventory VALUES ('locations-1')",
+			"CREATE TABLE named_location_inventory_metadata (content_hash TEXT)",
+			"INSERT INTO named_location_inventory_metadata VALUES ('locations-1')",
 			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT)",
 			"INSERT INTO payloads VALUES ('boundary-releases', 'releases-1')",
 			"INSERT INTO payloads VALUES ('postcode-index', 'index-1')",

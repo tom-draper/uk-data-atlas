@@ -1,4 +1,4 @@
-import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW, NAMED_LOCATION_PARTIAL_MEMBERS_VIEW, NAMED_LOCATION_GEOMETRIES_VIEW } from "./deprecatedViews.ts";
+import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW, NAMED_LOCATION_PARTIAL_MEMBERS_VIEW, NAMED_LOCATION_GEOMETRIES_VIEW, NAMED_LOCATION_INVENTORY_VIEW } from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -17,12 +17,13 @@ export const namedLocationTables = (
 	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.locations))
 		throw new Error("Invalid named location inventory");
 	return {
-		named_location_inventory: {
+		named_location_inventory_metadata: {
+			views: { named_location_inventory: NAMED_LOCATION_INVENTORY_VIEW },
 			columns: [
-				"schemaVersion INTEGER NOT NULL",
-				"contentHash TEXT NOT NULL",
+				"schema_version INTEGER NOT NULL",
+				"content_hash TEXT NOT NULL",
 				"artifact TEXT NOT NULL",
-				"gazetteerVersion INTEGER NOT NULL",
+				"gazetteer_version INTEGER NOT NULL",
 			],
 			rows: [
 				[
