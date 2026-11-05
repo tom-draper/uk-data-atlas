@@ -122,7 +122,7 @@ export async function linkBoundaryTiles(
 
 if (
 	process.argv[1] &&
-	resolve(process.argv[1]) === resolve("scripts/link-boundary-tiles.ts")
+	resolve(process.argv[1]) === resolve("scripts/link-boundary-tiles.mts")
 ) {
 	void linkBoundaryTiles(
 		undefined,
