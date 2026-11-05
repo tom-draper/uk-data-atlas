@@ -1054,7 +1054,12 @@ const websiteStages = [
 	stage(
 		"website-datasets",
 		["atlas-sqlite", "assemble-atlas", "website-tiles"],
-		["--max-old-space-size=3072", "pipeline/src/compile-website-data.mts"],
+		[
+			"--import",
+			"tsx",
+			"--max-old-space-size=3072",
+			"pipeline/src/compile-website-data.mts",
+		],
 		{
 			outputs: ["public/data/datasets"],
 			rawInputs: websiteDatasetInputs,
@@ -1077,7 +1082,7 @@ const websiteStages = [
 	stage(
 		"website-registry",
 		["website-datasets"],
-		["scripts/generate-dataset-registry.ts"],
+		["--import", "tsx", "scripts/generate-dataset-registry.ts"],
 		{
 			exclusive: true,
 			rawInputs: [],
