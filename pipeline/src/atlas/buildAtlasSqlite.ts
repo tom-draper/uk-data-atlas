@@ -14,7 +14,11 @@ import {
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { publishDatasetPayloads } from "../storage/index.ts";
+import {
+	CACHE_STAGES,
+	publishDatasetPayloads,
+	removeStageStamps,
+} from "../storage/index.ts";
 import { writeSqliteIndex, writeSqliteTables } from "../storage/index.ts";
 import {
 	type LocationProjectionInventory,
@@ -114,6 +118,9 @@ export const buildAtlasSqlite = (
 ) => {
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
+	// The cache is extended below, so what the later stages added to it is
+	// no longer known to be there. Their stamps go, and they rebuild.
+	removeStageStamps(repositoryRoot, CACHE_STAGES);
 	const path = join(directory, "atlas-base.sqlite");
 	const payload = readFileSync(
 		join(artifactDirectory(repositoryRoot), "terrain-catalogue.json"),
