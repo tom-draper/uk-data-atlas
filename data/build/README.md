@@ -5,7 +5,11 @@ API. Raw-source downloads restore `data/source/` and leave this folder intact. E
 with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
 The stage cache in `.cache/data-build/` records recent stage timings and the latest
 build summary. Run `pnpm data:build --plan` to see available timing estimates and
-which stages can run in parallel.
+which stages can run in parallel. A build where nothing changed runs no stage.
+The `.stamps/` folder here holds one small file for each stage that adds tables
+to `atlas-cache.sqlite`. It records the hash of that stage's tables, which is
+how the cache tracks work inside a shared file. Delete a stamp to rebuild its
+stage.
 
 ```text
 data/source/          raw sources, restored from the pinned data release
@@ -63,6 +67,9 @@ that need the text, such as the API, gunzip the row. The cache is stamped with t
 SHA-256 hash of the final canonical database. The API opens both files read-only
 and fails readiness if the cache is missing, stale, lacks required payloads or
 predates the gzip column.
+The stages that fill it (`place-index`, `area-search-index`, `postcode-counts`,
+then `atlas-cache-stamp`) are skipped when unchanged. Each leaves a stamp in
+`.stamps/`, and `atlas-sqlite` clears them all when it extends the cache.
 After restoring source data with `pnpm data:download`, run `pnpm data:build`
 to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).

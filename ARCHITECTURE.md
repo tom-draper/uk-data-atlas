@@ -195,9 +195,10 @@ the critical path.
 Each graph stage lists the paths it changes in `stageWrites` (in
 `pipeline/build-data-graph.mjs`), beyond its `outputs` and `requiredOutputs`.
 Stages that share a path, such as the writers of `atlas-cache.sqlite`, never
-overlap and run in plan order. A stage with no declared paths (`sources` and the two registries, which
-rewrite `data/source` or checked-in code) runs alone. Add the paths of any new
-stage, or it will run alone.
+overlap and run in plan order. A stage with no declared paths (`sources`, which
+rewrites `data/source`) runs alone, as does an `exclusive` stage. The two
+registries are `exclusive`: they rewrite checked-in code that other stages
+import. Add the paths of any new stage, or it will run alone.
 `pnpm data:build --check-writes` runs one stage at a time and names any file a
 stage changed outside its declared paths. Run it after adding or changing a stage.
 
@@ -283,9 +284,32 @@ removed files under declared directories change the cache key. Generated files
 are tracked as stage outputs rather than bundled as code inputs. Unresolved
 local imports fail the check rather than reuse a stale result.
 
-Download, catalogue registry generation, source documentation and website
-registry generation always run. Their generated code is inspected again before
-later stage keys are computed. `pipeline/build-data-cache.mjs` stores the cache in
+Only the `sources` download is never cached, as it can change any raw file and
+needs the network. It is skipped, with no command run, when
+`data/source/.source-release.json` names the release pinned in
+`data-release.json` and every file still has its recorded stamp (the first check
+`data:download` makes). Every other stage is cached, so a build where nothing
+changed runs no stage.
+
+The catalogue and website registries rewrite checked-in files. Those files are
+their `requiredOutputs`, tracked by size, mtime and content like any output, so
+deleting or editing one reruns its stage. Their definitions are imported by
+path, so the whole definition directories are `codeInputs`. After a registry
+writes code, the code hashes of later stages are computed again.
+
+`place-index`, `area-search-index` and `postcode-counts` add tables to
+`atlas-cache.sqlite`, which also holds other stages' tables and is rewritten by
+copy and rename. Each lists the file as `shared`, so its bytes are not that
+stage's output, and leaves a stamp at `data/build/.stamps/<stage>.json` holding
+the cache component's generation and a hash of the stage's own tables (and, for
+`postcode-counts`, its `payloads` row). The stamp is the stage's required
+output and its digest, so the stage's readers rerun only when its tables
+change. `atlas-sqlite` clears the stamps when it extends the cache, which
+reruns all four. `atlas-cache-stamp` is the last writer and owns the file's
+bytes, so any other change to it reruns that stage. Its script then checks that
+the cache holds each stage's component for the current `atlas.sqlite`,
+and fails with the stale stage's stamp removed if it does not.
+`pipeline/build-data-cache.mjs` stores the cache in
 `.cache/data-build/`. The scoped key format and the content-hash record format
 each invalidate old entries once.
 `--from` and `--no-cache` rerun the stages they select regardless.
@@ -304,8 +328,7 @@ Use `--only <stage>` to select a stage and its prerequisites, or add `--plan` to
 validate and preview adoption.
 This trusts the user: it checks file presence, not whether the bytes were built
 from current code or sources. Use it only when those outputs are known to be
-valid. Never-cacheable stages are skipped, including downloads and registry
-updates. Adoption refuses missing required files, empty declared output folders,
+valid. The never-cached `sources` download is skipped. Adoption refuses missing required files, empty declared output folders,
 and missing files in the previous cache inventory. Keep the old stages.json
 when upgrading: its output paths remain usable even if its version is obsolete.
 Without an inventory or declared outputs, build the stage first. Adoption cannot
