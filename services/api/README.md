@@ -419,7 +419,9 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Return a named location's boundary, bounding box and optional union
       geometry. `GET /v1/locations/{id}/geometry` serves the union of the
       location's members, compiled once for their fully resolved release, as a
-      GeoJSON Feature carrying its bounding box and boundary release. It is
+      GeoJSON Feature carrying its bounding box and boundary release.
+      Coordinates are WGS84 degrees rounded to five decimal places, about a
+      metre, and the bounding box is measured from the rounded geometry. It is
       unavailable rather than estimated where no union has been built.
 - [x] Compare location membership across dates through
       `GET /v1/locations/{id}/comparison?from=&to=`, which returns retained,
