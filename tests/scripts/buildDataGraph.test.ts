@@ -24,6 +24,19 @@ test("only the stages that rewrite sources or checked-in code run alone", () => 
 	);
 });
 
+test("the catalogue registry tracks the checked-in files it generates", () => {
+	const registry = stages.find(
+		(stage) => stage.name === "catalogue-registry",
+	);
+	assert.ok(registry);
+	assert.equal(registry.cacheable, true);
+	assert.deepEqual(registry.requiredOutputs, [
+		"packages/datasets/src/data/catalog/definitions/index.ts",
+		"packages/datasets/src/data/catalog/registry.ts",
+		"packages/datasets/src/data/catalog/generated.ts",
+	]);
+});
+
 test("every declared path is under the build outputs", () => {
 	for (const stage of stages.filter((stage) => !stage.exclusive))
 		for (const path of stageScope(stage) ?? [])
