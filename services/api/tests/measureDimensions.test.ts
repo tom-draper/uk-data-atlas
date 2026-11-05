@@ -4,6 +4,7 @@ import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import {
 	measureDimensionProblems,
+	measureSeriesKey,
 	totalMember,
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
@@ -13,6 +14,19 @@ import { join } from "node:path";
 import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
+test("series keys sort members and distinguish datasets", () => {
+	const dimensions = { party: "lab", sex: "female" };
+	const reordered = { sex: "female", party: "lab" };
+	assert.equal(
+		measureSeriesKey({ measure: "votes", dimensions }),
+		measureSeriesKey({ measure: "votes", dimensions: reordered }),
+	);
+	assert.notEqual(
+		measureSeriesKey({ measure: "votes", dimensions }),
+		measureSeriesKey({ measure: "votes", dimensions, datasetId: "local" }),
+	);
+});
 
 const vocabulary: StatisticsVocabulary = {
 	schemaVersion: 1,

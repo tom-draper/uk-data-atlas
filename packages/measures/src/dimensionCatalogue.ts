@@ -1,5 +1,6 @@
 import {
 	totalMember,
+	measureSeriesKey,
 	type DataCatalog,
 	type DimensionMemberDefinition,
 	type Measure,
@@ -30,7 +31,7 @@ export type Dimension = {
 };
 
 export type Series = {
-	/** The internal catalogue series id. */
+	/** Canonical identity of the measure, members and optional dataset. */
 	id: string;
 	catalogueMeasure: Measure;
 	dimensions: Record<string, string>;
@@ -100,7 +101,7 @@ export const dimensionCatalogue = (
 		const mapping = config.ids[measure.id];
 		if (!mapping) continue;
 		const series: Series = {
-			id: measure.id,
+			id: measureSeriesKey(mapping),
 			catalogueMeasure: measure,
 			dimensions: mapping.dimensions ?? {},
 			...(mapping.datasetId ? { datasetId: mapping.datasetId } : {}),
@@ -152,7 +153,8 @@ export const dimensionCatalogue = (
 	const seriesIndex = new Map(
 		measures.flatMap((measure) =>
 			measure.series.map(
-				(series) => [series.id, { measure, series }] as const,
+				(series) =>
+					[series.catalogueMeasure.id, { measure, series }] as const,
 			),
 		),
 	);

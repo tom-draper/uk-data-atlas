@@ -154,7 +154,7 @@ describe("measure values and dimensions", () => {
 	it("takes the total for a dimension left out", () => {
 		const result = values({ measure: "households" });
 		expect(result.series).toEqual({
-			id: "households-total",
+			id: '["households",[["tenure","total"]],null]',
 			dimensions: { tenure: "total" },
 		});
 		expect(column(result, "2021").values).toEqual([40, 120]);
@@ -165,7 +165,9 @@ describe("measure values and dimensions", () => {
 			measure: "households",
 			dimensions: { tenure: ["rented"] },
 		});
-		expect(result.series.id).toBe("households-rented");
+		expect(result.series.id).toBe(
+			'["households",[["tenure","rented"]],null]',
+		);
 		expect(column(result, "2021").values).toEqual([15, 50]);
 		expect(result.measure.dimensions).toEqual([
 			{

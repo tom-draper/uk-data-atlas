@@ -177,7 +177,7 @@ export const resolveMeasureQuery = (
 					},
 				),
 			};
-		ids.push(candidates[0]!.id);
+		ids.push(candidates[0]!.catalogueMeasure.id);
 		named.push({ series: candidates[0]!, measure });
 		publicMeasures.push(measure.id);
 		for (const [dimension, codes] of own)
