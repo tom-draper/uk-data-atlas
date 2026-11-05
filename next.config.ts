@@ -7,12 +7,20 @@ const dataVersion =
 const nextConfig: NextConfig = {
 	reactCompiler: true,
 	// Server-rendered pages and browser data routes share the compiled database.
+	// The website's own pages and lookups are in `website-assets.sqlite`, which
+	// is not part of the API's release, so the routes that read them list it.
 	outputFileTracingIncludes: {
-		"/places/*": ["./data/build/atlas.sqlite"],
+		"/places/*": [
+			"./data/build/atlas.sqlite",
+			"./data/build/website-assets.sqlite",
+		],
 		// Postcode pages read their postcode's row when first rendered.
-		"/places/postcodes/[district]/[inward]": ["./data/build/atlas.sqlite"],
-		"/data/atlas-pages/*": ["./data/build/atlas.sqlite"],
-		"/data/atlas-lookups/*": ["./data/build/atlas.sqlite"],
+		"/places/postcodes/[district]/[inward]": [
+			"./data/build/atlas.sqlite",
+			"./data/build/website-assets.sqlite",
+		],
+		"/data/atlas-pages/*": ["./data/build/website-assets.sqlite"],
+		"/data/atlas-lookups/*": ["./data/build/website-assets.sqlite"],
 		"/atlas": ["./data/build/atlas.sqlite"],
 		"/atlas/*": ["./data/build/atlas.sqlite"],
 		"/data/catalogue/*": ["./data/build/atlas.sqlite"],
