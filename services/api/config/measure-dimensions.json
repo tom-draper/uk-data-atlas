@@ -205,18 +205,6 @@
 				"cars-or-vans": "two"
 			}
 		},
-		"claimant-count": {
-			"measure": "claimants",
-			"dimensions": {
-				"age-group": "16-plus"
-			}
-		},
-		"claimant-count-16-to-24": {
-			"measure": "claimants",
-			"dimensions": {
-				"age-group": "16-to-24"
-			}
-		},
 		"council-tax": {
 			"measure": "band-d-council-tax"
 		},

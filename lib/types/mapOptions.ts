@@ -3,6 +3,7 @@ import { type Datasets } from "./datasets.ts";
 import { type ColorRange } from "@uk-data-atlas/datasets/types/common";
 import type { BaseMapStyle } from "../config/baseMapStyles.ts";
 import type { CatalogueDatasetType } from "@/lib/data/catalog";
+import type { DeclaredDatasetId } from "@uk-data-atlas/datasets/data/declarations";
 
 // Base option types reused across visualizations
 export interface ColorRangeOption {
@@ -54,10 +55,6 @@ export interface GhgEmissionsOptions extends ColorRangeOption {
 }
 
 export interface UnemploymentOptions extends ColorRangeOption {
-	measure: "rate" | "count";
-}
-
-export interface ClaimantCountOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
 
@@ -161,8 +158,14 @@ export interface NetworkOptions {
 	excluded?: string[];
 }
 
+/** Options of a dataset whose display is declared: the choice is one of its measure ids. */
+export interface DeclaredMapOptions extends ColorRangeOption {
+	measure: string;
+}
+
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
+	| DeclaredDatasetId
 	| "regionalGdpItl3"
 	| "mobileCoverage"
 	| "fuelPoverty"
@@ -186,37 +189,36 @@ export type ChartMapOptions = Omit<
 	| "airQuality"
 	| "ghgEmissions"
 	| "unemployment"
-	| "claimantCount"
 	| "homelessness"
 	| "schoolPerformance"
-> & {
-	regionalGdpItl3: RegionalGdpItl3Options;
-	mobileCoverage: MobileCoverageOptions;
-	fuelPoverty: FuelPovertyOptions;
-	imd: ImdOptions;
-	planningApplications: PlanningApplicationsOptions;
-	workplaceIncome: WorkplaceIncomeOptions;
-	housingTenure: HousingTenureOptions;
-	generalHealth: GeneralHealthOptions;
-	pupilAbsence: PupilAbsenceOptions;
-	publicHealth: PublicHealthOptions;
-	housePrice: HousePriceOptions;
-	income: IncomeOptions;
-	businessActivity: CountMetricOptions;
-	electricVehicleChargers: CountMetricOptions;
-	electricityConsumption: EnergyConsumptionOptions;
-	gasConsumption: EnergyConsumptionOptions;
-	waste: WasteOptions;
-	jobs: CountMetricOptions;
-	broadband: BroadbandOptions;
-	airQuality: AirQualityOptions;
-	ghgEmissions: GhgEmissionsOptions;
-	unemployment: UnemploymentOptions;
-	claimantCount: ClaimantCountOptions;
-	homelessness: HomelessnessOptions;
-	schoolPerformance: SchoolPerformanceOptions;
-	lifeExpectancy: LifeExpectancyOptions;
-};
+> &
+	Record<DeclaredDatasetId, DeclaredMapOptions> & {
+		regionalGdpItl3: RegionalGdpItl3Options;
+		mobileCoverage: MobileCoverageOptions;
+		fuelPoverty: FuelPovertyOptions;
+		imd: ImdOptions;
+		planningApplications: PlanningApplicationsOptions;
+		workplaceIncome: WorkplaceIncomeOptions;
+		housingTenure: HousingTenureOptions;
+		generalHealth: GeneralHealthOptions;
+		pupilAbsence: PupilAbsenceOptions;
+		publicHealth: PublicHealthOptions;
+		housePrice: HousePriceOptions;
+		income: IncomeOptions;
+		businessActivity: CountMetricOptions;
+		electricVehicleChargers: CountMetricOptions;
+		electricityConsumption: EnergyConsumptionOptions;
+		gasConsumption: EnergyConsumptionOptions;
+		waste: WasteOptions;
+		jobs: CountMetricOptions;
+		broadband: BroadbandOptions;
+		airQuality: AirQualityOptions;
+		ghgEmissions: GhgEmissionsOptions;
+		unemployment: UnemploymentOptions;
+		homelessness: HomelessnessOptions;
+		schoolPerformance: SchoolPerformanceOptions;
+		lifeExpectancy: LifeExpectancyOptions;
+	};
 
 export type ColorTheme =
 	| "viridis"

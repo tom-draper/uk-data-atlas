@@ -8,7 +8,6 @@ export { broadbandDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog
 export { businessActivityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/businessActivity";
 export { carAvailabilityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/carAvailability";
 export { childPovertyDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/childPoverty";
-export { claimantCountDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/claimantCount";
 export { councilTaxDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/councilTax";
 export { crimeDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/crime";
 export { electricVehicleChargersDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/electricVehicleChargers";

@@ -2,6 +2,7 @@
 
 import type { ActiveViz, Dataset } from "@/lib/types";
 import { getChartDatasetDefinition } from "@/lib/datasets";
+import { declaredMeasure, formatDisplay } from "@/lib/datasets/declared";
 import {
 	EthnicityLegend,
 	NetworkLegend,
@@ -72,6 +73,19 @@ export default function LegendContent({
 		onRangeChangeEnd,
 	};
 	const chartDefinition = getChartDatasetDefinition(activeDataset.type);
+	const declared = declaredMeasure(activeDataset.type, displayOptions);
+	if (declared) {
+		const { legend } = declared;
+		return (
+			<DynamicRangeLegend
+				{...rangeControls}
+				datasetKey={activeDataset.type as ColorRangeDatasetKey}
+				absoluteRange={{ min: legend.min, max: legend.max }}
+				defaultRange={declared.colorRange}
+				formatLabel={(value) => formatDisplay(legend.format, value)}
+			/>
+		);
+	}
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
 		const populationMetric =
@@ -112,20 +126,6 @@ export default function LegendContent({
 					format: (value: number) =>
 						unemploymentMeasure === "count"
 							? `${value.toLocaleString()} unemployed`
-							: `${value.toFixed(1)}%`,
-				}
-			: null;
-		const claimantCountMeasure =
-			activeDataset.type === "claimantCount"
-				? displayOptions.claimantCount.measure
-				: null;
-		const claimantCountLegend = claimantCountMeasure
-			? {
-					min: 0,
-					max: claimantCountMeasure === "count" ? 80000 : 20,
-					format: (value: number) =>
-						claimantCountMeasure === "count"
-							? `${value.toLocaleString()} claimants`
 							: `${value.toFixed(1)}%`,
 				}
 			: null;
@@ -203,7 +203,6 @@ export default function LegendContent({
 					: (wasteLegend ??
 						schoolPerformanceLegend ??
 						homelessnessLegend ??
-						claimantCountLegend ??
 						unemploymentLegend ??
 						legend);
 		const dynamicRange = getColorRange?.(
@@ -238,7 +237,6 @@ export default function LegendContent({
 				formatLabel={
 					homelessnessLegend?.format ??
 					schoolPerformanceLegend?.format ??
-					claimantCountLegend?.format ??
 					unemploymentLegend?.format ??
 					((value) => measureLegend.format(value, displayOptions))
 				}

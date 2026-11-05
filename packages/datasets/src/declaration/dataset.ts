@@ -1,19 +1,19 @@
-import type { BoundaryType } from "../data/boundaries/catalog";
+import type { BoundaryType } from "../data/boundaries/catalog.ts";
 import type {
 	DatasetDefinition,
 	DatasetIngestionContract,
 	DatasetPayloadLayout,
 	DatasetReader,
-} from "../data/catalog/types";
-import type { DatasetCountry } from "../types/coverage";
-import type { DatasetModule } from "./modules";
+} from "../data/catalog/types.ts";
+import type { DatasetCountry } from "../types/coverage.ts";
+import type { DatasetModule } from "./modules.ts";
 import type {
 	DeclaredDataset,
 	DeclaredHeader,
 	DeclaredPayload,
-} from "./statistics";
-import type { DatasetDisplay } from "./display";
-import { yearParts } from "./yearParts";
+} from "./statistics.ts";
+import type { DatasetDisplay } from "./display.ts";
+import { yearParts } from "./yearParts.ts";
 
 /**
  * Everything the atlas knows about one dataset, in one module. The API

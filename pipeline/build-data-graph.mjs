@@ -504,6 +504,7 @@ const catalogueFiles = [
 	`${catalogueRegistry}/definitions/index.ts`,
 	`${catalogueRegistry}/registry.ts`,
 	`${catalogueRegistry}/generated.ts`,
+	"packages/datasets/src/data/declarations.ts",
 ];
 const chartRegistryFiles = [
 	"lib/datasets/generated.ts",

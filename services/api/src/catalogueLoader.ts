@@ -4,6 +4,7 @@ import {
 	type CatalogueOptions,
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
+	withDeclaredMeasureIds,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	statisticsReadPathPath,
@@ -19,7 +20,9 @@ export * from "@uk-data-atlas/atlas-runtime/catalogue";
  * The reviewed measure dimension mapping is bundled with the server.
  */
 export const measureDimensions = {
-	config: measureDimensionsConfig as MeasureDimensionsConfig,
+	config: withDeclaredMeasureIds(
+		measureDimensionsConfig as MeasureDimensionsConfig,
+	),
 };
 
 /**

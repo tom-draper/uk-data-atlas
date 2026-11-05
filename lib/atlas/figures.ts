@@ -59,7 +59,7 @@ export type FigureInputs = {
 	businessActivity: Editions<{ value: number }>;
 	electricVehicleChargers: Editions<{ value: number }>;
 	councilTax: Editions<{ name: string; value: number }>;
-	claimantCount: Editions<
+	"claimant-count": Editions<
 		{ totalCount: number; totalRate: number },
 		{ month: string }
 	>;
@@ -430,7 +430,7 @@ const RULES: Readonly<Record<string, FigureRule>> = {
 		},
 	},
 	"claimant-count": {
-		compute({ claimantCount }, location, period) {
+		compute({ "claimant-count": claimantCount }, location, period) {
 			const { data, month } = claimantCount[String(period)];
 			const rows = everyValue(
 				districtsOf(location, Object.keys(data)),

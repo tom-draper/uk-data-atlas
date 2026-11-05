@@ -116,8 +116,8 @@ export async function loadClaimantCount(
 	const year = 2026;
 	return {
 		[year]: {
-			id: `claimantCount${year}`,
-			type: "claimantCount",
+			id: `claimant-count${year}`,
+			type: "claimant-count",
 			year,
 			month,
 			boundaryType: "localAuthority",

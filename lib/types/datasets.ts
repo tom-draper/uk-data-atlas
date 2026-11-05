@@ -23,10 +23,6 @@ import {
 	type AirQualityDataset,
 } from "@uk-data-atlas/datasets/types/airQuality";
 import {
-	type AggregatedClaimantCountData,
-	type ClaimantCountDataset,
-} from "@uk-data-atlas/datasets/types/claimantCount";
-import {
 	type AggregatedSchoolPerformanceData,
 	type SchoolPerformanceDataset,
 } from "@uk-data-atlas/datasets/types/schoolPerformance";
@@ -53,7 +49,6 @@ type DatasetValue =
 	| NetworkDataset
 	| BroadbandDataset
 	| AirQualityDataset
-	| ClaimantCountDataset
 	| SchoolPerformanceDataset
 	| NHSWaitingDataset
 	| UnemploymentDataset
@@ -69,7 +64,6 @@ export type Datasets = {
 	workplaceIncome: Record<string, WorkplaceIncomeDataset>;
 	broadband: Record<string, BroadbandDataset>;
 	airQuality: Record<string, AirQualityDataset>;
-	claimantCount: Record<string, ClaimantCountDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
 	unemployment: Record<string, UnemploymentDataset>;

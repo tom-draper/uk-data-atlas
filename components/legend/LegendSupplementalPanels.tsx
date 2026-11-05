@@ -566,22 +566,20 @@ export function UnemploymentMeasurePanel({
 	);
 }
 
-const CLAIMANT_COUNT_MEASURES = [
-	["rate", "Rate"],
-	["count", "Count"],
-] as const;
-
-export function ClaimantCountMeasurePanel({
+/** The choice of measure for a declared dataset, from its declared measures. */
+export function DeclaredMeasurePanel({
 	measure,
+	measures,
 	onChange,
 }: {
-	measure: "rate" | "count";
-	onChange: (measure: "rate" | "count") => void;
+	measure: string;
+	measures: readonly { id: string; label: string }[];
+	onChange: (measure: string) => void;
 }) {
 	return (
 		<GlassSegmentedMeasurePanel
 			measure={measure}
-			measures={CLAIMANT_COUNT_MEASURES}
+			measures={measures.map(({ id, label }) => [id, label] as const)}
 			onChange={onChange}
 		/>
 	);

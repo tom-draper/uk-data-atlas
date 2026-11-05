@@ -972,7 +972,7 @@ const writeSources = (
 		qualification: censusPaths.qualification,
 		ethnicity: censusPaths.ethnicity,
 		broadband,
-		claimantCount,
+		declared: { "claimant-count": claimantCount },
 		homelessness,
 		roadCollisions,
 		income,

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { aggregateClaimantCount } from "@uk-data-atlas/datasets/data/claimant-count/aggregate";
 import {
 	aggregateAirQuality,
 	aggregateBroadband,
 	aggregateChildPoverty,
-	aggregateClaimantCount,
 	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateHomelessness,
