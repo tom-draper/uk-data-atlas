@@ -16,6 +16,16 @@ const nextConfig: NextConfig = {
 		"/atlas": ["./data/build/atlas.sqlite"],
 		"/atlas/*": ["./data/build/atlas.sqlite"],
 		"/data/catalogue/*": ["./data/build/atlas.sqlite"],
+		// Measure queries read the statistics rows through the catalogue, the
+		// read path that selects each measure's series, and the reviewed
+		// mapping of catalogue ids onto measures and dimensions.
+		"/data/measures/*": [
+			"./data/build/atlas.sqlite",
+			"./data/build/artifacts/data-catalog.json",
+			"./data/build/statistics-read-path.json",
+			"./data/build/statistics-vocabulary.json",
+			"./services/api/config/measure-dimensions.json",
+		],
 	},
 
 	env: {
