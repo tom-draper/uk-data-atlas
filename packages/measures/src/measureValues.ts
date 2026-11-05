@@ -224,7 +224,10 @@ const resolveSeries = (
 		context.measureDimensions ?? identityDimensions(context.dataCatalog),
 	);
 	const named = catalogue.measure(request.measure);
-	const byId = named ? undefined : catalogue.catalogueSeries(request.measure);
+	const byId = named
+		? undefined
+		: (catalogue.series(request.measure) ??
+			catalogue.catalogueSeries(request.measure));
 	const measure = named ?? byId?.measure;
 	if (!measure)
 		return refuse(
@@ -268,6 +271,10 @@ const resolveSeries = (
 			wrong.members.map((member) => ({ member })),
 		);
 	let candidates = matchingSeries(measure, filters, request.datasetId);
+	if (byId)
+		candidates = candidates.filter(
+			(candidate) => candidate.id === byId.series.id,
+		);
 	candidates = narrowByGeography(candidates, request.geography);
 	if (candidates.length > 0)
 		candidates = preferDefaultBreakdown(measure, candidates);
