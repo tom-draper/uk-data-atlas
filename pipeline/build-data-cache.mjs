@@ -228,6 +228,7 @@ export function createStageCache({
 
 	const inputs = new Map();
 	let files = null;
+	const generated = new Set();
 	const stageInputs = new Map();
 	const currentInputs = (stage) => {
 		const selected =
@@ -564,6 +565,8 @@ export function createStageCache({
 			begun.delete(stage.name);
 			snapshot = null;
 			const after = scope ? scopedSnapshot(scope) : currentSnapshot();
+			for (const [path, stamp] of after)
+				if (!sameStamp(before.get(path), stamp)) generated.add(path);
 			// A scoped stage can keep earlier files outside its scope.
 			const afterStamp = (path) =>
 				after.get(path) ?? (scope ? fileStamp(path) : undefined);
@@ -663,6 +666,14 @@ export function createStageCache({
 			};
 			save();
 			return digest;
+		},
+
+		/** Files created or rewritten during this build that still exist. */
+		generatedFiles() {
+			return [...generated].flatMap((path) => {
+				const stamp = fileStamp(path);
+				return stamp ? [[path, stamp.size]] : [];
+			});
 		},
 
 		/** Where the cache lives, for messages. */

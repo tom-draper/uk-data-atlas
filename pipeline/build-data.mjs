@@ -12,6 +12,7 @@ import {
 } from "./build-data-scheduler.mjs";
 import {
 	buildLog,
+	formatBytes,
 	formatCount,
 	formatDuration,
 } from "../packages/atlas-runtime/src/storage/buildTiming.ts";
@@ -81,6 +82,33 @@ const ALWAYS_RUNS = "always-runs";
 
 const plural = (count, noun) =>
 	`${formatCount(count)} ${noun}${count === 1 ? "" : "s"}`;
+
+export function formatAssetTree(files) {
+	const root = new Map();
+	for (const [path, size] of files) {
+		const parts = path.split("/");
+		let node = root;
+		for (const part of parts.slice(0, -1)) {
+			if (!node.has(part)) node.set(part, new Map());
+			node = node.get(part);
+		}
+		node.set(parts.at(-1), size);
+	}
+	const lines = [];
+	const visit = (node, prefix) => {
+		const entries = [...node].sort(([a], [b]) => a.localeCompare(b));
+		entries.forEach(([name, value], index) => {
+			const last = index === entries.length - 1;
+			lines.push(
+				`${prefix}${last ? "└── " : "├── "}${name}${value instanceof Map ? "/" : ` (${formatBytes(value)})`}`,
+			);
+			if (value instanceof Map)
+				visit(value, prefix + (last ? "    " : "│   "));
+		});
+	};
+	visit(root, "  ");
+	return lines;
+}
 
 /**
  * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
@@ -210,13 +238,22 @@ export async function runBuild({
 				: `Data build done in ${elapsed} (${formatCount(ran.length)} ran, ${formatCount(unchanged)} unchanged)`,
 		);
 		const slowest = [...ran].sort((a, b) => b.total - a.total).slice(0, 5);
-		if (slowest.length === 0) return;
-		const width = Math.max(...slowest.map((timing) => timing.name.length));
-		log("Slowest stages:");
-		for (const timing of slowest)
-			log(
-				`  ${timing.name.padEnd(width)}  ${formatDuration(timing.total)}${verbose ? ` (command ${formatDuration(timing.command)}, overhead ${formatDuration(timing.overhead)})` : ""}`,
+		if (slowest.length) {
+			const width = Math.max(
+				...slowest.map((timing) => timing.name.length),
 			);
+			log("Slowest stages:");
+			for (const timing of slowest)
+				log(
+					`  ${timing.name.padEnd(width)}  ${formatDuration(timing.total)}${verbose ? ` (command ${formatDuration(timing.command)}, overhead ${formatDuration(timing.overhead)})` : ""}`,
+				);
+		}
+		const generated =
+			!failed && !adopt ? (cache?.generatedFiles?.() ?? []) : [];
+		if (generated.length) {
+			log(`Generated assets (${plural(generated.length, "file")}):`);
+			for (const line of formatAssetTree(generated)) log(line);
+		}
 	};
 	const logCommand = (stage) => {
 		log(`  Command: pnpm ${stage.args.join(" ")}`);
