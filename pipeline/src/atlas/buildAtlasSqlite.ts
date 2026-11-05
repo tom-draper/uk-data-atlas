@@ -29,7 +29,7 @@ import { locationProjectionTables } from "../storage/index.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { namedLocationTables } from "../storage/index.ts";
 import { crosswalkTables } from "../storage/index.ts";
-import { DATASETS_VIEW } from "../storage/deprecatedViews.ts";
+import { DATASETS_VIEW, removeDeprecatedObject } from "../storage/deprecatedViews.ts";
 import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index.ts";
 import { DatabaseSync } from "node:sqlite";
 import { censusSmallAreaStatistics } from "../statistics/censusSmallAreaStatistics.ts";
@@ -317,8 +317,11 @@ export const buildAtlasSqlite = (
 				artifacts,
 				parentArtifacts,
 			});
-			for (const name of Object.keys(tables))
+			for (const [name, table] of Object.entries(tables)) {
+				for (const oldName of Object.keys("views" in table ? table.views : {}))
+					removeDeprecatedObject(database, oldName);
 				database.exec(`DROP TABLE IF EXISTS ${name}`);
+			}
 			writeSqliteTables(database, tables);
 			database
 				.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
