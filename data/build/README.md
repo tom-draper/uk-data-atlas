@@ -74,6 +74,46 @@ After restoring source data with `pnpm data:download`, run `pnpm data:build`
 to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).
 
+## website-assets.sqlite
+
+The website's precompressed pages and lookups live in this file, in the
+`website_asset` table, and nowhere else. They are not in `atlas.sqlite`: only
+the Next.js website reads them, so the file the API serves, and the one that
+can be distributed as a data product, carries no website content. The
+`website-lookups` stage writes the file by temporary copy and rename. No other
+stage reads it and no API stage waits for it, so rebuilding the pages
+invalidates neither `atlas.sqlite` nor `atlas-cache.sqlite`.
+
+It is a file of its own rather than part of `atlas-cache.sqlite` because the
+cache is stamped against the canonical database and the API refuses to start on
+a stale one, and because several stages rewrite the cache by copy and rename.
+The assets are written by one stage, are not derived from `atlas.sqlite`, and
+have no reason to share either rule. Deploy the file with the Next.js server.
+`readAtlasAsset` fails with the build command if it is missing, and the API
+never opens it. The deprecated `website_assets` view is in this file.
+
+## What `atlas.sqlite` keeps
+
+`atlas.sqlite` holds the data the API serves, so a table is kept there if any
+API route reads it. Two tables that look like build output are read at request
+time and stay:
+
+- `crosswalk_edge_check` holds the per-edge measures of a crosswalk (`match`,
+  `widest_difference_m`, `contained_share`, `overlap_area_m2` and others).
+  `readSqliteCrosswalk` joins it to rebuild each crosswalk's records, so
+  `/v1/crosswalks/{id}/records`, `:convert`, the area overlap routes and the
+  boundary release comparison (which reads `match === "recoded"`) all return
+  its values.
+- `payloads` holds `relationship-paths`, `geography-inventory`,
+  `boundary-releases`, `analysis-geographies`, `analysis-geography-validation`,
+  `terrain-catalogue`, `postcode-index` and `postcode-areas`, which the API
+  loads, with `dataset-manifest` and any dataset payload stored whole, which
+  only the website and checks read. `dataset_catalogue.payload_id` refers to the
+  table, so those few kilobytes stay with it.
+
+Readers of a file that is optional, such as `website-assets.sqlite`, check that
+it exists and fail with the command that builds it.
+
 ## Read-only connections
 
 Readers share one read-only `DatabaseSync` per database file per process, with
@@ -376,8 +416,7 @@ still read them. Atlas lookups use the migrated loader. Atlas pages read boundar
 properties for area sizes. Producers write the manifests and gzip files under
 `data/build/atlas-assets/`. The `pipeline/` workspace owns the `website-lookups`
 stage, which validates and stores those release files in the `website_asset`
-table before the final release
-manifest hashes the database. Its primary key is `(kind, id)`, where `kind` is
+table of `website-assets.sqlite`, outside the release database. Its primary key is `(kind, id)`, where `kind` is
 `pages` or `lookups`. Each row stores a SHA-256 hash and the original gzipped
 JSON bytes. Website routes serve those bytes directly to gzip-capable clients;
 server rendering and precompilation decompress the selected row. Old public
@@ -431,7 +470,8 @@ artifacts remain inputs to relationship paths, analysis geographies and their
 validation, location projections, relationship candidates, geography inventory,
 lookup manifests, validation reports, proposals.
 Atlas lookups and pages use the migrated loader. Their compilers write to
-`data/build/atlas-assets/`, and the pipeline assembles those files into SQLite.
+`data/build/atlas-assets/`, and the pipeline stores those files in
+`website-assets.sqlite`.
 The website never reads crosswalk JSON directly.
 
 ### Named locations
@@ -494,7 +534,8 @@ compiler read named locations from SQLite. Full named-location JSON remains for
 location projections, lookup exports. Packed metadata and
 geometry JSON remain build outputs of the same compiler, although the API no
 longer reads them. Atlas pages use the resolver's migrated loader and write
-release artifacts that the pipeline stores in `website_asset`.
+release artifacts that the pipeline stores in `website_asset` in
+`website-assets.sqlite`.
 
 ### Location projections
 
@@ -697,7 +738,7 @@ spellings. New queries should use the stored tables:
 | Deprecated view | Stored table |
 | --- | --- |
 | `datasets` | `dataset_catalogue` |
-| `website_assets` | `website_asset` |
+| `website_assets` (in `website-assets.sqlite`) | `website_asset` |
 | `area_inventory` | `area_inventory_metadata` |
 | `crosswalk_inventory` | `crosswalk_inventory_metadata` |
 | `crosswalk_coverage` | `crosswalk_coverage_entry` |
