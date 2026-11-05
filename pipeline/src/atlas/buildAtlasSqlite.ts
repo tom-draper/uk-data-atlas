@@ -29,6 +29,7 @@ import { locationProjectionTables } from "../storage/index.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { namedLocationTables } from "../storage/index.ts";
 import { crosswalkTables } from "../storage/index.ts";
+import { DATASETS_VIEW } from "../storage/deprecatedViews.ts";
 import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index.ts";
 import { DatabaseSync } from "node:sqlite";
 import { censusSmallAreaStatistics } from "../statistics/censusSmallAreaStatistics.ts";
@@ -236,7 +237,8 @@ export const buildAtlasSqlite = (
 				key: ["id"],
 				rows: payloads(),
 			},
-			datasets: {
+			dataset_catalogue: {
+				views: { datasets: DATASETS_VIEW },
 				columns: [
 					"type TEXT NOT NULL",
 					"output TEXT NOT NULL UNIQUE",
@@ -246,7 +248,7 @@ export const buildAtlasSqlite = (
 					"fingerprint TEXT NOT NULL",
 					"sha256 TEXT NOT NULL",
 					"bytes INTEGER NOT NULL",
-					"payloadId TEXT REFERENCES payloads(id)",
+					"payload_id TEXT REFERENCES payloads(id)",
 				],
 				key: ["type"],
 				rows: manifest.datasets.map((entry) => [

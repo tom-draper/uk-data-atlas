@@ -162,13 +162,13 @@ describe("fuel poverty on the statistics model", () => {
 						key: ["id"],
 						rows: [],
 					},
-					datasets: {
+					dataset_catalogue: {
 						columns: [
 							"type TEXT",
 							"output TEXT",
 							"sha256 TEXT",
 							"bytes INTEGER",
-							"payloadId TEXT",
+							"payload_id TEXT",
 						],
 						key: ["type"],
 						rows: [

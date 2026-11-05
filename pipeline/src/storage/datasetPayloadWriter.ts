@@ -27,7 +27,7 @@ export function publishDatasetPayloads(root: string) {
 		try {
 			for (const row of database
 				.prepare(
-					"SELECT type, output, sha256 FROM datasets WHERE payloadId IS NULL ORDER BY output",
+					"SELECT type, output, sha256 FROM dataset_catalogue WHERE payload_id IS NULL ORDER BY output",
 				)
 				.all()) {
 				const output = String(row.output);

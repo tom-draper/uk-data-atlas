@@ -36,7 +36,7 @@ function cacheSample() {
 		join(root, "data/build/atlas-base.sqlite"),
 	);
 	database.exec(
-		"UPDATE datasets SET sha256 = 'source', payloadId = NULL WHERE output = 'sample'",
+		"UPDATE dataset_catalogue SET sha256 = 'source', payload_id = NULL WHERE output = 'sample'",
 	);
 	database.close();
 	const cache = new DatabaseSync(atlasCachePath(root));

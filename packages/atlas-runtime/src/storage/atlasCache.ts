@@ -26,7 +26,7 @@ const dependencies: Record<CacheComponent, string[]> = {
 		"crosswalk_inventory",
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
-	datasets: ["query:SELECT output, sha256 FROM datasets ORDER BY output"],
+	datasets: ["query:SELECT output, sha256 FROM dataset_catalogue ORDER BY output"],
 };
 
 export const atlasCachePath = (root: string) =>
