@@ -5,15 +5,16 @@ import { brotliCompressSync, brotliDecompressSync, constants } from "node:zlib";
  *
  * The atlas database keeps large JSON payloads such as the relationship
  * paths. Brotli at quality 9 shrinks them by about 99% in tens of
- * milliseconds, and decodes about twice as fast as gzip. Quality 11 saves a
- * further 4% for a hundred times the build time. The same input always
- * stores the same bytes.
+ * milliseconds, and decodes about twice as fast as gzip. Quality 11 does no
+ * better on the largest payload and takes a hundred times as long. Dense
+ * numeric text such as geometry gains much more from quality 10, so callers
+ * may ask for it. The same input always stores the same bytes.
  */
-export function packText(text: string): Buffer {
+export function packText(text: string, quality = 9): Buffer {
 	const input = Buffer.from(text, "utf8");
 	return brotliCompressSync(input, {
 		params: {
-			[constants.BROTLI_PARAM_QUALITY]: 9,
+			[constants.BROTLI_PARAM_QUALITY]: quality,
 			[constants.BROTLI_PARAM_SIZE_HINT]: input.length,
 		},
 	});
