@@ -24,7 +24,7 @@ export const readSqliteNamedLocationInventory = (
 			"SELECT code FROM named_location_member WHERE location_id = ? ORDER BY position",
 		);
 		const assertions = database.prepare(
-			"SELECT code, validFrom, validTo FROM named_location_assertions WHERE locationId = ? ORDER BY position",
+			"SELECT code, valid_from AS validFrom, valid_to AS validTo FROM named_location_assertion WHERE location_id = ? ORDER BY position",
 		);
 		const partials = database.prepare(
 			"SELECT code, share, memberOf FROM named_location_partial_members WHERE locationId = ? ORDER BY position",
