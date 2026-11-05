@@ -155,22 +155,21 @@ const apiOrder = [
 	"postcode-index",
 	"measure-compatibility",
 	"postcode-areas",
-	"atlas-lookups",
-	"export-manifest",
-	"map-resource",
-	"atlas-pages",
-	"website-lookups",
 	"assemble-atlas",
 	"place-index",
 	"area-search-index",
+	"export-manifest",
 	"postcode-counts",
 	"relationship-candidates",
 	"lookup-manifest",
+	"map-resource",
 	"validation-report",
 	"atlas-release-initial",
 	"documents",
+	"atlas-lookups",
 	"atlas-cache-stamp",
 	"atlas-release",
+	"atlas-pages",
 ];
 
 test("default build executes both products in dependency order", (context) => {
@@ -180,30 +179,21 @@ test("default build executes both products in dependency order", (context) => {
 		"boundaries",
 		"boundary-tiles",
 		"website-tiles",
+		"website-lookups",
 		"website-datasets",
 		"website-registry",
 	]);
-	assert.equal(build.commands().length, apiOrder.length + 5);
+	assert.equal(build.commands().length, apiOrder.length + 6);
 });
 
-test("rebuilding atlas pages imports SQLite assets before sealing the release and refreshing website data", (context) => {
+test("rebuilding atlas pages refreshes the website assets and leaves the API release alone", (context) => {
 	const build = fixture(context);
 	assert.deepEqual(stages(build.run(["--from", "atlas-pages"])), [
 		"atlas-pages",
 		"website-lookups",
-		"assemble-atlas",
-		"place-index",
-		"area-search-index",
-		"postcode-counts",
-		"atlas-release-initial",
-		"documents",
-		"atlas-cache-stamp",
-		"atlas-release",
-		"website-datasets",
-		"website-registry",
 	]);
 	assert.deepEqual(build.commands().at(-1), [
-		"scripts/generate-dataset-registry.ts",
+		"pipeline/src/build-atlas-assets.ts",
 	]);
 });
 
@@ -311,21 +301,21 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"geography-catalogues",
 		"measure-compatibility",
 		"postcode-areas",
-		"atlas-lookups",
-		"export-manifest",
-		"atlas-pages",
-		"website-lookups",
 		"assemble-atlas",
 		"place-index",
 		"area-search-index",
+		"export-manifest",
 		"postcode-counts",
 		"relationship-candidates",
 		"lookup-manifest",
 		"validation-report",
 		"atlas-release-initial",
 		"documents",
+		"atlas-lookups",
 		"atlas-cache-stamp",
 		"atlas-release",
+		"atlas-pages",
+		"website-lookups",
 		"website-datasets",
 		"website-registry",
 	]);
