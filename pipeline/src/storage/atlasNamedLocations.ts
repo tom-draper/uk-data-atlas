@@ -1,4 +1,4 @@
-import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW } from "./deprecatedViews.ts";
+import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW, NAMED_LOCATION_PARTIAL_MEMBERS_VIEW } from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -73,7 +73,7 @@ export const namedLocationTables = (
 			]),
 		},
 		named_location_member: {
-			views: { named_location_members: NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW },
+			views: { named_location_members: NAMED_LOCATION_MEMBERS_VIEW },
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",
@@ -110,16 +110,17 @@ export const namedLocationTables = (
 				]),
 			),
 		},
-		named_location_partial_members: {
+		named_location_partial_member: {
+			views: { named_location_partial_members: NAMED_LOCATION_PARTIAL_MEMBERS_VIEW },
 			columns: [
-				"locationId TEXT NOT NULL REFERENCES named_location(id)",
+				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",
 				"code TEXT NOT NULL",
 				"share REAL NOT NULL",
-				"memberOf TEXT NOT NULL REFERENCES named_location(id)",
+				"member_of TEXT NOT NULL REFERENCES named_location(id)",
 			],
-			key: ["locationId", "position"],
-			indexes: [["code", "locationId"]],
+			key: ["location_id", "position"],
+			indexes: [["code", "location_id"]],
 			rows: inventory.locations.flatMap((location) =>
 				(location.partialMembers ?? []).map((member, position) => [
 					location.id,
