@@ -11,7 +11,7 @@ import type { DatasetTopic } from "@uk-data-atlas/datasets";
  * leaves, and a caller who wants one can aggregate them without the risk of
  * adding a subtotal to its own parts.
  */
-export type Category = readonly [suffix: string, column: string, label: string];
+export type Category = readonly [suffix: string, column: string, label: string, member?: string];
 
 export type CensusTable = {
 	table: string;
@@ -21,6 +21,8 @@ export type CensusTable = {
 	related?: readonly DatasetTopic[];
 	/** The measure id is the prefix and the category suffix. */
 	measurePrefix: string;
+	measure: string;
+	dimension: string;
 	unit: string;
 	universe: string;
 	totalColumn: string;
@@ -38,6 +40,8 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts001",
 		topic: "population-estimates",
 		measurePrefix: "usual-residents",
+		measure: "usual-residents",
+		dimension: "residence-type",
 		unit: "usual residents",
 		universe:
 			"All usual residents on Census Day, 21 March 2021, whether they lived in a household or a communal establishment.",
@@ -47,11 +51,13 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 				"in-households",
 				"Residence type: Lives in a household; measures: Value",
 				"Usual residents living in households",
+				"household",
 			],
 			[
 				"in-communal-establishments",
 				"Residence type: Lives in a communal establishment; measures: Value",
 				"Usual residents living in communal establishments",
+				"communal-establishment",
 			],
 			[
 				"total",
@@ -68,6 +74,8 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts007a",
 		topic: "population-estimates",
 		measurePrefix: "age",
+		measure: "usual-residents",
+		dimension: "age-band",
 		unit: "usual residents",
 		universe: "All usual residents, by age on Census Day.",
 		totalColumn: "Age: Total",
@@ -99,6 +107,8 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts003",
 		topic: "population-estimates",
 		measurePrefix: "household-composition",
+		measure: "households",
+		dimension: "household-composition",
 		unit: "households",
 		universe: "Households, not people: each household counts once.",
 		totalColumn: "Household composition: Total; measures: Value",
@@ -187,6 +197,8 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts054",
 		topic: "housing-stock",
 		measurePrefix: "tenure",
+		measure: "households",
+		dimension: "tenure",
 		unit: "households",
 		universe: "Households, not people: each household counts once.",
 		totalColumn: "Tenure of household: Total: All households",
@@ -245,6 +257,8 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts066",
 		topic: "labour-market",
 		measurePrefix: "economic-activity",
+		measure: "usual-residents-16-plus",
+		dimension: "economic-activity",
 		unit: "usual residents aged 16 and over",
 		universe:
 			"Usual residents aged 16 and over, by their activity in the week before Census Day.",
@@ -312,6 +326,8 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts021",
 		topic: "ethnicity-and-identity",
 		measurePrefix: "ethnicity",
+		measure: "usual-residents",
+		dimension: "ethnic-group",
 		unit: "usual residents",
 		universe:
 			"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
@@ -377,11 +393,13 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 				"other-mixed",
 				"Ethnic group: Mixed or Multiple ethnic groups: Other Mixed or Multiple ethnic groups",
 				"Ethnic group: Other Mixed or Multiple ethnic groups",
+				"other-mixed-or-multiple-ethnic-groups",
 			],
 			[
 				"white-british",
 				"Ethnic group: White: English, Welsh, Scottish, Northern Irish or British",
 				"Ethnic group: English, Welsh, Scottish, Northern Irish or British",
+				"english-welsh-scottish-northern-irish-or-british",
 			],
 			["irish", "Ethnic group: White: Irish", "Ethnic group: Irish"],
 			[
@@ -404,6 +422,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 				"any-other",
 				"Ethnic group: Other ethnic group: Any other ethnic group",
 				"Ethnic group: Any other ethnic group",
+				"any-other-ethnic-group",
 			],
 		],
 		notes: [],
@@ -412,6 +431,8 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts037",
 		topic: "health-status",
 		measurePrefix: "general-health",
+		measure: "usual-residents",
+		dimension: "general-health",
 		unit: "usual residents",
 		universe:
 			"All usual residents, by their own assessment of their general health.",
