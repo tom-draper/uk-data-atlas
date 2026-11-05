@@ -260,7 +260,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 			0,
 		);
 		assert.throws(
-			() => database.prepare("DELETE FROM named_locations").run(),
+			() => database.prepare("DELETE FROM named_location").run(),
 			/FOREIGN KEY/,
 		);
 		database

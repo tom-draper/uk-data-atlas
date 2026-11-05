@@ -30,7 +30,7 @@ export const readSqliteNamedLocationInventory = (
 			"SELECT code, share, memberOf FROM named_location_partial_members WHERE locationId = ? ORDER BY position",
 		);
 		const locations = database
-			.prepare("SELECT * FROM named_locations ORDER BY position")
+			.prepare("SELECT id, position, fields, label, kind, definition_revision AS definitionRevision, member_geography AS memberGeography, valid_from AS validFrom, valid_to AS validTo, min_x AS minX, min_y AS minY, max_x AS maxX, max_y AS maxY, source FROM named_location ORDER BY position")
 			.all()
 			.map((row) => {
 				const values = {
