@@ -130,10 +130,10 @@ stored as Brotli blobs and decompressed on read.
   decompressed text. Only `atlas.sqlite` stores payloads this way. The
   `payloads` tables of `atlas-cache.sqlite` and the postcode component remain
   plain text.
-- `named_location_geometries.geometry` is `BLOB NOT NULL`: a GeoJSON geometry
+- `named_location_geometry.geometry` is `BLOB NOT NULL`: a GeoJSON geometry
   in WGS84 degrees rounded to five decimal places (about 1.1 m), Brotli
   quality 10. Write it with `packGeometry`, which also returns bounds measured
-  from the rounded shape for `minX`, `minY`, `maxX` and `maxY`, and read it with
+  from the rounded shape for `min_x`, `min_y`, `max_x` and `max_y`, and read it with
   `unpackGeometry` (`storedGeometry.ts`). Rounding is lossy: the stored shape
   differs from the compiled union by at most 0.000005 degrees per axis. Keep
   full precision geometry out of this table, and compute from the JSON
@@ -153,3 +153,7 @@ payload tests after a data build.
 
 `website_asset` stores the website’s compressed release assets. The deprecated
 `website_assets` view preserves the former name for read-only queries.
+
+Legacy table names and camelCase columns are preserved by deprecated read-only
+views, listed in `data/build/README.md`. The `area_releases` table, `areas`
+view and `payloads` tables remain unchanged pending the related branch work.
