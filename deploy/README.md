@@ -258,8 +258,9 @@ certbot renew --dry-run
 Do not commit downloaded source data, generated API data, logs, credentials,
 certificates or swap files. The data build compiles the website docs catalogue and place artifacts.
 
-The website serves atlas lookups and pages from `data/build/atlas.sqlite` and
-never fetches them from the API. Include `data/build/atlas-assets/` when deploying
+The website serves atlas lookups and pages from `data/build/website-assets.sqlite`
+and never fetches them from the API. Deploy that file with the website only: the
+API does not open it, and it is not part of the data product. Include `data/build/atlas-assets/` when deploying
 the API, which serves the gzip files directly. Restart
 the API and website in either order. On a memory-constrained local machine,
 stop the API before `pnpm data:build`.
@@ -287,4 +288,5 @@ Deploy `data/build/atlas.sqlite` and `data/build/atlas-cache.sqlite` from the
 same build. The pipeline builds and stamps the cache. The API only reads both
 files. It checks the stamp and required dataset payloads at startup and
 fails readiness if they are missing or
-mismatched. It does not rebuild the cache.
+mismatched. It does not rebuild the cache. Neither file holds the website's
+pages and lookups, which are in `data/build/website-assets.sqlite`.

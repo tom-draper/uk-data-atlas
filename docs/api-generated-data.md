@@ -26,5 +26,5 @@ reviewing a vocabulary change, copy the generated vocabulary there and commit it
 
 The API reads catalogue manifests, export metadata, geometry metadata and
 evidence documents from `data/build/artifacts/`. Atlas page and lookup assets
-live under `data/build/atlas-assets/` and in the database's `website_asset`
-table. See `data/build/README.md` for the database schema and build outputs.
+live under `data/build/atlas-assets/` and in the `website_asset` table of
+`data/build/website-assets.sqlite`, which only the website reads. See `data/build/README.md` for the database schema and build outputs.

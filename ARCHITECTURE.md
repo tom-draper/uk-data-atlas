@@ -35,7 +35,7 @@ services/mcp/           the MCP server: a read-only HTTP client of the public AP
 scripts/                build orchestration and file readers for both products
 data/
   source/               raw source files, restored from the data release
-  build/                shared generated datasets and atlas.sqlite
+  build/                shared generated datasets, atlas.sqlite and website-assets.sqlite
 public/data/            the atlas's compiled data, served by the website
 ```
 
@@ -44,7 +44,7 @@ public/data/            the atlas's compiled data, served by the website
 | Where                   | What                                                           | In git      | Made by                                                                                            |
 | ----------------------- | -------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
 | `data/source/`          | Raw files as publishers supplied them                          | No          | `pnpm data:download`, from the release pinned in `data-release.json`                               |
-| `data/build/`           | Shared generated datasets and `atlas.sqlite`                   | README only | `pnpm data:build`                                                                                  |
+| `data/build/`           | Shared generated datasets, `atlas.sqlite`, `website-assets.sqlite` | README only | `pnpm data:build`                                                                                  |
 | `data/build/artifacts/` | Remaining generated API catalogues and downloads               | No          | `pnpm data:build`                                                                                  |
 | `public/data/`          | The atlas's compiled datasets, boundary properties and PMTiles | No          | `pnpm data:build`, `pnpm data:build --only boundaries` and `pnpm data:build --only boundary-tiles` |
 
@@ -63,7 +63,7 @@ That stage reads only the areas, crosswalks, geometry, named locations and
 catalogue manifests it uses, not the API's release manifest. It stores gzipped files and a manifest under
 `data/build/atlas-assets/atlas-pages/` and `atlas-pages.json`. The API serves them at
 `/v1/atlas-pages/{page-id}.json`. `pnpm data:build --only website-lookups` stores their
-precompressed bytes in `data/build/atlas.sqlite`. The website reads them directly
+precompressed bytes in `data/build/website-assets.sqlite`, a file the API does not read. The website reads them directly
 for server rendering and serves browser requests at `/data/atlas-pages/{page-id}.json`:
 
 | Page id               | Contents                                                   |
@@ -396,5 +396,6 @@ geometries and the runtime geography catalogue remain.
 
 The pipeline builds search, location projection and postcode-count tables in
 `data/build/atlas-cache.sqlite`. Deploy it alongside the canonical database from
-the same build. The source data release contains only raw inputs. See
+the same build. The website's pages and lookups are in `data/build/website-assets.sqlite`,
+which only the Next.js server needs. The source data release contains only raw inputs. See
 [generated API data](docs/api-generated-data.md).

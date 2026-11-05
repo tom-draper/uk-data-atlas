@@ -151,8 +151,15 @@ payload tests after a data build.
 
 ## Website assets
 
-`website_asset` stores the website’s compressed release assets. The deprecated
-`website_assets` view preserves the former name for read-only queries.
+`website_asset` stores the website’s compressed release assets in
+`website-assets.sqlite`, not in `atlas.sqlite`. Only the Next.js website reads
+them, so the API's release stays to what the API serves. The deprecated
+`website_assets` view in that file preserves the former name for read-only
+queries.
+
+`crosswalk_edge_check` and `payloads` stay in `atlas.sqlite`. The API reads
+both at request time (see "What `atlas.sqlite` keeps" in `data/build/README.md`),
+so neither is build-only output.
 
 Legacy table names and camelCase columns are preserved by deprecated read-only
 views, listed in `data/build/README.md`. The `area_releases` table, `areas`
