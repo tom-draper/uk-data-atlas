@@ -25,7 +25,7 @@ export function parseOnlyArgument(argv: readonly string[]): string[] | null {
 		.filter(Boolean);
 	if (names.length === 0)
 		throw new Error(
-			"--only needs at least one dataset, e.g. --only claimantCount",
+			"--only needs at least one dataset, e.g. --only claimant-count",
 		);
 	return names;
 }

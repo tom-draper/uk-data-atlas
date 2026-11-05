@@ -4,6 +4,10 @@ import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import {
+	declaredDisplay as displayOf,
+	declaredMeasure as measureOf,
+} from "@/lib/datasets/declared";
+import {
 	hasPopulationMetric,
 	POPULATION_METRIC_RANGES,
 } from "@/lib/config/mapOptions";
@@ -28,7 +32,7 @@ import {
 } from "./legend/legendData";
 import {
 	AirQualityMeasurePanel,
-	ClaimantCountMeasurePanel,
+	DeclaredMeasurePanel,
 	BroadbandMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
@@ -86,6 +90,12 @@ export default function LegendPanel({
 		mapOptions,
 		onMapOptionsChange,
 	);
+	const declaredDisplay = activeDataset
+		? displayOf(activeDataset.type)
+		: undefined;
+	const declaredMeasure = activeDataset
+		? measureOf(activeDataset.type, controls.displayOptions)
+		: undefined;
 	const activeTheme =
 		themes.find((theme) => theme.id === controls.displayOptions.theme.id) ??
 		themes[0];
@@ -406,17 +416,22 @@ export default function LegendPanel({
 				/>
 			)}
 
-			{activeDataset?.type === "claimantCount" && (
-				<ClaimantCountMeasurePanel
-					measure={controls.displayOptions.claimantCount.measure}
+			{declaredDisplay && declaredDisplay.measures.length > 1 && (
+				<DeclaredMeasurePanel
+					measure={declaredMeasure?.id ?? ""}
+					measures={declaredDisplay.measures}
 					onChange={(measure) =>
-						onMapOptionsChange("claimantCount", {
-							measure,
-							colorRange:
-								measure === "count"
-									? { min: 1000, max: 14000 }
-									: { min: 1, max: 8 },
-						})
+						onMapOptionsChange(
+							activeDataset!.type as keyof MapOptions,
+							{
+								measure,
+								colorRange: {
+									...declaredDisplay.measures.find(
+										(candidate) => candidate.id === measure,
+									)!.colorRange,
+								},
+							},
+						)
 					}
 				/>
 			)}

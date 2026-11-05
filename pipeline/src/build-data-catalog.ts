@@ -1,3 +1,4 @@
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
 import { AtlasDatasetInput } from "./catalog/input.ts";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -33,7 +34,6 @@ export const datasetCatalogInputs = (
 		qualification: precompiled("qualification.json"),
 		ethnicity: precompiled("ethnicity.json"),
 		broadband: precompiled("broadband.json"),
-		claimantCount: precompiled("claimant-count.json"),
 		homelessness: precompiled("homelessness.json"),
 		roadCollisions: precompiled("road-collisions.json"),
 		income: precompiled("income.json"),
@@ -66,6 +66,14 @@ export const datasetCatalogInputs = (
 		adultSocialCareOutcomes: precompiled("adult-social-care-outcomes.json"),
 		planningApplications: precompiled("planning-applications.json"),
 		electricVehicleChargers: precompiled("electric-vehicle-chargers.json"),
+		declared: Object.fromEntries(
+			DATASET_DECLARATIONS.filter(
+				(declaration) => declaration.catalogue,
+			).map((declaration) => [
+				declaration.id,
+				precompiled(`${declaration.id}.json`),
+			]),
+		),
 		censusSmallAreaRoot: repositoryRoot,
 	};
 	return inputs;

@@ -11,6 +11,7 @@ const chartDefinitionExclusions = new Set([
 	"types.ts",
 	"ingestion.ts",
 	"generated.ts",
+	"declared.ts",
 	"chartGroups.ts",
 	"boundaryRequirements.ts",
 	"valueCard.ts",

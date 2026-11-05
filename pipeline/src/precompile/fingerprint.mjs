@@ -52,6 +52,7 @@ const pipelineInputs = [
 ];
 
 const definitionsDirectory = "packages/datasets/src/data/catalog/definitions";
+const dataDirectory = "packages/datasets/src/data";
 
 // These name every dataset, so reaching one from a single dataset's imports
 // would tie that dataset to all the others, and adding a dataset would change
@@ -60,6 +61,7 @@ const definitionsDirectory = "packages/datasets/src/data/catalog/definitions";
 const barredFiles = new Set([
 	"packages/datasets/src/data/catalog/registry.ts",
 	"packages/datasets/src/data/catalog/generated.ts",
+	`${dataDirectory}/declarations.ts`,
 	`${definitionsDirectory}/index.ts`,
 ]);
 
@@ -253,7 +255,10 @@ const fingerprintOf = async (context, label, files) => {
 	return `sha256:${hash.digest("hex")}`;
 };
 
-/** The dataset type each definition file declares, by file. */
+/**
+ * The dataset type each definition file declares, by file: the definitions
+ * not yet moved, then the declarations, whose id is their type.
+ */
 const definitionFiles = async (root) => {
 	const directory = join(root, definitionsDirectory);
 	const found = new Map();
@@ -272,6 +277,23 @@ const definitionFiles = async (root) => {
 				`Two dataset definitions declare the type ${type}.`,
 			);
 		found.set(type, path);
+	}
+	const declarations = join(root, dataDirectory);
+	for (const entry of (
+		await readdir(declarations, { withFileTypes: true })
+	).sort((left, right) => left.name.localeCompare(right.name))) {
+		const path = join(declarations, entry.name, "dataset.ts");
+		if (!entry.isDirectory() || !(await isFile(path))) continue;
+		const id = /^\s*id:\s*"([^"]+)"/m.exec(
+			await readFile(path, "utf8"),
+		)?.[1];
+		if (!id)
+			throw new Error(
+				`${dataDirectory}/${entry.name}/dataset.ts declares no id.`,
+			);
+		if (found.has(id))
+			throw new Error(`Two dataset definitions declare the type ${id}.`);
+		found.set(id, path);
 	}
 	return found;
 };

@@ -1,3 +1,5 @@
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
+import { statisticsOf } from "@uk-data-atlas/datasets/declaration/dataset";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
 import {
 	GENERAL_ELECTION,
@@ -15,7 +17,6 @@ import {
 import {
 	BUSINESS_ACTIVITY,
 	CHILD_POVERTY,
-	CLAIMANT_COUNT,
 	COUNCIL_TAX,
 	HOUSE_PRICE,
 	HOUSING_AFFORDABILITY,
@@ -69,7 +70,8 @@ import {
 } from "./people.ts";
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */
-export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
+/** Statistics declarations not yet moved into a dataset declaration. */
+const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	CAR_AVAILABILITY,
 	QUALIFICATION,
 	TRAVEL_TO_WORK,
@@ -80,7 +82,6 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	WORKPLACE_INCOME,
 	JOBS,
 	BUSINESS_ACTIVITY,
-	CLAIMANT_COUNT,
 	UNEMPLOYMENT,
 	CHILD_POVERTY,
 	REGIONAL_GDP_ITL1,
@@ -126,6 +127,12 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	LOCAL_ELECTION,
 	GENERAL_ELECTION,
 	HISTORICAL_GENERAL_ELECTION,
+];
+
+/** Catalogue datasets stored as statistics rows, by manifest type. */
+export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
+	...LEGACY_STATISTICS_DATASETS,
+	...DATASET_DECLARATIONS.map(statisticsOf),
 ];
 
 /**

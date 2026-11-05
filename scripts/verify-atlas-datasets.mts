@@ -34,14 +34,24 @@ for (const { output } of manifest.datasets)
 const jsonInputs = datasetCatalogInputs(root);
 // Small-area census tables read raw files in both builds and are outside this migration.
 delete jsonInputs.censusSmallAreaRoot;
-const sqliteInputs = Object.fromEntries(
-	Object.entries(jsonInputs).map(([key, value]) => [
-		key,
-		value instanceof AtlasDatasetInput
-			? new AtlasDatasetInput(root, value.output, "atlas")
-			: value,
-	]),
-) as DataCatalogInputs;
+const fromSqlite = (value: unknown) =>
+	value instanceof AtlasDatasetInput
+		? new AtlasDatasetInput(root, value.output, "atlas")
+		: value;
+const sqliteInputs = {
+	...Object.fromEntries(
+		Object.entries(jsonInputs).map(([key, value]) => [
+			key,
+			fromSqlite(value),
+		]),
+	),
+	declared: Object.fromEntries(
+		Object.entries(jsonInputs.declared ?? {}).map(([id, value]) => [
+			id,
+			fromSqlite(value),
+		]),
+	),
+} as DataCatalogInputs;
 const digest = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");
 function snapshot(inputs: DataCatalogInputs) {

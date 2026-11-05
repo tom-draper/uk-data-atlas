@@ -5,6 +5,7 @@ import type {
 	CatalogueDatasetType,
 } from "@uk-data-atlas/datasets/data/catalog/generated";
 import type { ChartDatasetDefinition } from "./types";
+import { DECLARED_CHART_DEFINITIONS } from "./declared";
 import { adultSocialCareActivityDefinition } from "./adultSocialCareActivity";
 import { adultSocialCareOutcomesDefinition } from "./adultSocialCareOutcomes";
 import { airQualityDefinition } from "./airQuality";
@@ -14,7 +15,6 @@ import { broadbandDefinition } from "./broadband";
 import { businessActivityDefinition } from "./businessActivity";
 import { carAvailabilityDefinition } from "./carAvailability";
 import { childPovertyDefinition } from "./childPoverty";
-import { claimantCountDefinition } from "./claimantCount";
 import { councilTaxDefinition } from "./councilTax";
 import { crimeDefinition } from "./crime";
 import { electricVehicleChargersDefinition } from "./electricVehicleChargers";
@@ -69,7 +69,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		businessActivityDefinition,
 		carAvailabilityDefinition,
 		childPovertyDefinition,
-		claimantCountDefinition,
 		councilTaxDefinition,
 		crimeDefinition,
 		electricVehicleChargersDefinition,
@@ -108,4 +107,5 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		wasteDefinition,
 		wimdDefinition,
 		workplaceIncomeDefinition,
-	];
+		...DECLARED_CHART_DEFINITIONS,
+	].sort((left, right) => (left.type < right.type ? -1 : 1));

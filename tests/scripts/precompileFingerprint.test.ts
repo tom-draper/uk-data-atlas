@@ -275,6 +275,36 @@ describe("precompile fingerprints", () => {
 		expect(after.datasets).toEqual(before.datasets);
 	});
 
+	it("fingerprints a declaration by its id and what it imports", async () => {
+		await write(
+			"packages/datasets/src/data/gamma/dataset.ts",
+			'import { load } from "./loader";\nexport const gamma = {\n\tid: "gamma",\n\tload,\n};\n',
+		);
+		await write(
+			"packages/datasets/src/data/gamma/loader.ts",
+			"export const load = 1;",
+		);
+		await write(
+			"packages/datasets/src/data/catalog/definitions/index.ts",
+			"// unchanged",
+		);
+		const before = await precompileFingerprints(root);
+		expect(Object.keys(before.datasets)).toEqual([
+			"alpha",
+			"beta",
+			"gamma",
+		]);
+		await write(
+			"packages/datasets/src/data/gamma/loader.ts",
+			"export const load = 2;",
+		);
+		const after = await precompileFingerprints(root);
+
+		expect(after.datasets.gamma).not.toEqual(before.datasets.gamma);
+		expect(after.datasets.alpha).toEqual(before.datasets.alpha);
+		expect(after.datasets.beta).toEqual(before.datasets.beta);
+	});
+
 	it("refuses two definitions that declare the same type", async () => {
 		await write(
 			"packages/datasets/src/data/catalog/definitions/gamma.ts",

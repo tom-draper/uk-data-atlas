@@ -8,10 +8,7 @@ import type {
 	AggregatedAirQualityData,
 	AirQualityDataset,
 } from "@uk-data-atlas/datasets/types/airQuality";
-import type {
-	AggregatedClaimantCountData,
-	ClaimantCountDataset,
-} from "@uk-data-atlas/datasets/types/claimantCount";
+import { denominator } from "@uk-data-atlas/datasets/helpers/rates";
 import type {
 	AggregatedChildPovertyData,
 	ChildPovertyDataset,
@@ -85,14 +82,6 @@ export function weightedMean<T>(
 	}
 	return total > 0 ? weighted / total : null;
 }
-
-/**
- * The size of the population a rate is taken over, recovered from a count and
- * the rate it gives: 250 claimants at 2.5% are 10,000 residents. Unknown where
- * the rate is zero, since any population gives none.
- */
-const denominator = (count: number, ratePer: number, rate: number) =>
-	rate > 0 ? (count / rate) * ratePer : null;
 
 /** Coverage is a share of premises, so authorities are weighted by premises. */
 export function aggregateBroadband(
@@ -177,41 +166,6 @@ export function aggregateRegionalGdp(
 		}),
 		{ gvaMillionGbp: 0, gdpMillionGbp: 0 },
 	);
-}
-
-/**
- * Counts add. Both rates are claimants as a share of residents aged 16 to 64,
- * so the combined rate is the summed claimants over the summed residents,
- * recovered from each authority's count and rate.
- */
-export function aggregateClaimantCount(
-	records: ClaimantCountDataset["data"][string][],
-): AggregatedClaimantCountData | null {
-	if (records.length === 0) return null;
-	let totalCount = 0,
-		youthCount = 0,
-		residents = 0,
-		ratedTotal = 0,
-		ratedYouth = 0;
-	for (const record of records) {
-		totalCount += record.totalCount;
-		youthCount += record.youthCount;
-		const population = denominator(
-			record.totalCount,
-			100,
-			record.totalRate,
-		);
-		if (population === null) continue;
-		residents += population;
-		ratedTotal += record.totalCount;
-		ratedYouth += record.youthCount;
-	}
-	return {
-		totalCount,
-		totalRate: residents > 0 ? (ratedTotal / residents) * 100 : 0,
-		youthCount,
-		youthRate: residents > 0 ? (ratedYouth / residents) * 100 : 0,
-	};
 }
 
 export function aggregateChildPoverty(

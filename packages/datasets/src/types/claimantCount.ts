@@ -9,7 +9,7 @@ export interface ClaimantCountLADData {
 
 export interface ClaimantCountDataset {
 	id: string;
-	type: "claimantCount";
+	type: "claimant-count";
 	year: number;
 	month: string;
 	boundaryType: "localAuthority";

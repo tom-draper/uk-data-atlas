@@ -1,4 +1,4 @@
-import type { BoundaryType } from "../data/boundaries/catalog";
+import type { BoundaryType } from "../data/boundaries/catalog.ts";
 
 /**
  * How the website shows a dataset, as data. The website builds the chart

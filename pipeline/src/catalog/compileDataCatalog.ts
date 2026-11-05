@@ -20,7 +20,8 @@ import { compileDeprivationIndices } from "./deprivation.ts";
 import { compilePopulationDensity } from "./populationDensity.ts";
 import { mergeMeasurePartitions } from "./indicators.ts";
 import { compileBroadband } from "./broadband.ts";
-import { compileClaimantCount } from "./claimantCount.ts";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
+import { compileDeclaredIndicators } from "./declaredIndicators.ts";
 import { compileHomelessness } from "./homelessness.ts";
 import { compileRoadCollisions } from "./roadCollisions.ts";
 import { compileIncome } from "./income.ts";
@@ -57,7 +58,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	qualification: Input;
 	ethnicity: Input;
 	broadband: Input;
-	claimantCount: Input;
 	homelessness: Input;
 	roadCollisions: Input;
 	income: Input;
@@ -90,6 +90,8 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	adultSocialCareOutcomes?: Input;
 	planningApplications?: Input;
 	electricVehicleChargers?: Input;
+	/** The compiled file of each declared dataset that publishes measures, by id. */
+	declared?: Record<string, Input>;
 	/**
 	 * The repository root, whose data/ directory holds the Census 2021
 	 * small-area tables compiled straight from their Nomis files.
@@ -114,7 +116,6 @@ export const compileDataCatalog = ({
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
 	broadband: broadbandPath,
-	claimantCount: claimantCountPath,
 	homelessness: homelessnessPath,
 	roadCollisions: roadCollisionsPath,
 	income: incomePath,
@@ -147,6 +148,7 @@ export const compileDataCatalog = ({
 	adultSocialCareOutcomes: adultSocialCareOutcomesPath,
 	planningApplications: planningApplicationsPath,
 	electricVehicleChargers: electricVehicleChargersPath,
+	declared = {},
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
@@ -236,11 +238,19 @@ export const compileDataCatalog = ({
 	const england2025 = england2023.map((code) => RECODED_2025[code] ?? code);
 	const indicatorObservations = [
 		...compileBroadband(catalogManifest, broadbandPath, populationCodes),
-		...compileClaimantCount(
-			catalogManifest,
-			claimantCountPath,
-			populationCodes,
-		),
+		...DATASET_DECLARATIONS.filter(
+			(declaration) => declaration.catalogue,
+		).flatMap((declaration) => {
+			const path = declared[declaration.id];
+			if (!path)
+				throw new Error(`No compiled file for ${declaration.id}`);
+			return compileDeclaredIndicators(
+				catalogManifest,
+				declaration,
+				path,
+				{ authorities: populationCodes },
+			);
+		}),
 		...compileHomelessness(catalogManifest, homelessnessPath, england2025),
 		...compileRoadCollisions(
 			catalogManifest,

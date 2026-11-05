@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
-import { claimantCountDefinition } from "@/lib/datasets/claimantCount";
 import { councilTaxDefinition } from "@/lib/datasets/councilTax";
 import { crimeDefinition } from "@/lib/datasets/crime";
 import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
@@ -18,7 +17,9 @@ const area = (
 	data: unknown = null,
 ): SelectedArea => ({ type, code, name: code, data }) as SelectedArea;
 
-const claimantCard = claimantCountDefinition.chart.card!;
+const claimantCard = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "claimant-count",
+)!.chart.card!;
 const claimants = {
 	boundaryType: "localAuthority",
 	boundaryYear: 2023,

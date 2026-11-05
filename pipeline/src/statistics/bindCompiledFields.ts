@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { CENSUS_BREAKDOWNS } from "../catalog/census.ts";
 import {
@@ -26,6 +27,14 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 			]),
 		),
 	),
+	...Object.fromEntries(
+		DATASET_DECLARATIONS.flatMap((declaration) =>
+			(declaration.catalogue?.indicators ?? []).map((indicator) => [
+				indicator.id,
+				[[declaration.id, indicator.field]],
+			]),
+		),
+	),
 	"ghg-emissions": [["ghg-emissions", "totalKtCO2e"]],
 	"total-jobs": [["jobs", "totalJobs"]],
 	"life-expectancy-male": [["life-expectancy-series", "male.value"]],
@@ -45,8 +54,6 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 	"local-election-effective-votes": [["local-election", "partyVotes.LAB"]],
 	"mobile-4g-coverage": [["mobile-coverage", "pct4GIndoorAll"]],
 	"mobile-5g-coverage": [["mobile-coverage", "pct5GOutdoorAll"]],
-	"claimant-count": [["claimant-count", "totalCount"]],
-	"claimant-count-16-to-24": [["claimant-count", "youthCount"]],
 	"imd-rank": [["imd", "imdRank"]],
 	"imd-decile": [["imd", "imdDecile"]],
 	"wimd-rank": [["wimd", "wimdRank"]],

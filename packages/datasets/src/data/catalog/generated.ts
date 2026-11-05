@@ -8,7 +8,6 @@ import type { broadbandDatasetDefinition } from "./definitions/broadband.ts";
 import type { businessActivityDatasetDefinition } from "./definitions/businessActivity.ts";
 import type { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
 import type { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
-import type { claimantCountDatasetDefinition } from "./definitions/claimantCount.ts";
 import type { councilTaxDatasetDefinition } from "./definitions/councilTax.ts";
 import type { crimeDatasetDefinition } from "./definitions/crime.ts";
 import type { electricVehicleChargersDatasetDefinition } from "./definitions/electricVehicleChargers.ts";
@@ -56,6 +55,7 @@ import type { unemploymentDatasetDefinition } from "./definitions/unemployment.t
 import type { wasteDatasetDefinition } from "./definitions/waste.ts";
 import type { wimdDatasetDefinition } from "./definitions/wimd.ts";
 import type { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIncome.ts";
+import type { claimantCount } from "../claimant-count/dataset.ts";
 
 export type CatalogueDataset =
 	| Awaited<
@@ -82,9 +82,6 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof childPovertyDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
-			ReturnType<typeof claimantCountDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof councilTaxDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>[string]
@@ -214,9 +211,14 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof workplaceIncomeDatasetDefinition.precompile>
-	  >[string];
+	  >[string]
+	| Awaited<ReturnType<typeof claimantCount.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
-export type CatalogueDatasetRecords = {
+/** Records of the datasets declared in `data/<id>/dataset.ts`, by id. */
+export type DeclaredDatasetRecords = {
+	"claimant-count": Awaited<ReturnType<typeof claimantCount.load>>;
+};
+export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	adultSocialCareActivity: Awaited<
 		ReturnType<typeof adultSocialCareActivityDatasetDefinition.precompile>
 	>;
@@ -241,9 +243,6 @@ export type CatalogueDatasetRecords = {
 	>;
 	childPoverty: Awaited<
 		ReturnType<typeof childPovertyDatasetDefinition.precompile>
-	>;
-	claimantCount: Awaited<
-		ReturnType<typeof claimantCountDatasetDefinition.precompile>
 	>;
 	councilTax: Awaited<
 		ReturnType<typeof councilTaxDatasetDefinition.precompile>

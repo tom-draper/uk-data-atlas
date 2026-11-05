@@ -1,4 +1,5 @@
 import { CHART_DATASET_DEFINITIONS } from "../datasets";
+import { declaredDefaultOptions } from "../datasets/declared";
 import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
 export const POPULATION_METRIC_RANGES = {
@@ -39,6 +40,7 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 		definition.type,
 		{
 			colorRange: definition.map?.colorRange ?? { min: 0, max: 1 },
+			...declaredDefaultOptions(definition.type),
 			...(definition.type === "regionalGdpItl3"
 				? { measure: "gdp" }
 				: {}),
@@ -65,7 +67,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "publicHealth"
 				? { measure: "smoking" }
 				: {}),
-			...(definition.type === "claimantCount" ? { measure: "rate" } : {}),
 			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
 			...(definition.type === "schoolPerformance"
 				? { measure: "grade4" }

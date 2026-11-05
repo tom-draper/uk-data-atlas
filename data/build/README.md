@@ -36,7 +36,7 @@ per dataset in `CATALOGUE_DATASET_DEFINITIONS`, in catalogue order.
 
 | Field         | Meaning                                                                                                                     |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `type`        | The dataset's id in the catalogue, e.g. `claimantCount`.                                                                    |
+| `type`        | The dataset's id in the catalogue, e.g. `claimant-count`.                                                                   |
 | `output`      | Its payload file, `<output>.json` beside the manifest.                                                                      |
 | `source`      | Where the data comes from and its licence, from the definition.                                                             |
 | `contract`    | The ingestion contract the source was checked against.                                                                      |
