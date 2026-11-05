@@ -1,15 +1,12 @@
-import type {
-	DataCatalog,
-	Measure,
-	MeasureAggregation,
+import {
+	aggregationRule,
+	type AvailableWeightedAggregation,
+	type DataCatalog,
+	type Measure,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { statisticPhrase } from "./aggregation";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
-export type AvailableWeightedAggregation = Extract<
-	MeasureAggregation,
-	{ kind: "intensive" }
-> & { available: true };
+export type { AvailableWeightedAggregation };
 
 export type AggregationMeasure = {
 	dataCatalog: DataCatalog;
@@ -42,24 +39,13 @@ export const resolveAggregationMeasure = ({
 			"No published measure serves aggregation at that path.",
 		);
 	}
-	const weightedAggregation =
-		measure.aggregation.kind === "intensive" &&
-		measure.aggregation.operation === "weighted-mean" &&
-		measure.aggregation.available === true
-			? { ...measure.aggregation, available: true as const }
-			: undefined;
-	const usesSum =
-		measure.aggregation.kind === "extensive" &&
-		measure.aggregation.available;
-	if (!usesSum && !weightedAggregation) {
-		return problem(
-			422,
-			"Operation Not Supported",
-			measure.aggregation.kind === "non-aggregatable"
-				? `This measure is ${statisticPhrase(measure.aggregation.statistic)} and cannot be combined over areas. ${measure.aggregation.note}`
-				: "This measure is not available for aggregation.",
-			{ code: "aggregation_not_supported" },
-		);
+	const rule = aggregationRule(measure);
+	if (rule.kind === "unsupported") {
+		return problem(422, "Operation Not Supported", rule.detail, {
+			code: "aggregation_not_supported",
+		});
 	}
+	const weightedAggregation =
+		rule.kind === "weighted-mean" ? rule.weighted : undefined;
 	return { dataCatalog, measure, weightedAggregation };
 };
