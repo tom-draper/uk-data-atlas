@@ -38,7 +38,7 @@ it("serves datasets from rows with the compiled values", () => {
 		);
 		expect(fromRows.length).toBeGreaterThan(0);
 		const cached = cache.prepare(
-			"SELECT source_sha256, sha256, bytes, gzip FROM dataset_payloads WHERE output = ?",
+			"SELECT source_sha256, sha256, bytes, gzip FROM dataset_payload WHERE output = ?",
 		);
 		for (const row of fromRows) {
 			const output = String(row.output);

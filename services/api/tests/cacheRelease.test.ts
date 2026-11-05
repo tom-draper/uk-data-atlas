@@ -25,7 +25,7 @@ test("validates the cache against the canonical database", (context) => {
 	);
 	const cache = new DatabaseSync(join(directory, "atlas-cache.sqlite"));
 	cache.exec(
-		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE dataset_payloads (output TEXT, source_sha256 TEXT, sha256 TEXT, bytes INTEGER, gzip BLOB)",
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE dataset_payload (output TEXT, source_sha256 TEXT, sha256 TEXT, bytes INTEGER, gzip BLOB)",
 	);
 	cache.prepare("INSERT INTO meta VALUES (?, ?)").run(
 		"atlas-sqlite-content-hash",
@@ -34,12 +34,12 @@ test("validates the cache against the canonical database", (context) => {
 			.digest("hex")}`,
 	);
 	cache.exec(
-		"INSERT INTO dataset_payloads VALUES ('test', 'hash', 'generated-hash', 7, x'1f8b')",
+		"INSERT INTO dataset_payload VALUES ('test', 'hash', 'generated-hash', 7, x'1f8b')",
 	);
 	cache.close();
 	assert.doesNotThrow(() => validateCacheRelease(root));
 	const incomplete = new DatabaseSync(join(directory, "atlas-cache.sqlite"));
-	incomplete.exec("DELETE FROM dataset_payloads");
+	incomplete.exec("DELETE FROM dataset_payload");
 	incomplete.close();
 	assert.throws(
 		() => validateCacheRelease(root),
@@ -48,7 +48,7 @@ test("validates the cache against the canonical database", (context) => {
 	);
 	const legacy = new DatabaseSync(join(directory, "atlas-cache.sqlite"));
 	legacy.exec(
-		"DROP TABLE dataset_payloads; CREATE TABLE dataset_payloads (output TEXT, source_sha256 TEXT, sha256 TEXT, payload TEXT); INSERT INTO dataset_payloads VALUES ('test', 'hash', 'generated-hash', 'payload')",
+		"DROP TABLE dataset_payload; CREATE TABLE dataset_payload (output TEXT, source_sha256 TEXT, sha256 TEXT, payload TEXT); INSERT INTO dataset_payload VALUES ('test', 'hash', 'generated-hash', 'payload')",
 	);
 	legacy.close();
 	assert.throws(

@@ -10,6 +10,7 @@ export const LOCATION_PROJECTION_MEMBERS_VIEW = "SELECT crosswalk_id AS crosswal
 export const LOCATION_PROJECTION_PARENTS_VIEW = "SELECT crosswalk_id AS crosswalkId, key, value FROM location_projection_parent";
 export const LOCATION_PROJECTION_DICTIONARIES_VIEW = "SELECT kind, crosswalk_id AS crosswalkId, dictionary FROM location_projection_dictionary";
 export const CACHE_GENERATIONS_VIEW = "SELECT component, generation FROM cache_generation";
+export const DATASET_PAYLOADS_VIEW = "SELECT output, source_sha256, sha256, bytes, gzip FROM dataset_payload";
 export const DATASETS_VIEW = "SELECT type, output, source, contract, summary, fingerprint, sha256, bytes, payload_id AS payloadId FROM dataset_catalogue";
 
 /** Read-only aliases for database consumers using retired names. */

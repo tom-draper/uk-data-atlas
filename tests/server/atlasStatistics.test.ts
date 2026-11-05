@@ -277,7 +277,7 @@ describe("fuel poverty on the statistics model", () => {
 			const cache = new DatabaseSync(atlasCachePath(root));
 			try {
 				const rows = cache
-					.prepare("SELECT * FROM dataset_payloads")
+					.prepare("SELECT * FROM dataset_payload")
 					.all();
 				expect(rows).toEqual([
 					{
@@ -295,7 +295,7 @@ describe("fuel poverty on the statistics model", () => {
 				expect([...gzip.subarray(4, 8)]).toEqual([0, 0, 0, 0]);
 				stored = Buffer.from(gzip);
 				cache
-					.prepare("UPDATE dataset_payloads SET gzip = ?")
+					.prepare("UPDATE dataset_payload SET gzip = ?")
 					.run(gzipSync("cached"));
 			} finally {
 				cache.close();
@@ -312,7 +312,7 @@ describe("fuel poverty on the statistics model", () => {
 				expect(
 					Buffer.from(
 						rebuilt
-							.prepare("SELECT gzip FROM dataset_payloads")
+							.prepare("SELECT gzip FROM dataset_payload")
 							.get()!.gzip as Uint8Array,
 					).equals(stored!),
 				).toBe(true);
