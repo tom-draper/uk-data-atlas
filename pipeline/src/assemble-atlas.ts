@@ -15,7 +15,6 @@ import {
 	packText,
 	unpackText,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { createDeprecatedViews } from "./storage/deprecatedViews.ts";
 import { writePostcodeAreas } from "./storage/index.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
@@ -30,7 +29,6 @@ export function assembleAtlas(root: string) {
 	const components = [
 		join(directory, "atlas-base.sqlite"),
 		join(directory, "postcode-index.sqlite"),
-		join(directory, "website-assets.sqlite"),
 	] as const;
 	for (const component of components)
 		if (!existsSync(component))
@@ -52,9 +50,6 @@ export function assembleAtlas(root: string) {
 			database
 				.prepare("ATTACH DATABASE ? AS postcode_component")
 				.run(components[1]);
-			database
-				.prepare("ATTACH DATABASE ? AS website_component")
-				.run(components[2]);
 			database.exec(
 				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
@@ -86,14 +81,6 @@ export function assembleAtlas(root: string) {
 				readPostcodeAreaComponent(root, name),
 			);
 			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
-			database.exec(`CREATE TABLE IF NOT EXISTS website_asset (
-			kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL,
-			gzip BLOB NOT NULL, PRIMARY KEY (kind, id)
-		) WITHOUT ROWID`);
-			database.exec(
-				"INSERT INTO main.website_asset SELECT * FROM website_component.website_asset",
-			);
-			createDeprecatedViews(database);
 			database.exec("COMMIT; VACUUM");
 		} finally {
 			database.close();

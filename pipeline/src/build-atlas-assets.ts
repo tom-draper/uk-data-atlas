@@ -7,10 +7,16 @@ import {
 	ATLAS_LOOKUP_NAMES,
 	atlasAssetsDirectory,
 	buildLog,
+	websiteAssetsPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
+import { createDeprecatedViews } from "./storage/deprecatedViews.ts";
 
-/** Validate and stage release assets before assembling the database. */
+/**
+ * Validate the website's pages and lookups and write them to
+ * `website-assets.sqlite`. The file is the final home of `website_asset`: it
+ * is not merged into `atlas.sqlite`, which holds only what the API serves.
+ */
 export function buildAtlasAssets(root: string) {
 	const publicDirectory = atlasAssetsDirectory(root);
 	const assets: {
@@ -80,7 +86,7 @@ export function buildAtlasAssets(root: string) {
 			if (!ids.has(id))
 				throw new Error(`Missing atlas ${kind} asset ${id}`);
 	}
-	const path = join(root, "data/build/website-assets.sqlite");
+	const path = websiteAssetsPath(root);
 	const temporary = `${path}.${randomUUID()}.tmp`;
 	try {
 		const database = new DatabaseSync(temporary);
@@ -96,6 +102,7 @@ export function buildAtlasAssets(root: string) {
 			for (const asset of assets)
 				insert.run(asset.kind, asset.id, asset.sha256, asset.gzip);
 			database.exec("COMMIT");
+			createDeprecatedViews(database);
 		} finally {
 			database.close();
 		}
@@ -112,6 +119,6 @@ if (
 ) {
 	buildAtlasAssets(resolve(import.meta.dirname, "../.."));
 	buildLog.info(
-		"Staged website pages and lookups in data/build/website-assets.sqlite",
+		"Wrote website pages and lookups to data/build/website-assets.sqlite",
 	);
 }
