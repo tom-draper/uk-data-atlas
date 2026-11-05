@@ -639,8 +639,8 @@ export class LocationProjectionDatabase extends LocationProjections {
 		);
 		this.rows = {
 			members: this.database.lookup(
-				"location_projection_members",
-				["crosswalkId", "key"],
+				"location_projection_member",
+				["crosswalk_id", "key"],
 				"value",
 			),
 			parents: this.database.lookup(
