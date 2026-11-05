@@ -2,7 +2,6 @@ import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { CompiledMeasure } from "../catalog/manifest.ts";
 import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
-import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { bindCensusStatistics } from "./bindCensusStatistics.ts";
 import { bindStatisticsField } from "./bindStatisticsField.ts";
 import type { DatasetLookup } from "./declaredFieldSeries.ts";
@@ -23,7 +22,6 @@ export function measureStatisticsSelections(
 	measure: Measure,
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
-	ids?: MeasureDimensionsConfig["ids"],
 	lookup?: DatasetLookup,
 ): StatisticsSelection[] | undefined {
 	if (
@@ -133,7 +131,7 @@ export function measureStatisticsSelections(
 			return undefined;
 		return selection;
 	}
-	const census = ids && bindCensusStatistics(database, measure, ids, true);
+	const census = bindCensusStatistics(database, measure, true);
 	if (census) {
 		const datasets = new Set(census.map((selection) => selection.dataset));
 		const remainingSources = measure.sources.filter(

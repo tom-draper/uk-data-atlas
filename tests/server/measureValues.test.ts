@@ -152,7 +152,7 @@ describe("measure values and dimensions", () => {
 	it("takes the total for a dimension left out", () => {
 		const result = values({ measure: "households" });
 		expect(result.series).toEqual({
-			id: "households-total",
+			id: '["households",[["tenure","total"]],null]',
 			dimensions: { tenure: "total" },
 		});
 		expect(column(result, "2021").values).toEqual([40, 120]);
@@ -163,7 +163,9 @@ describe("measure values and dimensions", () => {
 			measure: "households",
 			dimensions: { tenure: ["rented"] },
 		});
-		expect(result.series.id).toBe("households-rented");
+		expect(result.series.id).toBe(
+			'["households",[["tenure","rented"]],null]',
+		);
 		expect(column(result, "2021").values).toEqual([15, 50]);
 		expect(result.measure.dimensions).toEqual([
 			{
@@ -183,6 +185,14 @@ describe("measure values and dimensions", () => {
 		const result = values({ measure: "households-owned" });
 		expect(result.measure.id).toBe("households");
 		expect(column(result, "2021").values).toEqual([25, 70]);
+	});
+
+	it("reads a canonical series key as its measure and members", () => {
+		const result = values({
+			measure: '["households",[["tenure","owned"]],null]',
+		});
+		expect(result.measure.id).toBe("households");
+		expect(result.series.dimensions).toEqual({ tenure: "owned" });
 	});
 
 	it("refuses a series id filtered off its own member", () => {

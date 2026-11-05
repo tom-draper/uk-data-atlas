@@ -88,10 +88,10 @@ export const describeMeasure = (
 				...(!single && catalogued.uncertainty
 					? { uncertainty: catalogued.uncertainty }
 					: {}),
-				...(documents?.has(`measure-${series.id}`)
+				...(documents?.has(`measure-${series.catalogueMeasure.id}`)
 					? {
 							documents: {
-								evidence: `/v1/documents/measure-${series.id}.json`,
+								evidence: `/v1/documents/measure-${series.catalogueMeasure.id}.json`,
 							},
 						}
 					: {}),

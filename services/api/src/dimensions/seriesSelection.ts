@@ -20,7 +20,6 @@ import type {
 	DimensionalMeasure,
 	Series,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { retiredMeasure } from "./retiredMeasure";
 
 /**
  * How a measure, and the dimension filters that go with it, are read as one
@@ -140,8 +139,7 @@ export type MeasureTerm =
 	  };
 
 /**
- * Read a measure id or alias. An old encoded series id is refused with the
- * measure and members that replace it; a reviewed human alias is accepted.
+ * Read a measure id or reviewed human alias, refusing old encoded series ids.
  */
 export const readMeasureTerm = (
 	dataCatalog: DataCatalog,
@@ -151,17 +149,23 @@ export const readMeasureTerm = (
 	const catalogueId = canonicalMeasureId(dataCatalog, term);
 	const named = catalogue.measure(term);
 	const aliased =
-		!named && catalogueId ? catalogue.series(catalogueId) : undefined;
+		!named && catalogueId
+			? catalogue.catalogueSeries(catalogueId)
+			: undefined;
 	const measure = named ?? aliased?.measure;
 	if (!measure) return { kind: "unknown" };
 	if (
 		aliased &&
 		(catalogueId === term || measureSlug(term) === catalogueId) &&
-		aliased.series.id !== measure.id
+		aliased.series.catalogueMeasure.id !== measure.id
 	)
 		return {
 			kind: "problem",
-			response: retiredMeasure(term, measure, aliased.series),
+			response: problem(
+				404,
+				"Not Found",
+				"No published measure matches that id.",
+			),
 		};
 	return { kind: "measure", measure, ...(aliased ? { aliased } : {}) };
 };

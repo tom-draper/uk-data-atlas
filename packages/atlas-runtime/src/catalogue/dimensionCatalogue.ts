@@ -1,5 +1,6 @@
 import {
 	totalMember,
+	measureSeriesKey,
 	type DataCatalog,
 	type DimensionMemberDefinition,
 	type Measure,
@@ -30,7 +31,7 @@ export type Dimension = {
 };
 
 export type Series = {
-	/** The internal catalogue series id. */
+	/** Canonical identity of the measure, members and optional dataset. */
 	id: string;
 	catalogueMeasure: Measure;
 	dimensions: Record<string, string>;
@@ -51,8 +52,12 @@ export type DimensionalMeasure = {
 export type DimensionCatalogue = {
 	measures: DimensionalMeasure[];
 	measure: (id: string) => DimensionalMeasure | undefined;
-	/** The measure and series a catalogue measure id names. */
+	/** The measure and series a canonical series key names. */
 	series: (
+		key: string,
+	) => { measure: DimensionalMeasure; series: Series } | undefined;
+	/** The measure and series a legacy catalogue measure id names. */
+	catalogueSeries: (
 		catalogueId: string,
 	) => { measure: DimensionalMeasure; series: Series } | undefined;
 	/** Every dimension id, which is also its query parameter name. */
@@ -100,7 +105,7 @@ export const dimensionCatalogue = (
 		const mapping = config.ids[measure.id];
 		if (!mapping) continue;
 		const series: Series = {
-			id: measure.id,
+			id: measureSeriesKey(mapping),
 			catalogueMeasure: measure,
 			dimensions: mapping.dimensions ?? {},
 			...(mapping.datasetId ? { datasetId: mapping.datasetId } : {}),
@@ -156,10 +161,19 @@ export const dimensionCatalogue = (
 			),
 		),
 	);
+	const catalogueSeriesIndex = new Map(
+		measures.flatMap((measure) =>
+			measure.series.map(
+				(series) =>
+					[series.catalogueMeasure.id, { measure, series }] as const,
+			),
+		),
+	);
 	const built: DimensionCatalogue = {
 		measures,
 		measure: (id) => measureIndex.get(id),
-		series: (catalogueId) => seriesIndex.get(catalogueId),
+		series: (key) => seriesIndex.get(key),
+		catalogueSeries: (catalogueId) => catalogueSeriesIndex.get(catalogueId),
 		dimensionIds: new Set(
 			measures.flatMap((measure) =>
 				measure.dimensions.map((dimension) => dimension.id),
@@ -240,7 +254,7 @@ export const publicSeries = (
 	const found = dimensionCatalogue(
 		catalog,
 		dimensions ?? identityDimensions(catalog),
-	).series(id);
+	).catalogueSeries(id);
 	return found
 		? { id: found.measure.id, dimensions: found.series.dimensions }
 		: { id, dimensions: {} };

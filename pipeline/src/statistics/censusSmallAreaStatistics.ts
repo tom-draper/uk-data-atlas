@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	STATISTICS_DATASETS,
-	readMeasureDimensionsMapping,
 	type AreaIndex,
 	type StatisticsDataset,
 	type StatisticsDimension,
@@ -21,8 +20,8 @@ import {
 
 /**
  * The census small-area tables as statistics rows: one dataset per table,
- * one series per category and geography, named by the measure and members
- * the API's measure mapping gives each category's measure id.
+ * one series per category and geography, using the measure and members
+ * declared by each table.
  *
  * Measures, and dimensions whose members another dataset declares in full,
  * are those datasets' own, so these datasets must follow the declared ones.
@@ -292,7 +291,6 @@ export function censusSmallAreaStatistics(
 	tables: readonly CensusTable[] = CENSUS_SMALL_AREA_TABLES,
 ): StatisticsInput[] {
 	if (tables.length === 0) return [];
-	const config = readMeasureDimensionsMapping(repositoryRoot);
 	const stored = declared();
 	const period = census2021();
 	return tables.map((table) => (areas: AreaIndex): StatisticsDataset => {
@@ -316,17 +314,16 @@ export function censusSmallAreaStatistics(
 		const fingerprint = createHash("sha256");
 		for (const { path } of files) fingerprint.update(readFileSync(path));
 
-		const columns = table.categories.map(([suffix]) => {
-			const id = `${table.measurePrefix}-${suffix}`;
-			const mapping = config.ids[id];
-			if (!mapping)
-				throw new Error(`${slug}: ${id} has no measure mapping`);
-			const measure = stored.measures.get(mapping.measure);
+		const columns = table.categories.map(([suffix, , , member]) => {
+			const measure = stored.measures.get(table.measure);
 			if (!measure)
 				throw new Error(
-					`${slug}: ${mapping.measure} is not a stored measure`,
+					`${slug}: ${table.measure} is not a stored measure`,
 				);
-			return { measure, members: mapping.dimensions ?? {} };
+			return {
+				measure,
+				members: { [table.dimension]: member ?? suffix },
+			};
 		});
 
 		const dimensions: StatisticsDimension[] = [];
