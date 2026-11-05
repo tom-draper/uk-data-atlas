@@ -1,4 +1,4 @@
-import { PLACE_INDEX_PLACES_VIEW } from "./deprecatedViews.ts";
+import { PLACE_INDEX_NAMES_VIEW, PLACE_INDEX_PLACES_VIEW } from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { compareCodeUnits, packPositions } from "@uk-data-atlas/search-index";
 import {
@@ -78,7 +78,8 @@ export const placeIndexTables = (
 			],
 			rows: index.places.map((place) => placeColumns(place, geographyAt)),
 		},
-		place_index_names: {
+		place_index_name: {
+			views: { place_index_names: PLACE_INDEX_NAMES_VIEW },
 			columns: ["name TEXT", "labels"],
 			rows: index.names.map((name, at) => [
 				name,
