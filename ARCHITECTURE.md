@@ -97,6 +97,16 @@ and passes dataset URLs containing their payload SHA-256 to the browser. Its
 immutable caching and negotiated gzip compression. Neither product fetches
 catalogue datasets from the other product.
 
+The Next.js server also answers measure queries at `/data/measures/<measure>`.
+It runs the shared `queryMeasureValues` (`packages/atlas-runtime/src/catalogue/measureValues.ts`),
+the function the API's series selection and aggregation rules also use, over the
+same statistics rows, and returns columns of values per area and period with the
+measure's value kind, unit and dimensions. It reads `data-catalog.json`,
+`statistics-read-path.json`, `statistics-vocabulary.json` and the reviewed
+`services/api/config/measure-dimensions.json` next to `atlas.sqlite`, so a
+website deployment ships those with the database. See
+[docs/website-measure-queries.md](docs/website-measure-queries.md).
+
 The website data build reads `data/build/datasets/` when cutting regional chunks,
 without copying the catalogue payloads. `public/data/datasets/` retains
 gazetteer, road-safety, chunk and SEO assets and the website build manifest.
