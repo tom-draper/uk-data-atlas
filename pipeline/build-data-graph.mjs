@@ -479,6 +479,7 @@ const stage = (
 		requiredOutputs = [],
 		codeInputs = [],
 		rawInputs,
+		shared = [],
 		writes = [],
 	} = {},
 ) => ({
@@ -492,6 +493,7 @@ const stage = (
 	requiredOutputs,
 	codeInputs,
 	rawInputs: rawInputs ?? defaultRawInputs[name],
+	shared,
 	writes,
 });
 
