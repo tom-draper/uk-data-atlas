@@ -1056,7 +1056,12 @@ const websiteStages = [
 	),
 	stage(
 		"website-datasets",
-		["atlas-sqlite", "assemble-atlas", "website-tiles"],
+		[
+			"atlas-sqlite",
+			"assemble-atlas",
+			"website-tiles",
+			"website-lookups",
+		],
 		[
 			"--import",
 			"tsx",
