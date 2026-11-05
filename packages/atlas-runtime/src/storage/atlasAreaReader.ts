@@ -10,7 +10,7 @@ export const readSqliteAreaInventory = (
 	try {
 		const header = database
 			.prepare(
-				"SELECT schemaVersion, contentHash, boundaryRegistryHash FROM area_inventory",
+				"SELECT schema_version AS schemaVersion, content_hash AS contentHash, boundary_registry_hash AS boundaryRegistryHash FROM area_inventory_metadata",
 			)
 			.get();
 		if (!header || header.schemaVersion !== 1)

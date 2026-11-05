@@ -86,8 +86,8 @@ function cacheFixture() {
 	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
 	canonical.exec(
 		[
-			"CREATE TABLE area_inventory (contentHash TEXT)",
-			"INSERT INTO area_inventory VALUES ('areas-1')",
+			"CREATE TABLE area_inventory_metadata (content_hash TEXT)",
+			"INSERT INTO area_inventory_metadata VALUES ('areas-1')",
 			"CREATE TABLE named_location_inventory_metadata (content_hash TEXT)",
 			"INSERT INTO named_location_inventory_metadata VALUES ('locations-1')",
 			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT)",
@@ -156,7 +156,7 @@ test("a stamp's generation changes when the canonical inputs do", () => {
 	const { root, place } = cacheFixture();
 	const first = place([["Leeds"]]);
 	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
-	canonical.exec("UPDATE area_inventory SET contentHash = 'areas-2'");
+	canonical.exec("UPDATE area_inventory_metadata SET content_hash = 'areas-2'");
 	canonical.close();
 	const second = place([["Leeds"]]);
 	assert.equal(second.content, first.content);

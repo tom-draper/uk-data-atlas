@@ -24,7 +24,7 @@ function fixture(t: { onTestFinished: (fn: () => void) => void }) {
 	const canonical = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(canonical);
 	database.exec(
-		"CREATE TABLE area_inventory (contentHash TEXT); INSERT INTO area_inventory VALUES ('first'); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT)",
+		"CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('first'); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT)",
 	);
 	database.close();
 	return { root, canonical, apiRoot: join(root, "services/api") };
@@ -43,7 +43,7 @@ test("cache publication leaves canonical bytes unchanged and detects missing and
 	assert.equal(requireAtlasCache(root, "area-search"), atlasCachePath(root));
 	assert.deepEqual(readFileSync(canonical), before);
 	const database = new DatabaseSync(canonical);
-	database.exec("UPDATE area_inventory SET contentHash = 'second'");
+	database.exec("UPDATE area_inventory_metadata SET content_hash = 'second'");
 	database.close();
 	assert.throws(
 		() => requireAtlasCache(root, "area-search"),
