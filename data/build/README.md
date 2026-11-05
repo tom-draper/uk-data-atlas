@@ -310,8 +310,9 @@ All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/c
 | `candidacy`         | `(contest_id, position)`                                                 | The candidate a contest elected: given name, family name and gender. `v_candidacy` adds the party's votes and share.                                                                                                                                                           |
 
 `observation.area_version_id` references `area_version(id)`, one row per
-release and code. `observation` is indexed by `(area_version_id, series_id, period_id)` for
-place queries (`observation_area`); `series` by `(dataset_id, measure_id)`
+release and code. `observation` has no secondary index: its primary key serves
+series reads, and a place read passes the series of the area's release
+(`WHERE series_id IN (...) AND area_version_id = ?`). `series` is indexed by `(dataset_id, measure_id)`
 (`series_dataset`) and `series_member` by `(member_id, series_id)`
 (`series_member_member`). The build fails if an observation's area is not in its series'
 release, if an observed value is null, or if a dataset's `verify` hook fails.
