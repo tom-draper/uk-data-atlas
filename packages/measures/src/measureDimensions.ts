@@ -105,11 +105,12 @@ export const totalMember = (members: DimensionMemberDefinition[]) => {
 	return roots.size === 1 && members.length > 1 ? [...roots][0] : undefined;
 };
 
-const key = (mapping: MeasureIdMapping) =>
+/** Stable identity for a measure, its fixed members and optional dataset. */
+export const measureSeriesKey = (mapping: MeasureIdMapping) =>
 	JSON.stringify([
 		mapping.measure,
 		Object.entries(mapping.dimensions ?? {}).sort(([left], [right]) =>
-			left.localeCompare(right),
+			left < right ? -1 : left > right ? 1 : 0,
 		),
 		mapping.datasetId ?? null,
 	]);
@@ -203,7 +204,7 @@ export const measureDimensionProblems = (
 			problems.push(
 				`${id} names dataset ${mapping.datasetId}, which none of its sources is from.`,
 			);
-		const identity = key(mapping);
+		const identity = measureSeriesKey(mapping);
 		const other = seen.get(identity);
 		if (other)
 			problems.push(

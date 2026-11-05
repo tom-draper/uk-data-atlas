@@ -166,7 +166,7 @@ export const resolveDimensionRequest = (
 		const next = new URL(parsed);
 		for (const name of names) next.searchParams.delete(name);
 		const path = [...segments];
-		path[position.index] = series.id;
+		path[position.index] = series.catalogueMeasure.id;
 		next.pathname = `/${path
 			.map((segment) =>
 				encodeURIComponent(segment).replaceAll("%3A", ":"),

@@ -138,7 +138,7 @@ export type MeasureValuesMeasure = {
 export type MeasureValues = {
 	ok: true;
 	measure: MeasureValuesMeasure;
-	/** The series read: its catalogue id and the member of each dimension. */
+	/** The series read: its canonical key and the member of each dimension. */
 	series: { id: string; dimensions: Record<string, string> };
 	source: {
 		datasetId: string;
