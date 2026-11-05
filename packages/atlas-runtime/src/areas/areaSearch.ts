@@ -333,7 +333,7 @@ export const openAreaSearchIndexDatabase = (
 	const mismatch = headerMismatch(header, areaInventoryHash);
 	if (mismatch)
 		throw new Error(`The area search index at ${path} ${mismatch}.`);
-	const codes = database.table("codes");
+	const codes = database.table("code");
 	const terms = database.table("terms");
 	const titleTerms = database.table("title_terms");
 	let offset = 0;

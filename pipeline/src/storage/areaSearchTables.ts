@@ -1,3 +1,4 @@
+import { AREA_SEARCH_CODES_VIEW } from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { packPositions } from "@uk-data-atlas/search-index";
 import type { AreaSearchIndexArtifact } from "@uk-data-atlas/atlas-runtime/areas";
@@ -23,7 +24,8 @@ export const areaSearchIndexTables = (
 			),
 		}),
 	},
-	area_search_codes: {
+	area_search_code: {
+		views: { area_search_codes: AREA_SEARCH_CODES_VIEW },
 		columns: ["code TEXT"],
 		rows: index.releases.flatMap((release) =>
 			release.codes.map((code) => [code]),
