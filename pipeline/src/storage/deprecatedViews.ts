@@ -1,6 +1,7 @@
 import type { DatabaseSync } from "node:sqlite";
 
 export const PLACE_INDEX_PLACES_VIEW = "SELECT * FROM place_index_place";
+export const PLACE_INDEX_NAMES_VIEW = "SELECT * FROM place_index_name";
 export const DATASETS_VIEW = "SELECT type, output, source, contract, summary, fingerprint, sha256, bytes, payload_id AS payloadId FROM dataset_catalogue";
 
 /** Read-only aliases for database consumers using retired names. */
