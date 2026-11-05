@@ -85,13 +85,13 @@ export function buildAtlasAssets(root: string) {
 	try {
 		const database = new DatabaseSync(temporary);
 		try {
-			database.exec(`CREATE TABLE website_assets (
+			database.exec(`CREATE TABLE website_asset (
 				kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL,
 				gzip BLOB NOT NULL, PRIMARY KEY (kind, id)
 			) WITHOUT ROWID`);
 			database.exec("BEGIN");
 			const insert = database.prepare(
-				"INSERT INTO website_assets VALUES (?, ?, ?, ?)",
+				"INSERT INTO website_asset VALUES (?, ?, ?, ?)",
 			);
 			for (const asset of assets)
 				insert.run(asset.kind, asset.id, asset.sha256, asset.gzip);

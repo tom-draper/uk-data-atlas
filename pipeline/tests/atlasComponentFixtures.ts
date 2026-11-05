@@ -21,7 +21,7 @@ export function writeEmptyWebsiteComponent(root: string) {
 		join(root, "data/build/website-assets.sqlite"),
 	);
 	database.exec(
-		"CREATE TABLE website_assets (kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL, gzip BLOB NOT NULL, PRIMARY KEY (kind, id)) WITHOUT ROWID",
+		"CREATE TABLE website_asset (kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL, gzip BLOB NOT NULL, PRIMARY KEY (kind, id)) WITHOUT ROWID",
 	);
 	database.close();
 }

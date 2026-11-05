@@ -15,6 +15,7 @@ import {
 	packText,
 	unpackText,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { createDeprecatedViews } from "./storage/deprecatedViews.ts";
 import { writePostcodeAreas } from "./storage/index.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
@@ -85,13 +86,14 @@ export function assembleAtlas(root: string) {
 				readPostcodeAreaComponent(root, name),
 			);
 			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
-			database.exec(`CREATE TABLE IF NOT EXISTS website_assets (
+			database.exec(`CREATE TABLE IF NOT EXISTS website_asset (
 			kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL,
 			gzip BLOB NOT NULL, PRIMARY KEY (kind, id)
 		) WITHOUT ROWID`);
 			database.exec(
-				"INSERT INTO main.website_assets SELECT * FROM website_component.website_assets",
+				"INSERT INTO main.website_asset SELECT * FROM website_component.website_asset",
 			);
+			createDeprecatedViews(database);
 			database.exec("COMMIT; VACUUM");
 		} finally {
 			database.close();

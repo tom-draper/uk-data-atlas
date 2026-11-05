@@ -140,6 +140,9 @@ describe("SQLite website assets", () => {
 			{ readOnly: true },
 		);
 		try {
+			expect(database.prepare("SELECT count(*) AS n FROM website_assets").get()).toEqual(
+				database.prepare("SELECT count(*) AS n FROM website_asset").get(),
+			);
 			expect(
 				database
 					.prepare(

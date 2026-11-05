@@ -109,7 +109,7 @@ export function readAtlasAsset(root: string, kind: AtlasAssetKind, id: string) {
 	try {
 		const row = database
 			.prepare(
-				"SELECT sha256, gzip FROM website_assets WHERE kind = ? AND id = ?",
+				"SELECT sha256, gzip FROM website_asset WHERE kind = ? AND id = ?",
 			)
 			.get(kind, id);
 		if (!row) return undefined;
