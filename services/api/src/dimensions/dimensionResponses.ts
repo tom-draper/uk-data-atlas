@@ -24,7 +24,7 @@ const rewriteLink = (
 	reading: DimensionReading,
 ) => {
 	const data = new RegExp(
-		`/v1/data/${series.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[/?#"]|$)(/[A-Za-z:]+)?(\\?[^\\s"#]*)?`,
+		`/v1/data/${series.catalogueMeasure.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[/?#"]|$)(/[A-Za-z:]+)?(\\?[^\\s"#]*)?`,
 		"g",
 	);
 	const rewritten = text.replace(
@@ -40,7 +40,7 @@ const rewriteLink = (
 		},
 	);
 	return rewritten.replaceAll(
-		`/v1/measures/${series.id}`,
+		`/v1/measures/${series.catalogueMeasure.id}`,
 		`/v1/measures/${reading.measure.id}`,
 	);
 };
@@ -53,7 +53,7 @@ const restate = (
 	key?: string,
 ): unknown => {
 	if (typeof value === "string")
-		return series.id === reading.measure.id &&
+		return series.catalogueMeasure.id === reading.measure.id &&
 			Object.keys(series.dimensions).length === 0 &&
 			!series.datasetId
 			? value
@@ -65,14 +65,14 @@ const restate = (
 	for (const [name, item] of Object.entries(value)) {
 		if (
 			(name === "measureId" || name === "measure") &&
-			item === series.id
+			item === series.catalogueMeasure.id
 		) {
 			restated[name] = reading.measure.id;
 			continue;
 		}
 		restated[name] = restate(item, series, reading, name);
 	}
-	if (key === "measure" && value.id === series.id) {
+	if (key === "measure" && value.id === series.catalogueMeasure.id) {
 		restated.id = reading.measure.id;
 		if (typeof value.label === "string") {
 			restated.label = reading.measure.label;
@@ -94,7 +94,7 @@ const restateTerms = (
 			.join("");
 		return value.replace(
 			new RegExp(
-				`measure=${series.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w-])`,
+				`measure=${series.catalogueMeasure.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w-])`,
 				"g",
 			),
 			() => `measure=${measure.id}${members}`,

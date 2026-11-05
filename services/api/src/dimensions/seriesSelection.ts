@@ -155,7 +155,7 @@ export const readMeasureTerm = (
 	if (
 		aliased &&
 		(catalogueId === term || measureSlug(term) === catalogueId) &&
-		aliased.series.id !== measure.id
+		aliased.series.catalogueMeasure.id !== measure.id
 	)
 		return {
 			kind: "problem",
