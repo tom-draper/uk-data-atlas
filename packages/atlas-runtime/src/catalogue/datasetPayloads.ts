@@ -106,7 +106,7 @@ const readCached = (
 	try {
 		const row = cache
 			.prepare(
-				"SELECT sha256, bytes, gzip FROM dataset_payloads WHERE output = ? AND source_sha256 = ?",
+				"SELECT sha256, bytes, gzip FROM dataset_payload WHERE output = ? AND source_sha256 = ?",
 			)
 			.get(output, sourceSha256);
 		return typeof row?.sha256 === "string" &&

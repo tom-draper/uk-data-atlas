@@ -50,7 +50,7 @@ export function readAtlasDatasetUrls(
 			try {
 				for (const row of cache
 					.prepare(
-						"SELECT output, source_sha256, sha256 FROM dataset_payloads",
+						"SELECT output, source_sha256, sha256 FROM dataset_payload",
 					)
 					.all())
 					cached.set(String(row.output), {

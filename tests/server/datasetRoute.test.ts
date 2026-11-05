@@ -41,7 +41,7 @@ function cacheSample() {
 	database.close();
 	const cache = new DatabaseSync(atlasCachePath(root));
 	cache
-		.prepare("INSERT INTO dataset_payloads VALUES (?, ?, ?, ?, ?)")
+		.prepare("INSERT INTO dataset_payload VALUES (?, ?, ?, ?, ?)")
 		.run("sample", "source", sha256, Buffer.byteLength(payload), stored);
 	cache.close();
 }
