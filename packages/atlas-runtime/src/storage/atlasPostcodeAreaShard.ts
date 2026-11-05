@@ -1,4 +1,5 @@
 import type { SqlReader } from "./readOnlyDatabase.ts";
+import { unpackText } from "./storedPayload.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { postcodeDistrictWhere } from "./atlasPostcodeShard.ts";
 import {
@@ -78,13 +79,13 @@ export function readPostcodeAreaShard(
 	const entry = artifact.shards.find((e) => e.path === path);
 	if (!entry) throw new Error(`Missing postcode area shard ${path}`);
 	const index: PostcodeIndexArtifact = JSON.parse(
-		String(
+		unpackText(
 			database
 				.prepare(
 					"SELECT payload FROM payloads WHERE id = 'postcode-index'",
 				)
 				.get()!.payload,
-		),
+		)!,
 	);
 	const rows = database
 		.prepare(

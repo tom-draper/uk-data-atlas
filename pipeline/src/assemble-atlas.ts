@@ -12,6 +12,8 @@ import { fileURLToPath } from "node:url";
 import {
 	artifactDirectory,
 	closeReadOnlyDatabase,
+	packText,
+	unpackText,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { writePostcodeAreas } from "./storage/index.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
@@ -55,11 +57,12 @@ export function assembleAtlas(root: string) {
 			database.exec(
 				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
-			const insertPayload = database.prepare(
+			const insertStored = database.prepare(
 				"INSERT OR REPLACE INTO payloads (id, payload) VALUES (?, ?)",
 			);
-			for (const { id, payload } of payloads)
-				insertPayload.run(id, payload);
+			const insertPayload = (id: string, text: string) =>
+				insertStored.run(id, packText(text));
+			for (const { id, payload } of payloads) insertPayload(id, payload);
 			const postcode = database
 				.prepare(
 					"SELECT payload FROM postcode_component.payloads WHERE id = 'postcode-index'",
@@ -76,12 +79,12 @@ export function assembleAtlas(root: string) {
 			database.exec(
 				"INSERT INTO main.postcodes SELECT * FROM postcode_component.postcodes",
 			);
-			insertPayload.run("postcode-index", postcode.payload!);
+			insertPayload("postcode-index", unpackText(postcode.payload)!);
 			database.exec("COMMIT; PRAGMA foreign_keys = ON; BEGIN");
 			writePostcodeAreas(database, postcodeAreas, (name) =>
 				readPostcodeAreaComponent(root, name),
 			);
-			insertPayload.run("postcode-areas", JSON.stringify(postcodeAreas));
+			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
 			database.exec(`CREATE TABLE IF NOT EXISTS website_assets (
 			kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL,
 			gzip BLOB NOT NULL, PRIMARY KEY (kind, id)

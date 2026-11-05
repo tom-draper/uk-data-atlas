@@ -209,6 +209,25 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 		storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
 	assembleAtlas(root);
 	assert.equal(readAtlasPayload(root, "existing"), "retained");
+	// Assembled payloads are stored compressed and read back as the text.
+	const assembled = new DatabaseSync(path, { readOnly: true });
+	assert.deepEqual(
+		assembled
+			.prepare(
+				"SELECT id, typeof(payload) AS type FROM payloads WHERE id LIKE 'postcode-%' ORDER BY id",
+			)
+			.all()
+			.map((row) => ({ ...row })),
+		[
+			{ id: "postcode-areas", type: "blob" },
+			{ id: "postcode-index", type: "blob" },
+		],
+	);
+	assembled.close();
+	assert.equal(
+		JSON.parse(readAtlasPayload(root, "postcode-index")).contentHash,
+		compiled.artifact.postcodeIndex,
+	);
 	assert.equal(
 		existsSync(
 			join(

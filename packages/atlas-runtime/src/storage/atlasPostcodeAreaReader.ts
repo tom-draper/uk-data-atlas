@@ -6,6 +6,7 @@ import {
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import { atlasDatabasePath } from "./dataLayout.ts";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
+import { unpackText } from "./storedPayload.ts";
 
 export function readSqlitePostcodeAreas(
 	repositoryRoot: string,
@@ -21,13 +22,13 @@ export function readSqlitePostcodeAreaShard(
 	try {
 		requirePostcodeAreaLayout(database);
 		const artifact: PostcodeAreasArtifact = JSON.parse(
-			String(
+			unpackText(
 				database
 					.prepare(
 						"SELECT payload FROM payloads WHERE id = 'postcode-areas'",
 					)
 					.get()!.payload,
-			),
+			)!,
 		);
 		return readPostcodeAreaShard(database, artifact, path);
 	} finally {

@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, statSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
 
 const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
 const cacheTable = (name: string) =>
@@ -83,15 +84,19 @@ export function compareAtlasCache(beforePath: string, apiRoot: string) {
 			.all()) {
 			const id = String(row.id);
 			const destination = cachePayloads.has(id) ? cache : canonical;
-			const next = destination
-				.prepare("SELECT payload FROM payloads WHERE id = ?")
-				.get(id)?.payload;
+			// The canonical database stores payloads compressed.
+			const next = unpackText(
+				destination
+					.prepare("SELECT payload FROM payloads WHERE id = ?")
+					.get(id)?.payload,
+			);
+			const previous = unpackText(row.payload);
 			const matches =
 				id === "location-projection-inventory"
 					? typeof next === "string" &&
-						JSON.stringify(JSON.parse(String(row.payload))) ===
+						JSON.stringify(JSON.parse(String(previous))) ===
 							JSON.stringify(JSON.parse(next))
-					: row.payload === next;
+					: previous === next;
 			comparisons.push({ name: `payload:${id}`, rows: 1, matches });
 			if (cachePayloads.has(id))
 				assert.equal(

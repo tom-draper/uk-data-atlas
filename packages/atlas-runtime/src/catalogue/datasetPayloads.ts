@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { atlasCachePath } from "../storage/atlasCache.ts";
+import { unpackText } from "../storage/storedPayload.ts";
 import {
 	openReadOnlyDatabase,
 	type SqlReader,
@@ -175,10 +176,12 @@ export function readDatasetPayloadWithHash(
 			.get(output);
 		if (!row) return undefined;
 		if (typeof row.payloadId === "string") {
-			const stored = database
-				.prepare("SELECT payload FROM payloads WHERE id = ?")
-				.get(row.payloadId)?.payload;
-			if (typeof stored !== "string")
+			const stored = unpackText(
+				database
+					.prepare("SELECT payload FROM payloads WHERE id = ?")
+					.get(row.payloadId)?.payload,
+			);
+			if (stored === undefined)
 				throw new Error(`Missing payload ${row.payloadId} at ${path}`);
 			return { payload: stored, sha256: String(row.sha256) };
 		}
