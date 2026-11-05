@@ -644,8 +644,8 @@ export class LocationProjectionDatabase extends LocationProjections {
 				"value",
 			),
 			parents: this.database.lookup(
-				"location_projection_parents",
-				["crosswalkId", "key"],
+				"location_projection_parent",
+				["crosswalk_id", "key"],
 				"value",
 			),
 		};

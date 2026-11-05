@@ -1,4 +1,4 @@
-import { LOCATION_PROJECTION_MEMBERS_VIEW } from "./deprecatedViews.ts";
+import { LOCATION_PROJECTION_MEMBERS_VIEW, LOCATION_PROJECTION_PARENTS_VIEW } from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { deflateRawSync } from "node:zlib";
 import {
@@ -106,13 +106,14 @@ export const locationProjectionTables = ({
 			key: ["crosswalk_id", "key"],
 			rows: rows("members"),
 		},
-		location_projection_parents: {
+		location_projection_parent: {
+			views: { location_projection_parents: LOCATION_PROJECTION_PARENTS_VIEW },
 			columns: [
-				"crosswalkId TEXT NOT NULL",
+				"crosswalk_id TEXT NOT NULL",
 				"key TEXT NOT NULL",
 				"value BLOB NOT NULL",
 			],
-			key: ["crosswalkId", "key"],
+			key: ["crosswalk_id", "key"],
 			rows: rows("parents"),
 		},
 	} satisfies Record<string, SqliteTable>;
