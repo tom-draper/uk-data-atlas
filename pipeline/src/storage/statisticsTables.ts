@@ -417,12 +417,6 @@ export function statisticsTables(
 			constraints: [
 				"CHECK (value IS NOT NULL OR category_id IS NOT NULL OR status_id <> 1)",
 			],
-			indexes: [
-				{
-					name: "observation_area",
-					columns: ["area_version_id", "series_id", "period_id"],
-				},
-			],
 			rows: rows(function* (
 				{ datasets, seriesIds, periods, category },
 				database,

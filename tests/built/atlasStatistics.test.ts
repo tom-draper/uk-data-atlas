@@ -159,8 +159,6 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 				// dbstat is a compile-time option; totals below still apply.
 			}
 			const after = statSync(path).size;
-			database.exec("DROP INDEX observation_area; VACUUM;");
-			const withoutAreaIndex = statSync(path).size;
 			database.exec(
 				`DROP VIEW v_observation; ${statisticsTableNames
 					.map((table) => `DROP TABLE ${table};`)
@@ -175,7 +173,6 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 					before,
 					after,
 					delta: after - before,
-					areaIndexBytes: after - withoutAreaIndex,
 					observations: 33755 * 3,
 					bytesPerObservation: (after - before) / (33755 * 3),
 					publisherNames,
