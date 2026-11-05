@@ -1,4 +1,4 @@
-import { LOCATION_PROJECTION_MEMBERS_VIEW, LOCATION_PROJECTION_PARENTS_VIEW } from "./deprecatedViews.ts";
+import { LOCATION_PROJECTION_DICTIONARIES_VIEW, LOCATION_PROJECTION_MEMBERS_VIEW, LOCATION_PROJECTION_PARENTS_VIEW } from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { deflateRawSync } from "node:zlib";
 import {
@@ -83,13 +83,14 @@ export const locationProjectionTables = ({
 				]),
 			);
 	return {
-		location_projection_dictionaries: {
+		location_projection_dictionary: {
+			views: { location_projection_dictionaries: LOCATION_PROJECTION_DICTIONARIES_VIEW },
 			columns: [
 				"kind TEXT NOT NULL",
-				"crosswalkId TEXT NOT NULL",
+				"crosswalk_id TEXT NOT NULL",
 				"dictionary BLOB NOT NULL",
 			],
-			key: ["kind", "crosswalkId"],
+			key: ["kind", "crosswalk_id"],
 			rows: shards.map(({ table, crosswalkId, dictionary }) => [
 				table,
 				crosswalkId,

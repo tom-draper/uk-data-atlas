@@ -633,8 +633,8 @@ export class LocationProjectionDatabase extends LocationProjections {
 				`The location projections at ${path} were built from another projection inventory.`,
 			);
 		this.dictionary = this.database.lookup(
-			"location_projection_dictionaries",
-			["kind", "crosswalkId"],
+			"location_projection_dictionary",
+			["kind", "crosswalk_id"],
 			"dictionary",
 		);
 		this.rows = {
