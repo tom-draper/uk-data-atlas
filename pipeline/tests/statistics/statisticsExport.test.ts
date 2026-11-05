@@ -64,13 +64,7 @@ test("binds a census measure only when every source partition is complete", () =
 				},
 			],
 		} as unknown as Measure;
-		const ids = {
-			"age-0-to-4": {
-				measure: "usual-residents",
-				dimensions: { "age-band": "0-to-4" },
-			},
-		};
-		const bound = bindCensusStatistics(db, measure, ids);
+		const bound = bindCensusStatistics(db, measure);
 		assert.equal(bound?.length, 2);
 		assert.deepEqual(bound?.[0], {
 			dataset: "census-2021-ts007a",
@@ -81,16 +75,15 @@ test("binds a census measure only when every source partition is complete", () =
 			release: "lsoa-2021",
 			periods: ["2021-census"],
 		});
-		assert.equal(bindCensusStatistics(db, measure, {}), undefined);
 		measure.sources.push({
 			...measure.sources[0]!,
 			datasetId: "ethnicity",
 		});
-		assert.equal(bindCensusStatistics(db, measure, ids), undefined);
-		assert.equal(bindCensusStatistics(db, measure, ids, true)?.length, 2);
+		assert.equal(bindCensusStatistics(db, measure), undefined);
+		assert.equal(bindCensusStatistics(db, measure, true)?.length, 2);
 		measure.sources.pop();
 		measure.sources[1]!.coverage.recordCount = 2;
-		assert.equal(bindCensusStatistics(db, measure, ids), undefined);
+		assert.equal(bindCensusStatistics(db, measure), undefined);
 	} finally {
 		db.close();
 	}
@@ -549,7 +542,6 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				catalogueMeasure,
 				bindings,
 				undefined,
-				undefined,
 				lookup,
 			)?.length,
 			1,
@@ -560,7 +552,6 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				db,
 				catalogueMeasure,
 				bindings,
-				undefined,
 				undefined,
 				lookup,
 			),

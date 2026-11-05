@@ -1,9 +1,6 @@
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 
-import {
-	readMeasureDimensionsConfig,
-	type StatisticsReadPath,
-} from "@uk-data-atlas/measures";
+import type { StatisticsReadPath } from "@uk-data-atlas/measures";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DataCatalog } from "@uk-data-atlas/measures";
@@ -30,7 +27,6 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 	const readPath = readJsonSync(
 		statisticsReadPathPath(repositoryRoot),
 	) as StatisticsReadPath;
-	const { ids } = readMeasureDimensionsConfig(repositoryRoot).config;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),
 		{ readOnly: true },
@@ -48,7 +44,6 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 				measure,
 				bindings,
 				readPath,
-				ids,
 			);
 			if (!selection) continue;
 			const formats = await compileMeasureDownloads(
