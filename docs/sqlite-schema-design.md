@@ -13,6 +13,15 @@ binds a dataset, measure, geography release and dimension members. Each
 status and any bounds or category. `v_observation` joins these tables into a
 readable view.
 
+`observation` is `WITHOUT ROWID` with primary key `(series_id, area_version_id,
+period_id)` and no secondary index. A secondary `(area_version_id, series_id,
+period_id)` index cost about 115 MiB and saved almost nothing: on a copy of the
+build, reading one area through the primary key took 0.1 to 5 ms warm and 8 to
+165 ms cold, within about 1.7x of the index. A reader that looks an area up
+passes the series of the area's release, as in `WHERE series_id IN (SELECT id
+FROM series WHERE release_id = ?) AND area_version_id = ?`. A query on
+`area_version_id` alone scans the table.
+
 The statistics writer is `packages/atlas-runtime/src/catalogue/atlasStatistics.ts`.
 Dataset declarations in
 `packages/atlas-runtime/src/catalogue/statisticsDatasets/` identify fields,
