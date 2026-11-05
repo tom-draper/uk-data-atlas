@@ -83,7 +83,7 @@ const plural = (count, noun) =>
 	`${formatCount(count)} ${noun}${count === 1 ? "" : "s"}`;
 
 /**
- * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
+ * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
@@ -233,6 +233,13 @@ export async function runBuild({
 		}
 		// --from and --no-cache rerun every stage they select, and record them.
 		const reuse = cache !== null && useCache && from === undefined;
+		// A stage that always runs may know its work is already done, and then
+		// it is skipped without a command. Its digest is the same either way.
+		const current = new Set();
+		if (useCache && from === undefined && !adopt)
+			for (const stage of selected)
+				if (stage.cacheable === false && (await stage.isCurrent?.()))
+					current.add(stage.name);
 		// Each stage's output digest this build, or null once a stage has to run
 		// (in a plan, its outputs are not known until it does).
 		const alwaysRunning = () =>
@@ -259,6 +266,7 @@ export async function runBuild({
 			const toRun = new Set();
 			const known = alwaysRunning();
 			for (const stage of selected) {
+				if (current.has(stage.name)) continue;
 				const reused = reusableDigest(
 					stage,
 					dependencyDigests(stage, known),
@@ -317,6 +325,14 @@ export async function runBuild({
 					`${stage.name}: adopted ${plural(adopted.files.length, "output file")}`,
 				);
 				if (verbose) for (const path of adopted.files) log(`  ${path}`);
+				recordTiming(stage.name, stageStartedAt, 0, true);
+				return false;
+			}
+			if (current.has(stage.name)) {
+				log(
+					`${stage.name}: up to date, ${plan ? "would skip" : "skipped"}`,
+				);
+				if (plan || verbose) logCommand(stage);
 				recordTiming(stage.name, stageStartedAt, 0, true);
 				return false;
 			}

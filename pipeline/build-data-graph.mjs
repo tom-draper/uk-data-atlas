@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
+import { sourcesMatchRelease } from "../scripts/data-release.mjs";
 import { PLACE_LOOKUPS } from "../packages/datasets/src/data/gazetteer/places.ts";
 import {
 	BOUNDARY_CATALOG,
@@ -472,6 +473,7 @@ const stage = (
 	args = [`scripts/build-${name}.ts`],
 	{
 		cacheable = true,
+		isCurrent,
 		outputs = [],
 		requiredOutputs = [],
 		codeInputs = [],
@@ -483,6 +485,7 @@ const stage = (
 	dependencies,
 	args,
 	cacheable,
+	isCurrent,
 	outputs,
 	requiredOutputs,
 	codeInputs,
@@ -491,9 +494,11 @@ const stage = (
 });
 
 const apiStages = [
-	// Always runs. It is quick when data/ already matches the pinned release.
+	// Always runs, as a download can change any raw file and needs the network.
+	// It is skipped when data/source already matches the pinned release.
 	stage("sources", [], ["data:download"], {
 		cacheable: false,
+		isCurrent: () => sourcesMatchRelease(),
 	}),
 	stage("operations", [], ["pipeline/src/build-operations.ts"], {
 		codeInputs: [
