@@ -11,7 +11,10 @@ import {
 } from "@uk-data-atlas/measures";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { readMeasureDimensionsMapping } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	dimensionCatalogue,
+	readMeasureDimensionsMapping,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -84,6 +87,24 @@ const config = (
 	defaults: {},
 	ids,
 	...extra,
+});
+
+test("indexes canonical series separately from catalogue ids", () => {
+	const mapping = {
+		measure: "recorded-crimes",
+		dimensions: { offence: "burglary" },
+	};
+	const indexed = dimensionCatalogue(
+		catalog({ "crime-burglary": ["crime"] }) as Parameters<
+			typeof dimensionCatalogue
+		>[0],
+		{ config: config({ "crime-burglary": mapping }), vocabulary },
+	);
+	const found = indexed.series(measureSeriesKey(mapping));
+	assert.equal(found?.measure.id, "recorded-crimes");
+	assert.equal(found?.series.catalogueMeasure.id, "crime-burglary");
+	assert.equal(indexed.series("crime-burglary"), undefined);
+	assert.deepEqual(indexed.catalogueSeries("crime-burglary"), found);
 });
 
 const problems = (

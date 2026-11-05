@@ -149,7 +149,9 @@ export const readMeasureTerm = (
 	const catalogueId = canonicalMeasureId(dataCatalog, term);
 	const named = catalogue.measure(term);
 	const aliased =
-		!named && catalogueId ? catalogue.series(catalogueId) : undefined;
+		!named && catalogueId
+			? catalogue.catalogueSeries(catalogueId)
+			: undefined;
 	const measure = named ?? aliased?.measure;
 	if (!measure) return { kind: "unknown" };
 	if (

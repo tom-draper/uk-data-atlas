@@ -224,7 +224,7 @@ const resolveSeries = (
 		context.measureDimensions ?? identityDimensions(context.dataCatalog),
 	);
 	const named = catalogue.measure(request.measure);
-	const byId = named ? undefined : catalogue.series(request.measure);
+	const byId = named ? undefined : catalogue.catalogueSeries(request.measure);
 	const measure = named ?? byId?.measure;
 	if (!measure)
 		return refuse(

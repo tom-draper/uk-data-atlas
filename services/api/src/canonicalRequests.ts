@@ -44,7 +44,7 @@ export const canonicalMeasureRequest = <T extends RouteRequestFor<never>>(
 			term !== id &&
 			measureSlug(term) !== id &&
 			segments[1] === "measures"
-				? dimensionCatalogue(catalog, dimensions).series(id)
+				? dimensionCatalogue(catalog, dimensions).catalogueSeries(id)
 				: undefined;
 		segments[position] = series?.measure.id ?? id;
 	}

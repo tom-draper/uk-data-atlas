@@ -91,7 +91,7 @@ export const handleCatalogueRoutes = ({
 	if (dimensional && segments[1] === "measures" && segments.length === 3) {
 		const term = segments[2]!;
 		const named = dimensional.measure(term);
-		const aliased = named ? undefined : dimensional.series(term);
+		const aliased = named ? undefined : dimensional.catalogueSeries(term);
 		const measure = named ?? aliased?.measure;
 		if (!measure)
 			return problem(
