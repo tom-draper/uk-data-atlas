@@ -33,7 +33,6 @@ import {
 import {
 	AirQualityMeasurePanel,
 	DeclaredMeasurePanel,
-	BroadbandMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
 	EnergySectorPanel,
@@ -52,7 +51,6 @@ import {
 	WorkplacePayMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
-	MobileCoverageMeasurePanel,
 	PercentageRangePanel,
 	RegionalOutputMeasurePanel,
 	SchoolPerformanceMeasurePanel,
@@ -298,17 +296,6 @@ export default function LegendPanel({
 					}
 				/>
 			)}
-			{activeDataset?.type === "mobileCoverage" && (
-				<MobileCoverageMeasurePanel
-					measure={controls.displayOptions.mobileCoverage.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("mobileCoverage", {
-							measure,
-							colorRange: { min: 0, max: 100 },
-						})
-					}
-				/>
-			)}
 			{activeDataset?.type === "generalHealth" && (
 				<GeneralHealthMeasurePanel
 					measure={controls.displayOptions.generalHealth.measure}
@@ -507,23 +494,6 @@ export default function LegendPanel({
 						}}
 					/>
 				)}
-
-			{activeDataset?.type === "broadband" && (
-				<BroadbandMeasurePanel
-					measure={controls.displayOptions.broadband.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("broadband", {
-							measure,
-							colorRange:
-								measure === "superfast"
-									? { min: 70, max: 100 }
-									: measure === "ultrafast"
-										? { min: 30, max: 100 }
-										: { min: 50, max: 100 },
-						})
-					}
-				/>
-			)}
 
 			{activeDataset?.type === "lifeExpectancy" && (
 				<LifeExpectancyMeasurePanel

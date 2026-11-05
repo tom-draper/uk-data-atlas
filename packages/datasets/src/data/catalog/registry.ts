@@ -6,7 +6,6 @@ import { adultSocialCareOutcomesDatasetDefinition } from "./definitions/adultSoc
 import { airQualityDatasetDefinition } from "./definitions/airQuality.ts";
 import { brexitDatasetDefinition } from "./definitions/brexit.ts";
 import { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency.ts";
-import { broadbandDatasetDefinition } from "./definitions/broadband.ts";
 import { businessActivityDatasetDefinition } from "./definitions/businessActivity.ts";
 import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
 import { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
@@ -33,7 +32,6 @@ import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts
 import { lifeExpectancySeriesDatasetDefinition } from "./definitions/lifeExpectancySeries.ts";
 import { localElectionDatasetDefinition } from "./definitions/localElection.ts";
 import { localGovernmentFinanceDatasetDefinition } from "./definitions/localGovernmentFinance.ts";
-import { mobileCoverageDatasetDefinition } from "./definitions/mobileCoverage.ts";
 import { netAdditionalDwellingsDatasetDefinition } from "./definitions/netAdditionalDwellings.ts";
 import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
@@ -65,7 +63,6 @@ export const LEGACY_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	airQualityDatasetDefinition,
 	brexitDatasetDefinition,
 	brexitConstituencyDatasetDefinition,
-	broadbandDatasetDefinition,
 	businessActivityDatasetDefinition,
 	carAvailabilityDatasetDefinition,
 	childPovertyDatasetDefinition,
@@ -92,7 +89,6 @@ export const LEGACY_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	lifeExpectancySeriesDatasetDefinition,
 	localElectionDatasetDefinition,
 	localGovernmentFinanceDatasetDefinition,
-	mobileCoverageDatasetDefinition,
 	netAdditionalDwellingsDatasetDefinition,
 	nhsWaitingDatasetDefinition,
 	nimdmDatasetDefinition,

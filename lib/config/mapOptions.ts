@@ -44,9 +44,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "regionalGdpItl3"
 				? { measure: "gdp" }
 				: {}),
-			...(definition.type === "mobileCoverage"
-				? { measure: "pct5GOutdoorAll" }
-				: {}),
 			...(definition.type === "fuelPoverty" ? { measure: "rate" } : {}),
 			...(definition.type === "imd" ? { measure: "imdScore" } : {}),
 			...(definition.type === "planningApplications"
@@ -86,9 +83,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 				: {}),
 			...(hasPopulationMetric(definition.type)
 				? { measure: "total" }
-				: {}),
-			...(definition.type === "broadband"
-				? { measure: "fullFibre" }
 				: {}),
 			...(definition.type === "airQuality" ? { measure: "no2" } : {}),
 			...(definition.type === "unemployment" ? { measure: "rate" } : {}),

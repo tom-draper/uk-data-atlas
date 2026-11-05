@@ -31,10 +31,6 @@ export interface EnergyConsumptionOptions extends CountMetricOptions {
 	sector: "allMetersGwh" | "domesticGwh" | "nonDomesticGwh";
 }
 
-export interface BroadbandOptions extends ColorRangeOption {
-	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
-}
-
 export interface AirQualityOptions extends ColorRangeOption {
 	measure: "no2" | "pm25" | "pm10";
 }
@@ -72,16 +68,6 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 
 export interface RegionalGdpItl3Options extends ColorRangeOption {
 	measure: "gdp" | "gva";
-}
-
-export interface MobileCoverageOptions extends ColorRangeOption {
-	measure:
-		| "pct5GOutdoorAll"
-		| "pct5GOutdoorAny"
-		| "pct4GIndoorAll"
-		| "pct4GIndoorAny"
-		| "pct4GGeoAll"
-		| "pct5GGeoAny";
 }
 
 export interface FuelPovertyOptions extends ColorRangeOption {
@@ -167,7 +153,6 @@ export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
 	| DeclaredDatasetId
 	| "regionalGdpItl3"
-	| "mobileCoverage"
 	| "fuelPoverty"
 	| "imd"
 	| "planningApplications"
@@ -185,7 +170,6 @@ export type ChartMapOptions = Omit<
 	| "gasConsumption"
 	| "waste"
 	| "jobs"
-	| "broadband"
 	| "airQuality"
 	| "ghgEmissions"
 	| "unemployment"
@@ -194,7 +178,6 @@ export type ChartMapOptions = Omit<
 > &
 	Record<DeclaredDatasetId, DeclaredMapOptions> & {
 		regionalGdpItl3: RegionalGdpItl3Options;
-		mobileCoverage: MobileCoverageOptions;
 		fuelPoverty: FuelPovertyOptions;
 		imd: ImdOptions;
 		planningApplications: PlanningApplicationsOptions;
@@ -211,7 +194,6 @@ export type ChartMapOptions = Omit<
 		gasConsumption: EnergyConsumptionOptions;
 		waste: WasteOptions;
 		jobs: CountMetricOptions;
-		broadband: BroadbandOptions;
 		airQuality: AirQualityOptions;
 		ghgEmissions: GhgEmissionsOptions;
 		unemployment: UnemploymentOptions;

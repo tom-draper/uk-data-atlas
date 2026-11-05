@@ -52,7 +52,7 @@ export type FigureInputs = {
 		childrenPopulation: number;
 	}>;
 	broadband: Editions<{ pctFullFibre: number; premisesCount: number }>;
-	mobileCoverage: Editions<{
+	"mobile-coverage": Editions<{
 		pct5GOutdoorAll: number;
 		premisesCount: number;
 	}>;
@@ -349,7 +349,7 @@ const RULES: Readonly<Record<string, FigureRule>> = {
 		},
 	},
 	"mobile-coverage": {
-		compute({ mobileCoverage }, location, period) {
+		compute({ "mobile-coverage": mobileCoverage }, location, period) {
 			const { data } = mobileCoverage[String(period)];
 			const rows = everyValue(
 				districtsOf(location, Object.keys(data)),

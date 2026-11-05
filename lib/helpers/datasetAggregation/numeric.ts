@@ -1,14 +1,15 @@
 import type { Features, PropertyKeys } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
 import type {
-	AggregatedBroadbandData,
-	BroadbandDataset,
-} from "@uk-data-atlas/datasets/types/broadband";
-import type {
 	AggregatedAirQualityData,
 	AirQualityDataset,
 } from "@uk-data-atlas/datasets/types/airQuality";
-import { denominator } from "@uk-data-atlas/datasets/helpers/rates";
+import {
+	denominator,
+	weightedMean,
+} from "@uk-data-atlas/datasets/helpers/rates";
+
+export { weightedMean };
 import type {
 	AggregatedChildPovertyData,
 	ChildPovertyDataset,
@@ -25,10 +26,6 @@ import type {
 	AggregatedGhgEmissionsData,
 	GhgEmissionsDataset,
 } from "@uk-data-atlas/datasets/types/ghgEmissions";
-import type {
-	AggregatedMobileCoverageData,
-	MobileCoverageDataset,
-} from "@uk-data-atlas/datasets/types/mobileCoverage";
 import type {
 	AggregatedSchoolPerformanceData,
 	AggregatedSchoolPerformanceGapData,
@@ -57,53 +54,6 @@ export function collectBoundaryRecords<T>(
 		if (record) records.push(record);
 	}
 	return records;
-}
-
-/**
- * The mean of a value over records, each weighted by the size of the
- * population it describes, over the records that have both. A figure that is
- * a share or an average of something must be combined this way: a flat mean
- * of authorities' figures would weigh the Isles of Scilly as heavily as
- * Birmingham.
- */
-export function weightedMean<T>(
-	records: T[],
-	value: (record: T) => number | null | undefined,
-	weight: (record: T) => number | null | undefined,
-): number | null {
-	let weighted = 0,
-		total = 0;
-	for (const record of records) {
-		const v = value(record);
-		const w = weight(record);
-		if (v == null || w == null || !(w > 0)) continue;
-		weighted += v * w;
-		total += w;
-	}
-	return total > 0 ? weighted / total : null;
-}
-
-/** Coverage is a share of premises, so authorities are weighted by premises. */
-export function aggregateBroadband(
-	records: BroadbandDataset["data"][string][],
-): AggregatedBroadbandData | null {
-	const reporting = records.filter((record) => record.pctFullFibre != null);
-	const share = (
-		field: "pctSuperfast" | "pctUltrafast" | "pctFullFibre" | "pctGigabit",
-	) =>
-		weightedMean(
-			reporting,
-			(record) => record[field],
-			(record) => record.premisesCount,
-		) ?? 0;
-	return reporting.some((record) => (record.premisesCount ?? 0) > 0)
-		? {
-				pctSuperfast: share("pctSuperfast"),
-				pctUltrafast: share("pctUltrafast"),
-				pctFullFibre: share("pctFullFibre"),
-				pctGigabit: share("pctGigabit"),
-			}
-		: null;
 }
 
 /**
@@ -238,58 +188,6 @@ export function aggregateGhgEmissions(
 				industry,
 				...sectors,
 			};
-}
-
-/**
- * Coverage is a share of premises, so authorities are weighted by how many
- * premises they hold rather than averaged flat; otherwise the Isles of Scilly
- * would pull a region's figure as hard as Birmingham. Landmass shares have no
- * premises weight to use, so they stay a plain mean.
- */
-export function aggregateMobileCoverage(
-	records: MobileCoverageDataset["data"][string][],
-): AggregatedMobileCoverageData | null {
-	if (records.length === 0) return null;
-
-	const premisesWeighted = (
-		field:
-			| "pct4GIndoorAll"
-			| "pct4GIndoorAny"
-			| "pct5GOutdoorAll"
-			| "pct5GOutdoorAny",
-	) => {
-		let weighted = 0,
-			premises = 0;
-		for (const record of records) {
-			const share = record[field];
-			const count = record.premisesCount;
-			if (share === null || count === null || count <= 0) continue;
-			weighted += share * count;
-			premises += count;
-		}
-		return premises > 0 ? weighted / premises : null;
-	};
-
-	const mean = (field: "pct4GGeoAll" | "pct5GGeoAny") => {
-		let total = 0,
-			count = 0;
-		for (const record of records) {
-			const share = record[field];
-			if (share === null) continue;
-			total += share;
-			count++;
-		}
-		return count > 0 ? total / count : null;
-	};
-
-	return {
-		pct4GIndoorAll: premisesWeighted("pct4GIndoorAll"),
-		pct4GIndoorAny: premisesWeighted("pct4GIndoorAny"),
-		pct5GOutdoorAll: premisesWeighted("pct5GOutdoorAll"),
-		pct5GOutdoorAny: premisesWeighted("pct5GOutdoorAny"),
-		pct4GGeoAll: mean("pct4GGeoAll"),
-		pct5GGeoAny: mean("pct5GGeoAny"),
-	};
 }
 
 export function aggregateHomelessness(

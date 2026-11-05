@@ -1,13 +1,11 @@
 import type { BoundaryAggregationSpec } from "./ports";
 import {
 	aggregateAirQuality,
-	aggregateBroadband,
 	aggregateChildPoverty,
 	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateGhgEmissions,
 	aggregateHomelessness,
-	aggregateMobileCoverage,
 	aggregateRegionalGdp,
 	aggregateSchoolPerformance,
 	aggregateSchoolPerformanceGap,
@@ -158,11 +156,6 @@ export const travelToWorkAggregation = boundaryAggregation(
 	"localAuthority",
 	aggregateTravelToWork,
 );
-export const broadbandAggregation = numericAggregation(
-	"broadband",
-	"localAuthority",
-	aggregateBroadband,
-);
 export const airQualityAggregation = numericAggregation(
 	"airQuality",
 	"localAuthority",
@@ -192,11 +185,6 @@ export const regionalGdpItl3Aggregation = numericAggregation(
 	"regional-gdp-itl3",
 	"itl3",
 	aggregateRegionalGdp,
-);
-export const mobileCoverageAggregation = numericAggregation(
-	"mobileCoverage",
-	"localAuthority",
-	aggregateMobileCoverage,
 );
 export const homelessnessAggregation = numericAggregation(
 	"homelessness",

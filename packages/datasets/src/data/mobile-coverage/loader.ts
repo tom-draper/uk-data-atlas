@@ -69,8 +69,8 @@ export async function loadMobileCoverage(
 
 	return {
 		[YEAR]: {
-			id: `mobileCoverage${YEAR}`,
-			type: "mobileCoverage",
+			id: `mobile-coverage${YEAR}`,
+			type: "mobile-coverage",
 			year: YEAR,
 			boundaryType: "localAuthority",
 			boundaryYear: BOUNDARY_YEAR,

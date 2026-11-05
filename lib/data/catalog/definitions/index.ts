@@ -4,7 +4,6 @@ export { adultSocialCareOutcomesDatasetDefinition } from "@uk-data-atlas/dataset
 export { airQualityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/airQuality";
 export { brexitDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/brexit";
 export { brexitConstituencyDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/brexitConstituency";
-export { broadbandDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/broadband";
 export { businessActivityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/businessActivity";
 export { carAvailabilityDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/carAvailability";
 export { childPovertyDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/childPoverty";
@@ -29,7 +28,6 @@ export { lifeExpectancyDatasetDefinition } from "@uk-data-atlas/datasets/data/ca
 export { lifeExpectancySeriesDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/lifeExpectancySeries";
 export { localElectionDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/localElection";
 export { localGovernmentFinanceDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/localGovernmentFinance";
-export { mobileCoverageDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/mobileCoverage";
 export { netAdditionalDwellingsDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/netAdditionalDwellings";
 export { nhsWaitingDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/nhsWaiting";
 export { nimdmDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/nimdm";

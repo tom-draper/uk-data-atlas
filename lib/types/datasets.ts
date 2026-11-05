@@ -15,10 +15,6 @@ import {
 import { type AggregatedCustomData, type CustomDataset } from "./custom.ts";
 import { type NetworkDataset } from "./network.ts";
 import {
-	type AggregatedBroadbandData,
-	type BroadbandDataset,
-} from "@uk-data-atlas/datasets/types/broadband";
-import {
 	type AggregatedAirQualityData,
 	type AirQualityDataset,
 } from "@uk-data-atlas/datasets/types/airQuality";
@@ -47,7 +43,6 @@ type DatasetValue =
 	| WorkplaceIncomeDataset
 	| CustomDataset
 	| NetworkDataset
-	| BroadbandDataset
 	| AirQualityDataset
 	| SchoolPerformanceDataset
 	| NHSWaitingDataset
@@ -62,7 +57,6 @@ export type Datasets = {
 	crime: Record<string, CrimeDataset>;
 	income: Record<string, IncomeDataset>;
 	workplaceIncome: Record<string, WorkplaceIncomeDataset>;
-	broadband: Record<string, BroadbandDataset>;
 	airQuality: Record<string, AirQualityDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;

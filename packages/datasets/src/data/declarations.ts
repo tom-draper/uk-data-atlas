@@ -3,11 +3,15 @@ import {
 	definitionOf,
 	type DatasetDeclaration,
 } from "../declaration/dataset.ts";
+import { broadband } from "./broadband/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
+import { mobileCoverage } from "./mobile-coverage/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
+	broadband,
 	claimantCount,
+	mobileCoverage,
 ];
 
 /** The manifest definition of each declaration. */
@@ -15,4 +19,5 @@ export const DECLARED_DEFINITIONS = DATASET_DECLARATIONS.map((declaration) =>
 	definitionOf(declaration),
 );
 
-export type DeclaredDatasetId = "claimant-count";
+export type DeclaredDatasetId =
+	"broadband" | "claimant-count" | "mobile-coverage";

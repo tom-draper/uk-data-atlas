@@ -11,7 +11,6 @@ import { adultSocialCareOutcomesDefinition } from "./adultSocialCareOutcomes";
 import { airQualityDefinition } from "./airQuality";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
-import { broadbandDefinition } from "./broadband";
 import { businessActivityDefinition } from "./businessActivity";
 import { carAvailabilityDefinition } from "./carAvailability";
 import { childPovertyDefinition } from "./childPoverty";
@@ -35,7 +34,6 @@ import { jobsDefinition } from "./jobs";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
 import { localGovernmentFinanceDefinition } from "./localGovernmentFinance";
-import { mobileCoverageDefinition } from "./mobileCoverage";
 import { netAdditionalDwellingsDefinition } from "./netAdditionalDwellings";
 import { nhsWaitingDefinition } from "./nhsWaiting";
 import { nimdmDefinition } from "./nimdm";
@@ -65,7 +63,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		airQualityDefinition,
 		brexitDefinition,
 		brexitConstituencyDefinition,
-		broadbandDefinition,
 		businessActivityDefinition,
 		carAvailabilityDefinition,
 		childPovertyDefinition,
@@ -89,7 +86,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		lifeExpectancyDefinition,
 		localElectionDefinition,
 		localGovernmentFinanceDefinition,
-		mobileCoverageDefinition,
 		netAdditionalDwellingsDefinition,
 		nhsWaitingDefinition,
 		nimdmDefinition,
