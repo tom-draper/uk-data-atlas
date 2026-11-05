@@ -285,3 +285,86 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 			/Missing named location geometry/,
 		);
 	}));
+
+test("SQLite named location geometry is stored rounded and compressed", () =>
+	fixture((root, directory) => {
+		const ring = [
+			[-1.234567891, 51.987654321],
+			[-1.234566234, 51.987650001],
+			[-1.134567891, 51.987654321],
+			[-1.134567891, 52.087654321],
+			[-1.234567891, 51.987654321],
+		];
+		const inventory: NamedLocationInventory = {
+			schemaVersion: 1,
+			contentHash: "precise",
+			source: {
+				artifact: "data/datasets/gazetteer.core.json",
+				gazetteerVersion: 1,
+			},
+			locations: [
+				{
+					id: "precise",
+					label: "Precise",
+					kind: "editorial-grouping",
+					definitionRevision: 1,
+					memberGeography: "ward",
+					memberCodes: ["E00000001"],
+					validity: { from: null, to: null },
+					bbox: [
+						-1.234567891, 51.987654321, -1.134567891, 52.087654321,
+					],
+					geometry: {
+						boundaryRelease: "2024",
+						bbox: [
+							-1.234567891, 51.987654321, -1.134567891,
+							52.087654321,
+						],
+						geometry: {
+							type: "MultiPolygon",
+							coordinates: [[ring]],
+						},
+					},
+				},
+			],
+		};
+		writeFileSync(
+			join(directory, "named-locations.json"),
+			JSON.stringify(inventory),
+		);
+		const compiled = join(root, "../../data/build");
+		mkdirSync(compiled, { recursive: true });
+		const path = join(compiled, "atlas.sqlite");
+		writeSqliteIndex(path, {}, namedLocationTables(directory));
+		rmSync(join(directory, "named-locations.json"));
+		const database = new DatabaseSync(path, { readOnly: true });
+		const stored = database
+			.prepare(
+				"SELECT typeof(geometry) AS type, minX, minY, maxX, maxY FROM named_location_geometries",
+			)
+			.get();
+		database.close();
+		assert.equal(stored?.type, "blob");
+		const rounded = [-1.23457, 51.98765, -1.13457, 52.08765];
+		assert.deepEqual(
+			[stored?.minX, stored?.minY, stored?.maxX, stored?.maxY],
+			rounded,
+		);
+		const geometry = readNamedLocationInventory(join(root, "../.."))
+			.locations[0]?.geometry;
+		assert.deepEqual(geometry?.bbox, rounded);
+		// The two points that round to one are merged into a single corner.
+		assert.deepEqual(geometry?.geometry, {
+			type: "MultiPolygon",
+			coordinates: [
+				[
+					[
+						[-1.23457, 51.98765],
+						[-1.13457, 51.98765],
+						[-1.13457, 52.08765],
+						[-1.23457, 51.98765],
+					],
+				],
+			],
+		});
+	}));

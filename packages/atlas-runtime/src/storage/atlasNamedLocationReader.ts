@@ -6,6 +6,7 @@ import type {
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
 import { atlasDatabasePath } from "./dataLayout.ts";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
+import { unpackGeometry } from "./storedGeometry.ts";
 
 export const readSqliteNamedLocationInventory = (
 	repositoryRoot: string,
@@ -89,7 +90,7 @@ export const readSqliteNamedLocationInventory = (
 									shape.maxX as number,
 									shape.maxY as number,
 								],
-								geometry: JSON.parse(shape.geometry as string),
+								geometry: unpackGeometry(shape.geometry),
 							};
 						} finally {
 							connection.release();
