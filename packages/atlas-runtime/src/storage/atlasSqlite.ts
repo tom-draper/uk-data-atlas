@@ -65,7 +65,7 @@ export function readAtlasDatasetUrls(
 		}
 		return Object.fromEntries(
 			database
-				.prepare("SELECT output, sha256, payloadId FROM datasets")
+				.prepare("SELECT output, sha256, payload_id AS payloadId FROM dataset_catalogue")
 				.all()
 				.map((row) => {
 					const output = String(row.output);

@@ -27,7 +27,7 @@ it("serves datasets from rows with the compiled values", () => {
 	try {
 		const datasets = database
 			.prepare(
-				"SELECT type, output, sha256, bytes, payloadId FROM datasets ORDER BY output",
+				"SELECT type, output, sha256, bytes, payload_id AS payloadId FROM dataset_catalogue ORDER BY output",
 			)
 			.all();
 		const fromRows = datasets.filter((row) => row.payloadId === null);

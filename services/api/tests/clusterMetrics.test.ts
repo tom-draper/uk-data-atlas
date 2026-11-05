@@ -20,7 +20,7 @@ beforeAll(async () => {
 	const canonicalPath = join(data, "atlas.sqlite");
 	const canonical = new DatabaseSync(canonicalPath);
 	canonical.exec(
-		"CREATE TABLE datasets (output TEXT, sha256 TEXT, payloadId TEXT)",
+		"CREATE TABLE dataset_catalogue (output TEXT, sha256 TEXT, payload_id TEXT)",
 	);
 	canonical.close();
 	const hash = `sha256:${createHash("sha256").update(readFileSync(canonicalPath)).digest("hex")}`;
