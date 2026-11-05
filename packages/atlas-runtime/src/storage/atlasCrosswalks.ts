@@ -115,7 +115,7 @@ export const readSqliteCrosswalkInventory = (
 							areaInventoryHash: header.areaInventoryHash,
 							releases: database
 								.prepare(
-									"SELECT geography, boundaryRelease, areaCount, relatedAreaCount FROM crosswalk_coverage ORDER BY position",
+									"SELECT geography, boundary_release AS boundaryRelease, area_count AS areaCount, related_area_count AS relatedAreaCount FROM crosswalk_coverage_entry ORDER BY position",
 								)
 								.all(),
 						},
