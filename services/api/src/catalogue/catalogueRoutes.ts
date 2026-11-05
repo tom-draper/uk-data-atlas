@@ -99,7 +99,7 @@ export const handleCatalogueRoutes = ({
 				"Not Found",
 				"No published measure matches that id.",
 			);
-		if (aliased && aliased.series.id !== measure.id)
+		if (aliased && aliased.series.catalogueMeasure.id !== measure.id)
 			return problem(
 				404,
 				"Not Found",
