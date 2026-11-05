@@ -21,7 +21,7 @@ export const readSqliteNamedLocationInventory = (
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite named location inventory");
 		const members = database.prepare(
-			"SELECT code FROM named_location_members WHERE locationId = ? ORDER BY position",
+			"SELECT code FROM named_location_member WHERE location_id = ? ORDER BY position",
 		);
 		const assertions = database.prepare(
 			"SELECT code, validFrom, validTo FROM named_location_assertions WHERE locationId = ? ORDER BY position",
