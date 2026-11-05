@@ -2,6 +2,7 @@ import {
 	POSTCODE_AREA_LAYOUT,
 	POSTCODE_AREA_LAYOUT_KEY,
 	postcodeAreaColumns,
+	unpackText,
 	readPostcodeAreaShard,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
@@ -45,13 +46,13 @@ export function writePostcodeAreas(
 ) {
 	const columns = postcodeAreaColumns(artifact);
 	const index: PostcodeIndexArtifact = JSON.parse(
-		String(
+		unpackText(
 			database
 				.prepare(
 					"SELECT payload FROM payloads WHERE id = 'postcode-index'",
 				)
 				.get()!.payload,
-		),
+		)!,
 	);
 	if (
 		artifact.shards.length !== index.shards.length ||

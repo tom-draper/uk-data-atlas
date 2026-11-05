@@ -28,7 +28,10 @@ import {
 	namedLocationInventory,
 } from "./geographyFixtures";
 import { createHash } from "node:crypto";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readAtlasPayload,
+	unpackText,
+} from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -140,12 +143,15 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 				.map((row) => row.id),
 			["dataset-manifest", "terrain-catalogue"],
 		);
+		const stored = database
+			.prepare(
+				"SELECT typeof(payload) AS type, payload FROM payloads WHERE id = 'terrain-catalogue'",
+			)
+			.get();
+		// Payloads are stored compressed and read back as the original text.
+		assert.equal(stored?.type, "blob");
 		assert.equal(
-			database
-				.prepare(
-					"SELECT payload FROM payloads WHERE id = 'terrain-catalogue'",
-				)
-				.get()?.payload,
+			unpackText(stored?.payload),
 			readFileSync(
 				join(
 					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),

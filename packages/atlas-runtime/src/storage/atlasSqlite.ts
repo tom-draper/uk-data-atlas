@@ -8,6 +8,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { atlasCachePath } from "./atlasCache.ts";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
+import { unpackText } from "./storedPayload.ts";
 
 /** Server-only access to the shared compiled release. Connections are shared and reopen when the file is replaced. */
 export function readAtlasPayload(
@@ -16,15 +17,17 @@ export function readAtlasPayload(
 	path = join(repositoryRoot, "data/build/atlas.sqlite"),
 ): string {
 	const database = openReadOnlyDatabase(path);
-	let stored: unknown;
+	let stored: string | undefined;
 	try {
-		stored = database
-			.prepare("SELECT payload FROM payloads WHERE id = ?")
-			.get(id)?.payload;
+		stored = unpackText(
+			database
+				.prepare("SELECT payload FROM payloads WHERE id = ?")
+				.get(id)?.payload,
+		);
 	} finally {
 		database.release();
 	}
-	if (typeof stored === "string") return stored;
+	if (stored !== undefined) return stored;
 	// Datasets served from rows have no stored payload.
 	if (id.startsWith("dataset:")) {
 		const payload = readDatasetPayload(repositoryRoot, id.slice(8));

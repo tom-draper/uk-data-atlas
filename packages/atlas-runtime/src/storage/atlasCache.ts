@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
+import { unpackText } from "./storedPayload.ts";
 
 export type CacheComponent =
 	| "area-search"
@@ -52,9 +53,13 @@ export function cacheGeneration(
 					.map((row) => Object.values(row));
 			if (dependency.startsWith("payload:"))
 				return (
-					database
-						.prepare("SELECT payload FROM payloads WHERE id = ?")
-						.get(dependency.slice(8))?.payload ?? null
+					unpackText(
+						database
+							.prepare(
+								"SELECT payload FROM payloads WHERE id = ?",
+							)
+							.get(dependency.slice(8))?.payload,
+					) ?? null
 				);
 			return (
 				database.prepare(`SELECT contentHash FROM ${dependency}`).get()

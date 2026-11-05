@@ -50,6 +50,7 @@ import { join, resolve } from "node:path";
 import {
 	artifactDirectory,
 	closeAllReadOnlyDatabases,
+	packText,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics.ts";
 
@@ -198,9 +199,13 @@ export const buildAtlasSqlite = (
 			throw new Error(`Invalid parent projections in ${shard.artifact}`);
 		return artifact;
 	});
+	/** Payloads are stored as compressed blobs. */
 	function* payloads() {
-		yield ["terrain-catalogue", payload];
-		yield ["dataset-manifest", manifestPayload];
+		for (const [id, text] of storedPayloads()) yield [id, packText(text)];
+	}
+	function* storedPayloads() {
+		yield ["terrain-catalogue", payload] as const;
+		yield ["dataset-manifest", manifestPayload] as const;
 		for (const entry of manifest.datasets) {
 			const content = readFileSync(
 				join(directory, "datasets", `${entry.output}.json`),
@@ -216,7 +221,7 @@ export const buildAtlasSqlite = (
 				);
 			// Datasets served from rows are rebuilt into the cache instead.
 			if (!servedFromRows(entry.type))
-				yield [`dataset:${entry.output}`, content];
+				yield [`dataset:${entry.output}`, content] as const;
 		}
 	}
 	writeSqliteIndex(
@@ -227,7 +232,7 @@ export const buildAtlasSqlite = (
 			...crosswalkTables(artifactDirectory(repositoryRoot)),
 			...namedLocationTables(artifactDirectory(repositoryRoot)),
 			payloads: {
-				columns: ["id TEXT NOT NULL", "payload TEXT NOT NULL"],
+				columns: ["id TEXT NOT NULL", "payload BLOB NOT NULL"],
 				key: ["id"],
 				rows: payloads(),
 			},

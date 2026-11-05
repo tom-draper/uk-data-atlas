@@ -8,6 +8,7 @@ import {
 	readSqlitePostcodeAreas,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
+import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	PostcodeIndexArtifact,
@@ -24,35 +25,33 @@ const before = new DatabaseSync(beforePath, { readOnly: true });
 const after = new DatabaseSync(afterPath, { readOnly: true });
 try {
 	const index: PostcodeIndexArtifact = JSON.parse(
-		String(
+		unpackText(
 			before
 				.prepare(
 					"SELECT payload FROM payloads WHERE id = 'postcode-index'",
 				)
 				.get()!.payload,
-		),
+		)!,
 	);
 	const artifact = readSqlitePostcodeAreas(resolve(apiRoot, "../.."));
 	assert.ok(
 		index.shards.length > 0 && artifact.shards.length > 0,
 		"No shards compared",
 	);
-	assert.equal(
-		after
-			.prepare("SELECT payload FROM payloads WHERE id = 'postcode-index'")
-			.get()!.payload,
-		before
-			.prepare("SELECT payload FROM payloads WHERE id = 'postcode-index'")
-			.get()!.payload,
-	);
-	assert.equal(
-		after
-			.prepare("SELECT payload FROM payloads WHERE id = 'postcode-areas'")
-			.get()!.payload,
-		before
-			.prepare("SELECT payload FROM payloads WHERE id = 'postcode-areas'")
-			.get()!.payload,
-	);
+	// Payloads are stored compressed now, and were plain text before.
+	for (const id of ["postcode-index", "postcode-areas"])
+		assert.equal(
+			unpackText(
+				after
+					.prepare("SELECT payload FROM payloads WHERE id = ?")
+					.get(id)!.payload,
+			),
+			unpackText(
+				before
+					.prepare("SELECT payload FROM payloads WHERE id = ?")
+					.get(id)!.payload,
+			),
+		);
 	const oldArea = (path: string) => {
 		const db = new DatabaseSync(beforePath, { readOnly: true });
 		try {

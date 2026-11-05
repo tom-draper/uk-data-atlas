@@ -1,4 +1,5 @@
 import { requireAtlasCache } from "../storage/atlasCache.ts";
+import { unpackText } from "../storage/storedPayload.ts";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
@@ -54,9 +55,11 @@ export const readTerrainCatalogue = (
 	try {
 		const row = database
 			.prepare("SELECT payload FROM payloads WHERE id = ?")
-			.get("terrain-catalogue") as { payload: string } | undefined;
-		if (!row) throw new Error(`Missing terrain catalogue at ${path}`);
-		const catalogue = JSON.parse(row.payload) as TerrainCatalogue;
+			.get("terrain-catalogue");
+		const text = unpackText(row?.payload);
+		if (text === undefined)
+			throw new Error(`Missing terrain catalogue at ${path}`);
+		const catalogue = JSON.parse(text) as TerrainCatalogue;
 		if (
 			catalogue.schemaVersion !== 1 ||
 			!Array.isArray(catalogue.products)
