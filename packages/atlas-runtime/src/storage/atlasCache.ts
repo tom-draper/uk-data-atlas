@@ -17,12 +17,12 @@ const dependencies: Record<CacheComponent, string[]> = {
 	"area-search": ["area_inventory"],
 	"place-index": [
 		"area_inventory",
-		"named_location_inventory",
+		"query:SELECT content_hash FROM named_location_inventory_metadata",
 		"payload:boundary-releases",
 	],
 	projections: [
 		"area_inventory",
-		"named_location_inventory",
+		"query:SELECT content_hash FROM named_location_inventory_metadata",
 		"crosswalk_inventory",
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
