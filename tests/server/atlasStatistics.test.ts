@@ -241,18 +241,16 @@ describe("fuel poverty on the statistics model", () => {
 					.all();
 				expect(strict).toHaveLength(11);
 				expect(strict.every((row) => row.strict === 1)).toBe(true);
+				// Place reads use the primary key with the release's series, so
+				// there is no secondary index on observation.
 				expect(
 					database
 						.prepare(
-							"SELECT name FROM sqlite_master WHERE type = 'index' AND name IN ('observation_area', 'series_dataset', 'series_member_member') ORDER BY name",
+							"SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name IN ('observation', 'series', 'series_member') AND name NOT LIKE 'sqlite_autoindex%' ORDER BY name",
 						)
 						.all()
 						.map((row) => row.name),
-				).toEqual([
-					"observation_area",
-					"series_dataset",
-					"series_member_member",
-				]);
+				).toEqual(["series_dataset", "series_member_member"]);
 				expect(
 					database.prepare("PRAGMA foreign_key_check").all(),
 				).toEqual([]);
