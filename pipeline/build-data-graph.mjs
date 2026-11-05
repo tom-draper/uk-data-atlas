@@ -502,6 +502,11 @@ const catalogueFiles = [
 	`${catalogueRegistry}/registry.ts`,
 	`${catalogueRegistry}/generated.ts`,
 ];
+const chartRegistryFiles = [
+	"lib/datasets/generated.ts",
+	"lib/datasets/generatedCharts.tsx",
+];
+
 const apiStages = [
 	// Always runs, as a download can change any raw file and needs the network.
 	// It is skipped when data/source already matches the pinned release.
@@ -1054,7 +1059,18 @@ const websiteStages = [
 		"website-registry",
 		["website-datasets"],
 		["scripts/generate-dataset-registry.ts"],
-		{ cacheable: false },
+		{
+			exclusive: true,
+			rawInputs: [],
+			requiredOutputs: chartRegistryFiles,
+			// The chart and catalogue definitions are imported by path.
+			codeInputs: [
+				"lib",
+				"packages/datasets",
+				".prettierrc",
+				"package.json",
+			],
+		},
 	),
 ];
 

@@ -37,6 +37,16 @@ test("the catalogue registry tracks the checked-in files it generates", () => {
 	]);
 });
 
+test("the website registry tracks the checked-in files it generates", () => {
+	const registry = stages.find((stage) => stage.name === "website-registry");
+	assert.ok(registry);
+	assert.equal(registry.cacheable, true);
+	assert.deepEqual(registry.requiredOutputs, [
+		"lib/datasets/generated.ts",
+		"lib/datasets/generatedCharts.tsx",
+	]);
+});
+
 test("every declared path is under the build outputs", () => {
 	for (const stage of stages.filter((stage) => !stage.exclusive))
 		for (const path of stageScope(stage) ?? [])
