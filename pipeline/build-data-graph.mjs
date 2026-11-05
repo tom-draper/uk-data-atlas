@@ -473,6 +473,7 @@ const stage = (
 	args = [`scripts/build-${name}.ts`],
 	{
 		cacheable = true,
+		exclusive = false,
 		isCurrent,
 		outputs = [],
 		requiredOutputs = [],
@@ -485,6 +486,7 @@ const stage = (
 	dependencies,
 	args,
 	cacheable,
+	exclusive,
 	isCurrent,
 	outputs,
 	requiredOutputs,

@@ -3,7 +3,13 @@ import { test } from "vitest";
 import { stageScope } from "@/pipeline/build-data-cache.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 
-type Stage = { name: string; writes?: string[]; cacheable?: boolean };
+type Stage = {
+	name: string;
+	writes?: string[];
+	cacheable?: boolean;
+	exclusive?: boolean;
+	requiredOutputs?: string[];
+};
 
 const stages = buildDataStages as Stage[];
 const overlaps = (a: string, b: string) =>
@@ -11,13 +17,15 @@ const overlaps = (a: string, b: string) =>
 
 test("only the stages that rewrite sources or checked-in code run alone", () => {
 	assert.deepEqual(
-		stages.filter((stage) => !stageScope(stage)).map(({ name }) => name),
+		stages
+			.filter((stage) => !stageScope(stage) || stage.exclusive)
+			.map(({ name }) => name),
 		["sources", "catalogue-registry", "website-registry"],
 	);
 });
 
 test("every declared path is under the build outputs", () => {
-	for (const stage of stages)
+	for (const stage of stages.filter((stage) => !stage.exclusive))
 		for (const path of stageScope(stage) ?? [])
 			assert.match(path, /^(data\/build|public\/data)\//, stage.name);
 });

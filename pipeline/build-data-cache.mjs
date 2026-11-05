@@ -388,7 +388,13 @@ export function createStageCache({
 	};
 
 	const adoptionOutputs = (stage) => {
-		const after = currentSnapshot();
+		const snapshot = currentSnapshot();
+		// A stage that writes checked-in files has outputs outside the roots.
+		const after = {
+			has: (path) => snapshot.has(path) || Boolean(fileStamp(path)),
+			get: (path) => snapshot.get(path) ?? fileStamp(path),
+			keys: () => snapshot.keys(),
+		};
 		const previous = previousStages[stage.name]?.outputs;
 		const paths = new Set([
 			...Object.keys(previous ?? {}),
@@ -585,6 +591,16 @@ export function createStageCache({
 			for (const [path, stamp] of after)
 				if (!sameStamp(before.get(path), stamp))
 					outputs.set(path, stamp);
+			// Rewriting checked-in code changes what later stages hash as code.
+			const codeChanged = [...after].some(
+				([path, stamp]) =>
+					!sameStamp(before.get(path), stamp) &&
+					!outputRoots.some((root) => path.startsWith(`${root}/`)),
+			);
+			if (codeChanged) {
+				files = null;
+				stageInputs.clear();
+			}
 			for (const [name, record] of Object.entries(state.stages)) {
 				let taken = false;
 				for (const path of outputs.keys())

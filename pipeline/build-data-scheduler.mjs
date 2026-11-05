@@ -66,7 +66,8 @@ export function conflicts(a, b) {
 	const first = stageScope(a);
 	const second = stageScope(b);
 	// A stage with no declared paths could touch anything, so it runs alone.
-	if (!first || !second) return true;
+	// So does one that rewrites files the other stages import.
+	if (!first || !second || a.exclusive || b.exclusive) return true;
 	return first.some((path) => second.some((other) => overlaps(path, other)));
 }
 
