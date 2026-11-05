@@ -9,7 +9,6 @@ const { buildSync } = require("esbuild");
 
 const runtimeConfig = {
 	"pipeline/src/build-data-catalog.ts": ["measure-dimensions.json"],
-	"pipeline/src/build-export-manifest.ts": ["measure-dimensions.json"],
 	"pipeline/src/build-derived-boundaries.ts": ["area-source-adapters.json"],
 	"pipeline/src/build-area-inventory.ts": [
 		"area-source-adapters.json",

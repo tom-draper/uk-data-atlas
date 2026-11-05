@@ -1,17 +1,15 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/catalogue/node";
-import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea.ts";
 import type { StatisticsSelection } from "./statisticsExport.ts";
 
 /**
  * Bind a complete small-area census measure to its canonical series: the
- * measure and members the measure mapping names its census column by.
+ * measure and members declared by its census table.
  */
 export function bindCensusStatistics(
 	database: DatabaseSync,
 	measure: Measure,
-	ids: MeasureDimensionsConfig["ids"],
 	allowOtherSources = false,
 ): StatisticsSelection[] | undefined {
 	for (const table of CENSUS_SMALL_AREA_TABLES) {
@@ -19,10 +17,9 @@ export function bindCensusStatistics(
 			([suffix]) => `${table.measurePrefix}-${suffix}` === measure.id,
 		);
 		if (!category) continue;
-		const mapping = ids[measure.id];
-		if (!mapping || measure.unit !== table.unit || !measure.sources.length)
+		if (measure.unit !== table.unit || !measure.sources.length)
 			return undefined;
-		const members = mapping.dimensions ?? {};
+		const members = { [table.dimension]: category[3] ?? category[0] };
 		const dataset = `census-2021-${table.table}`;
 		const selection: StatisticsSelection[] = [];
 		for (const source of measure.sources) {
@@ -63,7 +60,7 @@ export function bindCensusStatistics(
 				)
 				.all(
 					dataset,
-					mapping.measure,
+					table.measure,
 					type,
 					Object.keys(members).length,
 					JSON.stringify(members),
@@ -75,7 +72,7 @@ export function bindCensusStatistics(
 				return undefined;
 			selection.push({
 				dataset,
-				measure: mapping.measure,
+				measure: table.measure,
 				members,
 				exact: true,
 				geography: type,
