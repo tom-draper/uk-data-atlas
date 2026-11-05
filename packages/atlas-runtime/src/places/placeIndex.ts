@@ -359,7 +359,7 @@ export const openPlaceIndexDatabase = (
 	if (mismatch) throw new Error(`The place index at ${path} ${mismatch}.`);
 	const places = database.table("place");
 	const names = database.table("name");
-	const codes = database.table("codes");
+	const codes = database.table("code");
 	return {
 		contentHash: header.contentHash,
 		releases: JSON.parse(meta("releases")) as string[],
