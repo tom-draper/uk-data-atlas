@@ -1,3 +1,4 @@
+import { CROSSWALK_INVENTORY_VIEW } from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -387,11 +388,12 @@ export const crosswalkTables = (
 	const edgeReference =
 		"FOREIGN KEY (crosswalk_id, from_version_id, to_version_id) REFERENCES crosswalk_edge (crosswalk_id, from_version_id, to_version_id)";
 	return {
-		crosswalk_inventory: {
+		crosswalk_inventory_metadata: {
+			views: { crosswalk_inventory: CROSSWALK_INVENTORY_VIEW },
 			columns: [
-				"schemaVersion INTEGER NOT NULL",
-				"contentHash TEXT NOT NULL",
-				"areaInventoryHash TEXT",
+				"schema_version INTEGER NOT NULL",
+				"content_hash TEXT NOT NULL",
+				"area_inventory_hash TEXT",
 			],
 			rows: [
 				[
