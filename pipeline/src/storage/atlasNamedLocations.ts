@@ -1,4 +1,4 @@
-import { NAMED_LOCATIONS_VIEW } from "./deprecatedViews.ts";
+import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW } from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -72,14 +72,15 @@ export const namedLocationTables = (
 					: JSON.stringify(location.source),
 			]),
 		},
-		named_location_members: {
+		named_location_member: {
+			views: { named_location_members: NAMED_LOCATION_MEMBERS_VIEW },
 			columns: [
-				"locationId TEXT NOT NULL REFERENCES named_location(id)",
+				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",
 				"code TEXT NOT NULL",
 			],
-			key: ["locationId", "position"],
-			indexes: [["code", "locationId"]],
+			key: ["location_id", "position"],
+			indexes: [["code", "location_id"]],
 			rows: inventory.locations.flatMap((location) =>
 				location.memberCodes.map((code, position) => [
 					location.id,
