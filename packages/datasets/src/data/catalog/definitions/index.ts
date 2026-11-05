@@ -4,7 +4,6 @@ export { adultSocialCareOutcomesDatasetDefinition } from "./adultSocialCareOutco
 export { airQualityDatasetDefinition } from "./airQuality.ts";
 export { brexitDatasetDefinition } from "./brexit.ts";
 export { brexitConstituencyDatasetDefinition } from "./brexitConstituency.ts";
-export { broadbandDatasetDefinition } from "./broadband.ts";
 export { businessActivityDatasetDefinition } from "./businessActivity.ts";
 export { carAvailabilityDatasetDefinition } from "./carAvailability.ts";
 export { childPovertyDatasetDefinition } from "./childPoverty.ts";
@@ -31,7 +30,6 @@ export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy.ts";
 export { lifeExpectancySeriesDatasetDefinition } from "./lifeExpectancySeries.ts";
 export { localElectionDatasetDefinition } from "./localElection.ts";
 export { localGovernmentFinanceDatasetDefinition } from "./localGovernmentFinance.ts";
-export { mobileCoverageDatasetDefinition } from "./mobileCoverage.ts";
 export { netAdditionalDwellingsDatasetDefinition } from "./netAdditionalDwellings.ts";
 export { nhsWaitingDatasetDefinition } from "./nhsWaiting.ts";
 export { nimdmDatasetDefinition } from "./nimdm.ts";

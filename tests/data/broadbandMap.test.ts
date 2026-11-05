@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { broadbandDefinition } from "@/lib/datasets/broadband";
+import { getChartDatasetDefinition } from "@/lib/datasets";
 import type { BroadbandDataset } from "@uk-data-atlas/datasets/types/broadband";
 
 const dataset: BroadbandDataset = {
@@ -24,7 +24,14 @@ const dataset: BroadbandDataset = {
 
 describe("broadband map metric", () => {
 	it("uses the selected coverage measure", () => {
-		const valueFor = broadbandDefinition.map?.valueFor;
+		const valueFor = getChartDatasetDefinition("broadband")?.map
+			?.valueFor as
+			| ((
+					dataset: BroadbandDataset,
+					code: string,
+					options: typeof DEFAULT_MAP_OPTIONS,
+			  ) => number | null)
+			| undefined;
 		expect(valueFor?.(dataset, "E1", DEFAULT_MAP_OPTIONS)).toBe(61);
 
 		for (const [measure, expected] of [

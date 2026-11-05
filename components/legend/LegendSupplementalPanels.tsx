@@ -5,7 +5,6 @@ import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
-import { MOBILE_COVERAGE_MEASURES } from "@/lib/helpers/mobileCoverageMeasures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
 import { PUBLIC_HEALTH_MEASURES } from "@uk-data-atlas/datasets/data/public-health/loader";
@@ -348,29 +347,6 @@ export function EnergySectorPanel({
 	);
 }
 
-const MOBILE_COVERAGE_SEGMENTS = MOBILE_COVERAGE_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-type MobileCoverageMeasure = (typeof MOBILE_COVERAGE_MEASURES)[number]["value"];
-
-export function MobileCoverageMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: MobileCoverageMeasure;
-	onChange: (measure: MobileCoverageMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={MOBILE_COVERAGE_SEGMENTS}
-			onChange={onChange}
-			vertical
-		/>
-	);
-}
-
 const REGIONAL_OUTPUT_SEGMENTS = REGIONAL_OUTPUT_MEASURES.map(
 	({ value, label }) => [value, label] as const,
 );
@@ -492,31 +468,6 @@ export function AirQualityMeasurePanel({
 		<GlassSegmentedMeasurePanel
 			measure={measure}
 			measures={AIR_QUALITY_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}
-
-const BROADBAND_MEASURES = [
-	["fullFibre", "Full"],
-	["superfast", "Super"],
-	["ultrafast", "Ultra"],
-	["gigabit", "Gig"],
-] as const;
-
-export function BroadbandMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
-	onChange: (
-		measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit",
-	) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={BROADBAND_MEASURES}
 			onChange={onChange}
 		/>
 	);

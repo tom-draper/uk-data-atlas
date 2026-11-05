@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadMobileCoverage } from "@uk-data-atlas/datasets/data/mobile-coverage/loader";
-import { aggregateMobileCoverage } from "@/lib/helpers/datasetAggregation/numeric";
+import { aggregateMobileCoverage } from "@uk-data-atlas/datasets/data/mobile-coverage/aggregate";
 
 // The published columns are percentages of premises, or of landmass, reached by
 // exactly that many operators; each family sums to 100.
@@ -60,8 +60,8 @@ describe("loadMobileCoverage", () => {
 			"E06000002",
 		]);
 		expect(datasets[2025]).toMatchObject({
-			id: "mobileCoverage2025",
-			type: "mobileCoverage",
+			id: "mobile-coverage2025",
+			type: "mobile-coverage",
 			boundaryType: "localAuthority",
 			boundaryYear: 2024,
 		});

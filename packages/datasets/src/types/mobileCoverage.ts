@@ -18,7 +18,7 @@ export interface MobileCoverageLADData {
 
 export interface MobileCoverageDataset {
 	id: string;
-	type: "mobileCoverage";
+	type: "mobile-coverage";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

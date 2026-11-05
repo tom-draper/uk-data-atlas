@@ -93,18 +93,6 @@ export default function LegendContent({
 				activeDataset.type === "electricVehicleChargers" ||
 				activeDataset.type === "jobs") &&
 			displayOptions[activeDataset.type].measure === "perPopulation";
-		const broadbandMeasure =
-			activeDataset.type === "broadband"
-				? displayOptions.broadband.measure
-				: null;
-		const broadbandLabel =
-			broadbandMeasure === "superfast"
-				? "superfast"
-				: broadbandMeasure === "ultrafast"
-					? "ultrafast"
-					: broadbandMeasure === "gigabit"
-						? "gigabit"
-						: "full fibre";
 		const airQualityMeasure =
 			activeDataset.type === "airQuality"
 				? displayOptions.airQuality.measure
@@ -186,25 +174,18 @@ export default function LegendContent({
 					format: (value: number) =>
 						`${value.toFixed(0)} per 100k residents`,
 				}
-			: broadbandMeasure
+			: airQualityMeasure
 				? {
 						min: 0,
-						max: 100,
+						max: airQualityMeasure === "pm25" ? 20 : 35,
 						format: (value: number) =>
-							`${value.toFixed(0)}% ${broadbandLabel}`,
+							`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 					}
-				: airQualityMeasure
-					? {
-							min: 0,
-							max: airQualityMeasure === "pm25" ? 20 : 35,
-							format: (value: number) =>
-								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
-						}
-					: (wasteLegend ??
-						schoolPerformanceLegend ??
-						homelessnessLegend ??
-						unemploymentLegend ??
-						legend);
+				: (wasteLegend ??
+					schoolPerformanceLegend ??
+					homelessnessLegend ??
+					unemploymentLegend ??
+					legend);
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,

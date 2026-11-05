@@ -19,9 +19,11 @@ import { compileLifeExpectancy } from "./lifeExpectancy.ts";
 import { compileDeprivationIndices } from "./deprivation.ts";
 import { compilePopulationDensity } from "./populationDensity.ts";
 import { mergeMeasurePartitions } from "./indicators.ts";
-import { compileBroadband } from "./broadband.ts";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
-import { compileDeclaredIndicators } from "./declaredIndicators.ts";
+import {
+	compileDeclaredIndicators,
+	compileYearlyIndicators,
+} from "./declaredIndicators.ts";
 import { compileHomelessness } from "./homelessness.ts";
 import { compileRoadCollisions } from "./roadCollisions.ts";
 import { compileIncome } from "./income.ts";
@@ -33,7 +35,6 @@ import { compileCensusSmallArea } from "./censusSmallArea.ts";
 import { withAliases } from "./measureAliases.ts";
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureSource } from "@uk-data-atlas/measures";
-import { compileMobileCoverage } from "./mobileCoverage.ts";
 import { compileJobs } from "./jobs.ts";
 import { compileEmissions } from "./emissions.ts";
 import { compileRegionalGdp } from "./regionalGdp.ts";
@@ -52,12 +53,10 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	population: Input;
 	populationUk: Input;
 	ghgEmissions: Input;
-	mobileCoverage: Input;
 	travelToWork: Input;
 	carAvailability: Input;
 	qualification: Input;
 	ethnicity: Input;
-	broadband: Input;
 	homelessness: Input;
 	roadCollisions: Input;
 	income: Input;
@@ -110,12 +109,10 @@ export const compileDataCatalog = ({
 	population: populationPath,
 	populationUk: populationUkPath,
 	ghgEmissions: ghgEmissionsPath,
-	mobileCoverage: mobileCoveragePath,
 	travelToWork: travelToWorkPath,
 	carAvailability: carAvailabilityPath,
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
-	broadband: broadbandPath,
 	homelessness: homelessnessPath,
 	roadCollisions: roadCollisionsPath,
 	income: incomePath,
@@ -158,7 +155,7 @@ export const compileDataCatalog = ({
 	regionalGdpObservations: MeasureObservationArtifact[];
 	energyConsumptionObservations: MeasureObservationArtifact[];
 	jobsObservations: MeasureObservationArtifact;
-	mobileCoverageObservations: MeasureObservationArtifact[];
+	yearlyIndicatorObservations: MeasureObservationArtifact[];
 	indicatorObservations: MeasureObservationArtifact[];
 	statisticsFields: Array<{
 		measureId: string;
@@ -220,9 +217,19 @@ export const compileDataCatalog = ({
 		"regional-gdp-itl3": regionalGdpItl3Path,
 	});
 	const jobs = compileJobs(catalogManifest, jobsPath, populationCodes);
-	const mobileCoverage = compileMobileCoverage(
-		catalogManifest,
-		mobileCoveragePath,
+	const declaredFile = (id: string) => {
+		const path = declared[id];
+		if (!path) throw new Error(`No compiled file for ${id}`);
+		return path;
+	};
+	const yearly = DATASET_DECLARATIONS.filter(
+		(declaration) => declaration.catalogue?.yearly,
+	).map((declaration) =>
+		compileYearlyIndicators(
+			catalogManifest,
+			declaration,
+			declaredFile(declaration.id),
+		),
 	);
 	const census = compileCensus(
 		catalogManifest,
@@ -237,20 +244,17 @@ export const compileDataCatalog = ({
 	);
 	const england2025 = england2023.map((code) => RECODED_2025[code] ?? code);
 	const indicatorObservations = [
-		...compileBroadband(catalogManifest, broadbandPath, populationCodes),
 		...DATASET_DECLARATIONS.filter(
-			(declaration) => declaration.catalogue,
-		).flatMap((declaration) => {
-			const path = declared[declaration.id];
-			if (!path)
-				throw new Error(`No compiled file for ${declaration.id}`);
-			return compileDeclaredIndicators(
+			(declaration) =>
+				declaration.catalogue && !declaration.catalogue.yearly,
+		).flatMap((declaration) =>
+			compileDeclaredIndicators(
 				catalogManifest,
 				declaration,
-				path,
+				declaredFile(declaration.id),
 				{ authorities: populationCodes },
-			);
-		}),
+			),
+		),
 		...compileHomelessness(catalogManifest, homelessnessPath, england2025),
 		...compileRoadCollisions(
 			catalogManifest,
@@ -342,7 +346,7 @@ export const compileDataCatalog = ({
 			...regionalGdp.measures,
 			...energyConsumption.measures,
 			jobs.measure,
-			...mobileCoverage.measures,
+			...yearly.flatMap(({ measures }) => measures),
 			...indicatorMeasures,
 			...unemployment.measures,
 			...census.measures,
@@ -379,7 +383,9 @@ export const compileDataCatalog = ({
 		regionalGdpObservations: regionalGdp.artifacts,
 		energyConsumptionObservations: energyConsumption.artifacts,
 		jobsObservations: jobs.artifact,
-		mobileCoverageObservations: mobileCoverage.artifacts,
+		yearlyIndicatorObservations: yearly.flatMap(
+			({ artifacts }) => artifacts,
+		),
 		censusObservations: census.artifacts,
 		indicatorObservations: [
 			...indicatorObservations.map(({ artifact }) => artifact),

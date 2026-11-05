@@ -4,7 +4,6 @@ import type { adultSocialCareOutcomesDatasetDefinition } from "./definitions/adu
 import type { airQualityDatasetDefinition } from "./definitions/airQuality.ts";
 import type { brexitDatasetDefinition } from "./definitions/brexit.ts";
 import type { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency.ts";
-import type { broadbandDatasetDefinition } from "./definitions/broadband.ts";
 import type { businessActivityDatasetDefinition } from "./definitions/businessActivity.ts";
 import type { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
 import type { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
@@ -31,7 +30,6 @@ import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectan
 import type { lifeExpectancySeriesDatasetDefinition } from "./definitions/lifeExpectancySeries.ts";
 import type { localElectionDatasetDefinition } from "./definitions/localElection.ts";
 import type { localGovernmentFinanceDatasetDefinition } from "./definitions/localGovernmentFinance.ts";
-import type { mobileCoverageDatasetDefinition } from "./definitions/mobileCoverage.ts";
 import type { netAdditionalDwellingsDatasetDefinition } from "./definitions/netAdditionalDwellings.ts";
 import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import type { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
@@ -55,7 +53,9 @@ import type { unemploymentDatasetDefinition } from "./definitions/unemployment.t
 import type { wasteDatasetDefinition } from "./definitions/waste.ts";
 import type { wimdDatasetDefinition } from "./definitions/wimd.ts";
 import type { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIncome.ts";
+import type { broadband } from "../broadband/dataset.ts";
 import type { claimantCount } from "../claimant-count/dataset.ts";
+import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
 
 export type CatalogueDataset =
 	| Awaited<
@@ -73,7 +73,6 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<ReturnType<typeof broadbandDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof businessActivityDatasetDefinition.precompile>
 	  >[string]
@@ -145,9 +144,6 @@ export type CatalogueDataset =
 			>
 	  >[string]
 	| Awaited<
-			ReturnType<typeof mobileCoverageDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
 			ReturnType<
 				typeof netAdditionalDwellingsDatasetDefinition.precompile
 			>
@@ -212,11 +208,15 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof workplaceIncomeDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<ReturnType<typeof claimantCount.load>>[string];
+	| Awaited<ReturnType<typeof broadband.load>>[string]
+	| Awaited<ReturnType<typeof claimantCount.load>>[string]
+	| Awaited<ReturnType<typeof mobileCoverage.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
 /** Records of the datasets declared in `data/<id>/dataset.ts`, by id. */
 export type DeclaredDatasetRecords = {
+	broadband: Awaited<ReturnType<typeof broadband.load>>;
 	"claimant-count": Awaited<ReturnType<typeof claimantCount.load>>;
+	"mobile-coverage": Awaited<ReturnType<typeof mobileCoverage.load>>;
 };
 export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	adultSocialCareActivity: Awaited<
@@ -231,9 +231,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	brexit: Awaited<ReturnType<typeof brexitDatasetDefinition.precompile>>;
 	brexitConstituency: Awaited<
 		ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>
-	>;
-	broadband: Awaited<
-		ReturnType<typeof broadbandDatasetDefinition.precompile>
 	>;
 	businessActivity: Awaited<
 		ReturnType<typeof businessActivityDatasetDefinition.precompile>
@@ -302,9 +299,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	localGovernmentFinance: Awaited<
 		ReturnType<typeof localGovernmentFinanceDatasetDefinition.precompile>
-	>;
-	mobileCoverage: Awaited<
-		ReturnType<typeof mobileCoverageDatasetDefinition.precompile>
 	>;
 	netAdditionalDwellings: Awaited<
 		ReturnType<typeof netAdditionalDwellingsDatasetDefinition.precompile>

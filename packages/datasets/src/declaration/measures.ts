@@ -1,5 +1,9 @@
 import type { DeclaredDataset, DeclaredDimension, Json } from "./statistics.ts";
-import type { Aggregation, StatisticsMeasure, ValueKind } from "./vocabulary.ts";
+import type {
+	Aggregation,
+	StatisticsMeasure,
+	ValueKind,
+} from "./vocabulary.ts";
 
 /**
  * Measures shared by several datasets. A slug means one thing everywhere, and

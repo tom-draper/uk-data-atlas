@@ -115,7 +115,8 @@ export default function BroadbandChart({
 }: BroadbandChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const measure = useCurrentMapOptions().broadband.measure;
+	const measure = useCurrentMapOptions().broadband
+		.measure as keyof typeof MEASURES;
 	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 

@@ -148,30 +148,6 @@
 		"air-quality-grid-cells": {
 			"measure": "air-quality-grid-cells"
 		},
-		"broadband-full-fibre-availability": {
-			"measure": "broadband-availability",
-			"dimensions": {
-				"broadband-speed": "full-fibre"
-			}
-		},
-		"broadband-gigabit-availability": {
-			"measure": "broadband-availability",
-			"dimensions": {
-				"broadband-speed": "gigabit"
-			}
-		},
-		"broadband-superfast-availability": {
-			"measure": "broadband-availability",
-			"dimensions": {
-				"broadband-speed": "superfast"
-			}
-		},
-		"broadband-ultrafast-availability": {
-			"measure": "broadband-availability",
-			"dimensions": {
-				"broadband-speed": "ultrafast"
-			}
-		},
 		"business-activity": {
 			"measure": "enterprises"
 		},
@@ -1044,22 +1020,6 @@
 			"dimensions": {
 				"pay-statistic": "median",
 				"earnings-place": "workplace"
-			}
-		},
-		"mobile-4g-coverage": {
-			"measure": "mobile-premises-coverage",
-			"dimensions": {
-				"mobile-technology": "4g",
-				"coverage-location": "indoor",
-				"mobile-operators": "all"
-			}
-		},
-		"mobile-5g-coverage": {
-			"measure": "mobile-premises-coverage",
-			"dimensions": {
-				"mobile-technology": "5g",
-				"coverage-location": "outdoor",
-				"mobile-operators": "all"
 			}
 		},
 		"net-additional-dwellings": {

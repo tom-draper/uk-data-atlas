@@ -27,8 +27,12 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 			]),
 		),
 	),
+	// An indicator the catalogue compiler cannot trace to one field of one
+	// period (merged authorities, a file with a period per year) is bound here.
 	...Object.fromEntries(
-		DATASET_DECLARATIONS.flatMap((declaration) =>
+		DATASET_DECLARATIONS.filter(
+			({ catalogue }) => catalogue?.mergeApril2023 || catalogue?.yearly,
+		).flatMap((declaration) =>
 			(declaration.catalogue?.indicators ?? []).map((indicator) => [
 				indicator.id,
 				[[declaration.id, indicator.field]],
@@ -52,8 +56,6 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 	"general-election-valid-votes": [["general-election", "validVotes"]],
 	"local-election-turnout": [["local-election", "turnoutPercent"]],
 	"local-election-effective-votes": [["local-election", "partyVotes.LAB"]],
-	"mobile-4g-coverage": [["mobile-coverage", "pct4GIndoorAll"]],
-	"mobile-5g-coverage": [["mobile-coverage", "pct5GOutdoorAll"]],
 	"imd-rank": [["imd", "imdRank"]],
 	"imd-decile": [["imd", "imdDecile"]],
 	"wimd-rank": [["wimd", "wimdRank"]],

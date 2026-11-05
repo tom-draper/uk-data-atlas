@@ -52,7 +52,8 @@ export default function MobileCoverageChart({
 	setActiveViz,
 }: MobileCoverageChartProps) {
 	const isDark = useIsDark();
-	const measure = useCurrentMapOptions().mobileCoverage.measure;
+	const measure = useCurrentMapOptions()["mobile-coverage"]
+		.measure as keyof AggregatedMobileCoverageData;
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
@@ -73,7 +74,7 @@ export default function MobileCoverageChart({
 		: null;
 
 	const isActive =
-		activeDataset?.type === "mobileCoverage" &&
+		activeDataset?.type === "mobile-coverage" &&
 		activeDataset.id === dataset?.id;
 
 	if (!dataset) return null;
