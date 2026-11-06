@@ -6,6 +6,7 @@ import {
 	ATLAS_CACHE_WORK_ENV,
 	discardAtlasCacheWork,
 } from "./src/storage/atlasCacheWork.ts";
+import { OUTPUT_MANIFEST_ENV } from "./src/storage/outputManifest.ts";
 import { buildDataStages } from "./build-data-graph.mjs";
 import {
 	DEFAULT_STAGE_WEIGHT_MS,
@@ -146,7 +147,7 @@ export function formatAssetTree(files, { verbose = false } = {}) {
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
- *   execute?: (stage: Stage, options: { verbose: boolean, prefixed: boolean }) => number | Promise<number>,
+ *   execute?: (stage: Stage, options: { verbose: boolean, prefixed: boolean, outputManifest?: string }) => number | Promise<number>,
  *   limits?: { jobs: number, memoryMb: number },
  *   log?: (line: string) => void,
  *   logError?: (message: string) => void,
@@ -452,7 +453,11 @@ export async function runBuild({
 			const commandStartedAt = performance.now();
 			let status;
 			try {
-				status = await execute(stage, { verbose, prefixed: jobs > 1 });
+				status = await execute(stage, {
+					verbose,
+					prefixed: jobs > 1,
+					outputManifest: cache?.manifestPath(stage.name),
+				});
 			} catch (error) {
 				const command = performance.now() - commandStartedAt;
 				const total = recordTiming(stage.name, stageStartedAt, command);
@@ -564,9 +569,15 @@ const relayScript = fileURLToPath(
  * with the stage's name in front of each line when stages run at once. The
  * relay prefixes each line of stdout and stderr as it arrives.
  */
-function executeStage(stage, { verbose = false, prefixed = false } = {}) {
+function executeStage(
+	stage,
+	{ verbose = false, prefixed = false, outputManifest } = {},
+) {
 	const env = { ...process.env };
 	delete env.DATA_BUILD_RELAY_PREFIX;
+	delete env[OUTPUT_MANIFEST_ENV];
+	// Where the stage may note the hashes of files it hashed while writing.
+	if (outputManifest) env[OUTPUT_MANIFEST_ENV] = outputManifest;
 	// Stages add to shared files in a working copy, which the build publishes.
 	env[ATLAS_CACHE_WORK_ENV] = "1";
 	if (verbose) env.DATA_BUILD_VERBOSE = "1";
