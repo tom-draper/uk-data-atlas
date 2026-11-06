@@ -9,7 +9,9 @@ which stages can run in parallel. A build where nothing changed runs no stage.
 The `.stamps/` folder here holds one small file for each stage that adds tables
 to `atlas-cache.sqlite`. It records the hash of that stage's tables, which is
 how the cache tracks work inside a shared file. Delete a stamp to rebuild its
-stage.
+stage. The parity check stages (`verify-dataset-payloads`, `verify-postcode-areas`)
+leave a stamp there too, as the record that they passed; a local build skips them
+unless given `--verify`, and `pnpm data:verify` runs them.
 
 ```text
 data/source/          raw sources, restored from the pinned data release
@@ -67,6 +69,8 @@ that need the text, such as the API, gunzip the row. The cache is stamped with t
 SHA-256 hash of the final canonical database. The API opens both files read-only
 and fails readiness if the cache is missing, stale, lacks required payloads or
 predates the gzip column.
+`verify-dataset-payloads` reads these rows back and compares each with the
+compiler's JSON by value, so the build computes the generated payload once.
 The stages that fill it (`place-index`, `area-search-index`, `postcode-counts`,
 then `atlas-cache-stamp`) are skipped when unchanged. Each leaves a stamp in
 `.stamps/`, and `atlas-sqlite` clears them all when it extends the cache.
@@ -311,8 +315,9 @@ does not copy catalogue payloads into `public/data/datasets/`. That directory
 still holds generated gazetteer, road-safety, regional chunk and SEO assets,
 plus the website build manifest. The graph compiles shared datasets and SQLite
 before running the website compilation stage. `pnpm data:build --from datasets`
-rebuilds shared datasets, SQLite and their downstream consumers. `pnpm data:verify --target website` checks the website manifest and assets,
-including catalogue payload hashes in SQLite. It does not validate the relational
+rebuilds shared datasets, SQLite and their downstream consumers. `pnpm data:verify` checks the website manifest and assets,
+including catalogue payload hashes in SQLite, and then runs the parity checks
+described under "Parity checks" in `ARCHITECTURE.md`. It does not validate the relational
 API tables or the complete compiled release.
 
 ### Statistics tables
@@ -825,6 +830,12 @@ release, code and name. `postcode_area_columns` preserves release order and the
 presence of the optional several-match field per district. `postcode_area_codes`
 preserves each district's code dictionary as ordered references to `area_version`.
 These small tables retain the details needed to reconstruct the original bytes.
+
+The `postcode-areas` stage places each postcode once and writes the shards. The
+`verify-postcode-areas` check stage reads them back and compares every 5,000th
+postcode, and every postcode in several areas, with a live containment and
+nearest-edge lookup. A local build skips it; `pnpm data:build --verify` and
+`pnpm data:verify` run it.
 
 The reader selects a compact-postcode prefix range, filters to the district's
 postcode length, and orders by postcode using the primary key. This reproduces
