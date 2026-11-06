@@ -600,6 +600,74 @@ from the current-build manifest and removed from the API public directory. Rebui
 Run `node --import tsx scripts/verify-location-projections.mts` after building to
 compare every stored member and parent projection with its release shard.
 
+## Compiled intermediates and who reads them
+
+`atlas-sqlite` writes the areas, crosswalks and named locations in
+`artifacts/` into `atlas-base.sqlite`. The JSON stays, because the stages that
+compile and write it read it, and no website or API code reads it at run time.
+
+| JSON                                     | Read by                                                                                                                                                                                                                                            |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `areas/<geography>/<release>.json` (115) | `geometry-source-registry`, `crosswalk-inventory` (and each of its workers), `named-locations`, `location-projections`, `atlas-sqlite`, `map-resource`, `lookup-manifest`, `relationship-candidates`, `measure-compatibility`, `validation-report` |
+| `crosswalks/*.json.gz` (181)             | `crosswalk-inventory` (its own output, when reusing), `location-projections`, `atlas-sqlite`, `lookup-manifest`, `validation-report`, `analysis-geography-validation`                                                                              |
+| `named-locations.json`                   | `location-projections`, `atlas-sqlite`, `lookup-manifest`                                                                                                                                                                                          |
+
+Reading from SQLite is not always cheaper, so each stage reads what suits its
+access pattern. Measured on the 2026-11 release (980,726 area versions, 181
+crosswalks, 1.9 million edges, one process each; times vary by up to 2x with
+load on the machine, peak memory does not):
+
+| Read                                  | Compiled JSON           | `atlas-base.sqlite`   |
+| ------------------------------------- | ----------------------- | --------------------- |
+| every area of every release           | 0.7 s                   | 1.7 s                 |
+| every crosswalk, whole, one at a time | 4.4 s, 507 MB peak RSS  | 27 s, 1.1 GB peak RSS |
+| every crosswalk held at once          | 7.2 s, 0.99 GB peak RSS |                       |
+| named locations, without geometry     | 0.35 s, 270 MB          | 11 ms, 110 MB         |
+| each crosswalk's shape (one to one)   | 4.7 to 15 s, 0.4 GB     | 0.4 s, 109 MB         |
+
+A stage that needs a few columns or an aggregate reads SQLite. A stage that
+needs every record of a crosswalk reads its one gzipped JSON file, which is
+already compact and faster to parse than the records can be rebuilt. The
+stages that cost memory were holding every crosswalk or every lookup table at
+once, not parsing more than they needed.
+
+- `relationship-paths` reads each crosswalk's shape with `readCrosswalkShapes`
+  (`pipeline/src/storage/buildIntermediates.ts`), a query over the edges, and
+  depends on `atlas-sqlite`. It was 4.7 to 15 s and 0.4 GB, and is 0.7 to 1 s and
+  0.18 GB, with the same output. The dependency adds no wait: its consumers
+  already follow `atlas-sqlite` through `statistics-read-path`.
+- `lookup-manifest` builds and renders one lookup table at a time
+  (`compileLookupManifest` takes an iterable of tables), where it held all 181
+  crosswalk tables and 115 area tables. It was 22 to 53 s and 1.8 GB, and is 13
+  to 18 s and 0.79 GB, with a byte for byte identical manifest.
+- `analysis-geography-validation` and `validation-report` read crosswalks
+  through `createCrosswalkArtifacts` (`pipeline/src/storage/crosswalkArtifacts.ts`),
+  which parses a file when first asked for and holds at most 64 MB of JSON
+  text. Analysis validation routes through one crosswalk, so it parses 1 of
+  181 files, not all (the read took 7.2 s and 0.99 GB, and now 65 ms and
+  0.13 GB). The validation report visits each once, so it holds one at a time
+  (3.7 s and 0.66 GB for the read).
+
+`pipeline/src/storage/buildIntermediates.ts` also has `readAreas({ geography,
+release, fields })`, which streams the requested columns, `readAreaInventory`,
+`readCrosswalk(from, to)`, `readCrosswalkById`, `readCrosswalks`,
+`readNamedLocations` (geometry loads only when used) and
+`readCrosswalkShapes`. They read `atlasBaseDatabasePath(root)`, the file
+`atlas-sqlite` writes, unless given another path. A stage that uses them must
+list `atlas-sqlite` in its dependencies, so it waits for the tables and its
+cache key follows them. `assemble-atlas` copies the file into `atlas.sqlite`,
+so a stage that runs before it reads `atlas-base.sqlite`.
+
+Stages upstream of `atlas-sqlite` cannot read these tables and stay on the
+JSON: `geometry-source-registry`, `crosswalk-inventory`, `named-locations` and
+`location-projections` (which `atlas-sqlite` waits for). `map-resource` is on
+the longest path of the build (about 22 minutes), so waiting for `atlas-sqlite`
+would lengthen the build, and it reads only code and name from one release at a
+time. `measure-compatibility` and `relationship-candidates` need whole area
+releases, which are faster to read as JSON, and their memory is not in the
+area read. No JSON file was dropped: each is still written by the stage that
+compiles it and read by `atlas-sqlite`.
+
 ## Planned
 
 Other API accelerators belong in `atlas-cache.sqlite`.

@@ -405,6 +405,11 @@ The statistics vocabulary and read-path stages write JSON under `data/build/`.
 The read-path stage compares statistics rows with independently compiled
 observation values before assembly. The API reads both files from the deployed build. Other API
 loaders still read their JSON outputs.
+Stages after `atlas-sqlite` read the tables they need from `atlas-base.sqlite`
+where that is cheaper than the JSON (`relationship-paths` reads each
+crosswalk's shape from the edges), and read a crosswalk's JSON one file at a
+time where they need every record. See "Compiled intermediates and who reads
+them" in [data/build/README.md](data/build/README.md), with the measurements.
 See [data/build/README.md](data/build/README.md) for the database schema.
 
 ## Rebuilding after a change
