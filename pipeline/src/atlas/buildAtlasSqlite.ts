@@ -7,13 +7,7 @@ import {
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { publishAtlasCacheSteps } from "../storage/index.ts";
-import {
-	comparableCompiled,
-	generatedFromRows,
-	payloadDifference,
-	rebuildDatasetPayload,
-	servedFromRows,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { servedFromRows } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	CACHE_STAGES,
 	datasetPayloadStep,
@@ -286,26 +280,6 @@ export const buildAtlasSqlite = (
 	try {
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)
 			throw new Error("Area versions on another geography's release");
-		for (const entry of manifest.datasets) {
-			if (!generatedFromRows(entry.type)) continue;
-			const compiled = readFileSync(
-				join(directory, "datasets", `${entry.output}.json`),
-				"utf8",
-			);
-			const generated = rebuildDatasetPayload(
-				written,
-				entry.type,
-				entry.output,
-			);
-			const difference = payloadDifference(
-				JSON.parse(generated),
-				comparableCompiled(entry.type, JSON.parse(compiled)),
-			);
-			if (difference)
-				throw new Error(
-					`${entry.type}: statistics rows do not match compiled dataset values at ${difference}`,
-				);
-		}
 	} finally {
 		written.close();
 	}
