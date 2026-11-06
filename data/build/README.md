@@ -70,6 +70,19 @@ predates the gzip column.
 The stages that fill it (`place-index`, `area-search-index`, `postcode-counts`,
 then `atlas-cache-stamp`) are skipped when unchanged. Each leaves a stamp in
 `.stamps/`, and `atlas-sqlite` clears them all when it extends the cache.
+
+A build copies the cache once for those stages. The first to write copies
+`atlas-cache.sqlite` to `.atlas-cache.sqlite.work`, the rest change that copy,
+and `atlas-cache-stamp` vacuums it once and renames it over the cache, so the
+published file is replaced in one step at the end. If the build stops first, the
+published cache is untouched. The next build discards the copy, with the stamps
+of the stages that wrote to it, so they run again; it never resumes from the
+copy, because a stage killed midway leaves pages that cannot be trusted. The
+file only exists while a build runs. `atlas-sqlite` extends the cache in one
+copy of its own, without a vacuum, and publishes it before the later stages
+start, since stages between them read its projections. Stages run by hand (not
+through `pnpm data:build`) publish their own change directly, with their own
+copy and vacuum, as before.
 After restoring source data with `pnpm data:download`, run `pnpm data:build`
 to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).
@@ -124,7 +137,7 @@ parsing the schema. A reader leases the connection with
 `openReadOnlyDatabase(path)` and calls `release()` in a `finally`.
 
 The pipeline replaces `atlas.sqlite` and `atlas-cache.sqlite` by renaming a
-temporary file over them, and a connection keeps reading the old inode. So
+temporary or working file over them, and a connection keeps reading the old inode. So
 before a lease is handed out the file's `dev`, `ino`, `size` and `mtime` are
 compared with those recorded at open (one `stat`, under a microsecond). A
 changed file closes the connection, drops its statements and opens the new

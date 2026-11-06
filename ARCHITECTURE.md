@@ -308,17 +308,41 @@ path, so the whole definition directories are `codeInputs`. After a registry
 writes code, the code hashes of later stages are computed again.
 
 `place-index`, `area-search-index` and `postcode-counts` add tables to
-`atlas-cache.sqlite`, which also holds other stages' tables and is rewritten by
-copy and rename. Each lists the file as `shared`, so its bytes are not that
-stage's output, and leaves a stamp at `data/build/.stamps/<stage>.json` holding
-the cache component's generation and a hash of the stage's own tables (and, for
-`postcode-counts`, its `payloads` row). The stamp is the stage's required
-output and its digest, so the stage's readers rerun only when its tables
-change. `atlas-sqlite` clears the stamps when it extends the cache, which
-reruns all four. `atlas-cache-stamp` is the last writer and owns the file's
-bytes, so any other change to it reruns that stage. Its script then checks that
-the cache holds each stage's component for the current `atlas.sqlite`,
-and fails with the stale stage's stamp removed if it does not.
+`atlas-cache.sqlite`, which also holds other stages' tables. A build copies the
+file once for all three. The first of them to write copies the published cache
+to a working copy, `data/build/.atlas-cache.sqlite.work`, the others change that
+copy where it is (the runner sets `ATLAS_CACHE_WORK=1` for its stages, and
+stages run by hand still publish their own change), and `atlas-cache-stamp`
+vacuums it once and renames it over the cache. The stages list the cache as
+`shared`, so its bytes are not their output, and the working copy as `scratch`,
+a path they may write that is neither tracked as an output nor required to
+exist. Both make them run one at a time. Each leaves a stamp at
+`data/build/.stamps/<stage>.json` holding the cache component's generation and
+a hash of the stage's own tables (and, for `postcode-counts`, its `payloads`
+row), plus the id of the working copy it wrote to. The stamp is the stage's
+required output and its digest, so the stage's readers rerun only when its
+tables change, and the id makes it new in any build that made a copy, so the
+publishing stage always runs after a writer does. `--only` on one of the three
+also selects `atlas-cache-stamp` (`finishedBy`), and `atlas-release-initial`
+waits for it, because the published cache is the only one other stages read.
+`atlas-sqlite` writes its projection and dataset components into one copy of the
+published cache and renames it at once, since stages that need those run before
+the late stages finish. It clears the stamps and any working copy, which reruns
+all four.
+
+A build that stops leaves no half-published cache: only the rename publishes,
+and the working copy is discarded, never resumed. The runner removes a leftover
+copy before it looks at any stage, and again when a stage fails, together with
+the stamps of the stages that wrote to it (found by the copy's id; all of them
+if the copy cannot be read). A stage that fails inside the copy does the same
+at once, as its pages cannot be rolled back. A stage with no stamp reruns, so
+a cached stage never leaves the published cache without its tables. Stages
+stamped by earlier builds keep their stamps, as the next copy starts from the
+published cache that holds their tables. `atlas-cache-stamp` owns the
+published file's bytes, so any other change to it reruns that stage. Its
+script checks that the cache it is about to publish holds each stage's
+component for the current `atlas.sqlite`, and fails with the stale stage's
+stamp removed if it does not.
 `pipeline/build-data-cache.mjs` stores the cache in
 `.cache/data-build/`. The scoped key format and the content-hash record format
 each invalidate old entries once.
