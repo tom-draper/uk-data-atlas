@@ -218,3 +218,109 @@ test("the stage helpers write the file and only note a hash when the build asks"
 		{ path, sha256: sha256Hex("content") },
 	);
 });
+
+const runVerified = async (
+	root: string,
+	stages: Stage[],
+	execute: (stage: Stage, options: { outputManifest?: string }) => number,
+	argv: string[] = ["--verify-outputs", "--no-cache"],
+) => {
+	const log: string[] = [];
+	const errors: string[] = [];
+	const status = await runBuild({
+		argv,
+		stages: stages.map((stage) => ({ dependencies: [], ...stage })),
+		log: (line: string) => log.push(line),
+		logError: (message: string) => errors.push(message),
+		execute,
+		createCache: () =>
+			createStageCache({
+				root,
+				stateFile: join(root, ".cache/stages.json"),
+				codeFiles: () => [],
+				environment: {},
+			}),
+	});
+	return { status, log, errors };
+};
+
+test("verify mode catches a write outside the declared outputs", async () => {
+	const { root, write } = fixture();
+	const stages: Stage[] = [alpha];
+	const clean = await runVerified(root, stages, () => {
+		write("data/build/a/file.json", "{}");
+		return 0;
+	});
+	assert.equal(clean.status, 0);
+	const stray = await runVerified(root, stages, () => {
+		write("data/build/a/file.json", "{ }");
+		write("data/build/stray.json", "{}");
+		return 0;
+	});
+	assert.equal(stray.status, 1);
+	assert.ok(stray.log.includes("  data/build/stray.json"));
+	assert.ok(stray.errors.includes("Output verification failed."));
+});
+
+test("verify mode catches a stage that recorded a hash its file does not have", async () => {
+	const { root, write } = fixture();
+	const stages: Stage[] = [alpha];
+	const lying = (
+		stage: Stage,
+		{ outputManifest }: { outputManifest?: string },
+	) => {
+		assert.ok(outputManifest);
+		write("data/build/a/file.bin", "real");
+		recordOutputHash(
+			join(root, "data/build/a/file.bin"),
+			sha256Hex("not the real bytes"),
+			outputManifest,
+		);
+		return stage.name === "alpha" ? 0 : 1;
+	};
+	const verified = await runVerified(root, stages, lying);
+	assert.equal(verified.status, 1);
+	assert.ok(
+		verified.log.includes(
+			"alpha: recorded a hash that does not match 1 file",
+		),
+	);
+	assert.ok(verified.log.includes("  data/build/a/file.bin"));
+	// The record holds what the bytes hash to, so the lie never reaches a digest.
+	assert.equal(
+		recorded(root, "alpha")["data/build/a/file.bin"].sha256,
+		digestOf("real"),
+	);
+	// Without verification the cache takes the stage at its word.
+	const trusting = await runVerified(root, stages, lying, ["--no-cache"]);
+	assert.equal(trusting.status, 0);
+	assert.equal(
+		recorded(root, "alpha")["data/build/a/file.bin"].sha256,
+		sha256Hex("not the real bytes"),
+	);
+});
+
+test("--check-writes and DATA_BUILD_VERIFY_OUTPUTS verify as well", async () => {
+	const { root, write } = fixture();
+	const stray = () => {
+		write("data/build/stray.json", "{}");
+		return 0;
+	};
+	assert.equal(
+		(
+			await runVerified(root, [alpha], stray, [
+				"--check-writes",
+				"--no-cache",
+			])
+		).status,
+		1,
+	);
+	process.env.DATA_BUILD_VERIFY_OUTPUTS = "1";
+	onTestFinished(() => {
+		delete process.env.DATA_BUILD_VERIFY_OUTPUTS;
+	});
+	assert.equal(
+		(await runVerified(root, [alpha], stray, ["--no-cache"])).status,
+		1,
+	);
+});

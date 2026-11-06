@@ -167,7 +167,8 @@ export async function runBuild({
 } = {}) {
 	let jobs = limits.jobs;
 	let jobsFlag = false;
-	let checkWrites = false;
+	let verifyFlag = false;
+	let verifyOutputs = process.env.DATA_BUILD_VERIFY_OUTPUTS === "1";
 	let from;
 	let only;
 	let plan = false;
@@ -184,8 +185,13 @@ export async function runBuild({
 			verbose = true;
 		} else if (argument === "--no-cache" && useCache) {
 			useCache = false;
-		} else if (argument === "--check-writes" && !checkWrites) {
-			checkWrites = true;
+		} else if (
+			(argument === "--verify-outputs" ||
+				argument === "--check-writes") &&
+			!verifyFlag
+		) {
+			verifyFlag = true;
+			verifyOutputs = true;
 		} else if (argument === "--jobs" && !jobsFlag) {
 			if (!/^[1-9]\d*$/.test(argv[index + 1] ?? ""))
 				throw new Error("--jobs requires a positive whole number.");
@@ -204,15 +210,15 @@ export async function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--jobs <n> | --check-writes] [--no-cache | --adopt]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--jobs <n> | --verify-outputs] [--no-cache | --adopt]`,
 			);
 		}
 	}
-	if (checkWrites && (jobsFlag || adopt || plan))
+	if (verifyOutputs && (jobsFlag || adopt || plan))
 		throw new Error(
-			"--check-writes runs one stage at a time and cannot be combined with --jobs, --adopt or --plan.",
+			"--verify-outputs runs one stage at a time and cannot be combined with --jobs, --adopt or --plan.",
 		);
-	if (checkWrites) jobs = 1;
+	if (verifyOutputs) jobs = 1;
 	if (adopt && (!useCache || from !== undefined))
 		throw new Error(
 			"--adopt cannot be combined with --no-cache or --from.",
@@ -373,6 +379,7 @@ export async function runBuild({
 		let knownEstimates = 0;
 		let failureStatus = null;
 		const undeclaredStages = [];
+		const mismatchedStages = [];
 		const startedAtOf = new Map();
 		// A stage's expected duration: its last run, if it has to run at all.
 		const weightOf = (stage) =>
@@ -449,7 +456,7 @@ export async function runBuild({
 				`${stage.name}: running (${formatCount(started)} of ${formatCount(toRun.size)})`,
 			);
 			if (verbose) logCommand(stage);
-			cache?.begin(stage, { audit: checkWrites });
+			cache?.begin(stage, { audit: verifyOutputs });
 			const commandStartedAt = performance.now();
 			let status;
 			try {
@@ -487,7 +494,7 @@ export async function runBuild({
 				failureStatus ??= status;
 				return false;
 			}
-			const undeclared = checkWrites
+			const undeclared = verifyOutputs
 				? (cache?.undeclaredChanges(stage) ?? [])
 				: [];
 			if (undeclared.length) {
@@ -501,7 +508,20 @@ export async function runBuild({
 			}
 			const digest = cache?.record(stage, dependencies, {
 				cacheable: stage.cacheable !== false,
+				verify: verifyOutputs,
 			});
+			const wrongHashes = verifyOutputs
+				? (cache?.manifestMismatches(stage.name) ?? [])
+				: [];
+			if (wrongHashes.length) {
+				mismatchedStages.push(stage.name);
+				log(
+					`${stage.name}: recorded a hash that does not match ${plural(wrongHashes.length, "file")}`,
+				);
+				for (const path of wrongHashes.slice(0, 10)) log(`  ${path}`);
+				if (wrongHashes.length > 10)
+					log(`  and ${formatCount(wrongHashes.length - 10)} more`);
+			}
 			if (stage.cacheable !== false)
 				digests.set(stage.name, digest ?? null);
 			const total = recordTiming(stage.name, stageStartedAt, command);
@@ -529,9 +549,18 @@ export async function runBuild({
 			log(
 				`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Add their paths to stageWrites in pipeline/build-data-graph.mjs.`,
 			);
+		if (mismatchedStages.length)
+			log(
+				`Wrong output hashes in ${plural(mismatchedStages.length, "stage")}: ${mismatchedStages.join(", ")}. Each recorded a hash its file does not have, so the build would have trusted it.`,
+			);
 		if (failureStatus !== null) {
 			discardWork();
 			return failureStatus;
+		}
+		// An undeclared write is a bug in the graph: the cache would not see it.
+		if (undeclaredStages.length || mismatchedStages.length) {
+			logError("Output verification failed.");
+			return 1;
 		}
 		if (plan && knownEstimates)
 			log(
