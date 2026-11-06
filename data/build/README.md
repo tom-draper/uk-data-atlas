@@ -73,8 +73,9 @@ then `atlas-cache-stamp`) are skipped when unchanged. Each leaves a stamp in
 
 A build copies the cache once for those stages. The first to write copies
 `atlas-cache.sqlite` to `.atlas-cache.sqlite.work`, the rest change that copy,
-and `atlas-cache-stamp` vacuums it once and renames it over the cache, so the
-published file is replaced in one step at the end. If the build stops first, the
+and `atlas-cache-stamp` vacuums it once, with `VACUUM INTO` a temporary file
+beside the cache, and renames that over the cache, so the published file is
+replaced in one step at the end. If the build stops first, the
 published cache is untouched. The next build discards the copy, with the stamps
 of the stages that wrote to it, so they run again; it never resumes from the
 copy, because a stage killed midway leaves pages that cannot be trusted. The
@@ -83,6 +84,33 @@ copy of its own, without a vacuum, and publishes it before the later stages
 start, since stages between them read its projections. Stages run by hand (not
 through `pnpm data:build`) publish their own change directly, with their own
 copy and vacuum, as before.
+
+### Vacuuming
+
+A database is vacuumed once, when it is published, never by the stages that
+write into it. `publishVacuumed(workPath, publishedPath)` in
+`pipeline/src/storage/publishVacuumed.ts` runs `VACUUM INTO
+'<published path>.tmp'`, syncs the file, renames it over the published path and
+syncs the directory. A stale `.tmp` from a build that stopped is removed first,
+and a failure leaves the published file as it was. `VACUUM INTO` writes the
+compact file once, where an in-place `VACUUM` writes a temporary copy and then
+the file again. On `atlas.sqlite` (1.19 GB) it took 58 to 82 seconds against 168
+for the in-place form, and its output is byte for byte the same on every run.
+
+- `atlas.sqlite`: `assemble-atlas` copies `atlas-base.sqlite`, adds the postcode
+  and geography components, and publishes the copy with `publishVacuumed`.
+  `atlas-base.sqlite` and `postcode-index.sqlite` are components and are not
+  vacuumed. `website-assets.sqlite` is written in one pass and renamed, with
+  nothing to reclaim.
+- `atlas-cache.sqlite`: `atlas-cache-stamp` publishes the working copy with
+  `publishVacuumed`. A stage run by hand publishes its own copy the same way.
+
+The copy keeps the source's `page_size`, `auto_vacuum`, `user_version` and
+`application_id`. It does not keep `journal_mode` (a WAL database comes out in
+the default mode), and the writers use `journal_mode = OFF`, which is not stored
+in the file. The stage cache is unaffected: stage digests hash the bytes of the
+file a stage published, and the vacuum is deterministic, while the cache stages
+are tracked by stamps that hash table content.
 After restoring source data with `pnpm data:download`, run `pnpm data:build`
 to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).
