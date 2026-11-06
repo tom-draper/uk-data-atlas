@@ -7,13 +7,13 @@
 		"node": ">=24 <27"
 	},
 	"scripts": {
-		"data:verify": "tsx scripts/verify-data.mts",
+		"data:verify": "tsx scripts/verify-data.mts && node pipeline/build-data.mjs --checks",
 		"data:build": "node pipeline/build-data.mjs",
 		"docs:sources": "tsx scripts/generate-sources-readme.mts",
 		"data:download": "node scripts/data-release.mjs download",
 		"data:publish": "node scripts/data-release.mjs publish",
 		"dev": "node scripts/ensure-website-data.mjs && next dev --turbopack",
-		"build": "node scripts/link-boundary-tiles.mts && pnpm data:verify && node --import tsx scripts/build-seo-data.mts && next build --turbopack",
+		"build": "node scripts/link-boundary-tiles.mts && node --import tsx scripts/verify-data.mts && node --import tsx scripts/build-seo-data.mts && next build --turbopack",
 		"start": "next start",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",

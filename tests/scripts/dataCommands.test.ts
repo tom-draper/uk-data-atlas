@@ -52,7 +52,7 @@ function runDevCheck(fresh: boolean, compileStatus = 0) {
 const { appendFileSync } = require("node:fs");
 const args = process.argv.slice(2);
 appendFileSync(process.env.COMMAND_TRACE, JSON.stringify(args) + "\\n");
-process.exit(args[0] === "data:verify" ? ${fresh ? 0 : 1} : ${compileStatus});
+process.exit(args.includes("scripts/verify-data.mts") ? ${fresh ? 0 : 1} : ${compileStatus});
 `,
 	);
 	chmodSync(executable, 0o755);
@@ -81,7 +81,7 @@ test("dev startup skips compilation when website data verifies", () => {
 	const { result, commands } = runDevCheck(true);
 	expect(result.status).toBe(0);
 	expect(commands).toEqual([
-		["data:verify"],
+		["exec", "tsx", "scripts/verify-data.mts"],
 		["exec", "tsx", "scripts/build-seo-data.mts"],
 	]);
 });
@@ -89,13 +89,19 @@ test("dev startup skips compilation when website data verifies", () => {
 test("dev startup builds missing data through the pipeline before any copy command", () => {
 	const { result, commands } = runDevCheck(false);
 	expect(result.status).toBe(0);
-	expect(commands).toEqual([["data:verify"], ["data:build"]]);
+	expect(commands).toEqual([
+		["exec", "tsx", "scripts/verify-data.mts"],
+		["data:build"],
+	]);
 });
 
 test("dev startup propagates compilation failure without building SEO data", () => {
 	const { result, commands } = runDevCheck(false, 23);
 	expect(result.status).toBe(23);
-	expect(commands).toEqual([["data:verify"], ["data:build"]]);
+	expect(commands).toEqual([
+		["exec", "tsx", "scripts/verify-data.mts"],
+		["data:build"],
+	]);
 });
 
 test("dev startup propagates SEO data failure", () => {
