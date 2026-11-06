@@ -83,7 +83,7 @@ const ALWAYS_RUNS = "always-runs";
 const plural = (count, noun) =>
 	`${formatCount(count)} ${noun}${count === 1 ? "" : "s"}`;
 
-export function formatAssetTree(files) {
+export function formatAssetTree(files, { verbose = false } = {}) {
 	const root = new Map();
 	for (const [path, size] of files) {
 		const parts = path.split("/");
@@ -94,16 +94,41 @@ export function formatAssetTree(files) {
 		}
 		node.set(parts.at(-1), size);
 	}
+	const summarize = (node) => {
+		let count = 0;
+		let bytes = 0;
+		let hasSqlite = false;
+		for (const [name, value] of node) {
+			if (value instanceof Map) {
+				const child = summarize(value);
+				count += child.count;
+				bytes += child.bytes;
+				hasSqlite ||= child.hasSqlite;
+			} else {
+				count += 1;
+				bytes += value;
+				hasSqlite ||= name.endsWith(".sqlite");
+			}
+		}
+		return { count, bytes, hasSqlite };
+	};
 	const lines = [];
 	const visit = (node, prefix) => {
 		const entries = [...node].sort(([a], [b]) => a.localeCompare(b));
 		entries.forEach(([name, value], index) => {
 			const last = index === entries.length - 1;
-			lines.push(
-				`${prefix}${last ? "└── " : "├── "}${name}${value instanceof Map ? "/" : ` (${formatBytes(value)})`}`,
-			);
-			if (value instanceof Map)
-				visit(value, prefix + (last ? "    " : "│   "));
+			const branch = `${prefix}${last ? "└── " : "├── "}`;
+			if (value instanceof Map) {
+				const summary = summarize(value);
+				if (!verbose && summary.count > 8 && !summary.hasSqlite) {
+					lines.push(`${branch}${name}/ (${formatCount(summary.count)} files, ${formatBytes(summary.bytes)})`);
+				} else {
+					lines.push(`${branch}${name}/`);
+					visit(value, prefix + (last ? "    " : "│   "));
+				}
+			} else {
+				lines.push(`${branch}${name} (${formatBytes(value)})`);
+			}
 		});
 	};
 	visit(root, "  ");
@@ -252,7 +277,7 @@ export async function runBuild({
 			!failed && !adopt ? (cache?.generatedFiles?.() ?? []) : [];
 		if (generated.length) {
 			log(`Generated assets (${plural(generated.length, "file")}):`);
-			for (const line of formatAssetTree(generated)) log(line);
+			for (const line of formatAssetTree(generated, { verbose })) log(line);
 		}
 	};
 	const logCommand = (stage) => {
