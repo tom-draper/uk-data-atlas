@@ -5,8 +5,8 @@ import type {
 	CrosswalkInventory,
 } from "@uk-data-atlas/relationships";
 
-/** About twice the largest compiled crosswalk, as JSON text. */
-export const CROSSWALK_ARTIFACT_CACHE_BYTES = 128 * 1024 * 1024;
+/** Room for the largest compiled crosswalk (55 MB of JSON text) and a little over. */
+export const CROSSWALK_ARTIFACT_CACHE_BYTES = 64 * 1024 * 1024;
 
 /**
  * Crosswalk artifacts read from the compiled JSON when first asked for, and
