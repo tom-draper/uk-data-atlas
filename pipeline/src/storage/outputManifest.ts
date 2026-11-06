@@ -25,11 +25,11 @@ export function recordOutputHash(
 	manifest: string | undefined = process.env[OUTPUT_MANIFEST_ENV],
 ) {
 	if (!manifest) return;
-	const { size, mtimeMs, ino, dev } = statSync(path);
+	const { size, mtimeMs, ino } = statSync(path);
 	mkdirSync(dirname(manifest), { recursive: true });
 	appendFileSync(
 		manifest,
-		`${JSON.stringify({ path: resolve(path), size, mtimeMs, ino, dev, sha256 })}\n`,
+		`${JSON.stringify({ path: resolve(path), size, mtimeMs, ino, sha256 })}\n`,
 	);
 }
 

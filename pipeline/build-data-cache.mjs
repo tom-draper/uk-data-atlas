@@ -32,7 +32,6 @@ const stampOf = (stats) => ({
 	size: stats.size,
 	mtimeMs: stats.mtimeMs,
 	ino: stats.ino,
-	dev: stats.dev,
 });
 
 /** Size and mtime of every file under `directory`, keyed by repo path. */
@@ -148,15 +147,11 @@ const sameStamp = (a, b) =>
  */
 const sameFile = (a, b) =>
 	sameStamp(a, b) &&
-	(a.ino === undefined ||
-		b.ino === undefined ||
-		(a.ino === b.ino && a.dev === b.dev));
+	(a.ino === undefined || b.ino === undefined || a.ino === b.ino);
 
-/** Names a file by device, inode, size and mtime, so its links share a hash. */
+/** Names a file by inode, size and mtime, so its links share a hash. */
 const identityOf = (stamp) =>
-	stamp.ino
-		? `${stamp.dev}:${stamp.ino}:${stamp.size}:${stamp.mtimeMs}`
-		: null;
+	stamp.ino ? `${stamp.ino}:${stamp.size}:${stamp.mtimeMs}` : null;
 
 /** SHA-256 of a file, read in chunks so large outputs never sit in memory. */
 function hashFileContent(path) {
@@ -212,7 +207,6 @@ function readManifest(file, root) {
 			size: entry.size,
 			mtimeMs: entry.mtimeMs,
 			ino: entry.ino,
-			dev: entry.dev,
 			sha256: entry.sha256,
 		});
 	}
