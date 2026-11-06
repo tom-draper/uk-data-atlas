@@ -5,7 +5,7 @@ import type {
 	AreaReleaseArtifact,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createCrosswalkArtifacts } from "../storage/crosswalkArtifacts.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileLocationProjections } from "@uk-data-atlas/atlas-runtime/places";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
@@ -56,9 +56,7 @@ export const buildLocationProjections = (repositoryRoot: string) => {
 	const projections = compileLocationProjections(
 		namedLocations,
 		crosswalkInventory,
-		crosswalkInventory.crosswalks.map((crosswalk) =>
-			read<CrosswalkArtifact>(publicDirectory, crosswalk.artifact),
-		),
+		createCrosswalkArtifacts(publicDirectory, crosswalkInventory),
 		readAreaLookup(publicDirectory),
 	);
 	for (const artifact of projections.parentArtifacts) {

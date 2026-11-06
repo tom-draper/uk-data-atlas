@@ -291,15 +291,31 @@ const compileLocationParentArtifact = (
 export const compileLocationProjections = (
 	namedLocations: NamedLocationInventory,
 	crosswalkInventory: CrosswalkInventory,
-	crosswalks: Iterable<CrosswalkArtifact>,
+	crosswalks:
+		| Iterable<CrosswalkArtifact>
+		| { get(id: string): CrosswalkArtifact | undefined },
 	areaLookup: AreaLookup,
 ) => {
-	const crosswalkById = new Map(
-		[...crosswalks].map((crosswalk) => [crosswalk.id, crosswalk]),
-	);
-	const artifacts = crosswalkInventory.crosswalks.flatMap((summary) => {
+	// A lookup is asked for each crosswalk once, in inventory order, so a
+	// lazy one keeps a single crosswalk in memory at a time.
+	const crosswalkById =
+		Symbol.iterator in crosswalks
+			? new Map(
+					[...crosswalks].map((crosswalk) => [
+						crosswalk.id,
+						crosswalk,
+					]),
+				)
+			: crosswalks;
+	const artifacts: NonNullable<
+		ReturnType<typeof compileLocationProjectionArtifact>
+	>[] = [];
+	const parentArtifacts: NonNullable<
+		ReturnType<typeof compileLocationParentArtifact>
+	>[] = [];
+	for (const summary of crosswalkInventory.crosswalks) {
 		const crosswalk = crosswalkById.get(summary.id);
-		if (!crosswalk) return [];
+		if (!crosswalk) continue;
 		const artifact = compileLocationProjectionArtifact(
 			namedLocations,
 			crosswalkInventory.contentHash,
@@ -307,8 +323,16 @@ export const compileLocationProjections = (
 			crosswalk,
 			areaLookup,
 		);
-		return artifact ? [artifact] : [];
-	});
+		if (artifact) artifacts.push(artifact);
+		const parent = compileLocationParentArtifact(
+			namedLocations,
+			crosswalkInventory.contentHash,
+			summary,
+			crosswalk,
+			areaLookup,
+		);
+		if (parent) parentArtifacts.push(parent);
+	}
 	const shards = artifacts
 		.map((artifact) => {
 			const first = artifact.projections[0];
@@ -326,18 +350,6 @@ export const compileLocationProjections = (
 		.sort((left, right) =>
 			left.crosswalkId.localeCompare(right.crosswalkId),
 		);
-	const parentArtifacts = crosswalkInventory.crosswalks.flatMap((summary) => {
-		const crosswalk = crosswalkById.get(summary.id);
-		if (!crosswalk) return [];
-		const artifact = compileLocationParentArtifact(
-			namedLocations,
-			crosswalkInventory.contentHash,
-			summary,
-			crosswalk,
-			areaLookup,
-		);
-		return artifact ? [artifact] : [];
-	});
 	const parentShards = parentArtifacts
 		.map((artifact) => {
 			const first = artifact.parentProjections[0];

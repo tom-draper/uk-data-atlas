@@ -648,6 +648,11 @@ once, not parsing more than they needed.
   0.13 GB). The validation report visits each once, so it holds one at a time
   (3.7 s and 0.66 GB for the read).
 
+- `location-projections` runs before `atlas-sqlite`, so it reads the JSON, but
+  through the same loader, one crosswalk at a time and with one pass over
+  them. It was 21.5 s and 1.56 GB, and is 17.5 s and 0.97 GB, with identical
+  projections.
+
 `pipeline/src/storage/buildIntermediates.ts` also has `readAreas({ geography,
 release, fields })`, which streams the requested columns, `readAreaInventory`,
 `readCrosswalk(from, to)`, `readCrosswalkById`, `readCrosswalks`,
