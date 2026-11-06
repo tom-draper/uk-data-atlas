@@ -810,6 +810,19 @@ const apiStages = [
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
+	// Reads the stored placements back and asks the geometry again for a sample.
+	checkStage(
+		"verify-postcode-areas",
+		[
+			"postcode-areas",
+			"postcode-index",
+			"geometry-source-registry",
+			"geometry-store",
+		],
+		{
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"crosswalk-inventory",
 		["area-inventory", "geometry-source-registry"],
