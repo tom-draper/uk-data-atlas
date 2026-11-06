@@ -10,9 +10,7 @@ export const crosswalkFindings = (
 	inputs: ValidationInputs,
 	summary: CrosswalkInventory["crosswalks"][number],
 ): Finding[] => {
-	const artifact = inputs.crosswalkArtifacts.find(
-		(candidate) => candidate.id === summary.id,
-	);
+	const artifact = inputs.crosswalkArtifacts.get(summary.id);
 	if (!artifact) {
 		return [
 			check(

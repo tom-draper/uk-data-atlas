@@ -62,7 +62,8 @@ export type ValidationInputs = {
 	areaArtifacts: AreaReleaseArtifact[];
 	geometrySources: GeometrySourceRegistry;
 	crosswalkInventory: CrosswalkInventory;
-	crosswalkArtifacts: CrosswalkArtifact[];
+	/** Crosswalk artifacts by id, read when a crosswalk is checked. */
+	crosswalkArtifacts: Pick<Map<string, CrosswalkArtifact>, "get">;
 	relationshipCandidates: RelationshipCandidateInventory;
 	geographyInventory: GeographyInventory;
 	dataCatalog: DataCatalog;

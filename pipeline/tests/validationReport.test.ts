@@ -335,7 +335,9 @@ const inputs = (
 				contentHash: crosswalk.contentHash,
 			})),
 		},
-		crosswalkArtifacts: crosswalks,
+		crosswalkArtifacts: new Map(
+			crosswalks.map((crosswalk) => [crosswalk.id, crosswalk]),
+		),
 		relationshipCandidates: {
 			schemaVersion: 1,
 			contentHash: "sha256:candidates",

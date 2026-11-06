@@ -7,7 +7,6 @@ import type {
 	AreaReleaseArtifact,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import type { ExportManifest } from "@uk-data-atlas/atlas-runtime/storage";
@@ -29,6 +28,7 @@ import {
 	artifactDirectory,
 	configDirectory,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { createCrosswalkArtifacts } from "./storage/crosswalkArtifacts.ts";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildValidationReport = (repositoryRoot: string) => {
@@ -63,8 +63,9 @@ export const buildValidationReport = (repositoryRoot: string) => {
 				"geometry-sources.json",
 			),
 			crosswalkInventory,
-			crosswalkArtifacts: crosswalkInventory.crosswalks.map((crosswalk) =>
-				read<CrosswalkArtifact>(crosswalk.artifact),
+			crosswalkArtifacts: createCrosswalkArtifacts(
+				outputDirectory,
+				crosswalkInventory,
 			),
 			relationshipCandidates: read<RelationshipCandidateInventory>(
 				"relationship-candidates.json",
