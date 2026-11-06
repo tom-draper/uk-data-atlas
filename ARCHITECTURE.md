@@ -313,7 +313,8 @@ file once for all three. The first of them to write copies the published cache
 to a working copy, `data/build/.atlas-cache.sqlite.work`, the others change that
 copy where it is (the runner sets `ATLAS_CACHE_WORK=1` for its stages, and
 stages run by hand still publish their own change), and `atlas-cache-stamp`
-vacuums it once and renames it over the cache. The stages list the cache as
+vacuums it once, with `VACUUM INTO` a temporary file beside the cache, and
+renames that over the cache. The stages list the cache as
 `shared`, so its bytes are not their output, and the working copy as `scratch`,
 a path they may write that is neither tracked as an output nor required to
 exist. Both make them run one at a time. Each leaves a stamp at
