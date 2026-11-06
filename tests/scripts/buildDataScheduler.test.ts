@@ -588,7 +588,7 @@ test("the real graph runs with overlap but never breaks a dependency or a shared
 				);
 });
 
-test("--check-writes names the stages that change files outside their declared writes", async () => {
+test("--verify-outputs fails and names the stages that change files outside their declared writes", async () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-build-audit-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const write = (path: string) => {
@@ -597,7 +597,7 @@ test("--check-writes names the stages that change files outside their declared w
 	};
 	const stages = [stage("tidy"), stage("stray", ["tidy"])];
 	const { status, log } = await build(stages, {
-		argv: ["--check-writes"],
+		argv: ["--verify-outputs"],
 		limits: unlimited,
 		execute: (current) => {
 			write(`data/build/${current.name}/out.json`);
@@ -612,7 +612,7 @@ test("--check-writes names the stages that change files outside their declared w
 				environment: {},
 			}),
 	});
-	assert.equal(status, 0);
+	assert.equal(status, 1);
 	assert.ok(
 		log.includes("stray: changed 1 file outside its declared writes"),
 	);
@@ -625,7 +625,7 @@ test("--check-writes names the stages that change files outside their declared w
 	);
 	await assert.rejects(
 		build(stages, {
-			argv: ["--check-writes", "--jobs", "2"],
+			argv: ["--verify-outputs", "--jobs", "2"],
 			execute: () => 0,
 		}),
 		/cannot be combined/,
