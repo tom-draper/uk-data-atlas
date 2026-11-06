@@ -5,8 +5,13 @@ import { buildLog } from "../packages/atlas-runtime/src/storage/buildTiming.ts";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const options = { cwd: root, shell: process.platform === "win32" };
 const force = process.env.ATLAS_FORCE_DATA_BUILD === "1";
+// Only whether the published files are current. The parity checks that
+// `pnpm data:verify` adds read build intermediates and are slow, and a failed
+// one is not a reason to regenerate the data.
 const fresh =
-	!force && spawnSync("pnpm", ["data:verify"], options).status === 0;
+	!force &&
+	spawnSync("pnpm", ["exec", "tsx", "scripts/verify-data.mts"], options)
+		.status === 0;
 
 if (fresh) {
 	buildLog.info("Local data is up to date, skipping regeneration");
