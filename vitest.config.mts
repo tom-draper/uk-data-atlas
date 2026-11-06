@@ -44,7 +44,7 @@ export default defineConfig({
 					testTimeout: 0,
 					hookTimeout: 0,
 					restoreMocks: true,
-					sequence: { hooks: "list" as const },
+					sequence: { hooks: "list" as const, groupOrder: 1 },
 				},
 			})),
 			{
@@ -80,7 +80,7 @@ export default defineConfig({
 					name: "built",
 					include: [BUILT_TESTS],
 					fileParallelism: false,
-					sequence: { groupOrder: 1 },
+					sequence: { groupOrder: 2 },
 				},
 			},
 		],
