@@ -1,6 +1,5 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
-	readSqlitePostcodeShard,
 	buildLog,
 	formatCount,
 	formatDuration,
@@ -11,6 +10,7 @@ import {
 	readPostcodeAreaComponent,
 	storePostcodeAreas,
 } from "./postcodes/storePostcodeAreas.ts";
+import { readPostcodeCoordinates } from "./postcodes/postcodeCoordinates.ts";
 import { existsSync, readFileSync } from "node:fs";
 
 import { availableParallelism } from "node:os";
@@ -22,17 +22,13 @@ import {
 	Worker,
 	workerData,
 } from "node:worker_threads";
-import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry.ts";
-import { readSqlitePostcodeIndex as readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/storage";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { AreasResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/postcodes";
-import { parsePostcode } from "@uk-data-atlas/geography";
-import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import {
 	createAreaGeometryCache,
 	readGeometrySourceLookup,
@@ -42,28 +38,24 @@ import {
 	placementsFromShards,
 	placePoints,
 	releaseCounts,
-	toCentimetres,
 	type ReleasePlacements,
 } from "./postcodes/postcodeAreaCompiler.ts";
 import {
-	NONE,
-	SEVERAL,
 	releaseKey,
 	type PostcodeAreaRelease,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
 } from "@uk-data-atlas/geography/postcode-area-types";
-import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
 
 /**
  * Compile postcode placements into a component: the areas each postcode's centroid lies in,
  * for the releases postcode answers read by default.
  *
- * Each release is placed in a worker thread holding that release's geometry,
- * and checked there against the live lookup for a sample of postcodes; any
- * difference fails the build. A release whose postcodes, areas and geometry
- * are unchanged since the last build is read back from its shards instead,
- * unless `--rebuild` is given.
+ * Each release is placed in a worker thread holding that release's geometry.
+ * The `verify-postcode-areas` check stage then compares the stored placements
+ * with a live lookup for a sample of postcodes. A release whose postcodes,
+ * areas and geometry are unchanged since the last build is read back from its
+ * shards instead, unless `--rebuild` is given.
  * `--workers N` sets how many releases are placed at once; each holds a
  * release's geometry, packed, and parses its source file to load it.
  */
@@ -74,7 +66,6 @@ type Job = {
 	boundaryRelease: string;
 	longitudes: SharedArrayBuffer;
 	latitudes: SharedArrayBuffer;
-	verifyEvery: number;
 };
 
 type JobResult = {
@@ -89,11 +80,10 @@ type JobResult = {
 				: never,
 		]
 	>;
-	verified: number;
 	seconds: number;
 };
 
-/** Place every postcode in one release, then check a sample the live way. */
+/** Place every postcode in one release. */
 const placeRelease = (job: Job): JobResult => {
 	const started = performance.now();
 	const longitudes = new Float64Array(job.longitudes);
@@ -106,52 +96,11 @@ const placeRelease = (job: Job): JobResult => {
 		cache.codes(geography, boundaryRelease),
 		(code) => cache.get(geography, boundaryRelease, code),
 	);
-	const expected = (at: number) => {
-		const area = placements.area[at]!;
-		if (area === NONE) return [];
-		if (area === SEVERAL)
-			return placements.several
-				.get(at)!
-				.map(([codeAt, containment, distance]) => [
-					placements.codes[codeAt]!,
-					containment,
-					distance,
-				]);
-		return [
-			[placements.codes[area]!, "interior", placements.distanceCm[at]!],
-		];
-	};
-	let verified = 0;
-	const check = (at: number) => {
-		const point: [number, number] = [longitudes[at]!, latitudes[at]!];
-		const live = cache
-			.findContaining(geography, boundaryRelease, point)
-			.map(({ code, containment }) => [
-				code,
-				containment,
-				toCentimetres(
-					distanceToBoundaryM(
-						point,
-						cache.get(geography, boundaryRelease, code)!,
-					),
-				),
-			]);
-		const compiled = expected(at);
-		if (JSON.stringify(live) !== JSON.stringify(compiled))
-			throw new Error(
-				`${releaseKey(geography, boundaryRelease)}: point ${at} at ${point.join(",")} is placed in ${JSON.stringify(compiled)}, but a live lookup finds ${JSON.stringify(live)}.`,
-			);
-		verified += 1;
-	};
-	for (let at = 0; at < longitudes.length; at += job.verifyEvery)
-		if (!Number.isNaN(longitudes[at]!)) check(at);
-	for (const at of placements.several.keys()) check(at);
 	return {
 		codes: placements.codes,
 		area: placements.area,
 		distanceCm: placements.distanceCm,
 		several: [...placements.several.entries()],
-		verified,
 		seconds: (performance.now() - started) / 1000,
 	};
 };
@@ -193,46 +142,10 @@ const previousBuild = (repositoryRoot: string, postcodeIndex: string) => {
 
 export const buildPostcodeAreas = async (
 	repositoryRoot: string,
-	options: { workers?: number; verifyEvery?: number; rebuild?: boolean } = {},
+	options: { workers?: number; rebuild?: boolean } = {},
 ) => {
-	const { postcodeArtifact, lng, lat, longitudes, latitudes } = (() => {
-		const databasePath = join(
-			repositoryRoot,
-			"data/build/postcode-index.sqlite",
-		);
-		const postcodeIndex = readPostcodeIndex(repositoryRoot, databasePath);
-		const postcodeArtifact = postcodeIndex.artifact;
-		const count = postcodeArtifact.counts.postcodes;
-		const longitudes = new SharedArrayBuffer(count * 8);
-		const latitudes = new SharedArrayBuffer(count * 8);
-		const lng = new Float64Array(longitudes).fill(Number.NaN);
-		const lat = new Float64Array(latitudes).fill(Number.NaN);
-		let at = 0;
-		for (const entry of postcodeArtifact.shards) {
-			const shard = JSON.parse(
-				readSqlitePostcodeShard(repositoryRoot, entry, databasePath),
-			) as PostcodeShard;
-			for (const postcode of shard.postcodes) {
-				const found = postcodeIndex.lookup(
-					parsePostcode(postcode) as Extract<
-						ReturnType<typeof parsePostcode>,
-						{ kind: "unit" }
-					>,
-				);
-				if (found.status === "found" && found.record.centroid) {
-					const point = postcodeLookupPoint(found.record.centroid);
-					lng[at] = point.lng;
-					lat[at] = point.lat;
-				}
-				at += 1;
-			}
-		}
-		if (at !== count)
-			throw new Error(
-				`The postcode index counts ${count} postcodes but holds ${at}.`,
-			);
-		return { postcodeArtifact, lng, lat, longitudes, latitudes };
-	})();
+	const { postcodeArtifact, lng, lat, longitudes, latitudes } =
+		readPostcodeCoordinates(repositoryRoot);
 	const geometrySources = readGeometrySourceLookup(repositoryRoot);
 	const { areaInventory, chosen } = (() => {
 		const databasePath = join(
@@ -355,7 +268,6 @@ export const buildPostcodeAreas = async (
 					boundaryRelease: next.boundaryRelease,
 					longitudes,
 					latitudes,
-					verifyEvery: options.verifyEvery ?? 5_000,
 				});
 				placed.set(key, {
 					codes: result.codes,
@@ -364,7 +276,7 @@ export const buildPostcodeAreas = async (
 					several: new Map(result.several),
 				});
 				buildLog.detail(
-					`Placed ${key} in ${formatDuration(result.seconds * 1000)}, matching a live lookup for ${formatCount(result.verified)} postcodes`,
+					`Placed ${key} in ${formatDuration(result.seconds * 1000)}`,
 				);
 			}
 		}),
