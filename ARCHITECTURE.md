@@ -209,8 +209,15 @@ overlap and run in plan order. A stage with no declared paths (`sources`, which
 rewrites `data/source`) runs alone, as does an `exclusive` stage. The two
 registries are `exclusive`: they rewrite checked-in code that other stages
 import. Add the paths of any new stage, or it will run alone.
-`pnpm data:build --check-writes` runs one stage at a time and names any file a
-stage changed outside its declared paths. Run it after adding or changing a stage.
+`pnpm data:build --verify-outputs` (or `DATA_BUILD_VERIFY_OUTPUTS=1`; `--check-writes` is the
+old name) runs one stage at a time, scans the whole output tree before and after
+each, and fails the build naming any file a stage changed outside its declared
+paths. The normal build looks only at declared paths, so a stage that writes
+elsewhere is not noticed and its dependants are not invalidated. Run the
+verification after adding or changing a stage, and before trusting a cache that
+a new stage has built. It also checks the hashes described below. A full data
+build needs the pinned source release, so CI runs only the unit tests that
+exercise it on a fixture graph.
 
 When a stage fails, no new stage starts. Stages already running finish, so
 their outputs are complete and recorded in the cache, and the build exits with
@@ -267,10 +274,29 @@ paths while it ran, so stages with separate paths can run at once. A stage
 without declared paths is tracked across both trees and runs alone.
 
 A stage's output digest hashes the contents of its output files, not their
-mtimes. Each recorded file stores `{size, mtimeMs, sha256}`. A file is hashed,
-in streamed chunks, only when no record holds that path with the same size and
-mtime, so unchanged multi-gigabyte outputs such as `atlas.sqlite` are not read
-again. The skip check compares size and mtime alone. A stage that rewrites
+mtimes. After a stage runs, the runner stats only the paths the stage declares
+(`stageWrites`, `outputs`, `requiredOutputs`), never the whole tree; only a stage
+with no declared paths (`sources`) scans both trees. Each recorded file stores
+`{size, mtimeMs, ino, sha256}`. A file is hashed, in streamed chunks, only when
+no hash can be trusted for it. Three sources are trusted, each only for a file
+whose size, mtime and inode all match the stat taken with the hash:
+
+- the file's own earlier record, so unchanged multi-gigabyte outputs such as
+  `atlas.sqlite` are not read again;
+- a link to a file already hashed, whichever stage recorded it, so
+  `public/data/boundaries` (hard links of `data/build/boundaries`) is not read
+  again;
+- a hash the stage recorded while writing the file. A stage calls
+  `recordOutputHash` or `writeFileHashedSync` from
+  `pipeline/src/storage/outputManifest.ts` with the hash of the bytes it wrote
+  (`geometry-store` and `map-resource` do). The runner gives each stage a
+  manifest path in `DATA_BUILD_OUTPUT_MANIFEST` (under the cache folder, one
+  JSON line per file), reads it when the stage finishes, then deletes it. A file
+  changed after its hash was recorded no longer matches and is hashed again.
+
+The skip check on later builds compares size and mtime alone. SQLite files are
+still hashed as files. The content stamps in `stageStamp.ts` keep standing in for
+the shared `atlas-cache.sqlite`, which several stages write. A stage that rewrites
 identical bytes therefore keeps its digest, and its dependants are skipped (early
 cutoff). If it instead restores a shared file that a downstream stage had
 changed, such as `atlas.sqlite`, that downstream stage is invalidated and

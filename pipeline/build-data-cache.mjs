@@ -233,9 +233,11 @@ function readOutputs(outputs) {
  * none are declared), the relevant environment, and dependencies'
  * outputs. Its outputs are the files under OUTPUT_ROOTS it created or
  * changed, plus any in the folders it declares as `outputs`. Each is recorded
- * with its size, mtime and SHA-256, and the stage's output digest hashes the
+ * with its size, mtime, inode and SHA-256, and the stage's output digest hashes the
  * contents, so a stage that rewrites identical bytes changes nothing downstream.
- * Size and mtime only decide whether a file must be hashed again. A file belongs
+ * Size, mtime and inode only decide whether a file must be hashed again; a hash
+ * the stage recorded while writing, or one held by a link to the same file, is
+ * used instead of reading the file. A file belongs
  * to the last stage that wrote it.
  *
  * @param {{
