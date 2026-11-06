@@ -4,7 +4,9 @@ import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
 
 /**
  * Write tables, each keyed by `position`, and a key-value `meta` table. The
- * file is written beside its path and moved into place once complete.
+ * file is written beside its path and moved into place once complete. It is
+ * not vacuumed: it is a component, and the database published from it is
+ * vacuumed once, at that publish step.
  */
 export const writeSqliteIndex = (
 	path: string,
@@ -27,7 +29,7 @@ export const writeSqliteIndex = (
 		for (const [key, value] of Object.entries(meta))
 			insertMeta.run(key, value);
 		writeSqliteTables(database, tables);
-		database.exec("COMMIT; VACUUM;");
+		database.exec("COMMIT");
 	} finally {
 		database.close();
 	}
