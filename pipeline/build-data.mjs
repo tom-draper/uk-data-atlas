@@ -284,7 +284,10 @@ export async function runBuild({
 		const generated =
 			!failed && !adopt ? (cache?.generatedFiles?.() ?? []) : [];
 		if (generated.length) {
-			log(`Generated assets (${plural(generated.length, "file")}):`);
+			const generatedBytes = generated.reduce((total, [, size]) => total + size, 0);
+			log(
+				`Generated assets (${plural(generated.length, "file")}, ${formatBytes(generatedBytes)} total):`,
+			);
 			for (const line of formatAssetTree(generated, { verbose })) log(line);
 		}
 	};
