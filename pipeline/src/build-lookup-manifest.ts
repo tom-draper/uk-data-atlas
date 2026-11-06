@@ -37,31 +37,31 @@ export const buildLookupManifest = (repositoryRoot: string) => {
 	const crosswalkInventory = read<CrosswalkInventory>(
 		"crosswalk-inventory.json",
 	);
-	const manifest = compileLookupManifest([
-		...areaInventory.releases.flatMap((release) => {
-			if (release.status !== "available") return [];
+	// Each table is built when the compiler asks for it and released after it
+	// is rendered, so only one table's rows are in memory at a time.
+	function* tables() {
+		for (const release of areaInventory.releases) {
+			if (release.status !== "available") continue;
 			const artifact = read<AreaReleaseArtifact>(release.artifact);
-			return [
-				areaIdentityTable({
-					geography: artifact.geography,
-					boundaryRelease: artifact.boundaryRelease,
-					artifact: release.artifact,
-					contentHash: artifact.contentHash,
-					areas: artifact.areas,
-				}),
-			];
-		}),
-		...crosswalkInventory.crosswalks.map((crosswalk) =>
-			crosswalkTable(
+			yield areaIdentityTable({
+				geography: artifact.geography,
+				boundaryRelease: artifact.boundaryRelease,
+				artifact: release.artifact,
+				contentHash: artifact.contentHash,
+				areas: artifact.areas,
+			});
+		}
+		for (const crosswalk of crosswalkInventory.crosswalks)
+			yield crosswalkTable(
 				read<LookupCrosswalk>(crosswalk.artifact),
 				crosswalk.artifact,
-			),
-		),
-		namedLocationMembersTable(
+			);
+		yield namedLocationMembersTable(
 			read<LookupNamedLocations>("named-locations.json"),
 			"named-locations.json",
-		),
-	]);
+		);
+	}
+	const manifest = compileLookupManifest(tables());
 	const outputPath = join(publicDirectory, "lookup-manifest.json");
 	writeFileSync(outputPath, `${JSON.stringify(manifest, null, "\t")}\n`);
 	return { outputPath, lookupCount: manifest.lookups.length };

@@ -339,54 +339,60 @@ export const renderLookup = (table: LookupTable, format: LookupFormat) => {
 	};
 };
 
+/**
+ * Compile the manifest from tables given one at a time. A table's rows are
+ * rendered and counted as it arrives and are not kept, so the largest table
+ * is the most held at once, however many there are.
+ */
 export const compileLookupManifest = (
-	tables: LookupTable[],
+	tables: Iterable<LookupTable>,
 ): LookupManifest => {
-	const ids = tables.map((table) => table.id);
-	if (new Set(ids).size !== ids.length) {
-		throw new Error("Each lookup must have a unique id.");
-	}
-	const lookups = [...tables]
-		.sort((left, right) => left.id.localeCompare(right.id))
-		.map(({ rows, ...table }) => {
-			for (const entry of table.columns) {
-				const empty = rows.some((row) => {
-					const value = row[entry.name];
-					return (
-						value === null ||
-						value === undefined ||
-						value === "" ||
-						(Array.isArray(value) && value.length === 0)
-					);
-				});
-				if (entry.required && empty) {
-					throw new Error(
-						`${table.id}: required column ${entry.name} is empty in some rows.`,
-					);
-				}
+	const ids = new Set<string>();
+	const lookups: LookupManifest["lookups"] = [];
+	for (const { rows, ...table } of tables) {
+		if (ids.has(table.id)) {
+			throw new Error("Each lookup must have a unique id.");
+		}
+		ids.add(table.id);
+		for (const entry of table.columns) {
+			const empty = rows.some((row) => {
+				const value = row[entry.name];
+				return (
+					value === null ||
+					value === undefined ||
+					value === "" ||
+					(Array.isArray(value) && value.length === 0)
+				);
+			});
+			if (entry.required && empty) {
+				throw new Error(
+					`${table.id}: required column ${entry.name} is empty in some rows.`,
+				);
 			}
-			return {
-				...table,
-				rowCount: rows.length,
-				formats: Object.fromEntries(
-					LOOKUP_FORMATS.map((format) => {
-						const { contentType, body } = renderLookup(
-							{ ...table, rows },
-							format,
-						);
-						return [
-							format,
-							{
-								contentType,
-								bytes: Buffer.byteLength(body, "utf8"),
-								contentHash: sha256(body),
-								href: `/v1/lookups/${table.id}?format=${format}`,
-							},
-						];
-					}),
-				) as LookupManifest["lookups"][number]["formats"],
-			};
+		}
+		lookups.push({
+			...table,
+			rowCount: rows.length,
+			formats: Object.fromEntries(
+				LOOKUP_FORMATS.map((format) => {
+					const { contentType, body } = renderLookup(
+						{ ...table, rows },
+						format,
+					);
+					return [
+						format,
+						{
+							contentType,
+							bytes: Buffer.byteLength(body, "utf8"),
+							contentHash: sha256(body),
+							href: `/v1/lookups/${table.id}?format=${format}`,
+						},
+					];
+				}),
+			) as LookupManifest["lookups"][number]["formats"],
 		});
+	}
+	lookups.sort((left, right) => left.id.localeCompare(right.id));
 	return {
 		schemaVersion: 1,
 		contentHash: sha256(JSON.stringify({ schemaVersion: 1, lookups })),

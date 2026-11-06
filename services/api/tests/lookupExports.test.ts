@@ -184,6 +184,22 @@ test("lists each lookup's columns, rows and the hash of every rendered format", 
 	);
 });
 
+test("compiles tables supplied one at a time, in the same order and with the same hashes", () => {
+	const all = tables();
+	const supplied: number[] = [];
+	function* lazily() {
+		// Reversed, to show the manifest orders by id and not by arrival.
+		for (const [index, table] of [...all].reverse().entries()) {
+			supplied.push(index);
+			yield table;
+		}
+	}
+	const manifest = compileLookupManifest(lazily());
+	assert.deepEqual(supplied, [0, 1, 2]);
+	assert.deepEqual(manifest, compileLookupManifest(all));
+	assert.throws(() => compileLookupManifest([all[0], all[0]]), /unique id/);
+});
+
 test("serves a lookup only when it renders the bytes its manifest lists", () => {
 	const lookupManifest = compileLookupManifest(tables());
 	const areaInventory = {
