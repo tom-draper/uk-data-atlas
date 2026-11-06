@@ -24,6 +24,7 @@ import {
 	discardAtlasCacheWork,
 	WORK_SESSION_KEY,
 } from "./atlasCacheWork.ts";
+import { publishVacuumed } from "./publishVacuumed.ts";
 import { hashSqliteContent, writeStageStamp } from "./stageStamp.ts";
 
 export type CacheStep = {
@@ -93,10 +94,11 @@ export const activeAtlasCachePath = (root: string) =>
 /**
  * Add components to the cache without exposing incomplete tables to API
  * readers. Run by hand, this copies the cache once, applies every step to the
- * copy, vacuums it and renames it into place. Run by the data build, the steps
- * go into the shared working copy instead, which `atlas-cache-stamp` vacuums
- * and renames once for the whole build. `defer: false` forces the first form,
- * and `vacuum: false` leaves the vacuum to a later publish.
+ * copy, then publishes it with one `VACUUM INTO` and a rename. Run by the data
+ * build, the steps go into the shared working copy instead, which
+ * `atlas-cache-stamp` publishes once for the whole build. `defer: false`
+ * forces the first form, and `vacuum: false` renames the copy as it is and
+ * leaves the vacuum to a later publish.
  */
 export function publishAtlasCacheSteps(
 	root: string,
@@ -121,15 +123,20 @@ export function publishAtlasCacheSteps(
 					step.component,
 					applyStep(database, root, step),
 				);
-			if (vacuum) database.exec("VACUUM");
 		} finally {
 			database.close();
 		}
 		for (const [component, generation] of generations)
 			guardGeneration(root, component, generation);
 		// Readers in this process must not keep the file about to be replaced.
-		closeReadOnlyDatabase(path);
-		renameSync(temporary, path);
+		if (vacuum)
+			publishVacuumed(temporary, path, {
+				beforeReplace: () => closeReadOnlyDatabase(path),
+			});
+		else {
+			closeReadOnlyDatabase(path);
+			renameSync(temporary, path);
+		}
 	} finally {
 		rmSync(temporary, { force: true });
 	}
@@ -190,25 +197,26 @@ export function publishAtlasCache(
 }
 
 /**
- * Rename the working copy over the published cache, after one vacuum for the
- * whole build. Returns false when the build wrote nothing to the cache.
+ * Publish the working copy over the cache: the one vacuum of the build, as a
+ * `VACUUM INTO` beside the cache and a rename. The working copy is removed
+ * afterwards, and survives a failure with its stamps. Returns false when the
+ * build wrote nothing to the cache.
  */
 export function publishAtlasCacheWork(root: string) {
 	const work = atlasCacheWorkPath(root);
 	if (!existsSync(work)) return false;
-	const database = new DatabaseSync(work);
-	try {
-		database
-			.prepare("DELETE FROM meta WHERE key = ?")
-			.run(WORK_SESSION_KEY);
-		database.exec("VACUUM");
-	} finally {
-		database.close();
-	}
 	const path = atlasCachePath(root);
-	// Readers in this process must not keep the file about to be replaced.
-	closeReadOnlyDatabase(path);
-	renameSync(work, path);
+	publishVacuumed(work, path, {
+		// The published copy drops the session id; the working copy keeps it,
+		// so a failed publish is still discarded with its stamps.
+		finish: (database) =>
+			database
+				.prepare("DELETE FROM meta WHERE key = ?")
+				.run(WORK_SESSION_KEY),
+		// Readers in this process must not keep the file about to be replaced.
+		beforeReplace: () => closeReadOnlyDatabase(path),
+	});
+	rmSync(work, { force: true });
 	return true;
 }
 
