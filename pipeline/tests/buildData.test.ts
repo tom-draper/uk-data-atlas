@@ -84,7 +84,12 @@ try {
 	);
 	return {
 		directory,
-		run(argv: string[], fail = "", script = fixtureRunner) {
+		run(
+			argv: string[],
+			fail = "",
+			script = fixtureRunner,
+			env: Record<string, string> = {},
+		) {
 			return spawnSync(process.execPath, [script, ...argv], {
 				cwd: directory,
 				encoding: "utf8",
@@ -96,6 +101,7 @@ try {
 					// The checks have their own tests; CI would switch them on.
 					CI: "",
 					DATA_BUILD_VERIFY: "",
+					...env,
 				},
 			});
 		},
@@ -197,6 +203,40 @@ test("default build executes both products in dependency order", async (context)
 		build.commands().length,
 		(await expectedStages(apiOrder)).length + 6,
 	);
+});
+
+test("the parity checks join the real graph when CI, DATA_BUILD_VERIFY or --verify switch them on", async (context) => {
+	const build = fixture(context);
+	const local = stages(build.run(["--plan"]));
+	assert.ok(!local.some((name) => name.startsWith("verify-")));
+	const checks = ["verify-dataset-payloads", "verify-postcode-areas"];
+	for (const [argv, env] of [
+		[["--plan"], { CI: "true" }],
+		[["--plan"], { DATA_BUILD_VERIFY: "1" }],
+		[["--plan", "--verify"], {}],
+	] as const) {
+		const planned = stages(build.run([...argv], "", undefined, { ...env }));
+		assert.deepEqual(
+			planned.filter((name) => !checks.includes(name)),
+			local,
+		);
+		// Each check follows the stages that make what it reads.
+		const after = (check: string, ...before: string[]) =>
+			before.forEach((name) =>
+				assert.ok(planned.indexOf(check) > planned.indexOf(name)),
+			);
+		after("verify-dataset-payloads", "datasets", "atlas-sqlite");
+		after("verify-postcode-areas", "postcode-areas", "geometry-store");
+		assert.equal(planned.filter((name) => checks.includes(name)).length, 2);
+	}
+	// A check named on its own runs, with what it reads, whatever the mode.
+	assert.ok(
+		stages(
+			build.run(["--plan", "--only", "verify-dataset-payloads"]),
+		).includes("verify-dataset-payloads"),
+	);
+	// --checks leaves the rest of the build out.
+	assert.deepEqual(stages(build.run(["--plan", "--checks"])).sort(), checks);
 });
 
 test("rebuilding atlas pages refreshes the website assets and leaves the API release alone", (context) => {
