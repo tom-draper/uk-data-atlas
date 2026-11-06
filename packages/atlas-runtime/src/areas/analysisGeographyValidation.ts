@@ -67,7 +67,7 @@ const totalOf = (records: Array<{ value: number }>) =>
 export const validateAnalysisGeographies = (
 	analysisGeographies: AnalysisGeographyInventory,
 	dataCatalog: DataCatalog,
-	crosswalkLookup: Map<string, CrosswalkArtifact>,
+	crosswalkLookup: Pick<Map<string, CrosswalkArtifact>, "get">,
 	observationsByArtifact: Map<
 		string,
 		AnyMeasureObservationArtifact | MeasureTableArtifact
