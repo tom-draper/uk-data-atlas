@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import {
+	appendFileSync,
 	linkSync,
 	mkdirSync,
 	mkdtempSync,
@@ -15,6 +16,13 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { onTestFinished, test } from "vitest";
 import { createStageCache } from "@/pipeline/build-data-cache.mjs";
+import { runBuild } from "@/pipeline/build-data.mjs";
+import {
+	OUTPUT_MANIFEST_ENV,
+	recordOutputHash,
+	sha256Hex,
+	writeFileHashedSync,
+} from "../../pipeline/src/storage/outputManifest";
 
 type Stage = {
 	name: string;
@@ -127,5 +135,86 @@ test("a link to a file already hashed shares its hash", () => {
 	assert.equal(
 		recorded(root, "beta")["public/data/b/alias.pmtiles"].sha256,
 		digestOf("tiles"),
+	);
+});
+
+test("hashes a stage recorded while writing are trusted without reading the file", () => {
+	const { root, write, cache, hashed } = fixture();
+	const stages = cache();
+	stages.begin(alpha);
+	const manifest = stages.manifestPath("alpha");
+	write("data/build/a/streamed.bin", "streamed");
+	recordOutputHash(
+		join(root, "data/build/a/streamed.bin"),
+		sha256Hex("streamed"),
+		manifest,
+	);
+	write("data/build/a/plain.bin", "plain");
+	const digest = stages.record(alpha, []);
+	assert.deepEqual(hashed, ["data/build/a/plain.bin"]);
+	// The digest is what hashing every file would have given.
+	const reference = fixture();
+	const other = reference.cache();
+	other.begin(alpha);
+	reference.write("data/build/a/streamed.bin", "streamed");
+	reference.write("data/build/a/plain.bin", "plain");
+	assert.equal(digest, other.record(alpha, []));
+	assert.throws(() => statSync(manifest));
+});
+
+test("a recorded hash is ignored once the file has changed since", () => {
+	const { root, write, cache, hashed } = fixture();
+	const stages = cache();
+	stages.begin(alpha);
+	const manifest = stages.manifestPath("alpha");
+	write("data/build/a/file.bin", "first");
+	recordOutputHash(
+		join(root, "data/build/a/file.bin"),
+		sha256Hex("first"),
+		manifest,
+	);
+	write("data/build/a/file.bin", "second, and longer");
+	stages.record(alpha, []);
+	assert.deepEqual(hashed, ["data/build/a/file.bin"]);
+	assert.equal(
+		recorded(root, "alpha")["data/build/a/file.bin"].sha256,
+		digestOf("second, and longer"),
+	);
+});
+
+test("a manifest tolerates damage and paths outside the repository", () => {
+	const { root, write, cache, hashed } = fixture();
+	const stages = cache();
+	stages.begin(alpha);
+	const manifest = stages.manifestPath("alpha");
+	write("data/build/a/file.bin", "file");
+	recordOutputHash(
+		join(root, "data/build/a/file.bin"),
+		sha256Hex("file"),
+		manifest,
+	);
+	appendFileSync(manifest, '{"path": "/etc/passwd", "sha256": "0"}\n');
+	appendFileSync(
+		manifest,
+		`${JSON.stringify({ path: "../escape", size: 1, mtimeMs: 1, sha256: "a".repeat(64) })}\n`,
+	);
+	appendFileSync(manifest, '{"path": "data/build/a/trunc');
+	stages.record(alpha, []);
+	assert.deepEqual(hashed, []);
+});
+
+test("the stage helpers write the file and only note a hash when the build asks", () => {
+	const { root } = fixture();
+	const path = join(root, "out/file.bin");
+	mkdirSync(dirname(path), { recursive: true });
+	assert.equal(process.env[OUTPUT_MANIFEST_ENV], undefined);
+	writeFileHashedSync(path, "content");
+	assert.equal(readFileSync(path, "utf8"), "content");
+	const manifest = join(root, "manifest/alpha.jsonl");
+	writeFileHashedSync(path, "content", manifest);
+	const [line] = readFileSync(manifest, "utf8").trim().split("\n");
+	assert.deepEqual(
+		{ path: JSON.parse(line).path, sha256: JSON.parse(line).sha256 },
+		{ path, sha256: sha256Hex("content") },
 	);
 });
