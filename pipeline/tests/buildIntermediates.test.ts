@@ -13,6 +13,7 @@ import {
 	readCrosswalk,
 	readCrosswalkById,
 	readCrosswalkInventory,
+	readCrosswalkShapes,
 	readCrosswalks,
 	readNamedLocations,
 	writeSqliteIndex,
@@ -243,6 +244,16 @@ test("crosswalks are read by endpoints or id and rebuild the artifact", (context
 				contentHash: "sha256:other",
 			}),
 		/Invalid crosswalk artifact/,
+	);
+});
+
+test("crosswalk shapes come from the edges", (context) => {
+	const root = fixture(context);
+	// C has no target, so the crosswalk is not one to one forward; each
+	// target has one source, so it is one to one in reverse.
+	assert.deepEqual(
+		[...readCrosswalkShapes(root)],
+		[[crosswalk.id, { forward: false, reverse: true }]],
 	);
 });
 

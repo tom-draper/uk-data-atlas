@@ -4,12 +4,9 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import {
-	compileRelationshipPaths,
-	crosswalkShape,
-} from "./relationships/relationshipPaths.ts";
+import { compileRelationshipPaths } from "./relationships/relationshipPaths.ts";
+import { readCrosswalkShapes } from "./storage/buildIntermediates.ts";
 import { readApprovedRelationshipPaths } from "./relationships/relationshipPathAdapters.ts";
-import { readStoredText } from "@uk-data-atlas/artifacts";
 import {
 	artifactDirectory,
 	configDirectory,
@@ -29,14 +26,9 @@ export const buildRelationshipPaths = (repositoryRoot: string) => {
 	const crosswalks = JSON.parse(
 		readFileSync(join(directory, "crosswalk-inventory.json"), "utf8"),
 	) as CrosswalkInventory;
-	const shapes = new Map(
-		crosswalks.crosswalks.map((summary) => [
-			summary.id,
-			crosswalkShape(
-				JSON.parse(readStoredText(join(directory, summary.artifact))),
-			),
-		]),
-	);
+	// Path discovery needs only whether each crosswalk is one to one in each
+	// direction, which the edges in atlas-base.sqlite answer without records.
+	const shapes = readCrosswalkShapes(repositoryRoot);
 	const paths = compileRelationshipPaths(
 		crosswalks,
 		readApprovedRelationshipPaths(
