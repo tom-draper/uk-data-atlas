@@ -4,14 +4,13 @@ import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
-import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { readStoredText } from "@uk-data-atlas/artifacts";
+import { createCrosswalkArtifacts } from "./storage/crosswalkArtifacts.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
@@ -42,13 +41,10 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const crosswalkInventory = JSON.parse(
 		readFileSync(join(directory, "crosswalk-inventory.json"), "utf8"),
 	) as CrosswalkInventory;
-	const crosswalkLookup = new Map(
-		crosswalkInventory.crosswalks.map((entry) => {
-			const artifact = JSON.parse(
-				readStoredText(join(directory, entry.artifact)),
-			) as CrosswalkArtifact;
-			return [entry.id, artifact] as const;
-		}),
+	// Only the crosswalks the configured pairs route through are read.
+	const crosswalkLookup = createCrosswalkArtifacts(
+		directory,
+		crosswalkInventory,
 	);
 	const { database, readArtifact } = openStatisticsArtifactReader(
 		repositoryRoot,
