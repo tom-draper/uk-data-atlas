@@ -12,6 +12,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { compileFlatDownloads } from "./atlas/flatDownloads.ts";
+import { writeFileHashedSync } from "./storage/outputManifest.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import { roundKeepingValidity } from "./maps/compileGeometryValidity.ts";
@@ -230,7 +231,7 @@ export const buildMapResources = (
 			continue;
 		}
 		const { archive, descriptor } = compiled;
-		writeFileSync(join(assets, artifact), archive);
+		writeFileHashedSync(join(assets, artifact), archive);
 		resources.push(descriptor);
 		compiledIds.add(id);
 		state[id] = { key, descriptor };
