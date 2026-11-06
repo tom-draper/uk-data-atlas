@@ -87,6 +87,27 @@ export function planBuild(stages, from, roots) {
 // A stage that always runs reaches later stages through their inputs.
 const ALWAYS_RUNS = "always-runs";
 
+const switchedOn = (value) =>
+	value !== undefined && !["", "0", "false"].includes(value.toLowerCase());
+
+/**
+ * Whether the build runs its check stages, the exact-copy (parity) checks
+ * that rebuild an output a second way and compare it with the first. A local
+ * build skips them. `--verify`, `DATA_BUILD_VERIFY=1` and CI (a truthy `CI`,
+ * which GitHub Actions sets) switch them on, and `pnpm data:verify` runs them
+ * with `--checks`. Once on, the stage cache decides which actually run: a
+ * check is skipped while its inputs and code are unchanged since it passed.
+ *
+ * @param {{ flag?: boolean, env?: Record<string, string | undefined> }} [options]
+ */
+export function resolveChecks({ flag = false, env = process.env } = {}) {
+	if (flag) return { run: true, reason: "--verify" };
+	if (env.DATA_BUILD_VERIFY === "1")
+		return { run: true, reason: "DATA_BUILD_VERIFY=1" };
+	if (switchedOn(env.CI)) return { run: true, reason: "CI" };
+	return { run: false, reason: undefined };
+}
+
 const plural = (count, noun) =>
 	`${formatCount(count)} ${noun}${count === 1 ? "" : "s"}`;
 
@@ -143,7 +164,7 @@ export function formatAssetTree(files, { verbose = false } = {}) {
 }
 
 /**
- * @typedef {{ name: string, dependencies: string[], args: string[], cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
+ * @typedef {{ name: string, dependencies: string[], args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
@@ -153,6 +174,7 @@ export function formatAssetTree(files, { verbose = false } = {}) {
  *   logError?: (message: string) => void,
  *   createCache?: () => ReturnType<typeof createStageCache> | null,
  *   discardWork?: () => void,
+ *   env?: Record<string, string | undefined>,
  * }} [options]
  */
 export async function runBuild({
@@ -164,10 +186,13 @@ export async function runBuild({
 	createCache = () => null,
 	discardWork = () => {},
 	limits = { jobs: 1, memoryMb: Infinity },
+	env = process.env,
 } = {}) {
 	let jobs = limits.jobs;
 	let jobsFlag = false;
 	let verifyFlag = false;
+	let verifyChecks = false;
+	let checksOnly = false;
 	let verifyOutputs = process.env.DATA_BUILD_VERIFY_OUTPUTS === "1";
 	let from;
 	let only;
@@ -185,6 +210,10 @@ export async function runBuild({
 			verbose = true;
 		} else if (argument === "--no-cache" && useCache) {
 			useCache = false;
+		} else if (argument === "--verify" && !verifyChecks) {
+			verifyChecks = true;
+		} else if (argument === "--checks" && !checksOnly) {
+			checksOnly = true;
 		} else if (
 			(argument === "--verify-outputs" ||
 				argument === "--check-writes") &&
@@ -210,7 +239,7 @@ export async function runBuild({
 			index += 1;
 		} else {
 			throw new Error(
-				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--jobs <n> | --verify-outputs] [--no-cache | --adopt]`,
+				`Unknown or repeated argument: ${argument}. Usage: pnpm data:build [--only <stage> | --from <stage>] [--plan] [--verbose] [--jobs <n> | --verify-outputs] [--no-cache | --adopt] [--verify | --checks]`,
 			);
 		}
 	}
@@ -219,6 +248,12 @@ export async function runBuild({
 			"--verify-outputs runs one stage at a time and cannot be combined with --jobs, --adopt or --plan.",
 		);
 	if (verifyOutputs) jobs = 1;
+	if (checksOnly && (only !== undefined || from !== undefined || adopt))
+		throw new Error(
+			"--checks runs the check stages alone and cannot be combined with --only, --from or --adopt.",
+		);
+	if (checksOnly && verifyChecks)
+		throw new Error("--checks already runs the checks; drop --verify.");
 	if (adopt && (!useCache || from !== undefined))
 		throw new Error(
 			"--adopt cannot be combined with --no-cache or --from.",
@@ -229,11 +264,26 @@ export async function runBuild({
 		throw new Error(
 			`Unknown stage: ${only}. Available stages: ${stages.map((stage) => stage.name).join(", ")}`,
 		);
-	const selected = planBuild(
+	const checks = checksOnly
+		? { run: true, reason: "--checks" }
+		: resolveChecks({ flag: verifyChecks, env });
+	const isCheck = (stage) => stage.check === true;
+	// Check stages read what other stages wrote and nothing depends on them,
+	// so leaving them out never changes what the rest of the build does. A
+	// check named with --only is run whatever the mode.
+	const skippedChecks = [];
+	let selected = planBuild(
 		stages,
 		from,
 		only === undefined ? undefined : [only],
 	);
+	if (checksOnly) selected = planBuild(stages).filter(isCheck);
+	else if (!checks.run)
+		selected = selected.filter((stage) => {
+			if (!isCheck(stage) || stage.name === only) return true;
+			skippedChecks.push(stage.name);
+			return false;
+		});
 	const startedAt = performance.now();
 	const buildStartedAt = new Date().toISOString();
 	const timings = [];
@@ -314,7 +364,7 @@ export async function runBuild({
 		// Stages that add to a shared file work on a copy until the build
 		// publishes it. A copy left by a build that stopped is thrown away
 		// before any stage is looked up, with the stamps that vouch for it.
-		if (!plan && !adopt) discardWork();
+		if (!plan && !adopt && !checksOnly) discardWork();
 		// --from and --no-cache rerun every stage they select, and record them.
 		const reuse = cache !== null && useCache && from === undefined;
 		// A stage that always runs may know its work is already done, and then
@@ -369,6 +419,14 @@ export async function runBuild({
 				? `Data build: adopting existing outputs for ${plural(selected.length, "stage")}`
 				: `Data build${plan ? " plan" : ""}: ${plural(selected.length, "stage")}, ${formatCount(toRun.size)} to run, ${formatCount(selected.length - toRun.size)} unchanged`,
 		);
+		if (skippedChecks.length)
+			log(
+				`Parity checks not run (${formatCount(skippedChecks.length)}): ${skippedChecks.join(", ")}. Run them with pnpm data:verify or pnpm data:build --verify.`,
+			);
+		else if (!adopt && checks.run && selected.some(isCheck))
+			log(
+				`Parity checks on (${checks.reason}); each reruns only when its inputs or code changed.`,
+			);
 		if (jobs > 1 && !adopt && !plan)
 			log(
 				`Running up to ${formatCount(jobs)} stages at once within ${formatCount(Math.round(limits.memoryMb))} MB`,
