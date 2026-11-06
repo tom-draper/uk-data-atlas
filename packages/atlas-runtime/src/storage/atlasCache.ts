@@ -26,7 +26,9 @@ const dependencies: Record<CacheComponent, string[]> = {
 		"query:SELECT content_hash FROM crosswalk_inventory_metadata",
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
-	datasets: ["query:SELECT output, sha256 FROM dataset_catalogue ORDER BY output"],
+	datasets: [
+		"query:SELECT output, sha256 FROM dataset_catalogue ORDER BY output",
+	],
 };
 
 export const atlasCachePath = (root: string) =>

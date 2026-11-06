@@ -1,15 +1,16 @@
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
+import { fileURLToPath } from "node:url";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "@uk-data-atlas/atlas-runtime/relationships";
 
 const publicDirectory = artifactDirectory(
-	new URL("../..", import.meta.url).pathname,
+	resolve(dirname(fileURLToPath(import.meta.url)), "../../../.."),
 );
 
 const read = <T>(path: string) =>

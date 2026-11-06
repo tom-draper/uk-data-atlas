@@ -9,12 +9,14 @@ import {
 import { measureCoverage } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
 import type { MeasureContext } from "./measureContext.ts";
+import type { MeasureDimensions } from "./measureDimensionsLoader.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export type MeasureCapabilityContext = Omit<
 	MeasureContext,
 	"geographyResolver"
 > & {
+	measureDimensions?: MeasureDimensions;
 	geographyResolver: Pick<
 		MeasureContext["geographyResolver"],
 		"crosswalkSummaries" | "crosswalk" | "missingRequirement"
@@ -143,7 +145,23 @@ export const conversionCoverageOnto = (
 											period,
 										},
 										method: result.method,
-										href: `/v1/data/${measure.id}/convert?period=${period}&geography=${source.sourceGeography.type}&codeYear=${source.sourceGeography.boundaryYear}&crosswalk=${summary.id}`,
+										href: (() => {
+											const mapping =
+												context.measureDimensions
+													?.config.ids[measure.id];
+											const query = new URLSearchParams({
+												period,
+												geography:
+													source.sourceGeography.type,
+												codeYear: String(
+													source.sourceGeography
+														.boundaryYear,
+												),
+												...(mapping?.dimensions ?? {}),
+												crosswalk: summary.id,
+											});
+											return `/v1/data/${mapping?.measure ?? measure.id}/convert?${query}`;
+										})(),
 									},
 									targets: new Set(
 										result.records.map(

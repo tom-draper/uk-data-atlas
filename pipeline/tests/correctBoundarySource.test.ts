@@ -31,14 +31,17 @@ it("decodes an uncorrected boundary source and rejects invalid input", async () 
 	};
 	const result = await correctedSource(JSON.stringify(source), correction);
 	expect(result.features[0]?.properties).toEqual({ code: "E1" });
-	expect(result.features[0]?.geometry.coordinates).toEqual([
-		[
-			[-1, 52],
-			[0, 52],
-			[0, 53],
-			[-1, 52],
+	expect(result.features[0]?.geometry).toMatchObject({
+		type: "Polygon",
+		coordinates: [
+			[
+				[-1, 52],
+				[0, 52],
+				[0, 53],
+				[-1, 52],
+			],
 		],
-	]);
+	});
 	await expect(correctedSource("{}", correction)).rejects.toThrow(
 		"Boundary data is not valid GeoJSON or TopoJSON",
 	);

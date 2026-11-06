@@ -2095,7 +2095,7 @@ test("names what covers the nations a measure does not", () => {
 				artifactDirectory(
 					resolve(
 						dirname(fileURLToPath(import.meta.url)),
-						"../../../services/api",
+						"../../..",
 					),
 				),
 				"data-catalog.json",

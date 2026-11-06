@@ -3,7 +3,10 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { rebuildDatasetPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { DATASET_PAYLOADS_VIEW, removeDeprecatedObject } from "./deprecatedViews.ts";
+import {
+	DATASET_PAYLOADS_VIEW,
+	removeDeprecatedObject,
+} from "./deprecatedViews.ts";
 import { publishAtlasCache } from "./atlasCacheWriter.ts";
 
 const digest = (text: string) =>

@@ -29,10 +29,10 @@ vi.mock("@uk-data-atlas/geography", async (importOriginal) => ({
 vi.mock("@uk-data-atlas/datasets/data/gazetteer/loader", () => ({
 	loadGazetteerCore: vi.fn(async () => ({ places: [] })),
 }));
-vi.mock("../../lib/data/gazetteer/matchIndex", () => ({
+vi.mock("../src/gazetteer/matchIndex.ts", () => ({
 	loadMatchIndex: async () => ({}),
 }));
-vi.mock("../../scripts/atlas-lookups", () => ({ readAtlasLookup: () => "{}" }));
+vi.mock("../src/atlasLookups", () => ({ readAtlasLookup: () => "{}" }));
 vi.mock("../src/precompile/websiteOutput.mts", async () => {
 	const { mkdirSync, writeFileSync } = await import("node:fs");
 	const { join } = await import("node:path");

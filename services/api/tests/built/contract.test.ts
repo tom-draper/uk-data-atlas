@@ -172,7 +172,7 @@ test("gives every problem code a typed schema in the OpenAPI document", () => {
 				spec,
 			)?.[0] ?? "";
 		assert.ok(schema, `no ${name} schema`);
-		assert.match(schema, new RegExp(`const: ${code}\\n`));
+		assert.match(schema, new RegExp(`const: ${code}(?:\\n|\\s*[,}])`));
 		assert.match(
 			schema,
 			new RegExp(
@@ -923,16 +923,25 @@ test("keeps the resolution contract's one exception the only one", () => {
 		"the contract's exception paragraph no longer names exactly the route that is excepted",
 	);
 
-	const routes = readdirSync(resolve(apiRoot, "src")).filter((file) =>
-		file.endsWith("Routes.ts"),
-	);
+	const routeFiles = (directory: string, prefix = ""): string[] =>
+		readdirSync(resolve(apiRoot, directory), {
+			withFileTypes: true,
+		}).flatMap((entry) => {
+			const path = [prefix, entry.name].filter(Boolean).join("/");
+			if (entry.isDirectory())
+				return routeFiles(`${directory}/${entry.name}`, path);
+			return entry.isFile() && entry.name.endsWith("Routes.ts")
+				? [path]
+				: [];
+		});
+	const routes = routeFiles("src");
 	const choosing = routes.filter((file) =>
 		/measure\??\.sources\.(find|filter)\(/.test(
 			readFileSync(resolve(apiRoot, "src", file), "utf8"),
 		),
 	);
 	assert.deepEqual(
-		choosing,
+		choosing.map((file) => file.split("/").at(-1)),
 		["bulkRoutes.ts"],
 		"a route chooses its own partition; either it should ask the resolver, or the contract should say why it does not",
 	);

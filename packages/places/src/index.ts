@@ -5,3 +5,4 @@ export * from "./placeIndex.ts";
 export * from "./placeResolver.ts";
 
 export * from "./namedLocationResolver.ts";
+export * from "./gazetteer.ts";

@@ -40,7 +40,10 @@ const lookup = createAreaLookup([
 const locations: NamedLocationInventory = {
 	schemaVersion: 1,
 	contentHash: "sha256:locations",
-	source: { artifact: "gazetteer.json", gazetteerVersion: 1 },
+	source: {
+		artifact: "data/datasets/gazetteer.core.json",
+		gazetteerVersion: 1,
+	},
 	locations: [
 		{
 			id: "york-region",

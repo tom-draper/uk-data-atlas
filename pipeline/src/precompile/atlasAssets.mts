@@ -6,7 +6,7 @@ import {
 	parseParishLadMappings,
 } from "@uk-data-atlas/geography";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
-import { loadMatchIndex } from "../../../lib/data/gazetteer/matchIndex.ts";
+import { loadMatchIndex } from "../gazetteer/matchIndex.ts";
 import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets/data/gazetteer/places";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
 import {
@@ -16,7 +16,7 @@ import {
 	snapshotFileContents,
 } from "./cache.mts";
 import { OUT_DIR, out, outputMatches } from "./websiteOutput.mts";
-import { readAtlasLookup } from "../../../scripts/atlas-lookups.ts";
+import { readAtlasLookup } from "../atlasLookups.ts";
 import { BOUNDARY_DATA, ROOT, SOURCE_DATA } from "./paths.mts";
 import { readBoundaryAsset } from "./sources/read.mts";
 import type { ReuseContext } from "./types.mts";

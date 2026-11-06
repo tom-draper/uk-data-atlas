@@ -48,7 +48,7 @@ export type ConnectionPragmas = {
  * `atlas.sqlite` and `atlas-cache.sqlite` alike, a bigger page cache, mapped
  * reads and in-memory temporary storage made no steady-state difference to
  * latency and cost memory per worker, and mapping slowed cold bulk reads (see
- * `services/api/benchmarks/sqlite-pragmas.md`). So the cache is SQLite's own
+ * the SQLite pragma benchmark. So the cache is SQLite's own
  * 2000 KiB, set explicitly so it reads back, and mapping is off.
  */
 const DEFAULT_PRAGMAS: ConnectionPragmas = {

@@ -169,7 +169,9 @@ describe("SQLite website assets", () => {
 		try {
 			// The retired name still reads the relocated table.
 			expect(
-				assets.prepare("SELECT count(*) AS n FROM website_assets").get(),
+				assets
+					.prepare("SELECT count(*) AS n FROM website_assets")
+					.get(),
 			).toEqual(
 				assets.prepare("SELECT count(*) AS n FROM website_asset").get(),
 			);

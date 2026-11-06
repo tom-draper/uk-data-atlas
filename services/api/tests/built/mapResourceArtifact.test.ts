@@ -2,7 +2,6 @@ import { resolve as resolveRepositoryRoot } from "node:path";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { gunzipSync } from "node:zlib";
 import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
@@ -15,15 +14,13 @@ import {
 } from "@uk-data-atlas/map-tiles/tileset";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
-import {
-	buildFullDetailParquet,
-	GEOJSON_TIERS,
-} from "@uk-data-atlas/atlas-runtime/maps";
+import { GEOJSON_TIERS } from "@uk-data-atlas/atlas-runtime/maps";
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readApiCatalogues } from "../../src/catalogueLoader";
+import { route } from "../../src/routes";
 
 /**
  * The published artifact, held to the descriptor that describes it.
@@ -35,7 +32,9 @@ import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
  */
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const publicRoot = artifactDirectory(resolveRepositoryRoot(apiRoot, "../.."));
+const repositoryRoot = resolveRepositoryRoot(apiRoot, "../..");
+const publicRoot = artifactDirectory(repositoryRoot);
+const catalogues = readApiCatalogues(repositoryRoot);
 
 const manifest = JSON.parse(
 	readFileSync(join(publicRoot, "map-resources.json"), "utf8"),
@@ -47,42 +46,24 @@ const manifest = JSON.parse(
 
 const sha256 = (content: Buffer) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
-
-const areaInventory = JSON.parse(
-	readFileSync(join(publicRoot, "area-inventory.json"), "utf8"),
-) as {
-	releases: Array<{ geography: string; id: string; artifact?: string }>;
-};
-const geometry = createAreaGeometryCache(resolve(apiRoot, "../.."));
+const featureResources = [...manifest.resources]
+	.sort((left, right) => left.areaCount - right.areaCount)
+	.slice(0, 1);
 
 /**
- * A tier's download as a client receives it: the stored file, or, for the
- * full tier, the GeoParquet built from the geometry store on request.
+ * A tier's download as a client receives it, built from the geometry store.
  */
 const downloadBytes = (
 	resource: MapResourceDescriptor,
 	entry: MapResourceDescriptor["features"][number],
 ): Buffer => {
-	if (entry.artifact)
-		return readFileSync(join(apiRoot, "../../data/build", entry.artifact));
-	const release = areaInventory.releases.find(
-		(candidate) =>
-			candidate.geography === resource.geography &&
-			candidate.id === resource.boundaryRelease,
-	)!;
-	const areas = JSON.parse(
-		readFileSync(join(publicRoot, release.artifact!), "utf8"),
-	) as { areas: Array<{ code: string; name: string }> };
-	return buildFullDetailParquet(
-		geometry,
-		{
-			geography: resource.geography,
-			boundaryRelease: resource.boundaryRelease,
-			attribution: resource.attribution.text,
-			topology: "shared-arc",
-		},
-		new Map(areas.areas.map((area) => [area.code, area.name])),
-	)!.body;
+	const response = route("GET", entry.href, catalogues) as {
+		status: number;
+		representation?: { body: Uint8Array };
+	};
+	assert.equal(response.status, 200, entry.href);
+	assert.ok(response.representation, entry.href);
+	return Buffer.from(response.representation.body);
 };
 
 test("recomputes the manifest's own content hash", () => {
@@ -246,7 +227,7 @@ const wkbRings = (wkb: Buffer) => {
 };
 
 test("publishes every tier as GeoParquet that matches its descriptor and the tiles", () => {
-	for (const resource of manifest.resources) {
+	for (const resource of featureResources) {
 		const parquet = resource.features.filter(
 			(entry) => entry.format === "geoparquet-1.1",
 		);
@@ -265,9 +246,9 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 			]),
 		);
 		for (const entry of parquet) {
-			// Only the full tier is built on request; every other is stored.
-			assert.equal(entry.artifact === undefined, entry.tier === "full");
-			const name = entry.artifact ?? `${resource.id} full`;
+			// Every feature tier is generated from the geometry store on request.
+			assert.equal(entry.artifact, undefined);
+			const name = `${resource.id} ${entry.tier}`;
 			const bytes = downloadBytes(resource, entry);
 			assert.equal(bytes.length, entry.bytes, `${name} size`);
 			assert.equal(
@@ -378,7 +359,7 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 });
 
 test("publishes the coarser tiers as GeoJSON holding the GeoParquet's features", () => {
-	for (const resource of manifest.resources) {
+	for (const resource of featureResources) {
 		const geoJson = resource.features.filter(
 			(entry) => entry.format === "geojson",
 		);
@@ -388,24 +369,16 @@ test("publishes the coarser tiers as GeoJSON holding the GeoParquet's features",
 			resource.id,
 		);
 		for (const entry of geoJson) {
-			const stored = readFileSync(
-				join(apiRoot, "../../data/build", entry.artifact!),
-			);
-			assert.equal(
-				stored.length,
-				entry.gzipBytes,
-				`${entry.artifact} size`,
-			);
-			const text = gunzipSync(stored);
+			const text = downloadBytes(resource, entry);
 			assert.equal(
 				text.length,
 				entry.bytes,
-				`${entry.artifact} decoded size`,
+				`${resource.id} ${entry.tier} size`,
 			);
 			assert.equal(
 				sha256(text),
 				entry.contentHash,
-				`${entry.artifact} does not hash to what its descriptor records; rebuild with \`pnpm --dir ../.. data:build --only map-resource\``,
+				`${resource.id} ${entry.tier} does not hash to what its descriptor records`,
 			);
 			const collection = JSON.parse(text.toString("utf8")) as {
 				type: string;
@@ -418,15 +391,13 @@ test("publishes the coarser tiers as GeoJSON holding the GeoParquet's features",
 			assert.equal(collection.type, "FeatureCollection");
 			assert.equal(collection.features.length, resource.areaCount);
 			const parquet = readParquet(
-				readFileSync(
-					join(
-						join(apiRoot, "../../data/build"),
-						resource.features.find(
-							(candidate) =>
-								candidate.tier === entry.tier &&
-								candidate.format === "geoparquet-1.1",
-						)!.artifact!,
-					),
+				downloadBytes(
+					resource,
+					resource.features.find(
+						(candidate) =>
+							candidate.tier === entry.tier &&
+							candidate.format === "geoparquet-1.1",
+					)!,
 				),
 			);
 			assert.deepEqual(

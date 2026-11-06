@@ -97,16 +97,24 @@ const samples = () => {
 						source.sourceGeography.boundaryYear,
 			)!;
 			const records = artifact.periods.at(-1)!.records;
+			const mapping =
+				catalogues.measureDimensions?.config.ids[measure.id];
+			const measurePath = mapping?.measure ?? measure.id;
+			const dimensions = mapping?.dimensions ?? {};
 			const step = Math.max(1, Math.floor(records.length / 3));
 			for (let index = 0; index < records.length; index += step) {
 				const query = new URLSearchParams({
 					place: records[index]!.areaCode,
 					geography: source.sourceGeography.type,
 					codeYear: String(source.sourceGeography.boundaryYear),
+					...dimensions,
+					...(mapping?.datasetId
+						? { datasetId: mapping.datasetId }
+						: {}),
 				});
 				picked.push({
 					measureId: measure.id,
-					url: `/v1/data/${measure.id}/series?${query}`,
+					url: `/v1/data/${measurePath}/series?${query}`,
 				});
 				for (const period of [
 					source.periods[0]!,
@@ -114,10 +122,14 @@ const samples = () => {
 				])
 					picked.push({
 						measureId: measure.id,
-						url: `/v1/data/${measure.id}/value?${new URLSearchParams(
+						url: `/v1/data/${measurePath}/value?${new URLSearchParams(
 							{
 								place: `${source.sourceGeography.type}/${records[index]!.areaCode}`,
 								period,
+								...dimensions,
+								...(mapping?.datasetId
+									? { datasetId: mapping.datasetId }
+									: {}),
 							},
 						)}`,
 					});
@@ -167,6 +179,7 @@ test("serves the same answers from statistics rows as from compiled artifacts", 
 	const checked = samples();
 	assert.ok(checked.length > 300, `only ${checked.length} samples`);
 	let answered = 0;
+	const refusals: string[] = [];
 	for (const { url } of checked) {
 		const before = route("GET", url, legacy);
 		const after = route("GET", url, catalogues);
@@ -179,10 +192,16 @@ test("serves the same answers from statistics rows as from compiled artifacts", 
 			url,
 		);
 		if (after.status === 200) answered++;
+		else if (refusals.length < 12) {
+			const body = after.body as { code?: string; detail?: string };
+			refusals.push(
+				`${after.status} ${body.code}: ${url} (${body.detail})`,
+			);
+		}
 	}
 	// A pair of matching refusals proves little, so most samples must answer.
 	assert.ok(
 		answered > checked.length * 0.95,
-		`${answered} of ${checked.length} samples answered`,
+		`${answered} of ${checked.length} samples answered; first refusals: ${refusals.join("; ")}`,
 	);
 });

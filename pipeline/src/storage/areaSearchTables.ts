@@ -1,4 +1,8 @@
-import { AREA_SEARCH_CODES_VIEW, AREA_SEARCH_TERMS_VIEW, AREA_SEARCH_TITLE_TERMS_VIEW } from "./deprecatedViews.ts";
+import {
+	AREA_SEARCH_CODES_VIEW,
+	AREA_SEARCH_TERMS_VIEW,
+	AREA_SEARCH_TITLE_TERMS_VIEW,
+} from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { packPositions } from "@uk-data-atlas/search-index";
 import type { AreaSearchIndexArtifact } from "@uk-data-atlas/atlas-runtime/areas";

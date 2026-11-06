@@ -1,5 +1,6 @@
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
 	CHART_PRESENTATIONS,
@@ -48,7 +49,7 @@ const manifestByType = new Map(
 );
 
 const readCompiled = (file: string) => {
-	const content = readAtlasPayload(process.cwd(), `dataset:${file}`);
+	const content = readFileSync(`data/build/datasets/${file}.json`, "utf8");
 	return {
 		data: JSON.parse(content) as Record<string, never>,
 		sha256: createHash("sha256").update(content).digest("hex"),

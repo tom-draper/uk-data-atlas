@@ -53,7 +53,7 @@ export const similarAreasMetadata = {
 		status: 400,
 		when: "A selected measure does not serve the geography and period, or more than ten measures are requested.",
 		"x-example-request":
-			"/v1/areas/localAuthority/E08000010/similar?measures=population,population-density,total-jobs&period=2024",
+			"/v1/areas/localAuthority/E08000010/similar?measures=population,population-density,total-jobs,imd-rank,life-expectancy,unemployment,house-price,broadband-availability,recorded-crimes,ghg-emissions,claimants&period=2024",
 	},
 	responses: {
 		"200": {
@@ -87,7 +87,7 @@ export const similarAreasMetadata = {
 							droppedAreaCount: 0,
 							areas: [
 								{
-									areaCode: "E08000011",
+									areaCode: "E08000015",
 									distance: 0.44,
 									rank: 1,
 									values: { population: 160128 },

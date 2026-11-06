@@ -26,7 +26,7 @@ import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import {
 	discoverDatasets,
 	type DiscoveredDataset,
-} from "../../scripts/dataset-discovery.ts";
+} from "./dataset-discovery.ts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import { compileCatalogueDatasets } from "./compile-datasets.mts";
 import {
@@ -39,7 +39,7 @@ import { fileSnapshots } from "./precompile/cache.mts";
 import { OUT_DIR, loadReuseContext, out } from "./precompile/websiteOutput.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
 import { chunksResult } from "./precompile/output.mts";
-import { readAtlasLookup } from "../../scripts/atlas-lookups.ts";
+import { readAtlasLookup } from "./atlasLookups.ts";
 import { ROOT, SOURCE_DATA } from "./precompile/paths.mts";
 import {
 	compileRegionChunks,
@@ -53,7 +53,7 @@ import {
 	elapsedSince,
 	formatCount,
 	msSince,
-} from "../../scripts/timing.mts";
+} from "@uk-data-atlas/atlas-runtime/storage";
 
 /** Checks that every file a meta.json promises is actually present. */
 async function verifyDescribedFiles(

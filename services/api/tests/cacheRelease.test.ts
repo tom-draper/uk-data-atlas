@@ -56,7 +56,9 @@ test("validates the cache against the canonical database", (context) => {
 		(error: Error) => String(error.cause).includes("no such column: gzip"),
 	);
 	const changed = new DatabaseSync(join(directory, "atlas.sqlite"));
-	changed.exec("INSERT INTO dataset_catalogue VALUES ('other', 'hash', NULL)");
+	changed.exec(
+		"INSERT INTO dataset_catalogue VALUES ('other', 'hash', NULL)",
+	);
 	changed.close();
 	assert.throws(
 		() => validateCacheRelease(root),

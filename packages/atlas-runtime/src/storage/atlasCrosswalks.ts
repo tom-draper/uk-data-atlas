@@ -75,7 +75,9 @@ export const readSqliteCrosswalkInventory = (
 	const database = openReadOnlyDatabase(databasePath);
 	try {
 		const header = database
-			.prepare("SELECT schema_version AS schemaVersion, content_hash AS contentHash, area_inventory_hash AS areaInventoryHash FROM crosswalk_inventory_metadata")
+			.prepare(
+				"SELECT schema_version AS schemaVersion, content_hash AS contentHash, area_inventory_hash AS areaInventoryHash FROM crosswalk_inventory_metadata",
+			)
 			.get();
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite crosswalk inventory");

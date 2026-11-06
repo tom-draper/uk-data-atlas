@@ -6,6 +6,8 @@ import { expect, it } from "vitest";
 
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import {
+	comparableCompiled,
+	generatedFromRows,
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
@@ -51,7 +53,11 @@ it("serves datasets from rows with the compiled values", () => {
 				`data/build/datasets/${output}.json`,
 				"utf8",
 			);
-			expect(JSON.parse(rebuilt), output).toEqual(JSON.parse(compiled));
+			expect(JSON.parse(rebuilt), output).toEqual(
+				generatedFromRows(String(row.type))
+					? comparableCompiled(String(row.type), JSON.parse(compiled))
+					: JSON.parse(compiled),
+			);
 			const entry = cached.get(output);
 			expect(entry?.source_sha256, output).toBe(row.sha256);
 			expect(entry?.sha256, output).toBe(digest(rebuilt));
