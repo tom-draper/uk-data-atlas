@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import { sourcesMatchRelease } from "../scripts/data-release.mjs";
+import { ATLAS_CACHE_WORK } from "./src/storage/atlasCacheWork.ts";
 import { CACHE_STAGES, STAMP_DIRECTORY } from "./src/storage/stageStamp.ts";
 import { PLACE_LOOKUPS } from "../packages/datasets/src/data/gazetteer/places.ts";
 import {
@@ -481,6 +482,8 @@ const stage = (
 		codeInputs = [],
 		rawInputs,
 		shared = [],
+		scratch = [],
+		finishedBy,
 		writes = [],
 	} = {},
 ) => ({
@@ -495,6 +498,8 @@ const stage = (
 	codeInputs,
 	rawInputs: rawInputs ?? defaultRawInputs[name],
 	shared,
+	scratch,
+	finishedBy,
 	writes,
 });
 
@@ -512,8 +517,14 @@ const chartRegistryFiles = [
 ];
 
 // The atlas cache is one file with several writers. Each stage after the base
-// build adds tables to it, and tracks them through a stamp of its own.
+// build adds tables to it, and tracks them through a stamp of its own. They
+// add to one working copy, which `atlas-cache-stamp` publishes.
 const atlasCache = "data/build/atlas-cache.sqlite";
+const cacheWorkingCopy = {
+	shared: [atlasCache],
+	scratch: [ATLAS_CACHE_WORK],
+	finishedBy: "atlas-cache-stamp",
+};
 const stampOf = (stage) => `${STAMP_DIRECTORY}/${stage}.json`;
 
 const apiStages = [
@@ -645,7 +656,7 @@ const apiStages = [
 		["pipeline/src/build-place-index.ts"],
 		{
 			rawInputs: [],
-			shared: [atlasCache],
+			...cacheWorkingCopy,
 			requiredOutputs: [stampOf("place-index")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
@@ -656,7 +667,7 @@ const apiStages = [
 		["pipeline/src/build-area-search-index.ts"],
 		{
 			rawInputs: [],
-			shared: [atlasCache],
+			...cacheWorkingCopy,
 			requiredOutputs: [stampOf("area-search-index")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
@@ -770,7 +781,7 @@ const apiStages = [
 		["pipeline/src/build-postcode-counts.ts"],
 		{
 			rawInputs: [],
-			shared: [atlasCache],
+			...cacheWorkingCopy,
 			requiredOutputs: [stampOf("postcode-counts")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
@@ -901,6 +912,7 @@ const apiStages = [
 			"postcode-index",
 			"postcode-areas",
 			"postcode-counts",
+			"atlas-cache-stamp",
 			"location-projections",
 			"data-catalog",
 			"measure-compatibility",
@@ -965,8 +977,10 @@ const apiStages = [
 		["pipeline/src/stamp-atlas-cache.ts"],
 		{
 			rawInputs: [],
-			// The last writer, so it owns the file and notices any change to it.
+			// Publishes the working copy, so it owns the file and notices any
+			// change to it.
 			requiredOutputs: [atlasCache, stampOf("atlas-cache-stamp")],
+			scratch: [ATLAS_CACHE_WORK],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
@@ -1056,12 +1070,7 @@ const websiteStages = [
 	),
 	stage(
 		"website-datasets",
-		[
-			"atlas-sqlite",
-			"assemble-atlas",
-			"website-tiles",
-			"website-lookups",
-		],
+		["atlas-sqlite", "assemble-atlas", "website-tiles", "website-lookups"],
 		[
 			"--import",
 			"tsx",
@@ -1121,11 +1130,13 @@ const stageWrites = {
 	operations: [`${artifacts}/operations.json`],
 	"terrain-catalogue": [`${artifacts}/terrain-catalogue.json`],
 	datasets: ["data/build/datasets"],
-	// Creates both databases, then adds the projection and dataset caches. It
-	// clears the stamps of the stages that add to the cache after it.
+	// Creates both databases, then adds the projection and dataset caches in
+	// one copy of the cache. It clears the stamps of the stages that add to the
+	// cache after it, and any working copy they started.
 	"atlas-sqlite": [
 		"data/build/atlas-base.sqlite",
 		atlasCache,
+		ATLAS_CACHE_WORK,
 		...CACHE_STAGES.map(stampOf),
 	],
 	"api-datasets": [`${artifacts}/source-data`],
@@ -1142,8 +1153,8 @@ const stageWrites = {
 		`${artifacts}/named-locations.json`,
 		`${artifacts}/named-locations-metadata.json`,
 	],
-	// The three before it copy the cache, edit the copy and rename it into
-	// place, so they declare it as `shared`. This one edits it where it is.
+	// The three before it add to the cache's working copy, so they declare the
+	// cache as `shared`. This one renames the copy over the cache.
 	"atlas-cache-stamp": [atlasCache],
 	"postcode-index": ["data/build/postcode-index.sqlite"],
 	"statistics-vocabulary": ["data/build/statistics-vocabulary.json"],

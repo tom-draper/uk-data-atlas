@@ -64,14 +64,15 @@ function stampPath(root, path, stamps = new Map()) {
 }
 
 /**
- * The paths a stage may change: its declared `writes`, `shared`, `outputs`
- * and `requiredOutputs`. A stage that declares none is tracked across all of
+ * The paths a stage may change: its declared `writes`, `shared`, `scratch`,
+ * `outputs` and `requiredOutputs`. A stage that declares none is tracked across all of
  * OUTPUT_ROOTS, so it must run alone.
  */
 export function stageScope(stage) {
 	const paths = [
 		...(stage.writes ?? []),
 		...(stage.shared ?? []),
+		...(stage.scratch ?? []),
 		...(stage.outputs ?? []),
 		...(stage.requiredOutputs ?? []),
 	];
@@ -597,9 +598,11 @@ export function createStageCache({
 			const known = knownHashes();
 			// A shared file holds other stages' work, so its bytes are not this
 			// stage's digest. The stage tracks what it owns in a stamp instead.
-			// Rewriting it still takes it from whichever stage recorded it.
+			// Rewriting it still takes it from whichever stage recorded it. A
+			// scratch file is the same, except that it is gone once the build
+			// is done with it, so it is not required to exist either.
 			const isShared = (path) =>
-				stage.shared?.some(
+				[...(stage.shared ?? []), ...(stage.scratch ?? [])].some(
 					(own) => path === own || path.startsWith(`${own}/`),
 				);
 			const rewritten = [];
