@@ -6,7 +6,7 @@ import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { publishAtlasCache } from "../storage/index.ts";
+import { publishAtlasCacheSteps } from "../storage/index.ts";
 import {
 	comparableCompiled,
 	generatedFromRows,
@@ -16,7 +16,8 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	CACHE_STAGES,
-	publishDatasetPayloads,
+	datasetPayloadStep,
+	discardAtlasCacheWork,
 	removeStageStamps,
 } from "../storage/index.ts";
 import { writeSqliteIndex, writeSqliteTables } from "../storage/index.ts";
@@ -124,8 +125,10 @@ export const buildAtlasSqlite = (
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
 	// The cache is extended below, so what the later stages added to it is
-	// no longer known to be there. Their stamps go, and they rebuild.
+	// no longer known to be there. Their stamps go, and they rebuild. So does
+	// any working copy, which was started from the cache as it was.
 	removeStageStamps(repositoryRoot, CACHE_STAGES);
+	discardAtlasCacheWork(repositoryRoot);
 	const path = join(directory, "atlas-base.sqlite");
 	const payload = readFileSync(
 		join(artifactDirectory(repositoryRoot), "terrain-catalogue.json"),
@@ -315,27 +318,40 @@ export const buildAtlasSqlite = (
 		const componentCache = join(cacheDirectory, "atlas-cache.sqlite");
 		if (existsSync(cachePath))
 			symlinkSync(resolve(cachePath), componentCache);
-		publishAtlasCache(cacheRoot, "projections", (database) => {
-			const tables = locationProjectionTables({
-				artifacts,
-				parentArtifacts,
-			});
-			for (const [name, table] of Object.entries(tables)) {
-				for (const oldName of Object.keys(
-					"views" in table ? table.views : {},
-				))
-					removeDeprecatedObject(database, oldName);
-				database.exec(`DROP TABLE IF EXISTS ${name}`);
-			}
-			writeSqliteTables(database, tables);
-			database
-				.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
-				.run(
-					"location-projection-inventory",
-					JSON.stringify(projectionInventory),
-				);
-		});
-		publishDatasetPayloads(cacheRoot);
+		// One copy of the published cache takes both components. Later stages
+		// add to it in the build's working copy, which is vacuumed once.
+		publishAtlasCacheSteps(
+			cacheRoot,
+			[
+				{
+					component: "projections",
+					write: (database) => {
+						const tables = locationProjectionTables({
+							artifacts,
+							parentArtifacts,
+						});
+						for (const [name, table] of Object.entries(tables)) {
+							for (const oldName of Object.keys(
+								"views" in table ? table.views : {},
+							))
+								removeDeprecatedObject(database, oldName);
+							database.exec(`DROP TABLE IF EXISTS ${name}`);
+						}
+						writeSqliteTables(database, tables);
+						database
+							.prepare(
+								"INSERT OR REPLACE INTO payloads VALUES (?, ?)",
+							)
+							.run(
+								"location-projection-inventory",
+								JSON.stringify(projectionInventory),
+							);
+					},
+				},
+				datasetPayloadStep(cacheRoot),
+			],
+			{ defer: false, vacuum: false },
+		);
 		// Nothing in this process may hold the files about to be replaced or removed.
 		closeAllReadOnlyDatabases();
 		renameSync(componentCache, cachePath);

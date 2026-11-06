@@ -3,6 +3,7 @@ export * from "./atlasCrosswalks.ts";
 export * from "./atlasNamedLocations.ts";
 export * from "./atlasPostcodeAreas.ts";
 export * from "./atlasPostcodeTables.ts";
+export * from "./atlasCacheWork.ts";
 export * from "./atlasCacheWriter.ts";
 export * from "./stageStamp.ts";
 export * from "./sqliteIndexWriter.ts";

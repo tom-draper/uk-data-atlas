@@ -7,7 +7,7 @@ import {
 	DATASET_PAYLOADS_VIEW,
 	removeDeprecatedObject,
 } from "./deprecatedViews.ts";
-import { publishAtlasCache } from "./atlasCacheWriter.ts";
+import { publishAtlasCacheSteps, type CacheStep } from "./atlasCacheWriter.ts";
 
 const digest = (text: string) =>
 	createHash("sha256").update(text).digest("hex");
@@ -16,8 +16,9 @@ const digest = (text: string) =>
  * Rebuild every dataset served from rows into the cache, gzipped. Level 9
  * writes no mtime or name, so one build always stores the same bytes.
  */
-export function publishDatasetPayloads(root: string) {
-	return publishAtlasCache(root, "datasets", (cache) => {
+export const datasetPayloadStep = (root: string): CacheStep => ({
+	component: "datasets",
+	write: (cache) => {
 		removeDeprecatedObject(cache, "dataset_payloads");
 		cache.exec(
 			"DROP TABLE IF EXISTS dataset_payload; CREATE TABLE dataset_payload (output TEXT NOT NULL PRIMARY KEY, source_sha256 TEXT NOT NULL, sha256 TEXT NOT NULL, bytes INTEGER NOT NULL, gzip BLOB NOT NULL) STRICT, WITHOUT ROWID",
@@ -53,5 +54,8 @@ export function publishDatasetPayloads(root: string) {
 		} finally {
 			database.close();
 		}
-	});
-}
+	},
+});
+
+export const publishDatasetPayloads = (root: string) =>
+	publishAtlasCacheSteps(root, [datasetPayloadStep(root)]);
