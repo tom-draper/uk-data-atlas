@@ -26,13 +26,21 @@ const ENVIRONMENT = ["MAXIMUM_DISCOVERED_STEPS"];
 
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 
+/** What a stat says about a file. The inode only distinguishes files. */
+const stampOf = (stats) => ({
+	size: stats.size,
+	mtimeMs: stats.mtimeMs,
+	ino: stats.ino,
+	dev: stats.dev,
+});
+
 /** Size and mtime of every file under `directory`, keyed by repo path. */
 function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
 	if (excluded.has(directory)) return stamps;
 	const target = statSync(join(root, directory), { throwIfNoEntry: false });
 	if (!target) return stamps;
 	if (target.isFile()) {
-		stamps.set(directory, { size: target.size, mtimeMs: target.mtimeMs });
+		stamps.set(directory, stampOf(target));
 		return stamps;
 	}
 	let entries;
@@ -48,8 +56,7 @@ function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
 		const stats = statSync(join(root, path), { throwIfNoEntry: false });
 		if (!stats) continue;
 		if (stats.isDirectory()) stampFiles(root, path, stamps, excluded);
-		else if (stats.isFile())
-			stamps.set(path, { size: stats.size, mtimeMs: stats.mtimeMs });
+		else if (stats.isFile()) stamps.set(path, stampOf(stats));
 	}
 	return stamps;
 }
@@ -57,8 +64,7 @@ function stampFiles(root, directory, stamps = new Map(), excluded = new Set()) {
 /** Size and mtime of a file, or of every file under a folder, by repo path. */
 function stampPath(root, path, stamps = new Map()) {
 	const stats = statSync(join(root, path), { throwIfNoEntry: false });
-	if (stats?.isFile())
-		stamps.set(path, { size: stats.size, mtimeMs: stats.mtimeMs });
+	if (stats?.isFile()) stamps.set(path, stampOf(stats));
 	else if (stats?.isDirectory()) stampFiles(root, path, stamps);
 	return stamps;
 }
@@ -134,6 +140,22 @@ function hashOutputs(outputs) {
 
 const sameStamp = (a, b) =>
 	Boolean(a && b) && a.size === b.size && a.mtimeMs === b.mtimeMs;
+
+/**
+ * The same file, unchanged: size, mtime and inode all match. A record from
+ * before inodes were kept has none, and then size and mtime decide.
+ */
+const sameFile = (a, b) =>
+	sameStamp(a, b) &&
+	(a.ino === undefined ||
+		b.ino === undefined ||
+		(a.ino === b.ino && a.dev === b.dev));
+
+/** Names a file by device, inode, size and mtime, so its links share a hash. */
+const identityOf = (stamp) =>
+	stamp.ino
+		? `${stamp.dev}:${stamp.ino}:${stamp.size}:${stamp.mtimeMs}`
+		: null;
 
 /** SHA-256 of a file, read in chunks so large outputs never sit in memory. */
 function hashFileContent(path) {
@@ -327,9 +349,7 @@ export function createStageCache({
 	};
 	const fileStamp = (path) => {
 		const stats = statSync(join(root, path), { throwIfNoEntry: false });
-		return stats?.isFile()
-			? { size: stats.size, mtimeMs: stats.mtimeMs }
-			: undefined;
+		return stats?.isFile() ? stampOf(stats) : undefined;
 	};
 
 	const keyFor = (stage, dependencyDigests) =>
@@ -360,22 +380,34 @@ export function createStageCache({
 		return known;
 	};
 
-	/** Output records for these files, hashing only those not known unchanged. */
-	const withHashes = (stamps, known = knownHashes()) =>
-		new Map(
+	/**
+	 * Output records for these files. A file is read and hashed only when no
+	 * hash can be trusted: its own record, or a link to a file already hashed,
+	 * both needing the same size, mtime and inode.
+	 */
+	const withHashes = (stamps, known = knownHashes()) => {
+		const linked = new Map();
+		for (const entry of known.values()) {
+			const identity = identityOf(entry);
+			if (identity && !linked.has(identity))
+				linked.set(identity, entry.sha256);
+		}
+		return new Map(
 			[...stamps]
 				.sort(([a], [b]) => a.localeCompare(b))
 				.map(([path, stamp]) => {
 					const entry = known.get(path);
-					const sha256 = sameStamp(entry, stamp)
-						? entry.sha256
-						: hashFile(join(root, path));
-					return [
-						path,
-						{ size: stamp.size, mtimeMs: stamp.mtimeMs, sha256 },
-					];
+					const identity = identityOf(stamp);
+					let sha256;
+					if (entry && sameFile(entry, stamp)) sha256 = entry.sha256;
+					else if (identity && linked.has(identity))
+						sha256 = linked.get(identity);
+					else sha256 = hashFile(join(root, path));
+					if (identity) linked.set(identity, sha256);
+					return [path, { ...stampOf(stamp), sha256 }];
 				}),
 		);
+	};
 
 	/** Every stage the named one depends on, directly or not, from the records. */
 	const upstreamOf = (name) => {
@@ -548,7 +580,7 @@ export function createStageCache({
 			return [...fullScan()]
 				.filter(
 					([path, stamp]) =>
-						!inScope(path) && !sameStamp(before.get(path), stamp),
+						!inScope(path) && !sameFile(before.get(path), stamp),
 				)
 				.map(([path]) => path)
 				.sort();
@@ -568,14 +600,14 @@ export function createStageCache({
 			snapshot = null;
 			const after = scope ? scopedSnapshot(scope) : currentSnapshot();
 			for (const [path, stamp] of after)
-				if (!sameStamp(before.get(path), stamp)) generated.add(path);
+				if (!sameFile(before.get(path), stamp)) generated.add(path);
 			// A scoped stage can keep earlier files outside its scope.
 			const afterStamp = (path) =>
 				after.get(path) ?? (scope ? fileStamp(path) : undefined);
 			if (!cacheable) {
 				let changed = false;
 				for (const [path, stamp] of after) {
-					if (sameStamp(before.get(path), stamp)) continue;
+					if (sameFile(before.get(path), stamp)) continue;
 					for (const record of Object.values(state.stages)) {
 						if (path in record.outputs) {
 							delete record.outputs[path];
@@ -607,14 +639,14 @@ export function createStageCache({
 				);
 			const rewritten = [];
 			for (const [path, stamp] of after)
-				if (!sameStamp(before.get(path), stamp)) {
+				if (!sameFile(before.get(path), stamp)) {
 					rewritten.push(path);
 					if (!isShared(path)) outputs.set(path, stamp);
 				}
 			// Rewriting checked-in code changes what later stages hash as code.
 			const codeChanged = [...after].some(
 				([path, stamp]) =>
-					!sameStamp(before.get(path), stamp) &&
+					!sameFile(before.get(path), stamp) &&
 					!outputRoots.some((root) => path.startsWith(`${root}/`)),
 			);
 			if (codeChanged) {
