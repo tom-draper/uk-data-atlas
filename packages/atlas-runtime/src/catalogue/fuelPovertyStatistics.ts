@@ -7,7 +7,6 @@ import type {
 	FuelPovertyLSOAData,
 } from "@uk-data-atlas/datasets/types/fuelPoverty";
 import type { SqlReader } from "../storage/readOnlyDatabase.ts";
-import { isDeepStrictEqual } from "node:util";
 import type {
 	AreaRelease,
 	StatisticsDataset,
@@ -160,17 +159,6 @@ export function fuelPovertyStatistics(
 					yield { release, code, name: record.lsoaName };
 				}
 			}
-		},
-		verify(database) {
-			if (
-				!isDeepStrictEqual(
-					JSON.parse(rebuildFuelPoverty(database)),
-					periods,
-				)
-			)
-				throw new Error(
-					"Fuel poverty rows differ from catalogue payload",
-				);
 		},
 	};
 }

@@ -529,6 +529,23 @@ const cacheWorkingCopy = {
 };
 const stampOf = (stage) => `${STAMP_DIRECTORY}/${stage}.json`;
 
+/**
+ * A check stage: an exact-copy (parity) check kept apart from the stage that
+ * writes the output it checks, so that stage writes once and computes no
+ * second copy. It reads outputs, writes only a stamp, and nothing depends on
+ * it. A local build leaves it out; `--verify`, `DATA_BUILD_VERIFY=1`, CI and
+ * `pnpm data:verify` run it. Like any stage it is keyed on its code and its
+ * dependencies' output digests, so once it has passed it is skipped until
+ * one of those changes. The script is `pipeline/src/<name>.ts`.
+ */
+const checkStage = (name, dependencies, options = {}) =>
+	stage(name, dependencies, [`pipeline/src/${name}.ts`], {
+		rawInputs: [],
+		requiredOutputs: [stampOf(name)],
+		...options,
+		check: true,
+	});
+
 const apiStages = [
 	// Always runs, as a download can change any raw file and needs the network.
 	// It is skipped when data/source already matches the pinned release.
@@ -603,6 +620,11 @@ const apiStages = [
 			],
 		},
 	),
+	// A check stage: it reads the cache `atlas-sqlite` wrote and compares each
+	// generated dataset payload with the compiler's copy. See `checkStage`.
+	checkStage("verify-dataset-payloads", ["datasets", "atlas-sqlite"], {
+		codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+	}),
 	stage(
 		"api-datasets",
 		["sources"],

@@ -189,3 +189,19 @@ test("--checks cannot be combined with options that pick other stages", async (c
 	await assert.rejects(run(["--checks", "--verify"]), /drop --verify/);
 	await assert.rejects(run(["--verify", "--verify"]), /Unknown or repeated/);
 });
+
+test("every check stage in the real graph depends on what it reads and nothing depends on it", () => {
+	const checks = buildDataStages.filter((stage) => stage.check);
+	assert.ok(checks.length > 0);
+	const names = new Set(checks.map((stage) => stage.name));
+	for (const check of checks) {
+		assert.ok(check.dependencies.length > 0, check.name);
+		assert.equal(check.cacheable, true, check.name);
+		assert.ok(check.requiredOutputs.length > 0, check.name);
+		for (const dependency of check.dependencies)
+			assert.ok(!names.has(dependency), `${check.name} <- ${dependency}`);
+	}
+	for (const stage of buildDataStages)
+		for (const dependency of stage.dependencies)
+			assert.ok(!names.has(dependency), `${stage.name} <- ${dependency}`);
+});
