@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { stageScope } from "@/pipeline/build-data-cache.mjs";
+import { planBuild } from "@/pipeline/build-data.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
+import { conflicts } from "@/pipeline/build-data-scheduler.mjs";
+import { ATLAS_CACHE_WORK } from "@/pipeline/src/storage/atlasCacheWork";
 import {
 	CACHE_STAGES,
 	stageStampPath,
@@ -14,6 +17,9 @@ type Stage = {
 	exclusive?: boolean;
 	requiredOutputs?: string[];
 	shared?: string[];
+	scratch?: string[];
+	finishedBy?: string;
+	dependencies: string[];
 };
 
 const stages = buildDataStages as Stage[];
@@ -119,15 +125,52 @@ test("every cache stage tracks its own stamp, and the base build clears them", (
 		assert.ok(stage.requiredOutputs?.includes(stamp), name);
 		assert.ok(find("atlas-sqlite").writes?.includes(stamp), name);
 	}
-	// The stages that copy the cache share it; the last one owns its bytes.
-	for (const name of ["place-index", "area-search-index", "postcode-counts"])
+	// The stages that add to the cache share it and its one working copy; the
+	// last one publishes the copy, so it owns the cache's bytes.
+	for (const name of [
+		"place-index",
+		"area-search-index",
+		"postcode-counts",
+	]) {
 		assert.deepEqual(find(name).shared, ["data/build/atlas-cache.sqlite"]);
+		assert.deepEqual(find(name).scratch, [ATLAS_CACHE_WORK]);
+		assert.equal(find(name).finishedBy, "atlas-cache-stamp");
+	}
 	assert.deepEqual(find("atlas-cache-stamp").shared, []);
+	assert.deepEqual(find("atlas-cache-stamp").scratch, [ATLAS_CACHE_WORK]);
 	assert.ok(
 		find("atlas-cache-stamp").requiredOutputs?.includes(
 			"data/build/atlas-cache.sqlite",
 		),
 	);
+	// Nothing reads the cache between the stages and the publish.
+	assert.ok(
+		find("atlas-release-initial").dependencies.includes(
+			"atlas-cache-stamp",
+		),
+	);
+});
+
+test("building a cache stage also builds the stage that publishes its working copy", () => {
+	for (const name of ["place-index", "area-search-index", "postcode-counts"])
+		assert.ok(
+			planBuild(stages, undefined, [name]).some(
+				(stage: { name: string }) => stage.name === "atlas-cache-stamp",
+			),
+			name,
+		);
+});
+
+test("the base build and the cache stages never run at once", () => {
+	const named = (name: string) => stages.find((stage) => stage.name === name);
+	for (const name of [
+		"place-index",
+		"area-search-index",
+		"postcode-counts",
+	]) {
+		assert.ok(conflicts(named("atlas-sqlite"), named(name)), name);
+		assert.ok(conflicts(named("atlas-cache-stamp"), named(name)), name);
+	}
 });
 
 test("no stage is left uncacheable except the sources download", () => {

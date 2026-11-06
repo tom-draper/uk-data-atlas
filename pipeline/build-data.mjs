@@ -2,6 +2,10 @@ import { spawn } from "node:child_process";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createStageCache } from "./build-data-cache.mjs";
+import {
+	ATLAS_CACHE_WORK_ENV,
+	discardAtlasCacheWork,
+} from "./src/storage/atlasCacheWork.ts";
 import { buildDataStages } from "./build-data-graph.mjs";
 import {
 	DEFAULT_STAGE_WEIGHT_MS,
@@ -56,6 +60,8 @@ export function planBuild(stages, from, roots) {
 			if (!stage) throw new Error(`Unknown target stage: ${name}`);
 			needed.add(name);
 			for (const dependency of stage.dependencies) need(dependency);
+			// Work left in a shared scratch file is lost unless this stage runs.
+			if (stage.finishedBy) need(stage.finishedBy);
 		};
 		for (const root of roots) need(root);
 		planned = ordered.filter((stage) => needed.has(stage.name));
@@ -145,6 +151,7 @@ export function formatAssetTree(files, { verbose = false } = {}) {
  *   log?: (line: string) => void,
  *   logError?: (message: string) => void,
  *   createCache?: () => ReturnType<typeof createStageCache> | null,
+ *   discardWork?: () => void,
  * }} [options]
  */
 export async function runBuild({
@@ -154,6 +161,7 @@ export async function runBuild({
 	log = buildLog.info,
 	logError = buildLog.error,
 	createCache = () => null,
+	discardWork = () => {},
 	limits = { jobs: 1, memoryMb: Infinity },
 } = {}) {
 	let jobs = limits.jobs;
@@ -293,6 +301,10 @@ export async function runBuild({
 				selected.filter((stage) => stage.cacheable !== false),
 			);
 		}
+		// Stages that add to a shared file work on a copy until the build
+		// publishes it. A copy left by a build that stopped is thrown away
+		// before any stage is looked up, with the stamps that vouch for it.
+		if (!plan && !adopt) discardWork();
 		// --from and --no-cache rerun every stage they select, and record them.
 		const reuse = cache !== null && useCache && from === undefined;
 		// A stage that always runs may know its work is already done, and then
@@ -509,7 +521,10 @@ export async function runBuild({
 			log(
 				`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Add their paths to stageWrites in pipeline/build-data-graph.mjs.`,
 			);
-		if (failureStatus !== null) return failureStatus;
+		if (failureStatus !== null) {
+			discardWork();
+			return failureStatus;
+		}
 		if (plan && knownEstimates)
 			log(
 				`Estimated total: ${formatDuration(estimated)} for ${knownEstimates} of ${toRun.size} stages to run`,
@@ -530,6 +545,7 @@ export async function runBuild({
 		return 0;
 	} catch (error) {
 		failed = true;
+		if (!plan && !adopt) discardWork();
 		throw error;
 	} finally {
 		reportSummary(failed);
@@ -548,6 +564,8 @@ const relayScript = fileURLToPath(
 function executeStage(stage, { verbose = false, prefixed = false } = {}) {
 	const env = { ...process.env };
 	delete env.DATA_BUILD_RELAY_PREFIX;
+	// Stages add to shared files in a working copy, which the build publishes.
+	env[ATLAS_CACHE_WORK_ENV] = "1";
 	if (verbose) env.DATA_BUILD_VERBOSE = "1";
 	if (prefixed) env.DATA_BUILD_RELAY_PREFIX = `  [${stage.name}] `;
 	return new Promise((resolveStatus, reject) => {
@@ -585,6 +603,7 @@ if (
 		process.exitCode = await runBuild({
 			argv: process.argv.slice(2),
 			createCache: createStageCache,
+			discardWork: () => discardAtlasCacheWork(repositoryRoot),
 			limits: resolveLimits(),
 		});
 	} catch (error) {

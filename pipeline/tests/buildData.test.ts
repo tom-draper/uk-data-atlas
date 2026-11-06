@@ -170,10 +170,10 @@ const apiOrder = [
 	"lookup-manifest",
 	"map-resource",
 	"validation-report",
+	"atlas-cache-stamp",
 	"atlas-release-initial",
 	"documents",
 	"atlas-lookups",
-	"atlas-cache-stamp",
 	"atlas-release",
 	"atlas-pages",
 ];
@@ -319,10 +319,10 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"relationship-candidates",
 		"lookup-manifest",
 		"validation-report",
+		"atlas-cache-stamp",
 		"atlas-release-initial",
 		"documents",
 		"atlas-lookups",
-		"atlas-cache-stamp",
 		"atlas-release",
 		"atlas-pages",
 		"website-lookups",
@@ -506,4 +506,33 @@ process.exitCode = await runBuild({ argv: process.argv.slice(2), stages: ${JSON.
 		["right"],
 		["publish"],
 	]);
+});
+
+test("a build throws away a leftover working copy before it looks at any stage, and again if a stage fails", async () => {
+	const events: string[] = [];
+	const stages = [
+		{ name: "first", dependencies: [], args: ["first"] },
+		{ name: "second", dependencies: ["first"], args: ["second"] },
+	];
+	const run = (argv: string[], failing?: string) =>
+		runBuild({
+			argv,
+			stages,
+			log: () => {},
+			logError: () => {},
+			discardWork: () => events.push("discard"),
+			execute: (stage: { name: string }) => {
+				events.push(stage.name);
+				return stage.name === failing ? 1 : 0;
+			},
+		});
+	assert.equal(await run([]), 0);
+	assert.deepEqual(events, ["discard", "first", "second"]);
+	events.length = 0;
+	assert.equal(await run([], "second"), 1);
+	assert.deepEqual(events, ["discard", "first", "second", "discard"]);
+	// A plan runs nothing, so it leaves the copy alone.
+	events.length = 0;
+	assert.equal(await run(["--plan"]), 0);
+	assert.deepEqual(events, []);
 });

@@ -1287,6 +1287,134 @@ test("restoring a deleted shared API cache rebuilds every component", async () =
 	assert.deepEqual(await run(), ["base", ...components]);
 });
 
+test("stages that add to a working copy are skipped once it is published, and rerun after a failed build", async () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-work-copy-build-"));
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+	mkdirSync(join(root, "data/build/.stamps"), { recursive: true });
+	const published = join(root, "data/build/atlas-cache.sqlite");
+	const work = join(root, "data/build/.atlas-cache.sqlite.work");
+	const components = ["place-index", "area-search-index", "postcode-counts"];
+	const stamp = (name: string) =>
+		join(root, `data/build/.stamps/${name}.json`);
+	const find = (name: string) => {
+		const original = buildDataStages.find(
+			(entry: Stage) => entry.name === name,
+		);
+		assert.ok(original);
+		return original;
+	};
+	const selected = [
+		...components.map((name) => ({
+			...find(name),
+			dependencies: ["base"],
+		})),
+		{ ...find("atlas-cache-stamp"), dependencies: components },
+	];
+	const base = {
+		name: "base",
+		dependencies: [],
+		args: [],
+		requiredOutputs: ["data/build/atlas-cache.sqlite"],
+		writes: ["data/build/.stamps"],
+	};
+	let failing: string | null = null;
+	// The stages that wrote to the working copy, as its id does for stamps.
+	let writers: string[] = [];
+	const read = (path: string): string[] =>
+		existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : [];
+	// The same steps the real stages take, on plain files.
+	const execute = (current: { name: string }) => {
+		if (current.name === "base") {
+			writeFileSync(published, "[]");
+			return 0;
+		}
+		if (current.name === "atlas-cache-stamp") {
+			if (existsSync(work)) {
+				writeFileSync(published, readFileSync(work));
+				rmSync(work);
+				writers = [];
+			}
+			writeFileSync(stamp(current.name), "stamp");
+			return 0;
+		}
+		if (current.name === failing) return 1;
+		const values = read(existsSync(work) ? work : published);
+		writers.push(current.name);
+		writeFileSync(work, JSON.stringify([...values, current.name]));
+		// A stamp is new for each working copy, as the real ones are.
+		writeFileSync(
+			stamp(current.name),
+			`${current.name}:${work}:${values.length}`,
+		);
+		return 0;
+	};
+	const discard = () => {
+		if (!existsSync(work)) return;
+		for (const name of writers) rmSync(stamp(name), { force: true });
+		writers = [];
+		rmSync(work);
+	};
+	const run = async () => {
+		const executed: string[] = [];
+		const status = await runBuild({
+			stages: [base, ...selected],
+			log: () => {},
+			logError: () => {},
+			discardWork: discard,
+			createCache: () =>
+				createStageCache({
+					root,
+					stateFile: join(root, ".cache/stages.json"),
+					codeFiles: () => [],
+					environment: {},
+				}),
+			execute: (current: { name: string }) => {
+				executed.push(current.name);
+				return execute(current);
+			},
+		});
+		return { status, executed };
+	};
+	assert.deepEqual((await run()).executed, [
+		"base",
+		...components,
+		"atlas-cache-stamp",
+	]);
+	assert.deepEqual(read(published), components);
+	assert.equal(existsSync(work), false);
+	// Nothing changed: the working copy is gone and that is not a change.
+	assert.deepEqual((await run()).executed, []);
+	// One stage fails halfway through a build. Its copy is thrown away with
+	// the stamps, so the stages that wrote to it rebuild next time.
+	rmSync(stamp("area-search-index"));
+	failing = "postcode-counts";
+	rmSync(stamp("postcode-counts"));
+	const failed = await run();
+	assert.equal(failed.status, 1);
+	assert.deepEqual(failed.executed, ["area-search-index", "postcode-counts"]);
+	assert.equal(existsSync(work), false);
+	assert.deepEqual(read(published), components);
+	assert.equal(existsSync(stamp("area-search-index")), false);
+	failing = null;
+	const retry = await run();
+	assert.deepEqual(retry.executed, [
+		"area-search-index",
+		"postcode-counts",
+		"atlas-cache-stamp",
+	]);
+	assert.equal(existsSync(work), false);
+	assert.deepEqual(new Set(read(published)), new Set(components));
+	assert.deepEqual((await run()).executed, []);
+	// A stage that reruns with the same tables still gets the stamp stage to
+	// publish its copy, because the stamp carries the copy's id.
+	rmSync(stamp("place-index"));
+	assert.deepEqual((await run()).executed, [
+		"place-index",
+		"atlas-cache-stamp",
+	]);
+	assert.equal(existsSync(work), false);
+});
+
 test("adopt reuses current outputs after a cache version change without executing stages", async () => {
 	const { runs, root, write, build, ran } = fixture();
 	await runs();
