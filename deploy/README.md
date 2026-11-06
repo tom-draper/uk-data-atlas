@@ -48,8 +48,9 @@ server. Both read it in read-only mode.
 and pages into the shared release, then writes browser data and SEO files to
 `public/data/`.
 Neither output directory is tracked in Git.
-`pnpm build` verifies local generated data, generates map headlines and rankings,
-then runs Next.js. A nonzero
+`pnpm build` verifies the published files in local generated data, generates map headlines and rankings,
+then runs Next.js. It does not run the parity checks: a local `pnpm data:build`
+skips them too, and `pnpm data:verify` (or `pnpm data:build --verify`) runs them. A nonzero
 exit from any command means that step failed; stop before the next step.
 The build writes an initial atlas manifest before evidence documents, then
 writes the final manifest afterwards so a fresh build has the required inputs.

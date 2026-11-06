@@ -217,7 +217,52 @@ elsewhere is not noticed and its dependants are not invalidated. Run the
 verification after adding or changing a stage, and before trusting a cache that
 a new stage has built. It also checks the hashes described below. A full data
 build needs the pinned source release, so CI runs only the unit tests that
-exercise it on a fixture graph.
+exercise it on a fixture graph. They cover the parity checks too, and a pipeline
+run with `CI` set (a fixture build, once CI has one) runs them and fails on a mismatch.
+
+### Parity checks
+
+Some outputs are produced one way and then rebuilt another way to compare
+against it: the datasets served from statistics rows against the compiler's
+JSON, and a sample of the postcode areas against a live lookup. These parity
+checks are separate stages (`check: true` in the graph, built with `checkStage`
+in `pipeline/build-data-graph.mjs`), so the stage that produces an output writes
+it once and computes no second copy. Each check reads outputs, writes only a
+stamp in `data/build/.stamps/`, and nothing depends on it.
+
+| Check stage               | Reads                                                | Compares                                                                        |
+| ------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `verify-dataset-payloads` | `datasets`, and `dataset_payload` in the atlas cache | The payload generated from statistics rows with the compiler's JSON, by value   |
+| `verify-postcode-areas`   | `postcode-areas`, the postcode index, the geometry   | Every 5,000th postcode, and every postcode in several areas, with a live lookup |
+
+A local `pnpm data:build` leaves the checks out and lists them. They run when:
+
+- `pnpm data:build --verify` is given, or `DATA_BUILD_VERIFY=1` is set;
+- `CI` is set (GitHub Actions sets it), so a pipeline run in CI always checks;
+- `pnpm data:verify` runs, which verifies the published files and then runs
+  `pnpm data:build --checks`. That runs only the check stages, against the
+  outputs already built, and rebuilds nothing;
+- `--only <check>` names one.
+
+Once on, a check is an ordinary cached stage. Its key hashes its own code and
+the output digests of the stages it reads, so it is skipped while they are
+unchanged and runs again when an output changes or the check's code does. A
+producer that reruns but writes identical bytes does not rerun its check. A
+local build that skipped a check does not forget it: the next `--verify` build
+or `pnpm data:verify` finds its inputs changed and runs it once. A failing check
+is never recorded as passed, fails the build with a nonzero exit, and runs
+again next time. `--checks --no-cache` runs them all regardless.
+
+`pnpm build` and `pnpm dev` call only `scripts/verify-data.mts`, which checks the
+published files. The parity checks read build intermediates that the website
+server may not hold, and a failed check is no reason to regenerate data.
+
+`--verify` is not `--verify-outputs`: the latter audits what each stage writes.
+`statistics-read-path` still rebuilds every observation artifact from statistics
+rows as it runs. That comparison chooses each artifact's selector (a census
+source is narrowed to its code year's releases only because the unnarrowed
+rebuild differs), so it is how the stage works, not a check on a finished
+output, and it stays in the stage.
 
 When a stage fails, no new stage starts. Stages already running finish, so
 their outputs are complete and recorded in the cache, and the build exits with
@@ -419,6 +464,7 @@ See [data/build/README.md](data/build/README.md) for the database schema.
 | Shared datasets or their loaders       | `pnpm data:build --from datasets`                       |
 | How the API compiles geography or data | `pnpm data:build`, then `pnpm --dir services/api build` |
 | Anything, before a release             | `pnpm check:full`                                       |
+| Whether the outputs still agree        | `pnpm data:verify` (the files, then the parity checks)  |
 
 `pnpm check` is the quick set CI runs. It needs no generated data: unit tests
 that import a generated dataset get a small sample from `tests/fixtures/datasets`

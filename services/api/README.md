@@ -1081,8 +1081,9 @@ fetch the postcode directory from ONS.
       found in, and the country release that settles a postcode matching
       nothing. `pnpm --dir ../.. data:build --only postcode-areas` places each release's postcode
       centroids by the live lookup's own containment test and nearest-edge
-      distance, and checks a sample of each against a live lookup, failing on
-      any difference. Run `pnpm data:build --from postcode-areas` to assemble
+      distance. The `verify-postcode-areas` check stage (`pnpm data:verify`,
+      or `pnpm data:build --verify`) compares a sample of each with a live
+      lookup, failing on any difference. Run `pnpm data:build --from postcode-areas` to assemble
       the component into the published database. A postcode lookup, batch or value then reads a district
       shard rather than loading national geometry. Any other release is still
       placed live. The build takes about
