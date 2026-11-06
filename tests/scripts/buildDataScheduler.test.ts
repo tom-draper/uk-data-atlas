@@ -31,6 +31,7 @@ type Stage = {
 	isCurrent?: () => boolean | Promise<boolean>;
 	writes?: string[];
 	outputs?: string[];
+	check?: boolean;
 };
 
 const stage = (
@@ -79,6 +80,8 @@ const build = async (
 		stages,
 		log: (line: string) => log.push(line),
 		logError: (message: string) => errors.push(message),
+		// CI would switch the parity checks on.
+		env: {},
 		...options,
 	});
 	return { status, log, errors };
@@ -250,9 +253,11 @@ test("a stage that throws is reported once the running stages finish", async () 
 });
 
 test("--jobs 1 runs the real graph in plan order and logs exactly as a default build", async () => {
-	const planned = planBuild(buildDataStages, undefined, undefined).map(
-		({ name }: Stage) => name,
-	);
+	const everything = planBuild(buildDataStages, undefined, undefined);
+	// A default build leaves the parity checks out.
+	const planned = everything
+		.filter(({ check }: Stage) => !check)
+		.map(({ name }: Stage) => name);
 	const current = new Set(
 		await Promise.all(
 			(buildDataStages as Stage[])
@@ -284,6 +289,14 @@ test("--jobs 1 runs the real graph in plan order and logs exactly as a default b
 	assert.deepEqual(
 		defaults.ran,
 		planned.filter((name) => !current.has(name)),
+	);
+	// With the checks switched on they run in plan order beside what they read.
+	const verified = await run(["--jobs", "1", "--verify"]);
+	assert.deepEqual(
+		verified.ran,
+		everything
+			.map(({ name }: Stage) => name)
+			.filter((name: string) => !current.has(name)),
 	);
 	// Timings differ between runs, so compare the lines before the ranking.
 	const head = (lines: string[]) =>
@@ -558,6 +571,8 @@ test("the real graph runs with overlap but never breaks a dependency or a shared
 	let peak = 0;
 	let active = 0;
 	const { status } = await build(stages, {
+		// With the parity checks on, so they are held to the same rules.
+		argv: ["--verify"],
 		limits: { jobs: 8, memoryMb: Infinity },
 		execute: async (current) => {
 			started.set(current.name, (tick += 1));
