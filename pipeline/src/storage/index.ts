@@ -18,3 +18,4 @@ export * from "./locationProjectionTables.ts";
 export * from "./placeIndexTables.ts";
 export { statisticsTables } from "./statisticsTables.ts";
 export * from "./buildIntermediates.ts";
+export * from "./crosswalkArtifacts.ts";
