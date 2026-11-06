@@ -3,7 +3,6 @@ import {
 	copyFileSync,
 	existsSync,
 	readFileSync,
-	renameSync,
 	rmSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -15,7 +14,7 @@ import {
 	packText,
 	unpackText,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { writePostcodeAreas } from "./storage/index.ts";
+import { publishVacuumed, writePostcodeAreas } from "./storage/index.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
 	postcodeAreasDirectory,
@@ -81,13 +80,16 @@ export function assembleAtlas(root: string) {
 				readPostcodeAreaComponent(root, name),
 			);
 			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
-			database.exec("COMMIT; VACUUM");
+			database.exec("COMMIT");
 		} finally {
 			database.close();
 		}
-		// Readers in this process must not keep the file about to be replaced.
-		closeReadOnlyDatabase(path);
-		renameSync(temporary, path);
+		// The build's one vacuum of atlas.sqlite: written once beside the
+		// release, then renamed over it.
+		publishVacuumed(temporary, path, {
+			// Readers in this process must not keep the file about to be replaced.
+			beforeReplace: () => closeReadOnlyDatabase(path),
+		});
 	} finally {
 		rmSync(temporary, { force: true });
 	}
