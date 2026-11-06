@@ -804,7 +804,8 @@ const apiStages = [
 	),
 	stage(
 		"relationship-paths",
-		["crosswalk-inventory"],
+		// Reads each crosswalk's shape from the edges in atlas-base.sqlite.
+		["crosswalk-inventory", "atlas-sqlite"],
 		["pipeline/src/build-relationship-paths.ts"],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),

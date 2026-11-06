@@ -508,7 +508,8 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/relationships/relationshipPaths.ts",
 		"pipeline/src/relationships/relationshipPathAdapters.ts",
 		"packages/relationships/src/relationshipPaths.ts",
-		"packages/artifacts/src/storedText.ts",
+		"pipeline/src/storage/buildIntermediates.ts",
+		"packages/atlas-runtime/src/storage/atlasCrosswalks.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {

@@ -205,3 +205,38 @@ export const readNamedLocations = (
 	databasePath = atlasBaseDatabasePath(repositoryRoot),
 ): NamedLocationInventory =>
 	readSqliteNamedLocationInventory(repositoryRoot, databasePath);
+
+/** Whether each source has one target, and each target one source. */
+export type CrosswalkShape = { forward: boolean; reverse: boolean };
+
+/**
+ * The shape of every crosswalk, by id, from the edges alone. This is the
+ * whole of what path discovery reads of a crosswalk, so no record is loaded.
+ * `forward` is true when every source has exactly one target, so a source
+ * with none (which has a `crosswalk_source` row and no edge) breaks it.
+ */
+export const readCrosswalkShapes = (
+	repositoryRoot: string,
+	databasePath = atlasBaseDatabasePath(repositoryRoot),
+): Map<string, CrosswalkShape> => {
+	const database = openReadOnlyDatabase(databasePath);
+	try {
+		return new Map(
+			database
+				.prepare(
+					`SELECT c.slug AS id,
+						NOT EXISTS (SELECT 1 FROM crosswalk_source s WHERE s.crosswalk_id = c.id AND NOT EXISTS (SELECT 1 FROM crosswalk_edge e WHERE e.crosswalk_id = c.id AND e.from_version_id = s.from_version_id))
+						AND NOT EXISTS (SELECT 1 FROM crosswalk_edge e WHERE e.crosswalk_id = c.id GROUP BY e.from_version_id HAVING count(*) > 1) AS forward,
+						NOT EXISTS (SELECT 1 FROM crosswalk_edge e WHERE e.crosswalk_id = c.id GROUP BY e.to_version_id HAVING count(*) > 1) AS reverse
+					FROM crosswalk c ORDER BY c.id`,
+				)
+				.all()
+				.map((row) => [
+					row.id as string,
+					{ forward: row.forward === 1, reverse: row.reverse === 1 },
+				]),
+		);
+	} finally {
+		database.release();
+	}
+};
