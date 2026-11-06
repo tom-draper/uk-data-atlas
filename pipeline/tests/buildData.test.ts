@@ -93,6 +93,9 @@ try {
 					BUILD_TRACE: trace,
 					BUILD_FAIL: fail,
 					DATA_BUILD_CACHE_DIR: join(directory, "cache"),
+					// The checks have their own tests; CI would switch them on.
+					CI: "",
+					DATA_BUILD_VERIFY: "",
 				},
 			});
 		},
