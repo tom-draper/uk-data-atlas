@@ -29,6 +29,14 @@ export const atlasDatabasePath = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "atlas.sqlite");
 
 /**
+ * The database the build writes first, holding areas, crosswalks and named
+ * locations once `atlas-sqlite` has run. `assemble-atlas` copies it into
+ * `atlas.sqlite`, so stages that run before that read this file.
+ */
+export const atlasBaseDatabasePath = (repositoryRoot: string) =>
+	join(buildDirectory(repositoryRoot), "atlas-base.sqlite");
+
+/**
  * The website's precompressed pages and lookups. Only the Next.js website
  * reads them, so they stay out of `atlas.sqlite`, which is the API's data.
  */
