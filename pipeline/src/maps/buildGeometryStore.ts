@@ -28,6 +28,7 @@ import {
 	formatDuration,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { hashFile } from "../fileHashCache.ts";
+import { recordOutputHash, sha256Hex } from "../storage/outputManifest.ts";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -164,6 +165,8 @@ export const buildGeometryStore = (
 		// never sees half a file.
 		writeFileSync(join(directory, `${file}.partial`), body);
 		renameSync(join(directory, `${file}.partial`), join(directory, file));
+		// The build need not read the store back to hash it.
+		recordOutputHash(join(directory, file), sha256Hex(body));
 		state[identity] = key;
 		saveState();
 		compiled += 1;
