@@ -68,20 +68,21 @@ test("redirects archive, feature and tile requests and advertises the tile CDN",
 		archive.headers?.location,
 		`${assetBase}/${resource.tiles.artifact}`,
 	);
-	// The full tier has no file on the CDN: it keeps the API's own address.
+	// Feature tiers are served locally from the geometry store.
 	const full = resource.features.find((entry) => entry.tier === "full")!;
 	assert.equal(full.artifact, undefined);
 	assert.ok(full.href.startsWith("/v1/map-resources/"));
-	const feature = resource.features.find((entry) => entry.artifact)!;
+	const feature = resource.features.find((entry) => entry.tier === "high")!;
 	const response = route(
 		"GET",
 		`/v1/map-resources/${resource.id}/features?tier=${feature.tier}&format=${feature.format === "geojson" ? "geojson" : "geoparquet"}`,
 		catalogues,
 	);
-	assert.equal(response.status, 307);
+	assert.equal(response.status, 200);
 	assert.equal(
-		response.headers?.location,
-		`${assetBase}/${feature.artifact}`,
+		(response as { representation?: { contentType?: string } })
+			.representation?.contentType,
+		"application/vnd.apache.parquet",
 	);
 	const tile = route(
 		"GET",

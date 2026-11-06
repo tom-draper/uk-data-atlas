@@ -1,20 +1,20 @@
 import { mkdir, readFile, rename, writeFile } from "fs/promises";
 import { dirname, join } from "path";
 import { encodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
-import { Gazetteer } from "../../lib/data/gazetteer/gazetteer.ts";
+import { Gazetteer } from "@uk-data-atlas/places";
 import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import {
 	lsoaLadMappingsFile,
 	type PrecompiledBoundaryMappings,
 } from "@uk-data-atlas/geography";
-import { readAtlasLookup } from "../../scripts/atlas-lookups.ts";
-import { BOUNDARY_CATALOG } from "../../lib/data/boundaries/catalog.ts";
+import { readAtlasLookup } from "./atlasLookups.ts";
+import { BOUNDARY_CATALOG } from "@uk-data-atlas/datasets/data/boundaries/catalog";
 import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
 import {
 	codeKeyedFieldsFor,
 	type DatasetPayloadLayout,
 } from "@uk-data-atlas/datasets/data/catalog/types";
-import { aggregatePopulation } from "../../lib/helpers/datasetAggregation/population.ts";
+import { aggregatePopulation } from "./datasetAggregation/population.ts";
 const REGION_CHUNK_KEYS = [
 	"E12000001",
 	"E12000002",

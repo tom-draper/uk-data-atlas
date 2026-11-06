@@ -188,6 +188,8 @@ x-endpoint-chooser:
         "/data/{measure-id}/compare",
         "/data/{measure-id}/change",
       ]
+  - need: find councils similar across chosen measures
+    start: ["/areas/{geography}/{code}/similar"]
   - need: translate an identifier through a published crosswalk
     start: ["/translations"]
   - need: convert values under a declared measure/method rule
@@ -669,23 +671,26 @@ paths:
         drawn from, so neighbours share their borders exactly, and the ids are
         the ones a join table publishes, so values join by `id` or `code`
         without reading a tile. Every tier is published, `full` included, and
-        its size and SHA-256 are listed under `features` in the descriptor. Downloads are generated from the geometry store on request, checked
+        its size and SHA-256 are listed under `features` in the descriptor.
+        Downloads are generated from the geometry store on request, checked
         against their published hashes and cached within a bounded byte budget.
-        Cold requests for large releases can take longer; generation is serialized. A
-        coarse tier keeps every border shared but is not guaranteed to be a
-        valid polygon everywhere, as the descriptor's `generalisation` says. The
-        file's `uk-data-atlas` metadata names the resource, tier, attribution
-        and publisher file hash, so a copy loaded on its own is still citable.
+        Cold requests for large releases can take longer; generation is
+        serialized. A coarse tier keeps every border shared but is not
+        guaranteed to be a valid polygon everywhere, as the descriptor's
+        `generalisation` says. The file's `uk-data-atlas` metadata names the
+        resource, tier, attribution and publisher file hash, so a copy loaded on
+        its own is still citable.
 
         `format=geojson` returns the same features as an RFC 7946
         FeatureCollection, for the tools that open GeoJSON directly. It is
         published at the `medium` and `low` tiers only; `full` and `high` are
         GeoParquet only, and asking for them as GeoJSON answers 404. Each
         feature has the same `id`, and `code` and `name` properties; coordinates
-        are written to six decimal places, about 0.1 m. A client sending `Accept-Encoding: gzip` receives it with
-        `Content-Encoding: gzip` and one that does not receives it decoded. The
-        two encodings have different `ETag`s, and the descriptor's `bytes` and
-        `contentHash` describe the decoded GeoJSON.
+        are written to six decimal places, about 0.1 m. A client sending
+        `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and
+        one that does not receives it decoded. The two encodings have different
+        `ETag`s, and the descriptor's `bytes` and `contentHash` describe the
+        decoded GeoJSON.
 
         The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any
         reader that fetches Parquet over HTTP can read its footer and only the
@@ -843,8 +848,8 @@ paths:
         status bytes. Oversized joins return `422 Map Join Budget Exceeded`
         before output rows or columns are built, with no partial table and a
         `links.data` URL for paginated source observations. Source artifact
-        parsing and record materialisation occur before this check; this is
-        not a heap or RSS ceiling.
+        parsing and record materialisation occur before this check; this is not
+        a heap or RSS ceiling.
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/Geography"
@@ -3022,7 +3027,7 @@ paths:
                       - 2023
                   compiled:
                     bytes: 13350128
-                    sha256: 9b65e2c5703ac54675cde58ecb4367e23abe4ef09c6bfc9902b8d13ba0f97a11
+                    sha256: 32adfba936cd8746fac5ccceb71299b9822e0d3c04540420106e10b5272caf10
                 meta:
                   nextCursor: null
               schema:
@@ -4173,9 +4178,9 @@ paths:
           schema: { type: string }
           description: >
             A measure id from `GET /v1/measures`, or one of its aliases, with
-            optional dimension filters such as `offence=burglary`. An old
-            series id such as `crime-burglary` returns a 404 naming the
-            measure and members that replace it.
+            optional dimension filters such as `offence=burglary`. An old series
+            id such as `crime-burglary` returns a 404 naming the measure and
+            members that replace it.
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureDataset"
       responses:
@@ -4216,9 +4221,8 @@ paths:
           schema: { type: string }
           description: >
             A measure id from `GET /v1/measures`, or one of its aliases, with
-            optional dimension filters such as `offence=burglary`. An old
-            series id returns a 404 naming the measure and members that replace
-            it.
+            optional dimension filters such as `offence=burglary`. An old series
+            id returns a 404 naming the measure and members that replace it.
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureDataset"
         - { name: period, in: query, required: true, schema: { type: string } }
@@ -4796,10 +4800,10 @@ paths:
           choice carries the request that asks about it alone."
         x-example-request: "/v1/data/population/series?place=Newport"
       description: >
-        A measure with dimensions answers for the members its filters name,
-        such as `?offence=burglary`; a dimension left out takes its total where
-        one is published, and several members or `*` answer one `breakdown`
-        entry per series, as `/value` does.
+        A measure with dimensions answers for the members its filters name, such
+        as `?offence=burglary`; a dimension left out takes its total where one
+        is published, and several members or `*` answer one `breakdown` entry
+        per series, as `/value` does.
 
 
         Returns all published observations for one area code within one source
@@ -5592,16 +5596,16 @@ paths:
         why for each, such as a median, which cannot be summed over a region.
 
 
-        A measure with dimensions answers for the members its filters name:
-        `GET /v1/data/party-vote-share/value?place=Holborn and St
-        Pancras&party=lab`. A dimension left out takes its total where one is
-        published, and `defaults` and `dimensions` say which member was used.
-        Several members, or `*`, answer every matching series at once:
-        `data.breakdown` holds one entry per series, each with its
-        `dimensions` and the answer (`data`) or refusal (`problem`) that series
-        gives, so `GET /v1/data/recorded-crimes/value?place=Leeds&offence=*` is
-        every crime type for Leeds. Retired path ids such as `crime-burglary`
-        return a 404 with the canonical measure and members.
+        A measure with dimensions answers for the members its filters name: `GET
+        /v1/data/party-vote-share/value?place=Holborn and St Pancras&party=lab`.
+        A dimension left out takes its total where one is published, and
+        `defaults` and `dimensions` say which member was used. Several members,
+        or `*`, answer every matching series at once: `data.breakdown` holds one
+        entry per series, each with its `dimensions` and the answer (`data`) or
+        refusal (`problem`) that series gives, so `GET
+        /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime
+        type for Leeds. Retired path ids such as `crime-burglary` return a 404
+        with the canonical measure and members.
 
 
         Give `postcode` instead of `place` to answer for where a unit postcode
@@ -6207,11 +6211,11 @@ paths:
         on the box: a box covering the whole country is a reasonable analysis
         question, and it is the geometry that is expensive, not the extent. A
         box matching nothing is an empty answer, not an error; a geography and
-        release the catalogue does not carry is a 404.
-        Geometry collections process at most 250,000 source vertices per request,
-        counted before simplification. A larger request returns 422 without a
-        partial collection. Reduce the page size for a box query, omit its tier
-        to retrieve identities, or follow the problem's `links.downloads` to the
+        release the catalogue does not carry is a 404. Geometry collections
+        process at most 250,000 source vertices per request, counted before
+        simplification. A larger request returns 422 without a partial
+        collection. Reduce the page size for a box query, omit its tier to
+        retrieve identities, or follow the problem's `links.downloads` to the
         boundary release metadata and its whole-release downloads.
 
       parameters:
@@ -7044,14 +7048,14 @@ paths:
         from. Name a `crosswalk` to cite one that publishes a relationship for
         this area. A resource that supplies nothing for the area is refused with
         `422` rather than cited. The citation hashes the whole geometry source
-        file; `include=metrics` supplies the per-area `geometryHash`. The boundary release's
-        `metadataHash` pins its metadata, which names the source file but does
-        not hash its contents. The envelope's top-level `atlasRelease` is the
-        release of the API response itself: use `citation.identity.contentHash`
-        for the compiled area identity, `citation.boundary.metadataHash` for the
-        boundary metadata, and the hashes under `citation.measures`,
-        `citation.crosswalks` and `citation.geometry` for the other artifacts
-        that support a cited result.
+        file; `include=metrics` supplies the per-area `geometryHash`. The
+        boundary release's `metadataHash` pins its metadata, which names the
+        source file but does not hash its contents. The envelope's top-level
+        `atlasRelease` is the release of the API response itself: use
+        `citation.identity.contentHash` for the compiled area identity,
+        `citation.boundary.metadataHash` for the boundary metadata, and the
+        hashes under `citation.measures`, `citation.crosswalks` and
+        `citation.geometry` for the other artifacts that support a cited result.
 
 
         `metrics` measures the area's geometry without transferring its
@@ -7511,13 +7515,13 @@ paths:
         geometry is listed in `withoutGeometry` with the reason, rather than
         being passed over. `collection.members` and `collection.withGeometry`
         disagreeing is how a caller tells a partial collection from a complete
-        one; the response is still a 200.
-        At most 1,000 children may be requested in one collection.
-        Geometry collections process at most 250,000 source vertices per request,
-        counted before simplification. A larger request returns 422 without a
-        partial collection. Reduce the page size for a box query, omit its tier
-        to retrieve identities, or follow the problem's `links.downloads` to the
-        boundary release metadata and its whole-release downloads.
+        one; the response is still a 200. At most 1,000 children may be
+        requested in one collection. Geometry collections process at most
+        250,000 source vertices per request, counted before simplification. A
+        larger request returns 422 without a partial collection. Reduce the page
+        size for a box query, omit its tier to retrieve identities, or follow
+        the problem's `links.downloads` to the boundary release metadata and its
+        whole-release downloads.
 
       parameters:
         - $ref: "#/components/parameters/Geography"
@@ -7915,9 +7919,9 @@ paths:
         islands) is returned as a single GeometryCollection rather than picking
         one fragment. Coordinates keep seven decimal places of a degree, about a
         centimetre; most publishers' WGS84 files carry fifteen, which is float
-        noise from their own reprojection. A few areas whose parts lie less
-        than a centimetre apart keep their source precision, because rounding
-        would make their valid boundary invalid.
+        noise from their own reprojection. A few areas whose parts lie less than
+        a centimetre apart keep their source precision, because rounding would
+        make their valid boundary invalid.
 
 
         `tier` generalises the geometry before it is served, for callers that do
@@ -8081,9 +8085,9 @@ paths:
           description:
             Preflight this measure against an exact conversion's relationship
             purpose. A measure id from `GET /v1/measures`, or one of its
-            aliases, with optional dimension filters such as
-            `offence=burglary`; an old series id returns a 404 naming the
-            measure and members that replace it.
+            aliases, with optional dimension filters such as `offence=burglary`;
+            an old series id returns a 404 naming the measure and members that
+            replace it.
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureDataset"
         - {
@@ -8496,12 +8500,12 @@ paths:
         250,000 rows in an 8 MiB body. Nothing is stored or cached.
 
         The crosswalk fixes the exact source and target releases. Its source
-        identities must be compiled. semantics=count asserts that the values
-        are finite, non-negative counts that add over areas. Fractions are
-        allowed. A missing, invalid, ambiguous, duplicate or non-numeric row
-        refuses the entire request with 422. Code and name rows resolving to
-        the same area are duplicates. The first 1,000 rejected rows are listed,
-        with rejectedCount giving their full count.
+        identities must be compiled. semantics=count asserts that the values are
+        finite, non-negative counts that add over areas. Fractions are allowed.
+        A missing, invalid, ambiguous, duplicate or non-numeric row refuses the
+        entire request with 422. Code and name rows resolving to the same area
+        are duplicates. The first 1,000 rejected rows are listed, with
+        rejectedCount giving their full count.
 
         Omit weighting for exact regrouping. Splits require weighting=area or
         weighting=population matching the published crosswalk. An unweighted
@@ -8510,9 +8514,10 @@ paths:
 
         Each output states whether every source this crosswalk maps to it was
         supplied. Complete coverage is relative to published crosswalk mappings,
-        not the whole geography. Unreached targets are absent, never zero.
-        The response pins the Atlas release, input text hash and crosswalk hash,
-        and reports input and output totals. Send a UTF-8 body to reproduce its hash.
+        not the whole geography. Unreached targets are absent, never zero. The
+        response pins the Atlas release, input text hash and crosswalk hash, and
+        reports input and output totals. Send a UTF-8 body to reproduce its
+        hash.
       parameters:
         - $ref: "#/components/parameters/CrosswalkId"
         - name: semantics
@@ -8569,7 +8574,9 @@ paths:
         "415":
           description: Send application/json or text/csv.
         "422":
-          description: No conversion was applied. Correct rejected rows or select supported weighting.
+          description:
+            No conversion was applied. Correct rejected rows or select
+            supported weighting.
           content:
             application/problem+json:
               schema:
@@ -8706,9 +8713,9 @@ paths:
         names the artifact, its content hash and byte size, and describes it as
         read from the artifact at build time: its record counts, layout, record
         fields and the datasets to attribute. Field meanings and dataset
-        attribution are listed once in `fields` and `datasets`. Optional `formats`
-        lists prebuilt CSV and Parquet files of the named measure, with the
-        byte size, content hash and download link for each format.
+        attribution are listed once in `fields` and `datasets`. Optional
+        `formats` lists prebuilt CSV and Parquet files of the named measure,
+        with the byte size, content hash and download link for each format.
       responses:
         "200":
           description: The bulk-export manifest.
@@ -8826,14 +8833,14 @@ paths:
           source partition; `/v1/exports` lists them."
         x-example-request: "/v1/exports/population"
       description: >
-        Defaults to the source JSON artifact. Use `format=csv` or `format=parquet`
-        for a prebuilt flat file of the named measure across all periods. Shared
-        tables are projected to that measure, preserving null cells. Rows carry
-        measureId, unit, datasetId, geography, boundaryYear, period, areaCode,
-        sourceAreaCode, value, category, status, lowerBound and upperBound.
-        Missing fields are empty in CSV and null in Parquet. Sizes and hashes for
-        the flat files are listed in each export's `formats`. The response is
-        not wrapped in the usual API envelope.
+        Defaults to the source JSON artifact. Use `format=csv` or
+        `format=parquet` for a prebuilt flat file of the named measure across
+        all periods. Shared tables are projected to that measure, preserving
+        null cells. Rows carry measureId, unit, datasetId, geography,
+        boundaryYear, period, areaCode, sourceAreaCode, value, category, status,
+        lowerBound and upperBound. Missing fields are empty in CSV and null in
+        Parquet. Sizes and hashes for the flat files are listed in each export's
+        `formats`. The response is not wrapped in the usual API envelope.
       parameters:
         - $ref: "#/components/parameters/ExportId"
         - name: format
@@ -9064,15 +9071,14 @@ paths:
       description: >
         The web atlas cannot hold the crosswalks, so the build reduces them to
         compact lookups for the boundary releases the atlas draws, as the
-        geography resolver answers them. Available ids are `area-lineage`
-        (where each ward, local authority and constituency goes between
-        releases), `boundary-mappings` (each ward's local authority and
-        constituency), `constituency-lad-overlaps` (the share of each
-        constituency every local authority holds), `parish-lad-mappings` and
-        `lsoa-lad-mappings-{year}` for each LSOA year the atlas draws, such as
-        `lsoa-lad-mappings-2021`. Their shapes follow the atlas and may change
-        with it; the crosswalks and relationship routes are the stable way to
-        ask the same questions.
+        geography resolver answers them. Available ids are `area-lineage` (where
+        each ward, local authority and constituency goes between releases),
+        `boundary-mappings` (each ward's local authority and constituency),
+        `constituency-lad-overlaps` (the share of each constituency every local
+        authority holds), `parish-lad-mappings` and `lsoa-lad-mappings-{year}`
+        for each LSOA year the atlas draws, such as `lsoa-lad-mappings-2021`.
+        Their shapes follow the atlas and may change with it; the crosswalks and
+        relationship routes are the stable way to ask the same questions.
       parameters:
         - name: lookup-id
           in: path
@@ -9296,9 +9302,9 @@ paths:
           description: >
             A measure id from `GET /v1/measures`, or one of its aliases.
             Repeatable. Dimension filters such as `offence=burglary` apply to
-            each listed measure that has the dimension; an old series id such
-            as `crime-burglary` returns a 404 naming the measure and members
-            that replace it.
+            each listed measure that has the dimension; an old series id such as
+            `crime-burglary` returns a 404 naming the measure and members that
+            replace it.
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureDataset"
         - name: boundaryRelease
@@ -9891,7 +9897,7 @@ paths:
         when:
           A selected measure does not serve the geography and period, or more than ten measures are
           requested.
-        x-example-request: /v1/areas/localAuthority/E08000010/similar?measures=population,population-density,total-jobs&period=2024
+        x-example-request: /v1/areas/localAuthority/E08000010/similar?measures=population,population-density,total-jobs,imd-rank,life-expectancy,unemployment,house-price,broadband-availability,recorded-crimes,ghg-emissions,claimants&period=2024
       parameters:
         - name: geography
           in: path
@@ -9956,7 +9962,7 @@ paths:
                       standardDeviation: 96004.4
                   droppedAreaCount: 0
                   areas:
-                    - areaCode: E08000011
+                    - areaCode: E08000015
                       distance: 0.44
                       rank: 1
                       values:
@@ -10105,7 +10111,8 @@ components:
         `bytes=-length`. This is how a PMTiles client reads an archive: the
         header, then a directory, then only the tiles it needs. Several ranges
         in one request are not supported and get the whole file, as does an
-        `If-Range` that no longer matches the ETag. GeoJSON downloads are always sent whole.
+        `If-Range` that no longer matches the ETag. GeoJSON downloads are always
+        sent whole.
     PointLookupCrs:
       name: crs
       in: query
@@ -10258,8 +10265,8 @@ components:
         for the furthest date. A response to `latest` names the release it read
         in `Content-Location`. A geography whose newest month holds several
         releases that differ in more than coverage, or that has a release whose
-        id and registry metadata supply no date, is refused with `409` and the releases that could
-        be newest.
+        id and registry metadata supply no date, is refused with `409` and the
+        releases that could be newest.
     CrosswalkId:
       name: crosswalk-id
       in: path
@@ -10276,13 +10283,13 @@ components:
       description: >
         A measure id from `GET /v1/measures`, such as `population` or
         `recorded-crimes`, or one of its `aliases`, such as `house-prices`. An
-        alias is read as the id it names, and the response's
-        `Content-Location` header gives the request it was read as. Case,
-        spaces and punctuation are set aside, so `House Prices` is
-        `house-prices`. A measure's breakdowns are chosen with dimension
-        filters, not with the id: `recorded-crimes` with `offence=burglary`,
-        not `crime-burglary`. Retired ids return a 404 with the canonical
-        measure and members, in a path or in a `measure` query parameter.
+        alias is read as the id it names, and the response's `Content-Location`
+        header gives the request it was read as. Case, spaces and punctuation
+        are set aside, so `House Prices` is `house-prices`. A measure's
+        breakdowns are chosen with dimension filters, not with the id:
+        `recorded-crimes` with `offence=burglary`, not `crime-burglary`. Retired
+        ids return a 404 with the canonical measure and members, in a path or in
+        a `measure` query parameter.
     MeasureDataset:
       name: datasetId
       in: query
@@ -10310,15 +10317,15 @@ components:
         same filter. `GET /v1/measures/{measure-id}` lists a measure's
         dimensions and their members. A filter takes one member, several
         separated by commas (`party=lab,con`), or `*` for every member. A
-        dimension left out takes its total where the measure publishes one,
-        such as `offence=total`, and the response states the member chosen in
-        `defaults` and `dimensions`. Where no total is published, or the
-        filter asks for several members, `/value` and `/series` answer every
-        matching series at once, one `breakdown` entry each; an operation that
-        answers one series refuses with `ambiguous_dimension` and lists a
-        request for each in `choices`. Where two datasets publish the same
-        measure and members, such as general and local election votes, the
-        place's geography or `datasetId` chooses between them.
+        dimension left out takes its total where the measure publishes one, such
+        as `offence=total`, and the response states the member chosen in
+        `defaults` and `dimensions`. Where no total is published, or the filter
+        asks for several members, `/value` and `/series` answer every matching
+        series at once, one `breakdown` entry each; an operation that answers
+        one series refuses with `ambiguous_dimension` and lists a request for
+        each in `choices`. Where two datasets publish the same measure and
+        members, such as general and local election votes, the place's geography
+        or `datasetId` chooses between them.
     AreaCode:
       name: code
       in: path
@@ -10500,7 +10507,8 @@ components:
         comma separated.
       schema:
         type: string
-        example: '</v1/boundary-releases/lsoa/2001-12-ew-bgc-v2>; rel="successor-version"'
+        example: '</v1/boundary-releases/lsoa/2001-12-ew-bgc-v2>;
+          rel="successor-version"'
 
   responses:
     PartialContent:
@@ -10613,12 +10621,12 @@ components:
           description: >
             On a 409 Ambiguous Place: each place the name could mean, with its
             answer and the request that asks about it alone, as an object. On an
-            `ambiguous_dimension` or `no_matching_series` problem: each series of
-            the measure, as an object with its `dimensions`, its `datasetId`
+            `ambiguous_dimension` or `no_matching_series` problem: each series
+            of the measure, as an object with its `dimensions`, its `datasetId`
             where that tells it apart, its `label`, and the request that reads
-            it as `href`. On a
-            refusal from an area's children routes: each release the children
-            are published in, as a `{geography}/{release}` string.
+            it as `href`. On a refusal from an area's children routes: each
+            release the children are published in, as a `{geography}/{release}`
+            string.
           items:
             type: [object, string]
         candidates:
@@ -10687,12 +10695,12 @@ components:
             to another query, and `unknown_query_parameter` when the operation
             does not declare a supplied parameter. From a release resolution:
             `no_release_for_date` and `ambiguous_release`. From a measure's
-            dimension filters: `unknown_dimension` and `unknown_dimension_member`
-            (400) for a dimension or member the measure does not have,
-            `retired_measure_id` (404) when a path names a retired series id,
-            `no_matching_series` (404) when no series has the
-            members asked for, and `ambiguous_dimension` (409) when the request
-            leaves several series and the operation answers one.
+            dimension filters: `unknown_dimension` and
+            `unknown_dimension_member` (400) for a dimension or member the
+            measure does not have, `retired_measure_id` (404) when a path names
+            a retired series id, `no_matching_series` (404) when no series has
+            the members asked for, and `ambiguous_dimension` (409) when the
+            request leaves several series and the operation answers one.
         absence:
           type: string
           enum:
@@ -10761,12 +10769,16 @@ components:
           description: On an `unknown_dimension` problem, the dimensions the measure has.
         dimension:
           type: string
-          description: On an `unknown_dimension_member` problem, the dimension the filter named.
+          description:
+            On an `unknown_dimension_member` problem, the dimension the filter
+            named.
         measure:
           type: string
           description: On a `retired_measure_id` problem, the canonical measure.
         members:
-          description: Available members for an unknown member, or the retired id's dimension members.
+          description:
+            Available members for an unknown member, or the retired id's
+            dimension members.
           oneOf:
             - type: array
               items: { type: string }
@@ -11148,7 +11160,28 @@ components:
           dimension: offence
           members:
             - total
+            - violence-against-the-person
+            - homicide
+            - death-or-serious-injury-by-unlawful-driving
+            - violence-with-injury
+            - violence-without-injury
+            - stalking-and-harassment
+            - sexual-offences
+            - robbery
+            - theft
             - burglary
+            - residential-burglary
+            - non-residential-burglary
+            - vehicle-offences
+            - theft-from-the-person
+            - bicycle-theft
+            - shoplifting
+            - other-theft
+            - criminal-damage-and-arson
+            - drug-offences
+            - possession-of-weapons
+            - public-order-offences
+            - miscellaneous-crimes-against-society
 
     RetiredMeasureIdProblem:
       description: The measure id is retired. Use the canonical measure and members.
@@ -11163,10 +11196,13 @@ components:
         - type: https://api.ukdataatlas.com/problems/not-found
           title: Not Found
           status: 404
-          detail: crime-burglary is no longer accepted. Use /v1/data/recorded-crimes with offence=burglary.
+          detail:
+            crime-burglary is no longer accepted. Use /v1/data/recorded-crimes with
+            offence=burglary.
           code: retired_measure_id
           measure: recorded-crimes
-          members: { offence: burglary }
+          members:
+            offence: burglary
 
     NoMatchingSeriesProblem:
       description: The measure publishes no series for that combination of members.
@@ -11184,20 +11220,90 @@ components:
           status: 404
           detail:
             party-vote-share is not published for that combination of members from
-            local-election. GET /v1/measures/party-vote-share lists the series it
-            has.
+            local-election. GET /v1/measures/party-vote-share lists the series
+            it has.
           code: no_matching_series
           choices:
+            - dimensions:
+                party: apni
+              datasetId: general-election
+              label: General election vote share for Alliance Party
+              href: /v1/data/party-vote-share/value?place=Holborn&party=apni&datasetId=general-election
+            - dimensions:
+                party: brx
+              datasetId: general-election
+              label: General election vote share for Brexit Party
+              href: /v1/data/party-vote-share/value?place=Holborn&party=brx&datasetId=general-election
+            - dimensions:
+                party: con
+              datasetId: general-election
+              label: General election vote share for Conservative
+              href: /v1/data/party-vote-share/value?place=Holborn&party=con&datasetId=general-election
+            - dimensions:
+                party: dup
+              datasetId: general-election
+              label: General election vote share for Democratic Unionist Party
+              href: /v1/data/party-vote-share/value?place=Holborn&party=dup&datasetId=general-election
+            - dimensions:
+                party: green
+              datasetId: general-election
+              label: General election vote share for Green
+              href: /v1/data/party-vote-share/value?place=Holborn&party=green&datasetId=general-election
             - dimensions:
                 party: lab
               datasetId: general-election
               label: General election vote share for Labour
               href: /v1/data/party-vote-share/value?place=Holborn&party=lab&datasetId=general-election
+            - dimensions:
+                party: ld
+              datasetId: general-election
+              label: General election vote share for Liberal Democrat
+              href: /v1/data/party-vote-share/value?place=Holborn&party=ld&datasetId=general-election
+            - dimensions:
+                party: other
+              datasetId: general-election
+              label: General election vote share for Other candidates
+              href: /v1/data/party-vote-share/value?place=Holborn&party=other&datasetId=general-election
+            - dimensions:
+                party: pc
+              datasetId: general-election
+              label: General election vote share for Plaid Cymru
+              href: /v1/data/party-vote-share/value?place=Holborn&party=pc&datasetId=general-election
+            - dimensions:
+                party: ruk
+              datasetId: general-election
+              label: General election vote share for Reform UK
+              href: /v1/data/party-vote-share/value?place=Holborn&party=ruk&datasetId=general-election
+            - dimensions:
+                party: sdlp
+              datasetId: general-election
+              label: General election vote share for Social Democratic and Labour Party
+              href: /v1/data/party-vote-share/value?place=Holborn&party=sdlp&datasetId=general-election
+            - dimensions:
+                party: sf
+              datasetId: general-election
+              label: General election vote share for Sinn Féin
+              href: /v1/data/party-vote-share/value?place=Holborn&party=sf&datasetId=general-election
+            - dimensions:
+                party: snp
+              datasetId: general-election
+              label: General election vote share for Scottish National Party
+              href: /v1/data/party-vote-share/value?place=Holborn&party=snp&datasetId=general-election
+            - dimensions:
+                party: ukip
+              datasetId: general-election
+              label: General election vote share for UKIP
+              href: /v1/data/party-vote-share/value?place=Holborn&party=ukip&datasetId=general-election
+            - dimensions:
+                party: uup
+              datasetId: general-election
+              label: General election vote share for Ulster Unionist Party
+              href: /v1/data/party-vote-share/value?place=Holborn&party=uup&datasetId=general-election
 
     AmbiguousDimensionProblem:
       description:
-        The request leaves the measure several series and the operation answers
-        one, or the series are not parts of one breakdown.
+        The request leaves the measure several series and the operation
+        answers one, or the series are not parts of one breakdown.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -11297,7 +11403,9 @@ components:
               properties:
                 data:
                   type: string
-                  description: Paginated source observations for the requested partition and period.
+                  description:
+                    Paginated source observations for the requested partition and
+                    period.
 
     IncompatibleGeometryProblem:
       description: >
@@ -11948,8 +12056,8 @@ components:
               artifact:
                 type: string
                 description:
-                  The stored file, when present. Generated downloads omit this
-                  field and use their API href.
+                  The stored file, when present. Generated downloads omit this field
+                  and use their API href.
               href:
                 type: string
               rowCount:
@@ -11969,8 +12077,9 @@ components:
                   undone.
               gzipBytes:
                 type: integer
-                description: "Present for GeoJSON: the size of its gzip encoding
-                  as sent with `Content-Encoding: gzip`."
+                description:
+                  "Present for GeoJSON: the size of its gzip encoding as sent with
+                  `Content-Encoding: gzip`."
         generalisation:
           type: object
           description: The terms the tiers were compiled on, in plain words.
@@ -12221,8 +12330,8 @@ components:
           type: string
           format: date
           description: >
-            The date after which the release may be removed. Absent until one
-            is set.
+            The date after which the release may be removed. Absent until one is
+            set.
         replacedBy:
           type: string
           description: The id of the release, of the same geography, to use instead.
@@ -12258,11 +12367,10 @@ components:
         Where to get the whole release: its vector tiles, every generalisation
         tier as GeoParquet, and the `medium` and `low` tiers as GeoJSON. A
         release whose areas are not a coverage, because some edge lies on more
-        than two of them, cannot be tiled or generalised with shared borders:
-        it is `untiled`, with the reason, and downloadable whole as GeoParquet
-        at `full` detail only. A release
-        with no readable geometry is `unavailable`. Either stays available area
-        by area.
+        than two of them, cannot be tiled or generalised with shared borders: it
+        is `untiled`, with the reason, and downloadable whole as GeoParquet at
+        `full` detail only. A release with no readable geometry is
+        `unavailable`. Either stays available area by area.
       oneOf:
         - type: object
           required:
@@ -13848,9 +13956,9 @@ components:
         topology in planar WGS84 XY using JSTS IsValidOp, including
         self-intersections, holes, ring degeneracy and relationships between
         MultiPolygon parts. Z is ignored. This is not a geodesic, antimeridian,
-        cross-area coverage or general GeoJSON/OGC conformance certificate.
-        At most the first issue found by the checker is returned. Source geometry is
-        never repaired by validation. A valid result applies only to these
+        cross-area coverage or general GeoJSON/OGC conformance certificate. At
+        most the first issue found by the checker is returned. Source geometry
+        is never repaired by validation. A valid result applies only to these
         checks. More than 10,000 positions, or 10,000 polygon/ring components,
         yields `not-checked` with `position-limit`; GeometryCollection and
         non-polygon types are `unsupported-geometry`. Older stores without
@@ -13932,8 +14040,9 @@ components:
           pattern: "^sha256:[0-9a-f]{64}$"
           description: >
             SHA-256 of the UTF-8 JSON serialization of the full WGS 84 geometry
-            returned by the area's geometry route with tier=full. This identifies
-            its coordinates and their order, not topological equivalence.
+            returned by the area's geometry route with tier=full. This
+            identifies its coordinates and their order, not topological
+            equivalence.
         boundingBox:
           type: array
           description: >
@@ -14810,7 +14919,9 @@ components:
           const: json
         formats:
           type: array
-          description: Prebuilt flat files of the named measure, schema version 1. Sizes are file bytes before HTTP compression; hashes identify those bytes.
+          description:
+            Prebuilt flat files of the named measure, schema version 1. Sizes
+            are file bytes before HTTP compression; hashes identify those bytes.
           items:
             type: object
             required: [format, artifact, href, bytes, contentHash]
@@ -14823,9 +14934,9 @@ components:
               gzipBytes:
                 type: integer
                 description:
-                  "Present when the file is stored gzipped, as CSV is: its size
-                  as sent with `Content-Encoding: gzip`. A stored-gzipped file
-                  is not served in byte ranges."
+                  "Present when the file is stored gzipped, as CSV is: its size as
+                  sent with `Content-Encoding: gzip`. A stored-gzipped file is
+                  not served in byte ranges."
         artifact:
           type: string
         contentHash:
@@ -14857,8 +14968,8 @@ components:
                 `table` is an artifact several measures share, such as a census
                 table: one row per area, the area code and then a value for each
                 measure in `measures` order, null where none is published. Each
-                measure's JSON download contains the whole table. CSV and Parquet
-                contain only the named measure.
+                measure's JSON download contains the whole table. CSV and
+                Parquet contain only the named measure.
             measures:
               type: array
               items: { type: string }

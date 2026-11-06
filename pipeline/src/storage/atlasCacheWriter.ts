@@ -8,7 +8,10 @@ import {
 	closeReadOnlyDatabase,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { CACHE_GENERATIONS_VIEW, removeDeprecatedObject } from "./deprecatedViews.ts";
+import {
+	CACHE_GENERATIONS_VIEW,
+	removeDeprecatedObject,
+} from "./deprecatedViews.ts";
 import { hashSqliteContent, writeStageStamp } from "./stageStamp.ts";
 
 /** Replace one component without exposing incomplete tables to API readers. */
@@ -27,11 +30,19 @@ export function publishAtlasCache(
 			database.exec(
 				"PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN; CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS cache_generation (component TEXT PRIMARY KEY, generation TEXT NOT NULL) WITHOUT ROWID;",
 			);
-			const legacy = database.prepare("SELECT type FROM sqlite_schema WHERE name = 'cache_generations'").get();
+			const legacy = database
+				.prepare(
+					"SELECT type FROM sqlite_schema WHERE name = 'cache_generations'",
+				)
+				.get();
 			if (legacy?.type === "table")
-				database.exec("INSERT OR IGNORE INTO cache_generation SELECT component, generation FROM cache_generations");
+				database.exec(
+					"INSERT OR IGNORE INTO cache_generation SELECT component, generation FROM cache_generations",
+				);
 			removeDeprecatedObject(database, "cache_generations");
-			database.exec(`CREATE VIEW cache_generations AS ${CACHE_GENERATIONS_VIEW}`);
+			database.exec(
+				`CREATE VIEW cache_generations AS ${CACHE_GENERATIONS_VIEW}`,
+			);
 			write(database);
 			database
 				.prepare(

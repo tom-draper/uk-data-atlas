@@ -156,7 +156,9 @@ test("a stamp's generation changes when the canonical inputs do", () => {
 	const { root, place } = cacheFixture();
 	const first = place([["Leeds"]]);
 	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
-	canonical.exec("UPDATE area_inventory_metadata SET content_hash = 'areas-2'");
+	canonical.exec(
+		"UPDATE area_inventory_metadata SET content_hash = 'areas-2'",
+	);
 	canonical.close();
 	const second = place([["Leeds"]]);
 	assert.equal(second.content, first.content);
@@ -216,27 +218,58 @@ test("rebuilding a renamed cache table replaces its old table with a view", () =
 	const { root } = cacheFixture();
 	const path = join(root, "data/build/atlas-cache.sqlite");
 	const old = new DatabaseSync(path);
-	old.exec("CREATE TABLE place_index_places (position INTEGER PRIMARY KEY, name TEXT); INSERT INTO place_index_places VALUES (0, 'old')");
+	old.exec(
+		"CREATE TABLE place_index_places (position INTEGER PRIMARY KEY, name TEXT); INSERT INTO place_index_places VALUES (0, 'old')",
+	);
 	old.close();
-	const tables = { place_index_place: { columns: ["name TEXT"], rows: [["new"]], views: { place_index_places: "SELECT * FROM place_index_place" } } };
+	const tables = {
+		place_index_place: {
+			columns: ["name TEXT"],
+			rows: [["new"]],
+			views: { place_index_places: "SELECT * FROM place_index_place" },
+		},
+	};
 	publishCacheTables(root, "place-index", tables);
 	publishCacheTables(root, "place-index", tables);
 	const cache = new DatabaseSync(path, { readOnly: true });
 	try {
-		assert.equal(cache.prepare("SELECT type FROM sqlite_schema WHERE name = 'place_index_places'").get()?.type, "view");
-		assert.equal(cache.prepare("SELECT name FROM place_index_places").get()?.name, "new");
-	} finally { cache.close(); }
+		assert.equal(
+			cache
+				.prepare(
+					"SELECT type FROM sqlite_schema WHERE name = 'place_index_places'",
+				)
+				.get()?.type,
+			"view",
+		);
+		assert.equal(
+			cache.prepare("SELECT name FROM place_index_places").get()?.name,
+			"new",
+		);
+	} finally {
+		cache.close();
+	}
 });
 
 test("preserves cache generations when migrating the legacy table", () => {
 	const { root, place } = cacheFixture();
 	const path = join(root, "data/build/atlas-cache.sqlite");
 	const old = new DatabaseSync(path);
-	old.exec("CREATE TABLE cache_generations (component TEXT PRIMARY KEY, generation TEXT NOT NULL); INSERT INTO cache_generations VALUES ('other', 'old')");
+	old.exec(
+		"CREATE TABLE cache_generations (component TEXT PRIMARY KEY, generation TEXT NOT NULL); INSERT INTO cache_generations VALUES ('other', 'old')",
+	);
 	old.close();
 	place([["Leeds"]]);
 	const cache = new DatabaseSync(path, { readOnly: true });
 	try {
-		assert.equal(cache.prepare("SELECT generation FROM cache_generations WHERE component = 'other'").get()?.generation, "old");
-	} finally { cache.close(); }
+		assert.equal(
+			cache
+				.prepare(
+					"SELECT generation FROM cache_generations WHERE component = 'other'",
+				)
+				.get()?.generation,
+			"old",
+		);
+	} finally {
+		cache.close();
+	}
 });

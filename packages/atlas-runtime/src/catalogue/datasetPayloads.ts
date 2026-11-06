@@ -67,7 +67,9 @@ export function rebuildDatasetPayload(
 			let found = read.get(other);
 			if (!found) {
 				const type = database
-					.prepare("SELECT type FROM dataset_catalogue WHERE output = ?")
+					.prepare(
+						"SELECT type FROM dataset_catalogue WHERE output = ?",
+					)
 					.get(other)?.type;
 				if (typeof type !== "string")
 					throw new Error(`Unknown dataset ${other}`);
@@ -136,7 +138,9 @@ export function readStoredDatasetPayload(
 	);
 	try {
 		const row = database
-			.prepare("SELECT sha256, payload_id AS payloadId FROM dataset_catalogue WHERE output = ?")
+			.prepare(
+				"SELECT sha256, payload_id AS payloadId FROM dataset_catalogue WHERE output = ?",
+			)
 			.get(output);
 		if (!row || typeof row.payloadId === "string") return undefined;
 		const cached = readCached(root, output, String(row.sha256));

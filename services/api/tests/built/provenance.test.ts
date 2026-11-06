@@ -72,7 +72,6 @@ const partitions = (catalogues.dataCatalog?.measures ?? []).flatMap((measure) =>
 			codeYear: String(source.sourceGeography.boundaryYear),
 			limit: "1",
 			...mapping.dimensions,
-			...(mapping.datasetId ? { datasetId: mapping.datasetId } : {}),
 		});
 		return period
 			? [

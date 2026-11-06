@@ -13,6 +13,7 @@ import { test, type TestContext } from "vitest";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { runBuild } from "../build-data.mjs";
 import { createStageCache } from "../build-data-cache.mjs";
+import { sourcesMatchRelease } from "../../scripts/data-release.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const runner = join(root, "pipeline/build-data.mjs");
@@ -128,6 +129,11 @@ function stages(result: ReturnType<ReturnType<typeof fixture>["run"]>) {
 		.map((line) => line.split(":")[0]);
 }
 
+const expectedStages = async (names: string[]) => {
+	const sourcesCurrent = await sourcesMatchRelease();
+	return names.filter((name) => name !== "sources" || !sourcesCurrent);
+};
+
 const apiOrder = [
 	"sources",
 	"operations",
@@ -172,9 +178,9 @@ const apiOrder = [
 	"atlas-pages",
 ];
 
-test("default build executes both products in dependency order", (context) => {
+test("default build executes both products in dependency order", async (context) => {
 	const build = fixture(context);
-	assert.deepEqual(stages(build.run([])), [
+	const expected = [
 		...apiOrder,
 		"boundaries",
 		"boundary-tiles",
@@ -182,8 +188,12 @@ test("default build executes both products in dependency order", (context) => {
 		"website-lookups",
 		"website-datasets",
 		"website-registry",
-	]);
-	assert.equal(build.commands().length, apiOrder.length + 6);
+	];
+	assert.deepEqual(stages(build.run([])), await expectedStages(expected));
+	assert.equal(
+		build.commands().length,
+		(await expectedStages(apiOrder)).length + 6,
+	);
 });
 
 test("rebuilding atlas pages refreshes the website assets and leaves the API release alone", (context) => {
@@ -357,15 +367,15 @@ test("a plan selects the same stages without executing commands", (context) => {
 	]);
 });
 
-test("--only builds a stage and its prerequisites without unrelated or downstream work", (context) => {
+test("--only builds a stage and its prerequisites without unrelated or downstream work", async (context) => {
 	const build = fixture(context);
 	assert.deepEqual(stages(build.run(["--only", "boundary-tiles"])), [
-		"sources",
+		...(await expectedStages(["sources"])),
 		"boundaries",
 		"boundary-tiles",
 	]);
 	assert.deepEqual(build.commands(), [
-		["data:download"],
+		...((await sourcesMatchRelease()) ? [] : [["data:download"]]),
 		["pipeline/src/compile-boundaries.mts"],
 		[
 			"--max-old-space-size=3072",

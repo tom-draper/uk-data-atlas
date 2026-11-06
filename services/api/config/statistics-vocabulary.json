@@ -575,6 +575,13 @@
 			"valueKind": "index",
 			"aggregation": "none"
 		},
+		"source-winning-party": {
+			"label": "Winning party",
+			"description": "Winning party code reported by the source.",
+			"unit": "party",
+			"valueKind": "category",
+			"aggregation": "none"
+		},
 		"total-jobs": {
 			"label": "Total jobs",
 			"description": "Jobs located in the area: employee jobs, self-employment, government-supported trainees and HM Forces.",
@@ -2257,6 +2264,83 @@
 					"code": "other",
 					"label": "Other method",
 					"parent": "total"
+				}
+			]
+		},
+		"winning-party-code": {
+			"label": "Winning party code",
+			"members": [
+				{
+					"code": "APNI",
+					"label": "APNI"
+				},
+				{
+					"code": "CON",
+					"label": "CON"
+				},
+				{
+					"code": "DUP",
+					"label": "DUP"
+				},
+				{
+					"code": "GREEN",
+					"label": "GREEN"
+				},
+				{
+					"code": "IND",
+					"label": "IND"
+				},
+				{
+					"code": "LAB",
+					"label": "LAB"
+				},
+				{
+					"code": "LD",
+					"label": "LD"
+				},
+				{
+					"code": "OTHER",
+					"label": "OTHER"
+				},
+				{
+					"code": "PC",
+					"label": "PC"
+				},
+				{
+					"code": "REF",
+					"label": "REF"
+				},
+				{
+					"code": "RUK",
+					"label": "RUK"
+				},
+				{
+					"code": "SDLP",
+					"label": "SDLP"
+				},
+				{
+					"code": "SF",
+					"label": "SF"
+				},
+				{
+					"code": "SNP",
+					"label": "SNP"
+				},
+				{
+					"code": "SPK",
+					"label": "SPK"
+				},
+				{
+					"code": "TUV",
+					"label": "TUV"
+				},
+				{
+					"code": "UKIP",
+					"label": "UKIP"
+				},
+				{
+					"code": "UUP",
+					"label": "UUP"
 				}
 			]
 		}

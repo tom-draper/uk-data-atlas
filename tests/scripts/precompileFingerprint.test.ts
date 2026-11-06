@@ -31,7 +31,7 @@ const createRepository = async () => {
 		"packages/geography/src/reverseGridOffset.ts",
 		"packages/atlas-runtime/src/storage/buildTiming.ts",
 		"pipeline/src/compile-boundary-tiles.mts",
-		"scripts/dataset-discovery.ts",
+		"pipeline/src/dataset-discovery.ts",
 		"pipeline/src/dataset-region-chunks.mts",
 		"scripts/generate-dataset-registry.ts",
 		"pipeline/src/build-catalogue-registry.ts",

@@ -3213,7 +3213,7 @@ second inventory to maintain:
 
 **Sync**
 
-- `GET /v1/data/{measure-id}/export`, Download a whole measure as CSV or Parquet
+- `GET /v1/data/{measure-id}/export`, Download every observation for a measure
 - `GET /v1/exports`, List release-pinned whole observation artifacts
 - `GET /v1/exports/{export-id}`, Download one immutable source observation artifact
 - `GET /v1/lookups`, List whole lookup tables for download
@@ -3316,22 +3316,9 @@ catalogues by the contract tests:
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&codeYear=2025&release=2025-05-uk-bgc-v2&include=area`
 - `GET /v1/documents/measure-ghg-emissions.json`
-- `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&codeYear=2024`
-- `GET /v1/measures/mobile-4g-coverage`
 - `GET /v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025&place=S92000003`
 - `GET /v1/data/total-jobs/series?place=E08000035&geography=localAuthority&codeYear=2023`
-- `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&codeYear=2023`
-- `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&codeYear=2023`
-- `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&codeYear=2023`
-- `GET /v1/data/qualification-level-4-plus?period=2021&geography=localAuthority&codeYear=2023`
-- `GET /v1/data/broadband-gigabit-availability?period=2025-07&geography=localAuthority&codeYear=2024`
-- `GET /v1/data/claimant-count/value?period=2026-04&geography=localAuthority&codeYear=2024&place=S92000003`
-- `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&codeYear=2025`
-- `GET /v1/data/median-annual-pay/series?place=E08000003&geography=localAuthority&codeYear=2025`
-- `GET /v1/data/crime-total?period=year-ending-2026-03&geography=communitySafetyPartnership&codeYear=2023&release=2023-12-ew-bgc`
 - `GET /v1/data/unemployment-rate/series?place=E08000003&geography=localAuthority&codeYear=2019`
-- `GET /v1/data/no2-background-mean/value?period=2024&geography=localAuthority&codeYear=2024&place=W92000004`
-- `GET /v1/data/ethnicity-indian/value?period=2021&geography=localAuthority&codeYear=2023&place=W92000004`
 - `GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population?period=2024&geography=localAuthority&codeYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
@@ -3341,8 +3328,6 @@ catalogues by the contract tests:
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&codeYear=2023`
 - `GET /v1/data/house-price-median/series?place=E05008945&geography=ward&codeYear=2020`
 - `GET /v1/data/imd-decile?period=2025&geography=lsoa&codeYear=2021&release=2021-12-ew-bgc-v5&include=area`
-- `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&codeYear=2025`
-- `GET /v1/data/life-expectancy-male/series?place=E06000001&geography=localAuthority&codeYear=2025`
 - `GET /v1/data/population?period=2022&geography=constituency&codeYear=2024&release=2024-07-uk-bgc&include=area`
 - `GET /v1/data/population-density/series?place=E09000012&geography=localAuthority&codeYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`

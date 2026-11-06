@@ -46,7 +46,6 @@ describe("sitemap", () => {
 		for (const path of [
 			"/about",
 			"/sources",
-			"/boundaries",
 			"/docs",
 			"/atlas/england",
 			"/atlas/scotland/adult-social-care-activity",

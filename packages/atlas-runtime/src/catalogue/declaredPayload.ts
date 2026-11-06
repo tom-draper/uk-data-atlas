@@ -284,8 +284,8 @@ export function rebuildFromDeclaration(
 						typeof config.name === "string"
 							? config.name
 							: config.name?.[set.from];
-					if (nameField !== undefined) found[nameField] = name;
 					if (codeField !== undefined) found[codeField] = code;
+					if (nameField !== undefined) found[nameField] = name;
 				}
 				return found;
 			};
@@ -635,14 +635,16 @@ export function rebuildFromDeclaration(
 				found[String(row.child)] = String(row.parent);
 			linked[link.field] = found;
 		}
+		const { coverageCountries, ...baseHeader } = header;
 		result[key] = {
-			...header,
+			...baseHeader,
 			...linked,
 			...(config.election?.results
 				? { [config.election.results]: winners }
 				: {}),
 			...(spec.summary ? spec.summary(data, full) : {}),
 			...sections,
+			...(coverageCountries ? { coverageCountries } : {}),
 		} as Json;
 	}
 	if (Object.keys(result).length === 0)

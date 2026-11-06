@@ -1,4 +1,11 @@
-import { NAMED_LOCATIONS_VIEW, NAMED_LOCATION_MEMBERS_VIEW, NAMED_LOCATION_ASSERTIONS_VIEW, NAMED_LOCATION_PARTIAL_MEMBERS_VIEW, NAMED_LOCATION_GEOMETRIES_VIEW, NAMED_LOCATION_INVENTORY_VIEW } from "./deprecatedViews.ts";
+import {
+	NAMED_LOCATIONS_VIEW,
+	NAMED_LOCATION_MEMBERS_VIEW,
+	NAMED_LOCATION_ASSERTIONS_VIEW,
+	NAMED_LOCATION_PARTIAL_MEMBERS_VIEW,
+	NAMED_LOCATION_GEOMETRIES_VIEW,
+	NAMED_LOCATION_INVENTORY_VIEW,
+} from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -91,7 +98,9 @@ export const namedLocationTables = (
 			),
 		},
 		named_location_assertion: {
-			views: { named_location_assertions: NAMED_LOCATION_ASSERTIONS_VIEW },
+			views: {
+				named_location_assertions: NAMED_LOCATION_ASSERTIONS_VIEW,
+			},
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",
@@ -112,7 +121,10 @@ export const namedLocationTables = (
 			),
 		},
 		named_location_partial_member: {
-			views: { named_location_partial_members: NAMED_LOCATION_PARTIAL_MEMBERS_VIEW },
+			views: {
+				named_location_partial_members:
+					NAMED_LOCATION_PARTIAL_MEMBERS_VIEW,
+			},
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",
@@ -133,7 +145,9 @@ export const namedLocationTables = (
 			),
 		},
 		named_location_geometry: {
-			views: { named_location_geometries: NAMED_LOCATION_GEOMETRIES_VIEW },
+			views: {
+				named_location_geometries: NAMED_LOCATION_GEOMETRIES_VIEW,
+			},
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"boundary_release TEXT NOT NULL",

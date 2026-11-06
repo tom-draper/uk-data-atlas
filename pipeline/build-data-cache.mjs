@@ -182,6 +182,7 @@ function readOutputs(outputs) {
  *   outputRoots?: string[],
  *   dataDirectory?: string,
  *   codeFiles?: (stage: { name: string, args: string[], codeInputs?: string[] }) => string[],
+ *   keyVersion?: number,
  *   environment?: Record<string, string | undefined>,
  *   hashFile?: (path: string) => string,
  * }} [options]

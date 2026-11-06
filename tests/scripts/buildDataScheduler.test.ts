@@ -28,6 +28,7 @@ type Stage = {
 	dependencies: string[];
 	args: string[];
 	cacheable?: boolean;
+	isCurrent?: () => boolean | Promise<boolean>;
 	writes?: string[];
 	outputs?: string[];
 };
@@ -252,6 +253,17 @@ test("--jobs 1 runs the real graph in plan order and logs exactly as a default b
 	const planned = planBuild(buildDataStages, undefined, undefined).map(
 		({ name }: Stage) => name,
 	);
+	const current = new Set(
+		await Promise.all(
+			(buildDataStages as Stage[])
+				.filter((stage) => stage.cacheable === false)
+				.map(async (stage) =>
+					(await stage.isCurrent?.()) ? stage.name : undefined,
+				),
+		).then((names) =>
+			names.filter((name): name is string => name !== undefined),
+		),
+	);
 	const run = async (argv: string[]) => {
 		const ran: string[] = [];
 		const result = await build(buildDataStages as Stage[], {
@@ -264,9 +276,15 @@ test("--jobs 1 runs the real graph in plan order and logs exactly as a default b
 		return { ran, log: result.log };
 	};
 	const single = await run(["--jobs", "1"]);
-	assert.deepEqual(single.ran, planned);
+	assert.deepEqual(
+		single.ran,
+		planned.filter((name) => !current.has(name)),
+	);
 	const defaults = await run([]);
-	assert.deepEqual(defaults.ran, planned);
+	assert.deepEqual(
+		defaults.ran,
+		planned.filter((name) => !current.has(name)),
+	);
 	// Timings differ between runs, so compare the lines before the ranking.
 	const head = (lines: string[]) =>
 		lines.slice(0, lines.indexOf("Slowest stages:"));
@@ -522,6 +540,18 @@ test("a plan lists the waves of stages that can run together and the critical pa
 
 test("the real graph runs with overlap but never breaks a dependency or a shared path", async () => {
 	const stages = buildDataStages as Stage[];
+	const current = new Set(
+		await Promise.all(
+			stages
+				.filter((stage) => stage.cacheable === false)
+				.map(async (stage) =>
+					(await stage.isCurrent?.()) ? stage.name : undefined,
+				),
+		).then((names) =>
+			names.filter((name): name is string => name !== undefined),
+		),
+	);
+	const executedStages = stages.filter((stage) => !current.has(stage.name));
 	const started = new Map<string, number>();
 	const ended = new Map<string, number>();
 	let tick = 0;
@@ -541,15 +571,16 @@ test("the real graph runs with overlap but never breaks a dependency or a shared
 	});
 	assert.equal(status, 0);
 	assert.ok(peak > 1, "some stages overlap");
-	assert.equal(ended.size, stages.length);
-	for (const current of stages)
-		for (const dependency of current.dependencies)
-			assert.ok(
-				ended.get(dependency)! < started.get(current.name)!,
-				`${current.name} started before ${dependency} finished`,
-			);
-	for (const [index, first] of stages.entries())
-		for (const second of stages.slice(index + 1))
+	assert.equal(ended.size, executedStages.length);
+	for (const stage of executedStages)
+		for (const dependency of stage.dependencies)
+			if (!current.has(dependency))
+				assert.ok(
+					ended.get(dependency)! < started.get(stage.name)!,
+					`${stage.name} started before ${dependency} finished`,
+				);
+	for (const [index, first] of executedStages.entries())
+		for (const second of executedStages.slice(index + 1))
 			if (conflicts(first, second))
 				assert.ok(
 					ended.get(first.name)! < started.get(second.name)!,

@@ -16,7 +16,9 @@ export const readSqliteNamedLocationInventory = (
 	const database = openReadOnlyDatabase(path);
 	try {
 		const header = database
-			.prepare("SELECT schema_version AS schemaVersion, content_hash AS contentHash, artifact, gazetteer_version AS gazetteerVersion FROM named_location_inventory_metadata")
+			.prepare(
+				"SELECT schema_version AS schemaVersion, content_hash AS contentHash, artifact, gazetteer_version AS gazetteerVersion FROM named_location_inventory_metadata",
+			)
 			.get();
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite named location inventory");
@@ -30,7 +32,9 @@ export const readSqliteNamedLocationInventory = (
 			"SELECT code, share, member_of AS memberOf FROM named_location_partial_member WHERE location_id = ? ORDER BY position",
 		);
 		const locations = database
-			.prepare("SELECT id, position, fields, label, kind, definition_revision AS definitionRevision, member_geography AS memberGeography, valid_from AS validFrom, valid_to AS validTo, min_x AS minX, min_y AS minY, max_x AS maxX, max_y AS maxY, source FROM named_location ORDER BY position")
+			.prepare(
+				"SELECT id, position, fields, label, kind, definition_revision AS definitionRevision, member_geography AS memberGeography, valid_from AS validFrom, valid_to AS validTo, min_x AS minX, min_y AS minY, max_x AS maxX, max_y AS maxY, source FROM named_location ORDER BY position",
+			)
 			.all()
 			.map((row) => {
 				const values = {

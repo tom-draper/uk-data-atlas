@@ -1,4 +1,7 @@
-import { CROSSWALK_COVERAGE_VIEW, CROSSWALK_INVENTORY_VIEW } from "./deprecatedViews.ts";
+import {
+	CROSSWALK_COVERAGE_VIEW,
+	CROSSWALK_INVENTORY_VIEW,
+} from "./deprecatedViews.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {

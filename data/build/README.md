@@ -195,12 +195,12 @@ failure. Run the complete API or website target to include both stages.
 
 The database contains these tables:
 
-| Table      | Column        | Type                   | Key and meaning                                                                                                |
-| ---------- | ------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `meta`     | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                                                   |
-| `meta`     | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"3"`.                                                                      |
-| `payloads` | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>` for datasets not served from rows. |
-| `payloads` | `payload`     | `BLOB NOT NULL`        | Brotli-compressed UTF-8 JSON text from its compiled input. It decompresses to the exact bytes and array order. |
+| Table               | Column        | Type                   | Key and meaning                                                                                                |
+| ------------------- | ------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `meta`              | `key`         | `TEXT`                 | Primary key. Currently only `schemaVersion`.                                                                   |
+| `meta`              | `value`       | `TEXT NOT NULL`        | Database schema version, currently `"3"`.                                                                      |
+| `payloads`          | `id`          | `TEXT NOT NULL`        | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>` for datasets not served from rows. |
+| `payloads`          | `payload`     | `BLOB NOT NULL`        | Brotli-compressed UTF-8 JSON text from its compiled input. It decompresses to the exact bytes and array order. |
 | `dataset_catalogue` | `type`        | `TEXT NOT NULL`        | Primary key. Catalogue dataset type.                                                                           |
 | `dataset_catalogue` | `output`      | `TEXT NOT NULL UNIQUE` | Compiled output name, without `.json`.                                                                         |
 | `dataset_catalogue` | `source`      | `TEXT NOT NULL`        | JSON source metadata from the manifest.                                                                        |
@@ -736,27 +736,27 @@ shard and a direct postcode lookup. Each timed read opens its own connection.
 Deprecated read-only compatibility views preserve the earlier names and column
 spellings. New queries should use the stored tables:
 
-| Deprecated view | Stored table |
-| --- | --- |
-| `datasets` | `dataset_catalogue` |
-| `website_assets` (in `website-assets.sqlite`) | `website_asset` |
-| `area_inventory` | `area_inventory_metadata` |
-| `crosswalk_inventory` | `crosswalk_inventory_metadata` |
-| `crosswalk_coverage` | `crosswalk_coverage_entry` |
-| `named_locations` | `named_location` |
-| `named_location_inventory` | `named_location_inventory_metadata` |
-| `named_location_members` | `named_location_member` |
-| `named_location_assertions` | `named_location_assertion` |
-| `named_location_partial_members` | `named_location_partial_member` |
-| `named_location_geometries` | `named_location_geometry` |
-| `cache_generations` | `cache_generation` |
-| `dataset_payloads` | `dataset_payload` |
-| `location_projection_members` | `location_projection_member` |
-| `location_projection_parents` | `location_projection_parent` |
-| `location_projection_dictionaries` | `location_projection_dictionary` |
-| `place_index_places` | `place_index_place` |
-| `place_index_names` | `place_index_name` |
-| `place_index_codes` | `place_index_code` |
-| `area_search_codes` | `area_search_code` |
-| `area_search_terms` | `area_search_term` |
-| `area_search_title_terms` | `area_search_title_term` |
+| Deprecated view                               | Stored table                        |
+| --------------------------------------------- | ----------------------------------- |
+| `datasets`                                    | `dataset_catalogue`                 |
+| `website_assets` (in `website-assets.sqlite`) | `website_asset`                     |
+| `area_inventory`                              | `area_inventory_metadata`           |
+| `crosswalk_inventory`                         | `crosswalk_inventory_metadata`      |
+| `crosswalk_coverage`                          | `crosswalk_coverage_entry`          |
+| `named_locations`                             | `named_location`                    |
+| `named_location_inventory`                    | `named_location_inventory_metadata` |
+| `named_location_members`                      | `named_location_member`             |
+| `named_location_assertions`                   | `named_location_assertion`          |
+| `named_location_partial_members`              | `named_location_partial_member`     |
+| `named_location_geometries`                   | `named_location_geometry`           |
+| `cache_generations`                           | `cache_generation`                  |
+| `dataset_payloads`                            | `dataset_payload`                   |
+| `location_projection_members`                 | `location_projection_member`        |
+| `location_projection_parents`                 | `location_projection_parent`        |
+| `location_projection_dictionaries`            | `location_projection_dictionary`    |
+| `place_index_places`                          | `place_index_place`                 |
+| `place_index_names`                           | `place_index_name`                  |
+| `place_index_codes`                           | `place_index_code`                  |
+| `area_search_codes`                           | `area_search_code`                  |
+| `area_search_terms`                           | `area_search_term`                  |
+| `area_search_title_terms`                     | `area_search_title_term`            |

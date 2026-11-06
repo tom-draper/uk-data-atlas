@@ -1,4 +1,8 @@
-import { PLACE_INDEX_CODES_VIEW, PLACE_INDEX_NAMES_VIEW, PLACE_INDEX_PLACES_VIEW } from "./deprecatedViews.ts";
+import {
+	PLACE_INDEX_CODES_VIEW,
+	PLACE_INDEX_NAMES_VIEW,
+	PLACE_INDEX_PLACES_VIEW,
+} from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { compareCodeUnits, packPositions } from "@uk-data-atlas/search-index";
 import {
