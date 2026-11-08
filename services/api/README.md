@@ -74,9 +74,9 @@ Other API outputs remain in `data/build/artifacts/` until their compiler groups
 move. See [the migration plan](../../docs/data-pipeline-move.md).
 
 Areas are `area` (one row per geography and code) and `area_version` (that area
-in one release). `area_version.release_id` references `area_releases.position`,
-with a unique `(release_id, area_id)` lookup. IDs follow area artifact order, so
-release reads order by `id` without a separate ordering index. `in_inventory = 1`
+in one release). `area_version.release_id` references `area_releases.id`,
+with a unique `(release_id, area_id)` lookup. IDs are assigned once and follow no
+order, so release reads order by `inventory_position` (see `docs/stable-ids.md`). `in_inventory = 1`
 selects the published area inventory. Missing crosswalk endpoints become
 supplemental versions with `in_inventory = 0` and do not change area API
 responses. The `areas` view keeps the earlier column names for readers.
