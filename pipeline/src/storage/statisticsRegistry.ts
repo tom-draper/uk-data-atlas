@@ -1,3 +1,5 @@
+import type { IdRegistries } from "../ids/idRegistries.ts";
+import type { IdRegistry } from "../ids/idRegistry.ts";
 import {
 	seriesKey,
 	type StatisticsSource,
@@ -11,24 +13,40 @@ import {
 const same = (a: unknown, b: unknown) =>
 	JSON.stringify(a) === JSON.stringify(b);
 
-/** Assign integer ids to text keys, refusing a key declared twice differently. */
+/**
+ * Give text keys their ids from a stable registry, refusing a key declared
+ * twice differently. Ids are the registry's, so they follow neither the order
+ * of the declarations nor how many there are: `entries` are in declaration
+ * order and need not be in id order.
+ */
 class Registry<T> {
-	readonly items: T[] = [];
+	readonly entries: { id: number; item: T }[] = [];
 	private readonly ids = new Map<string, number>();
+	private readonly items = new Map<number, T>();
 	private readonly kind: string;
-	constructor(kind: string) {
+	private readonly stable: IdRegistry;
+	private readonly fields: (key: string) => string[];
+	constructor(
+		kind: string,
+		stable: IdRegistry,
+		fields: (key: string) => string[] = (key) => [key],
+	) {
 		this.kind = kind;
+		this.stable = stable;
+		this.fields = fields;
 	}
 	add(key: string, item: T) {
 		const id = this.ids.get(key);
 		if (id !== undefined) {
-			if (!same(this.items[id - 1], item))
+			if (!same(this.items.get(id), item))
 				throw new Error(`Conflicting ${this.kind} ${key}`);
 			return id;
 		}
-		this.items.push(item);
-		this.ids.set(key, this.items.length);
-		return this.items.length;
+		const assigned = this.stable.assign(...this.fields(key));
+		this.entries.push({ id: assigned, item });
+		this.items.set(assigned, item);
+		this.ids.set(key, assigned);
+		return assigned;
 	}
 	id(key: string, context: string) {
 		const id = this.ids.get(key);
@@ -42,11 +60,15 @@ export const sourceKey = (source: StatisticsSource) =>
 	JSON.stringify([source.publisher, source.url, source.licence]);
 
 /** Assign ids to everything the datasets declare, refusing conflicts. */
-export function registerStatistics(datasets: readonly StatisticsDataset[]) {
-	const sources = new Registry<StatisticsSource>("source");
-	const measures = new Registry<StatisticsMeasure>("measure");
+export function registerStatistics(
+	datasets: readonly StatisticsDataset[],
+	ids: IdRegistries,
+) {
+	const sources = new Registry<StatisticsSource>("source", ids.source);
+	const measures = new Registry<StatisticsMeasure>("measure", ids.measure);
 	const dimensions = new Registry<Omit<StatisticsDimension, "members">>(
 		"dimension",
+		ids.dimension,
 	);
 	const members = new Registry<{
 		dimension: number;
@@ -54,13 +76,18 @@ export function registerStatistics(datasets: readonly StatisticsDataset[]) {
 		label: string;
 		parent: number | null;
 		position: number;
-	}>("dimension member");
-	const periods = new Registry<StatisticsPeriod>("period");
+	}>("dimension member", ids.dimensionMember, (key) => key.split("\0"));
+	const periods = new Registry<StatisticsPeriod>("period", ids.period);
 	const slugs = new Set<string>();
 	const seriesKeys = new Set<string>();
+	/** Each dataset's id, in `datasets` order. */
+	const datasetIds: number[] = [];
 	const seriesIds: number[][] = [];
 	const seriesRows: {
+		/** The series' dataset's id, and its place in `datasets`. */
 		dataset: number;
+		datasetIndex: number;
+		id: number;
 		series: StatisticsSeries;
 		key: string;
 	}[] = [];
@@ -69,6 +96,8 @@ export function registerStatistics(datasets: readonly StatisticsDataset[]) {
 		if (slugs.has(dataset.slug))
 			throw new Error(`Duplicate dataset ${dataset.slug}`);
 		slugs.add(dataset.slug);
+		const datasetId = ids.dataset.assign(dataset.slug);
+		datasetIds.push(datasetId);
 		const context = `dataset ${dataset.slug}`;
 		sources.add(sourceKey(dataset.source), dataset.source);
 		for (const measure of dataset.measures) {
@@ -122,8 +151,15 @@ export function registerStatistics(datasets: readonly StatisticsDataset[]) {
 					throw new Error(
 						`Series ${key} derives from a later series`,
 					);
-				seriesRows.push({ dataset: index + 1, series, key });
-				return seriesRows.length;
+				const id = ids.series.assign(key);
+				seriesRows.push({
+					dataset: datasetId,
+					datasetIndex: index,
+					id,
+					series,
+					key,
+				});
+				return id;
 			}),
 		);
 	}
@@ -140,6 +176,7 @@ export function registerStatistics(datasets: readonly StatisticsDataset[]) {
 	};
 	return {
 		datasets,
+		datasetIds,
 		sources,
 		measures,
 		dimensions,
