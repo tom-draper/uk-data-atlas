@@ -149,7 +149,7 @@ const selectedSeries = (
 ) => {
 	const series = database
 		.prepare(
-			"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.position = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
+			"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
 		)
 		.all(selector.datasetId, selector.measure, selector.geography)
 		.map((row) => Number(row.id));
@@ -245,7 +245,7 @@ const periodRows = (
 	const series = any
 		? database
 				.prepare(
-					"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.position = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
+					"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
 				)
 				.all(selector.datasetId, selector.measure, selector.geography)
 				.map((row) => Number(row.id))
@@ -388,7 +388,7 @@ export function rebuildStatisticsObservationText(
 			for (const row of records.values()) row.status = selector.status;
 	if (selector.areasIn) {
 		const statement = database.prepare(
-			"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE r.geography = ? AND r.id = ?",
+			"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id WHERE r.geography = ? AND r.release = ?",
 		);
 		const listed = new Set(
 			selector.areasIn.flatMap((release) =>

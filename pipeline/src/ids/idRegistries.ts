@@ -15,7 +15,7 @@ import {
  * of files, each written once, so a new release adds a file.
  */
 export const ID_NAMESPACES = {
-	/** `(geography, release id)`: `area_releases.position`, the `release_id` columns. */
+	/** `(geography, release id)`: `area_releases.id`, the `release_id` columns. */
 	release: { first: 0, fields: 2, segmented: false },
 	/** `(slug)`: `geography.id`. */
 	geography: { first: 1, fields: 1, segmented: false },

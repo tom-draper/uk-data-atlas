@@ -36,12 +36,12 @@ const entry = {
 const areaFixture = (): Record<string, SqliteTable> => ({
 	area_releases: {
 		columns: [
-			"position INTEGER UNIQUE",
+			"id INTEGER UNIQUE",
 			"geography TEXT",
-			"id TEXT",
+			"release TEXT",
 			"status TEXT",
 		],
-		key: ["geography", "id"],
+		key: ["geography", "release"],
 		rows: [
 			[0, "lsoa", "2021-12-ew-bgc-v5", "available"],
 			[1, "localAuthority", "2024-05-uk-bgc", "available"],
@@ -76,7 +76,7 @@ const areaFixture = (): Record<string, SqliteTable> => ({
 		columns: [
 			"id INTEGER",
 			"area_id INTEGER REFERENCES area(id)",
-			"release_id INTEGER REFERENCES area_releases(position)",
+			"release_id INTEGER REFERENCES area_releases(id)",
 			"name TEXT",
 		],
 		key: ["id"],

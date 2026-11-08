@@ -266,7 +266,7 @@ export function statisticsTables(
 				"id INTEGER NOT NULL",
 				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
 				"measure_id INTEGER NOT NULL REFERENCES measure(id)",
-				"release_id INTEGER NOT NULL REFERENCES area_releases(position)",
+				"release_id INTEGER NOT NULL REFERENCES area_releases(id)",
 				"method TEXT NOT NULL CHECK (method IN ('published','converted','aggregated','modelled'))",
 				"derived_from_id INTEGER REFERENCES series(id)",
 				"key TEXT NOT NULL UNIQUE",
@@ -499,7 +499,7 @@ SELECT d.slug AS dataset, m.slug AS measure, m.unit,
    JOIN dimension_member dm ON dm.id = sm.member_id
    WHERE sm.series_id = s.id) AS members,
   a.code AS area_code, coalesce(n.name, v.name) AS area_name,
-  r.geography, r.id AS release, p.label AS period,
+  r.geography, r.release AS release, p.label AS period,
   o.value, o.lower, o.upper, c.code AS category, st.slug AS status,
   s.method, src.licence
 FROM observation o
@@ -509,7 +509,7 @@ JOIN source src ON src.id = d.source_id
 JOIN measure m ON m.id = s.measure_id
 JOIN area_version v ON v.id = o.area_version_id
 JOIN area a ON a.id = v.area_id
-JOIN area_releases r ON r.position = s.release_id
+JOIN area_releases r ON r.id = s.release_id
 JOIN period p ON p.id = o.period_id
 JOIN status st ON st.id = o.status_id
 LEFT JOIN dimension_member c ON c.id = o.category_id
@@ -525,7 +525,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"label TEXT NOT NULL",
 				"kind TEXT NOT NULL CHECK (kind IN ('general','local'))",
 				"date TEXT NOT NULL",
-				"release_id INTEGER NOT NULL REFERENCES area_releases(position)",
+				"release_id INTEGER NOT NULL REFERENCES area_releases(id)",
 			],
 			key: ["id"],
 			constraints: [
@@ -649,7 +649,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 			views: {
 				v_contest: `
 SELECT c.id AS contest_id, d.slug AS dataset, e.label AS election, e.kind, e.date AS polling_day,
-  a.code AS area_code, c.area_name, r.geography, r.id AS release,
+  a.code AS area_code, c.area_name, r.geography, r.release AS release,
   c.authority_code, c.authority_name, coalesce(rv.name, c.region_text) AS region,
   coalesce(cv.name, c.country_text) AS country, c.constituency_type, c.result,
   fp.code AS first_party, sp.code AS second_party, wp.key AS winner,
@@ -659,7 +659,7 @@ JOIN election e ON e.id = c.election_id
 JOIN dataset d ON d.id = e.dataset_id
 JOIN area_version v ON v.id = c.area_version_id
 JOIN area a ON a.id = v.area_id
-JOIN area_releases r ON r.position = v.release_id
+JOIN area_releases r ON r.id = v.release_id
 LEFT JOIN area_version rv ON rv.id = c.region_area_version_id
 LEFT JOIN area_version cv ON cv.id = c.country_area_version_id
 LEFT JOIN party fp ON fp.id = c.first_party_id

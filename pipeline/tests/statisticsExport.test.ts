@@ -32,7 +32,7 @@ test("binds a census measure only when every source partition is complete", () =
 			CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT);
 			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
-			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
@@ -104,7 +104,7 @@ test("uses reviewed source mappings only when each requested period exists", () 
 		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT);
 			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
-			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
@@ -168,7 +168,7 @@ test("exports house prices under the publisher's ward code and release", () => {
 		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT, unit TEXT);
 			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, key TEXT);
-			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE area (id INTEGER, code TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER, release_id INTEGER);
 			CREATE TABLE period (id INTEGER, label TEXT);
@@ -230,7 +230,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
 			CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, category_id INTEGER, status_id INTEGER);
-			CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT);
+			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER);
 			CREATE TABLE area (id INTEGER, code TEXT);
 			CREATE TABLE period (id INTEGER, label TEXT);

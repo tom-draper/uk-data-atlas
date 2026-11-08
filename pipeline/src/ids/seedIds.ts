@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import { DATABASE_KEYS } from "./databaseKeys.ts";
+import { keysOf } from "./databaseKeys.ts";
 import { idNamespaces, type IdRegistries } from "./idRegistries.ts";
 
 const hasTable = (database: DatabaseSync, sql: string) =>
@@ -21,10 +21,11 @@ export const seedIdRegistries = (
 	ids: IdRegistries,
 	{ fillGaps = false }: { fillGaps?: boolean } = {},
 ) => {
+	const keys = keysOf(database);
 	const seeded: Partial<Record<(typeof idNamespaces)[number], number>> = {};
 	for (const namespace of idNamespaces) {
 		const registry = ids.registries[namespace];
-		const { sql, key, group } = DATABASE_KEYS[namespace];
+		const { sql, key, group } = keys[namespace];
 		if (!hasTable(database, sql)) continue;
 		if (registry.size !== 0)
 			throw new Error(

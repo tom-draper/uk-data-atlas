@@ -33,11 +33,11 @@ export function measureStatisticsSelections(
 		const dataset = measure.id.replace(/-winning-party$/, "");
 		const rows = database
 			.prepare(
-				`SELECT r.geography, r.id AS release, p.label AS period FROM dataset d
+				`SELECT r.geography, r.release AS release, p.label AS period FROM dataset d
             JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
-            JOIN area_releases r ON r.position=s.release_id JOIN observation o ON o.series_id=s.id
+            JOIN area_releases r ON r.id=s.release_id JOIN observation o ON o.series_id=s.id
             JOIN period p ON p.id=o.period_id WHERE d.slug=? AND m.slug='source-winning-party'
-            GROUP BY r.geography,r.id,p.label`,
+            GROUP BY r.geography,r.release,p.label`,
 			)
 			.all(dataset);
 		if (
@@ -63,11 +63,11 @@ export function measureStatisticsSelections(
 	if (measure.id === "house-price-median") {
 		const rows = database
 			.prepare(
-				`SELECT r.id AS release, p.label AS period FROM dataset d
+				`SELECT r.release AS release, p.label AS period FROM dataset d
 			JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
-			JOIN area_releases r ON r.position=s.release_id JOIN observation o ON o.series_id=s.id
+			JOIN area_releases r ON r.id=s.release_id JOIN observation o ON o.series_id=s.id
 			JOIN period p ON p.id=o.period_id WHERE d.slug='house-price' AND m.slug='house-price-median'
-			AND r.geography='ward' AND p.label <= '2022' GROUP BY r.id,p.label`,
+			AND r.geography='ward' AND p.label <= '2022' GROUP BY r.release,p.label`,
 			)
 			.all();
 		if (

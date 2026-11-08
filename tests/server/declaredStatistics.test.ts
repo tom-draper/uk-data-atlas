@@ -24,12 +24,12 @@ import {
 const areas = (): Record<string, SqliteTable> => ({
 	area_releases: {
 		columns: [
-			"position INTEGER UNIQUE",
+			"id INTEGER UNIQUE",
 			"geography TEXT",
-			"id TEXT",
+			"release TEXT",
 			"status TEXT",
 		],
-		key: ["geography", "id"],
+		key: ["geography", "release"],
 		rows: [
 			[0, "localAuthority", "2024-05-uk-bgc", "available"],
 			[1, "localAuthority", "2022-12-uk-bgc-v2", "available"],
@@ -65,7 +65,7 @@ const areas = (): Record<string, SqliteTable> => ({
 		columns: [
 			"id INTEGER",
 			"area_id INTEGER REFERENCES area(id)",
-			"release_id INTEGER REFERENCES area_releases(position)",
+			"release_id INTEGER REFERENCES area_releases(id)",
 			"name TEXT",
 		],
 		key: ["id"],

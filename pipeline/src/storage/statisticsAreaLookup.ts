@@ -24,12 +24,12 @@ export function createStatisticsAreaLookup() {
 		if (position === undefined) {
 			const row = database
 				.prepare(
-					"SELECT position, status FROM area_releases WHERE geography = ? AND id = ?",
+					"SELECT id, status FROM area_releases WHERE geography = ? AND release = ?",
 				)
 				.get(release.geography, release.id);
 			if (!row || row.status !== "available")
 				throw new Error(`Unknown or unavailable area release ${key}`);
-			position = Number(row.position);
+			position = Number(row.id);
 			releases.set(key, position);
 		}
 		return position;
@@ -85,12 +85,12 @@ export function createStatisticsAreaLookup() {
 		if (!releases) {
 			releases = database
 				.prepare(
-					"SELECT position, id FROM area_releases WHERE geography = ? AND status = 'available'",
+					"SELECT id, release FROM area_releases WHERE geography = ? AND status = 'available'",
 				)
 				.all(geography)
 				.map((row) => ({
-					position: Number(row.position),
-					year: Number.parseInt(String(row.id), 10),
+					position: Number(row.id),
+					year: Number.parseInt(String(row.release), 10),
 				}));
 			releasesOf.set(geography, releases);
 		}
@@ -122,12 +122,12 @@ export function createStatisticsAreaLookup() {
 	const areaIndex = (database: DatabaseSync): AreaIndex => {
 		const available = database
 			.prepare(
-				"SELECT geography, id FROM area_releases WHERE status = 'available'",
+				"SELECT geography, release FROM area_releases WHERE status = 'available'",
 			)
 			.all()
 			.map((row) => ({
 				geography: String(row.geography),
-				id: String(row.id),
+				id: String(row.release),
 			}));
 		const find = (geography: string, year: number) => {
 			const declared = vintages[geography]?.[year];

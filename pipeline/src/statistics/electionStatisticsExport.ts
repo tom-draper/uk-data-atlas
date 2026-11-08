@@ -21,15 +21,15 @@ export function electionStatisticsExport(
 			: "min(st.slug)";
 		return {
 			party: Boolean(party),
-			sql: `SELECT d.slug, ?, 'votes', r.geography, r.id, a.code, p.label,
+			sql: `SELECT d.slug, ?, 'votes', r.geography, r.release, a.code, p.label,
 			${value}, NULL, NULL, NULL, ${status}${party ? `, '${party}'` : ""}
 			FROM dataset d JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
 			JOIN series_member sm ON sm.series_id=s.id JOIN dimension dim ON dim.id=sm.dimension_id AND dim.slug='party'
 			JOIN dimension_member dm ON dm.id=sm.member_id JOIN observation o ON o.series_id=s.id
 			JOIN area_version av ON av.id=o.area_version_id JOIN area a ON a.id=av.area_id
-			JOIN area_releases r ON r.position=s.release_id JOIN period p ON p.id=o.period_id JOIN status st ON st.id=o.status_id
+			JOIN area_releases r ON r.id=s.release_id JOIN period p ON p.id=o.period_id JOIN status st ON st.id=o.status_id
 			WHERE d.slug='local-election' AND m.slug='party-votes'
-			GROUP BY d.slug,r.geography,r.id,a.code,p.label ORDER BY r.geography,r.id,p.label,a.code`,
+			GROUP BY d.slug,r.geography,r.release,a.code,p.label ORDER BY r.geography,r.release,p.label,a.code`,
 		};
 	}
 	const partyJoin = party
@@ -54,12 +54,12 @@ export function electionStatisticsExport(
 			: votes;
 	return {
 		party: Boolean(party),
-		sql: `SELECT d.slug, ?, '${turnout || match?.[3] === "vote-share" ? "percent" : "votes"}', r.geography, r.id, a.code, p.label,
+		sql: `SELECT d.slug, ?, '${turnout || match?.[3] === "vote-share" ? "percent" : "votes"}', r.geography, r.release, a.code, p.label,
 		${value}, NULL, NULL, NULL, ${party ? "coalesce(pst.slug, st.slug)" : "st.slug"}${party ? `, '${party}'` : ""}
 		FROM dataset d JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
 		JOIN observation o ON o.series_id=s.id JOIN area_version av ON av.id=o.area_version_id JOIN area a ON a.id=av.area_id
-		JOIN area_releases r ON r.position=s.release_id JOIN period p ON p.id=o.period_id JOIN status st ON st.id=o.status_id
+		JOIN area_releases r ON r.id=s.release_id JOIN period p ON p.id=o.period_id JOIN status st ON st.id=o.status_id
 		${partyJoin} ${turnoutJoins}
-		WHERE d.slug='general-election' AND m.slug='valid-votes' ORDER BY r.geography,r.id,p.label,a.code`,
+		WHERE d.slug='general-election' AND m.slug='valid-votes' ORDER BY r.geography,r.release,p.label,a.code`,
 	};
 }

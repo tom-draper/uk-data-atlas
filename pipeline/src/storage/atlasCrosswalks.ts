@@ -120,7 +120,7 @@ const canonicalLabels = (name: SQLOutputValue, aliases: SQLOutputValue) =>
 /** Find or add an endpoint's area version, recording source area facts. */
 const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 	const find = database.prepare(
-		"SELECT v.id, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area a JOIN area_version v ON v.area_id = a.id WHERE a.code = ? AND a.geography_id = (SELECT g.id FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.position = ?) AND v.release_id = ?",
+		"SELECT v.id, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area a JOIN area_version v ON v.area_id = a.id WHERE a.code = ? AND a.geography_id = (SELECT g.id FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.id = ?) AND v.release_id = ?",
 	);
 	const add = addAreaVersion(database, ids);
 	const updateFacts = database.prepare(
@@ -208,7 +208,7 @@ export const crosswalkTables = (
 	const fields: { source: string[]; target: string[] }[] = [];
 	function* headers(database: DatabaseSync) {
 		const release = database.prepare(
-			"SELECT position FROM area_releases WHERE geography = ? AND id = ?",
+			"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
 		);
 		const position = (side: {
 			geography: string;
@@ -219,7 +219,7 @@ export const crosswalkTables = (
 				throw new Error(
 					`Missing crosswalk area release ${side.geography}/${side.boundaryRelease}`,
 				);
-			return Number(row.position);
+			return Number(row.id);
 		};
 		for (const [
 			inventoryPosition,
@@ -465,8 +465,8 @@ export const crosswalkTables = (
 				"slug TEXT NOT NULL UNIQUE",
 				// The crosswalk's place in the inventory, which its id does not follow.
 				"inventory_position INTEGER NOT NULL UNIQUE",
-				"from_release_id INTEGER NOT NULL REFERENCES area_releases(position)",
-				"to_release_id INTEGER NOT NULL REFERENCES area_releases(position)",
+				"from_release_id INTEGER NOT NULL REFERENCES area_releases(id)",
+				"to_release_id INTEGER NOT NULL REFERENCES area_releases(id)",
 				"method TEXT NOT NULL",
 				"quality TEXT NOT NULL",
 				"purpose TEXT CHECK (purpose IN ('identity', 'membership'))",

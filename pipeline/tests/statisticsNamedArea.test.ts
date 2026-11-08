@@ -6,7 +6,7 @@ import { createStatisticsAreaLookup } from "../src/storage/statisticsAreaLookup"
 const database = () => {
 	const db = new DatabaseSync(":memory:");
 	db.exec(`
-		CREATE TABLE area_releases (position INTEGER, geography TEXT, id TEXT, status TEXT);
+		CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT, status TEXT);
 		CREATE TABLE area (id INTEGER, code TEXT);
 		CREATE TABLE area_version (id INTEGER, area_id INTEGER, release_id INTEGER, name TEXT);
 		INSERT INTO area_releases VALUES (0, 'country', '2020-12-uk-bgc', 'available'),

@@ -287,7 +287,7 @@ test("exact edges weigh 1 on every basis without a stored row, others come from 
 		Number(
 			database
 				.prepare(
-					"SELECT v.id AS id FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE r.geography = ? AND a.code = ?",
+					"SELECT v.id AS id FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id WHERE r.geography = ? AND a.code = ?",
 				)
 				.get(geography, code)!.id,
 		);
@@ -381,7 +381,7 @@ test("a postcode-overlap source with one target weighs 1 on every basis without 
 		Number(
 			database
 				.prepare(
-					"SELECT v.id AS id FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE r.geography = ? AND a.code = ?",
+					"SELECT v.id AS id FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id WHERE r.geography = ? AND a.code = ?",
 				)
 				.get(geography, code)!.id,
 		);

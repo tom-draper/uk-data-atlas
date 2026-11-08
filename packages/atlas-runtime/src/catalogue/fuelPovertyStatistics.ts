@@ -168,12 +168,12 @@ export function rebuildFuelPoverty(database: SqlReader): string {
 	const periods = database
 		.prepare(
 			`
-		SELECT DISTINCT p.label, p.start_date, r.geography, r.id AS release
+		SELECT DISTINCT p.label, p.start_date, r.geography, r.release AS release
 		FROM dataset d
 		JOIN series s ON s.dataset_id = d.id
 		JOIN observation o ON o.series_id = s.id
 		JOIN period p ON p.id = o.period_id
-		JOIN area_releases r ON r.position = s.release_id
+		JOIN area_releases r ON r.id = s.release_id
 		WHERE d.slug = ?
 		ORDER BY p.start_date, p.label
 	`,

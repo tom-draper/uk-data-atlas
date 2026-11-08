@@ -18,7 +18,7 @@ export function writeEmptyPostcodeComponent(root: string) {
 export function writeEmptyPostcodeAreas(root: string) {
 	const base = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	base.exec(`CREATE TABLE IF NOT EXISTS geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
-		CREATE TABLE IF NOT EXISTS area_releases (position INTEGER PRIMARY KEY, geography TEXT, id TEXT);
+		CREATE TABLE IF NOT EXISTS area_releases (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 		CREATE TABLE IF NOT EXISTS area (id INTEGER PRIMARY KEY, geography_id INTEGER, code TEXT, UNIQUE(geography_id, code));
 		CREATE TABLE IF NOT EXISTS area_version (id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER, name TEXT, area_m2 REAL, population REAL, aliases TEXT, in_inventory INTEGER, UNIQUE(release_id, area_id));
 		CREATE VIEW IF NOT EXISTS areas AS SELECT v.id, a.code, v.name FROM area_version v JOIN area a ON a.id = v.area_id;`);
