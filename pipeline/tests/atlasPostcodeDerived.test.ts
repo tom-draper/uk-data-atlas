@@ -45,7 +45,7 @@ const storePostcodeAreas: typeof writePostcodeAreas = (
 	readShard,
 ) => {
 	writePostcodeAreas(root, artifact, readShard);
-	return assembleAtlas(root);
+	return assembleAtlas(root, { crosswalkWeights: false });
 };
 
 function fixture(t: TestContext) {
@@ -92,7 +92,7 @@ function fixture(t: TestContext) {
 		postcodes.texts.get(path)!,
 	);
 	writeEmptyPostcodeAreas(root);
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 	const compiled = compilePostcodeAreas(postcodes.artifact, [
 		{
 			release: {
@@ -155,7 +155,7 @@ test("a corrupt postcode area component does not replace the published database"
 		join(root, "data/build/postcode-areas-component", `${shard.path}.gz`),
 		"corrupt",
 	);
-	assert.throws(() => assembleAtlas(root));
+	assert.throws(() => assembleAtlas(root, { crosswalkWeights: false }));
 	assert.deepEqual(readFileSync(path), before);
 });
 
@@ -203,7 +203,7 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 	);
 	for (let run = 0; run < 2; run++)
 		storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 	assert.equal(readAtlasPayload(root, "existing"), "retained");
 	// Assembled payloads are stored compressed and read back as the text.
 	const assembled = new DatabaseSync(path, { readOnly: true });
