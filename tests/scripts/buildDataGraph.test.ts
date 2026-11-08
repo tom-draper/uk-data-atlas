@@ -4,7 +4,6 @@ import { stageScope } from "@/pipeline/build-data-cache.mjs";
 import { planBuild } from "@/pipeline/build-data.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 import { conflicts } from "@/pipeline/build-data-scheduler.mjs";
-import { WEIGHT_UNIT_INPUTS } from "@/pipeline/src/postcodes/crosswalkWeightUnits";
 import { ATLAS_CACHE_WORK } from "@/pipeline/src/storage/atlasCacheWork";
 import {
 	CACHE_STAGES,
@@ -183,9 +182,21 @@ test("no stage is left uncacheable except the sources download", () => {
 	);
 });
 
-test("assemble-atlas is rebuilt when a count crosswalk weights share changes", () => {
-	const assemble = (
+test("crosswalk weights are built before the atlas is assembled, from the counts they share", () => {
+	const weights = stages.find((stage) => stage.name === "crosswalk-weights");
+	assert.ok(weights);
+	assert.deepEqual(weights.requiredOutputs, [
+		"data/build/crosswalk-weights/crosswalk-weights.sqlite",
+	]);
+	assert.ok(weights.dependencies.includes("atlas-sqlite"));
+	assert.ok(weights.dependencies.includes("geometry-store"));
+	assert.ok(
+		stages
+			.find((stage) => stage.name === "assemble-atlas")
+			?.dependencies.includes("crosswalk-weights"),
+	);
+	const inputs = (
 		buildDataStages as Array<{ name: string; rawInputs?: unknown }>
-	).find((stage) => stage.name === "assemble-atlas");
-	assert.deepEqual(assemble?.rawInputs, WEIGHT_UNIT_INPUTS);
+	).find((stage) => stage.name === "crosswalk-weights")?.rawInputs;
+	assert.equal(typeof inputs, "function");
 });
