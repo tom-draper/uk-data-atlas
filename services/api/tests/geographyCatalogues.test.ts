@@ -91,7 +91,7 @@ test("stores exact catalogue bytes, retains existing data and serves without com
 		readFileSync(join(root, "data/build/atlas.sqlite")),
 		before,
 	);
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 	for (const [id, payload] of expected) {
 		assert.equal(readAtlasPayload(root, id), payload);
 		assert.equal(
@@ -212,7 +212,10 @@ test("a failed SQLite update keeps the previous database and removes its tempora
 	database.close();
 	const before = readFileSync(path);
 	buildGeographyCatalogues(root);
-	assert.throws(() => assembleAtlas(root), /rejected catalogue/);
+	assert.throws(
+		() => assembleAtlas(root, { crosswalkWeights: false }),
+		/rejected catalogue/,
+	);
 	assert.deepEqual(readFileSync(path), before);
 	assert.equal(existsSync(`${path}.geography.tmp`), false);
 	assert.equal(
