@@ -31,3 +31,16 @@ jobs:
       # and any pipeline run here (CI is set) switches them on.
       - run: pnpm --dir services/api generate:openapi --check
       - run: pnpm check
+      # Ids are never changed once assigned (docs/stable-ids.md): a change may
+      # add registry files and lines but not edit what its base has. A shallow
+      # fetch of the base is enough, since only its files are read.
+      - name: Id registries only grow
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.base_ref || github.event.before }}
+        run: |
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            echo "No base to compare with."
+          else
+            git fetch --no-tags --depth=1 origin "$BASE"
+            pnpm ids check --base FETCH_HEAD
+          fi
