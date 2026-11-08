@@ -3626,7 +3626,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3647,7 +3647,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3668,7 +3668,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3689,7 +3689,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3710,7 +3710,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3731,7 +3731,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3752,7 +3752,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3773,7 +3773,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3794,7 +3794,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3815,7 +3815,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3836,7 +3836,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3857,7 +3857,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3878,7 +3878,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3899,7 +3899,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3920,7 +3920,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3941,7 +3941,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3962,7 +3962,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -3983,7 +3983,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4004,7 +4004,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4025,7 +4025,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4046,7 +4046,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4067,7 +4067,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4088,7 +4088,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4109,7 +4109,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4130,7 +4130,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
@@ -4151,7 +4151,7 @@
 				"normalisation": "per-source",
 				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
 				"date": "2021-03-21",
-				"minimumShare": 0.001
+				"minimumShare": 0.01
 			},
 			"from": {
 				"geography": "ward",
