@@ -32,7 +32,8 @@ export const readScottishHouseholds = (path: string) => {
 	const households = new Map<string, number>();
 	for (const row of rows.slice(header + 1)) {
 		const code = row[0]?.trim();
-		if (!code) continue;
+		// Notes follow the table.
+		if (!code || !/^S\d{8}$/.test(code)) continue;
 		const count = row[1] === "-" ? 0 : Number(row[1]);
 		if (!Number.isFinite(count) || count < 0)
 			throw new Error(`${path} has no usable count for ${code}`);
