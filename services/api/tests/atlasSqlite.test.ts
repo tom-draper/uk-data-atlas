@@ -466,3 +466,84 @@ test("projection compilation writes build intermediates and removes old public c
 		[],
 	);
 });
+
+test("a rebuild keeps the ids of the last and will not renumber without its registry", (context) => {
+	const { root } = fixture(context);
+	const artifacts = artifactDirectory(root);
+	mkdirSync(join(artifacts, "areas"), { recursive: true });
+	const addRelease = (id: string, codes: string[]) => {
+		writeFileSync(
+			join(artifacts, `areas/${id}.json`),
+			JSON.stringify({
+				schemaVersion: 1,
+				contentHash: id,
+				areas: codes.map((code) => ({ code, name: code })),
+			}),
+		);
+		return {
+			id,
+			geography: "ward",
+			status: "available",
+			recordCount: codes.length,
+			artifact: `areas/${id}.json`,
+			contentHash: id,
+			codeProperty: "code",
+			nameProperty: "name",
+		};
+	};
+	const writeInventory = (releases: unknown[]) =>
+		writeFileSync(
+			join(artifacts, "area-inventory.json"),
+			JSON.stringify({
+				schemaVersion: 1,
+				contentHash: "areas",
+				boundaryRegistryHash: "registry",
+				releases,
+			}),
+		);
+	const ids = () => {
+		const database = new DatabaseSync(
+			join(root, "data/build/atlas-base.sqlite"),
+			{ readOnly: true },
+		);
+		try {
+			return database
+				.prepare(
+					"SELECT area_version_id AS id, geography, release, code FROM v_area_version ORDER BY area_version_id",
+				)
+				.all()
+				.map((row) => ({ ...row }));
+		} finally {
+			database.close();
+		}
+	};
+	const later = addRelease("2025", ["A", "C"]);
+	writeInventory([later]);
+	buildAtlasSqlite(root, { censusTables: [] });
+	const first = ids();
+	assert.deepEqual(
+		first.map((row) => [row.id, row.release, row.code]),
+		[
+			[1, "2025", "A"],
+			[2, "2025", "C"],
+		],
+	);
+	// A release added before it in the inventory changes none of the ids.
+	writeInventory([addRelease("2024", ["A", "B"]), later]);
+	buildAtlasSqlite(root, { censusTables: [] });
+	assert.deepEqual(
+		ids().map((row) => [row.id, row.release, row.code]),
+		[
+			[1, "2025", "A"],
+			[2, "2025", "C"],
+			[3, "2024", "A"],
+			[4, "2024", "B"],
+		],
+	);
+	// Without the registry a rebuild would number 2024 first.
+	rmSync(join(root, "pipeline/ids"), { recursive: true });
+	assert.throws(
+		() => buildAtlasSqlite(root, { censusTables: [] }),
+		/no id registry/,
+	);
+});
