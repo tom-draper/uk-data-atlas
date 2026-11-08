@@ -9,6 +9,7 @@ import {
 	type OutputAreaCounts,
 	type PostcodeRow,
 } from "../src/crosswalk-weights/atoms";
+import { readScottishHouseholds } from "../src/crosswalk-weights/inputs";
 
 const row = (
 	outputArea: string,
@@ -107,6 +108,34 @@ test("a column reads by code, refusing unusable counts unless they are marked", 
 				}),
 			],
 			[["A", 3]],
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("Scottish households are the first count of the household size table", () => {
+	const directory = mkdtempSync(join(tmpdir(), "weight-atoms-"));
+	try {
+		const path = join(directory, "uv406.csv");
+		writeFileSync(
+			path,
+			[
+				"Scotland's Census 2022 - National Records of Scotland",
+				"Table UV406 - Household size",
+				"All occupied household spaces",
+				'"","All occupied household spaces","One person","Two people"',
+				'"S00135307",62,22,24',
+				'"S00135308",-,-,-',
+				"",
+			].join("\n"),
+		);
+		assert.deepEqual(
+			[...readScottishHouseholds(path)],
+			[
+				["S00135307", 62],
+				["S00135308", 0],
+			],
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

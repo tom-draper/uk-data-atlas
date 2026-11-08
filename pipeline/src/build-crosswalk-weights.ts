@@ -1,49 +1,32 @@
-import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	buildLog,
 	formatCount,
 	formatDuration,
 	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { createHash } from "node:crypto";
-import {
-	existsSync,
-	mkdirSync,
-	readdirSync,
-	readFileSync,
-	renameSync,
-	rmSync,
-	writeFileSync,
-} from "node:fs";
+import { mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { isMainThread } from "node:worker_threads";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { releaseKey } from "@uk-data-atlas/geography/postcode-area-types";
-import {
-	buildWeightAtoms,
-	MEASURES,
-	onspdEdition,
-	readColumn,
-	readPostcodeRows,
-	type OutputAreaCounts,
-	type WeightAtoms,
-} from "./crosswalk-weights/atoms.ts";
+import { MEASURES } from "./crosswalk-weights/atoms.ts";
 import { crosswalkSetHash } from "./crosswalk-weights/crosswalkSetHash.ts";
 import {
 	crosswalkWeightsDirectory,
 	crosswalkWeightsPath,
 } from "./crosswalk-weights/paths.ts";
 import { EXACT_EDGE_SQL } from "./crosswalk-weights/exactEdges.ts";
+import { readWeightAtoms } from "./crosswalk-weights/inputs.ts";
+import { releasesWithGeometry } from "./crosswalk-weights/placement.ts";
 import {
-	placeInRelease,
-	releasesWithGeometry,
-} from "./crosswalk-weights/placement.ts";
-import {
-	weighEdges,
-	type Placement,
-	type WeighedEdge,
-} from "./crosswalk-weights/weigh.ts";
+	atomsKey,
+	ensurePlacements,
+	placementFile,
+	readPlacement,
+} from "./crosswalk-weights/placements.ts";
+import { weightAtomsDirectory } from "./crosswalk-weights/storedAtoms.ts";
+import { weighEdges, type WeighedEdge } from "./crosswalk-weights/weigh.ts";
 
 /**
  * Weight the edges of every crosswalk that is not exact, from the smallest
@@ -58,127 +41,6 @@ import {
  * `data/build/crosswalk-weights/crosswalk-weights.sqlite` for `assemble-atlas`
  * to copy in. Placements are an intermediate and do not ship.
  */
-
-const OUTPUT_AREA_2021 = {
-	from: { geography: "outputArea", boundaryRelease: "2021-12-ew-bgc-v2" },
-	to: { geography: "lsoa", boundaryRelease: "2021-12-ew-bgc-v5" },
-};
-
-const readCounts = (root: string, base: DatabaseSync): OutputAreaCounts => {
-	const source = (path: string) => join(root, "data/source", path);
-	const census = (table: string, column: string) =>
-		readColumn(
-			source(
-				`demographics/census-2021-small-area/${table}/census2021-${table}-oa.csv`,
-			),
-			"geography code",
-			column,
-		);
-	const population = census(
-		"ts001",
-		"Residence type: Total; measures: Value",
-	);
-	const households = census(
-		"ts003",
-		"Household composition: Total; measures: Value",
-	);
-	for (const [code, count] of readColumn(
-		source(
-			"demographics/population/census-2022-scotland-output-area/outputarea2022_usualresidentpopulation.csv",
-		),
-		"OutputArea2022",
-		"UsualResidentPopulation",
-	))
-		population.set(code, count);
-	const centroids = new Map<string, readonly [number, number]>();
-	for (const [path, column] of [
-		[
-			"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
-			"OA21CD",
-		],
-		[
-			"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
-			"OA22CD",
-		],
-	] as const) {
-		const lines = readFileSync(source(path), "utf8").trim().split("\n");
-		if (lines[0] !== `${column},longitude,latitude`)
-			throw new Error(`${path} has unexpected columns`);
-		for (const line of lines.slice(1)) {
-			const [code, longitude, latitude] = line.split(",");
-			centroids.set(code!, [Number(longitude), Number(latitude)]);
-		}
-	}
-	const lsoaOf = new Map<string, string>();
-	for (const row of base
-		.prepare(
-			`SELECT fa.code AS child, ta.code AS parent
-			FROM crosswalk_edge e
-			JOIN crosswalk c ON c.id = e.crosswalk_id
-			JOIN area_releases f ON f.position = c.from_release_id
-			JOIN area_releases t ON t.position = c.to_release_id
-			JOIN area_version fv ON fv.id = e.from_version_id JOIN area fa ON fa.id = fv.area_id
-			JOIN area_version tv ON tv.id = e.to_version_id JOIN area ta ON ta.id = tv.area_id
-			WHERE f.geography = ? AND f.id = ? AND t.geography = ? AND t.id = ?`,
-		)
-		.all(
-			OUTPUT_AREA_2021.from.geography,
-			OUTPUT_AREA_2021.from.boundaryRelease,
-			OUTPUT_AREA_2021.to.geography,
-			OUTPUT_AREA_2021.to.boundaryRelease,
-		))
-		lsoaOf.set(row.child as string, row.parent as string);
-	if (lsoaOf.size === 0)
-		throw new Error(
-			"No output area to LSOA crosswalk to split dwellings by",
-		);
-	return {
-		population,
-		households,
-		dwellings: readColumn(
-			source("housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv"),
-			"ecode",
-			"all_properties",
-			{
-				skipUnusable: true,
-				only: { column: "geography", value: "LSOA" },
-			},
-		),
-		lsoaOf,
-		centroids,
-	};
-};
-
-const shared = (values: Float64Array) => {
-	const copy = new Float64Array(new SharedArrayBuffer(values.byteLength));
-	copy.set(values);
-	return copy;
-};
-
-const atomsHash = (atoms: WeightAtoms) => {
-	const hash = createHash("sha256");
-	for (const values of [atoms.longitude, atoms.latitude])
-		hash.update(
-			new Uint8Array(values.buffer, values.byteOffset, values.byteLength),
-		);
-	return hash.digest("hex");
-};
-
-const readPlacement = (path: string): Placement => {
-	const meta = JSON.parse(readFileSync(`${path}.json`, "utf8")) as {
-		codes: string[];
-	};
-	const bytes = readFileSync(path);
-	return {
-		codes: meta.codes,
-		area: new Int32Array(
-			bytes.buffer.slice(
-				bytes.byteOffset,
-				bytes.byteOffset + bytes.byteLength,
-			),
-		),
-	};
-};
 
 export const buildCrosswalkWeights = async (
 	root: string,
@@ -209,20 +71,14 @@ export const buildCrosswalkWeights = async (
 			toRelease: string;
 		}>;
 		const inputHash = releasesWithGeometry(root);
-		const counts = readCounts(root, base);
-		const atoms = await buildWeightAtoms(
-			counts,
-			readPostcodeRows(onspdEdition(root)),
-			2_800_000,
-		);
+		const atoms = await readWeightAtoms(root);
 		buildLog.info(
 			`Weight atoms: ${formatCount(atoms.postcodes)} postcodes and ${formatCount(atoms.count - atoms.postcodes)} output areas without one`,
 		);
-		const longitudes = shared(atoms.longitude);
-		const latitudes = shared(atoms.latitude);
-		const atomsKey = atomsHash(atoms);
+		const key = atomsKey(atoms);
 
-		// Place the atoms in each release the crosswalks need, one at a time.
+		// Place the atoms in each release the crosswalks need, one at a time,
+		// except those `weight-atoms` already placed.
 		const skipped: string[] = [];
 		const weighable = crosswalks.filter((crosswalk) => {
 			const ends = [
@@ -236,7 +92,10 @@ export const buildCrosswalkWeights = async (
 		});
 		const directory = crosswalkWeightsDirectory(root);
 		const placements = join(directory, "placements");
-		mkdirSync(placements, { recursive: true });
+		const directories = [
+			placements,
+			join(weightAtomsDirectory(root), "placements"),
+		];
 		const releases = new Map<
 			string,
 			{ geography: string; boundaryRelease: string }
@@ -257,50 +116,37 @@ export const buildCrosswalkWeights = async (
 				},
 			);
 		}
-		const fileOf = (geography: string, boundaryRelease: string) =>
-			join(placements, `${geography}__${boundaryRelease}.i32`);
-		const keep = new Set<string>();
-		for (const { geography, boundaryRelease } of releases.values()) {
-			const file = fileOf(geography, boundaryRelease);
-			keep.add(file).add(`${file}.json`);
-			const key = sha256(
-				`${atomsKey}\n${inputHash(geography, boundaryRelease)}`,
-			);
-			const current =
-				!options.rebuild && existsSync(`${file}.json`)
-					? (JSON.parse(readFileSync(`${file}.json`, "utf8")) as {
-							key: string;
-						})
-					: undefined;
-			if (current?.key === key && existsSync(file)) {
-				buildLog.detail(
-					`Reused ${releaseKey(geography, boundaryRelease)}`,
-				);
-				continue;
-			}
-			const result = await placeInRelease({
-				root,
+		await ensurePlacements(
+			root,
+			atoms,
+			[...releases.values()],
+			directories,
+			{
+				rebuild: options.rebuild,
+				onPlaced: ({ geography, boundaryRelease }, seconds) =>
+					buildLog.detail(
+						seconds === undefined
+							? `Reused ${releaseKey(geography, boundaryRelease)}`
+							: `Placed ${releaseKey(geography, boundaryRelease)} in ${formatDuration(seconds * 1000)}`,
+					),
+			},
+		);
+		const placementOf = (geography: string, boundaryRelease: string) => {
+			const found = readPlacement(
+				directories,
 				geography,
 				boundaryRelease,
-				longitudes: longitudes.buffer as SharedArrayBuffer,
-				latitudes: latitudes.buffer as SharedArrayBuffer,
-			});
-			writeFileSync(
-				file,
-				new Uint8Array(
-					result.area.buffer,
-					result.area.byteOffset,
-					result.area.byteLength,
-				),
+				{
+					atomsKey: key,
+					geometryInput: inputHash(geography, boundaryRelease)!,
+				},
 			);
-			writeFileSync(
-				`${file}.json`,
-				JSON.stringify({ key, codes: result.codes }),
-			);
-			buildLog.detail(
-				`Placed ${releaseKey(geography, boundaryRelease)} in ${formatDuration(result.seconds * 1000)}`,
-			);
-		}
+			if (!found)
+				throw new Error(
+					`No placement of ${geography}/${boundaryRelease}`,
+				);
+			return found;
+		};
 
 		const edgesOf = base.prepare(
 			`SELECT e.from_version_id AS fromVersion, e.to_version_id AS toVersion, fa.code AS fromCode, ta.code AS toCode, ${EXACT_EDGE_SQL} AS exact
@@ -340,12 +186,8 @@ export const buildCrosswalkWeights = async (
 				})) as WeighedEdge[];
 				const rows = weighEdges(
 					atoms.measures,
-					readPlacement(
-						fileOf(crosswalk.fromGeography, crosswalk.fromRelease),
-					),
-					readPlacement(
-						fileOf(crosswalk.toGeography, crosswalk.toRelease),
-					),
+					placementOf(crosswalk.fromGeography, crosswalk.fromRelease),
+					placementOf(crosswalk.toGeography, crosswalk.toRelease),
 					edges,
 					new Set(crosswalk.basis === null ? [] : [crosswalk.basis]),
 				);
@@ -390,6 +232,16 @@ export const buildCrosswalkWeights = async (
 		}
 		renameSync(pending, output);
 		// Placements of releases no crosswalk needs any more.
+		const keep = new Set(
+			[...releases.values()].flatMap(({ geography, boundaryRelease }) => {
+				const file = placementFile(
+					placements,
+					geography,
+					boundaryRelease,
+				);
+				return [file, `${file}.json`];
+			}),
+		);
 		for (const name of readdirSyncSafe(placements))
 			if (!keep.has(join(placements, name)))
 				rmSync(join(placements, name), { force: true });
