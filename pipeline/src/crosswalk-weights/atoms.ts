@@ -226,7 +226,14 @@ export const readColumn = (
 	path: string,
 	codeColumn: string,
 	valueColumn: string,
-	{ skipUnusable = false }: { skipUnusable?: boolean } = {},
+	{
+		skipUnusable = false,
+		only,
+	}: {
+		skipUnusable?: boolean;
+		/** Keep only rows whose `column` is `value`. */
+		only?: { column: string; value: string };
+	} = {},
 ) => {
 	const [header, ...rows] = csvRecords(
 		readFileSync(path, "utf8").replace(/^﻿/, ""),
@@ -237,8 +244,12 @@ export const readColumn = (
 		throw new Error(
 			`${path} has no ${code < 0 ? codeColumn : valueColumn} column`,
 		);
+	const filter = only ? header!.indexOf(only.column) : -1;
+	if (only && filter < 0)
+		throw new Error(`${path} has no ${only.column} column`);
 	const counts = new Map<string, number>();
 	for (const [line, row] of rows.entries()) {
+		if (only && row[filter] !== only.value) continue;
 		const area = row[code]?.trim();
 		const count = Number(row[value]);
 		if (!area || !Number.isFinite(count) || count < 0) {

@@ -94,6 +94,20 @@ test("a column reads by code, refusing unusable counts unless they are marked", 
 			[["A", 3]],
 		);
 		assert.throws(() => readColumn(path, "code", "missing"), /no missing/);
+		// Rows of other geographies are not counted.
+		writeFileSync(
+			path,
+			'"kind","code","n"\n"LSOA","A","3"\n"MSOA","M","9"\n"LSOA","B","[z]"\n',
+		);
+		assert.deepEqual(
+			[
+				...readColumn(path, "code", "n", {
+					skipUnusable: true,
+					only: { column: "kind", value: "LSOA" },
+				}),
+			],
+			[["A", 3]],
+		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}
