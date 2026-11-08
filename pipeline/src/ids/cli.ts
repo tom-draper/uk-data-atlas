@@ -1,3 +1,4 @@
+import { buildLog } from "@uk-data-atlas/atlas-runtime/storage";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
@@ -33,7 +34,7 @@ const seed = (path: string | undefined) => {
 		const seeded = seedIdRegistries(database, ids);
 		ids.save();
 		for (const [namespace, size] of Object.entries(seeded))
-			console.log(`${namespace}: ${size} ids`);
+			buildLog.info(`${namespace}: ${size} ids`);
 	} finally {
 		database.close();
 	}
@@ -48,7 +49,7 @@ const verify = (path: string | undefined) => {
 			{ limit: 20 },
 		);
 		for (const [namespace, count] of Object.entries(checked))
-			console.log(`${namespace}: ${count} ids checked`);
+			buildLog.info(`${namespace}: ${count} ids checked`);
 		for (const m of mismatches)
 			console.error(
 				`${m.namespace} ${m.id} is ${m.key.join("/")}, which the registry gives ${m.registered ?? "no id"}`,
@@ -100,7 +101,7 @@ const check = (ref: string) => {
 		}
 	}
 	if (failed) process.exitCode = 1;
-	else console.log(`Id registries are valid and extend ${ref}`);
+	else buildLog.info(`Id registries are valid and extend ${ref}`);
 };
 
 const [command, ...args] = process.argv.slice(2);
