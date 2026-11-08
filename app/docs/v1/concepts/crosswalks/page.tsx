@@ -124,23 +124,35 @@ export default function CrosswalksPage() {
 			</P>
 			<SpecExample id="translateAreaCode" />
 
+			<H2 id="lookup-or-convert">Which crosswalk for which job</H2>
+			<P>
+				A `best-fit` crosswalk is a lookup: it names the one parent
+				holding most of each ward, so use it to ask which constituency a
+				ward is in. It cannot convert counts, because a ward that
+				straddles two constituencies is placed wholly in one. A
+				`postcode-overlap` crosswalk is for conversion: it lists every
+				constituency a ward has residents in and weights each by those
+				residents, so use it, with `purpose=apportion`, to convert a
+				count. Its weights sum to 1 for each ward, and pairs holding
+				less than 1% of a ward&apos;s residents, households, dwellings
+				and postcodes are left out.
+			</P>
+
 			<H2 id="missing">When there&apos;s no crosswalk</H2>
 			<P>
 				Crosswalks link exact releases, and publishers don&apos;t
-				publish one for every pair. December 2019 wards have no lookup
-				to the 2024 constituencies, for example, though May 2025 wards
-				do. Ask before you convert:
+				publish one for every pair. Parishes have no lookup to the 2024
+				constituencies, for example. Ask before you convert:
 			</P>
 			<Request
-				url={`${API_BASE_URL}/relationships?from=ward/2019-12-uk-bgc&to=constituency/2024-07-uk-bgc&purpose=apportion`}
+				url={`${API_BASE_URL}/relationships?from=parish/2024-12-ew-bgc&to=constituency/2024-07-uk-bgc&purpose=apportion`}
 			/>
 			<P>
 				`status` is `available`, `partial` or `unsupported`, and
 				`reason` says why. When no single crosswalk links the two, the
-				API looks for a route through several. Here the route goes via
-				local authorities, and its `coverage` shows only about two in
-				three wards get through, while `operations` says it may only be
-				used for weighted estimates.
+				API looks for a route through several. Its `coverage` shows how
+				much of the source gets through, while `operations` says whether
+				it may only be used for weighted estimates.
 			</P>
 			<P>When the answer isn&apos;t good enough, you can:</P>
 			<List
