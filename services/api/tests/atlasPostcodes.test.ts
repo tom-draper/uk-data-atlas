@@ -45,7 +45,7 @@ const rows = [
 function storePostcodeIndex(...args: Parameters<typeof writePostcodeIndex>) {
 	writePostcodeIndex(...args);
 	writeEmptyPostcodeAreas(args[0]);
-	assembleAtlas(args[0]);
+	assembleAtlas(args[0], { crosswalkWeights: false });
 }
 function fixture(t: TestContext) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-postcodes-"));
@@ -240,7 +240,7 @@ test("reassembling an unchanged component repairs corrupt postcode fields", (t) 
 	const database = new DatabaseSync(path);
 	database.exec("UPDATE postcodes SET introduced = 199901");
 	database.close();
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 	assert.equal(
 		readSqlitePostcodeShard(root, before.artifact.shards[0]!),
 		before.texts.get(before.artifact.shards[0]!.path),
@@ -282,7 +282,7 @@ test("the source builder reads filtered gzip rows into the postcode component", 
 	);
 	const result = await buildPostcodeIndex(root);
 	writeEmptyPostcodeAreas(root);
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 	assert.equal(result.artifact.counts.postcodes, 6);
 	assert.equal(
 		readPostcodeIndex(root).artifact.contentHash,
