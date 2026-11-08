@@ -14,7 +14,8 @@ import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";
-import { POSTCODE_WEIGHT_BASES } from "./atlasCrosswalkWeights.ts";
+import { EXACT_EDGE_SQL } from "../crosswalk-weights/exactEdges.ts";
+import { WEIGHT_BASES_FROM_COUNTS } from "../crosswalk-weights/bases.ts";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of
@@ -432,9 +433,12 @@ export const crosswalkTables = (
 			strict: true,
 			columns: ["id TEXT NOT NULL", "label TEXT NOT NULL"],
 			key: ["id"],
-			// The bases the build adds from postcodes are rows too: see
-			// atlasCrosswalkWeights.ts.
-			rows: Object.entries({ ...WEIGHT_BASES, ...POSTCODE_WEIGHT_BASES }),
+			// The bases the build adds from held counts are rows too: see
+			// crosswalk-weights/bases.ts.
+			rows: Object.entries({
+				...WEIGHT_BASES,
+				...WEIGHT_BASES_FROM_COUNTS,
+			}),
 		},
 		crosswalk: {
 			rowid: true,
@@ -546,6 +550,24 @@ JOIN area fa ON fa.id = fv.area_id
 JOIN area_version tv ON tv.id = e.to_version_id
 JOIN area ta ON ta.id = tv.area_id
 LEFT JOIN crosswalk_weight w ON w.crosswalk_id = e.crosswalk_id AND w.from_version_id = e.from_version_id AND w.to_version_id = e.to_version_id`,
+				v_crosswalk_weight: `SELECT c.slug AS crosswalk, fa.code AS from_code, ta.code AS to_code, w.basis_id AS basis, w.weight, w.overlap, w.source_share, w.target_share, 'stored' AS derivation, w.crosswalk_id, w.from_version_id, w.to_version_id
+FROM crosswalk_weight w
+JOIN crosswalk c ON c.id = w.crosswalk_id
+JOIN area_version fv ON fv.id = w.from_version_id
+JOIN area fa ON fa.id = fv.area_id
+JOIN area_version tv ON tv.id = w.to_version_id
+JOIN area ta ON ta.id = tv.area_id
+UNION ALL
+SELECT c.slug, fa.code, ta.code, b.id, 1.0, NULL, 1.0, NULL, 'exact', e.crosswalk_id, e.from_version_id, e.to_version_id
+FROM crosswalk_edge e
+JOIN crosswalk c ON c.id = e.crosswalk_id
+JOIN area_version fv ON fv.id = e.from_version_id
+JOIN area fa ON fa.id = fv.area_id
+JOIN area_version tv ON tv.id = e.to_version_id
+JOIN area ta ON ta.id = tv.area_id
+CROSS JOIN weight_basis b
+WHERE ${EXACT_EDGE_SQL}
+AND NOT EXISTS (SELECT 1 FROM crosswalk_weight w WHERE w.crosswalk_id = e.crosswalk_id AND w.from_version_id = e.from_version_id AND w.to_version_id = e.to_version_id AND w.basis_id = b.id)`,
 			},
 		},
 	};
