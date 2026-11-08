@@ -3615,6 +3615,552 @@
 				"boundaryRelease": "2024-07-uk-bgc"
 			},
 			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2011-12-ew-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2011-12-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2011-12-ew-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2011-12-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2016-12-gb-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2016-12-gb-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2017-12-gb-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2017-12-gb-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2018-12-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2018-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2020-12-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2020-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2021-12-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2021-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2022-12-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2022-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2023-12-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2023-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2024-12-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2024-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2026-05-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			}
+		},
+		{
+			"id": "ward-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.001
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			}
 		}
 	]
 }
