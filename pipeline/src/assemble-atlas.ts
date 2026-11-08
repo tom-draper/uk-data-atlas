@@ -5,17 +5,13 @@ import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import {
 	artifactDirectory,
-	buildLog,
 	closeReadOnlyDatabase,
 	packText,
 	unpackText,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import {
-	publishVacuumed,
-	writeCrosswalkWeights,
-	writePostcodeAreas,
-} from "./storage/index.ts";
-import { readWeightUnits } from "./postcodes/crosswalkWeightUnits.ts";
+import { publishVacuumed, writePostcodeAreas } from "./storage/index.ts";
+import { crosswalkSetHash } from "./crosswalk-weights/crosswalkSetHash.ts";
+import { crosswalkWeightsPath } from "./crosswalk-weights/paths.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
 	postcodeAreasDirectory,
@@ -57,6 +53,10 @@ export function assembleAtlas(
 			database
 				.prepare("ATTACH DATABASE ? AS postcode_component")
 				.run(components[1]);
+			if (crosswalkWeights)
+				database
+					.prepare("ATTACH DATABASE ? AS weights_component")
+					.run(crosswalkWeightsPath(root));
 			database.exec(
 				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
@@ -89,22 +89,18 @@ export function assembleAtlas(
 			);
 			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
 			if (crosswalkWeights) {
-				// Needs the placed postcodes, so it can only run once they are in.
-				const weights = writeCrosswalkWeights(
-					database,
-					readWeightUnits(root),
-				);
-				const unplaced = weights.units.filter((unit) => !unit.placed);
-				if (unplaced.length > 0)
+				const component = database
+					.prepare(
+						"SELECT value FROM weights_component.meta WHERE key = 'crosswalk_inventory_hash'",
+					)
+					.get();
+				if (component?.value !== crosswalkSetHash(database))
 					throw new Error(
-						`Postcodes are not placed in ${unplaced.map((unit) => `${unit.geography}/${unit.boundaryRelease}`).join(", ")}, which crosswalk weights share ${unplaced.map((unit) => unit.basis).join(", ")} between`,
+						"The crosswalk weights were computed for other crosswalks: rebuild crosswalk-weights",
 					);
-				for (const unit of weights.units)
-					buildLog.info(
-						`Shared ${Math.round(unit.allocated).toLocaleString("en-GB")} of ${Math.round(unit.held).toLocaleString("en-GB")} ${unit.basis} of ${unit.geography}/${unit.boundaryRelease} between postcodes`,
-					);
-				buildLog.info(
-					`Weighted ${weights.crosswalks.length} crosswalks from postcodes`,
+				// The crosswalks' own weights stay; these are the bases beside them.
+				database.exec(
+					"INSERT INTO main.crosswalk_weight SELECT * FROM weights_component.crosswalk_weight",
 				);
 			}
 			database.exec("COMMIT");

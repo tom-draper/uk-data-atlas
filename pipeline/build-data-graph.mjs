@@ -350,13 +350,37 @@ const censusSmallAreaInputs = (root) => {
 	}
 };
 
-// The counts `assemble-atlas` shares between postcodes to weight crosswalks.
-// pipeline/src/postcodes/crosswalkWeightUnits.ts reads these files.
-const weightUnitInputs = [
-	"demographics/census-2021-small-area/ts001/census2021-ts001-lsoa.csv",
-	"demographics/census-2021-small-area/ts003/census2021-ts003-lsoa.csv",
-	"deprivation/simd/SIMD+2020v2+-+indicators.csv",
-];
+// The files `crosswalk-weights` shares between postcodes: counts of residents,
+// households and dwellings, the centroids of output areas with no postcode, and
+// each postcode's output area. pipeline/src/crosswalk-weights/atoms.ts and
+// build-crosswalk-weights.ts read these.
+const crosswalkWeightInputs = (root) => {
+	const onspd = join(root, "data/source/postcodes/onspd");
+	let edition;
+	try {
+		edition = readdirSync(onspd)
+			.filter((name) => existsSync(join(onspd, name, "meta.json")))
+			.sort()
+			.at(-1);
+	} catch {
+		edition = undefined;
+	}
+	return [
+		"demographics/census-2021-small-area/ts001/census2021-ts001-oa.csv",
+		"demographics/census-2021-small-area/ts003/census2021-ts003-oa.csv",
+		"demographics/population/census-2022-scotland-output-area/outputarea2022_usualresidentpopulation.csv",
+		"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
+		"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
+		"housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv",
+		...(edition
+			? [
+					`postcodes/onspd/${edition}/meta.json`,
+					`postcodes/onspd/${edition}/onspd-permitted.csv.gz`,
+					`postcodes/onspd/${edition}/onspd-output-areas.csv.gz`,
+				]
+			: ["postcodes/onspd"]),
+	];
+};
 
 const postcodeInputs = (root) => {
 	const prefix = "postcodes/onspd";
@@ -449,7 +473,8 @@ const defaultRawInputs = {
 	"postcode-index": postcodeInputs,
 	"statistics-vocabulary": [],
 	"data-catalog": censusSmallAreaInputs,
-	"assemble-atlas": weightUnitInputs,
+	"assemble-atlas": [],
+	"crosswalk-weights": crosswalkWeightInputs,
 	"measure-compatibility": [],
 	"statistics-read-path": [],
 	"export-manifest": [],
@@ -737,6 +762,24 @@ const apiStages = [
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
+	// Places the postcodes, and the output areas without one, in each release a
+	// crosswalk to weigh joins, one release at a time. The placements are kept
+	// beside the result only to skip releases that have not changed.
+	stage(
+		"crosswalk-weights",
+		["atlas-sqlite", "geometry-store", "geometry-source-registry"],
+		[
+			"--max-old-space-size=4096",
+			"pipeline/src/build-crosswalk-weights.ts",
+		],
+		{
+			outputs: ["data/build/crosswalk-weights"],
+			requiredOutputs: [
+				"data/build/crosswalk-weights/crosswalk-weights.sqlite",
+			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"assemble-atlas",
 		[
@@ -745,10 +788,11 @@ const apiStages = [
 			"geography-catalogues",
 			"postcode-index",
 			"postcode-areas",
+			"crosswalk-weights",
 		],
 		["pipeline/src/assemble-atlas.ts"],
 		{
-			rawInputs: weightUnitInputs,
+			rawInputs: [],
 			requiredOutputs: ["data/build/atlas.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
@@ -1210,6 +1254,7 @@ const stageWrites = {
 		"data/build/measure-statistics-fields.json",
 	],
 	"assemble-atlas": ["data/build/atlas.sqlite"],
+	"crosswalk-weights": ["data/build/crosswalk-weights"],
 	"measure-compatibility": [`${artifacts}/measure-compatibility.json`],
 	"statistics-read-path": ["data/build/statistics-read-path.json"],
 	"export-manifest": [
