@@ -83,7 +83,7 @@ export const readSqliteCrosswalkInventory = (
 			throw new Error("Invalid SQLite crosswalk inventory");
 		const crosswalks = database
 			.prepare(
-				"SELECT c.*, f.geography AS fromGeography, f.id AS fromRelease, t.geography AS toGeography, t.id AS toRelease FROM crosswalk c JOIN area_releases f ON f.position = c.from_release_id JOIN area_releases t ON t.position = c.to_release_id ORDER BY c.id",
+				"SELECT c.*, f.geography AS fromGeography, f.id AS fromRelease, t.geography AS toGeography, t.id AS toRelease FROM crosswalk c JOIN area_releases f ON f.position = c.from_release_id JOIN area_releases t ON t.position = c.to_release_id ORDER BY c.inventory_position",
 			)
 			.all()
 			.map((row) => ({

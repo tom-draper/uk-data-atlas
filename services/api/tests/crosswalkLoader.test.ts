@@ -1,5 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { areaTables } from "./pipelineFixtures";
+import { IdRegistries, areaTables } from "./pipelineFixtures";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import { DatabaseSync } from "node:sqlite";
 import { crosswalkTables } from "./pipelineFixtures";
@@ -35,10 +35,11 @@ const store = (apiRoot: string, inventory: CrosswalkInventory) => {
 	);
 	emptyCrosswalkAreas(directory, inventory);
 	mkdirSync(join(apiRoot, "../../data/build"), { recursive: true });
+	const ids = IdRegistries.memory();
 	writeSqliteIndex(
 		join(apiRoot, "../../data/build/atlas.sqlite"),
 		{},
-		{ ...areaTables(directory), ...crosswalkTables(directory) },
+		{ ...areaTables(directory, ids), ...crosswalkTables(directory, ids) },
 	);
 };
 

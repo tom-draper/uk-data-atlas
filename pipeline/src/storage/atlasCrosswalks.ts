@@ -14,6 +14,7 @@ import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";
+import { IdRegistries } from "../ids/idRegistries.ts";
 import {
 	EXACT_EDGE_SQL,
 	SINGLE_TARGET_SQL,
@@ -117,11 +118,11 @@ const canonicalLabels = (name: SQLOutputValue, aliases: SQLOutputValue) =>
 	JSON.stringify([name, ...JSON.parse((aliases as string | null) ?? "[]")]);
 
 /** Find or add an endpoint's area version, recording source area facts. */
-const areaEndpoints = (database: DatabaseSync) => {
+const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 	const find = database.prepare(
 		"SELECT v.id, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area a JOIN area_version v ON v.area_id = a.id WHERE a.code = ? AND a.geography_id = (SELECT g.id FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.position = ?) AND v.release_id = ?",
 	);
-	const add = addAreaVersion(database);
+	const add = addAreaVersion(database, ids);
 	const updateFacts = database.prepare(
 		"UPDATE area_version SET area_m2 = coalesce(area_m2, ?), population = coalesce(population, ?) WHERE id = ?",
 	);
@@ -173,8 +174,13 @@ const areaEndpoints = (database: DatabaseSync) => {
 	};
 };
 
+/**
+ * `ids` gives each crosswalk the id it was first given, whatever its place in
+ * the inventory, which `inventory_position` keeps.
+ */
 export const crosswalkTables = (
 	directory: string,
+	ids: IdRegistries = IdRegistries.memory(),
 ): Record<string, SqliteTable> => {
 	const inventory: CrosswalkInventory = JSON.parse(
 		readFileSync(join(directory, "crosswalk-inventory.json"), "utf8"),
@@ -215,7 +221,10 @@ export const crosswalkTables = (
 				);
 			return Number(row.position);
 		};
-		for (const [id, entry] of inventory.crosswalks.entries()) {
+		for (const [
+			inventoryPosition,
+			entry,
+		] of inventory.crosswalks.entries()) {
 			const { artifact, bytes } = read(entry);
 			// Source facts live on the area version, shared by every crosswalk,
 			// so a crosswalk's sources must all give the same fields.
@@ -240,8 +249,9 @@ export const crosswalkTables = (
 				]),
 			);
 			yield [
-				id,
+				ids.crosswalk.assign(entry.id),
 				entry.id,
+				inventoryPosition,
 				position(entry.from),
 				position(entry.to),
 				entry.method,
@@ -265,7 +275,7 @@ export const crosswalkTables = (
 	 * they are read.
 	 */
 	function* sources(database: DatabaseSync) {
-		const endpoint = areaEndpoints(database);
+		const endpoint = areaEndpoints(database, ids);
 		const insert = (table: string, count: number) =>
 			database.prepare(
 				`INSERT INTO ${table} VALUES (${Array.from({ length: count }, () => "?").join(", ")})`,
@@ -296,14 +306,18 @@ export const crosswalkTables = (
 		const releases = database.prepare(
 			"SELECT from_release_id AS source, to_release_id AS target, basis_id AS basis FROM crosswalk WHERE id = ?",
 		);
-		for (const [crosswalk, entry] of inventory.crosswalks.entries()) {
+		for (const [
+			inventoryPosition,
+			entry,
+		] of inventory.crosswalks.entries()) {
+			const crosswalk = ids.crosswalk.assign(entry.id);
 			const { artifact } = read(entry);
 			const { source, target, basis } = releases.get(crosswalk) as {
 				source: number;
 				target: number;
 				basis: string | null;
 			};
-			const order = fields[crosswalk]!;
+			const order = fields[inventoryPosition]!;
 			let previousSource: string | undefined;
 			for (const record of artifact.records) {
 				const value = record.source as Endpoint;
@@ -449,6 +463,8 @@ export const crosswalkTables = (
 			columns: [
 				"id INTEGER",
 				"slug TEXT NOT NULL UNIQUE",
+				// The crosswalk's place in the inventory, which its id does not follow.
+				"inventory_position INTEGER NOT NULL UNIQUE",
 				"from_release_id INTEGER NOT NULL REFERENCES area_releases(position)",
 				"to_release_id INTEGER NOT NULL REFERENCES area_releases(position)",
 				"method TEXT NOT NULL",

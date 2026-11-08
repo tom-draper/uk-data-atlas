@@ -17,6 +17,7 @@ import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,
 } from "./postcodes/storePostcodeAreas.ts";
+import { loadIdRegistries } from "./ids/idRegistries.ts";
 import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
 
 /**
@@ -45,6 +46,9 @@ export function assembleAtlas(
 			"utf8",
 		),
 	) as PostcodeAreasArtifact;
+	// The areas that only a postcode lookup names take ids here, so these
+	// registries are the ones the base database was built with.
+	const ids = loadIdRegistries(root);
 	const temporary = `${path}.${randomUUID()}.tmp`;
 	try {
 		copyFileSync(components[0], temporary);
@@ -84,8 +88,11 @@ export function assembleAtlas(
 			);
 			insertPayload("postcode-index", unpackText(postcode.payload)!);
 			database.exec("COMMIT; PRAGMA foreign_keys = ON; BEGIN");
-			writePostcodeAreas(database, postcodeAreas, (name) =>
-				readPostcodeAreaComponent(root, name),
+			writePostcodeAreas(
+				database,
+				postcodeAreas,
+				(name) => readPostcodeAreaComponent(root, name),
+				ids,
 			);
 			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
 			if (crosswalkWeights) {
@@ -113,6 +120,7 @@ export function assembleAtlas(
 			// Readers in this process must not keep the file about to be replaced.
 			beforeReplace: () => closeReadOnlyDatabase(path),
 		});
+		ids.save();
 	} finally {
 		rmSync(temporary, { force: true });
 	}

@@ -87,7 +87,7 @@ export function* readAreas<F extends AreaField = AreaField>(
 		let count = 0;
 		for (const row of database
 			.prepare(
-				`SELECT ${columns} FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND v.in_inventory = 1 ORDER BY v.id`,
+				`SELECT ${columns} FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND v.in_inventory = 1 ORDER BY v.inventory_position`,
 			)
 			.iterate(release.position)) {
 			count += 1;
@@ -228,7 +228,7 @@ export const readCrosswalkShapes = (
 						NOT EXISTS (SELECT 1 FROM crosswalk_source s WHERE s.crosswalk_id = c.id AND NOT EXISTS (SELECT 1 FROM crosswalk_edge e WHERE e.crosswalk_id = c.id AND e.from_version_id = s.from_version_id))
 						AND NOT EXISTS (SELECT 1 FROM crosswalk_edge e WHERE e.crosswalk_id = c.id GROUP BY e.from_version_id HAVING count(*) > 1) AS forward,
 						NOT EXISTS (SELECT 1 FROM crosswalk_edge e WHERE e.crosswalk_id = c.id GROUP BY e.to_version_id HAVING count(*) > 1) AS reverse
-					FROM crosswalk c ORDER BY c.id`,
+					FROM crosswalk c ORDER BY c.inventory_position`,
 				)
 				.all()
 				.map((row) => [

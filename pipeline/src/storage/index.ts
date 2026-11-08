@@ -1,3 +1,4 @@
+export { IdRegistries } from "../ids/idRegistries.ts";
 export * from "./atlasAreas.ts";
 export * from "./atlasCrosswalks.ts";
 export * from "./atlasNamedLocations.ts";

@@ -17,6 +17,8 @@ import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { AREAS_VIEW } from "../src/storage";
+import { IdRegistries, idDirectory } from "../src/ids/idRegistries";
+import { seedIdRegistries } from "../src/ids/seedIds";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
@@ -39,12 +41,32 @@ import {
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 
+/**
+ * The fixture's base database is written by hand, so its ids are registered
+ * from it, as they would be from a build's.
+ */
+const registerBaseIds = (root: string) => {
+	const directory = idDirectory(root);
+	rmSync(directory, { recursive: true, force: true });
+	const ids = IdRegistries.load(directory);
+	const base = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"), {
+		readOnly: true,
+	});
+	try {
+		seedIdRegistries(base, ids, { fillGaps: true });
+	} finally {
+		base.close();
+	}
+	ids.save();
+};
+
 const storePostcodeAreas: typeof writePostcodeAreas = (
 	root,
 	artifact,
 	readShard,
 ) => {
 	writePostcodeAreas(root, artifact, readShard);
+	registerBaseIds(root);
 	return assembleAtlas(root, { crosswalkWeights: false });
 };
 
@@ -92,6 +114,7 @@ function fixture(t: TestContext) {
 		postcodes.texts.get(path)!,
 	);
 	writeEmptyPostcodeAreas(root);
+	registerBaseIds(root);
 	assembleAtlas(root, { crosswalkWeights: false });
 	const compiled = compilePostcodeAreas(postcodes.artifact, [
 		{
