@@ -128,6 +128,70 @@ const crosswalks = [
 			},
 		],
 	},
+	{
+		// A has one target, B two.
+		schemaVersion: 1,
+		id: "ward-to-constituency-postcode-overlap",
+		method: "postcode-overlap",
+		quality: "derived",
+		weighting: {
+			status: "provided",
+			basis: "population",
+			normalisation: "per-source",
+			population: "Census 2021 usual residents",
+			date: "2021-03-21",
+			minimumShare: 0.01,
+		},
+		from: ward,
+		to: constituency,
+		contentHash: "sha256:postcode-overlap",
+		records: [
+			{
+				source: {
+					code: "A",
+					labels: ["A"],
+					population: 90,
+					coverage: 1,
+				},
+				targets: [
+					{
+						code: "X",
+						labels: ["X"],
+						weight: 1,
+						population: 90,
+						sourceShare: 1,
+						targetShare: 0.5,
+					},
+				],
+			},
+			{
+				source: {
+					code: "B",
+					labels: ["B"],
+					population: 100,
+					coverage: 1,
+				},
+				targets: [
+					{
+						code: "X",
+						labels: ["X"],
+						weight: 0.25,
+						population: 25,
+						sourceShare: 0.25,
+						targetShare: 0.25,
+					},
+					{
+						code: "Y",
+						labels: ["Y"],
+						weight: 0.75,
+						population: 75,
+						sourceShare: 0.75,
+						targetShare: 1,
+					},
+				],
+			},
+		],
+	},
 ];
 
 const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
@@ -297,6 +361,52 @@ test("exact edges weigh 1 on every basis without a stored row, others come from 
 			["population", "stored"],
 			["population", "stored"],
 		],
+	);
+});
+
+test("a postcode-overlap source with one target weighs 1 on every basis without extra rows", (context) => {
+	const { path } = fixture(context);
+	const database = new DatabaseSync(path);
+	context.onTestFinished(() => {
+		if (database.isOpen) database.close();
+	});
+	const slug = "ward-to-constituency-postcode-overlap";
+	const id = Number(
+		database.prepare("SELECT id FROM crosswalk WHERE slug = ?").get(slug)!
+			.id,
+	);
+	const version = (geography: string, code: string) =>
+		Number(
+			database
+				.prepare(
+					"SELECT v.id AS id FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id WHERE r.geography = ? AND a.code = ?",
+				)
+				.get(geography, code)!.id,
+		);
+	// B has two targets, so its extra bases are stored where there are any.
+	database
+		.prepare(
+			"INSERT INTO crosswalk_weight VALUES (?, ?, ?, 'postcodes', 0.3, 6, 0.3, 0.2)",
+		)
+		.run(id, version("ward", "B"), version("constituency", "X"));
+	assert.deepEqual(view(database, slug), [
+		// A to X: its own residents are stored, the rest implied.
+		...[...BASES].map((basis) =>
+			basis === "population"
+				? ["A", "X", basis, 1, 90, 1, 0.5, "stored"]
+				: ["A", "X", basis, 1, null, null, null, "single-target"],
+		),
+		["B", "X", "population", 0.25, 25, 0.25, 0.25, "stored"],
+		["B", "X", "postcodes", 0.3, 6, 0.3, 0.2, "stored"],
+		["B", "Y", "population", 0.75, 75, 0.75, 1, "stored"],
+	]);
+	// The three kinds of row are told apart.
+	assert.deepEqual(
+		all(
+			database,
+			"SELECT derivation, count(*) FROM v_crosswalk_weight GROUP BY 1 ORDER BY 1",
+		).map((row) => row[0]),
+		["exact", "single-target", "stored"],
 	);
 });
 

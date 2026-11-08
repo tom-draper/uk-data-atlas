@@ -14,7 +14,10 @@ import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";
-import { EXACT_EDGE_SQL } from "../crosswalk-weights/exactEdges.ts";
+import {
+	EXACT_EDGE_SQL,
+	SINGLE_TARGET_SQL,
+} from "../crosswalk-weights/exactEdges.ts";
 import { WEIGHT_BASES_FROM_COUNTS } from "../crosswalk-weights/bases.ts";
 
 /**
@@ -567,6 +570,17 @@ JOIN area_version tv ON tv.id = e.to_version_id
 JOIN area ta ON ta.id = tv.area_id
 CROSS JOIN weight_basis b
 WHERE ${EXACT_EDGE_SQL}
+AND NOT EXISTS (SELECT 1 FROM crosswalk_weight w WHERE w.crosswalk_id = e.crosswalk_id AND w.from_version_id = e.from_version_id AND w.to_version_id = e.to_version_id AND w.basis_id = b.id)
+UNION ALL
+SELECT c.slug, fa.code, ta.code, b.id, 1.0, NULL, NULL, NULL, 'single-target', e.crosswalk_id, e.from_version_id, e.to_version_id
+FROM crosswalk_edge e
+JOIN crosswalk c ON c.id = e.crosswalk_id
+JOIN area_version fv ON fv.id = e.from_version_id
+JOIN area fa ON fa.id = fv.area_id
+JOIN area_version tv ON tv.id = e.to_version_id
+JOIN area ta ON ta.id = tv.area_id
+CROSS JOIN weight_basis b
+WHERE ${SINGLE_TARGET_SQL}
 AND NOT EXISTS (SELECT 1 FROM crosswalk_weight w WHERE w.crosswalk_id = e.crosswalk_id AND w.from_version_id = e.from_version_id AND w.to_version_id = e.to_version_id AND w.basis_id = b.id)`,
 			},
 		},
