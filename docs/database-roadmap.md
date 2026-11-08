@@ -15,6 +15,13 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
 - Ward to constituency (26 crosswalks, 225k edges) is best-fit only. LSOA
   2011 to 2021, output area to anything, and ward to ward across years have
   no weights.
+- Task 1 progress (2026-11-08): 39 of 181 crosswalks carry weights, 255,727 of
+  1.93M edges (13%), measured by running the postcode weighting on the
+  2026-11-04 build. Weights come from live postcodes, with Census 2021 LSOA
+  residents and households shared between them (output-area counts and
+  dwellings are not held). Only crosswalks whose two releases both have
+  postcodes placed qualify; placing more releases widens it. See
+  `data/build/README.md`, "Weights from postcodes".
 - All 1,643 series are `published`. The schema supports `converted` and
   `aggregated` series, but none exist.
 - 636k of 638k extent-continuity edges are same code, same area.
