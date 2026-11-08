@@ -11,7 +11,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import type { StatisticsDataset } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	STATUSES,
+	type StatisticsDataset,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	DATABASE_KEYS,
 	findIdMismatches,
@@ -510,4 +513,20 @@ test("parties keep their ids when another sorts before them", (context) => {
 	assert.equal(first.get("Lab"), 2);
 	assert.equal(second.get("Alliance"), 3);
 	assert.equal(second.get("Green"), 4);
+});
+
+test("a status keeps the id it has, because the list only grows at the end", () => {
+	// `status.id` is the position in STATUSES. Do not reorder or remove these:
+	// add a new status after the last one.
+	assert.deepEqual(
+		STATUSES.slice(0, 6).map(([slug]) => slug),
+		[
+			"observed",
+			"estimated",
+			"provisional",
+			"suppressed",
+			"not_applicable",
+			"derived",
+		],
+	);
 });
