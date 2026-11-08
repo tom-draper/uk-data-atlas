@@ -15,14 +15,16 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
 - Ward to constituency (26 crosswalks, 225k edges) is best-fit only. LSOA
   2011 to 2021, output area to anything, and ward to ward across years have
   no weights.
-- Task 1 progress (2026-11-08): 1.90M of 1.93M edges (98.7%) regroup exactly
-  and weigh 1 by rule (`v_crosswalk_weight`). Of the other 26,025 edges in 64
-  crosswalks, 25,093 (96%) now carry weights on four bases (postcodes,
-  residents, households, dwellings), summed from postcodes and output areas.
-  Measured on the 2026-11-04 build. The stage takes about 6 minutes and 1 GB.
-  Left: new edges for the other constituencies a straddling ward reaches,
-  Scottish households and dwellings, Northern Ireland, and the area basis. See
-  `data/build/README.md`, "Weights from small-area counts".
+- Task 1 progress (2026-11-08): 98.7% of edges regroup exactly and weigh 1 by
+  rule (`v_crosswalk_weight`); the other edges carry weights on up to four
+  bases (postcodes, residents, households, dwellings) summed from postcodes and
+  output areas. 26 new `postcode-overlap` crosswalks give each ward its every
+  constituency, where `best-fit` stays the one-to-one lookup: of 2.16M edges in
+  207 crosswalks, 99.96% have a residents weight. Measured on the 2026-11-04
+  build; the stages take about 2 and 5 minutes and 1 GB. Left: Northern Ireland,
+  Scottish dwellings, the area basis on the new crosswalks, and other families
+  as they show a need. See `data/build/README.md`, "Weights from small-area
+  counts".
 - All 1,643 series are `published`. The schema supports `converted` and
   `aggregated` series, but none exist.
 - 636k of 638k extent-continuity edges are same code, same area.
