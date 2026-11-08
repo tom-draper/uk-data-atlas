@@ -1,4 +1,4 @@
-# election: id registry. The key (2 fields) on line N below is id 1 + N - 1.
+# election: id registry. A key (2 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
 # Append only. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
 @general-election
 2010

@@ -1,43 +1,50 @@
-import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { IdRegistry } from "./idRegistry.ts";
+import {
+	loadRegistry,
+	registryPath,
+	saveRegistry,
+	type LoadedRegistry,
+} from "./idStore.ts";
 
 /**
  * Every id the database assigns, and the natural key each is assigned to.
  * `fields` is the key's length and `first` its first id: release positions
- * and crosswalk ids have always started at 0, the others at 1.
+ * and crosswalk ids have always started at 0, the others at 1. The two
+ * registries too big to be one reviewable file are `segmented`: a directory
+ * of files, each written once, so a new release adds a file.
  */
 export const ID_NAMESPACES = {
 	/** `(geography, release id)`: `area_releases.position`, the `release_id` columns. */
-	release: { first: 0, fields: 2 },
+	release: { first: 0, fields: 2, segmented: false },
 	/** `(slug)`: `geography.id`. */
-	geography: { first: 1, fields: 1 },
+	geography: { first: 1, fields: 1, segmented: false },
 	/** `(geography, code)`: `area.id`. */
-	area: { first: 1, fields: 2 },
+	area: { first: 1, fields: 2, segmented: true },
 	/** `(geography, release id, code)`: `area_version.id`. */
-	area_version: { first: 1, fields: 3 },
+	area_version: { first: 1, fields: 3, segmented: true },
 	/** `(slug)`: `crosswalk.id`. */
-	crosswalk: { first: 0, fields: 1 },
+	crosswalk: { first: 0, fields: 1, segmented: false },
 	/** `(publisher, url, licence)` as JSON: `source.id`. */
-	source: { first: 1, fields: 1 },
+	source: { first: 1, fields: 1, segmented: false },
 	/** `(slug)`: `dataset.id`. */
-	dataset: { first: 1, fields: 1 },
+	dataset: { first: 1, fields: 1, segmented: false },
 	/** `(slug)`: `measure.id`. */
-	measure: { first: 1, fields: 1 },
+	measure: { first: 1, fields: 1, segmented: false },
 	/** `(slug)`: `dimension.id`. */
-	dimension: { first: 1, fields: 1 },
+	dimension: { first: 1, fields: 1, segmented: false },
 	/** `(dimension slug, code)`: `dimension_member.id`. */
-	dimension_member: { first: 1, fields: 2 },
+	dimension_member: { first: 1, fields: 2, segmented: false },
 	/** `(label)`: `period.id`. */
-	period: { first: 1, fields: 1 },
+	period: { first: 1, fields: 1, segmented: false },
 	/** `(series key)`: `series.id`. */
-	series: { first: 1, fields: 1 },
+	series: { first: 1, fields: 1, segmented: false },
 	/** `(dataset slug, label)`: `election.id`. */
-	election: { first: 1, fields: 2 },
+	election: { first: 1, fields: 2, segmented: false },
 	/** `(party code)`: `party.id`. */
-	party: { first: 1, fields: 1 },
+	party: { first: 1, fields: 1, segmented: false },
 	/** `(dataset slug, election label, geography, release id, code)`: `contest.id`. */
-	contest: { first: 1, fields: 5 },
+	contest: { first: 1, fields: 5, segmented: false },
 } as const;
 
 export type IdNamespace = keyof typeof ID_NAMESPACES;
@@ -61,8 +68,13 @@ export const loadIdRegistries = (
 		frozen: environment.ATLAS_IDS_FROZEN === "1",
 	});
 
-export const idRegistryFile = (directory: string, name: IdNamespace) =>
-	join(directory, `${name.replaceAll("_", "-")}.txt`);
+/** The file, or for a segmented registry the directory, of a namespace. */
+export const idRegistryPath = (directory: string, name: IdNamespace) =>
+	registryPath(
+		directory,
+		name.replaceAll("_", "-"),
+		ID_NAMESPACES[name].segmented,
+	);
 
 /**
  * The registries of one build. `memory()` starts every namespace empty and
@@ -73,17 +85,23 @@ export const idRegistryFile = (directory: string, name: IdNamespace) =>
 export class IdRegistries {
 	readonly registries: Record<IdNamespace, IdRegistry>;
 	readonly directory: string | undefined;
+	private readonly loaded: Record<IdNamespace, LoadedRegistry> | undefined;
 
 	private constructor(
-		registries: Record<IdNamespace, IdRegistry>,
+		loaded: Record<IdNamespace, LoadedRegistry>,
 		directory?: string,
 	) {
-		this.registries = registries;
+		this.loaded = directory === undefined ? undefined : loaded;
+		this.registries = Object.fromEntries(
+			idNamespaces.map((name) => [name, loaded[name].registry]),
+		) as Record<IdNamespace, IdRegistry>;
 		this.directory = directory;
 	}
 
 	static memory() {
-		return new IdRegistries(IdRegistries.create(() => undefined));
+		return new IdRegistries(
+			IdRegistries.create(() => ({ registry: undefined })),
+		);
 	}
 
 	/**
@@ -93,30 +111,36 @@ export class IdRegistries {
 	 */
 	static load(directory: string, { frozen = false } = {}) {
 		return new IdRegistries(
-			IdRegistries.create((name) => {
-				const path = idRegistryFile(directory, name);
-				return existsSync(path)
-					? readFileSync(path, "utf8")
-					: undefined;
-			}, frozen),
+			IdRegistries.create((name) =>
+				loadRegistry(directory, name.replaceAll("_", "-"), {
+					...ID_NAMESPACES[name],
+					frozen,
+				}),
+			),
 			directory,
 		);
 	}
 
 	private static create(
-		read: (name: IdNamespace) => string | undefined,
-		frozen = false,
+		load: (name: IdNamespace) => LoadedRegistry | { registry: undefined },
 	) {
 		return Object.fromEntries(
-			idNamespaces.map((name) => [
-				name,
-				new IdRegistry(name, {
-					...ID_NAMESPACES[name],
-					text: read(name),
-					frozen,
-				}),
-			]),
-		) as Record<IdNamespace, IdRegistry>;
+			idNamespaces.map((name) => {
+				const loaded = load(name);
+				return [
+					name,
+					loaded.registry
+						? loaded
+						: {
+								registry: new IdRegistry(name, {
+									...ID_NAMESPACES[name],
+								}),
+								read: [],
+								written: [],
+							},
+				];
+			}),
+		) as Record<IdNamespace, LoadedRegistry>;
 	}
 
 	get release() {
@@ -177,10 +201,16 @@ export class IdRegistries {
 		) as Record<IdNamespace, number>;
 	}
 
-	/** Append what was added to the committed files. A no-op for `memory()`. */
+	/**
+	 * Write what was added to the committed files: appended to a small
+	 * registry, new files for a segmented one. A no-op for `memory()`.
+	 * Returns the files created or extended.
+	 */
 	save() {
-		if (this.directory === undefined) return;
-		for (const name of idNamespaces)
-			this.registries[name].save(idRegistryFile(this.directory, name));
+		if (this.directory === undefined || this.loaded === undefined)
+			return [];
+		return idNamespaces.flatMap((name) =>
+			saveRegistry(this.directory!, this.loaded![name]),
+		);
 	}
 }

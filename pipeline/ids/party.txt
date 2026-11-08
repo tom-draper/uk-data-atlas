@@ -1,4 +1,4 @@
-# party: id registry. The key on line N below is id 1 + N - 1.
+# party: id registry. A key is on each line below that is not a directive, and its id is the one after the line before it, from 1.
 # Append only. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
 APNI
 Ash

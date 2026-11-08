@@ -1,0 +1,9 @@
+# area-version seneddElectoralRegion/2022-12-w-bgc.txt: id registry. A key (3 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@seneddElectoralRegion	2022-12-w-bgc
+=833453
+W10000001
+W10000006
+W10000007
+W10000008
+W10000009

@@ -1,7 +1,7 @@
 import { buildLog } from "@uk-data-atlas/atlas-runtime/storage";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, relative, resolve } from "node:path";
+import { readFileSync, readdirSync } from "node:fs";
+import { dirname, join, relative, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { findIdMismatches } from "./databaseKeys.ts";
@@ -10,9 +10,10 @@ import {
 	IdRegistries,
 	idDirectory,
 	idNamespaces,
-	idRegistryFile,
+	idRegistryPath,
+	ID_NAMESPACES,
 } from "./idRegistries.ts";
-import { checkAppendOnly } from "./idRegistry.ts";
+import { registryProblems } from "./checkRegistries.ts";
 import { seedIdRegistries } from "./seedIds.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -60,47 +61,66 @@ const verify = (path: string | undefined) => {
 	}
 };
 
-/** The file as it was at `ref`, or undefined if it was not there. */
-const committed = (ref: string, path: string) => {
+const git = (...args: string[]) =>
+	execFileSync("git", args, {
+		cwd: root,
+		encoding: "utf8",
+		stdio: ["ignore", "pipe", "pipe"],
+		maxBuffer: 1 << 30,
+	});
+
+/** Every registry file in the working tree, by path inside `pipeline/ids`. */
+const workingFiles = (directory: string, prefix = ""): [string, string][] =>
+	readdirSync(directory, { withFileTypes: true }).flatMap((entry) =>
+		entry.isDirectory()
+			? workingFiles(
+					join(directory, entry.name),
+					`${prefix}${entry.name}/`,
+				)
+			: entry.name.endsWith(".txt")
+				? [
+						[
+							`${prefix}${entry.name}`,
+							readFileSync(join(directory, entry.name), "utf8"),
+						],
+					]
+				: [],
+	);
+
+/** Every registry file as it was at `ref`. */
+const committedFiles = (ref: string): [string, string][] => {
 	try {
-		return execFileSync(
-			"git",
-			["show", `${ref}:${relative(root, path).replaceAll("\\", "/")}`],
-			{
-				cwd: root,
-				encoding: "utf8",
-				stdio: ["ignore", "pipe", "ignore"],
-				maxBuffer: 1 << 30,
-			},
-		);
+		git("rev-parse", "--verify", `${ref}^{commit}`);
 	} catch {
-		return undefined;
+		throw new Error(
+			`Cannot find ${ref}. Fetch it first, for example git fetch origin main --depth=1.`,
+		);
 	}
+	const listed = git("ls-tree", "-r", "--name-only", ref, "--", ID_DIRECTORY)
+		.split("\n")
+		.filter((path) => path.endsWith(".txt"));
+	return listed.map((path) => [
+		path.slice(ID_DIRECTORY.length + 1),
+		git("show", `${ref}:${path}`),
+	]);
 };
 
 const check = (ref: string) => {
-	// Loading refuses blank lines, repeated keys and the wrong number of fields.
-	IdRegistries.load(idDirectory(root));
-	let failed = false;
+	const directory = idDirectory(root);
+	// Loading refuses blank lines, repeated keys, the wrong number of fields,
+	// and ids that are missing or given twice.
+	IdRegistries.load(directory);
+	const current = new Map(workingFiles(directory));
+	const problems = registryProblems(current, new Map(committedFiles(ref)));
 	for (const name of idNamespaces) {
-		const path = idRegistryFile(idDirectory(root), name);
-		if (!existsSync(path)) {
-			console.error(`Missing ${relative(root, path)}`);
-			failed = true;
-			continue;
-		}
-		const before = committed(ref, path);
-		if (
-			before !== undefined &&
-			!checkAppendOnly(before, readFileSync(path, "utf8"))
-		) {
-			console.error(
-				`${relative(root, path)} changes lines that are in ${ref}: ids may only be added`,
-			);
-			failed = true;
-		}
+		const path = relative(directory, idRegistryPath(directory, name));
+		const present = ID_NAMESPACES[name].segmented
+			? [...current.keys()].some((file) => file.startsWith(`${path}/`))
+			: current.has(path);
+		if (!present) problems.push(`${path} is missing`);
 	}
-	if (failed) process.exitCode = 1;
+	for (const problem of problems) console.error(problem);
+	if (problems.length > 0) process.exitCode = 1;
 	else buildLog.info(`Id registries are valid and extend ${ref}`);
 };
 

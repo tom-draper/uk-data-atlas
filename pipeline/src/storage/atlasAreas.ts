@@ -51,7 +51,11 @@ export const addAreaVersion = (database: DatabaseSync, ids: IdRegistries) => {
 				`Missing area release ${releasePosition} for ${code}`,
 			);
 		const geography = String(release.geography);
-		const areaId = ids.area.assign(geography, code);
+		const areaId = ids.area.assignIn(
+			`${geography}/${String(release.id)}`,
+			geography,
+			code,
+		);
 		const area = findArea.get(areaId);
 		if (!area) {
 			const geographyId = findGeography.get(geography)?.id;
@@ -130,7 +134,11 @@ export const areaTables = (
 	function* areas() {
 		const seen = new Set<number>();
 		for (const { release, area } of releaseAreas()) {
-			const id = ids.area.assign(release.geography, area.code);
+			const id = ids.area.assignIn(
+				`${release.geography}/${release.id}`,
+				release.geography,
+				area.code,
+			);
 			if (seen.has(id)) continue;
 			seen.add(id);
 			yield [id, geographies.get(release.geography)!, area.code];
@@ -149,7 +157,7 @@ export const areaTables = (
 					release.id,
 					area.code,
 				),
-				ids.area.assign(release.geography, area.code),
+				ids.area.id(release.geography, area.code)!,
 				releasePosition,
 				area.name,
 				null,

@@ -1,0 +1,8 @@
+# area-version country/2025-12-uk-bgc.txt: id registry. A key (3 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@country	2025-12-uk-bgc
+=6156
+E92000001
+N92000002
+S92000003
+W92000004
