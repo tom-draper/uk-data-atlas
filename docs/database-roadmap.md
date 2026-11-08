@@ -26,10 +26,13 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   as they show a need. See `data/build/README.md`, "Weights from small-area
   counts".
 - Task 2 progress (2026-11-08): ids are assigned once from append-only
-  registries in `pipeline/ids/` (15 namespaces, 1.37M keys, 14 MB, 3 MB compressed), seeded from
-  the 2026-11-04 build so no existing id changed. Order is stored apart as
-  `inventory_position`. Left: wiring `ids check --base` into review, and the
-  postcode lookup's own `position` numbering. See `docs/stable-ids.md`.
+  registries in `pipeline/ids/` (15 namespaces, 1.37M keys, 14 MB, 3 MB
+  compressed, 214 files, one per release for areas), seeded from the
+  2026-11-04 build so no existing id changed. Order is stored apart as
+  `inventory_position`, and `area_releases` is now `id` and `release`. CI checks
+  the registries against the base branch. Left: confirm the seed against the
+  deployed file (`pnpm ids verify`), and the postcode lookup's own numbering,
+  which is internal. See `docs/stable-ids.md`.
 - All 1,643 series are `published`. The schema supports `converted` and
   `aggregated` series, but none exist.
 - 636k of 638k extent-continuity edges are same code, same area.
