@@ -15,6 +15,7 @@ import {
 	compileGeometricContainmentCrosswalk,
 } from "./geometricContainment.ts";
 import { compilePopulationOverlapCrosswalk } from "./populationOverlap.ts";
+import { compilePostcodeOverlapCrosswalk } from "./postcodeOverlap.ts";
 import { compileExtentContinuityCrosswalk } from "./extentContinuity.ts";
 import {
 	AreaGeometryCache,
@@ -42,6 +43,8 @@ export type {
 	AreaOverlapCrosswalkArtifact,
 	PopulationOverlapValidation,
 	PopulationOverlapCrosswalkArtifact,
+	PostcodeOverlapValidation,
+	PostcodeOverlapCrosswalkArtifact,
 	GeometricContainmentValidation,
 	GeometricContainmentCrosswalkArtifact,
 	ExtentContinuityValidation,
@@ -118,6 +121,14 @@ export const createCrosswalkCompiler = (
 				areaLookup,
 				pairs,
 				rawGeometryCache.read,
+			);
+		}
+		if (adapter.method === "postcode-overlap") {
+			return compilePostcodeOverlapCrosswalk(
+				repositoryRoot,
+				adapter,
+				geometrySources,
+				areaLookup,
 			);
 		}
 		if (adapter.method === "area-overlap") {

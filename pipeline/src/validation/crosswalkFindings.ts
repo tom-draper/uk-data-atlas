@@ -149,9 +149,15 @@ export const crosswalkFindings = (
 
 	if (
 		artifact.method === "area-overlap" ||
-		artifact.method === "population-overlap"
+		artifact.method === "population-overlap" ||
+		artifact.method === "postcode-overlap"
 	) {
-		const deviations = artifact.records.map((record) => ({
+		// A postcode overlap's source with no people has no targets.
+		const deviations = (
+			artifact.method === "postcode-overlap"
+				? artifact.records.filter((record) => record.targets.length > 0)
+				: artifact.records
+		).map((record) => ({
 			code: record.source.code,
 			deviation: Math.abs(
 				record.targets.reduce(
@@ -313,6 +319,44 @@ export const crosswalkFindings = (
 					sliverPopulation: population.sliverPopulation,
 					outsidePopulation: population.outsidePopulation,
 					unmeasuredBlockCount: population.unmeasuredBlocks.length,
+				},
+			),
+		);
+	}
+
+	if (artifact.method === "postcode-overlap") {
+		// Recompute each source's coverage from its published pairs.
+		const { overlap } = artifact.validation;
+		const off = artifact.records
+			.filter((record) => record.targets.length > 0)
+			.map(
+				(record) =>
+					[
+						record.source.code,
+						record.targets.reduce(
+							(total, target) => total + target.sourceShare,
+							0,
+						),
+						record.source.coverage,
+					] as const,
+			)
+			.filter(
+				([, shares, coverage]) => Math.abs(shares - coverage) > 1e-5,
+			)
+			.map(([code, shares]) => `${code} (${shares.toFixed(4)})`);
+		findings.push(
+			check(
+				"postcode-overlap-coverage",
+				off.length === 0,
+				`Sources whose pairs hold a share of their people other than their coverage: ${listed(off)}.`,
+				{
+					minimumShare: overlap.minimumShare,
+					keptPairCount: overlap.keptPairCount,
+					droppedPairCount: overlap.droppedPairCount,
+					droppedPopulationShare: overlap.droppedPopulationShare,
+					unplacedPopulationShare: overlap.unplacedPopulationShare,
+					minimumSourceCoverage: overlap.minimumSourceCoverage,
+					sourcesWithoutTargets: overlap.sourcesWithoutTargets,
 				},
 			),
 		);

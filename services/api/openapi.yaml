@@ -14154,6 +14154,10 @@ components:
         boundary geometries and weights each source by the area it shares with
         each target. `population-overlap` reweights an area-overlap crosswalk's
         pairs by the residents of the building blocks in each.
+        `postcode-overlap` finds every pair of areas that share residents from
+        the postcodes and output areas placed in both releases, so a source
+        reaches all its targets, and weights each by the residents shared; it
+        is the conversion crosswalk where `best-fit` is the one-to-one lookup.
         `geometric-containment` derives a hierarchy from geometry where no
         publisher lookup carries it. `best-fit` names, for each child, the one
         parent holding most of its area where the two do not nest.
@@ -14166,6 +14170,7 @@ components:
           clean-containment,
           area-overlap,
           population-overlap,
+          postcode-overlap,
           geometric-containment,
           best-fit,
           extent-continuity,
@@ -14217,6 +14222,33 @@ components:
               description: The reference date of the count.
             blocks:
               $ref: "#/components/schemas/CrosswalkSide"
+        - type: object
+          description: >
+            Each record's target weights are shares of the source's resident
+            population living in each published target, counted at postcodes
+            (each carrying its share of its output area's census count), and
+            sum to 1 within rounding. Pairs holding less than `minimumShare` of
+            the source on every basis are not published.
+          required:
+            [status, basis, normalisation, population, date, minimumShare]
+          properties:
+            status:
+              const: provided
+            basis:
+              const: population
+            normalisation:
+              const: per-source
+            population:
+              type: string
+              description: What was counted, such as Census 2021 usual residents.
+            date:
+              type: string
+              description: The reference date of the count.
+            minimumShare:
+              type: number
+              description: >
+                The share of its source's measure a pair must hold, on some
+                basis, to be published.
 
     SuppliedCountConversionEnvelope:
       allOf:
@@ -14727,6 +14759,7 @@ components:
             - sliver-separation
             - continuity-extent
             - population-coverage
+            - postcode-overlap-coverage
             - containment-verified
             - best-fit-verified
             - measure-definition
