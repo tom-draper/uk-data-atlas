@@ -128,6 +128,7 @@ test("Scottish households are the first count of the household size table", () =
 				'"S00135307",62,22,24',
 				'"S00135308",-,-,-',
 				"",
+				"Crown copyright 2024",
 			].join("\n"),
 		);
 		assert.deepEqual(
