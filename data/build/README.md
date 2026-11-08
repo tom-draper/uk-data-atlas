@@ -516,49 +516,57 @@ without weights appears once, with null weight columns).
 or `population`), and artifacts rebuild from that basis alone. Other bases on
 the same edges are in `crosswalk_weight` only: select by `basis_id`.
 
-#### Weights from postcodes
+#### Weights from small-area counts
 
-`assemble-atlas` adds weights to the edges a crosswalk already has, from the
-smallest units held: live, small-user postcodes (not terminated, not large
-users), each already placed in the areas of 29 releases (`postcode_area_set`).
-The postcodes lying in both areas of an edge measure that pair, on three
-bases:
+The `crosswalk-weights` stage weights the edges of every crosswalk that does not
+regroup exactly, and `assemble-atlas` copies the result into `crosswalk_weight`.
 
-| Basis        | Measure of a postcode                                                                                                                         |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `postcodes`  | 1                                                                                                                                             |
-| `population` | Census 2021 usual residents (TS001) of its LSOA, shared equally between that LSOA's postcodes. Scotland: SIMD 2017 estimate of its data zone. |
-| `households` | Census 2021 households (TS003) of its LSOA, shared equally between that LSOA's postcodes. England and Wales only.                             |
+**Atoms.** A weight is a sum over atoms: every live, small-user postcode with a
+grid reference (1.68 million), and each output area that has people but no such
+postcode (127), at its population weighted centroid. A basis's count is held for
+each output area and shared equally between its atoms, so an output area inside
+both areas of a pair puts its whole count in the pair, and one on a border is
+split by its postcodes. Each release an edge joins is placed once, in turn, in a
+worker holding only that release's geometry (a point on the border of several
+areas, or in none, is placed nowhere). Placements are kept in
+`data/build/crosswalk-weights/placements/` to skip releases that have not
+changed; they are an intermediate and do not ship.
 
-For each edge and basis, `overlap` is the measure inside both areas, `weight`
-is the overlap as a share of the overlaps of the source's edges (so a source's
-weights sum to 1), and `source_share` and `target_share` are the overlap as a
-share of the whole source and the whole target, on any edge. A best-fit edge
-therefore has a `weight` of 1 and a `source_share` that says how much of the
-source it holds. No edge is added: a pair with no postcode in it has no row.
+| Basis        | Count shared between an output area's atoms                                                                           | Source                                                                                               |
+| ------------ | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `postcodes`  | 1 for each postcode                                                                                                   | ONS Postcode Directory                                                                               |
+| `population` | Census 2021 usual residents (TS001) of each England and Wales output area; Census 2022 residents of each Scottish one | Nomis bulk download `census2021-ts001.zip`; NRS `outputarea2022_usualresidentpopulation.csv`         |
+| `households` | Census 2021 households (TS003). England and Wales only                                                                | Nomis bulk download `census2021-ts003.zip`                                                           |
+| `dwellings`  | Council Tax properties of each LSOA, split between its output areas by their households. England and Wales only       | VOA Council Tax: stock of properties 2026, table CTSOP1.1 (rounded to the nearest 10; 31 March 2026) |
 
-A crosswalk is weighted when both its releases are among the 29 placed, except
-`extent-continuity` crosswalks, which are identity and so weighted 1 by
-definition. A crosswalk keeps its own basis: a population-overlap crosswalk
-gets `postcodes` and `households` but not a second `population`. The census
-counts are for March 2021 and the postcodes for August 2026, and people are
-spread evenly over an LSOA's postcodes, so a pair splitting an LSOA is only as
-good as that assumption. A unit with a count but no live postcode keeps it out
-of every pair; the build logs how much of each count was shared.
+`pnpm --dir pipeline fetch:onspd` and `fetch:weight-sources` download these
+(also the 2021 output area of each postcode, `onspd-output-areas.csv.gz`, and
+the centroids: ONS `OA_December_2021_EW_PWC_V4` and NRS `output-area-2022-pwc.zip`).
+The URLs are in each source folder's `meta.json`. Northern Ireland has no
+postcodes or counts here, and Scotland has no household or dwelling count.
 
-Not held, so not stored: output-area census counts (only LSOAs and MSOAs are
-held), dwelling counts at any level, Scottish household counts and anything
-for Northern Ireland postcodes.
+**Rows.** For each edge and basis, `overlap` is the measure inside both areas,
+`weight` is the overlap as a share of the overlaps of the source's edges (so a
+source's weights sum to 1), and `source_share` and `target_share` are the
+overlap as a share of the whole source and the whole target. A best-fit edge
+whose ward straddles two constituencies therefore has a `weight` of 1 and a
+`source_share` below 1. No edge is added to a crosswalk, and a pair with
+nothing in it has no row. A crosswalk keeps its own basis: a population-overlap
+crosswalk gets `postcodes`, `households` and `dwellings`, not a second
+`population`. The counts are for 2021 to 2022 and the postcodes for August 2026,
+and a pair that splits an output area is only as good as an even spread of its
+count over that area's postcodes.
 
-The API crosswalk inventory and bounded lazy artifact loader read SQLite over
-the shared read-only connection. JSON inventories and compressed crosswalk
-artifacts remain inputs to relationship paths, analysis geographies and their
-validation, location projections, relationship candidates, geography inventory,
-lookup manifests, validation reports, proposals.
-Atlas lookups and pages use the migrated loader. Their compilers write to
-`data/build/atlas-assets/`, and the pipeline stores those files in
-`website-assets.sqlite`.
-The website never reads crosswalk JSON directly.
+**Exact edges.** An edge whose source lies wholly in its target weighs 1 on
+every basis, so it has no stored row. This is the rule, in
+`crosswalk-weights/exactEdges.ts`: the crosswalk is `extent-continuity`,
+`clean-containment` or `geometric-containment`; or an `official-lookup` of
+membership; or the edge's `change` is `unchanged`; or its best-fit `relation` is
+`within`. Query `v_crosswalk_weight`, not `crosswalk_weight`: it returns the
+stored rows (`derivation = 'stored'`) and an implicit row for each exact edge and
+each basis in `weight_basis` (`derivation = 'exact'`, `weight = 1`,
+`source_share = 1`, null `overlap` and `target_share`). An edge that is neither
+exact nor stored has no weight.
 
 ### Named locations
 
