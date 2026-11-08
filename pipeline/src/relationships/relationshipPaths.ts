@@ -167,7 +167,8 @@ const discoverPaths = (
 					shapes.get(step.crosswalkId),
 				);
 				const weighting =
-					step.method === "population-overlap"
+					step.method === "population-overlap" ||
+					step.method === "postcode-overlap"
 						? "population"
 						: step.method === "area-overlap"
 							? "area"

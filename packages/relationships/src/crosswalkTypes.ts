@@ -5,6 +5,7 @@ import type {
 	GeometricContainmentCrosswalkAdapter,
 	IndeterminatePairs,
 	PopulationOverlapWeighting,
+	PostcodeOverlapWeighting,
 	PropertyCrosswalkAdapter,
 	ExtentContinuityCrosswalkAdapter,
 } from "./crosswalkAdapters.ts";
@@ -186,6 +187,71 @@ export type PopulationOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 				targetShare: number;
 				/** The pair's area, from the area-overlap crosswalk it reweights. */
 				overlapAreaM2: number;
+			}
+		>;
+	}>;
+};
+
+export type PostcodeOverlapValidation = {
+	/** The share a pair must hold of its source's measure, on some basis, to be kept. */
+	minimumShare: number;
+	/** Atoms: the postcodes and the output areas without one. */
+	postcodeCount: number;
+	outputAreaCount: number;
+	/** Pairs that held people, those kept, and those dropped as under `minimumShare`. */
+	pairCount: number;
+	keptPairCount: number;
+	droppedPairCount: number;
+	/** People in dropped pairs, and in no target at all, as shares of everyone placed in a source. */
+	droppedPopulationShare: number;
+	unplacedPopulationShare: number;
+	/** The smallest share of a source's people the kept pairs hold. */
+	minimumSourceCoverage: number;
+	/** Sources with people but no target, and sources with none. */
+	sourcesWithoutTargets: number;
+};
+
+/**
+ * Every pair of areas that share people, found from the atoms placed in both
+ * releases (see pipeline/src/crosswalk-weights). The conversion crosswalk
+ * between releases that best-fit only crosses one to one: a source's targets
+ * are all those holding its people, and its weights sum to 1 over them.
+ */
+export type PostcodeOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
+	method: "postcode-overlap";
+	quality: "derived";
+	weighting: PostcodeOverlapWeighting;
+	provenance: {
+		/** The atoms, hashed by where they lie. */
+		atoms: { key: string; postcodes: number; outputAreas: number };
+		inputs: Array<{
+			side: "from" | "to";
+			geography: string;
+			boundaryRelease: string;
+			geometryInput: string;
+		}>;
+	};
+	validation: {
+		sourceNameConflicts: Array<{ code: string; names: string[] }>;
+		endpoints: CrosswalkEndpoints;
+		overlap: PostcodeOverlapValidation;
+	};
+	records: Array<{
+		source: CrosswalkArea & {
+			/** People placed in the source, as estimated from the atoms. */
+			population: number;
+			/** Share of the source's people in its published targets. */
+			coverage: number;
+		};
+		targets: Array<
+			CrosswalkArea & {
+				/** Share of the source's covered people; weights sum to 1. */
+				weight: number;
+				population: number;
+				/** The pair's people as a share of the source's. */
+				sourceShare: number;
+				/** The pair's people as a share of the target's, from every source. */
+				targetShare: number;
 			}
 		>;
 	}>;
@@ -398,6 +464,7 @@ export type CrosswalkArtifact =
 	| PropertyCrosswalkArtifact
 	| AreaOverlapCrosswalkArtifact
 	| PopulationOverlapCrosswalkArtifact
+	| PostcodeOverlapCrosswalkArtifact
 	| GeometricContainmentCrosswalkArtifact
 	| BestFitCrosswalkArtifact
 	| ExtentContinuityCrosswalkArtifact;

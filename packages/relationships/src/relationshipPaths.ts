@@ -65,7 +65,8 @@ export const relationshipPurposeFor = (
 			  crosswalk.method === "geometric-containment"
 			? "membership"
 			: crosswalk.method === "area-overlap" ||
-				  crosswalk.method === "population-overlap"
+				  crosswalk.method === "population-overlap" ||
+				  crosswalk.method === "postcode-overlap"
 				? "apportion"
 				: crosswalk.method === "extent-continuity"
 					? "identity"

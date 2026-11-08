@@ -5,6 +5,7 @@ export type CrosswalkMethod =
 	| "clean-containment"
 	| "area-overlap"
 	| "population-overlap"
+	| "postcode-overlap"
 	| "geometric-containment"
 	| "best-fit"
 	| "extent-continuity";
@@ -31,11 +32,30 @@ export type PopulationOverlapWeighting = {
 	/** The building blocks the count was published for. */
 	blocks: { geography: GeographyKind; boundaryRelease: string };
 };
+/**
+ * Weights from resident population counted at the smallest units held: the
+ * postcodes in both areas of a pair, each carrying its share of its output
+ * area's census count. Unlike a population overlap, the pairs are found from
+ * the postcodes themselves, so a source reaches every target it has people in
+ * (beyond `minimumShare` of its people, on some basis).
+ */
+export type PostcodeOverlapWeighting = {
+	status: "provided";
+	basis: "population";
+	normalisation: "per-source";
+	/** What was counted, such as Census 2021 usual residents. */
+	population: string;
+	/** The reference date of the count. */
+	date: string;
+	/** A pair holding less than this share of its source's measure on every basis is dropped. */
+	minimumShare: number;
+};
 export type CrosswalkWeighting =
 	| { status: "not-provided" }
 	| { status: "not-applicable" }
 	| AreaOverlapWeighting
-	| PopulationOverlapWeighting;
+	| PopulationOverlapWeighting
+	| PostcodeOverlapWeighting;
 
 /** How many of a compiled release's areas a crosswalk relates to another. */
 export type ReleaseCoverage = {

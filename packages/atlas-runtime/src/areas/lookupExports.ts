@@ -134,12 +134,12 @@ export const crosswalkTable = (
 	crosswalk: LookupCrosswalk,
 	artifact: string,
 ): LookupTable => {
-	const weighted =
-		crosswalk.method === "area-overlap" ||
-		crosswalk.method === "population-overlap";
+	const peopleWeighted =
+		crosswalk.method === "population-overlap" ||
+		crosswalk.method === "postcode-overlap";
+	const weighted = crosswalk.method === "area-overlap" || peopleWeighted;
 	// A population overlap's shares are of people, not land.
-	const share =
-		crosswalk.method === "population-overlap" ? "population" : "area";
+	const share = peopleWeighted ? "population" : "area";
 	return {
 		id: `crosswalk-${crosswalk.id}`,
 		kind: "crosswalk",
@@ -203,8 +203,8 @@ export const crosswalkTable = (
 			column(
 				"population",
 				"number",
-				"The people in the overlap, from the crosswalk's population building blocks.",
-				crosswalk.method === "population-overlap",
+				"The people in the overlap, from the crosswalk's population building blocks or postcodes.",
+				peopleWeighted,
 			),
 		],
 		rows: crosswalk.records.flatMap((record) =>
