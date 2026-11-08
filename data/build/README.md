@@ -495,8 +495,8 @@ Crosswalks are integer edges between area versions. Every table is `STRICT`.
 | ---------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `crosswalk`            | `id` (inventory order), `slug` unique                      | `from_release_id` and `to_release_id` (`area_releases.position`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, `header`, `bytes`, and the JSON field order of sources and targets.                   |
 | `crosswalk_edge`       | `(crosswalk_id, from_version_id, to_version_id)`           | One source and target pair. `relation` (best fit: `within`, `straddles`, `indeterminate`) and `change` (official lookups: `unchanged`, `split`, `merged`, `complex`) are null where the crosswalk does not give them. Indexed by `(crosswalk_id, to_version_id)`. |
-| `weight_basis`         | `id`                                                       | `area` or `population`, with a label. A new basis is a row.                                                                                                                                                                                                       |
-| `crosswalk_weight`     | `(crosswalk_id, from_version_id, to_version_id, basis_id)` | Present for weighted crosswalks: `weight` (share of the covered source, summing to 1 per source), `overlap` (square metres or residents), `source_share` and `target_share`.                                                                                      |
+| `weight_basis`         | `id`                                                       | `area`, `population`, `postcodes` or `households`, with a label. A new basis is a row.                                                                                                                                                                            |
+| `crosswalk_weight`     | `(crosswalk_id, from_version_id, to_version_id, basis_id)` | One row per edge and basis: `weight` (share of the covered source, summing to 1 per source), `overlap` (square metres, residents, households or postcodes), `source_share` and `target_share`. See "Weights from postcodes".                                      |
 | `crosswalk_edge_check` | as `crosswalk_edge`                                        | Sparse matching diagnostics: `contained_share`, `outside_width_m`, `match`, `widest_difference_m`, `claimed_difference_m`, unweighted `check_source_share` and `check_target_share`, and `overlap_area_m2` on population-weighted crosswalks.                     |
 | `crosswalk_source`     | `(crosswalk_id, from_version_id)`                          | Only sources with `coverage`, or with no targets.                                                                                                                                                                                                                 |
 | `crosswalk_label`      | `(crosswalk_id, area_version_id)`                          | Publisher labels, only where they differ from `[name, ...aliases]`.                                                                                                                                                                                               |
@@ -509,7 +509,46 @@ field is stored only when present; a null value is refused because it could not
 be told apart from a missing one. Missing weights stay null, distinct from zero.
 `header` is the artifact metadata with a null `records` placeholder, and `bytes`
 keeps the original JSON byte count for the API cache budget. `v_crosswalk_edge`
-shows each edge with codes, names and its weight.
+shows each edge with codes, names and its weights, one row per basis (an edge
+without weights appears once, with null weight columns).
+
+`crosswalk.basis_id` is the basis the crosswalk's own artifact declares (`area`
+or `population`), and artifacts rebuild from that basis alone. Other bases on
+the same edges are in `crosswalk_weight` only: select by `basis_id`.
+
+#### Weights from postcodes
+
+`assemble-atlas` adds weights to the edges a crosswalk already has, from the
+smallest units held: live, small-user postcodes (not terminated, not large
+users), each already placed in the areas of 29 releases (`postcode_area_set`).
+The postcodes lying in both areas of an edge measure that pair, on three
+bases:
+
+| Basis        | Measure of a postcode                                                                                                                         |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `postcodes`  | 1                                                                                                                                             |
+| `population` | Census 2021 usual residents (TS001) of its LSOA, shared equally between that LSOA's postcodes. Scotland: SIMD 2017 estimate of its data zone. |
+| `households` | Census 2021 households (TS003) of its LSOA, shared equally between that LSOA's postcodes. England and Wales only.                             |
+
+For each edge and basis, `overlap` is the measure inside both areas, `weight`
+is the overlap as a share of the overlaps of the source's edges (so a source's
+weights sum to 1), and `source_share` and `target_share` are the overlap as a
+share of the whole source and the whole target, on any edge. A best-fit edge
+therefore has a `weight` of 1 and a `source_share` that says how much of the
+source it holds. No edge is added: a pair with no postcode in it has no row.
+
+A crosswalk is weighted when both its releases are among the 29 placed, except
+`extent-continuity` crosswalks, which are identity and so weighted 1 by
+definition. A crosswalk keeps its own basis: a population-overlap crosswalk
+gets `postcodes` and `households` but not a second `population`. The census
+counts are for March 2021 and the postcodes for August 2026, and people are
+spread evenly over an LSOA's postcodes, so a pair splitting an LSOA is only as
+good as that assumption. A unit with a count but no live postcode keeps it out
+of every pair; the build logs how much of each count was shared.
+
+Not held, so not stored: output-area census counts (only LSOAs and MSOAs are
+held), dwelling counts at any level, Scottish household counts and anything
+for Northern Ireland postcodes.
 
 The API crosswalk inventory and bounded lazy artifact loader read SQLite over
 the shared read-only connection. JSON inventories and compressed crosswalk
