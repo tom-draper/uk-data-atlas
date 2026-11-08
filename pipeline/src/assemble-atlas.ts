@@ -1,20 +1,21 @@
 import { randomUUID } from "node:crypto";
-import {
-	copyFileSync,
-	existsSync,
-	readFileSync,
-	rmSync,
-} from "node:fs";
+import { copyFileSync, existsSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import {
 	artifactDirectory,
+	buildLog,
 	closeReadOnlyDatabase,
 	packText,
 	unpackText,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { publishVacuumed, writePostcodeAreas } from "./storage/index.ts";
+import {
+	publishVacuumed,
+	writeCrosswalkWeights,
+	writePostcodeAreas,
+} from "./storage/index.ts";
+import { readWeightUnits } from "./postcodes/crosswalkWeightUnits.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
 import {
 	postcodeAreasDirectory,
@@ -80,6 +81,23 @@ export function assembleAtlas(root: string) {
 				readPostcodeAreaComponent(root, name),
 			);
 			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
+			// Needs the placed postcodes, so it can only run once they are in.
+			const weights = writeCrosswalkWeights(
+				database,
+				readWeightUnits(root),
+			);
+			const unplaced = weights.units.filter((unit) => !unit.placed);
+			if (unplaced.length > 0)
+				throw new Error(
+					`Postcodes are not placed in ${unplaced.map((unit) => `${unit.geography}/${unit.boundaryRelease}`).join(", ")}, which crosswalk weights share ${unplaced.map((unit) => unit.basis).join(", ")} between`,
+				);
+			for (const unit of weights.units)
+				buildLog.info(
+					`Shared ${Math.round(unit.allocated).toLocaleString("en-GB")} of ${Math.round(unit.held).toLocaleString("en-GB")} ${unit.basis} of ${unit.geography}/${unit.boundaryRelease} between postcodes`,
+				);
+			buildLog.info(
+				`Weighted ${weights.crosswalks.length} crosswalks from postcodes`,
+			);
 			database.exec("COMMIT");
 		} finally {
 			database.close();

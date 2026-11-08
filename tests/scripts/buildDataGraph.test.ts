@@ -4,6 +4,7 @@ import { stageScope } from "@/pipeline/build-data-cache.mjs";
 import { planBuild } from "@/pipeline/build-data.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 import { conflicts } from "@/pipeline/build-data-scheduler.mjs";
+import { WEIGHT_UNIT_INPUTS } from "@/pipeline/src/postcodes/crosswalkWeightUnits";
 import { ATLAS_CACHE_WORK } from "@/pipeline/src/storage/atlasCacheWork";
 import {
 	CACHE_STAGES,
@@ -180,4 +181,11 @@ test("no stage is left uncacheable except the sources download", () => {
 			.map(({ name }) => name),
 		["sources"],
 	);
+});
+
+test("assemble-atlas is rebuilt when a count crosswalk weights share changes", () => {
+	const assemble = (
+		buildDataStages as Array<{ name: string; rawInputs?: unknown }>
+	).find((stage) => stage.name === "assemble-atlas");
+	assert.deepEqual(assemble?.rawInputs, WEIGHT_UNIT_INPUTS);
 });
