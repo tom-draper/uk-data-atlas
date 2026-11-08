@@ -350,6 +350,14 @@ const censusSmallAreaInputs = (root) => {
 	}
 };
 
+// The counts `assemble-atlas` shares between postcodes to weight crosswalks.
+// pipeline/src/postcodes/crosswalkWeightUnits.ts reads these files.
+const weightUnitInputs = [
+	"demographics/census-2021-small-area/ts001/census2021-ts001-lsoa.csv",
+	"demographics/census-2021-small-area/ts003/census2021-ts003-lsoa.csv",
+	"deprivation/simd/SIMD+2020v2+-+indicators.csv",
+];
+
 const postcodeInputs = (root) => {
 	const prefix = "postcodes/onspd";
 	const directory = join(root, "data/source", prefix);
@@ -441,7 +449,7 @@ const defaultRawInputs = {
 	"postcode-index": postcodeInputs,
 	"statistics-vocabulary": [],
 	"data-catalog": censusSmallAreaInputs,
-	"assemble-atlas": [],
+	"assemble-atlas": weightUnitInputs,
 	"measure-compatibility": [],
 	"statistics-read-path": [],
 	"export-manifest": [],
@@ -740,7 +748,7 @@ const apiStages = [
 		],
 		["pipeline/src/assemble-atlas.ts"],
 		{
-			rawInputs: [],
+			rawInputs: weightUnitInputs,
 			requiredOutputs: ["data/build/atlas.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
