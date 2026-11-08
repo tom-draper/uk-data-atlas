@@ -207,8 +207,16 @@ export type PostcodeOverlapValidation = {
 	unplacedPopulationShare: number;
 	/** The smallest share of a source's people the kept pairs hold. */
 	minimumSourceCoverage: number;
-	/** Sources with people but no target, and sources with none. */
-	sourcesWithoutTargets: number;
+};
+
+/** Why a source has no target, and how many do not for that reason. */
+export type PostcodeOverlapCoverage = {
+	sourceCount: number;
+	/** Sources with at least one target. */
+	placedSources: number;
+	/** Sources with none: nobody was placed in them, or no pair held their people. */
+	unplacedSources: number;
+	unplacedReasons: Array<{ reason: string; count: number }>;
 };
 
 /**
@@ -235,6 +243,7 @@ export type PostcodeOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;
 		endpoints: CrosswalkEndpoints;
 		overlap: PostcodeOverlapValidation;
+		coverage: PostcodeOverlapCoverage;
 	};
 	records: Array<{
 		source: CrosswalkArea & {

@@ -91,7 +91,7 @@ const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
 	};
 	place(
 		"ward",
-		["A", "B", "C"],
+		["A", "B", "C", "N08000001"],
 		[0, 0, 0, 0, 0, 0, 1, 1, 1, 2],
 		"ward-input",
 	);
@@ -110,7 +110,7 @@ const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
 	const names = (codes: string[]) =>
 		new Map(codes.map((code) => [code, { code, name: `Area ${code}` }]));
 	const lookup: AreaLookup = new Map([
-		["ward/2024", names(["A", "B", "C"])],
+		["ward/2024", names(["A", "B", "C", "N08000001"])],
 		["constituency/2024", names(["X", "Y", "Z"])],
 	]);
 	return { root, sources, lookup };
@@ -159,6 +159,19 @@ test("every target holding a source's people is an edge, weighed by residents an
 		) < 1e-8,
 	);
 	assert.deepEqual(artifact.validation.endpoints.from.status, "verified");
+	// The ward in Northern Ireland has no postcodes, so no targets, and says why.
+	assert.deepEqual(artifact.records[3]!.targets, []);
+	assert.deepEqual(artifact.validation.coverage, {
+		sourceCount: 4,
+		placedSources: 3,
+		unplacedSources: 1,
+		unplacedReasons: [
+			{
+				reason: "no postcodes in ONSPD for Northern Ireland",
+				count: 1,
+			},
+		],
+	});
 });
 
 test("a pair under the minimum share on every basis is dropped and the rest renormalised", (context) => {

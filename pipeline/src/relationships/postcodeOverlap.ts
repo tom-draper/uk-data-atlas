@@ -17,8 +17,20 @@ import {
 } from "../crosswalk-weights/storedAtoms.ts";
 import { pairTotals } from "../crosswalk-weights/weigh.ts";
 
+/** Northern Ireland has no postcodes in the directory the atoms come from. */
+export const NORTHERN_IRELAND_REASON =
+	"no postcodes in ONSPD for Northern Ireland";
+const NO_RESIDENTS_REASON = "no residents placed in the source";
+const NO_TARGET_REASON = "no pair holds the source's residents";
+
 const COUNT = MEASURES.length;
 const POPULATION = MEASURES.indexOf("population");
+
+const sum = (values: Iterable<number>) => {
+	let total = 0;
+	for (const value of values) total += value;
+	return total;
+};
 
 /**
  * Compile a conversion crosswalk from the atoms placed in two releases.
@@ -83,7 +95,7 @@ export const compilePostcodeOverlapCrosswalk = (
 	let droppedPeople = 0;
 	let allPeople = 0;
 	let unplacedPeople = 0;
-	let withoutTargets = 0;
+	const unplaced = new Map<string, number>();
 	let minimumCoverage = 1;
 	const referenced = new Set<string>();
 	const records = from.placement.codes.map((code, a) => {
@@ -111,7 +123,15 @@ export const compilePostcodeOverlapCrosswalk = (
 			keptPairs += kept.length;
 			droppedPeople += inPairs - peopleInKept;
 			minimumCoverage = Math.min(minimumCoverage, peopleInKept / people);
-		} else withoutTargets += 1;
+		} else {
+			const reason =
+				people > 0
+					? NO_TARGET_REASON
+					: code.startsWith("N")
+						? NORTHERN_IRELAND_REASON
+						: NO_RESIDENTS_REASON;
+			unplaced.set(reason, (unplaced.get(reason) ?? 0) + 1);
+		}
 		return {
 			source: {
 				code,
@@ -213,7 +233,14 @@ export const compilePostcodeOverlapCrosswalk = (
 					8,
 				),
 				minimumSourceCoverage: round(minimumCoverage, 8),
-				sourcesWithoutTargets: withoutTargets,
+			},
+			coverage: {
+				sourceCount: records.length,
+				placedSources: records.length - sum(unplaced.values()),
+				unplacedSources: sum(unplaced.values()),
+				unplacedReasons: [...unplaced]
+					.map(([reason, count]) => ({ reason, count }))
+					.sort((a, b) => a.reason.localeCompare(b.reason)),
 			},
 		},
 		records,
