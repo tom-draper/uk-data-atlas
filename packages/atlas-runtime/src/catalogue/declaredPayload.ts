@@ -128,7 +128,7 @@ export function rebuildFromDeclaration(
 				LEFT JOIN dataset_area_key k ON k.dataset_id = r.dataset_id AND k.area_version_id = cv.id
 				JOIN area_version pv ON pv.id = r.parent_version_id
 				JOIN area pa ON pa.id = pv.area_id
-				JOIN area_releases pr ON pr.position = pv.release_id
+				JOIN area_releases pr ON pr.id = pv.release_id
 				LEFT JOIN dataset_area_name n ON n.dataset_id = r.dataset_id AND n.area_version_id = pv.id
 				LEFT JOIN dataset_area_name cn ON cn.dataset_id = r.dataset_id AND cn.area_version_id = cv.id
 				WHERE r.dataset_id = ? ORDER BY pa.code`,
@@ -169,7 +169,7 @@ export function rebuildFromDeclaration(
 
 	const series: Series[] = [];
 	const seriesQuery = database.prepare(
-		`SELECT s.id, m.slug AS measure, r.geography FROM series s JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.position = s.release_id WHERE s.dataset_id = ? ORDER BY s.id`,
+		`SELECT s.id, m.slug AS measure, r.geography FROM series s JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE s.dataset_id = ? ORDER BY s.id`,
 	);
 	const memberQuery = database.prepare(
 		`SELECT d.slug AS dimension, dm.code, dm.label, pm.label AS parent
@@ -617,10 +617,10 @@ export function rebuildFromDeclaration(
 					JOIN period p ON p.id = r.period_id
 					JOIN area_version cv ON cv.id = r.child_version_id
 					JOIN area ca ON ca.id = cv.area_id
-					JOIN area_releases cr ON cr.position = cv.release_id
+					JOIN area_releases cr ON cr.id = cv.release_id
 					JOIN area_version pv ON pv.id = r.parent_version_id
 					JOIN area pa ON pa.id = pv.area_id
-					JOIN area_releases pr ON pr.position = pv.release_id
+					JOIN area_releases pr ON pr.id = pv.release_id
 					LEFT JOIN dataset_area_key k ON k.dataset_id = r.dataset_id AND k.area_version_id = pv.id
 					WHERE r.dataset_id = ? AND r.relation = ? AND p.label = ? AND cr.geography = ? AND pr.geography = ?
 					ORDER BY ca.code`,

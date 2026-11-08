@@ -118,7 +118,7 @@ test("area releases stay parsed until their records exceed the budget", () =>
 		);
 		database
 			.prepare(
-				"DELETE FROM area_version WHERE release_id IN (SELECT position FROM area_releases WHERE id = ?)",
+				"DELETE FROM area_version WHERE release_id IN (SELECT id FROM area_releases WHERE release = ?)",
 			)
 			.run("2023");
 		database.close();

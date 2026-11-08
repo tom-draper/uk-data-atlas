@@ -95,7 +95,7 @@ export function writePostcodeAreas(
 		"INSERT INTO postcode_area_releases VALUES (?, ?, ?, ?, ?, ?)",
 	);
 	const findRelease = database.prepare(
-		"SELECT position FROM area_releases WHERE geography = ? AND id = ?",
+		"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
 	);
 	const findArea = database.prepare(
 		"SELECT v.id FROM area a JOIN area_version v ON v.area_id = a.id WHERE v.release_id = ? AND a.code = ?",
@@ -117,7 +117,7 @@ export function writePostcodeAreas(
 		if (!release)
 			throw new Error(`Missing postcode area release ${column.key}`);
 		return {
-			release: Number(release.position),
+			release: Number(release.id),
 			codes: new Map<string, number>(),
 		};
 	});

@@ -103,12 +103,12 @@ export const compareAtlasSqlite = (
 			}
 		}
 		const releases = before
-			.prepare("SELECT * FROM area_releases ORDER BY position")
+			.prepare("SELECT * FROM area_releases ORDER BY id")
 			.all();
 		assert.ok(releases.length > 0, "No area releases compared");
 		assert.deepEqual(
 			after
-				.prepare("SELECT * FROM area_releases ORDER BY position")
+				.prepare("SELECT * FROM area_releases ORDER BY id")
 				.all(),
 			releases,
 		);

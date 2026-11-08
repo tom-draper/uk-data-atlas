@@ -74,7 +74,7 @@ export function* readAreas<F extends AreaField = AreaField>(
 	try {
 		const release = database
 			.prepare(
-				"SELECT position, recordCount FROM area_releases WHERE geography = ? AND id = ? AND status = 'available'",
+				"SELECT id, recordCount FROM area_releases WHERE geography = ? AND release = ? AND status = 'available'",
 			)
 			.get(options.geography, options.release);
 		if (!release)
@@ -89,7 +89,7 @@ export function* readAreas<F extends AreaField = AreaField>(
 			.prepare(
 				`SELECT ${columns} FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND v.in_inventory = 1 ORDER BY v.inventory_position`,
 			)
-			.iterate(release.position)) {
+			.iterate(release.id)) {
 			count += 1;
 			const area: Record<string, unknown> = {};
 			for (const field of fields) {

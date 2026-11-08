@@ -103,9 +103,9 @@ export function bindCompiledFields(
 	)
 		return undefined;
 	const lookup =
-		database.prepare(`SELECT DISTINCT r.geography, r.id AS release, p.label AS period
+		database.prepare(`SELECT DISTINCT r.geography, r.release AS release, p.label AS period
 		FROM dataset d JOIN series s ON s.dataset_id = d.id JOIN measure m ON m.id = s.measure_id
-		JOIN area_releases r ON r.position = s.release_id
+		JOIN area_releases r ON r.id = s.release_id
 		JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id
 		WHERE d.slug = ? AND m.slug = ? AND p.label = ?
 		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
@@ -113,7 +113,7 @@ export function bindCompiledFields(
 			SELECT 1 FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
 			JOIN dimension_member dm ON dm.id = sm.member_id
 			WHERE sm.series_id = s.id AND dim.slug = expected.key AND dm.code = expected.value
-		)) ORDER BY r.geography, r.id, p.label`);
+		)) ORDER BY r.geography, r.release, p.label`);
 	const selected: StatisticsSelection[] = [];
 	for (const [dataset, field] of specs) {
 		const found = declaredFieldSeries(

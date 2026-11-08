@@ -56,7 +56,7 @@ const seriesDimensions = (
 ) =>
 	database
 		.prepare(
-			"SELECT s.id, group_concat(d.slug) AS dimensions FROM series s JOIN dataset ds ON ds.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.position = s.release_id LEFT JOIN series_member sm ON sm.series_id = s.id LEFT JOIN dimension d ON d.id = sm.dimension_id WHERE ds.slug = ? AND m.slug = ? AND r.geography = ? GROUP BY s.id",
+			"SELECT s.id, group_concat(d.slug) AS dimensions FROM series s JOIN dataset ds ON ds.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id LEFT JOIN series_member sm ON sm.series_id = s.id LEFT JOIN dimension d ON d.id = sm.dimension_id WHERE ds.slug = ? AND m.slug = ? AND r.geography = ? GROUP BY s.id",
 		)
 		.all(datasetId, measure, geography)
 		.map((row) =>
@@ -222,10 +222,10 @@ const selectorFor = (
 const releasesIn = (geography: string, year: number) =>
 	database
 		.prepare(
-			"SELECT id FROM area_releases WHERE geography = ? AND id LIKE ? ORDER BY id",
+			"SELECT release FROM area_releases WHERE geography = ? AND release LIKE ? ORDER BY release",
 		)
 		.all(geography, `${year}-%`)
-		.map((row) => String(row.id));
+		.map((row) => String(row.release));
 
 type StoredRecord = {
 	areaCode: string;

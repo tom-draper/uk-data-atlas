@@ -40,14 +40,14 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 	SELECT DISTINCT selected_series.id AS series_id, selected_label.id AS period_id FROM series selected_series
 	JOIN dataset selected_dataset ON selected_dataset.id = selected_series.dataset_id
 	JOIN measure selected_measure ON selected_measure.id = selected_series.measure_id
-	JOIN area_releases selected_release ON selected_release.position = selected_series.release_id
+	JOIN area_releases selected_release ON selected_release.id = selected_series.release_id
 	JOIN selections selection
 	JOIN json_each(selection.value, '$.periods') selected_period
 	JOIN period selected_label ON selected_label.label = selected_period.value
 	WHERE selected_dataset.slug = json_extract(selection.value, '$.dataset')
 	AND selected_measure.slug = json_extract(selection.value, '$.measure')
 	AND selected_release.geography = json_extract(selection.value, '$.geography')
-	AND selected_release.id = json_extract(selection.value, '$.release')
+	AND selected_release.release = json_extract(selection.value, '$.release')
 	AND (json_type(selection.value, '$.members') = 'object' OR json_type(selection.value, '$.dimension') = 'text')
 	AND (json_extract(selection.value, '$.exact') IS NOT 1 OR
 		(SELECT count(*) FROM series_member sm WHERE sm.series_id = selected_series.id) =
@@ -79,8 +79,8 @@ export function expandStatisticsSelection(
 		JOIN dimension dim ON dim.id = sm.dimension_id JOIN dimension_member dm ON dm.id = sm.member_id
 		WHERE sm.series_id = ? ORDER BY dim.slug`);
 	const related =
-		database.prepare(`SELECT r.geography, r.id AS release, p.label AS period
-		FROM series s JOIN area_releases r ON r.position = s.release_id
+		database.prepare(`SELECT r.geography, r.release AS release, p.label AS period
+		FROM series s JOIN area_releases r ON r.id = s.release_id
 		JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id
 		WHERE s.dataset_id = ? AND s.measure_id = ?
 		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
@@ -88,7 +88,7 @@ export function expandStatisticsSelection(
 			SELECT 1 FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
 			JOIN dimension_member dm ON dm.id = sm.member_id
 			WHERE sm.series_id = s.id AND dim.slug = expected.key AND dm.code = expected.value
-		)) GROUP BY s.id, p.id ORDER BY r.geography, r.id, p.label`);
+		)) GROUP BY s.id, p.id ORDER BY r.geography, r.release, p.label`);
 	const result = new Map<string, StatisticsSelection>();
 	const visited = new Set<string>();
 	for (const row of initial) {
@@ -187,7 +187,7 @@ export function exportStatisticsMeasure(
 					.prepare(
 						`SELECT DISTINCT d.id, d.slug FROM series s
 			JOIN measure m ON m.id = s.measure_id
-			JOIN area_releases r ON r.position = s.release_id
+			JOIN area_releases r ON r.id = s.release_id
 			JOIN series_member sm ON sm.series_id = s.id
 			JOIN dimension d ON d.id = sm.dimension_id
 			WHERE ${dimensionFilter} ORDER BY d.slug`,
@@ -252,8 +252,8 @@ export function exportStatisticsMeasure(
 		? "CASE WHEN a.code='E05013831' THEN 'E05011412' ELSE coalesce(house_parent.code,a.code) END"
 		: "a.code";
 	const release = housePrice
-		? `coalesce((SELECT r2.id FROM area a2 JOIN area_version av2 ON av2.area_id=a2.id JOIN area_releases r2 ON r2.position=av2.release_id WHERE a2.code=${areaCode} AND r2.geography='ward' AND r2.id LIKE '2020-%' LIMIT 1), r.id)`
-		: "r.id";
+		? `coalesce((SELECT r2.release FROM area a2 JOIN area_version av2 ON av2.area_id=a2.id JOIN area_releases r2 ON r2.id=av2.release_id WHERE a2.code=${areaCode} AND r2.geography='ward' AND r2.release LIKE '2020-%' LIMIT 1), r.release)`
+		: "r.release";
 	const statement = database.prepare(
 		election?.sql ??
 			`SELECT d.slug, ?, ${density ? "'people per square kilometre'" : "m.unit"}, r.geography, ${release},
@@ -261,7 +261,7 @@ export function exportStatisticsMeasure(
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
 		JOIN dataset d ON d.id = s.dataset_id
-		JOIN area_releases r ON r.position = s.release_id
+		JOIN area_releases r ON r.id = s.release_id
 		JOIN area_version av ON av.id = o.area_version_id
 		JOIN area a ON a.id = av.area_id
 		JOIN period p ON p.id = o.period_id
@@ -270,7 +270,7 @@ export function exportStatisticsMeasure(
 		${intervalJoins}
 		${houseJoin}
 		WHERE ${filter}
-		${aggregatePopulation ? "GROUP BY d.slug, m.unit, r.geography, r.id, a.code, p.label" : ""}
+		${aggregatePopulation ? "GROUP BY d.slug, m.unit, r.geography, r.release, a.code, p.label" : ""}
 		ORDER BY 4, 5, 7, 6, 1${aggregatePopulation ? "" : ", s.key"}`,
 	);
 	statement.setReturnArrays(true);

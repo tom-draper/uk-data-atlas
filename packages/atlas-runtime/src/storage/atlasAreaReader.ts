@@ -20,7 +20,7 @@ export const readSqliteAreaInventory = (
 			.all()
 			.map((row) => {
 				const identity = {
-					id: row.id as string,
+					id: row.release as string,
 					geography: row.geography as string,
 				};
 				return row.status === "available"
@@ -69,7 +69,7 @@ export const readSqliteAreas = (
 	try {
 		const header = database
 			.prepare(
-				"SELECT position, contentHash FROM area_releases WHERE geography = ? AND id = ?",
+				"SELECT id, contentHash FROM area_releases WHERE geography = ? AND release = ?",
 			)
 			.get(release.geography, release.id);
 		if (header?.contentHash !== release.contentHash)
@@ -80,7 +80,7 @@ export const readSqliteAreas = (
 			.prepare(
 				"SELECT a.code AS code, v.name AS name, v.aliases AS aliases FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND v.in_inventory = 1 ORDER BY v.inventory_position",
 			)
-			.all(header.position);
+			.all(header.id);
 		if (rows.length !== release.recordCount)
 			throw new Error(
 				`Invalid area release ${release.geography}/${release.id}`,

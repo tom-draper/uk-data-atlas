@@ -57,10 +57,10 @@ export const buildCrosswalkWeights = async (
 		const inventoryHash = crosswalkSetHash(base);
 		const crosswalks = base
 			.prepare(
-				`SELECT c.id AS id, c.slug AS slug, c.basis_id AS basis, f.geography AS fromGeography, f.id AS fromRelease, t.geography AS toGeography, t.id AS toRelease
+				`SELECT c.id AS id, c.slug AS slug, c.basis_id AS basis, f.geography AS fromGeography, f.release AS fromRelease, t.geography AS toGeography, t.release AS toRelease
 				FROM crosswalk c
-				JOIN area_releases f ON f.position = c.from_release_id
-				JOIN area_releases t ON t.position = c.to_release_id
+				JOIN area_releases f ON f.id = c.from_release_id
+				JOIN area_releases t ON t.id = c.to_release_id
 				WHERE EXISTS (SELECT 1 FROM crosswalk_edge e WHERE e.crosswalk_id = c.id AND NOT ${EXACT_EDGE_SQL})
 				ORDER BY c.id`,
 			)

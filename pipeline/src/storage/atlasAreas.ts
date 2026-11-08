@@ -14,7 +14,7 @@ export const AREAS_VIEW = `SELECT v.id, v.release_id AS releasePosition, a.code,
  * identify it for good. `area_version_id` is the compact integer the other
  * tables use, assigned once from `pipeline/ids/area-version.txt`.
  */
-export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geography, r.id AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_releases r ON r.position = v.release_id`;
+export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geography, r.release AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_releases r ON r.id = v.release_id`;
 
 /**
  * Add an area version that is not in its release's inventory, such as a code
@@ -24,7 +24,7 @@ export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geog
  */
 export const addAreaVersion = (database: DatabaseSync, ids: IdRegistries) => {
 	const findRelease = database.prepare(
-		"SELECT geography, id FROM area_releases WHERE position = ?",
+		"SELECT geography, release FROM area_releases WHERE id = ?",
 	);
 	const findGeography = database.prepare(
 		"SELECT id FROM geography WHERE slug = ?",
@@ -52,7 +52,7 @@ export const addAreaVersion = (database: DatabaseSync, ids: IdRegistries) => {
 			);
 		const geography = String(release.geography);
 		const areaId = ids.area.assignIn(
-			`${geography}/${String(release.id)}`,
+			`${geography}/${String(release.release)}`,
 			geography,
 			code,
 		);
@@ -68,19 +68,19 @@ export const addAreaVersion = (database: DatabaseSync, ids: IdRegistries) => {
 			);
 		const versionId = ids.areaVersion.assign(
 			geography,
-			String(release.id),
+			String(release.release),
 			code,
 		);
 		if (findVersion.get(versionId))
 			throw new Error(
-				`Area version id ${versionId} for ${geography}/${String(release.id)}/${code} is already used`,
+				`Area version id ${versionId} for ${geography}/${String(release.release)}/${code} is already used`,
 			);
 		addVersion.run(versionId, areaId, releasePosition, name, aliases);
 	};
 };
 
 /** Area versions whose release is for another geography than their area. */
-export const AREA_GEOGRAPHY_MISMATCH = `SELECT count(*) AS n FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id JOIN geography g ON g.id = a.geography_id WHERE g.slug <> r.geography`;
+export const AREA_GEOGRAPHY_MISMATCH = `SELECT count(*) AS n FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id JOIN geography g ON g.id = a.geography_id WHERE g.slug <> r.geography`;
 
 /**
  * `ids` gives each key the id it was first given. The default numbers keys in
@@ -187,11 +187,12 @@ export const areaTables = (
 		},
 		area_releases: {
 			columns: [
-				"geography TEXT NOT NULL",
-				"id TEXT NOT NULL",
 				// The release's stable id, assigned once and never reused. It is
 				// not an order: `inventory_position` is.
-				"position INTEGER NOT NULL UNIQUE",
+				"id INTEGER NOT NULL UNIQUE",
+				"geography TEXT NOT NULL",
+				// The boundary release's name, such as `2024-12-uk-bgc`.
+				"release TEXT NOT NULL",
 				"inventory_position INTEGER NOT NULL UNIQUE",
 				"status TEXT NOT NULL",
 				"recordCount INTEGER",
@@ -202,13 +203,13 @@ export const areaTables = (
 				"derivedFrom TEXT",
 				"reason TEXT",
 			],
-			key: ["geography", "id"],
+			key: ["geography", "release"],
 			rows: inventory.releases.map((release, inventoryPosition) =>
 				release.status === "available"
 					? [
+							releasePositions[inventoryPosition]!,
 							release.geography,
 							release.id,
-							releasePositions[inventoryPosition]!,
 							inventoryPosition,
 							release.status,
 							release.recordCount,
@@ -222,9 +223,9 @@ export const areaTables = (
 							null,
 						]
 					: [
+							releasePositions[inventoryPosition]!,
 							release.geography,
 							release.id,
-							releasePositions[inventoryPosition]!,
 							inventoryPosition,
 							release.status,
 							null,
@@ -263,7 +264,7 @@ export const areaTables = (
 			columns: [
 				"id INTEGER",
 				"area_id INTEGER NOT NULL REFERENCES area(id)",
-				"release_id INTEGER NOT NULL REFERENCES area_releases(position)",
+				"release_id INTEGER NOT NULL REFERENCES area_releases(id)",
 				"name TEXT NOT NULL",
 				"area_m2 REAL",
 				"population REAL",

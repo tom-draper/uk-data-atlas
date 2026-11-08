@@ -89,13 +89,13 @@ function fixture(t: TestContext) {
 	db.exec(
 		`CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID;
 		INSERT INTO payloads VALUES ('existing', 'retained');
-		CREATE TABLE area_releases (position INTEGER PRIMARY KEY, geography TEXT, id TEXT);
+		CREATE TABLE area_releases (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 		INSERT INTO area_releases VALUES (0, 'ward', '2026');
 		CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
 		INSERT INTO geography VALUES (1, 'ward');
 		CREATE TABLE area (id INTEGER PRIMARY KEY, geography_id INTEGER NOT NULL REFERENCES geography(id), code TEXT NOT NULL, UNIQUE(code, geography_id));
 		INSERT INTO area VALUES (1, 1, 'A');
-		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL REFERENCES area(id), release_id INTEGER NOT NULL REFERENCES area_releases(position), name TEXT NOT NULL, area_m2 REAL, population REAL, aliases TEXT, in_inventory INTEGER NOT NULL, UNIQUE(release_id, area_id));
+		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL REFERENCES area(id), release_id INTEGER NOT NULL REFERENCES area_releases(id), name TEXT NOT NULL, area_m2 REAL, population REAL, aliases TEXT, in_inventory INTEGER NOT NULL, UNIQUE(release_id, area_id));
 		INSERT INTO area_version VALUES (1, 1, 0, 'Area A', NULL, NULL, NULL, 1);
 		CREATE VIEW areas AS ${AREAS_VIEW};`,
 	);

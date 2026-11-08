@@ -40,9 +40,9 @@ export function bindReviewedStatistics(
 			return undefined;
 		const series = database
 			.prepare(
-				`SELECT s.id, r.id AS release, p.label AS period
+				`SELECT s.id, r.release AS release, p.label AS period
 			FROM series s JOIN dataset d ON d.id=s.dataset_id JOIN measure m ON m.id=s.measure_id
-			JOIN area_releases r ON r.position=s.release_id JOIN observation o ON o.series_id=s.id
+			JOIN area_releases r ON r.id=s.release_id JOIN observation o ON o.series_id=s.id
 			JOIN period p ON p.id=o.period_id WHERE d.slug=? AND m.slug=? AND r.geography=?
 			GROUP BY s.id, p.id`,
 			)
