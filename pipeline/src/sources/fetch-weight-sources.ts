@@ -42,6 +42,8 @@ const PWC_SERVICE =
 	"https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/OA_December_2021_EW_PWC_V4/FeatureServer/0";
 const NRS = "https://www.nrscotland.gov.uk";
 const NRS_POPULATION = `${NRS}/media/owpknvgk/outputarea2022_usualresidentpopulation.csv`;
+const NRS_HOUSEHOLDS =
+	"https://ukds-ckan.s3.eu-west-1.amazonaws.com/2022/NRS/UV406/census_2022_UV406_Household_size_OA.csv";
 const NRS_CENTROIDS = `${NRS}/media/gm4dvdsv/output-area-2022-pwc.zip`;
 const CTSOP =
 	"https://assets.publishing.service.gov.uk/media/6ab25147a9c3d267bcccecc1/CTSOP_1_1.zip";
@@ -55,6 +57,8 @@ export const WEIGHT_SOURCE_FILES = {
 		"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
 	residentsSc:
 		"demographics/population/census-2022-scotland-output-area/outputarea2022_usualresidentpopulation.csv",
+	householdsSc:
+		"demographics/population/census-2022-scotland-output-area/census_2022_UV406_Household_size_OA.csv",
 	centroidsSc:
 		"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
 	dwellingsEw: "housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv",
@@ -222,11 +226,16 @@ const fetchScotland = async (root: string, retrieved: string) => {
 	const population = await download(NRS_POPULATION);
 	const populationPath = WEIGHT_SOURCE_FILES.residentsSc;
 	const populationHash = write(root, populationPath, population);
+	const householdsHash = write(
+		root,
+		WEIGHT_SOURCE_FILES.householdsSc,
+		await download(NRS_HOUSEHOLDS),
+	);
 	writeMeta(root, dirname(populationPath), {
 		id: "census-2022-scotland-output-area",
-		title: "Scotland's Census 2022 output area usual resident population",
+		title: "Scotland's Census 2022 output area usual residents and households",
 		description:
-			"The usual resident population of every 2022 output area in Scotland. No household count is published beside it.",
+			"The usual resident population and the number of occupied household spaces (households, UV406 household size) of every 2022 output area in Scotland.",
 		topics: ["demographics", "population", "census", "scotland"],
 		publisher: "National Records of Scotland",
 		sourceUrl:
@@ -248,6 +257,12 @@ const fetchScotland = async (root: string, retrieved: string) => {
 				role: "source",
 				sha256: populationHash,
 				note: `${NRS_POPULATION}, unchanged.`,
+			},
+			{
+				path: "census_2022_UV406_Household_size_OA.csv",
+				role: "source",
+				sha256: householdsHash,
+				note: `Table UV406, household size, for 2022 output areas, as published by National Records of Scotland and mirrored by the UK Data Service: ${NRS_HOUSEHOLDS}, unchanged. The first column after the code is all occupied household spaces, the households; "-" is zero.`,
 			},
 		],
 	});
