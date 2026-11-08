@@ -26,7 +26,7 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   as they show a need. See `data/build/README.md`, "Weights from small-area
   counts".
 - Task 2 progress (2026-11-08): ids are assigned once from append-only
-  registries in `pipeline/ids/` (14 namespaces, 1.37M keys, 14 MB), seeded from
+  registries in `pipeline/ids/` (15 namespaces, 1.37M keys, 14 MB, 3 MB compressed), seeded from
   the 2026-11-04 build so no existing id changed. Order is stored apart as
   `inventory_position`. Left: wiring `ids check --base` into review, and the
   postcode lookup's own `position` numbering. See `docs/stable-ids.md`.
