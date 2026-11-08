@@ -238,6 +238,16 @@ analysis compilation. It updates a temporary copy and atomically replaces the
 database, retaining the existing tables. Its temporary copy is removed after a
 failure. Run the complete API or website target to include both stages.
 
+### Stable ids
+
+Every integer id (`area_version.id`, `series.id`, `crosswalk.id`, the `release_id`
+columns, and the rest) is assigned once from the registries committed in
+`pipeline/ids/`, keyed by natural key, and never changes, whatever is added to
+the inventory or the datasets. Join on the natural key outside the database
+(`v_area_version` gives an area's `geography`, `release` and `code` with its
+id). Order is stored apart from ids, as `inventory_position`. See
+`docs/stable-ids.md`.
+
 The database contains these tables:
 
 | Table               | Column        | Type                   | Key and meaning                                                                                                |
@@ -426,8 +436,10 @@ index, and bytes per table and index where SQLite has `dbstat`. This measures th
 
 `area_inventory_metadata` has one row keyed by integer `position = 0`, with
 `schema_version INTEGER`, `content_hash TEXT`, and `boundary_registry_hash TEXT`, all
-non-null. `area_releases` has the composite primary key `(geography, id)` and
-unique integer `position` to preserve inventory order. Its non-null text columns
+non-null. `area_releases` has the composite primary key `(geography, id)`, unique
+integer `position`, the release's stable id (the `release_id` columns hold it;
+it is not an order), and unique integer `inventory_position`, its place in the
+inventory. Its non-null text columns
 are `geography`, `id`, and `status`. Available releases have `recordCount INTEGER`,
 `artifact TEXT`, `contentHash TEXT`, `codeProperty TEXT`, and `nameProperty TEXT`.
 `derivedFrom TEXT` holds optional JSON source-adapter metadata. Unavailable
@@ -435,14 +447,17 @@ releases have `reason TEXT` instead. Inapplicable columns are null.
 
 Area identity is three `STRICT` tables:
 
-| Table          | Key                                  | Holds                                                                                                                             |
-| -------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `geography`    | `id`, `slug` unique                  | One row per geography named by `area_releases`.                                                                                   |
-| `area`         | `id`, `(code, geography_id)` unique  | One row per code in a geography, for all releases.                                                                                |
-| `area_version` | `id`, `(release_id, area_id)` unique | The area in one release (`area_releases.position`): `name`, `area_m2`, `population`, JSON `aliases`, and `in_inventory` (0 or 1). |
+| Table          | Key                                  | Holds                                                                                                                                                                                                                      |
+| -------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `geography`    | `id`, `slug` unique                  | One row per geography named by `area_releases`.                                                                                                                                                                            |
+| `area`         | `id`, `(code, geography_id)` unique  | One row per code in a geography, for all releases.                                                                                                                                                                         |
+| `area_version` | `id`, `(release_id, area_id)` unique | The area in one release (`area_releases.position`): `name`, `area_m2`, `population`, JSON `aliases`, `in_inventory` (0 or 1), and `inventory_position`, its place in the release's artifact (null if `in_inventory` is 0). |
 
-`area_version.id` follows release order, then area artifact order, so release
-reads order by `id`. Every other table references `area_version(id)`. Nullable
+`area_version.id` is assigned once from the registry and does not follow any order,
+so a release read orders by `inventory_position`. Every other table references
+`area_version(id)`. `(geography, release, code)` is the stable natural key: unique,
+and indexed through `area_releases`, `area` and `(release_id, area_id)`.
+`v_area_version` joins it to the id. Nullable
 `aliases` keeps absent versus empty aliases. The same area in two releases
 shares `area_id`. The `(code, geography_id)` index serves lookups by code.
 
@@ -493,7 +508,7 @@ Crosswalks are integer edges between area versions. Every table is `STRICT`.
 
 | Table                  | Key                                                        | Holds                                                                                                                                                                                                                                                             |
 | ---------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `crosswalk`            | `id` (inventory order), `slug` unique                      | `from_release_id` and `to_release_id` (`area_releases.position`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, `header`, `bytes`, and the JSON field order of sources and targets.                   |
+| `crosswalk`            | `id` (stable), `slug` unique, `inventory_position` unique  | `from_release_id` and `to_release_id` (`area_releases.position`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, `header`, `bytes`, and the JSON field order of sources and targets.                   |
 | `crosswalk_edge`       | `(crosswalk_id, from_version_id, to_version_id)`           | One source and target pair. `relation` (best fit: `within`, `straddles`, `indeterminate`) and `change` (official lookups: `unchanged`, `split`, `merged`, `complex`) are null where the crosswalk does not give them. Indexed by `(crosswalk_id, to_version_id)`. |
 | `weight_basis`         | `id`                                                       | `area`, `population`, `postcodes` or `households`, with a label. A new basis is a row.                                                                                                                                                                            |
 | `crosswalk_weight`     | `(crosswalk_id, from_version_id, to_version_id, basis_id)` | One row per edge and basis: `weight` (share of the covered source, summing to 1 per source), `overlap` (square metres, residents, households or postcodes), `source_share` and `target_share`. See "Weights from postcodes".                                      |

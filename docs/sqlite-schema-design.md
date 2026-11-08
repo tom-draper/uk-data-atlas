@@ -4,6 +4,12 @@
 `atlas-cache.sqlite` holds derived search, projection and dataset payload
 caches. See `data/build/README.md` for the tables, keys and build stages.
 
+## Stable ids
+
+Integer ids are assigned once from registries committed in `pipeline/ids/`
+and are not positions in any list. The natural key of each is unique, and
+order is stored in `inventory_position`. See `docs/stable-ids.md`.
+
 ## Statistics model
 
 `source` and `dataset` describe publication and provenance. `measure`,
