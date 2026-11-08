@@ -72,7 +72,11 @@ const relationFor = (
 	) {
 		return direction === "from" ? "within" : "contains";
 	}
-	if (method === "area-overlap" || method === "population-overlap")
+	if (
+		method === "area-overlap" ||
+		method === "population-overlap" ||
+		method === "postcode-overlap"
+	)
 		return "overlaps";
 	// Extent continuity is the only published evidence that two successive
 	// identities have the same extent, so it earns a stronger relation than a
@@ -126,7 +130,11 @@ export const relationsOf = (
 		relationshipPurpose === "membership"
 	)
 		return side === "from" ? ["within"] : ["contains"];
-	if (method === "area-overlap" || method === "population-overlap")
+	if (
+		method === "area-overlap" ||
+		method === "population-overlap" ||
+		method === "postcode-overlap"
+	)
 		return ["overlaps"];
 	if (method === "extent-continuity") return ["equivalent-to"];
 	return side === "from"

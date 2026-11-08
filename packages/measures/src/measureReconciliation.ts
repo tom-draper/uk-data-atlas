@@ -247,7 +247,8 @@ const summable = (path: RelationshipPath) =>
 		(step) =>
 			step.direction === "forward" ||
 			step.method === "area-overlap" ||
-			step.method === "population-overlap",
+			step.method === "population-overlap" ||
+			step.method === "postcode-overlap",
 	);
 
 /**

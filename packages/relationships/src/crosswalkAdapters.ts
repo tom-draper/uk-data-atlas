@@ -14,6 +14,7 @@ import type {
 	PropertyRelationshipPurpose,
 	AreaOverlapWeighting,
 	PopulationOverlapWeighting,
+	PostcodeOverlapWeighting,
 	CrosswalkWeighting,
 } from "./crosswalkInventory.ts";
 export type {
@@ -22,6 +23,7 @@ export type {
 	PropertyRelationshipPurpose,
 	AreaOverlapWeighting,
 	PopulationOverlapWeighting,
+	PostcodeOverlapWeighting,
 	CrosswalkWeighting,
 } from "./crosswalkInventory.ts";
 
@@ -149,6 +151,21 @@ export type PopulationOverlapCrosswalkAdapter = {
 	minimumCoverage: number;
 };
 
+// Postcode-overlap adapters weigh a conversion between two releases from the
+// atoms (postcodes, and output areas without one) placed in both: every pair
+// of areas that share people becomes an edge, so a ward that straddles two
+// constituencies reaches both. A best-fit crosswalk stays the one-to-one
+// lookup (which constituency is this ward in); this is the one to convert
+// counts with.
+export type PostcodeOverlapCrosswalkAdapter = {
+	id: string;
+	method: "postcode-overlap";
+	quality: "derived";
+	weighting: PostcodeOverlapWeighting;
+	from: { geography: GeographyKind; boundaryRelease: string };
+	to: { geography: GeographyKind; boundaryRelease: string };
+};
+
 // Geometric-containment adapters establish a hierarchy from the geometry of
 // two releases, where no publisher lookup carries it.
 export type GeometricContainmentCrosswalkAdapter = {
@@ -182,6 +199,7 @@ export type CrosswalkAdapter =
 	| PropertyCrosswalkAdapter
 	| AreaOverlapCrosswalkAdapter
 	| PopulationOverlapCrosswalkAdapter
+	| PostcodeOverlapCrosswalkAdapter
 	| GeometricContainmentCrosswalkAdapter
 	| BestFitCrosswalkAdapter
 	| ExtentContinuityCrosswalkAdapter;
@@ -324,6 +342,26 @@ const validPopulationOverlapAdapter = (
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;
 
+const validPostcodeOverlapAdapter = (
+	adapter: Record<string, unknown>,
+): adapter is PostcodeOverlapCrosswalkAdapter =>
+	adapter.method === "postcode-overlap" &&
+	adapter.quality === "derived" &&
+	adapter.relationshipPurpose === undefined &&
+	isRecord(adapter.weighting) &&
+	adapter.weighting.status === "provided" &&
+	adapter.weighting.basis === "population" &&
+	adapter.weighting.normalisation === "per-source" &&
+	typeof adapter.weighting.population === "string" &&
+	typeof adapter.weighting.date === "string" &&
+	typeof adapter.weighting.minimumShare === "number" &&
+	adapter.weighting.minimumShare > 0 &&
+	adapter.weighting.minimumShare < 1 &&
+	hasEndpoint(adapter.from) &&
+	hasEndpoint(adapter.to) &&
+	(adapter.from.geography !== adapter.to.geography ||
+		adapter.from.boundaryRelease !== adapter.to.boundaryRelease);
+
 const validGeometricContainmentAdapter = (
 	adapter: Record<string, unknown>,
 ): adapter is GeometricContainmentCrosswalkAdapter =>
@@ -386,6 +424,7 @@ export const parseCrosswalkAdapters = (
 				validPropertyAdapter(adapter) ||
 				validAreaOverlapAdapter(adapter) ||
 				validPopulationOverlapAdapter(adapter) ||
+				validPostcodeOverlapAdapter(adapter) ||
 				validGeometricContainmentAdapter(adapter) ||
 				validBestFitAdapter(adapter) ||
 				validExtentContinuityAdapter(adapter)

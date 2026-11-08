@@ -44,7 +44,7 @@ type CrosswalkSource = CrosswalkArtifact["records"][number]["source"];
 type CrosswalkTarget = CrosswalkArtifact["records"][number]["targets"][number];
 type OverlapCrosswalkArtifact = Extract<
 	CrosswalkArtifact,
-	{ method: "area-overlap" | "population-overlap" }
+	{ method: "area-overlap" | "population-overlap" | "postcode-overlap" }
 >;
 type OverlapCrosswalkTarget =
 	OverlapCrosswalkArtifact["records"][number]["targets"][number];
@@ -160,7 +160,8 @@ export const buildTranslationSteps = (
 			});
 	} else if (
 		artifact.method === "area-overlap" ||
-		artifact.method === "population-overlap"
+		artifact.method === "population-overlap" ||
+		artifact.method === "postcode-overlap"
 	) {
 		const recordsByTarget = new Map<
 			string,
@@ -195,7 +196,9 @@ export const buildTranslationSteps = (
 				targets: records.map(({ record, target }) => ({
 					...record.source,
 					weight: target.targetShare / sourceCoverage,
-					overlapAreaM2: target.overlapAreaM2,
+					...("overlapAreaM2" in target
+						? { overlapAreaM2: target.overlapAreaM2 }
+						: {}),
 					sourceShare: target.targetShare,
 					targetShare: target.sourceShare,
 				})),
