@@ -572,6 +572,13 @@ each basis in `weight_basis` (`derivation = 'exact'`, `weight = 1`,
 `source_share = 1`, null `overlap` and `target_share`). An edge that is neither
 exact nor stored has no weight.
 
+**Single-target sources.** A source of a `postcode-overlap` crosswalk with
+exactly one target (90% of them) weighs 1 on every basis too, so only the
+crosswalk's own residents row is stored for it, and the view returns the other
+bases with `derivation = 'single-target'`, `weight = 1` and null `overlap`,
+`source_share` and `target_share`. Other methods store theirs: a best-fit
+straddler's one edge is where its `source_share` says how little of it is there.
+
 #### Postcode-overlap crosswalks: lookup or conversion
 
 Two kinds of crosswalk join a ward release to a constituency release, and they
@@ -594,8 +601,18 @@ renormalised over the edges kept, and `coverage` on the source says what share
 of its residents they hold. Residents are the crosswalk's own basis
 (`crosswalk.basis_id = 'population'`, with `source.population` the estimated
 residents of the ward); `postcodes`, `households` and `dwellings` are added
-beside it in `crosswalk_weight`. A source with no residents placed (wards in
-Northern Ireland, which has no postcodes here) has no edges.
+beside it in `crosswalk_weight`.
+
+Northern Ireland wards are only in the `best-fit` crosswalks. The ONS Postcode
+Directory used here has no Northern Ireland postcodes, so a ward there has no
+atoms and nothing to weigh: it has a record with no targets, and no edges are
+made up for it. Each crosswalk's `validation.coverage` counts these
+(`unplacedSources`, 8,316 across the 26) with the reason, "no postcodes in ONSPD
+for Northern Ireland", and the `postcode-overlap-coverage` finding fails for any
+source that has no target for another reason. A source whose atoms were all
+placed nowhere would be one: that is how the Dolgellau wards, drawn as an
+enclave inside a ward without its hole, were found, and a point inside several
+areas is now placed in the one nested in the others.
 
 ### Named locations
 

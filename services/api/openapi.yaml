@@ -14158,6 +14158,9 @@ components:
         the postcodes and output areas placed in both releases, so a source
         reaches all its targets, and weights each by the residents shared; it
         is the conversion crosswalk where `best-fit` is the one-to-one lookup.
+        Northern Ireland wards are only in `best-fit` crosswalks: there are no
+        Northern Ireland postcodes in the ONS Postcode Directory to place, so a
+        `postcode-overlap` source there has no targets.
         `geometric-containment` derives a hierarchy from geometry where no
         publisher lookup carries it. `best-fit` names, for each child, the one
         parent holding most of its area where the two do not nest.
