@@ -518,8 +518,11 @@ the same edges are in `crosswalk_weight` only: select by `basis_id`.
 
 #### Weights from small-area counts
 
-The `crosswalk-weights` stage weights the edges of every crosswalk that does not
-regroup exactly, and `assemble-atlas` copies the result into `crosswalk_weight`.
+Two stages weight crosswalks from the same atoms, and `assemble-atlas` copies the
+result into `crosswalk_weight`. `weight-atoms` runs first, to place the atoms
+in the releases the `postcode-overlap` crosswalks join (they are compiled from
+it); `crosswalk-weights` then weights the edges of every crosswalk that does not
+regroup exactly, placing the releases it still needs.
 
 **Atoms.** A weight is a sum over atoms: every live, small-user postcode with a
 grid reference (1.68 million), and each output area that has people but no such
@@ -529,21 +532,22 @@ both areas of a pair puts its whole count in the pair, and one on a border is
 split by its postcodes. Each release an edge joins is placed once, in turn, in a
 worker holding only that release's geometry (a point on the border of several
 areas, or in none, is placed nowhere). Placements are kept in
+`data/build/weight-atoms/placements/` (for the postcode-overlap releases) and
 `data/build/crosswalk-weights/placements/` to skip releases that have not
-changed; they are an intermediate and do not ship.
+changed; they are intermediates and do not ship.
 
-| Basis        | Count shared between an output area's atoms                                                                           | Source                                                                                               |
-| ------------ | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `postcodes`  | 1 for each postcode                                                                                                   | ONS Postcode Directory                                                                               |
-| `population` | Census 2021 usual residents (TS001) of each England and Wales output area; Census 2022 residents of each Scottish one | Nomis bulk download `census2021-ts001.zip`; NRS `outputarea2022_usualresidentpopulation.csv`         |
-| `households` | Census 2021 households (TS003). England and Wales only                                                                | Nomis bulk download `census2021-ts003.zip`                                                           |
-| `dwellings`  | Council Tax properties of each LSOA, split between its output areas by their households. England and Wales only       | VOA Council Tax: stock of properties 2026, table CTSOP1.1 (rounded to the nearest 10; 31 March 2026) |
+| Basis        | Count shared between an output area's atoms                                                                           | Source                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `postcodes`  | 1 for each postcode                                                                                                   | ONS Postcode Directory                                                                                      |
+| `population` | Census 2021 usual residents (TS001) of each England and Wales output area; Census 2022 residents of each Scottish one | Nomis bulk download `census2021-ts001.zip`; NRS `outputarea2022_usualresidentpopulation.csv`                |
+| `households` | Census 2021 households (TS003); Scotland: Census 2022 occupied household spaces (UV406)                               | Nomis bulk download `census2021-ts003.zip`; NRS table UV406 by output area, mirrored by the UK Data Service |
+| `dwellings`  | Council Tax properties of each LSOA, split between its output areas by their households. England and Wales only       | VOA Council Tax: stock of properties 2026, table CTSOP1.1 (rounded to the nearest 10; 31 March 2026)        |
 
 `pnpm --dir pipeline fetch:onspd` and `fetch:weight-sources` download these
 (also the 2021 output area of each postcode, `onspd-output-areas.csv.gz`, and
 the centroids: ONS `OA_December_2021_EW_PWC_V4` and NRS `output-area-2022-pwc.zip`).
 The URLs are in each source folder's `meta.json`. Northern Ireland has no
-postcodes or counts here, and Scotland has no household or dwelling count.
+postcodes or counts here, and Scotland has no dwelling count.
 
 **Rows.** For each edge and basis, `overlap` is the measure inside both areas,
 `weight` is the overlap as a share of the overlaps of the source's edges (so a
@@ -567,6 +571,31 @@ stored rows (`derivation = 'stored'`) and an implicit row for each exact edge an
 each basis in `weight_basis` (`derivation = 'exact'`, `weight = 1`,
 `source_share = 1`, null `overlap` and `target_share`). An edge that is neither
 exact nor stored has no weight.
+
+#### Postcode-overlap crosswalks: lookup or conversion
+
+Two kinds of crosswalk join a ward release to a constituency release, and they
+answer different questions.
+
+| Method             | Edges                                                                                             | Use it to                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `best-fit`         | One per ward: the constituency holding most of its area. `relation` says `within` or `straddles`. | Ask which constituency a ward is in (a lookup).                             |
+| `postcode-overlap` | One per constituency the ward has residents in. `weight` sums to 1 per ward.                      | Convert counts or rates from wards to constituencies (`purpose=apportion`). |
+
+`best-fit` stays as it was. A `postcode-overlap` crosswalk is compiled for each
+ward release to each constituency release a best-fit crosswalk joins (26), by
+`pipeline/src/relationships/postcodeOverlap.ts`, from the atoms placed in both
+releases. Every pair of areas with an atom in both is an edge, except a pair
+holding under 1% of its source's measure on every basis (postcodes, residents,
+households, dwellings): the same rule for every crosswalk, recorded as
+`weighting.minimumShare`, which drops the stray postcodes where generalised
+borders disagree. A source's weights, which are shares of its residents, are
+renormalised over the edges kept, and `coverage` on the source says what share
+of its residents they hold. Residents are the crosswalk's own basis
+(`crosswalk.basis_id = 'population'`, with `source.population` the estimated
+residents of the ward); `postcodes`, `households` and `dwellings` are added
+beside it in `crosswalk_weight`. A source with no residents placed (wards in
+Northern Ireland, which has no postcodes here) has no edges.
 
 ### Named locations
 
