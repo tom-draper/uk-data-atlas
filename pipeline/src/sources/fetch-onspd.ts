@@ -51,6 +51,8 @@ const COLUMNS = [
 	"north1m",
 	"gridind",
 ] as const;
+/** The 2021 output area of each postcode, kept apart so the permitted file is unchanged. */
+const OUTPUT_AREA_COLUMNS = ["pcds", "oa21cd"] as const;
 
 type Item = { id: string; title: string; name: string; size: number };
 
@@ -94,7 +96,7 @@ const fileSha256 = (path: string) =>
 	new Promise<string>((done, fail) => {
 		const hash = createHash("sha256");
 		createReadStream(path)
-			.on("data/source", (chunk) => hash.update(chunk))
+			.on("data", (chunk) => hash.update(chunk))
 			.on("end", () => done(hash.digest("hex")))
 			.on("error", fail);
 	});
@@ -102,7 +104,11 @@ const fileSha256 = (path: string) =>
 const quoteCsv = (value: string) =>
 	/[\",\r\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
 
-async function writePermittedSource(archivePath: string, outputPath: string) {
+async function writePermittedSource(
+	archivePath: string,
+	outputPath: string,
+	outputAreaPath: string,
+) {
 	const unzip = spawn("unzip", ["-p", archivePath, "Data/ONSPD_*_UK.csv"], {
 		stdio: ["ignore", "pipe", "inherit"],
 	});
@@ -115,8 +121,15 @@ async function writePermittedSource(archivePath: string, outputPath: string) {
 	let country = -1;
 	let countryColumn = "";
 	let kept = 0;
+	let oaPositions: number[] = [];
+	const outputAreas = createGzip();
+	const outputAreasWritten = pipeline(
+		outputAreas,
+		createWriteStream(outputAreaPath),
+	);
 	const rows = async function* () {
 		for await (const line of createInterface({ input: unzip.stdout })) {
+			if (line === "") continue;
 			const cells = line
 				.split(",")
 				.map((cell) => cell.replace(/^"|"$/g, ""));
@@ -127,6 +140,12 @@ async function writePermittedSource(archivePath: string, outputPath: string) {
 					/^ctry\d{2}cd$/.test(column),
 				);
 				countryColumn = header[country] ?? "";
+				oaPositions = OUTPUT_AREA_COLUMNS.map((column) =>
+					header!.indexOf(column),
+				);
+				if (oaPositions.includes(-1))
+					throw new Error("The directory has no oa21cd column");
+				outputAreas.write(`${OUTPUT_AREA_COLUMNS.join(",")}\n`);
 				const missing = COLUMNS.filter((_, at) => positions[at] === -1);
 				if (missing.length > 0 || country === -1)
 					throw new Error(
@@ -137,7 +156,7 @@ async function writePermittedSource(archivePath: string, outputPath: string) {
 			}
 			if (cells.length !== header.length)
 				throw new Error(
-					`Unexpected ONSPD row width: ${cells.length}, expected ${header.length}`,
+					`Unexpected ONSPD row width: ${cells.length}, expected ${header.length}: ${line.slice(0, 80)}`,
 				);
 			if (cells[country]?.startsWith("N")) continue;
 			const selected = [
@@ -145,6 +164,9 @@ async function writePermittedSource(archivePath: string, outputPath: string) {
 				cells[country]!,
 			];
 			kept += 1;
+			outputAreas.write(
+				`${oaPositions.map((at) => quoteCsv(cells[at]!)).join(",")}\n`,
+			);
 			yield `${selected.map(quoteCsv).join(",")}\n`;
 		}
 	};
@@ -155,6 +177,8 @@ async function writePermittedSource(archivePath: string, outputPath: string) {
 			createGzip(),
 			createWriteStream(temporaryPath),
 		);
+		outputAreas.end();
+		await outputAreasWritten;
 		const code = await exited;
 		if (code !== 0) throw new Error(`unzip exited with ${code}`);
 		if (kept === 0)
@@ -186,6 +210,8 @@ export const fetchOnspd = async (
 	const sourceUrl = `${ITEMS}/${item.id}/data`;
 	const sourcePath = join(directory, "onspd-permitted.csv.gz");
 	const pendingSourcePath = `${sourcePath}.${process.pid}.tmp`;
+	const outputAreaPath = join(directory, "onspd-output-areas.csv.gz");
+	const pendingOutputAreaPath = `${outputAreaPath}.${process.pid}.tmp`;
 	try {
 		const response = await fetch(sourceUrl);
 		if (!response.ok)
@@ -198,8 +224,10 @@ export const fetchOnspd = async (
 		const includedRows = await writePermittedSource(
 			archive,
 			pendingSourcePath,
+			pendingOutputAreaPath,
 		);
 		const sourceHash = await fileSha256(pendingSourcePath);
+		const outputAreaHash = await fileSha256(pendingOutputAreaPath);
 		const meta = {
 			id: `${edition}-uk`,
 			kind: "postcode-directory",
@@ -227,9 +255,16 @@ export const fetchOnspd = async (
 					sha256: sourceHash,
 					note: `Only permitted non-Northern Ireland rows and fields required by the API; ${includedRows} rows.`,
 				},
+				{
+					path: "onspd-output-areas.csv.gz",
+					role: "source",
+					sha256: outputAreaHash,
+					note: `The 2021 output area (oa21cd: England and Wales 2021 codes, Scotland 2022 codes) of each of the same ${includedRows} rows, in the same order. Used to share census counts between postcodes for crosswalk weights.`,
+				},
 			],
 		};
 		renameSync(pendingSourcePath, sourcePath);
+		renameSync(pendingOutputAreaPath, outputAreaPath);
 		writeFileSync(
 			join(directory, `meta.json.${process.pid}.tmp`),
 			`${JSON.stringify(meta, null, "\t")}\n`,
@@ -241,6 +276,7 @@ export const fetchOnspd = async (
 		return { directory, edition };
 	} finally {
 		rmSync(pendingSourcePath, { force: true });
+		rmSync(pendingOutputAreaPath, { force: true });
 		rmSync(join(directory, `meta.json.${process.pid}.tmp`), {
 			force: true,
 		});
