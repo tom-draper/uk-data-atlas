@@ -12,7 +12,7 @@ import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
 
 const buildAtlasAssets = (root: string) => {
 	stageAtlasAssets(root);
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 };
 
 export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {

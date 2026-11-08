@@ -7,7 +7,7 @@ import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
 
 const buildAtlasAssets = (root: string) => {
 	stageAtlasAssets(root);
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 };
 
 const index = {

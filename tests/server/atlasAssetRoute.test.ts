@@ -18,7 +18,7 @@ import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 
 const buildAtlasAssets = (root: string) => {
 	stageAtlasAssets(root);
-	assembleAtlas(root);
+	assembleAtlas(root, { crosswalkWeights: false });
 };
 
 let fixture: ReturnType<typeof websiteAssetsFixture>;

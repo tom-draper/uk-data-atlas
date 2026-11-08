@@ -23,7 +23,14 @@ import {
 } from "./postcodes/storePostcodeAreas.ts";
 import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
 
-export function assembleAtlas(root: string) {
+/**
+ * `crosswalkWeights: false` leaves crosswalks with only their own weights, for
+ * fixtures whose roots hold no census counts and place no real releases.
+ */
+export function assembleAtlas(
+	root: string,
+	{ crosswalkWeights = true }: { crosswalkWeights?: boolean } = {},
+) {
 	const directory = join(root, "data/build");
 	const path = join(directory, "atlas.sqlite");
 	const components = [
@@ -81,23 +88,25 @@ export function assembleAtlas(root: string) {
 				readPostcodeAreaComponent(root, name),
 			);
 			insertPayload("postcode-areas", JSON.stringify(postcodeAreas));
-			// Needs the placed postcodes, so it can only run once they are in.
-			const weights = writeCrosswalkWeights(
-				database,
-				readWeightUnits(root),
-			);
-			const unplaced = weights.units.filter((unit) => !unit.placed);
-			if (unplaced.length > 0)
-				throw new Error(
-					`Postcodes are not placed in ${unplaced.map((unit) => `${unit.geography}/${unit.boundaryRelease}`).join(", ")}, which crosswalk weights share ${unplaced.map((unit) => unit.basis).join(", ")} between`,
+			if (crosswalkWeights) {
+				// Needs the placed postcodes, so it can only run once they are in.
+				const weights = writeCrosswalkWeights(
+					database,
+					readWeightUnits(root),
 				);
-			for (const unit of weights.units)
+				const unplaced = weights.units.filter((unit) => !unit.placed);
+				if (unplaced.length > 0)
+					throw new Error(
+						`Postcodes are not placed in ${unplaced.map((unit) => `${unit.geography}/${unit.boundaryRelease}`).join(", ")}, which crosswalk weights share ${unplaced.map((unit) => unit.basis).join(", ")} between`,
+					);
+				for (const unit of weights.units)
+					buildLog.info(
+						`Shared ${Math.round(unit.allocated).toLocaleString("en-GB")} of ${Math.round(unit.held).toLocaleString("en-GB")} ${unit.basis} of ${unit.geography}/${unit.boundaryRelease} between postcodes`,
+					);
 				buildLog.info(
-					`Shared ${Math.round(unit.allocated).toLocaleString("en-GB")} of ${Math.round(unit.held).toLocaleString("en-GB")} ${unit.basis} of ${unit.geography}/${unit.boundaryRelease} between postcodes`,
+					`Weighted ${weights.crosswalks.length} crosswalks from postcodes`,
 				);
-			buildLog.info(
-				`Weighted ${weights.crosswalks.length} crosswalks from postcodes`,
-			);
+			}
 			database.exec("COMMIT");
 		} finally {
 			database.close();
