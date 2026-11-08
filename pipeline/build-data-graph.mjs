@@ -350,7 +350,7 @@ const censusSmallAreaInputs = (root) => {
 	}
 };
 
-// The files `crosswalk-weights` shares between postcodes: counts of residents,
+// The files `weight-atoms` and `crosswalk-weights` share between postcodes: counts of residents,
 // households and dwellings, the centroids of output areas with no postcode, and
 // each postcode's output area. pipeline/src/crosswalk-weights/atoms.ts and
 // build-crosswalk-weights.ts read these.
@@ -369,6 +369,8 @@ const crosswalkWeightInputs = (root) => {
 		"demographics/census-2021-small-area/ts001/census2021-ts001-oa.csv",
 		"demographics/census-2021-small-area/ts003/census2021-ts003-oa.csv",
 		"demographics/population/census-2022-scotland-output-area/outputarea2022_usualresidentpopulation.csv",
+		"demographics/population/census-2022-scotland-output-area/census_2022_UV406_Household_size_OA.csv",
+		"lookups/output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
 		"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
 		"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
 		"housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv",
@@ -474,6 +476,7 @@ const defaultRawInputs = {
 	"statistics-vocabulary": [],
 	"data-catalog": censusSmallAreaInputs,
 	"assemble-atlas": [],
+	"weight-atoms": crosswalkWeightInputs,
 	"crosswalk-weights": crosswalkWeightInputs,
 	"measure-compatibility": [],
 	"statistics-read-path": [],
@@ -875,9 +878,21 @@ const apiStages = [
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
+	// The atoms crosswalk weights are summed over, placed in the releases the
+	// postcode-overlap crosswalks join, which are compiled from them.
+	stage(
+		"weight-atoms",
+		["area-inventory", "geometry-store", "geometry-source-registry"],
+		["--max-old-space-size=4096", "pipeline/src/build-weight-atoms.ts"],
+		{
+			outputs: ["data/build/weight-atoms"],
+			requiredOutputs: ["data/build/weight-atoms/atoms.json"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"crosswalk-inventory",
-		["area-inventory", "geometry-source-registry"],
+		["area-inventory", "geometry-source-registry", "weight-atoms"],
 		[
 			"--max-old-space-size=3072",
 			"pipeline/src/build-crosswalk-inventory.ts",
@@ -1254,6 +1269,7 @@ const stageWrites = {
 		"data/build/measure-statistics-fields.json",
 	],
 	"assemble-atlas": ["data/build/atlas.sqlite"],
+	"weight-atoms": ["data/build/weight-atoms"],
 	"crosswalk-weights": ["data/build/crosswalk-weights"],
 	"measure-compatibility": [`${artifacts}/measure-compatibility.json`],
 	"statistics-read-path": ["data/build/statistics-read-path.json"],
