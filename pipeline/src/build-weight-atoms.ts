@@ -1,5 +1,6 @@
 import {
 	buildLog,
+	configDirectory,
 	formatCount,
 	formatDuration,
 	repoPath,
@@ -37,7 +38,7 @@ export const buildWeightAtomsStage = async (
 	writeStoredAtoms(root, atoms);
 	const adapters = parseCrosswalkAdapters(
 		readFileSync(
-			join(root, "services/api/config/crosswalk-adapters.json"),
+			join(configDirectory(root), "crosswalk-adapters.json"),
 			"utf8",
 		),
 		"crosswalk-adapters.json",
