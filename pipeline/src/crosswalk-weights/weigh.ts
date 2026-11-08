@@ -8,7 +8,7 @@ export type WeighedEdge = {
 	toVersion: number;
 	fromCode: string;
 	toCode: string;
-	/** Exact edges regroup whole and are weighed 1 by `v_crosswalk_weight`. */
+	/** Needs no row: `v_crosswalk_weight` weighs it 1, as an exact or single-target edge. */
 	exact: boolean;
 };
 

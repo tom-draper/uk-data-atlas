@@ -16,7 +16,10 @@ import {
 	crosswalkWeightsDirectory,
 	crosswalkWeightsPath,
 } from "./crosswalk-weights/paths.ts";
-import { EXACT_EDGE_SQL } from "./crosswalk-weights/exactEdges.ts";
+import {
+	EXACT_EDGE_SQL,
+	SINGLE_TARGET_SQL,
+} from "./crosswalk-weights/exactEdges.ts";
 import { readWeightAtoms } from "./crosswalk-weights/inputs.ts";
 import { releasesWithGeometry } from "./crosswalk-weights/placement.ts";
 import {
@@ -149,7 +152,7 @@ export const buildCrosswalkWeights = async (
 		};
 
 		const edgesOf = base.prepare(
-			`SELECT e.from_version_id AS fromVersion, e.to_version_id AS toVersion, fa.code AS fromCode, ta.code AS toCode, ${EXACT_EDGE_SQL} AS exact
+			`SELECT e.from_version_id AS fromVersion, e.to_version_id AS toVersion, fa.code AS fromCode, ta.code AS toCode, ${EXACT_EDGE_SQL} AS exact, ${SINGLE_TARGET_SQL} AS single
 			FROM crosswalk_edge e
 			JOIN crosswalk c ON c.id = e.crosswalk_id
 			JOIN area_version fv ON fv.id = e.from_version_id JOIN area fa ON fa.id = fv.area_id
@@ -165,6 +168,7 @@ export const buildCrosswalkWeights = async (
 			slug: string;
 			edges: number;
 			exact: number;
+			singleTarget: number;
 			weighted: Record<string, number>;
 		}> = [];
 		try {
@@ -177,12 +181,14 @@ export const buildCrosswalkWeights = async (
 				"INSERT INTO crosswalk_weight VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 			);
 			for (const crosswalk of weighable) {
-				const edges = edgesOf.all(crosswalk.id).map((row) => ({
+				const found = edgesOf.all(crosswalk.id);
+				// Exact and single-target edges need no rows: the view implies them.
+				const edges = found.map((row) => ({
 					fromVersion: row.fromVersion as number,
 					toVersion: row.toVersion as number,
 					fromCode: row.fromCode as string,
 					toCode: row.toCode as string,
-					exact: row.exact === 1,
+					exact: row.exact === 1 || row.single === 1,
 				})) as WeighedEdge[];
 				const rows = weighEdges(
 					atoms.measures,
@@ -208,7 +214,10 @@ export const buildCrosswalkWeights = async (
 				summary.push({
 					slug: crosswalk.slug,
 					edges: edges.length,
-					exact: edges.filter((edge) => edge.exact).length,
+					exact: found.filter((row) => row.exact === 1).length,
+					singleTarget: found.filter(
+						(row) => row.exact !== 1 && row.single === 1,
+					).length,
 					weighted,
 				});
 			}
