@@ -1,3 +1,4 @@
+import { IdRegistry } from "../ids/idRegistry.ts";
 import type {
 	StatisticsDataset,
 	StatisticsParty,
@@ -23,7 +24,10 @@ const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
  * case, which is how the compiler derives it. A winner with no abbreviation
  * is stored under its key.
  */
-export function collectParties(datasets: readonly StatisticsDataset[]) {
+export function collectParties(
+	datasets: readonly StatisticsDataset[],
+	ids: IdRegistry = new IdRegistry("party", { first: 1, fields: 1 }),
+) {
 	const known = new Map<string, StatisticsParty>();
 	for (const dataset of datasets)
 		for (const party of dataset.parties ?? []) {
@@ -64,7 +68,9 @@ export function collectParties(datasets: readonly StatisticsDataset[]) {
 			colour: known.get(key)?.colour ?? null,
 		}))
 		.sort((a, b) => byText(a.code, b.code))
-		.map((party, index) => ({ id: index + 1, ...party }));
+		// Sorted so that parties new to the registry are numbered the same way
+		// each time; the ones it knows keep their ids whatever they sort to.
+		.map((party) => ({ id: ids.assign(party.code), ...party }));
 	const byCode = new Map(rows.map((row) => [row.code, row.id]));
 	const byKey = new Map(rows.map((row) => [row.key, row.id]));
 	const need = (ids: Map<string, number>, value: string, kind: string) => {

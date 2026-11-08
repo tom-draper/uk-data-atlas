@@ -9,6 +9,7 @@ import {
 	type StatisticsInput,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { DATASET_MODULES } from "@uk-data-atlas/datasets/declaration/modules";
+import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
@@ -23,8 +24,13 @@ const CONTEST_TEXT_COLUMNS = CONTEST_COLUMNS.filter(
 		column !== "winner",
 );
 
+/**
+ * `ids` gives every source, dataset, measure, series and the rest the id it
+ * was first given. The default numbers them in the order they are declared.
+ */
 export function statisticsTables(
 	inputs: readonly StatisticsInput[],
+	ids: IdRegistries = IdRegistries.memory(),
 ): Record<string, SqliteTable> {
 	const { releasePosition, area, areaIndex, namedArea } =
 		createStatisticsAreaLookup();
@@ -52,13 +58,28 @@ export function statisticsTables(
 				inputs.map((input) =>
 					typeof input === "function" ? input(index) : input,
 				),
+				ids,
 			);
 		}
 		return prepared;
 	};
+	/** A contest is an election's contest in one area of one release. */
+	const contestId = (
+		dataset: string,
+		election: string,
+		release: { geography: string; id: string },
+		code: string,
+	) =>
+		ids.contest.assign(
+			dataset,
+			election,
+			release.geography,
+			release.id,
+			code,
+		);
 	let collected: ReturnType<typeof collectParties> | undefined;
 	const parties = (database: DatabaseSync) =>
-		(collected ??= collectParties(prepare(database).datasets));
+		(collected ??= collectParties(prepare(database).datasets, ids.party));
 	const statusIds = new Map<string, number>(
 		STATUSES.map(([slug], index) => [slug, index + 1]),
 	);
@@ -87,8 +108,8 @@ export function statisticsTables(
 			],
 			key: ["id"],
 			rows: rows(({ sources }) =>
-				sources.items.map((source, index) => [
-					index + 1,
+				sources.entries.map(({ id, item: source }) => [
+					id,
 					source.publisher,
 					source.url ?? null,
 					source.licence,
@@ -111,9 +132,9 @@ export function statisticsTables(
 				"fingerprint TEXT NOT NULL",
 			],
 			key: ["id"],
-			rows: rows(({ datasets, sources }) =>
+			rows: rows(({ datasets, datasetIds, sources }) =>
 				datasets.map((dataset, index) => [
-					index + 1,
+					datasetIds[index]!,
 					dataset.slug,
 					dataset.module,
 					dataset.title,
@@ -143,8 +164,8 @@ export function statisticsTables(
 				"CHECK ((aggregation = 'ratio') = (numerator_id IS NOT NULL AND denominator_id IS NOT NULL))",
 			],
 			rows: rows(({ measures }) =>
-				measures.items.map((measure, index) => [
-					index + 1,
+				measures.entries.map(({ id, item: measure }) => [
+					id,
 					measure.slug,
 					measure.label,
 					measure.description,
@@ -170,8 +191,8 @@ export function statisticsTables(
 			],
 			key: ["id"],
 			rows: rows(({ dimensions }) =>
-				dimensions.items.map((dimension, index) => [
-					index + 1,
+				dimensions.entries.map(({ id, item: dimension }) => [
+					id,
 					dimension.slug,
 					dimension.label,
 				]),
@@ -191,8 +212,8 @@ export function statisticsTables(
 			key: ["id"],
 			constraints: ["UNIQUE (dimension_id, code)"],
 			rows: rows(({ members }) =>
-				members.items.map((member, index) => [
-					index + 1,
+				members.entries.map(({ id, item: member }) => [
+					id,
 					member.dimension,
 					member.code,
 					member.label,
@@ -214,8 +235,8 @@ export function statisticsTables(
 			key: ["id"],
 			constraints: ["CHECK (start_date <= end_date)"],
 			rows: rows(({ periods }) =>
-				periods.items.map((period, index) => [
-					index + 1,
+				periods.entries.map(({ id, item: period }) => [
+					id,
 					period.label,
 					period.kind,
 					period.start,
@@ -264,17 +285,17 @@ export function statisticsTables(
 				{ seriesRows, seriesIds, measures },
 				database,
 			) {
-				for (const [index, row] of seriesRows.entries()) {
-					const ids = seriesIds[row.dataset - 1];
+				for (const row of seriesRows) {
+					const seriesOf = seriesIds[row.datasetIndex]!;
 					yield [
-						index + 1,
+						row.id,
 						row.dataset,
 						measures.id(row.series.measure, row.key),
 						releasePosition(database, row.series.release),
 						row.series.method ?? "published",
 						row.series.derivedFrom === undefined
 							? null
-							: ids[row.series.derivedFrom],
+							: seriesOf[row.series.derivedFrom]!,
 						row.key,
 					];
 				}
@@ -295,10 +316,10 @@ export function statisticsTables(
 				},
 			],
 			rows: rows(({ seriesRows, dimensions, members }) =>
-				seriesRows.flatMap((row, index) =>
+				seriesRows.flatMap((row) =>
 					Object.entries(row.series.members ?? {}).map(
 						([dimension, member]) => [
-							index + 1,
+							row.id,
 							dimensions.id(dimension, row.key),
 							members.id(`${dimension}\0${member}`, row.key),
 						],
@@ -314,7 +335,7 @@ export function statisticsTables(
 				"name TEXT NOT NULL",
 			],
 			key: ["dataset_id", "area_version_id"],
-			rows: rows(function* ({ datasets }, database) {
+			rows: rows(function* ({ datasets, datasetIds }, database) {
 				for (const [index, dataset] of datasets.entries()) {
 					const seen = new Set<number>();
 					for (const {
@@ -334,7 +355,7 @@ export function statisticsTables(
 							);
 						seen.add(found.id);
 						if (found.name !== name)
-							yield [index + 1, found.id, name];
+							yield [datasetIds[index]!, found.id, name];
 					}
 				}
 			}),
@@ -347,12 +368,12 @@ export function statisticsTables(
 				"key TEXT NOT NULL",
 			],
 			key: ["dataset_id", "area_version_id"],
-			rows: rows(function* ({ datasets }, database) {
+			rows: rows(function* ({ datasets, datasetIds }, database) {
 				for (const [index, dataset] of datasets.entries())
 					for (const { release, code, key } of dataset.areaKeys?.() ??
 						[])
 						yield [
-							index + 1,
+							datasetIds[index]!,
 							area(database, dataset.slug, release, code).id,
 							key,
 						];
@@ -374,7 +395,7 @@ export function statisticsTables(
 				"child_version_id",
 				"parent_version_id",
 			],
-			rows: rows(function* ({ datasets }, database) {
+			rows: rows(function* ({ datasets, datasetIds }, database) {
 				for (const [index, dataset] of datasets.entries())
 					for (const {
 						relation,
@@ -383,7 +404,7 @@ export function statisticsTables(
 						parent,
 					} of dataset.relationships?.() ?? [])
 						yield [
-							index + 1,
+							datasetIds[index]!,
 							relation,
 							periodId(database, dataset.slug, period),
 							area(
@@ -511,13 +532,12 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 				"UNIQUE (dataset_id, label)",
 				"UNIQUE (dataset_id, date)",
 			],
-			rows: rows(function* ({ datasets }, database) {
-				let id = 0;
+			rows: rows(function* ({ datasets, datasetIds }, database) {
 				for (const [index, dataset] of datasets.entries())
 					for (const election of dataset.elections?.() ?? [])
 						yield [
-							++id,
-							index + 1,
+							ids.election.assign(dataset.slug, election.label),
+							datasetIds[index]!,
 							election.label,
 							election.kind,
 							election.date,
@@ -570,12 +590,16 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 			],
 			rows: rows(function* ({ datasets }, database) {
 				const { idOfCode, idOfKey } = parties(database);
-				let election = 0;
-				let id = 0;
 				for (const dataset of datasets)
-					for (const { date, contests } of dataset.elections?.() ??
-						[]) {
-						election++;
+					for (const {
+						label,
+						date,
+						contests,
+					} of dataset.elections?.() ?? []) {
+						const election = ids.election.assign(
+							dataset.slug,
+							label,
+						);
 						const year = Number(date.slice(0, 4));
 						for (const { release, code, contest } of contests) {
 							/** The area a name is, else the name as text. */
@@ -599,7 +623,7 @@ LEFT JOIN dataset_area_name n ON n.dataset_id = d.id AND n.area_version_id = v.i
 							const region = named("region");
 							const country = named("country");
 							yield [
-								++id,
+								contestId(dataset.slug, label, release, code),
 								election,
 								area(database, dataset.slug, release, code).id,
 								...CONTEST_TEXT_COLUMNS.map(
@@ -678,14 +702,18 @@ SELECT *, 100.0 * party_votes / valid_votes AS party_vote_share FROM (
   LEFT JOIN party p ON p.id = coalesce(ct.first_party_id, ct.winner_party_id))`,
 			},
 			rows: rows(function* ({ datasets }, database) {
-				let id = 0;
 				for (const dataset of datasets)
-					for (const { contests } of dataset.elections?.() ?? [])
-						for (const { elected } of contests) {
-							id++;
+					for (const { label, contests } of dataset.elections?.() ??
+						[])
+						for (const { release, code, elected } of contests) {
 							if (elected)
 								yield [
-									id,
+									contestId(
+										dataset.slug,
+										label,
+										release,
+										code,
+									),
 									1,
 									...CANDIDACY_COLUMNS.map(
 										(column) => elected[column] ?? null,
