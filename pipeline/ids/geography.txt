@@ -1,0 +1,36 @@
+# geography: id registry. The key on line N below is id 1 + N - 1.
+# Append only. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+combinedAuthority
+communitySafetyPartnership
+constituency
+country
+countyAndUnitaryAuthority
+countyElectoralDivision
+dataZone
+fireAndRescueAuthority
+historicalConstituency
+integratedCareBoard
+intermediateZone
+itl1
+itl2
+itl3
+localAuthority
+localHealthBoard
+localPlanningAuthority
+lsoa
+majorTownAndCity
+msoa
+nationalPark
+nhsEnglandRegion
+outputArea
+parish
+policeForceArea
+region
+scottishParliamentaryConstituency
+scottishParliamentaryRegion
+seneddConstituency
+seneddElectoralRegion
+subIntegratedCareBoardLocation
+superOutputArea
+travelToWorkArea
+ward
