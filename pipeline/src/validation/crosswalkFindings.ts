@@ -1,3 +1,4 @@
+import { NORTHERN_IRELAND_REASON } from "../relationships/postcodeOverlap.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { type Finding, sha256, listed, check } from "./findings.ts";
 import type { ValidationInputs } from "./inputs.ts";
@@ -326,7 +327,12 @@ export const crosswalkFindings = (
 
 	if (artifact.method === "postcode-overlap") {
 		// Recompute each source's coverage from its published pairs.
-		const { overlap } = artifact.validation;
+		const { overlap, coverage } = artifact.validation;
+		// Northern Ireland has no postcodes to place; any other source with no
+		// target is a gap to explain.
+		const unexplained = coverage.unplacedReasons.filter(
+			({ reason }) => reason !== NORTHERN_IRELAND_REASON,
+		);
 		const off = artifact.records
 			.filter((record) => record.targets.length > 0)
 			.map(
@@ -347,8 +353,17 @@ export const crosswalkFindings = (
 		findings.push(
 			check(
 				"postcode-overlap-coverage",
-				off.length === 0,
-				`Sources whose pairs hold a share of their people other than their coverage: ${listed(off)}.`,
+				off.length === 0 && unexplained.length === 0,
+				[
+					off.length > 0
+						? `Sources whose pairs hold a share of their people other than their coverage: ${listed(off)}.`
+						: undefined,
+					unexplained.length > 0
+						? `Sources with no target and no known reason: ${unexplained.map(({ reason, count }) => `${count} (${reason})`).join(", ")}.`
+						: undefined,
+				]
+					.filter(Boolean)
+					.join(" "),
 				{
 					minimumShare: overlap.minimumShare,
 					keptPairCount: overlap.keptPairCount,
@@ -356,7 +371,8 @@ export const crosswalkFindings = (
 					droppedPopulationShare: overlap.droppedPopulationShare,
 					unplacedPopulationShare: overlap.unplacedPopulationShare,
 					minimumSourceCoverage: overlap.minimumSourceCoverage,
-					sourcesWithoutTargets: overlap.sourcesWithoutTargets,
+					unplacedSources:
+						artifact.validation.coverage.unplacedSources,
 				},
 			),
 		);
