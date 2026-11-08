@@ -30,8 +30,11 @@ const fileOf = (
 	boundaryRelease: string,
 ) => join(directory, `${geography}__${boundaryRelease}.i32`);
 
-const placementKey = (key: string, geometryInput: string) =>
-	sha256(`${key}\n${geometryInput}`);
+/** Raise when the placement rules change, so kept placements are made again. */
+const PLACEMENT_VERSION = 2;
+
+export const placementKey = (key: string, geometryInput: string) =>
+	sha256(`${PLACEMENT_VERSION}\n${key}\n${geometryInput}`);
 
 /** The placement a directory holds for a release, if it is of these atoms and this geometry. */
 export const readPlacement = (

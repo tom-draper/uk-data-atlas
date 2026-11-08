@@ -14,12 +14,14 @@ import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry
 import type { PostcodeOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compilePostcodeOverlapCrosswalk } from "../src/relationships/postcodeOverlap";
 import { MEASURES, type WeightAtoms } from "../src/crosswalk-weights/atoms";
-import { placementFile } from "../src/crosswalk-weights/placements";
+import {
+	placementFile,
+	placementKey,
+} from "../src/crosswalk-weights/placements";
 import {
 	weightAtomsDirectory,
 	writeStoredAtoms,
 } from "../src/crosswalk-weights/storedAtoms";
-import { sha256 } from "@uk-data-atlas/artifacts";
 
 const adapter = (minimumShare: number): PostcodeOverlapCrosswalkAdapter => ({
 	id: "ward-to-constituency-postcode-overlap",
@@ -81,7 +83,7 @@ const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
 		writeFileSync(
 			`${file}.json`,
 			JSON.stringify({
-				key: sha256(`${key}\n${input}`),
+				key: placementKey(key, input),
 				atomsKey: key,
 				codes,
 			}),
