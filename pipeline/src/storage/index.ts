@@ -1,5 +1,6 @@
 export * from "./atlasAreas.ts";
 export * from "./atlasCrosswalks.ts";
+export * from "./atlasCrosswalkWeights.ts";
 export * from "./atlasNamedLocations.ts";
 export * from "./atlasPostcodeAreas.ts";
 export * from "./atlasPostcodeTables.ts";
