@@ -14,6 +14,7 @@ import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";
+import { POSTCODE_WEIGHT_BASES } from "./atlasCrosswalkWeights.ts";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of
@@ -76,6 +77,7 @@ const CHECK_COLUMNS = [
 ];
 const WEIGHT_COLUMNS = ["weight", "overlap", "source_share", "target_share"];
 
+/** Bases a crosswalk artifact can declare as its own. */
 const WEIGHT_BASES: Record<string, string> = {
 	area: "Area of overlap, in square metres",
 	population: "Residents in the overlap",
@@ -430,7 +432,9 @@ export const crosswalkTables = (
 			strict: true,
 			columns: ["id TEXT NOT NULL", "label TEXT NOT NULL"],
 			key: ["id"],
-			rows: Object.entries(WEIGHT_BASES),
+			// The bases the build adds from postcodes are rows too: see
+			// atlasCrosswalkWeights.ts.
+			rows: Object.entries({ ...WEIGHT_BASES, ...POSTCODE_WEIGHT_BASES }),
 		},
 		crosswalk: {
 			rowid: true,
