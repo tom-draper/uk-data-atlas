@@ -25,23 +25,15 @@ export type WeightRow = {
 const COUNT = MEASURES.length;
 
 /**
- * The weights of a crosswalk's edges from atoms placed in both its releases.
- *
- * For each edge and basis, `overlap` is the measure of the atoms lying in both
- * areas, `sourceShare` and `targetShare` that overlap as a share of everything
- * in the source and in the target (so in areas the other side does not hold),
- * and `weight` the overlap as a share of the overlaps of all the source's
- * edges, which sum to 1. Only edges that are not exact are returned, and an
- * edge with nothing in its overlap has no row. A basis in `own` is the
- * crosswalk's already: it is left alone.
+ * The measure of every atom placed in each area of `from`, in each of `to`, and
+ * in each pair, by index into the placements' codes. A pair is keyed by
+ * `from * width + to`.
  */
-export const weighEdges = (
+export const pairTotals = (
 	measures: Record<Measure, Float64Array>,
 	from: Placement,
 	to: Placement,
-	edges: readonly WeighedEdge[],
-	own: ReadonlySet<string> = new Set(),
-): WeightRow[] => {
+) => {
 	const atoms = from.area.length;
 	if (to.area.length !== atoms)
 		throw new Error("The two placements are of different atoms");
@@ -66,6 +58,28 @@ export const weighEdges = (
 			for (let m = 0; m < COUNT; m += 1) pair[m]! += columns[m]![atom]!;
 		}
 	}
+	return { sources, targets, pairs, width };
+};
+
+/**
+ * The weights of a crosswalk's edges from atoms placed in both its releases.
+ *
+ * For each edge and basis, `overlap` is the measure of the atoms lying in both
+ * areas, `sourceShare` and `targetShare` that overlap as a share of everything
+ * in the source and in the target (so in areas the other side does not hold),
+ * and `weight` the overlap as a share of the overlaps of all the source's
+ * edges, which sum to 1. Only edges that are not exact are returned, and an
+ * edge with nothing in its overlap has no row. A basis in `own` is the
+ * crosswalk's already: it is left alone.
+ */
+export const weighEdges = (
+	measures: Record<Measure, Float64Array>,
+	from: Placement,
+	to: Placement,
+	edges: readonly WeighedEdge[],
+	own: ReadonlySet<string> = new Set(),
+): WeightRow[] => {
+	const { sources, targets, pairs, width } = pairTotals(measures, from, to);
 	const fromAt = new Map(from.codes.map((code, at) => [code, at]));
 	const toAt = new Map(to.codes.map((code, at) => [code, at]));
 	// Each edge's overlap, and each source's total over its edges.

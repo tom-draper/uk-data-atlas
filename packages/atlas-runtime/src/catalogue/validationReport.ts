@@ -16,6 +16,7 @@ export const VALIDATION_CHECKS = [
 	"sliver-separation",
 	"continuity-extent",
 	"population-coverage",
+	"postcode-overlap-coverage",
 	"containment-verified",
 	"best-fit-verified",
 	"measure-definition",
