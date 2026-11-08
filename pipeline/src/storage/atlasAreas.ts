@@ -1,4 +1,5 @@
 import { AREA_INVENTORY_VIEW } from "./deprecatedViews.ts";
+import { IdRegistries } from "../ids/idRegistries.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -9,15 +10,34 @@ import type { SqliteTable } from "@uk-data-atlas/artifacts";
 export const AREAS_VIEW = `SELECT v.id, v.release_id AS releasePosition, a.code, v.in_inventory AS inInventory, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area_version v JOIN area a ON a.id = v.area_id`;
 
 /**
- * Add an area version that is not in its release's inventory, such as a code
- * a crosswalk or postcode lookup names. Its area is added if it is new.
+ * The stable public key of an area version: `geography`, `release` and `code`
+ * identify it for good. `area_version_id` is the compact integer the other
+ * tables use, assigned once from `pipeline/ids/area-version.txt`.
  */
-export const addAreaVersion = (database: DatabaseSync) => {
+export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geography, r.id AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_releases r ON r.position = v.release_id`;
+
+/**
+ * Add an area version that is not in its release's inventory, such as a code
+ * a crosswalk or postcode lookup names. Its area is added if it is new. Both
+ * take their ids from the registry, so the same code in the same release is
+ * the same id however the build met it.
+ */
+export const addAreaVersion = (database: DatabaseSync, ids: IdRegistries) => {
+	const findRelease = database.prepare(
+		"SELECT geography, id FROM area_releases WHERE position = ?",
+	);
+	const findGeography = database.prepare(
+		"SELECT id FROM geography WHERE slug = ?",
+	);
+	const findArea = database.prepare("SELECT code FROM area WHERE id = ?");
 	const addArea = database.prepare(
-		"INSERT OR IGNORE INTO area (geography_id, code) SELECT g.id, ? FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.position = ?",
+		"INSERT INTO area (id, geography_id, code) VALUES (?, ?, ?)",
+	);
+	const findVersion = database.prepare(
+		"SELECT 1 AS found FROM area_version WHERE id = ?",
 	);
 	const addVersion = database.prepare(
-		"INSERT INTO area_version (area_id, release_id, name, aliases, in_inventory) SELECT a.id, r.position, ?, ?, 0 FROM area_releases r JOIN geography g ON g.slug = r.geography JOIN area a ON a.geography_id = g.id AND a.code = ? WHERE r.position = ?",
+		"INSERT INTO area_version (id, area_id, release_id, name, aliases, in_inventory) VALUES (?, ?, ?, ?, ?, 0)",
 	);
 	return (
 		releasePosition: number,
@@ -25,30 +45,65 @@ export const addAreaVersion = (database: DatabaseSync) => {
 		name: string,
 		aliases: string | null,
 	) => {
-		addArea.run(code, releasePosition);
-		if (addVersion.run(name, aliases, code, releasePosition).changes !== 1)
+		const release = findRelease.get(releasePosition);
+		if (!release)
 			throw new Error(
 				`Missing area release ${releasePosition} for ${code}`,
 			);
+		const geography = String(release.geography);
+		const areaId = ids.area.assign(geography, code);
+		const area = findArea.get(areaId);
+		if (!area) {
+			const geographyId = findGeography.get(geography)?.id;
+			if (geographyId === undefined)
+				throw new Error(`Missing geography ${geography}`);
+			addArea.run(areaId, geographyId as number, code);
+		} else if (area.code !== code)
+			throw new Error(
+				`Area id ${areaId} is ${String(area.code)} in the database but ${geography}/${code} in the id registry`,
+			);
+		const versionId = ids.areaVersion.assign(
+			geography,
+			String(release.id),
+			code,
+		);
+		if (findVersion.get(versionId))
+			throw new Error(
+				`Area version id ${versionId} for ${geography}/${String(release.id)}/${code} is already used`,
+			);
+		addVersion.run(versionId, areaId, releasePosition, name, aliases);
 	};
 };
 
 /** Area versions whose release is for another geography than their area. */
 export const AREA_GEOGRAPHY_MISMATCH = `SELECT count(*) AS n FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id JOIN geography g ON g.id = a.geography_id WHERE g.slug <> r.geography`;
 
-export const areaTables = (directory: string): Record<string, SqliteTable> => {
+/**
+ * `ids` gives each key the id it was first given. The default numbers keys in
+ * the order they are met, which is right for a database built from nothing.
+ */
+export const areaTables = (
+	directory: string,
+	ids: IdRegistries = IdRegistries.memory(),
+): Record<string, SqliteTable> => {
 	const inventory: AreaInventory = JSON.parse(
 		readFileSync(join(directory, "area-inventory.json"), "utf8"),
 	);
 	const geographies = new Map<string, number>();
 	for (const release of inventory.releases)
 		if (!geographies.has(release.geography))
-			geographies.set(release.geography, geographies.size + 1);
-	const areaIds = new Map<string, number>();
-	const areaKey = (geography: string, code: string) =>
-		`${geographies.get(geography)}\t${code}`;
+			geographies.set(
+				release.geography,
+				ids.geography.assign(release.geography),
+			);
+	const releasePositions = inventory.releases.map((release) =>
+		ids.release.assign(release.geography, release.id),
+	);
 	function* releaseAreas() {
-		for (const [releasePosition, release] of inventory.releases.entries()) {
+		for (const [
+			inventoryPosition,
+			release,
+		] of inventory.releases.entries()) {
 			if (release.status !== "available") continue;
 			const artifact: AreaReleaseArtifact = JSON.parse(
 				readFileSync(join(directory, release.artifact), "utf8"),
@@ -61,26 +116,40 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 				throw new Error(
 					`Invalid area release ${release.geography}/${release.id}`,
 				);
-			for (const area of artifact.areas)
-				yield { releasePosition, geography: release.geography, area };
+			for (const [position, area] of artifact.areas.entries())
+				yield {
+					release,
+					releasePosition: releasePositions[inventoryPosition]!,
+					position,
+					area,
+				};
 		}
 	}
-	// Area ids follow first appearance, in release order.
+	// Each area keeps the id it was first given, so these rows are in release
+	// order but the ids need not be.
 	function* areas() {
-		for (const { geography, area } of releaseAreas()) {
-			const key = areaKey(geography, area.code);
-			if (areaIds.has(key)) continue;
-			areaIds.set(key, areaIds.size + 1);
-			yield [areaIds.size, geographies.get(geography)!, area.code];
+		const seen = new Set<number>();
+		for (const { release, area } of releaseAreas()) {
+			const id = ids.area.assign(release.geography, area.code);
+			if (seen.has(id)) continue;
+			seen.add(id);
+			yield [id, geographies.get(release.geography)!, area.code];
 		}
 	}
-	// Version ids match the row order of the old `areas` table.
 	function* versions() {
-		let id = 0;
-		for (const { releasePosition, geography, area } of releaseAreas())
+		for (const {
+			release,
+			releasePosition,
+			position,
+			area,
+		} of releaseAreas())
 			yield [
-				++id,
-				areaIds.get(areaKey(geography, area.code))!,
+				ids.areaVersion.assign(
+					release.geography,
+					release.id,
+					area.code,
+				),
+				ids.area.assign(release.geography, area.code),
 				releasePosition,
 				area.name,
 				null,
@@ -89,6 +158,7 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 					? null
 					: JSON.stringify(area.aliases),
 				1,
+				position,
 			];
 	}
 	return {
@@ -111,7 +181,10 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 			columns: [
 				"geography TEXT NOT NULL",
 				"id TEXT NOT NULL",
+				// The release's stable id, assigned once and never reused. It is
+				// not an order: `inventory_position` is.
 				"position INTEGER NOT NULL UNIQUE",
+				"inventory_position INTEGER NOT NULL UNIQUE",
 				"status TEXT NOT NULL",
 				"recordCount INTEGER",
 				"artifact TEXT",
@@ -122,12 +195,13 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 				"reason TEXT",
 			],
 			key: ["geography", "id"],
-			rows: inventory.releases.map((release, position) =>
+			rows: inventory.releases.map((release, inventoryPosition) =>
 				release.status === "available"
 					? [
 							release.geography,
 							release.id,
-							position,
+							releasePositions[inventoryPosition]!,
+							inventoryPosition,
 							release.status,
 							release.recordCount,
 							release.artifact,
@@ -142,7 +216,8 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 					: [
 							release.geography,
 							release.id,
-							position,
+							releasePositions[inventoryPosition]!,
+							inventoryPosition,
 							release.status,
 							null,
 							null,
@@ -186,11 +261,17 @@ export const areaTables = (directory: string): Record<string, SqliteTable> => {
 				"population REAL",
 				"aliases TEXT",
 				"in_inventory INTEGER NOT NULL CHECK (in_inventory IN (0, 1))",
+				// The area's place in its release's artifact, which ids no longer
+				// follow once a release has a code added.
+				"inventory_position INTEGER",
 			],
 			key: ["id"],
 			rows: versions(),
-			constraints: ["UNIQUE (release_id, area_id)"],
-			views: { areas: AREAS_VIEW },
+			constraints: [
+				"UNIQUE (release_id, area_id)",
+				"CHECK ((inventory_position IS NOT NULL) = (in_inventory = 1))",
+			],
+			views: { areas: AREAS_VIEW, v_area_version: AREA_VERSION_VIEW },
 		},
 	};
 };

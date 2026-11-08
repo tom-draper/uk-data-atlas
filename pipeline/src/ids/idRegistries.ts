@@ -47,6 +47,20 @@ export const idNamespaces = Object.keys(ID_NAMESPACES) as IdNamespace[];
 /** Where the committed registries live, relative to the repository root. */
 export const ID_DIRECTORY = "pipeline/ids";
 
+export const idDirectory = (root: string) => join(root, ID_DIRECTORY);
+
+/**
+ * The committed registries of a repository. `ATLAS_IDS_FROZEN=1` makes the
+ * build refuse any key they lack, for a build that must not change them.
+ */
+export const loadIdRegistries = (
+	root: string,
+	environment: NodeJS.ProcessEnv = process.env,
+) =>
+	IdRegistries.load(idDirectory(root), {
+		frozen: environment.ATLAS_IDS_FROZEN === "1",
+	});
+
 export const idRegistryFile = (directory: string, name: IdNamespace) =>
 	join(directory, `${name.replaceAll("_", "-")}.txt`);
 

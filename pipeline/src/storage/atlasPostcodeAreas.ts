@@ -8,6 +8,7 @@ import {
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";
+import type { IdRegistries } from "../ids/idRegistries.ts";
 import { chooseDistanceFallbacks } from "./postcodeDistanceFallbacks.ts";
 import {
 	postcodeDistrictWhere,
@@ -43,6 +44,7 @@ export function writePostcodeAreas(
 	database: DatabaseSync,
 	artifact: PostcodeAreasArtifact,
 	readShard: (path: string) => string,
+	registries: IdRegistries,
 ) {
 	const columns = postcodeAreaColumns(artifact);
 	const index: PostcodeIndexArtifact = JSON.parse(
@@ -98,7 +100,7 @@ export function writePostcodeAreas(
 	const findArea = database.prepare(
 		"SELECT v.id FROM area a JOIN area_version v ON v.area_id = a.id WHERE v.release_id = ? AND a.code = ?",
 	);
-	const addArea = addAreaVersion(database);
+	const addArea = addAreaVersion(database, registries);
 	const ids = columns.map((column, position) => {
 		addRelease.run(
 			position,

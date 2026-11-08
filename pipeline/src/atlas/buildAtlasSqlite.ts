@@ -30,6 +30,8 @@ import {
 } from "../storage/deprecatedViews.ts";
 import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index.ts";
 import { DatabaseSync } from "node:sqlite";
+import { loadIdRegistries } from "../ids/idRegistries.ts";
+import { verifyStableIds } from "../ids/databaseKeys.ts";
 import { censusSmallAreaStatistics } from "../statistics/censusSmallAreaStatistics.ts";
 import {
 	CENSUS_SMALL_AREA_TABLES,
@@ -52,6 +54,25 @@ import {
 	packText,
 } from "@uk-data-atlas/atlas-runtime/storage";
 import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics.ts";
+
+/** Whether an earlier database holds ids that a rebuild could renumber. */
+const hasStoredIds = (path: string) => {
+	if (!existsSync(path)) return false;
+	let database: DatabaseSync | undefined;
+	try {
+		database = new DatabaseSync(path, { readOnly: true });
+		return (
+			database
+				.prepare("SELECT EXISTS (SELECT 1 FROM area_version) AS found")
+				.get()?.found === 1
+		);
+	} catch {
+		// Not a database this build made, so there are no ids to keep.
+		return false;
+	} finally {
+		database?.close();
+	}
+};
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),
@@ -124,6 +145,13 @@ export const buildAtlasSqlite = (
 	removeStageStamps(repositoryRoot, CACHE_STAGES);
 	discardAtlasCacheWork(repositoryRoot);
 	const path = join(directory, "atlas-base.sqlite");
+	// Every id is the one its natural key was first given, from the committed
+	// registries in pipeline/ids. A build only adds keys it has not met.
+	const ids = loadIdRegistries(repositoryRoot);
+	if (ids.empty && hasStoredIds(path))
+		throw new Error(
+			"There is an atlas database but no id registry, so a rebuild would renumber it. Restore pipeline/ids, or seed it from the database with `pnpm ids seed`.",
+		);
 	const payload = readFileSync(
 		join(artifactDirectory(repositoryRoot), "terrain-catalogue.json"),
 		"utf8",
@@ -229,8 +257,8 @@ export const buildAtlasSqlite = (
 		path,
 		{ schemaVersion: "3" },
 		{
-			...areaTables(artifactDirectory(repositoryRoot)),
-			...crosswalkTables(artifactDirectory(repositoryRoot)),
+			...areaTables(artifactDirectory(repositoryRoot), ids),
+			...crosswalkTables(artifactDirectory(repositoryRoot), ids),
 			...namedLocationTables(artifactDirectory(repositoryRoot)),
 			payloads: {
 				columns: ["id TEXT NOT NULL", "payload BLOB NOT NULL"],
@@ -265,24 +293,29 @@ export const buildAtlasSqlite = (
 						: `dataset:${entry.output}`,
 				]),
 			},
-			...statisticsTables([
-				...statisticsInputs(directory, manifest.datasets, {
-					...UNSTORED_DATASETS,
-					...unstored,
-				}),
-				// After the declared datasets, whose measures and members
-				// the census tables share.
-				...censusSmallAreaStatistics(repositoryRoot, censusTables),
-			]),
+			...statisticsTables(
+				[
+					...statisticsInputs(directory, manifest.datasets, {
+						...UNSTORED_DATASETS,
+						...unstored,
+					}),
+					// After the declared datasets, whose measures and members
+					// the census tables share.
+					...censusSmallAreaStatistics(repositoryRoot, censusTables),
+				],
+				ids,
+			),
 		},
 	);
 	const written = new DatabaseSync(path, { readOnly: true });
 	try {
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)
 			throw new Error("Area versions on another geography's release");
+		verifyStableIds(written, ids);
 	} finally {
 		written.close();
 	}
+	ids.save();
 	const cacheRoot = mkdtempSync(join(directory, ".atlas-base-cache-"));
 	const cacheDirectory = join(cacheRoot, "data/build");
 	try {

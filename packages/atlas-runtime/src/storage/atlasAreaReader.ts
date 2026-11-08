@@ -16,7 +16,7 @@ export const readSqliteAreaInventory = (
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite area inventory");
 		const releases = database
-			.prepare("SELECT * FROM area_releases ORDER BY position")
+			.prepare("SELECT * FROM area_releases ORDER BY inventory_position")
 			.all()
 			.map((row) => {
 				const identity = {
@@ -78,7 +78,7 @@ export const readSqliteAreas = (
 			);
 		const rows = database
 			.prepare(
-				"SELECT code, name, aliases FROM areas WHERE releasePosition = ? AND inInventory = 1 ORDER BY id",
+				"SELECT a.code AS code, v.name AS name, v.aliases AS aliases FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND v.in_inventory = 1 ORDER BY v.inventory_position",
 			)
 			.all(header.position);
 		if (rows.length !== release.recordCount)

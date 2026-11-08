@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
 import {
+	IdRegistries,
 	areaTables,
 	crosswalkTables,
 	readCrosswalkById,
@@ -248,10 +249,11 @@ const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
 	} as unknown as CrosswalkInventory;
 	write("crosswalk-inventory.json", inventory);
 	const path = join(root, "data/build/atlas-base.sqlite");
+	const ids = IdRegistries.memory();
 	writeSqliteIndex(
 		path,
 		{},
-		{ ...areaTables(artifacts), ...crosswalkTables(artifacts) },
+		{ ...areaTables(artifacts, ids), ...crosswalkTables(artifacts, ids) },
 	);
 	return { root, path, inventory };
 };

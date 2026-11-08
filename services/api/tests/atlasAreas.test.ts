@@ -7,6 +7,7 @@ import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
 import {
 	AREA_GEOGRAPHY_MISMATCH,
+	IdRegistries,
 	addAreaVersion,
 	areaTables,
 } from "./pipelineFixtures";
@@ -89,7 +90,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 			() =>
 				database
 					.prepare(
-						"INSERT INTO area_version VALUES (NULL, 1, 0, 'duplicate', NULL, NULL, NULL, 1)",
+						"INSERT INTO area_version VALUES (NULL, 1, 0, 'duplicate', NULL, NULL, NULL, 1, 0)",
 					)
 					.run(),
 			/UNIQUE/,
@@ -102,7 +103,7 @@ test("relational areas preserve inventory order, aliases and record order withou
 			() =>
 				database
 					.prepare(
-						"INSERT INTO area_version VALUES (NULL, 1, -1, 'name', NULL, NULL, NULL, 1)",
+						"INSERT INTO area_version VALUES (NULL, 1, -1, 'name', NULL, NULL, NULL, 1, 0)",
 					)
 					.run(),
 			/FOREIGN KEY/,
@@ -165,7 +166,8 @@ test("an area keeps one identity across releases, with a version per release", (
 		JSON.stringify(inventory),
 	);
 	const path = join(directory, "atlas.sqlite");
-	writeSqliteIndex(path, {}, areaTables(directory));
+	const ids = IdRegistries.memory();
+	writeSqliteIndex(path, {}, areaTables(directory, ids));
 	const database = new DatabaseSync(path);
 	context.onTestFinished(() => database.close());
 	const versions = () =>
@@ -182,14 +184,14 @@ test("an area keeps one identity across releases, with a version per release", (
 		[4, "ward", "C", 3, 1, 1],
 		[5, "region", "B", 4, 2, 1],
 	]);
-	const add = addAreaVersion(database);
+	const add = addAreaVersion(database, ids);
 	add(1, "A", "", null);
 	add(2, "D", "", null);
 	assert.deepEqual(versions().slice(5), [
 		[6, "ward", "A", 1, 1, 0],
 		[7, "region", "D", 5, 2, 0],
 	]);
-	assert.throws(() => add(1, "A", "", null), /UNIQUE/);
+	assert.throws(() => add(1, "A", "", null), /already used/);
 	assert.throws(() => add(9, "E", "", null), /Missing area release/);
 	assert.equal(database.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n, 0);
 	assert.deepEqual(

@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { test } from "vitest";
 import {
 	areaTables,
+	IdRegistries,
 	crosswalkTables,
 	namedLocationTables,
 	readAreaInventory,
@@ -138,12 +139,13 @@ const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
 		],
 	});
 	write("named-locations.json", namedLocations);
+	const ids = IdRegistries.memory();
 	writeSqliteIndex(
 		join(root, "data/build/atlas-base.sqlite"),
 		{},
 		{
-			...areaTables(artifacts),
-			...crosswalkTables(artifacts),
+			...areaTables(artifacts, ids),
+			...crosswalkTables(artifacts, ids),
 			...namedLocationTables(artifacts),
 		},
 	);

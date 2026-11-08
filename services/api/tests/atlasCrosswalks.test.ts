@@ -1,6 +1,6 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { readSqliteAreas } from "@uk-data-atlas/atlas-runtime/storage";
-import { areaTables } from "./pipelineFixtures";
+import { IdRegistries, areaTables } from "./pipelineFixtures";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import assert from "node:assert/strict";
 import {
@@ -144,19 +144,23 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		}),
 	);
 	const path = join(root, "data/build/atlas.sqlite");
-	const rebuild = () =>
+	const rebuild = () => {
+		const ids = IdRegistries.memory();
 		writeSqliteIndex(
 			path,
 			{},
 			{
 				...areaTables(
 					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+					ids,
 				),
 				...crosswalkTables(
 					artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
+					ids,
 				),
 			},
 		);
+	};
 	rebuild();
 	assert.equal(
 		JSON.stringify(readCrosswalkInventory(root)),
