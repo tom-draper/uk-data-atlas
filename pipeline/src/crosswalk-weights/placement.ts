@@ -39,12 +39,29 @@ const BOUNDS_SLACK_DEGREES = 1e-9;
 const cellOf = (value: number, origin: number) =>
 	Math.floor((value + origin) / GRID_DEGREES);
 
+type Bounds = readonly [number, number, number, number];
+
+const insideBounds = (inner: Bounds, outer: Bounds) =>
+	inner[0] >= outer[0] &&
+	inner[1] >= outer[1] &&
+	inner[2] <= outer[2] &&
+	inner[3] <= outer[3];
+
+const boundsArea = (bounds: Bounds) =>
+	(bounds[2] - bounds[0]) * (bounds[3] - bounds[1]);
+
 /**
  * Place points in one release's areas: the area containing each point, which
  * is NONE for a point in no area and SEVERAL for one in more than one. This is
  * the postcode placement's search (each area looks through the points inside
  * its bounds) without its distance to the nearest border, which weights do not
  * need and which dominates its cost.
+ *
+ * A point well inside several areas is in the one nested in the others when
+ * their outlines enclose it: an enclave published without the hole its
+ * surrounding area should have, such as a ward drawn inside another (the
+ * Dolgellau wards), which would otherwise hold no point at all. Points on a
+ * border, or in areas that overlap without nesting, stay SEVERAL.
  */
 export const placeAtoms = (
 	longitudes: Float64Array,
@@ -65,10 +82,14 @@ export const placeAtoms = (
 		else cells.set(key, [at]);
 	}
 	const area = new Int32Array(count).fill(NONE);
+	const boundsOf = new Map<number, Bounds>();
+	// Atoms in several areas: each area and whether the atom is inside it.
+	const several = new Map<number, Array<[number, boolean]>>();
 	sorted.forEach((code, codeAt) => {
 		const geometry = geometryOf(code);
 		const bounds = geometry && geometryBounds(geometry);
 		if (!geometry || !bounds) return;
+		boundsOf.set(codeAt, bounds);
 		const west = cellOf(bounds[0] - BOUNDS_SLACK_DEGREES, 180);
 		const east = cellOf(bounds[2] + BOUNDS_SLACK_DEGREES, 180);
 		const south = cellOf(bounds[1] - BOUNDS_SLACK_DEGREES, 90);
@@ -80,11 +101,41 @@ export const placeAtoms = (
 				for (const at of members) {
 					const point: Coordinate = [longitudes[at]!, latitudes[at]!];
 					if (!pointInBounds(point, bounds)) continue;
-					if (containPoint(point, geometry) === "outside") continue;
-					area[at] = area[at] === NONE ? codeAt : SEVERAL;
+					const containment = containPoint(point, geometry);
+					if (containment === "outside") continue;
+					const entry: [number, boolean] = [
+						codeAt,
+						containment === "interior",
+					];
+					if (area[at] === NONE) {
+						area[at] = codeAt;
+						several.set(at, [entry]);
+					} else {
+						several.get(at)!.push(entry);
+						area[at] = SEVERAL;
+					}
 				}
 			}
 	});
+	for (const [at, entries] of several) {
+		if (entries.length === 1) continue;
+		if (!entries.every(([, interior]) => interior)) continue;
+		const innermost = entries.reduce((best, entry) =>
+			boundsArea(boundsOf.get(entry[0])!) <
+			boundsArea(boundsOf.get(best[0])!)
+				? entry
+				: best,
+		);
+		const inner = boundsOf.get(innermost[0])!;
+		if (
+			entries.every(
+				([other]) =>
+					other === innermost[0] ||
+					insideBounds(inner, boundsOf.get(other)!),
+			)
+		)
+			area[at] = innermost[0];
+	}
 	return { codes: sorted, area };
 };
 
