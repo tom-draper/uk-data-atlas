@@ -24,7 +24,7 @@ export const seedIdRegistries = (
 	const seeded: Partial<Record<(typeof idNamespaces)[number], number>> = {};
 	for (const namespace of idNamespaces) {
 		const registry = ids.registries[namespace];
-		const { sql, key } = DATABASE_KEYS[namespace];
+		const { sql, key, group } = DATABASE_KEYS[namespace];
 		if (!hasTable(database, sql)) continue;
 		if (registry.size !== 0)
 			throw new Error(
@@ -47,7 +47,7 @@ export const seedIdRegistries = (
 					),
 				);
 			const fields = key(row);
-			const assigned = registry.assign(...fields);
+			const assigned = registry.assignIn(group?.(row), ...fields);
 			if (assigned !== id)
 				throw new Error(
 					`${namespace} ${id} and ${assigned} are both ${fields.join("/")}, so one key has two ids`,

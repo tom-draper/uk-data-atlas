@@ -4,6 +4,7 @@ import {
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
+	readdirSync,
 	rmSync,
 	writeFileSync,
 } from "node:fs";
@@ -24,10 +25,10 @@ import {
 	IdRegistries,
 	idDirectory,
 	idNamespaces,
-	idRegistryFile,
+	idRegistryPath,
 	type IdNamespace,
 } from "../src/ids/idRegistries";
-import { checkAppendOnly } from "../src/ids/idRegistry";
+import { registryProblems } from "../src/ids/checkRegistries";
 import { seedIdRegistries } from "../src/ids/seedIds";
 import {
 	areaTables,
@@ -141,6 +142,26 @@ const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
 	return { root, artifacts, ids, build };
 };
 
+/** Every registry file under a directory, by path inside it. */
+const registryFiles = (directory: string, prefix = ""): Map<string, string> => {
+	const found = new Map<string, string>();
+	for (const entry of readdirSync(join(directory, prefix), {
+		withFileTypes: true,
+	}))
+		if (entry.isDirectory())
+			for (const [path, text] of registryFiles(
+				directory,
+				`${prefix}${entry.name}/`,
+			))
+				found.set(path, text);
+		else
+			found.set(
+				`${prefix}${entry.name}`,
+				readFileSync(join(directory, prefix, entry.name), "utf8"),
+			);
+	return found;
+};
+
 /** Every id by natural key, for the namespaces a database of areas holds. */
 const snapshot = (path: string) => {
 	const database = new DatabaseSync(path, { readOnly: true });
@@ -187,9 +208,18 @@ const after: Spec = {
 };
 
 test("adding a release in the middle of the inventory leaves every existing id unchanged", (context) => {
-	const { build } = fixture(context);
+	const { ids, build } = fixture(context);
 	const first = snapshot(build(before, "before"));
+	const filesBefore = registryFiles(ids);
 	const second = snapshot(build(after, "after"));
+	// The new release added files, and no file there was changed.
+	const filesAfter = registryFiles(ids);
+	for (const [path, text] of filesBefore) {
+		if (path.startsWith("area") && path.includes("/"))
+			assert.equal(filesAfter.get(path), text, `${path} is unchanged`);
+	}
+	assert.ok(filesAfter.has("area-version/ward/2024.txt"));
+	assert.ok(!filesBefore.has("area-version/ward/2024.txt"));
 	assert.ok(first.size > 10);
 	for (const [key, id] of first)
 		assert.equal(second.get(key), id, `${key} kept its id`);
@@ -312,7 +342,7 @@ test("a registry that no longer matches a database is found", (context) => {
 	const path = build(before, "before");
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
-		const file = idRegistryFile(ids, "area_version");
+		const file = join(idRegistryPath(ids, "area_version"), "ward/2023.txt");
 		const original = readFileSync(file, "utf8");
 		assert.equal(
 			findIdMismatches(database, IdRegistries.load(ids)).mismatches
@@ -326,7 +356,13 @@ test("a registry that no longer matches a database is found", (context) => {
 		[lines[first], lines[second]] = [lines[second]!, lines[first]!];
 		const swapped = lines.join("\n");
 		writeFileSync(file, swapped);
-		assert.equal(checkAppendOnly(original, swapped), false);
+		assert.equal(
+			registryProblems(
+				new Map([["area-version/ward/2023.txt", swapped]]),
+				new Map([["area-version/ward/2023.txt", original]]),
+			).length,
+			1,
+		);
 		const { mismatches } = findIdMismatches(
 			database,
 			IdRegistries.load(ids),
@@ -344,8 +380,12 @@ test("a registry that no longer matches a database is found", (context) => {
 test("a registry cannot list one key twice", (context) => {
 	const { ids, build } = fixture(context);
 	build(before, "before");
-	const file = idRegistryFile(ids, "area");
-	writeFileSync(file, `${readFileSync(file, "utf8")}@ward\nE1\n`);
+	// A file of its own, numbered to follow the rest, that lists E1 again.
+	const next = IdRegistries.load(ids).area.size + 1;
+	writeFileSync(
+		join(idRegistryPath(ids, "area"), "ward/2099.txt"),
+		`@ward\n=${next}\nE1\n`,
+	);
 	assert.throws(() => IdRegistries.load(ids), /lists ward\/E1 twice/);
 });
 

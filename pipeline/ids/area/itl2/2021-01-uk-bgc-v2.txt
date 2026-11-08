@@ -1,0 +1,14 @@
+# area itl2/2021-01-uk-bgc-v2.txt: id registry. A key (2 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@itl2
+=28701
+TLC1
+TLC2
+TLH1
+TLK1
+TLK2
+TLL1
+TLL2
+TLM6
+TLM7
+TLM8

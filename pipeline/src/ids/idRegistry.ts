@@ -1,30 +1,39 @@
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
-import { dirname } from "node:path";
-
 /**
  * An append-only registry of integer ids for natural keys.
  *
- * Line N of the file (not counting comments) is the key of id `first + N - 1`.
- * Ids are therefore never stored: they are positions, and the only way to
- * change one is to edit a line that is already there, which `git diff` shows
- * and `checkAppendOnly` refuses. A key is assigned once and keeps its id
- * whatever the inventory around it does, so a key that stops being built
- * leaves a gap that is never reused.
+ * A registry is text. Each line that is not a directive holds the last field
+ * of one key, and takes the id after the line before it, from the registry's
+ * first id. Ids are therefore never stored beside their keys: they are
+ * positions, and the only way to change one is to edit a line that is already
+ * there, which `git diff` shows and `checkAppendOnly` refuses. A key is
+ * assigned once and keeps its id whatever the inventory around it does, so a
+ * key that stops being built leaves a gap that is never reused.
  *
  * A key is a list of text fields. Lines hold the last field only, so that a
- * long run of codes in one release costs the code and a newline: a line
- * starting with `@` sets the other fields (tab separated) for the lines that
- * follow. Lines starting with `#` are comments.
+ * long run of codes in one release costs the code and a newline. Directives:
+ *
+ * - `@a<TAB>b` sets the other fields of the keys that follow;
+ * - `=N` sets the id of the next key, for text that does not continue the
+ *   ids before it (the first line of a segmented registry's file);
+ * - `#` starts a comment.
  *
  * ```
  * # area_version
  * @lad	2024-12-bgc
+ * =980727
  * E06000001
  * E06000002
  * ```
+ *
+ * A registry is one text, or, if segmented, many: each file was written once
+ * and is never changed, so a new release adds a file. The files together must
+ * hold every id from the first to the last exactly once, so a file deleted or
+ * copied is found at load.
  */
 
 const ESCAPED = /[\t\n\r]/;
+
+export type RegistryFile = { name: string; text: string };
 
 type Run = {
 	/** The key fields before the last, joined by tabs. */
@@ -32,10 +41,14 @@ type Run = {
 	/** The id of the run's first line. */
 	start: number;
 	count: number;
-	/** The run's lines in the loaded text, else the codes added since. */
+	/** The loaded file the run's lines are in, with their place in its text. */
+	file?: number;
 	slice?: readonly [from: number, to: number];
+	/** The codes added since loading. */
 	codes?: string[];
-	/** Appended to the file by `save()`. */
+	/** What names the file a new run is written to. */
+	group?: string;
+	/** Written out by the store. */
 	saved?: boolean;
 };
 
@@ -48,55 +61,70 @@ export class IdRegistry {
 	readonly first: number;
 	/** The number of fields in a key. */
 	readonly fields: number;
-	private readonly text: string;
-	private readonly runs: Run[] = [];
+	/** Whether new keys go to new files rather than the end of one. */
+	readonly segmented: boolean;
+	private readonly files: RegistryFile[];
+	private runs: Run[] = [];
 	private readonly runsOf = new Map<string, number[]>();
 	private readonly indexes = new Map<string, Map<string, number>>();
 	private next: number;
 	private readonly loaded: number;
-	private frozen: boolean;
-	/** What `save()` has appended to the text it loaded. */
-	private written = "";
+	private readonly frozen: boolean;
 
 	constructor(
 		name: string,
 		options: {
 			first: number;
 			fields: number;
+			/** One text, for a registry that is a single file. */
 			text?: string;
+			/** The files of a segmented registry. */
+			files?: RegistryFile[];
+			segmented?: boolean;
 			frozen?: boolean;
 		},
 	) {
 		this.name = name;
 		this.first = options.first;
 		this.fields = options.fields;
-		this.text = options.text ?? "";
+		this.segmented = options.segmented ?? false;
 		this.frozen = options.frozen ?? false;
+		this.files =
+			options.files ??
+			(options.text === undefined
+				? []
+				: [{ name: `${name}.txt`, text: options.text }]);
 		this.next = this.first;
-		this.parse();
+		for (const [index, file] of this.files.entries())
+			this.parse(index, file);
+		this.tile();
+		this.checkUnique();
 		this.loaded = this.next;
 	}
 
-	private parse() {
+	private parse(fileIndex: number, file: RegistryFile) {
+		const where = `Id registry ${this.name} file ${file.name}`;
+		const { text } = file;
 		let prefix = "";
 		let run: Run | undefined;
 		let offset = 0;
-		const seenPrefixes = new Set<string>();
+		let seenPrefix = this.fields === 1;
+		// A single file continues from the first id; a segment says where it starts.
+		let expected: number | undefined = this.segmented
+			? undefined
+			: this.first;
 		const finish = (end: number) => {
 			if (run) {
 				run.slice = [run.slice![0], end];
-				this.addRun(run);
+				this.runs.push(run);
 			}
 			run = undefined;
 		};
-		while (offset < this.text.length) {
-			const newline = this.text.indexOf("\n", offset);
+		while (offset < text.length) {
+			const newline = text.indexOf("\n", offset);
 			if (newline === -1)
-				throw new Error(
-					`Id registry ${this.name} does not end with a newline`,
-				);
-			const line = this.text.slice(offset, newline);
-			const lineEnd = newline + 1;
+				throw new Error(`${where} does not end with a newline`);
+			const line = text.slice(offset, newline);
 			if (line.startsWith("#")) {
 				// A comment ends a run, so a slice holds only code lines.
 				finish(offset);
@@ -108,32 +136,70 @@ export class IdRegistry {
 					this.fields - 1
 				)
 					throw new Error(
-						`Id registry ${this.name} line has the wrong number of key fields: ${JSON.stringify(line)}`,
+						`${where} line has the wrong number of key fields: ${JSON.stringify(line)}`,
 					);
-				seenPrefixes.add(prefix);
+				seenPrefix = true;
+			} else if (line.startsWith("=")) {
+				finish(offset);
+				const id = Number(line.slice(1));
+				if (!Number.isInteger(id) || id < this.first)
+					throw new Error(
+						`${where} has a bad id line ${JSON.stringify(line)}`,
+					);
+				expected = id;
 			} else {
 				if (line === "" || line.includes("\r"))
 					throw new Error(
-						`Id registry ${this.name} has a blank or malformed line after id ${this.next - 1}`,
+						`${where} has a blank or malformed line after id ${(expected ?? this.first) - 1}`,
 					);
-				if (this.fields > 1 && !seenPrefixes.size)
+				if (!seenPrefix)
 					throw new Error(
-						`Id registry ${this.name} has a key before its first @ line`,
+						`${where} has a key before its first @ line`,
+					);
+				if (expected === undefined)
+					throw new Error(
+						`${where} has a key before its first = line, which gives its id`,
 					);
 				if (!run)
 					run = {
 						prefix,
-						start: this.next,
+						start: expected,
 						count: 0,
+						file: fileIndex,
 						slice: [offset, offset],
 					};
 				run.count++;
-				this.next++;
+				expected++;
 			}
-			offset = lineEnd;
+			offset = newline + 1;
 		}
 		finish(offset);
-		this.checkUnique();
+	}
+
+	/** Every id from the first to the last is in exactly one place. */
+	private tile() {
+		this.runs.sort((a, b) => a.start - b.start);
+		let cursor = this.first;
+		for (const run of this.runs) {
+			if (run.start < cursor)
+				throw new Error(
+					`Id registry ${this.name} gives id ${run.start} to more than one key (${this.files[run.file!]!.name}): a file was copied or edited`,
+				);
+			if (run.start > cursor)
+				throw new Error(
+					`Id registry ${this.name} is missing ids ${cursor} to ${run.start - 1}: a file was deleted or not committed`,
+				);
+			cursor = run.start + run.count;
+		}
+		this.next = cursor;
+		for (const [index, run] of this.runs.entries())
+			this.listRun(run, index);
+	}
+
+	private listRun(run: Run, index: number) {
+		const list = this.runsOf.get(run.prefix);
+		if (list) list.push(index);
+		else this.runsOf.set(run.prefix, [index]);
 	}
 
 	private checkUnique() {
@@ -156,17 +222,10 @@ export class IdRegistry {
 		return [...(prefix === "" ? [] : prefix.split("\t")), code].join("/");
 	}
 
-	private addRun(run: Run) {
-		this.runs.push(run);
-		const list = this.runsOf.get(run.prefix);
-		if (list) list.push(this.runs.length - 1);
-		else this.runsOf.set(run.prefix, [this.runs.length - 1]);
-	}
-
 	private codesOf(run: Run): string[] {
 		if (run.codes) return run.codes;
 		const [from, to] = run.slice!;
-		return this.text.slice(from, to - 1).split("\n");
+		return this.files[run.file!]!.text.slice(from, to - 1).split("\n");
 	}
 
 	private split(key: readonly string[]) {
@@ -179,12 +238,9 @@ export class IdRegistry {
 				throw new Error(
 					`Id registry ${this.name} cannot hold ${JSON.stringify(field)}: keys are not empty and have no tabs or line breaks`,
 				);
-			else if (
-				index === key.length - 1 &&
-				(field.startsWith("@") || field.startsWith("#"))
-			)
+			else if (index === key.length - 1 && /^[@#=]/.test(field))
 				throw new Error(
-					`Id registry ${this.name} cannot hold ${JSON.stringify(field)}: the last field cannot start with @ or #`,
+					`Id registry ${this.name} cannot hold ${JSON.stringify(field)}: the last field cannot start with @, # or =`,
 				);
 		return {
 			prefix: key.slice(0, -1).join("\t"),
@@ -220,6 +276,17 @@ export class IdRegistry {
 
 	/** The key's id, assigning the next one if it has none. */
 	assign(...key: string[]): number {
+		return this.assignIn(undefined, ...key);
+	}
+
+	/**
+	 * The key's id, assigning the next one if it has none. A new key is
+	 * written to the file `group` names (a path such as `ward/2024-12`),
+	 * which by default is the key's own prefix: a segmented registry's keys
+	 * for one release go to one file. The group of a key that has an id does
+	 * not matter.
+	 */
+	assignIn(group: string | undefined, ...key: string[]): number {
 		const { prefix, code } = this.split(key);
 		const index = this.indexOf(prefix);
 		const existing = index.get(code);
@@ -228,12 +295,30 @@ export class IdRegistry {
 			throw new Error(
 				`Id registry ${this.name} has no id for ${key.join("/")}. Build locally to extend pipeline/ids and commit the new lines.`,
 			);
+		const where = this.segmented
+			? (group ?? prefix.split("\t").join("/"))
+			: "";
 		const id = this.next++;
 		const last = this.runs[this.runs.length - 1];
-		if (last?.codes && !last.saved && last.prefix === prefix) {
+		if (
+			last?.codes &&
+			!last.saved &&
+			last.prefix === prefix &&
+			last.group === where
+		) {
 			last.codes.push(code);
 			last.count++;
-		} else this.addRun({ prefix, start: id, count: 1, codes: [code] });
+		} else {
+			const run = {
+				prefix,
+				start: id,
+				count: 1,
+				codes: [code],
+				group: where,
+			};
+			this.runs.push(run);
+			this.listRun(run, this.runs.length - 1);
+		}
 		index.set(code, id);
 		return id;
 	}
@@ -263,65 +348,67 @@ export class IdRegistry {
 		return this.next - this.first;
 	}
 
-	/** How many ids this run added to those the file held. */
+	/** How many ids this run added to those the files held. */
 	get added() {
 		return this.next - this.loaded;
 	}
 
-	/** The lines to append to the file for ids added since it was loaded. */
-	pendingText(): string {
-		let out = "";
-		let prefix: string | undefined;
+	/**
+	 * The text to write for the ids added and not yet saved, by the file it
+	 * goes to (`""` for a registry that is one file, which it is appended to).
+	 */
+	pending(): { group: string; text: string }[] {
+		const groups = new Map<string, Run[]>();
 		for (const run of this.runs) {
-			if (run.slice || run.saved) continue;
-			// The file ends in whatever prefix its last written run had.
-			if (prefix === undefined) prefix = this.lastWrittenPrefix();
-			if (run.prefix !== prefix) {
-				out += `@${run.prefix}\n`;
-				prefix = run.prefix;
-			}
-			out += `${run.codes!.join("\n")}\n`;
+			if (!run.codes || run.saved) continue;
+			const list = groups.get(run.group!);
+			if (list) list.push(run);
+			else groups.set(run.group!, [run]);
 		}
-		return out;
+		return [...groups].map(([group, runs]) => {
+			let text = "";
+			let prefix: string | undefined = this.segmented
+				? this.fields === 1
+					? ""
+					: undefined
+				: this.lastWrittenPrefix();
+			let end: number | undefined = this.segmented
+				? undefined
+				: runs[0]!.start;
+			for (const run of runs) {
+				if (run.prefix !== prefix) {
+					text += `@${run.prefix}\n`;
+					prefix = run.prefix;
+				}
+				if (run.start !== end) text += `=${run.start}\n`;
+				text += `${run.codes!.join("\n")}\n`;
+				end = run.start + run.count;
+			}
+			return { group, text };
+		});
 	}
 
 	private lastWrittenPrefix() {
 		let prefix = "";
 		for (const run of this.runs)
-			if (run.slice || run.saved) prefix = run.prefix;
+			if (!run.codes || run.saved) prefix = run.prefix;
 		return prefix;
 	}
 
-	/** Append what was added to the file, creating it with a header if need be. */
-	save(path: string) {
-		const pending = this.pendingText();
-		const known = this.text + this.written;
-		if (pending === "" && existsSync(path)) return;
-		if (!existsSync(path)) {
-			mkdirSync(dirname(path), { recursive: true });
-			if (known !== "")
-				throw new Error(
-					`Id registry ${this.name} was loaded from a file that is gone`,
-				);
-		} else if (readFileSync(path, "utf8") !== known)
-			throw new Error(
-				`Id registry ${path} changed while it was in use. Rebuild so no ids are lost.`,
-			);
-		const header = known === "" ? this.header() : "";
-		appendFileSync(path, header + pending);
-		this.written += header + pending;
+	/** Record that the store has written everything `pending()` gave. */
+	markSaved() {
 		for (const run of this.runs) if (run.codes) run.saved = true;
 	}
 
-	header() {
-		return `# ${this.name}: id registry. The ${this.fields === 1 ? "key" : `key (${this.fields} fields)`} on line N below is id ${this.first} + N - 1.\n# Append only. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.\n`;
+	header(file = "") {
+		return `# ${this.name}${file ? ` ${file}` : ""}: id registry. ${this.fields === 1 ? "A key" : `A key (${this.fields} fields)`} is on each line below that is not a directive, and its id is the one after the line before it, from ${this.first}.\n# Append only${this.segmented ? ": a file is written once and never changed" : ""}. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.\n`;
 	}
 }
 
 /**
  * Whether `current` only adds lines to `previous`: the same header and the
  * same key lines in the same order, then more. This is the rule that keeps
- * ids stable across commits.
+ * ids stable across commits for a registry that is one file.
  */
 export const checkAppendOnly = (previous: string, current: string) =>
 	current.startsWith(previous) &&

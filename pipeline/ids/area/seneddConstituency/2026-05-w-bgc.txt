@@ -1,0 +1,20 @@
+# area seneddConstituency/2026-05-w-bgc.txt: id registry. A key (2 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@seneddConstituency
+=287304
+W09000048
+W09000049
+W09000050
+W09000051
+W09000052
+W09000053
+W09000054
+W09000055
+W09000056
+W09000057
+W09000058
+W09000059
+W09000060
+W09000061
+W09000062
+W09000063

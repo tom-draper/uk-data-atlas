@@ -1,0 +1,19 @@
+# area-version combinedAuthority/2025-12-en-bgc.txt: id registry. A key (3 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@combinedAuthority	2025-12-en-bgc
+=1
+E47000001
+E47000002
+E47000003
+E47000004
+E47000006
+E47000007
+E47000008
+E47000009
+E47000012
+E47000013
+E47000014
+E47000015
+E47000016
+E47000017
+E47000018

@@ -1,0 +1,20 @@
+# area localAuthority/2018-12-uk-bgc.txt: id registry. A key (2 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@localAuthority
+=29341
+E06000028
+E06000029
+E07000048
+E07000049
+E07000050
+E07000051
+E07000052
+E07000053
+E07000190
+E07000191
+E07000201
+E07000204
+E07000205
+E07000206
+S12000044
+S12000046

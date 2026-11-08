@@ -1,0 +1,11 @@
+# area localHealthBoard/2023-12-w-bgc.txt: id registry. A key (2 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@localHealthBoard
+=29783
+W11000023
+W11000024
+W11000025
+W11000028
+W11000029
+W11000030
+W11000031

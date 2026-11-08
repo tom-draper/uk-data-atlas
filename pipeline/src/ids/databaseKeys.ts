@@ -10,7 +10,12 @@ type Row = Record<string, SQLOutputValue>;
  */
 export const DATABASE_KEYS: Record<
 	IdNamespace,
-	{ sql: string; key: (row: Row) => string[] }
+	{
+		sql: string;
+		key: (row: Row) => string[];
+		/** The file a new key is written to, where not the key's own prefix. */
+		group?: (row: Row) => string;
+	}
 > = {
 	release: {
 		sql: "SELECT position AS id, geography, id AS release FROM area_releases ORDER BY position",
@@ -21,8 +26,11 @@ export const DATABASE_KEYS: Record<
 		key: (row) => [String(row.slug)],
 	},
 	area: {
-		sql: "SELECT a.id AS id, g.slug AS geography, a.code AS code FROM area a JOIN geography g ON g.id = a.geography_id ORDER BY g.id, a.id",
+		// An area is written with the release that first had it.
+		sql: "SELECT a.id AS id, g.slug AS geography, a.code AS code, fr.geography AS introduced_geography, fr.id AS introduced_release FROM area a JOIN geography g ON g.id = a.geography_id JOIN (SELECT area_id, min(id) AS version_id FROM area_version GROUP BY area_id) f ON f.area_id = a.id JOIN area_version fv ON fv.id = f.version_id JOIN area_releases fr ON fr.position = fv.release_id ORDER BY g.id, a.id",
 		key: (row) => [String(row.geography), String(row.code)],
+		group: (row) =>
+			`${String(row.introduced_geography)}/${String(row.introduced_release)}`,
 	},
 	area_version: {
 		sql: "SELECT v.id AS id, r.geography AS geography, r.id AS release, a.code AS code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.position = v.release_id ORDER BY v.release_id, v.id",

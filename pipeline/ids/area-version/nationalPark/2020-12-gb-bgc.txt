@@ -1,0 +1,19 @@
+# area-version nationalPark/2020-12-gb-bgc.txt: id registry. A key (3 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@nationalPark	2020-12-gb-bgc
+=206439
+E26000001
+E26000002
+E26000004
+E26000005
+E26000006
+E26000007
+E26000009
+E26000010
+E26000011
+E26000012
+S21000002
+S21000003
+W18000001
+W18000002
+W18000003

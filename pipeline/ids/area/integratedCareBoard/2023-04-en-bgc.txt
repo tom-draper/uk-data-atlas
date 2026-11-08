@@ -1,0 +1,17 @@
+# area integratedCareBoard/2023-04-en-bgc.txt: id registry. A key (2 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@integratedCareBoard
+=27351
+E54000022
+E54000023
+E54000024
+E54000025
+E54000026
+E54000027
+E54000028
+E54000034
+E54000042
+E54000044
+E54000056
+E54000063
+E54000064

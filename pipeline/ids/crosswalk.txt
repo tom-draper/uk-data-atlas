@@ -1,4 +1,4 @@
-# crosswalk: id registry. The key on line N below is id 0 + N - 1.
+# crosswalk: id registry. A key is on each line below that is not a directive, and its id is the one after the line before it, from 0.
 # Append only. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
 nhs-england-region-2022-07-en-bgc-to-nhs-england-region-2024-01-en-bgc-area-overlap
 data-zone-2021-ni-to-local-authority-2025-12-uk-bgc-official-lookup

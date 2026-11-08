@@ -1,0 +1,12 @@
+# area scottishParliamentaryRegion/2022-12-sc-bgc.txt: id registry. A key (2 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@scottishParliamentaryRegion
+=287296
+S17000011
+S17000012
+S17000013
+S17000014
+S17000015
+S17000018
+S17000019
+S17000020

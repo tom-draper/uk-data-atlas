@@ -1,4 +1,4 @@
-# series: id registry. The key on line N below is id 1 + N - 1.
+# series: id registry. A key is on each line below that is not a directive, and its id is the one after the line before it, from 1.
 # Append only. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
 adult-social-care-activity/long-term-support-clients/localAuthority:2025-05-uk-bgc-v2
 adult-social-care-outcomes/social-care-quality-of-life/localAuthority:2025-05-uk-bgc-v2

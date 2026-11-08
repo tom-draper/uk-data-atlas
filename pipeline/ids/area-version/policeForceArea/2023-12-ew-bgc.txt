@@ -1,0 +1,47 @@
+# area-version policeForceArea/2023-12-ew-bgc.txt: id registry. A key (3 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only: a file is written once and never changed. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@policeForceArea	2023-12-ew-bgc
+=833045
+E23000001
+E23000002
+E23000003
+E23000004
+E23000005
+E23000006
+E23000007
+E23000008
+E23000009
+E23000010
+E23000011
+E23000012
+E23000013
+E23000014
+E23000015
+E23000016
+E23000017
+E23000018
+E23000019
+E23000020
+E23000021
+E23000022
+E23000023
+E23000024
+E23000025
+E23000026
+E23000027
+E23000028
+E23000029
+E23000030
+E23000031
+E23000032
+E23000033
+E23000034
+E23000035
+E23000036
+E23000037
+E23000038
+E23000039
+W15000001
+W15000002
+W15000003
+W15000004
