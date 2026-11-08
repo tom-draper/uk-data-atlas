@@ -180,12 +180,12 @@ export const readSqliteCrosswalk = (
 				JOIN area_version v ON v.id = e.to_version_id
 				JOIN area a ON a.id = v.area_id
 				LEFT JOIN crosswalk_label l ON l.crosswalk_id = e.crosswalk_id AND l.area_version_id = e.to_version_id
-				LEFT JOIN crosswalk_weight w ON w.crosswalk_id = e.crosswalk_id AND w.from_version_id = e.from_version_id AND w.to_version_id = e.to_version_id
+				LEFT JOIN crosswalk_weight w ON w.crosswalk_id = e.crosswalk_id AND w.from_version_id = e.from_version_id AND w.to_version_id = e.to_version_id AND w.basis_id = ?2
 				LEFT JOIN crosswalk_edge_check k ON k.crosswalk_id = e.crosswalk_id AND k.from_version_id = e.from_version_id AND k.to_version_id = e.to_version_id
-				WHERE e.crosswalk_id = ?
+				WHERE e.crosswalk_id = ?1
 				ORDER BY e.from_version_id, a.code`,
 			)
-			.iterate(id)) {
+			.iterate(id, basis)) {
 			const from = target.from_version_id as number;
 			let list = targets.get(from);
 			if (!list) targets.set(from, (list = []));
