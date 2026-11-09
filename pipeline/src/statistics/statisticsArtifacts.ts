@@ -6,11 +6,11 @@ import {
 	type DataCatalog,
 	type MeasureSource,
 } from "@uk-data-atlas/measures";
+import { statisticsReadPathPath } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	rebuildStatisticsObservationText,
-	statisticsReadPathPath,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 export const statisticsArtifactReader = (
 	database: DatabaseSync,

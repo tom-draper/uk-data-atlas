@@ -3,8 +3,8 @@ import type {
 	StatisticsReadPath,
 	StatisticsSelector,
 	StatisticsTableSelector,
-} from "../storage/atlasStatisticsObservations.ts";
-import { readStatisticsObservationText } from "../storage/atlasStatisticsObservations.ts";
+} from "./atlasStatisticsObservations.ts";
+import { readStatisticsObservationText } from "./atlasStatisticsObservations.ts";
 import {
 	databaseGeneration,
 	openReadOnlyDatabase,

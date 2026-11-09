@@ -1,5 +1,5 @@
 import type { StatisticsVocabulary } from "@uk-data-atlas/measures";
-import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
+import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
 
 /**
  * The measures and dimensions the statistics tables hold, in the form the

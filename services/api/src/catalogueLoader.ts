@@ -5,12 +5,13 @@ import {
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
 	withDeclaredMeasureIds,
+	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	statisticsReadPathPath,
 	statisticsVocabularyPath,
-	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
+
 import { readFileSync } from "node:fs";
 import measureDimensionsConfig from "../config/measure-dimensions.json" with { type: "json" };
 

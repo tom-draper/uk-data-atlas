@@ -15,7 +15,7 @@ import { bindStatisticsField } from "../src/statistics/bindStatisticsField";
 import { bindCensusStatistics } from "../src/statistics/bindCensusStatistics";
 import { bindReviewedStatistics } from "../src/statistics/bindReviewedStatistics";
 import { observationArtifactName } from "@uk-data-atlas/measures";
-import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { type StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { bindCompiledFields } from "../src/statistics/bindCompiledFields";
 import { compileMeasureDownloads } from "../src/statistics/measureDownloads";
 import { gunzipSync } from "node:zlib";

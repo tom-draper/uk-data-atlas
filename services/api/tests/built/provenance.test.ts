@@ -2,10 +2,12 @@ import {
 	compiledObservationPath,
 	atlasDatabasePath,
 	observationValuesEqual,
-	readStatisticsObservationText,
 	statisticsReadPathPath,
-	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readStatisticsObservationText,
+	type StatisticsReadPath,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";

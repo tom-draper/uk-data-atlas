@@ -56,7 +56,7 @@ import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
 import { readRelationshipCandidateInventory } from "./governanceLoader.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "../storage/dataLayout.ts";
-import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations.ts";
+import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 
 const EVIDENCE_DOCUMENTS = [
 	"analysis-geography-validation",

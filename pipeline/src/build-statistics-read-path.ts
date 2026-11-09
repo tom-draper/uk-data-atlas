@@ -17,17 +17,19 @@ import {
 	HOUSE_PRICE_SERVED_WARD_CODES,
 	SALFORD_WARD_CODE_REMAP,
 } from "@uk-data-atlas/datasets/data/house-price/wardCodes";
-import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	readMeasureDimensionsConfig,
+	rebuildStatisticsObservationText,
+	type StatisticsReadPath,
+	type StatisticsSelector,
+	type StatisticsTableSelector,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactDirectory,
 	statisticsReadPathPath,
 	buildDirectory,
 	compiledObservationPath,
 	observationValuesEqual,
-	rebuildStatisticsObservationText,
-	type StatisticsReadPath,
-	type StatisticsSelector,
-	type StatisticsTableSelector,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**

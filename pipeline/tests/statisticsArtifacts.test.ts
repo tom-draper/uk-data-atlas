@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import type {
-	StatisticsReadPath,
-	StatisticsSelector,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	type StatisticsReadPath,
+	type StatisticsSelector,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { statisticsArtifactReader } from "../src/statistics/statisticsArtifacts";
 
 test("requires an exact selector inventory for the catalogue", () => {

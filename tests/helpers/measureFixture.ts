@@ -10,8 +10,8 @@ import {
 	type Measure,
 	type MeasureDimensions,
 	type MeasureValuesContext,
+	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * A small statistics database, catalogue and reviewed dimension mapping for

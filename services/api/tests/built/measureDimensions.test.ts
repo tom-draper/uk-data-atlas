@@ -6,11 +6,13 @@ import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { measureDimensionProblems } from "@uk-data-atlas/measures";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	readMeasureDimensionsConfig,
+	readStatisticsVocabulary,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	artifactDirectory,
 	atlasDatabasePath,
-	readStatisticsVocabulary,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");

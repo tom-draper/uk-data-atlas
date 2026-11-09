@@ -6,11 +6,11 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
 	ObservationCache,
 	type DataCatalog,
+	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	closeAllReadOnlyDatabases,
 	configureReadOnlyDatabases,
-	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
 
 let directory: string;
