@@ -94,3 +94,18 @@ const range = (text: unknown) => {
 	if (!match) throw new Error(`Unknown year range ${String(text)}`);
 	return periods.years(Number(match[1]), Number(match[2]));
 };
+
+export const declaredLifeExpectancySeries = () =>
+	lifeExpectancySeries.statistics!.dimensions!.find(
+		(dimension) => dimension.slug === "sex",
+	)!
+		.members!.filter(({ key }) => key !== "all")
+		.map(({ code, key }) => {
+			const member = code ?? key;
+			return {
+				id: `life-expectancy-${member}`,
+				measure: "life-expectancy",
+				dimensions: { sex: member },
+			};
+		});
+
