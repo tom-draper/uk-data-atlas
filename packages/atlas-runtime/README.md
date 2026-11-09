@@ -4,7 +4,6 @@ Node modules used by the API, data pipeline and website server to read and build
 
 - `@uk-data-atlas/atlas-runtime/places` for place index compilation, SQLite readers and location projections.
 - `@uk-data-atlas/atlas-runtime/postcodes` for postcode release selection.
-- `@uk-data-atlas/atlas-runtime/relationships` for crosswalks and conversions.
 - `@uk-data-atlas/atlas-runtime/catalogue` for catalogue loading, observation storage and evidence.
 - `@uk-data-atlas/atlas-runtime/loader` for loading a whole atlas release: the catalogue loader, the geography resolver and the reports that need it. It sits on top of every other folder, and none of them imports it.
 - `@uk-data-atlas/atlas-runtime/maps` for map resources.
@@ -19,7 +18,7 @@ Postcode indexes, area placements and counts live in `@uk-data-atlas/postcodes`.
 
 Area inventory types and data-source-independent lookups live in `@uk-data-atlas/areas`. The runtime supplies the SQLite reader.
 
-Crosswalk models, translation and member reconciliation live in `@uk-data-atlas/relationships`. The runtime provides the atlas storage readers and higher-level composition.
+Crosswalk readers, models, translation and member reconciliation live in `@uk-data-atlas/relationships`.
 
 Geometry sources, compiled-file readers, caches and spatial queries live in `@uk-data-atlas/geometry`.
 

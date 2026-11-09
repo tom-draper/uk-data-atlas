@@ -1,3 +1,3 @@
 # @uk-data-atlas/relationships
 
-Crosswalk models, relationship paths, translation, relationship indexing, validation and member reconciliation. Import from `@uk-data-atlas/relationships`. Translation and reconciliation accept supplied area and crosswalk data and do not depend on SQLite or the atlas runtime.
+Crosswalks between areas and translation of values across them. Import from `@uk-data-atlas/relationships`. The package includes crosswalk readers, relationship paths, validation and member reconciliation.
