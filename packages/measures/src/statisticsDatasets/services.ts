@@ -266,6 +266,18 @@ export const CRIME: DeclaredDataset = {
 	fields: [{ path: "{offence}", measure: "recorded-crimes" }],
 };
 
+export const roadCollisionSeries = () =>
+	ROAD_COLLISIONS.dimensions!.find(
+		(dimension) => dimension.slug === "collision-severity",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		return {
+			id: `road-collisions${member === "all" ? "" : `-${member}`}`,
+			measure: "road-collisions",
+			dimensions: { "collision-severity": member },
+		};
+	});
+
 export const ROAD_COLLISIONS: DeclaredDataset = {
 	type: "roadCollisions",
 	module: "transport",

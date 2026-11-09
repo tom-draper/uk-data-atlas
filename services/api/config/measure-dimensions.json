@@ -938,30 +938,6 @@
 				"highest-qualification": "total"
 			}
 		},
-		"road-collisions": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "all"
-			}
-		},
-		"road-collisions-fatal": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "fatal"
-			}
-		},
-		"road-collisions-serious": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "serious"
-			}
-		},
-		"road-collisions-slight": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "slight"
-			}
-		},
 		"simd-decile": {
 			"measure": "simd-decile"
 		},
