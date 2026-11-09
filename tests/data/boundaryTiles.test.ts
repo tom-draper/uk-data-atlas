@@ -74,6 +74,7 @@ describe("boundary map resources", () => {
 			minZoom: 0,
 			maxZoom: 12,
 			codeKey: "LAD24CD",
+			release: key,
 		});
 	});
 
@@ -146,6 +147,7 @@ describe("boundary map resources", () => {
 			minZoom: 0,
 			maxZoom: 12,
 			codeKey: "wd17cd",
+			release: "ward/2017-12-gb-bgc",
 		});
 	});
 
