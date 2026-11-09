@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+
 import { buildGeographyCatalogues } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
@@ -29,6 +29,7 @@ import { readRelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/rela
 import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
+	readAtlasPayload,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";

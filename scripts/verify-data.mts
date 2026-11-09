@@ -5,11 +5,12 @@ import {
 import {
 	buildLog,
 	readAtlasAssetText,
-	readAtlasPayload,
 } from "@uk-data-atlas/atlas-runtime/storage";
+
 import {
 	comparableCompiled,
 	generatedFromRows,
+	readAtlasPayload,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { ATLAS_LOOKUP_NAMES } from "./atlas-lookups";
 import { createHash } from "node:crypto";

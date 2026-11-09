@@ -5,7 +5,11 @@ import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
 import { gunzipSync, gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
-import { type StatisticsDataset } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	type StatisticsDataset,
+	readVersionedAtlasDataset,
+	readAtlasDatasetUrls,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
 	fuelPovertyStatistics,
@@ -16,8 +20,7 @@ import {
 	writeSqliteTables,
 	type SqliteTable,
 } from "../../pipeline/src/storage/index";
-import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
-import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/storage";
+
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import { publishDatasetPayloads } from "../../pipeline/src/storage/index";
 

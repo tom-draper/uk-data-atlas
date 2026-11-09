@@ -15,7 +15,7 @@ import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 import { gzipSync } from "node:zlib";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";

@@ -1,5 +1,6 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { AreaSearch } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	readAreaSearchIndex,
@@ -28,10 +29,7 @@ import {
 	namedLocationInventory,
 } from "./geographyFixtures";
 import { createHash } from "node:crypto";
-import {
-	readAtlasPayload,
-	unpackText,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
 import assert from "node:assert/strict";
 import {
 	existsSync,

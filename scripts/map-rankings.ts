@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { join } from "node:path";
 import { ATLAS_LOCATIONS } from "../lib/atlas/pages";
 import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";

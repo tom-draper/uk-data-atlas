@@ -21,7 +21,7 @@ import { IdRegistries, idDirectory } from "../src/ids/idRegistries";
 import { seedIdRegistries } from "../src/ids/seedIds";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { storePostcodeIndex } from "../src/postcodes/storePostcodeIndex";
 import { assembleAtlas } from "../src/assemble-atlas";
 import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";

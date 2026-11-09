@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "../storage/atlasSqlite.ts";
+import { readAtlasPayload } from "./atlasPayloads.ts";
 import { readFileSync } from "node:fs";
 import type { AnalysisGeographyInventory } from "../areas/analysisGeographies.ts";
 import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation.ts";

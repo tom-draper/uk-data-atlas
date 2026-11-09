@@ -2,7 +2,7 @@ import {
 	readSqliteCrosswalkInventory,
 	readSqliteCrosswalk,
 } from "./atlasCrosswalks.ts";
-import { readAtlasPayload } from "../storage/atlasSqlite.ts";
+import { requireAtlasPayload } from "../storage/atlasSqlite.ts";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
@@ -97,7 +97,7 @@ export const readRelationshipPathInventory = (
 ): RelationshipPathInventory => {
 	const path = atlasDatabasePath(repositoryRoot);
 	const inventory = JSON.parse(
-		readAtlasPayload(repositoryRoot, "relationship-paths"),
+		requireAtlasPayload(repositoryRoot, "relationship-paths"),
 	) as RelationshipPathInventory;
 	if (
 		inventory.schemaVersion !== 1 ||
