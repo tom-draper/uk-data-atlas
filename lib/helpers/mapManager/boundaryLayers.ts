@@ -1,6 +1,7 @@
 import { pmtilesURL } from "@/lib/map/tilesUrl";
-import { getFeatureProp } from "@uk-data-atlas/datasets/types/geometry";
 import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
+import type { MapValues } from "@uk-data-atlas/map-tiles/mapValues";
+import { drawnTileState } from "./tileState";
 import type { GeoJSONSource } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
 import type {
@@ -103,11 +104,19 @@ export class BoundaryLayerController {
 	private drawnGeojson: BoundaryGeojson | null = null;
 	/** Which of the drawn collection's properties are set as state. */
 	private stateProperties: string | null = null;
+	/**
+	 * The code-aligned values the `value` state is set from, in place of the
+	 * drawn collection's own `value` property. Used only with tiles.
+	 */
+	private values: MapValues | null = null;
+	/** The values `stateProperties` was last set from. */
+	private stateValues: MapValues | null = null;
 	private hidesFeatures = false;
 	private deferredPaint: {
 		geojson: BoundaryGeojson;
 		paint: FillPaintConfig;
 		visibility: MapOptions["visibility"];
+		values: MapValues | null;
 	} | null = null;
 	private awaitingStyle = false;
 
@@ -117,10 +126,16 @@ export class BoundaryLayerController {
 		geojson: BoundaryGeojson,
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
+		values: MapValues | null = null,
 	): void {
 		this.lastFillPaint = paint;
+		if (values && values.length !== this.tiles?.codeList.length)
+			throw new Error(
+				`Map values hold ${values.length} entries for ${this.tiles?.codeList.length ?? 0} areas`,
+			);
+		this.values = values;
 		if (!styleIsReady(this.map)) {
-			this.deferredPaint = { geojson, paint, visibility };
+			this.deferredPaint = { geojson, paint, visibility, values };
 			if (!this.awaitingStyle) {
 				this.awaitingStyle = true;
 				this.map.once("idle", () => {
@@ -132,6 +147,7 @@ export class BoundaryLayerController {
 							deferred.geojson,
 							deferred.paint,
 							deferred.visibility,
+							deferred.values,
 						);
 				});
 			}
@@ -286,6 +302,7 @@ export class BoundaryLayerController {
 		this.sourceGeometry = null;
 		this.drawnGeojson = null;
 		this.stateProperties = null;
+		this.stateValues = null;
 		this.hidesFeatures = false;
 	}
 
@@ -311,21 +328,18 @@ export class BoundaryLayerController {
 		if (
 			(!geometry && !this.tiles) ||
 			!drawn ||
-			this.stateProperties === key
+			(this.stateProperties === key && this.stateValues === this.values)
 		)
 			return;
 		this.stateProperties = key;
+		this.stateValues = this.values;
+		if (this.tiles) {
+			this.setTileState(this.tiles, drawn, properties);
+			return;
+		}
 		const shown = new Set<number>();
 		for (const feature of drawn.features) {
-			const code =
-				this.tiles &&
-				getFeatureProp(feature.properties, this.tiles.codeKey);
-			const id = this.tiles
-				? typeof code === "string"
-					? this.tiles.ids.get(code)
-					: undefined
-				: feature.id;
-			if (id === undefined) continue;
+			const id = feature.id;
 			shown.add(id);
 			const values = feature.properties as unknown as Record<
 				string,
@@ -336,30 +350,47 @@ export class BoundaryLayerController {
 			};
 			for (const property of properties)
 				state[property] = values[property] ?? null;
-			this.map.setFeatureState(
-				{
-					source: SOURCE_ID,
-					id,
-					...(this.tiles ? { sourceLayer: "boundaries" } : {}),
-				},
-				state,
-			);
+			this.map.setFeatureState({ source: SOURCE_ID, id }, state);
 		}
-		this.hidesFeatures = !!this.tiles || shown.size < (geometry?.size ?? 0);
-		if (this.tiles) {
-			for (const id of this.tiles.ids.values())
-				if (!shown.has(id))
-					this.map.setFeatureState(
-						{ source: SOURCE_ID, sourceLayer: "boundaries", id },
-						{ [OUTSIDE_DATASET_STATE]: true },
-					);
-			return;
-		}
+		this.hidesFeatures = shown.size < (geometry?.size ?? 0);
 		if (!this.hidesFeatures) return;
 		for (const id of geometry?.keys() ?? [])
 			if (!shown.has(id))
 				this.map.setFeatureState(
 					{ source: SOURCE_ID, id },
+					{ [OUTSIDE_DATASET_STATE]: true },
+				);
+	}
+
+	/**
+	 * The same for a source of tiles, whose features are addressed by the
+	 * release's ids. The values come from the drawn features' properties, or
+	 * from the code-aligned array when there is one. Only state is set, never
+	 * the source's data.
+	 */
+	private setTileState(
+		tiles: BoundaryTiles,
+		drawn: BoundaryGeojson,
+		properties: string[],
+	): void {
+		const states = drawnTileState(
+			drawn,
+			tiles,
+			properties,
+			this.values
+				? { kind: "values", values: this.values }
+				: { kind: "properties" },
+		);
+		for (const [id, state] of states)
+			this.map.setFeatureState(
+				{ source: SOURCE_ID, id, sourceLayer: "boundaries" },
+				{ ...state, [OUTSIDE_DATASET_STATE]: false },
+			);
+		this.hidesFeatures = true;
+		for (const id of tiles.ids.values())
+			if (!states.has(id))
+				this.map.setFeatureState(
+					{ source: SOURCE_ID, sourceLayer: "boundaries", id },
 					{ [OUTSIDE_DATASET_STATE]: true },
 				);
 	}

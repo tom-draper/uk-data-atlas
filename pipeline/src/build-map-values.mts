@@ -127,6 +127,7 @@ export async function buildMapValues(
 			await writeFile(join(paths.outDir, file), text);
 			entries[key] = {
 				file,
+				field,
 				bytes: Buffer.byteLength(text),
 				sha256: hash,
 				codeList: codeListId(codeList),

@@ -1,4 +1,5 @@
 import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
+import type { MapValues } from "@uk-data-atlas/map-tiles/mapValues";
 import type { BoundaryGeojson } from "@uk-data-atlas/datasets/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapInstance } from "@/lib/types/mapInstance";
@@ -31,6 +32,7 @@ export class LayerManager {
 					layer.data,
 					valuePaint(layer.colorExpression),
 					layer.visibility,
+					layer.values,
 				);
 				return;
 			case "points":
@@ -59,8 +61,9 @@ export class LayerManager {
 		geojson: BoundaryGeojson,
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
+		values?: MapValues,
 	): void {
-		this.boundaries.paint(geojson, paint, visibility);
+		this.boundaries.paint(geojson, paint, visibility, values ?? null);
 	}
 
 	updateVisibility(visibility: MapOptions["visibility"]): void {

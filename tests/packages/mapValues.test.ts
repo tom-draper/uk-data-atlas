@@ -17,6 +17,7 @@ const entryFor = (
 	values: readonly (number | null)[],
 ): MapValuesEntry => ({
 	file: "x.json",
+	field: "value",
 	bytes: encodeMapValues(values).length,
 	sha256: "",
 	codeList: codeListId(codeList),
