@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/geometry",
+	"description": "Finds neighbours and answers spatial queries over area geometry.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

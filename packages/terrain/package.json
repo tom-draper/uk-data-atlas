@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/terrain",
+	"description": "Terrain height sources and providers.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

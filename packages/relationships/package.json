@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/relationships",
+	"description": "Crosswalks between areas and translation of values across them.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

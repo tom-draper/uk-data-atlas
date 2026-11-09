@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/areas",
+	"description": "Builds area inventories and looks areas up by code and name.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

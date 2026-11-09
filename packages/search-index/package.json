@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/search-index",
+	"description": "Sorted, packed indexes and the lookups that search them.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

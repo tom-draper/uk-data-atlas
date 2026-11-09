@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/measures",
+	"description": "Measure definitions, quality, reconciliation and unit conversion.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

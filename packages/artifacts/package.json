@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/artifacts",
+	"description": "Content hashing and CSV, Parquet and SQLite file formats.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
