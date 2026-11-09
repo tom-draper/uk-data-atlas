@@ -5,6 +5,8 @@ import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
 import { getChartDatasetDefinition, isChartDataset } from "../datasets";
+import { mapValuesRequestFor } from "../data/mapValues/request";
+import { useMapValues } from "./useMapValues";
 import { categoryFilter } from "../helpers/mapManager/expressions";
 import {
 	renderCustomDataset,
@@ -138,9 +140,30 @@ export function useMapUpdates({
 		selectedLocation,
 	]);
 
+	// A plain numeric map reads its values from a code-aligned array when the
+	// build made one; any other map, or one with no array, joins as before.
+	const numericMap =
+		activeDataset && isChartDataset(activeDataset)
+			? getChartDatasetDefinition(activeDataset.type)
+			: undefined;
+	const mapValuesRequest =
+		geojson && activeDataset && numericMap?.map && !numericMap.mapRenderer
+			? mapValuesRequestFor(
+					activeDataset as { type: string; year?: number },
+					boundaryTiles.get(geojson),
+					numericMap.map as Parameters<typeof mapValuesRequestFor>[2],
+				)
+			: null;
+	const mapValuesState = useMapValues(mapValuesRequest);
+	const mapValuesPending = mapValuesState.status === "pending";
+	const mapValues =
+		mapValuesState.status === "ready" ? mapValuesState.values : undefined;
+
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
 		if (activeDataset.type === "network") return;
+		// The array is a few kilobytes: wait for it rather than join first.
+		if (mapValuesPending) return;
 		// Point datasets are drawn by the effect above and carry no per-boundary
 		// values (`data` is empty), so the choropleth path below would repaint
 		// every boundary in the default colour — undoing the clearBoundaryData()
@@ -201,5 +224,7 @@ export function useMapUpdates({
 		mapOptions.theme.id,
 		styleReady,
 		isDark,
+		mapValuesPending,
+		mapValues,
 	]);
 }
