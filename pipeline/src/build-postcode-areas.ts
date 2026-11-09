@@ -31,7 +31,7 @@ import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry.ts";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { AreasResolver } from "@uk-data-atlas/atlas-runtime/areas";
-import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/postcodes";
+import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	createAreaGeometryCache,
 	readGeometrySourceLookup,

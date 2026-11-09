@@ -14,7 +14,7 @@ import type {
 	MeasureCompatibilityInventory,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
-import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/postcodes";
+import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../src/routes";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import {

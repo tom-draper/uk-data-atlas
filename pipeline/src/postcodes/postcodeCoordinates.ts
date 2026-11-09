@@ -1,5 +1,8 @@
-import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
-import { readSqlitePostcodeIndex as readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readSqlitePostcodeShard,
+	readSqlitePostcodeIndex as readPostcodeIndex,
+} from "@uk-data-atlas/atlas-runtime/postcodes";
+
 import { parsePostcode } from "@uk-data-atlas/geography";
 import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
 import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";

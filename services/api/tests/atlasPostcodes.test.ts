@@ -21,7 +21,7 @@ import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
 import { buildPostcodeIndex } from "./pipelineFixtures";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
-import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/postcodes";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../src/routes";
 import { parsePostcode } from "@uk-data-atlas/geography";

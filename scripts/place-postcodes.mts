@@ -14,8 +14,11 @@ import {
 	type SourceDistrict,
 } from "../lib/places/postcodes";
 import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
-import { readSqlitePostcodeAreaShard } from "@uk-data-atlas/atlas-runtime/storage";
-import { postcodeDistrictWhere } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	readSqlitePostcodeAreaShard,
+	postcodeDistrictWhere,
+} from "@uk-data-atlas/atlas-runtime/postcodes";
+
 import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,

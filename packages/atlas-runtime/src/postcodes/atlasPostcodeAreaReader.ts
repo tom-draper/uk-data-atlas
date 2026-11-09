@@ -1,12 +1,12 @@
-import { readAtlasPayload } from "./atlasSqlite.ts";
+import { readAtlasPayload } from "../storage/atlasSqlite.ts";
 import {
 	readPostcodeAreaShard,
 	requirePostcodeAreaLayout,
 } from "./atlasPostcodeAreaShard.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
-import { atlasDatabasePath } from "./dataLayout.ts";
-import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
-import { unpackText } from "./storedPayload.ts";
+import { atlasDatabasePath } from "../storage/dataLayout.ts";
+import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
+import { unpackText } from "../storage/storedPayload.ts";
 
 export function readSqlitePostcodeAreas(
 	repositoryRoot: string,

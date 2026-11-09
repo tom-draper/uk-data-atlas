@@ -10,8 +10,8 @@ import proj4 from "proj4";
 import {
 	openReadOnlyDatabase,
 	readAtlasPayload,
-	requirePostcodeAreaLayout,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { requirePostcodeAreaLayout } from "@uk-data-atlas/atlas-runtime/postcodes";
 import {
 	DEPRIVATION_INDICES,
 	POSTCODE_GEOGRAPHIES,

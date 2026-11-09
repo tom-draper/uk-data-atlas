@@ -6,8 +6,9 @@ import { inflateSync } from "node:zlib";
 import {
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeAreas,
-} from "@uk-data-atlas/atlas-runtime/storage";
-import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
+	readSqlitePostcodeShard,
+} from "@uk-data-atlas/atlas-runtime/postcodes";
+
 import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
