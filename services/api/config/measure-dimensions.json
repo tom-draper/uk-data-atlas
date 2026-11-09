@@ -808,34 +808,6 @@
 		"local-government-finance": {
 			"measure": "education-services-budget"
 		},
-		"median-annual-pay": {
-			"measure": "gross-annual-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "residence"
-			}
-		},
-		"median-hourly-pay": {
-			"measure": "gross-hourly-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "residence"
-			}
-		},
-		"median-workplace-annual-pay": {
-			"measure": "gross-annual-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "workplace"
-			}
-		},
-		"median-workplace-hourly-pay": {
-			"measure": "gross-hourly-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "workplace"
-			}
-		},
 		"net-additional-dwellings": {
 			"measure": "net-additional-dwellings"
 		},
