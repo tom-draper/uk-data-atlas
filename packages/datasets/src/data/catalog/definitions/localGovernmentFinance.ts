@@ -8,6 +8,7 @@ export const localGovernmentFinanceDatasetDefinition: DatasetDefinition<
 	type: "localGovernmentFinance",
 	precompiledFile: "local-government-finance",
 	boundaryType: "localAuthority",
+	mapValueField: "value",
 	coverageCountries: ["GB-ENG"],
 	source: {
 		name: "Local authority revenue expenditure and financing",

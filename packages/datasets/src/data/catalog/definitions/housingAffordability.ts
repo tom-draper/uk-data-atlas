@@ -8,6 +8,7 @@ export const housingAffordabilityDatasetDefinition: DatasetDefinition<
 	type: "housingAffordability",
 	precompiledFile: "housing-affordability",
 	boundaryType: "localAuthority",
+	mapValueField: "value",
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {
 		name: "House price to residence-based earnings ratio",

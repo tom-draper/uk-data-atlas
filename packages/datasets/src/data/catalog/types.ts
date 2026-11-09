@@ -144,6 +144,13 @@ export interface DatasetDefinition<
 	precompiledFile: string;
 	/** Geography level used by the compiled records. */
 	boundaryType: BoundaryType;
+	/**
+	 * The record field the map colours areas by, for a dataset whose map reads one
+	 * plain number per area. The build emits it as a code-aligned value array
+	 * (see `@uk-data-atlas/map-tiles/mapValues`). Omit it for any dataset whose map
+	 * derives its value, and it keeps the GeoJSON join.
+	 */
+	mapValueField?: string;
 	/** Countries the source can cover, copied to each compiled vintage. */
 	coverageCountries?: readonly DatasetCountry[];
 	source: DatasetSource;

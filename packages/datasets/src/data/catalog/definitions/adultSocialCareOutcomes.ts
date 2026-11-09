@@ -8,6 +8,7 @@ export const adultSocialCareOutcomesDatasetDefinition: DatasetDefinition<
 	type: "adultSocialCareOutcomes",
 	precompiledFile: "adult-social-care-outcomes",
 	boundaryType: "localAuthority",
+	mapValueField: "value",
 	coverageCountries: ["GB-ENG"],
 	source: {
 		name: "Adult Social Care Outcomes Framework, England",

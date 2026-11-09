@@ -8,6 +8,7 @@ export const councilTaxDatasetDefinition: DatasetDefinition<
 	type: "councilTax",
 	precompiledFile: "council-tax",
 	boundaryType: "localAuthority",
+	mapValueField: "value",
 	coverageCountries: ["GB-ENG"],
 	source: {
 		name: "Council Tax levels in England",
