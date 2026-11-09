@@ -12,7 +12,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
+import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	areaNamedBy,
 	defaultSource,

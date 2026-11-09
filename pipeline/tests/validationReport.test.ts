@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
-import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type {
 	AreaOverlapCrosswalkArtifact,
 	CrosswalkArtifact,

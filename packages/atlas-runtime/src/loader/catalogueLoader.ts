@@ -1,4 +1,4 @@
-import { readAreaLookup } from "../areas/areaLookup.ts";
+import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readAtlasPayload } from "../catalogue/atlasPayloads.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { FullDetailDownloads } from "./fullDetailDownloads.ts";

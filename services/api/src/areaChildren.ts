@@ -1,6 +1,6 @@
 import type { AreaRelationship } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
-import { releaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
+import { releaseMonth } from "@uk-data-atlas/areas";
 
 type ChildSelection =
 	| { kind: "contemporary"; geography?: string }

@@ -1,11 +1,11 @@
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import type { BoundaryRelease } from "@uk-data-atlas/catalogue";
-import type { ResolvedContainingArea } from "@uk-data-atlas/atlas-runtime/areas";
+import type { ResolvedContainingArea } from "@uk-data-atlas/atlas-runtime/loader";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	parseSelectionDate,
 	type ReleaseReference,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { type GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
 import {
 	invalidQuery,
@@ -464,8 +464,8 @@ const COUNTRY_BY_PREFIX: Record<string, string> = {
 export const countryOfCode = (code: string) =>
 	/^[ENSW]\d{8}$/.test(code) ? COUNTRY_BY_PREFIX[code[0]!] : undefined;
 
-export { countryRelease } from "@uk-data-atlas/atlas-runtime/areas";
-import { countryRelease } from "@uk-data-atlas/atlas-runtime/areas";
+export { countryRelease } from "@uk-data-atlas/atlas-runtime/loader";
+import { countryRelease } from "@uk-data-atlas/atlas-runtime/loader";
 
 const tolerance = (
 	point: LookupPoint,

@@ -431,7 +431,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
 	for (const path of [
 		"pipeline/src/build-derived-boundaries.ts",
-		"packages/atlas-runtime/src/areas/areaSourceAdapters.ts",
+		"packages/areas/src/areaSourceAdapters.ts",
 		"pipeline/src/geographies/boundarySourcePaths.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
@@ -456,8 +456,8 @@ test("production builders resolve without UI code and include declared workers a
 		"packages/shapefile/src/dbf.ts",
 		"packages/geometry/src/geoJsonProperties.ts",
 		"pipeline/src/geographies/boundarySourcePaths.ts",
-		"packages/atlas-runtime/src/areas/areaAdapters.ts",
-		"packages/atlas-runtime/src/areas/areaSourceAdapters.ts",
+		"packages/areas/src/areaAdapters.ts",
+		"packages/areas/src/areaSourceAdapters.ts",
 	]) {
 		assert.ok(inputs.get("area-inventory")!.includes(path), path);
 	}
@@ -487,7 +487,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-geography-catalogues.ts",
-		"packages/atlas-runtime/src/areas/geographyBuildPath.ts",
+		"packages/areas/src/geographyBuildPath.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -519,7 +519,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-analysis-geographies.ts",
 		"pipeline/src/geographies/analysisGeographies.ts",
 		"packages/geography/src/geographyKinds.ts",
-		"packages/atlas-runtime/src/areas/geographyBuildPath.ts",
+		"packages/areas/src/geographyBuildPath.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {
@@ -567,7 +567,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"pipeline/src/build-lookup-manifest.ts",
-		"packages/atlas-runtime/src/areas/lookupExports.ts",
+		"packages/areas/src/lookupExports.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {

@@ -6,7 +6,7 @@ import { publishCacheTables, stampCacheStage } from "./storage/index.ts";
 import {
 	readAreaLookup,
 	readSqliteAreaInventory as readAreaInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { readGeographyCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";

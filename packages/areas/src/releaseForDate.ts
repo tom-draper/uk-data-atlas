@@ -1,4 +1,4 @@
-import type { AreaInventory } from "@uk-data-atlas/areas";
+import type { AreaInventory } from "./index.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { canonicalGeography } from "@uk-data-atlas/geography";

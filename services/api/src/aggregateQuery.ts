@@ -6,7 +6,7 @@ import { parsePlaceParameter, type PlaceParameter } from "./placeParameter";
 import {
 	parseExactReleaseReference,
 	type ExactReleaseReference,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import {
 	invalidQuery,
 	problem,

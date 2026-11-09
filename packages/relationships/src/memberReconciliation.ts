@@ -1,4 +1,4 @@
-import type { AreaLookup } from "@uk-data-atlas/areas";
+import type { AreaLookup } from "@uk-data-atlas/areas/inventory";
 
 /**
  * Why a member code does not resolve in the requested boundary release.

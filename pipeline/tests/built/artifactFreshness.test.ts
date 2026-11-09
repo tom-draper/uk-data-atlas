@@ -5,7 +5,7 @@ import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
 import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/loader";
 import { DatabaseSync } from "node:sqlite";
 
-import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
+import { geographyCatalogues } from "@uk-data-atlas/areas";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";

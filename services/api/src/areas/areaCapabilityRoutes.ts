@@ -4,11 +4,11 @@ import {
 	notBuilt,
 	unsupported,
 	type CapabilityStatus,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { measureCapability } from "@uk-data-atlas/atlas-runtime/loader";
-import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/loader";
 import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
-import { releaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
+import { releaseMonth } from "@uk-data-atlas/areas";
 import { requirementDetail } from "@uk-data-atlas/atlas-runtime/api";
 
 /**

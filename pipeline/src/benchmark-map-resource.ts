@@ -1,5 +1,5 @@
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";

@@ -4,10 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
-import {
-	RawGeometryCache,
-	readGeometries,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { RawGeometryCache, readGeometries } from "@uk-data-atlas/areas";
 
 const fixture = (
 	run: (root: string, sources: GeometrySourceLookup) => void,

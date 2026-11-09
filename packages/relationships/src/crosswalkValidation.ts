@@ -1,4 +1,4 @@
-import type { AreaLookup } from "@uk-data-atlas/areas";
+import type { AreaLookup } from "@uk-data-atlas/areas/inventory";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 import type { CrosswalkEndpointValidation } from "./crosswalkEndpointValidation.ts";

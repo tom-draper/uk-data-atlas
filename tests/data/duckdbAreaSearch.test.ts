@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { it } from "vitest";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import { compileDuckdbAreaSearchIndex } from "../../pipeline/src/places/duckdbAreaSearch";
 
 it("builds area search postings from a fixture", async () => {

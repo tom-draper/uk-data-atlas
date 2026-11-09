@@ -1,4 +1,4 @@
-import { parseExactReleaseReference } from "@uk-data-atlas/atlas-runtime/areas";
+import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	envelope,

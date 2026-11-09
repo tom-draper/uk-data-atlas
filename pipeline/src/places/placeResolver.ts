@@ -1,12 +1,11 @@
 import { NamedLocationResolver } from "@uk-data-atlas/places";
 
+import { readAreaLookup, readSqliteAreaInventory } from "@uk-data-atlas/areas";
 import {
-	readAreaLookup,
 	AreasResolver,
 	SpatialResolver,
 	LineageResolver,
-	readSqliteAreaInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/loader";
 import { type GeographyResolverInputs } from "@uk-data-atlas/atlas-runtime/loader";
 import { readBuildBoundaryRegistry } from "../buildBoundaryRegistry.ts";
 import {

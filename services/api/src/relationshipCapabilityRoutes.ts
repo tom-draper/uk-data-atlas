@@ -1,12 +1,12 @@
 import type { RelationshipPurpose } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { RelationshipOperation } from "@uk-data-atlas/atlas-runtime/areas";
+import type { RelationshipOperation } from "@uk-data-atlas/atlas-runtime/loader";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import {
 	publishedSourcePartitionOf,
 	publishedSourcePartitionsFor,
 	type MeasureCompatibilityInventory,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { parseExactReleaseReference } from "@uk-data-atlas/atlas-runtime/areas";
+import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import {
 	envelope,
 	invalidQuery,

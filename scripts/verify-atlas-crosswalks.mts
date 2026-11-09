@@ -1,6 +1,6 @@
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";

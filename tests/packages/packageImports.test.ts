@@ -61,6 +61,7 @@ const problems = (packageRoot: string) => {
 			if (specifier.startsWith("node:") || builtins.has(specifier)) {
 				const nodeOnly =
 					[
+						"areas",
 						"artifacts",
 						"atlas-db",
 						"atlas-runtime",
@@ -238,7 +239,6 @@ describe("atlas domain boundaries", () => {
 		const atlas = join(PACKAGES, "atlas-runtime/src");
 		const files = [
 			...[
-				"areas",
 				"catalogue",
 				"relationships",
 				"places",
@@ -248,6 +248,7 @@ describe("atlas domain boundaries", () => {
 			].flatMap((directory) => sourceFiles(join(atlas, directory))),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
+			...sourceFiles(join(PACKAGES, "areas/src")),
 			...sourceFiles(join(PIPELINE, "src/evidence")),
 			join(PIPELINE, "src/build-evidence-documents.ts"),
 		];
@@ -261,7 +262,7 @@ describe("atlas domain boundaries", () => {
 	});
 
 	it("recognises API imports through relative paths and package exports", () => {
-		const file = join(PACKAGES, "atlas-runtime/src/areas/example.ts");
+		const file = join(PACKAGES, "atlas-runtime/src/loader/example.ts");
 		expect(importsAtlasApi(file, "../api/routing")).toBe(true);
 		expect(importsAtlasApi(file, "@uk-data-atlas/atlas-runtime/api")).toBe(
 			true,
@@ -386,6 +387,7 @@ describe("pipeline boundaries", () => {
 			...sourceFiles(join(PACKAGES, "atlas-runtime/src")),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
+			...sourceFiles(join(PACKAGES, "areas/src")),
 		].filter(
 			(file) =>
 				relative(ROOT, file) !== "packages/atlas-db/src/dataLayout.ts",

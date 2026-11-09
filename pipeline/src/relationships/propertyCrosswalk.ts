@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import {
 	type AreaGeometryCache,
 	type GeometrySourceLookup,

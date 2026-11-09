@@ -5,10 +5,7 @@ export {
 	crosswalkInventoryFromEntries,
 } from "./crosswalkInventory.ts";
 export type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import {
-	RawGeometryCache,
-	type AreaLookup,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { RawGeometryCache, type AreaLookup } from "@uk-data-atlas/areas";
 import { compileAreaOverlapCrosswalk } from "../geographies/areaOverlap.ts";
 import {
 	compileBestFitCrosswalk,

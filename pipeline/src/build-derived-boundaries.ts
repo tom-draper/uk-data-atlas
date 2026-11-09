@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import {
 	readAreaSourceAdapters,
 	type AreaSourceAdapterManifest,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { sourceGeoJsonPath } from "./geographies/boundarySourcePaths.ts";
 import {
 	artifactDirectory,

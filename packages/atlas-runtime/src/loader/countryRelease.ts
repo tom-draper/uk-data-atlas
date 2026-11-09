@@ -1,4 +1,4 @@
-import { releaseMonth, supersededAt } from "./releaseForDate.ts";
+import { releaseMonth, supersededAt } from "@uk-data-atlas/areas";
 import type { AreasResolver } from "./resolver/areas.ts";
 
 /** The country release to place a point with: for the date, else the latest. */

@@ -1,4 +1,4 @@
-import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { SourceInventory } from "./sourceInventory.ts";
@@ -8,7 +8,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	GeographyRelationship,
 	GeographyInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/loader";
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

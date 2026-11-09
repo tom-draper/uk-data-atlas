@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test, afterAll } from "vitest";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../src/routes";

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 
 export const readBuildBoundaryRegistry = (root: string): BoundaryRegistry => {
 	const path = buildArtifactPath(root, "boundary-releases.json");

@@ -6,7 +6,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { buildTranslationSteps } from "@uk-data-atlas/atlas-runtime/relationships";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { parseExactReleaseReference } from "@uk-data-atlas/atlas-runtime/areas";
+import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import {
 	areaNamedBy,
 	namedAreaRefusal,
@@ -14,7 +14,7 @@ import {
 	statedDefaults,
 } from "../dataDefaults";
 import { selectSourcePartition } from "../sourcePartition";
-import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/areas";
+import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {

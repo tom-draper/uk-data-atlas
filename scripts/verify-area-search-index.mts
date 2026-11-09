@@ -1,14 +1,11 @@
 import assert from "node:assert/strict";
 import { resolve, join } from "node:path";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaLookup } from "@uk-data-atlas/areas";
 import {
 	readAreaInventory,
 	readAreaSearchIndex,
 } from "@uk-data-atlas/atlas-runtime/loader";
-import {
-	AreaSearch,
-	compileAreaSearchIndex,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { AreaSearch, compileAreaSearchIndex } from "@uk-data-atlas/areas";
 import { atEach, type Indexed } from "@uk-data-atlas/search-index";
 
 const root = resolve(import.meta.dirname, "..");

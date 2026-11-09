@@ -2,7 +2,7 @@ import type {
 	DataCatalog,
 	Measure,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { EvidenceDocument } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 type EvidenceMeasureDependencies<Context> = {

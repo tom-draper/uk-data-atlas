@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 import {
 	mkdirSync,
 	existsSync,
@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry.ts";
 import { createGeographyInventory } from "./geographies/geographyInventory.ts";
 import { createSourceInventory } from "./geographies/sourceInventory.ts";
-import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	artifactDirectory,
