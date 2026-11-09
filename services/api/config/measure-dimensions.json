@@ -854,28 +854,10 @@
 		"nimdm-rank": {
 			"measure": "nimdm-rank"
 		},
-		"no2-background-mean": {
-			"measure": "background-concentration",
-			"dimensions": {
-				"pollutant": "no2"
-			}
-		},
 		"planning-applications": {
 			"measure": "planning-applications",
 			"dimensions": {
 				"application-stage": "received"
-			}
-		},
-		"pm10-background-mean": {
-			"measure": "background-concentration",
-			"dimensions": {
-				"pollutant": "pm10"
-			}
-		},
-		"pm25-background-mean": {
-			"measure": "background-concentration",
-			"dimensions": {
-				"pollutant": "pm25"
 			}
 		},
 		"pm25-population-weighted": {

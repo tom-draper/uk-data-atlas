@@ -4,6 +4,18 @@ import { PREMISES, measure, per100k } from "./measures.ts";
 
 /** Energy, emissions, air, land, waste and connectivity. */
 
+export const airQualitySeries = () =>
+	AIR_QUALITY.dimensions!.find(
+		(dimension) => dimension.slug === "pollutant",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		return {
+			id: `${member}-background-mean`,
+			measure: "background-concentration",
+			dimensions: { pollutant: member },
+		};
+	});
+
 export const AIR_QUALITY: DeclaredDataset = {
 	type: "airQuality",
 	module: "environment",
