@@ -20,6 +20,31 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+test("crime series come from the offence declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	const crime = Object.entries(merged.ids).filter(([id]) =>
+		id.startsWith("crime-"),
+	);
+	assert.equal(crime.length, 23);
+	assert.ok(crime.every(([id]) => !(id in config.ids)));
+	assert.deepEqual(merged.ids["crime-theft-offences"], {
+		measure: "recorded-crimes",
+		dimensions: { offence: "theft" },
+	});
+	assert.deepEqual(
+		merged.ids["crime-death-or-serious-injury-by-illegal-driving"],
+		{
+			measure: "recorded-crimes",
+			dimensions: {
+				offence: "death-or-serious-injury-by-unlawful-driving",
+			},
+		},
+	);
+});
+
 test("energy series come from their meter declarations", () => {
 	const config = JSON.parse(
 		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
