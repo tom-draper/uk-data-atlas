@@ -52,7 +52,7 @@ import {
 	artifactDirectory,
 	closeAllReadOnlyDatabases,
 	packText,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics.ts";
 
 /** Whether an earlier database holds ids that a rebuild could renumber. */

@@ -2,10 +2,7 @@ import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,
 } from "@uk-data-atlas/atlas-runtime/areas";
-import {
-	buildLog,
-	readAtlasAssetText,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, readAtlasAssetText } from "@uk-data-atlas/atlas-db";
 
 import {
 	comparableCompiled,

@@ -4,7 +4,7 @@ import {
 	formatCount,
 	formatDuration,
 	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { parseCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { releaseKey } from "@uk-data-atlas/geography/postcode-area-types";
 import { readdirSync, readFileSync, rmSync } from "node:fs";

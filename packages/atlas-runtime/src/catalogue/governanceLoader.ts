@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates.ts";
-import { artifactDirectory } from "../storage/dataLayout.ts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 export const readRelationshipCandidateInventory = (
 	repositoryRoot: string,

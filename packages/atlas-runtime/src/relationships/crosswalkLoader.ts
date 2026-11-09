@@ -2,7 +2,7 @@ import {
 	readSqliteCrosswalkInventory,
 	readSqliteCrosswalk,
 } from "./atlasCrosswalks.ts";
-import { requireAtlasPayload } from "../storage/atlasSqlite.ts";
+import { requireAtlasPayload } from "@uk-data-atlas/atlas-db";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
@@ -10,7 +10,7 @@ import type {
 	CrosswalkHeader,
 	CrosswalkLookup,
 } from "@uk-data-atlas/relationships";
-import { atlasDatabasePath } from "../storage/dataLayout.ts";
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
 export const readCrosswalkInventory = readSqliteCrosswalkInventory;
 

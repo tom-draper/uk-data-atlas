@@ -1,5 +1,5 @@
-import type { SqlReader } from "../storage/readOnlyDatabase.ts";
-import { unpackText } from "../storage/storedPayload.ts";
+import type { SqlReader } from "@uk-data-atlas/atlas-db";
+import { unpackText } from "@uk-data-atlas/atlas-db";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { postcodeDistrictWhere } from "./atlasPostcodeShard.ts";
 import {

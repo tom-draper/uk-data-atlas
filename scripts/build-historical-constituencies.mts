@@ -9,7 +9,7 @@
  * year and the Library's id (`1918-1`), unique across sets. A few 1918 Irish
  * rows have no id; the compiler keys those by name, and so does the code.
  *
- * Usage: node --import { buildLog, formatCount } from "@uk-data-atlas/atlas-runtime/storage";
+ * Usage: node --import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
 import tsx scripts/build-historical-constituencies.mts [out]
  * `out` defaults to data/source/boundaries/historical-constituency.
  */

@@ -7,7 +7,7 @@ import {
 	encodeCompactPayload,
 } from "@uk-data-atlas/catalogue/compactPayload";
 import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
-import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
 import { out } from "./output.mts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";

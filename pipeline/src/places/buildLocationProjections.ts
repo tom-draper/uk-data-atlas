@@ -14,7 +14,7 @@ import {
 	storedTextExists,
 	writeStoredText,
 } from "@uk-data-atlas/artifacts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const read = <T>(directory: string, path: string): T => {
 	const fullPath = join(directory, path);

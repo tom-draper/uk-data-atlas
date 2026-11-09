@@ -6,7 +6,7 @@ import {
 	type DataCatalog,
 	type MeasureSource,
 } from "@uk-data-atlas/measures";
-import { statisticsReadPathPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 import {
 	rebuildStatisticsObservationText,
 	type StatisticsReadPath,

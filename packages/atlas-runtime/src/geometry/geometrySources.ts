@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { GeometrySource, GeometrySourceLookup } from "./areaGeometry.ts";
-import { artifactDirectory } from "../storage/dataLayout.ts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 type Registry = { schemaVersion?: unknown; releases?: unknown };
 export const readGeometrySourceLookup = (
 	repositoryRoot: string,

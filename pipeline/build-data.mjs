@@ -20,7 +20,7 @@ import {
 	formatBytes,
 	formatCount,
 	formatDuration,
-} from "../packages/atlas-runtime/src/storage/buildTiming.ts";
+} from "../packages/atlas-db/src/buildTiming.ts";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 

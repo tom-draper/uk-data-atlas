@@ -5,7 +5,7 @@ import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { AtlasRelease } from "@uk-data-atlas/atlas-runtime/storage";
+import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {

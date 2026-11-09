@@ -10,10 +10,7 @@ import {
 	readMeasureDimensionsConfig,
 	readStatisticsVocabulary,
 } from "@uk-data-atlas/atlas-runtime/measures";
-import {
-	artifactDirectory,
-	atlasDatabasePath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory, atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 

@@ -9,7 +9,7 @@ import {
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { payloadDifference } from "./payloadComparison.ts";
-import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 
 /**
  * Checks that every dataset the atlas serves from statistics rows has the

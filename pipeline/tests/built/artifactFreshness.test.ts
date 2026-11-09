@@ -1,8 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import {
-	requireAtlasCache,
-	readCachePayload,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { requireAtlasCache, readCachePayload } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
 import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/loader";
@@ -21,7 +18,7 @@ import {
 	readMeasureTotals,
 	readValidationWaivers,
 } from "../../src/validation/inputs";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 /**
  * A compiled artifact records the content hash of each artifact it was built

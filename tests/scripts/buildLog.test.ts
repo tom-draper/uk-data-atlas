@@ -6,7 +6,7 @@ import {
 	formatCount,
 	formatDuration,
 	formatGzipBytes,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 describe("formatDuration", () => {
 	test.each([

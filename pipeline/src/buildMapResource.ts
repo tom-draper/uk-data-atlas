@@ -26,7 +26,7 @@ import {
 	formatBytes,
 	formatCount,
 	formatDuration,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 /**
  * Compile every boundary release into a map resource: its tiles and the hashes and

@@ -21,7 +21,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { writeSqliteIndex } from "./pipelineFixtures";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 test("crosswalk edges rebuild artifacts with zero weights, labels and empty targets", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-crosswalks-"));

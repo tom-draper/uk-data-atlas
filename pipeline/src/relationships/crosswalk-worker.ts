@@ -12,7 +12,7 @@ import type {
 	CrosswalkWork,
 	CrosswalkWorkerResult,
 } from "./crosswalkWorkers.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const [root, outputDirectory] = process.argv.slice(2);
 if (!root || !outputDirectory || !process.send)

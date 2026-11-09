@@ -12,7 +12,7 @@ import {
 	text,
 	unpackPositions,
 	type Row,
-} from "../storage/sqliteIndex.ts";
+} from "@uk-data-atlas/atlas-db";
 
 /**
  * The compiled place index: every area and named location, and every name

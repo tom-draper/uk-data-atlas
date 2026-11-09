@@ -1,10 +1,7 @@
 import { createHash } from "crypto";
 import { rename, stat, writeFile } from "fs/promises";
 import { join } from "path";
-import {
-	formatCount,
-	type ArtifactResult,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { formatCount, type ArtifactResult } from "@uk-data-atlas/atlas-db";
 import type { CompiledOutput, FileSnapshot } from "./types.mts";
 
 const writeAtomically = async (path: string, contents: string) => {

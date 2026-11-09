@@ -139,7 +139,7 @@ stored as Brotli blobs and decompressed on read.
 
 - `payloads.payload` is `BLOB NOT NULL`: the exact UTF-8 JSON text, Brotli
   quality 9. Write it with `packText` and read it with `unpackText`
-  (`packages/atlas-runtime/src/storage/storedPayload.ts`). Never read the
+  (`packages/atlas-db/src/storedPayload.ts`). Never read the
   column with `String(value)`, which turns a blob into a list of byte values.
   `unpackText` returns text unchanged, so older databases and fixtures that
   store plain text still read. Hashes and ETags are taken over the

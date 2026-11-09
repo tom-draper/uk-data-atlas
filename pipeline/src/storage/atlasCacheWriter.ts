@@ -13,7 +13,7 @@ import {
 	cacheGeneration,
 	closeReadOnlyDatabase,
 	type CacheComponent,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import {
 	CACHE_GENERATIONS_VIEW,
 	removeDeprecatedObject,

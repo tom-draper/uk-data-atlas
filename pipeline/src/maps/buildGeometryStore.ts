@@ -26,7 +26,7 @@ import {
 	artifactDirectory,
 	formatBytes,
 	formatDuration,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { hashFile } from "../fileHashCache.ts";
 import { recordOutputHash, sha256Hex } from "../storage/outputManifest.ts";
 

@@ -33,7 +33,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const fixture = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "geography-catalogues-"));

@@ -6,7 +6,7 @@ import type {
 	FuelPovertyDataset,
 	FuelPovertyLSOAData,
 } from "@uk-data-atlas/datasets/types/fuelPoverty";
-import type { SqlReader } from "../storage/readOnlyDatabase.ts";
+import type { SqlReader } from "@uk-data-atlas/atlas-db";
 import type {
 	AreaRelease,
 	StatisticsDataset,

@@ -1,4 +1,4 @@
-import { buildLog, repoPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import { createHash } from "node:crypto";
 import {
 	createReadStream,

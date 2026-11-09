@@ -40,7 +40,7 @@ import {
 	artifactDirectory,
 	buildLog,
 	formatCount,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 export function buildPlaceProfiles(ROOT: string) {
 	const readDataset = (output: string) =>

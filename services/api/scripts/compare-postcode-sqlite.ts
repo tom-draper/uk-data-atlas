@@ -9,7 +9,7 @@ import {
 	readSqlitePostcodeShard,
 } from "@uk-data-atlas/atlas-runtime/postcodes";
 
-import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
+import { unpackText } from "@uk-data-atlas/atlas-db";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	PostcodeIndexArtifact,

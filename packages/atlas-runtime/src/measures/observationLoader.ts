@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import {
 	atlasDatabasePath,
 	statisticsReadPathPath,
-} from "../storage/dataLayout.ts";
+} from "@uk-data-atlas/atlas-db";
 import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,

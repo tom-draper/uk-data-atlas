@@ -34,7 +34,7 @@ import {
 	elapsedSince,
 	formatCount,
 	msSince,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 const COMPILED_POLYGON_RELEASES: Readonly<Record<string, number>> = {
 	"ward/2017-12-gb-bgc": 3,

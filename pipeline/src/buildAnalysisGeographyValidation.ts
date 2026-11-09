@@ -11,7 +11,7 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createCrosswalkArtifacts } from "./storage/crosswalkArtifacts.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {

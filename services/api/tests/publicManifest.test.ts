@@ -4,8 +4,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test, type TestContext } from "vitest";
-import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { readPublicManifest } from "@uk-data-atlas/atlas-db";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 type Fixture = { schemaVersion: 1; entries: string[] };
 

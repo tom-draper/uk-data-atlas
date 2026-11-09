@@ -11,10 +11,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import {
-	atlasCachePath,
-	requireAtlasCache,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath, requireAtlasCache } from "@uk-data-atlas/atlas-db";
 import { publishCacheTables } from "./pipelineFixtures";
 
 function fixture(t: { onTestFinished: (fn: () => void) => void }) {

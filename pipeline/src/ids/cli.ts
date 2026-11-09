@@ -1,4 +1,4 @@
-import { buildLog } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog } from "@uk-data-atlas/atlas-db";
 import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";

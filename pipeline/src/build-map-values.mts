@@ -16,7 +16,7 @@ import {
 	propertiesAsset,
 	type BoundaryType,
 } from "@uk-data-atlas/datasets/data/boundaries/catalog";
-import { buildLog } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog } from "@uk-data-atlas/atlas-db";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
 import type { DatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/types";
 import {

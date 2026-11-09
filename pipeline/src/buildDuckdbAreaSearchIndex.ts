@@ -7,7 +7,7 @@ import {
 } from "@uk-data-atlas/atlas-runtime/areas";
 
 import { publishCacheTables, stampCacheStage } from "./storage/index.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { compileDuckdbAreaSearchIndex } from "./places/duckdbAreaSearch.ts";
 
 export async function buildDuckdbAreaSearchIndex(root: string) {

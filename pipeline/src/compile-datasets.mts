@@ -23,11 +23,7 @@ import { compileDatasets } from "./precompile/datasetPool.mts";
 import { out } from "./precompile/output.mts";
 import { COMPILED_DATASETS, ROOT } from "./precompile/paths.mts";
 import type { CompiledDatasets } from "./precompile/types.mts";
-import {
-	buildLog,
-	elapsedSince,
-	formatCount,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, elapsedSince, formatCount } from "@uk-data-atlas/atlas-db";
 
 export const COMPILED_MANIFEST = join(
 	COMPILED_DATASETS,

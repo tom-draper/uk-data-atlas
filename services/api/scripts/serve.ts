@@ -1,7 +1,7 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import cluster from "node:cluster";
 import { createServer } from "node:http";
-import { onDatabaseReplaced } from "@uk-data-atlas/atlas-runtime/storage";
+import { onDatabaseReplaced } from "@uk-data-atlas/atlas-db";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {

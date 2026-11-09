@@ -6,7 +6,7 @@ import {
 	roundGeometry,
 	unpackGeometry,
 	unpackText,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 describe("stored payload text", () => {
 	it("round-trips text exactly, including multi-byte characters", () => {

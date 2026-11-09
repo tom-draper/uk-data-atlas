@@ -15,7 +15,7 @@ import {
 	buildLog,
 	formatCount,
 	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 export const buildAnalysisGeographies = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);

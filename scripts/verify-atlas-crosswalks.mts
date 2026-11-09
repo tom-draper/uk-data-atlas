@@ -26,7 +26,7 @@ import { readApprovedRelationshipPaths } from "../pipeline/src/relationships/rel
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf } from "@uk-data-atlas/atlas-runtime/storage";
+import { apiRootOf } from "@uk-data-atlas/atlas-db";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

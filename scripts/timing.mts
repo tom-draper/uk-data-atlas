@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/atlas-runtime/storage";
+export * from "@uk-data-atlas/atlas-db";

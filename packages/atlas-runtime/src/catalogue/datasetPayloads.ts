@@ -2,12 +2,9 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
-import { atlasCachePath } from "../storage/atlasCache.ts";
-import { unpackText } from "../storage/storedPayload.ts";
-import {
-	openReadOnlyDatabase,
-	type SqlReader,
-} from "../storage/readOnlyDatabase.ts";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { unpackText } from "@uk-data-atlas/atlas-db";
+import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
 import { rebuildFromDeclaration } from "../measures/declaredPayload.ts";
 import type { Json } from "../measures/declaredStatistics.ts";
 import { rebuildFuelPoverty } from "../measures/fuelPovertyStatistics.ts";

@@ -1,8 +1,8 @@
 import { type SQLOutputValue } from "node:sqlite";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import { atlasDatabasePath } from "../storage/dataLayout.ts";
-import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of

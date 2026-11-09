@@ -1,4 +1,4 @@
-import { atlasAssetsDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasAssetsDirectory } from "@uk-data-atlas/atlas-db";
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "@uk-data-atlas/artifacts";
@@ -8,13 +8,13 @@ import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import type {
 	AtlasRelease,
 	AtlasReleaseArtifactRef,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import {
 	artifactDirectory,
 	atlasDatabasePath,
 	statisticsReadPathPath,
 	statisticsVocabularyPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 // Catalogues that still have runtime JSON readers. Migrated data is covered by atlas.sqlite.
 const JSON_ARTIFACTS = [

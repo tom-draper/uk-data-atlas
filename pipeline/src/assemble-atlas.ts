@@ -8,7 +8,7 @@ import {
 	closeReadOnlyDatabase,
 	packText,
 	unpackText,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { publishVacuumed, writePostcodeAreas } from "./storage/index.ts";
 import { crosswalkSetHash } from "./crosswalk-weights/crosswalkSetHash.ts";
 import { crosswalkWeightsPath } from "./crosswalk-weights/paths.ts";

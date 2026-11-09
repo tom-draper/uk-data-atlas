@@ -12,7 +12,7 @@ import {
 	buildLog,
 	formatCount,
 	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 export const buildGeometrySourceRegistry = (root: string) => {
 	const out = artifactDirectory(root);
 	if (!existsSync(out))

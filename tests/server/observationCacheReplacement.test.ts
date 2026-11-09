@@ -11,7 +11,7 @@ import {
 import {
 	closeAllReadOnlyDatabases,
 	configureReadOnlyDatabases,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 let directory: string;
 let path: string;

@@ -45,7 +45,7 @@ as described in [DATA-LICENCES.md](./DATA-LICENCES.md).
 ## Data build output
 
 Every data build stage prints through `buildLog` and its formatters in
-`packages/atlas-runtime/src/storage/buildTiming.ts`. A test fails if a stage
+`packages/atlas-db/src/buildTiming.ts`. A test fails if a stage
 calls `console.log`, `console.info` or `console.warn` directly.
 
 - Write status lines in sentence case with no trailing full stop, and results

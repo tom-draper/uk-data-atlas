@@ -1,5 +1,5 @@
 import { openapiDocumentHash, type OperationsArtifact } from "./operations.ts";
-import { publicPath, readPublicManifest } from "../storage/publicManifest.ts";
+import { publicPath, readPublicManifest } from "@uk-data-atlas/atlas-db";
 
 /**
  * The operations compiled from `openapiDocument`. One compiled from an older

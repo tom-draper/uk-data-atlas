@@ -526,7 +526,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("analysis-geographies")!.includes(path), path);
 	}
 	for (const path of [
-		"packages/atlas-runtime/src/storage/atlasCache.ts",
+		"packages/atlas-db/src/atlasCache.ts",
 		"packages/search-index/src/node/nameFingerprint.ts",
 		"packages/geography/src/nameNormalisation.ts",
 		"packages/artifacts/src/sqliteTables.ts",
@@ -537,7 +537,7 @@ test("production builders resolve without UI code and include declared workers a
 		for (const path of [
 			"pipeline/src/build-atlas-release.ts",
 			"pipeline/src/atlas/atlasRelease.ts",
-			"packages/atlas-runtime/src/storage/atlasAssets.ts",
+			"packages/atlas-db/src/atlasAssets.ts",
 			"pipeline/src/fileHashCache.ts",
 			"pipeline/package.json",
 			"pipeline/tsconfig.json",
@@ -587,7 +587,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
-		"packages/atlas-runtime/src/storage/atlasAssets.ts",
+		"packages/atlas-db/src/atlasAssets.ts",
 	]) {
 		assert.ok(inputs.get("website-lookups")!.includes(path), path);
 	}

@@ -2,7 +2,7 @@ import { readAtlasPayload } from "../catalogue/atlasPayloads.ts";
 import { readFileSync } from "node:fs";
 import type { AnalysisGeographyInventory } from "../relationships/analysisGeographies.ts";
 import type { AnalysisGeographyValidationInventory } from "../catalogue/analysisGeographyValidation.ts";
-import type { AtlasRelease } from "../storage/atlasRelease.ts";
+import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import type { ExportManifest } from "../catalogue/exportManifest.ts";
@@ -10,7 +10,7 @@ import type { LookupManifest } from "../areas/lookupExports.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { ValidationReport } from "../catalogue/validationReport.ts";
 import { withUnitDefinitions } from "@uk-data-atlas/measures";
-import { publicPath, readPublicManifest } from "../storage/publicManifest.ts";
+import { publicPath, readPublicManifest } from "@uk-data-atlas/atlas-db";
 
 export const readAtlasRelease = (repositoryRoot: string): AtlasRelease =>
 	readPublicManifest<AtlasRelease>(

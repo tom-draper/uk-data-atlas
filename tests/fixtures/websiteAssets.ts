@@ -8,7 +8,7 @@ import { ATLAS_LOOKUP_NAMES } from "@/scripts/atlas-lookups";
 import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
 import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
 import { writeEmptyPostcodeComponent } from "@/services/api/tests/atlasComponentFixtures";
-import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
+import type { AtlasAssetKind } from "@uk-data-atlas/atlas-db";
 
 const buildAtlasAssets = (root: string) => {
 	stageAtlasAssets(root);

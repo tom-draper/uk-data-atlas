@@ -1,7 +1,4 @@
-import {
-	artifactDirectory,
-	configDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";

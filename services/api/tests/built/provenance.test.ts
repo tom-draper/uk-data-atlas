@@ -3,7 +3,7 @@ import {
 	atlasDatabasePath,
 	observationValuesEqual,
 	statisticsReadPathPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import {
 	readStatisticsObservationText,
 	type StatisticsReadPath,

@@ -6,7 +6,7 @@ import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResource
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
-import { artifactDirectory, buildDirectory } from "../storage/dataLayout.ts";
+import { artifactDirectory, buildDirectory } from "@uk-data-atlas/atlas-db";
 
 /** Every whole-release download the build wrote, tiled or not. */
 const allFeatures = (mapResources: MapResources) => [

@@ -3,9 +3,9 @@ import { readAtlasPayload } from "../catalogue/atlasPayloads.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { FullDetailDownloads } from "./fullDetailDownloads.ts";
 import type { EvidenceManifest } from "../catalogue/evidenceDocuments.ts";
-import { lazyValue } from "../storage/lazyValue.ts";
-import { readAtlasPages } from "../storage/atlasPages.ts";
-import { readAtlasLookups } from "../storage/atlasLookups.ts";
+import { lazyValue } from "@uk-data-atlas/atlas-db";
+import { readAtlasPages } from "@uk-data-atlas/atlas-db";
+import { readAtlasLookups } from "@uk-data-atlas/atlas-db";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readMeasureObservations } from "../measures/observationLoader.ts";
@@ -14,7 +14,7 @@ import {
 	createGeographyServices,
 } from "./geographyResolver.ts";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
-import type { AtlasRelease } from "../storage/atlasRelease.ts";
+import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
 import {
 	readAreaInventory,
 	readAreaSearchIndex,
@@ -55,7 +55,7 @@ import {
 import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
 import { readRelationshipCandidateInventory } from "../catalogue/governanceLoader.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
-import { artifactDirectory } from "../storage/dataLayout.ts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import type { StatisticsReadPath } from "../measures/atlasStatisticsObservations.ts";
 
 const EVIDENCE_DOCUMENTS = [

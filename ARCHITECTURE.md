@@ -154,7 +154,7 @@ services/api ───────┘
   and lookups come from the shared release, without reading API build output.
 - Other generated API files remain under `data/build/artifacts/` for now. They
   sit beside `atlas.sqlite` so the pipeline writes only under `data/build/`, and
-  `packages/atlas-runtime/src/storage/dataLayout.ts` resolves their locations
+  `packages/atlas-db/src/dataLayout.ts` resolves their locations
   from the repository root. The API directory remains the home of its config
   and `openapi.yaml`.
 - Browser-safe packages keep Node imports out of their browser entry points.

@@ -1,8 +1,5 @@
 /** Force selected compiles into a temporary directory and check existing hashes. */
-import {
-	configDirectory,
-	artifactDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { configDirectory, artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";

@@ -4,7 +4,7 @@ import {
 	formatCount,
 	formatDuration,
 	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,
@@ -28,7 +28,7 @@ import {
 	readSqliteAreaInventory as readAreaInventory,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry.ts";
-import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
+import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { AreasResolver } from "@uk-data-atlas/atlas-runtime/areas";
 import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/areas";

@@ -1,4 +1,4 @@
-import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
+import { unpackText } from "@uk-data-atlas/atlas-db";
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";

@@ -1,4 +1,4 @@
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { dirname, join, resolve } from "node:path";

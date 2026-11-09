@@ -11,7 +11,7 @@ import {
 	readCrosswalkById,
 	writeSqliteIndex,
 } from "../src/storage/index";
-import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-runtime/storage";
+import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 
 const release = (geography: string, id: string, codes: string[]) => ({

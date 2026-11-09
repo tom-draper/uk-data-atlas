@@ -30,7 +30,7 @@ import {
 	buildDirectory,
 	compiledObservationPath,
 	observationValuesEqual,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 /**
  * Select statistics rows for every artifact and check their values against

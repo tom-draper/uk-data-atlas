@@ -2,11 +2,7 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createAtlasRelease } from "./atlas/atlasRelease.ts";
-import {
-	artifactDirectory,
-	buildLog,
-	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory, buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 
 export const buildAtlasRelease = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

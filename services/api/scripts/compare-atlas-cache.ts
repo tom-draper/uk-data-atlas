@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, statSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
+import { unpackText } from "@uk-data-atlas/atlas-db";
 
 const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
 const cacheTable = (name: string) =>

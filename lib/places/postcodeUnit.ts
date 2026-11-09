@@ -7,7 +7,7 @@
 
 import { join } from "node:path";
 import proj4 from "proj4";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-runtime/storage";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { requirePostcodeAreaLayout } from "@uk-data-atlas/atlas-runtime/postcodes";
 import {

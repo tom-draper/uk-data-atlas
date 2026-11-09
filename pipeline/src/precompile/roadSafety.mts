@@ -2,7 +2,7 @@ import { join } from "path";
 import { Gazetteer } from "@uk-data-atlas/places";
 import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
 import { loadRoadSafety } from "./roadSafetyLoader.ts";
-import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import { fileStamp, isReleasedSource, sameFileStamp } from "./cache.mts";
 import { out, outputMatches } from "./websiteOutput.mts";
 import { SOURCE_DATA } from "./paths.mts";

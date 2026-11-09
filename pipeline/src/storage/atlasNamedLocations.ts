@@ -13,7 +13,7 @@ import type {
 	NamedLocationInventory,
 } from "@uk-data-atlas/places";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
-import { packGeometry } from "@uk-data-atlas/atlas-runtime/storage";
+import { packGeometry } from "@uk-data-atlas/atlas-db";
 
 export const namedLocationTables = (
 	directory: string,

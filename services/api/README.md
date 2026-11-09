@@ -28,7 +28,7 @@ mismatched cache fails readiness. The API does not build the cache.
 
 Each component also stores a generation hash over its inputs and cache compiler
 version. Readers reject stale components. Compiler changes must increment
-`CACHE_VERSION` in `packages/atlas-runtime/src/storage/atlasCache.ts`.
+`CACHE_VERSION` in `packages/atlas-db/src/atlasCache.ts`.
 
 The website continues to use its own data readers and never calls the API.
 

@@ -9,7 +9,7 @@
  *
  * Run via: npx tsx scripts/compile-air-quality.mts
  */
-import { buildLog, formatCount } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
 import { readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";

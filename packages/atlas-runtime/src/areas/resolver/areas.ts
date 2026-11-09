@@ -1,4 +1,4 @@
-import { lazyValue } from "../../storage/lazyValue.ts";
+import { lazyValue } from "@uk-data-atlas/atlas-db";
 import type {
 	AreaInventory,
 	AreaLookup,

@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-runtime/storage";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 // Compares the connection pragmas of the shared read-only module on the real
 // databases, one process per configuration, read only.

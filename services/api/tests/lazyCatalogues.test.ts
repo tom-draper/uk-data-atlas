@@ -12,7 +12,7 @@ import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places"
 import { namedLocationTables } from "./pipelineFixtures";
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const storeAreas = (
 	apiRoot: string,

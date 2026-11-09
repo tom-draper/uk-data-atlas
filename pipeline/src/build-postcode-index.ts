@@ -1,8 +1,4 @@
-import {
-	buildLog,
-	formatCount,
-	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import type { PostcodeSource } from "@uk-data-atlas/geography/postcode-index-types";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";

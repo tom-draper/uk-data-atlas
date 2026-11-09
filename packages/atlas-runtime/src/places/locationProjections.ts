@@ -20,7 +20,7 @@ import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 import type { SQLInputValue } from "node:sqlite";
-import { SqliteIndex, unpackJson } from "../storage/sqliteIndex.ts";
+import { SqliteIndex, unpackJson } from "@uk-data-atlas/atlas-db";
 
 export type LocationProjection = {
 	locationId: string;

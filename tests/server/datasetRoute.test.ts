@@ -14,8 +14,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
 import { buildAtlasSqlite } from "@/pipeline/src/atlas/buildAtlasSqlite";
 import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
-import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 
 let root: string;
 const stored = gzipSync('{"2024":{"value":42}}\n', { level: 9 });

@@ -10,7 +10,7 @@ import {
 import { onApril2023Authorities } from "../../src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const dataset = (
 	output: string,

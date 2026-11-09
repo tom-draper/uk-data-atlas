@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { expect, test } from "vitest";
 
 /**
- * Build stages print through `buildLog` (packages/atlas-runtime/src/storage/
+ * Build stages print through `buildLog` (packages/atlas-db/src/
  * buildTiming.ts), so every stage shares one style. This fails when a file in
  * these directories calls `console.log`, `console.info` or `console.warn`.
  * `console.error` stays for uncaught failures.
@@ -19,7 +19,7 @@ const DIRECTORIES = [
 ];
 
 /** The logger itself prints to the console. */
-const LOGGER = ["packages/atlas-runtime/src/storage/buildTiming.ts"];
+const LOGGER = ["packages/atlas-db/src/buildTiming.ts"];
 
 /**
  * Stages that PR #542 (retire legacy observation tables) is changing. Move
