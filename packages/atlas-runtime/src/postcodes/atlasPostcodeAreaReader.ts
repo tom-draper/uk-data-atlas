@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "../storage/atlasSqlite.ts";
+import { requireAtlasPayload } from "../storage/atlasSqlite.ts";
 import {
 	readPostcodeAreaShard,
 	requirePostcodeAreaLayout,
@@ -11,7 +11,7 @@ import { unpackText } from "../storage/storedPayload.ts";
 export function readSqlitePostcodeAreas(
 	repositoryRoot: string,
 ): PostcodeAreasArtifact {
-	return JSON.parse(readAtlasPayload(repositoryRoot, "postcode-areas"));
+	return JSON.parse(requireAtlasPayload(repositoryRoot, "postcode-areas"));
 }
 
 export function readSqlitePostcodeAreaShard(

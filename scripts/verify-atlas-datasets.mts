@@ -2,10 +2,11 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve, join } from "node:path";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+
 import {
 	comparableCompiled,
 	generatedFromRows,
+	readAtlasPayload,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { datasetCatalogInputs } from "../pipeline/src/build-data-catalog";
 import {

@@ -3,10 +3,13 @@ import {
 	requireAtlasCache,
 	readCachePayload,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	readMeasureObservations,
+	readAtlasPayload,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { DatabaseSync } from "node:sqlite";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+
 import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";

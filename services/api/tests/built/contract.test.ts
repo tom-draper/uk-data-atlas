@@ -5,11 +5,14 @@ import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/storage";
+
 import { httpResponse } from "../../src/httpResponse";
 import { CAPABILITY_STATUSES } from "@uk-data-atlas/atlas-runtime/areas";
 import { CONVERSION_METHODS } from "@uk-data-atlas/atlas-runtime/relationships";
-import { COMPATIBILITY_STATUSES } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	COMPATIBILITY_STATUSES,
+	readAtlasPayload,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 import { PROBLEM_CODES } from "@uk-data-atlas/atlas-runtime/api";
 import { route as domainRoute } from "../../src/routes";
 import { indexResponse } from "../../src/indexRoutes";

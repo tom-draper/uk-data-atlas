@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "../storage/atlasSqlite.ts";
+import { readAtlasPayload } from "./atlasPayloads.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { FullDetailDownloads } from "../areas/fullDetailDownloads.ts";
 import type { EvidenceManifest } from "./evidenceDocuments.ts";

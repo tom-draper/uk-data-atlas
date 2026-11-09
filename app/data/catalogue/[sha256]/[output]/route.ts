@@ -3,7 +3,7 @@ import { acceptsEncoding } from "@/lib/helpers/acceptedEncodings";
 import {
 	readStoredAtlasDataset,
 	readVersionedAtlasDataset,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 export const runtime = "nodejs";
 

@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "../storage/atlasSqlite.ts";
+import { requireAtlasPayload } from "../storage/atlasSqlite.ts";
 import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 
@@ -7,7 +7,7 @@ export const readSqlitePostcodeIndexArtifact = (
 	databasePath?: string,
 ): PostcodeIndexArtifact => {
 	const artifact: PostcodeIndexArtifact = JSON.parse(
-		readAtlasPayload(repositoryRoot, "postcode-index", databasePath),
+		requireAtlasPayload(repositoryRoot, "postcode-index", databasePath),
 	);
 	const mismatch = postcodeIndexMismatch(artifact);
 	if (mismatch)

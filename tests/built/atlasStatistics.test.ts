@@ -17,8 +17,11 @@ import { execFileSync } from "node:child_process";
 import { buildAreaInventory } from "../../pipeline/src/build-area-inventory";
 import { buildAtlasSqlite } from "../../pipeline/src/atlas/buildAtlasSqlite";
 import { buildTerrainCatalogue } from "../../pipeline/src/build-terrain-catalogue";
-import { rebuildFuelPoverty } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/storage";
+import {
+	rebuildFuelPoverty,
+	readVersionedAtlasDataset,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
 
 /** In drop order: children before the tables they reference. */

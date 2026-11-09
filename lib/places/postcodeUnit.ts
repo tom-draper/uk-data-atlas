@@ -7,10 +7,8 @@
 
 import { join } from "node:path";
 import proj4 from "proj4";
-import {
-	openReadOnlyDatabase,
-	readAtlasPayload,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { requirePostcodeAreaLayout } from "@uk-data-atlas/atlas-runtime/postcodes";
 import {
 	DEPRIVATION_INDICES,
