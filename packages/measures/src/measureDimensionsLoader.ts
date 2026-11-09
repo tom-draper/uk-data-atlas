@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { DATASET_DECLARATIONS, energyConsumptionSeries, crimeSeries, roadCollisionSeries, airQualitySeries } from "@uk-data-atlas/datasets";
+import { DATASET_DECLARATIONS, energyConsumptionSeries, crimeSeries, roadCollisionSeries, airQualitySeries, declaredLifeExpectancySeries as lifeExpectancySeries } from "@uk-data-atlas/datasets";
 import {
 	configDirectory,
 	atlasDatabasePath,
@@ -46,6 +46,9 @@ export const declaredMeasureIds = (): Record<string, MeasureIdMapping> =>
 			({ id, ...identity }) => [id, identity] as const,
 		),
 		...airQualitySeries().map(
+			({ id, ...identity }) => [id, identity] as const,
+		),
+		...lifeExpectancySeries().map(
 			({ id, ...identity }) => [id, identity] as const,
 		),
 		...crimeSeries().map(({ id, ...identity }) => [id, identity] as const),
