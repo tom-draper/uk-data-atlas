@@ -197,7 +197,9 @@ export class ObservationCache {
 					);
 				if (readPath.series && identities && key) seriesKeys.add(key);
 				names.add(name);
-				this.statistics.set(`${databasePath}:${name}`, {
+				const cacheKey =
+					readPath.series && identities && key ? key : name;
+				this.statistics.set(`${databasePath}:${cacheKey}`, {
 					selector,
 					artifact: {
 						measureId: measure.id,

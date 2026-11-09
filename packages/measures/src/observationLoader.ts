@@ -6,6 +6,7 @@ import {
 import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,
+	measureSeriesSourceKey,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
 	type MeasureSeriesIdentity,
@@ -37,7 +38,9 @@ export const readMeasureObservations = (
 		measure.sources.map((source) =>
 			lazySourceObservations(
 				databasePath,
-				observationArtifactName(measure.id, source),
+				readPath.series && identities?.[measure.id]
+					? measureSeriesSourceKey(identities[measure.id], source)
+					: observationArtifactName(measure.id, source),
 				measure.id,
 				source.sourceGeography,
 				tables,

@@ -7,6 +7,7 @@ import { test } from "vitest";
 import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	readMeasureObservations,
+	ObservationCache,
 	indexStatisticsSeries,
 	measureSeriesSourceKey,
 	type StatisticsReadPath,
@@ -166,6 +167,13 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		canonicalReadPath,
 		{ count: identity },
 	);
+	const cache = new ObservationCache();
+	const databasePath = join(root, "data/build/atlas.sqlite");
+	cache.bindCatalogue(databasePath, catalog, canonicalReadPath, {
+		count: identity,
+	});
+	assert.equal(cache.has(databasePath, key), true);
+	assert.equal(cache.has(databasePath, "count-observations"), false);
 	assert.deepEqual(canonical?.periods[0]?.records[0], {
 		areaCode: "E1",
 		value: 42,
