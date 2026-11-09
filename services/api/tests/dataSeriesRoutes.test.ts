@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { PropertyCrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	MeasureObservationArtifact,

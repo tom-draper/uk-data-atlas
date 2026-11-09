@@ -11,7 +11,7 @@ import type {
 	AnalysisGeographyInventory,
 	AnalysisGeographySupportConfig,
 	CrosswalkSummary,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;

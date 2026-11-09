@@ -1,4 +1,4 @@
-import type { AnalysisGeographySupport } from "../areas/analysisGeographies.ts";
+import type { AnalysisGeographySupport } from "./analysisGeographies.ts";
 
 /** How a reviewed support converts: one crosswalk, or a published path. */
 export const analysisConversion = (support: AnalysisGeographySupport) =>

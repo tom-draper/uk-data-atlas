@@ -1,6 +1,6 @@
 import { readAtlasPayload } from "../catalogue/atlasPayloads.ts";
 import { readFileSync } from "node:fs";
-import type { AnalysisGeographyInventory } from "../areas/analysisGeographies.ts";
+import type { AnalysisGeographyInventory } from "../relationships/analysisGeographies.ts";
 import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation.ts";
 import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
