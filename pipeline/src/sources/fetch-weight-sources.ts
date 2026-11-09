@@ -334,7 +334,7 @@ const fetchDwellings = async (root: string, retrieved: string) => {
 	const path = WEIGHT_SOURCE_FILES.dwellingsEw;
 	const hash = write(root, path, csv);
 	writeMeta(root, dirname(path), {
-		id: "council-tax-stock-2026",
+		id: "2026",
 		title: "Council Tax: stock of properties 2026, CTSOP1.1",
 		description:
 			"Properties on the Council Tax valuation list in England and Wales at 31 March 2026, by Council Tax band, local authority, LSOA and MSOA. Counts are rounded to the nearest 10 and small counts are suppressed.",
