@@ -4,7 +4,7 @@ import { attributionFor, attributionText } from "@uk-data-atlas/catalogue/node";
 import { measureCoverage } from "@uk-data-atlas/catalogue/node";
 import { areaMeasureSources } from "@uk-data-atlas/measures";
 import type { AreaIdentity } from "@uk-data-atlas/geography";
-import type { RouteContextFor } from "../runtime/index.ts";
+import type { RouteContextFor, RouteRequest } from "../runtime/index.ts";
 import { problem, type ApiResponse } from "../runtime/index.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { publicSeries } from "@uk-data-atlas/measures";
@@ -29,6 +29,7 @@ export const areaCitation = (
 	releaseId: string,
 	identity: AreaIdentity,
 	searchParams: URLSearchParams,
+	measureSeries?: RouteRequest["measureSeries"],
 ): { citation: Record<string, unknown> } | { response: ApiResponse } => {
 	const refuse = (response: ApiResponse) => ({ response });
 	const {
@@ -52,6 +53,9 @@ export const areaCitation = (
 	const unavailable = requireGeography(geographyResolver, "crosswalks");
 	if (unavailable) return refuse(unavailable);
 	const measureIds = [...new Set(searchParams.getAll("measure"))];
+	const selected = new Map(
+		measureSeries?.map(({ measureId, series }) => [measureId, series]),
+	);
 	const crosswalkIds = [...new Set(searchParams.getAll("crosswalk"))];
 	const releaseIdentity = releaseKey(geography, boundaryRelease);
 	// Resolved here only to refuse unknown resources; the bundle's own
@@ -60,6 +64,12 @@ export const areaCitation = (
 		{
 			datasets: [],
 			measures: measureIds,
+			resolvedMeasures: new Map(
+				[...selected].map(([id, series]) => [
+					id,
+					series.catalogueMeasure,
+				]),
+			),
 			boundaryReleases: [releaseIdentity],
 			crosswalks: crosswalkIds,
 		},
@@ -104,14 +114,16 @@ export const areaCitation = (
 	// actually hold a value for this area, in partitions assessed against
 	// this exact release.
 	const measures = measureIds.map((measureId) => {
-		const measure = dataCatalog.measures.find(
-			(candidate) => candidate.id === measureId,
-		) as DataCatalog["measures"][number];
+		const series = selected.get(measureId);
+		const measure = (series?.catalogueMeasure ??
+			dataCatalog.measures.find(
+				(candidate) => candidate.id === measureId,
+			)) as DataCatalog["measures"][number];
 		const coverage = measureCompatibilityInventory
 			? measureCoverage(
 					dataCatalog,
 					measureCompatibilityInventory,
-					measureId,
+					measure.id,
 				)
 			: undefined;
 		const sources = areaMeasureSources(
@@ -152,11 +164,9 @@ export const areaCitation = (
 					]
 				: [];
 		});
-		const named = publicSeries(
-			dataCatalog,
-			context.measureDimensions,
-			measure.id,
-		);
+		const named = series
+			? { id: measureId, dimensions: series.dimensions }
+			: publicSeries(dataCatalog, context.measureDimensions, measure.id);
 		return {
 			id: named.id,
 			...(Object.keys(named.dimensions).length > 0
@@ -205,8 +215,11 @@ export const areaCitation = (
 				),
 				...measureIds.flatMap(
 					(id) =>
-						dataCatalog.measures.find(
-							(candidate) => candidate.id === id,
+						(
+							selected.get(id)?.catalogueMeasure ??
+							dataCatalog.measures.find(
+								(candidate) => candidate.id === id,
+							)
 						)?.derivedFrom?.datasetIds ?? [],
 				),
 			],

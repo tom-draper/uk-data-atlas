@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";
+import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	registry,
@@ -253,6 +254,68 @@ test("cites a measure through the observations holding the area's value", () => 
 		),
 		["population", "ward/2023-05-uk-bgc"],
 	);
+});
+
+test("cites a selected dimensional series without rewriting its public measure", () => {
+	const context = testContext({
+		...citationContext,
+		dataCatalog: { ...citationContext.dataCatalog! },
+		measureDimensions: {
+			vocabulary: {
+				schemaVersion: 1,
+				measures: {
+					residents: {
+						label: "Residents",
+						description: "People.",
+						unit: "people",
+						valueKind: "count",
+						aggregation: "sum",
+					},
+				},
+				dimensions: {
+					age: {
+						label: "Age",
+						members: [{ code: "all", label: "All ages" }],
+					},
+				},
+			},
+			config: {
+				schemaVersion: 1,
+				measures: {},
+				dimensions: {},
+				members: {},
+				defaults: {},
+				ids: {
+					population: {
+						measure: "residents",
+						dimensions: { age: "all" },
+					},
+				},
+			},
+		},
+	});
+	const url =
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=citation&measure=residents&age=all";
+	const resolved = resolveDimensionRequest(url, context);
+	assert.equal(resolved.kind, "rewritten");
+	if (resolved.kind !== "rewritten")
+		throw new Error("Expected a rewritten request");
+	assert.equal(
+		resolved.url,
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=citation&measure=residents",
+	);
+	const result = citation(url, context);
+	assert.equal(result.status, 200, result.detail ?? "Citation failed");
+	const cited = result.data?.citation as {
+		measures: Array<{
+			id: string;
+			dimensions: Record<string, string>;
+			sources: unknown[];
+		}>;
+	};
+	assert.equal(cited.measures[0]?.id, "residents");
+	assert.deepEqual(cited.measures[0]?.dimensions, { age: "all" });
+	assert.equal(cited.measures[0]?.sources.length, 1);
 });
 
 test("refuses to cite a resource that supplies nothing for the area", () => {
