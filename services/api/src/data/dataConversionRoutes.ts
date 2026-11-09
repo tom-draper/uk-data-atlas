@@ -207,6 +207,7 @@ export const handleDataConversionRoutes = ({
 	const page = paginate(parsedUrl, converted.records, {
 		keyOf: (record) => record.areaCode,
 		subject: "conversion",
+		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
 	return {
