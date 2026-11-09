@@ -2,7 +2,7 @@
 
 Node modules used by the API, data pipeline and website server to read and build atlas data. Import the domain entry point needed by a consumer:
 
-- `@uk-data-atlas/atlas-runtime/catalogue` for catalogue loading, observation storage and evidence.
+- `@uk-data-atlas/catalogue/node` for catalogue loading, observation storage and evidence.
 - `@uk-data-atlas/atlas-runtime/loader` for loading a whole atlas release: the catalogue loader, the geography resolver and the reports that need it. It sits on top of every other folder, and none of them imports it.
 - `@uk-data-atlas/atlas-runtime/maps` for map resources.
 - `@uk-data-atlas/atlas-db` for atlas databases and release artifacts.
