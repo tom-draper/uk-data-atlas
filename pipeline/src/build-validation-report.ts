@@ -9,7 +9,7 @@ import type {
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import type { ExportManifest } from "@uk-data-atlas/atlas-runtime/storage";
+
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
@@ -17,6 +17,7 @@ import {
 	isMeasureTable,
 	tableMeasureObservations,
 	type AnyMeasureObservationArtifact,
+	type ExportManifest,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileValidationReport } from "./validation/compileValidationReport.ts";
 import {

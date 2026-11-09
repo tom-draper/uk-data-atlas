@@ -7,7 +7,6 @@ export * from "./atlasSqlite.ts";
 export * from "./buildTiming.ts";
 export * from "./dataLayout.ts";
 export * from "./observationComparison.ts";
-export * from "./exportManifest.ts";
 export * from "./lazyValue.ts";
 export * from "./publicJson.ts";
 export * from "./publicManifest.ts";

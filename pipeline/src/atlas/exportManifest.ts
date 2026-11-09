@@ -3,6 +3,10 @@ import {
 	type MeasureSource,
 	type MeasureObservation,
 	observationArtifactName,
+	type ExportField,
+	type ExportDataset,
+	type BulkExport,
+	type ExportManifest,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	isMeasureTable,
@@ -10,13 +14,6 @@ import {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { compileObservationDownloads } from "../statistics/observationDownloads.ts";
-
-import type {
-	ExportField,
-	ExportDataset,
-	BulkExport,
-	ExportManifest,
-} from "@uk-data-atlas/atlas-runtime/storage";
 
 const FIELD_DESCRIPTIONS: Record<string, string> = {
 	areaCode: "The official code of the area in the served source partition.",

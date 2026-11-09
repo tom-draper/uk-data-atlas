@@ -12,13 +12,14 @@ import type {
 	MeasureSource,
 	PopulationObservation,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { ExportManifest } from "@uk-data-atlas/atlas-runtime/storage";
+
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	VALIDATION_CHECKS,
 	type ValidationCheckId,
+	type ExportManifest,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { sha256 } from "./findings.ts";
 

@@ -10,6 +10,7 @@ export * from "./coveragePlan.ts";
 export * from "./correctionsReport.ts";
 export * from "@uk-data-atlas/measures";
 export * from "./evidenceDocuments.ts";
+export * from "./exportManifest.ts";
 export * from "./geographyCatalogue.ts";
 export * from "./geographyHealthReport.ts";
 export * from "./governanceLoader.ts";
