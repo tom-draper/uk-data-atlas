@@ -13,6 +13,7 @@ import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
 import type { PostcodeOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compilePostcodeOverlapCrosswalk } from "../src/relationships/postcodeOverlap";
+import { crosswalkFindings } from "../src/validation/crosswalkFindings";
 import { MEASURES, type WeightAtoms } from "../src/crosswalk-weights/atoms";
 import {
 	placementFile,
@@ -214,5 +215,39 @@ test("a placement of other atoms is refused", (context) => {
 				lookup,
 			),
 		/rebuild weight-atoms/,
+	);
+});
+
+test("validation accepts missing Northern Ireland targets but rejects other missing targets", (context) => {
+	const { root, sources, lookup } = fixture(context);
+	const artifact = compilePostcodeOverlapCrosswalk(
+		root,
+		adapter(0.001),
+		sources,
+		lookup,
+	);
+	const findings = (candidate: typeof artifact) =>
+		crosswalkFindings(
+			{
+				crosswalkArtifacts: new Map([[candidate.id, candidate]]),
+				areaArtifacts: [],
+			} as unknown as Parameters<typeof crosswalkFindings>[0],
+			{
+				id: candidate.id,
+				artifact: "test",
+				contentHash: candidate.contentHash,
+				recordCount: candidate.records.length,
+			} as Parameters<typeof crosswalkFindings>[1],
+		);
+	assert.equal(
+		findings(artifact).find((entry) => entry.id === "targets-present")
+			?.passed,
+		true,
+	);
+	const other = structuredClone(artifact);
+	other.records[3]!.source.code = "E00000001";
+	assert.equal(
+		findings(other).find((entry) => entry.id === "targets-present")?.passed,
+		false,
 	);
 });

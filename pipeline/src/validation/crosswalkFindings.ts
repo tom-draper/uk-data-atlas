@@ -95,7 +95,14 @@ export const crosswalkFindings = (
 	];
 
 	const withoutTargets = artifact.records
-		.filter((record) => record.targets.length === 0)
+		.filter(
+			(record) =>
+				record.targets.length === 0 &&
+				!(
+					artifact.method === "postcode-overlap" &&
+					record.source.code.startsWith("N")
+				),
+		)
 		.map((record) => record.source.code);
 	findings.push(
 		check(
