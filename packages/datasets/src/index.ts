@@ -215,3 +215,5 @@ export * from "./data/population/statistics.ts";
 export * from "./data/school-performance/statistics.ts";
 
 export * from "./data/new-datasets/aggregate.ts";
+
+export { energyConsumptionSeries } from "./data/energy-consumption/declaration.ts";
