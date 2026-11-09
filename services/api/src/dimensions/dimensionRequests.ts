@@ -172,6 +172,7 @@ export const resolveDimensionRequest = (
 			"value",
 			"compare",
 			"change",
+			"convert",
 			"rankings",
 		].includes(position.operation)
 			? measure.id
