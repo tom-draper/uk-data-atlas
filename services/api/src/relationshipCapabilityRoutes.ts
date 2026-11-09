@@ -20,15 +20,16 @@ const measureReadiness = (
 	measureId: string,
 	purpose: RelationshipPurpose,
 	from: { geography: string; boundaryRelease: string },
+	resolvedMeasure?: DataCatalog["measures"][number],
 ) => {
 	if (!catalog)
 		return {
 			status: "not-built" as const,
 			reason: "Build the data catalogue before assessing a measure's conversion semantics.",
 		};
-	const measure = catalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measure =
+		resolvedMeasure ??
+		catalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure)
 		return {
 			status: "unsupported" as const,
@@ -145,6 +146,7 @@ export const handleRelationshipCapabilityRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	measureSeries,
 }: RouteRequestFor<
 	| "conversionPlan"
 	| "hasAreaRelease"
@@ -293,6 +295,9 @@ export const handleRelationshipCapabilityRoutes = ({
 							measureId,
 							purpose,
 							from,
+							measureSeries?.find(
+								({ measureId: id }) => id === measureId,
+							)?.series.catalogueMeasure,
 						),
 					}
 				: {}),
