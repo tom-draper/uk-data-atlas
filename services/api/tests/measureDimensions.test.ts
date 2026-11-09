@@ -20,6 +20,31 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+test("travel to work series come from the travel method declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of [
+		"bicycle",
+		"car",
+		"home",
+		"motorcycle",
+		"on-foot",
+		"other",
+		"public-transport",
+		"taxi",
+		"total",
+	]) {
+		const id = `travel-to-work-${member}`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "people-in-employment",
+			dimensions: { "travel-method": member },
+		});
+	}
+});
+
 test("temporary accommodation series come from the homelessness fields", () => {
 	const config = JSON.parse(
 		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
