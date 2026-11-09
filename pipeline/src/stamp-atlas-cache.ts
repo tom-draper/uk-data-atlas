@@ -4,7 +4,7 @@ import {
 	buildLog,
 	cacheGeneration,
 	type CacheComponent,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { hashFile } from "./fileHashCache.ts";
 import {
 	latestAtlasCachePath,

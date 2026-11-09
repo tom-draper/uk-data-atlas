@@ -20,7 +20,7 @@ import {
 	packGeometry,
 	unpackGeometry,
 } from "@uk-data-atlas/geography/packed-geometry";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const square = (west: number, south: number, size: number) => [
 	[

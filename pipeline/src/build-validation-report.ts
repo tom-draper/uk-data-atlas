@@ -25,10 +25,7 @@ import {
 	readValidationWaivers,
 } from "./validation/inputs.ts";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
-import {
-	artifactDirectory,
-	configDirectory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
 import { createCrosswalkArtifacts } from "./storage/crosswalkArtifacts.ts";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 

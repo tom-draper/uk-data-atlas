@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { atlasCachePath } from "../storage/atlasCache.ts";
-import { readStoredAtlasPayload } from "../storage/atlasSqlite.ts";
-import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { readStoredAtlasPayload } from "@uk-data-atlas/atlas-db";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 import {
 	readDatasetPayload,
 	readDatasetPayloadWithHash,

@@ -17,7 +17,7 @@ import {
 	artifactDirectory,
 	buildLog,
 	formatCount,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);

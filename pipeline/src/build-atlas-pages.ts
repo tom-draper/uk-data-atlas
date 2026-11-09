@@ -13,7 +13,7 @@ import type {
 	AreaProfile,
 	PlaceIndex,
 } from "@uk-data-atlas/catalogue/place-profile";
-import { buildLog, formatCount } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const readDataset = (output: string) =>

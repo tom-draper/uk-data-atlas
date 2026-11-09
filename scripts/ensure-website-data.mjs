@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { buildLog } from "../packages/atlas-runtime/src/storage/buildTiming.ts";
+import { buildLog } from "../packages/atlas-db/src/buildTiming.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const options = { cwd: root, shell: process.platform === "win32" };

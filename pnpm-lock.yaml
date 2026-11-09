@@ -174,6 +174,9 @@ importers:
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:packages/artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:packages/atlas-db
       '@uk-data-atlas/atlas-runtime':
         specifier: workspace:*
         version: link:packages/atlas-runtime
@@ -318,6 +321,28 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  packages/atlas-db:
+    dependencies:
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+      '@uk-data-atlas/catalogue':
+        specifier: workspace:*
+        version: link:../catalogue
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../geography
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:../search-index
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   packages/atlas-runtime:
     dependencies:
       '@uk-data-atlas/areas':
@@ -326,6 +351,9 @@ importers:
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../catalogue
@@ -569,6 +597,9 @@ importers:
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../packages/artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../packages/atlas-db
       '@uk-data-atlas/atlas-runtime':
         specifier: workspace:*
         version: link:../packages/atlas-runtime
@@ -660,6 +691,9 @@ importers:
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../../packages/artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../../packages/atlas-db
       '@uk-data-atlas/atlas-runtime':
         specifier: workspace:*
         version: link:../../packages/atlas-runtime

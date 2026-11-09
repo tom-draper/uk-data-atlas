@@ -53,7 +53,7 @@ import {
 	elapsedSince,
 	formatCount,
 	msSince,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 /** Checks that every file a meta.json promises is actually present. */
 async function verifyDescribedFiles(

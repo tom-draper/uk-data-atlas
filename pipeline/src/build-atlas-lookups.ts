@@ -5,7 +5,7 @@ import { join, resolve } from "node:path";
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
 import { readLookupResolver } from "./atlas/lookupResolver.ts";
-import { buildDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildDirectory } from "@uk-data-atlas/atlas-db";
 import {
 	ATLAS_LOOKUPS_DIRECTORY,
 	atlasAssetsDirectory,
@@ -13,7 +13,7 @@ import {
 	type AtlasLookupManifest,
 	buildLog,
 	formatCount,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 const publicDirectory = atlasAssetsDirectory(repositoryRoot);
 const directory = join(publicDirectory, ATLAS_LOOKUPS_DIRECTORY);

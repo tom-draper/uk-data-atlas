@@ -1,6 +1,6 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { compilePostcodeAreas } from "../src/postcodes/postcodeAreaCompiler";
-import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import {
 	copyFileSync,
@@ -15,7 +15,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { AREAS_VIEW } from "../src/storage";
 import { IdRegistries, idDirectory } from "../src/ids/idRegistries";
 import { seedIdRegistries } from "../src/ids/seedIds";

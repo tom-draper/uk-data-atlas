@@ -21,7 +21,7 @@ import {
 	type SqliteTable,
 } from "../../pipeline/src/storage/index";
 
-import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { publishDatasetPayloads } from "../../pipeline/src/storage/index";
 
 const entry = {

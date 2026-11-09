@@ -6,10 +6,7 @@ import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import {
-	artifactDirectory,
-	atlasDatabasePath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory, atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 
 it("rebuilds every crosswalk artifact byte for byte from edge rows", () => {

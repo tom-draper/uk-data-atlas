@@ -20,7 +20,7 @@ import { buildTerrainCatalogue } from "../../pipeline/src/build-terrain-catalogu
 import { readVersionedAtlasDataset } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { rebuildFuelPoverty } from "@uk-data-atlas/atlas-runtime/measures";
 
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 /** In drop order: children before the tables they reference. */
 const statisticsTableNames = [

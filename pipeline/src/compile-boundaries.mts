@@ -24,7 +24,7 @@ import {
 	formatBytes,
 	formatCount,
 	msSince,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 import {
 	PROPERTIES_FILENAME,

@@ -4,7 +4,7 @@ import { DatabaseSync } from "node:sqlite";
 import { gunzipSync } from "node:zlib";
 import { expect, it } from "vitest";
 
-import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import {
 	comparableCompiled,
 	generatedFromRows,

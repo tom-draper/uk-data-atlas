@@ -3,8 +3,8 @@ import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
 } from "@uk-data-atlas/geography/postcode-index-types";
-import { atlasDatabasePath } from "../storage/dataLayout.ts";
-import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 export const postcodeFields = [
 	"postcode",

@@ -36,7 +36,7 @@ import {
 } from "../src/storage/index";
 import { registerStatistics } from "../src/storage/statisticsRegistry";
 import { collectParties } from "../src/storage/statisticsParties";
-import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-runtime/storage";
+import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 
 type Release = { id: string; codes: string[] };
 type Crosswalk = { from: string; to: string };

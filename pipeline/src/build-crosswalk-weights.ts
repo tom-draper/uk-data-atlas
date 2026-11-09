@@ -3,7 +3,7 @@ import {
 	formatCount,
 	formatDuration,
 	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { isMainThread } from "node:worker_threads";

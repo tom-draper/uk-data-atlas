@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { closeSync, openSync, readSync } from "node:fs";
 import { join } from "node:path";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-runtime/storage";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 export function validateCacheRelease(root: string): void {
 	const canonical = join(root, "data/build/atlas.sqlite");

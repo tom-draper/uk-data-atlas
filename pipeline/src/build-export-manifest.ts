@@ -1,4 +1,4 @@
-import { statisticsReadPathPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 
 import {
 	readMeasureDimensionsConfig,
@@ -9,7 +9,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import { compileExportManifest } from "./atlas/exportManifest.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { DatabaseSync } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections.ts";

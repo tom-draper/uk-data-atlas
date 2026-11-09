@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";

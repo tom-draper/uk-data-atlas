@@ -17,7 +17,7 @@ import {
 	configDirectory,
 	buildLog,
 	formatCount,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 type FeatureCollection = {
 	type?: unknown;

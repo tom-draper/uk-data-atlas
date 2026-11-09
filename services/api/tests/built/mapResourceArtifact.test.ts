@@ -18,7 +18,7 @@ import { GEOJSON_TIERS } from "@uk-data-atlas/atlas-runtime/maps";
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import { route } from "../../src/routes";
 

@@ -12,7 +12,7 @@ import { type CatalogueOptions } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	statisticsReadPathPath,
 	statisticsVocabularyPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 import { readFileSync } from "node:fs";
 import measureDimensionsConfig from "../config/measure-dimensions.json" with { type: "json" };

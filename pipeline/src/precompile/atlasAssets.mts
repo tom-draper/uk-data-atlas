@@ -8,7 +8,7 @@ import {
 import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
 import { loadMatchIndex } from "../gazetteer/matchIndex.ts";
 import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets/data/gazetteer/places";
-import { buildLog, msSince } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import {
 	fileSnapshots,
 	fileStamp,

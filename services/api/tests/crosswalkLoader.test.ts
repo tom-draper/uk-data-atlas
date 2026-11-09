@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { readCrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const entry = (id: string, geography: string) => ({
 	id,

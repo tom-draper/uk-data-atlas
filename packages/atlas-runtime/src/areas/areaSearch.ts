@@ -14,7 +14,7 @@ import {
 	lowerBound,
 	type Indexed,
 } from "@uk-data-atlas/search-index";
-import { SqliteIndex, text, unpackPositions } from "../storage/sqliteIndex.ts";
+import { SqliteIndex, text, unpackPositions } from "@uk-data-atlas/atlas-db";
 
 /**
  * What a search reads from the index: the artifact itself, or its tables in

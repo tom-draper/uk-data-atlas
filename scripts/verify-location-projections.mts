@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readCachePayload } from "@uk-data-atlas/atlas-runtime/storage";
+import { readCachePayload } from "@uk-data-atlas/atlas-db";
 import { createLocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
 import type {
 	LocationProjectionInventory,

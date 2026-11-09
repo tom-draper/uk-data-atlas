@@ -14,7 +14,7 @@ import type {
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileMeasureCompatibility } from "./statistics/measureCompatibility.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 const read = <T>(path: string): T =>

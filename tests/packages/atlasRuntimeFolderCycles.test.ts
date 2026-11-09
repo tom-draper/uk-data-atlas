@@ -9,11 +9,9 @@ import { findCycle, sourceFiles, specifiers } from "../helpers/sourceImports";
  * once atlas-runtime is gone.
  *
  * It fails on import cycles between the folders of `atlas-runtime/src`, so the
- * folders can later become packages without a cycle between them. The cycles
- * that exist today (fewer now that storage is clear, all running through these imports)
- * are tolerated by naming the import that closes each. Each P1 task removes
- * its exceptions. A new cycle fails, and so does an exception that no longer
- * closes anything, so the list cannot go stale.
+ * folders can later become packages without a cycle between them. Cycles are
+ * tolerated by naming the import that closes each. A new cycle fails, and so
+ * does an exception that no longer closes anything.
  */
 const SRC = join(process.cwd(), "packages/atlas-runtime/src");
 
@@ -61,29 +59,6 @@ it("keeps loader at the top, imported by no other atlas-runtime folder", () => {
 		.map(([from]) => from);
 	// `api` is the one consumer, it moves to services/api in task 14.
 	expect(importers, "folders importing loader").toEqual([]);
-});
-
-it("keeps storage free of every other atlas-runtime folder and of the domain packages", () => {
-	const edges = folderImports().get("storage") ?? new Set<string>();
-	expect([...edges], "folders storage imports").toEqual([]);
-	const domainPackages = [
-		"areas",
-		"places",
-		"postcodes",
-		"relationships",
-		"measures",
-	].map((name) => `@uk-data-atlas/${name}`);
-	const imported = sourceFiles(join(SRC, "storage")).flatMap((file) =>
-		specifiers(readFileSync(file, "utf8"))
-			.filter((specifier) =>
-				domainPackages.some(
-					(name) =>
-						specifier === name || specifier.startsWith(`${name}/`),
-				),
-			)
-			.map((specifier) => `${relative(SRC, file)} imports ${specifier}`),
-	);
-	expect(imported).toEqual([]);
 });
 
 it("keeps measures independent of catalogue", () => {

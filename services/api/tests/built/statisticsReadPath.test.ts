@@ -16,12 +16,12 @@ import {
 	atlasDatabasePath,
 	compiledObservationPath,
 	observationValuesEqual,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
 import { readFileSync } from "node:fs";
-import { statisticsReadPathPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 
 /**
  * The statistics read path. An artifact is read from the statistics tables

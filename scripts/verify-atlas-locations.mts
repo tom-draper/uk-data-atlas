@@ -21,7 +21,7 @@ import {
 	apiRootOf,
 	artifactDirectory,
 	roundGeometry,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 
 const root = resolve(import.meta.dirname, "..");

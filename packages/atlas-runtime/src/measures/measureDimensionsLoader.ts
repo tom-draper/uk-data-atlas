@@ -4,7 +4,7 @@ import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations"
 import {
 	configDirectory,
 	statisticsVocabularyPath,
-} from "../storage/dataLayout.ts";
+} from "@uk-data-atlas/atlas-db";
 import {
 	assertMeasureDimensions,
 	type DataCatalog,

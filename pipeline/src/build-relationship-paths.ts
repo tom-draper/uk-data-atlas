@@ -13,7 +13,7 @@ import {
 	buildLog,
 	formatCount,
 	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 // Long enough to rebase a local authority across a decade of releases, which
 // takes one identity step per release in between.

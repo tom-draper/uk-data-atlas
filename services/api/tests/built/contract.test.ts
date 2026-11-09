@@ -29,7 +29,7 @@ import {
 	type Schema,
 	type SchemaDocument,
 } from "../openapiSchema";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 /**
  * The API index, the OpenAPI paths and the README's endpoint list are three

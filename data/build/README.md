@@ -163,7 +163,7 @@ it exists and fail with the command that builds it.
 
 Readers share one read-only `DatabaseSync` per database file per process, with
 prepared statements kept per SQL string
-(`packages/atlas-runtime/src/storage/readOnlyDatabase.ts`). Opening a
+(`packages/atlas-db/src/readOnlyDatabase.ts`). Opening a
 connection costs far more than a point query, mostly in opening the file and
 parsing the schema. A reader leases the connection with
 `openReadOnlyDatabase(path)` and calls `release()` in a `finally`.
@@ -273,7 +273,7 @@ and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
 SQLite enforces the payload foreign key during the build. `payloads` holds each
 payload as a Brotli blob, quality 9, written by `packText` and read by
-`unpackText` in `packages/atlas-runtime/src/storage/storedPayload.ts`. The table
+`unpackText` in `packages/atlas-db/src/storedPayload.ts`. The table
 shrinks from 9.5 MB to 0.4 MB, mostly the 8.5 MB `relationship-paths` payload,
 which becomes 60 KB. Brotli beat gzip level 9 on the same payloads (60 KB
 against 140 KB for `relationship-paths`) and decompressed that payload in 4 ms
@@ -665,7 +665,7 @@ to `area`, because assertions can describe historical codes across releases.
 `named_location.id`, non-null `boundary_release TEXT`, real `min_x`, `min_y`,
 `max_x`, `max_y`, and `geometry BLOB NOT NULL`. The blob is the GeoJSON geometry
 as Brotli-compressed UTF-8 JSON (quality 10), written by `packGeometry` and read
-by `unpackGeometry` in `packages/atlas-runtime/src/storage/storedGeometry.ts`.
+by `unpackGeometry` in `packages/atlas-db/src/storedGeometry.ts`.
 Coordinates are WGS84 longitude and latitude in degrees, rounded to five decimal
 places, about 1.1 m of latitude. Neighbouring points that round together are
 merged, and a ring that collapses below four positions is dropped, though no

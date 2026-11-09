@@ -41,7 +41,7 @@ import { route } from "../src/routes";
 import fixtures from "./fixtures/geometry-validity.json";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";
 import { registry, testContext } from "./routeFixtures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const spec: SchemaDocument = parse(
 	readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),

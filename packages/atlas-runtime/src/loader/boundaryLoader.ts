@@ -1,5 +1,5 @@
-import { requireAtlasCache } from "../storage/atlasCache.ts";
-import { unpackText } from "../storage/storedPayload.ts";
+import { requireAtlasCache } from "@uk-data-atlas/atlas-db";
+import { unpackText } from "@uk-data-atlas/atlas-db";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
@@ -31,9 +31,9 @@ import {
 } from "@uk-data-atlas/postcodes";
 import type { GeometrySourceLookup } from "../geometry/areaGeometry.ts";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
-import { publicPath } from "../storage/publicManifest.ts";
-import { atlasDatabasePath } from "../storage/dataLayout.ts";
-import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
+import { publicPath } from "@uk-data-atlas/atlas-db";
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 export { readBoundaryRegistry } from "../catalogue/boundaryCatalogue.ts";
 

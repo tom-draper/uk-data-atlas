@@ -16,7 +16,6 @@
 		"./places": "./src/places/index.ts",
 		"./postcodes": "./src/postcodes/index.ts",
 		"./relationships": "./src/relationships/index.ts",
-		"./storage": "./src/storage/index.ts",
 		"./measures": "./src/measures/index.ts"
 	},
 	"scripts": {
@@ -37,7 +36,8 @@
 		"@uk-data-atlas/relationships": "workspace:*",
 		"@uk-data-atlas/geometry": "workspace:*",
 		"@uk-data-atlas/places": "workspace:*",
-		"@uk-data-atlas/measures": "workspace:*"
+		"@uk-data-atlas/measures": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

@@ -2,9 +2,9 @@ export {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
 } from "./atlasPostcodeAreaReader.ts";
-import { readCachePayload, requireAtlasCache } from "../storage/atlasCache.ts";
+import { readCachePayload, requireAtlasCache } from "@uk-data-atlas/atlas-db";
 import type { PostcodeCountsArtifact } from "@uk-data-atlas/postcodes";
-import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 export function readSqlitePostcodeCounts(
 	repositoryRoot: string,

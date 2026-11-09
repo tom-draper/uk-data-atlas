@@ -60,9 +60,12 @@ const problems = (packageRoot: string) => {
 			}
 			if (specifier.startsWith("node:") || builtins.has(specifier)) {
 				const nodeOnly =
-					["artifacts", "atlas-runtime", "shapefile"].includes(
-						manifest.name.replace("@uk-data-atlas/", ""),
-					) ||
+					[
+						"artifacts",
+						"atlas-db",
+						"atlas-runtime",
+						"shapefile",
+					].includes(manifest.name.replace("@uk-data-atlas/", "")) ||
 					(manifest.name === "@uk-data-atlas/search-index" &&
 						inside(join(packageRoot, "src/node"), file));
 				if (!nodeOnly)
@@ -240,10 +243,10 @@ describe("atlas domain boundaries", () => {
 				"geometry",
 				"places",
 				"postcodes",
-				"storage",
 				"maps",
 				"loader",
 			].flatMap((directory) => sourceFiles(join(atlas, directory))),
+			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PIPELINE, "src/evidence")),
 			join(PIPELINE, "src/build-evidence-documents.ts"),
 		];
@@ -376,14 +379,14 @@ describe("pipeline boundaries", () => {
 		}
 	});
 
-	it("finds the API project and its output through packages/atlas-runtime/src/storage/dataLayout.ts", () => {
+	it("finds the API project and its output through packages/atlas-db/src/dataLayout.ts", () => {
 		const files = [
 			...sourceFiles(join(PIPELINE, "src")),
 			...sourceFiles(join(PACKAGES, "atlas-runtime/src")),
+			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 		].filter(
 			(file) =>
-				relative(ROOT, file) !==
-				"packages/atlas-runtime/src/storage/dataLayout.ts",
+				relative(ROOT, file) !== "packages/atlas-db/src/dataLayout.ts",
 		);
 		expect(files.length).toBeGreaterThan(0);
 		const hardCoded = files.filter((file) =>

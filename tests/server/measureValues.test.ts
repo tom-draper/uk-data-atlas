@@ -10,7 +10,7 @@ import {
 	type MeasureValuesProblem,
 	type MeasureValuesRequest,
 } from "@uk-data-atlas/atlas-runtime/measures";
-import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-runtime/storage";
+import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import { createMeasureFixture } from "../helpers/measureFixture";
 
 let fixture: ReturnType<typeof createMeasureFixture>;

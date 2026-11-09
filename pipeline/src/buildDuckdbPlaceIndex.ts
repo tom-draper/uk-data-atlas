@@ -11,7 +11,7 @@ import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "
 import { readGeographyCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { placeIndexTables } from "./storage/index.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const readBoundaryRegistry = (repositoryRoot: string) =>
 	readGeographyCatalogue<BoundaryRegistry>(

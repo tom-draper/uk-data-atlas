@@ -10,7 +10,7 @@ import {
 	configureReadOnlyDatabases,
 	readCachePayload,
 	requireAtlasCache,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 let root: string;
 const atlasPath = () => join(root, "data/build/atlas.sqlite");

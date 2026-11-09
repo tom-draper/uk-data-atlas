@@ -1,4 +1,4 @@
-import type { SqlReader } from "../storage/readOnlyDatabase.ts";
+import type { SqlReader } from "@uk-data-atlas/atlas-db";
 import {
 	memberCode,
 	type DeclaredDataset,

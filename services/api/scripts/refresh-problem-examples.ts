@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseDocument } from "yaml";
 import { readApiCatalogues } from "../src/catalogueLoader";
-import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
+import { publicJson } from "@uk-data-atlas/atlas-db";
 import { PROBLEM_CODES } from "@uk-data-atlas/atlas-runtime/api";
 import { route } from "../src/routes";
 

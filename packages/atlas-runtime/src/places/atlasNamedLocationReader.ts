@@ -1,12 +1,12 @@
-import { lazyValue } from "../storage/lazyValue.ts";
+import { lazyValue } from "@uk-data-atlas/atlas-db";
 import type {
 	NamedLocation,
 	NamedLocationInventory,
 } from "@uk-data-atlas/places";
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
-import { atlasDatabasePath } from "../storage/dataLayout.ts";
-import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
-import { unpackGeometry } from "../storage/storedGeometry.ts";
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
+import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import { unpackGeometry } from "@uk-data-atlas/atlas-db";
 
 export const readSqliteNamedLocationInventory = (
 	repositoryRoot: string,

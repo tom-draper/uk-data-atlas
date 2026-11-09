@@ -4,10 +4,7 @@ import {
 	type MeasureValuesContext,
 } from "@uk-data-atlas/atlas-runtime/measures";
 import { readMeasureValuesContext } from "@uk-data-atlas/atlas-runtime/loader";
-import {
-	atlasDatabasePath,
-	databaseGeneration,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasDatabasePath, databaseGeneration } from "@uk-data-atlas/atlas-db";
 import { measureValuesUrl } from "./request";
 import type {
 	MeasureValuesErrorBody,

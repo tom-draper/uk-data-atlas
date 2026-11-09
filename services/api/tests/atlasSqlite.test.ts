@@ -1,5 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
+import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { AreaSearch } from "@uk-data-atlas/atlas-runtime/areas";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
@@ -27,7 +27,7 @@ import {
 	namedLocationInventory,
 } from "./geographyFixtures";
 import { createHash } from "node:crypto";
-import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
+import { unpackText } from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -45,11 +45,11 @@ import { test, type TestContext } from "vitest";
 import { buildAtlasSqlite } from "./pipelineFixtures";
 import { buildTerrainCatalogue } from "./pipelineFixtures";
 import { readTerrainCatalogue } from "@uk-data-atlas/atlas-runtime/loader";
-import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
+import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import { route } from "../src/routes";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { testContext } from "./routeFixtures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const fixture = (context: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-sqlite-"));

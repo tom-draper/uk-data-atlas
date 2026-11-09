@@ -8,7 +8,7 @@ import { readStatisticsObservationText } from "./atlasStatisticsObservations.ts"
 import {
 	databaseGeneration,
 	openReadOnlyDatabase,
-} from "../storage/readOnlyDatabase.ts";
+} from "@uk-data-atlas/atlas-db";
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import type {
 	DataCatalog,

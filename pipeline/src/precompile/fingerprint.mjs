@@ -35,7 +35,7 @@ const pipelineInputs = [
 	...baseInputs,
 	"pipeline/src/compile-boundaries.mts",
 	"packages/geography/src/reverseGridOffset.ts",
-	"packages/atlas-runtime/src/storage/buildTiming.ts",
+	"packages/atlas-db/src/buildTiming.ts",
 	"pipeline/src/compile-boundary-tiles.mts",
 	"pipeline/src/dataset-discovery.ts",
 	"pipeline/src/dataset-region-chunks.mts",

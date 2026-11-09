@@ -22,10 +22,10 @@ import type {
 	AreaReleaseArtifact,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
+import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import { compileNamedLocationGeometry } from "@uk-data-atlas/atlas-runtime/places";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 /**
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The

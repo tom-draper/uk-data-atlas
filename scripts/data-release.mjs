@@ -26,7 +26,7 @@ import {
 	buildLog,
 	formatBytes,
 	formatCount,
-} from "../packages/atlas-runtime/src/storage/buildTiming.ts";
+} from "../packages/atlas-db/src/buildTiming.ts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATA = join(ROOT, "data/source");

@@ -4,7 +4,7 @@ import {
 	type GeometrySourceLookup,
 } from "./areaGeometry.ts";
 import { readGeometrySourceLookup } from "./geometrySources.ts";
-import { artifactDirectory } from "../storage/dataLayout.ts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 export const readGeometrySources = (
 	repositoryRoot: string,

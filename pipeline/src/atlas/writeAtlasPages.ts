@@ -7,7 +7,7 @@ import {
 	atlasAssetsDirectory,
 	ATLAS_PAGES_MANIFEST,
 	type AtlasPageManifest,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 export function writeAtlasPages(
 	repositoryRoot: string,

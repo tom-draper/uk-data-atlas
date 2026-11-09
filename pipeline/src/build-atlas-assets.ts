@@ -8,8 +8,8 @@ import {
 	atlasAssetsDirectory,
 	buildLog,
 	websiteAssetsPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
-import type { AtlasAssetKind } from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
+import type { AtlasAssetKind } from "@uk-data-atlas/atlas-db";
 import { createDeprecatedViews } from "./storage/deprecatedViews.ts";
 
 /**

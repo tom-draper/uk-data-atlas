@@ -6,7 +6,7 @@ import {
 } from "../loader/catalogueLoader.ts";
 import { createOperationMatcher } from "./operationTemplates.ts";
 import { readOperations } from "./operationsLoader.ts";
-import { apiRootOf } from "../storage/dataLayout.ts";
+import { apiRootOf } from "@uk-data-atlas/atlas-db";
 
 export const readApiCatalogues = (
 	repositoryRoot: string,

@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readAtlasAssetText } from "@uk-data-atlas/atlas-runtime/storage";
+import { readAtlasAssetText } from "@uk-data-atlas/atlas-db";
 import { readAtlasPage } from "@/lib/helpers/atlasPages";
 import { describe, expect, it } from "vitest";
 import {

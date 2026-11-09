@@ -1,9 +1,5 @@
 /** Compile map headlines and rankings from the website datasets. */
-import {
-	buildLog,
-	formatCount,
-	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import {

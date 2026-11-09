@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { publicJson } from "@uk-data-atlas/atlas-runtime/storage";
+import { publicJson } from "@uk-data-atlas/atlas-db";
 
 test("bodies without code-vintage keys serialise unchanged", () => {
 	const body = { area: { code: "E08000035" }, note: '"boundaryYea' };

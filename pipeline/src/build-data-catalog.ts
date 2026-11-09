@@ -15,7 +15,7 @@ import {
 	artifactDirectory,
 	compiledObservationDirectory,
 	compiledObservationPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/atlas-runtime/measures";
 
 export const datasetCatalogInputs = (

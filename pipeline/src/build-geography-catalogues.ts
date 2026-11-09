@@ -1,4 +1,4 @@
-import { buildLog, repoPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

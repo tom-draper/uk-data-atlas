@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-runtime/storage";
+import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import { createMeasureValuesHandler } from "@/lib/measures/handler";
 import {
 	measureValuesUrl,

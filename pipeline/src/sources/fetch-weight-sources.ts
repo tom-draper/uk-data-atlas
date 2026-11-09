@@ -1,4 +1,4 @@
-import { buildLog, repoPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 import { createHash } from "node:crypto";

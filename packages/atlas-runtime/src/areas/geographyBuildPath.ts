@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { artifactDirectory } from "../storage/dataLayout.ts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 export const geographyCatalogues = [
 	"boundary-releases",

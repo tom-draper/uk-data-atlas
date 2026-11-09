@@ -13,7 +13,7 @@ import {
 	readMapResources,
 } from "@uk-data-atlas/atlas-runtime/maps";
 import { route } from "../../src/routes";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
 const assetBase = "https://maps.example.com/releases/test";

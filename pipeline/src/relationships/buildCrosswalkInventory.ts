@@ -46,7 +46,7 @@ import {
 	buildLog,
 	formatCount,
 	formatDuration,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 type GeometryCrosswalkAdapter =
 	| AreaOverlapCrosswalkAdapter

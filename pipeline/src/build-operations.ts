@@ -13,7 +13,7 @@ import {
 	buildLog,
 	formatCount,
 	repoPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-db";
 
 /**
  * Compiles the operations the server matches requests against from

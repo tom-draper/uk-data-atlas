@@ -2,7 +2,7 @@ import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { publishAtlasCache, stampCacheStage } from "./atlasCacheWriter.ts";
 import type { PostcodeCountsArtifact } from "@uk-data-atlas/geography/postcode-count-types";
-import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 export function storePostcodeCounts(
 	root: string,
