@@ -16,6 +16,7 @@ export const handleAreaIdentityRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	measureSeries,
 }: RouteRequestFor<
 	| "area"
 	| "explainAreaAbsence"
@@ -87,7 +88,13 @@ export const handleAreaIdentityRoutes = ({
 		if (dossier && "response" in dossier) return dossier.response;
 		const identity = { geography, boundaryRelease, code };
 		const citation = includes.has("citation")
-			? areaCitation(context, releaseId, identity, parsedUrl.searchParams)
+			? areaCitation(
+					context,
+					releaseId,
+					identity,
+					parsedUrl.searchParams,
+					measureSeries,
+				)
 			: undefined;
 		if (citation && "response" in citation) return citation.response;
 		const metrics = includes.has("metrics")
