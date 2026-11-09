@@ -46,7 +46,7 @@ const COMPILER_SOURCES = [
 	"pipeline/src/maps/buildGeometryStore.ts",
 	"pipeline/src/maps/compileGeometryValidity.ts",
 	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
-	"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
+	"packages/atlas-runtime/src/geometry/geoJsonProperties.ts",
 	"packages/atlas-runtime/src/geometry/geometryStore.ts",
 	"packages/geography/src/geometryValidity.ts",
 	"packages/geography/src/geometrySpatialIndex.ts",
