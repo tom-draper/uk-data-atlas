@@ -1,6 +1,6 @@
 import { analysisConversion } from "../relationships/analysisConversion.ts";
 import { unsupported } from "../areas/capability.ts";
-import { coveragePlan } from "../catalogue/coveragePlan.ts";
+import { coveragePlan } from "../loader/coveragePlan.ts";
 import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
 import { parseExactReleaseReference } from "../areas/releaseForDate.ts";
 import {

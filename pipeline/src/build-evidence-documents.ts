@@ -1,13 +1,15 @@
 import { build } from "esbuild";
 import {
 	correctionsReport,
-	geographyHealthReport,
-	measureCapability,
 	measureCompatibilityReport,
 	measureCoverage,
 	measureQuality,
-	relationshipRepairsReport,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	geographyHealthReport,
+	measureCapability,
+	relationshipRepairsReport,
+} from "@uk-data-atlas/atlas-runtime/loader";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
