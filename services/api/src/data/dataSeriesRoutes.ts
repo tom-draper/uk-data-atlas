@@ -1,11 +1,11 @@
-import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { analysisConversion } from "@uk-data-atlas/relationships";
 import {
 	convertThroughSteps,
 	type ConversionStep,
 } from "@uk-data-atlas/measures";
 import { buildTranslationSteps } from "@uk-data-atlas/relationships";
-import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import {
 	areaNamedBy,

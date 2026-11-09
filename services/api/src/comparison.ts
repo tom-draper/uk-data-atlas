@@ -1,7 +1,7 @@
 import type {
 	Measure,
 	PopulationObservation,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 
 /**
  * Compare two observations in the same measure partition. The caller names

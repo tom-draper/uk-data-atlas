@@ -1,7 +1,7 @@
 import {
 	isNumericObservation,
 	observationsFor,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	envelope,
 	invalidQuery,

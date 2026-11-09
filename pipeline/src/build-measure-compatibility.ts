@@ -2,14 +2,14 @@ import { buildArtifactPath } from "@uk-data-atlas/areas";
 import {
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/catalogue/node";
+import { tableMeasureObservations } from "@uk-data-atlas/measures";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { compileMeasureCompatibility } from "./statistics/measureCompatibility.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";

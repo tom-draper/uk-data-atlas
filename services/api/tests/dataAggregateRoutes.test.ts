@@ -11,8 +11,8 @@ import type {
 	MeasureObservationArtifact,
 	MeasureSource,
 	DataCatalog,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/catalogue/node";
 import {
 	areaLookup,
 	crosswalkArtifact,

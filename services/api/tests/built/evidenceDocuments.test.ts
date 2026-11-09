@@ -164,8 +164,7 @@ test("links measures to immutable reports and retires evidence query endpoints",
 });
 
 test("serves geography evidence from SQLite with exact bytes and conditional ETags", async (t) => {
-	const { readAtlasPayload } =
-		await import("@uk-data-atlas/atlas-runtime/catalogue");
+	const { readAtlasPayload } = await import("@uk-data-atlas/catalogue/node");
 	const server = createApiServer(
 		readApiCatalogues(resolveRepositoryRoot(apiRoot, "../..")),
 	);

@@ -13,3 +13,8 @@ export * from "./nameNormalisation.ts";
 export * from "./geometryValidity.ts";
 export * from "./geometryProvenance.ts";
 export * from "./geometryContainmentValidation.ts";
+export * from "./atlasBoundaryVintages.ts";
+export * from "./unitRegistry.ts";
+export * from "./boundaryRegistry.ts";
+export * from "./boundaryReleaseOrder.ts";
+export * from "./boundaryReleaseDeprecations.ts";

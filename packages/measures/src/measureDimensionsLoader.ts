@@ -11,7 +11,7 @@ import {
 	type MeasureDimensionsConfig,
 	type MeasureIdMapping,
 	type StatisticsVocabulary,
-} from "@uk-data-atlas/measures";
+} from "./index.ts";
 
 /** The reviewed mapping and the vocabulary it is checked against. */
 export type MeasureDimensions = {

@@ -23,7 +23,7 @@ import {
 	readGeographyInventory,
 } from "@uk-data-atlas/atlas-runtime/loader";
 import { readRelationshipPathInventory } from "@uk-data-atlas/relationships";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,

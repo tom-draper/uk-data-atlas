@@ -7,11 +7,11 @@ import {
 	type ExportDataset,
 	type BulkExport,
 	type ExportManifest,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	isMeasureTable,
 	type MeasureTableArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { compileObservationDownloads } from "../statistics/observationDownloads.ts";
 

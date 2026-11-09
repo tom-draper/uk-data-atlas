@@ -1,7 +1,7 @@
 import { readDataCatalog } from "./catalogueManifestLoader.ts";
-import { readMeasureDimensions } from "../measures/measureDimensionsLoader.ts";
-import { readMeasureObservations } from "../measures/observationLoader.ts";
-import type { MeasureValuesContext } from "../measures/measureValues.ts";
+import { readMeasureDimensions } from "@uk-data-atlas/measures";
+import { readMeasureObservations } from "@uk-data-atlas/measures";
+import type { MeasureValuesContext } from "@uk-data-atlas/measures";
 
 /**
  * What `queryMeasureValues` reads, loaded from a build for a process that is

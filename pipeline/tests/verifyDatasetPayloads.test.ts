@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { test, type TestContext } from "vitest";
-import { STATISTICS_DATASETS } from "@uk-data-atlas/atlas-runtime/measures";
+import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 import { verifyDatasetPayloads } from "../src/checks/verifyDatasetPayloads";
 
 // A type whose generated payload drops a header field its compiler writes.

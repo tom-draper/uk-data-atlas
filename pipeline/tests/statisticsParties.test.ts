@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { StatisticsDataset } from "@uk-data-atlas/atlas-runtime/measures";
+import type { StatisticsDataset } from "@uk-data-atlas/measures";
 import { collectParties } from "../src/storage/statisticsParties";
 
 const release = { geography: "constituency", id: "2024-07-uk-bgc" };

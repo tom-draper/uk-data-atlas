@@ -6,14 +6,14 @@ import {
 	findMeasureObservations,
 	type AnyMeasureObservationArtifact,
 	type MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationPartitionKey,
 	type CompatibilityCandidate,
 	type CompatibilityStatus,
 	type MeasureCompatibilityInventory,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 
 const sample = (codes: Set<string>) => [...codes].sort().slice(0, 20);
 

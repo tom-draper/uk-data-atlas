@@ -6,7 +6,7 @@ import {
 	type Measure,
 	type MeasureSource,
 	type PopulationObservation,
-} from "@uk-data-atlas/measures";
+} from "./index.ts";
 import {
 	dimensionCatalogue,
 	identityDimensions,

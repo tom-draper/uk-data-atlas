@@ -1,5 +1,5 @@
 import type { AreaInventory } from "./index.ts";
-import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
+import type { BoundaryRegistry } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { canonicalGeography } from "@uk-data-atlas/geography";
 
@@ -9,12 +9,12 @@ import {
 	releaseMonth,
 	boundaryReleaseMonth,
 	compareBoundaryReleases,
-} from "@uk-data-atlas/catalogue";
+} from "@uk-data-atlas/geography";
 export {
 	releaseMonth,
 	boundaryReleaseMonth,
 	compareBoundaryReleases,
-} from "@uk-data-atlas/catalogue";
+} from "@uk-data-atlas/geography";
 
 /**
  * A calendar date as `YYYY-MM-DD`, or a month as `YYYY-MM`, and the month it

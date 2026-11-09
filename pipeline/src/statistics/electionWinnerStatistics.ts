@@ -1,12 +1,12 @@
 import { closeSync, openSync, readSync } from "node:fs";
 import { JSONParser } from "@streamparser/json";
-import { type DeclaredDataset } from "@uk-data-atlas/atlas-runtime/measures";
+import { type DeclaredDataset } from "@uk-data-atlas/measures";
 import {
 	seriesKey,
 	type AreaIndex,
 	type StatisticsDataset,
 	type StatisticsObservation,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 
 const codes = [
 	"APNI",

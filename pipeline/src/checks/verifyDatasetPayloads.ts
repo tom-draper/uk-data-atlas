@@ -7,7 +7,7 @@ import {
 	comparableCompiled,
 	generatedFromRows,
 	servedFromRows,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { payloadDifference } from "./payloadComparison.ts";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 

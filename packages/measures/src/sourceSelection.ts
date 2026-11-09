@@ -1,4 +1,4 @@
-import type { Measure, MeasureSource } from "@uk-data-atlas/measures";
+import type { Measure, MeasureSource } from "./index.ts";
 
 export type SourceQuery = {
 	period?: string | null;

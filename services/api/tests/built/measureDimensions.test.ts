@@ -5,11 +5,11 @@ import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { measureDimensionProblems } from "@uk-data-atlas/measures";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	readMeasureDimensionsConfig,
 	readStatisticsVocabulary,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { artifactDirectory, atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");

@@ -3,7 +3,7 @@ import {
 	type DataCatalog,
 	type DimensionMemberDefinition,
 	type Measure,
-} from "@uk-data-atlas/measures";
+} from "./index.ts";
 import type { MeasureDimensions } from "./measureDimensionsLoader.ts";
 
 /**

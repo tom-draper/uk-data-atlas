@@ -1,9 +1,6 @@
 import { type DatasetInput } from "./input.ts";
-import type { Country, Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
-import {
-	countryForCode,
-	countriesFor,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Country, Measure } from "@uk-data-atlas/catalogue/node";
+import { countryForCode, countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";

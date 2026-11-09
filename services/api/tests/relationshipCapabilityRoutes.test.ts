@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { compileRelationshipPaths } from "./pipelineFixtures";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { MeasureCompatibilityInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
+import type { MeasureCompatibilityInventory } from "@uk-data-atlas/catalogue/node";
 import { route } from "../src/routes";
 import {
 	areaLookup,

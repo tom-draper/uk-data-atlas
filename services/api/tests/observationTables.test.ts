@@ -3,11 +3,11 @@ import { test } from "vitest";
 import {
 	periodRecordLookup,
 	type MeasureTableArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	observationTableOf,
 	tableMeasureObservations,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 
 const table: MeasureTableArtifact = {
 	schemaVersion: 1,

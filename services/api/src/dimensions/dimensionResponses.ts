@@ -3,7 +3,7 @@ import {
 	describeMembers,
 	type DimensionalMeasure,
 	type Series,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import type { DimensionReading } from "./dimensionRequests";
 
 /**

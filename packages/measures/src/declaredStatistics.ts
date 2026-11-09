@@ -1,4 +1,4 @@
-import type { DatabaseSync } from "node:sqlite";
+import type { DatabaseSync } from "@uk-data-atlas/atlas-db";
 import { seriesKey as canonicalSeriesKey } from "./atlasStatistics.ts";
 import {
 	periods,

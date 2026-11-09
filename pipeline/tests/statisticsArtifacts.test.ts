@@ -5,7 +5,7 @@ import type { DataCatalog } from "@uk-data-atlas/measures";
 import {
 	type StatisticsReadPath,
 	type StatisticsSelector,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { statisticsArtifactReader } from "../src/statistics/statisticsArtifacts";
 
 test("requires an exact selector inventory for the catalogue", () => {

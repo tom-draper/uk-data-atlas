@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
+import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/geography";
 import {
 	ATLAS_LOOKUP_FILES,
 	lsoaLadMappingsFile,

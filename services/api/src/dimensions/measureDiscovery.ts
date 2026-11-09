@@ -1,14 +1,11 @@
 import { measureSlug } from "@uk-data-atlas/catalogue";
-import type {
-	DataCatalog,
-	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import type {
 	Dimension,
 	DimensionalMeasure,
 	DimensionCatalogue,
 	Series,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 
 /**
  * Measures as `/v1/measures` lists them: what is measured, its dimensions

@@ -1,4 +1,4 @@
-import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasDatasetUrls } from "@uk-data-atlas/catalogue/node";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";

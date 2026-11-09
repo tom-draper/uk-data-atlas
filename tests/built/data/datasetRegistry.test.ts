@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";

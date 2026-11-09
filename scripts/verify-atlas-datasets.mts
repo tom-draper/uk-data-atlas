@@ -7,7 +7,7 @@ import {
 	comparableCompiled,
 	generatedFromRows,
 	readAtlasPayload,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { datasetCatalogInputs } from "../pipeline/src/build-data-catalog";
 import {
 	compileDataCatalog,

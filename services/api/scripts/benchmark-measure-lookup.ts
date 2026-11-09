@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { once } from "node:events";
 import { createApiServer } from "../src/apiServer";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { canonicalMeasureId } from "../src/catalogue/measureTerms";
 import { dataCatalog, testContext } from "../tests/routeFixtures";
 

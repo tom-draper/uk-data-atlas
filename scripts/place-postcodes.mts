@@ -1,6 +1,6 @@
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import {
 	compilePostcodes,
 	DEPRIVATION,

@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type {
-	Measure,
-	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import type { MeasureGeographyKind } from "@uk-data-atlas/geography";
 import {
 	areaNamedBy,

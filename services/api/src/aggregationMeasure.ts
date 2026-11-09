@@ -1,11 +1,8 @@
-import {
-	type DataCatalog,
-	type Measure,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type DataCatalog, type Measure } from "@uk-data-atlas/catalogue/node";
 import {
 	aggregationRule,
 	type AvailableWeightedAggregation,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 export type { AvailableWeightedAggregation };

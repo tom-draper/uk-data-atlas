@@ -9,7 +9,7 @@ import { searchMeasures } from "./measureTerms";
 import {
 	dimensionCatalogue,
 	identityDimensions,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import {
 	describeMeasure,
 	searchDimensionalMeasures,

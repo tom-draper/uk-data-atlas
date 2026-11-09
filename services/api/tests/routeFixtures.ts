@@ -12,8 +12,8 @@ import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
 } from "@uk-data-atlas/places";
-import type { ValidationReport } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
+import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import { parse } from "yaml";
 import {

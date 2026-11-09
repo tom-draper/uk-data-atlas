@@ -4,11 +4,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	readMeasureObservations,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 
 test("reads catalogue observations from statistics without legacy tables", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "statistics-observation-cache-"));

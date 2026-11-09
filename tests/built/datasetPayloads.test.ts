@@ -10,7 +10,7 @@ import {
 	generatedFromRows,
 	rebuildDatasetPayload,
 	servedFromRows,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 
 const digest = (text: string) =>
 	createHash("sha256").update(text).digest("hex");

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { measureCompatibilityReport } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { measureCompatibilityReport } from "@uk-data-atlas/catalogue/node";
 import { measureCompatibilityInventory } from "./routeFixtures";
 
 test("reports measure boundary candidates as code compatibility only", () => {

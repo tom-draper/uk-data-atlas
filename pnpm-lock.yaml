@@ -325,9 +325,6 @@ importers:
       '@uk-data-atlas/atlas-db':
         specifier: workspace:*
         version: link:../atlas-db
-      '@uk-data-atlas/catalogue':
-        specifier: workspace:*
-        version: link:../catalogue
       '@uk-data-atlas/datasets':
         specifier: workspace:*
         version: link:../datasets
@@ -371,9 +368,6 @@ importers:
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../artifacts
-      '@uk-data-atlas/catalogue':
-        specifier: workspace:*
-        version: link:../catalogue
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
@@ -451,7 +445,25 @@ importers:
       '@noble/hashes':
         specifier: ^2.4.0
         version: 2.4.0
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
+      '@uk-data-atlas/geography':
+        specifier: workspace:*
+        version: link:../geography
+      '@uk-data-atlas/measures':
+        specifier: workspace:*
+        version: link:../measures
+      '@uk-data-atlas/relationships':
+        specifier: workspace:*
+        version: link:../relationships
     devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -537,9 +549,15 @@ importers:
 
   packages/measures:
     dependencies:
-      '@uk-data-atlas/catalogue':
+      '@uk-data-atlas/artifacts':
         specifier: workspace:*
-        version: link:../catalogue
+        version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
+      '@uk-data-atlas/datasets':
+        specifier: workspace:*
+        version: link:../datasets
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography

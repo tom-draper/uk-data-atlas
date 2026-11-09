@@ -17,7 +17,7 @@ import { test } from "vitest";
 import {
 	observationArtifactName,
 	type DataCatalog,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { compileExportManifest as compileManifest } from "../src/atlas/exportManifest";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readParquet } from "./parquetFixtures";

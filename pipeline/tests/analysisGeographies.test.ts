@@ -11,7 +11,7 @@ import { analysisConversion } from "@uk-data-atlas/relationships";
 import type { AnalysisGeographySupportConfig } from "@uk-data-atlas/relationships";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 
 const catalogue = {

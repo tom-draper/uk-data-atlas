@@ -1,4 +1,4 @@
-import type { ObservationDownload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ObservationDownload } from "@uk-data-atlas/catalogue/node";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
@@ -8,7 +8,7 @@ import {
 	isMeasureTable,
 	type MeasureTableArtifact,
 	type BulkExport,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { writeParquet, type ParquetColumn } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 

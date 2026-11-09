@@ -1,4 +1,4 @@
-import type { StatisticsVocabulary } from "@uk-data-atlas/measures";
+import type { StatisticsVocabulary } from "./index.ts";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 /**

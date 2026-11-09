@@ -9,7 +9,7 @@ import {
 } from "../../src/catalog/compileDataCatalog";
 import { onApril2023Authorities } from "../../src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const dataset = (

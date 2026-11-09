@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
 import type { DatabaseSync } from "node:sqlite";
-import type { ObservationDownload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { ObservationDownload } from "@uk-data-atlas/catalogue/node";
 import {
 	exportStatisticsMeasure,
 	type StatisticsSelection,
