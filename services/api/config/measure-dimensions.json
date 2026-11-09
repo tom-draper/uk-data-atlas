@@ -370,24 +370,6 @@
 				"economic-activity": "unemployed"
 			}
 		},
-		"electricity-consumption": {
-			"measure": "electricity-consumption",
-			"dimensions": {
-				"meter-type": "all"
-			}
-		},
-		"electricity-consumption-domestic": {
-			"measure": "electricity-consumption",
-			"dimensions": {
-				"meter-type": "domestic"
-			}
-		},
-		"electricity-consumption-non-domestic": {
-			"measure": "electricity-consumption",
-			"dimensions": {
-				"meter-type": "non-domestic"
-			}
-		},
 		"ethnicity-african": {
 			"measure": "usual-residents",
 			"dimensions": {
@@ -500,24 +482,6 @@
 			"measure": "usual-residents",
 			"dimensions": {
 				"ethnic-group": "english-welsh-scottish-northern-irish-or-british"
-			}
-		},
-		"gas-consumption": {
-			"measure": "gas-consumption",
-			"dimensions": {
-				"meter-type": "all"
-			}
-		},
-		"gas-consumption-domestic": {
-			"measure": "gas-consumption",
-			"dimensions": {
-				"meter-type": "domestic"
-			}
-		},
-		"gas-consumption-non-domestic": {
-			"measure": "gas-consumption",
-			"dimensions": {
-				"meter-type": "non-domestic"
 			}
 		},
 		"gdp": {
