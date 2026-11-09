@@ -304,7 +304,9 @@ const difference = (stored: Artifact, rebuilt: Artifact) => {
 		: "The statistics rows rebuild the same records in a different layout.";
 };
 
-const plan: StatisticsReadPath = {
+const plan: StatisticsReadPath & {
+	statistics: NonNullable<StatisticsReadPath["statistics"]>;
+} = {
 	schemaVersion: 1,
 	dataCatalogHash: catalog.contentHash,
 	statistics: {},
@@ -428,7 +430,6 @@ writeFileSync(
 		{
 			schemaVersion: 1,
 			dataCatalogHash: plan.dataCatalogHash,
-			statistics: sorted(plan.statistics),
 			series: sorted(
 				indexStatisticsSeries(
 					catalog,

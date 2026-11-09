@@ -37,7 +37,7 @@ export function bindReviewedStatistics(
 		const selector =
 			reviewed.series && identity
 				? reviewed.series[measureSeriesSourceKey(identity, source)]
-				: reviewed.statistics[
+				: reviewed.statistics?.[
 						observationArtifactName(measure.id, source)
 					];
 		if (
