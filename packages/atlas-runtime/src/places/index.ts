@@ -1,4 +1,5 @@
 export * from "@uk-data-atlas/places";
+export * from "./atlasNamedLocationReader.ts";
 export * from "./ceremonialCounties.ts";
 export * from "./locationLoader.ts";
 export * from "./locationProjections.ts";

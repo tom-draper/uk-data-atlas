@@ -1,7 +1,7 @@
 import {
 	readSqliteCrosswalkInventory,
 	readSqliteCrosswalk,
-} from "../storage/atlasCrosswalks.ts";
+} from "./atlasCrosswalks.ts";
 import { readAtlasPayload } from "../storage/atlasSqlite.ts";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";

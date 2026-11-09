@@ -5,7 +5,7 @@ import { expect, it } from "vitest";
 import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	artifactDirectory,
 	atlasDatabasePath,

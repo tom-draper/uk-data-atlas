@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	readSqliteAreas,
 	readSqliteAreaInventory,
