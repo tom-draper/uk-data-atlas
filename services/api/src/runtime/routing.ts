@@ -133,6 +133,7 @@ export type RouteRequest = {
 	parsedUrl: URL;
 	segments: string[];
 	series?: Series;
+	measureSeries?: Array<{ measureId: string; series: Series }>;
 	/**
 	 * Serve another GET against the same catalogues, for a route whose answer is
 	 * exactly what a more specific route gives when called directly.

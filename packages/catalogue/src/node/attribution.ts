@@ -1,6 +1,6 @@
 import type { BoundaryRegistry } from "../index.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { DataCatalog } from "@uk-data-atlas/measures";
+import type { DataCatalog, Measure } from "@uk-data-atlas/measures";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export type Licence = { name: string; url?: string };
@@ -25,6 +25,7 @@ export type AttributionRequest = {
 	measures: string[];
 	boundaryReleases: string[];
 	crosswalks: string[];
+	resolvedMeasures?: ReadonlyMap<string, Measure>;
 };
 
 export type AttributionResult =
@@ -108,9 +109,9 @@ export const attributionFor = (
 
 	// A measure is attributed through the datasets its observations come from.
 	for (const id of request.measures) {
-		const measure = dataCatalog.measures.find(
-			(candidate) => candidate.id === id,
-		);
+		const measure =
+			request.resolvedMeasures?.get(id) ??
+			dataCatalog.measures.find((candidate) => candidate.id === id);
 		if (!measure) {
 			unknown.push(`measure=${id}`);
 			continue;

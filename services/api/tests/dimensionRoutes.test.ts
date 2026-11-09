@@ -770,6 +770,14 @@ test("finds a measure by a member's name and says which member to filter on", ()
 });
 
 test("reads a measure in a query parameter with dimension filters as one series", () => {
+	const resolved = resolveDimensionRequest(
+		"/v1/attribution?measure=recorded-crimes&offence=burglary",
+		context,
+	);
+	assert.equal(resolved.kind, "rewritten");
+	if (resolved.kind !== "rewritten")
+		throw new Error("Expected a rewritten request");
+	assert.equal(resolved.url, "/v1/attribution?measure=recorded-crimes");
 	for (const query of [
 		"measure=recorded-crimes&offence=burglary",
 		"measure=recorded-crimes&dimensions%5Boffence%5D=burglary",

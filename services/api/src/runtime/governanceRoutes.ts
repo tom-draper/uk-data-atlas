@@ -15,6 +15,7 @@ export const handleGovernanceRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	measureSeries,
 }: RouteRequest): ApiResponse | undefined => {
 	const { dataCatalog, relationshipCandidateInventory } = context;
 
@@ -63,7 +64,15 @@ export const handleGovernanceRoutes = ({
 			);
 		}
 		const attribution = attributionFor(
-			request,
+			{
+				...request,
+				resolvedMeasures: new Map(
+					measureSeries?.map(({ measureId, series }) => [
+						measureId,
+						series.catalogueMeasure,
+					]),
+				),
+			},
 			dataCatalog,
 			context.geographyResolver.boundaryReleasesFor(),
 			context.geographyResolver.crosswalkSummaries(),
