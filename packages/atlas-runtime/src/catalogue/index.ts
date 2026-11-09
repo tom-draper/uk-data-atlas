@@ -4,7 +4,6 @@ export * from "./atlasStatisticsVocabulary.ts";
 export * from "./attribution.ts";
 export * from "./boundaryCatalogue.ts";
 export * from "./catalogCountries.ts";
-export * from "./catalogueLoader.ts";
 export * from "./catalogueManifestLoader.ts";
 export * from "@uk-data-atlas/measures";
 export * from "./correctionsReport.ts";

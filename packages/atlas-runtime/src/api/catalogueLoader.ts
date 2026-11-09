@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import {
 	readAtlasCatalogues,
 	type CatalogueOptions,
-} from "../catalogue/catalogueLoader.ts";
+} from "../loader/catalogueLoader.ts";
 import { createOperationMatcher } from "./operationTemplates.ts";
 import { readOperations } from "./operationsLoader.ts";
 import { apiRootOf } from "../storage/dataLayout.ts";

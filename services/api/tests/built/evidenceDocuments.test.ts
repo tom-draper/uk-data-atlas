@@ -15,7 +15,7 @@ import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { createApiServer } from "../../src/apiServer";
 import { readApiCatalogues } from "../../src/catalogueLoader";
-import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	artifactDirectory,
 	buildDirectory,

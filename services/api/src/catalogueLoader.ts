@@ -1,12 +1,12 @@
 import { readApiCatalogues as readRuntimeApiCatalogues } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	assertMeasureDimensions,
-	type CatalogueOptions,
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
 	withDeclaredMeasureIds,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type CatalogueOptions } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	statisticsReadPathPath,
 	statisticsVocabularyPath,

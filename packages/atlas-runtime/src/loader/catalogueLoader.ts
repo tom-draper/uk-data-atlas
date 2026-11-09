@@ -1,17 +1,17 @@
-import { readAtlasPayload } from "./atlasPayloads.ts";
+import { readAtlasPayload } from "../catalogue/atlasPayloads.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { FullDetailDownloads } from "../loader/fullDetailDownloads.ts";
-import type { EvidenceManifest } from "./evidenceDocuments.ts";
+import { FullDetailDownloads } from "./fullDetailDownloads.ts";
+import type { EvidenceManifest } from "../catalogue/evidenceDocuments.ts";
 import { lazyValue } from "../storage/lazyValue.ts";
 import { readAtlasPages } from "../storage/atlasPages.ts";
 import { readAtlasLookups } from "../storage/atlasLookups.ts";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readMeasureObservations } from "./observationLoader.ts";
+import { readMeasureObservations } from "../catalogue/observationLoader.ts";
 import {
 	createGeographyResolver,
 	createGeographyServices,
-} from "../loader/geographyResolver.ts";
+} from "./geographyResolver.ts";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import {
@@ -46,17 +46,17 @@ import {
 	readLookupManifest,
 	readMeasureCompatibility,
 	readValidationReport,
-} from "./catalogueManifestLoader.ts";
+} from "../catalogue/catalogueManifestLoader.ts";
 import { readMapAssets, readMapResources } from "../maps/mapResourceLoader.ts";
 import {
 	createAreaGeometryCache,
 	readGeometrySources,
 } from "../geometry/geometryLoader.ts";
 import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
-import { readRelationshipCandidateInventory } from "./governanceLoader.ts";
+import { readRelationshipCandidateInventory } from "../catalogue/governanceLoader.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "../storage/dataLayout.ts";
-import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
+import type { StatisticsReadPath } from "../catalogue/atlasStatisticsObservations.ts";
 
 const EVIDENCE_DOCUMENTS = [
 	"analysis-geography-validation",

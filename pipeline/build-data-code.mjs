@@ -95,7 +95,7 @@ export function stageCodeInputs(root, stage, files) {
 		relative(root, resolve(root, path)).replaceAll("\\", "/"),
 	);
 	const runtimeInputs = inputs.includes(
-		"packages/atlas-runtime/src/catalogue/catalogueLoader.ts",
+		"packages/atlas-runtime/src/loader/catalogueLoader.ts",
 	)
 		? ["services/api/openapi.yaml"]
 		: [];
