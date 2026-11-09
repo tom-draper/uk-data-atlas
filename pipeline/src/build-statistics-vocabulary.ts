@@ -8,7 +8,7 @@ import {
 	formatCount,
 	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import { readStatisticsVocabulary } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readStatisticsVocabulary } from "@uk-data-atlas/atlas-runtime/measures";
 
 /** Generate the vocabulary from the statistics database for the data build. */
 const repositoryRoot = resolve(

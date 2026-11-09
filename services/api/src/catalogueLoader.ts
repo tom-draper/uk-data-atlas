@@ -3,9 +3,11 @@ import {
 	assertMeasureDimensions,
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
 	withDeclaredMeasureIds,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import { type CatalogueOptions } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	statisticsReadPathPath,

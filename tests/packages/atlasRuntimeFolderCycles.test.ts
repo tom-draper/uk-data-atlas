@@ -85,3 +85,8 @@ it("keeps storage free of every other atlas-runtime folder and of the domain pac
 	);
 	expect(imported).toEqual([]);
 });
+
+it("keeps measures independent of catalogue", () => {
+	const edges = folderImports().get("measures") ?? new Set<string>();
+	expect([...edges], "folders measures imports").not.toContain("catalogue");
+});

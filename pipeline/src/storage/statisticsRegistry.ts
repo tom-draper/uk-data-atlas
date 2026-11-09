@@ -1,14 +1,16 @@
 import type { IdRegistries } from "../ids/idRegistries.ts";
 import type { IdRegistry } from "../ids/idRegistry.ts";
 import {
-	seriesKey,
 	type StatisticsSource,
 	type StatisticsMeasure,
 	type StatisticsDimension,
 	type StatisticsPeriod,
+} from "@uk-data-atlas/atlas-runtime/measures";
+import {
+	seriesKey,
 	type StatisticsSeries,
 	type StatisticsDataset,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 const same = (a: unknown, b: unknown) =>
 	JSON.stringify(a) === JSON.stringify(b);

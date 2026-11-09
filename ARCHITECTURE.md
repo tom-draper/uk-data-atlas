@@ -98,7 +98,7 @@ immutable caching and negotiated gzip compression. Neither product fetches
 catalogue datasets from the other product.
 
 The Next.js server also answers measure queries at `/data/measures/<measure>`.
-It runs the shared `queryMeasureValues` (`packages/atlas-runtime/src/catalogue/measureValues.ts`),
+It runs the shared `queryMeasureValues` (`packages/atlas-runtime/src/measures/measureValues.ts`),
 the function the API's series selection and aggregation rules also use, over the
 same statistics rows, and returns columns of values per area and period with the
 measure's value kind, unit and dimensions. It reads `data-catalog.json`,

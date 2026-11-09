@@ -1,7 +1,7 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { CompiledMeasure } from "../catalog/manifest.ts";
-import { type StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/measures";
 import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { bindCensusStatistics } from "./bindCensusStatistics.ts";
 import { bindStatisticsField } from "./bindStatisticsField.ts";

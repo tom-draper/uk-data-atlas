@@ -7,7 +7,7 @@ import {
 
 import { type Finding, sha256, listed, check } from "./findings.ts";
 import type { MeasureTotal, ValidationInputs } from "./inputs.ts";
-import { observationTableOf } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationTableOf } from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	sameGeography,
 	describeGeography,

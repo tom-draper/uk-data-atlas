@@ -7,7 +7,7 @@ import {
 	dimensionCatalogue,
 	type DimensionalMeasure,
 	type Series,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import { resolveMeasureQuery } from "./measureQuery";
 import {
 	describeChoices,

@@ -2,12 +2,14 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
 	isNumericObservation,
 	observationsFor,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
 	queryMeasureValues,
 	type MeasureValues,
 	type MeasureValuesColumn,
 	type MeasureValuesProblem,
 	type MeasureValuesRequest,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-runtime/storage";
 import { createMeasureFixture } from "../helpers/measureFixture";
 

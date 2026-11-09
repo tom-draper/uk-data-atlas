@@ -8,10 +8,10 @@ import {
 	openReadOnlyDatabase,
 	type SqlReader,
 } from "../storage/readOnlyDatabase.ts";
-import { rebuildFromDeclaration } from "./declaredPayload.ts";
-import type { Json } from "./declaredStatistics.ts";
-import { rebuildFuelPoverty } from "./fuelPovertyStatistics.ts";
-import { STATISTICS_DATASETS } from "./statisticsDatasets/index.ts";
+import { rebuildFromDeclaration } from "../measures/declaredPayload.ts";
+import type { Json } from "../measures/declaredStatistics.ts";
+import { rebuildFuelPoverty } from "../measures/fuelPovertyStatistics.ts";
+import { STATISTICS_DATASETS } from "../measures/statisticsDatasets/index.ts";
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),

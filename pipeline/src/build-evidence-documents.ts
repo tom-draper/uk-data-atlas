@@ -1,3 +1,4 @@
+import { geographyHealthReport } from "./checks/geographyHealthReport.ts";
 import { build } from "esbuild";
 import {
 	correctionsReport,
@@ -6,7 +7,6 @@ import {
 	measureQuality,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
-	geographyHealthReport,
 	measureCapability,
 	relationshipRepairsReport,
 } from "@uk-data-atlas/atlas-runtime/loader";

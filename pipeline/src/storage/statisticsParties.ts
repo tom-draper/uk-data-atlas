@@ -1,8 +1,6 @@
 import { IdRegistry } from "../ids/idRegistry.ts";
-import type {
-	StatisticsDataset,
-	StatisticsParty,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { StatisticsParty } from "@uk-data-atlas/atlas-runtime/measures";
+import type { StatisticsDataset } from "@uk-data-atlas/atlas-runtime/measures";
 
 export type PartyRow = {
 	id: number;

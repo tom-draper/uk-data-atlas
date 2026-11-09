@@ -2,20 +2,16 @@ import { DatabaseSync } from "node:sqlite";
 import { describe, expect, it } from "vitest";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
-	declaredStatistics,
 	periods,
 	type DeclaredDataset,
 	type DeclaredField,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { measure } from "@uk-data-atlas/atlas-runtime/catalogue";
-import {
-	rebuildFromDeclaration,
-	yearParts,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import {
-	rebuildDatasetPayload,
-	STATISTICS_DATASETS,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
+import { declaredStatistics } from "@uk-data-atlas/atlas-runtime/measures";
+import { measure } from "@uk-data-atlas/atlas-runtime/measures";
+import { yearParts } from "@uk-data-atlas/atlas-runtime/measures";
+import { rebuildFromDeclaration } from "@uk-data-atlas/atlas-runtime/measures";
+import { rebuildDatasetPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { STATISTICS_DATASETS } from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	writeSqliteTables,
 	type SqliteTable,

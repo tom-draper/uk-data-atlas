@@ -6,9 +6,9 @@ import { catalogueFastifyRoutes } from "../src/catalogue/catalogueFastifyRoutes"
 import type {
 	DataCatalog,
 	Measure,
-	MeasureDimensions,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureDimensions } from "@uk-data-atlas/atlas-runtime/measures";
 import { route } from "../src/routes";
 import {
 	areaLookup,

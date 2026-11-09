@@ -15,15 +15,13 @@ import { bindStatisticsField } from "../src/statistics/bindStatisticsField";
 import { bindCensusStatistics } from "../src/statistics/bindCensusStatistics";
 import { bindReviewedStatistics } from "../src/statistics/bindReviewedStatistics";
 import { observationArtifactName } from "@uk-data-atlas/measures";
-import { type StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/measures";
 import { bindCompiledFields } from "../src/statistics/bindCompiledFields";
 import { compileMeasureDownloads } from "../src/statistics/measureDownloads";
 import { gunzipSync } from "node:zlib";
 import { measureStatisticsSelections } from "../src/statistics/measureStatisticsSelections";
-import type {
-	DeclaredDataset,
-	Measure,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DeclaredDataset } from "@uk-data-atlas/atlas-runtime/measures";
 
 test("binds a census measure only when every source partition is complete", () => {
 	const db = new DatabaseSync(":memory:");

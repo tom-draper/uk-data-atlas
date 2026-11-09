@@ -2,15 +2,17 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+	type StatisticsDimension,
+	type StatisticsMeasure,
+} from "@uk-data-atlas/atlas-runtime/measures";
+import {
 	STATISTICS_DATASETS,
 	readMeasureDimensionsMapping,
 	type AreaIndex,
 	type StatisticsDataset,
-	type StatisticsDimension,
 	type StatisticsInput,
-	type StatisticsMeasure,
 	type StatisticsSeries,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	CENSUS_SMALL_AREA_DIRECTORY,
 	CENSUS_SMALL_AREA_GEOGRAPHIES,

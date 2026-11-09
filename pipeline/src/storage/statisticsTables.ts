@@ -6,8 +6,8 @@ import {
 	STATUSES,
 	CONTEST_COLUMNS,
 	CANDIDACY_COLUMNS,
-	type StatisticsInput,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
+import { type StatisticsInput } from "@uk-data-atlas/atlas-runtime/measures";
 import { DATASET_MODULES } from "@uk-data-atlas/datasets/declaration/modules";
 import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";

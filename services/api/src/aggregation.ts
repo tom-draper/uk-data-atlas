@@ -123,4 +123,4 @@ export const summariseCoverage = (
 		: { status: "complete", assessments };
 };
 
-export { statisticPhrase } from "@uk-data-atlas/atlas-runtime/catalogue";
+export { statisticPhrase } from "@uk-data-atlas/atlas-runtime/measures";

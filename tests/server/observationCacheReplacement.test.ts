@@ -3,11 +3,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	ObservationCache,
-	type DataCatalog,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	closeAllReadOnlyDatabases,
 	configureReadOnlyDatabases,

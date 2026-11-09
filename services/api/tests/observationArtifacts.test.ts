@@ -5,7 +5,7 @@ import {
 	type MeasureSource,
 } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
-import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
 import type { MeasureTableArtifact } from "@uk-data-atlas/measures";
 
 const sourceGeography = { type: "lsoa", boundaryYear: 2021 } as const;

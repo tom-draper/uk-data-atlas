@@ -5,7 +5,7 @@ import { expect, it } from "vitest";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 /**
  * Reads the built `data/build/atlas.sqlite`. Every catalogue dataset is either

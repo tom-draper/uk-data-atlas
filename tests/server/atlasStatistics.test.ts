@@ -6,15 +6,15 @@ import { createHash } from "node:crypto";
 import { gunzipSync, gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import {
-	type StatisticsDataset,
 	readVersionedAtlasDataset,
 	readAtlasDatasetUrls,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type StatisticsDataset } from "@uk-data-atlas/atlas-runtime/measures";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
 	fuelPovertyStatistics,
 	rebuildFuelPoverty,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	writeSqliteIndex,
 	writeSqliteTables,
