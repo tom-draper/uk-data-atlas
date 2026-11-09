@@ -9,6 +9,7 @@ import { problem, type ApiResponse } from "./runtime/index.ts";
 
 import { resolveDatasetAliases } from "./datasetAliasRequests";
 import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
+import type { Series } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	breakdownResponse,
 	restatedResponse,
@@ -41,6 +42,7 @@ const buildRequest = (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body: RequestBody | undefined,
+	series?: Series,
 ): RouteRequest | ApiResponse => {
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
 	const matched = context.operationMatcher?.(parsedUrl.pathname);
@@ -75,6 +77,7 @@ const buildRequest = (
 			context.boundaryRegistry.contentHash,
 		parsedUrl,
 		segments: segments as string[],
+		...(series ? { series } : {}),
 		// A route's own calls name series by catalogue id, so they skip the
 		// dimension layer and are never restated twice.
 		dispatch: (nextUrl) => routeSeries("GET", nextUrl, context),
@@ -87,9 +90,10 @@ const routeSeries = (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	series?: Series,
 ): ApiResponse => {
 	if (method !== "GET" && method !== "POST") return methodNotAllowed();
-	const request = buildRequest(method, url, context, body);
+	const request = buildRequest(method, url, context, body, series);
 	if ("status" in request) return request;
 	return handleRoute(request) ?? notFound();
 };
@@ -99,10 +103,11 @@ const routeSeriesAsync = async (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	series?: Series,
 ): Promise<ApiResponse> => {
 	if (method !== "GET" && method !== "POST")
-		return routeSeries(method, url, context, body);
-	const request = buildRequest(method, url, context, body);
+		return routeSeries(method, url, context, body, series);
+	const request = buildRequest(method, url, context, body, series);
 	if ("status" in request) return request;
 	return (await handleRouteAsync(request)) ?? notFound();
 };
@@ -154,7 +159,13 @@ const routeResolved = (
 			);
 		case "series":
 			return seriesResponse(
-				routeSeries(method, resolved.url, context, body),
+				routeSeries(
+					method,
+					resolved.url,
+					context,
+					body,
+					resolved.series,
+				),
 				resolved.series,
 				resolved.reading,
 			);
@@ -162,7 +173,13 @@ const routeResolved = (
 			return breakdownResponse(
 				resolved.entries.map(({ url: entryUrl, series }) => ({
 					series,
-					response: routeSeries(method, entryUrl, context, body),
+					response: routeSeries(
+						method,
+						entryUrl,
+						context,
+						body,
+						series,
+					),
 				})),
 				resolved.reading,
 			);
@@ -191,7 +208,13 @@ const routeResolvedAsync = async (
 			);
 		case "series":
 			return seriesResponse(
-				await routeSeriesAsync(method, resolved.url, context, body),
+				await routeSeriesAsync(
+					method,
+					resolved.url,
+					context,
+					body,
+					resolved.series,
+				),
 				resolved.series,
 				resolved.reading,
 			);
@@ -205,6 +228,7 @@ const routeResolvedAsync = async (
 							entryUrl,
 							context,
 							body,
+							series,
 						),
 					})),
 				),

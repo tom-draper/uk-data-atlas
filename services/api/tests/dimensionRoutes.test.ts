@@ -10,6 +10,8 @@ import type {
 } from "@uk-data-atlas/catalogue/node";
 import type { MeasureDimensions } from "@uk-data-atlas/measures";
 import { route } from "../src/routes";
+import { handleMeasureExport } from "../src/bulkRoutes";
+import { dimensionCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	areaLookup,
 	crosswalkInventory,
@@ -223,6 +225,47 @@ const resourceIds = (response: ReturnType<typeof get>) =>
 	(data(response).resources as Array<{ id: string }>).map(({ id }) => id);
 const data = (response: ReturnType<typeof get>) =>
 	(response.body as { data: Record<string, unknown> }).data;
+
+test("exports the resolved series using the public measure path", () => {
+	const series = dimensionCatalogue(catalog, measureDimensions)
+		.measure("recorded-crimes")!
+		.series.find((entry) => entry.dimensions.offence === "burglary")!;
+	const file = {
+		format: "parquet" as const,
+		artifact: "burglary.parquet",
+		href: "/",
+		bytes: 10,
+		contentHash: "sha256:burglary",
+	};
+	const response = handleMeasureExport({
+		context: {
+			...context,
+			exportManifest: {
+				schemaVersion: 1,
+				contentHash: "sha256:manifest",
+				dataCatalogHash: catalog.contentHash,
+				fields: {},
+				datasets: {},
+				exports: [],
+				measureExports: [
+					{ measureId: "crime-burglary", formats: [file] },
+				],
+			},
+			exportFiles: new Map([
+				[file.artifact, { ...file, path: file.artifact }],
+			]),
+		},
+		releaseId: "release",
+		parsedUrl: new URL("http://localhost/v1/data/recorded-crimes/export"),
+		segments: ["v1", "data", "recorded-crimes", "export"],
+		series,
+	});
+	assert.equal(response.status, 200);
+	assert.equal(
+		response.representation?.contentType,
+		"application/vnd.apache.parquet",
+	);
+});
 
 test("reads a measure with a member filter as that series", () => {
 	const response = get(
