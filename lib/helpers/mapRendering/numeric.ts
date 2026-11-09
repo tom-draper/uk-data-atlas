@@ -1,4 +1,5 @@
 import type { BoundaryGeojson } from "@lib/types";
+import type { MapValues } from "@uk-data-atlas/map-tiles/mapValues";
 import type { BoundaryType } from "@uk-data-atlas/datasets/types/boundaries";
 import type { ColorRange } from "@uk-data-atlas/datasets/types/common";
 import type { MapOptions, NumericMapOptionsKey } from "@lib/types/mapOptions";
@@ -35,20 +36,21 @@ function renderChoropleth<T extends { data: Record<string, unknown> }>(
 	valueFor: (dataset: T, code: string) => number | null | undefined,
 	getColorRange: (dataset: T, options: MapOptions) => ColorRange,
 	invertColor = true,
+	values?: MapValues,
 ): void {
 	const codeProp = ctx.codeProp(scope, geojson.features);
 
-	const transformedGeojson = valueGeojson(
-		ctx,
-		geojson,
-		dataset,
-		sourceMode,
-		codeProp,
-		(code) => valueFor(dataset, code),
-	);
+	// With a code-aligned array the boundary collection is drawn as it is and
+	// the values are set as feature state, so no per-dataset copy is built.
+	const transformedGeojson = values
+		? geojson
+		: valueGeojson(ctx, geojson, dataset, sourceMode, codeProp, (code) =>
+				valueFor(dataset, code),
+			);
 	ctx.layerManager.render({
 		kind: "boundary-fill",
 		data: transformedGeojson,
+		values,
 		colorExpression: getSequentialColorExpression(
 			getColorRange(dataset, mapOptions),
 			mapOptions.theme.id,
@@ -65,6 +67,7 @@ export function renderNumericDataset<T extends NumericDataset>(
 	dataset: T,
 	mapOptions: MapOptions,
 	map: NumericMapConfig<T>,
+	values?: MapValues,
 ): void {
 	renderChoropleth(
 		ctx,
@@ -100,5 +103,6 @@ export function renderNumericDataset<T extends NumericDataset>(
 			return configuredRange;
 		},
 		map.invertColor,
+		values,
 	);
 }
