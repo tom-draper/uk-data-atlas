@@ -815,6 +815,18 @@ test("reads a measure in a query parameter with dimension filters as one series"
 	);
 });
 
+test("keeps public measure ids when resolving other measure-query paths", () => {
+	const resolved = resolveDimensionRequest(
+		"/v1/example?measure=recorded-crimes&offence=burglary",
+		context,
+	);
+	assert.equal(resolved.kind, "rewritten");
+	if (resolved.kind !== "rewritten")
+		throw new Error("Expected a rewritten request");
+	assert.equal(resolved.url, "/v1/example?measure=recorded-crimes");
+	assert.equal(resolved.read[0]?.series.dimensions.offence, "burglary");
+});
+
 test("resolves relationship readiness from the selected dimensional series", () => {
 	const url =
 		"/v1/relationships?from=ward/2023-05-uk-bgc&to=ward/2025-01-en-ward&measure=recorded-crimes&offence=burglary";

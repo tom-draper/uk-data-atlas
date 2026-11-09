@@ -25,11 +25,11 @@ import {
  * path. With several `measure` values a filter applies to each measure that
  * has the dimension and is ignored by those that do not, and so is `datasetId`,
  * which chooses between datasets that publish the same members, such as
- * general and local election turnout. A reviewed human alias such as `house-prices` is accepted; an old encoded series id such as
- * `crime-burglary` is refused with the measure and members that replace it.
+ * general and local election turnout. A reviewed human alias such as
+ * `house-prices` is accepted; an old encoded series id is not recognised.
  *
- * The routes read series by their catalogue id, so the request is rewritten
- * to carry those, and the dimension parameters are removed.
+ * The resolved series are passed to the route alongside the public measure
+ * ids, and the dimension parameters are removed from the routed request.
  */
 
 export type MeasureQueryResolution =
@@ -37,7 +37,7 @@ export type MeasureQueryResolution =
 	| { kind: "problem"; response: ApiResponse }
 	| {
 			kind: "rewritten";
-			/** The request, naming series by catalogue id. */
+			/** The request, naming public measures. */
 			url: string;
 			/** The request in measure-and-filter form, as the API read it. */
 			location: string;
@@ -201,13 +201,8 @@ export const resolveMeasureQuery = (
 			next.searchParams.append("measure", measure);
 		return next;
 	};
-	const internal = rewrite(
-		["/v1/attribution", "/v1/relationships"].includes(parsed.pathname) ||
-			/^\/v1\/areas\/[^/]+\/[^/]+\/[^/]+$/.test(parsed.pathname)
-			? publicMeasures
-			: ids,
-	);
-	// The series ids already say which dataset.
+	const internal = rewrite(publicMeasures);
+	// The selected series already identifies its dataset.
 	if (measures.length > 0) internal.searchParams.delete("datasetId");
 	const external = rewrite(publicMeasures);
 	for (const [dimension, codes] of stated)
