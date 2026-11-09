@@ -65,7 +65,7 @@ runtime package (`packages/atlas-runtime`):
 - **Reader.** `ObservationCache` (`catalogue/observationTables.ts`) rebuilds a
   measure source's observation artifact from the statistics rows using the
   selector recorded in `statistics-read-path.json`
-  (`storage/atlasStatisticsObservations.ts`). `lazySourceObservations` exposes
+  (`catalogue/atlasStatisticsObservations.ts`). `lazySourceObservations` exposes
   it as an artifact with one block of records per period, parsed on first use.
   `observationsFor` finds a source's period.
 - **Measures and dimensions.** A catalogue measure id such as `crime-burglary`
