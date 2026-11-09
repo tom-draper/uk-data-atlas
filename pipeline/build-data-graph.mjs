@@ -503,6 +503,7 @@ const defaultRawInputs = {
 	"website-tiles": [],
 	"website-lookups": [],
 	"website-datasets": websiteDatasetInputs,
+	"website-map-values": [],
 };
 
 const stage = (
@@ -1201,6 +1202,23 @@ const websiteStages = [
 			],
 		},
 	),
+	// The arrays the map colours areas from. They read the compiled datasets and
+	// the boundary sidecars, and nothing reads them back, so they run alone.
+	stage(
+		"website-map-values",
+		["website-datasets"],
+		["--import", "tsx", "pipeline/src/build-map-values.mts"],
+		{
+			outputs: ["public/data/map-values"],
+			rawInputs: [],
+			codeInputs: [
+				"package.json",
+				"packages/datasets",
+				"packages/map-tiles",
+				"pipeline/src/precompile/paths.mts",
+			],
+		},
+	),
 	stage(
 		"website-registry",
 		["website-datasets"],
@@ -1317,6 +1335,7 @@ const stageWrites = {
 	"website-tiles": ["public/data/boundaries"],
 	"website-lookups": ["data/build/website-assets.sqlite"],
 	"website-datasets": ["public/data/datasets"],
+	"website-map-values": ["public/data/map-values"],
 };
 
 const allStages = [...apiStages, ...websiteStages];

@@ -198,12 +198,13 @@ test("default build executes both products in dependency order", async (context)
 		"website-tiles",
 		"website-lookups",
 		"website-datasets",
+		"website-map-values",
 		"website-registry",
 	];
 	assert.deepEqual(stages(build.run([])), await expectedStages(expected));
 	assert.equal(
 		build.commands().length,
-		(await expectedStages(apiOrder)).length + 6,
+		(await expectedStages(apiOrder)).length + 7,
 	);
 });
 
@@ -373,6 +374,7 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"atlas-pages",
 		"website-lookups",
 		"website-datasets",
+		"website-map-values",
 		"website-registry",
 	]);
 });
