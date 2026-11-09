@@ -20,6 +20,21 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+test("road collision series come from the severity declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of ["all", "fatal", "serious", "slight"]) {
+		const id = `road-collisions${member === "all" ? "" : `-${member}`}`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "road-collisions",
+			dimensions: { "collision-severity": member },
+		});
+	}
+});
+
 test("crime series come from the offence declaration", () => {
 	const config = JSON.parse(
 		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),

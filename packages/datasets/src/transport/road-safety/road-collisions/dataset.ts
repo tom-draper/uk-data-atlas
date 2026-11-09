@@ -97,3 +97,16 @@ export const roadCollisions = defineDataset<RoadCollisionsDataset>({
 		fields: [{ path: "{collision-severity}", measure: "road-collisions" }],
 	},
 });
+
+export const roadCollisionSeries = () =>
+	roadCollisions.statistics!.dimensions!.find(
+		(dimension) => dimension.slug === "collision-severity",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		return {
+			id: `road-collisions${member === "all" ? "" : `-${member}`}`,
+			measure: "road-collisions",
+			dimensions: { "collision-severity": member },
+		};
+	});
+

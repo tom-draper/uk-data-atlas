@@ -218,3 +218,4 @@ export * from "./data/new-datasets/aggregate.ts";
 
 export { energyConsumptionSeries } from "./data/energy-consumption/declaration.ts";
 export { crimeSeries } from "./society/crime-and-justice/crime/dataset.ts";
+export { roadCollisionSeries } from "./transport/road-safety/road-collisions/dataset.ts";
