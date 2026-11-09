@@ -5,7 +5,7 @@ import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeog
 import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import type { ExportManifest } from "../storage/exportManifest.ts";
+import type { ExportManifest } from "./exportManifest.ts";
 import type { LookupManifest } from "../areas/lookupExports.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { ValidationReport } from "./validationReport.ts";

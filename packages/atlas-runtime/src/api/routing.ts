@@ -7,7 +7,7 @@ import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
 } from "@uk-data-atlas/measures";
-import type { ExportManifest } from "../storage/exportManifest.ts";
+import type { ExportManifest } from "../catalogue/exportManifest.ts";
 import type { GeographyInventory } from "../areas/geographyInventory.ts";
 import type { LookupManifest } from "../areas/lookupExports.ts";
 import type { FullDetailSource } from "../areas/fullDetailDownloads.ts";
