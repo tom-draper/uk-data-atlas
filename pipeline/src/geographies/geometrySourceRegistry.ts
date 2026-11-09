@@ -12,7 +12,7 @@ import { reversedOffsetsFor, substitutionsFor } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 type BoundaryMetadata = { files?: unknown };
-import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
 const kebab = (s: string) =>
 	s.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 const sourcePath = (directory: string) => {

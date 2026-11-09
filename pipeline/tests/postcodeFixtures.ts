@@ -5,7 +5,7 @@ import {
 } from "../src/postcodes/postcodeAreaCompiler";
 import { compilePostcodeIndex } from "../src/postcodes/postcodeIndex";
 import type { PostcodeSourceRow } from "../src/postcodes/postcodeIndex";
-import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import { parsePostcode } from "@uk-data-atlas/geography";
 import { PostcodeIndex, postcodeLookupPoint } from "@uk-data-atlas/postcodes";

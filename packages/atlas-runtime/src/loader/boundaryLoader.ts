@@ -29,7 +29,7 @@ import {
 	PostcodeCountsIndex,
 	postcodeCountsMismatch,
 } from "@uk-data-atlas/postcodes";
-import type { GeometrySourceLookup } from "../geometry/areaGeometry.ts";
+import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { publicPath } from "@uk-data-atlas/atlas-db";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";

@@ -2,7 +2,7 @@ import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatia
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MultiPolygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	type AreaGeometry,
@@ -18,7 +18,7 @@ import {
 	BoundedClipper,
 	BOUNDED_CLIPPING_VERSION,
 	type ClipOperand,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import { csvFields } from "@uk-data-atlas/artifacts";
 import type { PopulationOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {

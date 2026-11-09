@@ -1,6 +1,6 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	validateEndpoint,

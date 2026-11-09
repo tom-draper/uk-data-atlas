@@ -10,7 +10,7 @@ import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationsh
 import { isGeographyKind } from "@uk-data-atlas/geography";
 import type { readGeometries as readGeometriesForCache } from "@uk-data-atlas/atlas-runtime/areas";
 import { measureContainment } from "./relationships/geometricContainment.ts";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 
 // The sliver width the area-overlap crosswalks use, so every method here
 // agrees on what counts as two borders generalised apart.

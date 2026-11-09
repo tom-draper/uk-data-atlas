@@ -6,7 +6,7 @@ import { test } from "vitest";
 import {
 	AreaGeometryCache,
 	type GeoJsonGeometry,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
 import { compileMapResource } from "../src/maps/compileMapResource";
 

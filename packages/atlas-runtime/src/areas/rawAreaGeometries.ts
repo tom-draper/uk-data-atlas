@@ -7,7 +7,7 @@ import {
 	toPolygons,
 	type AreaGeometry,
 } from "@uk-data-atlas/geography/area-geometry-pieces";
-import type { GeometrySourceLookup } from "../geometry/areaGeometry.ts";
+import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
@@ -15,13 +15,13 @@ import {
 	appliesTo,
 	offsetGeometry,
 	readGridOffset,
-} from "../geometry/gridOffset.ts";
+} from "@uk-data-atlas/geometry";
 import {
 	applyReversedOffsets,
 	loadSubstitutions,
 	reversedOffsetProvenance,
 	substitutionProvenance,
-} from "../geometry/geometrySubstitution.ts";
+} from "@uk-data-atlas/geometry";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
@@ -32,7 +32,7 @@ import {
 	parseGeoJsonFeatures,
 	parseGeoJsonProperties,
 	type GeoJsonFeatures,
-} from "../geometry/geoJsonProperties.ts";
+} from "@uk-data-atlas/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 /** Each feature's properties, without decoding GeoJSON geometry. */

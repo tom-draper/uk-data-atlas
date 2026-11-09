@@ -16,7 +16,7 @@ import {
 import { releaseMonth } from "@uk-data-atlas/catalogue";
 import { toWgs84Geometry } from "@uk-data-atlas/geography/coordinates";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
-import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import type {
 	AreaInventory,
 	AreaReleaseArtifact,

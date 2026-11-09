@@ -6,7 +6,7 @@ import {
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { areaMetrics } from "../src/areaMetrics";
-import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 
 const ring = (west: number, south: number, east: number, north: number) => [
 	[west, south],

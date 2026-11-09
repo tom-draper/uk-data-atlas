@@ -3,7 +3,7 @@ import type {
 	AreaGeometryCache,
 	GeoJsonGeometry,
 	IntersectingArea,
-} from "../../geometry/areaGeometry.ts";
+} from "@uk-data-atlas/geometry";
 import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import type { Neighbour } from "@uk-data-atlas/geometry";
 import type {

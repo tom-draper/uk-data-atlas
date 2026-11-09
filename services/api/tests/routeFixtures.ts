@@ -1,7 +1,7 @@
 import { compileOperationTemplates } from "../../../pipeline/src/atlas/operationTemplates";
 import { reportRequest } from "./evidenceFixtures";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";

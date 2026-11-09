@@ -3,7 +3,7 @@ import {
 	buildSimplifiedDownload,
 	type SimplifiedDownload,
 } from "../maps/mapResource/simplifiedDownload.ts";
-import type { AreaGeometryCache } from "../geometry/areaGeometry.ts";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { GeographyResolver } from "./geographyResolver.ts";
 import {
 	buildFullDetailParquet,

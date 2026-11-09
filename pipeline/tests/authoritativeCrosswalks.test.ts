@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 
 const adapters = readCrosswalkAdapters(
 	new URL(

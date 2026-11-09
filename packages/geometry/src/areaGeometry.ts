@@ -37,18 +37,18 @@ import {
 	spatialCellKey,
 	spatialCells,
 } from "@uk-data-atlas/geography/geometry-spatial-index";
+import type { Neighbour } from "./borders.ts";
 import {
 	SpatialQueries,
-	type Neighbour,
 	type ContainingArea,
 	type NearbyArea,
 	type IntersectingArea,
-} from "@uk-data-atlas/geometry";
+} from "./spatialQueries.ts";
 export type {
 	ContainingArea,
 	NearbyArea,
 	IntersectingArea,
-} from "@uk-data-atlas/geometry";
+} from "./spatialQueries.ts";
 import {
 	type Coordinate,
 	type GeometryBounds,

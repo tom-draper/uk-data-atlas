@@ -189,6 +189,9 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:packages/geography
+      '@uk-data-atlas/geometry':
+        specifier: workspace:*
+        version: link:packages/geometry
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:packages/map-tiles
@@ -454,16 +457,28 @@ importers:
 
   packages/geometry:
     dependencies:
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../map-tiles
+      '@uk-data-atlas/shapefile':
+        specifier: workspace:*
+        version: link:../shapefile
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
     devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -612,6 +627,9 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../packages/geography
+      '@uk-data-atlas/geometry':
+        specifier: workspace:*
+        version: link:../packages/geometry
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../packages/map-tiles

@@ -8,7 +8,7 @@ import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResource
 import {
 	AreaGeometryCache,
 	readGeometrySourceLookup,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import { buildSimplifiedDownload } from "../../packages/atlas-runtime/src/maps/mapResource/simplifiedDownload";
 
 const root = resolve(process.argv[2] ?? ".");

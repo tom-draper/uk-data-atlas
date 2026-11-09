@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
 import type { AreaLookup } from "@uk-data-atlas/areas";
-import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import type { PostcodeOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compilePostcodeOverlapCrosswalk } from "../src/relationships/postcodeOverlap";
 import { crosswalkFindings } from "../src/validation/crosswalkFindings";

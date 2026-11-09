@@ -1,6 +1,6 @@
 {
 	"name": "@uk-data-atlas/geometry",
-	"description": "Finds neighbours and answers spatial queries over area geometry.",
+	"description": "Stores, loads and queries area geometry.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
@@ -15,9 +15,13 @@
 	"dependencies": {
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/map-tiles": "workspace:*",
-		"polygon-clipping": "0.15.7"
+		"polygon-clipping": "0.15.7",
+		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*",
+		"@uk-data-atlas/shapefile": "workspace:*"
 	},
 	"devDependencies": {
+		"@types/node": "^26.6.2",
 		"typescript": "^7.0.2"
 	}
 }

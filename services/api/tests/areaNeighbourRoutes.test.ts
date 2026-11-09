@@ -6,7 +6,7 @@ import { test } from "vitest";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import {
 	route,
 	registry,

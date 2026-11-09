@@ -1,7 +1,7 @@
 import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
 import { createHash } from "node:crypto";
 import polygonClipping from "polygon-clipping";
-import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import {
 	boundsIntersect,
 	candidatePieces,

@@ -1,4 +1,4 @@
-import type { AreaGeometryCache } from "../../geometry/areaGeometry.ts";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";

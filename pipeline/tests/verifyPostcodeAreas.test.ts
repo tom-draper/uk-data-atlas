@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
 import { containPoint } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 import {
 	placePoints,
 	toCentimetres,
