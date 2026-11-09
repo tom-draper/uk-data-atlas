@@ -8,6 +8,7 @@ import {
 	observationArtifactName,
 	totalMember,
 	type DataCatalog,
+	type MeasureSeriesIdentity,
 } from "@uk-data-atlas/measures";
 import {
 	SERVED_LOCAL_ELECTION_WARD_CODES,
@@ -183,12 +184,11 @@ const servedCodesFor = (
  * open is fixed at its total where it has one, and summed over otherwise.
  */
 const selectorFor = (
-	measureId: string,
+	mapping: MeasureSeriesIdentity,
 	datasetId: string,
 	geography: string,
 	boundaryYear: number,
 ): StatisticsSelector | string => {
-	const mapping = config.ids[measureId]!;
 	if (mapping.measure === "winning-party") {
 		// The winner is stored as text on each contest, not as a series.
 		const servedCodes = servedCodesFor(datasetId, boundaryYear);
@@ -355,7 +355,7 @@ for (const measure of catalog.measures)
 			continue;
 		}
 		const selector = selectorFor(
-			measure.id,
+			config.ids[measure.id]!,
 			source.datasetId,
 			source.sourceGeography.type,
 			source.sourceGeography.boundaryYear,
