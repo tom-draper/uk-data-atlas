@@ -1,4 +1,4 @@
-import type { GeographyResolver } from "../loader/geographyResolver.ts";
+import type { GeographyResolver } from "./geographyResolver.ts";
 
 export const relationshipRepairsReport = (
 	resolver: Pick<GeographyResolver, "relationshipRepairs">,
