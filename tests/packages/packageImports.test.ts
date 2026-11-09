@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { builtinModules } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { sourceFiles, specifiers } from "../helpers/sourceImports";
 
 /**
  * Check dependencies explicitly because workspace resolution can otherwise
@@ -9,13 +10,6 @@ import { describe, expect, it } from "vitest";
  * Browser-safe packages must also avoid Node built-ins.
  */
 const PACKAGES = join(process.cwd(), "packages");
-
-const sourceFiles = (directory: string): string[] =>
-	readdirSync(directory).flatMap((name) => {
-		const path = join(directory, name);
-		if (statSync(path).isDirectory()) return sourceFiles(path);
-		return /\.(ts|tsx|mts)$/.test(name) ? [path] : [];
-	});
 
 it("does not add API re-export shims", () => {
 	const apiSource = join(process.cwd(), "services/api/src");
@@ -33,14 +27,6 @@ it("does not add API re-export shims", () => {
 	});
 	expect(shims.map((file) => relative(apiSource, file))).toEqual([]);
 });
-
-const SPECIFIER =
-	/(?:^|[\s;])(?:import|export)\b[^"'`;]*?\bfrom\s*["']([^"']+)["']|(?:^|[\s;])import\s*["']([^"']+)["']|\bimport\(\s*["']([^"']+)["']\s*\)|\brequire\(\s*["']([^"']+)["']\s*\)/g;
-
-const specifiers = (source: string) =>
-	[...source.matchAll(SPECIFIER)].map(
-		(match) => match[1] ?? match[2] ?? match[3] ?? match[4]!,
-	);
 
 /** `@scope/name/sub` and `name/sub` both name a package by their first part. */
 const packageName = (specifier: string) =>
