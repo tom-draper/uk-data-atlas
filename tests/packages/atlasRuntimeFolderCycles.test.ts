@@ -19,8 +19,6 @@ const SRC = join(process.cwd(), "packages/atlas-runtime/src");
 
 /** `from -> to`: folder `from` imports folder `to`, closing a cycle. */
 const KNOWN_CYCLE_CLOSING_IMPORTS = [
-	// areas <-> catalogue, task 5 moves the shared pieces down.
-	"areas -> catalogue",
 	// areas <-> geometry, task 5.
 	"geometry -> areas",
 	// areas <-> relationships, task 5.
@@ -60,6 +58,14 @@ it("has no import cycles between atlas-runtime folders beyond the known ones", (
 		]),
 	);
 	expect(findCycle(graph)?.join(" > ")).toBeUndefined();
+});
+
+it("keeps loader at the top, imported by no other atlas-runtime folder", () => {
+	const importers = [...folderImports()]
+		.filter(([from, targets]) => targets.has("loader") && from !== "api")
+		.map(([from]) => from);
+	// `api` is the one consumer, it moves to services/api in task 14.
+	expect(importers, "folders importing loader").toEqual([]);
 });
 
 it("keeps storage free of every other atlas-runtime folder and of the domain packages", () => {

@@ -242,6 +242,7 @@ describe("atlas domain boundaries", () => {
 				"postcodes",
 				"storage",
 				"maps",
+				"loader",
 			].flatMap((directory) => sourceFiles(join(atlas, directory))),
 			...sourceFiles(join(PIPELINE, "src/evidence")),
 			join(PIPELINE, "src/build-evidence-documents.ts"),
