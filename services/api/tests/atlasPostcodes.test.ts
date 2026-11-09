@@ -20,7 +20,7 @@ import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
 import { buildPostcodeIndex } from "./pipelineFixtures";
-import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/areas";
+import { readPostcodeIndex } from "@uk-data-atlas/atlas-runtime/loader";
 import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/postcodes";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../src/routes";

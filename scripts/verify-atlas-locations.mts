@@ -11,10 +11,8 @@ import { join, resolve } from "node:path";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { createNamedLocationLookup } from "@uk-data-atlas/atlas-runtime/places";
 import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
-import {
-	readAreaInventory,
-	readAreaLookup,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { namedLocationMembersTable } from "@uk-data-atlas/atlas-runtime/areas";
 import { route } from "../services/api/src/routes";

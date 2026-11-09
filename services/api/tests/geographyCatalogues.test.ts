@@ -24,7 +24,7 @@ import {
 import {
 	readBoundaryRegistry,
 	readGeographyInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/loader";
 import { readRelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {

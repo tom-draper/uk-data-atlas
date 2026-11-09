@@ -11,10 +11,8 @@ import {
 	addAreaVersion,
 	areaTables,
 } from "./pipelineFixtures";
-import {
-	readAreaInventory,
-	readAreaLookup,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 import { writeSqliteIndex } from "./pipelineFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
