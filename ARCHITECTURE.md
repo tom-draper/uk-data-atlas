@@ -28,6 +28,7 @@ packages/catalogue/     shared catalogue code: the register of corrections
 packages/datasets/      browser-safe dataset definitions and compilers
 packages/geometry/      geometry storage, loaders and spatial queries
 packages/areas/         area inventories, lookup, search and boundaries
+packages/relationships/ crosswalks and translation between areas
 packages/atlas-runtime/ server-only atlas data and API modules
 packages/artifacts/     artifact storage, hashing and file formats
 packages/map-tiles/     the boundary tiler: shared-arc generalisation and
@@ -160,7 +161,7 @@ services/api ───────┘
   from the repository root. The API directory remains the home of its config
   and `openapi.yaml`.
 - Browser-safe packages keep Node imports out of their browser entry points.
-  `packages/atlas-runtime`, `packages/geometry`, `packages/artifacts` and `packages/shapefile` are
+  `packages/atlas-runtime`, `packages/geometry`, `packages/relationships`, `packages/artifacts` and `packages/shapefile` are
   Node packages and may read files. Package boundary tests check that imports
   stay within each package or its declared dependencies.
 
