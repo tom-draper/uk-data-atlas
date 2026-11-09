@@ -17,6 +17,7 @@ import { dimensionCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import {
 	areaLookup,
+	containmentCrosswalk,
 	crosswalkInventory,
 	crosswalkLookup,
 	dataCatalog,
@@ -334,6 +335,58 @@ test("routes comparisons by public measure and selected members", () => {
 	};
 	assert.equal(comparison.baseline.value, 5);
 	assert.equal(comparison.comparison.value, 7);
+});
+
+test("pages dimensional conversions without mixing series", () => {
+	const crosswalk = {
+		...containmentCrosswalk,
+		id: "crime-ward-to-authority",
+		records: [
+			{
+				source: { code: "E05000001", labels: [] },
+				targets: [{ code: "E08000001", labels: [] }],
+			},
+			{
+				source: { code: "W05000001", labels: [] },
+				targets: [{ code: "W06000001", labels: [] }],
+			},
+		],
+	};
+	const conversionContext = testContext({
+		geographyInventory,
+		areaLookup,
+		dataCatalog: catalog,
+		measureDimensions,
+		measureObservations: [
+			observations("crime-burglary", [5, 7]),
+			observations("crime-robbery", [2, 3]),
+		],
+		crosswalkLookup: new Map([[crosswalk.id, crosswalk]]),
+	});
+	const base = `/v1/data/recorded-crimes/convert?offence=burglary&period=2022&geography=ward&codeYear=2023&crosswalk=${crosswalk.id}&limit=1`;
+	const resolved = resolveDimensionRequest(base, conversionContext);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	assert.match(resolved.url, /^\/v1\/data\/recorded-crimes\/convert\?/);
+	const first = route("GET", base, conversionContext);
+	assert.equal(first.status, 200, JSON.stringify(first.body));
+	assert.equal(
+		(data(first).records as Array<{ value: number }>)[0]?.value,
+		5,
+	);
+	const cursor = (first.body as { meta: { nextCursor: string } }).meta
+		.nextCursor;
+	assert.ok(cursor);
+	const next = route("GET", `${base}&cursor=${cursor}`, conversionContext);
+	assert.equal(next.status, 200);
+	assert.equal((data(next).records as Array<{ value: number }>)[0]?.value, 7);
+	const other = route(
+		"GET",
+		base.replace("burglary", "robbery") + `&cursor=${cursor}`,
+		conversionContext,
+	);
+	assert.equal(other.status, 400);
+	assert.equal((other.body as { code?: string }).code, "invalid_cursor");
 });
 
 test("pages dimensional change without mixing series", () => {
