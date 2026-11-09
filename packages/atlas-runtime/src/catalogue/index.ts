@@ -36,3 +36,4 @@ export * from "./seriesMatching.ts";
 export * from "./aggregationRule.ts";
 export * from "./sourceSelection.ts";
 export * from "./measureValues.ts";
+export * from "./analysisGeographyValidation.ts";

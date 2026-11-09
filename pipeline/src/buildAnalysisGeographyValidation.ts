@@ -2,7 +2,7 @@ import { observationArtifactName } from "@uk-data-atlas/measures";
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";
+import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
