@@ -2,7 +2,7 @@ import { join } from "node:path";
 import {
 	readGeoJsonFeatures,
 	type GeoJsonFeatures,
-} from "../areas/geoJsonProperties.ts";
+} from "./geoJsonProperties.ts";
 import {
 	canServeAsWgs84,
 	geometryProvenance,

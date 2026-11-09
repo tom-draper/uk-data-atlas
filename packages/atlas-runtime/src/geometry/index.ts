@@ -6,3 +6,4 @@ export * from "./geometrySources.ts";
 export * from "./geometryStore.ts";
 export * from "./geometrySubstitution.ts";
 export * from "./gridOffset.ts";
+export * from "./geoJsonProperties.ts";

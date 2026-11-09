@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { readGeoJsonProperties } from "@uk-data-atlas/atlas-runtime/areas";
+import { readGeoJsonProperties } from "@uk-data-atlas/atlas-runtime/geometry";
 import { sourceGeoJsonPath } from "./boundarySourcePaths.ts";
 import { join } from "node:path";
 import type {
