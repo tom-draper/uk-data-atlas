@@ -201,7 +201,9 @@ export const resolveMeasureQuery = (
 			next.searchParams.append("measure", measure);
 		return next;
 	};
-	const internal = rewrite(ids);
+	const internal = rewrite(
+		parsed.pathname === "/v1/attribution" ? publicMeasures : ids,
+	);
 	// The series ids already say which dataset.
 	if (measures.length > 0) internal.searchParams.delete("datasetId");
 	const external = rewrite(publicMeasures);

@@ -42,6 +42,7 @@ const buildRequest = (
 	context: RouteDispatchContext,
 	body: RequestBody | undefined,
 	series?: Series,
+	measureSeries?: RouteRequest["measureSeries"],
 ): RouteRequest | ApiResponse => {
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
 	const matched = context.operationMatcher?.(parsedUrl.pathname);
@@ -77,6 +78,7 @@ const buildRequest = (
 		parsedUrl,
 		segments: segments as string[],
 		...(series ? { series } : {}),
+		...(measureSeries ? { measureSeries } : {}),
 		dispatch: (nextUrl) => {
 			const target = new URL(nextUrl, "http://localhost");
 			const targetSegments = target.pathname.split("/").filter(Boolean);
@@ -111,9 +113,17 @@ const routeSeries = (
 	context: RouteDispatchContext,
 	body?: RequestBody,
 	series?: Series,
+	measureSeries?: RouteRequest["measureSeries"],
 ): ApiResponse => {
 	if (method !== "GET" && method !== "POST") return methodNotAllowed();
-	const request = buildRequest(method, url, context, body, series);
+	const request = buildRequest(
+		method,
+		url,
+		context,
+		body,
+		series,
+		measureSeries,
+	);
 	if ("status" in request) return request;
 	return handleRoute(request) ?? notFound();
 };
@@ -124,10 +134,18 @@ const routeSeriesAsync = async (
 	context: RouteDispatchContext,
 	body?: RequestBody,
 	series?: Series,
+	measureSeries?: RouteRequest["measureSeries"],
 ): Promise<ApiResponse> => {
 	if (method !== "GET" && method !== "POST")
-		return routeSeries(method, url, context, body, series);
-	const request = buildRequest(method, url, context, body, series);
+		return routeSeries(method, url, context, body, series, measureSeries);
+	const request = buildRequest(
+		method,
+		url,
+		context,
+		body,
+		series,
+		measureSeries,
+	);
 	if ("status" in request) return request;
 	return (await handleRouteAsync(request)) ?? notFound();
 };
@@ -172,7 +190,17 @@ export const route = (
 		case "rewritten":
 			return withLocation(
 				restatedResponse(
-					routeSeries(method, resolved.url, context, body),
+					routeSeries(
+						method,
+						resolved.url,
+						context,
+						body,
+						undefined,
+						resolved.read.map(({ measure, series }) => ({
+							measureId: measure.id,
+							series,
+						})),
+					),
 					resolved.read,
 				),
 				resolved.location,
@@ -221,7 +249,17 @@ export const routeAsync = async (
 		case "rewritten":
 			return withLocation(
 				restatedResponse(
-					await routeSeriesAsync(method, resolved.url, context, body),
+					await routeSeriesAsync(
+						method,
+						resolved.url,
+						context,
+						body,
+						undefined,
+						resolved.read.map(({ measure, series }) => ({
+							measureId: measure.id,
+							series,
+						})),
+					),
 					resolved.read,
 				),
 				resolved.location,
