@@ -525,6 +525,25 @@ test("reads a measure with a member filter as that series", () => {
 	assert.match(String(body.via), /offence=burglary/);
 });
 
+test("dispatches nested value lookups with the selected public series", () => {
+	const paths: string[] = [];
+	const response = route(
+		"GET",
+		"/v1/data/recorded-crimes/value?place=ward/E05000001&offence=burglary",
+		{
+			...context,
+			operationMatcher: (path) => {
+				paths.push(path);
+				return { route: "unmatched" };
+			},
+		},
+	);
+	assert.equal(response.status, 200);
+	assert.equal((data(response).answer as { value: number }).value, 5);
+	assert.ok(paths.includes("/v1/data/recorded-crimes/series"));
+	assert.ok(!paths.includes("/v1/data/crime-burglary/series"));
+});
+
 test("takes the dimensions object form of a filter", () => {
 	const response = get(
 		"/v1/data/recorded-crimes/value?place=ward/E05000001&dimensions%5Boffence%5D=robbery",
