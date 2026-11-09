@@ -5,7 +5,7 @@ import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "@uk-data-atlas/relationships";
-import { measureCapability } from "@uk-data-atlas/measures";
+import { identityDimensions, measureCapability } from "@uk-data-atlas/measures";
 import {
 	containmentCrosswalk,
 	dataCatalog,
@@ -133,6 +133,52 @@ test("offers a conversion for an area only when it reaches that area", () => {
 			code: "LAD-S00000000",
 		}).status,
 		"unsupported",
+	);
+});
+
+test("conversion links name the public measure and series members", () => {
+	const catalog = { ...dataCatalog };
+	const dimensions = identityDimensions(catalog);
+	const dimensionalContext = {
+		...context,
+		dataCatalog: catalog,
+		measureDimensions: {
+			...dimensions,
+			config: {
+				...dimensions.config,
+				measures: {
+					...dimensions.config.measures,
+					residents: {
+						label: "Residents",
+						description: "Residents",
+						reason: "",
+					},
+				},
+				dimensions: {
+					sex: {
+						label: "Sex",
+						members: [{ code: "female", label: "Female" }],
+						reason: "",
+					},
+				},
+				ids: {
+					...dimensions.config.ids,
+					population: {
+						measure: "residents",
+						dimensions: { sex: "female" },
+					},
+				},
+			},
+		},
+	};
+	const capability = measureCapability(dimensionalContext, population, {
+		geography: "localAuthority",
+		boundaryRelease: "2023-a",
+	});
+	assert.equal(capability.status, "requires-conversion");
+	assert.equal(
+		"conversions" in capability && capability.conversions[0]?.href,
+		"/v1/data/residents/convert?period=2022&geography=ward&codeYear=2023&sex=female&crosswalk=wards-to-lad-a",
 	);
 });
 

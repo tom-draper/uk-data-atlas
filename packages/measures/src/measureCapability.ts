@@ -8,6 +8,7 @@ import { observationsFor } from "./observationArtifacts.ts";
 import type { MeasureContext } from "./measureContext.ts";
 import type { MeasureDimensions } from "./measureDimensionsLoader.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
+import { publicSeries } from "./dimensionCatalogue.ts";
 
 export type MeasureCapabilityContext = Omit<
 	MeasureContext,
@@ -143,9 +144,16 @@ export const conversionCoverageOnto = (
 										},
 										method: result.method,
 										href: (() => {
-											const mapping =
-												context.measureDimensions
-													?.config.ids[measure.id];
+											const series = context.dataCatalog
+												? publicSeries(
+														context.dataCatalog,
+														context.measureDimensions,
+														measure.id,
+													)
+												: {
+														id: measure.id,
+														dimensions: {},
+													};
 											const query = new URLSearchParams({
 												period,
 												geography:
@@ -154,10 +162,10 @@ export const conversionCoverageOnto = (
 													source.sourceGeography
 														.boundaryYear,
 												),
-												...(mapping?.dimensions ?? {}),
+												...series.dimensions,
 												crosswalk: summary.id,
 											});
-											return `/v1/data/${mapping?.measure ?? measure.id}/convert?${query}`;
+											return `/v1/data/${series.id}/convert?${query}`;
 										})(),
 									},
 									targets: new Set(
