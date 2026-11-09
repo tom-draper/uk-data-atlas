@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import {
 	queryMeasureValues,
-	readMeasureValuesContext,
 	type MeasureValuesContext,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readMeasureValuesContext } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	atlasDatabasePath,
 	databaseGeneration,

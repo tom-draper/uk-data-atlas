@@ -7,7 +7,7 @@ import {
 	readMeasureObservations,
 	readAtlasPayload,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/loader";
 import { DatabaseSync } from "node:sqlite";
 
 import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";

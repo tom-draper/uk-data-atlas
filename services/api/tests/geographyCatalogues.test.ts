@@ -26,11 +26,11 @@ import {
 	readGeographyInventory,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { readRelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
-	readAtlasPayload,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-runtime/storage";
