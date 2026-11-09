@@ -159,3 +159,16 @@ export const airQuality = defineDataset<AirQualityDataset>({
 		},
 	},
 });
+
+export const airQualitySeries = () =>
+	airQuality.statistics!.dimensions!.find(
+		(dimension) => dimension.slug === "pollutant",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		return {
+			id: `${member}-background-mean`,
+			measure: "background-concentration",
+			dimensions: { pollutant: member },
+		};
+	});
+
