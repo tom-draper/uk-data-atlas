@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { releaseKey, type LookupResolver } from "@uk-data-atlas/geography";
 import {
 	CrosswalkTranslator,

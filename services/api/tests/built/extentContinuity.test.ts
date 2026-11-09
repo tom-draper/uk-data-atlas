@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 const publicDirectory = artifactDirectory(
 	resolve(dirname(fileURLToPath(import.meta.url)), "../../../.."),

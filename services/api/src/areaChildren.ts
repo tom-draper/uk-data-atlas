@@ -1,4 +1,4 @@
-import type { AreaRelationship } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { AreaRelationship } from "@uk-data-atlas/relationships";
 import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseMonth } from "@uk-data-atlas/areas";
 

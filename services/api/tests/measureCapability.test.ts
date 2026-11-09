@@ -4,7 +4,7 @@ import { CAPABILITY_STATUSES } from "@uk-data-atlas/areas";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { measureCapability } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	containmentCrosswalk,

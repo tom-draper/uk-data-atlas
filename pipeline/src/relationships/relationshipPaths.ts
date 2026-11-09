@@ -1,4 +1,4 @@
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
@@ -9,7 +9,7 @@ import {
 	type RelationshipPathDiscovery,
 	type RelationshipPathInventory,
 	type ApprovedRelationshipPath,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 export const crosswalkShape = (artifact: {
 	records: Array<{

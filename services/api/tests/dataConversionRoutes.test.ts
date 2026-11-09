@@ -3,7 +3,7 @@ import { test } from "vitest";
 import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { route as routeRequest } from "../src/routes";
 import {
 	areaLookup,

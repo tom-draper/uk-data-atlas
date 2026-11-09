@@ -19,9 +19,9 @@ import {
 	multiPolygonAreaM2,
 	polygonWidthM,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { ExtentContinuityCrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
-import { validateEndpoint } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/relationships";
+import type { ExtentContinuityCrosswalkArtifact } from "@uk-data-atlas/relationships";
+import { validateEndpoint } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 // About a millimetre. Rounding only feeds a retry, when polygon-clipping's

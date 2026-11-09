@@ -24,12 +24,12 @@ import type { MapArchive } from "../maps/mapResource/archiveReader.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { MeasureDimensions } from "../measures/measureDimensionsLoader.ts";
 import type { NamedLocationInventory } from "../places/namedLocations.ts";
-import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates.ts";
+import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 import type { ApiResponse } from "./routeResponse.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ValidationReport } from "../catalogue/validationReport.ts";
-import type { AnalysisGeographyInventory } from "../relationships/analysisGeographies.ts";
+import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
 import type { AnalysisGeographyValidationInventory } from "../catalogue/analysisGeographyValidation.ts";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import type {

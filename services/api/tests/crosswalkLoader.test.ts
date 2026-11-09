@@ -9,8 +9,8 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { readCrosswalkLookup } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import { readCrosswalkLookup } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const entry = (id: string, geography: string) => ({

@@ -3,7 +3,7 @@ import {
 	componentsThroughSteps,
 	convertThroughSteps,
 	type ConversionStep,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/measures";
 import type { PopulationObservation } from "@uk-data-atlas/measures";
 import type { PostedRows } from "./requestRows";
 

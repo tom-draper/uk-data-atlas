@@ -30,7 +30,7 @@ import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
 	readRelationshipPathInventory,
-} from "../relationships/crosswalkLoader.ts";
+} from "@uk-data-atlas/relationships";
 import {
 	createLocationProjectionStore,
 	createNamedLocations,

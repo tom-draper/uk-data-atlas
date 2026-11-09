@@ -2,7 +2,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 type CrosswalkInventoryEntry = CrosswalkInventory["crosswalks"][number];
 

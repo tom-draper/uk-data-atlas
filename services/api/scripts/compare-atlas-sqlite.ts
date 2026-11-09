@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { readSqliteAreas, readSqliteAreaInventory } from "@uk-data-atlas/areas";
 
 const hash = (value: unknown) =>

@@ -198,6 +198,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:packages/map-tiles
+      '@uk-data-atlas/measures':
+        specifier: workspace:*
+        version: link:packages/measures
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:packages/relationships
@@ -538,6 +541,9 @@ importers:
         specifier: workspace:*
         version: link:../relationships
     devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -557,6 +563,9 @@ importers:
         specifier: workspace:*
         version: link:../search-index
     devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -585,9 +594,18 @@ importers:
       '@uk-data-atlas/areas':
         specifier: workspace:*
         version: link:../areas
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
+      '@uk-data-atlas/geometry':
+        specifier: workspace:*
+        version: link:../geometry
     devDependencies:
       '@types/node':
         specifier: ^26.6.2

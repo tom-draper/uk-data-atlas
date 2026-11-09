@@ -2,7 +2,7 @@ import { createAreaLookup } from "@uk-data-atlas/areas";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,

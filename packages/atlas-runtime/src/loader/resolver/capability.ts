@@ -5,7 +5,7 @@ import type {
 } from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { RelationshipCandidateInventory } from "../../relationships/relationshipCandidates.ts";
+import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import type {
 	AreaRelation,
 	AreaRelationship,

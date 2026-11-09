@@ -1,6 +1,6 @@
-import { type SQLOutputValue } from "node:sqlite";
-import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
-import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
+import { type SQLOutputValue } from "@uk-data-atlas/atlas-db";
+import type { CrosswalkArtifact } from "./crosswalkTypes.ts";
+import type { CrosswalkInventory } from "./crosswalkInventory.ts";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 

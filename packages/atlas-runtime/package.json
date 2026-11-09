@@ -1,6 +1,6 @@
 {
 	"name": "@uk-data-atlas/atlas-runtime",
-	"description": "Loads the atlas release from disk and serves its areas, geometry, places, postcodes, relationships and catalogue.",
+	"description": "Loads the atlas release from disk and serves its areas, geometry, places, postcodes and catalogue.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
@@ -13,7 +13,6 @@
 		"./maps": "./src/maps/index.ts",
 		"./places": "./src/places/index.ts",
 		"./postcodes": "./src/postcodes/index.ts",
-		"./relationships": "./src/relationships/index.ts",
 		"./measures": "./src/measures/index.ts"
 	},
 	"scripts": {

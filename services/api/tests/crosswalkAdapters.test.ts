@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
-import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
+import { readCrosswalkAdapters } from "@uk-data-atlas/relationships";
 
 const containment = {
 	id: "ward-to-lad-clean-containment",

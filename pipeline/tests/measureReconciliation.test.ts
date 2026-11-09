@@ -4,7 +4,7 @@ import { test } from "vitest";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import {
 	availableReconciliations,
 	reconcileMeasure,
@@ -13,7 +13,7 @@ import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	createRelationshipPathIndex,
 	type RelationshipPath,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type {

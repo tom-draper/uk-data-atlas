@@ -14,7 +14,10 @@
 	},
 	"dependencies": {
 		"@uk-data-atlas/areas": "workspace:*",
-		"@uk-data-atlas/geography": "workspace:*"
+		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*",
+		"@uk-data-atlas/geometry": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

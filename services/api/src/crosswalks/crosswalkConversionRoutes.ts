@@ -1,7 +1,7 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { directRelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
-import { relationshipPurposeFor } from "@uk-data-atlas/atlas-runtime/relationships";
+import { directRelationshipPath } from "@uk-data-atlas/relationships";
+import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
 import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "../queryRules";
 import { readPostedRows } from "../requestRows";

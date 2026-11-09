@@ -1,10 +1,10 @@
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { analysisConversion } from "@uk-data-atlas/atlas-runtime/relationships";
+import { analysisConversion } from "@uk-data-atlas/relationships";
 import {
 	convertThroughSteps,
 	type ConversionStep,
-} from "@uk-data-atlas/atlas-runtime/relationships";
-import { buildTranslationSteps } from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/measures";
+import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import {
