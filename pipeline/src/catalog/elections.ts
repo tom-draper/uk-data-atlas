@@ -9,7 +9,7 @@ import type {
 	Measure,
 	PopulationObservation,
 	CategoricalObservation,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	type PrecompiledFile,
 	sha256,
@@ -17,7 +17,7 @@ import {
 	number,
 	object,
 } from "./values.ts";
-import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import type { CatalogManifest } from "./manifest.ts";
 
 type ElectionMeasureField =

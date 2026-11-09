@@ -8,13 +8,13 @@ import { describe, expect, it } from "vitest";
 import {
 	readVersionedAtlasDataset,
 	readAtlasDatasetUrls,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { type StatisticsDataset } from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/catalogue/node";
+import { type StatisticsDataset } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
 	fuelPovertyStatistics,
 	rebuildFuelPoverty,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import {
 	writeSqliteIndex,
 	writeSqliteTables,

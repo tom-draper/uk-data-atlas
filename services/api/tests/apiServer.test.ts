@@ -12,7 +12,7 @@ import { gzipSync } from "node:zlib";
 import { connect, type AddressInfo } from "node:net";
 import { test, type TestContext } from "vitest";
 import { compileExportManifest } from "./pipelineFixtures";
-import { observationArtifactName } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationArtifactName } from "@uk-data-atlas/catalogue/node";
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {

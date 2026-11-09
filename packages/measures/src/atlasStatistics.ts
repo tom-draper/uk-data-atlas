@@ -1,4 +1,4 @@
-import type { DatabaseSync } from "node:sqlite";
+import type { DatabaseSync } from "@uk-data-atlas/atlas-db";
 import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
 import type {
 	AreaRelationship,

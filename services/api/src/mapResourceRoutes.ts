@@ -1,9 +1,9 @@
-import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { untiledFeatures } from "@uk-data-atlas/atlas-runtime/maps";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import { writeParquet } from "@uk-data-atlas/artifacts";
 import {
 	refused,

@@ -1,7 +1,4 @@
-import type {
-	DataCatalog,
-	Measure,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog, Measure } from "@uk-data-atlas/catalogue/node";
 
 /**
  * How a measure is found by the words people use for it. An id or a reviewed

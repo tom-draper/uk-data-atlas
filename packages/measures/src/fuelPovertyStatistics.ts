@@ -1,7 +1,7 @@
 import {
 	ATLAS_BOUNDARY_VINTAGES,
 	type AtlasBoundaryVintages,
-} from "@uk-data-atlas/catalogue";
+} from "@uk-data-atlas/geography";
 import type {
 	FuelPovertyDataset,
 	FuelPovertyLSOAData,

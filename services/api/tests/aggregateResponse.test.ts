@@ -2,10 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AggregationTarget } from "../src/aggregationTarget";
-import type {
-	Measure,
-	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import { buildAggregateResponse } from "../src/aggregateResponse";
 import { containmentCrosswalk } from "./geographyFixtures";
 

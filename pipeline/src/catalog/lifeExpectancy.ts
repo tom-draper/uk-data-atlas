@@ -3,7 +3,7 @@ import type { Measure } from "@uk-data-atlas/measures";
 import {
 	isPublishedAreaCode,
 	countriesFor,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { type PrecompiledFile, sha256, number, object } from "./values.ts";
 
 /**

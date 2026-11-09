@@ -559,7 +559,7 @@ test("production builders resolve without UI code and include declared workers a
 		"pipeline/src/build-measure-compatibility.ts",
 		"pipeline/src/statistics/measureCompatibility.ts",
 		"packages/measures/src/measureCompatibility.ts",
-		"packages/atlas-runtime/src/measures/observationTables.ts",
+		"packages/measures/src/observationTables.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {

@@ -1,16 +1,13 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import {
-	attributionFor,
-	attributionText,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { measureCoverage } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { attributionFor, attributionText } from "@uk-data-atlas/catalogue/node";
+import { measureCoverage } from "@uk-data-atlas/catalogue/node";
 import { areaMeasureSources } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/loader";
 import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { publicSeries } from "@uk-data-atlas/atlas-runtime/measures";
+import { publicSeries } from "@uk-data-atlas/measures";
 
 /**
  * A citation for one area, as `include=citation` expands it: the artifacts

@@ -4,8 +4,8 @@ import type {
 	PopulationObservation,
 } from "./dataCatalog.ts";
 
-import type { UnitDefinition } from "@uk-data-atlas/catalogue/unit-registry";
-export type { UnitDefinition } from "@uk-data-atlas/catalogue/unit-registry";
+import type { UnitDefinition } from "@uk-data-atlas/geography";
+export type { UnitDefinition } from "@uk-data-atlas/geography";
 
 const definition = (
 	code: string,

@@ -4,8 +4,8 @@ import type {
 	MeasureAggregation,
 	PopulationObservation,
 	SourceGeography,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
+import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldWithGaps } from "./localAuthorityFields.ts";
 import { onApril2023Authorities } from "./authorityChanges.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";

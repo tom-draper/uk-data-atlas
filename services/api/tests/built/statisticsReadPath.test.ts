@@ -6,12 +6,12 @@ import {
 	observationArtifactName,
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	tableMeasureObservations,
 	readStatisticsObservationText,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import {
 	atlasDatabasePath,
 	compiledObservationPath,

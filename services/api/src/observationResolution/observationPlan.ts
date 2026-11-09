@@ -2,12 +2,12 @@ import type {
 	DataCatalog,
 	Measure,
 	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import type {
 	CompatibilityCandidate,
 	CompatibilityStatus,
 	MeasureCompatibilityInventory,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import type { ProblemCode } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 

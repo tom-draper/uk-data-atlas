@@ -14,7 +14,6 @@
 	},
 	"dependencies": {
 		"@uk-data-atlas/artifacts": "workspace:*",
-		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/search-index": "workspace:*"
 	},

@@ -1,8 +1,5 @@
 import { problem } from "@uk-data-atlas/atlas-runtime/api";
-import type {
-	DimensionalMeasure,
-	Series,
-} from "@uk-data-atlas/atlas-runtime/measures";
+import type { DimensionalMeasure, Series } from "@uk-data-atlas/measures";
 
 /** Explain how to replace a retired public series id. */
 export const retiredMeasure = (

@@ -14,15 +14,22 @@
 		"./yearArrays": "./src/yearArrays.ts",
 		"./place-profile": "./src/placeProfile.ts",
 		"./surface-fingerprint": "./src/surfaceFingerprint.ts",
-		"./unit-registry": "./src/unitRegistry.ts"
+		"./unit-registry": "./src/unitRegistry.ts",
+		"./node": "./src/node/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"devDependencies": {
-		"typescript": "^7.0.2"
+		"typescript": "^7.0.2",
+		"@types/node": "^26.6.2"
 	},
 	"dependencies": {
-		"@noble/hashes": "^2.4.0"
+		"@noble/hashes": "^2.4.0",
+		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/measures": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*",
+		"@uk-data-atlas/relationships": "workspace:*",
+		"@uk-data-atlas/artifacts": "workspace:*"
 	}
 }

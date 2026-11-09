@@ -4,11 +4,8 @@ import {
 	type DeclaredField,
 	type DeclaredHeader,
 	periods,
-} from "@uk-data-atlas/atlas-runtime/measures";
-import {
-	memberCode,
-	STATISTICS_DATASETS,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
+import { memberCode, STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 
 /** The series and period a field of a compiled dataset holds, found from its declaration. */
 export type FieldSeries = {

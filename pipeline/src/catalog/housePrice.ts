@@ -4,10 +4,10 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { type PrecompiledFile, sha256, number, object } from "./values.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
-import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countriesFor } from "@uk-data-atlas/catalogue/node";
 
 /**
  * The last period published for a full calendar year. The workbook is a

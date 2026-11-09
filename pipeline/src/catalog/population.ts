@@ -4,9 +4,9 @@ import type {
 	Measure,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { type PrecompiledFile, sha256, number, object } from "./values.ts";
-import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countriesFor } from "@uk-data-atlas/catalogue/node";
 
 const recordsFromData = (
 	data: Record<string, unknown>,

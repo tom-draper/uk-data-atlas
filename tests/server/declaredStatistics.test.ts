@@ -5,13 +5,13 @@ import {
 	periods,
 	type DeclaredDataset,
 	type DeclaredField,
-} from "@uk-data-atlas/atlas-runtime/measures";
-import { declaredStatistics } from "@uk-data-atlas/atlas-runtime/measures";
-import { measure } from "@uk-data-atlas/atlas-runtime/measures";
-import { yearParts } from "@uk-data-atlas/atlas-runtime/measures";
-import { rebuildFromDeclaration } from "@uk-data-atlas/atlas-runtime/measures";
-import { rebuildDatasetPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { STATISTICS_DATASETS } from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
+import { declaredStatistics } from "@uk-data-atlas/measures";
+import { measure } from "@uk-data-atlas/measures";
+import { yearParts } from "@uk-data-atlas/measures";
+import { rebuildFromDeclaration } from "@uk-data-atlas/measures";
+import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
+import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 import {
 	writeSqliteTables,
 	type SqliteTable,

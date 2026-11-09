@@ -7,7 +7,7 @@ import {
 import {
 	readStatisticsObservationText,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";

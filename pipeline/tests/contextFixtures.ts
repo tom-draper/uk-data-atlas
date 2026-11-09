@@ -16,7 +16,7 @@ import type {
 	DataCatalog,
 	MeasureCompatibilityInventory,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";

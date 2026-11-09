@@ -8,7 +8,7 @@ import {
 	readSqliteAreaInventory as readAreaInventory,
 } from "@uk-data-atlas/areas";
 import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "@uk-data-atlas/places";
-import { readGeographyCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readGeographyCatalogue } from "@uk-data-atlas/catalogue/node";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { placeIndexTables } from "./storage/index.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";

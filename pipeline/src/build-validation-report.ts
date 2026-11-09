@@ -14,8 +14,8 @@ import {
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
 	type ExportManifest,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/catalogue/node";
+import { tableMeasureObservations } from "@uk-data-atlas/measures";
 import { compileValidationReport } from "./validation/compileValidationReport.ts";
 import {
 	readMeasureTotals,

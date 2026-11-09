@@ -9,7 +9,7 @@ import {
 import { measureCoverage } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
 import type { MeasureContext } from "./measureContext.ts";
-import type { MeasureDimensions } from "../measures/measureDimensionsLoader.ts";
+import type { MeasureDimensions } from "@uk-data-atlas/measures";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export type MeasureCapabilityContext = Omit<

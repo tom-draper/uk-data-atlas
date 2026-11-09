@@ -1,13 +1,10 @@
 import type { AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type { MeasureSource } from "@uk-data-atlas/measures";
-import {
-	countryForCode,
-	type BulkExport,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countryForCode, type BulkExport } from "@uk-data-atlas/catalogue/node";
 
 import { type Finding, sha256, listed, check } from "./findings.ts";
 import type { MeasureTotal, ValidationInputs } from "./inputs.ts";
-import { observationTableOf } from "@uk-data-atlas/atlas-runtime/measures";
+import { observationTableOf } from "@uk-data-atlas/measures";
 import {
 	sameGeography,
 	describeGeography,

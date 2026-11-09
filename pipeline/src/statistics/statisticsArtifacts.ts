@@ -10,7 +10,7 @@ import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 import {
 	rebuildStatisticsObservationText,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 
 export const statisticsArtifactReader = (
 	database: DatabaseSync,

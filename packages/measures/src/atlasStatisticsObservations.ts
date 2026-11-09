@@ -1,7 +1,7 @@
-import type { SQLOutputValue } from "node:sqlite";
+import type { SQLOutputValue } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { SourceGeography } from "@uk-data-atlas/measures";
+import type { SourceGeography } from "./index.ts";
 
 /**
  * Which statistics series an observation artifact is read from. The dataset,

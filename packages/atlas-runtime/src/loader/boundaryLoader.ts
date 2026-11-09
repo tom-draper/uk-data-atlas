@@ -5,7 +5,7 @@ import {
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeCounts,
 } from "@uk-data-atlas/postcodes";
-import { readGeographyCatalogue } from "../catalogue/geographyCatalogue.ts";
+import { readGeographyCatalogue } from "@uk-data-atlas/catalogue/node";
 import { readSqliteAreaInventory } from "@uk-data-atlas/areas";
 import { existsSync, readFileSync } from "node:fs";
 import type { AreaInventory } from "@uk-data-atlas/areas";
@@ -32,7 +32,7 @@ import { publicPath } from "@uk-data-atlas/atlas-db";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
-export { readBoundaryRegistry } from "../catalogue/boundaryCatalogue.ts";
+export { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
 
 export const readGeographyInventory = (
 	repositoryRoot: string,

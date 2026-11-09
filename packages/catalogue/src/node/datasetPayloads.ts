@@ -5,10 +5,10 @@ import { gunzipSync } from "node:zlib";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { unpackText } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
-import { rebuildFromDeclaration } from "../measures/declaredPayload.ts";
-import type { Json } from "../measures/declaredStatistics.ts";
-import { rebuildFuelPoverty } from "../measures/fuelPovertyStatistics.ts";
-import { STATISTICS_DATASETS } from "../measures/statisticsDatasets/index.ts";
+import { rebuildFromDeclaration } from "@uk-data-atlas/measures";
+import type { Json } from "@uk-data-atlas/measures";
+import { rebuildFuelPoverty } from "@uk-data-atlas/measures";
+import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),

@@ -8,10 +8,8 @@
 	"sideEffects": false,
 	"exports": {
 		"./api": "./src/api/index.ts",
-		"./catalogue": "./src/catalogue/index.ts",
 		"./loader": "./src/loader/index.ts",
-		"./maps": "./src/maps/index.ts",
-		"./measures": "./src/measures/index.ts"
+		"./maps": "./src/maps/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

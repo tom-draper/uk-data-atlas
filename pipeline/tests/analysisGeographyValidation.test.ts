@@ -11,14 +11,14 @@ import { DatabaseSync } from "node:sqlite";
 import { buildAnalysisGeographyValidation } from "../src/buildAnalysisGeographyValidation";
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { validateAnalysisGeographies } from "@uk-data-atlas/catalogue/node";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
+import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const analysisGeographies: AnalysisGeographyInventory = {

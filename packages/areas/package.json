@@ -23,7 +23,6 @@
 		"@uk-data-atlas/geometry": "workspace:*",
 		"@uk-data-atlas/map-tiles": "workspace:*",
 		"@uk-data-atlas/shapefile": "workspace:*",
-		"@uk-data-atlas/catalogue": "workspace:*",
 		"polygon-clipping": "0.15.7"
 	},
 	"devDependencies": {

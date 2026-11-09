@@ -11,7 +11,7 @@ import {
 	relationshipCandidateInventory,
 } from "./routeFixtures";
 import { correctionRecords } from "@uk-data-atlas/catalogue";
-import { correctionsReport } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { correctionsReport } from "@uk-data-atlas/catalogue/node";
 
 test("lists API-owned corrections without claiming source artifacts changed", () => {
 	const response = route("GET", "/v1/corrections", registry);

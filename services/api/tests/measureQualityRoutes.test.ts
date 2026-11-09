@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { measureQuality } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { measureQuality } from "@uk-data-atlas/catalogue/node";
 import {
 	dataCatalog,
 	measureCompatibilityInventory,

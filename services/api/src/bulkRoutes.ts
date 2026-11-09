@@ -6,7 +6,7 @@ import {
 	namedLocationMembersTable,
 	renderLookup,
 } from "@uk-data-atlas/areas";
-import { findMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { findMeasureObservations } from "@uk-data-atlas/catalogue/node";
 import {
 	envelope,
 	invalidQuery,
@@ -14,10 +14,7 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import {
-	observationTableOf,
-	observationTextOf,
-} from "@uk-data-atlas/atlas-runtime/measures";
+import { observationTableOf, observationTextOf } from "@uk-data-atlas/measures";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 

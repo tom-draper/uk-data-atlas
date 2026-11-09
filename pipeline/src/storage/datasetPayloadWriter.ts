@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
-import { rebuildDatasetPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
 import {
 	DATASET_PAYLOADS_VIEW,
 	removeDeprecatedObject,

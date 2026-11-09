@@ -6,10 +6,10 @@ import type {
 	Measure,
 	MeasureSource,
 	SourceGeography,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
+import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import { csvFields } from "@uk-data-atlas/artifacts";
-import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
 import { sha256 } from "./values.ts";
 

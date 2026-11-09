@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { publicJson } from "@uk-data-atlas/atlas-db";
-import type { EvidenceDocument } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { EvidenceDocument } from "@uk-data-atlas/catalogue/node";
 
 export const writeEvidenceDocument = (
 	directory: string,

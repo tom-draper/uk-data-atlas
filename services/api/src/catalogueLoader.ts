@@ -3,11 +3,11 @@ import {
 	assertMeasureDimensions,
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	withDeclaredMeasureIds,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { type CatalogueOptions } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	statisticsReadPathPath,
@@ -17,7 +17,7 @@ import {
 import { readFileSync } from "node:fs";
 import measureDimensionsConfig from "../config/measure-dimensions.json" with { type: "json" };
 
-export * from "@uk-data-atlas/atlas-runtime/catalogue";
+export * from "@uk-data-atlas/catalogue/node";
 
 /**
  * The reviewed measure dimension mapping is bundled with the server.

@@ -7,7 +7,7 @@ import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
 } from "@uk-data-atlas/measures";
-import type { ExportManifest } from "../catalogue/exportManifest.ts";
+import type { ExportManifest } from "@uk-data-atlas/catalogue/node";
 import type { GeographyInventory } from "../loader/geographyInventory.ts";
 import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { FullDetailSource } from "../loader/fullDetailDownloads.ts";
@@ -22,15 +22,15 @@ import type {
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import type { MapArchive } from "../maps/mapResource/archiveReader.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import type { MeasureDimensions } from "../measures/measureDimensionsLoader.ts";
+import type { MeasureDimensions } from "@uk-data-atlas/measures";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 import type { ApiResponse } from "./routeResponse.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
-import type { ValidationReport } from "../catalogue/validationReport.ts";
+import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
-import type { AnalysisGeographyValidationInventory } from "../catalogue/analysisGeographyValidation.ts";
+import type { AnalysisGeographyValidationInventory } from "@uk-data-atlas/catalogue/node";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import type {
 	AsyncTerrainProvider,

@@ -69,9 +69,13 @@ const problems = (packageRoot: string) => {
 						"places",
 						"postcodes",
 						"relationships",
+						"measures",
 						"shapefile",
 					].includes(manifest.name.replace("@uk-data-atlas/", "")) ||
-					(manifest.name === "@uk-data-atlas/search-index" &&
+					([
+						"@uk-data-atlas/search-index",
+						"@uk-data-atlas/catalogue",
+					].includes(manifest.name) &&
 						inside(join(packageRoot, "src/node"), file));
 				if (!nodeOnly)
 					found.push(
@@ -116,6 +120,30 @@ describe("shared packages", () => {
 		expect(typeof description).toBe("string");
 		expect(description.trim()).not.toBe("");
 		expect(description).not.toContain("\n");
+	});
+
+	it("keeps the catalogue main entry browser safe", () => {
+		const pending = [join(PACKAGES, "catalogue/src/index.ts")];
+		const seen = new Set<string>();
+		const invalid: string[] = [];
+		while (pending.length) {
+			const file = pending.pop()!;
+			if (seen.has(file)) continue;
+			seen.add(file);
+			for (const specifier of specifiers(readFileSync(file, "utf8"))) {
+				if (specifier.startsWith("."))
+					pending.push(resolve(dirname(file), specifier));
+				else if (
+					specifier.startsWith("node:") ||
+					builtins.has(specifier) ||
+					!["@uk-data-atlas/geography", "@noble/hashes"].includes(
+						packageName(specifier),
+					)
+				)
+					invalid.push(`${relative(ROOT, file)}: ${specifier}`);
+			}
+		}
+		expect(invalid).toEqual([]);
 	});
 
 	it("do not depend on each other in a cycle", () => {
@@ -245,9 +273,11 @@ describe("atlas domain boundaries", () => {
 	it("keeps domain modules and evidence loading independent of the API", () => {
 		const atlas = join(PACKAGES, "atlas-runtime/src");
 		const files = [
-			...["catalogue", "maps", "loader"].flatMap((directory) =>
+			...["maps", "loader"].flatMap((directory) =>
 				sourceFiles(join(atlas, directory)),
 			),
+			...sourceFiles(join(PACKAGES, "catalogue/src")),
+			...sourceFiles(join(PACKAGES, "measures/src")),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
 			...sourceFiles(join(PACKAGES, "areas/src")),
@@ -390,6 +420,8 @@ describe("pipeline boundaries", () => {
 		const files = [
 			...sourceFiles(join(PIPELINE, "src")),
 			...sourceFiles(join(PACKAGES, "atlas-runtime/src")),
+			...sourceFiles(join(PACKAGES, "catalogue/src")),
+			...sourceFiles(join(PACKAGES, "measures/src")),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
 			...sourceFiles(join(PACKAGES, "areas/src")),
@@ -398,7 +430,10 @@ describe("pipeline boundaries", () => {
 			...sourceFiles(join(PACKAGES, "postcodes/src")),
 		].filter(
 			(file) =>
-				relative(ROOT, file) !== "packages/atlas-db/src/dataLayout.ts",
+				![
+					"packages/atlas-db/src/dataLayout.ts",
+					"packages/measures/src/measureDimensions.ts",
+				].includes(relative(ROOT, file)),
 		);
 		expect(files.length).toBeGreaterThan(0);
 		const hardCoded = files.filter((file) =>

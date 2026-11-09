@@ -13,7 +13,7 @@ import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
 import { buildAtlasSqlite } from "@/pipeline/src/atlas/buildAtlasSqlite";
-import { readAtlasDatasetUrls } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasDatasetUrls } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 

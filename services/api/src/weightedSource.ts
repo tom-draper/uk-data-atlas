@@ -1,7 +1,4 @@
-import type {
-	DataCatalog,
-	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import {
 	numericObservationsFor,
 	type NumericObservationSuccess,

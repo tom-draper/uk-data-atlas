@@ -12,7 +12,7 @@ import { CONVERSION_METHODS } from "@uk-data-atlas/measures";
 import {
 	COMPATIBILITY_STATUSES,
 	readAtlasPayload,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { PROBLEM_CODES } from "@uk-data-atlas/atlas-runtime/api";
 import { route as domainRoute } from "../../src/routes";
 import { indexResponse } from "../../src/indexRoutes";

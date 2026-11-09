@@ -4,7 +4,7 @@ import { join } from "node:path";
 import {
 	type StatisticsDimension,
 	type StatisticsMeasure,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import {
 	STATISTICS_DATASETS,
 	readMeasureDimensionsMapping,
@@ -12,7 +12,7 @@ import {
 	type StatisticsDataset,
 	type StatisticsInput,
 	type StatisticsSeries,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import {
 	CENSUS_SMALL_AREA_DIRECTORY,
 	CENSUS_SMALL_AREA_GEOGRAPHIES,

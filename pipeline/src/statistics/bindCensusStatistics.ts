@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/catalogue/node";
 import type { MeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea.ts";
 import type { StatisticsSelection } from "./statisticsExport.ts";

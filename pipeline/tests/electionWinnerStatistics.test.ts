@@ -9,7 +9,7 @@ import {
 	seriesKey,
 	type AreaIndex,
 	type StatisticsDataset,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { electionWinnerStatistics } from "../src/statistics/electionWinnerStatistics";
 
 test("stores source winning party codes against the matching election area and period", () => {

@@ -3,7 +3,7 @@ import type {
 	DataCatalog,
 	MeasureObservationArtifact,
 	AnyMeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { sha256 } from "./values.ts";
 import {
 	type CatalogManifest,
@@ -33,7 +33,7 @@ import { compileAirQuality } from "./airQuality.ts";
 import { compileCensus } from "./census.ts";
 import { compileCensusSmallArea } from "./censusSmallArea.ts";
 import { withAliases } from "./measureAliases.ts";
-import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import type { MeasureSource } from "@uk-data-atlas/measures";
 import { compileJobs } from "./jobs.ts";
 import { compileEmissions } from "./emissions.ts";
