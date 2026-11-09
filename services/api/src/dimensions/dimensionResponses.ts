@@ -24,7 +24,7 @@ const rewriteLink = (
 	reading: DimensionReading,
 ) => {
 	const data = new RegExp(
-		`/v1/data/${series.catalogueMeasure.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[/?#"]|$)(/[A-Za-z:]+)?(\\?[^\\s"#]*)?`,
+		`/v1/data/(?:${[series.catalogueMeasure.id, reading.measure.id].map((id) => id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?=[/?#"]|$)(/[A-Za-z:]+)?(\\?[^\\s"#]*)?`,
 		"g",
 	);
 	const rewritten = text.replace(

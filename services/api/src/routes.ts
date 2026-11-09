@@ -88,8 +88,9 @@ const buildRequest = (
 				segments[1] === "data" &&
 				targetSegments[0] === "v1" &&
 				targetSegments[1] === "data" &&
-				decodePathSegment(targetSegments[2] ?? "") ===
-					series.catalogueMeasure.id
+				[series.catalogueMeasure.id, segments[2]].includes(
+					decodePathSegment(targetSegments[2] ?? ""),
+				)
 			) {
 				targetSegments[2] = encodeURIComponent(segments[2] as string);
 				target.pathname = `/${targetSegments.join("/")}`;
