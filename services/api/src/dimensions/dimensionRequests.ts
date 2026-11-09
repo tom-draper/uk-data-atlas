@@ -167,7 +167,7 @@ export const resolveDimensionRequest = (
 		for (const name of names) next.searchParams.delete(name);
 		const path = [...segments];
 		path[position.index] =
-			position.operation === "series" || position.operation === "value"
+			["series", "value", "compare"].includes(position.operation)
 				? measure.id
 				: series.catalogueMeasure.id;
 		next.pathname = `/${path
