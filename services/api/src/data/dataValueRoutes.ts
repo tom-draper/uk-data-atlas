@@ -253,6 +253,7 @@ const postcodeValue = (
 		context,
 		releaseId,
 		parsedUrl,
+		segments,
 		dispatch,
 	}: RouteRequestFor<
 		| "places"
@@ -322,7 +323,7 @@ const postcodeValue = (
 		return {
 			geography: other.source.sourceGeography.type,
 			boundaryYear: other.source.sourceGeography.boundaryYear,
-			ask: `/v1/data/${measure.id}/value?${query}`,
+			ask: `/v1/data/${encodeURIComponent(segments[2] as string)}/value?${query}`,
 		};
 	};
 	// The finest geography holds the most areas in the release it is placed in.
@@ -382,7 +383,7 @@ const postcodeValue = (
 	for (const candidate of candidates) {
 		attempt = attemptSource(
 			context,
-			measure,
+			{ ...measure, id: segments[2] as string },
 			candidate.source,
 			candidate.releases,
 			point,
