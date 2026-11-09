@@ -11,10 +11,12 @@ import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import {
 	atlasBaseDatabasePath,
 	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-runtime/storage";
+import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
-	readSqliteNamedLocationInventory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/relationships";
+import { readSqliteNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 
 /**

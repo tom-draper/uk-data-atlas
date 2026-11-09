@@ -1,4 +1,4 @@
-import { readSqliteNamedLocationInventory } from "../storage/atlasNamedLocationReader.ts";
+import { readSqliteNamedLocationInventory } from "./atlasNamedLocationReader.ts";
 import { readCachePayload, requireAtlasCache } from "../storage/atlasCache.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
