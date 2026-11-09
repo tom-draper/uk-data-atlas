@@ -1,4 +1,4 @@
-import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 import { countVertices } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { problem } from "@uk-data-atlas/atlas-runtime/api";
 

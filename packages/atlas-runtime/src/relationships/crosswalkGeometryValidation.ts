@@ -3,7 +3,7 @@ import { join } from "node:path";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "../geometry/areaGeometry.ts";
+} from "@uk-data-atlas/geometry";
 import {
 	containPoint,
 	ringsOf,
@@ -16,7 +16,7 @@ import type { CrosswalkArea } from "@uk-data-atlas/relationships";
 import {
 	geometrySubstitution,
 	reversedGridOffset,
-} from "../geometry/geometrySubstitution.ts";
+} from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 

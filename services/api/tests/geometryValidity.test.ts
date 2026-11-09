@@ -21,14 +21,14 @@ import {
 import {
 	compiledGeometryFile,
 	type GeometrySource,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import {
 	encodeGeometryStore,
 	readGeometryStore,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,

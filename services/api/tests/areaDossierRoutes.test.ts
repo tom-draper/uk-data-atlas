@@ -7,7 +7,7 @@ import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import { route as routeRequest } from "../src/routes";
 import {
 	compatibleWardAreaLookup,

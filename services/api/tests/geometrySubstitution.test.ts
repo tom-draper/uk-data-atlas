@@ -6,11 +6,8 @@ import { test } from "vitest";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "@uk-data-atlas/atlas-runtime/geometry";
-import {
-	offsetPosition,
-	readGridOffset,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
+import { offsetPosition, readGridOffset } from "@uk-data-atlas/geometry";
 import { toWgs84Geometry } from "@uk-data-atlas/geography/coordinates";
 
 const SUBSTITUTION = "northern-ireland-constituencies-2016";

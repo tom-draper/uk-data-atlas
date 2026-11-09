@@ -4,8 +4,8 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { AreaGeometryCache } from "@uk-data-atlas/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,

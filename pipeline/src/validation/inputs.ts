@@ -14,7 +14,7 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
-import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	VALIDATION_CHECKS,

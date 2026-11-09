@@ -51,7 +51,7 @@ import { readMapAssets, readMapResources } from "../maps/mapResourceLoader.ts";
 import {
 	createAreaGeometryCache,
 	readGeometrySources,
-} from "../geometry/geometryLoader.ts";
+} from "@uk-data-atlas/geometry";
 import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
 import { readRelationshipCandidateInventory } from "../catalogue/governanceLoader.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";

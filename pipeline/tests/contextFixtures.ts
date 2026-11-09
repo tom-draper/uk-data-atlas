@@ -1,4 +1,4 @@
-import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	createGeographyResolver,

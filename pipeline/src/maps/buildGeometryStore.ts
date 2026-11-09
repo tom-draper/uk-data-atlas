@@ -12,11 +12,11 @@ import { join } from "node:path";
 import {
 	AreaGeometryCache,
 	compiledGeometryFile,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
-import { geometrySubstitution } from "@uk-data-atlas/atlas-runtime/geometry";
-import { encodeGeometryStore } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
+import { geometrySubstitution } from "@uk-data-atlas/geometry";
+import { encodeGeometryStore } from "@uk-data-atlas/geometry";
 import {
 	compileGeometryValidity,
 	roundKeepingValidity,
@@ -45,13 +45,13 @@ import { recordOutputHash, sha256Hex } from "../storage/outputManifest.ts";
 const COMPILER_SOURCES = [
 	"pipeline/src/maps/buildGeometryStore.ts",
 	"pipeline/src/maps/compileGeometryValidity.ts",
-	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
-	"packages/atlas-runtime/src/geometry/geoJsonProperties.ts",
-	"packages/atlas-runtime/src/geometry/geometryStore.ts",
+	"packages/geometry/src/areaGeometry.ts",
+	"packages/geometry/src/geoJsonProperties.ts",
+	"packages/geometry/src/geometryStore.ts",
 	"packages/geography/src/geometryValidity.ts",
 	"packages/geography/src/geometrySpatialIndex.ts",
-	"packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
-	"packages/atlas-runtime/src/geometry/gridOffset.ts",
+	"packages/geometry/src/geometrySubstitution.ts",
+	"packages/geometry/src/gridOffset.ts",
 	"packages/geography/src/packedGeometry.ts",
 	"packages/geography/src/coordinates/reprojection.ts",
 	"packages/geography/src/geometryPointContainment.ts",

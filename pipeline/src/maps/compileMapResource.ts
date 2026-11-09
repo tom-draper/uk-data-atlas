@@ -1,5 +1,5 @@
 import { gzipSync } from "node:zlib";
-import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { buildGeoJson } from "@uk-data-atlas/atlas-runtime/maps";
 import { buildGeoParquet } from "@uk-data-atlas/atlas-runtime/maps";
 import {

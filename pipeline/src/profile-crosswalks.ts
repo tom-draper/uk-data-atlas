@@ -8,7 +8,7 @@ import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
 } from "./relationships/crosswalkCompiler.ts";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readCompiledAreaLookup } from "./relationships/crosswalkBuildInputs.ts";

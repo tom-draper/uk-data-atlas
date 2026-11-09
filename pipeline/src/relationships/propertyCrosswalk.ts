@@ -4,7 +4,7 @@ import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	type AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import {
 	validateGeometryContainment,
 	validateEndpoint,

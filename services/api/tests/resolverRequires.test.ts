@@ -1,7 +1,7 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import {
 	createGeographyResolver,
 	type GeographyRequirement,

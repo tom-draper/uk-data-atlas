@@ -1,4 +1,4 @@
-import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { BoundaryReleaseSummary } from "../maps/compileMapResource.ts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";

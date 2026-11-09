@@ -10,7 +10,6 @@
 		"./api": "./src/api/index.ts",
 		"./areas": "./src/areas/index.ts",
 		"./catalogue": "./src/catalogue/index.ts",
-		"./geometry": "./src/geometry/index.ts",
 		"./loader": "./src/loader/index.ts",
 		"./maps": "./src/maps/index.ts",
 		"./places": "./src/places/index.ts",

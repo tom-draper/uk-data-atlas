@@ -44,7 +44,8 @@
 		"topojson-simplify": "^3.0.3",
 		"tsx": "^4.23.15",
 		"yaml": "^2.9.1",
-		"@uk-data-atlas/atlas-db": "workspace:*"
+		"@uk-data-atlas/atlas-db": "workspace:*",
+		"@uk-data-atlas/geometry": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

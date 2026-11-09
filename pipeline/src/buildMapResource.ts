@@ -10,11 +10,11 @@ import {
 import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { compileFlatDownloads } from "./atlas/flatDownloads.ts";
 import { writeFileHashedSync } from "./storage/outputManifest.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { roundKeepingValidity } from "./maps/compileGeometryValidity.ts";
 import {
 	compileMapResource,
@@ -64,10 +64,10 @@ const COMPILER_SOURCES = [
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
 	"pipeline/src/maps/compileGeometryValidity.ts",
-	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
-	"packages/atlas-runtime/src/geometry/geoJsonProperties.ts",
-	"packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
-	"packages/atlas-runtime/src/geometry/gridOffset.ts",
+	"packages/geometry/src/areaGeometry.ts",
+	"packages/geometry/src/geoJsonProperties.ts",
+	"packages/geometry/src/geometrySubstitution.ts",
+	"packages/geometry/src/gridOffset.ts",
 	"packages/geography/src/packedGeometry.ts",
 	"packages/geography/src/coordinates/reprojection.ts",
 	"packages/geography/src/geometryPointContainment.ts",

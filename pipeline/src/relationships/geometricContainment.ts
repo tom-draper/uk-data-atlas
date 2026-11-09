@@ -1,7 +1,7 @@
 import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { MultiPolygon } from "polygon-clipping";
-import type { GeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
@@ -19,7 +19,7 @@ import {
 import {
 	BoundedClipper,
 	BOUNDED_CLIPPING_VERSION,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,

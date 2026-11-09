@@ -6,7 +6,7 @@ import {
 	readSync,
 } from "node:fs";
 import { join } from "node:path";
-import { readGeoJsonProperties } from "@uk-data-atlas/atlas-runtime/geometry";
+import { readGeoJsonProperties } from "@uk-data-atlas/geometry";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
 import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
 import { sha256 } from "@uk-data-atlas/artifacts";

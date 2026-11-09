@@ -14,7 +14,7 @@ import type { FullDetailSource } from "../loader/fullDetailDownloads.ts";
 import type { GeographyResolver } from "../loader/geographyResolver.ts";
 import type { PostcodeResolver } from "../areas/resolver/postcodes.ts";
 import type { AreaValidation } from "../areas/resolver/areaValidation.ts";
-import type { AreaGeometryCache } from "../geometry/areaGeometry.ts";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type {
 	LocationProjectionInventory,
 	LocationProjections,

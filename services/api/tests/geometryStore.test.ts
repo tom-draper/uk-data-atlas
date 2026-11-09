@@ -10,12 +10,12 @@ import {
 	type GeoJsonGeometry,
 	type GeometrySource,
 	type GeometrySourceLookup,
-} from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
 import {
 	encodeGeometryStore,
 	readGeometryStore,
-} from "@uk-data-atlas/atlas-runtime/geometry";
-import { createAreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
+import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import {
 	packGeometry,
 	unpackGeometry,

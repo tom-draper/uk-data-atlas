@@ -7,8 +7,8 @@ import {
 import {
 	createAreaGeometryCache,
 	readGeometrySourceLookup,
-} from "@uk-data-atlas/atlas-runtime/geometry";
-import type { GeoJsonGeometry } from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 import {
 	containPoint,
 	geometryBounds,

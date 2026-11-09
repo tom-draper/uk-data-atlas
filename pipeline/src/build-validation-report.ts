@@ -11,7 +11,7 @@ import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationsh
 import type { DataCatalog } from "@uk-data-atlas/measures";
 
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
-import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geometry";
+import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	isMeasureTable,

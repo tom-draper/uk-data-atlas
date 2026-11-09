@@ -7,7 +7,7 @@ import type {
 
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeographyInventory } from "../areas/geographyInventory.ts";
-import type { AreaGeometryCache } from "../geometry/areaGeometry.ts";
+import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { LocationProjections } from "../places/locationProjections.ts";

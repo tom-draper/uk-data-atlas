@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import {
 	AreaGeometryCache,
 	type GeoJsonGeometry,
-} from "@uk-data-atlas/atlas-runtime/geometry";
-import { readGeometrySourceLookup } from "@uk-data-atlas/atlas-runtime/geometry";
+} from "@uk-data-atlas/geometry";
+import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import {
 	GEOMETRY_TIERS,
 	simplifyGeometry,
