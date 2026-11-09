@@ -47,7 +47,7 @@ import {
 	readMeasureCompatibility,
 	readValidationReport,
 } from "./catalogueManifestLoader.ts";
-import { readMapAssets, readMapResources } from "../maps/mapResourceLoader.ts";
+import { readMapAssets, readMapResources } from "@uk-data-atlas/map-tiles/node";
 import {
 	createAreaGeometryCache,
 	readGeometrySources,

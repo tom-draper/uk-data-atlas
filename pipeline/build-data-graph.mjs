@@ -984,7 +984,7 @@ const apiStages = [
 			outputs: ["data/build/map-resources"],
 			rawInputs: geometryStoreInputs,
 			codeInputs: [
-				"packages/atlas-runtime/src/maps/mapResource",
+				"packages/map-tiles/src/node/mapResource",
 				"pipeline/src/maps/compileGeometryValidity.ts",
 			],
 		},

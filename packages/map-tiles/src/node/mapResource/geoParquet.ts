@@ -1,9 +1,9 @@
 import type { Coordinate } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
 import type { PackedGeometry } from "@uk-data-atlas/geography/packed-geometry";
 import { writeParquet, type ParquetTable } from "@uk-data-atlas/artifacts";
-import type { TileBox } from "@uk-data-atlas/map-tiles/tileGrid";
-import { boundsOf } from "@uk-data-atlas/map-tiles/tileset";
+import type { TileBox } from "../../tileGrid.ts";
+import { boundsOf } from "../../tileset.ts";
 
 /**
  * One tier of a map resource as GeoParquet 1.1: a row per area with the same

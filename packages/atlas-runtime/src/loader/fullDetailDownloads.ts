@@ -2,7 +2,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	buildSimplifiedDownload,
 	type SimplifiedDownload,
-} from "../maps/mapResource/simplifiedDownload.ts";
+} from "@uk-data-atlas/map-tiles/node";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { GeographyResolver } from "./geographyResolver.ts";
 import {
@@ -10,7 +10,7 @@ import {
 	buildFullDetailParquetAsync,
 	type FullDetailDownload,
 	type FullDetailRelease,
-} from "../maps/mapResource/fullDetail.ts";
+} from "@uk-data-atlas/map-tiles/node";
 
 /** Bytes of built downloads kept for the next request. */
 export const DEFAULT_FULL_DETAIL_CACHE_BYTES = 64 * 1024 * 1024;

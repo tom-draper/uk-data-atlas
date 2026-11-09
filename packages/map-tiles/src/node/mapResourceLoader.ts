@@ -2,10 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MapArchive } from "./mapResource/archiveReader.ts";
 import { openArchive } from "./mapResource/archiveReader.ts";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
+import type { MapResourceDescriptor } from "../mapResources.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 
-import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
+import type { MapResources } from "../mapResources.ts";
 import { artifactDirectory, buildDirectory } from "@uk-data-atlas/atlas-db";
 
 /** Every whole-release download the build wrote, tiled or not. */
