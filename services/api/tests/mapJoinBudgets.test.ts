@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { PopulationObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { PopulationObservation } from "@uk-data-atlas/catalogue/node";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
 import {

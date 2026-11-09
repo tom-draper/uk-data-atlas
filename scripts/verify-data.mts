@@ -8,7 +8,7 @@ import {
 	comparableCompiled,
 	generatedFromRows,
 	readAtlasPayload,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { ATLAS_LOOKUP_NAMES } from "./atlas-lookups";
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";

@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { once } from "node:events";
 import { createApiServer } from "../src/apiServer";
-import { type MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
+import { type MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
+import { tableMeasureObservations } from "@uk-data-atlas/measures";
 import { dataCatalog, testContext } from "../tests/routeFixtures";
 
 // From services/api: node --expose-gc --import tsx scripts/benchmark-observation-tables.ts

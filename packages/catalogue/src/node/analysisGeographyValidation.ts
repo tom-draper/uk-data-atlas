@@ -14,7 +14,7 @@ import {
 	isMeasureTable,
 	tableMeasureObservations,
 	type MeasureTableArtifact,
-} from "../measures/observationTables.ts";
+} from "@uk-data-atlas/measures";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type {
 	AnalysisGeographyInventory,

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { MeasureObservationArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { MeasureObservationArtifact } from "@uk-data-atlas/catalogue/node";
 import Fastify from "fastify";
 import { similarAreasFastifyRoutes } from "../src/areas/similarAreasFastifyRoutes";
 import {

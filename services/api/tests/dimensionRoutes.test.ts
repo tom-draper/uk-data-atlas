@@ -7,8 +7,8 @@ import type {
 	DataCatalog,
 	Measure,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { MeasureDimensions } from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/catalogue/node";
+import type { MeasureDimensions } from "@uk-data-atlas/measures";
 import { route } from "../src/routes";
 import {
 	areaLookup,

@@ -8,7 +8,7 @@ import {
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
-} from "@uk-data-atlas/measures";
+} from "./index.ts";
 import {
 	lazySourceObservations,
 	ObservationCache,

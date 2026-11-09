@@ -3,7 +3,7 @@ import {
 	reconcileMeasure,
 	type Measure,
 	type ReconciliationRouteRequest,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	coveragePlan,
 	type MeasureContext,

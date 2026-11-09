@@ -12,8 +12,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import { STATUSES } from "@uk-data-atlas/atlas-runtime/measures";
-import { type StatisticsDataset } from "@uk-data-atlas/atlas-runtime/measures";
+import { STATUSES } from "@uk-data-atlas/measures";
+import { type StatisticsDataset } from "@uk-data-atlas/measures";
 import {
 	keysOf,
 	findIdMismatches,

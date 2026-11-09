@@ -12,7 +12,7 @@ import { compilePlaceIndex } from "@uk-data-atlas/places";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../src/routes";

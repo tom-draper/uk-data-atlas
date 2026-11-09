@@ -22,7 +22,11 @@
 		"./postcode-index-types": "./src/postcodeIndexTypes.ts",
 		"./postcode-count-types": "./src/postcodeCountTypes.ts",
 		"./postcode-defaults": "./src/postcodeDefaults.ts",
-		"./coordinates": "./src/coordinates/index.ts"
+		"./coordinates": "./src/coordinates/index.ts",
+		"./atlasBoundaryVintages": "./src/atlasBoundaryVintages.ts",
+		"./boundaryRegistry": "./src/boundaryRegistry.ts",
+		"./boundaryReleaseOrder": "./src/boundaryReleaseOrder.ts",
+		"./boundaryReleaseDeprecations": "./src/boundaryReleaseDeprecations.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

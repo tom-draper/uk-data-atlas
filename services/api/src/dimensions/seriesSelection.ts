@@ -5,7 +5,7 @@ import {
 	type RouteDispatchContext,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { measureSlug } from "@uk-data-atlas/catalogue";
-import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	ALL,
 	filterProblem,
@@ -13,13 +13,13 @@ import {
 	preferDefaultBreakdown,
 	sameShape,
 	seriesDatasets,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { canonicalMeasureId } from "../catalogue/measureTerms";
 import type {
 	DimensionCatalogue,
 	DimensionalMeasure,
 	Series,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { retiredMeasure } from "./retiredMeasure";
 
 /**

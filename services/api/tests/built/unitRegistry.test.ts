@@ -7,8 +7,8 @@ import {
 	normaliseObservation,
 	unitDefinitionFor,
 	withUnitDefinitions,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
+import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 

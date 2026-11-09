@@ -1,4 +1,4 @@
-import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
+import type { BoundaryRegistry } from "../index.ts";
 import { readGeographyCatalogue } from "./geographyCatalogue.ts";
 
 export const readBoundaryRegistry = (

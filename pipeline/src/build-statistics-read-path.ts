@@ -23,7 +23,7 @@ import {
 	type StatisticsReadPath,
 	type StatisticsSelector,
 	type StatisticsTableSelector,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import {
 	artifactDirectory,
 	statisticsReadPathPath,

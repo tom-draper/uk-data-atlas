@@ -1,9 +1,6 @@
-import type {
-	DataCatalog,
-	Measure,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog, Measure } from "@uk-data-atlas/catalogue/node";
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { EvidenceDocument } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { EvidenceDocument } from "@uk-data-atlas/catalogue/node";
 
 type EvidenceMeasureDependencies<Context> = {
 	measureQuality: (context: Context, measureId: string) => unknown;

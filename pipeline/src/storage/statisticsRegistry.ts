@@ -5,12 +5,12 @@ import {
 	type StatisticsMeasure,
 	type StatisticsDimension,
 	type StatisticsPeriod,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import {
 	seriesKey,
 	type StatisticsSeries,
 	type StatisticsDataset,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 
 const same = (a: unknown, b: unknown) =>
 	JSON.stringify(a) === JSON.stringify(b);

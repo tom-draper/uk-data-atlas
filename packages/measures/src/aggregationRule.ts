@@ -1,4 +1,4 @@
-import type { Measure, MeasureAggregation } from "@uk-data-atlas/measures";
+import type { Measure, MeasureAggregation } from "./index.ts";
 
 /** How a non-aggregatable statistic reads in a sentence. */
 export const statisticPhrase = (statistic: string) =>

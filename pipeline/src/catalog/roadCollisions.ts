@@ -1,5 +1,5 @@
 import { type DatasetInput, readDatasetInput } from "./input.ts";
-import { countryForCode } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { countryForCode } from "@uk-data-atlas/catalogue/node";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";

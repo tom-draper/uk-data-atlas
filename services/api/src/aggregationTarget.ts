@@ -3,7 +3,7 @@ import type { MeasureSource } from "@uk-data-atlas/measures";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	membershipClaimFor,
 	membershipThroughSteps,

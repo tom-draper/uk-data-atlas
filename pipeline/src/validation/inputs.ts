@@ -8,7 +8,7 @@ import type {
 	DataCatalog,
 	MeasureSource,
 	PopulationObservation,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
 import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
@@ -17,7 +17,7 @@ import {
 	VALIDATION_CHECKS,
 	type ValidationCheckId,
 	type ExportManifest,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { sha256 } from "./findings.ts";
 
 export type ValidationWaiver = {

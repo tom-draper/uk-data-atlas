@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type {
-	DataCatalog,
-	Measure,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { DataCatalog, Measure } from "@uk-data-atlas/catalogue/node";
 import { resolveAggregationMeasure } from "../src/aggregationMeasure";
 
 const measure = (aggregation: Measure["aggregation"]) =>

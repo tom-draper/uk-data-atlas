@@ -3,7 +3,7 @@ import { test } from "vitest";
 import type {
 	AnyMeasureObservationArtifact,
 	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { readAggregateObservations } from "../src/aggregateObservations";
 
 const source = {

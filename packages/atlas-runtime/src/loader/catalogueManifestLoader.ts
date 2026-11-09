@@ -1,14 +1,14 @@
-import { readAtlasPayload } from "../catalogue/atlasPayloads.ts";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { readFileSync } from "node:fs";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
-import type { AnalysisGeographyValidationInventory } from "../catalogue/analysisGeographyValidation.ts";
+import type { AnalysisGeographyValidationInventory } from "@uk-data-atlas/catalogue/node";
 import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
-import type { ExportManifest } from "../catalogue/exportManifest.ts";
+import type { ExportManifest } from "@uk-data-atlas/catalogue/node";
 import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import type { ValidationReport } from "../catalogue/validationReport.ts";
+import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
 import { withUnitDefinitions } from "@uk-data-atlas/measures";
 import { publicPath, readPublicManifest } from "@uk-data-atlas/atlas-db";
 

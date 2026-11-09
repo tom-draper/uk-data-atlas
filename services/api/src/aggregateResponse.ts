@@ -1,10 +1,7 @@
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type {
-	Measure,
-	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import type { LocationCoverage } from "./locationAggregation";
 import type { NamedLocation } from "@uk-data-atlas/places";
 import type { ObservationArtifactReference } from "@uk-data-atlas/atlas-runtime/loader";

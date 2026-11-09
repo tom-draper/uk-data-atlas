@@ -5,7 +5,7 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { compileMeasureCompatibility } from "../src/statistics/measureCompatibility";
 
 const dataCatalog: DataCatalog = {

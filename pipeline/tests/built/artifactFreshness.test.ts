@@ -1,7 +1,7 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { requireAtlasCache, readCachePayload } from "@uk-data-atlas/atlas-db";
-import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
+import { readMeasureObservations } from "@uk-data-atlas/measures";
 import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/loader";
 import { DatabaseSync } from "node:sqlite";
 
@@ -11,7 +11,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
-import { observationPartitionKey } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { observationPartitionKey } from "@uk-data-atlas/catalogue/node";
 import { openapiDocumentHash } from "@uk-data-atlas/atlas-runtime/api";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {

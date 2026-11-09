@@ -10,7 +10,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { readMeasureDimensionsMapping } from "@uk-data-atlas/atlas-runtime/measures";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 

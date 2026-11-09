@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { measureCoverage } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { measureCoverage } from "@uk-data-atlas/catalogue/node";
 import { dataCatalog, measureCompatibilityInventory } from "./routeFixtures";
 
 test("publishes source and boundary code coverage without claiming equal geometry", () => {

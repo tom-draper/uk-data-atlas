@@ -16,3 +16,5 @@ export * from "./storedGeometry.ts";
 export * from "./storedPayload.ts";
 
 export type { SQLInputValue, SQLOutputValue } from "node:sqlite";
+
+export type { DatabaseSync } from "node:sqlite";

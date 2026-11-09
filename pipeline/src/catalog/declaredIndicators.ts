@@ -6,8 +6,8 @@ import type {
 	Measure,
 	MeasureAggregation,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import { countriesFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
+import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { type DatasetInput } from "./input.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";

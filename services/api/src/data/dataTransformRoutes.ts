@@ -1,6 +1,6 @@
 import { compareObservations } from "../comparison";
-import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
+import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import {
 	refused,
 	resolveObservations,

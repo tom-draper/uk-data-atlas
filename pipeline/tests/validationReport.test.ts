@@ -13,7 +13,7 @@ import type {
 import type {
 	Measure,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import type { RelationshipCandidate } from "@uk-data-atlas/relationships";
 import { compileValidationReport } from "../src/validation/compileValidationReport";
 import {

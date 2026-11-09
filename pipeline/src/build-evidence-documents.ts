@@ -5,7 +5,7 @@ import {
 	measureCompatibilityReport,
 	measureCoverage,
 	measureQuality,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import {
 	measureCapability,
 	relationshipRepairsReport,
@@ -25,7 +25,7 @@ import {
 	writeEvidenceDocument,
 	cachedEvidenceMeasure,
 } from "./evidence/evidenceDocumentStore.ts";
-import { availableReconciliations } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { availableReconciliations } from "@uk-data-atlas/catalogue/node";
 import {
 	artifactDirectory,
 	buildLog,

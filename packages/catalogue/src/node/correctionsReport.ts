@@ -1,4 +1,4 @@
-import { correctionsForMeasure } from "@uk-data-atlas/catalogue";
+import { correctionsForMeasure } from "../index.ts";
 
 export const correctionsReport = (measureId: string | null) => ({
 	records: correctionsForMeasure(measureId),

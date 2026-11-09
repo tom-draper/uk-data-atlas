@@ -3,9 +3,9 @@ import type {
 	SourceGeography,
 	PopulationObservation,
 	MeasureObservationArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { type PrecompiledFile, object } from "./values.ts";
-import { isPublishedAreaCode } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { isPublishedAreaCode } from "@uk-data-atlas/catalogue/node";
 
 /**
  * Read compiled emissions as one observation per authority per year.

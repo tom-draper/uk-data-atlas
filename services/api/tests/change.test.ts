@@ -11,7 +11,7 @@ import {
 import type {
 	Measure,
 	PopulationObservation,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 
 const measure = (valueKind: Measure["valueKind"]): Measure =>
 	({ id: "test", valueKind, unit: "people" }) as unknown as Measure;

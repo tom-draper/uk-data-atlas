@@ -5,7 +5,7 @@ import {
 	publishedSourcePartitionOf,
 	publishedSourcePartitionsFor,
 	type MeasureCompatibilityInventory,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
 import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import {
 	envelope,

@@ -1,4 +1,4 @@
-import { DEFAULT_OBSERVATION_CACHE_BYTES } from "@uk-data-atlas/atlas-runtime/measures";
+import { DEFAULT_OBSERVATION_CACHE_BYTES } from "@uk-data-atlas/measures";
 import { DEFAULT_CROSSWALK_CACHE_BYTES } from "@uk-data-atlas/relationships";
 import type { RateLimitPolicy } from "./rateLimit";
 

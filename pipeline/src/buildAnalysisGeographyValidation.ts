@@ -2,14 +2,14 @@ import { observationArtifactName } from "@uk-data-atlas/measures";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { validateAnalysisGeographies } from "@uk-data-atlas/catalogue/node";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/catalogue/node";
+import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import { createCrosswalkArtifacts } from "./storage/crosswalkArtifacts.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";

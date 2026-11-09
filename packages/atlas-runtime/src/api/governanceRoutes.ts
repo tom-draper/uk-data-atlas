@@ -1,6 +1,6 @@
 import { requireGeography } from "./routeResponse.ts";
-import { attributionFor, attributionText } from "../catalogue/attribution.ts";
-import { correctionsReport } from "../catalogue/correctionsReport.ts";
+import { attributionFor, attributionText } from "@uk-data-atlas/catalogue/node";
+import { correctionsReport } from "@uk-data-atlas/catalogue/node";
 import {
 	envelope,
 	invalidQuery,

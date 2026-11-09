@@ -1,7 +1,4 @@
-import type {
-	Measure,
-	MeasureSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { PlaceCandidate } from "@uk-data-atlas/places";
 import { describeCandidate } from "./placeResponses";
@@ -12,7 +9,7 @@ export {
 	defaultSource,
 	publishedPartitions,
 	type DefaultedSource,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 
 /**
  * The periods a change runs between when one or both are left out. The end

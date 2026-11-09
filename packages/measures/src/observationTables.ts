@@ -9,23 +9,16 @@ import {
 	databaseGeneration,
 	openReadOnlyDatabase,
 } from "@uk-data-atlas/atlas-db";
-import { observationArtifactName } from "@uk-data-atlas/measures";
+import { observationArtifactName } from "./index.ts";
 import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 	MeasureObservationArtifact,
 	PopulationObservation,
 	SourceGeography,
-} from "@uk-data-atlas/measures";
+} from "./index.ts";
 
-import {
-	isMeasureTable,
-	type MeasureTableArtifact,
-} from "@uk-data-atlas/measures";
-export {
-	isMeasureTable,
-	type MeasureTableArtifact,
-} from "@uk-data-atlas/measures";
+import { isMeasureTable, type MeasureTableArtifact } from "./measureTable.ts";
 
 /** The table each measure's view was taken from. */
 const tableOfView = new WeakMap<object, MeasureTableArtifact>();
@@ -38,8 +31,7 @@ const textOfView = new WeakMap<object, () => string>();
 export const observationTextOf = (artifact: object): string | undefined =>
 	textOfView.get(artifact)?.();
 
-import { registerPeriodRecordLookup } from "@uk-data-atlas/measures";
-export { periodRecordLookup } from "@uk-data-atlas/measures";
+import { registerPeriodRecordLookup } from "./index.ts";
 
 /** Each table's rows by area code, built the first time any measure asks. */
 const rowsByCode = new WeakMap<

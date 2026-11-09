@@ -1,6 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
-import type { Measure } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Measure } from "@uk-data-atlas/catalogue/node";
 import { CENSUS_BREAKDOWNS } from "../catalog/census.ts";
 import {
 	declaredFieldSeries,

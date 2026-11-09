@@ -1,13 +1,13 @@
-import { type StatisticsInput } from "@uk-data-atlas/atlas-runtime/measures";
+import { type StatisticsInput } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
-import { declaredStatistics } from "@uk-data-atlas/atlas-runtime/measures";
-import { fuelPovertyStatistics } from "@uk-data-atlas/atlas-runtime/measures";
+import { declaredStatistics } from "@uk-data-atlas/measures";
+import { fuelPovertyStatistics } from "@uk-data-atlas/measures";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
-} from "@uk-data-atlas/atlas-runtime/measures";
+} from "@uk-data-atlas/measures";
 import { publishAtlasCacheSteps } from "../storage/index.ts";
-import { servedFromRows } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { servedFromRows } from "@uk-data-atlas/catalogue/node";
 import {
 	CACHE_STAGES,
 	datasetPayloadStep,

@@ -105,7 +105,7 @@ export type Measure = {
 	 * label. Present on every measure served by the API; source artifacts retain
 	 * their original values and labels.
 	 */
-	unitDefinition?: import("@uk-data-atlas/catalogue/unit-registry").UnitDefinition;
+	unitDefinition?: import("@uk-data-atlas/geography").UnitDefinition;
 	aggregation: MeasureAggregation;
 	sources: MeasureSource[];
 	availability: {
