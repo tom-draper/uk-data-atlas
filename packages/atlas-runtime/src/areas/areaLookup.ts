@@ -3,10 +3,7 @@ import {
 	type AreaInventory,
 	type AreaLookup,
 } from "@uk-data-atlas/areas";
-import {
-	readSqliteAreaInventory,
-	readSqliteAreas,
-} from "../storage/atlasAreaReader.ts";
+import { readSqliteAreaInventory, readSqliteAreas } from "./atlasAreaReader.ts";
 
 /**
  * Area records kept parsed at once, about 125 bytes each. Every release

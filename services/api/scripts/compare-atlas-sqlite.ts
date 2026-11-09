@@ -12,7 +12,7 @@ import {
 import {
 	readSqliteAreas,
 	readSqliteAreaInventory,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/areas";
 
 const hash = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -107,9 +107,7 @@ export const compareAtlasSqlite = (
 			.all();
 		assert.ok(releases.length > 0, "No area releases compared");
 		assert.deepEqual(
-			after
-				.prepare("SELECT * FROM area_releases ORDER BY id")
-				.all(),
+			after.prepare("SELECT * FROM area_releases ORDER BY id").all(),
 			releases,
 		);
 		for (const table of [

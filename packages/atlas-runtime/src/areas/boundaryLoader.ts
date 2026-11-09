@@ -6,7 +6,7 @@ import {
 	readSqlitePostcodeCounts,
 } from "../storage/atlasPostcodeDerived.ts";
 import { readGeographyCatalogue } from "../catalogue/geographyCatalogue.ts";
-import { readSqliteAreaInventory } from "../storage/atlasAreaReader.ts";
+import { readSqliteAreaInventory } from "./atlasAreaReader.ts";
 import { existsSync, readFileSync } from "node:fs";
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { GeographyInventory } from "./geographyInventory.ts";

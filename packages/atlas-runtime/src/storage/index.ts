@@ -1,4 +1,3 @@
-export * from "./atlasAreaReader.ts";
 export * from "./atlasAssets.ts";
 export * from "./atlasCache.ts";
 export * from "./atlasCrosswalks.ts";

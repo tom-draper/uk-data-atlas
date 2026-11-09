@@ -11,11 +11,11 @@ import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import {
 	atlasBaseDatabasePath,
 	openReadOnlyDatabase,
-	readSqliteAreaInventory,
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
 	readSqliteNamedLocationInventory,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
 
 /**
  * What stages after `atlas-sqlite` read instead of the compiled JSON in

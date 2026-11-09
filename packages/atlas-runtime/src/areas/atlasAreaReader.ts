@@ -1,6 +1,6 @@
 import type { AreaInventory, AreaRecord } from "@uk-data-atlas/areas";
-import { atlasDatabasePath } from "./dataLayout.ts";
-import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
+import { atlasDatabasePath } from "../storage/dataLayout.ts";
+import { openReadOnlyDatabase } from "../storage/readOnlyDatabase.ts";
 
 export const readSqliteAreaInventory = (
 	repositoryRoot: string,
