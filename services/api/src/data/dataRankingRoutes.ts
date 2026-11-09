@@ -24,6 +24,7 @@ export const handleDataRankingRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 }: RouteRequestFor<never>): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
@@ -40,10 +41,11 @@ export const handleDataRankingRoutes = ({
 			"Build the data catalogue before retrieving source-exact rankings.",
 		);
 	}
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,

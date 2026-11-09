@@ -46,6 +46,7 @@ export const handleDataRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 }: RouteRequestFor<"area" | "places" | "missingRequirement">):
 	ApiResponse | undefined => {
 	if (segments.length !== 3 || segments[0] !== "v1" || segments[1] !== "data")
@@ -59,10 +60,11 @@ export const handleDataRoutes = ({
 			"Build the data catalogue before retrieving observations.",
 		);
 	}
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,

@@ -41,6 +41,7 @@ export const handleDataConversionRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 }: RouteRequestFor<
 	"crosswalk" | "indexedPathSteps" | "relationshipPath" | "missingRequirement"
 >): ApiResponse | undefined => {
@@ -61,10 +62,11 @@ export const handleDataConversionRoutes = ({
 		);
 	}
 	if (unavailable) return unavailable;
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure)
 		return problem(
 			404,

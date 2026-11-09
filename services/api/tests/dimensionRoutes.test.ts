@@ -11,6 +11,8 @@ import type {
 import type { MeasureDimensions } from "@uk-data-atlas/measures";
 import { route } from "../src/routes";
 import { handleMeasureExport } from "../src/bulkRoutes";
+import { handleDataRoutes } from "../src/data/dataRoutes";
+import { handleDataSeriesRoutes } from "../src/data/dataSeriesRoutes";
 import { dimensionCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	areaLookup,
@@ -264,6 +266,50 @@ test("exports the resolved series using the public measure path", () => {
 	assert.equal(
 		response.representation?.contentType,
 		"application/vnd.apache.parquet",
+	);
+});
+
+test("data handlers use the selected series with a public measure path", () => {
+	const series = dimensionCatalogue(catalog, measureDimensions)
+		.measure("recorded-crimes")!
+		.series.find((entry) => entry.dimensions.offence === "burglary")!;
+	const base = {
+		context,
+		releaseId: "release",
+		series,
+		dispatch: () => {
+			throw new Error("Unexpected dispatch");
+		},
+	};
+	const table = handleDataRoutes({
+		...base,
+		parsedUrl: new URL("http://localhost/v1/data/recorded-crimes"),
+		segments: ["v1", "data", "recorded-crimes"],
+	});
+	assert.equal(table?.status, 200);
+	assert.equal(
+		(table!.body as { data: { records: Array<{ value: number }> } }).data
+			.records[0]?.value,
+		5,
+	);
+	const temporal = handleDataSeriesRoutes({
+		...base,
+		parsedUrl: new URL(
+			"http://localhost/v1/data/recorded-crimes/series?place=ward/E05000001",
+		),
+		segments: ["v1", "data", "recorded-crimes", "series"],
+	});
+	assert.equal(temporal?.status, 200);
+});
+
+test("routes a dimensional time series to the selected members", () => {
+	const response = get(
+		"/v1/data/recorded-crimes/series?place=ward/E05000001&offence=burglary",
+	);
+	assert.equal(response.status, 200);
+	assert.equal(
+		(data(response).series as Array<{ value: number }>)[0]?.value,
+		5,
 	);
 });
 
