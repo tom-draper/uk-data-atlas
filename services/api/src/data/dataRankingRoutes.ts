@@ -125,6 +125,7 @@ export const handleDataRankingRoutes = ({
 	const page = paginate(parsedUrl, rankingOf(numericRecords, order), {
 		keyOf: (record) => record.areaCode,
 		subject: `${measureId} ranking`,
+		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
 	return {

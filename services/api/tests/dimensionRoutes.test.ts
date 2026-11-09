@@ -336,6 +336,25 @@ test("routes comparisons by public measure and selected members", () => {
 	assert.equal(comparison.comparison.value, 7);
 });
 
+test("pages dimensional rankings without mixing series", () => {
+	const base = "/v1/data/recorded-crimes/rankings?offence=burglary&limit=1";
+	const resolved = resolveDimensionRequest(base, context);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	assert.match(resolved.url, /^\/v1\/data\/recorded-crimes\/rankings\?/);
+	const first = get(base);
+	assert.equal(first.status, 200);
+	const cursor = (first.body as { meta: { nextCursor: string } }).meta
+		.nextCursor;
+	assert.ok(cursor);
+	assert.equal(get(`${base}&cursor=${cursor}`).status, 200);
+	const other = get(
+		`/v1/data/recorded-crimes/rankings?offence=robbery&limit=1&cursor=${cursor}`,
+	);
+	assert.equal(other.status, 400);
+	assert.equal((other.body as { code?: string }).code, "invalid_cursor");
+});
+
 test("pages dimensional tables without mixing series", () => {
 	const base = "/v1/data/recorded-crimes?offence=burglary&limit=1";
 	const resolved = resolveDimensionRequest(base, context);
