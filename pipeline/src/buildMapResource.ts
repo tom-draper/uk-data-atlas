@@ -65,7 +65,7 @@ const COMPILER_SOURCES = [
 	// shares: the full tier is built from the store and must match.
 	"pipeline/src/maps/compileGeometryValidity.ts",
 	"packages/atlas-runtime/src/geometry/areaGeometry.ts",
-	"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
+	"packages/atlas-runtime/src/geometry/geoJsonProperties.ts",
 	"packages/atlas-runtime/src/geometry/geometrySubstitution.ts",
 	"packages/atlas-runtime/src/geometry/gridOffset.ts",
 	"packages/geography/src/packedGeometry.ts",

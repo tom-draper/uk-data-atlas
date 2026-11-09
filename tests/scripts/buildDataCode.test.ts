@@ -454,7 +454,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const path of [
 		"packages/shapefile/src/dbf.ts",
-		"packages/atlas-runtime/src/areas/geoJsonProperties.ts",
+		"packages/atlas-runtime/src/geometry/geoJsonProperties.ts",
 		"pipeline/src/geographies/boundarySourcePaths.ts",
 		"packages/atlas-runtime/src/areas/areaAdapters.ts",
 		"packages/atlas-runtime/src/areas/areaSourceAdapters.ts",
