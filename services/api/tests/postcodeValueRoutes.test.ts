@@ -258,6 +258,64 @@ test("answers for the finest area the data was published for that contains the p
 	assert.match(data.note, /2023 boundaries, not today's/);
 });
 
+test("uses the selected public series for postcode lookups and links", () => {
+	const paths: string[] = [];
+	const dimensional = context({
+		dataCatalog: { ...dataCatalog },
+		operationMatcher: (path) => {
+			paths.push(path);
+			return { route: "unmatched" };
+		},
+		measureDimensions: {
+			vocabulary: {
+				schemaVersion: 1,
+				measures: {
+					residents: {
+						label: "Residents",
+						description: "People.",
+						unit: "people",
+						valueKind: "count",
+						aggregation: "sum",
+					},
+				},
+				dimensions: {
+					age: {
+						label: "Age",
+						members: [{ code: "all", label: "All ages" }],
+					},
+				},
+			},
+			config: {
+				schemaVersion: 1,
+				measures: {},
+				dimensions: {},
+				members: {},
+				defaults: {},
+				ids: {
+					population: {
+						measure: "residents",
+						dimensions: { age: "all" },
+					},
+				},
+			},
+		},
+	});
+	const result = get(
+		"/v1/data/residents/value?postcode=EC1A1AA&age=all",
+		dimensional,
+	);
+	assert.equal(result.status, 200, JSON.stringify(result.body));
+	assert.equal(result.data.answer.value, 100);
+	assert.ok(paths.includes("/v1/data/residents/series"));
+	assert.match(result.data.via, /^\/v1\/data\/residents\/series\?/);
+	assert.match(result.data.via, /age=all/);
+	assert.equal(get(result.data.via, dimensional).status, 200);
+	assert.match(result.data.otherGeographies[0].ask, /age=all/);
+	const other = get(result.data.otherGeographies[0].ask, dimensional);
+	assert.equal(other.status, 200);
+	assert.equal(other.data.answer.value, 300);
+});
+
 test("falls back to a coarser geography when a finer one has no value there", () => {
 	const { status, data } = get("/v1/data/population/value?postcode=EC1A1AB");
 	assert.equal(status, 200);
