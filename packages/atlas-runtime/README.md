@@ -2,7 +2,6 @@
 
 Node modules used by the API, data pipeline and website server to read and build atlas data. Import the domain entry point needed by a consumer:
 
-- `@uk-data-atlas/atlas-runtime/areas` for area inventories, lookups and searches.
 - `@uk-data-atlas/atlas-runtime/places` for place index compilation, SQLite readers and location projections.
 - `@uk-data-atlas/atlas-runtime/postcodes` for postcode release selection.
 - `@uk-data-atlas/atlas-runtime/relationships` for crosswalks and conversions.
