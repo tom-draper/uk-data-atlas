@@ -17,7 +17,7 @@ Each of the 48 chart datasets (`lib/datasets/*.ts`, registered in
 1. `atlas-sqlite` stores the statistics rows (`series`, `observation`,
    `measure`, `dimension`) in `data/build/atlas.sqlite`.
 2. The same stage regenerates each dataset's old-shape JSON payload from those
-   rows (`packages/atlas-runtime/src/measures/declaredPayload.ts`), compares
+   rows (`packages/measures/src/declaredPayload.ts`), compares
    it with the independently compiled dataset by value, and stores it gzipped
    in `data/build/atlas-cache.sqlite`.
 3. The Next.js server passes the browser a map of dataset output names to
@@ -127,7 +127,7 @@ generic map cannot.
 
 ## The query shape
 
-One function in `packages/atlas-runtime/src/measures/measureValues.ts`:
+One function in `packages/measures/src/measureValues.ts`:
 
 ```ts
 queryMeasureValues(context, request): MeasureValuesResult
