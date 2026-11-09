@@ -123,7 +123,6 @@ export const resolveMeasureQuery = (
 			};
 	}
 	const datasetId = parsed.searchParams.get("datasetId") ?? undefined;
-	const ids: string[] = [];
 	const named: Array<{ series: Series; measure: DimensionalMeasure }> = [];
 	const publicMeasures: string[] = [];
 	// The members each dimension is read at across the request, for the
@@ -133,7 +132,6 @@ export const resolveMeasureQuery = (
 	);
 	for (const [term, read] of reads) {
 		if (read.kind !== "measure") {
-			ids.push(term);
 			publicMeasures.push(term);
 			continue;
 		}
@@ -177,7 +175,6 @@ export const resolveMeasureQuery = (
 					},
 				),
 			};
-		ids.push(candidates[0]!.catalogueMeasure.id);
 		named.push({ series: candidates[0]!, measure });
 		publicMeasures.push(measure.id);
 		for (const [dimension, codes] of own)
@@ -190,7 +187,8 @@ export const resolveMeasureQuery = (
 	if (
 		names.length === 0 &&
 		!(datasetId !== undefined && measures.length > 0) &&
-		ids.every((id, index) => id === terms[index])
+		measures.every((measure) => measure.dimensions.length === 0) &&
+		publicMeasures.every((id, index) => id === terms[index])
 	)
 		return { kind: "unchanged" };
 	const rewrite = (measuresOut: string[]) => {
