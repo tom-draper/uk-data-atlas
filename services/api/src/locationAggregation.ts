@@ -1,7 +1,7 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { reconcileMembersForYear } from "@uk-data-atlas/relationships";
-import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocation } from "@uk-data-atlas/places";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 
 type LocationAggregate = {

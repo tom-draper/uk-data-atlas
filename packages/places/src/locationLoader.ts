@@ -5,10 +5,8 @@ import {
 	LocationProjectionDatabase,
 	type LocationProjectionInventory,
 } from "./locationProjections.ts";
-import {
-	createNamedLocationLookup,
-	type NamedLocationInventory,
-} from "./namedLocations.ts";
+import { createNamedLocationLookup } from "./namedLocations.ts";
+import type { NamedLocationInventory } from "./namedLocationTypes.ts";
 
 export const readNamedLocationInventory = readSqliteNamedLocationInventory;
 

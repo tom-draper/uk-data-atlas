@@ -26,7 +26,7 @@ import { route } from "../src/routes";
 import { indexResponse } from "../src/indexRoutes";
 import { getOnlyMethodNotAllowed } from "../src/routeHandlers";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
+import { LocationProjectionStore } from "@uk-data-atlas/places";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import { compileOperations } from "./pipelineFixtures";

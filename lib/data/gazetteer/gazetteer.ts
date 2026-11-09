@@ -1,1 +1,1 @@
-export { Gazetteer } from "@uk-data-atlas/atlas-runtime/places";
+export { Gazetteer } from "@uk-data-atlas/places/gazetteer";

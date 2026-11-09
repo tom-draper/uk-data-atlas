@@ -8,7 +8,7 @@ import {
 	compileLocationProjections,
 	LocationProjectionDatabase,
 	LocationProjectionStore,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import { locationProjectionTables } from "./pipelineFixtures";
 import {
 	areaLookup,

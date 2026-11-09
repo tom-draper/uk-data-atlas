@@ -7,10 +7,10 @@ import {
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import { COVERS_MINIMUM_SHARE } from "@uk-data-atlas/atlas-runtime/places";
+import { COVERS_MINIMUM_SHARE } from "@uk-data-atlas/places";
 import { notBuilt, unsupported } from "@uk-data-atlas/areas";
 import { areaKey } from "@uk-data-atlas/geography";
-import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocation } from "@uk-data-atlas/places";
 import { paginate } from "../pagination";
 
 export const selectedAsOf = (

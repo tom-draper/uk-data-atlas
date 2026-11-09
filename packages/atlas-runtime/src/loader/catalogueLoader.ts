@@ -36,7 +36,7 @@ import {
 	createNamedLocations,
 	readLocationProjectionInventory,
 	readNamedLocationInventory,
-} from "../places/locationLoader.ts";
+} from "@uk-data-atlas/places";
 import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,

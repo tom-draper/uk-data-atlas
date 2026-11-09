@@ -7,7 +7,7 @@ import {
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeShard,
-} from "@uk-data-atlas/atlas-runtime/postcodes";
+} from "@uk-data-atlas/postcodes";
 
 import { unpackText } from "@uk-data-atlas/atlas-db";
 import { sha256 } from "@uk-data-atlas/artifacts";

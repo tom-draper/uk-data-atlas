@@ -6,9 +6,9 @@ import {
 	readBoundaryRegistry,
 	readPlaceIndex,
 } from "@uk-data-atlas/atlas-runtime/loader";
-import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
-import { resolvePlaces } from "@uk-data-atlas/atlas-runtime/places";
+import { readNamedLocationInventory } from "@uk-data-atlas/places";
+import { compilePlaceIndex } from "@uk-data-atlas/places";
+import { resolvePlaces } from "@uk-data-atlas/places";
 import { atEach, type Indexed } from "@uk-data-atlas/search-index";
 
 const root = resolve(import.meta.dirname, "..");

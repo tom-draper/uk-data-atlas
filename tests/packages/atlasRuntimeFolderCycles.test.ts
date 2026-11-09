@@ -65,3 +65,13 @@ it("keeps measures independent of catalogue", () => {
 	const edges = folderImports().get("measures") ?? new Set<string>();
 	expect([...edges], "folders measures imports").not.toContain("catalogue");
 });
+
+it("keeps extracted places and postcodes out of runtime folder imports", () => {
+	const edges = folderImports();
+	expect([...edges.keys()]).not.toContain("places");
+	expect([...edges.keys()]).not.toContain("postcodes");
+	for (const targets of edges.values()) {
+		expect([...targets]).not.toContain("places");
+		expect([...targets]).not.toContain("postcodes");
+	}
+});

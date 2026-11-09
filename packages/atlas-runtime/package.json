@@ -11,8 +11,6 @@
 		"./catalogue": "./src/catalogue/index.ts",
 		"./loader": "./src/loader/index.ts",
 		"./maps": "./src/maps/index.ts",
-		"./places": "./src/places/index.ts",
-		"./postcodes": "./src/postcodes/index.ts",
 		"./measures": "./src/measures/index.ts"
 	},
 	"scripts": {

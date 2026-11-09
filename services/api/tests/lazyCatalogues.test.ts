@@ -8,10 +8,10 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { validateBatch } from "@uk-data-atlas/atlas-runtime/loader";
 import { readAreaLookup } from "@uk-data-atlas/areas";
-import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { namedLocationTables } from "./pipelineFixtures";
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const storeAreas = (

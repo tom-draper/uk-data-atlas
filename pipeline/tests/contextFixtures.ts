@@ -18,7 +18,7 @@ import type {
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 
 /**

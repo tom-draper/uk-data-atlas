@@ -10,7 +10,7 @@ import {
 	type compileLocationProjections,
 	type LocationProjection,
 	type LocationParentProjection,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 
 /**
  * A value as JSON, deflated against a dictionary of text like it. Values read

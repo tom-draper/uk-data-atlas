@@ -3,17 +3,17 @@ import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
 } from "@uk-data-atlas/relationships";
-import { compileLocationProjections } from "@uk-data-atlas/atlas-runtime/places";
+import { compileLocationProjections } from "@uk-data-atlas/places";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
-import { createNamedLocationLookup } from "@uk-data-atlas/atlas-runtime/places";
-import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
+import { createNamedLocationLookup } from "@uk-data-atlas/places";
+import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { namedLocationMembersTable } from "@uk-data-atlas/areas";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";

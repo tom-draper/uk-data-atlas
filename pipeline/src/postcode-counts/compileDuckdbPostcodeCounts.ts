@@ -5,7 +5,7 @@ import { aggregateCounts } from "./duckdbPostcodeCounts.ts";
 import {
 	type readSqlitePostcodeIndexArtifact,
 	type readSqlitePostcodeAreas,
-} from "@uk-data-atlas/atlas-runtime/postcodes";
+} from "@uk-data-atlas/postcodes";
 
 export function compileDuckDBCounts(
 	index: ReturnType<typeof readSqlitePostcodeIndexArtifact>,
