@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import { energyConsumptionSeries } from "./statisticsDatasets/environment.ts";
+import { crimeSeries } from "./statisticsDatasets/services.ts";
 import {
 	configDirectory,
 	statisticsVocabularyPath,
@@ -43,6 +44,7 @@ export const declaredMeasureIds = (): Record<string, MeasureIdMapping> =>
 		...energyConsumptionSeries().map(
 			({ id, ...identity }) => [id, identity] as const,
 		),
+		...crimeSeries().map(({ id, ...identity }) => [id, identity] as const),
 	]);
 
 /**
