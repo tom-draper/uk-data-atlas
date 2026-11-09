@@ -15,7 +15,7 @@ import {
 test("indexes each shared table column by its series and source", () => {
 	const source = {
 		datasetId: "census",
-		sourceGeography: { type: "ward", boundaryYear: 2021 },
+		sourceGeography: { type: "ward" as const, boundaryYear: 2021 },
 		observationArtifact: "shared-table",
 	};
 	const catalog = {
@@ -144,6 +144,48 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		value: 42,
 		status: "observed",
 	});
+	const identity = { measure: "count", dimensions: { kind: "all" } };
+	const source = catalog.measures[0]!.sources[0]!;
+	const key = measureSeriesSourceKey(identity, source);
+	const canonicalReadPath = {
+		...readPath,
+		statistics: {
+			"count-observations": {
+				datasetId: "fixture",
+				measure: "not-the-stored-measure",
+				dimensions: {},
+				geography: "ward",
+			},
+		},
+		series: { [key]: readPath.statistics["count-observations"]! },
+	};
+	const [canonical] = readMeasureObservations(
+		root,
+		catalog,
+		0,
+		canonicalReadPath,
+		{ count: identity },
+	);
+	assert.deepEqual(canonical?.periods[0]?.records[0], {
+		areaCode: "E1",
+		value: 42,
+		status: "observed",
+	});
+	assert.throws(
+		() =>
+			readMeasureObservations(
+				root,
+				catalog,
+				0,
+				{ ...canonicalReadPath, series: {} },
+				{ count: identity },
+			),
+		/Missing statistics selector/,
+	);
+	assert.throws(
+		() => readMeasureObservations(root, catalog, 0, canonicalReadPath, {}),
+		/Missing series identity/,
+	);
 	const update = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
 	update.exec("UPDATE observation SET value = 43");
 	update.close();

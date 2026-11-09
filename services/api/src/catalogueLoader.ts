@@ -41,6 +41,7 @@ export const readApiCatalogues = (
 		statisticsReadPath: JSON.parse(
 			readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 		) as StatisticsReadPath,
+		seriesIdentities: measureDimensions.config.ids,
 		...options,
 	});
 	const dimensions = {

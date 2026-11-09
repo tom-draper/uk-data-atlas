@@ -11,6 +11,7 @@ import { join, resolve } from "node:path";
 import {
 	readDataCatalog,
 	readMeasureObservations,
+	type MeasureSeriesIdentity,
 } from "@uk-data-atlas/measures";
 import {
 	createGeographyResolver,
@@ -156,6 +157,7 @@ export type CatalogueOptions = {
 	 * API passes its reviewed read path; without one, the build output is read.
 	 */
 	statisticsReadPath?: StatisticsReadPath;
+	seriesIdentities?: Readonly<Record<string, MeasureSeriesIdentity>>;
 	/**
 	 * Told before rejecting a compiled geometry release that no longer matches
 	 * its registered source.
@@ -380,6 +382,7 @@ export const readAtlasCatalogues = (
 			dataCatalog,
 			options.observationCacheBytes,
 			options.statisticsReadPath,
+			options.seriesIdentities,
 		),
 	);
 	const measureCompatibilityInventory = stage("measure-compatibility", () =>
