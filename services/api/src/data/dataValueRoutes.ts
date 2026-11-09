@@ -32,6 +32,7 @@ export const handleDataValueRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 	dispatch,
 }: RouteRequestFor<
 	| "places"
@@ -78,10 +79,11 @@ export const handleDataValueRoutes = ({
 			"Build the data catalogue before answering for a place.",
 		);
 	}
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,
