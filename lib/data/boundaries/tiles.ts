@@ -26,6 +26,10 @@ export type BoundaryTiles = {
 	maxZoom: number;
 	codeKey: PropertyKeys;
 	ids: Map<string, number>;
+	/** The release these tiles are for, as `<geography>/<release id>`. */
+	release: string;
+	/** The release's codes in feature id order: the code at index `i` has id `i + 1`. */
+	codeList: string[];
 };
 type Manifest = BoundaryResources;
 export const parseBoundaryTilesManifest = parseBoundaryResources;
@@ -66,6 +70,7 @@ export function selectBoundaryTiles(
 		minZoom: manifest.minZoom,
 		maxZoom: manifest.maxZoom,
 		codeKey: release.codeKey,
+		release: `${type}/${release.id}`,
 	};
 }
 
@@ -97,6 +102,6 @@ export async function fetchMapBoundaries(
 		...filter,
 		relations: { ...filter.relations, lsoaToLad },
 	});
-	boundaryTiles.set(data, { ...tiles, ids });
+	boundaryTiles.set(data, { ...tiles, ids, codeList: [...ids.keys()] });
 	return data;
 }

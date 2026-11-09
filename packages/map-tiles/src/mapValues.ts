@@ -20,6 +20,8 @@ export type CodeListId = { count: number; version: string };
 export type MapValuesEntry = {
 	/** Path of the array file, relative to the manifest's folder. */
 	file: string;
+	/** The dataset record field the values came from. */
+	field: string;
 	bytes: number;
 	sha256: string;
 	codeList: CodeListId;

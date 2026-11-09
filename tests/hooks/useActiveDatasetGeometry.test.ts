@@ -49,6 +49,8 @@ describe("active dataset geometry preparation", () => {
 			minZoom: 0,
 			maxZoom: 12,
 			codeKey: "LSOA11CD" as const,
+			release: "lsoa/test",
+			codeList: ["E01000001", "S01000001", "W01000001"],
 			ids: new Map([
 				["E01000001", 1],
 				["S01000001", 2],
