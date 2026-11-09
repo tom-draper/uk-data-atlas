@@ -231,6 +231,14 @@ const data = (response: ReturnType<typeof get>) =>
 	(response.body as { data: Record<string, unknown> }).data;
 
 test("exports the resolved series using the public measure path", () => {
+	const resolved = resolveDimensionRequest(
+		"/v1/data/recorded-crimes/export?offence=burglary",
+		context,
+	);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	assert.equal(resolved.url, "/v1/data/recorded-crimes/export");
+	assert.equal(resolved.series.dimensions.offence, "burglary");
 	const series = dimensionCatalogue(catalog, measureDimensions)
 		.measure("recorded-crimes")!
 		.series.find((entry) => entry.dimensions.offence === "burglary")!;
