@@ -7,8 +7,73 @@ import { test } from "vitest";
 import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	readMeasureObservations,
+	indexStatisticsSeries,
+	measureSeriesSourceKey,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
+
+test("indexes each shared table column by its series and source", () => {
+	const source = {
+		datasetId: "census",
+		sourceGeography: { type: "ward", boundaryYear: 2021 },
+		observationArtifact: "shared-table",
+	};
+	const catalog = {
+		measures: [
+			{ id: "first", sources: [source] },
+			{ id: "second", sources: [source] },
+		],
+	} as unknown as DataCatalog;
+	const selector = {
+		kind: "measure-table" as const,
+		id: "shared-table",
+		datasetId: "census",
+		geography: "ward",
+		boundaryYear: 2021,
+		period: "2021",
+		measures: ["first", "second"],
+		columns: [],
+	};
+	const readPath: StatisticsReadPath = {
+		schemaVersion: 1,
+		dataCatalogHash: "fixture",
+		statistics: { "shared-table": selector },
+		observations: {},
+	};
+	const identities = {
+		first: { measure: "residents", dimensions: { sex: "female" } },
+		second: { measure: "residents", dimensions: { sex: "male" } },
+	};
+	const identityFor = (id: string) =>
+		identities[id as keyof typeof identities];
+	const indexed = indexStatisticsSeries(catalog, readPath, identityFor);
+	assert.deepEqual(
+		indexed[measureSeriesSourceKey(identities.first, source)],
+		selector,
+	);
+	assert.deepEqual(
+		indexed[measureSeriesSourceKey(identities.second, source)],
+		selector,
+	);
+	assert.equal(Object.keys(indexed).length, 2);
+	assert.throws(
+		() => indexStatisticsSeries(catalog, readPath, () => identities.first),
+		/Duplicate statistics series source/,
+	);
+	assert.throws(
+		() => indexStatisticsSeries(catalog, readPath, () => undefined),
+		/Missing series identity/,
+	);
+	assert.throws(
+		() =>
+			indexStatisticsSeries(
+				catalog,
+				{ ...readPath, statistics: {} },
+				identityFor,
+			),
+		/Missing statistics selector/,
+	);
+});
 
 test("reads catalogue observations from statistics without legacy tables", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "statistics-observation-cache-"));
