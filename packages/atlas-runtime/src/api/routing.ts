@@ -29,7 +29,7 @@ import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 import type { ApiResponse } from "./routeResponse.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ValidationReport } from "../catalogue/validationReport.ts";
-import type { AnalysisGeographyInventory } from "../areas/analysisGeographies.ts";
+import type { AnalysisGeographyInventory } from "../relationships/analysisGeographies.ts";
 import type { AnalysisGeographyValidationInventory } from "../areas/analysisGeographyValidation.ts";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import type {

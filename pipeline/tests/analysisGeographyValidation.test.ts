@@ -12,7 +12,7 @@ import { buildAnalysisGeographyValidation } from "../src/buildAnalysisGeographyV
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/areas";
-import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AnyMeasureObservationArtifact,

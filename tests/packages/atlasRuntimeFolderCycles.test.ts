@@ -18,10 +18,7 @@ import { findCycle, sourceFiles, specifiers } from "../helpers/sourceImports";
 const SRC = join(process.cwd(), "packages/atlas-runtime/src");
 
 /** `from -> to`: folder `from` imports folder `to`, closing a cycle. */
-const KNOWN_CYCLE_CLOSING_IMPORTS = [
-	// areas <-> relationships, task 5.
-	"relationships -> areas",
-];
+const KNOWN_CYCLE_CLOSING_IMPORTS: string[] = [];
 
 const folderImports = () => {
 	const edges = new Map<string, Set<string>>();

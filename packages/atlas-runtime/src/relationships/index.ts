@@ -15,3 +15,4 @@ export * from "./crosswalkLoader.ts";
 export * from "./relationshipCandidates.ts";
 export * from "./crosswalkAdapterReader.ts";
 export * from "./atlasCrosswalks.ts";
+export * from "./analysisGeographies.ts";
