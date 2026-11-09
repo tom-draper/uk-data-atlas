@@ -3,10 +3,8 @@ import {
 	requireAtlasCache,
 	readCachePayload,
 } from "@uk-data-atlas/atlas-runtime/storage";
-import {
-	readMeasureObservations,
-	readAtlasPayload,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
 import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/loader";
 import { DatabaseSync } from "node:sqlite";
 

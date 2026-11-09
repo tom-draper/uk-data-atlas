@@ -6,9 +6,9 @@ import { gunzipSync } from "node:zlib";
 import {
 	comparableCompiled,
 	generatedFromRows,
-	payloadDifference,
 	servedFromRows,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { payloadDifference } from "./payloadComparison.ts";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**

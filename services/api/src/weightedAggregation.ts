@@ -8,7 +8,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { calculateWeightedMean } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { calculateWeightedMean } from "@uk-data-atlas/atlas-runtime/measures";
 
 type WeightedAggregateResult =
 	{ kind: "ok"; value: number; totalWeight: number } | ApiResponse;

@@ -1,12 +1,14 @@
 import type { DatabaseSync } from "node:sqlite";
 import {
-	memberCode,
-	STATISTICS_DATASETS,
 	type DeclaredDataset,
 	type DeclaredField,
 	type DeclaredHeader,
 	periods,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
+import {
+	memberCode,
+	STATISTICS_DATASETS,
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 /** The series and period a field of a compiled dataset holds, found from its declaration. */
 export type FieldSeries = {

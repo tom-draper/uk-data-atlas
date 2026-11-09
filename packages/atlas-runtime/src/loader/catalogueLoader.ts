@@ -8,7 +8,7 @@ import { readAtlasPages } from "../storage/atlasPages.ts";
 import { readAtlasLookups } from "../storage/atlasLookups.ts";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readMeasureObservations } from "../catalogue/observationLoader.ts";
+import { readMeasureObservations } from "../measures/observationLoader.ts";
 import {
 	createGeographyResolver,
 	createGeographyServices,
@@ -56,7 +56,7 @@ import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
 import { readRelationshipCandidateInventory } from "../catalogue/governanceLoader.ts";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "../storage/dataLayout.ts";
-import type { StatisticsReadPath } from "../catalogue/atlasStatisticsObservations.ts";
+import type { StatisticsReadPath } from "../measures/atlasStatisticsObservations.ts";
 
 const EVIDENCE_DOCUMENTS = [
 	"analysis-geography-validation",

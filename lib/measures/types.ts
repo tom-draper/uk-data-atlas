@@ -3,7 +3,7 @@ import type {
 	MeasureValuesCategoricalColumn,
 	MeasureValuesColumn,
 	MeasureValuesRequest,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 /**
  * The shapes of the website's measure query, shared by the route that serves

@@ -6,10 +6,8 @@ import type {
 	MeasureObservationArtifact,
 	SourceGeography,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import {
-	tableMeasureObservations,
-	type MeasureTableArtifact,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+import { type MeasureTableArtifact } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	crosswalkArtifact,
 	dataCatalog,

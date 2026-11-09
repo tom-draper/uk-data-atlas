@@ -17,7 +17,7 @@ import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {
 	observationTableOf,
 	observationTextOf,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
 import { QUERY_RULES } from "./queryRules";
 

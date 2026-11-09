@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
 	rebuildStatisticsObservationText,
 	type StatisticsSelector,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 /**
  * A local election in three wards, as the statistics tables hold it: party

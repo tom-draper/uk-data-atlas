@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	payloadDifference,
 	payloadValuesEqual,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "../../pipeline/src/checks/payloadComparison.ts";
 
 describe("payload comparison", () => {
 	it("treats numbers that differ only by summing order as equal", () => {

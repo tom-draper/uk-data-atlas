@@ -16,7 +16,8 @@
 		"./places": "./src/places/index.ts",
 		"./postcodes": "./src/postcodes/index.ts",
 		"./relationships": "./src/relationships/index.ts",
-		"./storage": "./src/storage/index.ts"
+		"./storage": "./src/storage/index.ts",
+		"./measures": "./src/measures/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

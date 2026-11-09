@@ -1,10 +1,10 @@
 import { DatabaseSync } from "node:sqlite";
 import { describe, expect, it } from "vitest";
+import { rebuildDatasetPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	declaredStatistics,
-	rebuildDatasetPayload,
 	STATISTICS_DATASETS,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	DATASET_DECLARATIONS,
 	DECLARED_DEFINITIONS,

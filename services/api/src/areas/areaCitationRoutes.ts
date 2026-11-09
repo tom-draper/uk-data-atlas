@@ -10,7 +10,7 @@ import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/areas";
 import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { publicSeries } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { publicSeries } from "@uk-data-atlas/atlas-runtime/measures";
 
 /**
  * A citation for one area, as `include=citation` expands it: the artifacts

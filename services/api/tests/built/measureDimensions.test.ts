@@ -9,7 +9,7 @@ import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	readMeasureDimensionsConfig,
 	readStatisticsVocabulary,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	artifactDirectory,
 	atlasDatabasePath,

@@ -12,7 +12,7 @@ export {
 	defaultSource,
 	publishedPartitions,
 	type DefaultedSource,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 /**
  * The periods a change runs between when one or both are left out. The end

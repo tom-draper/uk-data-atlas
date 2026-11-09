@@ -1,9 +1,9 @@
 import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
 import {
 	isMeasureTable,
-	tableMeasureObservations,
 	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

@@ -3,7 +3,7 @@ import { statisticsReadPathPath } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	readMeasureDimensionsConfig,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

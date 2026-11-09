@@ -3,15 +3,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import {
-	ObservationCache,
-	lazySourceObservations,
 	observationArtifactName,
 	type DataCatalog,
 	type Measure,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	ObservationCache,
+	lazySourceObservations,
 	type MeasureDimensions,
 	type MeasureValuesContext,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 /**
  * A small statistics database, catalogue and reviewed dimension mapping for

@@ -5,11 +5,13 @@ import { fileURLToPath } from "node:url";
 import {
 	observationArtifactName,
 	isMeasureTable,
-	tableMeasureObservations,
 	type AnyMeasureObservationArtifact,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	tableMeasureObservations,
 	readStatisticsObservationText,
 	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 import {
 	atlasDatabasePath,
 	compiledObservationPath,

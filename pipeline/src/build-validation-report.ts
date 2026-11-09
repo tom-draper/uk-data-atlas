@@ -15,10 +15,10 @@ import type { GeometrySourceRegistry } from "@uk-data-atlas/atlas-runtime/geomet
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	isMeasureTable,
-	tableMeasureObservations,
 	type AnyMeasureObservationArtifact,
 	type ExportManifest,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures";
 import { compileValidationReport } from "./validation/compileValidationReport.ts";
 import {
 	readMeasureTotals,

@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
-	observationTableOf,
 	periodRecordLookup,
-	tableMeasureObservations,
 	type MeasureTableArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
+import {
+	observationTableOf,
+	tableMeasureObservations,
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 const table: MeasureTableArtifact = {
 	schemaVersion: 1,

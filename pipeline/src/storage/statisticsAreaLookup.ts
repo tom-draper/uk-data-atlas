@@ -6,7 +6,7 @@ import type { DatabaseSync } from "node:sqlite";
 import type {
 	AreaRelease,
 	AreaIndex,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/atlas-runtime/measures";
 
 const vintages = ATLAS_BOUNDARY_VINTAGES as AtlasBoundaryVintages &
 	Partial<Record<string, Readonly<Record<number, string>>>>;
