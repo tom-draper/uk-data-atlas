@@ -174,6 +174,7 @@ export const resolveDimensionRequest = (
 			"change",
 			"convert",
 			"rankings",
+			"join",
 		].includes(position.operation)
 			? measure.id
 			: series.catalogueMeasure.id;
