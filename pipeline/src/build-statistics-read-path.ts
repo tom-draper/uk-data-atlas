@@ -21,6 +21,7 @@ import {
 import {
 	readMeasureDimensionsConfig,
 	rebuildStatisticsObservationText,
+	indexStatisticsSeries,
 	type StatisticsReadPath,
 	type StatisticsSelector,
 	type StatisticsTableSelector,
@@ -428,6 +429,13 @@ writeFileSync(
 			schemaVersion: 1,
 			dataCatalogHash: plan.dataCatalogHash,
 			statistics: sorted(plan.statistics),
+			series: sorted(
+				indexStatisticsSeries(
+					catalog,
+					plan,
+					(id) => config.ids[id] ?? censusSeries.get(id),
+				),
+			),
 			observations: sorted(plan.observations),
 		},
 		null,
