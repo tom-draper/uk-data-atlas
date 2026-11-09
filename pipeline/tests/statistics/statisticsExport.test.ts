@@ -138,8 +138,8 @@ test("uses reviewed source mappings only when each requested period exists", () 
 		const key = measureSeriesSourceKey(identity, measure.sources[0]!);
 		const canonical = {
 			...reviewed,
-			statistics: {},
-			series: { [key]: Object.values(reviewed.statistics)[0]! },
+			statistics: undefined,
+			series: { [key]: Object.values(reviewed.statistics!)[0]! },
 		};
 		assert.equal(
 			bindReviewedStatistics(db, measure, canonical, identity)?.length,
@@ -158,7 +158,7 @@ test("uses reviewed source mappings only when each requested period exists", () 
 		const zeroed = {
 			...reviewed,
 			statistics: Object.fromEntries(
-				Object.entries(reviewed.statistics).map(([name, selector]) => [
+				Object.entries(reviewed.statistics!).map(([name, selector]) => [
 					name,
 					{ ...selector, absentAsZero: true },
 				]),

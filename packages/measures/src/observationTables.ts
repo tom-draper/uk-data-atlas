@@ -190,7 +190,7 @@ export class ObservationCache {
 				const selector =
 					readPath.series && identities && key
 						? readPath.series[key]
-						: readPath.statistics[name];
+						: readPath.statistics?.[name];
 				if (!selector)
 					throw new Error(
 						`Missing statistics selector for ${key ?? name}.`,
@@ -208,7 +208,7 @@ export class ObservationCache {
 					},
 				});
 			}
-		for (const name of Object.keys(readPath.statistics))
+		for (const name of Object.keys(readPath.statistics ?? {}))
 			if (!names.has(name))
 				throw new Error(`Unexpected statistics selector: ${name}.`);
 		if (readPath.series && identities)

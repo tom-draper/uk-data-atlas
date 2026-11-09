@@ -124,7 +124,7 @@ export type StatisticsTableSelector = {
 export type StatisticsReadPath = {
 	schemaVersion: 1;
 	dataCatalogHash: string;
-	statistics: Record<string, StatisticsSelector | StatisticsTableSelector>;
+	statistics?: Record<string, StatisticsSelector | StatisticsTableSelector>;
 	series?: Record<string, StatisticsSelector | StatisticsTableSelector>;
 	observations: Record<string, string>;
 };
@@ -141,7 +141,7 @@ export const indexStatisticsSeries = (
 			throw new Error(`Missing series identity for ${measure.id}.`);
 		for (const source of measure.sources) {
 			const name = observationArtifactName(measure.id, source);
-			const selector = readPath.statistics[name];
+			const selector = readPath.statistics?.[name];
 			if (!selector)
 				throw new Error(`Missing statistics selector for ${name}.`);
 			const key = measureSeriesSourceKey(identity, source);

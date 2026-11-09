@@ -13,6 +13,7 @@ import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
 import { readFileSync } from "node:fs";
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
+import { measureSeriesSourceKey } from "@uk-data-atlas/measures";
 
 /**
  * The statistics read path names every catalogue partition and serves
@@ -31,20 +32,18 @@ test("database selectors match the validated build plan", () => {
 	assert.deepEqual(readAtlasStatisticsReadPath(databasePath), readPath);
 });
 
-test("names every catalogue artifact once as statistics", () => {
-	const names = new Set(
+test("names every catalogue series source once as statistics", () => {
+	const keys = new Set(
 		catalog.measures.flatMap((measure) =>
 			measure.sources.map((source) =>
-				observationArtifactName(measure.id, source),
+				measureSeriesSourceKey(
+					catalogues.measureDimensions.config.ids[measure.id]!,
+					source,
+				),
 			),
 		),
 	);
-	const planned = [
-		...Object.keys(readPath.statistics),
-		...Object.keys(readPath.observations),
-	];
-	assert.equal(new Set(planned).size, planned.length);
-	assert.deepEqual(new Set(planned), names);
+	assert.deepEqual(new Set(Object.keys(readPath.series ?? {})), keys);
 	assert.deepEqual(readPath.observations, {});
 });
 
@@ -54,8 +53,11 @@ const samples = () => {
 	for (const measure of catalog.measures)
 		for (const source of measure.sources) {
 			if (
-				!readPath.statistics[
-					observationArtifactName(measure.id, source)
+				!readPath.series?.[
+					measureSeriesSourceKey(
+						catalogues.measureDimensions.config.ids[measure.id]!,
+						source,
+					)
 				]
 			)
 				continue;

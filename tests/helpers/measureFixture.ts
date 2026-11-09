@@ -416,7 +416,7 @@ export const createMeasureFixture = (): {
 	normalise(path);
 	const catalog = fixtureCatalog();
 	const measureDimensions = fixtureDimensions();
-	const statistics: StatisticsReadPath["statistics"] = {};
+	const statistics: NonNullable<StatisticsReadPath["statistics"]> = {};
 	const bySeries = (id: string) => {
 		const mapped = measureDimensions.config.ids[id]!;
 		return fixtureSeries.find(
