@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { builtinModules } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { sourceFiles, specifiers } from "../helpers/sourceImports";
+import { findCycle, sourceFiles, specifiers } from "../helpers/sourceImports";
 
 /**
  * Check dependencies explicitly because workspace resolution can otherwise
@@ -100,6 +100,51 @@ describe("shared packages", () => {
 			expect(problems(join(PACKAGES, name))).toEqual([]);
 		},
 	);
+
+	it("do not depend on each other in a cycle", () => {
+		const graph = new Map(
+			packages.map((name) => {
+				const manifest = JSON.parse(
+					readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+				);
+				const dependencies = [
+					"dependencies",
+					"devDependencies",
+					"peerDependencies",
+				].flatMap((field) => Object.keys(manifest[field] ?? {}));
+				return [
+					name,
+					dependencies
+						.filter((dependency) =>
+							dependency.startsWith("@uk-data-atlas/"),
+						)
+						.map((dependency) =>
+							dependency.replace("@uk-data-atlas/", ""),
+						)
+						.filter((dependency) => packages.includes(dependency)),
+				];
+			}),
+		);
+		expect(findCycle(graph)?.join(" > ")).toBeUndefined();
+	});
+
+	it("catches a cycle between packages", () => {
+		const graph = new Map([
+			["a", ["b"]],
+			["b", ["c"]],
+			["c", ["a"]],
+			["d", ["a"]],
+		]);
+		expect(findCycle(graph)).toEqual(["a", "b", "c", "a"]);
+		expect(
+			findCycle(
+				new Map([
+					["a", ["b"]],
+					["b", []],
+				]),
+			),
+		).toBeUndefined();
+	});
 
 	it("catches an import the package does not declare", () => {
 		expect(
