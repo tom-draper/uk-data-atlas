@@ -14,6 +14,7 @@ import { handleMeasureExport } from "../src/bulkRoutes";
 import { handleDataRoutes } from "../src/data/dataRoutes";
 import { handleDataSeriesRoutes } from "../src/data/dataSeriesRoutes";
 import { dimensionCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import {
 	areaLookup,
 	crosswalkInventory,
@@ -314,6 +315,17 @@ test("routes a dimensional time series to the selected members", () => {
 });
 
 test("reads a measure with a member filter as that series", () => {
+	const resolved = resolveDimensionRequest(
+		"/v1/data/recorded-crimes/value?place=ward/E05000001&offence=burglary",
+		context,
+	);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	assert.equal(
+		resolved.url,
+		"/v1/data/recorded-crimes/value?place=ward%2FE05000001",
+	);
+	assert.equal(resolved.series.dimensions.offence, "burglary");
 	const response = get(
 		"/v1/data/recorded-crimes/value?place=ward/E05000001&offence=burglary",
 	);
