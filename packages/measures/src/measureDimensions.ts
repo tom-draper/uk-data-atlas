@@ -46,8 +46,8 @@ export type StatisticsVocabulary = {
 	dimensions: Record<string, DimensionDefinition>;
 };
 
-/** What one catalogue measure id stands for. */
-export type MeasureIdMapping = {
+/** A measure and the members that identify one series. */
+export type MeasureSeriesIdentity = {
 	measure: string;
 	/** Fixed members, by dimension. Absent when the measure has no breakdown. */
 	dimensions?: Record<string, string>;
@@ -57,6 +57,9 @@ export type MeasureIdMapping = {
 	 */
 	datasetId?: string;
 };
+
+/** What one catalogue measure id stands for. */
+export type MeasureIdMapping = MeasureSeriesIdentity;
 
 /** The reviewed mapping, `services/api/config/measure-dimensions.json`. */
 export type MeasureDimensionsConfig = {
@@ -106,7 +109,7 @@ export const totalMember = (members: DimensionMemberDefinition[]) => {
 };
 
 /** Stable identity for a measure, its fixed members and optional dataset. */
-export const measureSeriesKey = (mapping: MeasureIdMapping) =>
+export const measureSeriesKey = (mapping: MeasureSeriesIdentity) =>
 	JSON.stringify([
 		mapping.measure,
 		Object.entries(mapping.dimensions ?? {}).sort(([left], [right]) =>
