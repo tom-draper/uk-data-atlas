@@ -1,6 +1,6 @@
 import { readAtlasPayload } from "./atlasPayloads.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { FullDetailDownloads } from "../areas/fullDetailDownloads.ts";
+import { FullDetailDownloads } from "../loader/fullDetailDownloads.ts";
 import type { EvidenceManifest } from "./evidenceDocuments.ts";
 import { lazyValue } from "../storage/lazyValue.ts";
 import { readAtlasPages } from "../storage/atlasPages.ts";
@@ -11,7 +11,7 @@ import { readMeasureObservations } from "./observationLoader.ts";
 import {
 	createGeographyResolver,
 	createGeographyServices,
-} from "../areas/geographyResolver.ts";
+} from "../loader/geographyResolver.ts";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import {

@@ -1,4 +1,4 @@
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,

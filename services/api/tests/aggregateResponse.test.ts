@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AggregationTarget } from "../src/aggregationTarget";
 import type {
 	Measure,

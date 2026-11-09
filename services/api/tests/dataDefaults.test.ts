@@ -11,7 +11,7 @@ import {
 	defaultSource,
 	namedAreaRefusal,
 } from "../src/dataDefaults";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { PlaceCandidate } from "@uk-data-atlas/atlas-runtime/places";
 
 const source = (

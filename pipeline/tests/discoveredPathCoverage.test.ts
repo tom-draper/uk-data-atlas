@@ -5,7 +5,7 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import { crosswalkShape } from "../src/relationships/relationshipPaths";
 import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";

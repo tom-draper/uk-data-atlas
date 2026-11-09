@@ -5,9 +5,9 @@ import {
 	AreasResolver,
 	SpatialResolver,
 	LineageResolver,
-	type GeographyResolverInputs,
 	readSqliteAreaInventory,
 } from "@uk-data-atlas/atlas-runtime/areas";
+import { type GeographyResolverInputs } from "@uk-data-atlas/atlas-runtime/loader";
 import { readBuildBoundaryRegistry } from "../buildBoundaryRegistry.ts";
 import {
 	readCrosswalkInventory,

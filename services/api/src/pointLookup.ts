@@ -1,9 +1,7 @@
 import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
 import type { BoundaryRelease } from "@uk-data-atlas/catalogue";
-import type {
-	GeographyResolver,
-	ResolvedContainingArea,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import type { ResolvedContainingArea } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	parseSelectionDate,
 	type ReleaseReference,

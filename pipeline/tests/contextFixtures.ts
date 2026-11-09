@@ -1,10 +1,10 @@
 import type { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
+import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import {
-	createAreaLookup,
 	createGeographyResolver,
 	createGeographyServices,
 	type GeographyResolverInputs,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/loader";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {

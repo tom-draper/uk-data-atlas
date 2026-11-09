@@ -1,4 +1,4 @@
-import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/areas";
+import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/loader";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -7,7 +7,7 @@ import { test, afterAll } from "vitest";
 import { AreaGeometryCache } from "@uk-data-atlas/atlas-runtime/geometry";
 import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import type {
 	CompatibilityCandidate,
