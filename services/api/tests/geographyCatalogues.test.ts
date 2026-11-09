@@ -17,10 +17,7 @@ import { test, type TestContext } from "vitest";
 import { buildGeographyCatalogues } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
-import {
-	buildArtifactPath,
-	geographyCatalogues,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath, geographyCatalogues } from "@uk-data-atlas/areas";
 import {
 	readBoundaryRegistry,
 	readGeographyInventory,

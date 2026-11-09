@@ -1,5 +1,5 @@
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import {
 	createGeographyResolver,
 	createGeographyServices,
@@ -17,7 +17,7 @@ import type {
 	MeasureCompatibilityInventory,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
+import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 

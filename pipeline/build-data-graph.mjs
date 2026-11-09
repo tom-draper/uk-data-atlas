@@ -1156,9 +1156,7 @@ const websiteStages = [
 		{
 			outputs: ["public/data/boundaries"],
 			rawInputs: [],
-			codeInputs: [
-				"packages/atlas-runtime/src/areas/boundaryResources.ts",
-			],
+			codeInputs: ["packages/areas/src/boundaryResources.ts"],
 		},
 	),
 	// The website's pages and lookups, in a file of their own. Nothing in the

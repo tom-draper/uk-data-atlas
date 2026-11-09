@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { CAPABILITY_STATUSES } from "@uk-data-atlas/atlas-runtime/areas";
+import { CAPABILITY_STATUSES } from "@uk-data-atlas/areas";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,

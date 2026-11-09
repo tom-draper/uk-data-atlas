@@ -9,7 +9,7 @@ import {
 	choices,
 	readChoice,
 } from "@uk-data-atlas/atlas-runtime/api";
-import { parseSelectionDate } from "@uk-data-atlas/atlas-runtime/areas";
+import { parseSelectionDate } from "@uk-data-atlas/areas";
 import { withReleaseHeaders } from "../releaseDeprecation";
 import { QUERY_RULES } from "../queryRules";
 

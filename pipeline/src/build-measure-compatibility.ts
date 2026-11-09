@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 import {
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
@@ -7,10 +7,7 @@ import { tableMeasureObservations } from "@uk-data-atlas/atlas-runtime/measures"
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { type DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileMeasureCompatibility } from "./statistics/measureCompatibility.ts";

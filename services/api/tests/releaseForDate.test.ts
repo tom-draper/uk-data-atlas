@@ -5,7 +5,7 @@ import {
 	parseExactReleaseReference,
 	releaseMonth,
 	selectReleaseForDate,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 
 const release = (geography: string, id: string, countries: string[]) => ({
 	id,

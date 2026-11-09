@@ -7,7 +7,7 @@ import {
 	candidatePieces,
 	type AreaGeometry,
 } from "@uk-data-atlas/geography/area-geometry-pieces";
-import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { AreaOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import type {
 	AreaOverlapCrosswalkArtifact,
@@ -23,7 +23,7 @@ import {
 	CLIPPING_VERSION,
 	intersectWithin,
 } from "@uk-data-atlas/geography/piece-intersection";
-import { readGeometries } from "@uk-data-atlas/atlas-runtime/areas";
+import { readGeometries } from "@uk-data-atlas/areas";
 
 export const round = (value: number, places: number) =>
 	Math.round(value * 10 ** places) / 10 ** places;

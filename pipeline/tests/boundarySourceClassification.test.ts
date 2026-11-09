@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { createBoundaryRegistry } from "../src/build-boundary-registry";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { selectReleaseForDate } from "@uk-data-atlas/atlas-runtime/areas";
+import { selectReleaseForDate } from "@uk-data-atlas/areas";
 import { createSourceInventory } from "../src/geographies/sourceInventory";
 
 test("keeps the ONS names-and-codes table out of boundary release selection", (t) => {

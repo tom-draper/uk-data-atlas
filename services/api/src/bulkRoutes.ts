@@ -5,7 +5,7 @@ import {
 	lookupBodyHash,
 	namedLocationMembersTable,
 	renderLookup,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { findMeasureObservations } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	envelope,

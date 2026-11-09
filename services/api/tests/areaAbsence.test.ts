@@ -1,10 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { explainAreaAbsence } from "@uk-data-atlas/atlas-runtime/areas";
-import {
-	createAreaLookup,
-	type AreaInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { explainAreaAbsence } from "@uk-data-atlas/atlas-runtime/loader";
+import { createAreaLookup, type AreaInventory } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 
 const release = (geography: string, id: string) => ({

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
-import { readAreaAdapters } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaAdapters } from "@uk-data-atlas/areas";
 import { compileAreas } from "../../src/geographies/areaInventory";
 import { createBoundaryRegistry } from "../../src/build-boundary-registry";
 

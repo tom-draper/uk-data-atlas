@@ -4,13 +4,13 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import {
 	AreaSearch,
 	areaSearchIndexMismatch,
 	compileAreaSearchIndex,
 	openAreaSearchIndexDatabase,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { areaSearchIndexTables } from "./pipelineFixtures";
 
 const release = (

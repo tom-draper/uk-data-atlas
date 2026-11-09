@@ -22,7 +22,7 @@ import {
 	compiledGeometryFile,
 	type GeometrySource,
 } from "@uk-data-atlas/geometry";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import {

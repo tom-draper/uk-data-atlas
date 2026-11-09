@@ -1,4 +1,4 @@
-import type { AreaRecord } from "@uk-data-atlas/areas";
+import type { AreaRecord } from "./index.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 export type LookupCrosswalk = {

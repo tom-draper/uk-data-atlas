@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
 import { createGeometrySourceRegistry } from "../src/geographies/geometrySourceRegistry";
-import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/areas";
 
 const writeBoundarySource = (
 	root: string,

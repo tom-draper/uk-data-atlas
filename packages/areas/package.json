@@ -1,19 +1,30 @@
 {
 	"name": "@uk-data-atlas/areas",
-	"description": "Builds area inventories and looks areas up by code and name.",
+	"description": "Looks up, resolves, searches and loads boundaries for areas.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./inventory": "./src/areaInventory.ts",
+		"./boundary-resources": "./src/boundaryResources.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {
-		"@uk-data-atlas/geography": "workspace:*"
+		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/search-index": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*",
+		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/datasets": "workspace:*",
+		"@uk-data-atlas/geometry": "workspace:*",
+		"@uk-data-atlas/map-tiles": "workspace:*",
+		"@uk-data-atlas/shapefile": "workspace:*",
+		"@uk-data-atlas/catalogue": "workspace:*",
+		"polygon-clipping": "0.15.7"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

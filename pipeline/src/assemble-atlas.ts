@@ -18,7 +18,7 @@ import {
 	readPostcodeAreaComponent,
 } from "./postcodes/storePostcodeAreas.ts";
 import { loadIdRegistries } from "./ids/idRegistries.ts";
-import { geographyCatalogues } from "@uk-data-atlas/atlas-runtime/areas";
+import { geographyCatalogues } from "@uk-data-atlas/areas";
 
 /**
  * `crosswalkWeights: false` leaves crosswalks with only their own weights, for

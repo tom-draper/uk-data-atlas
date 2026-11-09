@@ -17,7 +17,7 @@ import {
 	readSqliteCrosswalkInventory,
 } from "@uk-data-atlas/atlas-runtime/relationships";
 import { readSqliteNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
-import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import { readSqliteAreaInventory } from "@uk-data-atlas/areas";
 
 /**
  * What stages after `atlas-sqlite` read instead of the compiled JSON in

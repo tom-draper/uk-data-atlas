@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { expect, onTestFinished, test } from "vitest";
 import { linkBoundaryTiles } from "@/scripts/link-boundary-tiles.mts";
-import { websiteBoundaryReleases } from "@uk-data-atlas/atlas-runtime/areas";
+import { websiteBoundaryReleases } from "@uk-data-atlas/areas";
 
 async function fixture() {
 	const root = await mkdtemp(join(tmpdir(), "boundary-publish-"));

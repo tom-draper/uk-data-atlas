@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { AnalysisGeographyValidationInventory } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import { reportRequest as routeRequest } from "./evidenceFixtures";
 import {

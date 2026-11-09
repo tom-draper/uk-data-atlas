@@ -5,11 +5,11 @@ import { join } from "node:path";
 import type {
 	AreaAdapterManifest,
 	AreaPropertyAdapter,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import type {
 	AreaSourceAdapter,
 	AreaSourceAdapterManifest,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
@@ -29,12 +29,12 @@ import type {
 	AreaRecord,
 	AreaReleaseArtifact,
 	AreaInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 export type {
 	AreaRecord,
 	AreaReleaseArtifact,
 	AreaInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 
 export type CompiledAreas = {
 	inventory: AreaInventory;

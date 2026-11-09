@@ -1,7 +1,7 @@
 import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { buildLog, readAtlasAssetText } from "@uk-data-atlas/atlas-db";
 
 import {

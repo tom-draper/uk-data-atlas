@@ -6,13 +6,13 @@ import {
 	createAreaLookup,
 	type AreaInventory,
 	type AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
+import { readAreaLookup } from "@uk-data-atlas/areas";
 import {
 	readAreaInventory,
 	readBoundaryRegistry,
 } from "@uk-data-atlas/atlas-runtime/loader";
-import { compileAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/areas";
+import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../services/api/src/routes";

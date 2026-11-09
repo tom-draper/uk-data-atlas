@@ -1,5 +1,5 @@
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
-import { boundaryReleaseMonth } from "@uk-data-atlas/atlas-runtime/areas";
+import { boundaryReleaseMonth } from "@uk-data-atlas/areas";
 import type {
 	RouteRequest,
 	RouteRequestFor,

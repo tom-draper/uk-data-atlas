@@ -1,10 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 
 export const readCompiledAreaLookup = (outputDirectory: string) => {
 	const inventory = JSON.parse(

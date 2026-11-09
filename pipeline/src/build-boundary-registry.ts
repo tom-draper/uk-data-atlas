@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 import {
 	existsSync,
 	mkdirSync,

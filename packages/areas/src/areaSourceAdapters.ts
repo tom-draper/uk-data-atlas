@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
-import type { AreaSourceAdapter } from "@uk-data-atlas/areas";
-export type { AreaSourceAdapter } from "@uk-data-atlas/areas";
+import type { AreaSourceAdapter } from "./areaInventory.ts";
+export type { AreaSourceAdapter } from "./areaInventory.ts";
 
 export type AreaSourceAdapterManifest = Record<string, AreaSourceAdapter>;
 

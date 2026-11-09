@@ -1,8 +1,8 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
-import { AreaSearch } from "@uk-data-atlas/atlas-runtime/areas";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { AreaSearch } from "@uk-data-atlas/areas";
+import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	readAreaInventory,

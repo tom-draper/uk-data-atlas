@@ -19,13 +19,13 @@ import {
 	type AreaMatches,
 	type AreaSearchFilters,
 	type AreaSearchIndex,
-} from "../areaSearch.ts";
+} from "@uk-data-atlas/areas";
 import {
 	compareBoundaryReleases,
 	derivedReleaseSources,
 	selectReleaseForDate,
 	type ReleaseSelection,
-} from "../releaseForDate.ts";
+} from "@uk-data-atlas/areas";
 import { exactNameMatch, type NameMatch } from "@uk-data-atlas/geography";
 
 import type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";

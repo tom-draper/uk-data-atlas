@@ -2,7 +2,7 @@ import {
 	buildArtifactPath,
 	readAreaLookup,
 	readSqliteAreaInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { readFileSync } from "node:fs";
 import {
 	readCrosswalkInventory,

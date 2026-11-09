@@ -17,11 +17,8 @@ import { releaseMonth } from "@uk-data-atlas/catalogue";
 import { toWgs84Geometry } from "@uk-data-atlas/geography/coordinates";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import { compileNamedLocationGeometry } from "@uk-data-atlas/atlas-runtime/places";
 import { sha256 } from "@uk-data-atlas/artifacts";

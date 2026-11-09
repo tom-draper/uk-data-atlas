@@ -1,14 +1,14 @@
 import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { GeometricContainmentCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { isGeographyKind } from "@uk-data-atlas/geography";
-import type { readGeometries as readGeometriesForCache } from "@uk-data-atlas/atlas-runtime/areas";
+import type { readGeometries as readGeometriesForCache } from "@uk-data-atlas/areas";
 import { measureContainment } from "./relationships/geometricContainment.ts";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 
