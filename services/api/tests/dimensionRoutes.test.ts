@@ -314,6 +314,25 @@ test("routes a dimensional time series to the selected members", () => {
 	);
 });
 
+test("routes comparisons by public measure and selected members", () => {
+	const url =
+		"/v1/data/recorded-crimes/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000001&comparisonPlace=W05000001&offence=burglary";
+	const resolved = resolveDimensionRequest(url, context);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	assert.match(resolved.url, /^\/v1\/data\/recorded-crimes\/compare\?/);
+	assert.equal(resolved.series.dimensions.offence, "burglary");
+	const response = get(url);
+	assert.equal(response.status, 200);
+	assert.equal((data(response).measure as { id: string }).id, "recorded-crimes");
+	const comparison = data(response).comparison as {
+		baseline: { value: number };
+		comparison: { value: number };
+	};
+	assert.equal(comparison.baseline.value, 5);
+	assert.equal(comparison.comparison.value, 7);
+});
+
 test("reads a measure with a member filter as that series", () => {
 	const resolved = resolveDimensionRequest(
 		"/v1/data/recorded-crimes/value?place=ward/E05000001&offence=burglary",
