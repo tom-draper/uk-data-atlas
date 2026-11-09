@@ -330,3 +330,22 @@ export const crime = defineDataset<CrimeDataset>({
 		aggregation: { scope: "localAuthority", aggregate: aggregateCrime },
 	},
 });
+
+export const crimeSeries = () =>
+	crime.statistics!.dimensions!.find(
+		(dimension) => dimension.slug === "offence",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		const suffix =
+			member === "theft"
+				? "theft-offences"
+				: member === "death-or-serious-injury-by-unlawful-driving"
+					? "death-or-serious-injury-by-illegal-driving"
+					: member;
+		return {
+			id: `crime-${suffix}`,
+			measure: "recorded-crimes",
+			dimensions: { offence: member },
+		};
+	});
+
