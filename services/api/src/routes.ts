@@ -77,9 +77,30 @@ const buildRequest = (
 		parsedUrl,
 		segments: segments as string[],
 		...(series ? { series } : {}),
-		// A route's own calls name series by catalogue id, so they skip the
-		// dimension layer and are never restated twice.
-		dispatch: (nextUrl) => routeSeries("GET", nextUrl, context),
+		dispatch: (nextUrl) => {
+			const target = new URL(nextUrl, "http://localhost");
+			const targetSegments = target.pathname.split("/").filter(Boolean);
+			if (
+				series &&
+				segments[0] === "v1" &&
+				segments[1] === "data" &&
+				targetSegments[0] === "v1" &&
+				targetSegments[1] === "data" &&
+				decodePathSegment(targetSegments[2] ?? "") ===
+					series.catalogueMeasure.id
+			) {
+				targetSegments[2] = encodeURIComponent(segments[2] as string);
+				target.pathname = `/${targetSegments.join("/")}`;
+				return routeSeries(
+					"GET",
+					target.pathname + target.search,
+					context,
+					undefined,
+					series,
+				);
+			}
+			return routeSeries("GET", nextUrl, context);
+		},
 	};
 };
 
