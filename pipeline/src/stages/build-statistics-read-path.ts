@@ -18,6 +18,7 @@ import {
 } from "@uk-data-atlas/datasets";
 import {
 	readMeasureDimensionsConfig,
+	indexStatisticsSeries,
 	type StatisticsReadPath,
 	type StatisticsSelector,
 } from "@uk-data-atlas/measures";
@@ -303,6 +304,13 @@ writeFileSync(
 			schemaVersion: 1,
 			dataCatalogHash: plan.dataCatalogHash,
 			statistics: sorted(plan.statistics),
+			series: sorted(
+				indexStatisticsSeries(
+					catalog,
+					plan,
+					(id) => config.ids[id] ?? censusSeries.get(id),
+				),
+			),
 			observations: sorted(plan.observations),
 		},
 		null,

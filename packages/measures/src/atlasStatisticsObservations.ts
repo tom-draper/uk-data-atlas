@@ -1,7 +1,15 @@
 import type { SQLOutputValue } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { SourceGeography } from "./index.ts";
+import {
+	measureSeriesSourceKey,
+	type MeasureSeriesIdentity,
+} from "./measureDimensions.ts";
+import {
+	observationArtifactName,
+	type DataCatalog,
+	type SourceGeography,
+} from "./dataCatalog.ts";
 
 /**
  * Which statistics series an observation artifact is read from. The dataset,
@@ -117,7 +125,32 @@ export type StatisticsReadPath = {
 	schemaVersion: 1;
 	dataCatalogHash: string;
 	statistics: Record<string, StatisticsSelector | StatisticsTableSelector>;
+	series?: Record<string, StatisticsSelector | StatisticsTableSelector>;
 	observations: Record<string, string>;
+};
+
+export const indexStatisticsSeries = (
+	catalog: DataCatalog,
+	readPath: StatisticsReadPath,
+	identityFor: (measureId: string) => MeasureSeriesIdentity | undefined,
+): NonNullable<StatisticsReadPath["series"]> => {
+	const indexed: NonNullable<StatisticsReadPath["series"]> = {};
+	for (const measure of catalog.measures) {
+		const identity = identityFor(measure.id);
+		if (!identity)
+			throw new Error(`Missing series identity for ${measure.id}.`);
+		for (const source of measure.sources) {
+			const name = observationArtifactName(measure.id, source);
+			const selector = readPath.statistics[name];
+			if (!selector)
+				throw new Error(`Missing statistics selector for ${name}.`);
+			const key = measureSeriesSourceKey(identity, source);
+			if (key in indexed)
+				throw new Error(`Duplicate statistics series source: ${key}.`);
+			indexed[key] = selector;
+		}
+	}
+	return indexed;
 };
 
 /** What the catalogue says about the artifact being rebuilt. */
