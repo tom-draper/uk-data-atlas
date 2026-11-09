@@ -5,6 +5,7 @@ import {
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
+	type MeasureSeriesIdentity,
 } from "./index.ts";
 import {
 	lazySourceObservations,
@@ -24,10 +25,11 @@ export const readMeasureObservations = (
 	readPath: StatisticsReadPath = readAtlasStatisticsReadPath(
 		atlasDatabasePath(repositoryRoot),
 	),
+	identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 ): AnyMeasureObservationArtifact[] => {
 	const databasePath = atlasDatabasePath(repositoryRoot);
 	const tables = new ObservationCache(maxBytes);
-	tables.bindCatalogue(databasePath, dataCatalog, readPath);
+	tables.bindCatalogue(databasePath, dataCatalog, readPath, identities);
 	return dataCatalog.measures.flatMap((measure) =>
 		measure.sources.map((source) =>
 			lazySourceObservations(

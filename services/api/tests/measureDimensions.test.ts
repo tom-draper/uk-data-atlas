@@ -39,7 +39,7 @@ test("series source keys distinguish dataset and geography partitions", () => {
 	};
 	const source = {
 		datasetId: "local-election",
-		sourceGeography: { type: "ward", boundaryYear: 2023 },
+		sourceGeography: { type: "ward" as const, boundaryYear: 2023 },
 	};
 	const key = measureSeriesSourceKey(series, source);
 	assert.equal(
