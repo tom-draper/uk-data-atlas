@@ -14,7 +14,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/loader";
 import { evidenceInputsHash } from "./evidence/evidenceInputsHash.ts";
 import { buildEvidenceMeasure } from "./evidence/buildEvidenceMeasure.ts";
 import {
