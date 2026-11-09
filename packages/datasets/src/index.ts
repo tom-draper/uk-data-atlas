@@ -222,3 +222,4 @@ export { roadCollisionSeries } from "./transport/road-safety/road-collisions/dat
 export { airQualitySeries } from "./environment/air-quality/air-quality/dataset.ts";
 export { declaredLifeExpectancySeries } from "./health/life-expectancy/life-expectancy-series/dataset.ts";
 export { medianPaySeries } from "./data/income/statistics.ts";
+export { homelessnessSeries } from "./housing/homelessness/homelessness/dataset.ts";

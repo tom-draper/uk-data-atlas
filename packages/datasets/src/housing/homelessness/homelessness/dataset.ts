@@ -170,3 +170,21 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 		},
 	},
 });
+
+export const homelessnessSeries = () =>
+	homelessness.statistics!.fields!
+		.filter((field) =>
+			[
+				"households-in-temporary-accommodation",
+				"children-in-temporary-accommodation",
+			].includes(field.measure),
+		)
+		.map((field) => ({
+			id:
+				field.measure === "children-in-temporary-accommodation"
+					? "temporary-accommodation-children"
+					: `temporary-accommodation-households${field.members?.["household-type"] === "all" ? "" : `-${field.members?.["household-type"]}`}`,
+			measure: field.measure,
+			...(field.members ? { dimensions: field.members } : {}),
+		}));
+
