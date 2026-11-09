@@ -13,7 +13,5 @@ export * from "./publicJson.ts";
 export * from "./publicManifest.ts";
 export * from "./readOnlyDatabase.ts";
 export * from "./sqliteIndex.ts";
-export * from "./atlasStatisticsVocabulary.ts";
-export * from "./atlasStatisticsObservations.ts";
 export * from "./storedGeometry.ts";
 export * from "./storedPayload.ts";

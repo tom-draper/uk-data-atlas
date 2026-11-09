@@ -4,11 +4,11 @@ import { fileURLToPath } from "node:url";
 import {
 	statisticsVocabularyPath,
 	buildDirectory,
-	readStatisticsVocabulary,
 	buildLog,
 	formatCount,
 	repoPath,
 } from "@uk-data-atlas/atlas-runtime/storage";
+import { readStatisticsVocabulary } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 /** Generate the vocabulary from the statistics database for the data build. */
 const repositoryRoot = resolve(

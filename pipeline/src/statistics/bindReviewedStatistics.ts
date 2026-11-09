@@ -1,6 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import { observationArtifactName, type Measure } from "@uk-data-atlas/measures";
-import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
+import { type StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	expandStatisticsSelection,
 	type StatisticsSelection,

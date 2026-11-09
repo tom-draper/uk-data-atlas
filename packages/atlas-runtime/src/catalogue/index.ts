@@ -1,3 +1,5 @@
+export * from "./atlasStatisticsObservations.ts";
+export * from "./atlasStatisticsVocabulary.ts";
 export * from "./attribution.ts";
 export * from "./boundaryCatalogue.ts";
 export * from "./catalogCountries.ts";

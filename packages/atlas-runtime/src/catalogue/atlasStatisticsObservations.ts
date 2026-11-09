@@ -1,5 +1,8 @@
 import type { SQLOutputValue } from "node:sqlite";
-import { openReadOnlyDatabase, type SqlReader } from "./readOnlyDatabase.ts";
+import {
+	openReadOnlyDatabase,
+	type SqlReader,
+} from "../storage/readOnlyDatabase.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { SourceGeography } from "@uk-data-atlas/measures";
 

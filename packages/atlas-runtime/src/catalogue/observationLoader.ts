@@ -3,7 +3,7 @@ import {
 	atlasDatabasePath,
 	statisticsReadPathPath,
 } from "../storage/dataLayout.ts";
-import type { StatisticsReadPath } from "../storage/atlasStatisticsObservations.ts";
+import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,

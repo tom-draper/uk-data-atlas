@@ -7,20 +7,19 @@ import {
 	isMeasureTable,
 	tableMeasureObservations,
 	type AnyMeasureObservationArtifact,
+	readStatisticsObservationText,
+	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	atlasDatabasePath,
 	compiledObservationPath,
 	observationValuesEqual,
-	readStatisticsObservationText,
 } from "@uk-data-atlas/atlas-runtime/storage";
+
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
 import { readFileSync } from "node:fs";
-import {
-	statisticsReadPathPath,
-	type StatisticsReadPath,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { statisticsReadPathPath } from "@uk-data-atlas/atlas-runtime/storage";
 
 /**
  * The statistics read path. An artifact is read from the statistics tables

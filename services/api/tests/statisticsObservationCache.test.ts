@@ -7,8 +7,8 @@ import { test } from "vitest";
 import {
 	readMeasureObservations,
 	type DataCatalog,
+	type StatisticsReadPath,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { StatisticsReadPath } from "@uk-data-atlas/atlas-runtime/storage";
 
 test("reads catalogue observations from statistics without legacy tables", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "statistics-observation-cache-"));
