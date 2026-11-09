@@ -9,7 +9,7 @@ import {
 	AreaGeometryCache,
 	readGeometrySourceLookup,
 } from "@uk-data-atlas/geometry";
-import { buildSimplifiedDownload } from "../../packages/atlas-runtime/src/maps/mapResource/simplifiedDownload";
+import { buildSimplifiedDownload } from "@uk-data-atlas/map-tiles/node";
 
 const root = resolve(process.argv[2] ?? ".");
 const id = process.argv[3];

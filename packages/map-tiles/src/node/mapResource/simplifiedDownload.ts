@@ -1,8 +1,8 @@
-import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
-import { compileTiers } from "@uk-data-atlas/map-tiles/topologyTiers";
-import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
+import { decomposeArcs } from "../../arcs.ts";
+import { compileTiers } from "../../topologyTiers.ts";
+import { featureIds } from "../../featureIds.ts";
+import type { GeometryTier } from "../../simplifyGeometry.ts";
+import type { MapGeometryCache } from "./geometryCache.ts";
 import { buildGeoJsonBody } from "./geoJson.ts";
 import { buildGeoParquet } from "./geoParquet.ts";
 import type { FullDetailRelease } from "./fullDetail.ts";
@@ -13,7 +13,7 @@ export type SimplifiedDownload = {
 };
 
 export const buildSimplifiedDownload = (
-	cache: AreaGeometryCache,
+	cache: MapGeometryCache,
 	release: FullDetailRelease,
 	names: Map<string, string>,
 	download: SimplifiedDownload,

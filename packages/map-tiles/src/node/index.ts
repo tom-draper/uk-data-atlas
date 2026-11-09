@@ -3,3 +3,4 @@ export * from "./mapResource/fullDetail.ts";
 export * from "./mapResource/geoJson.ts";
 export * from "./mapResource/geoParquet.ts";
 export * from "./mapResourceLoader.ts";
+export * from "./mapResource/simplifiedDownload.ts";

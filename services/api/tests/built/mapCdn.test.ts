@@ -8,10 +8,7 @@ import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 import { test } from "vitest";
 import { readApiCatalogues } from "../../src/catalogueLoader";
-import {
-	readMapAssets,
-	readMapResources,
-} from "@uk-data-atlas/atlas-runtime/maps";
+import { readMapAssets, readMapResources } from "@uk-data-atlas/map-tiles/node";
 import { route } from "../../src/routes";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 

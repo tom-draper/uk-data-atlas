@@ -54,7 +54,7 @@ const sourceFiles = (directory: string) =>
  * to any of it rebuilds every release.
  */
 const COMPILER_SOURCES = [
-	...sourceFiles("packages/atlas-runtime/src/maps/mapResource"),
+	...sourceFiles("packages/map-tiles/src/node/mapResource"),
 	// The tiler, shared with the website's precompile.
 	...sourceFiles("packages/map-tiles/src"),
 	"packages/artifacts/src/parquet.ts",

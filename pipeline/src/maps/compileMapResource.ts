@@ -1,7 +1,7 @@
 import { gzipSync } from "node:zlib";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { buildGeoJson } from "@uk-data-atlas/atlas-runtime/maps";
-import { buildGeoParquet } from "@uk-data-atlas/atlas-runtime/maps";
+import { buildGeoJson } from "@uk-data-atlas/map-tiles/node";
+import { buildGeoParquet } from "@uk-data-atlas/map-tiles/node";
 import {
 	compileTileset,
 	LAYER_NAME,
@@ -13,7 +13,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	buildFullDetailParquet,
 	GEOJSON_TIERS,
-} from "@uk-data-atlas/atlas-runtime/maps";
+} from "@uk-data-atlas/map-tiles/node";
 
 /**
  * One boundary release compiled into everything a map needs: the archive of

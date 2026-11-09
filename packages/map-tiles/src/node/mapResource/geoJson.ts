@@ -1,5 +1,5 @@
 import { gzipSync } from "node:zlib";
-import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 /**

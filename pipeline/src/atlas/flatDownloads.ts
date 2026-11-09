@@ -2,7 +2,7 @@ import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { BoundaryReleaseSummary } from "../maps/compileMapResource.ts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { buildFullDetailParquet } from "@uk-data-atlas/atlas-runtime/maps";
+import { buildFullDetailParquet } from "@uk-data-atlas/map-tiles/node";
 
 /** A release's flat downloads when no tiles can be drawn from it. */
 export type FlatDownloads = {

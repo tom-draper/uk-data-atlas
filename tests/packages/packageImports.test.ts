@@ -75,6 +75,7 @@ const problems = (packageRoot: string) => {
 					([
 						"@uk-data-atlas/search-index",
 						"@uk-data-atlas/catalogue",
+						"@uk-data-atlas/map-tiles",
 					].includes(manifest.name) &&
 						inside(join(packageRoot, "src/node"), file));
 				if (!nodeOnly)
@@ -122,29 +123,43 @@ describe("shared packages", () => {
 		expect(description).not.toContain("\n");
 	});
 
-	it("keeps the catalogue main entry browser safe", () => {
-		const pending = [join(PACKAGES, "catalogue/src/index.ts")];
-		const seen = new Set<string>();
-		const invalid: string[] = [];
-		while (pending.length) {
-			const file = pending.pop()!;
-			if (seen.has(file)) continue;
-			seen.add(file);
-			for (const specifier of specifiers(readFileSync(file, "utf8"))) {
-				if (specifier.startsWith("."))
-					pending.push(resolve(dirname(file), specifier));
-				else if (
-					specifier.startsWith("node:") ||
-					builtins.has(specifier) ||
-					!["@uk-data-atlas/geography", "@noble/hashes"].includes(
-						packageName(specifier),
+	it.each(["catalogue", "map-tiles"])(
+		"keeps the %s main entry browser safe",
+		(name) => {
+			const pending = [join(PACKAGES, name, "src/index.ts")];
+			const seen = new Set<string>();
+			const invalid: string[] = [];
+			while (pending.length) {
+				const file = pending.pop()!;
+				if (seen.has(file)) continue;
+				seen.add(file);
+				for (const specifier of specifiers(
+					readFileSync(file, "utf8"),
+				)) {
+					if (specifier.startsWith("."))
+						pending.push(
+							resolve(
+								dirname(file),
+								specifier.endsWith(".ts")
+									? specifier
+									: `${specifier}.ts`,
+							),
+						);
+					else if (
+						specifier.startsWith("node:") ||
+						builtins.has(specifier) ||
+						![
+							"@uk-data-atlas/geography",
+							"@noble/hashes",
+							"polygon-clipping",
+						].includes(packageName(specifier))
 					)
-				)
-					invalid.push(`${relative(ROOT, file)}: ${specifier}`);
+						invalid.push(`${relative(ROOT, file)}: ${specifier}`);
+				}
 			}
-		}
-		expect(invalid).toEqual([]);
-	});
+			expect(invalid).toEqual([]);
+		},
+	);
 
 	it("do not depend on each other in a cycle", () => {
 		const graph = new Map(
@@ -248,6 +263,7 @@ describe("extracted domain packages", () => {
 		"places",
 		"postcodes",
 		"measures",
+		"map-tiles",
 	])("%s has no atlas-runtime or direct SQLite dependency", (name) => {
 		const manifest = JSON.parse(
 			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
@@ -273,10 +289,11 @@ describe("atlas domain boundaries", () => {
 	it("keeps domain modules and evidence loading independent of the API", () => {
 		const atlas = join(PACKAGES, "atlas-runtime/src");
 		const files = [
-			...["maps", "loader"].flatMap((directory) =>
+			...["loader"].flatMap((directory) =>
 				sourceFiles(join(atlas, directory)),
 			),
 			...sourceFiles(join(PACKAGES, "catalogue/src")),
+			...sourceFiles(join(PACKAGES, "map-tiles/src")),
 			...sourceFiles(join(PACKAGES, "measures/src")),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
@@ -421,6 +438,7 @@ describe("pipeline boundaries", () => {
 			...sourceFiles(join(PIPELINE, "src")),
 			...sourceFiles(join(PACKAGES, "atlas-runtime/src")),
 			...sourceFiles(join(PACKAGES, "catalogue/src")),
+			...sourceFiles(join(PACKAGES, "map-tiles/src")),
 			...sourceFiles(join(PACKAGES, "measures/src")),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),

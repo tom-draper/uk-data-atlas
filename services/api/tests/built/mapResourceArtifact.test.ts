@@ -14,7 +14,7 @@ import {
 } from "@uk-data-atlas/map-tiles/tileset";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { GEOJSON_TIERS } from "@uk-data-atlas/atlas-runtime/maps";
+import { GEOJSON_TIERS } from "@uk-data-atlas/map-tiles/node";
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
