@@ -1,4 +1,4 @@
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
 import type {

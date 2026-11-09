@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { prepareAggregateTarget } from "../src/aggregatePreparation";
 
 // These cases need no compiled areas, so the resolver is empty.

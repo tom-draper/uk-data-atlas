@@ -2,7 +2,7 @@ import type {
 	Measure,
 	MeasureSource,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { PlaceCandidate } from "@uk-data-atlas/atlas-runtime/places";
 import { describeCandidate } from "./placeResponses";
 import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";

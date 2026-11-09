@@ -9,7 +9,7 @@ import {
 	availableReconciliations,
 	reconcileMeasure,
 } from "@uk-data-atlas/measures";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	createRelationshipPathIndex,
 	type RelationshipPath,

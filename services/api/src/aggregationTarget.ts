@@ -9,7 +9,7 @@ import {
 	membershipThroughSteps,
 	pathMembershipClaims,
 } from "./aggregationMembership";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	invalidQuery,
 	problem,

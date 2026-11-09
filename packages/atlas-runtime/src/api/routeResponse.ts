@@ -127,10 +127,10 @@ export const requirementDetail = (response: ApiResponse | undefined) =>
 
 export const requireGeography = (
 	resolver: Pick<
-		import("../areas/geographyResolver").GeographyResolver,
+		import("../loader/geographyResolver").GeographyResolver,
 		"missingRequirement"
 	>,
-	requirement: import("../areas/geographyResolver").GeographyRequirement,
+	requirement: import("../loader/geographyResolver").GeographyRequirement,
 ) => {
 	const detail = resolver.missingRequirement(requirement);
 	return detail === undefined

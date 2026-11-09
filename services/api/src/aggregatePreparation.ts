@@ -1,7 +1,7 @@
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { MeasureSource } from "@uk-data-atlas/measures";
 import {
 	aggregateTargetMembers,

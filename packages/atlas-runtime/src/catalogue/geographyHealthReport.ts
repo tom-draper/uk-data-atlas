@@ -1,5 +1,5 @@
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { GeographyResolver } from "../areas/geographyResolver.ts";
+import type { GeographyResolver } from "../loader/geographyResolver.ts";
 
 export const geographyHealthReport = (
 	geographyResolver: Pick<GeographyResolver, "geographyHealth">,
