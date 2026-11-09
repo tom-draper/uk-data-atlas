@@ -6,6 +6,7 @@ export const crimeDatasetDefinition: DatasetDefinition<CrimeDataset> = {
 	type: "crime",
 	precompiledFile: "crime",
 	boundaryType: "localAuthority",
+	mapValueField: "totalRecordedCrime",
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {
 		name: "Crime",

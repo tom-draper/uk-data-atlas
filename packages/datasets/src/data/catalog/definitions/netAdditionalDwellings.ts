@@ -8,6 +8,7 @@ export const netAdditionalDwellingsDatasetDefinition: DatasetDefinition<
 	type: "netAdditionalDwellings",
 	precompiledFile: "net-additional-dwellings",
 	boundaryType: "localAuthority",
+	mapValueField: "value",
 	coverageCountries: ["GB-ENG"],
 	source: {
 		name: "Housing supply: net additional dwellings",

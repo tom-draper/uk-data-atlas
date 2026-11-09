@@ -7,6 +7,7 @@ export const childPovertyDatasetDefinition: DatasetDefinition<ChildPovertyDatase
 		type: "childPoverty",
 		precompiledFile: "child-poverty",
 		boundaryType: "localAuthority",
+		mapValueField: "childPovertyRate",
 		source: {
 			name: "Child Poverty",
 			source: "Department for Work and Pensions",

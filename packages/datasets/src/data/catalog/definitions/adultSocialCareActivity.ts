@@ -8,6 +8,7 @@ export const adultSocialCareActivityDatasetDefinition: DatasetDefinition<
 	type: "adultSocialCareActivity",
 	precompiledFile: "adult-social-care-activity",
 	boundaryType: "localAuthority",
+	mapValueField: "value",
 	coverageCountries: ["GB-ENG"],
 	source: {
 		name: "Adult social care activity in England",
