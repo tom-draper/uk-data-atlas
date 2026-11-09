@@ -226,6 +226,7 @@ export const handleMapResourceRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series,
 }: RouteRequestFor<"areaCodes">): ApiResponse | undefined => {
 	if (segments[0] !== "v1" || segments[1] !== "map-resources")
 		return undefined;
@@ -352,7 +353,8 @@ export const handleMapResourceRoutes = ({
 		);
 
 	if (segments.length === 6 && segments[4] === "join") {
-		const measureId = segments[5]!;
+		const publicMeasureId = segments[5]!;
+		const measureId = series?.catalogueMeasure.id ?? publicMeasureId;
 		const format = readChoice(
 			parsedUrl.searchParams.get("format"),
 			JOIN.format,
@@ -522,7 +524,7 @@ export const handleMapResourceRoutes = ({
 					},
 				}),
 				headers: {
-					"content-disposition": `attachment; filename="${geography}-${release}-${measureId}-${period}.parquet"`,
+					"content-disposition": `attachment; filename="${geography}-${release}-${publicMeasureId}-${period}.parquet"`,
 				},
 			},
 		};
