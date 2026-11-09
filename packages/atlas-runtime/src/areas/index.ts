@@ -17,7 +17,6 @@ export * from "./atlasAreaReader.ts";
 export * from "./batchValidation.ts";
 export * from "./boundaryResources.ts";
 export * from "./capability.ts";
-export * from "./catalog/countries.ts";
 export * from "./countryRelease.ts";
 export * from "@uk-data-atlas/areas";
 export * from "./geographyBuildPath.ts";
