@@ -202,7 +202,9 @@ export const resolveMeasureQuery = (
 		return next;
 	};
 	const internal = rewrite(
-		parsed.pathname === "/v1/attribution" ? publicMeasures : ids,
+		["/v1/attribution", "/v1/relationships"].includes(parsed.pathname)
+			? publicMeasures
+			: ids,
 	);
 	// The series ids already say which dataset.
 	if (measures.length > 0) internal.searchParams.delete("datasetId");
