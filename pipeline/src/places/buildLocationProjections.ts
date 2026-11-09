@@ -4,8 +4,8 @@ import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import { createCrosswalkArtifacts } from "../storage/crosswalkArtifacts.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import { compileLocationProjections } from "@uk-data-atlas/atlas-runtime/places";
-import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import { compileLocationProjections } from "@uk-data-atlas/places";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import {
 	readStoredText,
 	storedTextExists,

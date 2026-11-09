@@ -4,23 +4,20 @@ import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeCounts,
-} from "../postcodes/atlasPostcodeDerived.ts";
+} from "@uk-data-atlas/postcodes";
 import { readGeographyCatalogue } from "../catalogue/geographyCatalogue.ts";
 import { readSqliteAreaInventory } from "@uk-data-atlas/areas";
 import { existsSync, readFileSync } from "node:fs";
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { GeographyInventory } from "./geographyInventory.ts";
-import type { NamedLocationInventory } from "../places/namedLocations.ts";
-import {
-	openPlaceIndexDatabase,
-	type PlaceIndex,
-} from "../places/placeIndex.ts";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
+import { openPlaceIndexDatabase, type PlaceIndex } from "@uk-data-atlas/places";
 import {
 	openAreaSearchIndexDatabase,
 	type AreaSearchIndex,
 } from "@uk-data-atlas/areas";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
-import { readSqlitePostcodeIndex } from "../postcodes/atlasPostcodesReader.ts";
+import { readSqlitePostcodeIndex } from "@uk-data-atlas/postcodes";
 import {
 	PostcodeAreaIndex,
 	postcodeAreasMismatch,

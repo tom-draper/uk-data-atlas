@@ -14,7 +14,7 @@ import {
 import {
 	compileLocationProjections,
 	LocationProjectionStore,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 import {

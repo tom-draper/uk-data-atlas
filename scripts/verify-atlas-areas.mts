@@ -13,7 +13,7 @@ import {
 	readBoundaryRegistry,
 } from "@uk-data-atlas/atlas-runtime/loader";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";

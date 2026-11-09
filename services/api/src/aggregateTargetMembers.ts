@@ -5,7 +5,7 @@ import {
 } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
 import type { PopulationObservation } from "@uk-data-atlas/measures";
-import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocation } from "@uk-data-atlas/places";
 import {
 	invalidQuery,
 	problem,

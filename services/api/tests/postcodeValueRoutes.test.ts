@@ -8,7 +8,7 @@ import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { compilePlaceIndex } from "@uk-data-atlas/places";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,

@@ -201,6 +201,12 @@ importers:
       '@uk-data-atlas/measures':
         specifier: workspace:*
         version: link:packages/measures
+      '@uk-data-atlas/places':
+        specifier: workspace:*
+        version: link:packages/places
+      '@uk-data-atlas/postcodes':
+        specifier: workspace:*
+        version: link:packages/postcodes
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:packages/relationships
@@ -550,18 +556,36 @@ importers:
 
   packages/places:
     dependencies:
+      '@uk-data-atlas/areas':
+        specifier: workspace:*
+        version: link:../areas
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
+      '@uk-data-atlas/catalogue':
+        specifier: workspace:*
+        version: link:../catalogue
       '@uk-data-atlas/datasets':
         specifier: workspace:*
         version: link:../datasets
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
+      '@uk-data-atlas/geometry':
+        specifier: workspace:*
+        version: link:../geometry
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../relationships
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../search-index
+      polygon-clipping:
+        specifier: 0.15.7
+        version: 0.15.7
     devDependencies:
       '@types/node':
         specifier: ^26.6.2
@@ -575,6 +599,9 @@ importers:
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography

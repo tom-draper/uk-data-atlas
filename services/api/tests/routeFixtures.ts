@@ -11,7 +11,7 @@ import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationship
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import type { ValidationReport } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";

@@ -8,18 +8,18 @@ import {
 	readAreaInventory,
 	readPlaceIndex,
 } from "@uk-data-atlas/atlas-runtime/loader";
-import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
-import { resolvePlaces } from "@uk-data-atlas/atlas-runtime/places";
+import { readNamedLocationInventory } from "@uk-data-atlas/places";
+import { resolvePlaces } from "@uk-data-atlas/places";
 import { buildLocationProjections } from "./pipelineFixtures";
-import { createNamedLocationLookup } from "@uk-data-atlas/atlas-runtime/places";
+import { createNamedLocationLookup } from "@uk-data-atlas/places";
 import {
 	compileLocationProjections,
 	LocationProjectionStore,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import {
 	createLocationProjectionStore,
 	readLocationProjectionInventory,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import {
 	areaLookup,
 	containmentCrosswalk,

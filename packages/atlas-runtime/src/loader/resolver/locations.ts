@@ -6,11 +6,11 @@ import {
 import type {
 	LocationProjection,
 	LocationProjections,
-} from "../../places/locationProjections.ts";
+} from "@uk-data-atlas/places";
 import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
-} from "../../places/namedLocations.ts";
+} from "@uk-data-atlas/places";
 import { NamedLocationResolver } from "@uk-data-atlas/places";
 import type { CatalogueResolver } from "./catalogue.ts";
 import type { AreaIdentity } from "./areas.ts";

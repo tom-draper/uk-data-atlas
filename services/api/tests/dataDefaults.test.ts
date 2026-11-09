@@ -12,7 +12,7 @@ import {
 	namedAreaRefusal,
 } from "../src/dataDefaults";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
-import type { PlaceCandidate } from "@uk-data-atlas/atlas-runtime/places";
+import type { PlaceCandidate } from "@uk-data-atlas/places";
 
 const source = (
 	type: MeasureGeographyKind,

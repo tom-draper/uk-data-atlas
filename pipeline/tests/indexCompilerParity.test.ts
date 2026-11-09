@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { compileAreaSearchIndex, createAreaLookup } from "@uk-data-atlas/areas";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { compilePlaceIndex } from "@uk-data-atlas/places";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { compileDuckdbAreaSearchIndex } from "../src/places/duckdbAreaSearch";
 import { compileDuckdbPlaceIndex } from "../src/places/duckdbPlaceIndex";

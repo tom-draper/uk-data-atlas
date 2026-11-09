@@ -10,13 +10,13 @@ import type { GeographyInventory } from "./geographyInventory.ts";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { LocationProjections } from "../places/locationProjections.ts";
+import type { LocationProjections } from "@uk-data-atlas/places";
 import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
-} from "../places/namedLocations.ts";
+} from "@uk-data-atlas/places";
 import type { AreaSearchIndex } from "@uk-data-atlas/areas";
-import type { PlaceIndex } from "../places/placeIndex.ts";
+import type { PlaceIndex } from "@uk-data-atlas/places";
 import type { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeCountsIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";

@@ -13,7 +13,7 @@ import {
 	readCrosswalkLookup,
 } from "@uk-data-atlas/relationships";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
-import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import { readNamedLocationInventory } from "@uk-data-atlas/places";
 
 export const createPlaceResolver = (
 	inputs: Pick<

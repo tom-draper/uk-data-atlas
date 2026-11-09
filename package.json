@@ -51,7 +51,9 @@
 		"@uk-data-atlas/geometry": "workspace:*",
 		"@uk-data-atlas/areas": "workspace:*",
 		"@uk-data-atlas/relationships": "workspace:*",
-		"@uk-data-atlas/measures": "workspace:*"
+		"@uk-data-atlas/measures": "workspace:*",
+		"@uk-data-atlas/places": "workspace:*",
+		"@uk-data-atlas/postcodes": "workspace:*"
 	},
 	"devDependencies": {
 		"@duckdb/node-api": "1.4.5-r.1",

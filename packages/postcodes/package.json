@@ -15,7 +15,8 @@
 	"dependencies": {
 		"@uk-data-atlas/artifacts": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
-		"@uk-data-atlas/search-index": "workspace:*"
+		"@uk-data-atlas/search-index": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",

@@ -17,12 +17,12 @@ import { decodeCompactPayload } from "@uk-data-atlas/catalogue/compactPayload";
 import {
 	readSqlitePostcodeAreaShard,
 	postcodeDistrictWhere,
-} from "@uk-data-atlas/atlas-runtime/postcodes";
+} from "@uk-data-atlas/postcodes";
 
 import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,
-} from "@uk-data-atlas/atlas-runtime/postcodes";
+} from "@uk-data-atlas/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 

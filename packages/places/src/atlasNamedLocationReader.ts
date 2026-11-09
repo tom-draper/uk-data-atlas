@@ -1,8 +1,5 @@
 import { lazyValue } from "@uk-data-atlas/atlas-db";
-import type {
-	NamedLocation,
-	NamedLocationInventory,
-} from "@uk-data-atlas/places";
+import type { NamedLocation, NamedLocationInventory } from "./index.ts";
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";

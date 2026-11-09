@@ -1,6 +1,6 @@
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { NamedLocationInventory } from "../../places/namedLocations.ts";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
 
 export type CatalogueResolverInputs = {
 	areaInventory?: AreaInventory;

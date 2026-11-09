@@ -1,12 +1,12 @@
 import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { NamedLocationInventory } from "@uk-data-atlas/places";
+import type { NamedLocationInventory } from "./index.ts";
 import { compareBoundaryReleases } from "@uk-data-atlas/catalogue";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { SQLInputValue } from "node:sqlite";
+import type { SQLInputValue } from "@uk-data-atlas/atlas-db";
 import {
 	SqliteIndex,
 	text,
@@ -32,15 +32,7 @@ import {
 	type CompiledPlaceLabel,
 	type PlaceIndex,
 	type PlaceIndexArtifact,
-} from "@uk-data-atlas/places";
-export {
-	AREA_CODE,
-	placeReference,
-	type CompiledPlace,
-	type CompiledPlaceLabel,
-	type PlaceIndex,
-	type PlaceIndexArtifact,
-} from "@uk-data-atlas/places";
+} from "./index.ts";
 
 /** The fields an index is checked against before it serves a query. */
 type PlaceIndexHeader = Pick<
