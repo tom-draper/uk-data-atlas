@@ -3,10 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
-import {
-	compileNamedLocations,
-	membersAt,
-} from "@uk-data-atlas/atlas-runtime/places";
+import { compileNamedLocations, membersAt } from "@uk-data-atlas/places";
 
 test("keeps an official area's kind and its ONS source", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-named-locations-"));

@@ -6,7 +6,7 @@ import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	compileLocationProjections,
 	LocationProjectionStore,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import { cursorFor } from "../src/pagination";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";

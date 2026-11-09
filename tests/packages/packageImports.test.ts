@@ -66,6 +66,8 @@ const problems = (packageRoot: string) => {
 						"atlas-db",
 						"atlas-runtime",
 						"geometry",
+						"places",
+						"postcodes",
 						"relationships",
 						"shapefile",
 					].includes(manifest.name.replace("@uk-data-atlas/", "")) ||
@@ -211,41 +213,47 @@ const importsAtlasApi = (file: string, specifier: string) =>
 		inside(ATLAS_API, resolve(dirname(file), specifier)));
 
 describe("extracted domain packages", () => {
-	it.each(["areas", "relationships", "geometry", "places", "measures"])(
-		"%s has no atlas-runtime or direct SQLite dependency",
-		(name) => {
-			const manifest = JSON.parse(
-				readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
-			);
-			const dependencies = Object.keys(manifest.dependencies ?? {});
-			expect(dependencies).not.toContain("@uk-data-atlas/atlas-runtime");
-			const files = sourceFiles(join(PACKAGES, name, "src"));
-			expect(files.length).toBeGreaterThan(0);
-			const imports = files.flatMap((file) =>
-				specifiers(readFileSync(file, "utf8")),
-			);
-			expect(
-				imports.filter(
-					(specifier) =>
-						specifier.startsWith("node:sqlite") ||
-						specifier.startsWith("@uk-data-atlas/atlas-runtime"),
-				),
-			).toEqual([]);
-		},
-	);
+	it.each([
+		"areas",
+		"relationships",
+		"geometry",
+		"places",
+		"postcodes",
+		"measures",
+	])("%s has no atlas-runtime or direct SQLite dependency", (name) => {
+		const manifest = JSON.parse(
+			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+		);
+		const dependencies = Object.keys(manifest.dependencies ?? {});
+		expect(dependencies).not.toContain("@uk-data-atlas/atlas-runtime");
+		const files = sourceFiles(join(PACKAGES, name, "src"));
+		expect(files.length).toBeGreaterThan(0);
+		const imports = files.flatMap((file) =>
+			specifiers(readFileSync(file, "utf8")),
+		);
+		expect(
+			imports.filter(
+				(specifier) =>
+					specifier.startsWith("node:sqlite") ||
+					specifier.startsWith("@uk-data-atlas/atlas-runtime"),
+			),
+		).toEqual([]);
+	});
 });
 
 describe("atlas domain boundaries", () => {
 	it("keeps domain modules and evidence loading independent of the API", () => {
 		const atlas = join(PACKAGES, "atlas-runtime/src");
 		const files = [
-			...["catalogue", "places", "postcodes", "maps", "loader"].flatMap(
-				(directory) => sourceFiles(join(atlas, directory)),
+			...["catalogue", "maps", "loader"].flatMap((directory) =>
+				sourceFiles(join(atlas, directory)),
 			),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
 			...sourceFiles(join(PACKAGES, "areas/src")),
 			...sourceFiles(join(PACKAGES, "relationships/src")),
+			...sourceFiles(join(PACKAGES, "places/src")),
+			...sourceFiles(join(PACKAGES, "postcodes/src")),
 			...sourceFiles(join(PIPELINE, "src/evidence")),
 			join(PIPELINE, "src/build-evidence-documents.ts"),
 		];
@@ -386,6 +394,8 @@ describe("pipeline boundaries", () => {
 			...sourceFiles(join(PACKAGES, "geometry/src")),
 			...sourceFiles(join(PACKAGES, "areas/src")),
 			...sourceFiles(join(PACKAGES, "relationships/src")),
+			...sourceFiles(join(PACKAGES, "places/src")),
+			...sourceFiles(join(PACKAGES, "postcodes/src")),
 		].filter(
 			(file) =>
 				relative(ROOT, file) !== "packages/atlas-db/src/dataLayout.ts",

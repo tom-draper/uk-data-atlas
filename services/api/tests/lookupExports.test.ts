@@ -13,7 +13,7 @@ import {
 	namedLocationMembersTable,
 	renderLookup,
 } from "@uk-data-atlas/areas";
-import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";

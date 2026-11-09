@@ -15,4 +15,4 @@ export * from "./sqliteIndex.ts";
 export * from "./storedGeometry.ts";
 export * from "./storedPayload.ts";
 
-export type { SQLOutputValue } from "node:sqlite";
+export type { SQLInputValue, SQLOutputValue } from "node:sqlite";

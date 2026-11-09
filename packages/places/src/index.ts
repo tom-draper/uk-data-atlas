@@ -6,3 +6,11 @@ export * from "./placeResolver.ts";
 
 export * from "./namedLocationResolver.ts";
 export * from "./gazetteer.ts";
+
+export * from "./atlasNamedLocationReader.ts";
+export * from "./ceremonialCounties.ts";
+export * from "./locationLoader.ts";
+export * from "./locationProjections.ts";
+export * from "./namedLocationGeometry.ts";
+export * from "./namedLocationsCompiler.ts";
+export * from "./placeIndexCompiler.ts";

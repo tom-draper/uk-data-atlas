@@ -6,9 +6,9 @@ import {
 	createGeographyResolver,
 	type GeographyRequirement,
 } from "@uk-data-atlas/atlas-runtime/loader";
-import type { LocationProjectionStore } from "@uk-data-atlas/atlas-runtime/places";
+import type { LocationProjectionStore } from "@uk-data-atlas/places";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
-import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
+import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 import { areaLookup, namedLocationInventory } from "./geographyFixtures";
 

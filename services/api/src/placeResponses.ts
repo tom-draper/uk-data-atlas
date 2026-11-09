@@ -1,4 +1,4 @@
-import type { PlaceCandidate } from "@uk-data-atlas/atlas-runtime/places";
+import type { PlaceCandidate } from "@uk-data-atlas/places";
 import type { Attempt } from "./placeValue";
 
 export const describeCandidate = (candidate: PlaceCandidate) => ({

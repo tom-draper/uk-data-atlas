@@ -1,5 +1,5 @@
 import { requireAtlasPayload } from "@uk-data-atlas/atlas-db";
-import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
+import { postcodeIndexMismatch } from "./index.ts";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 
 export const readSqlitePostcodeIndexArtifact = (

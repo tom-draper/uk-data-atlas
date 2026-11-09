@@ -24,20 +24,7 @@ import type {
 	NamedLocation,
 	NamedLocationInventory,
 	NamedLocationKind,
-} from "@uk-data-atlas/places";
-export type {
-	NamedLocation,
-	NamedLocationInventory,
-	NamedLocationKind,
-} from "@uk-data-atlas/places";
-
-export {
-	createNamedLocationLookup,
-	memberCodesAt,
-	membersAt,
-	selectNamedLocationAt,
-	type NamedLocationLookup,
-} from "@uk-data-atlas/places";
+} from "./namedLocationTypes.ts";
 
 export const idFor = (label: string) =>
 	label

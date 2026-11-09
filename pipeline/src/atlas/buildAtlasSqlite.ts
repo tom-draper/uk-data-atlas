@@ -19,7 +19,7 @@ import {
 	type LocationProjectionInventory,
 	type LocationProjectionArtifact,
 	type LocationParentProjectionArtifact,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import { locationProjectionTables } from "../storage/index.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { namedLocationTables } from "../storage/index.ts";

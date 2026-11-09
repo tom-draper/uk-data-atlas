@@ -6,7 +6,7 @@ import type {
 	MeasureSource,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import type { LocationCoverage } from "./locationAggregation";
-import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocation } from "@uk-data-atlas/places";
 import type { ObservationArtifactReference } from "@uk-data-atlas/atlas-runtime/loader";
 import { envelope, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";

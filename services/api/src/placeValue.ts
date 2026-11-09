@@ -2,7 +2,7 @@ import type { Measure } from "@uk-data-atlas/measures";
 import {
 	comparePlaceCandidates,
 	type PlaceCandidate,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 
 /**
  * Answering "what is this measure for this place?" from a name.

@@ -10,7 +10,7 @@ import {
 import { validateLocationAggregation } from "./locationAggregation";
 import type { LocationCoverage } from "./locationAggregation";
 import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
-import type { NamedLocation } from "@uk-data-atlas/atlas-runtime/places";
+import type { NamedLocation } from "@uk-data-atlas/places";
 import type { PopulationObservation } from "@uk-data-atlas/measures";
 import { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 

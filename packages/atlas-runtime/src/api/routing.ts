@@ -18,12 +18,12 @@ import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type {
 	LocationProjectionInventory,
 	LocationProjections,
-} from "../places/locationProjections.ts";
+} from "@uk-data-atlas/places";
 import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
 import type { MapArchive } from "../maps/mapResource/archiveReader.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { MeasureDimensions } from "../measures/measureDimensionsLoader.ts";
-import type { NamedLocationInventory } from "../places/namedLocations.ts";
+import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 import type { ApiResponse } from "./routeResponse.ts";

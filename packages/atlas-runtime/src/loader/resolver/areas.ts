@@ -13,7 +13,7 @@ import {
 } from "../batchValidation.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { resolvePlaces } from "@uk-data-atlas/places";
-import type { PlaceIndex } from "../../places/placeIndex.ts";
+import type { PlaceIndex } from "@uk-data-atlas/places";
 import {
 	AreaSearch,
 	type AreaMatches,

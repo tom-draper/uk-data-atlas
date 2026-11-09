@@ -11,7 +11,7 @@ import {
 	compilePlaceIndex,
 	openPlaceIndexDatabase,
 	placeIndexMismatch,
-} from "@uk-data-atlas/atlas-runtime/places";
+} from "@uk-data-atlas/places";
 import { placeIndexTables } from "./pipelineFixtures";
 import { parsePlaceReference, resolvePlaces } from "@uk-data-atlas/places";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
