@@ -88,15 +88,11 @@ const buildRequest = (
 				segments[1] === "data" &&
 				targetSegments[0] === "v1" &&
 				targetSegments[1] === "data" &&
-				[series.catalogueMeasure.id, segments[2]].includes(
-					decodePathSegment(targetSegments[2] ?? ""),
-				)
+				decodePathSegment(targetSegments[2] ?? "") === segments[2]
 			) {
-				targetSegments[2] = encodeURIComponent(segments[2] as string);
-				target.pathname = `/${targetSegments.join("/")}`;
 				return routeSeries(
 					"GET",
-					target.pathname + target.search,
+					nextUrl,
 					context,
 					undefined,
 					series,
@@ -107,7 +103,7 @@ const buildRequest = (
 	};
 };
 
-/** Route a request that names series by catalogue id. */
+/** Route a request with its selected series, when one was resolved. */
 const routeSeries = (
 	method: string | undefined,
 	url: string | undefined,
