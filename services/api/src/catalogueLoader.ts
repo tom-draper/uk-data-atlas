@@ -19,16 +19,17 @@ export const readApiCatalogues = (
 	repositoryRoot: string,
 	options: CatalogueOptions = {},
 ) => {
-	const catalogues = readRuntimeApiCatalogues(repositoryRoot, {
-		statisticsReadPath: readAtlasStatisticsReadPath(
-			atlasDatabasePath(repositoryRoot),
-		),
-		...options,
-	});
 	const dimensions = {
 		config: readAtlasMeasureMapping(atlasDatabasePath(repositoryRoot)),
 		vocabulary: readStatisticsVocabulary(atlasDatabasePath(repositoryRoot)),
 	};
+	const catalogues = readRuntimeApiCatalogues(repositoryRoot, {
+		statisticsReadPath: readAtlasStatisticsReadPath(
+			atlasDatabasePath(repositoryRoot),
+		),
+		seriesIdentities: dimensions.config.ids,
+		...options,
+	});
 	assertMeasureDimensions(
 		catalogues.dataCatalog,
 		dimensions.config,
