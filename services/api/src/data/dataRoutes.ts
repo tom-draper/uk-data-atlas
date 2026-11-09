@@ -234,6 +234,7 @@ export const handleDataRoutes = ({
 	const page = paginate(parsedUrl, matches, {
 		keyOf: (record) => record.areaCode,
 		subject: `${measureId} query`,
+		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
 	const { items: records, nextCursor } = page;
@@ -280,6 +281,18 @@ export const handleDataRoutes = ({
 		(record): record is MeasureExportRecord => isNumericObservation(record),
 	);
 	if (requestedFormat !== "json") {
+		const nextPageUrl = new URL(parsedUrl);
+		if (selectedSeries) {
+			for (const [dimension, member] of Object.entries(
+				selectedSeries.dimensions,
+			))
+				nextPageUrl.searchParams.set(dimension, member);
+			if (selectedSeries.datasetId)
+				nextPageUrl.searchParams.set(
+					"datasetId",
+					selectedSeries.datasetId,
+				);
+		}
 		const exported = exportMeasureRecords(
 			requestedFormat as TabularFormat,
 			{
@@ -311,7 +324,7 @@ export const handleDataRoutes = ({
 				// the page size.
 				headers: nextCursor
 					? {
-							link: `<${nextPageHref(parsedUrl, nextCursor)}>; rel="next"`,
+							link: `<${nextPageHref(nextPageUrl, nextCursor)}>; rel="next"`,
 						}
 					: {},
 			},

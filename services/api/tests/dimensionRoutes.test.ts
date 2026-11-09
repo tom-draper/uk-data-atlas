@@ -324,13 +324,45 @@ test("routes comparisons by public measure and selected members", () => {
 	assert.equal(resolved.series.dimensions.offence, "burglary");
 	const response = get(url);
 	assert.equal(response.status, 200);
-	assert.equal((data(response).measure as { id: string }).id, "recorded-crimes");
+	assert.equal(
+		(data(response).measure as { id: string }).id,
+		"recorded-crimes",
+	);
 	const comparison = data(response).comparison as {
 		baseline: { value: number };
 		comparison: { value: number };
 	};
 	assert.equal(comparison.baseline.value, 5);
 	assert.equal(comparison.comparison.value, 7);
+});
+
+test("pages dimensional tables without mixing series", () => {
+	const base = "/v1/data/recorded-crimes?offence=burglary&limit=1";
+	const resolved = resolveDimensionRequest(base, context);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	assert.match(resolved.url, /^\/v1\/data\/recorded-crimes\?/);
+	const first = get(base);
+	assert.equal(first.status, 200);
+	const cursor = (first.body as { meta: { nextCursor: string } }).meta
+		.nextCursor;
+	assert.ok(cursor);
+	const next = get(`${base}&cursor=${cursor}`);
+	assert.equal(next.status, 200);
+	assert.equal((data(next).records as Array<{ value: number }>)[0]?.value, 7);
+	const other = get(
+		`/v1/data/recorded-crimes?offence=robbery&limit=1&cursor=${cursor}`,
+	);
+	assert.equal(other.status, 400);
+	assert.equal((other.body as { code?: string }).code, "invalid_cursor");
+	const csv = get(`${base}&format=csv`);
+	const link = csv.representation?.headers?.link;
+	assert.ok(link);
+	assert.match(link, /^<\/v1\/data\/recorded-crimes\?/);
+	assert.match(link, /offence=burglary/);
+	const href = link.match(/^<([^>]+)>/)?.[1];
+	assert.ok(href);
+	assert.equal(get(href).status, 200);
 });
 
 test("reads a measure with a member filter as that series", () => {
@@ -377,7 +409,10 @@ test("uses the selected series for explicit value aggregation", () => {
 	);
 	assert.equal(response.status, 200);
 	assert.equal((data(response).record as { value: number }).value, 5);
-	assert.equal((data(response).measure as { id: string }).id, "recorded-crimes");
+	assert.equal(
+		(data(response).measure as { id: string }).id,
+		"recorded-crimes",
+	);
 });
 
 test("uses a dimension's total when the request names no member, and says so", () => {
