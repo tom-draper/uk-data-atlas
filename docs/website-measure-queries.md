@@ -137,7 +137,7 @@ Request:
 
 | Field          | Meaning                                                                           |
 | -------------- | --------------------------------------------------------------------------------- |
-| `measure`      | A measure id (`population`), or a catalogue series id                             |
+| `measure`      | A measure id (`population`), or a canonical series key                            |
 | `dimensions`   | Filters by dimension id; a dimension left out takes its total or reviewed default |
 | `datasetId`    | Chooses between datasets that publish the same members                            |
 | `geography`    | The source geography level, such as `localAuthority`                              |

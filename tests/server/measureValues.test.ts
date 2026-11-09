@@ -183,10 +183,11 @@ describe("measure values and dimensions", () => {
 		]);
 	});
 
-	it("reads a catalogue series id as its measure and members", () => {
-		const result = values({ measure: "households-owned" });
-		expect(result.measure.id).toBe("households");
-		expect(column(result, "2021").values).toEqual([25, 70]);
+	it("refuses an encoded catalogue series id", () => {
+		expect(problem({ measure: "households-owned" })).toMatchObject({
+			status: 404,
+			code: "unknown_measure",
+		});
 	});
 
 	it("reads a canonical series key as its measure and members", () => {
@@ -200,7 +201,7 @@ describe("measure values and dimensions", () => {
 	it("refuses a series id filtered off its own member", () => {
 		expect(
 			problem({
-				measure: "households-owned",
+				measure: '["households",[["tenure","owned"]],null]',
 				dimensions: { tenure: ["rented"] },
 			}),
 		).toMatchObject({ status: 400, code: "unknown_dimension_member" });
