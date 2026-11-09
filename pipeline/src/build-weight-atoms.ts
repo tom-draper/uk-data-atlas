@@ -96,7 +96,7 @@ if (
 	resolve(process.argv[1]) === scriptPath
 ) {
 	const result = await buildWeightAtomsStage(
-		resolve(dirname(scriptPath), ".."),
+		resolve(dirname(scriptPath), "../.."),
 		{ rebuild: process.argv.includes("--rebuild") },
 	);
 	buildLog.info(

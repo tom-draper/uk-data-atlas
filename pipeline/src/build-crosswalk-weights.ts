@@ -281,7 +281,7 @@ if (
 	resolve(process.argv[1]) === scriptPath
 ) {
 	const { output, summary, skipped, atoms, seconds } =
-		await buildCrosswalkWeights(resolve(dirname(scriptPath), ".."), {
+		await buildCrosswalkWeights(resolve(dirname(scriptPath), "../.."), {
 			rebuild: process.argv.includes("--rebuild"),
 		});
 	for (const measure of MEASURES)
