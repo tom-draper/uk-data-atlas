@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/map-tiles",
+	"description": "Builds and reads boundary vector tiles and map value arrays.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

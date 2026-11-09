@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/geography",
+	"description": "Area codes, kinds, coordinates and geometry primitives.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

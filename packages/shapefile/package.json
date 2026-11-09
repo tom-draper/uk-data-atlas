@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/shapefile",
+	"description": "Reads shapefile geometry and DBF records.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",

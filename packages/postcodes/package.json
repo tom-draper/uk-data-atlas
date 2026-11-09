@@ -1,5 +1,6 @@
 {
 	"name": "@uk-data-atlas/postcodes",
+	"description": "Postcode indexes, areas and counts.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
