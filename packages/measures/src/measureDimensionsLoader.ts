@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import { energyConsumptionSeries } from "./statisticsDatasets/environment.ts";
 import {
 	configDirectory,
 	statisticsVocabularyPath,
@@ -27,8 +28,8 @@ const readJson = <T>(path: string): T =>
  * measure and members it stands for.
  */
 export const declaredMeasureIds = (): Record<string, MeasureIdMapping> =>
-	Object.fromEntries(
-		DATASET_DECLARATIONS.flatMap((declaration) =>
+	Object.fromEntries([
+		...DATASET_DECLARATIONS.flatMap((declaration) =>
 			(declaration.catalogue?.indicators ?? []).map((indicator) => [
 				indicator.id,
 				{
@@ -39,7 +40,10 @@ export const declaredMeasureIds = (): Record<string, MeasureIdMapping> =>
 				},
 			]),
 		),
-	);
+		...energyConsumptionSeries().map(
+			({ id, ...identity }) => [id, identity] as const,
+		),
+	]);
 
 /**
  * The reviewed mapping with the measure ids the dataset declarations publish.

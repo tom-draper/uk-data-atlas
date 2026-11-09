@@ -15,9 +15,37 @@ import { join } from "node:path";
 import {
 	dimensionCatalogue,
 	readMeasureDimensionsMapping,
+	withDeclaredMeasureIds,
 } from "@uk-data-atlas/measures";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
+test("energy series come from their meter declarations", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const fuel of ["electricity", "gas"])
+		for (const member of ["all", "domestic", "non-domestic"]) {
+			const id = `${fuel}-consumption${member === "all" ? "" : `-${member}`}`;
+			assert.equal(config.ids[id], undefined);
+			assert.deepEqual(merged.ids[id], {
+				measure: `${fuel}-consumption`,
+				dimensions: { "meter-type": member },
+			});
+		}
+	assert.throws(
+		() =>
+			withDeclaredMeasureIds({
+				...config,
+				ids: {
+					...config.ids,
+					"gas-consumption": merged.ids["gas-consumption"]!,
+				},
+			}),
+		/which a dataset declaration publishes/,
+	);
+});
 
 test("series keys sort members and distinguish datasets", () => {
 	const dimensions = { party: "lab", sex: "female" };

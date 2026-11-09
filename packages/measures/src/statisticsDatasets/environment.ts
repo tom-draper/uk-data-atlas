@@ -187,6 +187,15 @@ const METER_TYPE = {
 	],
 };
 
+export const energyConsumptionSeries = () =>
+	["electricity", "gas"].flatMap((fuel) =>
+		METER_TYPE.members.map(({ code }) => ({
+			id: `${fuel}-consumption${code === "all" ? "" : `-${code}`}`,
+			measure: `${fuel}-consumption`,
+			dimensions: { "meter-type": code },
+		})),
+	);
+
 const consumption = (type: string, fuel: "electricity" | "gas") => ({
 	type,
 	module: "environment" as const,
