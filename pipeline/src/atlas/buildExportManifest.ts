@@ -28,6 +28,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 	const readPath = readJsonSync(
 		statisticsReadPathPath(repositoryRoot),
 	) as StatisticsReadPath;
+	const identities = readMeasureDimensionsMapping(repositoryRoot).ids;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),
 		{ readOnly: true },
@@ -40,7 +41,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 				database,
 				dataCatalog,
 				readPath,
-				readMeasureDimensionsMapping(repositoryRoot).ids,
+				identities,
 			),
 		);
 		manifest.measureExports = [];
@@ -50,6 +51,8 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 				measure,
 				bindings,
 				readPath,
+				undefined,
+				identities,
 			);
 			if (!selection) continue;
 			const formats = await compileMeasureDownloads(
