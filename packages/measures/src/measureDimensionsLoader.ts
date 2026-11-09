@@ -9,6 +9,7 @@ import {
 import { lifeExpectancySeries } from "./statisticsDatasets/people.ts";
 import {
 	crimeSeries,
+	homelessnessSeries,
 	roadCollisionSeries,
 } from "./statisticsDatasets/services.ts";
 import {
@@ -62,6 +63,9 @@ export const declaredMeasureIds = (): Record<string, MeasureIdMapping> =>
 			({ id, ...identity }) => [id, identity] as const,
 		),
 		...crimeSeries().map(({ id, ...identity }) => [id, identity] as const),
+		...homelessnessSeries().map(
+			({ id, ...identity }) => [id, identity] as const,
+		),
 		...roadCollisionSeries().map(
 			({ id, ...identity }) => [id, identity] as const,
 		),

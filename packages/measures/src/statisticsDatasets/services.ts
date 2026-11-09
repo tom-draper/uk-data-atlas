@@ -338,6 +338,23 @@ export const ROAD_COLLISIONS: DeclaredDataset = {
 	fields: [{ path: "{collision-severity}", measure: "road-collisions" }],
 };
 
+export const homelessnessSeries = () =>
+	(HOMELESSNESS.fields as DeclaredField[])
+		.filter((field) =>
+			[
+				"households-in-temporary-accommodation",
+				"children-in-temporary-accommodation",
+			].includes(field.measure),
+		)
+		.map((field) => ({
+			id:
+				field.measure === "children-in-temporary-accommodation"
+					? "temporary-accommodation-children"
+					: `temporary-accommodation-households${field.members?.["household-type"] === "all" ? "" : `-${field.members?.["household-type"]}`}`,
+			measure: field.measure,
+			...(field.members ? { dimensions: field.members } : {}),
+		}));
+
 export const HOMELESSNESS: DeclaredDataset = {
 	type: "homelessness",
 	module: "housing",

@@ -886,21 +886,6 @@
 		"simd-rank": {
 			"measure": "simd-rank"
 		},
-		"temporary-accommodation-children": {
-			"measure": "children-in-temporary-accommodation"
-		},
-		"temporary-accommodation-households": {
-			"measure": "households-in-temporary-accommodation",
-			"dimensions": {
-				"household-type": "all"
-			}
-		},
-		"temporary-accommodation-households-with-children": {
-			"measure": "households-in-temporary-accommodation",
-			"dimensions": {
-				"household-type": "with-children"
-			}
-		},
 		"tenure-owned-outright": {
 			"measure": "households",
 			"dimensions": {

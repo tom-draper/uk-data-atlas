@@ -20,6 +20,30 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+test("temporary accommodation series come from the homelessness fields", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	const expected = {
+		"temporary-accommodation-children": {
+			measure: "children-in-temporary-accommodation",
+		},
+		"temporary-accommodation-households": {
+			measure: "households-in-temporary-accommodation",
+			dimensions: { "household-type": "all" },
+		},
+		"temporary-accommodation-households-with-children": {
+			measure: "households-in-temporary-accommodation",
+			dimensions: { "household-type": "with-children" },
+		},
+	};
+	for (const [id, identity] of Object.entries(expected)) {
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], identity);
+	}
+});
+
 test("median pay series come from the pay fields", () => {
 	const config = JSON.parse(
 		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
