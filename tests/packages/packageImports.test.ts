@@ -101,6 +101,15 @@ describe("shared packages", () => {
 		},
 	);
 
+	it.each(packages)("%s has a one-line description", (name) => {
+		const { description } = JSON.parse(
+			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+		);
+		expect(typeof description).toBe("string");
+		expect(description.trim()).not.toBe("");
+		expect(description).not.toContain("\n");
+	});
+
 	it("do not depend on each other in a cycle", () => {
 		const graph = new Map(
 			packages.map((name) => {
