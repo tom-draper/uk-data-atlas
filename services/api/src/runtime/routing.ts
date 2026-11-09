@@ -23,7 +23,7 @@ import type {
 import type { MapResources } from "@uk-data-atlas/map-tiles";
 import type { MapArchive } from "@uk-data-atlas/map-tiles/node";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import type { MeasureDimensions } from "@uk-data-atlas/measures";
+import type { MeasureDimensions, Series } from "@uk-data-atlas/measures";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
@@ -132,6 +132,7 @@ export type RouteRequest = {
 	releaseId: string;
 	parsedUrl: URL;
 	segments: string[];
+	series?: Series;
 	/**
 	 * Serve another GET against the same catalogues, for a route whose answer is
 	 * exactly what a more specific route gives when called directly.
