@@ -14,8 +14,11 @@ import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../src/statistics/bindStatisticsField";
 import { bindCensusStatistics } from "../src/statistics/bindCensusStatistics";
 import { bindReviewedStatistics } from "../src/statistics/bindReviewedStatistics";
-import { observationArtifactName } from "@uk-data-atlas/measures";
-import { type StatisticsReadPath } from "@uk-data-atlas/measures";
+import {
+	measureSeriesSourceKey,
+	observationArtifactName,
+	type StatisticsReadPath,
+} from "@uk-data-atlas/measures";
 import { bindCompiledFields } from "../src/statistics/bindCompiledFields";
 import { compileMeasureDownloads } from "../src/statistics/measureDownloads";
 import { gunzipSync } from "node:zlib";
@@ -134,6 +137,26 @@ test("uses reviewed source mappings only when each requested period exists", () 
 			observations: {},
 		};
 		assert.equal(bindReviewedStatistics(db, measure, reviewed)?.length, 1);
+		const identity = { measure: "population", dimensions: { sex: "all" } };
+		const key = measureSeriesSourceKey(identity, measure.sources[0]!);
+		const canonical = {
+			...reviewed,
+			statistics: {},
+			series: { [key]: Object.values(reviewed.statistics)[0]! },
+		};
+		assert.equal(
+			bindReviewedStatistics(db, measure, canonical, identity)?.length,
+			1,
+		);
+		assert.equal(
+			bindReviewedStatistics(
+				db,
+				measure,
+				{ ...canonical, series: {} },
+				identity,
+			),
+			undefined,
+		);
 		// A selector that serves values its series do not hold as they are.
 		const zeroed = {
 			...reviewed,

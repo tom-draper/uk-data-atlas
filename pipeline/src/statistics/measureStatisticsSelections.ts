@@ -1,5 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/catalogue/node";
+import type { MeasureSeriesIdentity } from "@uk-data-atlas/measures";
 import type { CompiledMeasure } from "../catalog/manifest.ts";
 import { type StatisticsReadPath } from "@uk-data-atlas/measures";
 import { bindCensusStatistics } from "./bindCensusStatistics.ts";
@@ -23,6 +24,7 @@ export function measureStatisticsSelections(
 	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
 	lookup?: DatasetLookup,
+	identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 ): StatisticsSelection[] | undefined {
 	if (
 		measure.id === "general-election-winning-party" ||
@@ -99,6 +101,7 @@ export function measureStatisticsSelections(
 				})),
 			},
 			readPath,
+			identities?.population,
 		);
 	}
 	if (electionStatisticsExport(measure.id)) {
@@ -151,7 +154,13 @@ export function measureStatisticsSelections(
 	const compiled = bindCompiledFields(database, measure, lookup);
 	if (compiled) return compiled;
 	const reviewed =
-		readPath && bindReviewedStatistics(database, measure, readPath);
+		readPath &&
+		bindReviewedStatistics(
+			database,
+			measure,
+			readPath,
+			identities?.[measure.id],
+		);
 	if (reviewed) return reviewed;
 	if (!measure.sources.length) return undefined;
 	const result: StatisticsSelection[] = [];
