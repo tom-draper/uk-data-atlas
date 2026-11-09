@@ -32,7 +32,7 @@ import {
 	parseGeoJsonFeatures,
 	parseGeoJsonProperties,
 	type GeoJsonFeatures,
-} from "./geoJsonProperties.ts";
+} from "../geometry/geoJsonProperties.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 /** Each feature's properties, without decoding GeoJSON geometry. */
