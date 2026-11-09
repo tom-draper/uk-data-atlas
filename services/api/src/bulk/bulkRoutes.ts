@@ -28,9 +28,10 @@ export const handleMeasureExport = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series,
 }: Pick<
 	RouteRequestFor<never>,
-	"context" | "releaseId" | "parsedUrl" | "segments"
+	"context" | "releaseId" | "parsedUrl" | "segments" | "series"
 >): ApiResponse => {
 	if (!context.dataCatalog || !context.exportManifest)
 		return problem(
@@ -38,9 +39,9 @@ export const handleMeasureExport = ({
 			"Catalogue Unavailable",
 			"Build the data catalogue and export manifest before downloading a measure.",
 		);
-	const measure = context.dataCatalog.measures.find(
-		(item) => item.id === segments[2],
-	);
+	const measure =
+		series?.catalogueMeasure ??
+		context.dataCatalog.measures.find((item) => item.id === segments[2]);
 	if (!measure)
 		return problem(404, "Not Found", "No measure matches that identity.");
 	const formats = parsedUrl.searchParams.getAll("format");
