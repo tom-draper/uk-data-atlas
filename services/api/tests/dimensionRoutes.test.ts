@@ -352,6 +352,15 @@ test("takes the dimensions object form of a filter", () => {
 	assert.equal((data(response).answer as { value: number }).value, 2);
 });
 
+test("uses the selected series for explicit value aggregation", () => {
+	const response = get(
+		"/v1/data/recorded-crimes/value?place=E92000001&offence=burglary&geography=ward&codeYear=2023",
+	);
+	assert.equal(response.status, 200);
+	assert.equal((data(response).record as { value: number }).value, 5);
+	assert.equal((data(response).measure as { id: string }).id, "recorded-crimes");
+});
+
 test("uses a dimension's total when the request names no member, and says so", () => {
 	const response = get("/v1/data/recorded-crimes/value?place=ward/E05000001");
 	assert.equal(response.status, 200);
