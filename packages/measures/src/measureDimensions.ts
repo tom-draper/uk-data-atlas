@@ -1,4 +1,4 @@
-import type { DataCatalog } from "./dataCatalog.ts";
+import type { DataCatalog, MeasureSource } from "./dataCatalog.ts";
 
 /**
  * Measures and their dimensions, and how each catalogue measure id maps onto
@@ -116,6 +116,18 @@ export const measureSeriesKey = (mapping: MeasureSeriesIdentity) =>
 			left < right ? -1 : left > right ? 1 : 0,
 		),
 		mapping.datasetId ?? null,
+	]);
+
+/** Stable identity of a series on one published source partition. */
+export const measureSeriesSourceKey = (
+	series: MeasureSeriesIdentity,
+	source: Pick<MeasureSource, "datasetId" | "sourceGeography">,
+) =>
+	JSON.stringify([
+		measureSeriesKey(series),
+		source.datasetId,
+		source.sourceGeography.type,
+		source.sourceGeography.boundaryYear,
 	]);
 
 /** Everything wrong with a mapping, against a catalogue and the vocabulary. */
