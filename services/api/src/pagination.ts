@@ -81,6 +81,7 @@ export const paginate = <T>(
 		keyOf: (item: T) => string;
 		/** What is paged, such as `ranking`, for a cursor that names none of it. */
 		subject: string;
+		scope?: string;
 	},
 ): Page<T> | { problem: ApiResponse } => {
 	const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
@@ -92,7 +93,30 @@ export const paginate = <T>(
 		};
 	const cursor = readCursor(parsedUrl);
 	if ("problem" in cursor) return cursor;
-	const { key } = cursor;
+	let { key } = cursor;
+	if (key !== undefined && options.scope !== undefined) {
+		try {
+			const decoded: unknown = JSON.parse(key);
+			if (
+				!Array.isArray(decoded) ||
+				decoded.length !== 2 ||
+				decoded[0] !== options.scope ||
+				typeof decoded[1] !== "string"
+			)
+				return {
+					problem: invalidCursor(
+						`cursor is not valid for this ${options.subject}.`,
+					),
+				};
+			key = decoded[1];
+		} catch {
+			return {
+				problem: invalidCursor(
+					`cursor is not valid for this ${options.subject}.`,
+				),
+			};
+		}
+	}
 	const offset =
 		key === undefined
 			? 0
@@ -112,7 +136,14 @@ export const paginate = <T>(
 		items: page,
 		nextCursor:
 			offset + page.length < items.length && last !== undefined
-				? cursorFor(options.keyOf(last))
+				? cursorFor(
+						options.scope === undefined
+							? options.keyOf(last)
+							: JSON.stringify([
+									options.scope,
+									options.keyOf(last),
+								]),
+					)
 				: null,
 	};
 };
