@@ -46,7 +46,7 @@ import {
 	readLookupManifest,
 	readMeasureCompatibility,
 	readValidationReport,
-} from "../catalogue/catalogueManifestLoader.ts";
+} from "./catalogueManifestLoader.ts";
 import { readMapAssets, readMapResources } from "../maps/mapResourceLoader.ts";
 import {
 	createAreaGeometryCache,

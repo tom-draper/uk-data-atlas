@@ -1,7 +1,7 @@
 import { readDataCatalog } from "./catalogueManifestLoader.ts";
-import { readMeasureDimensions } from "./measureDimensionsLoader.ts";
-import { readMeasureObservations } from "./observationLoader.ts";
-import type { MeasureValuesContext } from "./measureValues.ts";
+import { readMeasureDimensions } from "../catalogue/measureDimensionsLoader.ts";
+import { readMeasureObservations } from "../catalogue/observationLoader.ts";
+import type { MeasureValuesContext } from "../catalogue/measureValues.ts";
 
 /**
  * What `queryMeasureValues` reads, loaded from a build for a process that is
