@@ -827,6 +827,43 @@ test("keeps public measure ids when resolving other measure-query paths", () => 
 	assert.equal(resolved.read[0]?.series.dimensions.offence, "burglary");
 });
 
+test("resolves default dimensions even when the catalogue id matches", () => {
+	const matchingCatalog = {
+		...catalog,
+		measures: catalog.measures.map((measure) =>
+			measure.id === "crime-total"
+				? { ...measure, id: "recorded-crimes" }
+				: measure,
+		),
+	};
+	const matchingDimensions = {
+		...measureDimensions,
+		config: {
+			...measureDimensions.config,
+			ids: {
+				...measureDimensions.config.ids,
+				"recorded-crimes": measureDimensions.config.ids["crime-total"]!,
+			},
+		},
+	};
+	const resolved = resolveDimensionRequest(
+		"/v1/example?measure=recorded-crimes",
+		{
+			...context,
+			dataCatalog: matchingCatalog,
+			measureDimensions: matchingDimensions,
+		},
+	);
+	assert.equal(resolved.kind, "rewritten");
+	if (resolved.kind !== "rewritten")
+		throw new Error("Expected a rewritten request");
+	assert.equal(resolved.read[0]?.series.dimensions.offence, "total");
+	assert.equal(
+		resolveDimensionRequest("/v1/example?measure=population", context).kind,
+		"unchanged",
+	);
+});
+
 test("resolves relationship readiness from the selected dimensional series", () => {
 	const url =
 		"/v1/relationships?from=ward/2023-05-uk-bgc&to=ward/2025-01-en-ward&measure=recorded-crimes&offence=burglary";
