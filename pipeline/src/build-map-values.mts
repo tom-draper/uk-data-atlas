@@ -16,6 +16,7 @@ import {
 	propertiesAsset,
 	type BoundaryType,
 } from "@uk-data-atlas/datasets/data/boundaries/catalog";
+import { buildLog } from "@uk-data-atlas/atlas-runtime/storage";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
 import type { DatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/types";
 import {
@@ -158,5 +159,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 	});
 	const entries = Object.values(manifest.entries);
 	const bytes = entries.reduce((sum, entry) => sum + entry.bytes, 0);
-	console.log(`Wrote ${entries.length} map value arrays, ${bytes} bytes`);
+	buildLog.info(`Wrote ${entries.length} map value arrays, ${bytes} bytes`);
 }
