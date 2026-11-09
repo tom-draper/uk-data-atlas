@@ -171,6 +171,7 @@ export const resolveDimensionRequest = (
 			"series",
 			"value",
 			"compare",
+			"change",
 			"rankings",
 		].includes(position.operation)
 			? measure.id
