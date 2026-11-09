@@ -5,6 +5,7 @@ import {
 	airQualitySeries,
 	energyConsumptionSeries,
 } from "./statisticsDatasets/environment.ts";
+import { lifeExpectancySeries } from "./statisticsDatasets/people.ts";
 import {
 	crimeSeries,
 	roadCollisionSeries,
@@ -51,6 +52,9 @@ export const declaredMeasureIds = (): Record<string, MeasureIdMapping> =>
 			({ id, ...identity }) => [id, identity] as const,
 		),
 		...airQualitySeries().map(
+			({ id, ...identity }) => [id, identity] as const,
+		),
+		...lifeExpectancySeries().map(
 			({ id, ...identity }) => [id, identity] as const,
 		),
 		...crimeSeries().map(({ id, ...identity }) => [id, identity] as const),

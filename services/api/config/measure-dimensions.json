@@ -730,18 +730,6 @@
 		"imd-rank": {
 			"measure": "imd-rank"
 		},
-		"life-expectancy-female": {
-			"measure": "life-expectancy",
-			"dimensions": {
-				"sex": "female"
-			}
-		},
-		"life-expectancy-male": {
-			"measure": "life-expectancy",
-			"dimensions": {
-				"sex": "male"
-			}
-		},
 		"local-election-con-votes": {
 			"measure": "party-votes",
 			"dimensions": {

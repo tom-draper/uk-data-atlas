@@ -20,6 +20,22 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+test("life expectancy series come from the sex declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of ["female", "male"]) {
+		const id = `life-expectancy-${member}`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "life-expectancy",
+			dimensions: { sex: member },
+		});
+	}
+	assert.equal(merged.ids["life-expectancy-all"], undefined);
+});
+
 test("air quality series come from the pollutant declaration", () => {
 	const config = JSON.parse(
 		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
