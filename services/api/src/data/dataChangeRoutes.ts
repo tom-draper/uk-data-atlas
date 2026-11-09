@@ -298,6 +298,7 @@ export const handleDataChangeRoutes = ({
 		const page = paginate(parsedUrl, ranked, {
 			keyOf: (entry) => entry.areaCode,
 			subject: "change query",
+			scope: selectedSeries?.id,
 		});
 		if ("problem" in page) return page.problem;
 		records = page.items;

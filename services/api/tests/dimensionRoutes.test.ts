@@ -336,6 +336,64 @@ test("routes comparisons by public measure and selected members", () => {
 	assert.equal(comparison.comparison.value, 7);
 });
 
+test("pages dimensional change without mixing series", () => {
+	const measures = catalog.measures.map((measure) =>
+		["crime-burglary", "crime-robbery"].includes(measure.id)
+			? {
+					...measure,
+					sources: measure.sources.map((source) => ({
+						...source,
+						periods: ["2022", "2023"],
+					})),
+				}
+			: measure,
+	);
+	const artifacts = [
+		observations("crime-burglary", [5, 7]),
+		observations("crime-robbery", [2, 3]),
+	].map((artifact) => ({
+		...artifact,
+		periods: [
+			...artifact.periods,
+			{
+				...artifact.periods[0]!,
+				period: "2023",
+				records: artifact.periods[0]!.records.map((record) => ({
+					...record,
+					value: record.value! + 1,
+				})),
+			},
+		],
+	}));
+	const changeContext = testContext({
+		...context,
+		dataCatalog: { ...catalog, measures },
+		measureObservations: artifacts,
+	});
+	const base =
+		"/v1/data/recorded-crimes/change?offence=burglary&startPeriod=2022&endPeriod=2023&limit=1";
+	const resolved = resolveDimensionRequest(base, changeContext);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	assert.match(resolved.url, /^\/v1\/data\/recorded-crimes\/change\?/);
+	const first = route("GET", base, changeContext);
+	assert.equal(first.status, 200, JSON.stringify(first.body));
+	const cursor = (first.body as { meta: { nextCursor: string } }).meta
+		.nextCursor;
+	assert.ok(cursor);
+	assert.equal(
+		route("GET", `${base}&cursor=${cursor}`, changeContext).status,
+		200,
+	);
+	const other = route(
+		"GET",
+		base.replace("burglary", "robbery") + `&cursor=${cursor}`,
+		changeContext,
+	);
+	assert.equal(other.status, 400);
+	assert.equal((other.body as { code?: string }).code, "invalid_cursor");
+});
+
 test("pages dimensional rankings without mixing series", () => {
 	const base = "/v1/data/recorded-crimes/rankings?offence=burglary&limit=1";
 	const resolved = resolveDimensionRequest(base, context);
