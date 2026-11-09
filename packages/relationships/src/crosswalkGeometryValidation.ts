@@ -12,7 +12,7 @@ import {
 	boundaryDistanceWithinM,
 	distanceToBoundaryM,
 } from "@uk-data-atlas/geography/area-distance";
-import type { CrosswalkArea } from "@uk-data-atlas/relationships";
+import type { CrosswalkArea } from "./crosswalkTypes.ts";
 import {
 	geometrySubstitution,
 	reversedGridOffset,

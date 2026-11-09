@@ -12,7 +12,7 @@ import { createBoundaryRegistry } from "./build-boundary-registry.ts";
 import { createGeographyInventory } from "./geographies/geographyInventory.ts";
 import { createSourceInventory } from "./geographies/sourceInventory.ts";
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
 	artifactDirectory,
 	buildLog,

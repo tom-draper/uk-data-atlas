@@ -2,7 +2,7 @@ import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/loader";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { route as routeRequest, routeAsync } from "../src/routes";
 import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";

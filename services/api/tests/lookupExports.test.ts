@@ -5,7 +5,7 @@ import { type AreaInventory, createAreaLookup } from "@uk-data-atlas/areas";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import {
 	areaIdentityTable,
 	compileLookupManifest,

@@ -3,8 +3,8 @@ import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { validateAnalysisGeographies } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { AnalysisGeographyInventory } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,

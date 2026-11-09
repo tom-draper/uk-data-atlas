@@ -3,13 +3,10 @@ import {
 	readSqliteCrosswalk,
 } from "./atlasCrosswalks.ts";
 import { requireAtlasPayload } from "@uk-data-atlas/atlas-db";
-import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
-import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
-import type {
-	CrosswalkHeader,
-	CrosswalkLookup,
-} from "@uk-data-atlas/relationships";
+import type { CrosswalkArtifact } from "./crosswalkTypes.ts";
+import type { CrosswalkInventory } from "./crosswalkInventory.ts";
+import type { RelationshipPathInventory } from "./relationshipPaths.ts";
+import type { CrosswalkHeader, CrosswalkLookup } from "./translation.ts";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
 export const readCrosswalkInventory = readSqliteCrosswalkInventory;

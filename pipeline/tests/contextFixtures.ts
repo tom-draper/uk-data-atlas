@@ -11,7 +11,7 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import type {
 	DataCatalog,
 	MeasureCompatibilityInventory,
@@ -19,7 +19,7 @@ import type {
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/atlas-runtime/places";
-import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 
 /**
  * What a test context is built from: route resources, plus the raw lookups

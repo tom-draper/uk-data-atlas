@@ -2,12 +2,12 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { compileRelationshipCandidates } from "./relationships/relationshipCandidates.ts";
 import {
 	readCrosswalkAdapters,
 	type PropertyCrosswalkAdapter,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import {
 	artifactDirectory,
 	configDirectory,

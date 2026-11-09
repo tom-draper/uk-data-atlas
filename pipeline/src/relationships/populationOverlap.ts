@@ -20,12 +20,12 @@ import {
 	type ClipOperand,
 } from "@uk-data-atlas/geometry";
 import { csvFields } from "@uk-data-atlas/artifacts";
-import type { PopulationOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { PopulationOverlapCrosswalkAdapter } from "@uk-data-atlas/relationships";
 import type {
 	CrosswalkArtifact,
 	PopulationOverlapCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
-import { validateEndpoint } from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
+import { validateEndpoint } from "@uk-data-atlas/relationships";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 // About a millimetre, for a retry when polygon-clipping's sweep line fails.

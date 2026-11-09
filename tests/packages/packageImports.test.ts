@@ -66,6 +66,7 @@ const problems = (packageRoot: string) => {
 						"atlas-db",
 						"atlas-runtime",
 						"geometry",
+						"relationships",
 						"shapefile",
 					].includes(manifest.name.replace("@uk-data-atlas/", "")) ||
 					(manifest.name === "@uk-data-atlas/search-index" &&
@@ -238,17 +239,13 @@ describe("atlas domain boundaries", () => {
 	it("keeps domain modules and evidence loading independent of the API", () => {
 		const atlas = join(PACKAGES, "atlas-runtime/src");
 		const files = [
-			...[
-				"catalogue",
-				"relationships",
-				"places",
-				"postcodes",
-				"maps",
-				"loader",
-			].flatMap((directory) => sourceFiles(join(atlas, directory))),
+			...["catalogue", "places", "postcodes", "maps", "loader"].flatMap(
+				(directory) => sourceFiles(join(atlas, directory)),
+			),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
 			...sourceFiles(join(PACKAGES, "areas/src")),
+			...sourceFiles(join(PACKAGES, "relationships/src")),
 			...sourceFiles(join(PIPELINE, "src/evidence")),
 			join(PIPELINE, "src/build-evidence-documents.ts"),
 		];
@@ -388,6 +385,7 @@ describe("pipeline boundaries", () => {
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
 			...sourceFiles(join(PACKAGES, "areas/src")),
+			...sourceFiles(join(PACKAGES, "relationships/src")),
 		].filter(
 			(file) =>
 				relative(ROOT, file) !== "packages/atlas-db/src/dataLayout.ts",

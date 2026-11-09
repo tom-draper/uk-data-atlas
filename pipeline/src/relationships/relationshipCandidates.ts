@@ -10,7 +10,7 @@ import { readGeoJsonProperties } from "@uk-data-atlas/geometry";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
 import type { AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/relationships";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -27,7 +27,7 @@ import type {
 	RelationshipCandidate,
 	RelationshipCandidateInventory,
 	PublishedRelationship,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

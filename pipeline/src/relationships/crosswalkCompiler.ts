@@ -4,7 +4,7 @@ export {
 	createCrosswalkInventory,
 	crosswalkInventoryFromEntries,
 } from "./crosswalkInventory.ts";
-export type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+export type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { RawGeometryCache, type AreaLookup } from "@uk-data-atlas/areas";
 import { compileAreaOverlapCrosswalk } from "../geographies/areaOverlap.ts";
 import {
@@ -21,14 +21,14 @@ import {
 import type {
 	CrosswalkAdapter,
 	CrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 export type {
 	CrosswalkMethod,
 	CrosswalkQuality,
 	CrosswalkWeighting,
-} from "@uk-data-atlas/atlas-runtime/relationships";
-export type { CrosswalkEndpointValidation } from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
+export type { CrosswalkEndpointValidation } from "@uk-data-atlas/relationships";
 
 export type {
 	CrosswalkArea,
@@ -50,7 +50,7 @@ export type {
 	BestFitValidation,
 	BestFitCrosswalkArtifact,
 	CrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 /** One compiler owns the geometry caches for its compilation run. */
 export const createCrosswalkCompiler = (

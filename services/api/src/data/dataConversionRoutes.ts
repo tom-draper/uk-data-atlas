@@ -1,8 +1,8 @@
 import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
-import { buildTranslationSteps } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { RelationshipPath } from "@uk-data-atlas/relationships";
+import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import {
 	refused,
@@ -12,7 +12,7 @@ import { statisticPhrase } from "../aggregation";
 import {
 	convertThroughSteps,
 	type ConversionStep,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/measures";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 import { paginate } from "../pagination";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";

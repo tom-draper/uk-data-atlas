@@ -14,7 +14,7 @@ import {
 	type PopulationOverlapCrosswalkAdapter,
 	type PropertyCrosswalkAdapter,
 	type ExtentContinuityCrosswalkAdapter,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import {
 	compileCrosswalks,
 	crosswalkInventoryEntry,
@@ -29,7 +29,7 @@ import {
 import {
 	CONTAINMENT_TOLERANCE_M,
 	geometryContainmentInputs,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { DIFFERENCE_RULE, REALIGNED_SHARE } from "./extentContinuity.ts";
 import {
 	addRelatedCodes,

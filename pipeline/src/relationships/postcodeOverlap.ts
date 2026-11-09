@@ -6,7 +6,7 @@ import {
 	validateEndpoint,
 	type PostcodeOverlapCrosswalkAdapter,
 	type PostcodeOverlapCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { join } from "node:path";
 import { labelsFor, round } from "../geographies/areaOverlap.ts";
 import { MEASURES } from "../crosswalk-weights/atoms.ts";

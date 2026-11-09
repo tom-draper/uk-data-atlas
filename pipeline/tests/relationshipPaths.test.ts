@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
 	createRelationshipPathIndex,
 	type CrosswalkShape,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 import { crosswalkInventory } from "./geographyFixtures";
 

@@ -19,7 +19,7 @@ import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type {
 	AnalysisGeographyInventory,
 	AnalysisGeographySupport,
-} from "../relationships/analysisGeographies.ts";
+} from "@uk-data-atlas/relationships";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 export type AnalysisGeographyValidationInventory = {

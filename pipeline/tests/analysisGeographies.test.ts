@@ -7,12 +7,12 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { analysisConversion } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { AnalysisGeographySupportConfig } from "@uk-data-atlas/atlas-runtime/relationships";
+import { analysisConversion } from "@uk-data-atlas/relationships";
+import type { AnalysisGeographySupportConfig } from "@uk-data-atlas/relationships";
 import type { GeographyKind } from "@uk-data-atlas/geography";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/atlas-runtime/catalogue";
-import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 
 const catalogue = {
 	contentHash: "sha256:catalogue",

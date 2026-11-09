@@ -6,7 +6,7 @@ import { coveragePlan } from "@uk-data-atlas/atlas-runtime/loader";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import {
 	containmentCrosswalk,
 	dataCatalog,

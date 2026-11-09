@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { isGeographyKind } from "@uk-data-atlas/geography";
 
 type Release = BoundaryRegistry["releases"][number] & {

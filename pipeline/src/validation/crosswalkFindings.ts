@@ -1,5 +1,5 @@
 import { NORTHERN_IRELAND_REASON } from "../relationships/postcodeOverlap.ts";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { type Finding, sha256, listed, check } from "./findings.ts";
 import type { ValidationInputs } from "./inputs.ts";
 

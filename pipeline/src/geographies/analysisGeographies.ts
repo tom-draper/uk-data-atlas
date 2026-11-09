@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import { isGeographyKind } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { RelationshipPathInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 import type {
@@ -11,7 +11,7 @@ import type {
 	AnalysisGeographyInventory,
 	AnalysisGeographySupportConfig,
 	CrosswalkSummary,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;

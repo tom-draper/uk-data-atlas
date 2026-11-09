@@ -3,7 +3,7 @@ import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { compileRelationshipPaths } from "./relationships/relationshipPaths.ts";
 import { readCrosswalkShapes } from "./storage/buildIntermediates.ts";
 import { readApprovedRelationshipPaths } from "./relationships/relationshipPathAdapters.ts";

@@ -6,11 +6,11 @@ import { test } from "vitest";
 import type { Polygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { createAreaRelationshipIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createAreaRelationshipIndex } from "@uk-data-atlas/relationships";
 import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { measureContainment } from "../src/relationships/geometricContainment";
 
