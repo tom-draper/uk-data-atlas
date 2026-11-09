@@ -27,6 +27,7 @@ packages/geography/     shared geography code: lineage, containment file
 packages/catalogue/     shared catalogue code: the register of corrections
 packages/datasets/      browser-safe dataset definitions and compilers
 packages/geometry/      geometry storage, loaders and spatial queries
+packages/areas/         area inventories, lookup, search and boundaries
 packages/atlas-runtime/ server-only atlas data and API modules
 packages/artifacts/     artifact storage, hashing and file formats
 packages/map-tiles/     the boundary tiler: shared-arc generalisation and
