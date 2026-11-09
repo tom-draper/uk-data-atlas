@@ -22,8 +22,11 @@ import {
 	Worker,
 	workerData,
 } from "node:worker_threads";
-import { readSqliteAreaInventory as readAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+
+import {
+	readAreaLookup,
+	readSqliteAreaInventory as readAreaInventory,
+} from "@uk-data-atlas/atlas-runtime/areas";
 import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry.ts";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";

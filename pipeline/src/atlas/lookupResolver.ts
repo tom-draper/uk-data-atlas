@@ -1,7 +1,7 @@
-import { readSqliteAreaInventory } from "@uk-data-atlas/atlas-runtime/storage";
 import {
 	buildArtifactPath,
 	readAreaLookup,
+	readSqliteAreaInventory,
 } from "@uk-data-atlas/atlas-runtime/areas";
 import { readFileSync } from "node:fs";
 import {
