@@ -20,6 +20,25 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+test("median pay series come from the pay fields", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const place of ["residence", "workplace"])
+		for (const period of ["annual", "hourly"]) {
+			const id = `median-${place === "workplace" ? "workplace-" : ""}${period}-pay`;
+			assert.equal(config.ids[id], undefined);
+			assert.deepEqual(merged.ids[id], {
+				measure: `gross-${period}-pay`,
+				dimensions: {
+					"pay-statistic": "median",
+					"earnings-place": place,
+				},
+			});
+		}
+});
+
 test("life expectancy series come from the sex declaration", () => {
 	const config = JSON.parse(
 		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
