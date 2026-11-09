@@ -156,7 +156,7 @@ export const handleDataValueRoutes = ({
 	const requestedCodeYear = parsedUrl.searchParams.get("codeYear");
 	const requestedDataset = parsedUrl.searchParams.get("datasetId");
 	const outcome = valueForPlace(
-		measure,
+		{ ...measure, id: segments[2] as string },
 		candidates,
 		period,
 		(url, operation) => {

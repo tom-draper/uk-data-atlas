@@ -542,6 +542,14 @@ test("dispatches nested value lookups with the selected public series", () => {
 	assert.equal((data(response).answer as { value: number }).value, 5);
 	assert.ok(paths.includes("/v1/data/recorded-crimes/series"));
 	assert.ok(!paths.includes("/v1/data/crime-burglary/series"));
+	const via = String(data(response).via);
+	assert.match(via, /offence=burglary/);
+	const repeated = get(via);
+	assert.equal(repeated.status, 200);
+	assert.equal(
+		(data(repeated).series as { value: number }[]).at(-1)?.value,
+		5,
+	);
 });
 
 test("takes the dimensions object form of a filter", () => {
