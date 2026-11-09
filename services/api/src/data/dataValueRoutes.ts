@@ -149,6 +149,7 @@ export const handleDataValueRoutes = ({
 			releaseId,
 			parsedUrl,
 			segments,
+			series: selectedSeries,
 			dispatch,
 		});
 	const requestedGeography = parsedUrl.searchParams.get("geography");
@@ -166,6 +167,7 @@ export const handleDataValueRoutes = ({
 				releaseId,
 				parsedUrl: aggregateUrl,
 				segments: aggregateUrl.pathname.split("/").filter(Boolean),
+				series: selectedSeries,
 				dispatch,
 			});
 		},

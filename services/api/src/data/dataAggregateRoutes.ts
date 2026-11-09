@@ -23,6 +23,7 @@ export const aggregateValue = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series,
 }: RouteRequestFor<
 	| "area"
 	| "crosswalk"
@@ -36,7 +37,7 @@ export const aggregateValue = ({
 	| "countryIdentity"
 >): ApiResponse => {
 	const { dataCatalog, measureObservations } = context;
-	const measureId = segments[2] as string;
+	const measureId = series?.catalogueMeasure.id ?? (segments[2] as string);
 	const resolvedMeasure = resolveAggregationMeasure({
 		dataCatalog,
 		measureId,
