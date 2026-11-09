@@ -4,7 +4,7 @@ import type {
 	ApiResponse,
 } from "@uk-data-atlas/atlas-runtime/api";
 import { areaNotFound, envelope } from "@uk-data-atlas/atlas-runtime/api";
-import { releaseDownloads } from "@uk-data-atlas/atlas-runtime/maps";
+import { releaseDownloads } from "@uk-data-atlas/map-tiles/node";
 import { resolveBoundaryRelease } from "./resolveBoundaryRelease";
 import { compareBoundaryReleases } from "./compareBoundaryReleases";
 

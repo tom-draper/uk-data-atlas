@@ -7,15 +7,21 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
+		".": "./src/index.ts",
+		"./node": "./src/node/index.ts",
 		"./*": "./src/*.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {
-		"polygon-clipping": "0.15.7"
+		"polygon-clipping": "0.15.7",
+		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*",
+		"@uk-data-atlas/geography": "workspace:*"
 	},
 	"devDependencies": {
-		"typescript": "^7.0.2"
+		"typescript": "^7.0.2",
+		"@types/node": "^26.6.2"
 	}
 }

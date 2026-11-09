@@ -1,8 +1,8 @@
-import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
+import type { MapGeometryCache } from "./geometryCache.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { GeometryTier } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
+import type { GeometryTier } from "../../simplifyGeometry.ts";
+import { featureIds } from "../../featureIds.ts";
 import {
 	packedBounds,
 	type PackedGeometry,
@@ -64,7 +64,7 @@ const AREAS_PER_STEP = 4096;
  * and labels them; the ids are the ones the tiles and join tables use.
  */
 function* fullDetailTable(
-	cache: AreaGeometryCache,
+	cache: MapGeometryCache,
 	release: FullDetailRelease,
 	names: Map<string, string>,
 ): Generator<
@@ -109,7 +109,7 @@ function* fullDetailTable(
 
 /** The full-detail GeoParquet of a release, as the build publishes it. */
 export const buildFullDetailParquet = (
-	cache: AreaGeometryCache,
+	cache: MapGeometryCache,
 	release: FullDetailRelease,
 	names: Map<string, string>,
 ): FullDetailDownload | undefined => {
@@ -128,7 +128,7 @@ export const buildFullDetailParquet = (
  * thread.
  */
 export const buildFullDetailParquetAsync = async (
-	cache: AreaGeometryCache,
+	cache: MapGeometryCache,
 	release: FullDetailRelease,
 	names: Map<string, string>,
 ): Promise<FullDetailDownload | undefined> => {
