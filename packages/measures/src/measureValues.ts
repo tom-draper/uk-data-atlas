@@ -43,7 +43,7 @@ export type MeasureValuesContext = {
 };
 
 export type MeasureValuesRequest = {
-	/** A measure id such as `population`, or a catalogue series id. */
+	/** A measure id such as `population`, or a canonical series key. */
 	measure: string;
 	/** Members by dimension id. A dimension left out takes its total or default. */
 	dimensions?: Readonly<Record<string, readonly string[]>>;
@@ -224,10 +224,7 @@ const resolveSeries = (
 		context.measureDimensions ?? identityDimensions(context.dataCatalog),
 	);
 	const named = catalogue.measure(request.measure);
-	const byId = named
-		? undefined
-		: (catalogue.series(request.measure) ??
-			catalogue.catalogueSeries(request.measure));
+	const byId = named ? undefined : catalogue.series(request.measure);
 	const measure = named ?? byId?.measure;
 	if (!measure)
 		return refuse(
