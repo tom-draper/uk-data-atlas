@@ -17,7 +17,7 @@ export type LookupCrosswalk = {
 					weight: number;
 					sourceShare: number;
 					targetShare: number;
-					overlapAreaM2: number;
+					overlapAreaM2?: number;
 					population?: number;
 			  }
 		>;
@@ -197,8 +197,8 @@ export const crosswalkTable = (
 			column(
 				"overlapAreaM2",
 				"number",
-				"The overlapping area in square metres, for a weighted overlap.",
-				weighted,
+				"The overlapping area in square metres, where available for a weighted overlap.",
+				weighted && crosswalk.method !== "postcode-overlap",
 			),
 			column(
 				"population",
@@ -215,7 +215,7 @@ export const crosswalkTable = (
 								weight: number;
 								sourceShare: number;
 								targetShare: number;
-								overlapAreaM2: number;
+								overlapAreaM2?: number;
 								population?: number;
 							})
 						: undefined;

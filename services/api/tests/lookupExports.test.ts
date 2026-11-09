@@ -290,3 +290,35 @@ test("serves a lookup only when it renders the bytes its manifest lists", () => 
 		400,
 	);
 });
+
+test("postcode overlap lookup exports population without requiring an overlap area", () => {
+	const postcode = {
+		...overlap,
+		id: "postcode-overlap",
+		method: "postcode-overlap",
+		records: [
+			{
+				source: { code: "E05000001", labels: ["Ward"] },
+				targets: [
+					{
+						code: "E14000001",
+						labels: ["Constituency"],
+						weight: 1,
+						sourceShare: 1,
+						targetShare: 0.5,
+						population: 100,
+					},
+				],
+			},
+		],
+	};
+	const table = crosswalkTable(postcode, "postcode.json");
+	assert.equal(
+		table.columns.find((column) => column.name === "overlapAreaM2")
+			?.required,
+		false,
+	);
+	assert.equal(table.rows[0]?.overlapAreaM2, null);
+	assert.equal(table.rows[0]?.population, 100);
+	assert.equal(compileLookupManifest([table]).lookups.length, 1);
+});
