@@ -3,7 +3,6 @@
 Node modules used by the API, data pipeline and website server to read and build atlas data. Import the domain entry point needed by a consumer:
 
 - `@uk-data-atlas/atlas-runtime/areas` for area inventories, lookups and searches.
-- `@uk-data-atlas/atlas-runtime/geometry` for geometry sources and storage.
 - `@uk-data-atlas/atlas-runtime/places` for place index compilation, SQLite readers and location projections.
 - `@uk-data-atlas/atlas-runtime/postcodes` for postcode release selection.
 - `@uk-data-atlas/atlas-runtime/relationships` for crosswalks and conversions.
@@ -23,7 +22,7 @@ Area inventory types and data-source-independent lookups live in `@uk-data-atlas
 
 Crosswalk models, translation and member reconciliation live in `@uk-data-atlas/relationships`. The runtime provides the atlas storage readers and higher-level composition.
 
-Spatial queries and shared-border calculations live in `@uk-data-atlas/geometry`. The runtime supplies the source and compiled-file readers and caches.
+Geometry sources, compiled-file readers, caches and spatial queries live in `@uk-data-atlas/geometry`.
 
 Place search and named-location membership live in `@uk-data-atlas/places`.
 
