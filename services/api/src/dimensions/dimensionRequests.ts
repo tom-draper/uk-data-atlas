@@ -18,10 +18,10 @@ import {
 
 /**
  * A request that names a measure and dimension filters, read as a request
- * for one series by its catalogue id, or for several to answer together.
+ * for one series, or for several to answer together.
  *
  * `GET /v1/data/recorded-crimes/value?place=Leeds&offence=burglary` is read
- * as `GET /v1/data/crime-burglary/value?place=Leeds`. A filter is a query
+ * as the burglary series of `recorded-crimes`. A filter is a query
  * parameter named after the dimension, or `dimensions[offence]=burglary`; it
  * takes one member, several separated by commas, or `*` for every member.
  * A dimension left out takes its total where the measure publishes one, and
@@ -162,22 +162,11 @@ export const resolveDimensionRequest = (
 			candidates[0]!.dimensions,
 		))
 			if (!filters.has(dimension)) defaulted[dimension] = code;
-	const rewritten = (series: Series) => {
+	const rewritten = () => {
 		const next = new URL(parsed);
 		for (const name of names) next.searchParams.delete(name);
 		const path = [...segments];
-		path[position.index] = [
-			"table",
-			"series",
-			"value",
-			"compare",
-			"change",
-			"convert",
-			"rankings",
-			"join",
-		].includes(position.operation)
-			? measure.id
-			: series.catalogueMeasure.id;
+		path[position.index] = measure.id;
 		next.pathname = `/${path
 			.map((segment) =>
 				encodeURIComponent(segment).replaceAll("%3A", ":"),
@@ -215,14 +204,14 @@ export const resolveDimensionRequest = (
 	if (candidates.length === 1)
 		return {
 			kind: "series",
-			url: rewritten(candidates[0]!),
+			url: rewritten(),
 			series: candidates[0]!,
 			reading,
 		};
 	return {
 		kind: "breakdown",
 		entries: candidates.map((series) => ({
-			url: rewritten(series),
+			url: rewritten(),
 			series,
 		})),
 		reading,
