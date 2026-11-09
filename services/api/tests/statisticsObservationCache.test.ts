@@ -158,7 +158,7 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 				geography: "ward",
 			},
 		},
-		series: { [key]: readPath.statistics["count-observations"]! },
+		series: { [key]: readPath.statistics!["count-observations"]! },
 	};
 	const [canonical] = readMeasureObservations(
 		root,
@@ -175,6 +175,18 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	assert.equal(cache.has(databasePath, key), true);
 	assert.equal(cache.has(databasePath, "count-observations"), false);
 	assert.deepEqual(canonical?.periods[0]?.records[0], {
+		areaCode: "E1",
+		value: 42,
+		status: "observed",
+	});
+	const [canonicalOnly] = readMeasureObservations(
+		root,
+		catalog,
+		0,
+		{ ...canonicalReadPath, statistics: undefined },
+		{ count: identity },
+	);
+	assert.deepEqual(canonicalOnly?.periods[0]?.records[0], {
 		areaCode: "E1",
 		value: 42,
 		status: "observed",

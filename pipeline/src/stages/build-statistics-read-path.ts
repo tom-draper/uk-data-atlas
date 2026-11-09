@@ -226,7 +226,9 @@ const releasesIn = (geography: string, year: number) =>
 		.all(geography, `${year}-%`)
 		.map((row) => String(row.release));
 
-const plan: StatisticsReadPath = {
+const plan: StatisticsReadPath & {
+	statistics: NonNullable<StatisticsReadPath["statistics"]>;
+} = {
 	schemaVersion: 1,
 	dataCatalogHash: catalog.contentHash,
 	statistics: {},
@@ -303,7 +305,6 @@ writeFileSync(
 		{
 			schemaVersion: 1,
 			dataCatalogHash: plan.dataCatalogHash,
-			statistics: sorted(plan.statistics),
 			series: sorted(
 				indexStatisticsSeries(
 					catalog,

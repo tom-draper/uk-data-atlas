@@ -54,6 +54,14 @@ test("requires an exact selector inventory for the catalogue", () => {
 				count: identity,
 			}),
 		);
+		assert.doesNotThrow(() =>
+			statisticsArtifactReader(
+				database,
+				catalog,
+				{ ...canonical, statistics: undefined },
+				{ count: identity },
+			),
+		);
 		assert.throws(
 			() =>
 				statisticsArtifactReader(

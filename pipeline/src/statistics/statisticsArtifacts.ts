@@ -40,7 +40,7 @@ export const statisticsArtifactReader = (
 			return selector;
 		}
 		const name = observationArtifactName(measureId, source);
-		const selector = readPath.statistics[name];
+		const selector = readPath.statistics?.[name];
 		if (!selector)
 			throw new Error(`Missing statistics selector for ${name}.`);
 		return selector;
@@ -57,7 +57,7 @@ export const statisticsArtifactReader = (
 			names.add(name);
 		}
 	}
-	for (const name of Object.keys(readPath.statistics))
+	for (const name of Object.keys(readPath.statistics ?? {}))
 		if (!names.has(name))
 			throw new Error(`Unexpected statistics selector: ${name}.`);
 	if (readPath.series && identities)
