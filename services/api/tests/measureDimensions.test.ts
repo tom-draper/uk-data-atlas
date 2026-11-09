@@ -20,6 +20,21 @@ import {
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+test("air quality series come from the pollutant declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of ["no2", "pm10", "pm25"]) {
+		const id = `${member}-background-mean`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "background-concentration",
+			dimensions: { pollutant: member },
+		});
+	}
+});
+
 test("road collision series come from the severity declaration", () => {
 	const config = JSON.parse(
 		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
