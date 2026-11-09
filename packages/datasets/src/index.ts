@@ -221,3 +221,4 @@ export { crimeSeries } from "./society/crime-and-justice/crime/dataset.ts";
 export { roadCollisionSeries } from "./transport/road-safety/road-collisions/dataset.ts";
 export { airQualitySeries } from "./environment/air-quality/air-quality/dataset.ts";
 export { declaredLifeExpectancySeries } from "./health/life-expectancy/life-expectancy-series/dataset.ts";
+export { medianPaySeries } from "./data/income/statistics.ts";

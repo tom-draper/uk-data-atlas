@@ -142,3 +142,15 @@ export const payStatistics = (
 	dimensions: [PAY_STATISTICS, PAY_PERIOD, EARNINGS_PLACE],
 	fields: payFields(place),
 });
+
+export const medianPaySeries = () =>
+	(["residence", "workplace"] as const).flatMap((place) =>
+		payFields(place)
+			.filter((field) => field.path.endsWith(".median"))
+			.map((field) => ({
+				id: `median-${place === "workplace" ? "workplace-" : ""}${field.path.split(".")[0]}-pay`,
+				measure: field.measure,
+				dimensions: field.members!,
+			})),
+	);
+

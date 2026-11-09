@@ -790,34 +790,6 @@
 			"measure": "winning-party",
 			"datasetId": "local-election"
 		},
-		"median-annual-pay": {
-			"measure": "gross-annual-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "residence"
-			}
-		},
-		"median-hourly-pay": {
-			"measure": "gross-hourly-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "residence"
-			}
-		},
-		"median-workplace-annual-pay": {
-			"measure": "gross-annual-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "workplace"
-			}
-		},
-		"median-workplace-hourly-pay": {
-			"measure": "gross-hourly-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "workplace"
-			}
-		},
 		"nimdm-rank": {
 			"measure": "nimdm-rank"
 		},
