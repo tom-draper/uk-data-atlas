@@ -12,6 +12,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections.ts";
 import { compileMeasureDownloads } from "./statistics/measureDownloads.ts";
 import type { CompiledMeasure } from "./catalog/manifest.ts";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { statisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
@@ -40,7 +41,12 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		const manifest = compileExportManifest(
 			publicDirectory,
 			dataCatalog,
-			statisticsArtifactReader(database, dataCatalog, readPath),
+			statisticsArtifactReader(
+				database,
+				dataCatalog,
+				readPath,
+				readMeasureDimensionsMapping(repositoryRoot).ids,
+			),
 		);
 		manifest.measureExports = [];
 		for (const measure of dataCatalog.measures) {
