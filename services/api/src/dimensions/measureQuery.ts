@@ -202,7 +202,8 @@ export const resolveMeasureQuery = (
 		return next;
 	};
 	const internal = rewrite(
-		["/v1/attribution", "/v1/relationships"].includes(parsed.pathname)
+		["/v1/attribution", "/v1/relationships"].includes(parsed.pathname) ||
+			/^\/v1\/areas\/[^/]+\/[^/]+\/[^/]+$/.test(parsed.pathname)
 			? publicMeasures
 			: ids,
 	);
