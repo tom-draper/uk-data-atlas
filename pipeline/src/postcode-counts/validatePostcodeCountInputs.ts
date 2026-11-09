@@ -1,9 +1,10 @@
-import { readSqlitePostcodeIndexArtifact } from "@uk-data-atlas/atlas-runtime/storage";
-import { readSqlitePostcodeShard } from "@uk-data-atlas/atlas-runtime/storage";
 import {
+	readSqlitePostcodeIndexArtifact,
+	readSqlitePostcodeShard,
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/postcodes";
+
 import {
 	releaseKey,
 	type PostcodeAreasShard,

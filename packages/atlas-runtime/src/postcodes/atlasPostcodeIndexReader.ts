@@ -1,4 +1,4 @@
-import { readAtlasPayload } from "./atlasSqlite.ts";
+import { readAtlasPayload } from "../storage/atlasSqlite.ts";
 import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
 

@@ -29,6 +29,7 @@ export * from "./geographyBuildPath.ts";
 export * from "./geographyInventory.ts";
 export * from "./geographyResolver.ts";
 export * from "./lookupExports.ts";
+export * from "./postcodeAreaReleases.ts";
 export * from "./rankCompatibilityReleases.ts";
 export * from "./rawAreaGeometries.ts";
 export {

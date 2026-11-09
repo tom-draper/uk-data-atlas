@@ -1,19 +1,17 @@
-import {
-	POSTCODE_AREA_LAYOUT,
-	POSTCODE_AREA_LAYOUT_KEY,
-	postcodeAreaColumns,
-	unpackText,
-	readPostcodeAreaShard,
-} from "@uk-data-atlas/atlas-runtime/storage";
+import { unpackText } from "@uk-data-atlas/atlas-runtime/storage";
 import { type DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { addAreaVersion } from "./atlasAreas.ts";
 import type { IdRegistries } from "../ids/idRegistries.ts";
 import { chooseDistanceFallbacks } from "./postcodeDistanceFallbacks.ts";
 import {
+	POSTCODE_AREA_LAYOUT,
+	POSTCODE_AREA_LAYOUT_KEY,
+	postcodeAreaColumns,
+	readPostcodeAreaShard,
 	postcodeDistrictWhere,
 	postcodeFields,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/postcodes";
 import {
 	NONE,
 	SEVERAL,

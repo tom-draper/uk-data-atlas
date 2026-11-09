@@ -32,7 +32,7 @@ import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeCounts,
-} from "@uk-data-atlas/atlas-runtime/storage";
+} from "@uk-data-atlas/atlas-runtime/postcodes";
 import {
 	readPostcodeCounts,
 	readPostcodeAreaIndex,
