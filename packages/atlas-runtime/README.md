@@ -8,6 +8,7 @@ Node modules used by the API, data pipeline and website server to read and build
 - `@uk-data-atlas/atlas-runtime/postcodes` for postcode release selection.
 - `@uk-data-atlas/atlas-runtime/relationships` for crosswalks and conversions.
 - `@uk-data-atlas/atlas-runtime/catalogue` for catalogue loading, observation storage and evidence.
+- `@uk-data-atlas/atlas-runtime/loader` for loading a whole atlas release: the catalogue loader, the geography resolver and the reports that need it. It sits on top of every other folder, and none of them imports it.
 - `@uk-data-atlas/atlas-runtime/maps` for map resources.
 - `@uk-data-atlas/atlas-runtime/storage` for atlas databases and release artifacts.
 - `@uk-data-atlas/atlas-runtime/api` for route contracts and query handling.
@@ -28,4 +29,4 @@ Place search and named-location membership live in `@uk-data-atlas/places`.
 
 Measure definitions, observation access, units, compatibility, coverage, geographic conversion and reconciliation live in `@uk-data-atlas/measures`.
 
-The catalogue loader composes focused area, spatial, lineage, location and postcode resolvers and shares them with the geography facade. It supplies batch area validation directly to API routes. `PostcodeResolver` can read its indexes without constructing the geography resolver; area placement uses the spatial resolver supplied at construction.
+The loader folder composes focused area, spatial, lineage, location and postcode resolvers and shares them with the geography facade. It supplies batch area validation directly to API routes. `PostcodeResolver` can read its indexes without constructing the geography resolver; area placement uses the spatial resolver supplied at construction.
