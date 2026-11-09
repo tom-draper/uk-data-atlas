@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,

@@ -8,7 +8,7 @@ import {
 import { join } from "node:path";
 import { readGeoJsonProperties } from "@uk-data-atlas/geometry";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
-import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
 

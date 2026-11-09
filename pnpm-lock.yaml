@@ -171,6 +171,9 @@ importers:
 
   .:
     dependencies:
+      '@uk-data-atlas/areas':
+        specifier: workspace:*
+        version: link:packages/areas
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:packages/artifacts
@@ -195,6 +198,9 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:packages/map-tiles
+      '@uk-data-atlas/relationships':
+        specifier: workspace:*
+        version: link:packages/relationships
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:packages/search-index
@@ -304,9 +310,36 @@ importers:
 
   packages/areas:
     dependencies:
+      '@uk-data-atlas/artifacts':
+        specifier: workspace:*
+        version: link:../artifacts
+      '@uk-data-atlas/atlas-db':
+        specifier: workspace:*
+        version: link:../atlas-db
+      '@uk-data-atlas/catalogue':
+        specifier: workspace:*
+        version: link:../catalogue
+      '@uk-data-atlas/datasets':
+        specifier: workspace:*
+        version: link:../datasets
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
+      '@uk-data-atlas/geometry':
+        specifier: workspace:*
+        version: link:../geometry
+      '@uk-data-atlas/map-tiles':
+        specifier: workspace:*
+        version: link:../map-tiles
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:../search-index
+      '@uk-data-atlas/shapefile':
+        specifier: workspace:*
+        version: link:../shapefile
+      polygon-clipping:
+        specifier: 0.15.7
+        version: 0.15.7
     devDependencies:
       '@types/node':
         specifier: ^26.6.2

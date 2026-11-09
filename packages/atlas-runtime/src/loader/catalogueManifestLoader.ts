@@ -6,7 +6,7 @@ import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import type { ExportManifest } from "../catalogue/exportManifest.ts";
-import type { LookupManifest } from "../areas/lookupExports.ts";
+import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { ValidationReport } from "../catalogue/validationReport.ts";
 import { withUnitDefinitions } from "@uk-data-atlas/measures";

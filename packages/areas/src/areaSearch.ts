@@ -3,7 +3,7 @@ export {
 	compileAreaSearchIndex,
 	type AreaSearchIndexArtifact,
 } from "./areaSearchCompiler.ts";
-import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
+import type { AreaLookup, AreaRecord } from "./index.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";

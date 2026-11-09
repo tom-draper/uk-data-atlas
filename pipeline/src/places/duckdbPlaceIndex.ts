@@ -1,5 +1,5 @@
 import { DuckDBInstance } from "@duckdb/node-api";
-import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import {

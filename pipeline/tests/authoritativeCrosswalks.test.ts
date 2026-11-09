@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 
 const adapters = readCrosswalkAdapters(

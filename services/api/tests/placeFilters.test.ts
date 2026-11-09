@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import { route } from "./routeFixtures";
 import { areaLookup, geographyInventory, registry } from "./routeFixtures";
 

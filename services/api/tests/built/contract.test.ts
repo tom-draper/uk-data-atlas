@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 
 import { httpResponse } from "../../src/httpResponse";
-import { CAPABILITY_STATUSES } from "@uk-data-atlas/atlas-runtime/areas";
+import { CAPABILITY_STATUSES } from "@uk-data-atlas/areas";
 import { CONVERSION_METHODS } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	COMPATIBILITY_STATUSES,

@@ -6,11 +6,11 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { validateBatch } from "@uk-data-atlas/atlas-runtime/areas";
-import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { validateBatch } from "@uk-data-atlas/atlas-runtime/loader";
+import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { namedLocationTables } from "./pipelineFixtures";
-import type { AreaInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 

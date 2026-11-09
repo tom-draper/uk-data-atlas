@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type {
-	AreaLookup,
-	AreaRecord,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
 import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { RelationshipPath } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
@@ -15,8 +12,8 @@ import {
 	type RelationshipPrerequisite,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "@uk-data-atlas/atlas-runtime/areas";
-import { compareReleaseEvidence as compareBoundaryReleases } from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/loader";
+import { compareReleaseEvidence as compareBoundaryReleases } from "@uk-data-atlas/atlas-runtime/loader";
 
 type Candidate = Omit<ResolvedRelationshipPath, "rank">;
 type Coverage = Candidate["coverage"]["status"];

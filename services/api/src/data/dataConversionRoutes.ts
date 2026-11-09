@@ -13,7 +13,7 @@ import {
 	convertThroughSteps,
 	type ConversionStep,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
+import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 import { paginate } from "../pagination";
 import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
 import {

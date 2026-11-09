@@ -5,7 +5,7 @@ import {
 } from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { packPositions } from "@uk-data-atlas/search-index";
-import type { AreaSearchIndexArtifact } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaSearchIndexArtifact } from "@uk-data-atlas/areas";
 
 /** Codes in position order and term postings packed as u32s. */
 export const areaSearchIndexTables = (

@@ -1,4 +1,4 @@
-import type { AreaReleaseArtifact } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type { MeasureSource } from "@uk-data-atlas/measures";
 import {
 	countryForCode,

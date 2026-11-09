@@ -7,7 +7,7 @@ import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,
 	websiteBoundaryReleases,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 
 const root = process.cwd();
 const boundaryDirectory = join(root, "public/data/boundaries");

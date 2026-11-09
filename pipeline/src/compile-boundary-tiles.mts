@@ -27,7 +27,7 @@ import {
 	websiteBoundaryReleases,
 	type BoundaryResource,
 	type BoundaryResources,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { correctedSource, releaseSources } from "./compile-boundaries.mts";
 import {
 	buildLog,
@@ -47,7 +47,7 @@ export const TILES_FILENAME = "boundaries.pmtiles";
 export const TILES_MANIFEST = "boundaries/tiles.json";
 const TILER_SOURCES = [
 	import.meta.filename,
-	join(ROOT, "packages/atlas-runtime/src/areas/boundaryResources.ts"),
+	join(ROOT, "packages/areas/src/boundaryResources.ts"),
 	...readdirSync(join(ROOT, "packages/map-tiles/src")).map((name) =>
 		join(ROOT, "packages/map-tiles/src", name),
 	),

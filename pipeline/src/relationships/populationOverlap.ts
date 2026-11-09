@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
-import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import {
 	type AreaGeometry,
 	areaMultiPolygon,
@@ -12,7 +12,7 @@ import {
 } from "@uk-data-atlas/geography/area-geometry-pieces";
 import { labelsFor, round } from "../geographies/areaOverlap.ts";
 import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
-import { readGeometries } from "@uk-data-atlas/atlas-runtime/areas";
+import { readGeometries } from "@uk-data-atlas/areas";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import {
 	BoundedClipper,

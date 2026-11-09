@@ -1,10 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { createFileHashCache } from "./fileHashCache.ts";
 import { createGeometrySourceRegistry } from "./geographies/geometrySourceRegistry.ts";
 import {

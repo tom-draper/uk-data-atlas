@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { test } from "vitest";
 import type { Polygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import { createAreaRelationshipIndex } from "@uk-data-atlas/atlas-runtime/relationships";
 import {
 	readCrosswalkAdapters,

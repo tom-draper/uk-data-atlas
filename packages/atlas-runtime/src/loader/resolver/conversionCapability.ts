@@ -1,5 +1,5 @@
 import type { AreaInventory, AreaLookup } from "@uk-data-atlas/areas";
-import type { CapabilityStatus } from "../capability.ts";
+import type { CapabilityStatus } from "@uk-data-atlas/areas";
 import type {
 	RelationshipPath,
 	RelationshipPurpose,

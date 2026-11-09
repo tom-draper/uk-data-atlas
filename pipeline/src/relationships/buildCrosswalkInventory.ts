@@ -35,7 +35,7 @@ import {
 	addRelatedCodes,
 	releaseCoverageOf,
 	type RelatedCodesByRelease,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/relationships";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { BOUNDED_CLIPPING_VERSION } from "@uk-data-atlas/geometry";

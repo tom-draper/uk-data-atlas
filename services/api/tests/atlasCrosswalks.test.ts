@@ -1,5 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { readSqliteAreas } from "@uk-data-atlas/atlas-runtime/areas";
+import { readSqliteAreas } from "@uk-data-atlas/areas";
 import { IdRegistries, areaTables } from "./pipelineFixtures";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import assert from "node:assert/strict";

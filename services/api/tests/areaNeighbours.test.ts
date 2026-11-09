@@ -4,7 +4,7 @@ import {
 	borderIndex,
 	sharedBorder,
 	sharedBorderWith,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import { edgeLengthM } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 

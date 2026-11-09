@@ -1,4 +1,4 @@
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

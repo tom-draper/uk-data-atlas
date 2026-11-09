@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import {
 	CapabilityResolver,
 	type CapabilityResolverInputs,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/loader";
 import { CrosswalkTranslator } from "@uk-data-atlas/atlas-runtime/relationships";
 
 test("caches relationship coverage across limits and health requests", () => {

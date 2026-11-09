@@ -6,7 +6,7 @@ import type {
 } from "@uk-data-atlas/areas";
 
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { GeographyInventory } from "../areas/geographyInventory.ts";
+import type { GeographyInventory } from "./geographyInventory.ts";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
@@ -15,7 +15,7 @@ import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
 } from "../places/namedLocations.ts";
-import type { AreaSearchIndex } from "../areas/areaSearch.ts";
+import type { AreaSearchIndex } from "@uk-data-atlas/areas";
 import type { PlaceIndex } from "../places/placeIndex.ts";
 import type { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeCountsIndex } from "@uk-data-atlas/postcodes";
@@ -26,21 +26,21 @@ import {
 	AreasResolver,
 	type AreaIdentity,
 	type GeographyEndpoint,
-} from "../areas/resolver/areas.ts";
-import { AreaValidation } from "../areas/resolver/areaValidation.ts";
-import { CatalogueResolver } from "../areas/resolver/catalogue.ts";
-import { CapabilityResolver } from "../areas/resolver/capability.ts";
-import { LineageResolver } from "../areas/resolver/lineage.ts";
+} from "./resolver/areas.ts";
+import { AreaValidation } from "./resolver/areaValidation.ts";
+import { CatalogueResolver } from "./resolver/catalogue.ts";
+import { CapabilityResolver } from "./resolver/capability.ts";
+import { LineageResolver } from "./resolver/lineage.ts";
 import {
 	compareBoundaryReleases,
 	type BoundaryReleaseComparison,
-} from "../areas/resolver/releaseComparison.ts";
-import { LocationsResolver } from "../areas/resolver/locations.ts";
-import { PostcodeResolver } from "../areas/resolver/postcodes.ts";
+} from "./resolver/releaseComparison.ts";
+import { LocationsResolver } from "./resolver/locations.ts";
+import { PostcodeResolver } from "./resolver/postcodes.ts";
 import {
 	SpatialResolver,
 	type ResolvedContainingArea,
-} from "../areas/resolver/spatial.ts";
+} from "./resolver/spatial.ts";
 import {
 	CrosswalkTranslator,
 	type CrosswalkLookup,
@@ -67,17 +67,17 @@ export {
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "../areas/resolver/capability.ts";
+} from "./resolver/capability.ts";
 export type {
 	BoundaryExtentChange,
 	BoundaryReleaseComparison,
 	PublishedRelationshipMapping,
-} from "../areas/resolver/releaseComparison.ts";
+} from "./resolver/releaseComparison.ts";
 export type {
 	AreaIdentity,
 	GeographyEndpoint,
 	ResolvedSameCodeArea,
-} from "../areas/resolver/areas.ts";
+} from "./resolver/areas.ts";
 export type {
 	CrosswalkLookup,
 	ResolvedAreaTranslation,
@@ -92,17 +92,17 @@ export type {
 	ResolvedIntersectingAreas,
 	ResolvedAreaNeighbour,
 	ResolvedAreaNeighbours,
-} from "../areas/resolver/spatial.ts";
+} from "./resolver/spatial.ts";
 export type {
 	TraversedRelationship,
 	ResolvedAreaHistory,
 	ResolvedAreaRelationshipSummary,
-} from "../areas/resolver/lineage.ts";
+} from "./resolver/lineage.ts";
 export type {
 	ResolvedRelationshipCoverage,
 	GeographyHealth,
 	RelationshipRepair,
-} from "../areas/resolver/capability.ts";
+} from "./resolver/capability.ts";
 
 export type GeographyResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;

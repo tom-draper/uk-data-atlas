@@ -1,8 +1,5 @@
 import { readFileSync } from "node:fs";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
@@ -13,7 +10,7 @@ import type {
 	PopulationObservation,
 } from "@uk-data-atlas/atlas-runtime/catalogue";
 
-import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/areas";
+import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
 import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import {

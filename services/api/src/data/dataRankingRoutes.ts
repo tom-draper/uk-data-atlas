@@ -2,7 +2,7 @@ import { isNumericObservation } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { observationsFor } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { refused } from "../observationResolution/observationPlan";
 import { rankingOf } from "../ranking";
-import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/areas";
+import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 import { publishedPartitions, statedDefaults } from "../dataDefaults";
 import { selectSourcePartition } from "../sourcePartition";
 import { paginate } from "../pagination";

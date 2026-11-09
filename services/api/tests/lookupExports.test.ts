@@ -1,10 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "vitest";
-import {
-	type AreaInventory,
-	createAreaLookup,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { type AreaInventory, createAreaLookup } from "@uk-data-atlas/areas";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
@@ -15,7 +12,7 @@ import {
 	crosswalkTable,
 	namedLocationMembersTable,
 	renderLookup,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";

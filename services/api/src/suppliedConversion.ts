@@ -1,4 +1,4 @@
-import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/areas";
+import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	componentsThroughSteps,
 	convertThroughSteps,

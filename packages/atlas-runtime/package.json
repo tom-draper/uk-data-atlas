@@ -8,7 +8,6 @@
 	"sideEffects": false,
 	"exports": {
 		"./api": "./src/api/index.ts",
-		"./areas": "./src/areas/index.ts",
 		"./catalogue": "./src/catalogue/index.ts",
 		"./loader": "./src/loader/index.ts",
 		"./maps": "./src/maps/index.ts",

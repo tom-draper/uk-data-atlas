@@ -9,10 +9,7 @@ import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
 } from "@uk-data-atlas/atlas-runtime/relationships";
-import {
-	readSqliteAreas,
-	readSqliteAreaInventory,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { readSqliteAreas, readSqliteAreaInventory } from "@uk-data-atlas/areas";
 
 const hash = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");

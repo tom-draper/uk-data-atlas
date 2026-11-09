@@ -1,10 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileRelationshipCandidates } from "./relationships/relationshipCandidates.ts";
 import {

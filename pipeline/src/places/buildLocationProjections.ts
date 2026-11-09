@@ -1,10 +1,7 @@
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
-import { createAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
+import { createAreaLookup } from "@uk-data-atlas/areas";
 import { createCrosswalkArtifacts } from "../storage/crosswalkArtifacts.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/atlas-runtime/relationships";
 import { compileLocationProjections } from "@uk-data-atlas/atlas-runtime/places";

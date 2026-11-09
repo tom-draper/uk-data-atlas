@@ -1,7 +1,7 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
-import type { AreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaLookup } from "@uk-data-atlas/areas";
 import {
 	BoundedClipper,
 	BOUNDED_CLIPPING_VERSION,
@@ -14,7 +14,7 @@ import {
 } from "@uk-data-atlas/geography/area-geometry-pieces";
 import { labelsFor, round } from "../geographies/areaOverlap.ts";
 import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
-import { readGeometries } from "@uk-data-atlas/atlas-runtime/areas";
+import { readGeometries } from "@uk-data-atlas/areas";
 import {
 	multiPolygonAreaM2,
 	polygonWidthM,

@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readAreaAdapters } from "@uk-data-atlas/atlas-runtime/areas";
-import { readAreaSourceAdapters } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaAdapters } from "@uk-data-atlas/areas";
+import { readAreaSourceAdapters } from "@uk-data-atlas/areas";
 import { compileAreas } from "./geographies/areaInventory.ts";
 import { createBoundaryRegistry } from "./build-boundary-registry.ts";
 import {

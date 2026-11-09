@@ -2,7 +2,7 @@ import {
 	LazyAreaLookup,
 	type AreaInventory,
 	type AreaLookup,
-} from "@uk-data-atlas/areas";
+} from "./index.ts";
 import { readSqliteAreaInventory, readSqliteAreas } from "./atlasAreaReader.ts";
 
 /**

@@ -1,12 +1,9 @@
 import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
-import { buildArtifactPath } from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type {
-	AreaInventory,
-	AreaReleaseArtifact,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";

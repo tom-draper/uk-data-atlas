@@ -2,10 +2,7 @@ import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-	buildArtifactPath,
-	geographyCatalogues,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { buildArtifactPath, geographyCatalogues } from "@uk-data-atlas/areas";
 
 /** Finalise catalogue payloads after analysis has read the base database. */
 export const buildGeographyCatalogues = (repositoryRoot: string) => {
