@@ -92,7 +92,7 @@ website reads for each dataset is generated from those rows, checked against
 the compiled dataset by value, and cached in `data/build/atlas-cache.sqlite`.
 The API catalogue
 compiler and atlas pages read it directly through the server-only reader in
-`packages/atlas-runtime/src/catalogue/atlasPayloads.ts`. The `api-datasets` stage only builds
+`packages/catalogue/src/node/atlasPayloads.ts`. The `api-datasets` stage only builds
 gazetteer core and boundary assets under `data/build/artifacts/source-data/`.
 Named locations consume that gazetteer. The Next.js server also reads SQLite
 and passes dataset URLs containing their payload SHA-256 to the browser. Its
@@ -101,7 +101,7 @@ immutable caching and negotiated gzip compression. Neither product fetches
 catalogue datasets from the other product.
 
 The Next.js server also answers measure queries at `/data/measures/<measure>`.
-It runs the shared `queryMeasureValues` (`packages/atlas-runtime/src/measures/measureValues.ts`),
+It runs the shared `queryMeasureValues` (`packages/measures/src/measureValues.ts`),
 the function the API's series selection and aggregation rules also use, over the
 same statistics rows, and returns columns of values per area and period with the
 measure's value kind, unit and dimensions. It reads `data-catalog.json`,

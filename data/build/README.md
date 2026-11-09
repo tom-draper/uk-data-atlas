@@ -334,7 +334,7 @@ API tables or the complete compiled release.
 
 `atlas-sqlite` writes the canonical statistics tables from
 `docs/sqlite-schema-design.md` (layer 4). Every catalogue dataset is stored
-in them. `UNSTORED_DATASETS` (`packages/atlas-runtime/src/catalogue/statisticsDatasets/`)
+in them. `UNSTORED_DATASETS` (`packages/catalogue/src/node/statisticsDatasets/`)
 lists any exception with its reason, and is empty. The API reads its observations
 from these same statistics rows. The base database schema version is 3.
 
@@ -344,7 +344,7 @@ intervals, periods and areas with statistics-backed artifacts and records the
 selectors in `statistics-read-path.json`. The build fails if an artifact cannot
 be reconstructed. These compiler outputs are build inputs, not API storage.
 
-All tables are `STRICT` with integer keys. Writer: `packages/atlas-runtime/src/measures/atlasStatistics.ts`.
+All tables are `STRICT` with integer keys. Writer: `packages/measures/src/atlasStatistics.ts`.
 
 | Table               | Key                                                                      | Meaning                                                                                                                                                                                                                                                                        |
 | ------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -376,7 +376,7 @@ release, if an observed value is null, or if a dataset's `verify` hook fails.
 members, area code and name, geography, release, period, value, status,
 method, licence).
 
-Fuel poverty (`packages/atlas-runtime/src/measures/fuelPovertyStatistics.ts`) maps each record field to a
+Fuel poverty (`packages/measures/src/fuelPovertyStatistics.ts`) maps each record field to a
 measure (`households`, `fuel-poor-households`, `fuel-poverty-rate`) on the 2021
 LSOA release. Record order is area code order and is not stored; the mapper
 refuses unordered input. The period header (`id`, `year`, `boundaryType`,
@@ -384,8 +384,8 @@ refuses unordered input. The period header (`id`, `year`, `boundaryType`,
 the build refuses to publish if the rebuilt values differ from the compiled JSON,
 and stores no payload.
 
-The other datasets are configuration in `packages/atlas-runtime/src/catalogue/statisticsDatasets/`, read by
-`packages/atlas-runtime/src/measures/declaredStatistics.ts`. Each config names the record fields that hold
+The other datasets are configuration in `packages/catalogue/src/node/statisticsDatasets/`, read by
+`packages/measures/src/declaredStatistics.ts`. Each config names the record fields that hold
 values, the measure and dimension members each one is, and the period. Every
 number in a record must be claimed by a field or listed as `derived` with a
 reason (per-100k figures, percentages the compiler computes, copies), and the
@@ -394,7 +394,7 @@ then on each `alsoIn` release in turn; a code in none of them fails the build
 unless an `exclude` pattern gives a reason.
 
 A config with `payload` has its JSON generated from rows, not stored.
-`packages/atlas-runtime/src/measures/declaredPayload.ts` places each series'
+`packages/measures/src/declaredPayload.ts` places each series'
 values at the config's field paths in every record, and fills a value with no
 observation as null. Names and keys come from `dataset_area_name` and
 `dataset_area_key`, parent and other related areas from `area_relationship`,

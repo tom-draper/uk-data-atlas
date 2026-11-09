@@ -29,9 +29,9 @@ passes the series of the area's release, as in `WHERE series_id IN (SELECT id
 FROM series WHERE release_id = ?) AND area_version_id = ?`. A query on
 `area_version_id` alone scans the table.
 
-The statistics writer is `packages/atlas-runtime/src/catalogue/atlasStatistics.ts`.
+The statistics writer is `packages/measures/src/atlasStatistics.ts`.
 Dataset declarations in
-`packages/atlas-runtime/src/catalogue/statisticsDatasets/` identify fields,
+`packages/measures/src/statisticsDatasets/` identify fields,
 dimensions and derived values. The build checks that numeric fields are
 accounted for and validates the stored row counts.
 
@@ -114,7 +114,7 @@ reconstructed. The compiled artifacts are build inputs, not a runtime fallback.
 ## Dataset payloads
 
 The website still reads a JSON payload per dataset. It is generated from the
-rows by `packages/atlas-runtime/src/catalogue/declaredPayload.ts`, using each
+rows by `packages/measures/src/declaredPayload.ts`, using each
 dataset's declaration: its field paths place series values in records, its
 `payload` gives each part's header and the field holding the area code, and its
 `computed` rules supply numbers the compiler calculates. The build compares
@@ -158,7 +158,7 @@ stored as Brotli blobs and decompressed on read.
 ## Dataset declarations
 
 To add a dataset, declare its fields and dimensions in
-`packages/atlas-runtime/src/catalogue/statisticsDatasets/`. Each numeric field
+`packages/measures/src/statisticsDatasets/`. Each numeric field
 must map to a series value or bound, or be documented as derived. Use the
 dataset's own periods and geography, and declare alternate releases when
 records contain areas from more than one release. Add unit tests for the
