@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
-import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,

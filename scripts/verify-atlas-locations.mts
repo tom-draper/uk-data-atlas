@@ -2,7 +2,7 @@ import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { compileLocationProjections } from "@uk-data-atlas/atlas-runtime/places";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";

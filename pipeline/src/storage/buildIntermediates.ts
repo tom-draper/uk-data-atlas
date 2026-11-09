@@ -15,7 +15,7 @@ import {
 import {
 	readSqliteCrosswalk,
 	readSqliteCrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { readSqliteNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { readSqliteAreaInventory } from "@uk-data-atlas/areas";
 

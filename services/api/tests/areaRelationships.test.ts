@@ -13,7 +13,7 @@ import {
 import type {
 	AreaOverlapCrosswalkArtifact,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 
 const endpoints = {
 	from: { status: "verified", availableAreaCount: 1, referencedCodeCount: 1 },

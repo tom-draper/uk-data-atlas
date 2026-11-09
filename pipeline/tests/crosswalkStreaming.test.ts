@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
 import { compileCrosswalks } from "../src/relationships/crosswalkCompiler";
-import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/relationships";
 
 const adapter = (id: string): PropertyCrosswalkAdapter => ({
 	id,

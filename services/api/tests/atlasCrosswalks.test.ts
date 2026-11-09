@@ -18,7 +18,7 @@ import { crosswalkTables } from "./pipelineFixtures";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { writeSqliteIndex } from "./pipelineFixtures";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";

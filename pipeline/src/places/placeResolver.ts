@@ -11,7 +11,7 @@ import { readBuildBoundaryRegistry } from "../buildBoundaryRegistry.ts";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 

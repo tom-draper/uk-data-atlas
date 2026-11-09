@@ -8,12 +8,12 @@ import {
 	type AreaGeometry,
 } from "@uk-data-atlas/geography/area-geometry-pieces";
 import type { AreaLookup } from "@uk-data-atlas/areas";
-import type { AreaOverlapCrosswalkAdapter } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { AreaOverlapCrosswalkAdapter } from "@uk-data-atlas/relationships";
 import type {
 	AreaOverlapCrosswalkArtifact,
 	AreaOverlapTarget,
-} from "@uk-data-atlas/atlas-runtime/relationships";
-import { validateEndpoint } from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
+import { validateEndpoint } from "@uk-data-atlas/relationships";
 import {
 	multiPolygonAreaM2,
 	polygonWidthM,

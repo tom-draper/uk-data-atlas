@@ -5,8 +5,8 @@ import {
 	convertThroughSteps,
 	type ConversionStep,
 } from "@uk-data-atlas/measures";
-import type { CrosswalkArtifact } from "@uk-data-atlas/atlas-runtime/relationships";
-import { buildTranslationSteps } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
+import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 
 const artifact = (records: CrosswalkArtifact["records"]): CrosswalkArtifact =>
 	({

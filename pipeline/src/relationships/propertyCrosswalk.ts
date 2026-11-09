@@ -13,7 +13,7 @@ import {
 	type CrosswalkArea,
 	type CrosswalkChange,
 	type PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 

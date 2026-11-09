@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { readCompiledAreaLookup } from "../../src/relationships/crosswalkBuildInputs";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";

@@ -8,7 +8,7 @@ import type {
 	AreaOverlapCrosswalkArtifact,
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { route } from "../src/routes";
 import type { ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
 import { areaLookup, containmentCrosswalk, testContext } from "./routeFixtures";

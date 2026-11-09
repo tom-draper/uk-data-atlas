@@ -1,8 +1,8 @@
 import type {
 	CrosswalkMethod,
 	CrosswalkQuality,
-} from "@uk-data-atlas/relationships";
-import type { RelationshipPath } from "@uk-data-atlas/relationships";
+} from "./crosswalkInventory.ts";
+import type { RelationshipPath } from "./relationshipPaths.ts";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 
 export type AnalysisGeographySupport = {

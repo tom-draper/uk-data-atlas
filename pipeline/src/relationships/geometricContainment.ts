@@ -23,13 +23,13 @@ import {
 import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 import type {
 	BestFitCrosswalkArtifact,
 	GeometricContainmentCrosswalkArtifact,
-} from "@uk-data-atlas/atlas-runtime/relationships";
-import { validateEndpoint } from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
+import { validateEndpoint } from "@uk-data-atlas/relationships";
 
 // About a millimetre, then about ten centimetres, for retries when
 // polygon-clipping's sweep line fails; both far below any sliver width.

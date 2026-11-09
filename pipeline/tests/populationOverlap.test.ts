@@ -6,11 +6,11 @@ import { test } from "vitest";
 import type { Polygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { convertObservations } from "@uk-data-atlas/atlas-runtime/relationships";
+import { convertObservations } from "@uk-data-atlas/measures";
 import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 
 // Squares near the equator, in degrees; D is about 1.1 km.

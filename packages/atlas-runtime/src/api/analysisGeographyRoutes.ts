@@ -1,4 +1,4 @@
-import { analysisConversion } from "../relationships/analysisConversion.ts";
+import { analysisConversion } from "@uk-data-atlas/relationships";
 import { unsupported } from "@uk-data-atlas/areas";
 import { coveragePlan } from "../loader/coveragePlan.ts";
 import { relationshipPurposeFor } from "@uk-data-atlas/relationships";

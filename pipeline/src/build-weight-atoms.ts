@@ -5,7 +5,7 @@ import {
 	formatDuration,
 	repoPath,
 } from "@uk-data-atlas/atlas-db";
-import { parseCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
+import { parseCrosswalkAdapters } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography/postcode-area-types";
 import { readdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";

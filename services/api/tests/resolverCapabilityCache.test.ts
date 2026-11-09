@@ -5,7 +5,7 @@ import {
 	CapabilityResolver,
 	type CapabilityResolverInputs,
 } from "@uk-data-atlas/atlas-runtime/loader";
-import { CrosswalkTranslator } from "@uk-data-atlas/atlas-runtime/relationships";
+import { CrosswalkTranslator } from "@uk-data-atlas/relationships";
 
 test("caches relationship coverage across limits and health requests", () => {
 	const areaLookup = createAreaLookup([

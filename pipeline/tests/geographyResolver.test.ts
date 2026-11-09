@@ -6,7 +6,7 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import {
 	createGeographyResolver,
 	createGeographyServices,
@@ -15,7 +15,7 @@ import {
 	compileLocationProjections,
 	LocationProjectionStore,
 } from "@uk-data-atlas/atlas-runtime/places";
-import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 import {
 	areaLookup,

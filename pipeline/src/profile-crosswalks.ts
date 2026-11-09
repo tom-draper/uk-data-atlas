@@ -3,7 +3,7 @@ import { configDirectory, artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { readCrosswalkAdapters } from "@uk-data-atlas/atlas-runtime/relationships";
+import { readCrosswalkAdapters } from "@uk-data-atlas/relationships";
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,

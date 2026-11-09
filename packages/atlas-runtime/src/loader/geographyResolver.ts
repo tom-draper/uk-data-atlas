@@ -21,7 +21,7 @@ import type { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeCountsIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
-import type { RelationshipCandidateInventory } from "../relationships/relationshipCandidates.ts";
+import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import {
 	AreasResolver,
 	type AreaIdentity,

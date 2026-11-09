@@ -1,4 +1,4 @@
-import type { RelationshipPurpose } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { RelationshipPurpose } from "@uk-data-atlas/relationships";
 import type { RelationshipOperation } from "@uk-data-atlas/atlas-runtime/loader";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import {

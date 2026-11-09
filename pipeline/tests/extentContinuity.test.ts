@@ -6,14 +6,14 @@ import { test } from "vitest";
 import type { Polygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { createAreaRelationshipIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createAreaRelationshipIndex } from "@uk-data-atlas/relationships";
 import {
 	readCrosswalkAdapters,
 	type ExtentContinuityCrosswalkAdapter,
-} from "@uk-data-atlas/atlas-runtime/relationships";
+} from "@uk-data-atlas/relationships";
 import { compileCrosswalks } from "./helpers/compileCrosswalks";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
-import { createRelationshipPathIndex } from "@uk-data-atlas/atlas-runtime/relationships";
+import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import { crosswalkShape } from "../src/relationships/relationshipPaths";
 import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
 import {

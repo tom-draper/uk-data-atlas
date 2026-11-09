@@ -7,7 +7,7 @@ import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
-import type { RelationshipCandidateInventory } from "@uk-data-atlas/atlas-runtime/relationships";
+import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
