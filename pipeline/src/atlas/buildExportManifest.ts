@@ -13,6 +13,7 @@ import { compileMeasureDownloads } from "../statistics/measureDownloads.ts";
 import type { CompiledMeasure } from "../catalog/manifest.ts";
 import { statisticsArtifactReader } from "../statistics/statisticsArtifacts.ts";
 import { readJsonSync } from "../lib/json.ts";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/atlas-runtime/catalogue";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);
@@ -35,7 +36,12 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		const manifest = compileExportManifest(
 			publicDirectory,
 			dataCatalog,
-			statisticsArtifactReader(database, dataCatalog, readPath),
+			statisticsArtifactReader(
+				database,
+				dataCatalog,
+				readPath,
+				readMeasureDimensionsMapping(repositoryRoot).ids,
+			),
 		);
 		manifest.measureExports = [];
 		for (const measure of dataCatalog.measures) {

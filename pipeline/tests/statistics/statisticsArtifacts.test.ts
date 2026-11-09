@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import type { DataCatalog } from "@uk-data-atlas/measures";
 import {
+	measureSeriesSourceKey,
+	type DataCatalog,
 	type StatisticsReadPath,
 	type StatisticsSelector,
 } from "@uk-data-atlas/measures";
@@ -14,7 +15,20 @@ test("requires an exact selector inventory for the catalogue", () => {
 		const catalog = {
 			contentHash: "fixture-hash",
 			datasets: [{ id: "dataset" }],
-			measures: [{ id: "count", sources: [{ datasetId: "dataset" }] }],
+			measures: [
+				{
+					id: "count",
+					sources: [
+						{
+							datasetId: "dataset",
+							sourceGeography: {
+								type: "ward",
+								boundaryYear: 2024,
+							},
+						},
+					],
+				},
+			],
 		} as unknown as DataCatalog;
 		const selector: StatisticsSelector = {
 			datasetId: "dataset",
@@ -30,6 +44,42 @@ test("requires an exact selector inventory for the catalogue", () => {
 		};
 		assert.doesNotThrow(() =>
 			statisticsArtifactReader(database, catalog, readPath),
+		);
+		const identity = { measure: "count", dimensions: { sex: "female" } };
+		const source = catalog.measures[0]!.sources[0]!;
+		const key = measureSeriesSourceKey(identity, source);
+		const canonical = { ...readPath, series: { [key]: selector } };
+		assert.doesNotThrow(() =>
+			statisticsArtifactReader(database, catalog, canonical, {
+				count: identity,
+			}),
+		);
+		assert.throws(
+			() =>
+				statisticsArtifactReader(
+					database,
+					catalog,
+					{ ...canonical, series: {} },
+					{ count: identity },
+				),
+			/Missing statistics selector/,
+		);
+		assert.throws(
+			() => statisticsArtifactReader(database, catalog, canonical, {}),
+			/Missing series identity/,
+		);
+		assert.throws(
+			() =>
+				statisticsArtifactReader(
+					database,
+					catalog,
+					{
+						...canonical,
+						series: { [key]: selector, extra: selector },
+					},
+					{ count: identity },
+				),
+			/Unexpected statistics series selector/,
 		);
 		assert.throws(
 			() =>
