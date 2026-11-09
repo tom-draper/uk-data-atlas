@@ -2,14 +2,12 @@ import { resolve as resolveRepositoryRoot } from "node:path";
 import { atlasCachePath } from "@uk-data-atlas/atlas-runtime/storage";
 import { readAtlasPayload } from "@uk-data-atlas/atlas-runtime/catalogue";
 import { AreaSearch } from "@uk-data-atlas/atlas-runtime/areas";
-import {
-	readAreaSearchIndex,
-	readAreaLookup,
-} from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaLookup } from "@uk-data-atlas/atlas-runtime/areas";
+import { readAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	readAreaInventory,
 	readPlaceIndex,
-} from "@uk-data-atlas/atlas-runtime/areas";
+} from "@uk-data-atlas/atlas-runtime/loader";
 import { readNamedLocationInventory } from "@uk-data-atlas/atlas-runtime/places";
 import { resolvePlaces } from "@uk-data-atlas/atlas-runtime/places";
 import { buildLocationProjections } from "./pipelineFixtures";
@@ -46,7 +44,7 @@ import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
 import { buildAtlasSqlite } from "./pipelineFixtures";
 import { buildTerrainCatalogue } from "./pipelineFixtures";
-import { readTerrainCatalogue } from "@uk-data-atlas/atlas-runtime/areas";
+import { readTerrainCatalogue } from "@uk-data-atlas/atlas-runtime/loader";
 import { readPublicManifest } from "@uk-data-atlas/atlas-runtime/storage";
 import { route } from "../src/routes";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";

@@ -1,3 +1,4 @@
+import { readAreaLookup } from "../areas/areaLookup.ts";
 import { readAtlasPayload } from "../catalogue/atlasPayloads.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { FullDetailDownloads } from "./fullDetailDownloads.ts";
@@ -16,7 +17,6 @@ import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import type { AtlasRelease } from "../storage/atlasRelease.ts";
 import {
 	readAreaInventory,
-	readAreaLookup,
 	readAreaSearchIndex,
 	readPostcodeAreaIndex,
 	readPostcodeCounts,
@@ -25,7 +25,7 @@ import {
 	readGeographyInventory,
 	readPlaceIndex,
 	readTerrainCatalogue,
-} from "../areas/boundaryLoader.ts";
+} from "./boundaryLoader.ts";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,

@@ -15,7 +15,6 @@ export * from "./areaSearchCompiler.ts";
 export * from "./areaSourceAdapters.ts";
 export * from "./atlasAreaReader.ts";
 export * from "./batchValidation.ts";
-export * from "./boundaryLoader.ts";
 export * from "./boundaryResources.ts";
 export * from "./capability.ts";
 export * from "./catalog/countries.ts";

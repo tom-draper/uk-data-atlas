@@ -6,10 +6,10 @@ import {
 	readSqlitePostcodeCounts,
 } from "../postcodes/atlasPostcodeDerived.ts";
 import { readGeographyCatalogue } from "../catalogue/geographyCatalogue.ts";
-import { readSqliteAreaInventory } from "./atlasAreaReader.ts";
+import { readSqliteAreaInventory } from "../areas/atlasAreaReader.ts";
 import { existsSync, readFileSync } from "node:fs";
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { GeographyInventory } from "./geographyInventory.ts";
+import type { GeographyInventory } from "../areas/geographyInventory.ts";
 import type { NamedLocationInventory } from "../places/namedLocations.ts";
 import {
 	openPlaceIndexDatabase,
@@ -18,7 +18,7 @@ import {
 import {
 	openAreaSearchIndexDatabase,
 	type AreaSearchIndex,
-} from "./areaSearch.ts";
+} from "../areas/areaSearch.ts";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
 import { readSqlitePostcodeIndex } from "../postcodes/atlasPostcodesReader.ts";
 import {
@@ -73,8 +73,6 @@ export const readTerrainCatalogue = (
 };
 
 export const readAreaInventory = readSqliteAreaInventory;
-
-export { DEFAULT_AREA_CACHE_RECORDS, readAreaLookup } from "./areaLookup.ts";
 
 /**
  * The compiled place index, read from its SQLite tables, refused unless built
