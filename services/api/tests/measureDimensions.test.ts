@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
 	measureDimensionProblems,
 	measureSeriesKey,
+	measureSeriesSourceKey,
 	totalMember,
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
@@ -28,6 +29,56 @@ test("series keys sort members and distinguish datasets", () => {
 	assert.notEqual(
 		measureSeriesKey({ measure: "votes", dimensions }),
 		measureSeriesKey({ measure: "votes", dimensions, datasetId: "local" }),
+	);
+});
+
+test("series source keys distinguish dataset and geography partitions", () => {
+	const series = {
+		measure: "votes",
+		dimensions: { party: "lab", sex: "female" },
+	};
+	const source = {
+		datasetId: "local-election",
+		sourceGeography: { type: "ward", boundaryYear: 2023 },
+	};
+	const key = measureSeriesSourceKey(series, source);
+	assert.equal(
+		key,
+		measureSeriesSourceKey(
+			{ measure: "votes", dimensions: { sex: "female", party: "lab" } },
+			source,
+		),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(series, {
+			...source,
+			datasetId: "general-election",
+		}),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(series, {
+			...source,
+			sourceGeography: {
+				...source.sourceGeography,
+				type: "constituency",
+			},
+		}),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(series, {
+			...source,
+			sourceGeography: { ...source.sourceGeography, boundaryYear: 2024 },
+		}),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(
+			{ ...series, datasetId: "local-election" },
+			source,
+		),
 	);
 });
 
