@@ -943,60 +943,6 @@
 		"total-jobs": {
 			"measure": "total-jobs"
 		},
-		"travel-to-work-bicycle": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "bicycle"
-			}
-		},
-		"travel-to-work-car": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "car"
-			}
-		},
-		"travel-to-work-home": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "home"
-			}
-		},
-		"travel-to-work-motorcycle": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "motorcycle"
-			}
-		},
-		"travel-to-work-on-foot": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "on-foot"
-			}
-		},
-		"travel-to-work-other": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "other"
-			}
-		},
-		"travel-to-work-public-transport": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "public-transport"
-			}
-		},
-		"travel-to-work-taxi": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "taxi"
-			}
-		},
-		"travel-to-work-total": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "total"
-			}
-		},
 		"unemployment-level": {
 			"measure": "unemployed-people"
 		},

@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import { travelToWorkSeries } from "./statisticsDatasets/census.ts";
 import { medianPaySeries } from "./statisticsDatasets/economy.ts";
 import {
 	airQualitySeries,
@@ -60,6 +61,9 @@ export const declaredMeasureIds = (): Record<string, MeasureIdMapping> =>
 			({ id, ...identity }) => [id, identity] as const,
 		),
 		...medianPaySeries().map(
+			({ id, ...identity }) => [id, identity] as const,
+		),
+		...travelToWorkSeries().map(
 			({ id, ...identity }) => [id, identity] as const,
 		),
 		...crimeSeries().map(({ id, ...identity }) => [id, identity] as const),
