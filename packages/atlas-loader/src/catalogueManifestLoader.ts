@@ -1,5 +1,4 @@
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
-import { readFileSync } from "node:fs";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
 import type { AnalysisGeographyValidationInventory } from "@uk-data-atlas/catalogue/node";
 import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
@@ -9,8 +8,7 @@ import type { ExportManifest } from "@uk-data-atlas/catalogue/node";
 import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
-import { withUnitDefinitions } from "@uk-data-atlas/measures";
-import { publicPath, readPublicManifest } from "@uk-data-atlas/atlas-db";
+import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 
 export const readAtlasRelease = (repositoryRoot: string): AtlasRelease =>
 	readPublicManifest<AtlasRelease>(
@@ -29,19 +27,6 @@ export const readValidationReport = (
 		"resources",
 		"validation report",
 	);
-
-export const readDataCatalog = (repositoryRoot: string): DataCatalog => {
-	const path = publicPath(repositoryRoot, "data-catalog.json");
-	const catalog = JSON.parse(readFileSync(path, "utf8")) as DataCatalog;
-	if (
-		catalog.schemaVersion !== 1 ||
-		!Array.isArray(catalog.datasets) ||
-		!Array.isArray(catalog.measures)
-	) {
-		throw new Error(`Invalid data catalogue at ${path}`);
-	}
-	return withUnitDefinitions(catalog);
-};
 
 export const readExportManifest = (repositoryRoot: string): ExportManifest =>
 	readPublicManifest<ExportManifest>(
