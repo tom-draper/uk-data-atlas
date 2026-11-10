@@ -3,7 +3,7 @@ import {
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import { tableMeasureObservations } from "@uk-data-atlas/measures";
+import { tableMeasureObservations, readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -61,6 +61,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 						: (artifact as AnyMeasureObservationArtifact);
 				}),
 			),
+			readMeasureDimensionsMapping(repositoryRoot).ids,
 		);
 		const outputPath = join(publicDirectory, "measure-compatibility.json");
 		writeFileSync(
