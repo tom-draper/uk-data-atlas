@@ -498,10 +498,6 @@ and indexed through `area_releases`, `area` and `(release_id, area_id)`.
 `aliases` keeps absent versus empty aliases. The same area in two releases
 shares `area_id`. The `(code, geography_id)` index serves lookups by code.
 
-`areas` is a read-only view over `area_version` and `area` with the earlier
-columns (`id`, `releasePosition`, `code`, `inInventory`, `name`, `aliases`,
-`areaM2`, `population`), kept for existing readers. Write to the tables.
-
 The API inventory and bounded lazy area lookup read these tables over the
 shared read-only connection (see Read-only connections). They refuse stale hashes and incomplete
 releases and never fall back to JSON. SQLite runs before the
