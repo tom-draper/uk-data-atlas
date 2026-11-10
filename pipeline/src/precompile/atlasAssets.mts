@@ -15,7 +15,7 @@ import {
 	snapshotFileContents,
 } from "./cache.mts";
 import { OUT_DIR, out, outputMatches } from "./websiteOutput.mts";
-import { readAtlasLookup } from "../atlasLookups.ts";
+import { readAtlasLookup } from "../atlas/atlasLookups.ts";
 import { BOUNDARY_DATA, ROOT, SOURCE_DATA } from "./paths.mts";
 import { readBoundaryAsset } from "./sources/read.mts";
 import type { ReuseContext } from "./types.mts";

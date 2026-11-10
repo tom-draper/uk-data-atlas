@@ -39,7 +39,7 @@ import { fileSnapshots } from "./precompile/cache.mts";
 import { OUT_DIR, loadReuseContext, out } from "./precompile/websiteOutput.mts";
 import { publishDatasets } from "./precompile/publishDatasets.mts";
 import { chunksResult } from "./precompile/output.mts";
-import { readAtlasLookup } from "./atlasLookups.ts";
+import { readAtlasLookup } from "./atlas/atlasLookups.ts";
 import { ROOT, SOURCE_DATA } from "./precompile/paths.mts";
 import {
 	compileRegionChunks,
