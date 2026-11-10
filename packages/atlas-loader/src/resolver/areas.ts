@@ -8,8 +8,9 @@ import {
 	type ResolvedSameCodeArea,
 } from "@uk-data-atlas/areas";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
-import { explainAreaAbsence, type AreaAbsence } from "../areaAbsence.ts";
 import {
+	explainAreaAbsence,
+	type AreaAbsence,
 	summariseBatch,
 	validateBatch,
 	type ValidatedValue,
