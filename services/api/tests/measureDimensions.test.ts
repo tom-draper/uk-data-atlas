@@ -334,7 +334,7 @@ test("uses catalogue series identities without an id mapping", () => {
 		measures: [
 			{ id: "legacy", sources: [source("crime")], series: identity },
 		],
-	} as Parameters<typeof dimensionCatalogue>[0];
+	} as unknown as Parameters<typeof dimensionCatalogue>[0];
 	const indexed = dimensionCatalogue(data, {
 		config: config({}),
 		vocabulary,
