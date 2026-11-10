@@ -15,7 +15,7 @@ export * from "@uk-data-atlas/relationships";
 export * from "./countryRelease.ts";
 export * from "@uk-data-atlas/relationships";
 export * from "./postcodeAreaReleases.ts";
-export * from "./rankCompatibilityReleases.ts";
+export * from "@uk-data-atlas/measures";
 export {
 	relatedCodesOf,
 	addRelatedCodes,
