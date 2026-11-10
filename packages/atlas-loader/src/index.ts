@@ -15,4 +15,3 @@ export * from "./resolver/locations.ts";
 export * from "./resolver/postcodes.ts";
 
 export { PostcodeResolver } from "./resolver/postcodes.ts";
-export type { AreaValidation } from "./resolver/areaValidation.ts";

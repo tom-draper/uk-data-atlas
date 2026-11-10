@@ -27,7 +27,6 @@ import {
 	type AreaIdentity,
 	type GeographyEndpoint,
 } from "@uk-data-atlas/geography";
-import { AreaValidation } from "./resolver/areaValidation.ts";
 import { CatalogueResolver } from "./resolver/catalogue.ts";
 import {
 	compareBoundaryReleases,
@@ -40,6 +39,7 @@ import {
 	type ResolvedContainingArea,
 } from "@uk-data-atlas/areas";
 import {
+	AreaValidation,
 	CapabilityResolver,
 	LineageResolver,
 	CrosswalkTranslator,
