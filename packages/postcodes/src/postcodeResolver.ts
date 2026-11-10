@@ -1,10 +1,7 @@
-import type {
-	PostcodeAreaIndex,
-	PostcodeCountsIndex,
-	PostcodeIndex,
-} from "@uk-data-atlas/postcodes";
 import type { AreaIdentity } from "@uk-data-atlas/geography";
-import type { SpatialResolver } from "@uk-data-atlas/areas";
+import type { PostcodeAreaIndex, PostcodeAreaMatch } from "./postcodeAreas.ts";
+import type { PostcodeCountsIndex } from "./postcodeCounts.ts";
+import type { PostcodeIndex } from "./postcodeIndex.ts";
 
 export type PostcodeResolverInputs = {
 	postcodeIndex?: PostcodeIndex;
@@ -12,13 +9,25 @@ export type PostcodeResolverInputs = {
 	postcodeCountsIndex?: PostcodeCountsIndex;
 };
 
+/**
+ * What turns a postcode's compiled placements into resolved areas. The caller
+ * chooses the resolved shape, which `PostcodeResolver` passes through.
+ */
+export type PlacedAreaResolver<Placed> = {
+	resolvePlacedAreas(
+		geography: string,
+		boundaryRelease: string,
+		placed: PostcodeAreaMatch[],
+	): Placed;
+};
+
 /** Postcode indexes and area placements for a release. */
-export class PostcodeResolver {
+export class PostcodeResolver<Placed> {
 	private readonly inputs: PostcodeResolverInputs;
-	private readonly spatial: Pick<SpatialResolver, "resolvePlacedAreas">;
+	private readonly spatial: PlacedAreaResolver<Placed>;
 	constructor(
 		inputs: PostcodeResolverInputs,
-		spatial: Pick<SpatialResolver, "resolvePlacedAreas">,
+		spatial: PlacedAreaResolver<Placed>,
 	) {
 		this.inputs = inputs;
 		this.spatial = spatial;
