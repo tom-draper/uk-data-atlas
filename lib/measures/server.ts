@@ -3,7 +3,7 @@ import {
 	queryMeasureValues,
 	type MeasureValuesContext,
 } from "@uk-data-atlas/measures";
-import { readMeasureValuesContext } from "@uk-data-atlas/atlas-runtime/loader";
+import { readMeasureValuesContext } from "@uk-data-atlas/atlas-loader";
 import { atlasDatabasePath, databaseGeneration } from "@uk-data-atlas/atlas-db";
 import { measureValuesUrl } from "./request";
 import type {

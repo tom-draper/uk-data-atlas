@@ -1,4 +1,4 @@
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
@@ -12,7 +12,7 @@ import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { createNamedLocationLookup } from "@uk-data-atlas/places";
 import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { readAreaLookup } from "@uk-data-atlas/areas";
-import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import { readAreaInventory } from "@uk-data-atlas/atlas-loader";
 import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { namedLocationMembersTable } from "@uk-data-atlas/areas";
 import { route } from "../services/api/src/routes";

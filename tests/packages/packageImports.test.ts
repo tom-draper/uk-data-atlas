@@ -68,7 +68,7 @@ const problems = (packageRoot: string) => {
 						"areas",
 						"artifacts",
 						"atlas-db",
-						"atlas-runtime",
+						"atlas-loader",
 						"geometry",
 						"places",
 						"postcodes",
@@ -254,12 +254,71 @@ const pipelineImportAllowed = (
 const ATLAS_API = join(ROOT, "services/api/src");
 
 const importsAtlasApi = (file: string, specifier: string) =>
-	specifier === "@uk-data-atlas/atlas-runtime/api" ||
-	specifier.startsWith("@uk-data-atlas/atlas-runtime/api/") ||
+	specifier === "@uk-data-atlas/api" ||
+	specifier.startsWith("@uk-data-atlas/api/") ||
 	(specifier.startsWith(".") &&
 		inside(ATLAS_API, resolve(dirname(file), specifier)));
 
 describe("extracted domain packages", () => {
+	it("reserves dependencies on all atlas domains for atlas-loader", () => {
+		const domains = [
+			"areas",
+			"catalogue",
+			"geometry",
+			"map-tiles",
+			"measures",
+			"places",
+			"postcodes",
+			"relationships",
+		];
+		const packages = readdirSync(PACKAGES).filter((name) =>
+			existsSync(join(PACKAGES, name, "package.json")),
+		);
+		const complete = packages.filter((name) => {
+			const manifest = JSON.parse(
+				readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+			);
+			const dependencies = {
+				...manifest.dependencies,
+				...manifest.devDependencies,
+				...manifest.peerDependencies,
+			};
+			return domains.every(
+				(domain) => `@uk-data-atlas/${domain}` in dependencies,
+			);
+		});
+		expect(complete).toEqual(["atlas-loader"]);
+	});
+
+	it("keeps atlas-loader above all other packages", () => {
+		const packages = readdirSync(PACKAGES).filter(
+			(name) =>
+				name !== "atlas-loader" &&
+				existsSync(join(PACKAGES, name, "package.json")),
+		);
+		for (const name of packages) {
+			const manifest = JSON.parse(
+				readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+			);
+			for (const field of [
+				"dependencies",
+				"devDependencies",
+				"peerDependencies",
+			])
+				expect(Object.keys(manifest[field] ?? {})).not.toContain(
+					"@uk-data-atlas/atlas-loader",
+				);
+			for (const file of sourceFiles(join(PACKAGES, name, "src")))
+				expect(
+					specifiers(readFileSync(file, "utf8")).filter(
+						(value) =>
+							value === "@uk-data-atlas/atlas-loader" ||
+							value.startsWith("@uk-data-atlas/atlas-loader/"),
+					),
+				).toEqual([]);
+		}
+	});
+
 	it.each([
 		"areas",
 		"relationships",
@@ -268,12 +327,12 @@ describe("extracted domain packages", () => {
 		"postcodes",
 		"measures",
 		"map-tiles",
-	])("%s has no atlas-runtime or direct SQLite dependency", (name) => {
+	])("%s has no atlas-loader or direct SQLite dependency", (name) => {
 		const manifest = JSON.parse(
 			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
 		);
 		const dependencies = Object.keys(manifest.dependencies ?? {});
-		expect(dependencies).not.toContain("@uk-data-atlas/atlas-runtime");
+		expect(dependencies).not.toContain("@uk-data-atlas/atlas-loader");
 		const files = sourceFiles(join(PACKAGES, name, "src"));
 		expect(files.length).toBeGreaterThan(0);
 		const imports = files.flatMap((file) =>
@@ -283,7 +342,7 @@ describe("extracted domain packages", () => {
 			imports.filter(
 				(specifier) =>
 					specifier.startsWith("node:sqlite") ||
-					specifier.startsWith("@uk-data-atlas/atlas-runtime"),
+					specifier.startsWith("@uk-data-atlas/atlas-loader"),
 			),
 		).toEqual([]);
 	});
@@ -299,19 +358,17 @@ describe("loader domain boundaries", () => {
 		"rankCompatibilityReleases.ts",
 		"sourceExactProvenance.ts",
 	])("keeps %s out of the loader", (file) => {
-		expect(
-			existsSync(join(PACKAGES, "atlas-runtime/src/loader", file)),
-		).toBe(false);
+		expect(existsSync(join(PACKAGES, "atlas-loader/src", file))).toBe(
+			false,
+		);
 	});
 });
 
 describe("atlas domain boundaries", () => {
 	it("keeps domain modules and evidence loading independent of the API", () => {
-		const atlas = join(PACKAGES, "atlas-runtime/src");
+		const atlas = join(PACKAGES, "atlas-loader/src");
 		const files = [
-			...["loader"].flatMap((directory) =>
-				sourceFiles(join(atlas, directory)),
-			),
+			...sourceFiles(atlas),
 			...sourceFiles(join(PACKAGES, "catalogue/src")),
 			...sourceFiles(join(PACKAGES, "map-tiles/src")),
 			...sourceFiles(join(PACKAGES, "measures/src")),
@@ -334,16 +391,11 @@ describe("atlas domain boundaries", () => {
 	});
 
 	it("recognises API imports through relative paths and package exports", () => {
-		const file = join(PACKAGES, "atlas-runtime/src/loader/example.ts");
+		const file = join(PACKAGES, "atlas-loader/src/example.ts");
 		expect(
-			importsAtlasApi(
-				file,
-				"../../../../services/api/src/runtime/routing",
-			),
+			importsAtlasApi(file, "../../../services/api/src/runtime/routing"),
 		).toBe(true);
-		expect(importsAtlasApi(file, "@uk-data-atlas/atlas-runtime/api")).toBe(
-			true,
-		);
+		expect(importsAtlasApi(file, "@uk-data-atlas/api")).toBe(true);
 		expect(importsAtlasApi(file, "../catalogue/measureContext")).toBe(
 			false,
 		);
@@ -481,7 +533,7 @@ describe("pipeline boundaries", () => {
 	it("finds the API project and its output through packages/atlas-db/src/dataLayout.ts", () => {
 		const files = [
 			...sourceFiles(join(PIPELINE, "src")),
-			...sourceFiles(join(PACKAGES, "atlas-runtime/src")),
+			...sourceFiles(join(PACKAGES, "atlas-loader/src")),
 			...sourceFiles(join(PACKAGES, "catalogue/src")),
 			...sourceFiles(join(PACKAGES, "map-tiles/src")),
 			...sourceFiles(join(PACKAGES, "measures/src")),

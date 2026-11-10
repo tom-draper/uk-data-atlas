@@ -3,7 +3,7 @@ import type {
 	PostcodeCountsIndex,
 	PostcodeIndex,
 } from "@uk-data-atlas/postcodes";
-import type { AreaIdentity } from "./areas.ts";
+import type { AreaIdentity } from "@uk-data-atlas/geography";
 import type { SpatialResolver } from "./spatial.ts";
 
 export type PostcodeResolverInputs = {

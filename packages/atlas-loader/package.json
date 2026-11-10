@@ -1,13 +1,13 @@
 {
-	"name": "@uk-data-atlas/atlas-runtime",
-	"description": "Loads the atlas release from disk and serves its areas, geometry, places, postcodes and catalogue.",
+	"name": "@uk-data-atlas/atlas-loader",
+	"description": "Loads a complete atlas release by wiring the domain packages together.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		"./loader": "./src/loader/index.ts"
+		".": "./src/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
@@ -15,12 +15,9 @@
 	"dependencies": {
 		"@uk-data-atlas/artifacts": "workspace:*",
 		"@uk-data-atlas/catalogue": "workspace:*",
-		"@uk-data-atlas/datasets": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/map-tiles": "workspace:*",
 		"@uk-data-atlas/search-index": "workspace:*",
-		"@uk-data-atlas/shapefile": "workspace:*",
-		"polygon-clipping": "0.15.7",
 		"@uk-data-atlas/terrain": "workspace:*",
 		"@uk-data-atlas/postcodes": "workspace:*",
 		"@uk-data-atlas/areas": "workspace:*",

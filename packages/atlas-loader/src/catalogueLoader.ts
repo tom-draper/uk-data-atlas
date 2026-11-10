@@ -21,11 +21,11 @@ import {
 	readPostcodeAreaIndex,
 	readPostcodeCounts,
 	readPostcodeIndex,
-	readBoundaryRegistry,
 	readGeographyInventory,
 	readPlaceIndex,
 	readTerrainCatalogue,
 } from "./boundaryLoader.ts";
+import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,

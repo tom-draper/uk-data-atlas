@@ -4,7 +4,7 @@ import {
 	createGeographyResolver,
 	createGeographyServices,
 	type GeographyResolverInputs,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/atlas-loader";
 import type { RouteContext } from "../src/runtime/index.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {

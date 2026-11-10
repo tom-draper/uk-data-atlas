@@ -10,7 +10,7 @@ import type {
 import {
 	createGeographyResolver,
 	createGeographyServices,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/atlas-loader";
 import {
 	compileLocationProjections,
 	LocationProjectionStore,

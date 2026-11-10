@@ -29,7 +29,6 @@ import {
 import { exactNameMatch, type NameMatch } from "@uk-data-atlas/geography";
 
 import type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";
-export type { GeographyEndpoint, AreaIdentity } from "@uk-data-atlas/geography";
 
 export const areaId = ({ geography, boundaryRelease, code }: AreaIdentity) =>
 	areaKey(geography, boundaryRelease, code);

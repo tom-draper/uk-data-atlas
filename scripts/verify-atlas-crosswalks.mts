@@ -1,7 +1,7 @@
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/catalogue";
 import { compileAtlasLookups } from "@uk-data-atlas/geography";
 import { readAreaLookup } from "@uk-data-atlas/areas";
-import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import { readAreaInventory } from "@uk-data-atlas/atlas-loader";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import type { CrosswalkLookup } from "@uk-data-atlas/relationships";
 import assert from "node:assert/strict";
@@ -23,7 +23,7 @@ import {
 	type CrosswalkShape,
 } from "../pipeline/src/relationships/relationshipPaths";
 import { readApprovedRelationshipPaths } from "../pipeline/src/relationships/relationshipPathAdapters";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
 import { apiRootOf } from "@uk-data-atlas/atlas-db";

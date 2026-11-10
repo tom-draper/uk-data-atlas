@@ -13,7 +13,7 @@ import type {
 } from "@uk-data-atlas/places";
 import { NamedLocationResolver } from "@uk-data-atlas/places";
 import type { CatalogueResolver } from "./catalogue.ts";
-import type { AreaIdentity } from "./areas.ts";
+import type { AreaIdentity } from "@uk-data-atlas/geography";
 
 export type LocationsResolverInputs = {
 	areaLookup?: AreaLookup;

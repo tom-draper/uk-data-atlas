@@ -1,4 +1,4 @@
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { MeasureSource } from "@uk-data-atlas/measures";
 import {
 	assessCoverage,

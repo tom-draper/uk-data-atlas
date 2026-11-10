@@ -12,7 +12,7 @@ import {
 	areaTables,
 } from "./pipelineFixtures";
 import { readAreaLookup } from "@uk-data-atlas/areas";
-import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import { readAreaInventory } from "@uk-data-atlas/atlas-loader";
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import { writeSqliteIndex } from "./pipelineFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";

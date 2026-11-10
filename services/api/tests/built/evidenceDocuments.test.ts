@@ -15,7 +15,7 @@ import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { createApiServer } from "../../src/apiServer";
 import { readApiCatalogues } from "../../src/catalogueLoader";
-import { readAtlasCatalogues } from "@uk-data-atlas/atlas-runtime/loader";
+import { readAtlasCatalogues } from "@uk-data-atlas/atlas-loader";
 import { artifactDirectory, buildDirectory } from "@uk-data-atlas/atlas-db";
 
 const apiRoot = resolve(import.meta.dirname, "../..");

@@ -180,9 +180,9 @@ importers:
       '@uk-data-atlas/atlas-db':
         specifier: workspace:*
         version: link:packages/atlas-db
-      '@uk-data-atlas/atlas-runtime':
+      '@uk-data-atlas/atlas-loader':
         specifier: workspace:*
-        version: link:packages/atlas-runtime
+        version: link:packages/atlas-loader
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:packages/catalogue
@@ -382,7 +382,7 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
-  packages/atlas-runtime:
+  packages/atlas-loader:
     dependencies:
       '@uk-data-atlas/areas':
         specifier: workspace:*
@@ -396,9 +396,6 @@ importers:
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../catalogue
-      '@uk-data-atlas/datasets':
-        specifier: workspace:*
-        version: link:../datasets
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
@@ -423,15 +420,9 @@ importers:
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../search-index
-      '@uk-data-atlas/shapefile':
-        specifier: workspace:*
-        version: link:../shapefile
       '@uk-data-atlas/terrain':
         specifier: workspace:*
         version: link:../terrain
-      polygon-clipping:
-        specifier: 0.15.7
-        version: 0.15.7
     devDependencies:
       '@types/node':
         specifier: ^26.6.2
@@ -726,9 +717,9 @@ importers:
       '@uk-data-atlas/atlas-db':
         specifier: workspace:*
         version: link:../packages/atlas-db
-      '@uk-data-atlas/atlas-runtime':
+      '@uk-data-atlas/atlas-loader':
         specifier: workspace:*
-        version: link:../packages/atlas-runtime
+        version: link:../packages/atlas-loader
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../packages/catalogue
@@ -823,9 +814,9 @@ importers:
       '@uk-data-atlas/atlas-db':
         specifier: workspace:*
         version: link:../../packages/atlas-db
-      '@uk-data-atlas/atlas-runtime':
+      '@uk-data-atlas/atlas-loader':
         specifier: workspace:*
-        version: link:../../packages/atlas-runtime
+        version: link:../../packages/atlas-loader
       '@uk-data-atlas/catalogue':
         specifier: workspace:*
         version: link:../../packages/catalogue
