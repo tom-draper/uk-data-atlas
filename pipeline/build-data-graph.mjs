@@ -458,7 +458,7 @@ const websiteDatasetInputs = (root) => {
 const stage = (
 	name,
 	dependencies = [],
-	args = [`scripts/build-${name}.ts`],
+	args,
 	{
 		cacheable = true,
 		check = false,
@@ -524,8 +524,8 @@ const stampOf = (stage) => `${STAMP_DIRECTORY}/${stage}.json`;
  * dependencies' output digests, so once it has passed it is skipped until
  * one of those changes. The script is `pipeline/src/stages/<name>.ts`.
  */
-const checkStage = (name, dependencies, options = {}) =>
-	stage(name, dependencies, [`pipeline/src/stages/${name}.ts`], {
+const checkStage = (name, dependencies, args, options = {}) =>
+	stage(name, dependencies, args, {
 		rawInputs: [],
 		requiredOutputs: [stampOf(name)],
 		...options,
@@ -630,9 +630,12 @@ const apiStages = [
 	),
 	// A check stage: it reads the cache `atlas-sqlite` wrote and compares each
 	// generated dataset payload with the compiler's copy. See `checkStage`.
-	checkStage("verify-dataset-payloads", ["datasets", "atlas-sqlite"], {
-		codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
-	}),
+	checkStage(
+		"verify-dataset-payloads",
+		["datasets", "atlas-sqlite"],
+		["pipeline/src/stages/verify-dataset-payloads.ts"],
+		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+	),
 	stage(
 		"api-datasets",
 		["sources"],
@@ -912,6 +915,7 @@ const apiStages = [
 			"geometry-source-registry",
 			"geometry-store",
 		],
+		["pipeline/src/stages/verify-postcode-areas.ts"],
 		{
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
