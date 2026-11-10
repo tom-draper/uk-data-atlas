@@ -1,3 +1,4 @@
+import { weightInputPaths } from "../storage/crosswalkInputSources.ts";
 import { statisticsReadPathTables } from "../storage/statisticsReadPathTables.ts";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
 import type { StatisticsReadPath } from "@uk-data-atlas/measures";
@@ -127,6 +128,67 @@ export function assembleAtlas(
 				database.exec(
 					"INSERT INTO main.crosswalk_weight SELECT * FROM weights_component.crosswalk_weight",
 				);
+				// Atom inputs contribute to each added basis; do not attribute them
+				// to exact or single-target weights implied by the view.
+				database.exec(`CREATE TABLE crosswalk_weight_input (
+					crosswalk_id INTEGER NOT NULL REFERENCES crosswalk(id),
+					basis_id TEXT NOT NULL REFERENCES weight_basis(id),
+					input TEXT NOT NULL REFERENCES crosswalk_input_source(input),
+					PRIMARY KEY (crosswalk_id, basis_id, input)
+				) WITHOUT ROWID, STRICT`);
+				database.exec(`CREATE TABLE crosswalk_weight_boundary_source (
+					crosswalk_id INTEGER NOT NULL REFERENCES crosswalk(id),
+					basis_id TEXT NOT NULL REFERENCES weight_basis(id),
+					side TEXT NOT NULL CHECK (side IN ('from', 'to')),
+					source_id INTEGER NOT NULL REFERENCES source(id),
+					PRIMARY KEY (crosswalk_id, basis_id, side)
+				) WITHOUT ROWID, STRICT`);
+				for (const [side, column] of [
+					["from", "from_release_id"],
+					["to", "to_release_id"],
+				] as const)
+					database
+						.prepare(
+							`INSERT INTO crosswalk_weight_boundary_source
+						SELECT DISTINCT w.crosswalk_id, w.basis_id, ?, b.source_id
+						FROM weights_component.crosswalk_weight w JOIN crosswalk c ON c.id = w.crosswalk_id
+						JOIN area_releases r ON r.id = c.${column}
+						JOIN boundary_release_source b ON b.geography = r.geography AND b.release = r.release`,
+						)
+						.run(side);
+				const expectedWeightSides =
+					Number(
+						database
+							.prepare(
+								"SELECT count(*) AS n FROM (SELECT DISTINCT crosswalk_id, basis_id FROM weights_component.crosswalk_weight)",
+							)
+							.get()!.n,
+					) * 2;
+				const recordedWeightSides = Number(
+					database
+						.prepare(
+							"SELECT count(*) AS n FROM crosswalk_weight_boundary_source",
+						)
+						.get()!.n,
+				);
+				if (recordedWeightSides !== expectedWeightSides)
+					throw new Error(
+						"Missing boundary sources for crosswalk weights",
+					);
+				const addWeightInput = database.prepare(
+					"INSERT INTO crosswalk_weight_input VALUES (?, ?, ?)",
+				);
+				for (const row of database
+					.prepare(
+						"SELECT DISTINCT crosswalk_id, basis_id FROM weights_component.crosswalk_weight",
+					)
+					.iterate())
+					for (const input of weightInputPaths(root))
+						addWeightInput.run(
+							row.crosswalk_id as number,
+							row.basis_id as string,
+							input,
+						);
 			}
 			// Every converted series is marked as one, and none of its values
 			// as observed, or the copy fails.
