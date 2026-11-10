@@ -177,28 +177,31 @@ export class ObservationCache {
 			);
 		const names = new Set<string>();
 		const seriesKeys = new Set<string>();
+		const canonical = Boolean(
+			readPath.series &&
+			(identities || catalog.measures.some((measure) => measure.series)),
+		);
 		for (const measure of catalog.measures)
 			for (const source of measure.sources) {
 				const name = observationArtifactName(measure.id, source);
-				const identity = identities?.[measure.id];
-				if (readPath.series && identities && !identity)
+				const identity = measure.series ?? identities?.[measure.id];
+				if (canonical && !identity)
 					throw new Error(
 						`Missing series identity for ${measure.id}.`,
 					);
 				const key =
 					identity && measureSeriesSourceKey(identity, source);
 				const selector =
-					readPath.series && identities && key
-						? readPath.series[key]
+					canonical && key
+						? readPath.series?.[key]
 						: readPath.statistics?.[name];
 				if (!selector)
 					throw new Error(
 						`Missing statistics selector for ${key ?? name}.`,
 					);
-				if (readPath.series && identities && key) seriesKeys.add(key);
+				if (canonical && key) seriesKeys.add(key);
 				names.add(name);
-				const cacheKey =
-					readPath.series && identities && key ? key : name;
+				const cacheKey = canonical && key ? key : name;
 				this.statistics.set(`${databasePath}:${cacheKey}`, {
 					selector,
 					artifact: {
@@ -211,7 +214,7 @@ export class ObservationCache {
 		for (const name of Object.keys(readPath.statistics ?? {}))
 			if (!names.has(name))
 				throw new Error(`Unexpected statistics selector: ${name}.`);
-		if (readPath.series && identities)
+		if (readPath.series && canonical)
 			for (const key of Object.keys(readPath.series))
 				if (!seriesKeys.has(key))
 					throw new Error(

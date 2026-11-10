@@ -36,18 +36,22 @@ export const readMeasureObservations = (
 	const tables = new ObservationCache(maxBytes);
 	tables.bindCatalogue(databasePath, dataCatalog, readPath, identities);
 	const bySeriesSource = new Map<string, AnyMeasureObservationArtifact>();
+	const canonical = Boolean(
+		readPath.series &&
+		(identities || dataCatalog.measures.some((measure) => measure.series)),
+	);
 	const observations = dataCatalog.measures.flatMap((measure) =>
 		measure.sources.map((source) => {
+			const identity = measure.series ?? identities?.[measure.id];
 			const view = lazySourceObservations(
 				databasePath,
-				readPath.series && identities?.[measure.id]
-					? measureSeriesSourceKey(identities[measure.id], source)
+				canonical && identity
+					? measureSeriesSourceKey(identity, source)
 					: observationArtifactName(measure.id, source),
 				measure.id,
 				source.sourceGeography,
 				tables,
 			);
-			const identity = identities?.[measure.id];
 			if (identity)
 				bySeriesSource.set(
 					measureSeriesSourceKey(identity, source),
@@ -56,6 +60,7 @@ export const readMeasureObservations = (
 			return view;
 		}),
 	);
-	if (identities) registerSeriesObservations(observations, bySeriesSource);
+	if (identities || dataCatalog.measures.some((measure) => measure.series))
+		registerSeriesObservations(observations, bySeriesSource);
 	return observations;
 };
