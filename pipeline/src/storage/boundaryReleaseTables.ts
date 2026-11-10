@@ -52,6 +52,34 @@ export function boundaryReleaseTables(
 				release.deprecation?.reason ?? null,
 			]),
 		},
+		boundary_release_validity: {
+			strict: true,
+			columns: [
+				"geography TEXT NOT NULL",
+				"release TEXT NOT NULL",
+				"purpose TEXT NOT NULL CHECK (purpose IN ('election_poll'))",
+				"valid_from TEXT NOT NULL",
+				"valid_to TEXT NOT NULL",
+				"source_url TEXT NOT NULL",
+				"note TEXT NOT NULL",
+			],
+			key: ["geography", "release", "purpose", "valid_from", "valid_to"],
+			constraints: [
+				"FOREIGN KEY (geography, release) REFERENCES boundary_release(geography, release)",
+				"CHECK (valid_from <= valid_to)",
+			],
+			rows: registry.releases.flatMap((release) =>
+				(release.validity ?? []).map((item) => [
+					release.geography,
+					release.id,
+					item.purpose,
+					item.validFrom,
+					item.validTo,
+					item.sourceUrl,
+					item.note,
+				]),
+			),
+		},
 		boundary_release_country: {
 			strict: true,
 			columns: [

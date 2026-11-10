@@ -17,6 +17,7 @@ import {
 	sourceMetadataCorrections,
 } from "@uk-data-atlas/catalogue";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import { verifiedBoundaryValidity } from "./verifiedBoundaryValidity.ts";
 import { readJsonSync } from "../lib/json.ts";
 
 type BoundaryMetadata = {
@@ -164,6 +165,9 @@ export const createBoundaryRegistry = (
 				});
 		})
 		.map((release) => {
+			const validity =
+				verifiedBoundaryValidity[`${release.geography}/${release.id}`];
+			if (validity) release = { ...release, validity };
 			const deprecation =
 				boundaryReleaseDeprecations[
 					`${release.geography}/${release.id}`

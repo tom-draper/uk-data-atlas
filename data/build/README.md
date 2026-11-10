@@ -459,6 +459,22 @@ release)`. `boundary_release_country` holds its country codes. Join these to
 without an area inventory. Temporal coverage is the source’s description, not
 an effective-date interval.
 
+`boundary_release_validity` records evidence-backed inclusive intervals for a
+specified purpose. `election_poll` means the release was used for that election's
+poll, not necessarily every other electoral or legal purpose. `source_url` and
+`note` describe the evidence. An absent row means unknown; it does not imply
+invalidity. The current evidence verifies individual polling days only. For example:
+
+```sql
+SELECT geography, release, source_url, note
+FROM boundary_release_validity
+WHERE purpose = 'election_poll'
+  AND '2024-07-04' BETWEEN valid_from AND valid_to;
+```
+
+The entries are curated in `pipeline/src/geographies/verifiedBoundaryValidity.ts`;
+they are not inferred from release names or from the next held snapshot.
+
 `catalogue_measure` and `catalogue_measure_member` map API catalogue IDs to
 statistics measures and fixed members. `measure_default_member` records
 defaults; `additional_measure`, `additional_dimension`, and
