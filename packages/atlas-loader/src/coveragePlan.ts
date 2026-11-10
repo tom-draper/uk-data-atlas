@@ -3,10 +3,10 @@ import type { Country, DataCatalog } from "@uk-data-atlas/measures";
 import {
 	conversionCoverageOnto,
 	type MeasureConversionPath,
-} from "./measureCapability.ts";
+} from "@uk-data-atlas/measures";
 import { measureCoverage } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
-import type { MeasureContext } from "./measureContext.ts";
+import type { MeasureContext } from "@uk-data-atlas/measures";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 type Measure = DataCatalog["measures"][number];

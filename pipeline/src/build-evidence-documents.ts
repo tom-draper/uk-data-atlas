@@ -6,7 +6,7 @@ import {
 	measureCoverage,
 	measureQuality,
 } from "@uk-data-atlas/catalogue/node";
-import { measureCapability } from "@uk-data-atlas/atlas-loader";
+import { measureCapability } from "@uk-data-atlas/measures";
 import { relationshipRepairsReport } from "@uk-data-atlas/relationships";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";

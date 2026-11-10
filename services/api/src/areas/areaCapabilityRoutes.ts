@@ -5,7 +5,7 @@ import {
 	unsupported,
 	type CapabilityStatus,
 } from "@uk-data-atlas/areas";
-import { measureCapability } from "@uk-data-atlas/atlas-loader";
+import { measureCapability } from "@uk-data-atlas/measures";
 import type { AreaIdentity } from "@uk-data-atlas/geography";
 import type { RouteContextFor } from "../runtime/index.ts";
 import { releaseMonth } from "@uk-data-atlas/areas";

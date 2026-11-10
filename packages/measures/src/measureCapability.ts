@@ -1,15 +1,12 @@
-import type { ConversionMethod } from "@uk-data-atlas/measures";
-import { areaMeasureSources } from "@uk-data-atlas/measures";
+import type { ConversionMethod } from "./conversion.ts";
+import { areaMeasureSources } from "./areaResources.ts";
 import { notBuilt, unsupported } from "@uk-data-atlas/areas";
-import { convertObservations } from "@uk-data-atlas/measures";
-import {
-	isNumericObservation,
-	type DataCatalog,
-} from "@uk-data-atlas/measures";
-import { measureCoverage } from "@uk-data-atlas/measures";
-import { observationsFor } from "@uk-data-atlas/measures";
+import { convertObservations } from "./conversion.ts";
+import { isNumericObservation, type DataCatalog } from "./dataCatalog.ts";
+import { measureCoverage } from "./measureCoverage.ts";
+import { observationsFor } from "./observationArtifacts.ts";
 import type { MeasureContext } from "./measureContext.ts";
-import type { MeasureDimensions } from "@uk-data-atlas/measures";
+import type { MeasureDimensions } from "./measureDimensionsLoader.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export type MeasureCapabilityContext = Omit<
