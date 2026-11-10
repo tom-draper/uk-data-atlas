@@ -273,6 +273,6 @@ export function writePostcodeAreas(
 			);
 	}
 	database.exec(`DROP TABLE postcodes; ALTER TABLE postcodes_next RENAME TO postcodes;
-		CREATE VIEW postcodes_decoded AS SELECT ${postcodeFields.map((field) => `p.${field}`).join(", ")}${columns.map((c, i) => `, s.${quote(c.area)}, ${distanceExpression(columns, fallbacks, i)} AS ${quote(c.distance)}`).join("")}${columns.map((c, i) => `, a${i}.code AS ${quote(c.area.replace(/AreaId$/, "Code"))}`).join("")} FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id ${columns.map((c, i) => `LEFT JOIN areas a${i} ON a${i}.id = s.${quote(c.area)}`).join(" ")};
-		CREATE VIEW postcode_area_matches_decoded AS SELECT m.*, r.geography, r.boundaryRelease, a.code, a.name FROM postcode_area_matches m JOIN postcode_area_releases r ON r.position = m.releasePosition JOIN areas a ON a.id = m.areaId;`);
+		CREATE VIEW postcodes_decoded AS SELECT ${postcodeFields.map((field) => `p.${field}`).join(", ")}${columns.map((c, i) => `, s.${quote(c.area)}, ${distanceExpression(columns, fallbacks, i)} AS ${quote(c.distance)}`).join("")}${columns.map((c, i) => `, a${i}.code AS ${quote(c.area.replace(/AreaId$/, "Code"))}`).join("")} FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id ${columns.map((c, i) => `LEFT JOIN area_version v${i} ON v${i}.id = s.${quote(c.area)} LEFT JOIN area a${i} ON a${i}.id = v${i}.area_id`).join(" ")};
+		CREATE VIEW postcode_area_matches_decoded AS SELECT m.*, r.geography, r.boundaryRelease, a.code, v.name FROM postcode_area_matches m JOIN postcode_area_releases r ON r.position = m.releasePosition JOIN area_version v ON v.id = m.areaId JOIN area a ON a.id = v.area_id;`);
 }

@@ -289,7 +289,13 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	assert.equal(readAtlasPayload(root, "dataset-manifest"), manifest);
 	const database = new DatabaseSync(path, { readOnly: true });
 	try {
-		const row = database.prepare("SELECT * FROM datasets").get()!;
+		assert.equal(
+			database
+				.prepare("SELECT name FROM sqlite_schema WHERE name = ?")
+				.get("datasets"),
+			undefined,
+		);
+		const row = database.prepare("SELECT * FROM dataset_catalogue").get()!;
 		assert.deepEqual(
 			{ ...row },
 			{
@@ -301,7 +307,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 				fingerprint: entry.fingerprint,
 				sha256: entry.compiled.sha256,
 				bytes: entry.compiled.bytes,
-				payloadId: "dataset:sample",
+				payload_id: "dataset:sample",
 			},
 		);
 		assert.deepEqual(

@@ -240,14 +240,14 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 			if (!found) return undefined;
 			const placed = database
 				.prepare(
-					`SELECT a.code FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN areas a ON a.id = s.${quote(found.column)} WHERE p.postcode = ?`,
+					`SELECT a.code FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN area_version v ON v.id = s.${quote(found.column)} JOIN area a ON a.id = v.area_id WHERE p.postcode = ?`,
 				)
 				.get(compact);
 			const edge = placed
 				? undefined
 				: database
 						.prepare(
-							"SELECT a.code FROM postcode_area_matches m JOIN areas a ON a.id = m.areaId WHERE m.district = ? AND m.releasePosition = ? AND m.postcodePosition = ? ORDER BY m.position LIMIT 1",
+							"SELECT a.code FROM postcode_area_matches m JOIN area_version v ON v.id = m.areaId JOIN area a ON a.id = v.area_id WHERE m.district = ? AND m.releasePosition = ? AND m.postcodePosition = ? ORDER BY m.position LIMIT 1",
 						)
 						.get(district, found.position, at);
 			const code = (placed ?? edge)?.code;

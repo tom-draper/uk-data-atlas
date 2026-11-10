@@ -26,7 +26,6 @@ import { locationProjectionTables } from "../storage/index.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { namedLocationTables } from "../storage/index.ts";
 import { crosswalkTables } from "../storage/index.ts";
-import { DATASETS_VIEW } from "../storage/deprecatedViews.ts";
 import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index.ts";
 import { DatabaseSync } from "node:sqlite";
 import { loadIdRegistries } from "../ids/idRegistries.ts";
@@ -272,7 +271,6 @@ export const buildAtlasSqlite = (
 				rows: payloads(),
 			},
 			dataset_catalogue: {
-				views: { datasets: DATASETS_VIEW },
 				columns: [
 					"type TEXT NOT NULL",
 					"output TEXT NOT NULL UNIQUE",

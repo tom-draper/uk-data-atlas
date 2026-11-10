@@ -1012,7 +1012,8 @@ cut `postcodes` by about 105 MB.
 SELECT p.postcode, a.code, a.name
 FROM postcodes p
 JOIN postcode_area_set s ON s.id = p.area_set_id
-JOIN areas a ON a.id = s.countryAreaId
+JOIN area_version v ON v.id = s.countryAreaId
+JOIN area a ON a.id = v.area_id
 WHERE p.postcode = 'SW1A1AA';
 
 SELECT postcode, countryCode FROM postcodes_decoded
@@ -1065,7 +1066,6 @@ spellings. New queries should use the stored tables:
 
 | Deprecated view                               | Stored table                    |
 | --------------------------------------------- | ------------------------------- |
-| `datasets`                                    | `dataset_catalogue`             |
 | `website_assets` (in `website-assets.sqlite`) | `website_asset`                 |
 | `area_inventory`                              | `area_inventory_metadata`       |
 | `crosswalk_inventory`                         | `crosswalk_inventory_metadata`  |
