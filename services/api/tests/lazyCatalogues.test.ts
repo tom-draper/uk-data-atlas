@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { validateBatch } from "@uk-data-atlas/atlas-runtime/loader";
+import { validateBatch } from "@uk-data-atlas/relationships";
 import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { namedLocationTables } from "./pipelineFixtures";

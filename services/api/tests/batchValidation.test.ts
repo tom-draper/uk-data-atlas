@@ -1,10 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import {
-	summariseBatch,
-	validateBatch,
-} from "@uk-data-atlas/atlas-runtime/loader";
+import { summariseBatch, validateBatch } from "@uk-data-atlas/relationships";
 
 const release = (
 	geography: string,

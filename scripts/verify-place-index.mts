@@ -3,9 +3,9 @@ import { resolve, join } from "node:path";
 import { readAreaLookup } from "@uk-data-atlas/areas";
 import {
 	readAreaInventory,
-	readBoundaryRegistry,
 	readPlaceIndex,
 } from "@uk-data-atlas/atlas-runtime/loader";
+import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
 import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { resolvePlaces } from "@uk-data-atlas/places";
