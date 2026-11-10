@@ -1,7 +1,7 @@
 import type { AreaLookup } from "@uk-data-atlas/areas";
-import type { DataCatalog } from "@uk-data-atlas/measures";
-import type { measureCoverage } from "@uk-data-atlas/measures";
-import { observationsFor } from "@uk-data-atlas/measures";
+import type { DataCatalog } from "./index.ts";
+import type { measureCoverage } from "./index.ts";
+import { observationsFor } from "./index.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export const findArea = (

@@ -1,5 +1,5 @@
 import type { ConversionMethod } from "@uk-data-atlas/measures";
-import { areaMeasureSources } from "./areaResources.ts";
+import { areaMeasureSources } from "@uk-data-atlas/measures";
 import { notBuilt, unsupported } from "@uk-data-atlas/areas";
 import { convertObservations } from "@uk-data-atlas/measures";
 import {
