@@ -9,7 +9,7 @@ import { readGeographyCatalogue } from "@uk-data-atlas/catalogue/node";
 import { readSqliteAreaInventory } from "@uk-data-atlas/areas";
 import { existsSync, readFileSync } from "node:fs";
 import type { AreaInventory } from "@uk-data-atlas/areas";
-import type { GeographyInventory } from "./geographyInventory.ts";
+import type { GeographyInventory } from "@uk-data-atlas/relationships";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { openPlaceIndexDatabase, type PlaceIndex } from "@uk-data-atlas/places";
 import {

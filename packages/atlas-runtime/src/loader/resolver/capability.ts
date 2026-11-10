@@ -18,7 +18,7 @@ import {
 	type RelationshipOperation,
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
-} from "./conversionCapability.ts";
+} from "@uk-data-atlas/relationships";
 import type { CrosswalkTranslator } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { areaId } from "./areas.ts";
@@ -32,7 +32,7 @@ export {
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "./conversionCapability.ts";
+} from "@uk-data-atlas/relationships";
 
 export type ResolvedRelationshipCoverage = {
 	areaCount: number;

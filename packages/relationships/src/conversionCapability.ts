@@ -1,13 +1,7 @@
 import type { AreaInventory, AreaLookup } from "@uk-data-atlas/areas";
 import type { CapabilityStatus } from "@uk-data-atlas/areas";
-import type {
-	RelationshipPath,
-	RelationshipPurpose,
-} from "@uk-data-atlas/relationships";
-import type {
-	CrosswalkTranslator,
-	GeographyEndpoint,
-} from "@uk-data-atlas/relationships";
+import type { RelationshipPath, RelationshipPurpose } from "./index.ts";
+import type { CrosswalkTranslator, GeographyEndpoint } from "./index.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export type RelationshipPathStepCoverage = {

@@ -2,7 +2,7 @@ import type {
 	CrosswalkMethod,
 	CrosswalkQuality,
 	CrosswalkWeighting,
-} from "@uk-data-atlas/relationships";
+} from "./index.ts";
 
 export type GeographyRelationship = {
 	id: string;

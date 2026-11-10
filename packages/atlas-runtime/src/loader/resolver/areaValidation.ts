@@ -1,4 +1,7 @@
-import { summariseBatch, type ValidatedValue } from "../batchValidation.ts";
+import {
+	summariseBatch,
+	type ValidatedValue,
+} from "@uk-data-atlas/relationships";
 import { normalisePlaceName } from "@uk-data-atlas/geography";
 import type { CrosswalkTranslator } from "@uk-data-atlas/relationships";
 import type { AreasResolver, GeographyEndpoint } from "./areas.ts";
