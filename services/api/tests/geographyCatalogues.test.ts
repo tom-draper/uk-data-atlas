@@ -18,10 +18,8 @@ import { buildGeographyCatalogues } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
 import { buildArtifactPath, geographyCatalogues } from "@uk-data-atlas/areas";
-import {
-	readBoundaryRegistry,
-	readGeographyInventory,
-} from "@uk-data-atlas/atlas-runtime/loader";
+import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
+import { readGeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
 import { readRelationshipPathInventory } from "@uk-data-atlas/relationships";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import {

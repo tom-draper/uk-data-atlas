@@ -8,7 +8,7 @@ import type {
 	DataCatalog,
 } from "@uk-data-atlas/measures";
 import type { ExportManifest } from "@uk-data-atlas/catalogue/node";
-import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyInventory } from "@uk-data-atlas/relationships";
 import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { FullDetailSource } from "@uk-data-atlas/atlas-runtime/loader";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";

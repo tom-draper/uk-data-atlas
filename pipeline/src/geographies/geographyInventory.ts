@@ -8,7 +8,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	GeographyRelationship,
 	GeographyInventory,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/relationships";
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

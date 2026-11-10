@@ -7,7 +7,7 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 
-import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyInventory } from "@uk-data-atlas/relationships";
 import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import {

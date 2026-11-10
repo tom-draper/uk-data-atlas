@@ -6,7 +6,7 @@ import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
-import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import {
 	createNamedLocationLookup,

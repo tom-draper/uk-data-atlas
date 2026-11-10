@@ -1,6 +1,6 @@
 import { requireGeography } from "../runtime/index.ts";
 import { areaNotFound } from "../runtime/index.ts";
-import { MAX_BATCH_VALUES } from "@uk-data-atlas/atlas-runtime/loader";
+import { MAX_BATCH_VALUES } from "@uk-data-atlas/relationships";
 import { matchManifest, matchReportResponse } from "../matchReport";
 import { readPostedRows } from "../requestRows";
 import { invalidQuery, type ApiResponse } from "../runtime/index.ts";
