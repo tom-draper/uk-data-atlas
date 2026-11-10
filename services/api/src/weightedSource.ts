@@ -1,6 +1,10 @@
 import type { DataCatalog, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";
 import {
+	measureSeriesKey,
+	type MeasureSeriesIdentity,
+} from "@uk-data-atlas/measures";
+import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
 } from "./numericObservations";
@@ -20,6 +24,7 @@ export const readWeightedSource = ({
 	context,
 	dataCatalog,
 	weightMeasureId,
+	weightSeriesIdentity,
 	measureId,
 	period,
 	source,
@@ -28,17 +33,18 @@ export const readWeightedSource = ({
 	context: RouteContextFor<never>;
 	dataCatalog: DataCatalog;
 	weightMeasureId: string;
+	weightSeriesIdentity?: MeasureSeriesIdentity;
 	measureId: string;
 	period: string;
 	source: MeasureSource;
 	artifacts: Parameters<typeof numericObservationsFor>[3];
 }): WeightedSource | ApiResponse => {
-	const weightSeries = context.measureDimensions
-		? dimensionCatalogue(
-				dataCatalog,
-				context.measureDimensions,
-			).catalogueSeries(weightMeasureId)?.series
+	const catalogue = context.measureDimensions
+		? dimensionCatalogue(dataCatalog, context.measureDimensions)
 		: undefined;
+	const weightSeries = weightSeriesIdentity
+		? catalogue?.series(measureSeriesKey(weightSeriesIdentity))?.series
+		: catalogue?.catalogueSeries(weightMeasureId)?.series;
 	const weightMeasure =
 		weightSeries?.catalogueMeasure ??
 		dataCatalog.measures.find(
@@ -62,7 +68,7 @@ export const readWeightedSource = ({
 		);
 	}
 	const result = numericObservationsFor(
-		weightMeasureId,
+		weightMeasure.id,
 		weightSource,
 		period,
 		{ ...artifacts, seriesKey: weightSeries?.id },

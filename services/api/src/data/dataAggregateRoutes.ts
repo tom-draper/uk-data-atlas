@@ -137,6 +137,7 @@ export const aggregateValue = ({
 			context,
 			dataCatalog: availableDataCatalog,
 			weightMeasureId,
+			weightSeriesIdentity: measure.weightSeries,
 			measureId,
 			period: period as string,
 			source,

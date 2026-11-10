@@ -9,6 +9,8 @@ import {
 } from "@uk-data-atlas/measures";
 import { resolveObservations } from "../src/observationResolution/observationPlan";
 import { seriesCompatibility } from "../src/seriesCompatibility";
+import { identityDimensions } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readWeightedSource } from "../src/weightedSource";
 
 test("plans the selected series without looking it up by catalogue id", () => {
 	const source = {
@@ -36,6 +38,54 @@ test("plans the selected series without looking it up by catalogue id", () => {
 		assert.equal(result.plan.measure, measure);
 		assert.equal(result.plan.source, source);
 	}
+});
+
+test("selects weights using their canonical identity instead of the old id", () => {
+	const source = {
+		datasetId: "fixture",
+		periods: ["2024"],
+		sourceGeography: { type: "ward", boundaryYear: 2024 },
+	};
+	const measure = { id: "actual-weight", label: "Weight", sources: [source] };
+	const catalog = { measures: [measure] } as unknown as DataCatalog;
+	const result = readWeightedSource({
+		context: {
+			dataCatalog: catalog,
+			measureDimensions: identityDimensions(catalog),
+		} as Parameters<typeof readWeightedSource>[0]["context"],
+		dataCatalog: catalog,
+		weightMeasureId: "wrong-id",
+		weightSeriesIdentity: { measure: "actual-weight" },
+		measureId: "ratio",
+		period: "2024",
+		source: source as Parameters<typeof readWeightedSource>[0]["source"],
+		artifacts: {
+			measureObservations: [
+				{
+					schemaVersion: 1,
+					contentHash: "hash",
+					measureId: "actual-weight",
+					sourceGeography: source.sourceGeography as Parameters<
+						typeof readWeightedSource
+					>[0]["source"]["sourceGeography"],
+					periods: [
+						{
+							period: "2024",
+							records: [
+								{
+									areaCode: "E1",
+									value: 3,
+									status: "observed",
+								},
+							],
+						},
+					],
+				},
+			],
+		},
+	});
+	assert.ok(!("status" in result));
+	assert.equal(result.measure.id, "actual-weight");
 });
 
 test("selects compatibility by canonical series instead of the supplied old id", () => {
