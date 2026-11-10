@@ -18,7 +18,7 @@ import { buildDataCatalog } from "./build-data-catalog.ts";
  * the cache that lets a run skip unchanged work is pipeline/src/precompile/cache.mts, and each
  * stage of the pipeline has its own module in precompile/.
  */
-import { readFile, mkdir, stat, utimes } from "fs/promises";
+import { mkdir, stat, utimes } from "fs/promises";
 import { join } from "path";
 import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 
@@ -54,6 +54,7 @@ import {
 	formatCount,
 	msSince,
 } from "@uk-data-atlas/atlas-db";
+import { readJson } from "./lib/json.ts";
 
 /** Checks that every file a meta.json promises is actually present. */
 async function verifyDescribedFiles(
@@ -91,7 +92,7 @@ async function compileSelected(names: readonly string[]) {
 	let manifest: { datasets: { type: string }[] };
 	let manifestTimes: { atime: Date; mtime: Date };
 	try {
-		manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+		manifest = await readJson(manifestPath);
 		manifestTimes = await stat(manifestPath);
 	} catch {
 		throw new Error(
@@ -121,9 +122,7 @@ async function compileSelected(names: readonly string[]) {
 		await writeDatasetRegionChunks({
 			root: ROOT,
 			datasets: compiledDatasets,
-			core: JSON.parse(
-				await readFile(join(OUT_DIR, "gazetteer.core.json"), "utf8"),
-			),
+			core: await readJson(join(OUT_DIR, "gazetteer.core.json")),
 			boundaryMappings: {
 				wardToLad: parseBoundaryWardToLad(
 					JSON.parse(readAtlasLookup(ROOT, "boundary-mappings.json")),

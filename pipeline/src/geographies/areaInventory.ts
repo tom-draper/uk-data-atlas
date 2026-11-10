@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { readGeoJsonProperties } from "@uk-data-atlas/geometry";
 import { sourceGeoJsonPath } from "./boundarySourcePaths.ts";
 import { join } from "node:path";
@@ -30,6 +30,7 @@ import type {
 	AreaReleaseArtifact,
 	AreaInventory,
 } from "@uk-data-atlas/areas";
+import { readJsonSync } from "../lib/json.ts";
 export type {
 	AreaRecord,
 	AreaReleaseArtifact,
@@ -70,8 +71,8 @@ const findProperties = (properties: Record<string, unknown>) => {
 };
 
 const sourceDbfPath = (directory: string) => {
-	const metadata = JSON.parse(
-		readFileSync(join(directory, "meta.json"), "utf8"),
+	const metadata = readJsonSync(
+		join(directory, "meta.json"),
 	) as BoundaryMetadata;
 	if (!Array.isArray(metadata.files)) return undefined;
 	const shapefile = metadata.files.find(

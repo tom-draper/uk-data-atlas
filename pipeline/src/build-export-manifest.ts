@@ -4,7 +4,7 @@ import {
 	readMeasureDimensionsConfig,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/measures";
@@ -16,24 +16,20 @@ import { measureStatisticsSelections } from "./statistics/measureStatisticsSelec
 import { compileMeasureDownloads } from "./statistics/measureDownloads.ts";
 import type { CompiledMeasure } from "./catalog/manifest.ts";
 import { statisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
+import { readJsonSync } from "./lib/json.ts";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);
 	const dataCatalogPath = join(publicDirectory, "data-catalog.json");
-	const dataCatalog = JSON.parse(
-		readFileSync(dataCatalogPath, "utf8"),
-	) as DataCatalog;
-	const bindings = JSON.parse(
-		readFileSync(
-			join(repositoryRoot, "data/build/measure-statistics-fields.json"),
-			"utf8",
-		),
+	const dataCatalog = readJsonSync(dataCatalogPath) as DataCatalog;
+	const bindings = readJsonSync(
+		join(repositoryRoot, "data/build/measure-statistics-fields.json"),
 	) as Array<{
 		measureId: string;
 		field: NonNullable<CompiledMeasure["statisticsField"]>;
 	}>;
-	const readPath = JSON.parse(
-		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
+	const readPath = readJsonSync(
+		statisticsReadPathPath(repositoryRoot),
 	) as StatisticsReadPath;
 	const { ids } = readMeasureDimensionsConfig(repositoryRoot).config;
 	const database = new DatabaseSync(

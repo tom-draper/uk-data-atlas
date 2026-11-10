@@ -6,7 +6,6 @@ import {
 	mkdirSync,
 	mkdtempSync,
 	openSync,
-	readFileSync,
 	renameSync,
 	rmSync,
 	writeFileSync,
@@ -18,6 +17,7 @@ import {
 	ONS_BOUNDARY_SOURCES,
 	type OnsBoundarySource,
 } from "./onsBoundarySources.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 const SERVICES =
 	"https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services";
@@ -222,8 +222,8 @@ export const fetchOnsBoundary = async ({
 				throw new Error(
 					`${directory} already exists without source metadata; use a new release directory.`,
 				);
-			const previous: unknown = JSON.parse(
-				readFileSync(join(directory, "meta.json"), "utf8"),
+			const previous: unknown = readJsonSync(
+				join(directory, "meta.json"),
 			);
 			if (
 				!isRecord(previous) ||

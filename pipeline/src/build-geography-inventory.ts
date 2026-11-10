@@ -1,11 +1,5 @@
 import { buildArtifactPath } from "@uk-data-atlas/areas";
-import {
-	mkdirSync,
-	existsSync,
-	readFileSync,
-	writeFileSync,
-	rmSync,
-} from "node:fs";
+import { mkdirSync, existsSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry.ts";
@@ -18,6 +12,7 @@ import {
 	buildLog,
 	formatCount,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
 	const outputDirectory = artifactDirectory(repositoryRoot);
@@ -29,16 +24,14 @@ export const buildGeographyInventory = (repositoryRoot: string) => {
 	const sourceInventory = createSourceInventory(repositoryRoot);
 	const areaInventoryPath = join(outputDirectory, "area-inventory.json");
 	const areaInventory = existsSync(areaInventoryPath)
-		? (JSON.parse(readFileSync(areaInventoryPath, "utf8")) as AreaInventory)
+		? (readJsonSync(areaInventoryPath) as AreaInventory)
 		: undefined;
 	const crosswalkInventoryPath = join(
 		outputDirectory,
 		"crosswalk-inventory.json",
 	);
 	const crosswalkInventory = existsSync(crosswalkInventoryPath)
-		? (JSON.parse(
-				readFileSync(crosswalkInventoryPath, "utf8"),
-			) as CrosswalkInventory)
+		? (readJsonSync(crosswalkInventoryPath) as CrosswalkInventory)
 		: undefined;
 	const geographyInventory = createGeographyInventory(
 		createBoundaryRegistry(repositoryRoot),

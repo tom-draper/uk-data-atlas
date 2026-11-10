@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { copyFileSync, existsSync, readFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
@@ -19,6 +19,7 @@ import {
 } from "./postcodes/storePostcodeAreas.ts";
 import { loadIdRegistries } from "./ids/idRegistries.ts";
 import { geographyCatalogues } from "@uk-data-atlas/areas";
+import { readJsonSync } from "./lib/json.ts";
 
 /**
  * `crosswalkWeights: false` leaves crosswalks with only their own weights, for
@@ -37,14 +38,11 @@ export function assembleAtlas(
 	for (const component of components)
 		if (!existsSync(component))
 			throw new Error(`Missing atlas component ${component}`);
-	const payloads = JSON.parse(
-		readFileSync(join(directory, "geography-payloads.json"), "utf8"),
+	const payloads = readJsonSync(
+		join(directory, "geography-payloads.json"),
 	) as Array<{ id: string; payload: string }>;
-	const postcodeAreas = JSON.parse(
-		readFileSync(
-			join(postcodeAreasDirectory(root), "manifest.json"),
-			"utf8",
-		),
+	const postcodeAreas = readJsonSync(
+		join(postcodeAreasDirectory(root), "manifest.json"),
 	) as PostcodeAreasArtifact;
 	// The areas that only a postcode lookup names take ids here, so these
 	// registries are the ones the base database was built with.

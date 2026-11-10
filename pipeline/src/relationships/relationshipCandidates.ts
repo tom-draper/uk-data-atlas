@@ -1,10 +1,4 @@
-import {
-	closeSync,
-	existsSync,
-	openSync,
-	readFileSync,
-	readSync,
-} from "node:fs";
+import { closeSync, existsSync, openSync, readSync } from "node:fs";
 import { join } from "node:path";
 import { readGeoJsonProperties } from "@uk-data-atlas/geometry";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
@@ -28,6 +22,7 @@ import type {
 	RelationshipCandidateInventory,
 	PublishedRelationship,
 } from "@uk-data-atlas/relationships";
+import { readJsonSync } from "../lib/json.ts";
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
@@ -69,8 +64,8 @@ const propertyPairs = (properties: Record<string, unknown>) => {
 };
 
 const sourcePaths = (directory: string) => {
-	const metadata = JSON.parse(
-		readFileSync(join(directory, "meta.json"), "utf8"),
+	const metadata = readJsonSync(
+		join(directory, "meta.json"),
 	) as BoundaryMetadata;
 	if (!Array.isArray(metadata.files)) return {};
 	const source = metadata.files.find(
@@ -140,9 +135,7 @@ const firstGeoJsonProperties = (path: string) => {
 	const marker = '"properties":';
 	const start = header.indexOf(marker, features);
 	if (features < 0 || start < 0) {
-		const source = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as FeatureCollection;
+		const source = readJsonSync(path) as FeatureCollection;
 		const properties = source.features?.[0]?.properties;
 		if (typeof properties !== "object" || properties === null) {
 			throw new Error(
@@ -177,7 +170,7 @@ const firstGeoJsonProperties = (path: string) => {
 			}
 		}
 	}
-	const source = JSON.parse(readFileSync(path, "utf8")) as FeatureCollection;
+	const source = readJsonSync(path) as FeatureCollection;
 	const properties = source.features?.[0]?.properties;
 	if (typeof properties !== "object" || properties === null) {
 		throw new Error(

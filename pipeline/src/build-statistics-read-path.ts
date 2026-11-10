@@ -31,6 +31,7 @@ import {
 	compiledObservationPath,
 	observationValuesEqual,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 
 /**
  * Select statistics rows for every artifact and check their values against
@@ -41,11 +42,8 @@ const repositoryRoot = resolve(
 	"../..",
 );
 const databasePath = join(buildDirectory(repositoryRoot), "atlas-base.sqlite");
-const catalog = JSON.parse(
-	readFileSync(
-		join(artifactDirectory(repositoryRoot), "data-catalog.json"),
-		"utf8",
-	),
+const catalog = readJsonSync(
+	join(artifactDirectory(repositoryRoot), "data-catalog.json"),
 ) as DataCatalog;
 const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
 const database = new DatabaseSync(databasePath, { readOnly: true });

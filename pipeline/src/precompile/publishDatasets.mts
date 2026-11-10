@@ -1,4 +1,3 @@
-import { readFile } from "fs/promises";
 import { join } from "path";
 import { readCompiledFromDisk } from "./compileDataset.mts";
 import { COMPILED_DATASETS } from "./paths.mts";
@@ -7,6 +6,7 @@ import type {
 	CompiledDatasets,
 	ExistingManifestDataset,
 } from "./types.mts";
+import { readJson } from "../lib/json.ts";
 
 const RUN_COMPILE = "Run pnpm data:build --only datasets first.";
 
@@ -24,11 +24,8 @@ export async function publishDatasets(
 ): Promise<ExistingManifestDataset[]> {
 	let manifest: { datasets: ExistingManifestDataset[] };
 	try {
-		manifest = JSON.parse(
-			await readFile(
-				join(COMPILED_DATASETS, "dataset-manifest.json"),
-				"utf8",
-			),
+		manifest = await readJson(
+			join(COMPILED_DATASETS, "dataset-manifest.json"),
 		);
 	} catch {
 		throw new Error(

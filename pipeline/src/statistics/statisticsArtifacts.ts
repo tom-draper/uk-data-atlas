@@ -1,5 +1,4 @@
 import { DatabaseSync } from "node:sqlite";
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	observationArtifactName,
@@ -11,6 +10,7 @@ import {
 	rebuildStatisticsObservationText,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
+import { readJsonSync } from "../lib/json.ts";
 
 export const statisticsArtifactReader = (
 	database: DatabaseSync,
@@ -57,8 +57,8 @@ export const openStatisticsArtifactReader = (
 	repositoryRoot: string,
 	catalog: DataCatalog,
 ) => {
-	const readPath = JSON.parse(
-		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
+	const readPath = readJsonSync(
+		statisticsReadPathPath(repositoryRoot),
 	) as StatisticsReadPath;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),

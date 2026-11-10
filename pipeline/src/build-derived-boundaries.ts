@@ -1,10 +1,4 @@
-import {
-	existsSync,
-	mkdirSync,
-	readFileSync,
-	writeFileSync,
-	rmSync,
-} from "node:fs";
+import { existsSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -18,6 +12,7 @@ import {
 	buildLog,
 	formatCount,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -55,9 +50,7 @@ export const buildDerivedBoundaries = (
 				`${identity}: no declared GeoJSON source is available`,
 			);
 		}
-		const source = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as FeatureCollection;
+		const source = readJsonSync(path) as FeatureCollection;
 		if (
 			source.type !== "FeatureCollection" ||
 			!Array.isArray(source.features)

@@ -1,10 +1,10 @@
 import { AREA_INVENTORY_VIEW } from "./deprecatedViews.ts";
 import { IdRegistries } from "../ids/idRegistries.ts";
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import type { DatabaseSync } from "node:sqlite";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
+import { readJsonSync } from "../lib/json.ts";
 
 /** The legacy `areas` shape, read from `area` and `area_version`. */
 export const AREAS_VIEW = `SELECT v.id, v.release_id AS releasePosition, a.code, v.in_inventory AS inInventory, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area_version v JOIN area a ON a.id = v.area_id`;
@@ -90,8 +90,8 @@ export const areaTables = (
 	directory: string,
 	ids: IdRegistries = IdRegistries.memory(),
 ): Record<string, SqliteTable> => {
-	const inventory: AreaInventory = JSON.parse(
-		readFileSync(join(directory, "area-inventory.json"), "utf8"),
+	const inventory: AreaInventory = readJsonSync(
+		join(directory, "area-inventory.json"),
 	);
 	const geographies = new Map<string, number>();
 	for (const release of inventory.releases)
@@ -109,8 +109,8 @@ export const areaTables = (
 			release,
 		] of inventory.releases.entries()) {
 			if (release.status !== "available") continue;
-			const artifact: AreaReleaseArtifact = JSON.parse(
-				readFileSync(join(directory, release.artifact), "utf8"),
+			const artifact: AreaReleaseArtifact = readJsonSync(
+				join(directory, release.artifact),
 			);
 			if (
 				artifact.schemaVersion !== 1 ||

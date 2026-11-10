@@ -12,6 +12,7 @@ import {
 } from "@uk-data-atlas/atlas-db";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-db";
 import { createDeprecatedViews } from "./storage/deprecatedViews.ts";
+import { readJsonSync } from "./lib/json.ts";
 
 /**
  * Validate the website's pages and lookups and write them to
@@ -36,8 +37,8 @@ export function buildAtlasAssets(root: string) {
 			["docs-catalogue", "place-facts", "places-index", "ward-areas"],
 		],
 	] satisfies [AtlasAssetKind, string[]][]) {
-		const manifest: unknown = JSON.parse(
-			readFileSync(join(publicDirectory, `atlas-${kind}.json`), "utf8"),
+		const manifest: unknown = readJsonSync(
+			join(publicDirectory, `atlas-${kind}.json`),
 		);
 		if (
 			!manifest ||

@@ -6,7 +6,6 @@ import {
 	NAMED_LOCATION_GEOMETRIES_VIEW,
 	NAMED_LOCATION_INVENTORY_VIEW,
 } from "./deprecatedViews.ts";
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
 	NamedLocation,
@@ -14,12 +13,13 @@ import type {
 } from "@uk-data-atlas/places";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { packGeometry } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "../lib/json.ts";
 
 export const namedLocationTables = (
 	directory: string,
 ): Record<string, SqliteTable> => {
-	const inventory: NamedLocationInventory = JSON.parse(
-		readFileSync(join(directory, "named-locations.json"), "utf8"),
+	const inventory: NamedLocationInventory = readJsonSync(
+		join(directory, "named-locations.json"),
 	);
 	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.locations))
 		throw new Error("Invalid named location inventory");

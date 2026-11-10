@@ -1,9 +1,9 @@
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { readJsonSync } from "../lib/json.ts";
 type BoundaryMetadata = { files?: unknown };
 export const sourceGeoJsonPath = (directory: string) => {
-	const metadata = JSON.parse(
-		readFileSync(join(directory, "meta.json"), "utf8"),
+	const metadata = readJsonSync(
+		join(directory, "meta.json"),
 	) as BoundaryMetadata;
 	if (!Array.isArray(metadata.files)) return undefined;
 	const file = metadata.files.find(

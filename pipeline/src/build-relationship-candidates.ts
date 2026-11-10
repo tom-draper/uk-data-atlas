@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -15,10 +15,11 @@ import {
 	formatCount,
 	repoPath,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 
 const readAreaArtifacts = (outputDirectory: string) => {
-	const inventory = JSON.parse(
-		readFileSync(join(outputDirectory, "area-inventory.json"), "utf8"),
+	const inventory = readJsonSync(
+		join(outputDirectory, "area-inventory.json"),
 	) as AreaInventory;
 	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
 		throw new Error(
@@ -28,9 +29,7 @@ const readAreaArtifacts = (outputDirectory: string) => {
 	return inventory.releases.flatMap((release) => {
 		if (release.status !== "available") return [];
 		const path = join(outputDirectory, release.artifact);
-		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as AreaReleaseArtifact;
+		const artifact = readJsonSync(path) as AreaReleaseArtifact;
 		if (
 			artifact.schemaVersion !== 1 ||
 			artifact.contentHash !== release.contentHash
@@ -48,8 +47,8 @@ export const buildRelationshipCandidates = (repositoryRoot: string) => {
 			`Create the API public directory before building: ${outputDirectory}`,
 		);
 	}
-	const crosswalks = JSON.parse(
-		readFileSync(join(outputDirectory, "crosswalk-inventory.json"), "utf8"),
+	const crosswalks = readJsonSync(
+		join(outputDirectory, "crosswalk-inventory.json"),
 	) as CrosswalkInventory;
 	const inventory = compileRelationshipCandidates(
 		repositoryRoot,

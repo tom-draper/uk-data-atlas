@@ -1,6 +1,6 @@
 import { observationArtifactName } from "@uk-data-atlas/measures";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
-import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, existsSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { validateAnalysisGeographies } from "@uk-data-atlas/catalogue/node";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
@@ -13,6 +13,7 @@ import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import { createCrosswalkArtifacts } from "./storage/crosswalkArtifacts.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
+import { readJsonSync } from "./lib/json.ts";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);
@@ -29,17 +30,14 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 		throw new Error(
 			"Build analysis geographies, the data catalogue and crosswalk inventory before analysis validation.",
 		);
-	const analysisGeographies = JSON.parse(
-		readFileSync(
-			buildArtifactPath(repositoryRoot, "analysis-geographies.json"),
-			"utf8",
-		),
+	const analysisGeographies = readJsonSync(
+		buildArtifactPath(repositoryRoot, "analysis-geographies.json"),
 	) as AnalysisGeographyInventory;
-	const dataCatalog = JSON.parse(
-		readFileSync(join(directory, "data-catalog.json"), "utf8"),
+	const dataCatalog = readJsonSync(
+		join(directory, "data-catalog.json"),
 	) as DataCatalog;
-	const crosswalkInventory = JSON.parse(
-		readFileSync(join(directory, "crosswalk-inventory.json"), "utf8"),
+	const crosswalkInventory = readJsonSync(
+		join(directory, "crosswalk-inventory.json"),
 	) as CrosswalkInventory;
 	// Only the crosswalks the configured pairs route through are read.
 	const crosswalkLookup = createCrosswalkArtifacts(

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { BOUNDARY_CATALOG, BOUNDARY_TYPES } from "@uk-data-atlas/datasets";
 import {
@@ -7,6 +7,7 @@ import {
 	substitutionsFor,
 } from "@uk-data-atlas/geography";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets";
+import { readJsonSync } from "../lib/json.ts";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 export const PROPERTIES_FILENAME = "properties.json";
@@ -23,7 +24,7 @@ export const PROPERTIES_FILENAME = "properties.json";
  */
 const readReleaseMeta = (releaseDir: string) =>
 	parseDatasetMeta(
-		JSON.parse(readFileSync(join(releaseDir, "meta.json"), "utf8")),
+		readJsonSync(join(releaseDir, "meta.json")),
 		basename(releaseDir),
 	);
 
@@ -37,10 +38,7 @@ const correctionsFromMeta = (releaseDir: string) =>
 		const path = join(ROOT, "data/source", "boundaries", `${id}.json`);
 		return {
 			path,
-			offset: parseGridOffset(
-				JSON.parse(readFileSync(path, "utf8")),
-				path,
-			),
+			offset: parseGridOffset(readJsonSync(path), path),
 		};
 	});
 
@@ -127,10 +125,7 @@ const reversedOffsetSources = (type: string, releaseId: string) =>
 		);
 		return {
 			path,
-			offset: parseGridOffset(
-				JSON.parse(readFileSync(path, "utf8")),
-				path,
-			),
+			offset: parseGridOffset(readJsonSync(path), path),
 		};
 	});
 

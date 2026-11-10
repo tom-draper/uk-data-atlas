@@ -13,12 +13,11 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 
 type BoundaryMetadata = { files?: unknown };
 import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
+import { readJsonSync } from "../lib/json.ts";
 const kebab = (s: string) =>
 	s.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 const sourcePath = (directory: string) => {
-	const meta = JSON.parse(
-		readFileSync(join(directory, "meta.json"), "utf8"),
-	) as BoundaryMetadata;
+	const meta = readJsonSync(join(directory, "meta.json")) as BoundaryMetadata;
 	if (!Array.isArray(meta.files)) return;
 	const f = meta.files.find(
 		(x) =>
@@ -62,9 +61,9 @@ const crs = (path: string) => {
 // Grid corrections a release declares, by the id of their shared definition
 // in data/source/boundaries/, which the website's boundary compiler also applies.
 const declaredCorrections = (directory: string): string[] => {
-	const meta = JSON.parse(
-		readFileSync(join(directory, "meta.json"), "utf8"),
-	) as { corrections?: unknown };
+	const meta = readJsonSync(join(directory, "meta.json")) as {
+		corrections?: unknown;
+	};
 	return Array.isArray(meta.corrections)
 		? meta.corrections.filter((id): id is string => typeof id === "string")
 		: [];

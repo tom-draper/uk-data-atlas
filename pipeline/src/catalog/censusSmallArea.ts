@@ -12,6 +12,7 @@ import { csvFields } from "@uk-data-atlas/artifacts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import type { DatasetModule } from "@uk-data-atlas/datasets";
 import { sha256 } from "./values.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Census 2021 tables for England and Wales at the two statistical small-area
@@ -579,9 +580,7 @@ export const compileCensusSmallArea = (
 			CENSUS_SMALL_AREA_DIRECTORY,
 			table.table,
 		);
-		const meta = JSON.parse(
-			readFileSync(join(directory, "meta.json"), "utf8"),
-		) as {
+		const meta = readJsonSync(join(directory, "meta.json")) as {
 			title: string;
 			description: string;
 			publisher: string;

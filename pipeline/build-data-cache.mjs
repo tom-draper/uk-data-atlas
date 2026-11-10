@@ -13,6 +13,7 @@ import {
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { sha256FileHexSync, sha256Hex } from "./src/lib/hash.ts";
+import { readJsonSync } from "./src/lib/json.ts";
 
 const VERSION = 4;
 export const KEY_VERSION = 1;
@@ -247,7 +248,7 @@ export function createStageCache({
 	let state;
 	let previousStages = {};
 	try {
-		state = JSON.parse(readFileSync(stateFile, "utf8"));
+		state = readJsonSync(stateFile);
 		previousStages = state?.stages ?? {};
 		if (state?.version !== VERSION) state = null;
 		else

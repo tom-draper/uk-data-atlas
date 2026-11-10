@@ -1,5 +1,5 @@
 import { packNamedLocations } from "../storage/index.ts";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { geometryBounds } from "@uk-data-atlas/geography";
 import {
@@ -20,6 +20,7 @@ import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import { compileNamedLocationGeometry } from "@uk-data-atlas/places";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
@@ -101,13 +102,10 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 			release.status === "available" &&
 			memberGeographies.has(release.geography)
 				? [
-						JSON.parse(
-							readFileSync(
-								join(
-									artifactDirectory(repositoryRoot),
-									release.artifact,
-								),
-								"utf8",
+						readJsonSync(
+							join(
+								artifactDirectory(repositoryRoot),
+								release.artifact,
 							),
 						) as AreaReleaseArtifact,
 					]

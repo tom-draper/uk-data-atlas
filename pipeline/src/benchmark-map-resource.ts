@@ -2,7 +2,6 @@ import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
@@ -10,14 +9,15 @@ import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
 } from "./maps/compileMapResource.ts";
+import { readJsonSync } from "./lib/json.ts";
 
 // Run from the repository root. Each process compiles one real release without
 // consulting the map-resource build cache or overwriting published artifacts.
 const root = resolve(process.argv[2] ?? ".");
 const id = process.argv[3] ?? "country/2025-12-uk-bgc";
 const out = artifactDirectory(root);
-const registry: { releases: BoundaryReleaseSummary[] } = JSON.parse(
-	readFileSync(buildArtifactPath(root, "boundary-releases.json"), "utf8"),
+const registry: { releases: BoundaryReleaseSummary[] } = readJsonSync(
+	buildArtifactPath(root, "boundary-releases.json"),
 );
 const release = registry.releases.find(
 	(entry) => `${entry.geography}/${entry.id}` === id,
@@ -25,13 +25,13 @@ const release = registry.releases.find(
 assert.ok(release, `Unknown release ${id}`);
 const inventory: {
 	releases: Array<{ geography: string; id: string; artifact: string }>;
-} = JSON.parse(readFileSync(join(out, "area-inventory.json"), "utf8"));
+} = readJsonSync(join(out, "area-inventory.json"));
 const identity = inventory.releases.find(
 	(entry) => `${entry.geography}/${entry.id}` === id,
 );
 assert.ok(identity, `No area inventory for ${id}`);
-const areas: { areas: Array<{ code: string; name: string }> } = JSON.parse(
-	readFileSync(join(out, identity.artifact), "utf8"),
+const areas: { areas: Array<{ code: string; name: string }> } = readJsonSync(
+	join(out, identity.artifact),
 );
 const names = new Map(areas.areas.map((area) => [area.code, area.name]));
 const cache = new AreaGeometryCache(root, readGeometrySourceLookup(root));

@@ -10,6 +10,7 @@ import {
 	readGeometrySourceLookup,
 } from "@uk-data-atlas/geometry";
 import { buildSimplifiedDownload } from "@uk-data-atlas/map-tiles/node";
+import { readJsonSync } from "./lib/json.ts";
 
 const root = resolve(process.argv[2] ?? ".");
 const id = process.argv[3];
@@ -18,28 +19,18 @@ assert.ok(
 	"Usage: tsx pipeline/src/verify-map-downloads.ts <baseline-repository> <geography/release>",
 );
 const state: Record<string, { descriptor?: MapResourceDescriptor }> =
-	JSON.parse(
-		readFileSync(
-			join(root, "data/build/map-resources/build-state.json"),
-			"utf8",
-		),
-	);
+	readJsonSync(join(root, "data/build/map-resources/build-state.json"));
 const descriptor = state[id]?.descriptor;
 assert.ok(descriptor, `No stored baseline descriptor for ${id}`);
 const inventory: {
 	releases: Array<{ geography: string; id: string; artifact: string }>;
-} = JSON.parse(
-	readFileSync(
-		join(root, "data/build/artifacts/area-inventory.json"),
-		"utf8",
-	),
-);
+} = readJsonSync(join(root, "data/build/artifacts/area-inventory.json"));
 const identity = inventory.releases.find(
 	(entry) => `${entry.geography}/${entry.id}` === id,
 );
 assert.ok(identity, `No area inventory for ${id}`);
-const areas: { areas: Array<{ code: string; name: string }> } = JSON.parse(
-	readFileSync(join(root, "data/build/artifacts", identity.artifact), "utf8"),
+const areas: { areas: Array<{ code: string; name: string }> } = readJsonSync(
+	join(root, "data/build/artifacts", identity.artifact),
 );
 const names = new Map(areas.areas.map((area) => [area.code, area.name]));
 // Use the deployed geometry store, as the server does, rather than source geometry.

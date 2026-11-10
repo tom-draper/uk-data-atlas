@@ -9,6 +9,7 @@ import {
 	type OutputAreaCounts,
 	type WeightAtoms,
 } from "./atoms.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * The held counts, centroids and postcodes the atoms are made of, read from
@@ -92,9 +93,7 @@ export const readOutputAreaCounts = (root: string): OutputAreaCounts => {
 			centroids.set(code!, [Number(longitude), Number(latitude)]);
 		}
 	}
-	const lookup = JSON.parse(
-		readFileSync(source(OUTPUT_AREA_LSOA_LOOKUP), "utf8"),
-	) as {
+	const lookup = readJsonSync(source(OUTPUT_AREA_LSOA_LOOKUP)) as {
 		features: Array<{ properties: { OA21CD: string; LSOA21CD: string } }>;
 	};
 	const lsoaOf = new Map(

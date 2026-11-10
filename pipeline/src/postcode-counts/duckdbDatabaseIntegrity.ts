@@ -1,5 +1,6 @@
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, statSync } from "node:fs";
 import { sha256FileHex } from "../lib/hash.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 export type Seal = {
 	schemaVersion: 1;
@@ -9,7 +10,7 @@ export type Seal = {
 };
 
 export function readSeal(path: string): Seal {
-	const seal = JSON.parse(readFileSync(path, "utf8"));
+	const seal = readJsonSync<Seal>(path);
 	if (
 		seal.schemaVersion !== 1 ||
 		typeof seal.databaseSha256 !== "string" ||

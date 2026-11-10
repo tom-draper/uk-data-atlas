@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { sha256Hex } from "../lib/hash.ts";
+import { readJson } from "../lib/json.ts";
 
 // Two kinds of fingerprint come out of this file, so that changing one
 // dataset's loader recompiles that dataset alone.
@@ -102,9 +103,7 @@ const resolveFile = async (base) => {
 
 /** tsconfig path aliases as [prefix, target directory] pairs, e.g. "@lib/". */
 const readAliases = async (root) => {
-	const { compilerOptions } = JSON.parse(
-		await readFile(join(root, "tsconfig.json"), "utf8"),
-	);
+	const { compilerOptions } = await readJson(join(root, "tsconfig.json"));
 	return Object.entries(compilerOptions?.paths ?? {}).flatMap(
 		([pattern, [target]]) =>
 			pattern.endsWith("/*") && target.endsWith("/*")
@@ -128,9 +127,7 @@ const importedFiles = async (root, aliases, file, resolveImport) => {
 				.slice("@uk-data-atlas/".length)
 				.split("/");
 			const directory = join(root, "packages", name);
-			const { exports } = JSON.parse(
-				await readFile(join(directory, "package.json"), "utf8"),
-			);
+			const { exports } = await readJson(join(directory, "package.json"));
 			const subpath = parts.length ? `./${parts.join("/")}` : ".";
 			const target =
 				exports[subpath] ??

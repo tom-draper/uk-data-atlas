@@ -1,6 +1,6 @@
 import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -9,6 +9,7 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { ExtentContinuityCrosswalkAdapter } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import { isGeographyKind } from "@uk-data-atlas/geography";
+import { readJsonSync } from "./lib/json.ts";
 
 type Release = BoundaryRegistry["releases"][number] & {
 	identity: string;
@@ -33,9 +34,7 @@ const toKebabCase = (value: string) =>
 export const proposeExtentContinuity = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);
 	const read = <T>(path: string) =>
-		JSON.parse(
-			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),
-		) as T;
+		readJsonSync(buildArtifactPath(repositoryRoot, path)) as T;
 	const registry = read<BoundaryRegistry>("boundary-releases.json");
 	const geometrySources = new Map(
 		read<{
@@ -55,7 +54,7 @@ export const proposeExtentContinuity = (repositoryRoot: string) => {
 			const features = path.toLowerCase().endsWith(".shp")
 				? readShapefileFeatures(path)
 				: (
-						JSON.parse(readFileSync(path, "utf8")) as {
+						readJsonSync(path) as {
 							features: Array<{ geometry?: unknown }>;
 						}
 					).features;
@@ -200,7 +199,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 			configDirectory(repositoryRoot),
 			"crosswalk-adapters.json",
 		);
-		const file = JSON.parse(readFileSync(path, "utf8")) as {
+		const file = readJsonSync(path) as {
 			schemaVersion: 1;
 			crosswalks: Array<{ method: string }>;
 		};

@@ -8,7 +8,6 @@ import {
 import { distanceToBoundaryM } from "@uk-data-atlas/geography";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { readPostcodeCoordinates } from "../postcodes/postcodeCoordinates.ts";
 import {
@@ -20,6 +19,7 @@ import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,
 } from "../postcodes/storePostcodeAreas.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /** What a live lookup finds for a point: area code, containment and distance. */
 export type LiveLookup = (
@@ -83,11 +83,8 @@ export function verifyPostcodeAreas(
 ) {
 	const { postcodeArtifact, lng, lat } =
 		readPostcodeCoordinates(repositoryRoot);
-	const manifest = JSON.parse(
-		readFileSync(
-			join(postcodeAreasDirectory(repositoryRoot), "manifest.json"),
-			"utf8",
-		),
+	const manifest = readJsonSync(
+		join(postcodeAreasDirectory(repositoryRoot), "manifest.json"),
 	) as PostcodeAreasArtifact;
 	if (manifest.postcodeIndex !== postcodeArtifact.contentHash)
 		throw new Error(

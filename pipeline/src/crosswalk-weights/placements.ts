@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { placeInRelease, releasesWithGeometry } from "./placement.ts";
 import type { WeightAtoms } from "./atoms.ts";
 import type { Placement } from "./weigh.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Placements of the atoms in releases, kept as files (an Int32 index into the
@@ -46,7 +47,7 @@ export const readPlacement = (
 	for (const directory of directories) {
 		const file = fileOf(directory, geography, boundaryRelease);
 		if (!existsSync(`${file}.json`) || !existsSync(file)) continue;
-		const meta = JSON.parse(readFileSync(`${file}.json`, "utf8")) as {
+		const meta = readJsonSync(`${file}.json`) as {
 			key: string;
 			codes: string[];
 		};

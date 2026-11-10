@@ -7,13 +7,13 @@ import {
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
-	readFileSync,
 	rmSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Download the small-area counts that crosswalk weights share between
@@ -108,7 +108,7 @@ const addCensusFile = (
 	file: Record<string, string>,
 ) => {
 	const path = join(root, "data/source", directory, "meta.json");
-	const meta = JSON.parse(readFileSync(path, "utf8")) as {
+	const meta = readJsonSync(path) as {
 		files: Array<Record<string, string>>;
 	};
 	meta.files = [

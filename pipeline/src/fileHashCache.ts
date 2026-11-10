@@ -1,12 +1,7 @@
-import {
-	existsSync,
-	mkdirSync,
-	readFileSync,
-	statSync,
-	writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { sha256FileHexSync } from "./lib/hash.ts";
+import { readJsonSync } from "./lib/json.ts";
 
 type Entry = { size: number; mtimeNs: string; ino: number; hash: string };
 
@@ -22,7 +17,7 @@ export const hashFile = (path: string) => `sha256:${sha256FileHexSync(path)}`;
 export const createFileHashCache = (cachePath: string) => {
 	let entries: Record<string, Entry> = {};
 	try {
-		entries = JSON.parse(readFileSync(cachePath, "utf8"));
+		entries = readJsonSync(cachePath);
 	} catch {
 		// No cache yet, or an unreadable one: every file is hashed.
 	}

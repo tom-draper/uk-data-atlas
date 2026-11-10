@@ -8,7 +8,7 @@
  * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
  * type or output file, and keeps the rest of the manifest as it was.
  */
-import { mkdir, readFile } from "fs/promises";
+import { mkdir } from "fs/promises";
 import { join, relative, resolve } from "path";
 import { fileURLToPath } from "url";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
@@ -24,6 +24,7 @@ import { out } from "./precompile/output.mts";
 import { COMPILED_DATASETS, ROOT } from "./precompile/paths.mts";
 import type { CompiledDatasets } from "./precompile/types.mts";
 import { buildLog, elapsedSince, formatCount } from "@uk-data-atlas/atlas-db";
+import { readJson } from "./lib/json.ts";
 
 export const COMPILED_MANIFEST = join(
 	COMPILED_DATASETS,
@@ -34,7 +35,7 @@ type ManifestEntry = Awaited<ReturnType<typeof compileDataset>>;
 
 const readManifest = async (): Promise<{ datasets: ManifestEntry[] }> => {
 	try {
-		return JSON.parse(await readFile(COMPILED_MANIFEST, "utf8"));
+		return await readJson(COMPILED_MANIFEST);
 	} catch {
 		throw new Error(
 			"No compiled dataset manifest to update. Run a full pnpm data:build --only datasets first.",

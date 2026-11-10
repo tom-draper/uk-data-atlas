@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import {
@@ -6,6 +6,7 @@ import {
 	removeStageStamps,
 	stageStampPath,
 } from "./stageStamp.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * The atlas cache is rebuilt in a working copy, so a build copies the file
@@ -49,8 +50,8 @@ function sessionOf(path: string) {
 
 function stampSession(root: string, stage: string) {
 	try {
-		const stamp = JSON.parse(
-			readFileSync(stageStampPath(root, stage), "utf8"),
+		const stamp = readJsonSync<{ session?: unknown } | null>(
+			stageStampPath(root, stage),
 		);
 		return typeof stamp?.session === "string" ? stamp.session : null;
 	} catch {
