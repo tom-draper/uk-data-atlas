@@ -325,6 +325,26 @@ test("indexes canonical series separately from catalogue ids", () => {
 	assert.deepEqual(indexed.catalogueSeries("crime-burglary"), found);
 });
 
+test("uses catalogue series identities without an id mapping", () => {
+	const identity = {
+		measure: "recorded-crimes",
+		dimensions: { offence: "burglary" },
+	};
+	const data = {
+		measures: [
+			{ id: "legacy", sources: [source("crime")], series: identity },
+		],
+	} as Parameters<typeof dimensionCatalogue>[0];
+	const indexed = dimensionCatalogue(data, {
+		config: config({}),
+		vocabulary,
+	});
+	assert.equal(
+		indexed.series(measureSeriesKey(identity))?.measure.id,
+		"recorded-crimes",
+	);
+});
+
 const problems = (
 	ids: Record<string, string[]>,
 	mapping: MeasureDimensionsConfig,
