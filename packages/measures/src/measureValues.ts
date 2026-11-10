@@ -1,10 +1,12 @@
 import {
 	isNumericObservation,
+	measureSeriesKey,
 	observationsFor,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
 	type Measure,
 	type MeasureSource,
+	type MeasureSeriesIdentity,
 	type PopulationObservation,
 } from "./index.ts";
 import {
@@ -381,14 +383,18 @@ const PARTIAL = MEASURE_VALUE_STATUSES.indexOf("partial");
 const readWeights = (
 	context: MeasureValuesContext,
 	weightMeasureId: string | undefined,
+	weightSeriesIdentity: MeasureSeriesIdentity | undefined,
 	source: MeasureSource,
 	period: string,
 ): Map<string, number> | undefined => {
-	if (!weightMeasureId) return undefined;
-	const weightSeries = dimensionCatalogue(
+	if (!weightMeasureId && !weightSeriesIdentity) return undefined;
+	const catalogue = dimensionCatalogue(
 		context.dataCatalog,
 		context.measureDimensions ?? identityDimensions(context.dataCatalog),
-	).catalogueSeries(weightMeasureId)?.series;
+	);
+	const weightSeries = weightSeriesIdentity
+		? catalogue.series(measureSeriesKey(weightSeriesIdentity))?.series
+		: catalogue.catalogueSeries(weightMeasureId!)?.series;
 	const weight =
 		weightSeries?.catalogueMeasure ??
 		context.dataCatalog.measures.find(
@@ -565,6 +571,7 @@ export function queryMeasureValues(
 					? readWeights(
 							context,
 							rule.weighted.weight.measureId,
+							catalogueMeasure.weightSeries,
 							source,
 							period,
 						)

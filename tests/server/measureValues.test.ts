@@ -282,7 +282,26 @@ describe("measure values combined over areas", () => {
 	});
 
 	it("reads weighted values by their selected series", () => {
-		const { dataCatalog, measureObservations } = fixture.context;
+		const { measureObservations } = fixture.context;
+		const dataCatalog = {
+			...fixture.context.dataCatalog,
+			measures: fixture.context.dataCatalog.measures.map((measure) =>
+				measure.id === "access-rate" &&
+				measure.aggregation.kind === "intensive"
+					? {
+							...measure,
+							weightSeries: { measure: "population" },
+							aggregation: {
+								...measure.aggregation,
+								weight: {
+									...measure.aggregation.weight,
+									measureId: "incorrect-legacy-id",
+								},
+							},
+						}
+					: measure,
+			),
+		};
 		const dimensions = identityDimensions(dataCatalog);
 		const catalogue = dimensionCatalogue(dataCatalog, dimensions);
 		const population = measureObservations.find(
