@@ -11,6 +11,8 @@ import {
 import { publishVacuumed, writePostcodeAreas } from "../storage/index.ts";
 import { crosswalkSetHash } from "../crosswalk-weights/crosswalkSetHash.ts";
 import { crosswalkWeightsPath } from "../crosswalk-weights/paths.ts";
+import { convertedSeriesPath } from "../conversion/paths.ts";
+import { copyConvertedSeries } from "../conversion/storeConverted.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography";
 import {
 	postcodeAreasDirectory,
@@ -22,11 +24,15 @@ import { readJsonSync } from "../lib/json.ts";
 
 /**
  * `crosswalkWeights: false` leaves crosswalks with only their own weights, for
- * fixtures whose roots hold no census counts and place no real releases.
+ * fixtures whose roots hold no census counts and place no real releases. The
+ * converted series are built through those weights, so they go with them.
  */
 export function assembleAtlas(
 	root: string,
-	{ crosswalkWeights = true }: { crosswalkWeights?: boolean } = {},
+	{
+		crosswalkWeights = true,
+		convertedSeries = crosswalkWeights,
+	}: { crosswalkWeights?: boolean; convertedSeries?: boolean } = {},
 ) {
 	const directory = join(root, "data/build");
 	const path = join(directory, "atlas.sqlite");
@@ -58,6 +64,10 @@ export function assembleAtlas(
 				database
 					.prepare("ATTACH DATABASE ? AS weights_component")
 					.run(crosswalkWeightsPath(root));
+			if (convertedSeries)
+				database
+					.prepare("ATTACH DATABASE ? AS converted_component")
+					.run(convertedSeriesPath(root));
 			database.exec(
 				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
@@ -107,6 +117,9 @@ export function assembleAtlas(
 					"INSERT INTO main.crosswalk_weight SELECT * FROM weights_component.crosswalk_weight",
 				);
 			}
+			// Every converted series is marked as one, and none of its values
+			// as observed, or the copy fails.
+			if (convertedSeries) copyConvertedSeries(database, ids);
 			database.exec("COMMIT");
 		} finally {
 			database.close();

@@ -200,3 +200,23 @@ test("crosswalk weights are built before the atlas is assembled, from the counts
 	).find((stage) => stage.name === "crosswalk-weights")?.rawInputs;
 	assert.equal(typeof inputs, "function");
 });
+
+test("converted series are built from the backtest, before the atlas is assembled", () => {
+	const converted = stages.find((stage) => stage.name === "converted-series");
+	assert.ok(converted);
+	assert.deepEqual(converted.requiredOutputs, [
+		"data/build/converted-series/converted-series.sqlite",
+		"data/build/converted-series/converted-series.md",
+	]);
+	for (const dependency of [
+		"atlas-sqlite",
+		"crosswalk-weights",
+		"conversion-backtest",
+	])
+		assert.ok(converted.dependencies.includes(dependency));
+	assert.ok(
+		stages
+			.find((stage) => stage.name === "assemble-atlas")
+			?.dependencies.includes("converted-series"),
+	);
+});
