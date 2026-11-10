@@ -190,10 +190,8 @@ Top five: tasks 33, 41, 34, 36 with 37, and 45.
 
 ### Licence table coverage
 
-The source `licence` and `source_licence` tables record recognised source
-licences, and `election_licence` separates the historic local-election years.
-Boundary releases link to `source`; crosswalk provenance links identifiable
-boundary input paths to those sources. Crosswalks can also use other inputs,
-including postcode and population data, which still need source links. The
-customer-specific licence record described in DATA-LICENCES.md remains a
-separate delivery concern and is not supplied by the source licence table.
+Source licence tables cover boundary releases and identify population and
+postcode atom inputs for crosswalks and added weight bases. A customer-specific
+copy can be created with `pnpm delivery:create`; its `delivery_licence` row
+records the supplied customer, order, release and terms independently of the
+source licences.
