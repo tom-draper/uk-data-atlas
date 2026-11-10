@@ -27,3 +27,27 @@ test("publishes series identities in the catalogue and includes them in its hash
 		/Missing series identity for legacy/,
 	);
 });
+
+test("publishes the canonical identity of a weight measure", () => {
+	const catalog = {
+		schemaVersion: 1,
+		contentHash: "old",
+		source: { artifact: "manifest", manifestVersion: 1 },
+		datasets: [],
+		measures: [
+			{
+				id: "average",
+				aggregation: {
+					kind: "intensive",
+					weight: { measureId: "legacy-weight" },
+				},
+			},
+		],
+	} as unknown as DataCatalog;
+	const weight = { measure: "population", dimensions: { age: "all" } };
+	const result = catalogueWithSeries(catalog, {
+		average: { measure: "average" },
+		"legacy-weight": weight,
+	});
+	assert.deepEqual(result.measures[0]?.weightSeries, weight);
+});
