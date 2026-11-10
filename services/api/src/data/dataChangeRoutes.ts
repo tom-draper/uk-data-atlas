@@ -9,7 +9,7 @@ import {
 	relativeChangeRefusal,
 	type ChangeBasis,
 } from "../change";
-import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/loader";
+import { sourceSeriesProvenance } from "../sourceExactProvenance.ts";
 import { paginate } from "../pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";

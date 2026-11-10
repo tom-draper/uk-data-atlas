@@ -1,5 +1,5 @@
 import type { MeasureSource } from "@uk-data-atlas/measures";
-import type { CallerSelectedGeometry } from "@uk-data-atlas/atlas-runtime/loader";
+import type { CallerSelectedGeometry } from "./sourceExactProvenance.ts";
 
 export type TabularFormat = "csv" | "ndjson";
 
