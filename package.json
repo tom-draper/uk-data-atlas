@@ -26,7 +26,8 @@
 		"check:full": "pnpm check && pnpm data:verify && pnpm verify:atlas && vitest run --project built && pnpm --dir pipeline test:built && pnpm --dir services/api test",
 		"verify:atlas": "tsx scripts/verify-atlas-areas.mts && tsx scripts/verify-atlas-crosswalks.mts && tsx scripts/verify-atlas-datasets.mts && tsx scripts/verify-atlas-locations.mts",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
-		"roads:serve": "node scripts/serve-os-open-roads.mjs"
+		"roads:serve": "node scripts/serve-os-open-roads.mjs",
+		"delivery:create": "tsx pipeline/src/delivery/cli.ts"
 	},
 	"dependencies": {
 		"@uk-data-atlas/catalogue": "workspace:*",
